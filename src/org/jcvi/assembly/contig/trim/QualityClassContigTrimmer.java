@@ -1,0 +1,289 @@
+/*
+ * Created on Oct 1, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.assembly.contig.trim;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.jcvi.Range;
+import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.assembly.AssemblyUtil;
+import org.jcvi.assembly.Contig;
+import org.jcvi.assembly.PlacedIterable;
+import org.jcvi.assembly.PlacedRead;
+import org.jcvi.assembly.VirtualPlacedRead;
+import org.jcvi.assembly.analysis.ContigCheckerStruct;
+import org.jcvi.assembly.contig.DefaultQualityClassContigMap;
+import org.jcvi.assembly.contig.QualityClassRegion;
+import org.jcvi.assembly.coverage.CoverageMap;
+import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.cli.CommandLineOptionBuilder;
+import org.jcvi.cli.CommandLineUtils;
+import org.jcvi.datastore.CachedDataStore;
+import org.jcvi.datastore.ContigDataStore;
+import org.jcvi.datastore.DataStore;
+import org.jcvi.datastore.DataStoreException;
+import org.jcvi.datastore.DefaultContigFileDataStore;
+import org.jcvi.fasta.FastaRecordDataStoreAdapter;
+import org.jcvi.fasta.LargeQualityFastaFileDataStore;
+import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.qualClass.QualityClass;
+import org.jcvi.glyph.qualClass.QualityDataStoreAdapter;
+import org.jcvi.sequence.ReadTrimMap;
+import org.jcvi.sequence.ReadTrimUtil;
+import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.sequence.TrimType;
+
+public class QualityClassContigTrimmer<R extends PlacedRead> implements
+        ContigTrimmer<R> {
+
+    private final int maxNumberOf5PrimeBasesToTrim;
+    private final int maxNumberOf3PrimeBasesToTrim;
+    private final Set<QualityClass> qualityClassesToTrim;
+
+    /**
+     * 
+     * @param maxNumberOf5PrimeBasesToTrim max number of bases to trim off
+     * of the 5' side (residue based)
+     * @param maxNumberOf3PrimeBasesToTrim max number of bases to trim off
+     * of the 3' side (residue based)
+     * @param qualityClassesToTrim Set of Quality classes to consider
+     * trimming
+     */
+    public QualityClassContigTrimmer(int maxNumberOf5PrimeBasesToTrim,
+            int maxNumberOf3PrimeBasesToTrim,
+            Set<QualityClass> qualityClassesToTrim) {
+        this.maxNumberOf5PrimeBasesToTrim = maxNumberOf5PrimeBasesToTrim;
+        this.maxNumberOf3PrimeBasesToTrim = maxNumberOf3PrimeBasesToTrim;
+        this.qualityClassesToTrim = qualityClassesToTrim;
+    }
+
+    @Override
+    public List<TrimmedPlacedRead<R>> trim(ContigCheckerStruct<R> struct) throws DataStoreException {
+
+        Map<R, Range> trimmedReads = new HashMap<R, Range>();
+        DefaultQualityClassContigMap<R> qualityClassContigMap = struct.getQualityClassMap();
+        CoverageMap<CoverageRegion<R>> coverageMap = struct.getSequenceCoverageMap();
+        DataStore<EncodedGlyphs<PhredQuality>> qualityMap = struct.getQualityDataStore();
+        for (QualityClassRegion qualityClassRegion : qualityClassContigMap) {
+            if (isAQualityClassToTrim(qualityClassRegion.getQualityClass())) {
+                for(Long consensusIndex : new PlacedIterable(qualityClassRegion)){
+                    CoverageRegion<R> coverageRegion = coverageMap.getRegionWhichCovers(consensusIndex);
+
+                    for (R read : coverageRegion.getElements()) {
+                        int gappedValidRangeIndex = (int)read.convertReferenceIndexToValidRangeIndex(consensusIndex);
+                        if (isASnp(read, gappedValidRangeIndex)){                           
+
+                            Range oldValidRange = getPreviousValidRange(trimmedReads, read);
+                            Range newValidRange = computeNewValidRange(qualityMap, read,oldValidRange,gappedValidRangeIndex);
+                            if (newValidRange != null) {
+                                trimmedReads.put(read, newValidRange);
+                            }
+
+                        }
+
+                    }
+                }
+            }
+        }
+        List<TrimmedPlacedRead<R>> trims = new ArrayList<TrimmedPlacedRead<R>>();
+        for (Entry<R, Range> entry : trimmedReads.entrySet()) {
+            trims.add(new DefaultTrimmedPlacedRead<R>(
+                    entry.getKey(), 
+                    entry.getValue().convertRange(CoordinateSystem.RESIDUE_BASED)));
+        }
+        return trims;
+    }
+
+    private boolean isASnp(R read, int gappedValidRangeIndex) {
+        return read.getSnps().containsKey(
+                Integer.valueOf(gappedValidRangeIndex));
+    }
+
+    private boolean isAQualityClassToTrim(QualityClass qualityClass) {
+        return qualityClassesToTrim.contains(qualityClass);
+    }
+
+    private Range computeNewValidRange(DataStore<EncodedGlyphs<PhredQuality>> qualityMap, R read, Range oldValidRange,int gappedValidRangeIndex) throws DataStoreException {
+        final EncodedGlyphs<PhredQuality> qualityValues = qualityMap.get(read.getId());
+
+        int gappedTrimIndex = computeGappedTrimIndex(read,
+                gappedValidRangeIndex);
+     
+        int fullRangeIndex = AssemblyUtil.convertToUngappedFullRangeIndex(read,(int)qualityValues.getLength(), gappedTrimIndex);
+        // need to +1 passed fullRangeIndex to trim off snp for non-gaps
+        if(!read.getEncodedGlyphs().isGap(gappedValidRangeIndex)){
+            fullRangeIndex ++;
+        }
+        long fullLength = qualityValues.getLength();
+        
+        Range newValidRange = null;
+        if (fullRangeIndex < maxNumberOf5PrimeBasesToTrim) {
+            // 5 prime
+            newValidRange = Range.buildRange(fullRangeIndex, 
+                    oldValidRange.getEnd());
+        } else if (fullLength - fullRangeIndex < maxNumberOf3PrimeBasesToTrim) {
+            // 3 prime
+            newValidRange = Range.buildRange(oldValidRange.getEnd(),
+                    fullRangeIndex);
+        }
+        return newValidRange;
+    }
+
+    private Range getPreviousValidRange(
+            Map<R, Range> trimmedReads,
+            R read) {
+        Range oldValidRange = read.getValidRange();
+
+        if (trimmedReads.containsKey(read)) {
+            oldValidRange = trimmedReads.get(read);
+        }
+        return oldValidRange;
+    }
+
+    private int computeGappedTrimIndex(R read,
+            int gappedValidRangeIndex) {
+        int gappedTrimIndex;
+        if (read.getSequenceDirection() == SequenceDirection.FORWARD) {
+            gappedTrimIndex = AssemblyUtil.getRightFlankingNonGapIndex(read,
+                    gappedValidRangeIndex);
+        } else {
+            gappedTrimIndex = AssemblyUtil.getLeftFlankingNonGapIndex(read,
+                    gappedValidRangeIndex);
+        }
+        return gappedTrimIndex;
+    }
+
+    public static void main(String[] args) throws IOException, DataStoreException {
+            Options options = new Options();
+            options.addOption(new CommandLineOptionBuilder("c", "contig file to examine")
+                                .longName("contig_file")
+                                .isRequired(true)
+                                .build());
+            options.addOption(new CommandLineOptionBuilder("q", "quality fasta file (full range)")
+                                .longName("qual_file")
+                                .isRequired(true)
+                                .build());
+            options.addOption(new CommandLineOptionBuilder("f", ".seq.features file current containing trim points")
+                                .longName("feat_file")
+                                .isRequired(true)
+                                .build());
+            options.addOption(new CommandLineOptionBuilder("max5", "max bases to trim off the 5 prime side (ungapped)")
+                                    .build());
+            options.addOption(new CommandLineOptionBuilder("max3", "max bases to trim off the 3 prime side (ungapped)")
+                                    .build());
+            options.addOption(new CommandLineOptionBuilder("quality_classes", "comma sep list of quality classes to try to trim")
+                                            .build());
+            options.addOption(new CommandLineOptionBuilder("high_qual_threshold", "quality value which is considered to be high quality")
+                                        .build());
+            try{
+            CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
+            
+            File contigFile = new File(commandLine.getOptionValue("c"));
+            File qualFastaFile = new File(commandLine.getOptionValue("q"));
+            File trimFile = new File(commandLine.getOptionValue("f"));
+            
+            final int fivePrimeMaxBasesToTrim = commandLine.hasOption("max5")? Integer.parseInt(commandLine.getOptionValue("max5")):50;
+            int threePrimeMaxBasesToTrim = commandLine.hasOption("max3")? Integer.parseInt(commandLine.getOptionValue("max3")):15;
+            String commaSepQualityClassesToTrim = commandLine.hasOption("quality_classes")?commandLine.getOptionValue("quality_classes"): "15,16,17";
+            
+            PhredQuality highQualityThreshold = commandLine.hasOption("high_qual_threshold")?
+                                PhredQuality.valueOf(Integer.parseInt(commandLine.getOptionValue("high_qual_threshold"))) :
+                                    PhredQuality.valueOf(30);
+                                
+            Set<QualityClass> qualityClassesToTrim = EnumSet.noneOf(QualityClass.class);
+            
+            
+            for(String qualityClassAsString : commaSepQualityClassesToTrim.split(",")){
+                qualityClassesToTrim.add(QualityClass.valueOf(Byte.parseByte(qualityClassAsString)));
+            }
+            ReadTrimMap trimMap = ReadTrimUtil.readReadTrimsFromFile(trimFile);
+            ContigDataStore<PlacedRead, Contig<PlacedRead>> contigDataStore = new DefaultContigFileDataStore(
+                    contigFile);
+            QualityDataStore qualityFastaMap = 
+                CachedDataStore.createCachedDataStore(QualityDataStore.class, 
+                        new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(qualFastaFile))),
+                        100);
+         
+            for (Contig<PlacedRead> contig : contigDataStore) {
+                ContigCheckerStruct<PlacedRead> contigCheckerStruct = new ContigCheckerStruct<PlacedRead>(
+                        contig, qualityFastaMap, highQualityThreshold);
+
+                QualityClassContigTrimmer trimmer = new QualityClassContigTrimmer(
+                        fivePrimeMaxBasesToTrim, threePrimeMaxBasesToTrim, qualityClassesToTrim);
+
+                List<TrimmedPlacedRead<PlacedRead>> trims = trimmer
+                        .trim(contigCheckerStruct);
+              //dkatzel turn off extender for now...
+                /*
+                List<String> trimmedReadNames = new ArrayList<String>();
+                for (TrimmedPlacedRead<PlacedRead> trim : trims) {
+                    trimmedReadNames.add(trim.getRead().getId());
+                }
+                
+                QualityClassExtender extender = new QualityClassExtender<PlacedRead>();
+                List<TrimmedPlacedRead<PlacedRead>> extendedReads = new ArrayList<TrimmedPlacedRead<PlacedRead>>();
+                for(PlacedRead read : contig.getPlacedReads()){
+                    if(!trimmedReadNames.contains(read.getId())){
+                        TrimmedPlacedRead<PlacedRead> extended = extender.extend(
+                                contig.getConsensus(), 
+                                read, 
+                                trimMap.getReadTrimFor(read.getId()), 
+                                seqFastaMap.getRecord(read.getId()).getValues());
+                        if(extended!=null){
+                            extendedReads.add(extended);
+                        }
+                    }
+                }
+                */
+                List<TrimmedPlacedRead<PlacedRead>> allChangedReads = new ArrayList<TrimmedPlacedRead<PlacedRead>>();
+                allChangedReads.addAll(trims);
+               // allChangedReads.addAll(extendedReads);
+                for (TrimmedPlacedRead<PlacedRead> trim : allChangedReads) {
+                    // force it to be residue based
+                    Range newtrimmedRange = trim.getNewTrimRange()
+                            .convertRange(CoordinateSystem.RESIDUE_BASED);
+                    Range oldTrimmedRange = trim.getRead().getValidRange()
+                            .convertRange(CoordinateSystem.RESIDUE_BASED);
+                    String readId = trim.getRead().getId();
+                    long rightDelta = newtrimmedRange.getLocalEnd() - oldTrimmedRange.getLocalEnd();
+                    long displayRight;
+                    if (rightDelta == 0) {
+                        displayRight = trimMap.getReadTrimFor(readId)
+                                .getTrimRange(TrimType.CLB).convertRange(
+                                        CoordinateSystem.RESIDUE_BASED)
+                                .getLocalEnd();
+                    } else {
+                        displayRight = newtrimmedRange.getLocalEnd();
+                    }
+                    System.out.println(String.format("%s\t%d\t%d\t%d\t%d",
+                            readId, newtrimmedRange.getLocalStart(), displayRight,
+                            newtrimmedRange.getLocalStart()
+                                    - oldTrimmedRange.getLocalStart(), rightDelta));
+                }
+                
+            }
+            }catch(ParseException e){
+                HelpFormatter formatter = new HelpFormatter();
+                formatter.printHelp( QualityClassContigTrimmer.class.getName(), options );
+                System.exit(1);
+            }
+    }
+
+}

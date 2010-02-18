@@ -1,0 +1,168 @@
+/*
+ * Created on Sep 23, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.trace.sanger.chromatogram.scf.section;
+
+
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+
+import org.jcvi.glyph.DefaultEncodedGlyphs;
+import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.sequence.DefaultConfidence;
+import org.jcvi.sequence.Peaks;
+import org.jcvi.trace.sanger.chromatogram.BasicChromatogram;
+import org.jcvi.trace.sanger.chromatogram.Channel;
+import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
+import org.jcvi.trace.sanger.chromatogram.DefaultChannelGroup;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramImpl;
+import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
+import org.jcvi.trace.sanger.chromatogram.scf.section.AbstractBasesSectionCodec;
+
+
+public abstract class AbstractTestBasesSection {
+    protected static final String DECODED_BASES = "ACGTACGT";
+    private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
+
+    protected NucleotideEncodedGlyphs encodedBases = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.getGlyphsFor(DECODED_BASES));
+    protected SCFHeader mockHeader;
+    protected SCFChromatogramImpl chromatogram;
+    protected byte[] calledConfidence = new byte[]{40,40,40,40,63,38,38,38};
+    protected EncodedGlyphs<PhredQuality> encodedQualities = new DefaultEncodedGlyphs(RUN_LENGTH_CODEC, 
+            PhredQuality.valueOf(calledConfidence));
+    protected byte[] aConfidence = new byte[]{40,3,4,2,38,0,2,1};
+    protected byte[] cConfidence = new byte[]{0,40,3,4,2,38,0,2};
+    protected byte[] gConfidence = new byte[]{1,1,40,3,4,2,38,0};
+    protected byte[] tConfidence = new byte[]{0,2,1,40,3,4,2,38};
+    protected short[] peaks = new short[]{10,20,30,40,50,58,69,80};
+
+    protected byte[] insertionConfidence = new byte[]{2,3,4,5,4,3,2,1};
+    protected byte[] deletionConfidence = new byte[]{40,20,30,5,9,1,2,0};
+    protected byte[] subsitutionConfidence = new byte[]{6,5,12,31,6,0,8,60};
+
+    protected byte[] EMPTY_CONFIDENCE = new byte[]{0,0,0,0,0,0,0,0};
+    protected short[] positions = new short[]{10,20,30,40,50,60,70,80};
+    protected AbstractBasesSectionCodec sut;
+
+    public AbstractTestBasesSection(){
+        mockHeader = createMock(SCFHeader.class);
+        ChannelGroup channelGroup = new DefaultChannelGroup(
+                new Channel(aConfidence,positions),
+                new Channel(cConfidence,positions),
+                new Channel(gConfidence,positions),
+                new Channel(tConfidence,positions));
+        BasicChromatogram basicChromatogram = new BasicChromatogram(
+                encodedBases,encodedQualities,
+                new Peaks(peaks),channelGroup);
+        chromatogram = new SCFChromatogramImpl(basicChromatogram);
+
+        sut = createAbstractBasesSectionHandler();
+    }
+    protected abstract AbstractBasesSectionCodec createAbstractBasesSectionHandler() ;
+
+    public AbstractBasesSectionCodec getHandler(){
+        return sut;
+    }
+    /**
+     * @return the bases
+     */
+    public EncodedGlyphs<NucleotideGlyph> getEncodedBases() {
+        return encodedBases;
+    }
+
+    /**
+     * @return the chromatogram
+     */
+    public SCFChromatogramImpl getChromatogram() {
+        return chromatogram;
+    }
+    /**
+     * @return the mockHeader
+     */
+    public SCFHeader getMockHeader() {
+        return mockHeader;
+    }
+
+    protected  void expectPeakReads(InputStream mockInputStream)
+    throws IOException {
+        for(int i=0; i< peaks.length; i++){
+             short peak = peaks[i];
+             //each peak is being read as an int
+             //so we have 4 calls to read() per peak
+             expectPeakRead(mockInputStream, peak);
+         }
+    }
+    protected void expectPeakRead(InputStream mockInputStream, short peak)
+            throws IOException {
+        expect(mockInputStream.read()).andReturn(0);
+         expect(mockInputStream.read()).andReturn(0);
+         expect(mockInputStream.read()).andReturn(peak<< 8 & 0xFF );
+         expect(mockInputStream.read()).andReturn(peak & 0xFF );
+    }
+    protected void addOptionalConfidences(){
+
+        chromatogram = new SCFChromatogramImpl(chromatogram,
+                                        new DefaultConfidence(subsitutionConfidence),
+                                        new DefaultConfidence(insertionConfidence),
+                                        new DefaultConfidence(deletionConfidence),null
+                                        );
+    }
+    protected void removeSubstitutionConfidence() {
+        chromatogram = new SCFChromatogramImpl(chromatogram,
+                null,
+                new DefaultConfidence(insertionConfidence),
+                new DefaultConfidence(deletionConfidence),null
+                );
+
+    }
+    protected void removeInsertionConfidence() {
+        chromatogram = new SCFChromatogramImpl(chromatogram,
+                new DefaultConfidence(subsitutionConfidence),
+                null,
+                new DefaultConfidence(deletionConfidence),null
+                );
+
+    }
+    protected void removeDeletionConfidence() {
+        chromatogram = new SCFChromatogramImpl(chromatogram,
+                new DefaultConfidence(subsitutionConfidence),
+                new DefaultConfidence(insertionConfidence),
+                null,null
+                );
+
+    }
+
+    protected void bulkPutAsInts(ByteBuffer result, short[] shorts) {
+        for(int i=0; i< shorts.length; i++){
+            result.putInt(shorts[i]);
+        }
+    }
+
+    protected abstract ByteBuffer createRequiredExpectedEncodedBases();
+
+    protected abstract ByteBuffer createEncodedBasesWithAllOptionalData() ;
+
+    protected abstract ByteBuffer createEncodedBasesWithoutSubstutionData();
+
+    protected abstract ByteBuffer createEncodedBasesWithoutDeletionData() ;
+
+    protected abstract ByteBuffer createEncodedBasesWithoutInsertionData() ;
+
+
+    protected abstract InputStream createValidMockInputStreamWithoutOptionalConfidence(long skipDistance)
+    throws IOException ;
+
+    protected abstract InputStream createValidMockInputStreamWithOptionalConfidence(long skipDistance)
+    throws IOException ;
+}
