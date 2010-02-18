@@ -1,0 +1,150 @@
+/*
+ * Created on Nov 4, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.trace.fourFiveFour.flowgram.sff;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.jcvi.Range;
+import org.jcvi.TestUtil;
+import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFFlowgram;
+import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+import static org.easymock.classextension.EasyMock.*;
+public class TestSFFFlowgram {
+
+    Range qualitiesClip = Range.buildRange(10,90);
+    Range adapterClip= Range.buildRange(5,95);
+    EncodedGlyphs<PhredQuality> confidence = createMock(EncodedGlyphs.class);
+    List<Short> values = convertIntoList(new short[]{202, 310,1,232,7});
+    NucleotideEncodedGlyphs basecalls = createMock(NucleotideEncodedGlyphs.class);
+    
+    SFFFlowgram sut;
+    @Before
+    public void setup(){
+        sut = new SFFFlowgram(basecalls,confidence,values,qualitiesClip, adapterClip);
+    }
+
+    private static List<Short> convertIntoList(short[] values) {
+        List<Short> valueList = new ArrayList<Short>();
+        for(short s: values){
+            valueList.add(s);
+        }
+        return valueList;
+    }
+    
+    @Test
+    public void constructor(){
+        assertEquals(basecalls, sut.getBasecalls());
+        assertEquals(confidence, sut.getQualities());
+        assertEquals(qualitiesClip, sut.getQualitiesClip());
+        assertEquals(adapterClip, sut.getAdapterClip());
+        assertEquals(values.size(), sut.getSize());
+        for(int i=0; i< values.size(); i++){
+            assertEquals(SFFUtil.convertFlowgramValue(values.get(i)), 
+                            sut.getValueAt(i),0);
+        }
+    }
+    @Test
+    public void nullBasecallsShouldthrowNullPointerException(){
+        try{
+            new SFFFlowgram(null,confidence,values,qualitiesClip, adapterClip);
+            fail("should throw nullPointerException when basecalls is null");
+        }
+        catch(NullPointerException expected){
+            assertEquals("basecalls can not be null", expected.getMessage());
+        }
+    }
+    @Test
+    public void nullQualitiesShouldthrowNullPointerException(){
+        try{
+            new SFFFlowgram(basecalls,null,values,qualitiesClip, adapterClip);
+            fail("should throw nullPointerException when qualities is null");
+        }
+        catch(NullPointerException expected){
+            assertEquals("qualities can not be null", expected.getMessage());
+        }
+    }
+    @Test
+    public void nullValuesShouldthrowNullPointerException(){
+        try{
+            new SFFFlowgram(basecalls,confidence,null,qualitiesClip, adapterClip);
+            fail("should throw nullPointerException when values is null");
+        }
+        catch(NullPointerException expected){
+            assertEquals("values can not be null", expected.getMessage());
+        }
+    }
+    @Test
+    public void emptyValuesShouldthrowIllegalArgumentException(){
+        try{
+            new SFFFlowgram(basecalls,confidence,Collections.<Short>emptyList(),qualitiesClip, adapterClip);
+            fail("should throw IllegalArgumentException when values is empty");
+        }
+        catch(IllegalArgumentException expected){
+            assertEquals("values can not be empty", expected.getMessage());
+        }
+    }
+    @Test
+    public void nullQualitiesClipShouldthrowNullPointerException(){
+        try{
+            new SFFFlowgram(basecalls,confidence,values,null, adapterClip);
+            fail("should throw nullPointerException when qualitiesClip is null");
+        }
+        catch(NullPointerException expected){
+            assertEquals("qualitiesClip can not be null", expected.getMessage());
+        }
+    }
+    @Test
+    public void nullAdapterClipShouldthrowNullPointerException(){
+        try{
+            new SFFFlowgram(basecalls,confidence,values,qualitiesClip, null);
+            fail("should throw nullPointerException when adapterClip is null");
+        }
+        catch(NullPointerException expected){
+            assertEquals("adapterClip can not be null", expected.getMessage());
+        }
+    }
+    
+    @Test
+    public void equalsSameRef(){
+        TestUtil.assertEqualAndHashcodeSame(sut, sut);
+    }
+    @Test
+    public void notEqualsNull(){
+        assertFalse(sut.equals(null));
+    }
+    @Test
+    public void notEqualsDifferentClass(){
+        assertFalse(sut.equals("not a SFFFlowgram"));
+    }
+    @Test
+    public void equalsSameData(){
+        SFFFlowgram sameData = new SFFFlowgram(basecalls,confidence,values,qualitiesClip, adapterClip);
+        TestUtil.assertEqualAndHashcodeSame(sut, sameData);
+    }
+    @Test
+    public void notEqualsDifferentValues(){
+        SFFFlowgram differentValues = new SFFFlowgram(basecalls,confidence,
+                convertIntoList(new short[]{1,2,3,4,5,6,7}),
+                    qualitiesClip, adapterClip);
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
+    }
+    @Test
+    public void notEqualsValues(){
+        SFFFlowgram differentValues = new SFFFlowgram(basecalls,confidence,
+                convertIntoList(new short[]{1,2,3,4,5,6,7}),
+                    qualitiesClip, adapterClip);
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
+    }
+}

@@ -1,0 +1,108 @@
+/*
+ * Created on Jan 26, 2010
+ *
+ * @author dkatzel
+ */
+package org.jcvi.fasta;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.jcvi.datastore.DataStore;
+import org.jcvi.datastore.DataStoreException;
+import org.jcvi.datastore.SimpleDataStore;
+import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.io.IOUtil;
+/**
+ * {@code DefaultQualityFastaFileDataStore} is the default implementation
+ * of {@link AbstractQualityFastaFileDataStore} which stores
+ * all fasta records in memory.  This is only recommended for small fasta
+ * files that won't take up too much memory.
+ * @author dkatzel
+ * @see LargeQualityFastaFileDataStore
+ *
+ */
+public class DefaultQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore{
+
+    private final Map<String, QualityFastaRecord<EncodedGlyphs<PhredQuality>>> map = new HashMap<String, QualityFastaRecord<EncodedGlyphs<PhredQuality>>>();
+    private DataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> datastore;
+    /**
+     * @param fastaRecordFactory
+     */
+    public DefaultQualityFastaFileDataStore(
+            QualityFastaRecordFactory fastaRecordFactory) {
+        super(fastaRecordFactory);
+    }
+    /**
+     * Convenience constructor using the {@link DefaultQualityFastaRecordFactory}.
+     * This call is the same as {@link #DefaultQualityFastaFileDataStore(QualityFastaRecordFactory)
+     * new DefaultQualityFastaFileDataStore(DefaultQualityFastaRecordFactory.getInstance());}
+     */
+    public DefaultQualityFastaFileDataStore() {
+        super();
+    }
+    public DefaultQualityFastaFileDataStore(File fastaFile,QualityFastaRecordFactory fastaRecordFactory) throws FileNotFoundException {
+        super(fastaRecordFactory);
+        parseFastaFile(fastaFile);
+    }
+    public DefaultQualityFastaFileDataStore(File fastaFile) throws FileNotFoundException {
+        super();
+        parseFastaFile(fastaFile);
+    }
+    private void parseFastaFile(File fastaFile) throws FileNotFoundException {
+        InputStream in = new FileInputStream(fastaFile);
+        try{
+        FastaParser.parseFasta(in, this);
+        }
+        finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+    }
+    @Override
+    public void visitRecord(String id, String comment, String recordBody) {
+        map.put(id  , this.getFastaRecordFactory().createFastaRecord(id, comment,recordBody));
+        
+    }
+    @Override
+    public void close() throws IOException {
+        map.clear();
+        datastore.close();
+    }
+    
+    
+    @Override
+    public void visitEndOfFile() {
+        super.visitEndOfFile();
+        datastore = new SimpleDataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>>(map);
+    }
+    @Override
+    public boolean contains(String id) throws DataStoreException {
+        return datastore.contains(id);
+    }
+    @Override
+    public QualityFastaRecord<EncodedGlyphs<PhredQuality>> get(String id)
+            throws DataStoreException {
+        return datastore.get(id);
+    }
+    @Override
+    public Iterator<String> getIds() throws DataStoreException {
+        return datastore.getIds();
+    }
+    @Override
+    public int size() throws DataStoreException {
+        return datastore.size();
+    }
+    @Override
+    public Iterator<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> iterator() {
+        return datastore.iterator();
+    }
+    
+
+}

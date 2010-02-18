@@ -1,0 +1,152 @@
+/*
+ * Created on Jan 20, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.assembly.coverage;
+
+import java.util.Arrays;
+
+import org.jcvi.TestUtil;
+import org.jcvi.assembly.Placed;
+import org.junit.Test;
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
+public class TestDefaultCoverageRegion {
+
+    Placed seq1 = createMock(Placed.class);
+    Placed seq2 = createMock(Placed.class);
+    int start = 100;
+    int length = 200;
+    int end = start+length-1;
+    DefaultCoverageRegion<Placed> sut = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1,seq2))
+                                        .end(end)
+                                        .build();
+    
+    @Test
+    public void builder(){
+
+        
+        assertEquals(start, sut.getStart());
+        assertEquals(end, sut.getEnd());
+        assertEquals(length, sut.getLength());
+        assertEquals(Arrays.asList(seq1,seq2), sut.getElements());
+        assertEquals(2, sut.getCoverage());
+    }
+    @Test
+    public void add(){
+
+        DefaultCoverageRegion region = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1))
+                                    .add(seq2)
+                                    .end(end)
+                                        .build();
+        
+        assertEquals(start, region.getStart());
+        assertEquals(end, region.getEnd());
+        assertEquals(length, region.getLength());
+        assertEquals(Arrays.asList(seq1,seq2), region.getElements());
+        assertEquals(2, region.getCoverage());
+    }
+    @Test
+    public void remove(){
+        DefaultCoverageRegion region = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1,seq2))
+                    .end(end)
+                    .remove(seq2)
+                    .build();
+        
+        assertEquals(start, region.getStart());
+        assertEquals(end, region.getEnd());
+        assertEquals(length, region.getLength());
+        assertEquals(Arrays.asList(seq1), region.getElements());
+        assertEquals(1, region.getCoverage());
+    }
+    
+    @Test
+    public void endNotSetShouldThowIllegalStateException(){
+        
+        try{
+            new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1,seq2)).build();
+            fail("calling build() before end() should throw illegalState Exception");
+        }
+        catch(IllegalStateException e){
+            assertEquals("end must be set", e.getMessage());
+        }
+    }
+    
+    @Test
+    public void nullElementsShouldThrowIllegalArgumentException(){
+        try{
+            new DefaultCoverageRegion.Builder<Placed>(start,null);
+            fail("passing in null elements should throw illegalArgumentException");
+        }catch(IllegalArgumentException e){
+            assertEquals("elements can not be null" , e.getMessage());
+        }
+    }
+    
+    @Test
+    public void equalsSameRef(){
+        TestUtil.assertEqualAndHashcodeSame(sut, sut);
+    }
+    
+    @Test
+    public void equalsSameRValues(){
+        DefaultCoverageRegion sameValues = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1,seq2))
+                                        .end(end)
+                                        .build();
+        TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
+    }
+    
+    @Test
+    public void notEqualsNull(){
+        assertFalse(sut.equals(null));
+    }
+    
+    @Test
+    public void notEqualsDifferentClass(){
+        assertFalse(sut.equals("not a coverageRegion"));
+    }
+    
+    @Test
+    public void notEqualsDifferentStart(){
+        DefaultCoverageRegion differentStart = new DefaultCoverageRegion.Builder<Placed>(
+                                    start+1,
+                                    Arrays.asList(seq1,seq2))
+                                        .end(end+1)
+                                        .build();
+        
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentStart);
+    }
+    
+    @Test
+    public void notEqualsDifferentLength(){
+        DefaultCoverageRegion differentLength = new DefaultCoverageRegion.Builder<Placed>(
+                                    start,
+                                    Arrays.asList(seq1,seq2))
+                                        .end(end+1)
+                                        .build();
+        
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentLength);
+    }
+    @Test
+    public void notEqualsDifferentElements(){
+        DefaultCoverageRegion differentElements = new DefaultCoverageRegion.Builder<Placed>(
+                                    start,
+                                    Arrays.asList(seq1))
+                                        .end(end)
+                                        .build();
+        
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentElements);
+    }
+    
+    @Test
+    public void sameElementsDifferentOrderIsNotEqual(){
+        DefaultCoverageRegion differentElementOrder = new DefaultCoverageRegion.Builder<Placed>(
+                                    start,
+                                    Arrays.asList(seq2,seq1))
+                                        .end(end)
+                                        .build();
+        
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentElementOrder);
+    }
+    
+}

@@ -1,0 +1,95 @@
+/*
+ * Created on Jan 7, 2010
+ *
+ * @author dkatzel
+ */
+package org.jcvi.assembly.ace;
+
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+
+import org.jcvi.datastore.DataStore;
+import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.trace.TraceNucleotideDataStoreAdapter;
+import org.jcvi.trace.TraceQualityDataStoreAdapter;
+import org.jcvi.trace.sanger.phd.Phd;
+
+public class DefaultAceAssembly<A extends AceContig> implements AceAssembly<A>{
+
+    private final AceTagMap tagMap;
+    private final DataStore<A> aceDataStore;
+    private final List<File> phdFiles;
+    private final DataStore<Phd> phdDataStore;
+    private final DataStore<NucleotideEncodedGlyphs> nucleotideDataStore;
+    private final DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore;
+    
+    /**
+     * @param aceDataStore
+     * @param phdDataStore
+     * @param phdFiles
+     * @param tagMap
+     */
+    public DefaultAceAssembly(DataStore<A> aceDataStore,
+            DataStore<Phd> phdDataStore, List<File> phdFiles,
+            AceTagMap tagMap) {
+        this.aceDataStore = aceDataStore;
+        this.phdDataStore = phdDataStore;
+        this.phdFiles = phdFiles;
+        this.tagMap = tagMap;
+        this.nucleotideDataStore = new TraceNucleotideDataStoreAdapter<Phd>(phdDataStore);
+        this.qualityDataStore = new TraceQualityDataStoreAdapter<Phd>(phdDataStore);
+    }
+    public DefaultAceAssembly(DataStore<A> aceDataStore,
+            DataStore<Phd> phdDataStore, List<File> phdFiles){
+        this(aceDataStore, phdDataStore, phdFiles, DefaultAceTagMap.EMPTY_MAP);
+    }
+    public DefaultAceAssembly(DataStore<A> aceDataStore,
+            DataStore<Phd> phdDataStore){
+        this(aceDataStore, phdDataStore, Collections.<File>emptyList(), DefaultAceTagMap.EMPTY_MAP);
+    }
+    @Override
+    public AceTagMap getAceTagMap() {
+        return tagMap;
+    }
+
+    @Override
+    public DataStore<Phd> getPhdDataStore() {
+        return phdDataStore;
+    }
+
+    @Override
+    public List<File> getPhdFiles() {
+        return phdFiles;
+    }
+
+    @Override
+    public DataStore<A> getContigDataStore() {
+        return aceDataStore;
+    }
+
+    @Override
+    public List<File> getNuceotideFiles() {
+        return phdFiles;
+    }
+
+    @Override
+    public DataStore<NucleotideEncodedGlyphs> getNucleotideDataStore() {
+        return nucleotideDataStore;
+    }
+
+    @Override
+    public DataStore<EncodedGlyphs<PhredQuality>> getQualityDataStore() {
+        return qualityDataStore;
+    }
+
+    @Override
+    public List<File> getQualityFiles() {
+        return phdFiles;
+    }
+    
+    
+
+}

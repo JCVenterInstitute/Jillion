@@ -1,0 +1,120 @@
+/*
+ * Created on Sep 4, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.assembly;
+
+import java.util.Map;
+
+import org.jcvi.Range;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
+import org.jcvi.sequence.Read;
+import org.jcvi.sequence.SequenceDirection;
+
+
+public class DefaultPlacedRead implements PlacedRead {
+
+    private final Read<ReferencedEncodedNucleotideGlyphs> read;
+    private final long start;
+    private final SequenceDirection sequenceDirection;
+    
+    
+    public DefaultPlacedRead(Read<ReferencedEncodedNucleotideGlyphs> read, long start, SequenceDirection sequenceDirection){
+        if(read==null){
+            throw new IllegalArgumentException("read can not be null");
+        }
+        this.read = read;
+        this.start= start;
+        this.sequenceDirection = sequenceDirection;
+    }
+    @Override
+    public long getLength() {
+        return read.getLength();
+    }
+
+    @Override
+    public long getStart() {
+        return start;
+    }
+
+    public Read<ReferencedEncodedNucleotideGlyphs> getRead(){
+        return read;
+    }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + read.hashCode();
+        result = prime * result + (int) (start ^ (start >>> 32));
+        return result;
+    }
+    /**
+     * Two PlacedReads are equal if they have the same start value
+     * and they have their reads are equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj){
+            return true;
+        }
+        if (obj instanceof DefaultPlacedRead){           
+            DefaultPlacedRead other = (DefaultPlacedRead) obj;
+            return read.equals(other.getRead()) && start== other.getStart();
+        }
+        return false;
+        
+    }
+    
+    @Override
+    public SequenceDirection getSequenceDirection() {
+        return sequenceDirection;
+    }
+    @Override
+    public String toString() {
+        return "offset = "+ getStart() + " complimented? "+ getSequenceDirection()+"  " + read.toString();
+    }
+    @Override
+    public long getEnd() {
+        return getStart()+getLength()-1;
+    }
+
+    public Map<Integer, NucleotideGlyph> getSnps(){
+        return read.getEncodedGlyphs().getSnps();
+    }
+    @Override
+    public NucleotideEncodedGlyphs getEncodedGlyphs() {
+        return read.getEncodedGlyphs();
+    }
+    @Override
+    public String getId() {
+        return read.getId();
+    }
+    @Override
+    public Range getValidRange(){
+        return read.getEncodedGlyphs().getValidRange();
+    }
+    @Override
+    public long convertReferenceIndexToValidRangeIndex(long referenceIndex) {
+        
+        long validRangeIndex= referenceIndex - getStart();
+        checkValidRange(validRangeIndex);
+        return validRangeIndex;
+    }
+    @Override
+    public long convertValidRangeIndexToReferenceIndex(long validRangeIndex) {
+        checkValidRange(validRangeIndex);
+        return getStart() +validRangeIndex;
+    }
+    private void checkValidRange(long validRangeIndex) {
+        if(validRangeIndex <0){
+            throw new IllegalArgumentException("reference index refers to index before valid range");
+        }
+        if(validRangeIndex > getLength()-1){
+            throw new IllegalArgumentException("reference index refers to index after valid range");
+        }
+    }
+
+}
