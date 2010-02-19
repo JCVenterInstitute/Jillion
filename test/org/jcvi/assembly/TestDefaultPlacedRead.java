@@ -26,11 +26,11 @@ package org.jcvi.assembly;
 import java.util.Map;
 
 import org.jcvi.Range;
-import org.jcvi.TestUtil;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
 import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

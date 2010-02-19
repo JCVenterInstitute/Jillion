@@ -24,7 +24,7 @@
 package org.jcvi.trace.sanger.chromatogram;
 
 
-import org.jcvi.TestUtil;
+import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.sanger.chromatogram.Channel;
 import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
 import org.jcvi.trace.sanger.chromatogram.DefaultChannelGroup;

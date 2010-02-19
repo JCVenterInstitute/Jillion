@@ -23,8 +23,8 @@
  */
 package org.jcvi.assembly.ace;
 
-import org.jcvi.TestUtil;
 import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAssembledFrom {

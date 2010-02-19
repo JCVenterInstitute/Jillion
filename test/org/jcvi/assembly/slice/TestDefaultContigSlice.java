@@ -26,13 +26,13 @@ package org.jcvi.assembly.slice;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.TestUtil;
 import org.jcvi.assembly.Location;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.slice.DefaultContigSlice;
 import org.jcvi.assembly.slice.SliceLocation;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.*;

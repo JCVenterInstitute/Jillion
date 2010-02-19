@@ -28,10 +28,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.TestUtil;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFFlowgram;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
 import org.junit.Before;

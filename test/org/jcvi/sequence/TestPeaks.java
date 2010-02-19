@@ -27,13 +27,13 @@ import static org.junit.Assert.*;
 
 import java.nio.ShortBuffer;
 
-import org.jcvi.TestUtil;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.num.DefaultShortGlyphCodec;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
 import org.jcvi.sequence.Peaks;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 
 public class TestPeaks {

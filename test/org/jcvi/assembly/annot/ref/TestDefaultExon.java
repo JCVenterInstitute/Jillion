@@ -23,9 +23,9 @@
  */
 package org.jcvi.assembly.annot.ref;
 
-import org.jcvi.TestUtil;
 import org.jcvi.assembly.annot.DefaultExon;
 import org.jcvi.assembly.annot.Frame;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultExon {

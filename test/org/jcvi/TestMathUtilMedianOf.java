@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 
 import java.util.Collections;
 
+import org.jcvi.util.MathUtil;
 import org.junit.Test;
 
 public class TestMathUtilMedianOf {

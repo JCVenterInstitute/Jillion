@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.jcvi.TestUtil;
+import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeader;
 import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeaderCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;

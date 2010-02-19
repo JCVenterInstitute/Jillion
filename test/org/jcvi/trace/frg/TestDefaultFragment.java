@@ -24,11 +24,11 @@
 package org.jcvi.trace.frg;
 
 import org.jcvi.Range;
-import org.jcvi.TestUtil;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Library;
+import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.Trace;
 import org.junit.Before;
 import org.junit.Test;

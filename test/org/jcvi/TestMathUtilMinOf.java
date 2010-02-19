@@ -25,6 +25,7 @@ package org.jcvi;
 
 import java.util.Collections;
 
+import org.jcvi.util.MathUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestMathUtilMinOf {

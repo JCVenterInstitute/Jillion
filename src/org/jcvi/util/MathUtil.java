@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi;
+package org.jcvi.util;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

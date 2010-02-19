@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi;
+package org.jcvi.testUtil;
 
 import static org.junit.Assert.*;
 
