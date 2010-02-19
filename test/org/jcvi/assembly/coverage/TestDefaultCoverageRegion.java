@@ -25,8 +25,8 @@ package org.jcvi.assembly.coverage;
 
 import java.util.Arrays;
 
-import org.jcvi.TestUtil;
 import org.jcvi.assembly.Placed;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;

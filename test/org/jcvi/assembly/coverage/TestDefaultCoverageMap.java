@@ -29,8 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.TestUtil;
 import org.jcvi.assembly.Placed;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultCoverageMap {

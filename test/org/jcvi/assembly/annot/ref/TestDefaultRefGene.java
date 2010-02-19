@@ -26,10 +26,10 @@ package org.jcvi.assembly.annot.ref;
 import static org.easymock.classextension.EasyMock.*;
 
 import org.jcvi.Range;
-import org.jcvi.TestUtil;
 import org.jcvi.assembly.annot.Strand;
 import org.jcvi.assembly.annot.ref.CodingRegion;
 import org.jcvi.assembly.annot.ref.DefaultRefGene;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

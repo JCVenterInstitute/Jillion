@@ -29,10 +29,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.TestUtil;
 import org.jcvi.assembly.annot.Exon;
 import org.jcvi.assembly.annot.ref.CodingRegionState;
 import org.jcvi.assembly.annot.ref.DefaultCodingRegion;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 
 public class TestCodingRegion {

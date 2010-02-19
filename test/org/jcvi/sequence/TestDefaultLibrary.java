@@ -26,7 +26,7 @@ package org.jcvi.sequence;
 import static org.junit.Assert.*;
 
 import org.jcvi.Distance;
-import org.jcvi.TestUtil;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 
 public class TestDefaultLibrary {

@@ -23,9 +23,9 @@
  */
 package org.jcvi.assembly;
 
-import org.jcvi.TestUtil;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.sequence.Read;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

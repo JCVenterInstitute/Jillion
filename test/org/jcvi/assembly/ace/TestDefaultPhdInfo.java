@@ -25,7 +25,7 @@ package org.jcvi.assembly.ace;
 
 import java.util.Date;
 
-import org.jcvi.TestUtil;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultPhdInfo {

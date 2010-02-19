@@ -24,7 +24,7 @@
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import org.jcvi.Range;
-import org.jcvi.TestUtil;
+import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFReadHeader;
 import org.junit.Test;
 

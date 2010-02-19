@@ -25,11 +25,11 @@ package org.jcvi.trace.sanger.chromatogram;
 
 import java.util.Properties;
 
-import org.jcvi.TestUtil;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Peaks;
+import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.sanger.chromatogram.BasicChromatogram;
 import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
 import org.junit.Before;

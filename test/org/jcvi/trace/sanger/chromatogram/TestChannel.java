@@ -27,9 +27,9 @@ import static org.easymock.classextension.EasyMock.*;
 
 import java.nio.ShortBuffer;
 
-import org.jcvi.TestUtil;
 import org.jcvi.sequence.Confidence;
 import org.jcvi.sequence.DefaultConfidence;
+import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.sanger.chromatogram.Channel;
 import org.junit.Test;
 

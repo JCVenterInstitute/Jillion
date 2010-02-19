@@ -28,6 +28,7 @@ import static junit.framework.Assert.fail;
 
 import java.util.Collections;
 
+import org.jcvi.util.MathUtil;
 import org.junit.Test;
 
 public class MathUtilAvgOf {

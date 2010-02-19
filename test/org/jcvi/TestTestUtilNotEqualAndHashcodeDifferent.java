@@ -27,6 +27,7 @@ import static org.junit.Assert.fail;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 
 public class TestTestUtilNotEqualAndHashcodeDifferent extends AbstractTestTestUtil{

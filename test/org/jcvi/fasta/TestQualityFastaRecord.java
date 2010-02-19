@@ -23,11 +23,11 @@
  */
 package org.jcvi.fasta;
 
-import org.jcvi.TestUtil;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.classextension.EasyMock.*;

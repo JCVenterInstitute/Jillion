@@ -25,7 +25,7 @@ package org.jcvi.trace.sanger.chromatogram;
 
 import java.util.Arrays;
 
-import org.jcvi.TestUtil;
+import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.sanger.chromatogram.EncodedByteData;
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -25,7 +25,7 @@ package org.jcvi.trace.sanger.chromatogram.scf;
 
 import java.nio.ByteBuffer;
 
-import org.jcvi.TestUtil;
+import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.sanger.chromatogram.scf.PrivateData;
 import org.junit.Test;
 import static org.junit.Assert.*;

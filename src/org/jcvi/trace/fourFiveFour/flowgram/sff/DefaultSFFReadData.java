@@ -27,7 +27,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 
 import org.jcvi.CommonUtil;
-import org.jcvi.MathUtil;
+import org.jcvi.util.MathUtil;
 
 public class DefaultSFFReadData implements SFFReadData {
 

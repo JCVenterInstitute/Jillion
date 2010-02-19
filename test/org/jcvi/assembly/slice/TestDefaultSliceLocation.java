@@ -25,13 +25,13 @@ package org.jcvi.assembly.slice;
 
 import static org.easymock.EasyMock.createMock;
 
-import org.jcvi.TestUtil;
 import org.jcvi.assembly.DefaultLocation;
 import org.jcvi.assembly.slice.DefaultSliceLocation;
 import org.jcvi.assembly.slice.SliceLocation;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Read;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.jcvi.TestUtil;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -42,6 +41,7 @@ import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
 import org.jcvi.sequence.Confidence;
 import org.jcvi.sequence.DefaultConfidence;
+import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramBuilder;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;

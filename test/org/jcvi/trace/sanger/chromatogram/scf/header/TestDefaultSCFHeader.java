@@ -24,7 +24,7 @@
 package org.jcvi.trace.sanger.chromatogram.scf.header;
 import static org.junit.Assert.*;
 
-import org.jcvi.TestUtil;
+import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeader;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
 import org.junit.Before;

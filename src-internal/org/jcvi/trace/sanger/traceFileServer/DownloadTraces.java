@@ -25,7 +25,6 @@ package org.jcvi.trace.sanger.traceFileServer;
 
 import java.io.Console;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +48,6 @@ import org.jcvi.http.HttpUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.ReadWriteFileServer;
 import org.jcvi.io.idReader.DefaultFileIdReader;
-import org.jcvi.io.idReader.IdParser;
 import org.jcvi.io.idReader.IdReader;
 import org.jcvi.io.idReader.StringIdParser;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.FileType;

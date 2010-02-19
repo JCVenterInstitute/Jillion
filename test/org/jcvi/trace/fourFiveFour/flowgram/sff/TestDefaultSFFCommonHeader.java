@@ -25,7 +25,7 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import java.math.BigInteger;
 
-import org.jcvi.TestUtil;
+import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFCommonHeader;
 import org.junit.Test;
 import static org.junit.Assert.*;

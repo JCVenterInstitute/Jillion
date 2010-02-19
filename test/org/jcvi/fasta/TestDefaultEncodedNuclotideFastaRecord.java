@@ -25,11 +25,11 @@ package org.jcvi.fasta;
 
 import java.util.List;
 
-import org.jcvi.TestUtil;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.classextension.EasyMock.*;

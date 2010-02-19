@@ -25,7 +25,6 @@ package org.jcvi.assembly.contig;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
-import org.jcvi.TestUtil;
 import org.jcvi.assembly.Location;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.glyph.EncodedGlyphs;
@@ -33,6 +32,7 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Read;
+import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 public class TestQualityDifference {
 
