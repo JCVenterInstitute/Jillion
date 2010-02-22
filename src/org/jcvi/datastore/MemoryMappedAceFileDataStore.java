@@ -33,6 +33,7 @@ import org.jcvi.assembly.ace.AbstractAceFileDataStore;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceFileParser;
 import org.jcvi.assembly.ace.AcePlacedRead;
+import org.jcvi.util.DefaultMemoryMappedFileRange;
 import org.jcvi.util.MemoryMappedFileRange;
 
 public class MemoryMappedAceFileDataStore extends AbstractAceFileDataStore implements ContigDataStore<AcePlacedRead, AceContig>{
@@ -46,7 +47,9 @@ public class MemoryMappedAceFileDataStore extends AbstractAceFileDataStore imple
         this.memoryMappedFileRange = memoryMappedFileRange;
         this.file = file;
     }
-
+    public MemoryMappedAceFileDataStore(File file){
+        this(file, new DefaultMemoryMappedFileRange());
+    }
 
     @Override
     public void visitLine(String line) {        

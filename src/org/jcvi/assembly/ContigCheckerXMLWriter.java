@@ -29,7 +29,6 @@ import java.io.OutputStream;
 
 import org.jcvi.assembly.analysis.ContigCheckerStruct;
 import org.jcvi.assembly.analysis.SnpXMLWriter;
-import org.jcvi.assembly.contig.QualityClassContigMapXMLWriter;
 import org.jcvi.assembly.contig.qual.LowestFlankingQualityValueStrategy;
 import org.jcvi.assembly.coverage.DirectionalSequenceCoverageMapXMLCoverageWriter;
 import org.jcvi.assembly.coverage.XMLCoverageWriter;
@@ -47,7 +46,7 @@ public class ContigCheckerXMLWriter<T extends PlacedRead> implements Closeable{
     
     private OutputStream out;
     private final XMLCoverageWriter<T> sequenceCoverageWriter = new DirectionalSequenceCoverageMapXMLCoverageWriter<T>();
-    private final QualityClassContigMapXMLWriter qualityClassWriter = new QualityClassContigMapXMLWriter();
+
     private final SnpXMLWriter<T> snpWriter;
     public ContigCheckerXMLWriter(OutputStream out) throws IOException{
         this.out = out;

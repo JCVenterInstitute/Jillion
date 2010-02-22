@@ -44,7 +44,7 @@ import org.jcvi.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.fasta.LargeQualityFastaFileDataStore;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.qualClass.QualityDataStoreAdapter;
+import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.jcvi.io.idReader.IdReaderException;
 
 public class ContigCheckerContigFile {
@@ -89,7 +89,7 @@ public class ContigCheckerContigFile {
             log.println(id);
             Contig<PlacedRead> contig = contigDataStore.get(id);
             
-            ContigCheckerStruct<PlacedRead> struct = new ContigCheckerStruct<PlacedRead>(contig, qualityFastaMap, PhredQuality.valueOf(30));
+            ContigCheckerStruct<PlacedRead> struct = new ContigCheckerStruct<PlacedRead>(contig, qualityFastaMap);
             ContigChecker<PlacedRead> contigChecker = new ContigChecker<PlacedRead>(struct, percentReadDirectionDifferenceTheshold,
                     lowSequenceCoverageThreshold, highSequenceCoverageThreshold);
             contigChecker.run();

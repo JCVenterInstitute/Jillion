@@ -17,19 +17,27 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Feb 17, 2009
+ * Created on Sep 8, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.assembly.analysis.issue;
+package org.jcvi.auth;
 
-import org.jcvi.assembly.analysis.DefaultAnalysisIssue;
-import org.jcvi.assembly.contig.QualityClassRegion;
+import java.io.Closeable;
 
-public class QualityClassContigMapIssue extends DefaultAnalysisIssue{
+public interface JCVIAuthorizer extends Closeable{
 
-    public QualityClassContigMapIssue(QualityClassRegion qualityClassRegion) {
-        super(Severity.MEDIUM, qualityClassRegion.toString());
-    }
-
+    String getUsername();
+    char[] getPassword();
+    /**
+     * Cleans up any resources created.  
+     * It is recommended that the password
+     * is cleared out for security.
+     */
+    void close();
+    /**
+     * Checks to see if this Authorizer is closed.
+     * @return {@code true} if closed; {@code false} otherwise.
+     */
+    boolean isClosed();
 }

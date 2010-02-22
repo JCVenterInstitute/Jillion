@@ -341,6 +341,9 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
         @Override
         public void createNewSymLink(String pathtoFileToLink,
                 String symbolicPath) throws IOException {
+            if(contains(symbolicPath)){
+               throw new IOException("file already exists");
+            }
             //TODO use NIO 2 to do this when Java 7 comes out
             Process process =new ProcessBuilder("/bin/ln","-s",pathtoFileToLink, symbolicPath)
                                         .directory(getRootDir())

@@ -28,11 +28,9 @@ import java.util.Collections;
 import java.util.List;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.analysis.processors.HighQualityDifferenceContigProcess;
-import org.jcvi.assembly.analysis.processors.QualityClassContigMapAnalysisProcess;
 import org.jcvi.assembly.analysis.processors.ReverseComplimentContigAnalysisProcess;
 import org.jcvi.assembly.analysis.processors.SequenceCoverageAnalysisProcess;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.qualClass.QualityClass;
 import org.jcvi.pipeline.AbstractPipeline;
 import org.jcvi.pipeline.Process;
 
@@ -96,8 +94,7 @@ public class ContigChecker<R extends PlacedRead> extends AbstractPipeline {
         List<Process> analyizers = new ArrayList<Process>();
         final PhredQuality highqualityThreshold = PhredQuality.valueOf((byte)30);
        // analyizers.add(new GapsInConsensusContigAnalysisProcess(struct,contigCheckBuilder));
-        analyizers.add(new QualityClassContigMapAnalysisProcess<R>(contigCheckBuilder, struct,QualityClass.valueOf((byte)10)));
-        
+       
         analyizers.add(new ReverseComplimentContigAnalysisProcess<R>(struct, percentReverseComplimentedDifferenceThreshold, contigCheckBuilder));
         analyizers.add(new SequenceCoverageAnalysisProcess<R>(struct, contigCheckBuilder, new SequenceCoverageAnalyzer<R>(lowSequenceCoverageThreshold,highSequenceCoverageThreshold)));
         analyizers.add(new HighQualityDifferenceContigProcess(contigCheckBuilder, struct, highqualityThreshold));

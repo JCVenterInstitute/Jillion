@@ -48,7 +48,9 @@ public abstract class  AbstractSliceMap implements SliceMap{
             EncodedGlyphs<PhredQuality> qualities;
             try {
                 final String id = read.getId();
-                qualities = qualityDataStore.get(id);
+                
+                qualities = qualityDataStore==null?null:qualityDataStore.get(id);
+                
                 int indexIntoVirtualRead = (int) (offset - read.getStart());
                 final SliceElement sliceElement = createSliceElementFor(
                         qualityValueStrategy, indexIntoVirtualRead, read,
