@@ -33,6 +33,7 @@ import java.util.Set;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.VirtualPlacedRead;
+import org.jcvi.assembly.VirtualPlacedReadAdapter;
 import org.jcvi.assembly.cas.CasIdLookup;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
@@ -76,8 +77,7 @@ public class AceContigAdapter implements AceContig{
 
     @Override
     public VirtualPlacedRead<AcePlacedRead> getPlacedReadById(String id) {
-     // TODO Auto-generated method stub
-        return null;
+        return new VirtualPlacedReadAdapter<AcePlacedRead>(adaptedReads.get(id));
     }
 
     @Override
