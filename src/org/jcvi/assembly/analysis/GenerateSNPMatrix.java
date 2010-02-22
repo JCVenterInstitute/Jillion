@@ -68,7 +68,7 @@ public class GenerateSNPMatrix {
             String contigId = commandLine.getOptionValue("id");
             String positions = commandLine.getOptionValue("pos");
             boolean isGapped = commandLine.hasOption("g");
-            String outputFilePath = commandLine.getOptionValue("output");
+            String outputFilePath = commandLine.getOptionValue("out");
             
             MemoryMappedAceFileDataStore datastore = new MemoryMappedAceFileDataStore(aceFile);
             AceFileParser.parseAceFile(aceFile, datastore);
