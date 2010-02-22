@@ -29,7 +29,7 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.analysis.ContigCheckerStruct;
 import org.jcvi.datastore.DataStoreException;
 
-public interface ContigTrimmer<R extends PlacedRead> {
+public interface ContigTrimmer<R extends PlacedRead, C extends ContigCheckerStruct<R>> {
 
-    List<TrimmedPlacedRead<R>> trim(ContigCheckerStruct<R> struct) throws DataStoreException;
+    List<TrimmedPlacedRead<R>> trim(C struct) throws DataStoreException;
 }

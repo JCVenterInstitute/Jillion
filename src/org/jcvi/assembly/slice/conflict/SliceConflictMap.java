@@ -47,7 +47,7 @@ import org.jcvi.fasta.DefaultQualityFastaFileDataStore;
 import org.jcvi.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.qualClass.QualityDataStoreAdapter;
+import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 
 public class SliceConflictMap implements Iterable<ConflictedRegion>{
 

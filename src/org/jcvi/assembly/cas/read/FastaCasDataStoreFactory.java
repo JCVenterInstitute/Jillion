@@ -32,7 +32,7 @@ import org.jcvi.fasta.LargeQualityFastaFileDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.qualClass.QualityDataStoreAdapter;
+import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 
 public class FastaCasDataStoreFactory implements
         CasDataStoreFactory {

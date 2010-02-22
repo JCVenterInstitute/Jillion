@@ -51,7 +51,7 @@ import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.qualClass.QualityDataStoreAdapter;
+import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.jcvi.trace.sanger.phd.ArtificalPhdDataStore;
 import org.jcvi.trace.sanger.phd.Phd;
 import org.joda.time.DateTime;

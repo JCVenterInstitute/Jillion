@@ -101,7 +101,7 @@ public class ContigCheckerAceFile {
                                 new TraceQualityDataStoreAdapter<Phd>(phdDataStore);
             
             ContigCheckerStruct<AcePlacedRead> struct = new ContigCheckerStruct<AcePlacedRead>(contig, 
-                    qualityFastaDataStore, PhredQuality.valueOf(30));
+                    qualityFastaDataStore);
             ContigChecker<AcePlacedRead> contigChecker = new ContigChecker<AcePlacedRead>(struct, percentReadDirectionDifferenceTheshold,
                     lowSequenceCoverageThreshold, highSequenceCoverageThreshold);
             contigChecker.run();

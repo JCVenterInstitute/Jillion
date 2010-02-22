@@ -45,15 +45,9 @@ import org.jcvi.cli.CommandLineUtils;
 import org.jcvi.datastore.ContigDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.MemoryMappedAceFileDataStore;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
-import org.jcvi.trace.TraceQualityDataStoreAdapter;
 import org.jcvi.trace.sanger.phd.H2PhdQualityDataStore;
-import org.jcvi.trace.sanger.phd.LargePhdDataStoreFactory;
-import org.jcvi.trace.sanger.phd.Phd;
-import org.jcvi.trace.sanger.phd.PhdDataStore;
-import org.jcvi.trace.sanger.phd.PhdDataStoreFactory;
 import org.jcvi.util.DefaultMemoryMappedFileRange;
 
 public class ContigCheckNextGenAceFile {
@@ -126,7 +120,7 @@ public class ContigCheckNextGenAceFile {
                 AceContig contig =contigDataStore.get(id) ;
                 
                 ContigCheckerStruct<AcePlacedRead> struct = new ContigCheckerStruct<AcePlacedRead>(contig, 
-                        qualityDataStore, PhredQuality.valueOf(30));
+                        qualityDataStore);
                 ContigChecker<AcePlacedRead> contigChecker = new NextGenContigChecker(struct, percentReadDirectionDifferenceTheshold,
                         lowSequenceCoverageThreshold, highSequenceCoverageThreshold);
                 contigChecker.run();
