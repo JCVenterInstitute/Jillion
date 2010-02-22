@@ -73,24 +73,24 @@ public class GenerateSNPMatrix {
             MemoryMappedAceFileDataStore datastore = new MemoryMappedAceFileDataStore(aceFile);
             AceFileParser.parseAceFile(aceFile, datastore);
             AceContig contig = datastore.get(contigId);
-            
-            Map<String, Map<Integer, NucleotideGlyph>> snpMap = new HashMap<String, Map<Integer,NucleotideGlyph>>();
-            CoverageMap<CoverageRegion<AcePlacedRead>> gappedCoverageMap = DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads());
-            NucleotideEncodedGlyphs consensus = contig.getConsensus();
-            LargeNoQualitySliceMap sliceMap = new LargeNoQualitySliceMap(gappedCoverageMap);
             List<Integer> coordinates = new ArrayList<Integer>();
             for(String coordinate : positions.split(",")){
                 coordinates.add(Integer.parseInt(coordinate));
             }
+            Map<String, Map<Integer, NucleotideGlyph>> snpMap = new HashMap<String, Map<Integer,NucleotideGlyph>>();
+            CoverageMap<CoverageRegion<AcePlacedRead>> gappedCoverageMap = DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads());
+            NucleotideEncodedGlyphs consensus = contig.getConsensus();
+            LargeNoQualitySliceMap sliceMap = new LargeNoQualitySliceMap(gappedCoverageMap);
+            
             for(Integer coordinate : coordinates){
-                final int ungappedOffset;
+                final int gappedOffset;
                 if(isGapped){
-                    ungappedOffset = coordinate;
+                    gappedOffset = coordinate-1;
                 }
                 else{
-                    ungappedOffset =coordinate+1;
+                    int ungappedOffset = coordinate-1;
+                    gappedOffset =consensus.convertUngappedValidRangeIndexToGappedValidRangeIndex(ungappedOffset);
                 }
-                int gappedOffset =consensus.convertUngappedValidRangeIndexToGappedValidRangeIndex(ungappedOffset);
                 Slice slice = sliceMap.getSlice(gappedOffset);
                 for(SliceElement element : slice.getSliceElements()){
                     String id = element.getName();
