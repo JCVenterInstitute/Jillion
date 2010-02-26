@@ -19,5 +19,6 @@
 /**
  * This package contains classes for handling contigs stored in CLC Bio's
  * .cas file format. 
+ * @author dkatzel
  */
 package org.jcvi.assembly.cas;
