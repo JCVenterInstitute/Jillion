@@ -25,12 +25,32 @@ package org.jcvi.assembly.cas;
 
 import java.math.BigInteger;
 import java.util.List;
-
+/**
+ * {@code CasFileInfo} contains all the information
+ * known by a .cas file about a group of similar files.
+ * @author dkatzel
+ *
+ *
+ */
 public interface CasFileInfo {
-
+    /**
+     * Total number of sequences contained in the entire group
+     * of files.
+     * @return the number of sequences; always {@code >=0}.
+     */
     long getNumberOfSequences();
-    
+    /**
+     * Get the total number of residues in the entire group
+     * of files.
+     * @return a {@link BigInteger} of all total count of residues;
+     *  never null and always {@code >=0}.
+     */
     BigInteger getNumberOfResidues();
-    
+    /**
+     * Get the list of File paths for all the files in this FileInfo object.
+     * These paths may be absolute file paths or relative file paths or a mix of
+     * both.
+     * @return a List of file paths; never null.
+     */
     List<String> getFileNames();
 }

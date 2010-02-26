@@ -25,7 +25,13 @@ package org.jcvi.assembly.cas;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-
+/**
+ * CasContig is a {@link Contig} marker interface
+ * for contigs made from .cas files.
+ * @author dkatzel
+ *
+ *
+ */
 public interface CasContig extends Contig<PlacedRead>{
 
 }

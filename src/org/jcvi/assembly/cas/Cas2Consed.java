@@ -53,11 +53,10 @@ import org.jcvi.assembly.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.H2FastQCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.H2SffCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.MultiCasDataStoreFactory;
-import org.jcvi.assembly.contig.qual.ZeroGapQualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.assembly.slice.DefaultSliceMapFactory;
+import org.jcvi.assembly.slice.LargeNoQualitySliceMapFactory;
 import org.jcvi.assembly.slice.SliceMapFactory;
 import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.cli.CommandLineUtils;
@@ -131,9 +130,9 @@ public class Cas2Consed {
                         new FastaCasDataStoreFactory(cacheSize)        
                 );
                 
-                final SliceMapFactory sliceMapFactory = new DefaultSliceMapFactory(new ZeroGapQualityValueStrategy());
-                CasAssembly casAssembly = new DefaultCasAssembly.Builder(casFile, casDataStoreFactory)
-                .build();
+                final SliceMapFactory sliceMapFactory = new LargeNoQualitySliceMapFactory();
+                                                    CasAssembly casAssembly = new DefaultCasAssembly.Builder(casFile, casDataStoreFactory)
+                                                    .build();
                 System.out.println("finished making casAssemblies");
                 for(File traceFile : casAssembly.getNuceotideFiles()){
                     traceFilesOut.println(traceFile.getAbsolutePath());
