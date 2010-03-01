@@ -39,6 +39,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.auth.BasicEncodedJCVIAuthorizer;
 import org.jcvi.auth.JCVIAuthorizer;
 import org.jcvi.auth.JCVIAuthorizerUtils;
+import org.jcvi.auth.TigrAuthorizerUtils;
 import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.cli.CommandLineUtils;
 import org.jcvi.datastore.DataStoreException;
@@ -94,7 +95,7 @@ public class DownloadTraces {
             String baseUrl;
             Console console = System.console();
             if(commandLine.hasOption("D")){
-                authorizer = JCVIAuthorizerUtils.getProjectDbAuthorizerFrom(commandLine, console);
+                authorizer = TigrAuthorizerUtils.getProjectDbAuthorizerFrom(commandLine, console);
                 baseUrl = JCVI_TIGR_URL;
             }
             else{
