@@ -23,12 +23,42 @@
  */
 package org.jcvi.assembly.cas.read;
 
+import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-
+/**
+ * {@code CasDataStoreFactory} is a way to get {@link NucleotideDataStore}s
+ * and {@link QualityDataStore}s from the file paths
+ * encoded inside a CAS file.  Since the CAS file does not know
+ * how this data is encoded, it is this Factory's job
+ * of decoding the files into {@link DataStore}s.
+ * @author dkatzel
+ *
+ *
+ */
 public interface CasDataStoreFactory {
-
+    /**
+     * Get the data encoded in the given file
+     * path as a {@link NucleotideDataStore}.
+     * @param pathToDataStore the file path (may be relative) to 
+     * a file which has nucleotide data.
+     * @return the data encoded in the given 
+     * file as a {@link NucleotideDataStore}.
+     * @throws CasDataStoreFactoryException if there is a problem reading the 
+     * file.
+     * @throws NullPointerException if the pathToDataStore is {@code null}.
+     */
     NucleotideDataStore getNucleotideDataStoreFor(String pathToDataStore) throws CasDataStoreFactoryException;
-    
+    /**
+     * Get the data encoded in the given file
+     * path as a {@link QualityDataStore}.
+     * @param pathToDataStore the file path (may be relative) to 
+     * a file which has quality data.
+     * @return the data encoded in the given 
+     * file as a {@link QualityDataStore}.
+     * @throws CasDataStoreFactoryException if there is a problem reading the 
+     * file.
+     * @throws NullPointerException if the pathToDataStore is {@code null}.
+     */
     QualityDataStore getQualityDataStoreFor(String pathToDataStore) throws CasDataStoreFactoryException;
 }
