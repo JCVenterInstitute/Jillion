@@ -46,32 +46,38 @@ public class PhdWriter {
     "EEE MMM dd kk:mm:ss yyyy");
     
     public static void writePhd(String id, Phd phd,OutputStream out) throws IOException{
+        StringBuilder phdRecord = new StringBuilder();
         
-        write(out, String.format("%s %s%n%n",BEGIN_SEQUENCE, id));
+        phdRecord.append( String.format("%s %s%n%n",BEGIN_SEQUENCE, id));
         
-        writeComments(out, phd);
-        writeDnaSection(out, phd);
-        write(out, String.format("%n"));
-        write(out, String.format("%s%n",END_SEQUENCE));
-        writeTags(out,phd);
-        out.flush();
+        phdRecord.append(createComments(phd));
+        phdRecord.append(writeDnaSection(phd));
+        phdRecord.append( String.format("%n"));
+        phdRecord.append(String.format("%s%n",END_SEQUENCE));
+        phdRecord.append(createTags(phd));
+        write(out, phdRecord.toString());
         
     }
 
-    private static void writeTags(OutputStream out, Phd phd) throws IOException {
+    private static String createTags(Phd phd) {
+        StringBuilder tags = new StringBuilder();
         for(PhdTag tag : phd.getTags()){
-            write(out, String.format("%s{%n%s%n}%n",tag.getTagName(), tag.getTagValue()));
+            tags.append(String.format("%s{%n%s%n}%n",tag.getTagName(), tag.getTagValue()));
         }
+        return tags.toString();
+        
         
     }
 
-    private static void writeDnaSection(OutputStream out, Phd phd) throws IOException {
-        write(out, String.format("%s%n",BEGIN_DNA));
-        writeCalledInfo(out,phd);
-        write(out, String.format("%s%n",END_DNA));        
+    private static String writeDnaSection(Phd phd) {
+        StringBuilder dna = new StringBuilder();
+        dna.append(String.format("%s%n",BEGIN_DNA));
+        dna.append(writeCalledInfo(phd));
+        dna.append(String.format("%s%n",END_DNA));   
+        return dna.toString();
     }
 
-    private static void writeCalledInfo(OutputStream out, Phd phd) throws IOException {
+    private static String writeCalledInfo( Phd phd){
         List<NucleotideGlyph> bases = phd.getBasecalls().decode();
         List<PhredQuality> qualities = phd.getQualities().decode();
         List<ShortGlyph> peaks = phd.getPeaks().getData().decode();
@@ -83,25 +89,24 @@ public class PhdWriter {
                                             peaks.get(i).getNumber()));
         }
         
-        write(out, result.toString());
+        return result.toString();
+        
     }
 
-    private static void writeComments(OutputStream out, Phd phd) throws IOException {
-        write(out, BEGIN_COMMENT+"\n");
-        write(out, String.format("%n"));
+    private static String createComments(Phd phd) {
+        StringBuilder comments = new StringBuilder();
+        
+        comments.append( BEGIN_COMMENT+"\n");
+        comments.append( String.format("%n"));
         for(Entry<Object, Object> entry :phd.getComments().entrySet()){
-            writeComment(out, entry.getKey(), entry.getValue());
+            comments.append(String.format("%s: %s%n",entry.getKey(),entry.getValue()));
         }
-        write(out, String.format("%n"));
-        write(out, END_COMMENT+"\n");
-        write(out, String.format("%n"));
+        comments.append(String.format("%n"));
+        comments.append(END_COMMENT+"\n");
+        comments.append(String.format("%n"));
+        return comments.toString();
     }
 
-    private static void writeComment(OutputStream out, Object key, Object value) throws IOException {
-        
-        write(out, String.format("%s: %s%n",key,value));
-        
-    }
 
     private static void write(OutputStream out, String data) throws IOException{
         out.write(data.getBytes("UTF-8"));
