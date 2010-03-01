@@ -28,12 +28,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AcePlacedRead;
+import org.jcvi.assembly.ace.ConsensusAceTag;
 import org.jcvi.assembly.ace.DefaultAceContig;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
@@ -41,6 +44,7 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 public class ConsedUtil {
+    private static final Pattern CONTIG_RENAME_PATTERN = Pattern.compile("U(\\w+)");
     public static String convertAceGapsToContigGaps(String basecallsWithAceGaps) {
         return basecallsWithAceGaps.replace('*', '-');
     }
@@ -92,5 +96,20 @@ public class ConsedUtil {
             newContigs.add(builder.build());
         }
         return newContigs;
+    }
+    
+    public static boolean isContigRename(ConsensusAceTag consensusTag){
+        return consensusTag.getType().equals("contigName");
+    }
+    public static String getRenamedContigId(ConsensusAceTag consensusTag){
+        if(!isContigRename(consensusTag)){
+            throw new IllegalArgumentException("not a contig rename");
+        }
+        String data= consensusTag.getData();
+        Matcher matcher = CONTIG_RENAME_PATTERN.matcher(data);
+        if(matcher.find()){
+            return matcher.group(1);
+        }
+        throw new IllegalArgumentException("consensus tag does not contain rename info : "+consensusTag);
     }
 }
