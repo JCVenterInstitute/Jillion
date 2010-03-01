@@ -27,9 +27,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-
+/**
+ * {@code MultiCasDataStoreFactory} is a {@link CasDataStoreFactory}
+ * implementation that wraps several {@link CasDataStoreFactory}s.
+ * Each getXXX command is tried on each wrapped {@link CasDataStoreFactory}
+ * until a {@link DataStore} is returned 
+ * without throwing a {@link CasDataStoreFactoryException}.
+ * @author dkatzel
+ *
+ *
+ */
 public class MultiCasDataStoreFactory implements
         CasDataStoreFactory {
 
@@ -38,11 +48,29 @@ public class MultiCasDataStoreFactory implements
     public MultiCasDataStoreFactory(CasDataStoreFactory...casNucleotideDataStoreFactories){
         this(Arrays.asList(casNucleotideDataStoreFactories));
     }
-    
+    /**
+     * Constructs a {@link MultiCasDataStoreFactory} wrapping the given
+     * {@link CasDataStoreFactory}s.
+     * @param casNucleotideDataStoreFactories list of {@link CasDataStoreFactory}
+     * objects to wrap.
+     * @throws NullPointerException if any of the {@link CasDataStoreFactory} 
+     * to wrap is {@code null}.
+     */
     public  MultiCasDataStoreFactory(List<CasDataStoreFactory> casNucleotideDataStoreFactories){
+       
+        for(CasDataStoreFactory factory :casNucleotideDataStoreFactories){
+            if(factory ==null){
+                throw new NullPointerException("factory can not be null");
+            }
+        }
         this.factories = new ArrayList<CasDataStoreFactory>(casNucleotideDataStoreFactories );
     }
-
+    /**
+     * 
+    * {@inheritDoc}
+    * @throws CasDataStoreFactoryException if none of the
+    * wrapped factories returns a valid {@link NucleotideDataStore}.
+     */
     @Override
     public NucleotideDataStore getNucleotideDataStoreFor(
             String pathToDataStore) throws CasDataStoreFactoryException {
@@ -56,7 +84,12 @@ public class MultiCasDataStoreFactory implements
         }
        throw new CasDataStoreFactoryException("could not get nucleotide datastore for "+ pathToDataStore);
     }
-
+    /**
+     * 
+    * {@inheritDoc}
+    * @throws CasDataStoreFactoryException if none of the
+    * wrapped factories returns a valid {@link QualityDataStore}.
+     */
     @Override
     public QualityDataStore getQualityDataStoreFor(
             String pathToDataStore) throws CasDataStoreFactoryException {
