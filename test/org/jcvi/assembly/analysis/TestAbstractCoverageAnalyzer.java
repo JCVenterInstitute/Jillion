@@ -33,7 +33,6 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -70,7 +69,7 @@ public class TestAbstractCoverageAnalyzer {
         coverageMap = createMock(CoverageMap.class);
         mockIter = createMock(Iterator.class);
         expect(coverageMap.iterator()).andReturn(mockIter);
-        struct = new ContigCheckerStruct<VirtualPlacedRead<PlacedRead>>(contig,null, PhredQuality.valueOf(30));
+        struct = new ContigCheckerStruct<VirtualPlacedRead<PlacedRead>>(contig,null);
     }
     @Test
     public void emptyMap(){

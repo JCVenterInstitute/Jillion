@@ -31,7 +31,6 @@ import java.util.Set;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.SequenceDirection;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +45,7 @@ public class TestReverseComplimentContigAnalyzer {
     @Before
     public void setup(){
         contig = createMock(Contig.class);
-        struct = new ContigCheckerStruct(contig,null, PhredQuality.valueOf(30));
+        struct = new ContigCheckerStruct(contig,null);
     }
     
     @Test
