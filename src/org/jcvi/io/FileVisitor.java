@@ -38,7 +38,7 @@ public interface FileVisitor {
     void visitFile();
    
     /**
-     * The File has been completely visitied.
+     * The File has been completely visited.
      */
     void visitEndOfFile();
 }
