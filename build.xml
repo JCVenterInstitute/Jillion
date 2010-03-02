@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JavaCommon" default="unit.tests" basedir=".">
+	
+	<property name="version" value="2.0.0" />
+	<property name="project-name" value="JCVI-JavaCommon" />
+	<property name="bin" value ="bin_ant"/>
+	<property name="reports" value ="reports"/>
+	<property name="src" value ="src"/>
+	<property name="src-internal" value ="src-internal"/>
+	<property name="test" value ="test"/>
+	<property name ="lib" value="lib"/>
+	<property name ="lib-internal" value="lib-internal"/>
+	<property name ="release" value ="release"/>
+	<property name ="scripts" value = "scripts"/>
+	
+	<property name ="analysis" value="build-lib"/>
+  
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+
+    <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
+            <classpath>
+              <fileset dir="${analysis}/pmd"/>
+           </classpath>
+    </taskdef>
+	
+    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+            <classpath>
+            	<fileset dir="${analysis}" includes="**/*.jar"/>
+          </classpath>
+    </taskdef>
+    
+	<taskdef resource="emma_ant.properties" >
+        <classpath>
+            <fileset dir="${analysis}/emma"/>
+   		</classpath>
+    </taskdef>
+	
+    <taskdef resource="checkstyletask.properties"
+         classpath="${analysis}/checkstyle-all-5.0-beta01.jar"/>
+
+    <taskdef name="testability" classname="com.google.ant.TestabilityTask">
+        <classpath>
+            <fileset dir="${analysis}/testability-explorer"/>
+        </classpath>
+    </taskdef>
+	
+    <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"
+        classpath="${analysis}/jarjar-1.0rc8.jar"/>
+
+    <typedef resource="com/googlecode/svntask/svntask.xml">
+            <classpath>
+                    <fileset dir="${analysis}/svn">
+                            <include name="svnkit.jar" />
+                            <include name="svntask.jar" />
+                    </fileset>
+            </classpath>
+    </typedef>
+	        
+	<taskdef name="javancss"
+            classname="javancss.JavancssAntTask">
+            <classpath>
+                <fileset dir="${analysis}/javancss"/>
+            </classpath>
+    </taskdef>
+
+	
+    <path id="classpath">
+        <fileset dir="${lib}" includes="**/*.jar"/>
+    	<fileset dir="${lib-internal}" includes="**/*.jar"/>
+    </path>
+	<path id ="test.classpath">
+		<fileset dir="${lib}" includes="**/*.jar"/>
+		<fileset dir="${lib-internal}" includes="**/*.jar"/>
+		<fileset dir="${analysis}" includes="**/*.jar"/>
+		<pathelement path= "${bin}"/>
+		</path>
+
+	
+	<target name="revision" 
+		description = "sets the property 'revision' to the svn revision can be later used with ${revision}">
+			<svn>
+				<info path="." revisionProperty="revision" />
+			</svn>
+		</target>
+	
+	<target name="bin"
+	         description="Compile Java source and test files" depends="source.only.bin">
+		<!-- source already compiled so only compile tests -->
+		<javac debug="true" destdir="${bin}"  classpathref="classpath">
+					<src path="${test}"/>
+	  	</javac>
+		<copy todir="${bin}">
+			<fileset dir="${test}" excludes="**/*.java"/>
+		</copy>
+
+	 </target>
+	
+	<target name="source.only.bin"
+		         description="Compile only Java source files" depends="clean">
+			<mkdir dir="${bin}"/>
+			<!-- copile source separately so we can instrument with emma simply
+				 this avoids the need for emma filters-->
+			<!-- debug = true required for emma reports to see line coverage and link to source-->
+			<javac debug="true" destdir="${bin}"  classpathref="classpath">
+				<src path="${src}"/>
+		  	</javac>
+			<emma enabled="${emma.enabled}" >
+								      <instr instrpath="${bin}"
+								             mode="overwrite"
+								      		merge="no"
+								      >
+						      		</instr>
+						  	    </emma>
+			<copy todir="${bin}">
+				<fileset dir="${src}" excludes="**/*.java"/>
+			</copy>
+
+		 </target>
+		
+	<target name="internal.source.only.bin"
+			         description="Compile only Java source files" depends="source.only.bin">
+				
+				<!-- copile source separately so we can instrument with emma simply
+					 this avoids the need for emma filters-->
+				<!-- debug = true required for emma reports to see line coverage and link to source-->
+				<javac debug="true" destdir="${bin}"  classpathref="classpath">
+					<src path="${src-internal}"/>
+			  	</javac>
+				<emma enabled="${emma.enabled}" >
+									      <instr instrpath="${bin}"
+									             mode="overwrite"
+									      		merge="no"
+									      >
+							      		</instr>
+							  	    </emma>
+				<copy todir="${bin}">
+					<fileset dir="${src-internal}" excludes="**/*.java"/>
+				</copy>
+
+			 </target>
+	
+	<target name="emma" description="turns on EMMA's on-the-fly instrumentation mode" >
+	    <property name="emma.enabled" value="true" />
+	  </target>
+	<target name="clean"
+         description="Clean generated files">
+		<delete dir="${bin}"/>
+		<delete dir="${release}"/>
+ 	</target>
+
+
+	
+
+	<target name="pmd" description ="runs pmd on source code">
+	      <pmd rulesetfiles="rulesets/favorites.xml">
+	          <formatter type="xml" toFile="pmd.xml"/>
+	          <fileset dir="${src}">
+	              <include name="**/*.java"/>
+	          </fileset>
+	      </pmd>
+	  </target>
+
+	<target name="findbugs" description ="runs findbugs" depends="source.only.bin">
+	    <findbugs home="${analysis}/findbugs"
+	              output="xml"
+	              outputFile="findbugs.xml">
+	      <auxClasspath refid = "test.classpath" />
+	      <sourcePath path="${src}" />
+	      <class location="${bin}" />
+	    
+	    </findbugs>
+  </target>
+	
+	<target name ="unit.tests" depends ="bin">
+			<junit haltonfailure="yes" showoutput="yes">		
+				<formatter type="xml"/>
+				
+			  <test name="org.jcvi.AllUnitTests"/>
+				<classpath refid = "test.classpath" />
+			</junit>
+		</target>
+	
+	<target name = "report.emma" description = "generates emma report for instrumented classes">
+		<emma enabled="${emma.enabled}" > 
+			<report>
+				<sourcepath>
+				          <dirset dir="${src}" />
+				</sourcepath>
+				<infileset dir="." includes="*.em, *.ec" />
+	 	 		<xml outfile = "coverage.xml"/>
+				<html outfile="coverage.html"
+					    		depth="method"
+				                columns="name,class,method,block,line"/>
+		 	</report>
+		</emma>
+	</target>
+	
+	
+	
+	<target name="javadoc" description = "generate javadoc from source">
+			<javadoc packagenames ="org.jcvi.*"
+					sourcepath ="${src}"
+					author ="true"
+					destdir = "javadoc"
+					windowtitle = "${project-name} API"
+					linksource= "yes">
+			</javadoc>
+		</target>
+	
+	<target name = "checkstyle" description = "generates checkstyle report on source">
+		<checkstyle config="${analysis}/checkStyle_docs/checkstyle_checks.modified.xml"
+			failOnViolation="false"
+			classpathref="test.classpath">
+			
+		  <fileset dir="${src}" includes="**/*.java"/>
+		  <formatter type="xml" toFile="checkstyle_errors.xml"/>
+		</checkstyle>
+		</target>
+	
+	<target name="testability" depends="jar-src-all">
+		<testability filter= "org.jcvi" print ="xml" resultfile="testabilityexplorer.xml">
+
+			<classpath>
+		    	<fileset dir=".">
+		    		<include name ="${project-name}-${version}-r${revision}.jar" />
+				</fileset>
+		    </classpath>
+	   </testability>	   
+	</target>
+	<target name="jar-src-all" description="jar of all source files" depends= "revision, internal.source.only.bin">
+		
+		    <jarjar jarfile="${project-name}-${version}-r${revision}.jar">
+		        <fileset dir="${bin}"/>
+		        
+		    	<zipfileset src="${lib}/easymock.jar"/>
+		    	<zipfileset src="${lib}/easymockclassextension.jar"/>
+		    	<zipfileset src="${lib}/cglib-nodep.jar"/>		    	
+		    	<zipfileset src="${lib}/log4j-1.2.15.jar"/>
+		    	<zipfileset src="${lib}/joda-time-1.5.2.jar"/>
+		    	<zipfileset src="${lib}/junit-4.4.jar"/>
+		    	<zipfileset src="${lib}/poi-3.5-FINAL-20090928.jar"/>
+		    	<zipfileset src="${lib}/poi-ooxml-3.5-FINAL-20090928.jar"/>
+		    	<zipfileset src="${lib}/jcommon-1.0.15.jar"/>
+		    	<zipfileset src="${lib}/jfreechart-1.0.12.jar"/>
+		    	<zipfileset src="${lib}/finj-1.1.5.jar"/>
+		    	<zipfileset src="${lib}/batik-awt-util.jar"/>
+		    	<zipfileset src="${lib}/batik-dom.jar"/>
+		    	<zipfileset src="${lib}/batik-svggen.jar"/>
+		    	<zipfileset src="${lib}/batik-util.jar"/>
+		    	<zipfileset src="${lib}/batik-xml.jar"/>
+		    	<zipfileset src="${lib}/guice-2.0.jar"/>
+		    	<zipfileset src="${lib}/aopalliance.jar"/>
+		    	<zipfileset src="${lib}/commons-cli-1.2.jar"/>
+		    	<zipfileset src="${lib}/commons-collections-3.2.1.jar"/>
+		    	<zipfileset src="${lib}/commons-io-1.4.jar"/>
+		    	<zipfileset src="${lib}/h2-1.2.128.jar"/>
+		    	
+		    	<zipfileset src="${lib-internal}/EUIDService.jar"/>
+		    	<zipfileset src="${lib-internal}/ChromatogramArchiver_client.jar"/>
+		    </jarjar>
+	</target>
+	<target name="jar-src-core" description="jar of all source files" depends= "revision, source.only.bin">
+		
+		    <jarjar jarfile="${project-name}-${version}-r${revision}.jar">
+		        <fileset dir="${bin}"/>		        
+		    </jarjar>
+	</target>
+	<target name ="javancss" description ="run javancss on source">
+		<javancss srcdir="${src}" includes ="**/*.java"
+		            generateReport="true"
+		            outputfile="javancss_metrics.xml"
+		            format="xml"/>
+
+	</target>
+	
+	<target name = "release" description ="create release folder with all files needed to be released"
+		depends ="jar-src-all">
+		<copy todir="${release}">
+					<fileset dir="${scripts}"/>
+		</copy>
+		<copy file="${project-name}-${version}-r${revision}.jar" todir="${release}"></copy>
+	</target>
+</project>
