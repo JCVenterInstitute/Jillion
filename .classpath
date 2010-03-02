@@ -5,30 +5,34 @@
 	<classpathentry kind="src" path="src-internal"/>
 	<classpathentry kind="src" path="test-internal"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/aopalliance.jar"/>
-	<classpathentry kind="lib" path="lib/batik-awt-util.jar"/>
-	<classpathentry kind="lib" path="lib/batik-dom.jar"/>
-	<classpathentry kind="lib" path="lib/batik-svggen.jar"/>
-	<classpathentry kind="lib" path="lib/batik-util.jar"/>
-	<classpathentry kind="lib" path="lib/batik-xml.jar"/>
-	<classpathentry kind="lib" path="lib/cglib-nodep.jar"/>
-	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-io-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/easymock.jar"/>
-	<classpathentry kind="lib" path="lib/easymockclassextension.jar"/>
-	<classpathentry kind="lib" path="lib/finj-1.1.5.jar"/>
-	<classpathentry kind="lib" path="lib/guice-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/h2-1.2.128.jar"/>
-	<classpathentry kind="lib" path="lib/jcommon-1.0.15.jar"/>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.12.jar"/>
-	<classpathentry kind="lib" path="lib/joda-time-1.5.2.jar"/>
-	<classpathentry kind="lib" path="lib/junit-4.4.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="lib/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/poi-3.5-FINAL-20090928.jar"/>
-	<classpathentry kind="lib" path="lib/poi-ooxml-3.5-FINAL-20090928.jar"/>
-	<classpathentry kind="lib" path="lib-internal/ChromatogramArchiver_client.jar"/>
-	<classpathentry kind="lib" path="lib-internal/EUIDService.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/aopalliance.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-awt-util.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-dom.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-svggen.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-util.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-xml.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cglib-nodep.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-cli-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-collections-3.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io-1.4.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://commons.apache.org/io/api-release"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/easymock.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/easymockclassextension.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/finj-1.1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/h2-1.2.128.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jcommon-1.0.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/joda-time-1.5.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/junit-4.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/poi-3.5-FINAL-20090928.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.5-FINAL-20090928.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib-internal/ChromatogramArchiver_client.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib-internal/EUIDService.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
