@@ -52,11 +52,13 @@ public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends
     private PreparedStatement IDS_STATEMENT;
     
     private final Connection connection;
+    private final File dataStoreFile;
     public AbstractH2EncodedGlyphDataStore(File database) throws DataStoreException{
         StringBuilder connectionBuilder = new StringBuilder(CONNECTION_SUBSTRING)
                                             .append("file:")
                                             .append(database.getAbsolutePath());
         connection = connect(connectionBuilder.toString());
+        dataStoreFile = database;
         initialize();
     }
     
@@ -64,6 +66,7 @@ public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends
         StringBuilder connectionBuilder = new StringBuilder(CONNECTION_SUBSTRING)
                                             .append("mem:");
         connection = connect(connectionBuilder.toString());
+        dataStoreFile =null;
         initialize();
     }
     private final Connection connect(String connectionString) throws DataStoreException{
@@ -169,6 +172,11 @@ public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends
         IOUtil.closeAndIgnoreErrors(SIZE_STATEMENT);
         IOUtil.closeAndIgnoreErrors(INSERT_STATEMENT);
         IOUtil.closeAndIgnoreErrors(connection);
+        if(dataStoreFile !=null){
+            //try to delete. ignore failures...
+            new File(dataStoreFile+".h2.db").delete();
+            new File(dataStoreFile+".lock.db").delete();
+        }
     }
 
     @Override
