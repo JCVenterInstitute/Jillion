@@ -26,11 +26,12 @@ package org.jcvi.util;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class MathUtil {
-    public static Integer minOf(List<Integer> integers){
+    public static Integer minOf(Collection<Integer> integers){
         if(integers.size() ==0){
             throw new IllegalArgumentException("must pass in at least one value");
         }
@@ -44,7 +45,7 @@ public class MathUtil {
     public static Integer minOf(Integer...integers){
         return minOf(Arrays.asList(integers));
     }
-    public static Integer maxOf(List<Integer> integers){
+    public static Integer maxOf(Collection<Integer> integers){
         if(integers.size() ==0){
             throw new IllegalArgumentException("must pass in at least one value");
         }
@@ -62,13 +63,13 @@ public class MathUtil {
     public static  Double averageOf(Integer... values){
         return averageOf(Arrays.asList(values));
     }
-    public static  Double averageOf(List<Integer> values){
+    public static  Double averageOf(Collection<Integer> values){
         if(values.size() ==0){
             throw new IllegalArgumentException("must pass in at least one value");
         }
         long sum=0;
-        for(int i = 0; i<values.size(); i++){
-            sum += values.get(i).intValue();
+        for(Integer value : values){
+            sum += value;
         }
         return Double.valueOf((double)sum/values.size());
 
@@ -102,7 +103,7 @@ public class MathUtil {
         }
        return sumOf(list);
     }
-    public static BigInteger sumOf(List<? extends Number> values){
+    public static BigInteger sumOf(Collection<? extends Number> values){
         BigInteger sum=BigInteger.valueOf(0);
         for(Number value : values){
             sum =sum.add(BigInteger.valueOf(value.longValue()));
@@ -112,7 +113,7 @@ public class MathUtil {
     public static Integer medianOf(Integer... values){
         return medianOf(Arrays.asList(values));
     }
-    public static Integer medianOf(List<Integer> values){
+    public static Integer medianOf(Collection<Integer> values){
         int size =values.size();
 
         if(size ==0){
