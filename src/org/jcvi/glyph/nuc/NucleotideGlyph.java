@@ -152,6 +152,10 @@ public enum NucleotideGlyph implements Glyph {
         }
         throw new IllegalArgumentException("invalid character " + c + " ascii value " + (int)c.charValue());
     }
+    /**
+     * Returns this glyph as a single character String.  For example {@link #Adenine} 
+     * will return "A".
+     */
     @Override
     public String toString() {
         return getCharacter().toString();
