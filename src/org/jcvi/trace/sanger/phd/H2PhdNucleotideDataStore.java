@@ -16,37 +16,47 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Feb 5, 2010
- *
- * @author dkatzel
- */
+
 package org.jcvi.trace.sanger.phd;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideDataStore;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.nuc.datastore.H2NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
+
 /**
- * {@code H2PhdQualityDataStore} is a {@link QualityDataStore}
+ * {@code H2PhdNucleotideDataStore} is a {@link NucleotideDataStore}
  * implementation of {@link AbstractH2PhdDataStore}.
+ * 
  * @author dkatzel
  *
  *
  */
-public class H2PhdQualityDataStore extends AbstractH2PhdDataStore<PhredQuality, EncodedGlyphs<PhredQuality>> implements QualityDataStore{
-    public H2PhdQualityDataStore(File phdFile,H2QualityDataStore qualityDataStore) throws FileNotFoundException{
-        super(phdFile, qualityDataStore);
+public class H2PhdNucleotideDataStore extends AbstractH2PhdDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> implements NucleotideDataStore{
+
+    /**
+     * @param phdFile
+     * @param h2Datastore
+     * @throws FileNotFoundException
+     */
+    public H2PhdNucleotideDataStore(
+            File phdFile,
+            H2NucleotideDataStore h2Datastore)
+            throws FileNotFoundException {
+        super(phdFile, h2Datastore);
+
     }
 
+    /**
+    * {@inheritDoc}
+    */
     @Override
     protected String visitSingleBaseCall(NucleotideGlyph base,
             PhredQuality quality, int tracePosition) {
-        //add space so parser can tell positions apart.
-        return quality.getNumber()+" ";
+        return base.toString();
     }
-    
+
 }
