@@ -24,7 +24,13 @@
 package org.jcvi.trace.sanger.chromatogram;
 
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-
+/**
+ * {@code ChannelGroup} is a composite of all 4 {@link Channel}s
+ * of a Sanger sequenced trace.
+ * @author dkatzel
+ *
+ *
+ */
 public interface ChannelGroup {
 
     /**
@@ -47,7 +53,9 @@ public interface ChannelGroup {
      */
     Channel getTChannel();
     /**
-     * 
+     * Get the {@link Channel} for a particular {@link NucleotideGlyph}.
+     * For example {@link #getChannel(NucleotideGlyph) getChannel(NucleotideGlyph.Adenine)}
+     * is the same as {@link #getAChannel()}.
      * @param nucleotide the nucleotide channel to get.
      * @return the {@link Channel} for that {@link NucleotideGlyph}.
      */
