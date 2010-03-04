@@ -35,11 +35,10 @@ import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.VirtualPlacedRead;
-import org.jcvi.assembly.contig.qual.LowestFlankingQualityValueStrategy;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.assembly.slice.LargeSliceMap;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceMap;
+import org.jcvi.assembly.slice.SliceMapFactory;
 import org.jcvi.assembly.slice.consensus.ConicConsensusCaller;
 import org.jcvi.assembly.slice.consensus.ConsensusCaller;
 import org.jcvi.datastore.DataStore;
@@ -57,7 +56,7 @@ public class AssemblyArchiveXMLWriter<T extends PlacedRead> {
     private static final String XML_BEGIN = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("MM/dd/yy HH:mm:ss:");
     
-    public void  write(AssemblyArchive<T> assemblyArchive, DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore,OutputStream out) throws IOException{
+    public void  write(AssemblyArchive<T> assemblyArchive, SliceMapFactory sliceMapFactory, DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore,OutputStream out) throws IOException{
         writeString(out, XML_BEGIN);
         String submitterReference = assemblyArchive.getSubmitterReference();
         writeString(out, String.format("<assembly submitter_reference=\"%s\" type = \"%s\">\n", 
@@ -74,14 +73,17 @@ public class AssemblyArchiveXMLWriter<T extends PlacedRead> {
         writeString(out, createTag(AssemblyArchiveField.NUMBER_OF_BASES, assemblyArchive.getNumberOfTotalBasecalls()));
         writeString(out, createTag(AssemblyArchiveField.COVERAGE, String.format("%.02f",assemblyArchive.getCoverageRatio())));
         
-        for(AssemblyArchiveContigRecord<T> contig : assemblyArchive.getContigRecords()){
-            writeContig(out,contig, qualityDataStore);
+        for(AssemblyArchiveContigRecord<T> contigRecord : assemblyArchive.getContigRecords()){
+            SliceMap sliceMap = sliceMapFactory.createNewSliceMap(
+                                        DefaultCoverageMap.buildCoverageMap(contigRecord.getContig().getPlacedReads()), 
+                                        qualityDataStore);
+            writeContig(out,contigRecord, sliceMap);
         }
         out.flush();
         
     }
 
-    private void writeContig(OutputStream out, AssemblyArchiveContigRecord<T> contigRecord, DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore) throws IOException {
+    private void writeContig(OutputStream out, AssemblyArchiveContigRecord<T> contigRecord, SliceMap sliceMap) throws IOException {
         writeString(out, 
                 String.format("<contig submitter_reference=\"%s\" conformation=\"%s\" type=\"%s\">%n",
                         contigRecord.getSubmitterReference(),
@@ -103,10 +105,6 @@ public class AssemblyArchiveXMLWriter<T extends PlacedRead> {
                 NucleotideGlyph.convertToString(
                         NucleotideGlyph.convertToUngapped(consensus.decode())),
                         AssemblyArchiveContigField.CONSENSUS));
-        SliceMap sliceMap = new LargeSliceMap(DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads()), 
-                qualityDataStore, 
-                new LowestFlankingQualityValueStrategy(), 
-                Range.buildRangeOfLength(0, consensus.getLength()));
         StringBuilder cumulativeQualities = new StringBuilder();
         ConsensusCaller consensusCaller = new ConicConsensusCaller(PhredQuality.valueOf(30));
         int offset=0;
