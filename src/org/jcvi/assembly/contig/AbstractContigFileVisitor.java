@@ -24,7 +24,6 @@
 package org.jcvi.assembly.contig;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.DefaultContig;
 import org.jcvi.sequence.SequenceDirection;
 
 public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{
