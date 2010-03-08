@@ -96,11 +96,6 @@ public class DefaultCasContig implements CasContig{
         return delegate.isCircular();
     }
 
-    @Override
-    public Contig<PlacedRead> without(List<PlacedRead> reads) {
-        return delegate.without(reads);
-    }
-
     public static class Builder implements org.jcvi.Builder<DefaultCasContig>{
 
         private final String id;

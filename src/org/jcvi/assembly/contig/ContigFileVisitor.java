@@ -41,10 +41,16 @@ public interface ContigFileVisitor extends TextFileVisitor{
      */
     void visitNewContig(String contigId);
     /**
-     * Visit a line of basecalls.
-     * @param line
+     * Visit a line of basecalls for the current contig consensus.
+     * @param lineOfBasecalls a String containing basecalls.
      */
-    void visitBasecallsLine(String line);
+    void visitConsensusBasecallsLine(String lineOfBasecalls);
+    
+    /**
+     * Visit a line of basecalls for the current read.
+     * @param lineOfBasecalls a String containing basecalls. 
+     */
+    void visitReadBasecallsLine(String lineOfBasecalls);
     /**
      * Visit an underlying read for the current contig being visited.
      * @param readId the id of the read.

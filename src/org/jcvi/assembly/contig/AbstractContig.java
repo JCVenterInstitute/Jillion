@@ -83,9 +83,6 @@ public abstract class AbstractContig<T extends PlacedRead> implements Contig<T>{
     public boolean isCircular() {
         return circular;
     }
-
-    protected abstract AbstractContig build(String id, NucleotideEncodedGlyphs consensus, Set<VirtualPlacedRead<T>> virtualReads,boolean circular);
-
     @Override
     public NucleotideEncodedGlyphs getConsensus() {
         return consensus;
@@ -111,20 +108,6 @@ public abstract class AbstractContig<T extends PlacedRead> implements Contig<T>{
 
     
 
-    @Override
-    public Contig<T> without(List<T> readsToRemove) {
-        if(readsToRemove.isEmpty()){
-            return this;
-        }
-        Set<VirtualPlacedRead<T>> virtualReadsToKeep = new HashSet<VirtualPlacedRead<T>>(virtualReads.size());
-
-        for(VirtualPlacedRead<T> virtualRead : virtualReads){
-            if(!readsToRemove.contains(virtualRead.getRealPlacedRead())){
-                virtualReadsToKeep.add(virtualRead);
-            }
-        }
-        return this.build(id, consensus, virtualReadsToKeep,this.isCircular());
-    }
 
     @Override
     public boolean containsPlacedRead(String placedReadId) {

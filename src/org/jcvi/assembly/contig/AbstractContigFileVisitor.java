@@ -51,9 +51,16 @@ public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{
     }
 
     @Override
-    public void visitBasecallsLine(String line) {
+    public void visitConsensusBasecallsLine(String lineOfBasecalls) {
         throwExceptionIfInitialized();
-        currentBasecalls.append(line);
+        currentBasecalls.append(lineOfBasecalls);
+    }
+
+    @Override
+    public void visitReadBasecallsLine(String lineOfBasecalls) {
+        throwExceptionIfInitialized();
+        currentBasecalls.append(lineOfBasecalls);
+        
     }
 
     @Override

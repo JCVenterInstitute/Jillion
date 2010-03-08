@@ -16,25 +16,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Sep 4, 2008
- *
+
+package org.jcvi.assembly.tasm;
+
+import java.util.Map;
+
+import org.jcvi.assembly.Contig;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.assembly;
-
-import java.util.Set;
-
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-
-public interface Contig<T extends PlacedRead>{
-    String getId();
-    int getNumberOfReads();
-    Set<T> getPlacedReads();
-    NucleotideEncodedGlyphs getConsensus();
-    VirtualPlacedRead<T> getPlacedReadById(String id);
-    boolean containsPlacedRead(String placedReadId);
-    boolean isCircular();
-    
-    Set<VirtualPlacedRead<T>> getVirtualPlacedReads();
+public interface TigrAssemblerContig extends Contig<TigrAssemblerPlacedRead>{
+    /**
+     * Get the Tigr Assembler properties associated with this
+     * Contig.
+     * @return a non-null {@link Map} containing all
+     * the attributes of this contig as Key Value pairs.
+     */
+    Map<String,String> getAttributes();
 }

@@ -129,19 +129,6 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
             return new DefaultAceContig(contigId, validConsensus,placedReads,circular);
         }
     }
-
-    @Override
-    protected DefaultAceContig build(String id, NucleotideEncodedGlyphs consensus,
-            Set<VirtualPlacedRead<AcePlacedRead>> virtualReads, boolean circular) {
-     
-        return new DefaultAceContig(id, consensus,virtualReads,circular);
-    }
-
-    @Override
-    public DefaultAceContig without(List<AcePlacedRead> readsToRemove) {
-        return (DefaultAceContig)super.without(readsToRemove);
-    }
-
     
     
 }
