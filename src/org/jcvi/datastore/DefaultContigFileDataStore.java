@@ -45,19 +45,30 @@ public class DefaultContigFileDataStore extends AbstractContigFileDataStore impl
 
     private boolean isClosed = false;
     
-    
-    private DefaultContigFileDataStore(){
+    /**
+     * Construct an empty uninitialized Contig File DataStore.
+     */
+    public DefaultContigFileDataStore(){
         contigs = new HashMap<String, Contig<PlacedRead>>();
     }
 
-    
-    public DefaultContigFileDataStore(File file) throws FileNotFoundException{
-        this(new FileInputStream(file));
+    /**
+     * Construct a ContigFileDataStore containing the contig
+     * data from the given contig file.
+     * @param contigFile the contig file containing the desired contig data.
+     * @throws FileNotFoundException if the given contig file does not exist.
+     */
+    public DefaultContigFileDataStore(File contigFile) throws FileNotFoundException{
+        this(new FileInputStream(contigFile));
     }
-    
+    /**
+     * Construct a ContigFileDataStore containing the contig
+     * data from the given {@link InputStream} of a contig file.
+     * @param inputStream an {@link InputStream} of contig file data.
+     */
     public DefaultContigFileDataStore(InputStream inputStream) {
         this();
-        DefaultContigFileParser.parseInputStream(inputStream, this);
+        DefaultContigFileParser.parse(inputStream, this);
     }
     @Override
     protected void addContig(Contig contig) {

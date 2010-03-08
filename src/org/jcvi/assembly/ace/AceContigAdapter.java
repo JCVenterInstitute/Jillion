@@ -26,7 +26,6 @@ package org.jcvi.assembly.ace;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -95,12 +94,6 @@ public class AceContigAdapter implements AceContig{
     public boolean isCircular() {
         // TODO Auto-generated method stub
         return delegate.isCircular();
-    }
-
-    @Override
-    public AceContig without(List<AcePlacedRead> reads) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     

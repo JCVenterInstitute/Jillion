@@ -105,7 +105,7 @@ public class Contig2Consed {
             DateTime date = new DateTime(DateTimeUtils.currentTimeMillis());
             DefaultAceAdapterContigFileDataStore aceDataStore = new DefaultAceAdapterContigFileDataStore(date.toDate());
             
-            DefaultContigFileParser.parseInputStream(new FileInputStream(contigFile), aceDataStore);
+            DefaultContigFileParser.parse(new FileInputStream(contigFile), aceDataStore);
             NucleotideDataStore seqDataStore;
             if(commandLine.hasOption("seq")){
                 File seqFile = new File(commandLine.getOptionValue("seq"));

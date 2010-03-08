@@ -16,25 +16,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Sep 4, 2008
- *
+
+package org.jcvi.assembly.tasm;
+
+import org.jcvi.assembly.contig.ContigFileVisitor;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.assembly;
+public interface TigrAssemblyFileVisitor extends ContigFileVisitor{
 
-import java.util.Set;
-
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-
-public interface Contig<T extends PlacedRead>{
-    String getId();
-    int getNumberOfReads();
-    Set<T> getPlacedReads();
-    NucleotideEncodedGlyphs getConsensus();
-    VirtualPlacedRead<T> getPlacedReadById(String id);
-    boolean containsPlacedRead(String placedReadId);
-    boolean isCircular();
+    void visitContigAttribute(String key, String value);
+    void visitReadAttribute(String key, String value);
     
-    Set<VirtualPlacedRead<T>> getVirtualPlacedReads();
+    void visitBeginContigBlock();
+    void visitEndContigBlock();
+    
+    void visitBeginReadBlock();
+    void visitEndReadBlock();
 }

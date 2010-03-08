@@ -115,18 +115,6 @@ public class ContigCheckerAceFile {
         }
     }
     
-    private static AceContig removeReferenceFromContig(
-            PhdDataStore phdDataStore, AceContig contig) throws DataStoreException {
-        List<AcePlacedRead> readsToRemove = new ArrayList<AcePlacedRead>();
-        for(AcePlacedRead read : contig.getPlacedReads()){
-            if(!phdDataStore.contains(read.getId())){
-                readsToRemove.add(read);
-            }
-        }
-        if(readsToRemove.isEmpty()){
-            return contig;
-        }
-        return contig.without(readsToRemove);
-    }
+    
 
 }

@@ -23,44 +23,38 @@
  */
 package org.jcvi.assembly;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
 import org.jcvi.Range;
 import org.jcvi.assembly.contig.AbstractContig;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.DefaultReferencedEncodedNucleotideGlyph;
+import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
 import org.jcvi.sequence.DefaultRead;
+import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
 
-public final class DefaultContig extends AbstractContig<PlacedRead>{
+public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
 
     
 
-    private DefaultContig(String id, NucleotideEncodedGlyphs consensus,
-            Set<VirtualPlacedRead<PlacedRead>> virtualReads,boolean circular) {
+    protected DefaultContig(String id, NucleotideEncodedGlyphs consensus,
+            Set<VirtualPlacedRead<P>> virtualReads,boolean circular) {
         super(id, consensus, virtualReads,circular);
     }
     
-    public static class Builder{
-        private NucleotideEncodedGlyphs consensus;
-        private String id;
-        private final Set<VirtualPlacedRead<PlacedRead>> virtualReads;
-        private boolean circular;
+    public static class Builder extends AbstractContigBuilder<PlacedRead, DefaultContig<PlacedRead>>{
+    
         public Builder(String id, NucleotideEncodedGlyphs consensus){
-            this.id = id;
-            this.consensus = consensus;
-            virtualReads = new HashSet<VirtualPlacedRead<PlacedRead>>();
+            super(id,consensus);
         }
         public void addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
             
             if(offset <0){
-                SplitReferenceEncodedNucleotideGlyphs referenceEncodedGlyphs = new SplitReferenceEncodedNucleotideGlyphs(consensus, basecalls,offset, validRange);
+                SplitReferenceEncodedNucleotideGlyphs referenceEncodedGlyphs = new SplitReferenceEncodedNucleotideGlyphs(getConsensus(), basecalls,offset, validRange);
                 final DefaultPlacedRead actualPlacedRead = new DefaultPlacedRead(new DefaultRead(id, referenceEncodedGlyphs), offset,dir );
                 
-                long leftOffset = consensus.getLength() + offset;
+                long leftOffset = getConsensus().getLength() + offset;
                 Range leftRange = Range.buildRangeOfLength(leftOffset, -1L*offset);
                 Range rightRange = Range.buildRange(0, basecalls.length() - leftRange.size()-validRange.getStart());
                 
@@ -69,31 +63,23 @@ public final class DefaultContig extends AbstractContig<PlacedRead>{
                 
                 SectionOfPlacedRead<PlacedRead> leftSection = new SectionOfPlacedRead<PlacedRead>(id+"_left",actualPlacedRead, 0,leftRange, leftValidRange );
                 SectionOfPlacedRead<PlacedRead> rightSection = new SectionOfPlacedRead<PlacedRead>(id+"_right",actualPlacedRead, (int)rightValidRange.getStart(),rightRange, rightValidRange );
-                virtualReads.add(leftSection);
-                virtualReads.add(rightSection);
+                addRead(leftSection);
+                addRead(rightSection);
                 
               }
             else{
-                NucleotideEncodedGlyphs referenceEncoded = new DefaultReferencedEncodedNucleotideGlyph(consensus,basecalls, offset,validRange);
-                final DefaultPlacedRead actualPlacedRead = new DefaultPlacedRead(new DefaultRead(id, referenceEncoded), offset,dir );
-                
-                virtualReads.add(new VirtualPlacedReadAdapter<PlacedRead>(actualPlacedRead));
+                super.addRead(id, offset, validRange, basecalls, dir);
             }
+            
         }
-        
+        @Override
+        protected PlacedRead createPlacedRead(Read<ReferencedEncodedNucleotideGlyphs> read, long offset, SequenceDirection dir){
+            return new DefaultPlacedRead(read,offset,dir);
+        }
+       
         public DefaultContig build(){
-            return new DefaultContig(id, consensus, virtualReads,circular);
+            return new DefaultContig(getId(), getConsensus(), getVirtualReads(),isCircular());
         }
-    }
-
-    @Override
-    protected DefaultContig build(String id, NucleotideEncodedGlyphs consensus, Set<VirtualPlacedRead<PlacedRead>> virtualReads, boolean circular) {
-        return new DefaultContig(id, consensus, virtualReads,circular);
-    }
-
-    @Override
-    public DefaultContig without(List readsToRemove) {
-        return (DefaultContig)super.without(readsToRemove);
     }
 
 }

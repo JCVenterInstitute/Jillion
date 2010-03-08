@@ -45,7 +45,7 @@ public class MemoryMappedContigFileDataStore implements ContigDataStore<PlacedRe
     public MemoryMappedContigFileDataStore(File file) throws FileNotFoundException{
         this.file = file;
         this.mappedRanges = new DefaultMemoryMappedFileRange();
-        DefaultContigFileParser.parseInputStream(new FileInputStream(file),
+        DefaultContigFileParser.parse(new FileInputStream(file),
                                         new MemoryMappedContigFileVisitor(mappedRanges));
         
     }
@@ -62,7 +62,7 @@ public class MemoryMappedContigFileDataStore implements ContigDataStore<PlacedRe
         try {
             SingleContigFileVisitor visitor = new SingleContigFileVisitor();
             final InputStream inputStream = MemoryMappedUtil.createInputStreamFromFile(file,range);
-            DefaultContigFileParser.parseInputStream(inputStream,visitor);
+            DefaultContigFileParser.parse(inputStream,visitor);
             return visitor.getContigToReturn();
         } catch (Exception e) {
             throw new DataStoreException("error trying to get contig "+ contigId,e);
