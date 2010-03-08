@@ -52,6 +52,9 @@ public final class ReSequencingUtils {
     private static final String GET_MANIFEST_URL ="http://reports-prod:8280/JasperServer-Pro/flow.html";
     
     public static InputStream getManifestFor(String sequencingPlateBarcode, JCVIAuthorizer auth,OUTPUT_TYPE outputType) throws IOException{
+        if(sequencingPlateBarcode ==null || sequencingPlateBarcode.trim().isEmpty()){
+            throw new IllegalArgumentException("must provide at least one sequencing plate barcode");
+        }
         HttpGetRequestBuilder builder = new HttpGetRequestBuilder(GET_MANIFEST_URL);
         builder.addVariable("_flowId", "viewReportFlow")
         .addVariable("reportUnit", "/Secured_Details/Resequencing/QC/Reseq_Manifest")
