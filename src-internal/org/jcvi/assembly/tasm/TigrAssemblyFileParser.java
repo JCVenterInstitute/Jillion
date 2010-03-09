@@ -41,6 +41,9 @@ import org.jcvi.sequence.SequenceDirection;
  */
 public class TigrAssemblyFileParser {
     private static final String CR = "\n";
+    /**
+     * Each contig data is separated by a pipe ('|').
+     */
     private static final String END_OF_CONTIG = "|";
     private static final Pattern KEY_VALUE_PATTERN = Pattern.compile("(\\S+)\\s+(\\S+)");
     /**
