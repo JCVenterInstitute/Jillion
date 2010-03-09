@@ -16,25 +16,29 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 4, 2008
- *
- * @author dkatzel
- */
-package org.jcvi.uid;
 
+package org.jcvi.assembly.contig;
+
+import org.jcvi.assembly.contig.trim.AllTrimUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+/**
+ * @author dkatzel
+ *
+ *
+ */
 @RunWith(Suite.class)
 @SuiteClasses(
-    {
-        TestUidService.class,
-        TestEuidUidFacade.class
-
-    }
-)
-public class AllUnitTests {
+        {
+            TestDefaultQualityClassContigMap.class,
+            TestDefaultContigQualityClassComputer.class,
+            TestDefaultContigQualityClassComputerComputeQualityFromRegion.class,
+            
+            AllTrimUnitTests.class
+        }
+        )
+public class AllInternalContigUnitTests {
 
 }

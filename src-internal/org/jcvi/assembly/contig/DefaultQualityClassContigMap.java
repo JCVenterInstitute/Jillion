@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStore;
@@ -46,7 +45,7 @@ public class DefaultQualityClassContigMap<P extends PlacedRead> implements Itera
    
 
     public DefaultQualityClassContigMap(
-                    CoverageMap<CoverageRegion<VirtualPlacedRead<P>>> coverageMap, 
+                    CoverageMap<CoverageRegion<P>> coverageMap, 
                     EncodedGlyphs<NucleotideGlyph> consensus,
                     DataStore<EncodedGlyphs<PhredQuality>> qualityFastaMap, 
                     QualityClassComputer<P,NucleotideGlyph> qualityClassComputer){

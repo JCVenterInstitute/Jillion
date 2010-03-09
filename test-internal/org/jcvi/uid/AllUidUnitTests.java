@@ -17,30 +17,24 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Jan 16, 2009
+ * Created on Apr 4, 2008
  *
  * @author dkatzel
  */
-package org.jcvi.assembly.contig;
+package org.jcvi.uid;
 
-import org.jcvi.assembly.contig.qual.AllQualityValueStrategyUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-    {  
-        TestContigFileWriter.class,
-        TestQualityClassRegion.class,
-        TestQualityDifference.class,
-        TestDefaultHighQualityDifferenceContigMap.class,
-        TestDefaultBasecallCount.class,
-        
-        AllQualityValueStrategyUnitTests.class
-       
+    {
+        TestUidService.class,
+        TestEuidUidFacade.class
+
     }
-    )
-public class AllContigUnitTests {
+)
+public class AllUidUnitTests {
 
 }

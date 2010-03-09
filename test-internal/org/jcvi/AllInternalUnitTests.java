@@ -16,31 +16,31 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 16, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.assembly.contig;
 
-import org.jcvi.assembly.contig.qual.AllQualityValueStrategyUnitTests;
+package org.jcvi;
+
+import org.jcvi.assembly.contig.AllInternalContigUnitTests;
+import org.jcvi.assembly.tasm.AllTasmUnitTests;
+import org.jcvi.trace.sanger.traceFileServer.AllJcviTraceFileServerUnitTests;
+import org.jcvi.uid.AllUidUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+/**
+ * @author dkatzel
+ *
+ *
+ */
 @RunWith(Suite.class)
 @SuiteClasses(
-    {  
-        TestContigFileWriter.class,
-        TestQualityClassRegion.class,
-        TestQualityDifference.class,
-        TestDefaultHighQualityDifferenceContigMap.class,
-        TestDefaultBasecallCount.class,
-        
-        AllQualityValueStrategyUnitTests.class
-       
+    {
+        AllInternalContigUnitTests.class,
+        AllTasmUnitTests.class,
+        AllJcviTraceFileServerUnitTests.class,
+        AllUidUnitTests.class
     }
     )
-public class AllContigUnitTests {
+public class AllInternalUnitTests {
 
 }

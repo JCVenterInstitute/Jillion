@@ -24,7 +24,6 @@
 package org.jcvi.assembly.contig;
 
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStore;
@@ -35,7 +34,7 @@ import org.jcvi.glyph.qualClass.QualityClass;
 
 public interface QualityClassComputer<P extends PlacedRead, G extends Glyph> {
 
-    QualityClass computeQualityClass(CoverageMap<CoverageRegion<VirtualPlacedRead<P>>> coverageMap,
+    QualityClass computeQualityClass(CoverageMap<CoverageRegion<P>> coverageMap,
             DataStore<EncodedGlyphs<PhredQuality>> qualityFastaMap,
             EncodedGlyphs<G> consensus,int index);
 }
