@@ -16,21 +16,23 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Mar 17, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.assembly.tasm;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+/**
+ * Runs all the TIGR Assembler internal unit tests.
+ * @author dkatzel
+ *
+ *
+ */
 @RunWith(Suite.class)
 @SuiteClasses(
-    { 
-        TestTigrTasmFileParser.class
+    {
+       TestTigrAssemblerContigDataStore.class 
     }
     )
 public class AllTasmUnitTests {

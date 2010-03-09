@@ -28,12 +28,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.QualityFastaRecord;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -57,7 +55,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     
     QualityValueStrategy qualityValueStrategy;
     DefaultContigQualityClassComputer  sut;
-    CoverageRegion<VirtualPlacedRead<PlacedRead>> coverageRegion;
+    CoverageRegion<PlacedRead> coverageRegion;
     DataStore<EncodedGlyphs<PhredQuality>> qualityFastaMap;
     NucleotideGlyph consensusBase = NucleotideGlyph.Adenine;
     NucleotideGlyph notConsensusBase = NucleotideGlyph.Thymine;
@@ -76,7 +74,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     
     @Test
     public void zeroCoverageRegion() throws DataStoreException{
-        expect(coverageRegion.getElements()).andReturn(Collections.<VirtualPlacedRead<PlacedRead>>emptyList());
+        expect(coverageRegion.getElements()).andReturn(Collections.<PlacedRead>emptyList());
         replay(qualityFastaMap,coverageRegion,builder);
         assertEquals(expectedQuality,
                 sut.computeQualityClassFor(qualityFastaMap, index, coverageRegion, consensusBase, builder));
@@ -84,7 +82,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     }
     @Test
     public void oneReadAtThresholdQualShouldBeConsideredHighQuality() throws DataStoreException{
-        List<VirtualPlacedRead<PlacedRead>> reads = new ArrayList<VirtualPlacedRead<PlacedRead>>();
+        List<PlacedRead> reads = new ArrayList<PlacedRead>();
         List<Object> mocks = new ArrayList<Object>();
         mocks.addAll(createThresholdQualityAgreeingRead("read1", SequenceDirection.FORWARD,reads));
         assertQualityClassBuiltCorrectly(reads, mocks);
@@ -93,7 +91,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
 
     @Test
     public void oneReadHighQualForwardAgreement() throws DataStoreException{
-        List<VirtualPlacedRead<PlacedRead>> reads = new ArrayList<VirtualPlacedRead<PlacedRead>>();
+        List<PlacedRead> reads = new ArrayList<PlacedRead>();
         List<Object> mocks = new ArrayList<Object>();
         mocks.addAll(createHighQualityAgreeingRead("read1", SequenceDirection.FORWARD,reads));
         assertQualityClassBuiltCorrectly(reads, mocks);
@@ -101,14 +99,14 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
 
     @Test
     public void oneReadHighQualReverseAgreement() throws DataStoreException{
-        List<VirtualPlacedRead<PlacedRead>> reads = new ArrayList<VirtualPlacedRead<PlacedRead>>();
+        List<PlacedRead> reads = new ArrayList<PlacedRead>();
         List<Object> mocks = new ArrayList<Object>();
         mocks.addAll(createHighQualityAgreeingRead("read1", SequenceDirection.REVERSE,reads));
         assertQualityClassBuiltCorrectly(reads, mocks);
     }
     @Test
     public void twoReadsQualReverseAgreement() throws DataStoreException{
-        List<VirtualPlacedRead<PlacedRead>> reads = new ArrayList<VirtualPlacedRead<PlacedRead>>();
+        List<PlacedRead> reads = new ArrayList<PlacedRead>();
         List<Object> mocks = new ArrayList<Object>();
         mocks.addAll(createHighQualityAgreeingRead("read1", SequenceDirection.REVERSE,reads));
         mocks.addAll(createHighQualityAgreeingRead("read2", SequenceDirection.FORWARD,reads));
@@ -117,7 +115,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     
     @Test
     public void oneReadLowQualForwardAgreement() throws DataStoreException{
-        List<VirtualPlacedRead<PlacedRead>> reads = new ArrayList<VirtualPlacedRead<PlacedRead>>();
+        List<PlacedRead> reads = new ArrayList<PlacedRead>();
         List<Object> mocks = new ArrayList<Object>();
         mocks.addAll(createLowQualityAgreeingRead("read1", SequenceDirection.FORWARD,reads));
         assertQualityClassBuiltCorrectly(reads, mocks);
@@ -125,28 +123,28 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
 
     @Test
     public void oneReadLowQualReverseAgreement() throws DataStoreException{
-        List<VirtualPlacedRead<PlacedRead>> reads = new ArrayList<VirtualPlacedRead<PlacedRead>>();
+        List<PlacedRead> reads = new ArrayList<PlacedRead>();
         List<Object> mocks = new ArrayList<Object>();
         mocks.addAll(createLowQualityAgreeingRead("read1", SequenceDirection.REVERSE,reads));
         assertQualityClassBuiltCorrectly(reads, mocks);
     }
     @Test
     public void oneReadLowQualReverseConflict() throws DataStoreException{
-        List<VirtualPlacedRead<PlacedRead>> reads = new ArrayList<VirtualPlacedRead<PlacedRead>>();
+        List<PlacedRead> reads = new ArrayList<PlacedRead>();
         List<Object> mocks = new ArrayList<Object>();
         mocks.addAll(createLowQualityConflictingRead("read1", SequenceDirection.REVERSE,reads));
         assertQualityClassBuiltCorrectly(reads, mocks);
     }
     @Test
     public void oneReadThresholdQualForwardConflictShouldCountAsHighQuality() throws DataStoreException{
-        List<VirtualPlacedRead<PlacedRead>> reads = new ArrayList<VirtualPlacedRead<PlacedRead>>();
+        List<PlacedRead> reads = new ArrayList<PlacedRead>();
         List<Object> mocks = new ArrayList<Object>();
         mocks.addAll(createThresholdQualityConflictingRead("read1", SequenceDirection.FORWARD,reads));
         assertQualityClassBuiltCorrectly(reads, mocks);
     }
     @Test
     public void oneReadHighQualForwardConflict() throws DataStoreException{
-        List<VirtualPlacedRead<PlacedRead>> reads = new ArrayList<VirtualPlacedRead<PlacedRead>>();
+        List<PlacedRead> reads = new ArrayList<PlacedRead>();
         List<Object> mocks = new ArrayList<Object>();
         mocks.addAll(createHighQualityConflictingRead("read1", SequenceDirection.FORWARD,reads));
         assertQualityClassBuiltCorrectly(reads, mocks);
@@ -154,7 +152,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     
     @Test
     public void manyReadsWithLowAndHighQualityAgreementsAndConflicts() throws DataStoreException{
-        List<VirtualPlacedRead<PlacedRead>> reads = new ArrayList<VirtualPlacedRead<PlacedRead>>();
+        List<PlacedRead> reads = new ArrayList<PlacedRead>();
         List<Object> mocks = new ArrayList<Object>();
         mocks.addAll(createHighQualityAgreeingRead("read1", SequenceDirection.FORWARD,reads));
         mocks.addAll(createHighQualityAgreeingRead("read2", SequenceDirection.REVERSE,reads));
@@ -171,7 +169,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
         assertQualityClassBuiltCorrectly(reads, mocks);
     }
 
-    private void assertQualityClassBuiltCorrectly(List<VirtualPlacedRead<PlacedRead>> reads,
+    private void assertQualityClassBuiltCorrectly(List<PlacedRead> reads,
             List<Object> mocks) throws DataStoreException {
         expect(coverageRegion.getElements()).andReturn(reads);
         replay(mocks.toArray());
@@ -183,77 +181,69 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     }
     
     
-    private List<Object> createHighQualityAgreeingRead(String id,SequenceDirection dir,List<VirtualPlacedRead<PlacedRead>> reads) throws DataStoreException {
+    private List<Object> createHighQualityAgreeingRead(String id,SequenceDirection dir,List<PlacedRead> reads) throws DataStoreException {
         return createAgreeingRead(id, dir, reads, highQuality);
     }
-    private List<Object> createLowQualityAgreeingRead(String id,SequenceDirection dir,List<VirtualPlacedRead<PlacedRead>> reads) throws DataStoreException {
+    private List<Object> createLowQualityAgreeingRead(String id,SequenceDirection dir,List<PlacedRead> reads) throws DataStoreException {
         return createAgreeingRead(id, dir, reads, lowQuality);
     }
-    private List<Object> createHighQualityConflictingRead(String id,SequenceDirection dir,List<VirtualPlacedRead<PlacedRead>> reads) throws DataStoreException {
+    private List<Object> createHighQualityConflictingRead(String id,SequenceDirection dir,List<PlacedRead> reads) throws DataStoreException {
         return createConflictingRead(id, dir, reads, highQuality);
     }
-    private List<Object> createLowQualityConflictingRead(String id,SequenceDirection dir,List<VirtualPlacedRead<PlacedRead>> reads) throws DataStoreException {
+    private List<Object> createLowQualityConflictingRead(String id,SequenceDirection dir,List<PlacedRead> reads) throws DataStoreException {
         return createConflictingRead(id, dir, reads, lowQuality);
     }
     private List<Object> createThresholdQualityAgreeingRead(
             String id, SequenceDirection dir,
-            List<VirtualPlacedRead<PlacedRead>> reads) throws DataStoreException {
+            List<PlacedRead> reads) throws DataStoreException {
         return createAgreeingRead(id, dir, reads, threshold);
     }
     private List<Object> createThresholdQualityConflictingRead(
             String id, SequenceDirection dir,
-            List<VirtualPlacedRead<PlacedRead>> reads) throws DataStoreException {
+            List<PlacedRead> reads) throws DataStoreException {
         return createConflictingRead(id, dir, reads, threshold);
     }
     private List<Object> createAgreeingRead(String id, SequenceDirection dir,
-            List<VirtualPlacedRead<PlacedRead>> reads, final PhredQuality returnedQuality) throws DataStoreException {
-        VirtualPlacedRead<PlacedRead> virtualRead = createMock(VirtualPlacedRead.class);
+            List<PlacedRead> reads, final PhredQuality returnedQuality) throws DataStoreException {
         PlacedRead realRead = createMock(PlacedRead.class);
         NucleotideEncodedGlyphs encodedBases = createMock(NucleotideEncodedGlyphs.class);
         EncodedGlyphs<PhredQuality> encodedQualities = createMock(EncodedGlyphs.class);
         expect(realRead.getId()).andReturn(id);
-        expect(virtualRead.getRealPlacedRead()).andReturn(realRead);
         expect(qualityFastaMap.get(id)).andReturn(encodedQualities);
-        expect(virtualRead.getStart()).andReturn(0L);
-        expect(virtualRead.getEncodedGlyphs()).andReturn(encodedBases);
-        final int realIndex = index+15;
-        expect(virtualRead.getRealIndexOf(index)).andReturn(realIndex);
+        expect(realRead.getStart()).andReturn(0L);
+        expect(realRead.getEncodedGlyphs()).andReturn(encodedBases);
         expect(encodedBases.get(index)).andReturn(consensusBase);  
-        expect(qualityValueStrategy.getQualityFor(realRead, encodedQualities, realIndex)).andReturn(returnedQuality);
-        expect(virtualRead.getSequenceDirection()).andReturn(dir);
+        expect(qualityValueStrategy.getQualityFor(realRead, encodedQualities, index)).andReturn(returnedQuality);
+        expect(realRead.getSequenceDirection()).andReturn(dir);
         if(returnedQuality == lowQuality){
             expect(builder.addLowQualityAgreement(dir)).andReturn(builder);
         }
         else{
             expect(builder.addHighQualityAgreement(dir)).andReturn(builder);
         }
-        reads.add(virtualRead);
-        return Arrays.asList(virtualRead, encodedBases, encodedQualities,realRead);
+        reads.add(realRead);
+        return Arrays.asList(realRead, encodedBases, encodedQualities);
     }
     
     private List<Object> createConflictingRead(String id, SequenceDirection dir,
-            List<VirtualPlacedRead<PlacedRead>> reads, final PhredQuality returnedQuality) throws DataStoreException {
-        VirtualPlacedRead<PlacedRead> virtualRead = createMock(VirtualPlacedRead.class);
+            List<PlacedRead> reads, final PhredQuality returnedQuality) throws DataStoreException {
         PlacedRead realRead = createMock(PlacedRead.class);
-        expect(virtualRead.getRealPlacedRead()).andReturn(realRead);
         NucleotideEncodedGlyphs encodedBases = createMock(NucleotideEncodedGlyphs.class);
         EncodedGlyphs<PhredQuality> encodedQualities = createMock(EncodedGlyphs.class);
         expect(realRead.getId()).andReturn(id);
         expect(qualityFastaMap.get(id)).andReturn(encodedQualities);
-        expect(virtualRead.getStart()).andReturn(0L);
-        expect(virtualRead.getEncodedGlyphs()).andReturn(encodedBases);
-        final int realIndex = index+15;
-        expect(virtualRead.getRealIndexOf(index)).andReturn(realIndex);
+        expect(realRead.getStart()).andReturn(0L);
+        expect(realRead.getEncodedGlyphs()).andReturn(encodedBases);
         expect(encodedBases.get(index)).andReturn(notConsensusBase);      
-        expect(qualityValueStrategy.getQualityFor(realRead, encodedQualities, realIndex)).andReturn(returnedQuality);
-        expect(virtualRead.getSequenceDirection()).andReturn(dir);
+        expect(qualityValueStrategy.getQualityFor(realRead, encodedQualities, index)).andReturn(returnedQuality);
+        expect(realRead.getSequenceDirection()).andReturn(dir);
         if(returnedQuality == lowQuality){
             expect(builder.addLowQualityConflict(dir)).andReturn(builder);
         }
         else{
             expect(builder.addHighQualityConflict(dir)).andReturn(builder);
         }
-        reads.add(virtualRead);
-        return Arrays.asList(virtualRead, encodedBases, encodedQualities,realRead);
+        reads.add(realRead);
+        return Arrays.asList(realRead, encodedBases, encodedQualities);
     }
 }

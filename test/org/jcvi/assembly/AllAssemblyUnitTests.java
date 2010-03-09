@@ -30,7 +30,6 @@ import org.jcvi.assembly.cas.AllCasUnitTests;
 import org.jcvi.assembly.contig.AllContigUnitTests;
 import org.jcvi.assembly.coverage.AllCoverageUnitTests;
 import org.jcvi.assembly.slice.AllSliceUnitTests;
-import org.jcvi.assembly.tasm.AllTasmUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -50,7 +49,6 @@ import org.junit.runners.Suite.SuiteClasses;
         AllRefUnitTests.class,
         AllContigUnitTests.class,
         AllCoverageUnitTests.class,
-        AllTasmUnitTests.class,
         AllAgpUnitTests.class,
         AllCasUnitTests.class,
         
