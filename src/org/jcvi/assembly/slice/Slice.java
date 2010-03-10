@@ -24,10 +24,42 @@
 package org.jcvi.assembly.slice;
 
 import java.util.List;
-
+/**
+ * A {@code Slice} is a one base wide cut of an assembly from zero 
+ * or more {@link SliceElement}s.
+ * @author dkatzel
+ *
+ *
+ */
 public interface Slice extends Iterable<SliceElement>{
+    /**
+     * Get the {@link SliceElement}s
+     * that contribute to this Slice.
+     * @return a List of all the SliceElements
+     * in this Slice, never null.
+     */
     List<SliceElement> getSliceElements();
+    /**
+     * Get the coverage depth of this Slice.  this 
+     * should be the same as the size of the
+     * List returned from {@link #getSliceElements()}.
+     * @return the coverage depth of this slice, will
+     * always be {@code >= 0}.
+     */
     int getCoverageDepth();
+    /**
+     * Does this {@link Slice} contain a 
+     * {@link SliceElement} with the given id.
+     * @param elementId the id of the SliceElement being queried.
+     * @return {@code true} if this Slice does contain
+     * a SliceElement with the given id; {@code false} otherwise.
+     */
     boolean containsElement(String elementId);
+    /**
+     * Get the SliceElement by id.
+     * @param elementId the id of the SliceElement to get.
+     * @return the {@link SliceElement} if exists; or {@code null}
+     * if there is no SliceElement for this Slice with that id.
+     */
     SliceElement getSliceElement(String elementId);
 }

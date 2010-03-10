@@ -72,7 +72,7 @@ public class DefaultSliceElement implements SliceElement {
         }
         SliceElement other = (SliceElement) obj;
         return 
-        CommonUtil.similarTo(getName(), other.getName()) &&
+        CommonUtil.similarTo(getId(), other.getId()) &&
         CommonUtil.similarTo(getBase(), other.getBase()) &&
         CommonUtil.similarTo(getQuality(), other.getQuality()) &&
         CommonUtil.similarTo(getSequenceDirection(), other.getSequenceDirection());
@@ -97,7 +97,7 @@ public class DefaultSliceElement implements SliceElement {
     @Override
     public String toString() {
         return String.format("name %s %s (%d) %s",
-                getName(),
+                getId(),
                 base.getName(),
                 quality.getNumber(),
                 direction);
@@ -105,7 +105,7 @@ public class DefaultSliceElement implements SliceElement {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return name;
     }
 

@@ -163,7 +163,7 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
                             //we don't have to check if we match currentelement
                             if(currentElement ==null){
                                 //first time through...
-                                currentElement = element.getName();
+                                currentElement = element.getId();
                                 break;
                             }
                                 //entering new best segment so we are done...
@@ -177,7 +177,7 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
                     }
                     
                 }else{
-                    currentElement = slice.getSliceElements().get(0).getName();
+                    currentElement = slice.getSliceElements().get(0).getId();
                 }
                 i++;
             }     

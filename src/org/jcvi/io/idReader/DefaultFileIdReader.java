@@ -107,7 +107,7 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
         try {
             return getIds();
         } catch (IdReaderException e) {
-            throw new IllegalStateException("could not create iterator over ids");
+            throw new IllegalStateException("could not create iterator over ids",e);
         }
     }
 }

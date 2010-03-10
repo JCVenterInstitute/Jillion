@@ -72,7 +72,7 @@ public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
                         previouslyEnteredRange = Range.buildRange(start,end);
                         bestSegments.put(previouslyEnteredRange, new DefaultAceBestSegment(currentElement, previouslyEnteredRange));
                     }
-                    currentElement = element.getName();
+                    currentElement = element.getId();
                     start=i;
                     end=i;
                     foundMatch=true;
