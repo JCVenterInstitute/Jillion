@@ -93,7 +93,7 @@ public class GenerateSNPMatrix {
                 }
                 Slice slice = sliceMap.getSlice(gappedOffset);
                 for(SliceElement element : slice.getSliceElements()){
-                    String id = element.getName();
+                    String id = element.getId();
                     if(!snpMap.containsKey(id)){
                         snpMap.put(id, new HashMap<Integer, NucleotideGlyph>());
                     }

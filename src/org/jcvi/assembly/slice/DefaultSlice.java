@@ -36,7 +36,7 @@ public class DefaultSlice implements Slice{
     public DefaultSlice(List<SliceElement> elements){
         this.elements = new HashMap<String, SliceElement>(elements.size(),1);
         for(SliceElement element : elements){
-            this.elements.put(element.getName(), element);
+            this.elements.put(element.getId(), element);
         }
         
     }
