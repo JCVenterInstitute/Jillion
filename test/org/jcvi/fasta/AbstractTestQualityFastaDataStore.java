@@ -34,7 +34,7 @@ import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.junit.Test;
 import static org.junit.Assert.*;
-public abstract class AbstractTestQualityFastaMap {
+public abstract class AbstractTestQualityFastaDataStore {
 
     private static final String QUAL_FILE_PATH = "files/19150.qual";
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
@@ -173,7 +173,7 @@ public abstract class AbstractTestQualityFastaMap {
                                 })));
     @Test
     public void parseFile() throws IOException, DataStoreException{
-        DataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> sut = buildQualityFastaMapFrom(new File(AbstractTestQualityFastaMap.class.getResource(QUAL_FILE_PATH).getFile()));
+        DataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> sut = buildQualityFastaMapFrom(new File(AbstractTestQualityFastaDataStore.class.getResource(QUAL_FILE_PATH).getFile()));
         assertEquals(321, sut.size());
         assertEquals(JGBAA02T21A12PB1A1F, sut.get("JGBAA02T21A12PB1A1F"));
         assertEquals(JGBAA07T21D08MP605F, sut.get("JGBAA07T21D08MP605F"));

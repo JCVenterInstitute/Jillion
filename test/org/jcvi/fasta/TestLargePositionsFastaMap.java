@@ -29,7 +29,7 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.num.ShortGlyph;
 
-public class TestLargePositionsFastaMap extends AbstractTestPositionsFastaMap{
+public class TestLargePositionsFastaMap extends AbstractTestPositionsFastaDataStore{
 
     @Override
     protected DataStore<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> createPositionFastaMap(File fastaFile)
