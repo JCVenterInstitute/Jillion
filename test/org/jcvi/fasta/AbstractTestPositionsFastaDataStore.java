@@ -36,7 +36,7 @@ import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
 import org.junit.Test;
 
-public abstract class AbstractTestPositionsFastaMap {
+public abstract class AbstractTestPositionsFastaDataStore {
     private static final String QUAL_FILE_PATH = "files/1119369023656.peak";
     private static final GlyphCodec<ShortGlyph> CODEC = DefaultShortGlyphCodec.getInstance();
     
@@ -115,7 +115,7 @@ public abstract class AbstractTestPositionsFastaMap {
             )));
     @Test
     public void parseFile() throws Exception{
-        DataStore<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> sut = createPositionFastaMap(new File(TestDefaultPositionsFastaMap.class.getResource(QUAL_FILE_PATH).getFile()));
+        DataStore<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> sut = createPositionFastaMap(new File(TestDefaultPositionsFastaDataStore.class.getResource(QUAL_FILE_PATH).getFile()));
         assertEquals(1, sut.size());
         assertEquals(expected, sut.get("1119369023656"));
     }

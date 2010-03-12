@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Apr 20, 2009
+ * Created on Jul 10, 2009
  *
  * @author dkatzel
  */
@@ -26,14 +26,16 @@ package org.jcvi.fasta;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.datastore.DataStore;
+import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.num.ShortGlyph;
 
-public class TestDefaultSequenceFastaMapWithNoComment extends AbstractTestSequenceFastaMapWithNoComment{
+
+public class TestDefaultPositionsFastaDataStore extends AbstractTestPositionsFastaDataStore{
+
 
     @Override
-    protected DefaultNucleotideFastaFileDataStore buildMap(
-            File file) throws IOException {
-        return new DefaultNucleotideFastaFileDataStore(file);
+    protected DataStore<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> createPositionFastaMap(File fastaFile) throws IOException {
+        return new DefaultPositionFastaFileDataStore(fastaFile);
     }
-    
-
 }

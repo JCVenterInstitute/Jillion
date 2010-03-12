@@ -29,7 +29,7 @@ import java.io.IOException;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
-public class TestLargeSequenceFastaMap  extends AbstractTestSequenceFastaMap {
+public class TestLargeSequenceFastaMap  extends AbstractTestSequenceFastaDataStore {
 
     @Override
     protected DataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> buildSequenceFastaMap(File file)

@@ -30,7 +30,7 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
-public class TestLargeQualityFastaMap extends AbstractTestQualityFastaMap{
+public class TestLargeQualityFastaMap extends AbstractTestQualityFastaDataStore{
 
     @Override
     protected  DataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> buildQualityFastaMapFrom(File file)

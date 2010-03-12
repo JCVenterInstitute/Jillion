@@ -32,7 +32,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.junit.Test;
 import static org.junit.Assert.*;
-public abstract class AbstractTestSequenceFastaMap {
+public abstract class AbstractTestSequenceFastaDataStore {
 
     protected static final String FASTA_FILE_PATH = "files/19150.fasta";
    
@@ -139,10 +139,10 @@ public abstract class AbstractTestSequenceFastaMap {
             "GCCATCAATTAATGTCGAATTGTTTAA"
     );
     protected File getFile() {
-        return new File(AbstractTestSequenceFastaMap.class.getResource(FASTA_FILE_PATH).getFile());
+        return new File(AbstractTestSequenceFastaDataStore.class.getResource(FASTA_FILE_PATH).getFile());
     }
     protected InputStream getFileAsStream(){
-        return AbstractTestSequenceFastaMap.class.getResourceAsStream(FASTA_FILE_PATH);
+        return AbstractTestSequenceFastaDataStore.class.getResourceAsStream(FASTA_FILE_PATH);
     }
     
     @Test

@@ -39,14 +39,14 @@ import org.junit.runners.Suite.SuiteClasses;
      TestDefaultSequenceFastaMap.class,
      TestLargeSequenceFastaMap.class,
      
-     TestDefaultSequenceFastaMapWithNoComment.class,
+     TestDefaultSequenceFastaDataStoreWithNoComment.class,
      TestLargeSequenceFastaMapWithNoComment.class,
      
      TestFlowgramQualityFastaMap.class,
      
      TestPositionFastaRecord.class,
      
-     TestDefaultPositionsFastaMap.class,
+     TestDefaultPositionsFastaDataStore.class,
      TestLargePositionsFastaMap.class,
      TestLargeQualityFastaMap.class,
      
