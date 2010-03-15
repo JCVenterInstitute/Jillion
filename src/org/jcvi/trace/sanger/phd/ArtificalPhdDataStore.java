@@ -36,7 +36,14 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
+/**
+ * {@code ArtificialPhdDataStore} is a {@link DataStore} of
+ * Nucleotide and PhredQuality data that has been adapted to 
+ * match the {@link Phd} interface.
+ * @author dkatzel
+ *
+ *
+ */
 public class ArtificalPhdDataStore extends AbstractDataStore<Phd>{
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern(
     "EEE MMM dd kk:mm:ss yyyy");

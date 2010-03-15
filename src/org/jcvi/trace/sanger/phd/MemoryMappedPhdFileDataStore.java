@@ -40,6 +40,7 @@ import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.ByteBufferInputStream;
+import org.jcvi.util.DefaultMemoryMappedFileRange;
 import org.jcvi.util.MemoryMappedFileRange;
 
 public class MemoryMappedPhdFileDataStore extends AbstractPhdFileDataStore{
@@ -50,7 +51,9 @@ public class MemoryMappedPhdFileDataStore extends AbstractPhdFileDataStore{
     private boolean initialized=false;
     private final File phdBall;
     private int currentLineLength;
-    
+    public MemoryMappedPhdFileDataStore(File phdBall){
+        this(phdBall, new DefaultMemoryMappedFileRange());
+    }
     /**
      * @param recordLocations
      */
