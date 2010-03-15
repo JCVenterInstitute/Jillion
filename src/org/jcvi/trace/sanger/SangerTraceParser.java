@@ -24,13 +24,16 @@
 package org.jcvi.trace.sanger;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFCodec;
@@ -57,6 +60,15 @@ public class SangerTraceParser implements SangerTraceCodec{
     }
     private SangerTraceParser(){}
     
+    public SangerTrace decode(File traceFile) throws TraceDecoderException, FileNotFoundException{
+        InputStream in = new FileInputStream(traceFile);
+        try{
+            return decode(in);
+        }
+        finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+    }
     @Override
     public SangerTrace decode(InputStream in) throws TraceDecoderException {
         BufferedInputStream bufferedIn = new BufferedInputStream(in);

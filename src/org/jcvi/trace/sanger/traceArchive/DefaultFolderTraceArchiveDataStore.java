@@ -24,10 +24,8 @@
 package org.jcvi.trace.sanger.traceArchive;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.trace.TraceDecoderException;
 
 public class DefaultFolderTraceArchiveDataStore extends AbstractFolderTraceArchiveDataStore{
 

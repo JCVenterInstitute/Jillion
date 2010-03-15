@@ -23,7 +23,6 @@
  */
 package org.jcvi.trace.sanger.phd;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -32,13 +31,11 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.num.ShortGlyphFactory;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Peaks;
 
 public class DefaultPhd implements Phd {
 
-    private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
     
     private final NucleotideEncodedGlyphs basecalls;
     private final EncodedGlyphs<PhredQuality> qualities;
