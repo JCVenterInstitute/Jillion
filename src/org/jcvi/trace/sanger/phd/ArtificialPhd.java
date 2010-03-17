@@ -38,6 +38,16 @@ import org.jcvi.sequence.Peaks;
 public class ArtificialPhd implements Phd{
 
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
+    /**
+     * The Position of the first peak in a Newbler created
+     * fake 454 phd record.
+     */
+    private static final int NEWBLER_454_START_POSITION = 15;
+    /**
+     * The number of positions between every basecall
+     * in a Newbler created fake 454 phd record.
+     */
+    private static final int NEWBLER_454_PEAK_SPACING = 19;
     
     private final NucleotideEncodedGlyphs basecalls;
     private final EncodedGlyphs<PhredQuality> qualities;
@@ -46,6 +56,41 @@ public class ArtificialPhd implements Phd{
    private Peaks fakePositions=null;
    private final int numberOfPositionsForEachPeak;
    private final int numberOfBases;
+   private final int positionOfFirstPeak;
+   /**
+    * Create an {@link ArtificialPhd} record that matches
+    * the way Newbler creates phd records for 454 reads.
+    * This is needed so tools like consed will correctly
+    * space the fake chromatograms for 454 reads since it uses
+    * 454 developed tools which rely on this spacing.
+    * @param basecalls the basecalls for this Phd.
+    * @param qualities the qualities for this Phd.
+    * @param comments the comments for this Phd.
+    * @param tags the {@link PhdTag}s for this Phd.
+    * @return a new {@link ArtificialPhd} which has position data that matches
+    * what would have been created by Newbler.
+    */
+   public static ArtificialPhd createNewbler454Phd(NucleotideEncodedGlyphs basecalls,
+            EncodedGlyphs<PhredQuality> qualities,
+           Properties comments, List<PhdTag> tags){
+       return new ArtificialPhd(basecalls, qualities, comments, tags, NEWBLER_454_START_POSITION,NEWBLER_454_PEAK_SPACING);
+   }
+   /**
+    * Create an {@link ArtificialPhd} record that matches
+    * the way Newbler creates phd records for 454 reads.
+    * This is needed so tools like consed will correctly
+    * space the fake chromatograms for 454 reads since it uses
+    * 454 developed tools which rely on this spacing.
+    * @param basecalls the basecalls for this Phd.
+    * @param qualities the qualities for this Phd.
+    * @return a new {@link ArtificialPhd} which has position data that matches
+    * what would have been created by Newbler.
+    */
+   public static ArtificialPhd createNewbler454Phd(NucleotideEncodedGlyphs basecalls,
+            EncodedGlyphs<PhredQuality> qualities){
+       return ArtificialPhd.createNewbler454Phd(basecalls, qualities, 
+               new Properties(),Collections.<PhdTag>emptyList());
+   }
    /**
     * {@code buildArtificalPhd} creates a {@link DefaultPhd}
     * using the given basecalls and qualities
@@ -84,16 +129,35 @@ public class ArtificialPhd implements Phd{
     public ArtificialPhd(NucleotideEncodedGlyphs basecalls,
             EncodedGlyphs<PhredQuality> qualities,
            Properties comments, List<PhdTag> tags,int numberOfPositionsForEachPeak){
-        this.basecalls = basecalls;
-        this.qualities = qualities;
-        this.tags = tags;
-        this.comments = comments;
-        this.numberOfBases = (int)basecalls.getLength();
-        this.numberOfPositionsForEachPeak = numberOfPositionsForEachPeak;
+       this(basecalls, qualities,comments, tags,numberOfPositionsForEachPeak,numberOfPositionsForEachPeak);
         
         
     }
-
+    /**
+     * {@code buildArtificalPhd} creates a {@link DefaultPhd}
+     * using the given basecalls and qualities, comments and tags
+     * but creates artificial peak data spacing each
+     * peak {@code numberOfPositionsForEachPeak} apart.
+     * @param basecalls the basecalls for this Phd.
+     * @param qualities the qualities for this Phd.
+     * @param comments the comments for this Phd.
+     * @param tags the {@link PhdTag}s for this Phd.
+     * @param numberOfPositionsForEachPeak number of positions each
+     * peak should be separated as.
+     * @return a new DefaultPhd using the given values.
+     */
+     public ArtificialPhd(NucleotideEncodedGlyphs basecalls,
+             EncodedGlyphs<PhredQuality> qualities,
+            Properties comments, List<PhdTag> tags,int positionOfFirstPeak,int numberOfPositionsForEachPeak){
+         this.basecalls = basecalls;
+         this.qualities = qualities;
+         this.tags = tags;
+         this.comments = comments;
+         this.numberOfBases = (int)basecalls.getLength();
+         this.numberOfPositionsForEachPeak = numberOfPositionsForEachPeak;
+         this.positionOfFirstPeak = positionOfFirstPeak;
+         
+     }
     @Override
     public Properties getComments() {
         return comments;
@@ -118,7 +182,7 @@ public class ArtificialPhd implements Phd{
             List<ShortGlyph> fakePositions = new ArrayList<ShortGlyph>(numberOfBases);
             
             for(int i=0; i< numberOfBases; i++){
-                fakePositions.add(PEAK_FACTORY.getGlyphFor(i * numberOfPositionsForEachPeak +numberOfPositionsForEachPeak ));
+                fakePositions.add(PEAK_FACTORY.getGlyphFor(i * numberOfPositionsForEachPeak +positionOfFirstPeak ));
             }
             this.fakePositions = new Peaks(fakePositions);
         }
