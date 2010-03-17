@@ -38,13 +38,29 @@ public class DefaultNucleotideSffDataStore implements NucleotideDataStore{
     private final SffDataStore flowgramDataStore;
     private final boolean trim;
     /**
-     * @param flowgramDataStore
+     * Create a {@link NucleotideDataStore} using the 
+     * basecalls from the given {@link SffDataStore}.
+     *
+     * @param flowgramDataStore the {@link SffDataStore} to
+     * wrap.
+     * @param trim should the basecalls be trimmed as specified
+     * by the flowgram.
      */
     public DefaultNucleotideSffDataStore(
             SffDataStore flowgramDataStore, boolean trim) {
         this.flowgramDataStore = flowgramDataStore;
         this.trim = trim;
     }
+    /**
+     * Create a {@link NucleotideDataStore} using the 
+     * basecalls from the given {@link SffDataStore}.
+     * This is the same as {@link #DefaultNucleotideSffDataStore(SffDataStore, boolean)
+     * new DefaultNucleotideSffDataStore( flowgramDataStore,false)}
+     *
+     * @param flowgramDataStore the {@link SffDataStore} to
+     * wrap.
+     * @see #DefaultNucleotideSffDataStore(SffDataStore, boolean)
+     */
     public DefaultNucleotideSffDataStore(
             SffDataStore flowgramDataStore) {
         this(flowgramDataStore, false);
@@ -58,6 +74,9 @@ public class DefaultNucleotideSffDataStore implements NucleotideDataStore{
     public NucleotideEncodedGlyphs get(String id) throws DataStoreException {
         final Flowgram flowgram = flowgramDataStore.get(id);
         NucleotideEncodedGlyphs fullRange= flowgram.getBasecalls();
+        if(id.equals("FTF2AAH02HMW3K")){
+            System.out.println("here");
+        }
         if(trim){
            
             return new DefaultNucleotideEncodedGlyphs(

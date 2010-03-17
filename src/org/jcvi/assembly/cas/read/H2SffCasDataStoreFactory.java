@@ -43,8 +43,7 @@ public class H2SffCasDataStoreFactory implements CasDataStoreFactory{
         }
         try {
             return new H2NucleotideSffDataStore(new File(pathToDataStore), 
-                    new H2NucleotideDataStore(),
-                    true);
+                    new H2NucleotideDataStore());
         } catch (Exception e) {
            throw new CasDataStoreFactoryException("could not create H2 Sff Nucleotide DataStore for "+ pathToDataStore,e);
         } 
@@ -58,8 +57,7 @@ public class H2SffCasDataStoreFactory implements CasDataStoreFactory{
         }
         try {
             return new H2QualitySffDataStore(new File(pathToDataStore), 
-                    new H2QualityDataStore(),
-                    true);
+                    new H2QualityDataStore());
         } catch (Exception e) {
            throw new CasDataStoreFactoryException("could not create H2 Sff Quality DataStore for "+ pathToDataStore,e);
         } 

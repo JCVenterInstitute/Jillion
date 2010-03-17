@@ -17,6 +17,6 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /**
- * Set of Classes use to simplify working with HTTP.
+ * Set of Classes used to simplify working with HTTP.
  */
 package org.jcvi.http;

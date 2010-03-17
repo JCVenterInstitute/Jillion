@@ -36,7 +36,12 @@ public interface EncodedGlyphs<T extends Glyph> {
     int hashCode();
 
     boolean equals(Object obj);
-    
+    /**
+     * Decodes the Glyphs for the given TrimRange
+     * @param range the range to trim against, if null, then decode
+     * all glyphs (the same as {@link #decode()}).
+     * @return
+     */
     List<T> decode(Range range);
 
 }

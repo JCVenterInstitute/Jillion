@@ -62,6 +62,9 @@ public class EncodedShortGlyph implements EncodedGlyphs<ShortGlyph>{
     }
     @Override
     public List<ShortGlyph> decode(Range range) {
+        if(range==null){
+            return decode();
+        }
         List<ShortGlyph> result = new ArrayList<ShortGlyph>();
         for(long index : range){
             result.add(get((int)index));

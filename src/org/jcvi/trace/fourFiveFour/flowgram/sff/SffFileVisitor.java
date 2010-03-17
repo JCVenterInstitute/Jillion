@@ -24,12 +24,51 @@
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import org.jcvi.io.FileVisitor;
-
+/**
+ * {@code SffFileVisitor} is a {@link FileVisitor}
+ * implementation for 454 .sff binary encoded files.
+ * @author dkatzel
+ * @see SffParser
+ *
+ */
 public interface SffFileVisitor extends FileVisitor {
-
+    /**
+     * Visit the header information that is common to 
+     * all reads in this sff file.  The Boolean
+     * return value allows visitors to tell the parser
+     * to continue parsing the sff data or to halt parsing
+     * entirely.
+     * @param commonHeader the {@link SFFCommonHeader} of this sff
+     * file being parsed.
+     * @return {@code true} to continue parsing the
+     * SFF file and move on to the reads;
+     * {@code false} to stop parsing the file.
+     */
     boolean visitCommonHeader(SFFCommonHeader commonHeader);
-    
+    /**
+     * Visit the header for the current read.  The Boolean
+     * return value allows visitors to tell the parser
+     * to visit this read's data or to skip it and move
+     * onto the next read.
+     * @param readHeader the parsed header for the current read
+     * being parsed.
+     * @return {@code true} to parse the read data for this 
+     * read; {@code false} to skip this read and move on to
+     * the next.
+     */
     boolean visitReadHeader(SFFReadHeader readHeader);
-    
+    /**
+     * Visit the read data for the current read.  The Boolean
+     * return value allows visitors to tell the parser
+     * to continue parsing the sff data or to halt parsing
+     * entirely.  (this is useful if a visitor has visited all the 
+     * reads it cares about and wants to stop parsing to save time and
+     * resources.
+     * @param readData the data for the current read
+     * being parsed.
+     * @return {@code true} to continue parsing the
+     * SFF file and move on to the next read header;
+     * {@code false} to stop parsing the file.
+     */
     boolean visitReadData(SFFReadData readData);
 }

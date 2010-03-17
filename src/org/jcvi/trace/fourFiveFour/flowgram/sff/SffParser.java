@@ -38,6 +38,14 @@ public class SffParser {
     private static final SFFReadDataCodec readDataCodec =new DefaultSFFReadDataCodec();
     
     private SffParser(){}
+    /**
+     * Parse the given sffFile and call the appropriate visitXXX methods
+     * on the given visitor.
+     * @param sffFile the sff file to visit.
+     * @param visitor the visitor to visit.
+     * @throws SFFDecoderException if there is a problem parsing the sff data.
+     * @throws NullPointerException if the sffFile or visitor are null.
+     */
     public static void parseSFF(File sffFile, SffFileVisitor visitor) throws SFFDecoderException, FileNotFoundException{
         InputStream in = new FileInputStream(sffFile);
         try{
@@ -46,35 +54,45 @@ public class SffParser {
             IOUtil.closeAndIgnoreErrors(in);
         }
     }
+    /**
+     * Parse the given {@link InputStream} containing sff encoded
+     * data and call the appropriate visitXXX methods on the given visitor.
+     * @param in {@link InputStream} containing sff encoded
+     * data
+     * @param visitor the visitor to visit.
+     * @throws SFFDecoderException if there is a problem parsing the sff data.
+     * @throws NullPointerException if the inputstream or visitor are null.
+     */
     public static void parseSFF(InputStream in, SffFileVisitor visitor) throws SFFDecoderException{
         DataInputStream dataIn = new DataInputStream(in);
         visitor.visitFile();
         SFFCommonHeader commonHeader =commonHeaderCodec.decodeHeader(dataIn);
-        visitor.visitCommonHeader(commonHeader);
+        if(visitor.visitCommonHeader(commonHeader)){
         
-        final long numberOfReads = commonHeader.getNumberOfReads();
-        final int numberOfFlowsPerRead = commonHeader.getNumberOfFlowsPerRead();
-        for(long i=0; i<numberOfReads; i++){
-            SFFReadHeader readHeader = readHeaderCodec.decodeReadHeader(dataIn);
-            if(visitor.visitReadHeader(readHeader)){            
-                final int numberOfBases = readHeader.getNumberOfBases();
-                SFFReadData readData = readDataCodec.decode(dataIn,
-                                numberOfFlowsPerRead,
-                                numberOfBases);
-                if(!visitor.visitReadData(readData)){
-                    break;
+            final long numberOfReads = commonHeader.getNumberOfReads();
+            final int numberOfFlowsPerRead = commonHeader.getNumberOfFlowsPerRead();
+            for(long i=0; i<numberOfReads; i++){
+                SFFReadHeader readHeader = readHeaderCodec.decodeReadHeader(dataIn);
+                if(visitor.visitReadHeader(readHeader)){            
+                    final int numberOfBases = readHeader.getNumberOfBases();
+                    SFFReadData readData = readDataCodec.decode(dataIn,
+                                    numberOfFlowsPerRead,
+                                    numberOfBases);
+                    if(!visitor.visitReadData(readData)){
+                        break;
+                    }
+                }else{
+                    //skip length of readData
+                    int readDataLength = SFFUtil.getReadDataLength(numberOfFlowsPerRead, readHeader.getNumberOfBases());
+                    int padding =SFFUtil.caclulatePaddedBytes(readDataLength);
+                    try {
+                        IOUtil.blockingSkip(dataIn, readDataLength+padding);
+                    } catch (IOException e) {
+                        throw new SFFDecoderException("could not skip read data block");
+                    }
                 }
-            }else{
-                //skip length of readData
-                int readDataLength = SFFUtil.getReadDataLength(numberOfFlowsPerRead, readHeader.getNumberOfBases());
-                int padding =SFFUtil.caclulatePaddedBytes(readDataLength);
-                try {
-                    IOUtil.blockingSkip(dataIn, readDataLength+padding);
-                } catch (IOException e) {
-                    throw new SFFDecoderException("could not skip read data block");
-                }
+                
             }
-            
         }
         visitor.visitEndOfFile();
         

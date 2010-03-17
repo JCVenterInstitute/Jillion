@@ -80,6 +80,9 @@ public abstract class AbstractEnocdedNucleotideGlyphs implements NucleotideEncod
     
     @Override
     public List<NucleotideGlyph> decode(Range range) {
+        if(range==null){
+            return decode();
+        }
         List<NucleotideGlyph> result = new ArrayList<NucleotideGlyph>();
         for(long index : range){
             result.add(get((int)index));
