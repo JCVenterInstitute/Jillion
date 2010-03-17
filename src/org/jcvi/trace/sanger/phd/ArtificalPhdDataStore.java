@@ -78,10 +78,9 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd>{
        if(basecalls ==null){
            throw new NullPointerException("could not find basecalls for "+id);
        }
-    return new ArtificialPhd(basecalls, 
+    return ArtificialPhd.createNewbler454Phd(basecalls, 
                 qualDataStore.get(id),
-                comments,Collections.<PhdTag>emptyList(),
-                12);
+                comments,Collections.<PhdTag>emptyList());
     }
 
     @Override
