@@ -23,13 +23,25 @@
  */
 package org.jcvi.fasta;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
+
+import org.jcvi.io.IOUtil;
 
 public class FastaParser {
 
     private FastaParser(){}
-    
+    public static void parseFasta(File fastaFile, FastaVisitor visitor) throws FileNotFoundException{
+        InputStream in = new FileInputStream(fastaFile);
+        try{
+            parseFasta(in,visitor);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+    }
     public static void parseFasta(InputStream in, FastaVisitor visitor){
         Scanner scanner = new Scanner(in).useDelimiter("\n");
         visitor.visitFile();

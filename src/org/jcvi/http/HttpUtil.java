@@ -28,6 +28,12 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 
 
+/**
+ * Utility Class for HTTP data.
+ * @author jsitz@jcvi.org
+ *
+ *
+ */
 public final class HttpUtil {
 
     private HttpUtil(){}
@@ -35,10 +41,15 @@ public final class HttpUtil {
     /** The default character encoding for text data */
     public static final Charset ASCII = Charset.forName("ASCII");
 
-    /** The separator string to place between variables */
+    /** The separator character to place between variables */
     public static final char VAR_SEPARATOR = '&';
-    /** The separator string to place between variable names and their values */
+    /** The separator character to place between variable names and their values */
     public static final char VALUE_SEPARATOR = '=';
+    
+    /** The separator character  o place between variables as a byte array*/
+    public static final byte[] VAR_SEPARATOR_BYTES = Character.toString(VAR_SEPARATOR).getBytes(ASCII);
+    /** The separator character to place between variable names and their values as a byte array*/
+    public static final byte[] VALUE_SEPARATOR_BYTES = Character.toString(VALUE_SEPARATOR).getBytes(ASCII);
     /**
      * Java Property key which points the trust store to 
      * use for SSL Authentication.

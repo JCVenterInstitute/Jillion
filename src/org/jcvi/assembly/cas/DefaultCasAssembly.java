@@ -27,16 +27,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jcvi.assembly.cas.read.CasDataStoreFactory;
 import org.jcvi.assembly.cas.read.AbstractCasFileNucleotideDataStore;
 import org.jcvi.assembly.cas.read.DefaultCasFileQualityDataStore;
 import org.jcvi.assembly.cas.read.ReadCasFileNucleotideDataStore;
 import org.jcvi.assembly.cas.read.ReferenceCasFileNucleotideDataStore;
+import org.jcvi.assembly.cas.read.ValidRangeDataStore;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
+import org.jcvi.fasta.FastaParser;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.trace.fourFiveFour.flowgram.sff.SffParser;
 import org.jcvi.util.MultipleWrapper;
 
 public class DefaultCasAssembly implements CasAssembly{
@@ -134,8 +138,15 @@ public class DefaultCasAssembly implements CasAssembly{
                 CasParser.parseCas(casFile, MultipleWrapper.createMultipleWrapper(
                         CasFileVisitor.class, 
                         readIdLookup, referenceIdLookup,nucleotideDataStore,referenceNucleotideDataStore,qualityDataStore));
-            
-            
+            ValidRangeDataStore validRangeDataStore = new ValidRangeDataStore();
+            for(File readFile : readIdLookup.getFiles()){
+                String extension =FilenameUtils.getExtension(readFile.getName());
+                if("sff".equals(extension)){
+                    SffParser.parseSFF(readFile, validRangeDataStore);
+                }else if("fasta".equals(extension)){
+                    FastaParser.parseFasta(readFile, validRangeDataStore);
+                }
+            }
             DefaultCasGappedReferenceMap gappedReferenceMap = new DefaultCasGappedReferenceMap(referenceNucleotideDataStore, referenceIdLookup);
             CasParser.parseCas(casFile, gappedReferenceMap);
            
@@ -144,7 +155,8 @@ public class DefaultCasAssembly implements CasAssembly{
                     referenceIdLookup, 
                     readIdLookup, 
                     gappedReferenceMap, 
-                    nucleotideDataStore);
+                    nucleotideDataStore,
+                    validRangeDataStore);
             
             CasParser.parseCas(casFile, casDatastore);
             return new DefaultCasAssembly(casDatastore, 
@@ -152,7 +164,7 @@ public class DefaultCasAssembly implements CasAssembly{
                             nucleotideDataStore, referenceNucleotideDataStore), 
                     qualityDataStore, 
                     readIdLookup, referenceIdLookup);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new IllegalStateException("error building CasAssembly",e);
             }
         }

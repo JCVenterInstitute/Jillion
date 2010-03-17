@@ -28,10 +28,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import org.jcvi.auth.JCVIEncodedAuthorizer;
 import org.jcvi.http.HttpGetRequestBuilder;
+import org.jcvi.http.HttpPostStream;
 import org.jcvi.io.fileServer.ReadWriteFileServer;
 import org.jcvi.util.StringUtilities;
 import org.jtc.chromatogram_archiver.api.archiver.client.JTCChromatogramArchiver;
@@ -229,11 +231,18 @@ public abstract class JcviTraceFileServer implements TraceFileServer{
     }
 
     protected HttpURLConnection createURLConnectionFor(String id, RequestType type, FileType fileType, ReturnFormat returnFormat ) throws MalformedURLException, IOException{
-        HttpURLConnection connection = generateTraceFileServerURLConnection(id, type,
-                fileType, returnFormat);
-        connection.setDoInput(true);
+        
+        HttpURLConnection connection = (HttpURLConnection)new URL(urlBase).openConnection();
+        connection.setRequestMethod("POST");
+        connection.setDoOutput(true);
         connection.setUseCaches(true);
         connection.setRequestProperty("Authorization", authorizer.getEncodedAuthorization());
+        HttpPostStream postStream = new HttpPostStream(connection);
+        postStream.writeVariable(type.toString()+"s", id)
+        .writeVariable("TraceFileType", fileType)
+        .writeVariable("ReturnFormat", returnFormat);
+        
+        
         return connection;
                   
     }
@@ -257,7 +266,7 @@ public abstract class JcviTraceFileServer implements TraceFileServer{
 
     public boolean contains(String id,RequestType requestType) throws IOException {
         HttpURLConnection connection =createURLConnectionFor(id, requestType, FileType.ZTR, ReturnFormat.SINGLE);
-        connection.setRequestMethod("HEAD");
+       
         return responseCodeIsOK(connection);
     }
     @Override

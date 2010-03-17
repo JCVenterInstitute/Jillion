@@ -43,7 +43,7 @@ import org.jcvi.sequence.SequenceDirection;
 public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<DefaultCasPlacedRead>{
     private final String readId;
     private long startOffset;
-    private long validRangeStart=0;
+    private long validRangeStart;
     private long currentOffset=0;
     private boolean outsideValidRange=true;
     private final List<NucleotideGlyph> allBases;
@@ -51,18 +51,29 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     private final SequenceDirection dir;
     private int numberOfGaps=0;
     private long referenceOffset;
-    public DefaultCasPlacedReadFromCasAlignmentBuilder(String readId,EncodedGlyphs<NucleotideGlyph> fullRangeSequence, boolean isReversed, long startOffset){
-        this.readId = readId;
-        this.startOffset = startOffset;
-        this.referenceOffset = startOffset;
+    private final long fullUngappedLength;
+    public DefaultCasPlacedReadFromCasAlignmentBuilder(String readId,
+            EncodedGlyphs<NucleotideGlyph> fullRangeSequence, 
+            boolean isReversed, long startOffset,
+            Range traceTrimRange){
         if(fullRangeSequence ==null){
             throw new NullPointerException("null fullRangeSequence for id "+ readId);
         }
+        if(readId.equals("FTF2AAH01CT5VL")){
+            System.out.println("here");
+        }
+        this.readId = readId;
+        this.startOffset = startOffset;
+        this.referenceOffset = startOffset;
+        this.fullUngappedLength = fullRangeSequence.getLength();
+        
         if(isReversed){
-            allBases = NucleotideGlyph.reverseCompliment(fullRangeSequence.decode());
+            allBases = NucleotideGlyph.reverseCompliment(fullRangeSequence.decode(traceTrimRange));
+            validRangeStart = traceTrimRange ==null?0:AssemblyUtil.reverseComplimentValidRange(traceTrimRange, fullUngappedLength).getStart();
         }
         else{
-            allBases = fullRangeSequence.decode();
+            allBases = fullRangeSequence.decode(traceTrimRange);
+            validRangeStart = traceTrimRange ==null?0:traceTrimRange.getStart();
         }
         dir = isReversed? SequenceDirection.REVERSE: SequenceDirection.FORWARD;
        // dir= SequenceDirection.FORWARD;
@@ -133,7 +144,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     public DefaultCasPlacedRead build() {
         Range validRange = Range.buildRangeOfLength(0, validBases.size()-numberOfGaps).shiftRight(validRangeStart).convertRange(CoordinateSystem.RESIDUE_BASED);
         if(dir==SequenceDirection.REVERSE){
-            validRange = AssemblyUtil.reverseComplimentValidRange(validRange, allBases.size());
+            validRange = AssemblyUtil.reverseComplimentValidRange(validRange, fullUngappedLength);
         }
         Read<NucleotideEncodedGlyphs> read = new DefaultRead(readId,
                         new DefaultNucleotideEncodedGlyphs(validBases,validRange));

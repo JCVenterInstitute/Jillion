@@ -69,6 +69,9 @@ public class EncodedByteGlyphs implements EncodedGlyphs<ByteGlyph>{
     }
     @Override
     public List<ByteGlyph> decode(Range range) {
+        if(range==null){
+            return decode();
+        }
         List<ByteGlyph> result = new ArrayList<ByteGlyph>();
         for(long index : range){
             result.add(get((int)index));

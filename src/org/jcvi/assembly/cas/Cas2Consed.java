@@ -123,6 +123,9 @@ public class Cas2Consed {
            logOut.println(System.getProperty("user.dir"));
         
            try{
+               if(!outputDir.contains("chromat_dir")){
+                   outputDir.createNewDir("chromat_dir");
+               }
                 final SolexaFastQQualityCodec solexaQualityCodec = new SolexaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
                 MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                         new H2SffCasDataStoreFactory(),               

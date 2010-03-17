@@ -69,7 +69,14 @@ public class DefaultCasFileQualityDataStore extends AbstractOnePassCasFileVisito
             try {
                 qualityDataStores.add(casDataStoreFactory.getQualityDataStoreFor(filePath));
             } catch (Exception e) {
-               throw new IllegalStateException("could not load read file: "+ filePath,e);
+                //something like a fasta file doesn't have qualities
+                //so fake them (CLC assembler doesn't use qualities 
+                //anyway (dkatzel March 2010) 
+                try {
+                    qualityDataStores.add(createArtificalDataStoreFor(filePath));
+                } catch (Exception e2) {
+                   throw new IllegalStateException("could not load read file: "+ filePath,e2);
+                }
             }
         }
     }

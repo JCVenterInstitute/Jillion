@@ -48,7 +48,7 @@ public class DefaultSffCasDataStoreFactory  implements
             String pathToDataStore) throws CasDataStoreFactoryException {
         
         addDataStoreIfNeeded(pathToDataStore);
-        return new DefaultNucleotideSffDataStore(sffDataStores.get(pathToDataStore),true);
+        return new DefaultNucleotideSffDataStore(sffDataStores.get(pathToDataStore));
     }
 
     private void addDataStoreIfNeeded(String pathToDataStore)
@@ -63,7 +63,7 @@ public class DefaultSffCasDataStoreFactory  implements
     public synchronized QualityDataStore getQualityDataStoreFor(
             String pathToDataStore) throws CasDataStoreFactoryException {
         addDataStoreIfNeeded(pathToDataStore);
-        return new QualitySffDataStore(sffDataStores.get(pathToDataStore),true);
+        return new QualitySffDataStore(sffDataStores.get(pathToDataStore));
     }
 
     private SffDataStore parseSffDataStore(String pathToDataStore)

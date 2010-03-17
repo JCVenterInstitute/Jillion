@@ -37,6 +37,7 @@ import org.jcvi.assembly.cas.alignment.CasAlignmentRegionType;
 import org.jcvi.assembly.cas.read.CasPlacedRead;
 import org.jcvi.assembly.cas.read.DefaultCasPlacedRead;
 import org.jcvi.assembly.cas.read.DefaultCasPlacedReadFromCasAlignmentBuilder;
+import org.jcvi.assembly.cas.read.ValidRangeDataStore;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
@@ -51,7 +52,7 @@ public class DefaultCasFileContigDataStore extends AbstractOnePassCasFileVisitor
     private final CasGappedReferenceMap gappedReferenceMap;
     private long readCounter =0;
     private final DataStore<NucleotideEncodedGlyphs> nucleotideDataStore;
-    
+    private final ValidRangeDataStore validRangeDataStore;
     
     
     /**
@@ -65,11 +66,12 @@ public class DefaultCasFileContigDataStore extends AbstractOnePassCasFileVisitor
      */
     public DefaultCasFileContigDataStore(CasIdLookup referenceIdLookup,
             CasIdLookup readIdLookup, CasGappedReferenceMap gappedReferenceMap,
-            DataStore<NucleotideEncodedGlyphs> nucleotideDataStore) {
+            DataStore<NucleotideEncodedGlyphs> nucleotideDataStore,ValidRangeDataStore validRangeDataStore) {
         this.referenceIdLookup = referenceIdLookup;
         this.readIdLookup = readIdLookup;
         this.gappedReferenceMap = gappedReferenceMap;
         this.nucleotideDataStore = nucleotideDataStore;
+        this.validRangeDataStore = validRangeDataStore;
     }
 
     @Override
@@ -87,7 +89,8 @@ public class DefaultCasFileContigDataStore extends AbstractOnePassCasFileVisitor
                 builder = new DefaultCasPlacedReadFromCasAlignmentBuilder(readId,
                         nucleotideDataStore.get(readId),
                         alignment.readIsReversed(),
-                        gappedStartOffset
+                        gappedStartOffset,
+                        validRangeDataStore.get(readId)
                        );
                 List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
                 int lastIndex = regionsToConsider.size()-1;

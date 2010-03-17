@@ -39,11 +39,11 @@ public class TestHttpGetRequestBuilder {
     }
     @Test(expected = NullPointerException.class)
     public void nullKeyShouldThrowNPE() throws UnsupportedEncodingException{
-        sut.addVariable(null);
+        sut.addFlag(null);
     }
     @Test
     public void addVarible() throws IOException{
-        sut.addVariable("var");
+        sut.addFlag("var");
         assertEquals(urlBase+"?var",
                 sut.build().getURL().toString());
     }

@@ -29,16 +29,14 @@ import java.util.Iterator;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
+
 
 /**
- * A <code>QualityDataStoreAdapter</code> adapts the heavily parameterized
- * <code>{@link DataStore}&lt;{@link EncodedGlyphs}&lt;{@link PhredQuality}&gt;&gt;</code>
- * interface to its simplified equivalent {@link QualityDataStore}.
+ * A <code>NucleotideDataStoreAdapter</code> adapts the heavily parameterized
+ * <code>{@link DataStore}&lt;{@link NucleotideEncodedGlyphs}&gt;</code>
+ * interface to its simplified equivalent {@link NucleotideDataStore}.
  *
  * @author jsitz@jcvi.org
  */
@@ -48,7 +46,7 @@ public class NucleotideDataStoreAdapter implements NucleotideDataStore
     private final DataStore<NucleotideEncodedGlyphs> datastore;
 
     /**
-     * Constructs a new <code>QualityDataStoreAdapter</code>.
+     * Constructs a new <code>NucleotideDataStoreAdapter</code>.
      *
      * @param datastore The {@link DataStore} being wrapped and adapted.
      */

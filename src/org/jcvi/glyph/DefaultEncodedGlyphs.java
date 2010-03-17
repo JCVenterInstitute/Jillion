@@ -101,6 +101,9 @@ public class  DefaultEncodedGlyphs<T extends Glyph> implements EncodedGlyphs<T> 
     }
     @Override
     public List<T> decode(Range range) {
+        if(range ==null){
+            return decode();
+        }
         List<T> result = new ArrayList<T>();
         if(range.isSubRangeOf(Range.buildRangeOfLength(0, getLength()))){
             for(long index : range){
