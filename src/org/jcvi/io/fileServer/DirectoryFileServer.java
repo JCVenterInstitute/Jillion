@@ -282,7 +282,7 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
             super(rootDir);
             if(!rootDir.exists()){
                 if(!rootDir.mkdirs()){
-                    throw new IOException("could not create rootDir" + rootDir);
+                    throw new IOException("could not create rootDir " + rootDir);
                 }
             }
         }
