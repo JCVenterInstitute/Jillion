@@ -90,7 +90,7 @@ public final class JCVIAuthorizerUtils {
         options.addOption(new CommandLineOptionBuilder("S","server","name of server")
                                 .longName("Server")
                                 .build());
-        options.addOption(new CommandLineOptionBuilder("D","database","name of server")
+        options.addOption(new CommandLineOptionBuilder("D","database","name of project database(s) to use comma separated if using more than one")
                                 .isRequired(isDatabaseRequired)
                                 .build());
        
