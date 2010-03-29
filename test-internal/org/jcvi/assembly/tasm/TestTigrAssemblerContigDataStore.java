@@ -83,8 +83,11 @@ public class TestTigrAssemblerContigDataStore {
     public void NA() throws DataStoreException{
         assertContigDataMatches(contigDataStore.get("27233"), tasmDataStore.get("1122071329933"));
     }
-    
-    
+    @Test
+    public void lastContig() throws DataStoreException{
+        assertContigDataMatches(contigDataStore.get("27235"), tasmDataStore.get("1122071329934"));
+    }
+
     private void assertContigDataMatches(Contig<PlacedRead> contig, TigrAssemblerContig tasm){
         assertEquals("consensus",contig.getConsensus(), tasm.getConsensus());
         assertEquals("#reads",contig.getNumberOfReads(), tasm.getNumberOfReads());

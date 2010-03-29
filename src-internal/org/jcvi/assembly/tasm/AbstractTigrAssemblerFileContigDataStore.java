@@ -137,7 +137,7 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         */
         @Override
         public void visitEndOfFile() {
-            
+            visitBeginContigBlock();
         }
 
         /**
