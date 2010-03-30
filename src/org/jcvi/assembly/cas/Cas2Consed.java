@@ -24,12 +24,15 @@
 package org.jcvi.assembly.cas;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
@@ -37,6 +40,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.jcvi.assembly.ace.AceAssembly;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceContigAdapter;
@@ -58,19 +62,36 @@ import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.assembly.slice.LargeNoQualitySliceMapFactory;
 import org.jcvi.assembly.slice.SliceMapFactory;
+import org.jcvi.assembly.util.DefaultTrimFileDataStore;
+import org.jcvi.assembly.util.TrimDataStore;
+import org.jcvi.assembly.util.TrimDataStoreUtil;
 import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.cli.CommandLineUtils;
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.DataStore;
+import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
 import org.jcvi.fasta.fastq.SolexaFastQQualityCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.jcvi.io.fileServer.DirectoryFileServer;
+import org.jcvi.io.fileServer.DirectoryFileServer.ReadOnlyDirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
+import org.jcvi.trace.TraceDataStore;
+import org.jcvi.trace.TraceQualityDataStoreAdapter;
+import org.jcvi.trace.sanger.FileSangerTrace;
+import org.jcvi.trace.sanger.SangerTrace;
+import org.jcvi.trace.sanger.SingleSangerTraceDirectoryFileDataStore;
+import org.jcvi.trace.sanger.SingleSangerTraceFileDataStore;
 import org.jcvi.trace.sanger.phd.ArtificalPhdDataStore;
 import org.jcvi.trace.sanger.phd.Phd;
+import org.jcvi.trace.sanger.phd.PhdDataStore;
+import org.jcvi.trace.sanger.phd.PhdSangerTraceDataStoreAdapter;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Period;
@@ -97,6 +118,13 @@ public class Cas2Consed {
         options.addOption(new CommandLineOptionBuilder("prefix", "file prefix for all generated files ( default "+DEFAULT_PREFIX +" )")                                
                                 .build());
         
+        options.addOption(new CommandLineOptionBuilder("trim", "trim file in sfffile's tab delimmed trim format")                                
+                                                        .build());
+        options.addOption(new CommandLineOptionBuilder("trimMap", "trim map file containing tab delimited trimmed fastX file to untrimmed counterpart")                                
+                                    .build());
+        options.addOption(new CommandLineOptionBuilder("chromat_dir", "directory of chromatograms to be converted into phd "+
+                "(it is assumed the read data for these chromatograms are in a fasta file which the .cas file knows about")                                
+                        .build());
         options.addOption(new CommandLineOptionBuilder("s", "cache size ( default "+DEFAULT_CACHE_SIZE +" )")  
                                 .longName("cache_size")
                                         .build());
@@ -112,7 +140,33 @@ public class Cas2Consed {
                     DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
             
             String prefix = commandLine.hasOption("prefix")? commandLine.getOptionValue("prefix"): DEFAULT_PREFIX;
+            TrimDataStore trimDatastore;
+            if(commandLine.hasOption("trim")){
+                trimDatastore = new DefaultTrimFileDataStore(new File(commandLine.getOptionValue("trim")));
+            }else{
+                trimDatastore = TrimDataStoreUtil.EMPTY_DATASTORE;
+            }
+            Map<String,String> trimToUntrimmedMap;
+            if(commandLine.hasOption("trimMap")){
+                trimToUntrimmedMap = CasConversionUtil.parseTrimmedToUntrimmedFiles(new File(commandLine.getOptionValue("trimMap")));
+            }else{
+                trimToUntrimmedMap = Collections.emptyMap();
+            }
+            TraceDataStore<FileSangerTrace> sangerTraceDataStore=null;
+            Map<String, File> sangerFileMap = null;
+            ReadOnlyDirectoryFileServer sourceChromatogramFileServer = null;
             
+            if(commandLine.hasOption("chromat_dir")){
+                sourceChromatogramFileServer = DirectoryFileServer.createReadOnlyDirectoryFileServer(new File(commandLine.getOptionValue("chromat_dir")));
+                sangerTraceDataStore = new SingleSangerTraceDirectoryFileDataStore(
+                        sourceChromatogramFileServer, ".scf");
+                sangerFileMap = new HashMap<String, File>();
+                Iterator<String> iter = sangerTraceDataStore.getIds();
+                while(iter.hasNext()){
+                    String id = iter.next();
+                    sangerFileMap.put(id, sangerTraceDataStore.get(id).getFile());
+                }
+            }
             PrintWriter logOut = new PrintWriter(new FileOutputStream(outputDir.createNewFile(prefix+".log")),true);
             PrintWriter consensusOut = new PrintWriter(new FileOutputStream(outputDir.createNewFile(prefix+".consensus.fasta")),true);
             PrintWriter traceFilesOut = new PrintWriter(new FileOutputStream(outputDir.createNewFile(prefix+".traceFiles.txt")),true);
@@ -126,16 +180,30 @@ public class Cas2Consed {
                if(!outputDir.contains("chromat_dir")){
                    outputDir.createNewDir("chromat_dir");
                }
+               //copy scfs
+               if(sourceChromatogramFileServer !=null){
+                   for(File f :sourceChromatogramFileServer){
+                       String name =f.getName();
+                       
+                       OutputStream out = new FileOutputStream(outputDir.createNewFile("chromat_dir/"+name));
+                       try{
+                       IOUtils.copy(new FileInputStream(f), out);
+                       }finally{
+                           IOUtils.closeQuietly(out);
+                       }
+                   }
+               }
                 final SolexaFastQQualityCodec solexaQualityCodec = new SolexaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
                 MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                         new H2SffCasDataStoreFactory(),               
                         new H2FastQCasDataStoreFactory(solexaQualityCodec),
-                        new FastaCasDataStoreFactory(cacheSize)        
+                        new FastaCasDataStoreFactory(trimToUntrimmedMap,cacheSize)        
                 );
                 
                 final SliceMapFactory sliceMapFactory = new LargeNoQualitySliceMapFactory();
-                                                    CasAssembly casAssembly = new DefaultCasAssembly.Builder(casFile, casDataStoreFactory)
-                                                    .build();
+                
+                CasAssembly casAssembly = new DefaultCasAssembly.Builder(casFile, casDataStoreFactory, trimDatastore, trimToUntrimmedMap)
+                .build();
                 System.out.println("finished making casAssemblies");
                 for(File traceFile : casAssembly.getNuceotideFiles()){
                     traceFilesOut.println(traceFile.getAbsolutePath());
@@ -157,9 +225,11 @@ public class Cas2Consed {
                 }
                 DataStore<CasContig> contigDatastore = casAssembly.getContigDataStore();
                 Map<String, AceContig> aceContigs = new HashMap<String, AceContig>();
+                CasIdLookup readIdLookup = sangerFileMap ==null? casAssembly.getReadIdLookup() :
+                    new DifferentFileCasIdLookupAdapter(casAssembly.getReadIdLookup(), sangerFileMap);
                 Date phdDate = new Date(startTime);
                 for(CasContig casContig : contigDatastore){
-                    final AceContigAdapter adpatedCasContig = new AceContigAdapter(casContig, phdDate,casAssembly.getReadIdLookup());
+                    final AceContigAdapter adpatedCasContig = new AceContigAdapter(casContig, phdDate,readIdLookup);
                     CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(adpatedCasContig.getPlacedReads());
                     for(AceContig splitAceContig : ConsedUtil.split0xContig(adpatedCasContig, coverageMap)){
                         aceContigs.put(splitAceContig.getId(), splitAceContig);
@@ -168,17 +238,20 @@ public class Cas2Consed {
                     }
                     
                 }
-                System.out.println("finished adapting casAssemblies into aces");
-                final DataStore<Phd> phdDataStore = CachedDataStore.createCachedDataStore(DataStore.class,
-                        new ArtificalPhdDataStore(casAssembly.getNucleotideDataStore(), casAssembly.getQualityDataStore(), new DateTime(phdDate)),
+                System.out.printf("finished adapting %d casAssemblies into %d ace contigs%n", contigDatastore.size(),aceContigs.size());
+                QualityDataStore qualityDataStore = sangerTraceDataStore == null?
+                            casAssembly.getQualityDataStore() :
+                                MultipleDataStoreWrapper.createMultipleDataStoreWrapper(QualityDataStore.class, 
+                                        TraceQualityDataStoreAdapter.adapt(sangerTraceDataStore),casAssembly.getQualityDataStore() );
+                final DateTime phdDateTime = new DateTime(phdDate);
+                final PhdDataStore casPhdDataStore = CachedDataStore.createCachedDataStore(PhdDataStore.class,
+                        new ArtificalPhdDataStore(casAssembly.getNucleotideDataStore(), qualityDataStore, phdDateTime),
                         cacheSize);
-                /*
-                 * WA{
-    phdBall newbler 080416:144002
-    ../phdball_dir/phd.ball.1
-    }
-
-                 */
+                final PhdDataStore phdDataStore = sangerTraceDataStore ==null? casPhdDataStore :
+                    MultipleDataStoreWrapper.createMultipleDataStoreWrapper(PhdDataStore.class,
+                            new PhdSangerTraceDataStoreAdapter<FileSangerTrace>(sangerTraceDataStore,phdDateTime),
+                            casPhdDataStore);
+                
                 WholeAssemblyAceTag pathToPhd = new DefaultWholeAssemblyAceTag("phdball", "cas2consed", 
                         new Date(DateTimeUtils.currentTimeMillis()), "../phd_dir/"+prefix+".phd.ball");
                
@@ -206,7 +279,8 @@ public class Cas2Consed {
             System.exit(1);
         }
        }
-    
+
+
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp( "cas2Consed -cas <cas file> -o <output dir> [-prefix <prefix> -s <cache_size>]", 

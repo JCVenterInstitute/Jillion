@@ -30,7 +30,9 @@ import org.jcvi.glyph.phredQuality.QualityDataStore;
 
 public class TraceQualityDataStoreAdapter<T extends Trace> extends AbstractTraceDataStoreAdapter<T,EncodedGlyphs<PhredQuality>> implements QualityDataStore{
 
-  
+    public static <T extends Trace, E extends T> TraceQualityDataStoreAdapter<T> adapt(DataStore<E> delegate){
+        return (TraceQualityDataStoreAdapter<T>) new TraceQualityDataStoreAdapter<E>(delegate);
+    }
     /**
      * @param delegate
      */

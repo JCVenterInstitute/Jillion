@@ -32,14 +32,16 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 
 public class DefaultContigAssembly implements ContigAssembly{
 
     private final DataStore<Contig<PlacedRead>> contigDataStore;
-    private final DataStore<NucleotideEncodedGlyphs> nucleotideDataStore;
-    private final DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore;
+    private final NucleotideDataStore nucleotideDataStore;
+    private final QualityDataStore qualityDataStore;
     private final List<File> nucleotideFiles;
     private final List<File> qualityFiles;
     
@@ -52,9 +54,9 @@ public class DefaultContigAssembly implements ContigAssembly{
      * @param qualityFiles
      */
     public DefaultContigAssembly(DataStore<Contig<PlacedRead>> contigDataStore,
-            DataStore<NucleotideEncodedGlyphs> nucleotideDataStore,
+            NucleotideDataStore nucleotideDataStore,
             List<File> nucleotideFiles,
-            DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore,
+            QualityDataStore qualityDataStore,
             List<File> qualityFiles) {
         this.contigDataStore = contigDataStore;
         this.nucleotideDataStore = nucleotideDataStore;
@@ -74,12 +76,12 @@ public class DefaultContigAssembly implements ContigAssembly{
     }
 
     @Override
-    public DataStore<NucleotideEncodedGlyphs> getNucleotideDataStore() {
+    public NucleotideDataStore getNucleotideDataStore() {
         return nucleotideDataStore;
     }
 
     @Override
-    public DataStore<EncodedGlyphs<PhredQuality>> getQualityDataStore() {
+    public QualityDataStore getQualityDataStore() {
         return qualityDataStore;
     }
 
@@ -90,8 +92,8 @@ public class DefaultContigAssembly implements ContigAssembly{
     
     public static class Builder implements org.jcvi.Builder<DefaultContigAssembly>{
         private final DataStore<Contig<PlacedRead>> contigDataStore;
-        private final DataStore<NucleotideEncodedGlyphs> nucleotideDataStore;
-        private final DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore;
+        private final NucleotideDataStore nucleotideDataStore;
+        private final QualityDataStore qualityDataStore;
         private final List<File> nucleotideFiles = new ArrayList<File>();
         private final List<File> qualityFiles = new ArrayList<File>();
         
@@ -102,8 +104,8 @@ public class DefaultContigAssembly implements ContigAssembly{
          * @param qualityDataStore
          */
         public Builder(DataStore<Contig<PlacedRead>> contigDataStore,
-                DataStore<NucleotideEncodedGlyphs> nucleotideDataStore,
-                DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore) {
+                NucleotideDataStore nucleotideDataStore,
+                QualityDataStore qualityDataStore) {
             if(contigDataStore ==null || nucleotideDataStore ==null || qualityDataStore ==null){
                 throw new NullPointerException("parameters can not be null");
             }

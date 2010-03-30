@@ -68,6 +68,7 @@ public class CasParser {
             List<CasAlignment> alignments = new ArrayList<CasAlignment>();
             long totalNumberOfMatches=0, numberOfReportedAlignments=hasMatch?1:0;
             if(hasMultipleMatches){
+                System.out.println("has multiple matched!!! " +totalNumberOfMatches);
                 totalNumberOfMatches = CasUtil.parseByteCountFrom(dataIn) +2;
             }
             if(hasMultipleAlignments){

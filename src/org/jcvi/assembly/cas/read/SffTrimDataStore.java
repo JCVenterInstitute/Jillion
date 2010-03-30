@@ -25,9 +25,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.Range;
-import org.jcvi.datastore.DataStore;
+import org.jcvi.assembly.util.TrimDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.FastaVisitor;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFCommonHeader;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadData;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadHeader;
@@ -39,7 +38,7 @@ import org.jcvi.trace.fourFiveFour.flowgram.sff.SffFileVisitor;
  *
  *
  */
-public class ValidRangeDataStore implements DataStore<Range>, FastaVisitor,SffFileVisitor{
+public class SffTrimDataStore implements TrimDataStore, SffFileVisitor{
 
     private final Map<String, Range> trimRanges = new HashMap<String, Range>();
     /**
@@ -91,38 +90,7 @@ public class ValidRangeDataStore implements DataStore<Range>, FastaVisitor,SffFi
         return trimRanges.values().iterator();
     }
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitBodyLine(String bodyLine) {
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitDefline(String defline) {
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitRecord(String id, String comment, String entireBody) {
-        //TODO parse valid range from comment here
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitLine(String line) {
-        
-    }
+   
 
     /**
     * {@inheritDoc}

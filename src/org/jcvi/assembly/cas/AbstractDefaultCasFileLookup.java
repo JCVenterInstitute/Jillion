@@ -49,11 +49,22 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
 
     private final List<String> readNameOrder = new ArrayList<String>();
     private final Map<String, File> readNameToFile = new HashMap<String, File>();
+    private final Map<String, String> trimToUntrimmedMap;
     
     private final List<File> files = new ArrayList<File>();
     private boolean initialized = false;
     private boolean closed =false;
     
+    /**
+     * @param trimToUntrimmedMap
+     * @param initialized
+     */
+    public AbstractDefaultCasFileLookup(Map<String, String> trimToUntrimmedMap) {
+        this.trimToUntrimmedMap = trimToUntrimmedMap;
+    }
+    public AbstractDefaultCasFileLookup(){
+        this(Collections.<String, String>emptyMap());
+    }
     protected synchronized void checkNotYetInitialized(){
         if(initialized){
             throw new IllegalStateException("has already been initialized");
@@ -72,9 +83,27 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         for(String filePath: casFileInfo.getFileNames()){
             try {
                 System.out.println(filePath);
+                
                 final File file = new File(filePath);
-                files.add(file);
-                parse(file);
+                final File filetoParse;
+                String key=null;
+                System.out.println(file.getAbsolutePath());
+                
+                for(String path : trimToUntrimmedMap.keySet()){
+                    File f = new File(path);
+                    System.out.println("\t"+f.getAbsolutePath());
+                    if(f.getAbsolutePath().equals(file.getAbsolutePath())){
+                        key=path;
+                    }
+                }
+                if(key !=null){
+                    filetoParse = new File(trimToUntrimmedMap.get(key));
+                }else{
+                    filetoParse = file;
+                }
+                System.out.printf("loading file %s for cas file %s%n", filetoParse.getName(), file.getName());
+                files.add(filetoParse);
+                parse(filetoParse);
             } catch (Exception e) {
                throw new IllegalStateException("could not load read file: "+ filePath,e);
             }

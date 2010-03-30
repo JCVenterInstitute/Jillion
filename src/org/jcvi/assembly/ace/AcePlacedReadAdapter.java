@@ -45,8 +45,17 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         this.placedRead = placedRead;
         String readId = placedRead.getId();
         final String id;
-        if(traceFile !=null && "sff".equals(FilenameUtils.getExtension(traceFile.getName()))){
-           id="sff:"+traceFile.getName()+":"+readId;
+        if(traceFile !=null){
+            final String extension = FilenameUtils.getExtension(traceFile.getName());
+            if("sff".equals(extension)){        
+                id="sff:"+traceFile.getName()+":"+readId;
+            }
+            else if("scf".equals(extension)){        
+                id=traceFile.getName();
+            }
+            else{
+                id= readId;
+            }
         }else{
             id= readId;
         }

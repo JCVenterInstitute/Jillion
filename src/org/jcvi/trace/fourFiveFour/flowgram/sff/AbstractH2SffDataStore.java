@@ -33,22 +33,49 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.Glyph;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
-
+/**
+ * {@code AbstractH2SffDataStore} is an abstract implementation
+ * of a {@link DataStore} of {@link EncodedGlyphs} from an {@link SffDataStore}.
+ * @author dkatzel
+ *
+ *
+ */
 public abstract class AbstractH2SffDataStore<G extends Glyph, E extends EncodedGlyphs<G>> implements DataStore<E>, SffFileVisitor{
 
     private final AbstractH2EncodedGlyphDataStore<G, E> datastore;
     private final boolean trim;
     private SFFReadHeader currentReadHeader;
     /**
-     * @param datastore
-     * @throws FileNotFoundException 
-     * @throws SFFDecoderException 
+     * Creates an {@link AbstractH2SffDataStore}.
+     * @param sffFile The sff file to parse and extract information from.
+     * @param datastore the {@link AbstractH2EncodedGlyphDataStore} where
+     * the parsed data will be stored.
+     * @param trim should only the trimmed data be stored.
+     * @throws SFFDecoderException if there is a problem parsing the sff
+     * file.
+     * @throws FileNotFoundException if the sff file does not exist.
+     * @throws NullPointerException if datastore is null.
      */
     public AbstractH2SffDataStore(File sffFile,AbstractH2EncodedGlyphDataStore<G, E> datastore, boolean trim) throws SFFDecoderException, FileNotFoundException {
+        if(datastore==null){
+            throw new NullPointerException("AbstractH2EncodedGlyphDataStore can not be null");
+        }
         this.datastore = datastore;
         this.trim = trim;
         SffParser.parseSFF(sffFile, this);
     }
+    /**
+     * Convience constructor, same as {@link #AbstractH2SffDataStore(File, AbstractH2EncodedGlyphDataStore, boolean)
+     * new AbstractH2EncodedGlyphDataStore(sffFile,datastore,false)}.
+     * @param sffFile The sff file to parse and extract information from.
+     * @param datastore the {@link AbstractH2EncodedGlyphDataStore} where
+     * the parsed data will be stored.
+     * @throws SFFDecoderException if there is a problem parsing the sff
+     * file.
+     * @throws FileNotFoundException if the sff file does not exist.
+     * @throws NullPointerException if datastore is null.
+     * @see #AbstractH2SffDataStore(File, AbstractH2EncodedGlyphDataStore, boolean)
+     */
     public AbstractH2SffDataStore(File sffFile,AbstractH2EncodedGlyphDataStore<G, E> datastore) throws SFFDecoderException, FileNotFoundException {
         this(sffFile, datastore, false);
     }
@@ -83,6 +110,11 @@ public abstract class AbstractH2SffDataStore<G extends Glyph, E extends EncodedG
     }
     protected abstract String getDataRecord(SFFReadHeader readHeader,SFFReadData readData, boolean shouldTrim);
     
+    /**
+     * inserts the given {@link SFFReadData} into the wrapped
+     * {@link AbstractH2EncodedGlyphDataStore}.
+     * @see AbstractH2EncodedGlyphDataStore#insertRecord(String, String)
+     */
     @Override
     public boolean visitReadData(SFFReadData readData) {
         

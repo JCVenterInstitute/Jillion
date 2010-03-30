@@ -38,7 +38,13 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 
 import org.jcvi.io.IOUtil;
-
+/**
+ * {@code AbstractH2EncodedGlyphDataStore} is an {@link DataStore} of
+ * {@link EncodedGlyphs}.
+ * @author dkatzel
+ *
+ *
+ */
 public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends EncodedGlyphs<G>> implements DataStore<E>{
     static final String DRIVER_STRING = "org.h2.Driver";
     static final String CONNECTION_SUBSTRING = "jdbc:h2:";
@@ -174,9 +180,18 @@ public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends
         IOUtil.closeAndIgnoreErrors(connection);
         if(dataStoreFile !=null){
             //try to delete. ignore failures...
-            new File(dataStoreFile+".h2.db").delete();
-            new File(dataStoreFile+".lock.db").delete();
+            
+            deleteH2DatabaseFiles();
         }
+    }
+
+    private void deleteH2DatabaseFiles() {
+        //containing logs, index and data for all tables
+        new File(dataStoreFile+".h2.db").delete();
+        //lock file when database is in use.
+        new File(dataStoreFile+".lock.db").delete();
+        //database trace file if trace option is used.
+        new File(dataStoreFile+".trace.db").delete();
     }
 
     @Override

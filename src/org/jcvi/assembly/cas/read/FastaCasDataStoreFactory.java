@@ -24,6 +24,7 @@
 package org.jcvi.assembly.cas.read;
 
 import java.io.File;
+import java.util.Map;
 
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.fasta.FastaRecordDataStoreAdapter;
@@ -38,22 +39,48 @@ public class FastaCasDataStoreFactory implements
         CasDataStoreFactory {
 
     private final int cacheSize;
-    public FastaCasDataStoreFactory(int cacheSize){
+    private final Map<String,String> trimToUntrimmedMap;
+    public FastaCasDataStoreFactory(Map<String,String> trimToUntrimmedMap,int cacheSize){
+        this.trimToUntrimmedMap = trimToUntrimmedMap;
         this.cacheSize = cacheSize;
     }
     @Override
     public NucleotideDataStore getNucleotideDataStoreFor(String pathToDataStore) throws CasDataStoreFactoryException {
-             return CachedDataStore.createCachedDataStore(NucleotideDataStore.class, 
-                     new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(new LargeNucleotideFastaFileDataStore(new File(pathToDataStore)))),
+        File actualDataStore = getUntrimmedFileFor(pathToDataStore);   
+        System.out.println("getting nucleotide datastore for "+ actualDataStore.getName());
+        return CachedDataStore.createCachedDataStore(NucleotideDataStore.class, 
+                     new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(new LargeNucleotideFastaFileDataStore(actualDataStore))),
                      cacheSize);            
     }
     @Override
     public QualityDataStore getQualityDataStoreFor(
             String pathToDataStore) throws CasDataStoreFactoryException {
+        File actualDataStore = getUntrimmedFileFor(pathToDataStore);   
+        System.out.println("getting quality datastore for "+ actualDataStore.getName());
         return CachedDataStore.createCachedDataStore(QualityDataStore.class, 
-                new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(new File(pathToDataStore)))),
+                new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(actualDataStore))),
                 cacheSize);  
         
     }
 
+    private File getUntrimmedFileFor(String pathtoTrimmedDataStore){
+        final File file = new File(pathtoTrimmedDataStore);
+        final File filetoParse;
+        String key=null;
+        System.out.println(file.getAbsolutePath());
+        
+        for(String path : trimToUntrimmedMap.keySet()){
+            File f = new File(path);
+            System.out.println("\t"+f.getAbsolutePath());
+            if(f.getAbsolutePath().equals(file.getAbsolutePath())){
+                key=path;
+            }
+        }
+        if(key !=null){
+            filetoParse = new File(trimToUntrimmedMap.get(key));
+        }else{
+            filetoParse = file;
+        }
+        return filetoParse;
+    }
 }

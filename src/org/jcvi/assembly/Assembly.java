@@ -27,17 +27,16 @@ import java.io.File;
 import java.util.List;
 
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.nuc.NucleotideDataStore;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 
 public interface Assembly<C extends Contig, D extends DataStore<C>> {
 
     D getContigDataStore();
-    DataStore<EncodedGlyphs<PhredQuality>> getQualityDataStore();
+    QualityDataStore getQualityDataStore();
     List<File> getQualityFiles();
     
-    DataStore<NucleotideEncodedGlyphs> getNucleotideDataStore();
+    NucleotideDataStore getNucleotideDataStore();
     List<File> getNuceotideFiles();
     
 }

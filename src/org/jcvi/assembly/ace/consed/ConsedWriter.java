@@ -30,7 +30,6 @@ import java.io.OutputStream;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -105,6 +104,10 @@ public class ConsedWriter {
                         AceFileWriter.writeAceFile(aceAssembly,sliceMapFactory, aceOutputStream, calculateBestSegments);
                    
                         return null;
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                        throw new RuntimeException("err",e);
                     }finally{
                         latch.countDown();
                     }

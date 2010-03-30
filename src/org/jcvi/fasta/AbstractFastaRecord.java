@@ -90,7 +90,9 @@ public abstract class AbstractFastaRecord<T> implements FastaRecord<T>
     {
         return this.comments;
     }
-    
+    /**
+     * Gets the entire formatted fasta record as a {@link CharSequence}.
+     */
     public CharSequence getStringRecord()
     {
         final StringBuilder record = new StringBuilder();
@@ -126,8 +128,11 @@ public abstract class AbstractFastaRecord<T> implements FastaRecord<T>
         return 0;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
+    /**
+     * 
+    * Gets the entire formatted fasta record as a String,
+    * same as {@link #getStringRecord()}.
+    * @see #getStringRecord()
      */
     @Override
     public String toString()
