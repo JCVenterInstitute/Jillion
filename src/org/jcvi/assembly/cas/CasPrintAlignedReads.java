@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.Range;
@@ -233,7 +234,7 @@ public class CasPrintAlignedReads extends AbstractOnePassCasFileVisitor{
         FileOutputStream out = new FileOutputStream(new File(args[1]));
         MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                 new DefaultSffCasDataStoreFactory(),
-                new FastaCasDataStoreFactory(cacheSize),
+                new FastaCasDataStoreFactory(Collections.<String,String>emptyMap(),cacheSize),
                 new FastQCasDataStoreFactory(new SolexaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE), cacheSize)
                 );
         AbstractDefaultCasFileLookup readIdLookup = new DefaultReadCasFileLookup();

@@ -59,9 +59,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         if(fullRangeSequence ==null){
             throw new NullPointerException("null fullRangeSequence for id "+ readId);
         }
-        if(readId.equals("FTF2AAH01CT5VL")){
-            System.out.println("here");
-        }
+        try{
         this.readId = readId;
         this.startOffset = startOffset;
         this.referenceOffset = startOffset;
@@ -76,6 +74,9 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
             validRangeStart = traceTrimRange ==null?0:traceTrimRange.getStart();
         }
         dir = isReversed? SequenceDirection.REVERSE: SequenceDirection.FORWARD;
+    }catch(Exception e){
+        throw new IllegalStateException("error building alignment for read "+ readId,e);
+    }
        // dir= SequenceDirection.FORWARD;
         
     }

@@ -29,8 +29,10 @@ import java.util.List;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.trace.TraceNucleotideDataStoreAdapter;
 import org.jcvi.trace.TraceQualityDataStoreAdapter;
 import org.jcvi.trace.sanger.phd.Phd;
@@ -41,8 +43,8 @@ public class DefaultAceAssembly<A extends AceContig> implements AceAssembly<A>{
     private final DataStore<A> aceDataStore;
     private final List<File> phdFiles;
     private final DataStore<Phd> phdDataStore;
-    private final DataStore<NucleotideEncodedGlyphs> nucleotideDataStore;
-    private final DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore;
+    private final NucleotideDataStore nucleotideDataStore;
+    private final QualityDataStore qualityDataStore;
     
     /**
      * @param aceDataStore
@@ -94,12 +96,12 @@ public class DefaultAceAssembly<A extends AceContig> implements AceAssembly<A>{
     }
 
     @Override
-    public DataStore<NucleotideEncodedGlyphs> getNucleotideDataStore() {
+    public NucleotideDataStore getNucleotideDataStore() {
         return nucleotideDataStore;
     }
 
     @Override
-    public DataStore<EncodedGlyphs<PhredQuality>> getQualityDataStore() {
+    public QualityDataStore getQualityDataStore() {
         return qualityDataStore;
     }
 

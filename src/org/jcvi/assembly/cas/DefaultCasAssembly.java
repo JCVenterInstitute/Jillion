@@ -24,8 +24,8 @@
 package org.jcvi.assembly.cas;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jcvi.assembly.cas.read.CasDataStoreFactory;
@@ -33,20 +33,19 @@ import org.jcvi.assembly.cas.read.AbstractCasFileNucleotideDataStore;
 import org.jcvi.assembly.cas.read.DefaultCasFileQualityDataStore;
 import org.jcvi.assembly.cas.read.ReadCasFileNucleotideDataStore;
 import org.jcvi.assembly.cas.read.ReferenceCasFileNucleotideDataStore;
-import org.jcvi.assembly.cas.read.ValidRangeDataStore;
+import org.jcvi.assembly.cas.read.SffTrimDataStore;
+import org.jcvi.assembly.util.TrimDataStore;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
-import org.jcvi.fasta.FastaParser;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.nuc.NucleotideDataStore;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffParser;
 import org.jcvi.util.MultipleWrapper;
 
 public class DefaultCasAssembly implements CasAssembly{
     private final DataStore<CasContig> casDataStore;
-    private final DataStore<NucleotideEncodedGlyphs> nucleotideDataStore;
-    private final DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore;
+    private final NucleotideDataStore nucleotideDataStore;
+    private final QualityDataStore qualityDataStore;
     private final CasIdLookup referenceIdLookup;
     private final CasIdLookup traceIdLookup;
     
@@ -58,8 +57,8 @@ public class DefaultCasAssembly implements CasAssembly{
      * @param qualityFiles
      */
     public DefaultCasAssembly(DataStore<CasContig> casDataStore,
-            DataStore<NucleotideEncodedGlyphs> nucleotideDataStore,
-            DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore,
+            NucleotideDataStore nucleotideDataStore,
+            QualityDataStore qualityDataStore,
             CasIdLookup traceIdLookup,CasIdLookup referenceIdLookup) {
         this.casDataStore = casDataStore;
         this.nucleotideDataStore = nucleotideDataStore;
@@ -89,12 +88,12 @@ public class DefaultCasAssembly implements CasAssembly{
     }
 
     @Override
-    public DataStore<NucleotideEncodedGlyphs> getNucleotideDataStore() {
+    public NucleotideDataStore getNucleotideDataStore() {
         return nucleotideDataStore;
     }
 
     @Override
-    public DataStore<EncodedGlyphs<PhredQuality>> getQualityDataStore() {
+    public QualityDataStore getQualityDataStore() {
         return qualityDataStore;
     }
 
@@ -111,8 +110,8 @@ public class DefaultCasAssembly implements CasAssembly{
         public static final int DEFAULT_CACHE_SIZE = 2000;
         private final File casFile;
         private final CasDataStoreFactory casDataStoreFactory;
-        
-       
+        private final TrimDataStore externalTrimDataStore;
+        private final Map<String, String> trimToUntrimmedMap;
         /**
          * @param casFile
          * @param casDataStoreFactory
@@ -120,14 +119,16 @@ public class DefaultCasAssembly implements CasAssembly{
          * @param sliceMapFactory
          * @param solexaQualityCodec
          */
-        public Builder(File casFile, CasDataStoreFactory casDataStoreFactory) {
+        public Builder(File casFile, CasDataStoreFactory casDataStoreFactory,TrimDataStore externalTrimDataStore,Map<String, String> trimToUntrimmedMap) {
             this.casFile = casFile;
             this.casDataStoreFactory = casDataStoreFactory;
+            this.externalTrimDataStore = externalTrimDataStore;
+            this.trimToUntrimmedMap = trimToUntrimmedMap;
         }
 
         @Override
         public DefaultCasAssembly build() {
-            AbstractDefaultCasFileLookup readIdLookup = new DefaultReadCasFileLookup();
+            AbstractDefaultCasFileLookup readIdLookup = new DefaultReadCasFileLookup(trimToUntrimmedMap);
             AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup();
             AbstractCasFileNucleotideDataStore nucleotideDataStore = new ReadCasFileNucleotideDataStore(casDataStoreFactory);
             AbstractCasFileNucleotideDataStore referenceNucleotideDataStore = new ReferenceCasFileNucleotideDataStore(casDataStoreFactory);
@@ -138,29 +139,28 @@ public class DefaultCasAssembly implements CasAssembly{
                 CasParser.parseCas(casFile, MultipleWrapper.createMultipleWrapper(
                         CasFileVisitor.class, 
                         readIdLookup, referenceIdLookup,nucleotideDataStore,referenceNucleotideDataStore,qualityDataStore));
-            ValidRangeDataStore validRangeDataStore = new ValidRangeDataStore();
+            SffTrimDataStore sffTrimDatastore = new SffTrimDataStore();
             for(File readFile : readIdLookup.getFiles()){
                 String extension =FilenameUtils.getExtension(readFile.getName());
                 if("sff".equals(extension)){
-                    SffParser.parseSFF(readFile, validRangeDataStore);
-                }else if("fasta".equals(extension)){
-                    FastaParser.parseFasta(readFile, validRangeDataStore);
+                    SffParser.parseSFF(readFile, sffTrimDatastore);
                 }
             }
             DefaultCasGappedReferenceMap gappedReferenceMap = new DefaultCasGappedReferenceMap(referenceNucleotideDataStore, referenceIdLookup);
             CasParser.parseCas(casFile, gappedReferenceMap);
            
+            TrimDataStore multiTrimDataStore =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimDataStore.class, this.externalTrimDataStore, sffTrimDatastore);
             
             DefaultCasFileContigDataStore casDatastore = new DefaultCasFileContigDataStore(
                     referenceIdLookup, 
                     readIdLookup, 
                     gappedReferenceMap, 
                     nucleotideDataStore,
-                    validRangeDataStore);
+                    multiTrimDataStore);
             
             CasParser.parseCas(casFile, casDatastore);
             return new DefaultCasAssembly(casDatastore, 
-                    MultipleDataStoreWrapper.createMultipleDataStoreWrapper(DataStore.class, 
+                    MultipleDataStoreWrapper.createMultipleDataStoreWrapper(NucleotideDataStore.class, 
                             nucleotideDataStore, referenceNucleotideDataStore), 
                     qualityDataStore, 
                     readIdLookup, referenceIdLookup);

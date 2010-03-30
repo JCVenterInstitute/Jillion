@@ -45,25 +45,40 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
 
     private final DirectoryFileServer fileServer;
     private final SangerTraceCodec traceCodec;
-    /**
-     * @param dir
-     * @param traceCodec
-     */
+    private final String extension;
     public SingleSangerTraceDirectoryFileDataStore(DirectoryFileServer fileServer,
-            SangerTraceCodec traceCodec) {
+            SangerTraceCodec traceCodec, String extension) {
         if(fileServer ==null){
             throw new NullPointerException("fileServer can not be null");
         }
         if(traceCodec ==null){
             throw new NullPointerException("SangerTraceCodec can not be null");
         }
+        this.extension=extension;
         this.fileServer = fileServer;
         this.traceCodec = traceCodec;
+        
+    }
+    /**
+     * @param dir
+     * @param traceCodec
+     */
+    public SingleSangerTraceDirectoryFileDataStore(DirectoryFileServer fileServer,
+            SangerTraceCodec traceCodec) {
+       this(fileServer, traceCodec, null);
+    }
+    public SingleSangerTraceDirectoryFileDataStore(DirectoryFileServer fileServer, String extension){
+        this(fileServer, SangerTraceParser.getInstance(),extension);
     }
     public SingleSangerTraceDirectoryFileDataStore(DirectoryFileServer fileServer){
         this(fileServer, SangerTraceParser.getInstance());
     }
-    
+    private String addExtensionIfNeeded(String id){
+        if(extension!=null){
+            return id + extension;
+        }
+        return id;
+    }
     /**
      * {@inheritDoc}
      */
@@ -71,7 +86,7 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
      public boolean contains(String id) throws DataStoreException {
          super.contains(id);
          try {
-            return this.fileServer.contains(id);
+            return this.fileServer.contains(addExtensionIfNeeded(id));
         } catch (IOException e) {
             throw new DataStoreException("error when checking if Datastore contains" +id ,e);
         }
@@ -86,7 +101,7 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
          
              InputStream inputStream =null;
              try{
-                 File file = fileServer.getFile(id);
+                 File file = fileServer.getFile(addExtensionIfNeeded(id));
                  inputStream= new FileInputStream(file);
                  SangerTrace traceData= traceCodec.decode(inputStream);
                  return new DefaultFileSangerTrace(traceData,file);
@@ -116,7 +131,11 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
 
             @Override
             public String next() {
-                return iter.next().getName();
+                String actualFilename = iter.next().getName();
+                if(extension!=null){
+                    return actualFilename.substring(0, actualFilename.length()-extension.length());
+                }
+                return actualFilename;
             }
 
             @Override

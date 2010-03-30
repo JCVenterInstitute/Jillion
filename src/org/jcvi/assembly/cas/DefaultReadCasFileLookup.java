@@ -23,7 +23,24 @@
  */
 package org.jcvi.assembly.cas;
 
+import java.io.File;
+import java.util.Map;
+
 public class DefaultReadCasFileLookup extends AbstractDefaultCasFileLookup{
+
+    /**
+     * 
+     */
+    public DefaultReadCasFileLookup() {
+        super();
+    }
+
+    /**
+     * @param trimToUntrimmedMap
+     */
+    public DefaultReadCasFileLookup(Map<String, String> trimToUntrimmedMap) {
+        super(trimToUntrimmedMap);
+    }
 
     @Override
     public void visitContigFileInfo(CasFileInfo contigFileInfo) {

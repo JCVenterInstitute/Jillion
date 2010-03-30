@@ -16,15 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Dec 31, 2009
- *
+
+package org.jcvi.assembly.util;
+
+import org.jcvi.Range;
+import org.jcvi.io.FileVisitor;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.assembly.cas.read;
-
-import org.jcvi.glyph.phredQuality.QualityDataStore;
-
-public interface CasQualityDataStore extends QualityDataStore{
-
+public interface TrimFileVisitor extends FileVisitor{
+    /**
+     * Visit a Trim record.
+     * @param id the ID of the record being trimmed.
+     * @param trimRange the Range of the records clear
+     * valid range.
+     * @return {@code true} if the parser should
+     * continue to visit records; {@code false} otherwise.
+     */
+    boolean visitTrim(String id, Range trimRange);
 }

@@ -34,8 +34,6 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 /**
  * {@code ArtificialPhdDataStore} is a {@link DataStore} of
  * Nucleotide and PhredQuality data that has been adapted to 
@@ -44,9 +42,7 @@ import org.joda.time.format.DateTimeFormatter;
  *
  *
  */
-public class ArtificalPhdDataStore extends AbstractDataStore<Phd>{
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern(
-    "EEE MMM dd kk:mm:ss yyyy");
+public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements PhdDataStore{
     private final DataStore<NucleotideEncodedGlyphs> seqDataStore;
     private final DataStore<EncodedGlyphs<PhredQuality>> qualDataStore;
     private final Properties comments = new Properties();
@@ -62,7 +58,7 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd>{
             DataStore<EncodedGlyphs<PhredQuality>> qualDataStore, DateTime phdDate) {
         this.seqDataStore = seqDataStore;
         this.qualDataStore = qualDataStore;
-        comments.put("TIME", DATE_FORMAT.print(phdDate));
+        comments.putAll(PhdUtil.createPhdTimeStampCommentFor(phdDate));
     }
 
     @Override
