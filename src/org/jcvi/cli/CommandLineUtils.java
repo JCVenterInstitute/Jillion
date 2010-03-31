@@ -29,9 +29,22 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
+/**
+ * Utility class for commandline parsing.
+ * @author dkatzel
+ *
+ *
+ */
 public class CommandLineUtils {
-
+    /**
+     * Parse the a command line using the given options and the given
+     * arguments.
+     * @param options the options to use during parsing.
+     * @param args the arguments to parse.
+     * @return a new CommandLine object (not null).
+     * @throws ParseException if the argument to parse are not valid for
+     * the given Options.
+     */
     public static CommandLine parseCommandLine(Options options, String[] args) throws ParseException{
         CommandLineParser parser = new GnuParser();
         return parser.parse(options, args);
