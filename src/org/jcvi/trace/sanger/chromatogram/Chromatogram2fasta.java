@@ -108,7 +108,11 @@ public class Chromatogram2fasta {
         SangerTraceParser parser = SangerTraceParser.getInstance();
         try{
             for(String chromatogramFilePath : chromatogramFiles){
+                if(chromatogramFilePath.trim().isEmpty()){
+                    continue;
+                }
                 File chromatogramFile = new File(chromatogramFilePath);
+                
                 String id = FilenameUtils.getBaseName(chromatogramFile.getName());
                 SangerTrace chromo =parser.decode(chromatogramFile);
                 if(seqOut !=null){
