@@ -234,7 +234,7 @@ public class CasPrintAlignedReads extends AbstractOnePassCasFileVisitor{
         FileOutputStream out = new FileOutputStream(new File(args[1]));
         MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                 new DefaultSffCasDataStoreFactory(),
-                new FastaCasDataStoreFactory(Collections.<String,String>emptyMap(),cacheSize),
+                new FastaCasDataStoreFactory(EmptyCasTrimMap.getInstance(),cacheSize),
                 new FastQCasDataStoreFactory(new SolexaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE), cacheSize)
                 );
         AbstractDefaultCasFileLookup readIdLookup = new DefaultReadCasFileLookup();
