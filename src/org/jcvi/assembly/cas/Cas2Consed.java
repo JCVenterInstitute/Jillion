@@ -41,6 +41,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.jboss.util.collection.EmptyCollectionException;
 import org.jcvi.assembly.ace.AceAssembly;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceContigAdapter;
@@ -146,11 +147,11 @@ public class Cas2Consed {
             }else{
                 trimDatastore = TrimDataStoreUtil.EMPTY_DATASTORE;
             }
-            Map<String,String> trimToUntrimmedMap;
+            CasTrimMap trimToUntrimmedMap;
             if(commandLine.hasOption("trimMap")){
-                trimToUntrimmedMap = CasConversionUtil.parseTrimmedToUntrimmedFiles(new File(commandLine.getOptionValue("trimMap")));
+                trimToUntrimmedMap = new DefaultTrimFileCasTrimMap(new File(commandLine.getOptionValue("trimMap")));
             }else{
-                trimToUntrimmedMap = Collections.emptyMap();
+                trimToUntrimmedMap = EmptyCasTrimMap.getInstance();
             }
             TraceDataStore<FileSangerTrace> sangerTraceDataStore=null;
             Map<String, File> sangerFileMap = null;

@@ -16,42 +16,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Dec 31, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.assembly.cas;
 
 import java.io.File;
-import java.util.Map;
 
-public class DefaultReadCasFileLookup extends AbstractDefaultCasFileLookup{
+/**
+ * {@code EmptyCasTrimMap} is a {@link CasTrimMap}
+ * implementation that does not have any
+ * mappings.
+ * @author dkatzel
+ *
+ *
+ */
+public class EmptyCasTrimMap implements CasTrimMap{
 
+    private static EmptyCasTrimMap INSTANCE = new EmptyCasTrimMap();
+    
+    public static EmptyCasTrimMap getInstance(){
+        return INSTANCE;
+    }
+    private EmptyCasTrimMap(){}
     /**
-     * 
+     * Always returns trimmedFile.
+     * @param trimmedFile the trimmed file.
+     * @return the same trimmedFile as given.
      */
-    public DefaultReadCasFileLookup() {
-        super();
-    }
-
-    /**
-     * @param trimToUntrimmedMap
-     */
-    public DefaultReadCasFileLookup(CasTrimMap trimToUntrimmedMap) {
-        super(trimToUntrimmedMap);
-    }
-
     @Override
-    public void visitContigFileInfo(CasFileInfo contigFileInfo) {
-        checkNotYetInitialized();
-        
+    public File getUntrimmedFileFor(File trimmedFile) {
+        return trimmedFile;
     }
 
-    @Override
-    public void visitReadFileInfo(CasFileInfo readFileInfo) {
-        checkNotYetInitialized();
-        loadFiles(readFileInfo);
-        
-    }
 }

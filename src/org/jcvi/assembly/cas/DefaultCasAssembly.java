@@ -111,7 +111,7 @@ public class DefaultCasAssembly implements CasAssembly{
         private final File casFile;
         private final CasDataStoreFactory casDataStoreFactory;
         private final TrimDataStore externalTrimDataStore;
-        private final Map<String, String> trimToUntrimmedMap;
+        private final CasTrimMap trimToUntrimmedMap;
         /**
          * @param casFile
          * @param casDataStoreFactory
@@ -119,7 +119,7 @@ public class DefaultCasAssembly implements CasAssembly{
          * @param sliceMapFactory
          * @param solexaQualityCodec
          */
-        public Builder(File casFile, CasDataStoreFactory casDataStoreFactory,TrimDataStore externalTrimDataStore,Map<String, String> trimToUntrimmedMap) {
+        public Builder(File casFile, CasDataStoreFactory casDataStoreFactory,TrimDataStore externalTrimDataStore,CasTrimMap trimToUntrimmedMap) {
             this.casFile = casFile;
             this.casDataStoreFactory = casDataStoreFactory;
             this.externalTrimDataStore = externalTrimDataStore;

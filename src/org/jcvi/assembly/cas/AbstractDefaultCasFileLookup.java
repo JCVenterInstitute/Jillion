@@ -49,7 +49,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
 
     private final List<String> readNameOrder = new ArrayList<String>();
     private final Map<String, File> readNameToFile = new HashMap<String, File>();
-    private final Map<String, String> trimToUntrimmedMap;
+    private final CasTrimMap trimToUntrimmedMap;
     
     private final List<File> files = new ArrayList<File>();
     private boolean initialized = false;
@@ -59,11 +59,11 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
      * @param trimToUntrimmedMap
      * @param initialized
      */
-    public AbstractDefaultCasFileLookup(Map<String, String> trimToUntrimmedMap) {
+    public AbstractDefaultCasFileLookup(CasTrimMap trimToUntrimmedMap) {
         this.trimToUntrimmedMap = trimToUntrimmedMap;
     }
     public AbstractDefaultCasFileLookup(){
-        this(Collections.<String, String>emptyMap());
+        this(EmptyCasTrimMap.getInstance());
     }
     protected synchronized void checkNotYetInitialized(){
         if(initialized){
@@ -88,19 +88,9 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
                 final File filetoParse;
                 String key=null;
                 System.out.println(file.getAbsolutePath());
-                
-                for(String path : trimToUntrimmedMap.keySet()){
-                    File f = new File(path);
-                    System.out.println("\t"+f.getAbsolutePath());
-                    if(f.getAbsolutePath().equals(file.getAbsolutePath())){
-                        key=path;
-                    }
-                }
-                if(key !=null){
-                    filetoParse = new File(trimToUntrimmedMap.get(key));
-                }else{
-                    filetoParse = file;
-                }
+           
+                    filetoParse = trimToUntrimmedMap.getUntrimmedFileFor(file);
+               
                 System.out.printf("loading file %s for cas file %s%n", filetoParse.getName(), file.getName());
                 files.add(filetoParse);
                 parse(filetoParse);
