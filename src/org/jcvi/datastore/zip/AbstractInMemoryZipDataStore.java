@@ -16,32 +16,31 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Aug 5, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.datastore;
+
+package org.jcvi.datastore.zip;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.jcvi.datastore.AbstractDataStore;
+import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;
 
-public class InMemoryZipDataStore extends AbstractDataStore<InputStream> implements ZipDataStore {
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public abstract class AbstractInMemoryZipDataStore extends AbstractDataStore<InputStream> implements ZipDataStore {
 
-    private final Map<String, ByteBuffer> contents = new HashMap<String, ByteBuffer>();
-    
-    public InMemoryZipDataStore(ZipInputStream inputStream) throws IOException{
-        
+    protected AbstractInMemoryZipDataStore(ZipInputStream inputStream) throws IOException{
+        initialize();
         ZipEntry entry = inputStream.getNextEntry();
         while(entry !=null){
             String name = entry.getName();
@@ -50,41 +49,21 @@ public class InMemoryZipDataStore extends AbstractDataStore<InputStream> impleme
             //therefore must use byteArrayoutputStream.
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             IOUtil.writeToOutputStream(inputStream, output);
-            contents.put(name, ByteBuffer.wrap(output.toByteArray()));  
+            addRecord(name, output.toByteArray());  
             entry = inputStream.getNextEntry();
         }
     }
-    @Override
-    public boolean contains(String id) throws DataStoreException {
-        super.contains(id);
-        return contents.containsKey(id);
+    protected void initialize() throws IOException{
+        //co-op
     }
+    /**
+     * Add the entry with the given entry name and its corresponding
+     * data to this datastore.
+     * @param entryName
+     * @param data
+     */
+    protected abstract void addRecord(String entryName, byte[] data);
+   
 
-    @Override
-    public InputStream get(String id) throws DataStoreException {
-        super.get(id);
-        ByteBuffer buffer = contents.get(id);
-        return new ByteArrayInputStream(buffer.array());
-    }
-
-    @Override
-    public Iterator<String> getIds() throws DataStoreException {
-        super.getIds();
-        return contents.keySet().iterator();
-    }
-
-    @Override
-    public int size() throws DataStoreException {
-        super.size();
-        return contents.size();
-    }
-
-    @Override
-    public synchronized void close() throws IOException {
-        super.close();
-        contents.clear();
-    }
-
-    
 
 }
