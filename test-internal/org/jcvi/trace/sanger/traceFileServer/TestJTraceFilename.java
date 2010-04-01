@@ -35,6 +35,7 @@ public class TestJTraceFilename {
     
     private final String external_traceFileName = "Unknown_Z99_EXT_BMMBZ17TR_0_0_000_1108821227875.ztr";
     
+    private final String XXX_loaded_by_gel_TIGR_closure_traceFileName = "1035901-903-905-947_I11_TIGR_JPCCB01T27A03PB2A3FB_1036199_1119374593789_XXX_1119368952315.scf";
     @Test
     public void invalidFileNameShouldThrowIllegalArgumentException(){
         try{
@@ -55,6 +56,7 @@ public class TestJTraceFilename {
         assertEquals("Tracker_barcode", "ztr", JTraceFilenameUtil.getFileFormatFrom(Tracker_barcoded_traceFileName));
         assertEquals("Tracker_nonbarcode", "ztr", JTraceFilenameUtil.getFileFormatFrom(Tracker_non_barcoded_traceFileName));
         assertEquals("External","ztr", JTraceFilenameUtil.getFileFormatFrom(external_traceFileName));
+        assertEquals("TIGR gel loaded","scf", JTraceFilenameUtil.getFileFormatFrom(XXX_loaded_by_gel_TIGR_closure_traceFileName));
     }
     @Test
     public void getTraceFileID(){
@@ -62,14 +64,16 @@ public class TestJTraceFilename {
         assertEquals("Tracker_barcode", 1094392116666L, JTraceFilenameUtil.getTraceFileIDFrom(Tracker_barcoded_traceFileName));
         assertEquals("Tracker_nonbarcode", 1119728634200L, JTraceFilenameUtil.getTraceFileIDFrom(Tracker_non_barcoded_traceFileName));
         assertEquals("External",1108821227875L, JTraceFilenameUtil.getTraceFileIDFrom(external_traceFileName));
+        assertEquals("TIGR gel loaded",1119368952315L, JTraceFilenameUtil.getTraceFileIDFrom(XXX_loaded_by_gel_TIGR_closure_traceFileName));
     }
     
     @Test
     public void getCapillaryID(){
-        assertEquals("JLIMS", (short)94, JTraceFilenameUtil.getCapillaryIDFrom(JLIMS_traceFileName));
-        assertEquals("Tracker_barcode", (short)95, JTraceFilenameUtil.getCapillaryIDFrom(Tracker_barcoded_traceFileName));
-        assertEquals("Tracker_nonbarcode", (short)1, JTraceFilenameUtil.getCapillaryIDFrom(Tracker_non_barcoded_traceFileName));
-        assertEquals("External", (short)0, JTraceFilenameUtil.getCapillaryIDFrom(external_traceFileName));
+        assertEquals("JLIMS", "094", JTraceFilenameUtil.getCapillaryIDFrom(JLIMS_traceFileName));
+        assertEquals("Tracker_barcode", "095", JTraceFilenameUtil.getCapillaryIDFrom(Tracker_barcoded_traceFileName));
+        assertEquals("Tracker_nonbarcode", "001", JTraceFilenameUtil.getCapillaryIDFrom(Tracker_non_barcoded_traceFileName));
+        assertEquals("External", "000", JTraceFilenameUtil.getCapillaryIDFrom(external_traceFileName));
+        assertEquals("TIGR gel loaded", "XXX", JTraceFilenameUtil.getCapillaryIDFrom(XXX_loaded_by_gel_TIGR_closure_traceFileName));
     }
     
     @Test
@@ -78,6 +82,7 @@ public class TestJTraceFilename {
         assertEquals("Tracker_barcode", 1090617433962L, JTraceFilenameUtil.getTraceIDFrom(Tracker_barcoded_traceFileName));
         assertEquals("Tracker_nonbarcode", 1119610671976L, JTraceFilenameUtil.getTraceIDFrom(Tracker_non_barcoded_traceFileName));
         assertEquals("External", 0L, JTraceFilenameUtil.getTraceIDFrom(external_traceFileName));
+        assertEquals("TIGR gel loaded", 1119374593789L, JTraceFilenameUtil.getTraceIDFrom(XXX_loaded_by_gel_TIGR_closure_traceFileName));
     }
     @Test
     public void getRunID(){
@@ -85,6 +90,7 @@ public class TestJTraceFilename {
         assertEquals("Tracker_barcode", 1090617433951L, JTraceFilenameUtil.getRunIDFrom(Tracker_barcoded_traceFileName));
         assertEquals("Tracker_nonbarcode", 1038561L, JTraceFilenameUtil.getRunIDFrom(Tracker_non_barcoded_traceFileName));
         assertEquals("External", 0L, JTraceFilenameUtil.getRunIDFrom(external_traceFileName));
+        assertEquals("TIGR gel loaded", 1036199L, JTraceFilenameUtil.getRunIDFrom(XXX_loaded_by_gel_TIGR_closure_traceFileName));
     }
     
     @Test
@@ -93,6 +99,7 @@ public class TestJTraceFilename {
         assertEquals("Tracker_barcode", "A300O2YV", JTraceFilenameUtil.getPlateIDFrom(Tracker_barcoded_traceFileName));
         assertEquals("Tracker_nonbarcode", "A-1038559-560-561", JTraceFilenameUtil.getPlateIDFrom(Tracker_non_barcoded_traceFileName));
         assertEquals("External", "Unknown", JTraceFilenameUtil.getPlateIDFrom(external_traceFileName));
+        assertEquals("TIGR gel loaded", "1035901-903-905-947", JTraceFilenameUtil.getPlateIDFrom(XXX_loaded_by_gel_TIGR_closure_traceFileName));
     }
     @Test
     public void getPlateWell(){
@@ -100,6 +107,7 @@ public class TestJTraceFilename {
         assertEquals("Tracker_barcode", "B22", JTraceFilenameUtil.getPlateWellFrom(Tracker_barcoded_traceFileName));
         assertEquals("Tracker_nonbarcode", "A05", JTraceFilenameUtil.getPlateWellFrom(Tracker_non_barcoded_traceFileName));
         assertEquals("External", "Z99", JTraceFilenameUtil.getPlateWellFrom(external_traceFileName));
+        assertEquals("TIGR gel loaded", "I11", JTraceFilenameUtil.getPlateWellFrom(XXX_loaded_by_gel_TIGR_closure_traceFileName));
     }
     
     @Test
@@ -108,6 +116,7 @@ public class TestJTraceFilename {
         assertEquals("Tracker_barcode", SourceLIMS.JTC, JTraceFilenameUtil.getSourceLIMSFrom(Tracker_barcoded_traceFileName));
         assertEquals("Tracker_nonbarcode", SourceLIMS.TIGR, JTraceFilenameUtil.getSourceLIMSFrom(Tracker_non_barcoded_traceFileName));
         assertEquals("External", SourceLIMS.EXT, JTraceFilenameUtil.getSourceLIMSFrom(external_traceFileName));
+        assertEquals("TIGR gel loaded", SourceLIMS.TIGR, JTraceFilenameUtil.getSourceLIMSFrom(XXX_loaded_by_gel_TIGR_closure_traceFileName));
     }
     
     @Test
@@ -116,5 +125,6 @@ public class TestJTraceFilename {
         assertEquals("Tracker_barcode", "JAAA311TF", JTraceFilenameUtil.getLIMSParentIDFrom(Tracker_barcoded_traceFileName));
         assertEquals("Tracker_nonbarcode", "HMX8Z64T1001EWALK65B", JTraceFilenameUtil.getLIMSParentIDFrom(Tracker_non_barcoded_traceFileName));
         assertEquals("External", "BMMBZ17TR", JTraceFilenameUtil.getLIMSParentIDFrom(external_traceFileName));
+        assertEquals("TIGR gel loaded", "JPCCB01T27A03PB2A3FB", JTraceFilenameUtil.getLIMSParentIDFrom(XXX_loaded_by_gel_TIGR_closure_traceFileName));
     }
 }
