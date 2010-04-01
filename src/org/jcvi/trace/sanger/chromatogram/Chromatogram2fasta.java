@@ -88,7 +88,9 @@ public class Chromatogram2fasta {
        try {
         CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
         if(!commandLine.hasOption("s") && !commandLine.hasOption("p") && !commandLine.hasOption("q")){
-            throw new ParseException("must specifiy -s -p and/or -q to generate any fasta records");
+            String message ="must specifiy -s -p and/or -q to generate any fasta records";
+            System.err.println(message);
+            throw new ParseException(message);
         }
         String outputDirPath = commandLine.hasOption("o")? commandLine.getOptionValue("o"): ".";
         ReadWriteDirectoryFileServer outputFileServer = DirectoryFileServer.createReadWriteDirectoryFileServer(outputDirPath);

@@ -17,40 +17,26 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Sep 8, 2009
+ * Created on Aug 5, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.auth;
+package org.jcvi.datastore.zip;
 
-import java.io.Closeable;
+import java.io.InputStream;
+import java.util.zip.ZipEntry;
+
+import org.jcvi.datastore.DataStore;
 /**
- * {@code JCVIAuthorizer} is a interface
- * to handle username/password data.
+ * A {@code ZipDataStore} is a {@link DataStore} implementation
+ * of a ZIP file.  The ids in this DataStore are the {@link ZipEntry}s
+ * and the objects returned are {@link InputStream}s of the Files
+ * contained in the zip.  NOTE: Since JAR files are actually ZIP
+ * files, {@link ZipDataStore} can be used to read JARS as well.
  * @author dkatzel
  *
  *
  */
-public interface JCVIAuthorizer extends Closeable{
-    /**
-     * Get the username for this authorization.
-     * @return the username as a String.
-     */
-    String getUsername();
-    /**
-     * Get the password for this authorization as a char array.
-     * @return an array of chars.
-     */
-    char[] getPassword();
-    /**
-     * Cleans up any resources created.  
-     * It is recommended that the password
-     * is cleared out for security.
-     */
-    void close();
-    /**
-     * Checks to see if this Authorizer is closed.
-     * @return {@code true} if closed; {@code false} otherwise.
-     */
-    boolean isClosed();
+public interface ZipDataStore extends DataStore<InputStream>{
+
 }
