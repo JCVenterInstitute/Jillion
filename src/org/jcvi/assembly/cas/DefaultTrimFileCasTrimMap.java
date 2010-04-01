@@ -20,7 +20,7 @@
 package org.jcvi.assembly.cas;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,18 +39,25 @@ public class DefaultTrimFileCasTrimMap implements CasTrimMap{
      * Constructs a new {@link CasTrimMap} containing the data
      * provided by the given trim map file.
      * @param trimMapFile the trim map {@link File}.
-     * @throws FileNotFoundException if the given trim map file does not exist.
+     * @throws IOException 
      */
-    public DefaultTrimFileCasTrimMap(File trimMapFile) throws FileNotFoundException{
+    public DefaultTrimFileCasTrimMap(File trimMapFile) throws IOException{
         Map<String, String> pathMap= CasConversionUtil.parseTrimmedToUntrimmedFiles(trimMapFile);
         for(Entry<String, String> file : pathMap.entrySet()){
-            fileMap.put(new File(file.getKey()), new File(file.getValue()));
+            fileMap.put(new File(file.getKey()).getCanonicalFile(), new File(file.getValue()).getCanonicalFile());
         }
     }
     @Override
     public File getUntrimmedFileFor(File pathtoTrimmedDataStore){
-        if(fileMap.containsKey(pathtoTrimmedDataStore)){
-            return fileMap.get(pathtoTrimmedDataStore);
+        File cannonicalFile;
+        try {
+            cannonicalFile = pathtoTrimmedDataStore.getCanonicalFile();
+        } catch (IOException e) {
+           throw new IllegalStateException("error converting trim path to canonical form",e);
+        }
+        
+        if(fileMap.containsKey(cannonicalFile)){
+            return fileMap.get(cannonicalFile);
         }
         return pathtoTrimmedDataStore;
     }
