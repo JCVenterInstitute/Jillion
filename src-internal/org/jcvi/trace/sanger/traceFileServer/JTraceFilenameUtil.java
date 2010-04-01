@@ -61,7 +61,7 @@ public final class JTraceFilenameUtil {
      * used to parse out all information from a trace file name.
      */
     private static final Pattern JTRACE_2_PATTERN = Pattern.compile(
-            "^(\\S+)_(\\S+)_(\\S+)_(\\S+)_(\\d+)_(\\d+)_(\\d{3})_(\\d+)\\.(.+)$");
+            "^(\\S+)_(\\S+)_(\\S+)_(\\S+)_(\\d+)_(\\d+)_(\\w{3})_(\\d+)\\.(.+)$");
     /**
      * private constructor.
      */
@@ -106,7 +106,8 @@ public final class JTraceFilenameUtil {
     /**
      * Gets the sequencing plate well identifier.
      * @param jtraceFileName (not null) the a JTrace generated file name.
-     * @return A01-P24 for 384 well plates, A01-H12 for 96 well plates.
+     * @return A01-P24 for 384 well plates, A01-H12 for 96 well plates
+     *  or Z99 for external data.
      * @throws IllegalArgumentException if the given file name
      * is not a valid JTrace File name.
      * @throws NullPointerException if the given file is null.
@@ -192,8 +193,8 @@ public final class JTraceFilenameUtil {
      * is not a valid JTrace File name.
      * @throws NullPointerException if the given file is null.
      */
-    public static short getCapillaryIDFrom(String jtraceFileName){
-        return Short.parseShort(getMatcherFor(jtraceFileName).group(7));
+    public static String getCapillaryIDFrom(String jtraceFileName){
+        return getMatcherFor(jtraceFileName).group(7);
     }
     /**
      * Get the unique Trace File Identifier.
