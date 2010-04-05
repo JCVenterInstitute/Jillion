@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -70,6 +70,8 @@ public class AlignmentFactory
     private double score;
     /** The identity score of the alignment. */
     private double identity;
+    /** The percentage match for the alignment. */
+    private double match;
     
     /**
      * Creates a new <code>AlignmentFactory</code>.
@@ -115,7 +117,7 @@ public class AlignmentFactory
                                                                            this.buildStaticGapList(this.referenceGaps),
                                                                            this.refLength);
         
-        return new BasicAlignment(queryAlignment, referenceAlignment, this.score, this.identity);
+        return new BasicAlignment(queryAlignment, referenceAlignment, this.score, this.identity, this.match);
     }
     
     /**
@@ -277,6 +279,18 @@ public class AlignmentFactory
     public void setIdentity(double identity)
     {
         this.identity = identity;
+    }
+    
+    /**
+     * Sets the match score of the alignment.  This is calculated in a similar manner to the 
+     * {@link #setIdentity(double) identity} value, but it provides for partial scoring to 
+     * matches against ambiguous bases.
+     * 
+     * @param match The match score for the alignment.
+     */
+    public void setMatch(double match)
+    {
+        this.match = match;
     }
     
     /**
