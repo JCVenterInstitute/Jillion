@@ -19,17 +19,13 @@
 
 package org.jcvi.datastore.zip;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.jcvi.datastore.AbstractDataStore;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;
 
 /**
@@ -39,8 +35,8 @@ import org.jcvi.io.IOUtil;
  */
 public abstract class AbstractInMemoryZipDataStore extends AbstractDataStore<InputStream> implements ZipDataStore {
 
-    protected AbstractInMemoryZipDataStore(ZipInputStream inputStream) throws IOException{
-        initialize();
+    
+    protected void insert(ZipInputStream inputStream) throws IOException {
         ZipEntry entry = inputStream.getNextEntry();
         while(entry !=null){
             String name = entry.getName();
@@ -53,16 +49,14 @@ public abstract class AbstractInMemoryZipDataStore extends AbstractDataStore<Inp
             entry = inputStream.getNextEntry();
         }
     }
-    protected void initialize() throws IOException{
-        //co-op
-    }
+    
     /**
      * Add the entry with the given entry name and its corresponding
      * data to this datastore.
      * @param entryName
      * @param data
      */
-    protected abstract void addRecord(String entryName, byte[] data);
+    protected abstract void addRecord(String entryName, byte[] data) throws IOException;
    
 
 
