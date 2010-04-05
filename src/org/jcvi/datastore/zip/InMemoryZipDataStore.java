@@ -95,7 +95,7 @@ public class InMemoryZipDataStore extends AbstractInMemoryZipDataStore{
         return new InMemoryZipDataStore(zipInputStream);
     }
     private InMemoryZipDataStore(ZipInputStream inputStream) throws IOException{
-        super(inputStream);
+        insert(inputStream);
     }
     
     @Override
