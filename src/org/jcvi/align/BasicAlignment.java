@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -42,6 +42,8 @@ public class BasicAlignment implements Alignment
     private final double score;
     /** The percentage identity for the alignment. */
     private final double identity;
+    /** The percentage match for the alignment. */
+    private final double match;
     
     /**
      * Creates a new <code>BasicAlignment</code>.
@@ -51,9 +53,11 @@ public class BasicAlignment implements Alignment
      * @param score The alignment score.
      * @param identity The percentage identity as a double-encoded percentage greater than or
      * equal to <code>0.0</code> and less than or equal to <code>1.0</code>.
+     * @param match The match score percentage as a double-encoded percentage greater than or
+     * equal to <code>0.0</code> and less than or equal to <code>1.0</code>.
      */
     public BasicAlignment(SequenceAlignment queryAlignment,
-            SequenceAlignment referenceAlignment, double score, double identity)
+            SequenceAlignment referenceAlignment, double score, double identity, double match)
     {
         super();
         
@@ -61,6 +65,7 @@ public class BasicAlignment implements Alignment
         this.referenceAlignment = referenceAlignment;
         this.score = score;
         this.identity = identity;
+        this.match = match;
     }
 
     /* (non-Javadoc)
@@ -85,6 +90,15 @@ public class BasicAlignment implements Alignment
     public double getIdentity()
     {
         return this.identity;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jcvi.align.Alignment#getMatch()
+     */
+    @Override
+    public double getMatch() 
+    {
+        return this.match;
     }
     
     /* (non-Javadoc)

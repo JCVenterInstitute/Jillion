@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -61,6 +61,15 @@ public interface Alignment
      *  and <code>1.0</code>.
      */
     double getIdentity();
+    
+    /**
+     * Fetches the match score for this alignment.  This is a modified version of the identity
+     * score which gives partial credit for matches against ambiguity base calls.
+     * 
+     * @return The match score as a <code>double</code>-encoded percentage between 
+     * <code>0.0</code> and <code>1.0</code>.
+     */
+    double getMatch();
 
     /**
      * Fetches the reported score assigned to the alignment.  There is no required method for

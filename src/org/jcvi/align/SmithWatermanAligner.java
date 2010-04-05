@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /**
- * OldAligner.java Created: Aug 10, 2009 - 11:16:37 AM (jsitz) Copyright 2009 J.
+ * SmithWatermanAligner.java Created: Aug 10, 2009 - 11:16:37 AM (jsitz) Copyright 2009 J.
  * Craig Venter Institute
  */
 package org.jcvi.align;
@@ -36,13 +36,16 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
 {
     /** The default gap score. */
-    private static final GapPenalty DEFAULT_GAP_PENALTY = new ConstantGapPenalty(-3);
+    private static final int DEFAULT_GAP_SCORE = -3;
+    
+    /** The match score awarded for matches against ambiguous bases. */
+    private static final double AMBIGUITY_MATCH_SCORE = 0.75;
 
     /** The score for a gap in the alignment. */
-    private final GapPenalty gapPenalty;
+    private final int gapScore;
     
     /** The substitution matrix to use when scoring matches. */
-    private final AlignmentMatrix<NucleotideGlyph> matrix;
+    private final SubstitutionMatrix<NucleotideGlyph> matrix;
 
     /**
      * Creates a new <code>SmithWatermanAligner</code>.
@@ -50,41 +53,32 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
      * @param matrix The {@link SubstitutionMatrix} to use for scoring.
      * @param gapScore The gapping score (penalty) to use.
      */
-    public SmithWatermanAligner(AlignmentMatrix<NucleotideGlyph> matrix, GapPenalty gapPenalty)
+    public SmithWatermanAligner(SubstitutionMatrix<NucleotideGlyph> matrix, int gapScore)
     {
         super();
         
         this.matrix = matrix;
-        this.gapPenalty = gapPenalty;
-    }
-
-    public AlignmentMatrix<NucleotideGlyph> getMatrix() {
-        return matrix;
-    }
-
-    public GapPenalty getGapPenalty() {
-        return gapPenalty;
+        this.gapScore = gapScore;
     }
 
     /**
      * Creates a new <code>SmithWatermanAligner</code> with a default gap penalty 
-     * ({@value #DEFAULT_GAP_PENALTY}).
+     * ({@value #DEFAULT_GAP_SCORE}).
      * 
      * @param matrix The {@link SubstitutionMatrix} to use for scoring.
      */
-    public SmithWatermanAligner(SubstitutionMatrix matrix)
+    public SmithWatermanAligner(SubstitutionMatrix<NucleotideGlyph> matrix)
     {
-        this(matrix, SmithWatermanAligner.DEFAULT_GAP_PENALTY);
+        this(matrix, SmithWatermanAligner.DEFAULT_GAP_SCORE);
     }
 
     /* (non-Javadoc)
      * @see org.jcvi.align.Aligner#alignSequence(java.lang.CharSequence)
      */
-    public Alignment alignSequence(EncodedGlyphs<NucleotideGlyph> referenceSequence, EncodedGlyphs<NucleotideGlyph> querySequence)
+    public Alignment alignSequence(EncodedGlyphs<NucleotideGlyph> querySequence, EncodedGlyphs<NucleotideGlyph> referenceSequence)
     {
         final AlignmentFactory alignment = new AlignmentFactory();
-        final ScoringMatrix<NucleotideGlyph> score = createScoringMatrixFor(
-                referenceSequence, querySequence, this.gapPenalty);
+        final ScoringMatrix<NucleotideGlyph> score = new ScoringMatrix<NucleotideGlyph>(referenceSequence, querySequence, this.gapScore);
 
         /*
          * Set the sequence lengths
@@ -116,9 +110,10 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
          */
         int alignmentLength = 0;
         int identity = 0;
+        double matchScore = 0.0;
 
         // traverse the optimal path and build the alignment strings
-        while (stillTraversing(referenceSequence, querySequence, cursor))
+        while (cursor.y < referenceSequence.getLength() && cursor.x < querySequence.getLength())
         {
             /*
              * Bump the alignment length counter.
@@ -130,7 +125,7 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
              */
             switch (score.getPath(cursor))
             {
-                case DIAGNOL:
+                case ScoringMatrix.PATH_DIAG:
                     
                     /*
                      * Check for identity.
@@ -140,20 +135,25 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
                     if (refBase == queryBase)
                     {
                         identity++;
+                        matchScore++;
+                    }
+                    else if (matrix.getScore(refBase, queryBase) > 0)
+                    {
+                        matchScore += AMBIGUITY_MATCH_SCORE;
                     }
                     
                     cursor = cursor.translate(1, 1);
 
                     break;
 
-                case HORIZONTAL:
+                case ScoringMatrix.PATH_HORZ:
                     
                     alignment.addAbsoluteReferenceGap(cursor.y);
                     cursor = cursor.translate(1, 0);
 
                     break;
 
-                case VERTICAL:
+                case ScoringMatrix.PATH_VERT:
                     
                     alignment.addAbsoluteQueryGap(cursor.x);
                     cursor = cursor.translate(0, 1);
@@ -166,7 +166,8 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
          * Store the identity and score
          */
         alignment.setIdentity(identity / (double)alignmentLength);
-        alignment.setScore(score.getScore(start.x,start.y));
+        alignment.setScore(score.getScore(start));
+        alignment.setMatch(matchScore / (double)alignmentLength);
         
         /*
          * Update the alignment factory with the alignment stop points
@@ -185,20 +186,14 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
         return alignment.build();
     }
 
-    protected boolean stillTraversing(
-            EncodedGlyphs<NucleotideGlyph> referenceSequence,
-            EncodedGlyphs<NucleotideGlyph> querySequence, Coordinate cursor) {
-        return cursor.y < referenceSequence.getLength() && cursor.x < querySequence.getLength();
-    }
-
-    protected ScoringMatrix<NucleotideGlyph> createScoringMatrixFor(
-            EncodedGlyphs<NucleotideGlyph> referenceSequence,
-            EncodedGlyphs<NucleotideGlyph> querySequence,
-            GapPenalty gapPenalty) {
-        return new LocalScoringMatrix<NucleotideGlyph>(referenceSequence, querySequence, gapPenalty);
-    }
-
-    protected Coordinate getAlignmentStartCoordinate(final ScoringMatrix score) {
+    /**
+     * Fetches the start coordinate of the alignment within the scoring matrix.
+     * 
+     * @param score The scoring matrix.
+     * @return The {@link Coordinate} of the best start location.
+     */
+    protected Coordinate getAlignmentStartCoordinate(final ScoringMatrix<NucleotideGlyph> score) 
+    {
         return score.getBestStart();
     }
 }

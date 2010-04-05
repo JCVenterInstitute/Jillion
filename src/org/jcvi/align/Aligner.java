@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -44,5 +44,5 @@ public interface Aligner<G extends Glyph>
      * @param querySequence The sequence to align to the reference.
      * @return The {@link Alignment} of the query against the reference.
      */
-    Alignment alignSequence(EncodedGlyphs<G> referenceSequence, EncodedGlyphs<G> querySequence);
+    Alignment alignSequence(EncodedGlyphs<G> querySequence, EncodedGlyphs<G> referenceSequence);
 }
