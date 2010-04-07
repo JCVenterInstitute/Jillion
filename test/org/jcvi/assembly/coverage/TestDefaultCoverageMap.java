@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.Range;
+import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.Placed;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
@@ -275,5 +276,30 @@ public class TestDefaultCoverageMap {
         assertEquals(createCoverageRegion(5,9,seq_0_9,seq_0_12,seq_5_14 ), regions.get(0));
         assertEquals(createCoverageRegion(10,12,seq_0_12,seq_5_14 ), regions.get(1));
 
+    }
+    
+    @Test
+    public void checkAlternateCoordinateSystemRanges()
+    {
+        long residueStart = 1;
+        long residueStop = 100;
+        Range residueRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, residueStart, residueStop);
+        Range zeroRange = residueRange.convertRange(CoordinateSystem.ZERO_BASED);
+        
+        CoverageMap<CoverageRegion<Placed>> map = new DefaultCoverageMap.Builder<Placed>(
+                Arrays.asList((Placed)zeroRange)).build();
+        
+        List<CoverageRegion<Placed>> regions = map.getRegions();
+        assertEquals(1, regions.size());
+        assertEquals(0, regions.get(0).getStart());
+        assertEquals(99, regions.get(0).getEnd());
+        
+        CoverageMap<CoverageRegion<Placed>> residueMap = new DefaultCoverageMap.Builder<Placed>(
+                Arrays.asList((Placed)residueRange)).build();
+        
+        List<CoverageRegion<Placed>> residueRegions = residueMap.getRegions();
+        assertEquals(1, residueRegions.size());
+        assertEquals(0, residueRegions.get(0).getStart());
+        assertEquals(99, residueRegions.get(0).getEnd());
     }
 }
