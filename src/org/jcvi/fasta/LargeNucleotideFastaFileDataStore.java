@@ -177,10 +177,26 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
         Scanner scanner = new Scanner(fastaFile);
         String expectedHeader = String.format(">%s", id);
         String line = scanner.nextLine();
-        
-        while(!line.startsWith(expectedHeader) && scanner.hasNextLine()){
-            line = scanner.nextLine();            
+        boolean done=false;
+        //we have to do this while loop to make sure we find
+        //the actual read instead of a different read which is happens
+        //to include our id as a prefix (for example a TIGR "B" read
+        while(!done){
+            if(line.startsWith(expectedHeader)){
+                String currentId= SequenceFastaRecordUtil.parseIdentifierFromIdLine(line);
+                if(id.equals(currentId)){
+                    done=true;
+                    //done
+                    continue;
+                }
+            }
+            if(!scanner.hasNextLine()){
+                done=true;
+                continue;
+            }
+            line = scanner.nextLine(); 
         }
+        
         if(!scanner.hasNextLine()){
             return null;
         }
