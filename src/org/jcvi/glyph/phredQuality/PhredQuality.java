@@ -54,6 +54,10 @@ public final class PhredQuality extends ByteGlyph{
     public static int convertErrorProbability(double errorProbability){
         return (int)Math.round(-10.0 * Math.log10(errorProbability));
     }
+    public double getErrorProbability(){
+        return Math.pow(10, this.getNumber()/-10D);
+       
+    }
     
     public static PhredQuality valueOf(int b){
        return valueOf((byte)b);
