@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
- * 
+ *
  * 	This file is part of JCVI Java Common
- * 
+ *
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
- * 
+ *
  *     JCVI Java Common is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -66,28 +66,46 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
     /**
      * Enumeration of available range coordinate systems
      */
-    public enum CoordinateSystem {
-        ZERO_BASED("Zero Based", "0B"),
-        RESIDUE_BASED("Residue Based", "RB"),
-        SPACE_BASED("Space Based", "SB");
+    public enum CoordinateSystem implements RangeCoordinateSystem {
+        ZERO_BASED("Zero Based", "0B", 0, 0, 0, 0),
+        RESIDUE_BASED("Residue Based", "RB", 1, 1, -1, -1),
+        SPACE_BASED("Space Based", "SB", 0, 1, 0, -1);
 
         /** The full name used to display this coordinate system. */
         private String displayName;
         
         /** An abbreviated name to use as a printable <code>Range</code> annotation. */
         private String abbreviatedName;
-        
+
+        private long zeroBaseToCoordinateSystemStartAdjustmentValue;
+        private long zeroBaseToCoordinateSystemEndAdjustmentValue;
+
+        private long coordinateSystemToZeroBaseStartAdjustmentValue;
+        private long coordinateSystemToZeroBaseEndAdjustmentValue;
+
         /**
          * Builds a <code>CoordinateSystem</code>.
-         * 
+         *
          * @param displayName The full name used to display this coordinate system.
-         * @param abbreviatedName An abbreviated name to use as a printable <code>Range</code> 
+         * @param abbreviatedName An abbreviated name to use as a printable <code>Range</code>
          * annotation.
+         * @param zeroBaseToCoordinateSystemStartAdjustmentValue
+         * @param zeroBaseToCoordinateSystemEndAdjustmentValue
+         * @param coordinateSystemToZeroBaseStartAdjustmentValue
+         * @param coordinateSystemToZeroBaseEndAdjustmentValue
          */
-        private CoordinateSystem(String displayName, String abbreviatedName) 
-        {
+        private CoordinateSystem(String displayName,
+                                 String abbreviatedName,
+                                 long zeroBaseToCoordinateSystemStartAdjustmentValue,
+                                 long zeroBaseToCoordinateSystemEndAdjustmentValue,
+                                 long coordinateSystemToZeroBaseStartAdjustmentValue,
+                                 long coordinateSystemToZeroBaseEndAdjustmentValue) {
             this.displayName = displayName;
             this.abbreviatedName = abbreviatedName;
+            this.zeroBaseToCoordinateSystemStartAdjustmentValue = zeroBaseToCoordinateSystemStartAdjustmentValue;
+            this.zeroBaseToCoordinateSystemEndAdjustmentValue = zeroBaseToCoordinateSystemEndAdjustmentValue;
+            this.coordinateSystemToZeroBaseStartAdjustmentValue = coordinateSystemToZeroBaseStartAdjustmentValue;
+            this.coordinateSystemToZeroBaseEndAdjustmentValue = coordinateSystemToZeroBaseEndAdjustmentValue;
         }
 
         /**
@@ -107,8 +125,29 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
         {
             return displayName;
         }
+
+        // get range coordinate system start and end locations
+        // from range zero base start and end locations
+        public long getLocalStart(long start) {
+            return start + zeroBaseToCoordinateSystemStartAdjustmentValue;
+        }
+
+        public long getLocalEnd(long end) {
+            return end + zeroBaseToCoordinateSystemEndAdjustmentValue;
+        }
+
+        // get zero base start and end locations
+        // from range coordinate system start and end locations
+        public long getStart(long localStart) {
+            return localStart + coordinateSystemToZeroBaseStartAdjustmentValue;
+        }
+
+        public long getEnd(long localEnd) {
+            return localEnd + coordinateSystemToZeroBaseEndAdjustmentValue;
+        }
+
     }
-    private static final Map<CoordinateSystem, CoordinateConverter> SYSTEM_TO_CONVERTER_MAP;
+
     /**
      * Regular expression in the form (left) .. (right).
      */
@@ -121,14 +160,7 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
     
     
     private static final Comparator<Range> DEFAULT_COMPARATOR = new RangeArrivalComparator();
-    
-    static{
-        SYSTEM_TO_CONVERTER_MAP = new EnumMap<CoordinateSystem, CoordinateConverter>(CoordinateSystem.class);
-        SYSTEM_TO_CONVERTER_MAP.put(CoordinateSystem.RESIDUE_BASED, ResidueBasedConverter.getInstance());
-        SYSTEM_TO_CONVERTER_MAP.put(CoordinateSystem.SPACE_BASED, SpaceBasedConverter.getInstance());
-        SYSTEM_TO_CONVERTER_MAP.put(CoordinateSystem.ZERO_BASED, ZeroBasedConverter.getInstance());
-        
-    }
+
     /**
      * Factory method to build a {@link Range} object.
      * if end == start -1 then this method will return an {@link EmptyRange}.
@@ -141,46 +173,35 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
         return buildRange(CoordinateSystem.ZERO_BASED,start,end);
     }
 
-    public static Range buildRange(CoordinateSystem coordinateSystem,long start, long end){
+    public static Range buildRange(RangeCoordinateSystem coordinateSystem,long start, long end){
         if ( coordinateSystem == null ) {
             throw new IllegalArgumentException("Cannot build null coordinate system range");
         }
 
-        CoordinateConverter converter = SYSTEM_TO_CONVERTER_MAP.get(coordinateSystem);
-        if(converter == null){
-            throw new IllegalArgumentException("Do not know how to build a " + coordinateSystem + " range");
-        }
-        long zeroBasedStart = converter.getStart(start);
-        long zeroBasedEnd = converter.getEnd(end);
-        
-
+        long zeroBasedStart = coordinateSystem.getStart(start);
+        long zeroBasedEnd = coordinateSystem.getEnd(end);
 
         if(zeroBasedEnd >= zeroBasedStart) {
-            return new Range(zeroBasedStart,zeroBasedEnd,converter);
+            return new Range(zeroBasedStart,zeroBasedEnd,coordinateSystem);
         } else if (zeroBasedEnd == zeroBasedStart-1) {
-            return buildEmptyRange(zeroBasedStart,zeroBasedEnd,converter);
+            return buildEmptyRange(zeroBasedStart,zeroBasedEnd,coordinateSystem);
         } else {
             throw new IllegalArgumentException("Range coordinates" + start + "," + end
                 + " are not valid " + coordinateSystem + " coordinates");
         }
     }
     public Range copy(){
-        return buildRange(this.getCoordinateSystem(),this.getLocalStart(),this.getLocalEnd());
+        return buildRange(this.getRangeCoordinateSystem(),this.getLocalStart(),this.getLocalEnd());
     }
-    public Range convertRange(CoordinateSystem coordinateSystem) {
+    public Range convertRange(RangeCoordinateSystem coordinateSystem) {
         if ( coordinateSystem == null ) {
-            throw new IllegalArgumentException("Cannot convert to a null coordinate system");
-        }
-
-        CoordinateConverter converter = SYSTEM_TO_CONVERTER_MAP.get(coordinateSystem);
-        if(converter == null){
-            throw new IllegalArgumentException("Do not know how to convert to a " + coordinateSystem + " range");
+            throw new IllegalArgumentException("Cannot convert to a null range coordinate system");
         }
 
         if ( this.isEmpty() ) {
-            return new EmptyRange(this.getStart(),this.getEnd(),converter);
+            return new EmptyRange(this.getStart(),this.getEnd(),coordinateSystem);
         } 
-        return new Range(this.getStart(),this.getEnd(),converter);
+        return new Range(this.getStart(),this.getEnd(),coordinateSystem);
     }
     public static Range buildEmptyRange(){
         return buildEmptyRange(0);
@@ -188,30 +209,33 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
     public static Range buildEmptyRange(long coordinate){
         return buildEmptyRange(Range.CoordinateSystem.ZERO_BASED,coordinate);
     }
-    public static Range buildEmptyRange(CoordinateSystem coordinateSystem,long coordinate){
+    public static Range buildEmptyRange(RangeCoordinateSystem coordinateSystem,long coordinate){
         if ( coordinateSystem == null ) {
             throw new IllegalArgumentException("Cannot build null coordinate system range");
         }
         
-        CoordinateConverter converter = SYSTEM_TO_CONVERTER_MAP.get(coordinateSystem);
-        if(converter == null){
-            throw new IllegalArgumentException("Do not know how create a " + coordinateSystem + " empty range");
-        }
-        long zeroBasedStart = converter.getStart(coordinate);      
+        long zeroBasedStart = coordinateSystem.getStart(coordinate);
 
-        return buildEmptyRange(zeroBasedStart,zeroBasedStart-1,converter);
+        return buildEmptyRange(zeroBasedStart,zeroBasedStart-1,coordinateSystem);
     }
-    private static Range buildEmptyRange(long start,long end,CoordinateConverter converter) {
-        return new EmptyRange(start,end,converter);
+    private static Range buildEmptyRange(long start,long end,RangeCoordinateSystem coordinateSystem) {
+        return new EmptyRange(start,end,coordinateSystem);
     }
     public static Range buildRangeOfLength(long start, long length){
         return buildRangeOfLength(CoordinateSystem.ZERO_BASED, start, length);
     }
-    public static Range buildRangeOfLength(CoordinateSystem system,long start, long length){
-        return buildRange(system,start, start+length-1);
+    public static Range buildRangeOfLength(RangeCoordinateSystem system,long start, long length){
+        long zeroBasedStart = system.getStart(start);
+        Range zeroBasedRange = buildRange(CoordinateSystem.ZERO_BASED,zeroBasedStart,zeroBasedStart+length-1);
+        return zeroBasedRange.convertRange(system);
     }
     public static Range buildRangeOfLengthFromEndCoordinate(long end, long rangeSize){
-        return Range.buildRange(end-rangeSize+1,end);
+        return buildRangeOfLengthFromEndCoordinate(CoordinateSystem.ZERO_BASED,end,rangeSize);
+    }
+    public static Range buildRangeOfLengthFromEndCoordinate(RangeCoordinateSystem system,long end, long rangeSize){
+        long zeroBasedEnd = system.getEnd(end);
+        Range zeroBasedRange = buildRange(CoordinateSystem.ZERO_BASED,zeroBasedEnd-rangeSize+1,zeroBasedEnd);
+        return zeroBasedRange.convertRange(system);
     }
     public static Range buildInclusiveRange(Range... ranges){
         return buildInclusiveRange(Arrays.asList(ranges));
@@ -261,7 +285,7 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
      * @throws IllegalArgumentException if the given String does not
      * match the correct format.
      */
-    public static Range parseRange(String rangeAsString, CoordinateSystem coordinateSystem){
+    public static Range parseRange(String rangeAsString, RangeCoordinateSystem coordinateSystem){
         Matcher dotMatcher =DOT_PATTERN.matcher(rangeAsString);
         if(dotMatcher.find()){
             return convertIntoRange(dotMatcher,coordinateSystem);
@@ -296,7 +320,7 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
         return parseRange(rangeAsString, CoordinateSystem.ZERO_BASED);
     }
     
-    private static Range convertIntoRange(Matcher dashMatcher, CoordinateSystem coordinateSystem) {
+    private static Range convertIntoRange(Matcher dashMatcher, RangeCoordinateSystem coordinateSystem) {
         return Range.buildRange(coordinateSystem,Long.parseLong(dashMatcher.group(1)), 
                 Long.parseLong(dashMatcher.group(2))
                 );
@@ -317,7 +341,7 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
      * Object used to convert zero base coordinate system values to
      * the appropriate coordinate system values
      */
-    private final CoordinateConverter coordinateConverter;
+    private final RangeCoordinateSystem rangeCoordinateSystem;
 
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
@@ -354,16 +378,16 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
      * @param start The inclusive start coordinate.
      * @param end The inclusive end coordinate.
      */
-    private Range(long start, long end, CoordinateConverter coordinateConverter) {
+    private Range(long start, long end, RangeCoordinateSystem rangeCoordinateSystem) {
         this.start = start;
         this.end = end;
-        this.coordinateConverter = coordinateConverter;
+        this.rangeCoordinateSystem = rangeCoordinateSystem;
     }
 
     private Range(Range range){
         this.start = range.getStart();
         this.end = range.getEnd();
-        this.coordinateConverter = range.coordinateConverter;
+        this.rangeCoordinateSystem = range.getRangeCoordinateSystem();
     }
     /**
      * Fetch the left (start) coordinate.
@@ -383,16 +407,17 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
         return end;
     }
 
-    public CoordinateSystem getCoordinateSystem() {
-        return coordinateConverter.getCoordiateSystem();
+    public RangeCoordinateSystem getRangeCoordinateSystem() {
+        return rangeCoordinateSystem;
     }
 
+
     public long getLocalStart() {
-        return coordinateConverter.getLocalStart(start);
+        return rangeCoordinateSystem.getLocalStart(start);
     }
 
     public long getLocalEnd() {
-        return coordinateConverter.getLocalEnd(end);
+        return rangeCoordinateSystem.getLocalEnd(end);
     }
 
     /**
@@ -518,10 +543,10 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
 
         try{
             return Range.buildRange(Math.max(target.getStart(), this.start),
-                            Math.min(target.getEnd(), this.end)).convertRange(getCoordinateSystem());
+                            Math.min(target.getEnd(), this.end)).convertRange(getRangeCoordinateSystem());
         }
         catch(IllegalArgumentException e){
-            return buildEmptyRange().convertRange(getCoordinateSystem());
+            return buildEmptyRange().convertRange(getRangeCoordinateSystem());
         }
 
     }
@@ -638,7 +663,7 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
     public String toString()
     {
         return "[ " + this.getLocalStart() + " - " + this.getLocalEnd() + " ]/"
-            + this.getCoordinateSystem().getAbbreviatedName();
+            + getRangeCoordinateSystem().getAbbreviatedName();
     }
   
     
@@ -667,8 +692,8 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
         /**
          * Creates a new <code>EmptyRange</code>.
          */
-        private EmptyRange(long start,long end,CoordinateConverter coordinateConverter){
-            super(start,end,coordinateConverter);
+        private EmptyRange(long start,long end,RangeCoordinateSystem rangeCoordinateSystem){
+            super(start,end,rangeCoordinateSystem);
         }
 
         /**
@@ -857,110 +882,6 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
     public int compareTo(Range that) 
     {
         return Range.DEFAULT_COMPARATOR.compare(this, that);
-    }    
-
-    public interface CoordinateConverter {
-        public long getLocalStart(long start);
-        public long getLocalEnd(long end);
-        public long getStart(long localStart);
-        public long getEnd(long localEnd);
-        public Range.CoordinateSystem getCoordiateSystem();
-    }
-
-    private static class ZeroBasedConverter implements CoordinateConverter {
-        private static final ZeroBasedConverter instance = new ZeroBasedConverter();
-
-        private ZeroBasedConverter() {}
-
-        public static ZeroBasedConverter getInstance() {
-            return instance;
-        }
-
-        public long getLocalStart(long start) {
-            return start;
-        }
-
-        public long getLocalEnd(long end) {
-            return end;
-        }
-
-        public CoordinateSystem getCoordiateSystem() {
-            return CoordinateSystem.ZERO_BASED;
-        }
-
-        @Override
-        public long getStart(long localStart) {
-            return localStart;
-        }
-
-        @Override
-        public long getEnd(long localEnd) {
-            return localEnd;
-        }
-    }
-
-    private static class SpaceBasedConverter implements CoordinateConverter {
-        private static final SpaceBasedConverter instance = new SpaceBasedConverter();
-
-        private SpaceBasedConverter() {}
-
-        public static SpaceBasedConverter getInstance() {
-            return instance;
-        }
-
-        public long getLocalStart(long start) {
-            return start;
-        }
-
-        public long getLocalEnd(long end) {
-            return end+1;
-        }
-
-        public CoordinateSystem getCoordiateSystem() {
-            return CoordinateSystem.SPACE_BASED;
-        }
-
-        @Override
-        public long getStart(long localStart) {
-            return localStart;
-        }
-
-        @Override
-        public long getEnd(long localEnd) {
-            return localEnd-1;
-        }
-    }
-
-    private static class ResidueBasedConverter implements CoordinateConverter {
-        private static final ResidueBasedConverter instance = new ResidueBasedConverter();
-
-        private ResidueBasedConverter() {}
-
-        public static ResidueBasedConverter getInstance() {
-            return instance;
-        }
-        
-        public long getLocalStart(long start) {
-            return start+1;
-        }
-
-        public long getLocalEnd(long end) {
-            return end+1;
-        }
-
-        public CoordinateSystem getCoordiateSystem() {
-            return CoordinateSystem.RESIDUE_BASED;
-        }
-
-        @Override
-        public long getStart(long localStart) {
-            return localStart-1;
-        }
-
-        @Override
-        public long getEnd(long localEnd) {
-            return localEnd-1;
-        }
     }
 
     @Override

@@ -58,7 +58,7 @@ public class AssemblyUtil {
         }
         long newStart = fullLength - validRange.getEnd()-1;
         long newEnd = fullLength - validRange.getStart()-1;
-        return Range.buildRange(newStart, newEnd).convertRange(validRange.getCoordinateSystem());
+        return Range.buildRange(newStart, newEnd).convertRange(validRange.getRangeCoordinateSystem());
     }
     
     public static <R extends PlacedRead> int convertToUngappedFullRangeIndex(R placedRead, int fullLength,int gappedIndex) {
