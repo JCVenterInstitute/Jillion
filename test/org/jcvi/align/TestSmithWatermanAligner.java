@@ -64,10 +64,10 @@ public class TestSmithWatermanAligner
     public void testAlignSequences_simple()
     {
         this.testAlignSequences("CCATATTGATCACGCATTTCCCAGGGATTGAC", 
-                                "ATTGCATCAGGATACCCAG", 
-                                new int[] { 1, 19 }, new int[] { 5, 24 }, 
-                                new int[] { 11, 3 }, new int[] { 8 }, 
-                                0.762);
+                "ATTGCATCAGGATACCCAG", 
+                 new int[] { 5, 24 }, new int[] { 1, 19 }, 
+                 new int[] { 8 }, new int[] { 11, 14 },
+                0.762);
     }
 
     /**
@@ -92,7 +92,7 @@ public class TestSmithWatermanAligner
         final String reference = "CCATATTGATCACGCATTTCCCAGGGATTGAC";
         final String query = "TTTCCCAGGGATTGACATGA";
         this.testAlignSequences(reference, query, 
-                new int[] { 1, 16 }, new int[] { 17, 32 }, 
+                new int[] { 17, 32 }, new int[] { 1, 16 }, 
                 new int[] {  }, new int[] {  }, 
                 1.0);
     }
@@ -136,8 +136,8 @@ public class TestSmithWatermanAligner
         final String query = "GGATTCACCACCCAAATGATGCGGCAGAGCAGACAAGCTCTATCAAAACCCAACCACCTATATT" +
         		             "TCCGTTGGGACATCATCACTAAACCAGAGATTGGT";
         this.testAlignSequences(reference, query, 
-                new int[] { 1, 99 }, new int[] { 606, 705 }, 
-                new int[] { 37 }, new int[] {  }, 
+                new int[] { 606, 705 },  new int[] { 1, 99 },
+                new int[] {  }, new int[] { 37 }, 
                 0.98);
     }
 
