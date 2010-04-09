@@ -65,7 +65,7 @@ public class TestDefaultPrimerTrimmer_ActualData {
     
     @Test
     public void trim(){
-        Range expectedRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED,13,643);
+        Range expectedRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED,1,643);
         Range actualRange = sut.trim(sequence, primerDataStore);
         assertEquals(expectedRange, actualRange);
     }
