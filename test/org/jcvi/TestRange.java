@@ -138,6 +138,30 @@ public class TestRange{
         assertEquals(left+length-1, sut.getEnd());
     }
 
+    @Test
+    public void testBuildRangeOfLengthSpaceBasedRange_emptyRange(){
+        int left = 10;
+        int length = 0;
+
+        Range sut = Range.buildRangeOfLength(Range.CoordinateSystem.SPACE_BASED,left,length);
+        assertEquals(left,sut.getStart());
+        assertEquals(left+length, sut.getLocalEnd());
+        assertEquals(left+length-1, sut.getEnd());
+    }
+
+    @Test
+    public void testBuildRangeOfLengthResidueBasedRange_emptyRange(){
+        int left = 10;
+        int length = 0;
+
+        Range sut = Range.buildRangeOfLength(Range.CoordinateSystem.RESIDUE_BASED,left,length);
+        assertEquals(left-1,sut.getStart());
+        assertEquals(left,sut.getLocalStart());
+        assertEquals(left+length-1-1, sut.getEnd());
+        assertEquals(left+length-1, sut.getLocalEnd());
+    }
+
+    
     @Test(expected=IllegalArgumentException.class)
     public void testBuildRangeOfLength_negativeRange(){
         int left = 0;
@@ -164,6 +188,28 @@ public class TestRange{
         Range sut = Range.buildRangeOfLengthFromEndCoordinate(right,length);
         assertEquals(length,sut.getLength());
         assertEquals(right, sut.getEnd());
+    }
+    
+    @Test
+    public void testBuildRangeOfLengthFromEndCoordinateSpaceBased_emptyRange(){
+        int right = 10;
+        int length = 0;
+
+        Range sut = Range.buildRangeOfLengthFromEndCoordinate(Range.CoordinateSystem.SPACE_BASED,right,length);
+        assertEquals(length,sut.getLength());
+        assertEquals(right-1, sut.getEnd());
+        assertEquals(right, sut.getLocalEnd());
+    }
+
+    @Test
+    public void testBuildRangeOfLengthFromEndCoordinateResidueBased(){
+        int right = 19;
+        int length = 10;
+
+        Range sut = Range.buildRangeOfLengthFromEndCoordinate(Range.CoordinateSystem.RESIDUE_BASED,right,length);
+        assertEquals(length,sut.getLength());
+        assertEquals(right-1, sut.getEnd());
+        assertEquals(right, sut.getLocalEnd());
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -283,7 +329,7 @@ public class TestRange{
         long rangeStart = 5;
         long rangeEnd = 15;
         Range range = Range.buildRange(Range.CoordinateSystem.ZERO_BASED,rangeStart,rangeEnd);
-        Range convertedRange = range.convertRange(range.getCoordinateSystem());
+        Range convertedRange = range.convertRange(range.getRangeCoordinateSystem());
         assertEquals(range,convertedRange);
         assertEquals(range.getStart(),convertedRange.getStart());
         assertEquals(range.getEnd(),convertedRange.getEnd());
