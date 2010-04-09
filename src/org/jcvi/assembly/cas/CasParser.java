@@ -67,9 +67,9 @@ public class CasParser {
             boolean isPartOfPair= (info & 0x08)!=0;
             List<CasAlignment> alignments = new ArrayList<CasAlignment>();
             long totalNumberOfMatches=0, numberOfReportedAlignments=hasMatch?1:0;
-            if(hasMultipleMatches){
-                System.out.println("has multiple matched!!! " +totalNumberOfMatches);
+            if(hasMultipleMatches){                
                 totalNumberOfMatches = CasUtil.parseByteCountFrom(dataIn) +2;
+                System.out.println("has multiple matched!!! " +totalNumberOfMatches);
             }
             if(hasMultipleAlignments){
                 numberOfReportedAlignments = CasUtil.parseByteCountFrom(dataIn) +2;
