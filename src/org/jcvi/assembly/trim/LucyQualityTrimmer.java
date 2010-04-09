@@ -34,14 +34,44 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 
 
 /**
+ * {@code LucyQualityTrimmer} performs Lucy like quality trimming.  The algorithm 
+ * this class uses is the algorithm from the 2001 Lucy paper in
+ * Bioinformatics.
+ * <p>
+ * The Trimming algorithm performs 3 separate trimming phases:
+ * <ol>
+ * <li> 
+ * The beginning and end of each sequence is trimmed to remove the low
+ * quality data from each end.  The resulting region is called the <code>bracket</code>.
+ * </li>
+ * <li>
+ * The <code>bracket</code> is then trimmed against a series of sliding <code>Window</code>s.
+ * A Window of a certain size is slid across the <code>bracket</code>, if the average error probability
+ * of the data inside the window meets the given threshold, then that window is considered good quality.
+ * If more than one window is given,then
+ * the next Window is applied to the good quality range found by the previous window.
+ * The order of the Windows applied to trimming is largest window size
+ * to smallest window size.  The resulting ranges from this step will be referred
+ * to as <code>candidate regions</code>
+ * </li>
+ * <li> 
+ * Finally, the candidate good quality regions are further trimmed to meet overall
+ * error rates and the ends of the region (currently first and last 2 bases)
+ * must also meet a specific error rate threshold.  Each candidate region is trimmed
+ * until each end and the total overall error rate meet these thesholds at the same time. 
+ * </li>
+ * 
+ * The largest of the ranges after all these steps is the final trim range.
+ * </ol>
  * @author dkatzel
  *
- *
+ * @see <a href ="http://www.ncbi.nlm.nih.gov/pubmed/11751217">Chou HH, Holmes MH. DNA sequence quality trimming and vector removal. Bioinformatics. 2001;17:1093-1104. doi: 10.1093/bioinformatics/17.12.1093.<a>
  */
 public class LucyQualityTrimmer {
+    private static final int SIZE_OF_ENDS =2;
     private final int minGoodLength;
     private final Window bracketWindow;
-    private final double maxAvgError;
+    private final double maxTotalAvgError;
     private final double maxErrorAtEnds;
     
     private final Set<Window> trimWindows;
@@ -60,7 +90,7 @@ public class LucyQualityTrimmer {
         this.minGoodLength = minGoodLength;
         this.bracketWindow = bracketWindow;
         this.trimWindows = trimWindows;
-        this.maxAvgError = maxAvgError;
+        this.maxTotalAvgError = maxAvgError;
         this.maxErrorAtEnds = maxErrorAtEnds;
     }
     
@@ -72,7 +102,7 @@ public class LucyQualityTrimmer {
         List<Range> largestRanges = new ArrayList<Range>();
         for(Range candidateCleanRange : findCandidateCleanRangesFrom(bracketedErrorRates)){
             List<Double> candidateErrorRates = getSubList(bracketedErrorRates, candidateCleanRange);
-            largestRanges.add(findLargestRangeThatMeetErrorRate(candidateErrorRates, candidateCleanRange));
+            largestRanges.add(findLargestRangeThatPassesTotalAvgErrorRate(candidateErrorRates, candidateCleanRange));
         }
         
         Range largestRange= getLargestRangeFrom(largestRanges);
@@ -96,22 +126,18 @@ public class LucyQualityTrimmer {
         }
         return errorRates;
     }
-    /**
-     * @param encodedBracketedQualities
-     * @param candidateCleanRange
-     * @return
-     */
-    private Range findLargestRangeThatMeetErrorRate(List<Double> encodedCandidateErrorRates,
+
+    private Range findLargestRangeThatPassesTotalAvgErrorRate(List<Double> encodedCandidateErrorRates,
             Range candidateCleanRange) {
         long currentWindowSize = candidateCleanRange.getLength();
         boolean done=false;
-        while(!done && currentWindowSize >3){
+        while(!done && currentWindowSize >=SIZE_OF_ENDS){
             for(int i=0; i<encodedCandidateErrorRates.size() - currentWindowSize; i++){
                 Range currentWindowRange = Range.buildRange(i, currentWindowSize);
                 double avgErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, currentWindowRange);
-                double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.buildRangeOfLength(currentWindowRange.getStart(),2));
-                double rightEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.buildRangeOfLength(currentWindowRange.getEnd()-2,2));
-                if(avgErrorRate <= this.maxAvgError && leftEndErrorRate <= this.maxErrorAtEnds && rightEndErrorRate <= this.maxErrorAtEnds){
+                double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.buildRangeOfLength(currentWindowRange.getStart(),SIZE_OF_ENDS));
+                double rightEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.buildRangeOfLength(currentWindowRange.getEnd()-SIZE_OF_ENDS,SIZE_OF_ENDS));
+                if(avgErrorRate <= this.maxTotalAvgError && leftEndErrorRate <= this.maxErrorAtEnds && rightEndErrorRate <= this.maxErrorAtEnds){
                     //found a good range!
                     return currentWindowRange;
                 }
@@ -232,7 +258,7 @@ public class LucyQualityTrimmer {
         return largestRangeSoFar;
     }
     
-    final static class Window implements Comparable<Window>{
+    public final static class Window implements Comparable<Window>{
         private final int size;
         private final double maxErrorRate;
         /**
@@ -303,7 +329,12 @@ public class LucyQualityTrimmer {
         }
         
     }
-    
+    /**
+     * {@code Builder} is a builder 
+     * @author dkatzel
+     *
+     *
+     */
     public static class Builder implements org.jcvi.Builder<LucyQualityTrimmer>{
 
         private static final Window DEFAULT_BRACKET_WINDOW = new Window(10, 0.02D);
@@ -321,20 +352,27 @@ public class LucyQualityTrimmer {
         
         private final Set<Window> trimWindows = new TreeSet<Window>();
         
-        public Builder(int minGoodLength, Window bracketWindow){
+        private Builder(int minGoodLength, Window bracketWindow){
             this.minGoodLength = minGoodLength;
             this.bracketWindow = bracketWindow;
             this.maxAvgError = DEFAULT_MAX_AVG_ERROR;
             this.maxErrorAtEnds = DEFAULT_ERROR_AT_ENDS;
             
         }
+
         public Builder(int minGoodLength){
             this(minGoodLength, DEFAULT_BRACKET_WINDOW);
         }
         public Builder(){
             this(DEFAULT_MIN_GOOD_LENGTH, DEFAULT_BRACKET_WINDOW);
         }
-        
+        public Builder addTrimWindow(Window window){
+            if(window ==null){
+                throw new NullPointerException("trimWindow can not be null");
+            }
+            trimWindows.add(window);
+            return this;
+        }
         public Builder addTrimWindow(int windowSize, double maxErrorRate){
             trimWindows.add(new Window(windowSize, maxErrorRate));
             return this;

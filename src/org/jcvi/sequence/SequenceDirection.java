@@ -83,7 +83,11 @@ public enum SequenceDirection
         
     }
     
-
+    /**
+     * Get a 1 character String representation of this direction
+     * (F, R, N or U).
+     * @return
+     */
     public String getCode()
     {
         return this.name().substring(0, 1);
