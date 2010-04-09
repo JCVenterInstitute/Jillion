@@ -30,6 +30,7 @@ import org.jcvi.assembly.cas.AllCasUnitTests;
 import org.jcvi.assembly.contig.AllContigUnitTests;
 import org.jcvi.assembly.coverage.AllCoverageUnitTests;
 import org.jcvi.assembly.slice.AllSliceUnitTests;
+import org.jcvi.assembly.trim.AllTrimUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -44,6 +45,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestSplitPlacedRead.class,
         TestSectionOfPlacedRead.class,
         
+        AllTrimUnitTests.class,
         AllSliceUnitTests.class,
         AllAnalysisUnitTests.class,
         AllRefUnitTests.class,
