@@ -76,7 +76,7 @@ AbstractTestDirectoryFileServer {
             DirectoryFileServer.createReadWriteDirectoryFileServer(mockDir);
             fail("should throw IOException if dir can not be created");
         } catch (IOException e) {
-            assertEquals("could not create rootDir" + mockDir, e.getMessage());
+            assertEquals("could not create rootDir " + mockDir, e.getMessage());
             verify(mockDir);
         }
         
