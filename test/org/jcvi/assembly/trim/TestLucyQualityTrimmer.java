@@ -64,7 +64,6 @@ public class TestLucyQualityTrimmer {
     @Test
     public void SAJJA07T27G07MP675R() throws DataStoreException{
         final EncodedGlyphs<PhredQuality> fullQualities = qualities.get("SAJJA07T27G07MP675R");
-        System.out.println(fullQualities.getLength());
         Range actualTrimRange = sut.trim(fullQualities);
         Range expectedRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 16,680);
         assertEquals(expectedRange, actualTrimRange);

@@ -28,9 +28,7 @@ import java.util.TreeSet;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
 
@@ -68,12 +66,13 @@ public class LucyQualityTrimmer {
     
     
     public Range trim(EncodedGlyphs<PhredQuality> qualities){
-        Range bracketedRegion = findBracketedRegion(qualities);
-        final EncodedGlyphs<PhredQuality> encodedBracketedQualities = getEncodedQualitiesFor(qualities, bracketedRegion);
+        List<Double> errorRates = convertToErrorRates(qualities);
+        Range bracketedRegion = findBracketedRegion(errorRates);
+        List<Double> bracketedErrorRates = getSubList(errorRates, bracketedRegion);
         List<Range> largestRanges = new ArrayList<Range>();
-        for(Range candidateCleanRange : findCandidateCleanRangesFrom(encodedBracketedQualities)){
-            EncodedGlyphs<PhredQuality> encodedCandidateQualities = getEncodedQualitiesFor(encodedBracketedQualities, candidateCleanRange);
-            largestRanges.add(findLargestRangeThatMeetErrorRate(encodedCandidateQualities, candidateCleanRange));
+        for(Range candidateCleanRange : findCandidateCleanRangesFrom(bracketedErrorRates)){
+            List<Double> candidateErrorRates = getSubList(bracketedErrorRates, candidateCleanRange);
+            largestRanges.add(findLargestRangeThatMeetErrorRate(candidateErrorRates, candidateCleanRange));
         }
         
         Range largestRange= getLargestRangeFrom(largestRanges);
@@ -84,21 +83,34 @@ public class LucyQualityTrimmer {
     }
 
 
+    private List<Double> getSubList(List<Double> errorRates,
+            Range region) {
+        return errorRates.subList((int)region.getStart(), (int)region.getEnd()+1);
+    }
+
+
+    private List<Double> convertToErrorRates(EncodedGlyphs<PhredQuality> qualities){
+        List<Double> errorRates = new ArrayList<Double>((int)qualities.getLength());
+        for(PhredQuality quality : qualities.decode()){
+            errorRates.add(quality.getErrorProbability());
+        }
+        return errorRates;
+    }
     /**
      * @param encodedBracketedQualities
      * @param candidateCleanRange
      * @return
      */
-    private Range findLargestRangeThatMeetErrorRate(EncodedGlyphs<PhredQuality> encodedCandidateQualities,
+    private Range findLargestRangeThatMeetErrorRate(List<Double> encodedCandidateErrorRates,
             Range candidateCleanRange) {
         long currentWindowSize = candidateCleanRange.getLength();
         boolean done=false;
         while(!done && currentWindowSize >3){
-            for(int i=0; i<encodedCandidateQualities.getLength() - currentWindowSize; i++){
+            for(int i=0; i<encodedCandidateErrorRates.size() - currentWindowSize; i++){
                 Range currentWindowRange = Range.buildRange(i, currentWindowSize);
-                double avgErrorRate = this.computeAvgErrorRateOf(encodedCandidateQualities, currentWindowRange);
-                double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateQualities, Range.buildRangeOfLength(currentWindowRange.getStart(),2));
-                double rightEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateQualities, Range.buildRangeOfLength(currentWindowRange.getEnd()-2,2));
+                double avgErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, currentWindowRange);
+                double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.buildRangeOfLength(currentWindowRange.getStart(),2));
+                double rightEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.buildRangeOfLength(currentWindowRange.getEnd()-2,2));
                 if(avgErrorRate <= this.maxAvgError && leftEndErrorRate <= this.maxErrorAtEnds && rightEndErrorRate <= this.maxErrorAtEnds){
                     //found a good range!
                     return currentWindowRange;
@@ -110,26 +122,20 @@ public class LucyQualityTrimmer {
     }
 
 
-    private EncodedGlyphs<PhredQuality> getEncodedQualitiesFor(
-            EncodedGlyphs<PhredQuality> qualities, Range bracketedRegion) {
-        return new DefaultEncodedGlyphs<PhredQuality>(
-                RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, qualities.decode(bracketedRegion));
-    }
-
     /**
      * @param decode
      * @return
      */
-    private List<Range> findCandidateCleanRangesFrom(EncodedGlyphs<PhredQuality> bracketedQualities) {
+    private List<Range> findCandidateCleanRangesFrom(List<Double> bracketedErrorRates) {
         Iterator<Window> iterator = trimWindows.iterator();
         
         Window firstTrimWindow = iterator.next();
-        List<Range> candidateCleanRanges = trim(bracketedQualities, firstTrimWindow);
+        List<Range> candidateCleanRanges = trim(bracketedErrorRates, firstTrimWindow);
         while(iterator.hasNext()){
             Window subsequentTrimWindow = iterator.next();
             List<Range> trimmedCandidateCleanRanges = new ArrayList<Range>();
             for(Range range : candidateCleanRanges){
-                for(Range newCandidateRange : trim(getEncodedQualitiesFor(bracketedQualities,range), subsequentTrimWindow)){
+                for(Range newCandidateRange : trim(getSubList(bracketedErrorRates,range), subsequentTrimWindow)){
                     trimmedCandidateCleanRanges.add(newCandidateRange.shiftRight(range.getStart()));
                 }
             }
@@ -144,12 +150,12 @@ public class LucyQualityTrimmer {
      * @param trimWindow
      * @return
      */
-    private List<Range> trim(EncodedGlyphs<PhredQuality> bracketedQualities, Window trimWindow) {
+    private List<Range> trim(List<Double> errorRates, Window trimWindow) {
         List<Range> candidateCleanRanges = new ArrayList<Range>();
-        for(long i=0; i<bracketedQualities.getLength()-trimWindow.getSize(); i++){
+        for(long i=0; i<errorRates.size()-trimWindow.getSize(); i++){
             Range windowRange = Range.buildRangeOfLength(i, trimWindow.getSize());
             
-            double avgErrorRate = computeAvgErrorRateOf(bracketedQualities,windowRange);
+            double avgErrorRate = computeAvgErrorRateOf(errorRates,windowRange);
             if(avgErrorRate <= trimWindow.getMaxErrorRate()){
                 candidateCleanRanges.add(windowRange);
             }
@@ -162,21 +168,21 @@ public class LucyQualityTrimmer {
      * @param qualities
      * @return
      */
-    private Range findBracketedRegion(EncodedGlyphs<PhredQuality> qualities) {
-        long leftCoordinate = findLeftBracket(qualities);
-        long rightCoordinate = findRightBracket(qualities);
+    private Range findBracketedRegion(List<Double> errorRates) {
+        long leftCoordinate = findLeftBracket(errorRates);
+        long rightCoordinate = findRightBracket(errorRates);
         return Range.buildRange(leftCoordinate, rightCoordinate);
     }
     /**
      * @param qualities
      * @return
      */
-    private long findRightBracket(EncodedGlyphs<PhredQuality> qualities) {
-        long coordinate=qualities.getLength()-1;
+    private long findRightBracket(List<Double> errorRates) {
+        long coordinate=errorRates.size()-1;
         final int bracketSize = bracketWindow.getSize();
         while(coordinate >= bracketSize){
-            Range windowRange = Range.buildRangeOfLength(coordinate-bracketSize,coordinate);
-            double avgErrorRate = computeAvgErrorRateOf(qualities,windowRange);
+            Range windowRange = Range.buildRangeOfLength(coordinate-bracketSize,bracketSize);
+            double avgErrorRate = computeAvgErrorRateOf(errorRates,windowRange);
             if(avgErrorRate <= bracketWindow.getMaxErrorRate()){
                 return coordinate;
             }
@@ -190,12 +196,12 @@ public class LucyQualityTrimmer {
      * @param qualities
      * @return
      */
-    private int findLeftBracket(EncodedGlyphs<PhredQuality> qualities) {
+    private int findLeftBracket(List<Double> errorRates) {
         int coordinate=0;
         final int bracketSize = bracketWindow.getSize();
-        while(coordinate < qualities.getLength()- bracketSize){
+        while(coordinate < errorRates.size()- bracketSize){
             Range windowRange = Range.buildRangeOfLength(coordinate, bracketSize);
-            double avgErrorRate = computeAvgErrorRateOf(qualities,windowRange);
+            double avgErrorRate = computeAvgErrorRateOf(errorRates,windowRange);
             if(avgErrorRate <= bracketWindow.getMaxErrorRate()){
                 return coordinate;
             }
@@ -205,15 +211,14 @@ public class LucyQualityTrimmer {
     }
 
 
-    private double computeAvgErrorRateOf(EncodedGlyphs<PhredQuality> qualities,
+    private double computeAvgErrorRateOf(List<Double> errorRates,
             Range windowRange) {
-         double totalQuality = 0;
-         for(PhredQuality quality : qualities.decode(windowRange)){
-             totalQuality+= quality.getErrorProbability();
+         double totalErrorRate = 0;
+         for(double errorRate : getSubList(errorRates, windowRange)){
+             totalErrorRate+= errorRate;
          }
          
-         double avgErrorRate = totalQuality/windowRange.size();
-         return avgErrorRate;
+         return totalErrorRate/windowRange.size();
      }
     
     private Range getLargestRangeFrom(List<Range> goodQualityRanges) {
