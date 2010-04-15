@@ -55,30 +55,15 @@ public abstract class AbstractAceFileDataStore extends AbstractAceFileVisitor {
         }
         
     }
-
-
-
     @Override
     protected void visitNewContig(String contigId, String consensus) {
         contigBuilder= new DefaultAceContig.Builder(contigId, consensus);
         
     }
-
-
-
     
     protected void visitAceRead(String readId, String validBasecalls, int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo){
         contigBuilder.addRead(readId, validBasecalls ,offset, dir, 
                 validRange ,phdInfo);
-    }
-
-    @Override
-    public void visitEndOfFile() {
-        super.visitEndOfFile();
-        if(contigBuilder !=null){
-            visitContig(contigBuilder.build()); 
-        }
-        
     }
 
     
