@@ -63,7 +63,7 @@ public class TestAbstractQualityValueStrategy {
                                         new Class[]{int.class, int.class,PhredQuality.class, PhredQuality.class}));
         expect(placedRead.getEncodedGlyphs()).andStubReturn(encodedGlyphs);
         expect(placedRead.getValidRange()).andStubReturn(validRange);
-        expect(placedRead.getLength()).andStubReturn((long)LENGTH);
+        expect(encodedGlyphs.getLength()).andStubReturn((long)LENGTH);
         expect(qualityFasta.getValues()).andStubReturn(qualities);
         expect(placedRead.getSequenceDirection()).andReturn(getSequenceDirection()).anyTimes();
         expect(qualities.getLength()).andStubReturn((LENGTH));
