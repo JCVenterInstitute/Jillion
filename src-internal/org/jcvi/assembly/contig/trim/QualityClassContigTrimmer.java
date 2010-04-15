@@ -178,10 +178,10 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
             int gappedValidRangeIndex) {
         int gappedTrimIndex;
         if (read.getSequenceDirection() == SequenceDirection.FORWARD) {
-            gappedTrimIndex = AssemblyUtil.getRightFlankingNonGapIndex(read,
+            gappedTrimIndex = AssemblyUtil.getRightFlankingNonGapIndex(read.getEncodedGlyphs(),
                     gappedValidRangeIndex);
         } else {
-            gappedTrimIndex = AssemblyUtil.getLeftFlankingNonGapIndex(read,
+            gappedTrimIndex = AssemblyUtil.getLeftFlankingNonGapIndex(read.getEncodedGlyphs(),
                     gappedValidRangeIndex);
         }
         return gappedTrimIndex;
