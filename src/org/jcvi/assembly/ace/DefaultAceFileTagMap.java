@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.jcvi.Range;
+import org.jcvi.sequence.SequenceDirection;
 
 public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceTagMap {
 
@@ -113,6 +114,31 @@ public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceT
         readTags.add(new DefaultReadAceTag(id, type, creator, creationDate, 
                 Range.buildRange(gappedStart,gappedEnd), isTransient));
 
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected void visitAceRead(String readId, String validBasecalls,
+            int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo) {
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected void visitEndOfContig() {
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected void visitNewContig(String contigId, String consensus) {
+        
     }
 
    

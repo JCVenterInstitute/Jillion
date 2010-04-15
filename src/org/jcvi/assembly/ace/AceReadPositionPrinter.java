@@ -21,17 +21,18 @@ package org.jcvi.assembly.ace;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.Range;
-import org.jcvi.RangeCoordinateSystem;
 import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.assembly.AssemblyUtil;
+import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.cli.CommandLineUtils;
+import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -42,6 +43,39 @@ import org.jcvi.sequence.SequenceDirection;
  */
 public class AceReadPositionPrinter {
 
+    private static class Printer extends AbstractAceFileVisitor{
+        private String currentContigId=null;
+        private NucleotideEncodedGlyphs consensus;
+        @Override
+        protected void visitNewContig(String contigId, String consensus) {
+            currentContigId = contigId;
+            this.consensus = new DefaultNucleotideEncodedGlyphs(
+                        ConsedUtil.convertAceGapsToContigGaps(consensus));
+        }
+        
+        @Override
+        protected void visitEndOfContig() {
+           
+            
+        }
+        
+        @Override
+        protected void visitAceRead(String readId, String validBasecalls,
+                int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo) {
+            Range gappedOneBasedRange = Range.buildRangeOfLength(offset, validBasecalls.length()).convertRange(CoordinateSystem.RESIDUE_BASED);
+            int nonGapStartPosition = AssemblyUtil.getRightFlankingNonGapIndex(consensus, (int)gappedOneBasedRange.getStart());
+            
+            int nonGapEndPosition = AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)gappedOneBasedRange.getEnd());
+            Range unGappedOneBasesRange = Range.buildRange(
+                    consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex(nonGapStartPosition),
+                    consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex(nonGapEndPosition)).convertRange(CoordinateSystem.RESIDUE_BASED);
+            System.out.printf("%s\t%s\t%d\t%d\t%d\t%d\t%s%n", currentContigId, readId, 
+                    unGappedOneBasesRange.getLocalStart(), unGappedOneBasesRange.getLocalEnd(),
+                    gappedOneBasedRange.getLocalStart(), gappedOneBasedRange.getLocalEnd(),
+                    dir.getCode());
+            
+        }
+    }
     /**
      * @param args
      * @throws IOException 
@@ -58,25 +92,7 @@ public class AceReadPositionPrinter {
                 CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
                 File aceFile = new File(commandLine.getOptionValue("a"));
                 System.out.println("contigID\treadID\tstart\tend\tgapped start\tgapped end\tdir");
-                AceFileVisitor visitor = new AbstractAceFileDataStore() {
-                    
-                    @Override
-                    protected void visitContig(AceContig contig) {
-                        String contigId = contig.getId();
-                        NucleotideEncodedGlyphs consensus = contig.getConsensus();
-                        for(AcePlacedRead read : contig.getPlacedReads()){
-                            Range oneBasedRange = Range.buildRange(read.getStart(), read.getEnd()).convertRange(CoordinateSystem.RESIDUE_BASED);
-                            Range gappedOneBasesRange = Range.buildRange(
-                                    consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int)read.getStart()),
-                                    consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int)read.getEnd())).convertRange(CoordinateSystem.RESIDUE_BASED);
-                            System.out.printf("%s\t%s\t%d\t%d\t%d\t%d\t%s%n", contigId, read.getId(), 
-                                    gappedOneBasesRange.getLocalStart(), gappedOneBasesRange.getLocalEnd(),
-                                    oneBasedRange.getLocalStart(), oneBasedRange.getLocalEnd(),
-                                    read.getSequenceDirection().getCode());
-                        }
-                        
-                    }
-                };
+                AceFileVisitor visitor = new Printer();
                 AceFileParser.parseAceFile(aceFile, visitor);
             } catch (ParseException e) {
                 HelpFormatter formatter = new HelpFormatter();

@@ -26,6 +26,7 @@ package org.jcvi.assembly.contig.qual;
 import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
 public abstract class AbstractQualityValueStrategy implements QualityValueStrategy {
@@ -37,11 +38,12 @@ public abstract class AbstractQualityValueStrategy implements QualityValueStrate
         if(fullQualities ==null){
             throw new NullPointerException("null qualities for "+placedRead);
         }
-        if(!AssemblyUtil.isAGap(placedRead, gappedReadIndex)){
+        final NucleotideEncodedGlyphs encodedGlyphs = placedRead.getEncodedGlyphs();
+        if(!AssemblyUtil.isAGap(encodedGlyphs, gappedReadIndex)){
             return getQualityForNonGapBase(placedRead, fullQualities, gappedReadIndex);
         }
-        int leftFlankingNonGapIndex = AssemblyUtil.getLeftFlankingNonGapIndex(placedRead,gappedReadIndex-1);
-        int rightFlankingNonGapIndex = AssemblyUtil.getRightFlankingNonGapIndex(placedRead,gappedReadIndex+1);
+        int leftFlankingNonGapIndex = AssemblyUtil.getLeftFlankingNonGapIndex(encodedGlyphs,gappedReadIndex-1);
+        int rightFlankingNonGapIndex = AssemblyUtil.getRightFlankingNonGapIndex(encodedGlyphs,gappedReadIndex+1);
         
         final PhredQuality qualityOfGap = getQualityValueForGap(leftFlankingNonGapIndex, rightFlankingNonGapIndex, placedRead, fullQualities,gappedReadIndex);
         
@@ -59,7 +61,7 @@ public abstract class AbstractQualityValueStrategy implements QualityValueStrate
         if(AssemblyUtil.beforeStartOfRead(leftFlankingNonGapIndex)){
             return getQualityValueIfReadStartsWithGap();
         }
-        if(AssemblyUtil.afterEndOfRead(rightFlankingNonGapIndex, placedRead)){
+        if(AssemblyUtil.afterEndOfRead(rightFlankingNonGapIndex, placedRead.getEncodedGlyphs())){
             return getQualityValueIfReadEndsWithGap();
         }
         PhredQuality leftFlankingQuality = getQualityForNonGapBase(placedRead, fullQualities, leftFlankingNonGapIndex);

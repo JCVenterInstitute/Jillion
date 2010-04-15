@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.Range;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -91,15 +92,15 @@ public class AssemblyUtil {
     }
     
     public static boolean afterEndOfRead(int rightFlankingNonGapIndex,
-            PlacedRead placedRead) {
+            NucleotideEncodedGlyphs placedRead) {
         return rightFlankingNonGapIndex> placedRead.getLength()-1;
     }
 
-    public static boolean isAGap(PlacedRead placedRead, int gappedReadIndex) {
-        return placedRead.getEncodedGlyphs().isGap(gappedReadIndex);
+    public static boolean isAGap(NucleotideEncodedGlyphs glyphs, int gappedReadIndex) {
+        return glyphs.isGap(gappedReadIndex);
     }
 
-    public static int getLeftFlankingNonGapIndex(PlacedRead placedRead, int gappedReadIndex) {
+    public static int getLeftFlankingNonGapIndex(NucleotideEncodedGlyphs placedRead, int gappedReadIndex) {
         if(beforeStartOfRead(gappedReadIndex)){
             return gappedReadIndex;
         }
@@ -114,7 +115,7 @@ public class AssemblyUtil {
     }
     
 
-    public static int getRightFlankingNonGapIndex(PlacedRead placedRead, int gappedReadIndex) {
+    public static int getRightFlankingNonGapIndex(NucleotideEncodedGlyphs placedRead, int gappedReadIndex) {
         if(afterEndOfRead(gappedReadIndex, placedRead)){
             return gappedReadIndex;
         }
