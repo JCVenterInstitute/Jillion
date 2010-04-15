@@ -102,23 +102,30 @@ public abstract class AbstractAceFileDataStore extends AbstractAceFileVisitor {
             int end3 = computeEnd3(alignRight, clearRight); 
             AssembledFrom assembledFrom =currentAssembledFromMap.get(currentReadId);
             currentOffset = computeReadOffset(assembledFrom, end5);
-            currentValidBases = currentBasecalls.substring(end5-1, end3);  
-            int correctedClearLeft;
-            int correctedClearRight;
-            if(assembledFrom.getSequenceDirection() == SequenceDirection.REVERSE){
-                correctedClearLeft = reverseCompliment(currentReadFullLength, clearLeft);
-                correctedClearRight = reverseCompliment(currentReadFullLength, clearRight);
-                int temp = correctedClearLeft;
-                correctedClearLeft = correctedClearRight;
-                correctedClearRight = temp;
-            }
-            else{
-                correctedClearLeft = clearLeft;
-                correctedClearRight = clearRight;
-            }
-            final int numberOfGaps = getNumberOfGapsIn(currentValidBases);
-            correctedClearRight -= numberOfGaps;
-            currentClearRange = Range.buildRange(Range.CoordinateSystem.RESIDUE_BASED,correctedClearLeft, correctedClearRight);
+            if((end3-end5) <0){
+                //invalid converted ace file? 
+                //reset end3 to be absolute value of length?
+                skipCurrentRead = true;
+                System.out.printf("dropping read %s because it has a negative valid range %d%n", currentReadId, (end3-end5));
+            }else{
+                currentValidBases = currentBasecalls.substring(end5-1, end3); 
+                int correctedClearLeft;
+                int correctedClearRight;
+                if(assembledFrom.getSequenceDirection() == SequenceDirection.REVERSE){
+                    correctedClearLeft = reverseCompliment(currentReadFullLength, clearLeft);
+                    correctedClearRight = reverseCompliment(currentReadFullLength, clearRight);
+                    int temp = correctedClearLeft;
+                    correctedClearLeft = correctedClearRight;
+                    correctedClearRight = temp;
+                }
+                else{
+                    correctedClearLeft = clearLeft;
+                    correctedClearRight = clearRight;
+                }
+                final int numberOfGaps = getNumberOfGapsIn(currentValidBases);
+                correctedClearRight -= numberOfGaps;
+                currentClearRange = Range.buildRange(Range.CoordinateSystem.RESIDUE_BASED,correctedClearLeft, correctedClearRight);
+        }
         }
     }
     
@@ -163,11 +170,16 @@ public abstract class AbstractAceFileDataStore extends AbstractAceFileVisitor {
         if(!skipCurrentRead){
             currentPhdInfo =new DefaultPhdInfo(traceName, phdName, date);
             AssembledFrom assembledFrom = currentAssembledFromMap.get(currentReadId);
-            contigBuilder.addRead(currentReadId, currentValidBases ,currentOffset, assembledFrom.getSequenceDirection(), 
+            visitAceRead(currentReadId, currentValidBases ,currentOffset, assembledFrom.getSequenceDirection(), 
                     currentClearRange ,currentPhdInfo);
         }
         skipCurrentRead=false;
         
+    }
+    
+    protected void visitAceRead(String readId, String validBasecalls, int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo){
+        contigBuilder.addRead(readId, validBasecalls ,offset, dir, 
+                validRange ,phdInfo);
     }
 
     @Override
