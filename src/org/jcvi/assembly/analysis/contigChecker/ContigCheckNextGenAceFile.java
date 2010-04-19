@@ -95,7 +95,9 @@ public class ContigCheckNextGenAceFile {
             File aceFile = new File(commandLine.getOptionValue("ace"));
             File phdBallFile = new File(commandLine.getOptionValue("phd"));
             String outputBasePath = commandLine.getOptionValue("o");
-            String prefix =commandLine.getOptionValue("prefix");
+            String prefix =commandLine.hasOption("prefix")?
+                            commandLine.getOptionValue("prefix"):
+                                DEFAULT_PREFIX;
             
             final int lowSequenceCoverageThreshold= commandLine.hasOption("lowCoverage")?
                                     Integer.parseInt(commandLine.getOptionValue("lowCoverage")):
