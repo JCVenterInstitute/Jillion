@@ -66,6 +66,7 @@ public class DifferentFileCasIdLookupAdapter implements CasIdLookup{
         }
         return delegate.getFileFor(lookupId);
     }
+  
     @Override
     public List<File> getFiles() {
         Set<File> files = new HashSet<File>();
@@ -89,6 +90,13 @@ public class DifferentFileCasIdLookupAdapter implements CasIdLookup{
     @Override
     public int getNumberOfIds() {
         return delegate.getNumberOfIds();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getCasIdFor(String lookupId) {
+        return delegate.getCasIdFor(lookupId);
     }
     
     

@@ -86,7 +86,6 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
                 
                 final File file = new File(filePath);
                 final File filetoParse;
-                String key=null;
                 System.out.println(file.getAbsolutePath());
            
                     filetoParse = trimToUntrimmedMap.getUntrimmedFileFor(file);
@@ -209,6 +208,12 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         return readNameOrder.get((int)casReadId);
     }
 
+    @Override
+    public synchronized long getCasIdFor(String lookupId) {
+        checkIsInitialized();
+        checkNotClosed();
+        return readNameOrder.indexOf(lookupId);
+    }
     @Override
     public File getFileFor(long casReadId) {
         return getFileFor(getLookupIdFor(casReadId));

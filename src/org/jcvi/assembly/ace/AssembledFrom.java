@@ -23,13 +23,29 @@
  */
 package org.jcvi.assembly.ace;
 
+import org.jcvi.Range;
+import org.jcvi.assembly.AssemblyUtil;
+import org.jcvi.assembly.PlacedRead;
 import org.jcvi.sequence.SequenceDirection;
 
-public class AssembledFrom {
+public class AssembledFrom implements Comparable<AssembledFrom>{
 
     private final String id;
     private final SequenceDirection dir;
     private final int startOffset;
+    
+    public static AssembledFrom createFrom(PlacedRead read, long ungappedFullLength){
+        final Range validRange;
+        SequenceDirection dir = read.getSequenceDirection();
+        Range readValidRange = read.getValidRange();
+        if(dir==SequenceDirection.REVERSE){
+            validRange = AssemblyUtil.reverseComplimentValidRange(readValidRange, ungappedFullLength);
+        }
+        else{
+            validRange = readValidRange;
+        }
+        return new AssembledFrom(read.getId(), (int)(read.getStart()-validRange.getStart()+1),dir);
+    }
     /**
      * @param id
      * @param startOffset
@@ -77,6 +93,19 @@ public class AssembledFrom {
         StringBuilder builder = new StringBuilder();
         builder.append(id).append(" ").append(startOffset).append("is complimented? ").append(dir ==SequenceDirection.REVERSE);
         return builder.toString();
+    }
+    /**
+    * Compares two AssembledFrom instances and compares them based on start offset
+    * then by Id.  This should match the order of AssembledFrom records 
+    * (and reads) in an .ace file.
+    */
+    @Override
+    public int compareTo(AssembledFrom o) {
+        int cmp= Integer.valueOf(getStartOffset()).compareTo(o.getStartOffset());
+        if(cmp !=0){
+            return cmp;
+        }
+        return getId().compareTo(o.getId());
     }
     
     

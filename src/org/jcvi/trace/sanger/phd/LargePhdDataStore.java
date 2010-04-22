@@ -59,6 +59,9 @@ public class LargePhdDataStore implements PhdDataStore{
      * @param phdFile
      */
     public LargePhdDataStore(File phdFile) {
+        if(!phdFile.exists()){
+            throw new IllegalArgumentException("phd file does not exists "+ phdFile.getAbsolutePath());
+        }
         this.phdFile = phdFile;
     }
 
