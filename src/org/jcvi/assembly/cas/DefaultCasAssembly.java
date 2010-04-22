@@ -25,7 +25,6 @@ package org.jcvi.assembly.cas;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jcvi.assembly.cas.read.CasDataStoreFactory;

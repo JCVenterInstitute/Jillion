@@ -24,9 +24,9 @@
 package org.jcvi.assembly.cas.read;
 
 import java.io.File;
-import java.util.Map;
 
 import org.jcvi.assembly.cas.CasTrimMap;
+import org.jcvi.assembly.cas.EmptyCasTrimMap;
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.fasta.LargeNucleotideFastaFileDataStore;
@@ -41,6 +41,9 @@ public class FastaCasDataStoreFactory implements
 
     private final int cacheSize;
     private final CasTrimMap trimToUntrimmedMap;
+    public FastaCasDataStoreFactory(int cacheSize){
+        this(EmptyCasTrimMap.getInstance(),cacheSize);
+    }
     public FastaCasDataStoreFactory(CasTrimMap trimToUntrimmedMap,int cacheSize){
         this.trimToUntrimmedMap = trimToUntrimmedMap;
         this.cacheSize = cacheSize;

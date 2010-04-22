@@ -26,11 +26,11 @@ package org.jcvi.assembly.ace;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.assembly.slice.Slice;
@@ -41,15 +41,12 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
-import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.trace.sanger.phd.Phd;
 public class AceFileWriter {
 
     private static final String CONTIG_HEADER = "CO %s %d %d %d %s%n";
-    private static final PhredQuality ACE_DEFAULT_HIGH_QUALITY_THRESHOLD = PhredQuality.valueOf(20);
-    
+   
     
     public static void writeAceFile(AceAssembly<AceContig> aceAssembly,SliceMapFactory sliceMapFactory, 
             OutputStream out, boolean calculateBestSegments) throws IOException, DataStoreException{
@@ -61,7 +58,7 @@ public class AceFileWriter {
             numberOfReads += contig.getNumberOfReads();
         }
         try{
-            writeString(String.format("AS %d %d%n", numberOfContigs, numberOfReads), out);
+            writeString(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads), out);
             DataStore<Phd> phdDataStore = aceAssembly.getPhdDataStore();
             for(AceContig contig: aceDataStore){
                 if(calculateBestSegments){
@@ -95,7 +92,7 @@ public class AceFileWriter {
         writeString(String.format("WA{%n%s %s %s%n%s%n}%n", 
                 wholeAssemblyTag.getType(),
                 wholeAssemblyTag.getCreator(),                
-                AceFileParser.TAG_DATE_TIME_FORMATTER.print(wholeAssemblyTag.getCreationDate().getTime()),
+                AceFileUtil.TAG_DATE_TIME_FORMATTER.print(wholeAssemblyTag.getCreationDate().getTime()),
                 wholeAssemblyTag.getData()), out);
 
         
@@ -117,7 +114,7 @@ public class AceFileWriter {
                 consensusTag.getCreator(),
                 consensusTag.getStart(),
                 consensusTag.getEnd(),
-                AceFileParser.TAG_DATE_TIME_FORMATTER.print(consensusTag.getCreationDate().getTime()),
+                AceFileUtil.TAG_DATE_TIME_FORMATTER.print(consensusTag.getCreationDate().getTime()),
                 consensusTag.isTransient()?" NoTrans":"",
                         tagBodyBuilder.toString()), out);
         
@@ -129,7 +126,7 @@ public class AceFileWriter {
                         readTag.getCreator(),
                         readTag.getStart(),
                         readTag.getEnd(),
-                        AceFileParser.TAG_DATE_TIME_FORMATTER.print(readTag.getCreationDate().getTime())), out);
+                        AceFileUtil.TAG_DATE_TIME_FORMATTER.print(readTag.getCreationDate().getTime())), out);
         
     }
     public static void writeAceFile(Contig<AcePlacedRead> contig,
@@ -146,20 +143,38 @@ public class AceFileWriter {
                 
                 out);
         out.flush();
-        writeString(String.format("%s%n%n",convertToAcePaddedBasecalls(consensus)), out);
+        writeString(String.format("%s%n%n%n",AceFileUtil.convertToAcePaddedBasecalls(consensus)), out);
         out.flush();
         writeFakeUngappedConsensusQualities(consensus, out);
         writeString(String.format("%n"), out);
         out.flush();
+        List<AssembledFrom> assembledFroms = getSortedAssembledFromsFor(contig, phdDataStore);
+        
+        for(AssembledFrom assembledFrom : assembledFroms){
+            String id = assembledFrom.getId();
+            long fullLength = phdDataStore.get(id).getBasecalls().getLength();
+            writeAssembledFromRecords(contig.getPlacedReadById(id).getRealPlacedRead(),fullLength,out);
+        }
+        writeString(String.format("%n"), out);
+        out.flush();
+        for(AssembledFrom assembledFrom : assembledFroms){
+            String id = assembledFrom.getId();          
+            AcePlacedRead read = contig.getPlacedReadById(id).getRealPlacedRead();
+            writePlacedRead(read, phdDataStore.get(id),out);
+        }
+        writeString(String.format("%n"), out);
+        out.flush();
+    }
+    private static List<AssembledFrom> getSortedAssembledFromsFor(
+            Contig<AcePlacedRead> contig, DataStore<Phd> phdDataStore)
+            throws DataStoreException {
+        List<AssembledFrom> assembledFroms = new ArrayList<AssembledFrom>(contig.getNumberOfReads());
         for(AcePlacedRead read : contig.getPlacedReads()){
             long fullLength = phdDataStore.get(read.getId()).getBasecalls().getLength();
-            writeAssembledFromRecords(read,fullLength,out);
+            assembledFroms.add(AssembledFrom.createFrom(read, fullLength));
         }
-        out.flush();
-        for(AcePlacedRead read : contig.getPlacedReads()){            
-            writePlacedRead(read, phdDataStore.get(read.getId()),out);
-        }
-        out.flush();
+        Collections.sort(assembledFroms);
+        return assembledFroms;
     }
     public static void writeAceFile(Contig<AcePlacedRead> contig,
             SliceMap sliceMap,
@@ -198,22 +213,29 @@ public class AceFileWriter {
                 
                 out);
         }
-        writeString(String.format("%s%n%n",convertToAcePaddedBasecalls(consensus)), out);
+        writeString(String.format("%s%n%n",AceFileUtil.convertToAcePaddedBasecalls(consensus)), out);
         writeUngappedConsensusQualities(consensus,sliceMap, out);
         
         writeString(String.format("%n"), out);
-        for(AcePlacedRead read : contig.getPlacedReads()){
-            long fullLength = phdDataStore.get(read.getId()).getBasecalls().getLength();
-            writeAssembledFromRecords(read,fullLength,out);
+        List<AssembledFrom> assembledFroms = getSortedAssembledFromsFor(contig, phdDataStore);
+        
+        for(AssembledFrom assembledFrom : assembledFroms){
+            String id = assembledFrom.getId();
+            long fullLength = phdDataStore.get(id).getBasecalls().getLength();
+            writeAssembledFromRecords(contig.getPlacedReadById(id).getRealPlacedRead(),fullLength,out);
         }
+        out.flush();
         if(calculateBestSegments){
             writeString(bestSegmentBuilder.toString(),out);
             writeString(String.format("%n"), out);
         }
-        for(AcePlacedRead read : contig.getPlacedReads()){            
-            writePlacedRead(read, phdDataStore.get(read.getId()),out);
+        out.flush();
+        for(AssembledFrom assembledFrom : assembledFroms){
+            String id = assembledFrom.getId();          
+            AcePlacedRead read = contig.getPlacedReadById(id).getRealPlacedRead();
+            writePlacedRead(read, phdDataStore.get(id),out);
         }
-        
+        out.flush();
         
     }
     private static void writeFakeUngappedConsensusQualities(NucleotideEncodedGlyphs consensus,
@@ -264,110 +286,16 @@ public class AceFileWriter {
 
    
     private static void writeAssembledFromRecords(AcePlacedRead read, long fullLength,OutputStream out) throws IOException{
-        Range validRange;
-        if(read.getSequenceDirection()==SequenceDirection.REVERSE){
-            validRange = AssemblyUtil.reverseComplimentValidRange(read.getValidRange(), fullLength);
-        }
-        else{
-            validRange = read.getValidRange();
-        }
-        writeString(String.format("AF %s %s %d%n",
-                read.getId(),
-                read.getSequenceDirection()==SequenceDirection.FORWARD? "U":"C",
-                        read.getStart()-validRange.getStart()+1),
-                        out);
+        AssembledFrom assembledFrom = AssembledFrom.createFrom(read, fullLength);
+        writeString(AceFileUtil.createAssembledFromRecord(assembledFrom), out);
     }
+    
     private static void writePlacedRead(AcePlacedRead read, Phd phd,OutputStream out ) throws IOException{
-       
-        final String readId = read.getId();
-        final List<NucleotideGlyph> phdFullBases = phd.getBasecalls().decode();
-        
-        List<NucleotideGlyph> fullGappedValidRange;
-        if(read.getSequenceDirection() == SequenceDirection.FORWARD){
-            fullGappedValidRange = AssemblyUtil.buildGappedComplimentedFullRangeBases(read, 
-                    phdFullBases);
-        }else{
-            final List<NucleotideGlyph> complimentedFullBases = NucleotideGlyph.reverseCompliment(phdFullBases);
-            Range validRange = AssemblyUtil.reverseComplimentValidRange(read.getValidRange(),complimentedFullBases.size());
-            
-            fullGappedValidRange=new ArrayList<NucleotideGlyph>();
-            fullGappedValidRange.addAll(complimentedFullBases.subList(0, (int)validRange.getStart()));
-            fullGappedValidRange.addAll(read.getEncodedGlyphs().decode());
-            fullGappedValidRange.addAll(complimentedFullBases.subList((int)validRange.getEnd()+1, complimentedFullBases.size()));
-            
-            
-        }
-           
-
-        writeString(String.format("RD %s %d 0 0%n",
-                        readId,
-                        fullGappedValidRange.size()),out);
-        writeString(convertToAcePaddedBasecalls(fullGappedValidRange,phd)
-                            , out);
-        writeString(String.format("%n"), out);
-        writeRanges(read,fullGappedValidRange, out);
-        writePhdRecord(read,out);
+        writeString(AceFileUtil.createAcePlacedReadRecord(
+                read.getId(),read.getEncodedGlyphs(),  read.getValidRange(), read.getSequenceDirection(),phd, read.getPhdInfo()),out);
         
     }
-    private static void writePhdRecord(AcePlacedRead read, OutputStream out) throws IOException{
-        PhdInfo info =read.getPhdInfo();
-        writeString(String.format("DS CHROMAT_FILE: %s PHD_FILE: %s TIME: %s%n", 
-                
-                info.getTraceName(),
-                info.getPhdName(),
-                AceFileParser.CHROMAT_DATE_TIME_FORMATTER.print(info.getPhdDate().getTime())
-                
-        ),out);
-    }
-    private static void writeRanges(AcePlacedRead read,List<NucleotideGlyph>fullGappedBasecalls, OutputStream out)
-            throws IOException {
-        int numberOfGaps = read.getEncodedGlyphs().getGapIndexes().size();
-        Range ungappedValidRange = read.getValidRange().convertRange(CoordinateSystem.RESIDUE_BASED);
-        Range gappedValidRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
-                ungappedValidRange.getLocalStart(),
-                ungappedValidRange.getLocalEnd()+numberOfGaps);
-        
-        if(read.getSequenceDirection()==SequenceDirection.REVERSE){
-            final int fullLength = fullGappedBasecalls.size();
-            gappedValidRange = AssemblyUtil.reverseComplimentValidRange(gappedValidRange, fullLength);
-           
-        }
-
-        
-        writeString(String.format("%nQA %d %d %d %d%n",
-                gappedValidRange.getLocalStart(), gappedValidRange.getLocalEnd(),
-                gappedValidRange.getLocalStart(), gappedValidRange.getLocalEnd()
-                ),
-                out);
-    }
-    private static String convertToAcePaddedBasecalls(NucleotideEncodedGlyphs basecalls){
-       return convertToAcePaddedBasecalls(basecalls.decode(),null);
-    }
-    private static String convertToAcePaddedBasecalls(List<NucleotideGlyph> basecalls,Phd phd){
-        StringBuilder result = new StringBuilder();
-        int numberOfGapsSoFar=0;
-        for(int i=0; i< basecalls.size(); i++){
-            NucleotideGlyph base = basecalls.get(i);
-            if(base == NucleotideGlyph.Gap){
-                result.append("*");
-                numberOfGapsSoFar++;
-            }
-            else{
-                if(phd!=null){
-                    PhredQuality quality =phd.getQualities().get(i-numberOfGapsSoFar);
-                    if(quality.compareTo(ACE_DEFAULT_HIGH_QUALITY_THRESHOLD)<0){
-                        result.append(base.toString().toLowerCase());
-                    }
-                    else{
-                        result.append(base);
-                    }
-                }else{
-                    result.append(base);
-                }
-            }
-        }
-        return result.toString().replaceAll("(.{50})", "$1"+String.format("%n"));
-    }
+    
     private static void writeString(String s, OutputStream out) throws IOException{
         out.write(s.getBytes());
         

@@ -34,7 +34,7 @@ import org.jcvi.sequence.SequenceDirection;
  *
  *
  */
-public abstract class AbstractAceFileDataStore extends AbstractAceFileVisitor {
+public abstract class AbstractAceFileDataStore extends AbstractAceFileVisitor implements AceContigDataStore{
    
    
     private DefaultAceContig.Builder contigBuilder;

@@ -33,8 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.sequence.SequenceDirection;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 public class AceFileParser {
     private static final String BEGIN_CONSENSUS_QUALITIES_LINE = "BQ\\s*";
@@ -64,9 +62,7 @@ public class AceFileParser {
     private static final Pattern CONSENSUS_TAG_PATTERN = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}:\\d{6})(\\s+(noTrans))?");
     
     
-    public static final DateTimeFormatter CHROMAT_DATE_TIME_FORMATTER = DateTimeFormat.forPattern("EEE MMM dd kk:mm:ss yyyy");
-    public static final DateTimeFormatter TAG_DATE_TIME_FORMATTER = DateTimeFormat.forPattern("YYMMdd:HHmmss");
-    
+   
     public static void parseAceFile(File file, AceFileVisitor visitor) throws IOException{
         parseAceFile(new FileInputStream(file), visitor);
     }
@@ -160,7 +156,7 @@ public class AceFileParser {
                                         if(!timeMatcher.find()){
                                             throw new IOException("could not parse phd time stamp from "+ line);
                                         }
-                                        Date date= CHROMAT_DATE_TIME_FORMATTER.parseDateTime(                                                
+                                        Date date= AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parseDateTime(                                                
                                                 timeMatcher.group(1)).toDate();
                                         visitor.visitTraceDescriptionLine(traceName, phdName, date);
                                     }
@@ -179,7 +175,7 @@ public class AceFileParser {
                                             String creator = readTagMatcher.group(3);
                                             long gappedStart = Long.parseLong(readTagMatcher.group(4));
                                             long gappedEnd = Long.parseLong(readTagMatcher.group(5));
-                                            Date creationDate= TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
+                                            Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
                                                     readTagMatcher.group(6)).toDate();
                                             visitor.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, true);
                                             line = scanner.nextLine();
@@ -199,7 +195,7 @@ public class AceFileParser {
                                                 }
                                                 String type = tagMatcher.group(1);
                                                 String creator = tagMatcher.group(2);
-                                                Date creationDate= TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
+                                                Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
                                                         tagMatcher.group(3)).toDate();
                                                
                                                 boolean doneTag =false;
@@ -233,7 +229,7 @@ public class AceFileParser {
                                                     String creator = tagMatcher.group(3);
                                                     long gappedStart = Long.parseLong(tagMatcher.group(4));
                                                     long gappedEnd = Long.parseLong(tagMatcher.group(5));
-                                                    Date creationDate= TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
+                                                    Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
                                                             tagMatcher.group(6)).toDate();
                                                     boolean isTransient = tagMatcher.group(7)!=null;
                                                     

@@ -32,11 +32,10 @@ import org.jcvi.Range;
 import org.jcvi.assembly.ace.AbstractAceFileDataStore;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceFileParser;
-import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.util.DefaultMemoryMappedFileRange;
 import org.jcvi.util.MemoryMappedFileRange;
 
-public class MemoryMappedAceFileDataStore extends AbstractAceFileDataStore implements ContigDataStore<AcePlacedRead, AceContig>{
+public class MemoryMappedAceFileDataStore extends AbstractAceFileDataStore{
     private final MemoryMappedFileRange memoryMappedFileRange;
     private final File file;
     private int currentStartOffset;

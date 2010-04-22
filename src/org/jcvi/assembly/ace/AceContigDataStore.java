@@ -16,25 +16,16 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Oct 30, 2009
- *
+
+package org.jcvi.assembly.ace;
+
+import org.jcvi.datastore.ContigDataStore;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.assembly.cas;
+public interface AceContigDataStore extends ContigDataStore<AcePlacedRead,AceContig>{
 
-import java.io.Closeable;
-import java.io.File;
-import java.util.List;
-
-public interface CasIdLookup extends Closeable{
-
-    
-    String getLookupIdFor(long casReadId);
-    long getCasIdFor(String lookupId);
-    List<File> getFiles();
-    int getNumberOfIds();
-    File getFileFor(String lookupId);
-    File getFileFor(long casReadId);
-    
 }

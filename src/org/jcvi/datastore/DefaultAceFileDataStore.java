@@ -30,9 +30,8 @@ import java.util.Map;
 
 import org.jcvi.assembly.ace.AbstractAceFileDataStore;
 import org.jcvi.assembly.ace.AceContig;
-import org.jcvi.assembly.ace.AcePlacedRead;
 
-public class DefaultAceFileDataStore extends AbstractAceFileDataStore implements ContigDataStore<AcePlacedRead, AceContig>{
+public class DefaultAceFileDataStore extends AbstractAceFileDataStore {
 
     private Map<String, AceContig> contigMap = new LinkedHashMap<String, AceContig>();
 

@@ -35,12 +35,14 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.jcvi.Range;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.cli.CommandLineUtils;
 import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
+import org.jcvi.sequence.SequenceDirection;
 
 public class Ace2Fasta {
 
@@ -78,17 +80,18 @@ public class Ace2Fasta {
                     contigIdMap.put(originalId, ConsedUtil.getRenamedContigId(consensusTag));
                 }
             }
-            AceFileVisitor fastaVisitor = new AbstractAceFileDataStore() {
+           
+            AceFileVisitor fastaVisitor = new AbstractAceFileVisitor() {
                 
                 @Override
-                protected void visitContig(AceContig contig) {
-                    List<NucleotideGlyph>consensus = contig.getConsensus().decode();
+                protected void visitNewContig(String contigId, String consensusString) {
+                    List<NucleotideGlyph>consensus = NucleotideGlyph.getGlyphsFor(consensusString);
                     if(!gapped){
                         consensus = NucleotideGlyph.convertToUngapped(consensus);
                     }
-                    String id = contigIdMap.get(contig.getId());
+                    String id = contigIdMap.get(contigId);
                     if(id==null){
-                        id =contig.getId();
+                        id =contigId;
                     }
                     String comment = aceIn.getName()+" (whole contig)";
                     DefaultEncodedNucleotideFastaRecord fasta =
@@ -99,6 +102,18 @@ public class Ace2Fasta {
                         } catch (IOException e) {
                            throw new RuntimeException(e);
                         }
+                    
+                    
+                }
+                
+                @Override
+                protected void visitEndOfContig() {
+                    
+                }
+                
+                @Override
+                protected void visitAceRead(String readId, String validBasecalls,
+                        int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo) {
                     
                 }
             };

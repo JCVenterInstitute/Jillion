@@ -34,28 +34,32 @@ import org.jcvi.sequence.SequenceDirection;
 public class AssemblyUtil {
 
     public static <R extends PlacedRead> List<NucleotideGlyph> buildGappedComplimentedFullRangeBases(R placedRead, List<NucleotideGlyph> ungappedUncomplimentedFullRangeBases){
+       return buildGappedComplimentedFullRangeBases(placedRead.getEncodedGlyphs(), placedRead.getSequenceDirection(), placedRead.getValidRange(), ungappedUncomplimentedFullRangeBases);
+    }
+    public static List<NucleotideGlyph> buildGappedComplimentedFullRangeBases(NucleotideEncodedGlyphs gappedValidRange, SequenceDirection dir, Range validRange, List<NucleotideGlyph> ungappedUncomplimentedFullRangeBases){
         List<NucleotideGlyph> fullRangeComplimented;
-        if(placedRead.getSequenceDirection().equals(SequenceDirection.REVERSE)){
+        if(dir == SequenceDirection.REVERSE){
             fullRangeComplimented = NucleotideGlyph.reverseCompliment(ungappedUncomplimentedFullRangeBases);
         }
         else{
             fullRangeComplimented = ungappedUncomplimentedFullRangeBases;
         }
-        Range validRange = placedRead.getValidRange();
         List<NucleotideGlyph> gappedComplimentedFullRange = new ArrayList<NucleotideGlyph>();
         for(int i=0; i< validRange.getStart(); i++ ){
             gappedComplimentedFullRange.add(fullRangeComplimented.get(i));
         }
-        gappedComplimentedFullRange.addAll(placedRead.getEncodedGlyphs().decode());
+        gappedComplimentedFullRange.addAll(gappedValidRange.decode());
         for(int i=(int)validRange.getEnd()+1; i< fullRangeComplimented.size(); i++){
             gappedComplimentedFullRange.add(fullRangeComplimented.get(i));
         }
         return gappedComplimentedFullRange;
     }
     
+    
     public static Range reverseComplimentValidRange(Range validRange, long fullLength){
         if(fullLength < validRange.size()){
-            throw new IllegalArgumentException("valid range larger than fullLength");
+            throw new IllegalArgumentException(
+                    String.format("valid range  %s is larger than fullLength %d", validRange, fullLength));
         }
         long newStart = fullLength - validRange.getEnd()-1;
         long newEnd = fullLength - validRange.getStart()-1;

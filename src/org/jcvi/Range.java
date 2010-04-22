@@ -28,10 +28,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -513,7 +511,9 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
 
         return !(this.start > target.end || this.end < target.start);
     }
-
+    public boolean intersects(long coordinate){
+        return coordinate >= this.start && coordinate <=this.end;
+    }
     /**
      * Calculates the intersection of this {@link Range} and a second one.
      * <p>
