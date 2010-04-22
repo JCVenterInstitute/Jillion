@@ -119,6 +119,41 @@ public enum NucleotideGlyph implements Glyph {
             }
         }
     }
+    
+    /**
+     * A predefined matrix of nucleotide matching results.  This is a simple 2-index matrix
+     * where each index represents one of the nucleotides to attempt to match.  The order of the
+     * indexes does not matter.
+     */
+    private static final boolean[][] MATCH = new boolean[NucleotideGlyph.values().length][NucleotideGlyph.values().length];
+
+    /*
+     * This pre-populates the match table.
+     * 
+     * Note: Some simplistic optization happens here.  The match value is only calculated when 
+     * the second nucleotide in the pair is not less than the first.  After the calculation is
+     * done, the result is loaded into the matrix locations of [a,b] and [b,a].  This cuts the
+     * number of calculations roughly in half.  There isn't much savings here, really, but the
+     * optization was so simple to do, there wasn't much of a reason not to do it.
+     */
+    static
+    {
+        for (final NucleotideGlyph glyphA : NucleotideGlyph.values())
+        {
+            int glyphAindex = glyphA.ordinal();
+            for (final NucleotideGlyph glyphB : NucleotideGlyph.values())
+            {
+                int glyphBindex = glyphB.ordinal();
+                if (glyphAindex <= glyphBindex)
+                {
+                    boolean val = NucleotideGlyph.calculateMatch(glyphA, glyphB);
+                    NucleotideGlyph.MATCH[glyphAindex][glyphBindex] = val;
+                    NucleotideGlyph.MATCH[glyphBindex][glyphAindex] = val;
+                }
+            }
+        }
+    }
+    
     private final Character c;
     
     NucleotideGlyph(Character c){
@@ -209,6 +244,53 @@ public enum NucleotideGlyph implements Glyph {
         }
         return result.toString();
     }
+    
+    /**
+     * Checks to see if the given nucleotide matches this nucleotide.  A "match" is defined as
+     * any relationship where a nucleotide or one of its ambiguous constituents is eqivalent to 
+     * the other nucleotide or its constituents.
+     * 
+     * @param that The <code>NucleotideGlyph</code> to compare.
+     * @return <code>true</code> if the nucleotides may represent matching bases, false if they
+     * cannot represent matching bases.
+     */
+    public boolean matches(NucleotideGlyph that)
+    {
+        return NucleotideGlyph.MATCH[this.ordinal()][that.ordinal()];
+    }
+    
+    /**
+     * Pre-calculates the result of ambiguity {@link #matches(NucleotideGlyph) matching} for a
+     * given pair of nucleotides.
+     * 
+     * @param a The first nucleotide.
+     * @param b The second nucleotide.
+     * @return <code>true</code> if the two nucleotides represent a potential match, 
+     * <code>false</code> if they do not.
+     */
+    public static boolean calculateMatch(NucleotideGlyph a, NucleotideGlyph b)
+    {
+        if (a.equals(b)) return true;
+        
+        if (a.isAmbiguity())
+        {
+            if (b.isAmbiguity())
+            {
+                for (NucleotideGlyph constituent : NucleotideGlyph.AMBIGUITY_TO_CONSTIUENT.get(a))
+                {
+                    if (NucleotideGlyph.AMBIGUITY_TO_CONSTIUENT.get(b).contains(constituent)) return true;
+                }
+            }
+            else if (NucleotideGlyph.AMBIGUITY_TO_CONSTIUENT.get(a).contains(b)) return true;
+        }
+        else if (b.isAmbiguity())
+        {
+            if (NucleotideGlyph.AMBIGUITY_TO_CONSTIUENT.get(b).contains(a)) return true;
+        }
+        
+        return false;
+    }
+    
     public static Set<NucleotideGlyph> getAmbiguitesFor(NucleotideGlyph glyph){
         
         if(CONSTIUENT_TO_AMBIGUITY.containsKey(glyph)){
