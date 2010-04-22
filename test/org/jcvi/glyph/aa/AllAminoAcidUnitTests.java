@@ -16,36 +16,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Sep 3, 2008
- *
- * @author dkatzel
- */
-package org.jcvi.glyph;
 
+package org.jcvi.glyph.aa;
 
-import org.jcvi.glyph.aa.AllAminoAcidUnitTests;
-import org.jcvi.glyph.encoder.AllEnocderUnitTests;
-import org.jcvi.glyph.nuc.AllNucleotideUnitTests;
-import org.jcvi.glyph.num.AllNumericGlyphUnitTests;
-import org.jcvi.glyph.phredQuality.AllPhredQualityTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+/**
+ * @author dkatzel
+ *
+ *
+ */
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-
-       AllNucleotideUnitTests.class,
-       AllPhredQualityTests.class,
-       AllNumericGlyphUnitTests.class,
-       AllAminoAcidUnitTests.class,
-       TestRunLength.class,
-       TestRunLengthEncoder.class,
-       AllEnocderUnitTests.class
+        TestAminoAcid.class
     }
-)
-public class AllGlyphUnitTests {
+    )
+public class AllAminoAcidUnitTests {
 
 }
