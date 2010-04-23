@@ -31,7 +31,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestAminoAcid.class
+        TestAminoAcid.class,
+        TestCodon.class,
     }
     )
 public class AllAminoAcidUnitTests {
