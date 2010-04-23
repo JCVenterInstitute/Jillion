@@ -54,6 +54,13 @@ public enum NucleotideGlyph implements Glyph {
     Thymine(Character.valueOf('T')),
     Gap(Character.valueOf('-')),
     ;
+    /**
+     * A predefined matrix of nucleotide matching results.  This is a simple 2-index matrix
+     * where each index represents one of the nucleotides to attempt to match.  The order of the
+     * indexes does not matter.
+     */
+    private static final boolean[][] MATCH = new boolean[NucleotideGlyph.values().length][NucleotideGlyph.values().length];
+
     
     private static final Map<NucleotideGlyph,NucleotideGlyph> COMPLIMENT_MAP;
     private static final Map<NucleotideGlyph,Set<NucleotideGlyph>> AMBIGUITY_TO_CONSTIUENT;
@@ -118,26 +125,15 @@ public enum NucleotideGlyph implements Glyph {
                 }
             }
         }
-    }
-    
-    /**
-     * A predefined matrix of nucleotide matching results.  This is a simple 2-index matrix
-     * where each index represents one of the nucleotides to attempt to match.  The order of the
-     * indexes does not matter.
-     */
-    private static final boolean[][] MATCH = new boolean[NucleotideGlyph.values().length][NucleotideGlyph.values().length];
-
-    /*
-     * This pre-populates the match table.
-     * 
-     * Note: Some simplistic optization happens here.  The match value is only calculated when 
-     * the second nucleotide in the pair is not less than the first.  After the calculation is
-     * done, the result is loaded into the matrix locations of [a,b] and [b,a].  This cuts the
-     * number of calculations roughly in half.  There isn't much savings here, really, but the
-     * optization was so simple to do, there wasn't much of a reason not to do it.
-     */
-    static
-    {
+        /*
+         * This pre-populates the match table.
+         * 
+         * Note: Some simplistic optimization happens here.  The match value is only calculated when 
+         * the second nucleotide in the pair is not less than the first.  After the calculation is
+         * done, the result is loaded into the matrix locations of [a,b] and [b,a].  This cuts the
+         * number of calculations roughly in half.  There isn't much savings here, really, but the
+         * optimization was so simple to do, there wasn't much of a reason not to do it.
+         */
         for (final NucleotideGlyph glyphA : NucleotideGlyph.values())
         {
             int glyphAindex = glyphA.ordinal();
@@ -153,6 +149,8 @@ public enum NucleotideGlyph implements Glyph {
             }
         }
     }
+    
+  
     
     private final Character c;
     
