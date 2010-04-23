@@ -75,11 +75,23 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
     }
     @Override
     public long convertReferenceIndexToValidRangeIndex(long referenceIndex) {
-        throw new UnsupportedOperationException("no reference");
+        
+        long validRangeIndex= referenceIndex - getStart();
+        checkValidRange(validRangeIndex);
+        return validRangeIndex;
     }
     @Override
     public long convertValidRangeIndexToReferenceIndex(long validRangeIndex) {
-        throw new UnsupportedOperationException("no reference");
+        checkValidRange(validRangeIndex);
+        return getStart() +validRangeIndex;
+    }
+    private void checkValidRange(long validRangeIndex) {
+        if(validRangeIndex <0){
+            throw new IllegalArgumentException("reference index refers to index before valid range");
+        }
+        if(validRangeIndex > getLength()-1){
+            throw new IllegalArgumentException("reference index refers to index after valid range");
+        }
     }
     @Override
     public SequenceDirection getSequenceDirection() {
