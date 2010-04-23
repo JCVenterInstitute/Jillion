@@ -82,15 +82,10 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
     protected void loadFiles(CasFileInfo casFileInfo){
         for(String filePath: casFileInfo.getFileNames()){
             try {
-                System.out.println(filePath);
                 
                 final File file = new File(filePath);
-                final File filetoParse;
-                System.out.println(file.getAbsolutePath());
-           
-                    filetoParse = trimToUntrimmedMap.getUntrimmedFileFor(file);
+                final File filetoParse = trimToUntrimmedMap.getUntrimmedFileFor(file);
                
-                System.out.printf("loading file %s for cas file %s%n", filetoParse.getName(), file.getName());
                 files.add(filetoParse);
                 parse(filetoParse);
             } catch (Exception e) {

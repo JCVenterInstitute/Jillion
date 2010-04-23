@@ -188,11 +188,8 @@ public class CasParser {
                     maxContigLength = Math.max(maxContigLength, contigLength);
                 }
                 numberOfBytesForContigNumber = CasUtil.numberOfBytesRequiredFor(numberOfContigSequences);
-                System.out.println("# of contig seqs = "+ numberOfContigSequences);
-                System.out.println("numberOfBytesForContigNumber =" + numberOfBytesForContigNumber);
-                System.out.println("max contig length =" + maxContigLength);                
+                            
                 numberOfBytesForContigPosition =CasUtil.numberOfBytesRequiredFor(maxContigLength);
-                System.out.println("numberOfBytesForContigPosition =" + numberOfBytesForContigPosition);
                 //contig pairs not currently used so ignore them
                 
             }
