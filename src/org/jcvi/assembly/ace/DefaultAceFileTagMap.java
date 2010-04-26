@@ -23,6 +23,8 @@
  */
 package org.jcvi.assembly.ace;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -37,7 +39,12 @@ public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceT
     private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
     
     private DefaultConsensusAceTag.Builder consensusTagBuilder;
-    
+    public DefaultAceFileTagMap(){
+        super();
+    }
+    public DefaultAceFileTagMap(File aceFile) throws IOException{
+        AceFileParser.parseAceFile(aceFile, this);
+    }
     private synchronized void  checkAlreadyInitialized(){
         if(!isInitialized()){
             throw new IllegalStateException("not yet initialized");

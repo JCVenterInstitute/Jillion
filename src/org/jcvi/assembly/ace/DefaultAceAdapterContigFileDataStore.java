@@ -23,20 +23,23 @@
  */
 package org.jcvi.assembly.ace;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.jcvi.assembly.contig.DefaultContigFileParser;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
 
-public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileDataStore implements DataStore<DefaultAceContig>{
+public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileDataStore implements AceContigDataStore{
 
-    private final Map<String, DefaultAceContig> map = new HashMap<String, DefaultAceContig>();
-    private DataStore<DefaultAceContig> dataStore;
+    private final Map<String, AceContig> map = new HashMap<String, AceContig>();
+    private DataStore<AceContig> dataStore;
     
     /**
      * @param phdDate
@@ -44,7 +47,10 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     public DefaultAceAdapterContigFileDataStore(Date phdDate) {
         super(phdDate);
     }
-
+    public DefaultAceAdapterContigFileDataStore(Date phdDate, File contigFile) throws FileNotFoundException{
+        this(phdDate);
+        DefaultContigFileParser.parse(contigFile, this);
+    }
     @Override
     protected void visitAceContig(DefaultAceContig aceContig) {
         map.put(aceContig.getId(), aceContig);        
@@ -53,7 +59,7 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     @Override
     public void visitEndOfFile() {
         super.visitEndOfFile();
-        dataStore = new SimpleDataStore<DefaultAceContig>(map);
+        dataStore = new SimpleDataStore<AceContig>(map);
     }
 
     @Override
@@ -62,7 +68,7 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     }
 
     @Override
-    public DefaultAceContig get(String id) throws DataStoreException {
+    public AceContig get(String id) throws DataStoreException {
         return dataStore.get(id);
     }
 
@@ -83,7 +89,7 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     }
 
     @Override
-    public Iterator<DefaultAceContig> iterator() {
+    public Iterator<AceContig> iterator() {
         return dataStore.iterator();
     }
 

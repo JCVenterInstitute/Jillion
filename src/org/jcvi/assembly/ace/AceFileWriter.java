@@ -43,11 +43,14 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.sanger.phd.Phd;
+import org.jcvi.trace.sanger.phd.PhdDataStore;
 public class AceFileWriter {
 
     private static final String CONTIG_HEADER = "CO %s %d %d %d %s%n";
    
-    
+    public static void writeAceFile(AceAssembly<AceContig> aceAssembly,OutputStream out) throws IOException, DataStoreException{
+        writeAceFile(aceAssembly, null,out,false);
+    }
     public static void writeAceFile(AceAssembly<AceContig> aceAssembly,SliceMapFactory sliceMapFactory, 
             OutputStream out, boolean calculateBestSegments) throws IOException, DataStoreException{
         int numberOfContigs =0;
@@ -59,7 +62,7 @@ public class AceFileWriter {
         }
         try{
             writeString(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads), out);
-            DataStore<Phd> phdDataStore = aceAssembly.getPhdDataStore();
+            PhdDataStore phdDataStore = aceAssembly.getPhdDataStore();
             for(AceContig contig: aceDataStore){
                 if(calculateBestSegments){
                     SliceMap sliceMap = sliceMapFactory.createNewSliceMap(
@@ -130,7 +133,7 @@ public class AceFileWriter {
         
     }
     public static void writeAceFile(Contig<AcePlacedRead> contig,
-            DataStore<Phd> phdDataStore, 
+            PhdDataStore phdDataStore, 
             OutputStream out) throws IOException, DataStoreException{
         final NucleotideEncodedGlyphs consensus = contig.getConsensus();
         

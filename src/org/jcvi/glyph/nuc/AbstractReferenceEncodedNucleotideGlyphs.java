@@ -129,6 +129,59 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
     public Range getValidRange() {
         return validRange;
     }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + differentGlyphMap.hashCode();
+        result = prime * result + gaps.hashCode();
+        result = prime * result + length;
+        result = prime * result + startOffset;
+        result = prime * result
+                + ((validRange == null) ? 0 : validRange.hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof AbstractReferenceEncodedNucleotideGlyphs)) {
+            return false;
+        }
+        AbstractReferenceEncodedNucleotideGlyphs other = (AbstractReferenceEncodedNucleotideGlyphs) obj;
+        if (differentGlyphMap == null) {
+            if (other.differentGlyphMap != null) {
+                return false;
+            }
+        } else if (!differentGlyphMap.equals(other.differentGlyphMap)) {
+            return false;
+        }
+        if (gaps == null) {
+            if (other.gaps != null) {
+                return false;
+            }
+        } else if (!gaps.equals(other.gaps)) {
+            return false;
+        }
+        if (length != other.length) {
+            return false;
+        }
+        if (startOffset != other.startOffset) {
+            return false;
+        }
+        if (validRange == null) {
+            if (other.validRange != null) {
+                return false;
+            }
+        } else if (!validRange.equals(other.validRange)) {
+            return false;
+        }
+        return true;
+    }
     
     
     

@@ -48,9 +48,6 @@ public class AceContigAdapter implements AceContig{
         this.delegate = delegate;
         for(PlacedRead read : delegate.getPlacedReads()){
             final String readId = read.getId();
-            if(readId.equals("SOLEXA1_1_60_1265_1871#0/2")){
-                System.out.println("here");
-            }
             adaptedReads.put(readId, new AcePlacedReadAdapter(read,
                     phdDate, 
                     idLookup.getFileFor(readId)));
