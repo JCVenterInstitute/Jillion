@@ -54,6 +54,7 @@ import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.trace.TraceDataStore;
 import org.jcvi.trace.sanger.phd.MemoryMappedPhdFileDataStore;
 import org.jcvi.trace.sanger.phd.Phd;
+import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.trace.sanger.phd.PhdParser;
 import org.jcvi.trace.sanger.phd.newbler.NewblerMappedPhdBallFileDataStore;
 import org.jcvi.util.DefaultMemoryMappedFileRange;
@@ -109,7 +110,7 @@ public class RemoveReferenceFromNewblerMappedAce {
             }
             DataStore<AceContig> contigsWithActualConsensusDataStore = new SimpleDataStore<AceContig>(contigsWithActualConsensus);
             
-            DataStore<Phd> cachedPhdDataStore = CachedDataStore.createCachedDataStore(TraceDataStore.class,phdDataStore,1000);
+            PhdDataStore cachedPhdDataStore = CachedDataStore.createCachedDataStore(TraceDataStore.class,phdDataStore,1000);
            
             AceAssembly<AceContig> aceAssembly = new DefaultAceAssembly<AceContig>(
                     contigsWithActualConsensusDataStore, cachedPhdDataStore,

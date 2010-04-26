@@ -84,8 +84,7 @@ public class TestDefaultAceFileTagMap {
     DefaultAceFileTagMap sut;
     @Before
     public void setup() throws IOException{
-        sut = new DefaultAceFileTagMap();
-        AceFileParser.parseAceFile(RESOURCES.getFile(fileName), sut);
+        sut = new DefaultAceFileTagMap(RESOURCES.getFile(fileName));
     }
     @Test
     public void wholeAssemblyTag(){

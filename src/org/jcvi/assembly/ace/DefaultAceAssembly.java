@@ -28,21 +28,19 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.trace.TraceNucleotideDataStoreAdapter;
 import org.jcvi.trace.TraceQualityDataStoreAdapter;
 import org.jcvi.trace.sanger.phd.Phd;
+import org.jcvi.trace.sanger.phd.PhdDataStore;
 
 public class DefaultAceAssembly<A extends AceContig> implements AceAssembly<A>{
 
     private final AceTagMap tagMap;
     private final DataStore<A> aceDataStore;
     private final List<File> phdFiles;
-    private final DataStore<Phd> phdDataStore;
+    private final PhdDataStore phdDataStore;
     private final NucleotideDataStore nucleotideDataStore;
     private final QualityDataStore qualityDataStore;
     
@@ -53,7 +51,7 @@ public class DefaultAceAssembly<A extends AceContig> implements AceAssembly<A>{
      * @param tagMap
      */
     public DefaultAceAssembly(DataStore<A> aceDataStore,
-            DataStore<Phd> phdDataStore, List<File> phdFiles,
+            PhdDataStore phdDataStore, List<File> phdFiles,
             AceTagMap tagMap) {
         this.aceDataStore = aceDataStore;
         this.phdDataStore = phdDataStore;
@@ -63,11 +61,11 @@ public class DefaultAceAssembly<A extends AceContig> implements AceAssembly<A>{
         this.qualityDataStore = new TraceQualityDataStoreAdapter<Phd>(phdDataStore);
     }
     public DefaultAceAssembly(DataStore<A> aceDataStore,
-            DataStore<Phd> phdDataStore, List<File> phdFiles){
+            PhdDataStore phdDataStore, List<File> phdFiles){
         this(aceDataStore, phdDataStore, phdFiles, DefaultAceTagMap.EMPTY_MAP);
     }
     public DefaultAceAssembly(DataStore<A> aceDataStore,
-            DataStore<Phd> phdDataStore){
+            PhdDataStore phdDataStore){
         this(aceDataStore, phdDataStore, Collections.<File>emptyList(), DefaultAceTagMap.EMPTY_MAP);
     }
     @Override
@@ -76,7 +74,7 @@ public class DefaultAceAssembly<A extends AceContig> implements AceAssembly<A>{
     }
 
     @Override
-    public DataStore<Phd> getPhdDataStore() {
+    public PhdDataStore getPhdDataStore() {
         return phdDataStore;
     }
 

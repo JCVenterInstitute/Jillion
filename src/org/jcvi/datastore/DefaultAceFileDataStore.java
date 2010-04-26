@@ -23,6 +23,7 @@
  */
 package org.jcvi.datastore;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -30,6 +31,7 @@ import java.util.Map;
 
 import org.jcvi.assembly.ace.AbstractAceFileDataStore;
 import org.jcvi.assembly.ace.AceContig;
+import org.jcvi.assembly.ace.AceFileParser;
 
 public class DefaultAceFileDataStore extends AbstractAceFileDataStore {
 
@@ -41,6 +43,15 @@ public class DefaultAceFileDataStore extends AbstractAceFileDataStore {
         if(isClosed){
             throw new DataStoreException("DataStore is closed");
         }
+    }
+    
+    public DefaultAceFileDataStore(){
+        super();
+    }
+    
+    public DefaultAceFileDataStore(File aceFile) throws IOException{
+        super();
+        AceFileParser.parseAceFile(aceFile, this);
     }
     @Override
     protected void visitContig(AceContig contig) {

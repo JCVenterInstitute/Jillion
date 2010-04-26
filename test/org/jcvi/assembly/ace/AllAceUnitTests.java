@@ -41,7 +41,8 @@ import org.junit.runners.Suite.SuiteClasses;
        TestDefaultAceBestSegmentMap.class,
        TestOntheFlyAceBestSegmentMap.class,
        TestAcePlacedReadAdapter.class,
-       TestDefaultAceFileTagMap.class
+       TestDefaultAceFileTagMap.class,
+       TestAceFileWriter.class
     }
 )
 public class AllAceUnitTests {

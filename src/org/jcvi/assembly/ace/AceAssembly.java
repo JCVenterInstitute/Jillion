@@ -28,11 +28,11 @@ import java.util.List;
 
 import org.jcvi.assembly.Assembly;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.trace.sanger.phd.Phd;
+import org.jcvi.trace.sanger.phd.PhdDataStore;
 
 public interface AceAssembly<A extends AceContig> extends Assembly<A, DataStore<A>>{
 
     AceTagMap getAceTagMap();
-    DataStore<Phd> getPhdDataStore();
+    PhdDataStore getPhdDataStore();
     List<File> getPhdFiles();
 }

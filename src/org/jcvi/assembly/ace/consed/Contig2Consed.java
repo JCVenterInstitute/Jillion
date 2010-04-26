@@ -42,7 +42,6 @@ import org.jcvi.assembly.slice.LargeSliceMapFactory;
 import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.cli.CommandLineUtils;
 import org.jcvi.datastore.CachedDataStore;
-import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.fasta.LargeNucleotideFastaFileDataStore;
@@ -54,6 +53,7 @@ import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.jcvi.trace.sanger.phd.ArtificalPhdDataStore;
 import org.jcvi.trace.sanger.phd.Phd;
+import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Period;
@@ -138,7 +138,7 @@ public class Contig2Consed {
             
            
             
-            DataStore<Phd> phdDataStore = new ArtificalPhdDataStore(seqDataStore,qualDataStore,date);
+            PhdDataStore phdDataStore = new ArtificalPhdDataStore(seqDataStore,qualDataStore,date);
             AceAssembly aceAssembly = new DefaultAceAssembly(aceDataStore, phdDataStore);
             
             ConsedWriter.writeConsedPackage(aceAssembly, 
