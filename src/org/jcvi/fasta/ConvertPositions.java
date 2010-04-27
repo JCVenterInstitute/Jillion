@@ -33,6 +33,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.ace.AceFileParser;
 import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.cli.CommandLineUtils;
@@ -42,7 +43,7 @@ import org.jcvi.datastore.MemoryMappedContigFileDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.util.DefaultMemoryMappedFileRange;
 
-public class ConvertFastaPosition {
+public class ConvertPositions {
 
     /**
      * @param args
@@ -69,7 +70,7 @@ public class ConvertFastaPosition {
                             .longName("id")
                             .isRequired(true)
                             .build());
-        options.addOption(new CommandLineOptionBuilder("r", "input range(s)")
+        options.addOption(new CommandLineOptionBuilder("r", "input range(s) comma separated list of ranges to convert accept format x-y to mean the range [x,y] inclusive")
                             .longName("ranges")
                             .isRequired(true)
                             .build());
@@ -77,10 +78,13 @@ public class ConvertFastaPosition {
         
         gapGroup.addOption(new CommandLineOptionBuilder("g", "coordinate is gapped (DEFAULT)")
                             .longName("gapped")
+                            .isFlag(true)
                             .build());
         gapGroup.addOption(new CommandLineOptionBuilder("u", "coordinate is ungapped")
                                 .longName("ungapped")
+                                .isFlag(true)
                                 .build());
+        
         options.addOptionGroup(gapGroup);
         
         OptionGroup coordinateSystemGroup = new OptionGroup();
@@ -122,29 +126,33 @@ public class ConvertFastaPosition {
             }
             
             
-            final Range coordinateRange;
+           
             boolean isGapped = !commandLine.hasOption("u");
             boolean isOneBased = commandLine.hasOption("o");
             boolean isSpacedBased = commandLine.hasOption("s");
-          
-            if(isOneBased){
-                coordinateRange = Range.parseRange(commandLine.getOptionValue("r"),CoordinateSystem.RESIDUE_BASED);
-            }
-            else if(isSpacedBased){
-                coordinateRange = Range.parseRange(commandLine.getOptionValue("r"),CoordinateSystem.SPACE_BASED);
-            }else{
-                coordinateRange = Range.parseRange(commandLine.getOptionValue("r"),CoordinateSystem.ZERO_BASED);
-            }
-            int delta = (int)(coordinateRange.getLocalStart() - coordinateRange.getStart());
-            for(long coordinate = coordinateRange.getLocalStart(); coordinate <=coordinateRange.getLocalEnd(); coordinate ++){
-
-                final int convertedCoordinate;
-                if(isGapped){
-                    convertedCoordinate =values.convertGappedValidRangeIndexToUngappedValidRangeIndex((int)coordinate+delta);
-                }else{
-                    convertedCoordinate = values.convertUngappedValidRangeIndexToGappedValidRangeIndex((int)coordinate+delta);
+            for(String range : commandLine.getOptionValue("r").split(",")){
+                final Range coordinateRange;
+                if(isOneBased){
+                    coordinateRange = Range.parseRange(range,CoordinateSystem.RESIDUE_BASED);
                 }
-                System.out.printf("%d\t%d%n", coordinate,convertedCoordinate);
+                else if(isSpacedBased){
+                    coordinateRange = Range.parseRange(range,CoordinateSystem.SPACE_BASED);
+                }else{
+                    coordinateRange = Range.parseRange(range,CoordinateSystem.ZERO_BASED);
+                }
+                int delta = (int)(coordinateRange.getLocalStart() - coordinateRange.getStart());
+                for(long coordinate = coordinateRange.getLocalStart(); coordinate <=coordinateRange.getLocalEnd(); coordinate ++){
+    
+                    final int convertedCoordinate;
+                    int deltaCoordinate = (int)coordinate+delta;
+                    if(isGapped){
+                        deltaCoordinate = AssemblyUtil.getLeftFlankingNonGapIndex(values, deltaCoordinate);
+                        convertedCoordinate =values.convertGappedValidRangeIndexToUngappedValidRangeIndex(deltaCoordinate);
+                    }else{
+                        convertedCoordinate = values.convertUngappedValidRangeIndexToGappedValidRangeIndex(deltaCoordinate);
+                    }
+                    System.out.printf("%d\t%d%n", coordinate,convertedCoordinate);
+                }
             }
         }catch(ParseException e){
             printHelp(options);
@@ -156,9 +164,9 @@ public class ConvertFastaPosition {
 
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "convertFastaPosition -f <fasta file> -i <id of fasta record in file> -c <coordinate ranges> [OPTIONS]", 
+        formatter.printHelp( "convertPositions -i <id of record in file> -r <coordinate ranges> [OPTIONS]", 
                 
-                "convert ranges of fasta coordinates from gapped to ungapped or vice versa",
+                "convert ranges of fasta or consensus coordinates from gapped to ungapped or vice versa",
                 options,
                 "Created by Danny Katzel");
         
