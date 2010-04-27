@@ -100,6 +100,8 @@ public class ConvertPositions {
                 new CommandLineOptionBuilder("s", "coordinate system is SPACED based")
                             .longName("oneBased")
                             .build());
+        
+        options.addOptionGroup(coordinateSystemGroup);
         options.addOption(CommandLineUtils.createHelpOption());
         try{
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
@@ -151,7 +153,7 @@ public class ConvertPositions {
                     }else{
                         convertedCoordinate = values.convertUngappedValidRangeIndexToGappedValidRangeIndex(deltaCoordinate);
                     }
-                    System.out.printf("%d\t%d%n", coordinate,convertedCoordinate);
+                    System.out.printf("%d\t%d%n", coordinate,convertedCoordinate+1);
                 }
             }
         }catch(ParseException e){
@@ -166,7 +168,8 @@ public class ConvertPositions {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp( "convertPositions -i <id of record in file> -r <coordinate ranges> [OPTIONS]", 
                 
-                "convert ranges of fasta or consensus coordinates from gapped to ungapped or vice versa",
+                "convert ranges of fasta or consensus coordinates from gapped to ungapped or vice versa. "+
+                "Either way, the coordinates are converted into 1-based positions.",
                 options,
                 "Created by Danny Katzel");
         
