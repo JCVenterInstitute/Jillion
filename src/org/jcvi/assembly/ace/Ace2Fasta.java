@@ -70,16 +70,13 @@ public class Ace2Fasta {
     
             final OutputStream fastaOut = new FileOutputStream(commandLine.getOptionValue("out"));
             final boolean gapped = commandLine.hasOption("g");
-           
-            final Map<String, String> contigIdMap = new HashMap<String, String>();
-            DefaultAceFileTagMap tagMap = new DefaultAceFileTagMap();
-            AceFileParser.parseAceFile(aceIn, tagMap);
-            for(ConsensusAceTag consensusTag: tagMap.getConsensusTags()){
-                String originalId = consensusTag.getId();
-                if(ConsedUtil.isContigRename(consensusTag)){
-                    contigIdMap.put(originalId, ConsedUtil.getRenamedContigId(consensusTag));
-                }
-            }
+            //consed allows users to rename contigs, but instead of changing
+            //the CO record in the ace, the new name is stored as a comment at
+            //the end of the file.  contigIdMap parses those comments 
+            //to get the most current names
+            //for those the contigs, any contig without those comments
+            //will not exist in the map
+            final Map<String, String> contigIdMap = getContigIdMap(aceIn);
            
             AceFileVisitor fastaVisitor = new AbstractAceFileVisitor() {
                 
@@ -89,32 +86,31 @@ public class Ace2Fasta {
                     if(!gapped){
                         consensus = NucleotideGlyph.convertToUngapped(consensus);
                     }
-                    String id = contigIdMap.get(contigId);
-                    if(id==null){
-                        id =contigId;
-                    }
+                    String id = contigIdMap.containsKey(contigId)?
+                                        contigIdMap.get(contigId)
+                                        : contigId;
+                   
                     String comment = aceIn.getName()+" (whole contig)";
-                    DefaultEncodedNucleotideFastaRecord fasta =
-                        new DefaultEncodedNucleotideFastaRecord(id,comment,
-                    NucleotideGlyph.convertToString(consensus));
-                        try {
-                            fastaOut.write(fasta.getStringRecord().toString().getBytes());
-                        } catch (IOException e) {
-                           throw new RuntimeException(e);
-                        }
+                    DefaultEncodedNucleotideFastaRecord fasta = new DefaultEncodedNucleotideFastaRecord(
+                                                                    id,
+                                                                    comment,
+                                                                    consensus);
+                    try {
+                        fastaOut.write(fasta.getStringRecord().toString().getBytes());
+                    } catch (IOException e) {
+                       throw new RuntimeException("error writing Fasta Record for " + id,e);
+                    }
                     
                     
                 }
                 
                 @Override
                 protected void visitEndOfContig() {
-                    
                 }
                 
                 @Override
                 protected void visitAceRead(String readId, String validBasecalls,
                         int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo) {
-                    
                 }
             };
             AceFileParser.parseAceFile(aceIn, fastaVisitor);
@@ -123,6 +119,19 @@ public class Ace2Fasta {
             printHelp(options);
             System.exit(1);
         }
+    }
+
+    private static Map<String, String> getContigIdMap(final File aceIn)
+            throws IOException {
+        final Map<String, String> contigIdMap = new HashMap<String, String>();
+        DefaultAceFileTagMap tagMap = new DefaultAceFileTagMap(aceIn);
+        for(ConsensusAceTag consensusTag: tagMap.getConsensusTags()){
+            String originalId = consensusTag.getId();
+            if(ConsedUtil.isContigRename(consensusTag)){
+                contigIdMap.put(originalId, ConsedUtil.getRenamedContigId(consensusTag));
+            }
+        }
+        return contigIdMap;
     }
     
     private static void printHelp(Options options) {
