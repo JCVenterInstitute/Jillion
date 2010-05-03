@@ -23,6 +23,8 @@
  */
 package org.jcvi.fasta;
 
+import java.util.List;
+
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -38,6 +40,9 @@ public class DefaultEncodedNucleotideFastaRecord extends AbstractNucleotideSeque
     }
     public DefaultEncodedNucleotideFastaRecord(String identifier, String comments, EncodedGlyphs<NucleotideGlyph> sequence){
         super(identifier, comments,NucleotideGlyph.convertToString(sequence.decode()));
+    }
+    public DefaultEncodedNucleotideFastaRecord(String identifier, String comments, List<NucleotideGlyph> sequence){
+        super(identifier, comments,NucleotideGlyph.convertToString(sequence));
     }
     /**
      * @param identifier
