@@ -631,10 +631,48 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
         {
             return handleUnionIntersection(target);
         }
-        return handleDisjointUnion(target);
-
-       
+        
+        return handleDisjointUnion(target);   
     }
+    
+    /**
+     * Modifies the extent of a range by simultaneously adjusting its coordinates by specified
+     * amounts.  This method is primarily intended to increase the size of the
+     * <code>Range</code>, and as such, positive values will result in a <code>Range</code>
+     * which is longer than the current <code>Range</code>.  Negative values may also be used,
+     * with appropriately opposite results, and positive and negative deltas may be mixed to 
+     * produce a traslation/scaling effect.
+     * 
+     * @param fromStart The number of positions to extend the start of the range.
+     * @param fromEnd The number of positions to extend the end of the range.
+     * @return A new <code>Range</code> in the same {@link RangeCoordinateSystem}, with modified
+     * coordinates.
+     */
+    public Range grow(long fromStart, long fromEnd)
+    {
+        return Range.buildRange(this.getRangeCoordinateSystem(), this.getStart() - fromStart, this.getEnd() + fromEnd);
+    }
+    
+    /**
+     * Modifies the extend of a <code>Range</code> by adjusting its coordinates.  This is 
+     * directly related to the {@link #grow(long, long)} method.  It simply passes the 
+     * numerical negation of the values given here.
+     * <p>
+     * This is done as a convenience to make code easier to read.  Usually this method will be
+     * called with variables in the parameters and it will not be immediately obvious that the
+     * end result is intended to be a smaller <code>Range</code>.  This method should be used to
+     * make this situation more clear.
+     * 
+     * @param fromStart The number of positions to extend the start of the range.
+     * @param fromEnd The number of positions to extend the end of the range.
+     * @return A new <code>Range</code> in the same {@link RangeCoordinateSystem}, with modified
+     * coordinates.
+     */
+    public Range shrink(long fromStart, long fromEnd)
+    {
+        return this.grow(-fromStart, -fromEnd);
+    }
+    
     private Range[] handleDisjointUnion(Range target) {
         Range[] ranges = new Range[2];
 
