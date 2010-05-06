@@ -110,7 +110,7 @@ public class EmailBuilder {
      * @param recipients email addresses to send this message to.
      * @return this.
      */
-    public EmailBuilder addReceipients(String... recipients){
+    public EmailBuilder addRecipients(String... recipients){
         for(String recipient: recipients){
             this.recipients.add(recipient.trim());
         }
@@ -121,7 +121,7 @@ public class EmailBuilder {
      * @param recipients email addresses to CC this message to.
      * @return this.
      */
-    public EmailBuilder addCCReceipients(String... ccs){
+    public EmailBuilder addCCRecipients(String... ccs){
         for(String cc : ccs){
             this.ccs.add(cc.trim());
         }
@@ -133,7 +133,7 @@ public class EmailBuilder {
      * @param recipients email addresses to BCC this message to.
      * @return this.
      */
-    public EmailBuilder addBCCReceipients(String... bccs){
+    public EmailBuilder addBCCRecipients(String... bccs){
         for(String bcc : bccs){
             this.bccs.add(bcc.trim());
         }
