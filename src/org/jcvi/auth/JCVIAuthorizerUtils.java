@@ -72,38 +72,7 @@ public final class JCVIAuthorizerUtils {
             clearPassword(password);
         }
     }
-    /**
-     * Add common Project DB login options including:
-     * <ul>
-     * <li> {@code -S} to specify the Project Server</li>
-     * <li> {@code -D} to specify which Project database to log into</li>
-     * <li> {@code -U} to specify which user name to log in as</li>
-     * <li> {@code -P} to specify username's password (not recommended to use)</li>
-     * <li> {@code -p} to specify login credentals using a Project DB password file</li>
-     * </ul>
-     * If a user uses the -U option without providing a password, the console
-     * will prompt for a password. (recommended)
-     * @param options the {@link Options} instance to add the login options to.
-     * @param isDatabaseRequired forces the {@code -D} option to be required.
-     */
-    public static void addProjectDbLoginOptionsTo(Options options, boolean isDatabaseRequired) {
-        options.addOption(new CommandLineOptionBuilder("S","server","name of server")
-                                .longName("Server")
-                                .build());
-        options.addOption(new CommandLineOptionBuilder("D","database","name of project database(s) to use comma separated if using more than one")
-                                .isRequired(isDatabaseRequired)
-                                .build());
-       
-        options.addOption(new CommandLineOptionBuilder("p","passfile","password file")
-                    .longName("passfile")
-                            .build());
-        options.addOption(new CommandLineOptionBuilder("U","username","name of user")                            
-                            .longName("username")                    
-                            .build());
-        options.addOption(new CommandLineOptionBuilder("P","password","password of user")                            
-                            .longName("password")                    
-                            .build());
-    }
+    
     
     /**
      * Parse a username and password from the commandline using the 

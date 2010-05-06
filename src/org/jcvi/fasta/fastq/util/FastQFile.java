@@ -146,7 +146,7 @@ public class FastQFile implements FastQFileVisitor{
         
         group.addOption(new CommandLineOptionBuilder("i", "include file of ids to include")
                             .build());
-        group.addOption(new CommandLineOptionBuilder("e", "exclude file of ids to include")
+        group.addOption(new CommandLineOptionBuilder("e", "exclude file of ids to exclude")
                             .build());
         
         options.addOptionGroup(group);
@@ -203,10 +203,11 @@ public class FastQFile implements FastQFileVisitor{
     
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "fastQFile -o <output fastQ file> [OPTIONS] <fastq file>", 
+        formatter.printHelp( "fastQFile [-i | -e] idFile -o <output fastQ file> [OPTIONS] <fastq file>", 
                 
                 "filter  a fastQ file using the given ids to include/exclude and write the result to a new fastQ file",
                 options,
-                "Created by Danny Katzel");
+                String.format("Example invocation%nfastQfile.pl -i ids.lst -o filtered.fastq original.fastq%nCreated by Danny Katzel"
+                  ));
     }
 }

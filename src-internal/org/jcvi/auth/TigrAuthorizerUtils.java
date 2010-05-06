@@ -16,6 +16,7 @@ import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
+import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.io.IOUtil;
 
 public final class TigrAuthorizerUtils {
@@ -104,5 +105,74 @@ public final class TigrAuthorizerUtils {
    
         TigrAuthorizer authorizer = tigrAuthBuilder.build();
         return authorizer;
+    }
+    
+    /**
+     * Add common Project DB login options which allow multiple databases including:
+     * <ul>
+     * <li> {@code -S} to specify the Project Server</li>
+     * <li> {@code -D} to specify which Project database(s) to log into; comma separated if multiple</li>
+     * <li> {@code -U} to specify which user name to log in as</li>
+     * <li> {@code -P} to specify username's password (not recommended to use)</li>
+     * <li> {@code -p} to specify login credentals using a Project DB password file</li>
+     * </ul>
+     * If a user uses the -U option without providing a password, the console
+     * will prompt for a password. (recommended)
+     * @param options the {@link Options} instance to add the login options to.
+     * @param isDatabaseRequired forces the {@code -D} option to be required.
+     */
+    public static void addMultipleProjectDbLoginOptionsTo(Options options, boolean isDatabaseRequired) {
+        _addProjectDbLoginOptionsTo(options,isDatabaseRequired, "(s) to use comma separated if using more than one");
+    }
+    
+    /**
+     * Add common Project DB login options including:
+     * <ul>
+     * <li> {@code -S} to specify the Project Server</li>
+     * <li> {@code -D} to specify which Project database to log into</li>
+     * <li> {@code -U} to specify which user name to log in as</li>
+     * <li> {@code -P} to specify username's password (not recommended to use)</li>
+     * <li> {@code -p} to specify login credentals using a Project DB password file</li>
+     * </ul>
+     * If a user uses the -U option without providing a password, the console
+     * will prompt for a password. (recommended)
+     * @param options the {@link Options} instance to add the login options to.
+     * @param isDatabaseRequired forces the {@code -D} option to be required.
+     */
+    public static void addProjectDbLoginOptionsTo(Options options, boolean isDatabaseRequired) {
+        _addProjectDbLoginOptionsTo(options,isDatabaseRequired, "");
+    }
+    
+    /**
+     * Add common Project DB login options including:
+     * <ul>
+     * <li> {@code -S} to specify the Project Server</li>
+     * <li> {@code -D} to specify which Project database to log into</li>
+     * <li> {@code -U} to specify which user name to log in as</li>
+     * <li> {@code -P} to specify username's password (not recommended to use)</li>
+     * <li> {@code -p} to specify login credentals using a Project DB password file</li>
+     * </ul>
+     * If a user uses the -U option without providing a password, the console
+     * will prompt for a password. (recommended)
+     * @param options the {@link Options} instance to add the login options to.
+     * @param isDatabaseRequired forces the {@code -D} option to be required.
+     */
+    private static void _addProjectDbLoginOptionsTo(Options options, boolean isDatabaseRequired, String databaseUsageSuffix) {
+        options.addOption(new CommandLineOptionBuilder("S","server","name of server")
+                                .longName("Server")
+                                .build());
+        options.addOption(new CommandLineOptionBuilder("D","database","name of project database"+databaseUsageSuffix)
+                                .isRequired(isDatabaseRequired)
+                                .build());
+       
+        options.addOption(new CommandLineOptionBuilder("p","passfile","password file")
+                    .longName("passfile")
+                            .build());
+        options.addOption(new CommandLineOptionBuilder("U","username","name of user")                            
+                            .longName("username")                    
+                            .build());
+        options.addOption(new CommandLineOptionBuilder("P","password","password of user")                            
+                            .longName("password")                    
+                            .build());
     }
 }
