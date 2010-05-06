@@ -176,7 +176,9 @@ public enum NucleotideGlyph implements Glyph {
         }
         return reversed;
      }
-
+    public static NucleotideGlyph getGlyphFor(String base){
+        return getGlyphFor(base.charAt(0));
+    }
     public static NucleotideGlyph getGlyphFor(Character c){
         
         Character upperCased = Character.toUpperCase(c);

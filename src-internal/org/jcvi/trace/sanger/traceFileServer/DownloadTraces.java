@@ -71,7 +71,7 @@ public class DownloadTraces {
      */
     public static void main(String[] args) throws IOException, DataStoreException {
         Options options = new Options();
-        JCVIAuthorizerUtils.addProjectDbLoginOptionsTo(options, false);
+        TigrAuthorizerUtils.addProjectDbLoginOptionsTo(options, false);
         options.addOption(new CommandLineOptionBuilder("o", "output directory")
                         .longName("outdir")
                         .build());

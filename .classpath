@@ -47,5 +47,15 @@
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.5-FINAL-20090928.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib-internal/ChromatogramArchiver_client.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib-internal/EUIDService.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/activation.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://java.sun.com/javase/technologies/desktop/javabeans/glasgow/javadocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/mail.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://java.sun.com/products/javamail/javadocs/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
