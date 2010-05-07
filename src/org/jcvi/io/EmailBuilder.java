@@ -61,21 +61,24 @@ public class EmailBuilder {
     private Map<String,File> attachments = new HashMap<String,File>();
     private MimeMessage msg;
     private String message;
-    /**
-     * 
-     * @param emailHost
-     * @param from
-     * @throws AddressException
-     * @throws MessagingException
-     */
-    public EmailBuilder(String emailHost, String from) throws AddressException, MessagingException{
-        this(emailHost, from,System.getProperties());
-    }
-    public EmailBuilder(String emailHost,String from, Properties props) throws AddressException, MessagingException{
+
+    public EmailBuilder(String emailHost,String from) throws AddressException, MessagingException{
+        Properties props = new Properties();
         props.put("mail.smtp.host",emailHost);
-        Session session = Session.getDefaultInstance(props);
-        msg = new MimeMessage(session);
+        msg =createMimeMessage(props);
         msg.setFrom(new InternetAddress(from));
+    }
+    /**
+     * Create a new MimeMessage using data contained
+     * in the given Properties object.  Subclasses may override this
+     * for testing.
+     * @param props the properties used to create a MimeMessage, including
+     * "mail.smtp.host".
+     * @return a new (non-null) MimeMessage
+     */
+    protected MimeMessage createMimeMessage(Properties props) {
+        Session session = Session.getDefaultInstance(props);
+        return new MimeMessage(session);
     }
     /**
      * Set the subject of this email can not contain line breaks ({@code \n or \r} ).
@@ -199,7 +202,17 @@ public class EmailBuilder {
         }
         msg.setContent(mp);
         msg.setSentDate(new Date(DateTimeUtils.currentTimeMillis()));
-        Transport.send(msg);
+        sendEmail(msg);
+    }
+    /**
+     * Send the given {@link MimeMessage}.  Subclasses may override this
+     * for testing.
+     * @param message the fully built message to be sent.
+     * @throws MessagingException if the message could not be sent
+     * to any or all of its recipients.
+     */
+    protected void sendEmail(MimeMessage message) throws MessagingException {
+        Transport.send(message);
     }
     
     private InternetAddress[] createInternetAddressesFor(List<String> addresses) throws AddressException{

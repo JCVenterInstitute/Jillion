@@ -16,40 +16,39 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Sep 11, 2008
- *
- * @author dkatzel
- */
+
 package org.jcvi.io;
 
-import org.jcvi.io.fileServer.AllFileServerUnitTests;
-import org.jcvi.io.idReader.AllIdReaderUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Properties;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestIOUtil_closeAndIgnore.class,
-        TestIOUtil_blockingSkip.class,
-        TestIOUtil_readByteArray.class,
-        TestIOUtil_readShortArray.class,
-        TestIOUtil_convertSignedToUnsigned.class,
-        TestIOUtil_UnsignedByteArray.class,
-        TestIOUtil_deleteDir.class,
-        TestIOUtil_convertToUnsignedByteArray.class,
-        TestCheckSumUtil.class,
-        
-        AllBase64UnitTests.class,
-        AllIdReaderUnitTests.class,
-        
-        AllFileServerUnitTests.class,
-        TestEmailBuilder.class
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
+/**
+ * {@code JCVIEmailBuilder} is an implementation of 
+ * {@link EmailBuilder} which sets the email
+ * exchange server to JCVI's exchange server.
+ * 
+ * @author dkatzel
+ *
+ *
+ */
+public class JCVIEmailBuilder extends EmailBuilder {
+    private static final String JCVI_EMAIL_SERVER = "exchange.jcvi.org";
+    static final Properties PROPS = new Properties();
+    static{
+        PROPS.put("mail.smtp.host",JCVI_EMAIL_SERVER);
+    }
+    /**
+     * Creates a new {@link JCVIEmailBuilder}.
+     * @param from the e-mail address to say the email is from.
+     * @throws AddressException if the email is not a valid form
+     * @throws MessagingException
+     */
+    public JCVIEmailBuilder(String from)
+            throws AddressException, MessagingException {
+        super(JCVI_EMAIL_SERVER, from);
         
     }
-)
-public class AllIOUnitTests {
 
 }
