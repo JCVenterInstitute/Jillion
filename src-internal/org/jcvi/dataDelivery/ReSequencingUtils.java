@@ -30,9 +30,6 @@ import java.net.HttpURLConnection;
 import org.jcvi.auth.DefaultJCVIAuthorizer;
 import org.jcvi.auth.JCVIAuthorizer;
 import org.jcvi.http.HttpGetRequestBuilder;
-import org.jcvi.http.HttpUtil;
-import org.jcvi.io.fileServer.DirectoryFileServer;
-import org.jcvi.io.fileServer.ReadWriteFileServer;
 
 public final class ReSequencingUtils {
 
@@ -74,14 +71,5 @@ public final class ReSequencingUtils {
        return getManifestFor(Platebarcode, DefaultJCVIAuthorizer.JOE_USER, outputType);
     }
     
-    public static void main(String args[]) throws IOException{
-        System.setProperty(HttpUtil.SSL_TRUSTSTORE_PROPERTY_KEY,
-        "/usr/local/devel/JTC/prod/dataDelivery/lib/security/cacerts");
-        
-        String pcrBarcode = "P303403";
-        ReadWriteFileServer manifestDir = DirectoryFileServer.createReadWriteDirectoryFileServer("testManifestDir");
-        InputStream manifest = ReSequencingUtils.getManifestFor(pcrBarcode, OUTPUT_TYPE.EXCEL);
-        manifestDir.putStream("Manifest_"+pcrBarcode+".xls", manifest);
-        
-    }
+   
 }

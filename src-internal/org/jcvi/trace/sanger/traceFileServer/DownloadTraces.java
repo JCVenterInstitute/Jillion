@@ -57,9 +57,6 @@ import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.ReturnFormat;
 
 public class DownloadTraces {
 
-    private static final String JCVI_TIGR_URL = "https://tracefileserver-val/TraceFileServer-tigr/TraceFileServer";
-    private static final String JCVI_URL = "https://tracefileserver-val/TraceFileServer/TraceFileServer-secure";
-    
     private static final String DEFAULT_OUTPUT_DIR =".";
     private static final int BATCH_SIZE =1000;
     private static final FileType DEFAULT_FORMAT = FileType.ZTR;
@@ -87,7 +84,7 @@ public class DownloadTraces {
                 String.format("id type that the given list of ids is in.  default is %s supported values = %s",DEFAULT_REQUEST_TYPE,Arrays.asList(RequestType.values())))
                         .build());
         System.setProperty(HttpUtil.SSL_TRUSTSTORE_PROPERTY_KEY,
-        "/usr/local/devel/JTC/prod/dataDelivery/lib/security/cacerts");
+        TraceFileServerUtil.TRACE_FILE_SERVER_TRUSTSTORE_UNIX_PATH);
         
         try {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
@@ -96,11 +93,11 @@ public class DownloadTraces {
             Console console = System.console();
             if(commandLine.hasOption("D")){
                 authorizer = TigrAuthorizerUtils.getProjectDbAuthorizerFrom(commandLine, console);
-                baseUrl = JCVI_TIGR_URL;
+                baseUrl = TraceFileServerUtil.TIGR_URL;
             }
             else{
                 authorizer = JCVIAuthorizerUtils.parseAuthorizerFrom(commandLine, console);
-                baseUrl = JCVI_URL;
+                baseUrl = TraceFileServerUtil.JCVI_URL;
             }
             FileType fileType = commandLine.hasOption("format")?
                                 FileType.valueOf(commandLine.getOptionValue("format").toUpperCase())
