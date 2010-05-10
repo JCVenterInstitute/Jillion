@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_lib_jar" name="Create JAR for use in a shared library.">
+    <!--ANT 1.7 is required     -->
+    
+    <target name="init">
+      <property name="package" value="JavaCommonLib" />
+        
+      <property name="distDir" value="dist" />
+      <property name="buildDir" value="build" />
+      <property name="classPath" value="lib/joda-time-1.6.jar" />
+    	
+      <path id="classpath-libs">
+    	<fileset dir="lib">
+          <include name="*.jar" />
+    	</fileset>
+      	<fileset dir="lib-internal">
+          <include name="*.jar" />
+      	</fileset>
+      </path>
+    </target>
+    
+    <target name="build-clean" depends="init">
+      <delete dir="${buildDir}" />
+    </target>
+    
+    <target name="prebuild" depends="init">
+      <mkdir dir="${buildDir}"/>
+    </target>
+    
+    <target name="build" depends="prebuild">
+        <javac srcdir="src" destdir="${buildDir}">
+          <classpath>
+            <path refid="classpath-libs" />
+          </classpath>
+        </javac>
+        <javac srcdir="src-internal" destdir="${buildDir}">
+          <classpath>
+          	<path location="${buildDir}" />
+            <path refid="classpath-libs" />
+          </classpath>
+        </javac>
+    </target>
+                                       
+    <target name="create_lib_jar" depends="build">
+        <jar destfile="${package}.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="${buildDir}"/>
+        </jar>
+    	<antcall target="build-clean" />
+    </target>
+</project>
