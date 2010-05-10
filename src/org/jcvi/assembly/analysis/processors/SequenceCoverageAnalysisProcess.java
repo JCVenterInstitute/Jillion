@@ -23,6 +23,7 @@
  */
 package org.jcvi.assembly.analysis.processors;
 
+import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.analysis.ContigCheckReportBuilder;
 import org.jcvi.assembly.analysis.ContigCheckerStruct;
@@ -32,6 +33,8 @@ import org.jcvi.assembly.analysis.AnalysisIssue.Severity;
 import org.jcvi.assembly.analysis.issue.HighCoverageRegionAnalysisIssue;
 import org.jcvi.assembly.analysis.issue.LowCoverageRegionAnalysisIssue;
 import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.assembly.coverage.DefaultCoverageRegion;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
 public class SequenceCoverageAnalysisProcess<PR extends PlacedRead> extends AbstractContigAnalysisProcess<PR>{
 
@@ -43,13 +46,26 @@ public class SequenceCoverageAnalysisProcess<PR extends PlacedRead> extends Abst
     }
     @Override
     public void run() {
-        ContigCoverageAnalysis<PR> analysis =sequenceCoverageAnalyzer.analyize(getStruct());
+        final ContigCheckerStruct<PR> struct = getStruct();
+        NucleotideEncodedGlyphs consensus =struct.getContig().getConsensus();
+        ContigCoverageAnalysis<PR> analysis =sequenceCoverageAnalyzer.analyize(struct);
         for(CoverageRegion<PR> lowCoverageRegion: analysis.getLowCoverageRegions()){
-            getBuilder().addAnalysisIssue(new LowCoverageRegionAnalysisIssue<PR>(Severity.MEDIUM, lowCoverageRegion, "sequence"));
+
+            CoverageRegion<PR> ungappedCoverageRegion = convertToUngappedCoverageRegion(consensus, lowCoverageRegion);
+            getBuilder().addAnalysisIssue(new LowCoverageRegionAnalysisIssue<PR>(Severity.MEDIUM, ungappedCoverageRegion, "sequence"));
         }
         for(CoverageRegion<PR> highCoverageRegion: analysis.getHighCoverageRegions()){
-            getBuilder().addAnalysisIssue(new HighCoverageRegionAnalysisIssue<PR>(Severity.MEDIUM, highCoverageRegion, "sequence"));
+            CoverageRegion<PR> ungappedCoverageRegion = convertToUngappedCoverageRegion(consensus, highCoverageRegion);
+            getBuilder().addAnalysisIssue(new HighCoverageRegionAnalysisIssue<PR>(Severity.MEDIUM, ungappedCoverageRegion, "sequence"));
         }
+    }
+    private CoverageRegion<PR> convertToUngappedCoverageRegion(
+            NucleotideEncodedGlyphs consensus,
+            CoverageRegion<PR> highCoverageRegion) {
+        return  new DefaultCoverageRegion.Builder(
+                AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)highCoverageRegion.getStart()+1), highCoverageRegion.getElements())
+                .end(AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)highCoverageRegion.getEnd()+1))
+                .build();
     }
 
 }
