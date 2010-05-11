@@ -24,6 +24,7 @@
 package org.jcvi.assembly.analysis.issue;
 
 import org.jcvi.Range;
+import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.Placed;
 import org.jcvi.assembly.analysis.DefaultAnalysisIssue;
 import org.jcvi.assembly.coverage.CoverageRegion;
@@ -32,6 +33,6 @@ public abstract class AbstractCoverageRegionAnalysisIssue <P extends Placed> ext
 
     public AbstractCoverageRegionAnalysisIssue(Severity severity, CoverageRegion<P> coverageRegion, String type) {
         super(severity, String.format("%s has a %s coverage of %d", 
-                Range.buildRange(coverageRegion.getStart(),coverageRegion.getEnd()), type, coverageRegion.getCoverage()));
+                Range.buildRange(coverageRegion.getStart(),coverageRegion.getEnd()).convertRange(CoordinateSystem.RESIDUE_BASED), type, coverageRegion.getCoverage()));
     }
 }
