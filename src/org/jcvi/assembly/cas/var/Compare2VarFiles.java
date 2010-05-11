@@ -20,13 +20,29 @@
 package org.jcvi.assembly.cas.var;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.IOUtils;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.jcvi.assembly.cas.var.Variation.Type;
+import org.jcvi.cli.CommandLineOptionBuilder;
+import org.jcvi.cli.CommandLineUtils;
+import org.jcvi.glyph.nuc.NucleotideGlyph;
 /**
  * @author dkatzel
  *
@@ -34,72 +50,152 @@ import org.jcvi.assembly.cas.var.Variation.Type;
  */
 public class Compare2VarFiles {
 
+    private static final String DEFAULT_OUTPUT_FILE_SUFFIX = "variationDifferences.xls";
+    private static final Pattern FIRST_WORD_OF_CONTIG = Pattern.compile("^(\\S+)");
     /**
      * @param args
-     * @throws FileNotFoundException 
+     * @throws IOException 
      */
-    public static void main(String[] args) throws FileNotFoundException {
-        File file1 = new File("/usr/local/projects/VHTNGS/sample_data/giv3/RF/26361/mapping/giv3_RF_26361_sanger_only_edited_refs_find_variations.log");
-        File file2 = new File("/usr/local/projects/VHTNGS/sample_data/giv3/RF/26361/mapping/giv3_RF_26361_454_only_edited_refs_find_variations.log");
+    public static void main(String[] args) throws IOException {
+        Options options = new Options();
+        options.addOption(new CommandLineOptionBuilder("o", 
+                            String.format("output excel file (DEFAULT : <file1>_<file2>.%s )",DEFAULT_OUTPUT_FILE_SUFFIX))
         
-        VariationLog solexaVariations = new DefaultVariationLogFile(file1);
-        VariationLog sangerVariations = new DefaultVariationLogFile(file2);
+                            .build());
+        options.addOption(CommandLineUtils.createHelpOption());
+        if(args.length <2){
+            printHelp(options);
+            System.exit(1);
+        }
+        File file1  = new File(args[args.length-2]);
+        File file2  = new File(args[args.length-1]);
         
-        Set<String> solexaIds =solexaVariations.getContigIds();
-        Set<String> sangerIds =sangerVariations.getContigIds();
+        try {
+            CommandLine commandLine = CommandLineUtils.parseCommandLine(options, Arrays.copyOf(args, args.length-2));
         
-        for(String contigId : solexaIds){
+            final File outputFile;
+            if(commandLine.hasOption("o")){
+                outputFile = new File(commandLine.getOptionValue("o"));
+            }else{
+                outputFile = new File(String.format("%s.%s.%s",file1.getName(),file2.getName(),DEFAULT_OUTPUT_FILE_SUFFIX));
+            }
+            
+        VariationLog log1 = new DefaultVariationLogFile(file1);
+        VariationLog log2 = new DefaultVariationLogFile(file2);
+        
+        Set<String> log1Ids =log1.getContigIds();
+        Set<String> log2Ids =log2.getContigIds();
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        for(String contigId : log1Ids){
             
             Map<Long, Variation[]> variations = new TreeMap<Long, Variation[]>();
-            if(sangerIds.contains(contigId)){                
-                Map<Long, Variation> sangerVariationMap = sangerVariations.getVariationsFor(contigId);
-                Map<Long, Variation> solexaVariationMap = solexaVariations.getVariationsFor(contigId);
+            if(log2Ids.contains(contigId)){                
+                Map<Long, Variation> log2VariationMap = log2.getVariationsFor(contigId);
+                Map<Long, Variation> log1VariationMap = log1.getVariationsFor(contigId);
                 
-                for(Entry<Long, Variation> solexaVariationEntry: solexaVariations.getVariationsFor(contigId).entrySet()){
-                    long coordinate = solexaVariationEntry.getKey();
-                    Variation solexaVariation = solexaVariationEntry.getValue();
-                    if(sangerVariationMap.containsKey(coordinate)){                        
-                        Variation sangerVariation =sangerVariationMap.get(coordinate);
-                        if(sangerVariation.getType() != solexaVariation.getType() || sangerVariation.getConsensusBase() != solexaVariation.getConsensusBase()){
-                            variations.put(coordinate, new Variation[]{solexaVariation, sangerVariation});
+                for(Entry<Long, Variation> log1VariationEntry: log1.getVariationsFor(contigId).entrySet()){
+                    long coordinate = log1VariationEntry.getKey();
+                    Variation log1Variation = log1VariationEntry.getValue();
+                    if(log2VariationMap.containsKey(coordinate)){                        
+                        Variation log2Variation =log2VariationMap.get(coordinate);
+                        if(log2Variation.getType() != log1Variation.getType() || log2Variation.getConsensusBase() != log1Variation.getConsensusBase()){
+                            variations.put(coordinate, new Variation[]{log1Variation, log2Variation});
                         }
-                    }else if(solexaVariation.getType() == Type.DIFFERENCE){
+                    }else if(log1Variation.getType() == Type.DIFFERENCE){
                         Variation noChangeVariation = new DefaultVariation.Builder(
-                                solexaVariation.getCoordinate(),
+                                log1Variation.getCoordinate(),
                                 Type.NO_CHANGE,
-                                solexaVariation.getReferenceBase(), 
-                                solexaVariation.getReferenceBase())
+                                log1Variation.getReferenceBase(), 
+                                log1Variation.getReferenceBase())
                                     .build();
-                        variations.put(coordinate, new Variation[]{solexaVariation, noChangeVariation});
+                        variations.put(coordinate, new Variation[]{log1Variation, noChangeVariation});
                     }
                 }
-                for(Entry<Long, Variation> sangerVariationEntry: sangerVariations.getVariationsFor(contigId).entrySet()){
-                    long coordinate = sangerVariationEntry.getKey();
-                    Variation sangerVariation = sangerVariationEntry.getValue();
-                    if(solexaVariationMap.containsKey(coordinate)){                        
-                        Variation solexaVariation =solexaVariationMap.get(coordinate);
-                        if(sangerVariation.getType() != solexaVariation.getType() || sangerVariation.getConsensusBase() != solexaVariation.getConsensusBase()){
-                            variations.put(coordinate, new Variation[]{solexaVariation, sangerVariation});
+                for(Entry<Long, Variation> log2VariationEntry: log2.getVariationsFor(contigId).entrySet()){
+                    long coordinate = log2VariationEntry.getKey();
+                    Variation log2Variation = log2VariationEntry.getValue();
+                    if(log1VariationMap.containsKey(coordinate)){                        
+                        Variation log1Variation =log1VariationMap.get(coordinate);
+                        if(log2Variation.getType() != log1Variation.getType() || log2Variation.getConsensusBase() != log1Variation.getConsensusBase()){
+                            variations.put(coordinate, new Variation[]{log1Variation, log2Variation});
                         }
-                    }else if(sangerVariation.getType() == Type.DIFFERENCE){
+                    }else if(log2Variation.getType() == Type.DIFFERENCE){
                         Variation noChangeVariation = new DefaultVariation.Builder(
-                                sangerVariation.getCoordinate(),
+                                log2Variation.getCoordinate(),
                                 Type.NO_CHANGE,
-                                sangerVariation.getReferenceBase(), 
-                                sangerVariation.getReferenceBase())
+                                log2Variation.getReferenceBase(), 
+                                log2Variation.getReferenceBase())
                                     .build();
-                        variations.put(coordinate, new Variation[]{noChangeVariation, sangerVariation});
+                        variations.put(coordinate, new Variation[]{noChangeVariation, log2Variation});
                     }
                 }
                 if(!variations.isEmpty()){
-                    System.out.printf("%n%s%n%n",contigId);
+                    Matcher matcher = FIRST_WORD_OF_CONTIG.matcher(contigId);
+                    if(!matcher.find()){
+                        throw new IllegalStateException("could not turn "+contigId + " into a worksheet name");
+                    }
+                    HSSFSheet sheet =workbook.createSheet(matcher.group(1));
+                    HSSFRow header= sheet.createRow(0);
+                    header.createCell(0).setCellValue(new HSSFRichTextString("coordinate"));
+                    header.createCell(1).setCellValue(new HSSFRichTextString("file1 type"));
+                    header.createCell(2).setCellValue(new HSSFRichTextString("file1 reference -> consensus"));
+                    header.createCell(3).setCellValue(new HSSFRichTextString("file1 histogram counts"));
+                    
+                    header.createCell(4).setCellValue(new HSSFRichTextString("file2 type"));
+                    header.createCell(5).setCellValue(new HSSFRichTextString("file2 reference -> consensus"));
+                    header.createCell(6).setCellValue(new HSSFRichTextString("file2 histogram counts"));
+                    
+                    int rowCount=1;
                     for(Entry<Long, Variation[]> entry : variations.entrySet()){
                         Variation[] array = entry.getValue();
-                        System.out.println(array[0] + " | "+ array[1]);
+                        HSSFRow row =sheet.createRow(rowCount);
+                        final Variation variation1 = array[0];
+                        final Variation variation2 = array[1];
+                        row.createCell(0).setCellValue(variation1.getCoordinate());
+                        row.createCell(1).setCellValue(new HSSFRichTextString(variation1.getType().toString()));
+                        row.createCell(2).setCellValue(new HSSFRichTextString(
+                                String.format("%s -> %s",
+                                        variation1.getReferenceBase().toString(),
+                                        variation1.getConsensusBase().toString())));
+                        row.createCell(3).setCellValue(new HSSFRichTextString(createHistogramCountsFor(variation1.getHistogram())));
+
+                        row.createCell(4).setCellValue(new HSSFRichTextString(variation2.getType().toString()));
+                        row.createCell(5).setCellValue(new HSSFRichTextString(
+                                String.format("%s -> %s",
+                                        variation2.getReferenceBase().toString(),
+                                        variation2.getConsensusBase().toString())));
+                        row.createCell(6).setCellValue(new HSSFRichTextString(createHistogramCountsFor(variation2.getHistogram())));
+                       
+                        rowCount++;
                     }
                 }
             }
         }
+        FileOutputStream out = new FileOutputStream(outputFile);
+        workbook.write(out);
+        IOUtils.closeQuietly(out);
+        } catch (ParseException e) {
+            printHelp(options);
+            System.exit(1);
+        }
     }
 
+    private static String createHistogramCountsFor(Map<NucleotideGlyph, Integer> histogram){
+        StringBuilder variationList = new StringBuilder();
+        for(NucleotideGlyph base : NucleotideGlyph.getGlyphsFor("ACGTN-")){
+            if(histogram.containsKey(base)){
+                variationList.append(String.format(" %s: %d", base, histogram.get(base)));
+            }
+        }
+        return variationList.toString();
+    }
+    
+    private static void printHelp(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp( "compare2VarFiles [OPTIONS] <var file 1> <var file 2>", 
+                
+                "Compare 2 CLC variation log files",
+                options,
+                "Created by Danny Katzel");
+    }
 }
