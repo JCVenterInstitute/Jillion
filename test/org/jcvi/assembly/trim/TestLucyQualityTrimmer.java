@@ -21,6 +21,7 @@ package org.jcvi.assembly.trim;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.Range;
@@ -67,5 +68,13 @@ public class TestLucyQualityTrimmer {
         Range actualTrimRange = sut.trim(fullQualities);
         Range expectedRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 16,680);
         assertEquals(expectedRange, actualTrimRange);
+    }
+    
+    @Test
+    public void noGoodQualityDataShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
+        QualityDataStore badQualDataStore =QualityFastaRecordDataStoreAdapter.adapt(
+                new DefaultQualityFastaFileDataStore(RESOURCES.getFile("files/bad.qual")));
+        final EncodedGlyphs<PhredQuality> badQualities = badQualDataStore.get("SCJIA01T48H08PB26F");
+        assertEquals(Range.buildEmptyRange(), sut.trim(badQualities));
     }
 }

@@ -248,6 +248,9 @@ public class LucyQualityTrimmer {
      }
     
     private Range getLargestRangeFrom(List<Range> goodQualityRanges) {
+        if(goodQualityRanges.isEmpty()){
+            return Range.buildEmptyRange();
+        }
         Range largestRangeSoFar = goodQualityRanges.get(0);
            for(int i=1; i<goodQualityRanges.size();i++ ){
                Range currentRange =goodQualityRanges.get(i);
