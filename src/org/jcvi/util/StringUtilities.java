@@ -223,4 +223,9 @@ public final class StringUtilities
     {
         super();
     }
+    
+    
+    public static boolean isNumber(String s){
+        return s.matches("^\\d*\\.?\\d+");
+    }
 }
