@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.jcvi.util;
 
-import org.junit.Assert;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -27,14 +27,25 @@ public class TestStringUtilities {
     @Test
     public void testToCamelCase() 
     {
-        Assert.assertEquals("Standard Title", "thisIsCamelCase", StringUtilities.toCamelCase("This is Camel Case").toString());
-        Assert.assertEquals("Single Word", "test", StringUtilities.toCamelCase("Test").toString());
-        Assert.assertEquals("Leading whitespace", "thisIsATest", StringUtilities.toCamelCase("   This is a Test").toString());
-        Assert.assertEquals("Trailing whitespace", "thisIsATest", StringUtilities.toCamelCase("This is a Test   ").toString());
-        Assert.assertEquals("Digits", "digit89Test", StringUtilities.toCamelCase("digit 89 test").toString());
-        Assert.assertEquals("Standard Title (InitialCap)", "ThisIsCamelCase", StringUtilities.toCamelCase("This is Camel Case", true).toString());
-        Assert.assertEquals("Leading whitespace (InitialCap)", "ThisIsATest", StringUtilities.toCamelCase("   This is a Test", true).toString());
-        Assert.assertEquals("Trailing whitespace (InitialCap)", "ThisIsATest", StringUtilities.toCamelCase("This is a Test   ", true).toString());
+        assertEquals("Standard Title", "thisIsCamelCase", StringUtilities.toCamelCase("This is Camel Case").toString());
+        assertEquals("Single Word", "test", StringUtilities.toCamelCase("Test").toString());
+        assertEquals("Leading whitespace", "thisIsATest", StringUtilities.toCamelCase("   This is a Test").toString());
+        assertEquals("Trailing whitespace", "thisIsATest", StringUtilities.toCamelCase("This is a Test   ").toString());
+        assertEquals("Digits", "digit89Test", StringUtilities.toCamelCase("digit 89 test").toString());
+        assertEquals("Standard Title (InitialCap)", "ThisIsCamelCase", StringUtilities.toCamelCase("This is Camel Case", true).toString());
+        assertEquals("Leading whitespace (InitialCap)", "ThisIsATest", StringUtilities.toCamelCase("   This is a Test", true).toString());
+        assertEquals("Trailing whitespace (InitialCap)", "ThisIsATest", StringUtilities.toCamelCase("This is a Test   ", true).toString());
+    }
+    
+    @Test
+    public void isNumber(){
+        assertTrue("single digit",StringUtilities.isNumber("1"));
+        assertTrue("multiple digits",StringUtilities.isNumber("12345"));
+        assertTrue("decimal point",StringUtilities.isNumber("12.345"));
+        assertTrue("leading decimal point",StringUtilities.isNumber(".345"));
+        assertFalse("letter",StringUtilities.isNumber("A"));
+        assertFalse("word",StringUtilities.isNumber("nope"));
+        assertFalse("sentence",StringUtilities.isNumber("not a number"));
     }
 
 }
