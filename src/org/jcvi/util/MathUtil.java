@@ -28,48 +28,57 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class MathUtil {
-    public static Integer minOf(Collection<Integer> integers){
-        if(integers.size() ==0){
+    public static <N extends Number> N minOf(Collection<N> numbers){
+        if(numbers.size() ==0){
             throw new IllegalArgumentException("must pass in at least one value");
         }
-        int currentMin = Integer.MAX_VALUE;
-        for(Integer integer : integers){
-            currentMin = Math.min(currentMin, integer);
+        Iterator<N> iter = numbers.iterator();
+        N currentMin = iter.next();
+        while(iter.hasNext()){
+            N next = iter.next();
+            if(next.longValue() < currentMin.longValue()){
+                currentMin = next;
+            }
         }
 
         return currentMin;
     }
-    public static Integer minOf(Integer...integers){
-        return minOf(Arrays.asList(integers));
+    public static <N extends Number> N minOf(N...numbers){
+        return minOf(Arrays.asList(numbers));
     }
-    public static Integer maxOf(Collection<Integer> integers){
-        if(integers.size() ==0){
+    public static <N extends Number> N maxOf(Collection<N> numbers){
+        if(numbers.size() ==0){
             throw new IllegalArgumentException("must pass in at least one value");
         }
-        int currentMax = Integer.MIN_VALUE;
-        for(Integer integer : integers){
-            currentMax = Math.max(currentMax, integer);
+        Iterator<N> iter = numbers.iterator();
+        N currentMax = iter.next();
+        while(iter.hasNext()){
+            N next = iter.next();
+            if(next.longValue() > currentMax.longValue()){
+                currentMax = next;
+            }
         }
 
         return currentMax;
     }
-    public static Integer maxOf(Integer...integers){
+    public static <N extends Number> N maxOf(N...integers){
         return maxOf(Arrays.asList(integers));
     }
 
-    public static  Double averageOf(Integer... values){
+    public static<N extends Number> Double averageOf(N... values){
         return averageOf(Arrays.asList(values));
     }
-    public static  Double averageOf(Collection<Integer> values){
+    public static  <N extends Number> Double averageOf(Collection<N> values){
         if(values.size() ==0){
             throw new IllegalArgumentException("must pass in at least one value");
         }
         long sum=0;
-        for(Integer value : values){
-            sum += value;
+        for(N value : values){
+            sum += value.longValue();
         }
         return Double.valueOf((double)sum/values.size());
 
@@ -110,16 +119,16 @@ public class MathUtil {
         }
         return sum;
     }
-    public static Integer medianOf(Integer... values){
+    public static <N extends Number & Comparable<N>> Long medianOf(N... values){
         return medianOf(Arrays.asList(values));
     }
-    public static Integer medianOf(Collection<Integer> values){
+    public static <N extends Number & Comparable<N>> Long medianOf(Collection<N> values){
         int size =values.size();
 
         if(size ==0){
             throw new IllegalArgumentException("must pass in at least one value");
         }
-        List<Integer> sorted = new ArrayList<Integer>(values);
+        List<N> sorted = new ArrayList<N>(values);
         Collections.sort(sorted);
         if(size %2==0){
             //handle evens
@@ -128,11 +137,11 @@ public class MathUtil {
             //more complicated expression A+(B-A)/2
             //to avoid issues of overflow or underflow
 
-            int a= sorted.get(middleIndex-1);
-            int b = sorted.get(middleIndex);
-            return a+(b-a)/2;
+            N a= sorted.get(middleIndex-1);
+            N b = sorted.get(middleIndex);
+            return a.longValue()+(b.longValue()-a.longValue())/2;
         }
             //handle odds
-            return sorted.get(size/2);
+            return sorted.get(size/2).longValue();
     }
 }
