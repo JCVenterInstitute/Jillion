@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.io.IOUtil;
@@ -161,13 +162,16 @@ public final class TigrAuthorizerUtils {
         options.addOption(new CommandLineOptionBuilder("S","server","name of server")
                                 .longName("Server")
                                 .build());
-        options.addOption(new CommandLineOptionBuilder("D","database","name of project database"+databaseUsageSuffix)
-                                .isRequired(isDatabaseRequired)
+        OptionGroup group = new OptionGroup();
+        
+        group.addOption(new CommandLineOptionBuilder("D","database","name of project database"+databaseUsageSuffix)                                
                                 .build());
        
-        options.addOption(new CommandLineOptionBuilder("p","passfile","password file")
+        group.addOption(new CommandLineOptionBuilder("p","passfile","password file")
                     .longName("passfile")
                             .build());
+        group.setRequired(isDatabaseRequired);
+        options.addOptionGroup(group);
         options.addOption(new CommandLineOptionBuilder("U","username","name of user")                            
                             .longName("username")                    
                             .build());
