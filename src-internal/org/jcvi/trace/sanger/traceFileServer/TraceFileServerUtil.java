@@ -30,18 +30,24 @@ public final class TraceFileServerUtil {
      * Base URL path for requesting data from the Trace File server using TIGR
      * Project Database creds.
      */
-    public static final String TIGR_URL = "https://tracefileserver-val/TraceFileServer-tigr/TraceFileServer";
+    public static final String TIGR_URL = "https://tracefileserver/TraceFileServer-tigr/TraceFileServer";
     
     /**
      * Base URL path for requesting data from the Trace File server using the 
      * Standard JCVI LDAP creds.
      */
-    public static final String JCVI_URL = "https://tracefileserver-val/TraceFileServer/TraceFileServer-secure";
+    public static final String JCVI_URL = "https://tracefileserver/TraceFileServer/TraceFileServer-secure";
     
     /**
      * Path to the HTTPS cacert file on unix.
      */
     public static final String TRACE_FILE_SERVER_TRUSTSTORE_UNIX_PATH = "/usr/local/devel/JTC/prod/dataDelivery/lib/security/cacerts";
+    /**
+     * Key System property used by the Chromatogram Archiver jar to set
+     * the trace file server URL used to write chromatograms into JLIMS.
+     */
+    public static final String TRACE_FILE_SERVER_WRITER_URL_BASE_KEY= "JTCChromatogramArchiver.PROVIDER_URL";
+    
     /**
      * private constructor.
      */
