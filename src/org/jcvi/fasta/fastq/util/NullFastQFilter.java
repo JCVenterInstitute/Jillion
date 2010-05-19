@@ -16,55 +16,31 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Oct 9, 2009
- *
+
+package org.jcvi.fasta.fastq.util;
+
+/**
+ * {@code NullFastQFilter} is a Null Object implementation
+ * of {@link FastQFilter} that accepts all ids.
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.fasta.fastq;
-
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-
-
-public abstract class AbstractFastQFileVisitor <T extends FastQRecord> implements FastQFileVisitor{
-
-    private boolean initialized=false;
-
-    protected void checkNotYetInitialized(){
-        if(initialized){
-            throw new IllegalStateException("already initialized, can not visit more records");
-        }
-    }    
-
-
-    @Override
-    public void visitEndOfFile() {
-        checkNotYetInitialized();
-        initialized=true;        
-    }
-
-    @Override
-    public void visitLine(String line) {
-        checkNotYetInitialized();
-    }
+public class NullFastQFilter implements FastQFilter{
+    /**
+     * Singleton instance of NullFastQFilter.
+     */
+    public static NullFastQFilter INSTANCE = new NullFastQFilter();
     
-    @Override
-    public boolean visitEncodedQualities(String encodedQualities) {
-        return true;
-    }
-
-    @Override
-    public boolean visitEndBlock() {
-        return true;
-    }
-
-    @Override
-    public boolean visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
-        return true;
-    }
-
-    @Override
-    public void visitFile() {
+    private NullFastQFilter(){
         
     }
+    /**
+    * Accepts all ids.
+    */
+    @Override
+    public boolean accept(String id, String optionalComment) {
+        return true;
+    }
+
 }
