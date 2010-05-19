@@ -16,29 +16,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Oct 9, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.fasta.fastq;
 
-import org.jcvi.fasta.fastq.util.AllFastQUtilUnitTests;
+package org.jcvi.fasta.fastq.util;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+/**
+ * @author dkatzel
+ *
+ *
+ */
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestSangerFastQQualityCodec.class,
-        TestSolexaFastQQualityCodec.class,
-        TestSangerFastQQualityCodecActual.class,
-        TestDefaultFastQFileDataStore.class,
-        TestLargeFastQFileDataStore.class,
-        AllFastQUtilUnitTests.class
+        TestFastQ2Fasta.class
     }
     )
-public class AllFastqUnitTests {
+public class AllFastQUtilUnitTests {
 
 }

@@ -109,7 +109,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
     public boolean visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
         if(seqOut!=null && shouldWrite){
             try {
-                qualOut.write(new DefaultEncodedNucleotideFastaRecord( currentId,nucleotides) 
+                seqOut.write(new DefaultEncodedNucleotideFastaRecord( currentId,nucleotides) 
                         .toString().getBytes());
             } catch (IOException e) {
                 throw new RuntimeException("could not write to sequence data for "+ currentId, e);
