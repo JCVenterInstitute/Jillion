@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.jcvi.assembly.slice.Slice;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.junit.runners.Parameterized.Parameters;
 

@@ -27,9 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.jcvi.assembly.ContigCheckerXMLWriter;
 import org.jcvi.assembly.ace.AceContig;
@@ -41,7 +39,6 @@ import org.jcvi.assembly.analysis.ContigCheckerStruct;
 import org.jcvi.datastore.ContigDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.MemoryMappedAceFileDataStore;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.idReader.IdReaderException;
 import org.jcvi.trace.TraceDecoderException;

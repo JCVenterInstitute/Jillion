@@ -26,9 +26,6 @@ package org.jcvi.trace.sanger.phd.newbler;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;

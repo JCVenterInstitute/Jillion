@@ -35,9 +35,12 @@ import java.util.regex.Pattern;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFDecoderException;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SffFileVisitor;
-
+/**
+ * {@code PhdParser} parses .phd files (or phd.ball files).
+ * @author dkatzel
+ *
+ *
+ */
 public class PhdParser {
     private static final String BEGIN_COMMENT = "BEGIN_COMMENT";
     private static final String END_SEQUENCE = "END_SEQUENCE";
@@ -51,8 +54,18 @@ public class PhdParser {
     private static final Pattern BEGIN_SEQUENCE_PATTERN = Pattern.compile("BEGIN_SEQUENCE\\s+(\\S+)");
     private static final Pattern BEGIN_TAG_PATTERN = Pattern.compile("^(\\S+)\\{\\s*$");
     private static final String END_ITEM = "}";
-    
-    
+    /**
+     * private constructor.
+     */
+    private PhdParser(){}
+    /**
+     * Parse the given .phd file and call the visitXXX methods on the given
+     * {@link PhdFileVisitor}.
+     * @param phdFile the .phd file to parse.
+     * @param visitor the {@link PhdFileVisitor} to visit during
+     * parsing.
+     * @throws FileNotFoundException if the phdFile given does not exist.
+     */
     public static void parsePhd(File phdFile, PhdFileVisitor visitor) throws FileNotFoundException{
           InputStream in = new FileInputStream(phdFile);
             try{
@@ -61,6 +74,14 @@ public class PhdParser {
                 IOUtil.closeAndIgnoreErrors(in);
             }
     }
+    /**
+     * Parse the given {@link InputStream} assuming it contains .phd data. 
+     * PLEASE NOTE:  it is the caller's responsibility to close the inputStream
+     * after parsing.
+     * @param in the inputStram of .phd data.
+     * @param visitor the {@link PhdFileVisitor} to visit during
+     * parsing.
+     */
     public static void parsePhd(InputStream in, PhdFileVisitor visitor){
         Scanner scanner = new Scanner(in).useDelimiter("\n");
         visitor.visitFile();

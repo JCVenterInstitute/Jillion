@@ -53,7 +53,6 @@ import org.jcvi.datastore.DefaultAceFileDataStore;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.trace.TraceDataStore;
 import org.jcvi.trace.sanger.phd.MemoryMappedPhdFileDataStore;
-import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.trace.sanger.phd.PhdParser;
 import org.jcvi.trace.sanger.phd.newbler.NewblerMappedPhdBallFileDataStore;

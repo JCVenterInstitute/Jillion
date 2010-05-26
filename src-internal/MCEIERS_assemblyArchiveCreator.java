@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceFileParser;
 import org.jcvi.assembly.contig.qual.ZeroGapQualityValueStrategy;
 import org.jcvi.assembly.slice.DefaultSliceMapFactory;
@@ -12,10 +11,8 @@ import org.jcvi.assemblyArchive.AssemblyArchive;
 import org.jcvi.assemblyArchive.AssemblyArchiveType;
 import org.jcvi.assemblyArchive.AssemblyArchiveXMLWriter;
 import org.jcvi.assemblyArchive.DefaultAssemblyArchive;
-import org.jcvi.assemblyArchive.DefaultAssemblyArchiveContigRecord;
 import org.jcvi.assemblyArchive.LazyAssemblyArchiveContigRecord;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.DefaultAceFileDataStore;
 import org.jcvi.datastore.MemoryMappedAceFileDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;

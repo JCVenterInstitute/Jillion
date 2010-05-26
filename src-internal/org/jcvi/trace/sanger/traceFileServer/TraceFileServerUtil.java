@@ -36,8 +36,11 @@ public final class TraceFileServerUtil {
      * Base URL path for requesting data from the Trace File server using the 
      * Standard JCVI LDAP creds.
      */
-    public static final String JCVI_URL = "https://tracefileserver/TraceFileServer/TraceFileServer-secure";
-    
+    public static final String JCVI_FETCH_URL = "https://tracefileserver/TraceFileServer/TraceFileServer-secure";
+    /**
+     * List of comma separated URLS for writing data INTO the production TraceFileServer.
+     */
+    public static final String JCVI_WRITE_URLS = "jnp://tracefileserver-proda:1099,jnp://tracefileserver-prodb:1099";
     /**
      * Path to the HTTPS cacert file on unix.
      */

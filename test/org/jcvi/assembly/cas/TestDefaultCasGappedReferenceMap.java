@@ -23,7 +23,8 @@
  */
 package org.jcvi.assembly.cas;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jcvi.assembly.cas.alignment.CasAlignment;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegionType;
@@ -56,17 +57,22 @@ public class TestDefaultCasGappedReferenceMap {
         expect(contigNameLookup.getLookupIdFor(referenceId)).andReturn(referenceName);
     }
     
-    private CasMatch createMatchFor(CasAlignment... alignments){
-        return new DefaultCasMatch(true, false, false, false, Arrays.asList(alignments));
+    private List<CasMatch> createMatchesFor(CasAlignment... alignments){
+        List<CasMatch> matches = new ArrayList<CasMatch>();
+        for(CasAlignment alignment: alignments){
+            matches.add( new DefaultCasMatch(true, 1, 1L,false, alignment,0));
+        }
+        return matches;
     }
     @Test
     public void oneReadNoInsertsShouldNotAddAnyGaps(){
         CasAlignment alignment = new DefaultCasAlignment.Builder(referenceId,0,false)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 10)
                                                 .build();
-        CasMatch match = createMatchFor(alignment);
         replay(referenceNucleotideDataStore, contigNameLookup);
-        sut.visitMatch(match);
+        for(CasMatch match : createMatchesFor(alignment)){
+            sut.visitMatch(match);
+        }
         sut.visitEndOfFile();
         assertEquals(referenceCalls.decode(),sut.getGappedReferenceFor(referenceId).decode());
         verify(referenceNucleotideDataStore, contigNameLookup);        
@@ -77,12 +83,16 @@ public class TestDefaultCasGappedReferenceMap {
         CasAlignment alignment = new DefaultCasAlignment.Builder(referenceId,0,false)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 10)
                                                 .build();
-        CasMatch match = createMatchFor(alignment);
         reset(referenceNucleotideDataStore);
+        for(CasMatch match : createMatchesFor(alignment)){
+            sut.visitMatch(match);
+        }
         DataStoreException expectedDataStoreException = new DataStoreException("expected");
         expect(referenceNucleotideDataStore.get(referenceName)).andThrow(expectedDataStoreException);
         replay(referenceNucleotideDataStore, contigNameLookup);
-        sut.visitMatch(match);
+        for(CasMatch match : createMatchesFor(alignment)){
+            sut.visitMatch(match);
+        }
         sut.visitEndOfFile();
              
     }
@@ -92,9 +102,10 @@ public class TestDefaultCasGappedReferenceMap {
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 10)
                                                 .addRegion(CasAlignmentRegionType.INSERT, 10)
                                                 .build();
-        CasMatch match = createMatchFor(alignment);
         replay(referenceNucleotideDataStore, contigNameLookup);
-        sut.visitMatch(match);
+        for(CasMatch match : createMatchesFor(alignment)){
+            sut.visitMatch(match);
+        }
         sut.visitEndOfFile();
         assertEquals(referenceCalls.decode(),sut.getGappedReferenceFor(referenceId).decode());
         verify(referenceNucleotideDataStore, contigNameLookup);        
@@ -107,9 +118,10 @@ public class TestDefaultCasGappedReferenceMap {
         CasAlignment alignment2 = new DefaultCasAlignment.Builder(referenceId,0,false)
                                             .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 5)
                                             .build();
-        CasMatch match = createMatchFor(alignment1,alignment2);
         replay(referenceNucleotideDataStore, contigNameLookup);
-        sut.visitMatch(match);
+        for(CasMatch match : createMatchesFor(alignment1, alignment2)){
+            sut.visitMatch(match);
+        }
         sut.visitEndOfFile();
         assertEquals(referenceCalls.decode(),sut.getGappedReferenceFor(referenceId).decode());
         verify(referenceNucleotideDataStore, contigNameLookup);        
@@ -121,9 +133,10 @@ public class TestDefaultCasGappedReferenceMap {
                                                 .addRegion(CasAlignmentRegionType.INSERT, 1)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 6)
                                                 .build();
-        CasMatch match = createMatchFor(alignment);
         replay(referenceNucleotideDataStore, contigNameLookup);
-        sut.visitMatch(match);
+        for(CasMatch match : createMatchesFor(alignment)){
+            sut.visitMatch(match);
+        }
         sut.visitEndOfFile();
         assertEquals("GTTC-AAATTG",
                 NucleotideGlyph.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
@@ -137,11 +150,12 @@ public class TestDefaultCasGappedReferenceMap {
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 6)
                                                 .build();
         CasAlignment alignment2 = new DefaultCasAlignment.Builder(referenceId,0,false)
-        .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 5)
-        .build();
-        CasMatch match = createMatchFor(alignment,alignment2);
+                                                .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 5)
+                                                .build();
         replay(referenceNucleotideDataStore, contigNameLookup);
-        sut.visitMatch(match);
+        for(CasMatch match : createMatchesFor(alignment, alignment2)){
+            sut.visitMatch(match);
+        }
         sut.visitEndOfFile();
         assertEquals("GTTC-AAATTG",
                 NucleotideGlyph.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
@@ -159,9 +173,10 @@ public class TestDefaultCasGappedReferenceMap {
                                                 .addRegion(CasAlignmentRegionType.INSERT, 1)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 1)
                                                 .build();
-        CasMatch match = createMatchFor(alignment,alignment2);
         replay(referenceNucleotideDataStore, contigNameLookup);
-        sut.visitMatch(match);
+        for(CasMatch match : createMatchesFor(alignment, alignment2)){
+            sut.visitMatch(match);
+        }
         sut.visitEndOfFile();
         assertEquals("GTTC-AAATTG",
                 NucleotideGlyph.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
@@ -179,9 +194,10 @@ public class TestDefaultCasGappedReferenceMap {
                                                 .addRegion(CasAlignmentRegionType.INSERT, 1)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 3)
                                                 .build();
-        CasMatch match = createMatchFor(alignment,alignment2);
         replay(referenceNucleotideDataStore, contigNameLookup);
-        sut.visitMatch(match);
+        for(CasMatch match : createMatchesFor(alignment, alignment2)){
+            sut.visitMatch(match);
+        }
         sut.visitEndOfFile();
         assertEquals("GTTC-AAA-TTG",
                 NucleotideGlyph.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
@@ -199,9 +215,10 @@ public class TestDefaultCasGappedReferenceMap {
                                                 .addRegion(CasAlignmentRegionType.INSERT, 2)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 3)
                                                 .build();
-        CasMatch match = createMatchFor(alignment,alignment2);
         replay(referenceNucleotideDataStore, contigNameLookup);
-        sut.visitMatch(match);
+        for(CasMatch match : createMatchesFor(alignment, alignment2)){
+            sut.visitMatch(match);
+        }
         sut.visitEndOfFile();
         assertEquals("GTTC--AAATTG",
                 NucleotideGlyph.convertToString(sut.getGappedReferenceFor(referenceId).decode()));

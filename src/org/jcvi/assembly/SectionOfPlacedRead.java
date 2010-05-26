@@ -28,8 +28,6 @@ import java.util.Map;
 import org.jcvi.Range;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
-import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
 
 public class SectionOfPlacedRead<T extends PlacedRead> implements VirtualPlacedRead<T> {

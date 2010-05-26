@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,25 +16,9 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Oct 27, 2009
- *
- * @author dkatzel
+/**
+ * This package contains classes for working
+ * with Consed.
+ * @see <a href ="http://www.phrap.org/consed/consed.html">Consed</a>
  */
-package org.jcvi.assembly.cas;
-
-
-import org.jcvi.assembly.cas.alignment.CasAlignment;
-
-public interface CasMatch {
-
-    boolean matchReported();
-    boolean readHasMutlipleMatches();
-    boolean hasMultipleAlignments();
-    boolean readIsPartOfAPair();
-    CasAlignment getChosenAlignment();
-    long getNumberOfMatches();
-    long getNumberOfReportedAlignments();
-    int getScore();
-    
-}
+package org.jcvi.assembly.ace.consed;

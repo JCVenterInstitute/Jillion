@@ -32,10 +32,14 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
-import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.io.IOUtil;
-
+/**
+ * {@code JCVIAuthorizerUtils} is utility class for creating
+ * {@link JCVIAuthorizer} objects via the command line.
+ * @author dkatzel
+ *
+ *
+ */
 public final class JCVIAuthorizerUtils {
 
    

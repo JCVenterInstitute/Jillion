@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -59,8 +60,10 @@ public class UnmatedTraceToFragConverter {
      * @throws DataStoreException 
      * @throws TraceDecoderException 
      * @throws IOException 
+     * @throws ExecutionException 
+     * @throws InterruptedException 
      */
-    public static void main(String[] args) throws DataStoreException, TraceDecoderException, IOException {
+    public static void main(String[] args) throws DataStoreException, TraceDecoderException, IOException, InterruptedException, ExecutionException {
         Options options = new Options();
         
         options.addOption(new CommandLineOptionBuilder("dir", "trace directory as input")

@@ -28,7 +28,6 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.trace.TraceDataStore;
 import org.jcvi.trace.sanger.FileSangerTrace;
-import org.jcvi.trace.sanger.SangerTrace;
 import org.joda.time.DateTime;
 
 /**

@@ -26,7 +26,6 @@ package org.jcvi.trace.sanger.traceArchive;
 import java.io.File;
 import java.io.IOException;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.trace.TraceDecoderException;
 import org.junit.Before;
 import org.junit.Test;
 

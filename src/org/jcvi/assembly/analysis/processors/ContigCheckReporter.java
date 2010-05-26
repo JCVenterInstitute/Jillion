@@ -28,7 +28,7 @@ import org.jcvi.assembly.analysis.ContigCheckReportWriter;
 import org.jcvi.pipeline.Process;
 
 public class ContigCheckReporter implements Process{
-
+    @SuppressWarnings("unused")
     public ContigCheckReporter(ContigCheckReport report, ContigCheckReportWriter writer){
         
     }

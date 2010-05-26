@@ -26,8 +26,6 @@ package org.jcvi.assembly.contig;
 import java.io.Closeable;
 import java.io.IOException;
 
-import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.slice.ContigSliceMap;
 import org.jcvi.assembly.slice.SliceMap;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 

@@ -41,7 +41,6 @@ import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
 import org.jcvi.sequence.Confidence;
 import org.jcvi.sequence.DefaultConfidence;
-import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramBuilder;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;

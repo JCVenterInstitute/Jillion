@@ -35,15 +35,33 @@ import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
-
+/**
+ * {@code FastaCasDataStoreFactory} is a {@link CasDataStoreFactory}
+ * implementation for .fasta files.
+ * @author dkatzel
+ *
+ *
+ */
 public class FastaCasDataStoreFactory implements
         CasDataStoreFactory {
 
     private final int cacheSize;
     private final CasTrimMap trimToUntrimmedMap;
+    /**
+     * Create a FastaCasDataStoreFactory with the given cacheSize.
+     * @param cacheSize the max number of fasta records to store in memory. 
+     */
     public FastaCasDataStoreFactory(int cacheSize){
         this(EmptyCasTrimMap.getInstance(),cacheSize);
     }
+    /**
+     * Create a FastaCasDataStoreFactory which will automatically
+     * trim any records with the given {@link CasTrimMap} and using
+     * the given cacheSize.
+     * @param trimToUntrimmedMap a non-null CasTrimMap which may trim any
+     * records parsed.
+     * @param cacheSize the max number of (trimmed) fasta records to store in memory. 
+     */
     public FastaCasDataStoreFactory(CasTrimMap trimToUntrimmedMap,int cacheSize){
         this.trimToUntrimmedMap = trimToUntrimmedMap;
         this.cacheSize = cacheSize;
@@ -51,7 +69,6 @@ public class FastaCasDataStoreFactory implements
     @Override
     public NucleotideDataStore getNucleotideDataStoreFor(String pathToDataStore) throws CasDataStoreFactoryException {
         File actualDataStore = trimToUntrimmedMap.getUntrimmedFileFor(new File(pathToDataStore));     
-        System.out.println("getting nucleotide datastore for "+ actualDataStore.getName());
         return CachedDataStore.createCachedDataStore(NucleotideDataStore.class, 
                      new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(new LargeNucleotideFastaFileDataStore(actualDataStore))),
                      cacheSize);            
@@ -60,7 +77,6 @@ public class FastaCasDataStoreFactory implements
     public QualityDataStore getQualityDataStoreFor(
             String pathToDataStore) throws CasDataStoreFactoryException {
         File actualDataStore = trimToUntrimmedMap.getUntrimmedFileFor(new File(pathToDataStore));   
-        System.out.println("getting quality datastore for "+ actualDataStore.getName());
         return CachedDataStore.createCachedDataStore(QualityDataStore.class, 
                 new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(actualDataStore))),
                 cacheSize);  

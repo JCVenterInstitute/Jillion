@@ -82,39 +82,37 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
         super.visitMatch(match);
         boolean outsideValidRange=true;
         
-        for(CasAlignment alignment :match.getAlignments()){
-            Long referenceId = alignment.contigSequenceId();
-            if(!gapsByReferenceId.containsKey(referenceId)){
-                gapsByReferenceId.put(referenceId, new TreeMap<Long,Insertion>());
-            }
-            long currentOffset = alignment.getStartOfMatch();
-            List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
-            int lastIndex = regionsToConsider.size()-1;
-            if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
-                regionsToConsider.remove(lastIndex);
-            }
-            for(CasAlignmentRegion region: regionsToConsider){
-                if(outsideValidRange){
-                    if(region.getType() != CasAlignmentRegionType.INSERT){
-                        outsideValidRange=false;
-                    }
-                }
-                if(!outsideValidRange){
-                    
-                    if(region.getType() == CasAlignmentRegionType.INSERT){
-                        Map<Long,Insertion> insertions =gapsByReferenceId.get(referenceId);
-                        if(insertions.containsKey(currentOffset)){
-                            insertions.get(currentOffset).updateSize(region.getLength());
-                        }
-                        else{
-                            insertions.put(currentOffset, new Insertion(region.getLength()));
-                        }
-                    }else{
-                        currentOffset +=region.getLength();
-                    }
+        CasAlignment alignment =match.getChosenAlignment();
+        Long referenceId = alignment.contigSequenceId();
+        if(!gapsByReferenceId.containsKey(referenceId)){
+            gapsByReferenceId.put(referenceId, new TreeMap<Long,Insertion>());
+        }
+        long currentOffset = alignment.getStartOfMatch();
+        List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
+        int lastIndex = regionsToConsider.size()-1;
+        if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
+            regionsToConsider.remove(lastIndex);
+        }
+        for(CasAlignmentRegion region: regionsToConsider){
+            if(outsideValidRange){
+                if(region.getType() != CasAlignmentRegionType.INSERT){
+                    outsideValidRange=false;
                 }
             }
-             
+            if(!outsideValidRange){
+                
+                if(region.getType() == CasAlignmentRegionType.INSERT){
+                    Map<Long,Insertion> insertions =gapsByReferenceId.get(referenceId);
+                    if(insertions.containsKey(currentOffset)){
+                        insertions.get(currentOffset).updateSize(region.getLength());
+                    }
+                    else{
+                        insertions.put(currentOffset, new Insertion(region.getLength()));
+                    }
+                }else{
+                    currentOffset +=region.getLength();
+                }
+            }
         }
     }
 

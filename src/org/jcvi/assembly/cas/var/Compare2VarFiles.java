@@ -23,9 +23,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,7 +110,7 @@ public class Compare2VarFiles {
                                 log1Variation.getCoordinate(),
                                 Type.NO_CHANGE,
                                 log1Variation.getReferenceBase(), 
-                                log1Variation.getReferenceBase())
+                                Arrays.asList(log1Variation.getReferenceBase()))
                                     .build();
                         variations.put(coordinate, new Variation[]{log1Variation, noChangeVariation});
                     }
@@ -124,7 +128,7 @@ public class Compare2VarFiles {
                                 log2Variation.getCoordinate(),
                                 Type.NO_CHANGE,
                                 log2Variation.getReferenceBase(), 
-                                log2Variation.getReferenceBase())
+                                Arrays.asList(log2Variation.getReferenceBase()))
                                     .build();
                         variations.put(coordinate, new Variation[]{noChangeVariation, log2Variation});
                     }
@@ -180,13 +184,24 @@ public class Compare2VarFiles {
         }
     }
 
-    private static String createHistogramCountsFor(Map<NucleotideGlyph, Integer> histogram){
+    private static String createHistogramCountsFor(Map<List<NucleotideGlyph>, Integer> histogram){
         StringBuilder variationList = new StringBuilder();
-        for(NucleotideGlyph base : NucleotideGlyph.getGlyphsFor("ACGTN-")){
-            if(histogram.containsKey(base)){
-                variationList.append(String.format(" %s: %d", base, histogram.get(base)));
-            }
+        SortedSet<List<NucleotideGlyph>> keys = new TreeSet<List<NucleotideGlyph>>(
+                new Comparator<List<NucleotideGlyph>>() {
+
+                    @Override
+                    public int compare(List<NucleotideGlyph> o1,
+                            List<NucleotideGlyph> o2) {
+                        return NucleotideGlyph.convertToString(o1).compareTo(NucleotideGlyph.convertToString(o2));
+                    }
+                    
+                }
+                );
+        keys.addAll(histogram.keySet());
+        for(List<NucleotideGlyph> var : histogram.keySet()){
+            variationList.append(String.format(" %s: %d", NucleotideGlyph.convertToString(var), histogram.get(var)));
         }
+        
         return variationList.toString();
     }
     

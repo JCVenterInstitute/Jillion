@@ -24,30 +24,13 @@
 package org.jcvi.assembly.slice.conflict;
 
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.assembly.Contig;
-import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.contig.qual.LowestFlankingQualityValueStrategy;
-import org.jcvi.assembly.coverage.CoverageMap;
-import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.assembly.slice.DefaultSliceMap;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceMap;
-import org.jcvi.assembly.slice.conflict.SliceConflictDetector.SliceConflicts;
-import org.jcvi.datastore.DefaultContigFileDataStore;
-import org.jcvi.fasta.DefaultQualityFastaFileDataStore;
-import org.jcvi.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 
 public class SliceConflictMap implements Iterable<ConflictedRegion>{
 

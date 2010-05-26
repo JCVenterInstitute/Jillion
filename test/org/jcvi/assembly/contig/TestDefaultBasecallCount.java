@@ -30,13 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
-
-import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.slice.ContigSlice;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceElement;
-import org.jcvi.assembly.slice.SliceLocation;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.junit.Before;
 import org.junit.Test;

@@ -75,7 +75,7 @@ public class ContigCheckerXMLWriter<T extends PlacedRead> implements Closeable{
         out.write(CONTIG_END_TAG.getBytes());
         out.flush();
     }
-    
+    @SuppressWarnings("unused")
     protected void writeAdditionalTags(OutputStream out, ContigCheckerStruct<T> struct) throws IOException{
         // no-op
         

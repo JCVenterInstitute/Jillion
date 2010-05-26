@@ -61,7 +61,8 @@ public class XMLCoverageWriter<T extends Placed>{
         }
         out.write(String.format(BEGIN_COVERAGE_REGION_FORMAT, attributeBuilder.toString()).getBytes());
     }
-    protected void addAdditionalAttributes(CoverageRegion<T> region,
+    @SuppressWarnings("unused")
+    protected void addAdditionalAttributes( CoverageRegion<T> region,
             Properties attriubtes) {
         // no-op
         

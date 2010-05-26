@@ -38,7 +38,8 @@ public class TestCasUtil {
 
     @Test
     public void numberOfBytesRequired(){
-        assertEquals(1, CasUtil.numberOfBytesRequiredFor(1L));
+        
+        assertEquals(0, CasUtil.numberOfBytesRequiredFor(1L));
         assertEquals(1, CasUtil.numberOfBytesRequiredFor(100L));
         assertEquals(1, CasUtil.numberOfBytesRequiredFor(255L));
         assertEquals(1, CasUtil.numberOfBytesRequiredFor(256L));

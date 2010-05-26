@@ -173,8 +173,33 @@ public abstract class JcviTraceFileServer implements TraceFileServer{
     private static JTCChromatogramArchiver DEFAULT_CHROMATOGRAM_ARCHIVER;
     
     static{
-        try {
-            DEFAULT_CHROMATOGRAM_ARCHIVER = new JTCChromatogramArchiver();
+            DEFAULT_CHROMATOGRAM_ARCHIVER = createDefaultChromatogramArchiver();        
+    }
+    /**
+     * Sets the Set the System property used by the JTCChromatogramArchiver EJB
+     * for the URL(s) used for the production Trace File Server.
+     * @see TraceFileServerUtil#JCVI_WRITE_URLS
+     */
+    public static final synchronized void useDefaultTraceFileServerWriterUrl(){
+        useTraceFileServerWriterUrl(TraceFileServerUtil.JCVI_WRITE_URLS);
+    }
+    /**
+     * Set the System property used by the JTCChromatogramArchiver EJB
+     * for the URL(s) to send traces to load into the TraceFileServer.
+     * @param url the URL to send traces to load into the TraceFileServer.  May be 
+     * comma separated list of URLs which will be tried consecutively until
+     * one works.
+     */
+    public static synchronized final void useTraceFileServerWriterUrl(String url){
+        System.setProperty(TraceFileServerUtil.TRACE_FILE_SERVER_WRITER_URL_BASE_KEY, 
+                url);
+        DEFAULT_CHROMATOGRAM_ARCHIVER = createDefaultChromatogramArchiver();
+            System.out.println(DEFAULT_CHROMATOGRAM_ARCHIVER.toString());
+    }
+    
+    private static final JTCChromatogramArchiver createDefaultChromatogramArchiver() throws IllegalStateException{
+        try{
+            return new JTCChromatogramArchiver();
         } catch (ChromatogramArchiveException e) {
             throw new IllegalStateException("can not create JTCChromatogramArchiver",e);
         }
@@ -195,7 +220,7 @@ public abstract class JcviTraceFileServer implements TraceFileServer{
     /**
      * Creates a {@link ReadWriteJcviTraceFileServer} that fetch and
      * put trace data.
-     * @param urlBase url base path to communicate with Trace File Server 
+     * @param fetchUrlBase url base path to communicate with Trace File Server 
      * (can not be null).
      * @param authorizer {@link JCVIEncodedAuthorizer} implementation required
      * to fetch data from secure projects (can not be null)..
@@ -204,8 +229,8 @@ public abstract class JcviTraceFileServer implements TraceFileServer{
      * @return a new ReadWriteJcviTraceFileServer.
      * @throws NullPointerException if any parameters are null.
      */
-    public static ReadWriteJcviTraceFileServer createJcviTraceFileServer(String urlBase,JCVIEncodedAuthorizer authorizer, String project){
-        return new ReadWriteJcviTraceFileServer(urlBase, authorizer,DEFAULT_CHROMATOGRAM_ARCHIVER,project);
+    public static ReadWriteJcviTraceFileServer createJcviTraceFileServer(String fetchUrlBase,JCVIEncodedAuthorizer authorizer, String project){
+        return new ReadWriteJcviTraceFileServer(fetchUrlBase, authorizer,DEFAULT_CHROMATOGRAM_ARCHIVER,project);
     }
     
     private final String urlBase;

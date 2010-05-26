@@ -28,16 +28,30 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.util.LRUCache;
-
+/**
+ * {@code CachedTraceArchiveDataStore} is a {@link TraceArchiveDataStore}
+ * implementation which cache's {@link TraceArchiveTrace} records
+ * in an LRUCache.
+ * @author dkatzel
+ *
+ *
+ */
 public class CachedTraceArchiveDataStore implements TraceArchiveDataStore<TraceArchiveTrace>{
 
     private final Map<String, TraceArchiveTrace> lruCahce;
-    private final TraceArchiveDataStore<TraceArchiveTrace> traceArchiveMultiTrace;
-    
-    public CachedTraceArchiveDataStore(TraceArchiveDataStore<TraceArchiveTrace> traceArchiveMultiTrace, int cacheSize) {
-        this.traceArchiveMultiTrace = traceArchiveMultiTrace;
+    private final TraceArchiveDataStore<TraceArchiveTrace> traceArchiveDataStore;
+    /**
+     * Create a new CachedTraceArchiveDataStore wrapping the given
+     * TraceArchiveDataStore with an LRUCache of the given size.
+     * @param traceArchiveDataStore the TraceArchiveDataStore to cache (can not be null).
+     * @param cacheSize the size of the LRUCache to use.
+     */
+    public CachedTraceArchiveDataStore(TraceArchiveDataStore<TraceArchiveTrace> traceArchiveDataStore, int cacheSize) {
+        if(traceArchiveDataStore ==null){
+            throw new NullPointerException("traceArchiveDataStore can not be null");
+        }
+        this.traceArchiveDataStore = traceArchiveDataStore;
         lruCahce = new LRUCache<String, TraceArchiveTrace>(cacheSize);
     }
 
@@ -46,7 +60,7 @@ public class CachedTraceArchiveDataStore implements TraceArchiveDataStore<TraceA
         if(lruCahce.containsKey(id)){
             return lruCahce.get(id);
         }
-        TraceArchiveTrace trace = traceArchiveMultiTrace.get(id);
+        TraceArchiveTrace trace = traceArchiveDataStore.get(id);
         lruCahce.put(id, trace);
         return trace;
     }
@@ -54,27 +68,27 @@ public class CachedTraceArchiveDataStore implements TraceArchiveDataStore<TraceA
     @Override
     public void close() throws IOException {
         lruCahce.clear();
-        traceArchiveMultiTrace.close();
+        traceArchiveDataStore.close();
     }
 
     @Override
     public boolean contains(String id) throws DataStoreException {
-        return traceArchiveMultiTrace.contains(id);
+        return traceArchiveDataStore.contains(id);
     }
 
     @Override
     public int size() throws DataStoreException {
-        return traceArchiveMultiTrace.size();
+        return traceArchiveDataStore.size();
     }
 
     @Override
     public Iterator<TraceArchiveTrace> iterator() {
-        return traceArchiveMultiTrace.iterator();
+        return traceArchiveDataStore.iterator();
     }
 
     @Override
     public Iterator<String> getIds() throws DataStoreException {
-        return traceArchiveMultiTrace.getIds();
+        return traceArchiveDataStore.getIds();
     }
 
 }

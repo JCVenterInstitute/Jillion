@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
-import org.jcvi.testUtil.TestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
