@@ -21,6 +21,7 @@ package org.jcvi.assembly.cas.var;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,8 +36,8 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
  */
 public class VariationLogFileParser {
 
-    private static final Pattern CONTIG_PATTERN = Pattern.compile("^(.+):\\s*$");
-    private static final Pattern VARIATION_PATTERN = Pattern.compile("^\\s+(\\d+)\\s+(\\w+)\\s+(\\S)\\s+->\\s+(\\S)(.+)$");
+    private static final Pattern CONTIG_PATTERN = Pattern.compile("^(\\S+).*:\\s*$");
+    private static final Pattern VARIATION_PATTERN = Pattern.compile("^\\s+(\\d+)\\s+(\\w+)\\s+(\\S)\\s+->\\s+(\\S+)(.+)$");
     
     private static final String CR = "\n";
     public static void parseVariationFile(File variationLogFile, VariationLogFileVisitor visitor) throws FileNotFoundException{
@@ -51,6 +52,7 @@ public class VariationLogFileParser {
                 
                 if(contigMatcher.find()){
                     String contigId = contigMatcher.group(1);
+                    System.out.println("contig id = "+ contigId);
                     readVariationsForCurrentContig =visitor.visitContig(contigId);
                 }else if(readVariationsForCurrentContig){
                     Matcher varMatcher = VARIATION_PATTERN.matcher(line);
@@ -58,14 +60,17 @@ public class VariationLogFileParser {
                         long coordinate = Long.parseLong(varMatcher.group(1));
                         Type type = Type.getType(varMatcher.group(2));
                         NucleotideGlyph ref = NucleotideGlyph.getGlyphFor(varMatcher.group(3));
-                        NucleotideGlyph consensus = NucleotideGlyph.getGlyphFor(varMatcher.group(4));
+                        List<NucleotideGlyph> consensus = NucleotideGlyph.getGlyphsFor(varMatcher.group(4));
                         DefaultVariation.Builder variationBuilder = new DefaultVariation.Builder(coordinate, type,ref,consensus);
                         final String group = varMatcher.group(5);
                         Scanner histogramScanner = new Scanner(group);
+                        if(group.startsWith("AT   AAT: 39  -: 3")){
+                            System.out.println("here");
+                        }
                         while(histogramScanner.hasNext()){
-                            NucleotideGlyph base = NucleotideGlyph.getGlyphFor(histogramScanner.next());
+                            List<NucleotideGlyph> bases = NucleotideGlyph.getGlyphsFor(histogramScanner.next().replaceAll(":",""));
                             int count = histogramScanner.nextInt();
-                            variationBuilder.addHistogramRecord(base,count);
+                            variationBuilder.addHistogramRecord(bases,count);
                         }
                         visitor.visitVariation(variationBuilder.build());
                     }

@@ -97,7 +97,7 @@ public class DownloadTraces {
             }
             else{
                 authorizer = JCVIAuthorizerUtils.parseAuthorizerFrom(commandLine, console);
-                baseUrl = TraceFileServerUtil.JCVI_URL;
+                baseUrl = TraceFileServerUtil.JCVI_FETCH_URL;
             }
             FileType fileType = commandLine.hasOption("format")?
                                 FileType.valueOf(commandLine.getOptionValue("format").toUpperCase())

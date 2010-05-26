@@ -49,6 +49,7 @@ public class CasParser {
     private BigInteger offset;
     private  int numberOfBytesForContigPosition,numberOfBytesForContigNumber;
     private  long numberOfReads;
+    private CasScoringScheme scoringScheme;
     private CasParser(File file, CasFileVisitor visitor) throws IOException{
         parseMetaData(new FileInputStream(file),visitor);
         parseMatches(new FileInputStream(file),visitor);
@@ -65,16 +66,20 @@ public class CasParser {
             boolean hasMultipleMatches= (info & 0x02)!=0;
             boolean hasMultipleAlignments= (info & 0x04)!=0;
             boolean isPartOfPair= (info & 0x08)!=0;
-            List<CasAlignment> alignments = new ArrayList<CasAlignment>();
-            long totalNumberOfMatches=0, numberOfReportedAlignments=hasMatch?1:0;
+            long totalNumberOfMatches=hasMatch?1:0, numberOfReportedAlignments=hasMatch?1:0;
             if(hasMultipleMatches){                
                 totalNumberOfMatches = CasUtil.parseByteCountFrom(dataIn) +2;
-                System.out.println("has multiple matched!!! " +totalNumberOfMatches);
+            //    System.out.println("has multiple matches "+ totalNumberOfMatches);
             }
             if(hasMultipleAlignments){
                 numberOfReportedAlignments = CasUtil.parseByteCountFrom(dataIn) +2;
+             //   System.out.println("#alignments "+ numberOfReportedAlignments);
             }
-            for(int alignmentCount=0; alignmentCount<numberOfReportedAlignments; alignmentCount++){
+            
+            int score=0;
+            CasAlignment chosenAlignment=null;
+            if(hasMatch){
+           
                 long numberOfBytesInForThisMatch =CasUtil.parseByteCountFrom(dataIn);
                 long contigSequenceId = CasUtil.readCasUnsignedInt(dataIn, this.numberOfBytesForContigNumber);
                 long startPosition = CasUtil.readCasUnsignedInt(dataIn, this.numberOfBytesForContigPosition);
@@ -83,14 +88,17 @@ public class CasParser {
                                                     contigSequenceId, startPosition, 
                                                     isreverse);
                 long count=0;
+                
                 while(count <numberOfBytesInForThisMatch){
                     short matchValue = CasUtil.readCasUnsignedByte(dataIn);
                     if(matchValue == 255){
                         builder.addPhaseChange(dataIn.readByte());
+                        
                         count++;
                     }
                     else if(matchValue<128){
                         builder.addRegion(CasAlignmentRegionType.MATCH_MISMATCH, matchValue +1);
+                        
                     }
                     else if(matchValue<192){
                         builder.addRegion(CasAlignmentRegionType.INSERT, matchValue -127);
@@ -100,11 +108,10 @@ public class CasParser {
                     }
                     count++;
                 }
-                alignments.add(builder.build());
+                chosenAlignment =builder.build();
             }
-            visitor.visitMatch(new DefaultCasMatch(hasMatch, hasMultipleMatches, 
-                    hasMultipleAlignments, 
-                    isPartOfPair, alignments));
+            visitor.visitMatch(new DefaultCasMatch(hasMatch, totalNumberOfMatches, numberOfReportedAlignments,
+                    isPartOfPair, chosenAlignment,score));
         }
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
@@ -178,8 +185,8 @@ public class CasParser {
                 }
                 CasAlignmentScore score = alignmentScoreBuilder.build();
                 CasAlignmentType alignmentType = CasAlignmentType.valueOf((byte)dataIn.read());
-                CasScoringScheme scheme = new DefaultCasScoringScheme(scoreType, score, alignmentType);
-                visitor.visitScoringScheme(scheme);
+                scoringScheme = new DefaultCasScoringScheme(scoreType, score, alignmentType);
+                visitor.visitScoringScheme(scoringScheme);
                 long maxContigLength=0;
                 for(long i=0; i<numberOfContigSequences; i++){
                     long contigLength = CasUtil.readCasUnsignedInt(dataIn);

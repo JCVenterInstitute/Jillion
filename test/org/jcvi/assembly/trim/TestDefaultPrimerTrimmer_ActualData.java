@@ -19,7 +19,6 @@
 
 package org.jcvi.assembly.trim;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.Range;
@@ -27,7 +26,6 @@ import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fasta.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.fasta.DefaultNucleotideFastaRecordFactory;
-import org.jcvi.fasta.FastaDataStore;
 import org.jcvi.fasta.NucleotideFastaRecordDataStoreAdatper;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;

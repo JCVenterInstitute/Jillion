@@ -167,7 +167,7 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
          */
         alignment.setIdentity(identity / (double)alignmentLength);
         alignment.setScore(score.getScore(start));
-        alignment.setMatch(matchScore / (double)alignmentLength);
+        alignment.setMatch(matchScore / alignmentLength);
         
         /*
          * Update the alignment factory with the alignment stop points

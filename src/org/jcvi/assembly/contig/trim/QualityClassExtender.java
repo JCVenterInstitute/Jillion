@@ -33,7 +33,6 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.ReadTrim;
-import org.jcvi.sequence.ReadTrimUtil;
 import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.sequence.TrimType;
 

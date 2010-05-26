@@ -42,20 +42,18 @@ public final class CasUtil {
     /**
      * Get the number of bytes required to store the given number.
      * To save space, .cas files use a varible length field to 
-     * store counters.  the length of the field depends on the max number
+     * store counters.  The length of the field depends on the max number
      * to be stored.
      * @param i the number to store.
      * @return the number of bytes needed to store the given 
-     * input number as an int.
+     * input number as an int (which may be {@code 0}).
      * @throws IllegalArgumentException if {@code i<1}.
      */
     public static int numberOfBytesRequiredFor(long i){
         if(i < 1){
-            throw new IllegalArgumentException("number of contigs must be > 0 : " + i);
+            throw new IllegalArgumentException("input number must be > 0 : " + i);
         }
-        if(i ==1){
-            return 1;
-        }
+       
         return (int)Math.ceil(Math.log(i)/Math.log(256));
     }
     /**

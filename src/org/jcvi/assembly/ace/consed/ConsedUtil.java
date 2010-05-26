@@ -42,13 +42,39 @@ import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-
+/**
+ * This class contains utility scripts for
+ * converting {@link AceContig} data into
+ * data that can work with Consed.
+ * @author dkatzel
+ *
+ *
+ */
 public class ConsedUtil {
+    /**
+     * Consed rename comment header which tells us what the contig SHOULD 
+     * be named instead of the given ID.
+     */
     private static final Pattern CONTIG_RENAME_PATTERN = Pattern.compile("U(\\w+)");
+    /**
+     * Convert a string of basecalls with '*' to 
+     * represent gaps (which is what consed uses) with '-' instead. 
+     * @param basecallsWithAceGaps a string of basecalls with the '*' to 
+     * represent gaps.
+     * @return a new string with all the '*' converted into '-'.
+     * @see #convertContigGapstoAceGaps(String)
+     */
     public static String convertAceGapsToContigGaps(String basecallsWithAceGaps) {
         return basecallsWithAceGaps.replace('*', '-');
     }
-    
+    /**
+     * Convert a string of basecalls with the conventional '-' to 
+     * represent gaps with '*' which is what consed uses instead. 
+     * @param basecallsWithAceGaps a string of basecalls with the conventional '-' to 
+     * represent gaps.
+     * @return a new string with all the '-' converted into '*'.
+     * @see #convertAceGapsToContigGaps(String)
+     */
     public static String convertContigGapstoAceGaps(String basecallsWithAceGaps) {
         return basecallsWithAceGaps.replace('-', '*');
     }
@@ -79,7 +105,8 @@ public class ConsedUtil {
                 }
             }
             String contigConsensus =NucleotideGlyph.convertToString(consensus.decode(contigRange));
-            String contigId = String.format("%s_%d_%d",originalContigId, contigRange.getStart(), contigRange.getEnd());
+            String contigId = String.format("%s_%d_%d",originalContigId, 
+                    contigRange.getLocalStart(), contigRange.getLocalEnd());
             DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contigId, contigConsensus);
             
             for(String readId : contigReads){

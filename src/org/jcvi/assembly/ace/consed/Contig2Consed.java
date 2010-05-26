@@ -52,7 +52,6 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.jcvi.trace.sanger.phd.ArtificalPhdDataStore;
-import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;

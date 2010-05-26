@@ -23,7 +23,6 @@
  */
 package org.jcvi.glyph.encoder;
 
-import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 

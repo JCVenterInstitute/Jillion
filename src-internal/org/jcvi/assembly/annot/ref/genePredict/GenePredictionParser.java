@@ -23,18 +23,12 @@
  */
 package org.jcvi.assembly.annot.ref.genePredict;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,12 +44,6 @@ import org.jcvi.assembly.annot.ref.DefaultCodingRegion;
 import org.jcvi.assembly.annot.ref.DefaultRefGene;
 import org.jcvi.assembly.annot.ref.RefGene;
 import org.jcvi.assembly.annot.ref.RefUtil;
-import org.jcvi.assembly.annot.ref.writer.RefGeneTxtWriter;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.fasta.NucleotideSequenceFastaRecord;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
 public class GenePredictionParser {
 

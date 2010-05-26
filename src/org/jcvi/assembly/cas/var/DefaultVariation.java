@@ -19,22 +19,25 @@
 
 package org.jcvi.assembly.cas.var;
 
-import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 /**
+ * {@code DefaultVariation} is a default implementation 
+ * of {@link Variation}.
  * @author dkatzel
  *
  *
  */
-public class DefaultVariation implements Variation, Comparable<Variation>{
+public class DefaultVariation implements Variation{
 
     private final long coordinate;
-    private final NucleotideGlyph consensus;
+    private final List<NucleotideGlyph> consensus;
     private final NucleotideGlyph reference;
     private final Type type;
-    private final Map<NucleotideGlyph, Integer> histogram;
+    private final Map<List<NucleotideGlyph>, Integer> histogram;
     
     
     /**
@@ -45,8 +48,8 @@ public class DefaultVariation implements Variation, Comparable<Variation>{
      * @param histogram
      */
     protected DefaultVariation(long coordinate, Type type,
-            NucleotideGlyph reference, NucleotideGlyph consensus,
-            Map<NucleotideGlyph, Integer> histogram) {
+            NucleotideGlyph reference, List<NucleotideGlyph> consensus,
+            Map<List<NucleotideGlyph>, Integer> histogram) {
         this.coordinate = coordinate;
         this.type = type;
         this.consensus = consensus;
@@ -58,7 +61,7 @@ public class DefaultVariation implements Variation, Comparable<Variation>{
     * {@inheritDoc}
     */
     @Override
-    public NucleotideGlyph getConsensusBase() {
+    public List<NucleotideGlyph> getConsensusBase() {
         return consensus;
     }
 
@@ -74,7 +77,7 @@ public class DefaultVariation implements Variation, Comparable<Variation>{
     * {@inheritDoc}
     */
     @Override
-    public Map<NucleotideGlyph, Integer> getHistogram() {
+    public Map<List<NucleotideGlyph>, Integer> getHistogram() {
         return histogram;
     }
 
@@ -174,21 +177,21 @@ public class DefaultVariation implements Variation, Comparable<Variation>{
     }
     public static class Builder implements org.jcvi.Builder<DefaultVariation>{
         private final long coordinate;
-        private final NucleotideGlyph consensus;
+        private final List<NucleotideGlyph> consensus;
         private final NucleotideGlyph reference;
         private final Type type;
-        private final Map<NucleotideGlyph, Integer> histogram = new EnumMap<NucleotideGlyph, Integer>(NucleotideGlyph.class);
+        private final Map<List<NucleotideGlyph>, Integer> histogram = new HashMap<List<NucleotideGlyph>, Integer>();
         
         public Builder(long coordinate, Type type,
                 NucleotideGlyph reference,
-                NucleotideGlyph consensus ){
+                List<NucleotideGlyph> consensus ){
             this.consensus = consensus;
             this.coordinate = coordinate;
             this.reference = reference;
             this.type = type;
         }
         
-        public Builder addHistogramRecord(NucleotideGlyph base, int count){
+        public Builder addHistogramRecord(List<NucleotideGlyph> base, int count){
             histogram.put(base, count);
             return this;
         }
@@ -201,4 +204,5 @@ public class DefaultVariation implements Variation, Comparable<Variation>{
         }
         
     }
+
 }

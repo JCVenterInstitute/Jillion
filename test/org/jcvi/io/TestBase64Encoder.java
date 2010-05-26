@@ -27,8 +27,11 @@ import org.junit.Test;
 
 import sun.misc.BASE64Encoder;
 import static org.junit.Assert.*;
+@SuppressWarnings("restriction")
 public class TestBase64Encoder {
     //example text taken from Wikipedia Base64 article and is text of Thomas Hobbes' Leviathan 
+    //permanent link:
+    //http://en.wikipedia.org/w/index.php?title=Base64&oldid=363359790
     private final String sampleText = 
         "Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure.";
 
@@ -38,7 +41,6 @@ public class TestBase64Encoder {
         "dGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGlu\n"+
         "dWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRo\n"+
         "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4=";
-    
     @Test
     public void sunBase64Encode(){
         BASE64Encoder sunEncoder = new BASE64Encoder();

@@ -24,9 +24,6 @@
 package org.jcvi.assembly.contig;
 
 import java.util.Map;
-
-import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.slice.ContigSlice;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 

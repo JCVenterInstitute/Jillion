@@ -30,14 +30,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.jcvi.assembly.Location;
-import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.slice.ContigSlice;
-import org.jcvi.assembly.slice.ContigSliceMap;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceMap;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 

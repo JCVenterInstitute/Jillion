@@ -23,17 +23,32 @@
  */
 package org.jcvi.trace.frg;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.io.IOUtils;
 import org.jcvi.Distance;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.io.IOUtil;
+import org.jcvi.io.fileServer.DirectoryFileServer;
+import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.jcvi.sequence.Library;
 import org.jcvi.sequence.Mated;
 
@@ -51,59 +66,66 @@ public class Frg2Writer {
      * @param matedFrags list of mated fragments to write
      * @param out outputStream to write data to.
      * @throws IOException
+     * @throws ExecutionException 
+     * @throws InterruptedException 
      */
-    public void writeFrg2(final List<Mated<Fragment>> matedFrags, final List<Fragment> unmatedFrgs,OutputStream out) throws IOException{
-      //  ExecutorService executor = Executors.newFixedThreadPool(2);
+    public void writeFrg2(final List<Mated<Fragment>> matedFrags, final List<Fragment> unmatedFrgs,OutputStream out) throws IOException, InterruptedException, ExecutionException{
+        ExecutorService executor = Executors.newFixedThreadPool(3);
         writeVersion(out);
-        
-        new Runnable(){
+        final ReadWriteDirectoryFileServer tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer();
+        List<Callable<Void>> writers = new ArrayList<Callable<Void>>();
+        writers.add( new Callable<Void>(){
 
             @Override
-            public void run() {
-                OutputStream temp;
+            public Void call() throws Exception{
+                OutputStream temp=null;
                 try {
-                    temp = new FileOutputStream("tmp.lib");
-                    writeLibraries(matedFrags, unmatedFrgs, temp); 
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    temp = new FileOutputStream(tempDir.createNewFile("tmp.lib"));
+                    writeLibraries(matedFrags, unmatedFrgs, temp);
+                    return null;
+                }
+                finally{
+                    IOUtil.closeAndIgnoreErrors(temp);
                 }
                               
             }
-        }.run();
-        new Runnable(){
+        });
+        writers.add( new Callable<Void>(){
 
             @Override
-            public void run() {
-                OutputStream temp;
+            public Void call() throws Exception{
+                OutputStream temp=null;
                 try {
-                    temp = new FileOutputStream("tmp.frag");
+                    temp = new FileOutputStream(tempDir.createNewFile("tmp.frag"));
                     writeFragments(matedFrags, unmatedFrgs, temp); 
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    return null;
+                }finally{
+                    IOUtil.closeAndIgnoreErrors(temp);
                 }
                               
             }
-        }.run();
-        new Runnable(){
+        });
+        writers.add(  new Callable<Void>(){
 
             @Override
-            public void run() {
-                OutputStream temp;
+            public Void call() throws Exception{
+                OutputStream temp=null;
                 try {
-                    temp = new FileOutputStream("tmp.link");
+                    temp = new FileOutputStream(tempDir.createNewFile("tmp.link"));
                     writeLinkages(matedFrags,temp);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    return null;
+                }finally{
+                    IOUtil.closeAndIgnoreErrors(temp);
                 }
                               
             }
-        }.run();
-    /*    executor.execute(LibWriter);
-        executor.execute(fragWriter);
-        executor.execute(LinkWriter);
+        });
+        //wait for all to finish...
+        for(Future<Void> f :executor.invokeAll(writers)){
+            //get blocks until task is finished
+            f.get();
+        }
+       
         executor.shutdown();
         try {
             executor.awaitTermination(10, TimeUnit.MINUTES);
@@ -111,10 +133,22 @@ public class Frg2Writer {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        */
+        appendTempFile(tempDir.getFile("tmp.lib"), out);
+        appendTempFile(tempDir.getFile("tmp.frag"), out);
+        appendTempFile(tempDir.getFile("tmp.link"), out);
+        IOUtil.closeAndIgnoreErrors(out);
+        IOUtil.closeAndIgnoreErrors(tempDir);
     }
     
-    
+    private void appendTempFile(File temp, OutputStream out) throws IOException{
+        InputStream in = null;
+        try{
+            in = new FileInputStream(temp);
+            IOUtils.copy(in, out);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+    }
     private void writeLinkages(List<Mated<Fragment>> matedFragsLists,
             OutputStream out) throws IOException {
         for(Mated<Fragment> matedFrgs: matedFragsLists){

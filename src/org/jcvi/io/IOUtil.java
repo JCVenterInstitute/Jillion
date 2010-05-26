@@ -260,6 +260,13 @@ public final class IOUtil {
             buf.put((byte)array[i]);
         }
     }
+    /**
+     * Read the entire {@link InputStream} in and
+     * return it as a String, this does not close the stream
+     * @param in
+     * @return
+     * @throws IOException
+     */
     public static String readStream(InputStream in)
                                         throws IOException {
         final ByteArrayOutputStream expectedOutStream = new ByteArrayOutputStream();

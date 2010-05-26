@@ -23,7 +23,6 @@
  */
 package org.jcvi.assembly.coverage.critquor;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 

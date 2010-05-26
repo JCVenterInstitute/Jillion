@@ -21,7 +21,6 @@ package org.jcvi.assembly.cas.var;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;

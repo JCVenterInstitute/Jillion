@@ -23,8 +23,6 @@
  */
 package org.jcvi.assembly.cas;
 
-import java.io.File;
-import java.util.Map;
 
 public class DefaultReadCasFileLookup extends AbstractDefaultCasFileLookup{
 

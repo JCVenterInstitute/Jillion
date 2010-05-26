@@ -24,11 +24,16 @@
 package org.jcvi.fasta;
 
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-
+/**
+ * {@code NucleotideFastaRecordDataStoreAdatper} is an adapter
+ * that adapts a {@link DataStore} of {@link NucleotideSequenceFastaRecord}s
+ * into a {@link DataStore} of {@link NucleotideEncodedGlyphs}.
+ * @author dkatzel
+ *
+ *
+ */
 public class NucleotideFastaRecordDataStoreAdatper<F extends NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> extends FastaRecordDataStoreAdapter<NucleotideEncodedGlyphs,F> implements NucleotideDataStore{
     /**
      * Convert of {@code DataStore<F>} into a DataStore{@code DataStore<T>}

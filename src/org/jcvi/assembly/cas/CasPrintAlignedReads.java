@@ -101,7 +101,7 @@ public class CasPrintAlignedReads extends AbstractOnePassCasFileVisitor{
     public void visitMatch(CasMatch match) {
         super.visitMatch(match);
         String readId = readNameLookup.getLookupIdFor(currentReadId);
-        int numberOfAlignments = match.getAlignments().size();
+        long numberOfAlignments = match.getNumberOfReportedAlignments();
         StringBuilder builder = new StringBuilder();
         
         builder.append(String.format("read %s\t",readId));
@@ -112,7 +112,7 @@ public class CasPrintAlignedReads extends AbstractOnePassCasFileVisitor{
             builder.append("was multi match");
         }
         else{
-            CasAlignment alignment =match.getAlignments().get(0);
+            CasAlignment alignment =match.getChosenAlignment();
             long contigId =alignment.contigSequenceId();
             long offset =alignment.getStartOfMatch();
             long numberOfGaps = 0;

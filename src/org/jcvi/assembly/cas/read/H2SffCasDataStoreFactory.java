@@ -30,11 +30,18 @@ import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.datastore.H2NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
+import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.H2NucleotideSffDataStore;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.H2QualitySffDataStore;
 
 public class H2SffCasDataStoreFactory implements CasDataStoreFactory{
-
+    private final ReadWriteDirectoryFileServer databaseFileServer;
+    public H2SffCasDataStoreFactory(){
+        this(null);
+    }
+    public H2SffCasDataStoreFactory(ReadWriteDirectoryFileServer databaseFileServer){
+        this.databaseFileServer = databaseFileServer;
+    }
     @Override
     public NucleotideDataStore getNucleotideDataStoreFor(String pathToDataStore)
             throws CasDataStoreFactoryException {       
@@ -42,8 +49,16 @@ public class H2SffCasDataStoreFactory implements CasDataStoreFactory{
             throw new CasDataStoreFactoryException("not a sff file");
         }
         try {
-            return new H2NucleotideSffDataStore(new File(pathToDataStore), 
-                    new H2NucleotideDataStore());
+            final File sffFile = new File(pathToDataStore);
+            final H2NucleotideDataStore datastore;
+            if(databaseFileServer==null){
+                datastore = new H2NucleotideDataStore();
+            }else{
+                File tempFile = File.createTempFile("H2Sff", null,databaseFileServer.getRootDir());
+                datastore = new H2NucleotideDataStore(databaseFileServer.createNewFile(tempFile.getName()));
+            }
+            return new H2NucleotideSffDataStore(sffFile,  datastore);
+            
         } catch (Exception e) {
            throw new CasDataStoreFactoryException("could not create H2 Sff Nucleotide DataStore for "+ pathToDataStore,e);
         } 

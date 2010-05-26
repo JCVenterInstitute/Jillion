@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.trace.TraceDecoderException;
 import org.junit.Before;
 import org.junit.Test;
 

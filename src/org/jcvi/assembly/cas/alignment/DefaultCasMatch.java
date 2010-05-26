@@ -23,37 +23,34 @@
  */
 package org.jcvi.assembly.cas.alignment;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.jcvi.assembly.cas.CasMatch;
 
 public class DefaultCasMatch implements CasMatch{
     private final boolean hasMatch,
-     hasMultipleMatches,
-     hasMultipleAlignments,
      isPartOfPair;
-    private final List<CasAlignment> alignments;
-    
+    private final CasAlignment alignment;
+    private final long numberOfMatches,numberOfReportedAlignments;
+    private final int score;
     /**
      * @param hasMatch
      * @param hasMultipleMatches
      * @param hasMultipleAlignments
      * @param isPartOfPair
      */
-    public DefaultCasMatch(boolean hasMatch, boolean hasMultipleMatches,
-            boolean hasMultipleAlignments, boolean isPartOfPair,List<CasAlignment> alignments) {
+    public DefaultCasMatch(boolean hasMatch, long numberOfMatches,
+            long numberOfReportedAlignments,
+             boolean isPartOfPair,CasAlignment chosenAlignment, int score) {
         this.hasMatch = hasMatch;
-        this.hasMultipleMatches = hasMultipleMatches;
-        this.hasMultipleAlignments = hasMultipleAlignments;
+        this.numberOfMatches = numberOfMatches;
+        this.numberOfReportedAlignments = numberOfReportedAlignments;
         this.isPartOfPair = isPartOfPair;
-        this.alignments = new ArrayList<CasAlignment>(alignments);
+        this.alignment = chosenAlignment;
+        this.score = score;
     }
 
     @Override
     public boolean hasMultipleAlignments() {
-        return hasMultipleAlignments;
+        return numberOfReportedAlignments>1;
     }
 
     @Override
@@ -63,7 +60,7 @@ public class DefaultCasMatch implements CasMatch{
 
     @Override
     public boolean readHasMutlipleMatches() {
-        return hasMultipleMatches;
+        return numberOfMatches>1;
     }
 
     @Override
@@ -72,17 +69,17 @@ public class DefaultCasMatch implements CasMatch{
     }
 
     @Override
-    public List<CasAlignment> getAlignments() {
-        return Collections.unmodifiableList(alignments);
+    public CasAlignment getChosenAlignment() {
+        return alignment;
     }
 
     @Override
     public String toString() {
         StringBuilder result= new StringBuilder("DefaultCasMatch [hasMatch=" + hasMatch
-                + ", hasMultipleAlignments=" + hasMultipleAlignments
-                + ", hasMultipleMatches=" + hasMultipleMatches
+                + ", numberOfAlignments=" + numberOfReportedAlignments
+                + ", numberOfMatches=" + numberOfMatches
                 + ", isPartOfPair=" + isPartOfPair + ", alignments=");
-        for(CasAlignment alignment : alignments){
+        if(alignment !=null){
             result.append(String.format("%n%n\t%s", alignment));
         }
                result.append(String.format("%n]"));
@@ -91,15 +88,33 @@ public class DefaultCasMatch implements CasMatch{
     }
 
     @Override
+    public long getNumberOfReportedAlignments() {
+        return numberOfReportedAlignments;
+    }
+
+    @Override
+    public long getNumberOfMatches() {
+        return numberOfMatches;
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getScore() {
+        return score;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result
-                + ((alignments == null) ? 0 : alignments.hashCode());
+                + ((alignment == null) ? 0 : alignment.hashCode());
         result = prime * result + (hasMatch ? 1231 : 1237);
-        result = prime * result + (hasMultipleAlignments ? 1231 : 1237);
-        result = prime * result + (hasMultipleMatches ? 1231 : 1237);
         result = prime * result + (isPartOfPair ? 1231 : 1237);
+        result = prime * result
+                + (int) (numberOfMatches ^ (numberOfMatches >>> 32));
+        result = prime * result + score;
         return result;
     }
 
@@ -115,26 +130,31 @@ public class DefaultCasMatch implements CasMatch{
             return false;
         }
         DefaultCasMatch other = (DefaultCasMatch) obj;
-        if (alignments == null) {
-            if (other.alignments != null) {
+        if (alignment == null) {
+            if (other.alignment != null) {
                 return false;
             }
-        } else if (!alignments.equals(other.alignments)) {
+        } else if (!alignment.equals(other.alignment)) {
             return false;
         }
         if (hasMatch != other.hasMatch) {
             return false;
         }
-        if (hasMultipleAlignments != other.hasMultipleAlignments) {
-            return false;
-        }
-        if (hasMultipleMatches != other.hasMultipleMatches) {
-            return false;
-        }
         if (isPartOfPair != other.isPartOfPair) {
+            return false;
+        }
+        if (numberOfMatches != other.numberOfMatches) {
+            return false;
+        }
+        if (score != other.score) {
             return false;
         }
         return true;
     }
+
+    
+   
+
+  
 
 }
