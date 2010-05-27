@@ -122,7 +122,8 @@ public class Cas2Consed {
         options.addOption(new CommandLineOptionBuilder("s", "cache size ( default "+DEFAULT_CACHE_SIZE +" )")  
                                 .longName("cache_size")
                                         .build());
-        
+        options.addOption(new CommandLineOptionBuilder("coverage_trim", "perform additional contig ends trimming based on coverage.  The value of coverage_trim is the min level coverage required at ends.")                                
+                            .build());
         CommandLine commandLine;
         try {
             commandLine = CommandLineUtils.parseCommandLine(options, args);
@@ -145,6 +146,10 @@ public class Cas2Consed {
                 trimToUntrimmedMap = new DefaultTrimFileCasTrimMap(new File(commandLine.getOptionValue("trimMap")));
             }else{
                 trimToUntrimmedMap = EmptyCasTrimMap.getInstance();
+            }
+            Integer minCoverageAtEnds=null;
+            if(commandLine.hasOption("coverage_trim")){
+                minCoverageAtEnds = Integer.parseInt(commandLine.getOptionValue("coverage_trim"));
             }
             TraceDataStore<FileSangerTrace> sangerTraceDataStore=null;
             Map<String, File> sangerFileMap = null;

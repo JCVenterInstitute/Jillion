@@ -58,6 +58,7 @@ import org.jcvi.datastore.DefaultContigFileDataStore;
 import org.jcvi.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.fasta.LargeQualityFastaFileDataStore;
 import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
@@ -140,8 +141,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
     private Range computeNewValidRange(DataStore<EncodedGlyphs<PhredQuality>> qualityMap, R read, Range oldValidRange,int gappedValidRangeIndex) throws DataStoreException {
         final EncodedGlyphs<PhredQuality> qualityValues = qualityMap.get(read.getId());
 
-        int gappedTrimIndex = computeGappedTrimIndex(read,
-                gappedValidRangeIndex);
+        int gappedTrimIndex = computeGappedTrimIndex(read,gappedValidRangeIndex);
      
         int fullRangeIndex = AssemblyUtil.convertToUngappedFullRangeIndex(read,(int)qualityValues.getLength(), gappedTrimIndex);
         // need to +1 passed fullRangeIndex to trim off snp for non-gaps
@@ -177,11 +177,12 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
     private int computeGappedTrimIndex(R read,
             int gappedValidRangeIndex) {
         int gappedTrimIndex;
+        final NucleotideEncodedGlyphs encodedGlyphs = read.getEncodedGlyphs();
         if (read.getSequenceDirection() == SequenceDirection.FORWARD) {
-            gappedTrimIndex = AssemblyUtil.getRightFlankingNonGapIndex(read.getEncodedGlyphs(),
+            gappedTrimIndex = AssemblyUtil.getRightFlankingNonGapIndex(encodedGlyphs,
                     gappedValidRangeIndex);
         } else {
-            gappedTrimIndex = AssemblyUtil.getLeftFlankingNonGapIndex(read.getEncodedGlyphs(),
+            gappedTrimIndex = AssemblyUtil.getLeftFlankingNonGapIndex(encodedGlyphs,
                     gappedValidRangeIndex);
         }
         return gappedTrimIndex;

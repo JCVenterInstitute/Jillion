@@ -16,25 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jun 22, 2009
- *
- * @author dkatzel
- */
-package org.jcvi;
+
+package org.jcvi.assembly.ace.consed;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
 /**
- * {@code Builder} is an interface for the 
- * Builder Pattern.
- * @param <T> the Type of object this Builder will build.
  * @author dkatzel
  *
  *
  */
-public interface Builder<T> {
-    /**
-     * Create a new instance using the data collected
-     * by this builder thus far.
-     * @return a new instance of T.
-     */
-    T build();
+@RunWith(Suite.class)
+@SuiteClasses(
+    {
+        TestConsedUtil.class,
+        TestConsedUtil_Split0x.class
+    }
+    )
+public class AllConsedUnitTests {
+
 }

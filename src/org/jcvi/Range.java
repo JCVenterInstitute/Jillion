@@ -694,14 +694,16 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
                Math.max(this.getEnd(), target.getEnd())),};
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
+    /**
+     * Returns a String represenatation of this Range in local coordinates.
+     * The actual format is {@code [localStart - localEnd]/systemAbbreviatedName}
      */
     @Override
     public String toString()
     {
-        return "[ " + this.getLocalStart() + " - " + this.getLocalEnd() + " ]/"
-            + getRangeCoordinateSystem().getAbbreviatedName();
+        return String.format("[ %d - %d ]/%s", 
+                this.getLocalStart() ,this.getLocalEnd() ,
+            getRangeCoordinateSystem().getAbbreviatedName());
     }
   
     

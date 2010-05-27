@@ -24,6 +24,7 @@
 package org.jcvi.assembly.ace;
 
 
+import org.jcvi.assembly.ace.consed.AllConsedUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -42,7 +43,9 @@ import org.junit.runners.Suite.SuiteClasses;
        TestOntheFlyAceBestSegmentMap.class,
        TestAcePlacedReadAdapter.class,
        TestDefaultAceFileTagMap.class,
-       TestAceFileWriter.class
+       TestAceFileWriter.class,
+       
+       AllConsedUnitTests.class
     }
 )
 public class AllAceUnitTests {
