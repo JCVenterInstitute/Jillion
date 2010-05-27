@@ -78,6 +78,21 @@ public class ConsedUtil {
     public static String convertContigGapstoAceGaps(String basecallsWithAceGaps) {
         return basecallsWithAceGaps.replace('-', '*');
     }
+    /**
+     * Split a contig which may contain zero coverage areas (0x)
+     * into multiple contigs which all have at least some coverage at every
+     * location.  If the given contig is split, the new contigs will be named
+     * {@code <original_id>_<ungapped reference 1-based start>_<ungapped reference 1-based end>}
+     * <p/>
+     * Some Assemblers (mostly reference assemblers) create contigs with zero coverage
+     * regions (0x) but that have the reference basecalls as the consensus in those 
+     * areas. This method removes the parts of the contig which only have consensus. 
+     * @param contig an {@link AceContig} that may have 0x regions.  Can not be null.
+     * @param coverageMap the coverage map that corresponds to the given contig.
+     * @return a list of (possibly new) AceContigs of the broken given contig.  
+     * If there are no 0x regions in the given contig, then a list containing
+     * only the reference of the given contig is returned.
+     */
     public static List<AceContig> split0xContig(AceContig contig, CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap){
         List<Range> coveredRegions = new ArrayList<Range>();
         for(CoverageRegion region : coverageMap){
@@ -105,8 +120,10 @@ public class ConsedUtil {
                 }
             }
             String contigConsensus =NucleotideGlyph.convertToString(consensus.decode(contigRange));
+            //id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
             String contigId = String.format("%s_%d_%d",originalContigId, 
-                    contigRange.getLocalStart(), contigRange.getLocalEnd());
+                    consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getStart())+1,
+                    consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getEnd())+1);
             DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contigId, contigConsensus);
             
             for(String readId : contigReads){
@@ -115,6 +132,7 @@ public class ConsedUtil {
                     throw new NullPointerException("got a null read for id " + readId);
                 }
                 AcePlacedRead read = placedReadById.getRealPlacedRead();
+                //Range readRange = Range.buildRange(read.getStart(), read.getEnd()).union(target);
                 builder.addRead(readId, 
                         NucleotideGlyph.convertToString(read.getEncodedGlyphs().decode()), 
                         (int)(read.getStart() - contigRange.getStart()), 
@@ -124,19 +142,37 @@ public class ConsedUtil {
         }
         return newContigs;
     }
-    
+    /**
+     * Checks to see if the given {@link ConsensusAceTag} is denotes
+     * that the contig has been renamed.
+     * @param consensusTag the tag to check.
+     * @return {@code true} if this tag denotes a contig rename; {@code false}
+     * otherwise.
+     * @throw {@link NullPointerException} if consensusTag is null.
+     */
     public static boolean isContigRename(ConsensusAceTag consensusTag){
         return consensusTag.getType().equals("contigName");
     }
-    public static String getRenamedContigId(ConsensusAceTag consensusTag){
-        if(!isContigRename(consensusTag)){
+    /**
+     * Get the new name this contig should be named according to the given
+     * rename tag.
+     * @param contigRenameTag a {@link ConsensusAceTag} that denotes
+     * the contig has been renamed.
+     * @return the new name that the contig should be renamed to.
+     * @throws NullPointerException if contigRenameTag is null.
+     * @throws IllegalArgumentException if the given tag is not a contig rename
+     * tag or if the tag text does not match the known pattern for 
+     * contig renames.
+     */
+    public static String getRenamedContigId(ConsensusAceTag contigRenameTag){
+        if(!isContigRename(contigRenameTag)){
             throw new IllegalArgumentException("not a contig rename");
         }
-        String data= consensusTag.getData();
+        String data= contigRenameTag.getData();
         Matcher matcher = CONTIG_RENAME_PATTERN.matcher(data);
         if(matcher.find()){
             return matcher.group(1);
         }
-        throw new IllegalArgumentException("consensus tag does not contain rename info : "+consensusTag);
+        throw new IllegalArgumentException("consensus tag does not contain rename info : "+contigRenameTag);
     }
 }

@@ -55,13 +55,10 @@ public final class CommonUtil {
      */
     public static <T> boolean similarTo(T first, T second){
         if (first == null) {
-            if (second != null){
-                return false;
-            }
-        } else if (!first.equals(second)){
-            return false;
-        }
-        return true;
+            return second == null;
+        } 
+        return first.equals(second);
+     
     }
     /**
      * Checks to see if both parameters are null.
@@ -83,14 +80,24 @@ public final class CommonUtil {
         return (first ==null && second!=null)
                 || (first !=null && second==null);
     }
-    
+    /**
+     * Computes the hashcode of the given object with support for null objects.
+     * @param obj (can be null) the object to compute the hashcode for.
+     * @return the hashcode of the object; or {@code 0} if obj is null.
+     */
     public static int hashCode(Object obj){
         if(obj ==null){
             return 0;
         }
         return obj.hashCode();
     }
-    
+    /**
+     * Checks to make sure the given obj is not null.
+     * @param obj the object to check.
+     * @param errorMessage the error message to report if the object  IS null.
+     * @throws NullPointerException if obj is null, the error message
+     * is the given message.
+     */
     public static void cannotBeNull(Object obj, String errorMessage){
         if(obj ==null){
             throw new NullPointerException(errorMessage);
