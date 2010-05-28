@@ -43,7 +43,7 @@ import org.jcvi.fasta.fastq.FastQFileParser;
 import org.jcvi.fasta.fastq.FastQQualityCodec;
 import org.jcvi.fasta.fastq.FastQRecord;
 import org.jcvi.fasta.fastq.SangerFastQQualityCodec;
-import org.jcvi.fasta.fastq.SolexaFastQQualityCodec;
+import org.jcvi.fasta.fastq.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -184,7 +184,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
             if(commandLine.hasOption("sanger")){
                 fastqQualityCodec = new SangerFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
             }else{
-                fastqQualityCodec = new SolexaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
+                fastqQualityCodec = new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
             }
             Fastq2Fasta fastq2Fasta = new Fastq2Fasta(filter, fastqQualityCodec, seqOut, qualOut);
             

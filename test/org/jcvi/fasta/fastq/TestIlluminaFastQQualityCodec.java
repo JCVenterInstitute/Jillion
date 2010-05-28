@@ -37,7 +37,7 @@ import org.junit.runners.Parameterized.Parameters;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 @RunWith(Parameterized.class)
-public class TestSolexaFastQQualityCodec {
+public class TestIlluminaFastQQualityCodec {
     @Parameters
     public static Collection<?> data(){
         List<Object[]> data = new ArrayList<Object[]>();
@@ -52,9 +52,9 @@ public class TestSolexaFastQQualityCodec {
     private PhredQuality quality;
     private char encodedQuality;
     private GlyphCodec<PhredQuality> qualityCodec= createMock(GlyphCodec.class);
-    private SolexaFastQQualityCodec sut = new SolexaFastQQualityCodec(qualityCodec);
+    private IlluminaFastQQualityCodec sut = new IlluminaFastQQualityCodec(qualityCodec);
     
-    public TestSolexaFastQQualityCodec(PhredQuality quality,char encodedQuality ){
+    public TestIlluminaFastQQualityCodec(PhredQuality quality,char encodedQuality ){
         this.quality = quality;
         this.encodedQuality = encodedQuality;
     }

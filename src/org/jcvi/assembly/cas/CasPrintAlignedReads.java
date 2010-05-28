@@ -43,7 +43,7 @@ import org.jcvi.assembly.cas.read.MultiCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.DefaultSffCasDataStoreFactory;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.fastq.SolexaFastQQualityCodec;
+import org.jcvi.fasta.fastq.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -234,7 +234,7 @@ public class CasPrintAlignedReads extends AbstractOnePassCasFileVisitor{
         MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                 new DefaultSffCasDataStoreFactory(),
                 new FastaCasDataStoreFactory(EmptyCasTrimMap.getInstance(),cacheSize),
-                new FastQCasDataStoreFactory(new SolexaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE), cacheSize)
+                new FastQCasDataStoreFactory(new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE), cacheSize)
                 );
         AbstractDefaultCasFileLookup readIdLookup = new DefaultReadCasFileLookup();
         AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup();

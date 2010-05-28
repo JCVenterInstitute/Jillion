@@ -39,7 +39,7 @@ import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 
 public abstract class AbstractTestFastQFileDataStore {
-    static final SolexaFastQQualityCodec QUALITY_CODEC = new SolexaFastQQualityCodec(
+    static final IlluminaFastQQualityCodec QUALITY_CODEC = new IlluminaFastQQualityCodec(
             new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE));
     FastQFileVisitor sut = new DefaultFastQFileDataStore(QUALITY_CODEC);
     String file = "files/example.fastq";
