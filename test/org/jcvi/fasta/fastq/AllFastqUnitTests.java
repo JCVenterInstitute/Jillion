@@ -32,7 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestSangerFastQQualityCodec.class,
-        TestSolexaFastQQualityCodec.class,
+        TestIlluminaFastQQualityCodec.class,
         TestSangerFastQQualityCodecActual.class,
         TestDefaultFastQFileDataStore.class,
         TestLargeFastQFileDataStore.class,

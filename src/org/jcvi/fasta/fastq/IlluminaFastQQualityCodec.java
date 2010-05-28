@@ -26,15 +26,15 @@ package org.jcvi.fasta.fastq;
 import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 /**
- * {@code SolexaFastQQualityCodec} supports Solexa 1.3+
+ * {@code SolexaFastQQualityCodec} supports Illumina (Solexa 1.3+)
  * FastQ format.
  * @author dkatzel
  *
  *
  */
-public class SolexaFastQQualityCodec extends AbstractFastQQualityCodec{
+public class IlluminaFastQQualityCodec extends AbstractFastQQualityCodec{
 
-    public SolexaFastQQualityCodec(GlyphCodec<PhredQuality> qualityCodec) {
+    public IlluminaFastQQualityCodec(GlyphCodec<PhredQuality> qualityCodec) {
         super(qualityCodec);
     }
 

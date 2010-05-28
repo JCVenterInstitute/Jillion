@@ -49,7 +49,7 @@ import org.jcvi.assembly.util.TrimDataStore;
 import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.cli.CommandLineUtils;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.fasta.fastq.SolexaFastQQualityCodec;
+import org.jcvi.fasta.fastq.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -158,7 +158,7 @@ public class CasSNPMatrix {
             File variationsFile = new File(commandLine.getOptionValue("v"));
             DefaultVariationLogFile  varaintMap = new DefaultVariationLogFile(variationsFile);
                
-            final SolexaFastQQualityCodec solexaQualityCodec = new SolexaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
+            final IlluminaFastQQualityCodec solexaQualityCodec = new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
             MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                     new H2SffCasDataStoreFactory(DirectoryFileServer.createTemporaryDirectoryFileServer(new File("/usr/local/scratch/dkatzel/"))),               
                     new H2FastQCasDataStoreFactory(solexaQualityCodec),
