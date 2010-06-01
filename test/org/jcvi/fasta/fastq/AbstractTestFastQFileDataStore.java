@@ -31,6 +31,7 @@ import java.io.IOException;
 import org.jcvi.CommonUtil;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;

@@ -16,28 +16,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Sep 18, 2008
- *
- * @author dkatzel
- */
-package org.jcvi.trace;
 
-import org.jcvi.trace.fourFiveFour.All454UnitTests;
-import org.jcvi.trace.frg.AllFrgUnitTests;
-import org.jcvi.trace.sanger.AllSangerTraceUnitTests;
+package org.jcvi.fasta.fastq.illumina;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+
+/**
+ * @author dkatzel
+ *
+ *
+ */
 @RunWith(Suite.class)
 @SuiteClasses(
-    {    
-        All454UnitTests.class,
-        AllSangerTraceUnitTests.class,
-        AllFrgUnitTests.class,
-        TestDefaultTraceFileNameIdGeneratorStripExtension.class
+    {
+      TestIlluminaFastQQualityCodec.class
     }
     )
-public class AllTraceUnitTests {
+public class AllIlluminaUnitTests {
 
 }

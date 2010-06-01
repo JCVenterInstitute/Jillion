@@ -21,12 +21,13 @@
  *
  * @author dkatzel
  */
-package org.jcvi.fasta.fastq;
+package org.jcvi.fasta.fastq.illumina;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.junit.Test;

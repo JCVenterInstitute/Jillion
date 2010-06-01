@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jcvi.datastore.CachedDataStore;
-import org.jcvi.datastore.DataStore;
+import org.jcvi.fasta.fastq.FastQDataStore;
 import org.jcvi.fasta.fastq.FastQNucleotideDataStoreAdapter;
 import org.jcvi.fasta.fastq.FastQQualitiesDataStoreAdapter;
 import org.jcvi.fasta.fastq.FastQQualityCodec;
@@ -38,44 +38,49 @@ import org.jcvi.fasta.fastq.LargeFastQFileDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 
-public class FastQCasDataStoreFactory implements
-CasDataStoreFactory {
+public class FastQCasDataStoreFactory extends AbstractCasDataStoreFactory {
     private final int cacheSize;
-    private final Map<String, DataStore<FastQRecord>> fastQDataStores = new HashMap<String, DataStore<FastQRecord>>();
+    private final Map<File, FastQDataStore<FastQRecord>> fastQDataStores = new HashMap<File, FastQDataStore<FastQRecord>>();
     private final FastQQualityCodec quailtyCodec;
     /**
      * @param cacheSize
      */
     public FastQCasDataStoreFactory(FastQQualityCodec quailtyCodec, int cacheSize) {
+       this(null, quailtyCodec,cacheSize);
+    }
+    /**
+     * @param cacheSize
+     */
+    public FastQCasDataStoreFactory(File workingDir,FastQQualityCodec quailtyCodec, int cacheSize) {
+        super(workingDir);
         this.cacheSize = cacheSize;
         this.quailtyCodec = quailtyCodec;
     }
-
     @Override
     public synchronized NucleotideDataStore getNucleotideDataStoreFor(
-            String pathToDataStore) throws CasDataStoreFactoryException {
-        addDataStoreIfNeeded(pathToDataStore);
-        return new FastQNucleotideDataStoreAdapter(fastQDataStores.get(pathToDataStore));
+            File fastq) throws CasDataStoreFactoryException {
+        addDataStoreIfNeeded(fastq);
+        return new FastQNucleotideDataStoreAdapter(fastQDataStores.get(fastq));
     }
-    private void addDataStoreIfNeeded(String pathToDataStore) throws CasDataStoreFactoryException{
-        if(!fastQDataStores.containsKey(pathToDataStore)){ 
-            if(!"fastq".equals(FilenameUtils.getExtension(pathToDataStore))){
+    private void addDataStoreIfNeeded(File fastq) throws CasDataStoreFactoryException{
+        if(!fastQDataStores.containsKey(fastq)){ 
+            if(!"fastq".equals(FilenameUtils.getExtension(fastq.getName()))){
                 throw new CasDataStoreFactoryException("not a fastq file");
             }
-            DataStore<FastQRecord> dataStore = new LargeFastQFileDataStore(new File(pathToDataStore),quailtyCodec );
+            FastQDataStore<FastQRecord> dataStore = new LargeFastQFileDataStore(fastq,quailtyCodec );
             
-            DataStore<FastQRecord> cachedDataStore = CachedDataStore.createCachedDataStore(
-                    DataStore.class,
+            FastQDataStore<FastQRecord> cachedDataStore = CachedDataStore.createCachedDataStore(
+                    FastQDataStore.class,
                     dataStore,
                     cacheSize);
-            fastQDataStores.put(pathToDataStore, cachedDataStore);
+            fastQDataStores.put(fastq, cachedDataStore);
         }
     }
     @Override
     public synchronized QualityDataStore getQualityDataStoreFor(
-            String pathToDataStore) throws CasDataStoreFactoryException {
-        addDataStoreIfNeeded(pathToDataStore);
-        return new FastQQualitiesDataStoreAdapter(fastQDataStores.get(pathToDataStore));
+            File fastq) throws CasDataStoreFactoryException {
+        addDataStoreIfNeeded(fastq);
+        return new FastQQualitiesDataStoreAdapter(fastQDataStores.get(fastq));
     }
 
 }

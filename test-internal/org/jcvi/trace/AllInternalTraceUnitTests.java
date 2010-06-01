@@ -16,37 +16,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Oct 9, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.fasta.fastq;
 
-import org.jcvi.glyph.GlyphCodec;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-/**
- * {@code SolexaFastQQualityCodec} supports Illumina (Solexa 1.3+)
- * FastQ format.
- * @author dkatzel
- *
- *
- */
-public class IlluminaFastQQualityCodec extends AbstractFastQQualityCodec{
+package org.jcvi.trace;
+import org.jcvi.trace.sanger.traceFileServer.AllJcviTraceFileServerUnitTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-    public IlluminaFastQQualityCodec(GlyphCodec<PhredQuality> qualityCodec) {
-        super(qualityCodec);
+@RunWith(Suite.class)
+@SuiteClasses(
+    {    
+        
+        TestFakeTigrSeqnameMatedComputeLibraryLetter.class,
+        TestFakeTigrSeqnameWellPosition.class,
+        TestFakeTigrSeqnameMatedTraceIdGeneratorcomputeTigrSeqnamePrefix.class,
+        
+        AllJcviTraceFileServerUnitTests.class
     }
-
-    @Override
-    protected PhredQuality decode(char encodedQuality) {
-        return PhredQuality.valueOf(encodedQuality -64);
-    }
-
-    @Override
-    protected char encode(PhredQuality quality) {
-        return (char)(quality.getNumber().intValue()+64);
-    }
-    
+    )
+public class AllInternalTraceUnitTests {
 
 }

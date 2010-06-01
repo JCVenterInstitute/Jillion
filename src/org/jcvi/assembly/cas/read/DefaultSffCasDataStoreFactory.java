@@ -23,6 +23,7 @@
  */
 package org.jcvi.assembly.cas.read;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -37,42 +38,50 @@ import org.jcvi.trace.fourFiveFour.flowgram.sff.QualitySffDataStore;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffDataStore;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffParser;
 
-public class DefaultSffCasDataStoreFactory  implements
-                        CasDataStoreFactory {
+public class DefaultSffCasDataStoreFactory  extends
+                        AbstractCasDataStoreFactory {
 
-    private final Map<String, SffDataStore> sffDataStores = new HashMap<String, SffDataStore>();
+    private final Map<File, SffDataStore> sffDataStores = new HashMap<File, SffDataStore>();
 
-
+    /**
+     * @param workingDir
+     */
+    public DefaultSffCasDataStoreFactory(File workingDir) {
+        super(workingDir);
+    }
+    public DefaultSffCasDataStoreFactory() {
+        this(null);
+    }
     @Override
     public synchronized NucleotideDataStore getNucleotideDataStoreFor(
-            String pathToDataStore) throws CasDataStoreFactoryException {
+            File sffFile) throws CasDataStoreFactoryException {
         
-        addDataStoreIfNeeded(pathToDataStore);
-        return new DefaultNucleotideSffDataStore(sffDataStores.get(pathToDataStore));
+        addDataStoreIfNeeded(sffFile);
+        return new DefaultNucleotideSffDataStore(sffDataStores.get(sffFile));
     }
 
-    private void addDataStoreIfNeeded(String pathToDataStore)
+    private void addDataStoreIfNeeded(File sffFile)
             throws CasDataStoreFactoryException {
-        if(!sffDataStores.containsKey(pathToDataStore)){            
-            SffDataStore dataStore = parseSffDataStore(pathToDataStore);
-            sffDataStores.put(pathToDataStore, dataStore);
+        if(!sffDataStores.containsKey(sffFile)){            
+            SffDataStore dataStore = parseSffDataStore(sffFile);
+            sffDataStores.put(sffFile, dataStore);
         }
     }
 
     @Override
     public synchronized QualityDataStore getQualityDataStoreFor(
-            String pathToDataStore) throws CasDataStoreFactoryException {
-        addDataStoreIfNeeded(pathToDataStore);
-        return new QualitySffDataStore(sffDataStores.get(pathToDataStore));
+            File sffFile) throws CasDataStoreFactoryException {
+        addDataStoreIfNeeded(sffFile);
+        return new QualitySffDataStore(sffDataStores.get(sffFile));
     }
 
-    private SffDataStore parseSffDataStore(String pathToDataStore)
+    private SffDataStore parseSffDataStore(File sffFile)
             throws CasDataStoreFactoryException {
         DefaultSffFileDataStore dataStore =new DefaultSffFileDataStore(
                     RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
         InputStream in = null;
         try {
-            in = new FileInputStream(pathToDataStore);
+            in = new FileInputStream(sffFile);
             SffParser.parseSFF(in, dataStore);
            
         } catch (Exception e) {
@@ -83,6 +92,8 @@ public class DefaultSffCasDataStoreFactory  implements
         }
         return dataStore;
     }
+
+   
 
 
 }

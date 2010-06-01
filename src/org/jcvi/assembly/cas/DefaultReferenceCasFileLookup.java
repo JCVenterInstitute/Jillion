@@ -23,7 +23,39 @@
  */
 package org.jcvi.assembly.cas;
 
+import java.io.File;
+
 public class DefaultReferenceCasFileLookup extends AbstractDefaultCasFileLookup{
+
+    /**
+     * 
+     */
+    public DefaultReferenceCasFileLookup() {
+        super();
+    }
+
+    /**
+     * @param trimToUntrimmedMap
+     * @param workingDir
+     */
+    public DefaultReferenceCasFileLookup(CasTrimMap trimToUntrimmedMap,
+            File workingDir) {
+        super(trimToUntrimmedMap, workingDir);
+    }
+
+    /**
+     * @param trimToUntrimmedMap
+     */
+    public DefaultReferenceCasFileLookup(CasTrimMap trimToUntrimmedMap) {
+        super(trimToUntrimmedMap);
+    }
+
+    /**
+     * @param workingDir
+     */
+    public DefaultReferenceCasFileLookup(File workingDir) {
+        super(workingDir);
+    }
 
     @Override
     public void visitContigFileInfo(CasFileInfo contigFileInfo) {

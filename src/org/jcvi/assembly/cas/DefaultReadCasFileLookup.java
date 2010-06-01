@@ -23,6 +23,8 @@
  */
 package org.jcvi.assembly.cas;
 
+import java.io.File;
+
 
 public class DefaultReadCasFileLookup extends AbstractDefaultCasFileLookup{
 
@@ -31,6 +33,22 @@ public class DefaultReadCasFileLookup extends AbstractDefaultCasFileLookup{
      */
     public DefaultReadCasFileLookup() {
         super();
+    }
+
+    /**
+     * @param trimToUntrimmedMap
+     * @param workingDir
+     */
+    public DefaultReadCasFileLookup(CasTrimMap trimToUntrimmedMap,
+            File workingDir) {
+        super(trimToUntrimmedMap, workingDir);
+    }
+
+    /**
+     * @param workingDir
+     */
+    public DefaultReadCasFileLookup(File workingDir) {
+        super(workingDir);
     }
 
     /**

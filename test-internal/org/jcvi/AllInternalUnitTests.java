@@ -21,7 +21,7 @@ package org.jcvi;
 
 import org.jcvi.assembly.contig.AllInternalContigUnitTests;
 import org.jcvi.assembly.tasm.AllTasmUnitTests;
-import org.jcvi.trace.sanger.traceFileServer.AllJcviTraceFileServerUnitTests;
+import org.jcvi.trace.AllInternalTraceUnitTests;
 import org.jcvi.uid.AllUidUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -37,7 +37,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         AllInternalContigUnitTests.class,
         AllTasmUnitTests.class,
-        AllJcviTraceFileServerUnitTests.class,
+        AllInternalTraceUnitTests.class,
         AllUidUnitTests.class
     }
     )

@@ -111,6 +111,7 @@ public class DefaultCasAssembly implements CasAssembly{
         private final CasDataStoreFactory casDataStoreFactory;
         private final TrimDataStore externalTrimDataStore;
         private final CasTrimMap trimToUntrimmedMap;
+        private final File workingDir;
         /**
          * @param casFile
          * @param casDataStoreFactory
@@ -118,17 +119,20 @@ public class DefaultCasAssembly implements CasAssembly{
          * @param sliceMapFactory
          * @param solexaQualityCodec
          */
-        public Builder(File casFile, CasDataStoreFactory casDataStoreFactory,TrimDataStore externalTrimDataStore,CasTrimMap trimToUntrimmedMap) {
+        public Builder(File casFile, CasDataStoreFactory casDataStoreFactory,TrimDataStore externalTrimDataStore,CasTrimMap trimToUntrimmedMap,File workingDir) {
             this.casFile = casFile;
             this.casDataStoreFactory = casDataStoreFactory;
             this.externalTrimDataStore = externalTrimDataStore;
             this.trimToUntrimmedMap = trimToUntrimmedMap;
+            this.workingDir = workingDir;
         }
-
+        public Builder(File casFile, CasDataStoreFactory casDataStoreFactory,TrimDataStore externalTrimDataStore,CasTrimMap trimToUntrimmedMap) {
+          this(casFile, casDataStoreFactory, externalTrimDataStore, trimToUntrimmedMap,null);
+        }
         @Override
         public DefaultCasAssembly build() {
-            AbstractDefaultCasFileLookup readIdLookup = new DefaultReadCasFileLookup(trimToUntrimmedMap);
-            AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup();
+            AbstractDefaultCasFileLookup readIdLookup = new DefaultReadCasFileLookup(trimToUntrimmedMap,workingDir);
+            AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup(workingDir);
             AbstractCasFileNucleotideDataStore nucleotideDataStore = new ReadCasFileNucleotideDataStore(casDataStoreFactory);
             AbstractCasFileNucleotideDataStore referenceNucleotideDataStore = new ReferenceCasFileNucleotideDataStore(casDataStoreFactory);
             

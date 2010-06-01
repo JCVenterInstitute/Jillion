@@ -89,5 +89,7 @@ public class ResourceFileServer extends AbstractFileServer {
         return clazz.getResource(convertFileIdToPath(fileId)) !=null;
     }
 
-    
+    public File getRootDir(){
+        return new File(clazz.getName().replaceAll(".", "/")).getParentFile();
+    }
 }
