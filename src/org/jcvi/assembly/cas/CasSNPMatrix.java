@@ -49,7 +49,7 @@ import org.jcvi.assembly.util.TrimDataStore;
 import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.cli.CommandLineUtils;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.fasta.fastq.IlluminaFastQQualityCodec;
+import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;

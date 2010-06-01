@@ -34,22 +34,26 @@ import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.H2NucleotideSffDataStore;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.H2QualitySffDataStore;
 
-public class H2SffCasDataStoreFactory implements CasDataStoreFactory{
+public class H2SffCasDataStoreFactory extends AbstractCasDataStoreFactory{
     private final ReadWriteDirectoryFileServer databaseFileServer;
     public H2SffCasDataStoreFactory(){
-        this(null);
+        this(null,null);
+    }
+    public H2SffCasDataStoreFactory(File workingDir){
+        this(workingDir,null);
     }
     public H2SffCasDataStoreFactory(ReadWriteDirectoryFileServer databaseFileServer){
+        this(null, databaseFileServer);
+    }
+    public H2SffCasDataStoreFactory(File workingDir,ReadWriteDirectoryFileServer databaseFileServer){
+        super(workingDir);
         this.databaseFileServer = databaseFileServer;
     }
     @Override
-    public NucleotideDataStore getNucleotideDataStoreFor(String pathToDataStore)
+    public NucleotideDataStore getNucleotideDataStoreFor(File sffFile)
             throws CasDataStoreFactoryException {       
-        if(!"sff".equals(FilenameUtils.getExtension(pathToDataStore))){
-            throw new CasDataStoreFactoryException("not a sff file");
-        }
+        checkForSffExtension(sffFile);
         try {
-            final File sffFile = new File(pathToDataStore);
             final H2NucleotideDataStore datastore;
             if(databaseFileServer==null){
                 datastore = new H2NucleotideDataStore();
@@ -60,22 +64,26 @@ public class H2SffCasDataStoreFactory implements CasDataStoreFactory{
             return new H2NucleotideSffDataStore(sffFile,  datastore);
             
         } catch (Exception e) {
-           throw new CasDataStoreFactoryException("could not create H2 Sff Nucleotide DataStore for "+ pathToDataStore,e);
+           throw new CasDataStoreFactoryException("could not create H2 Sff Nucleotide DataStore for "+ sffFile.getAbsolutePath(),e);
         } 
     }
 
     @Override
-    public QualityDataStore getQualityDataStoreFor(String pathToDataStore)
+    public QualityDataStore getQualityDataStoreFor(File sffFile)
             throws CasDataStoreFactoryException {
-        if(!"sff".equals(FilenameUtils.getExtension(pathToDataStore))){
-            throw new CasDataStoreFactoryException("not a sff file");
-        }
+        checkForSffExtension(sffFile);
         try {
-            return new H2QualitySffDataStore(new File(pathToDataStore), 
+            return new H2QualitySffDataStore(sffFile, 
                     new H2QualityDataStore());
         } catch (Exception e) {
-           throw new CasDataStoreFactoryException("could not create H2 Sff Quality DataStore for "+ pathToDataStore,e);
+           throw new CasDataStoreFactoryException("could not create H2 Sff Quality DataStore for "+ sffFile.getAbsolutePath(),e);
         } 
+    }
+    private void checkForSffExtension(File sffFile)
+            throws CasDataStoreFactoryException {
+        if(!"sff".equals(FilenameUtils.getExtension(sffFile.getName()))){
+            throw new CasDataStoreFactoryException("not a sff file");
+        }
     }
 
 }

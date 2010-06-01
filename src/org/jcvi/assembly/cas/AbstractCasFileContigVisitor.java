@@ -69,33 +69,35 @@ public abstract class AbstractCasFileContigVisitor extends AbstractOnePassCasFil
     @Override
     public synchronized void visitMatch(CasMatch match) {
         super.visitMatch(match);
-        String readId = readIdLookup.getLookupIdFor(readCounter);
-        CasAlignment alignment = match.getChosenAlignment();
-        long referenceId = alignment.contigSequenceId();
-        
-        DefaultCasPlacedReadFromCasAlignmentBuilder builder;
-        long ungappedStartOffset = alignment.getStartOfMatch();
-        final NucleotideEncodedGlyphs gappedReference = gappedReferenceMap.getGappedReferenceFor(referenceId);
-        long gappedStartOffset = gappedReference.convertUngappedValidRangeIndexToGappedValidRangeIndex((int)ungappedStartOffset);
-        try {
-            builder = new DefaultCasPlacedReadFromCasAlignmentBuilder(readId,
-                    nucleotideDataStore.get(readId),
-                    alignment.readIsReversed(),
-                    gappedStartOffset,
-                    validRangeDataStore.get(readId)
-                   );
-            List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
-            int lastIndex = regionsToConsider.size()-1;
-            if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
-                regionsToConsider.remove(lastIndex);
+        if(match.matchReported()){
+            String readId = readIdLookup.getLookupIdFor(readCounter);
+            CasAlignment alignment = match.getChosenAlignment();
+            long referenceId = alignment.contigSequenceId();
+            
+            DefaultCasPlacedReadFromCasAlignmentBuilder builder;
+            long ungappedStartOffset = alignment.getStartOfMatch();
+            final NucleotideEncodedGlyphs gappedReference = gappedReferenceMap.getGappedReferenceFor(referenceId);
+            long gappedStartOffset = gappedReference.convertUngappedValidRangeIndexToGappedValidRangeIndex((int)ungappedStartOffset);
+            try {
+                builder = new DefaultCasPlacedReadFromCasAlignmentBuilder(readId,
+                        nucleotideDataStore.get(readId),
+                        alignment.readIsReversed(),
+                        gappedStartOffset,
+                        validRangeDataStore.get(readId)
+                       );
+                List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
+                int lastIndex = regionsToConsider.size()-1;
+                if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
+                    regionsToConsider.remove(lastIndex);
+                }
+                builder.addAlignmentRegions(regionsToConsider,gappedReference);
+                
+                
+                final DefaultCasPlacedRead casPlacedRead = builder.build();
+                visitPlacedRead(referenceId,casPlacedRead);
+            } catch (DataStoreException e) {
+                throw new IllegalStateException("could not create read placement for "+ alignment, e);
             }
-            builder.addAlignmentRegions(regionsToConsider,gappedReference);
-            
-            
-            final DefaultCasPlacedRead casPlacedRead = builder.build();
-            visitPlacedRead(referenceId,casPlacedRead);
-        } catch (DataStoreException e) {
-            throw new IllegalStateException("could not create read placement for "+ alignment, e);
         }
         readCounter++;
     }

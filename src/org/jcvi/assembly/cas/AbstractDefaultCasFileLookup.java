@@ -54,16 +54,37 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
     private final List<File> files = new ArrayList<File>();
     private boolean initialized = false;
     private boolean closed =false;
-    
+    private final File workingDir;
     /**
-     * @param trimToUntrimmedMap
-     * @param initialized
+     * Create a new instance of {@link AbstractDefaultCasFileLookup}.
+     * Since Cas files use relative paths to specify the read and reference
+     * files, an optional workingDir parameter can be set.
+     * @param trimToUntrimmedMap the {@link CasTrimMap} to use to perform
+     * additional trimming to the reads.
+     * @param workingDir the working directory to read relative paths from 
+     * (can be null if should use current working directory).
+     */
+    public AbstractDefaultCasFileLookup(CasTrimMap trimToUntrimmedMap, File workingDir) {
+        this.trimToUntrimmedMap = trimToUntrimmedMap;
+        this.workingDir = workingDir;
+    }
+    /**
+     * Create a new instance of {@link AbstractDefaultCasFileLookup} Same as
+     * {@link #AbstractDefaultCasFileLookup(CasTrimMap,File) new AbstractDefaultCasFileLookup(trimToUntrimmedMap,null)}.
+     * @param trimToUntrimmedMap the {@link CasTrimMap} to use to perform
+     * additional trimming to the reads.
+     * @param workingDir the working directory to read relative paths from 
+     * (can be null if should use current working directory).
+     * @see #AbstractDefaultCasFileLookup(CasTrimMap, File)
      */
     public AbstractDefaultCasFileLookup(CasTrimMap trimToUntrimmedMap) {
-        this.trimToUntrimmedMap = trimToUntrimmedMap;
+       this(trimToUntrimmedMap,null);
     }
     public AbstractDefaultCasFileLookup(){
-        this(EmptyCasTrimMap.getInstance());
+        this((File)null);
+    }
+    public AbstractDefaultCasFileLookup(File workingDir){
+        this(EmptyCasTrimMap.getInstance(),workingDir);
     }
     protected synchronized void checkNotYetInitialized(){
         if(initialized){
@@ -83,7 +104,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         for(String filePath: casFileInfo.getFileNames()){
             try {
                 
-                final File file = new File(filePath);
+                final File file = new File(workingDir,filePath);
                 final File filetoParse = trimToUntrimmedMap.getUntrimmedFileFor(file);
                
                 files.add(filetoParse);
@@ -109,6 +130,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
             }
             else{
               //try as fasta...
+                System.out.println(file.getAbsolutePath());
                 in = new FileInputStream(file);
                 FastaParser.parseFasta(in, new FastaReadOrder(file));
                

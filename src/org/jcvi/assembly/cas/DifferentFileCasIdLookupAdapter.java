@@ -71,7 +71,8 @@ public class DifferentFileCasIdLookupAdapter implements CasIdLookup{
     public List<File> getFiles() {
         Set<File> files = new HashSet<File>();
         files.addAll(differentFileLookupMap.values());
-        for(int i=0; i<getNumberOfIds(); i++){
+        final int numberOfIds = getNumberOfIds();
+        for(int i=0; i<numberOfIds; i++){
             String id = getLookupIdFor(i);
             if(!differentFileLookupMap.containsKey(id)){
                 files.add(delegate.getFileFor(id));

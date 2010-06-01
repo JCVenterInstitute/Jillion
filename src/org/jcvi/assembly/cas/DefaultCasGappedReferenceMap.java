@@ -80,9 +80,13 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
     @Override
     public synchronized void visitMatch(CasMatch match) {
         super.visitMatch(match);
+        if(match.matchReported()){
         boolean outsideValidRange=true;
         
         CasAlignment alignment =match.getChosenAlignment();
+        if(alignment ==null){
+            System.out.println("here");
+        }
         Long referenceId = alignment.contigSequenceId();
         if(!gapsByReferenceId.containsKey(referenceId)){
             gapsByReferenceId.put(referenceId, new TreeMap<Long,Insertion>());
@@ -113,6 +117,7 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
                     currentOffset +=region.getLength();
                 }
             }
+        }
         }
     }
 

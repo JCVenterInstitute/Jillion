@@ -23,6 +23,7 @@
  */
 package org.jcvi.fasta.fastq;
 
+import org.jcvi.fasta.fastq.illumina.AllIlluminaUnitTests;
 import org.jcvi.fasta.fastq.util.AllFastQUtilUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -32,11 +33,12 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestSangerFastQQualityCodec.class,
-        TestIlluminaFastQQualityCodec.class,
         TestSangerFastQQualityCodecActual.class,
         TestDefaultFastQFileDataStore.class,
         TestLargeFastQFileDataStore.class,
-        AllFastQUtilUnitTests.class
+        AllIlluminaUnitTests.class,
+        AllFastQUtilUnitTests.class,
+        
     }
     )
 public class AllFastqUnitTests {

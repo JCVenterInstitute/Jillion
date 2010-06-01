@@ -72,7 +72,7 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
-import org.jcvi.fasta.fastq.IlluminaFastQQualityCodec;
+import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
@@ -192,10 +192,10 @@ public class Cas2Consed {
                        }
                    }
                }
-                final IlluminaFastQQualityCodec solexaQualityCodec = new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
+                final IlluminaFastQQualityCodec illuminaQualityCodec = new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
                 MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                         new H2SffCasDataStoreFactory(),               
-                        new H2FastQCasDataStoreFactory(solexaQualityCodec),
+                        new H2FastQCasDataStoreFactory(illuminaQualityCodec),
                         new FastaCasDataStoreFactory(trimToUntrimmedMap,cacheSize)        
                 );
                 
