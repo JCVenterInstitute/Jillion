@@ -45,6 +45,8 @@ import org.junit.runners.Suite.SuiteClasses;
        TestDefaultAceFileTagMap.class,
        TestAceFileWriter.class,
        
+       TestAceContigTrimmer.class,
+       
        AllConsedUnitTests.class
     }
 )

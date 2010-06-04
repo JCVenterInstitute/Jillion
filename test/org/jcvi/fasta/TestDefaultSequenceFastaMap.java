@@ -24,6 +24,7 @@
 package org.jcvi.fasta;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.datastore.DataStoreException;
@@ -32,9 +33,9 @@ import org.junit.Test;
 public class TestDefaultSequenceFastaMap extends AbstractTestSequenceFastaDataStore {
 
     @Test
-    public void parseStream() throws DataStoreException{
+    public void parseStream() throws DataStoreException, FileNotFoundException{
         DefaultNucleotideFastaFileDataStore sut = new DefaultNucleotideFastaFileDataStore();
-        FastaParser.parseFasta(getFileAsStream(),sut);
+        FastaParser.parseFasta(getFile(),sut);
         assertParsedCorrectly(sut);
     }
 

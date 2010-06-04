@@ -77,6 +77,10 @@ public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlaced
             return offset;
         }
        
+        public Builder setOffset(int newOffset){
+            this.offset = newOffset;
+            return this;
+        }
         
         public DefaultAcePlacedRead build(){
             Read read = new DefaultRead(readId, 

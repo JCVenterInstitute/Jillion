@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.contig.AbstractContig;
+import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
 import org.jcvi.sequence.DefaultRead;
@@ -44,11 +45,13 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
     }
     
     public static class Builder extends AbstractContigBuilder<PlacedRead, DefaultContig<PlacedRead>>{
-    
+        public Builder(String id, String consensus){
+           this(id, new DefaultNucleotideEncodedGlyphs(consensus));
+        }
         public Builder(String id, NucleotideEncodedGlyphs consensus){
             super(id,consensus);
         }
-        public void addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
+        public Builder addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
             
             if(offset <0){
                 SplitReferenceEncodedNucleotideGlyphs referenceEncodedGlyphs = new SplitReferenceEncodedNucleotideGlyphs(getConsensus(), basecalls,offset, validRange);
@@ -70,6 +73,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             else{
                 super.addRead(id, offset, validRange, basecalls, dir);
             }
+            return this;
             
         }
         @Override

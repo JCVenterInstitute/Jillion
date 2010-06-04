@@ -50,8 +50,8 @@ public abstract class AbstractEnocdedNucleotideGlyphs implements NucleotideEncod
     public long getUngappedLength(){
         return getLength() - getGapIndexes().size();
     }
-
-    private int computeNumberOfInclusiveGapsInGappedValidRangeUntil(int gappedValidRangeIndex) {
+    @Override
+    public int computeNumberOfInclusiveGapsInGappedValidRangeUntil(int gappedValidRangeIndex) {
         int numberOfGaps=0;
         for(Integer gapIndex :getGapIndexes()){
             if(gapIndex.intValue() <=gappedValidRangeIndex){
@@ -60,7 +60,8 @@ public abstract class AbstractEnocdedNucleotideGlyphs implements NucleotideEncod
         }
         return numberOfGaps;
     }
-    private int computeNumberOfInclusiveGapsInUngappedValidRangeUntil(int ungappedValidRangeIndex) {
+    @Override
+    public int computeNumberOfInclusiveGapsInUngappedValidRangeUntil(int ungappedValidRangeIndex) {
         int numberOfGaps=0;
         for(Integer gapIndex :getGapIndexes()){
             //need to account for extra length due to gaps being added to ungapped index
