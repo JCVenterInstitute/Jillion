@@ -25,7 +25,6 @@ package org.jcvi.fasta;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
@@ -140,9 +139,6 @@ public abstract class AbstractTestSequenceFastaDataStore {
     );
     protected File getFile() {
         return new File(AbstractTestSequenceFastaDataStore.class.getResource(FASTA_FILE_PATH).getFile());
-    }
-    protected InputStream getFileAsStream(){
-        return AbstractTestSequenceFastaDataStore.class.getResourceAsStream(FASTA_FILE_PATH);
     }
     
     @Test

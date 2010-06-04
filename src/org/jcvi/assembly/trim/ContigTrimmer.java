@@ -19,24 +19,19 @@
 
 package org.jcvi.assembly.trim;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.assembly.Contig;
+import org.jcvi.assembly.PlacedRead;
+import org.jcvi.assembly.coverage.CoverageMap;
+import org.jcvi.assembly.coverage.CoverageRegion;
+
 
 /**
  * @author dkatzel
  *
  *
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-    TestDefaultPrimerTrimmer.class,
-    TestDefaultPrimerTrimmer_ActualData.class,
-    TestLucyQualityTrimmer.class,
-    TestMinimumEndCoverageTrimmer.class,
-    TestMinimumBidirectionalEndCoverageTrimmer.class
-}
-)
-public class AllTrimUnitTests {
+public interface ContigTrimmer<P extends PlacedRead, C extends Contig<P>> {
 
+   
+    C trimContig(C contig,CoverageMap<CoverageRegion<P>> coverageMap) throws TrimmerException;
 }

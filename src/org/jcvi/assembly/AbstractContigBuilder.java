@@ -46,15 +46,16 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
             this.consensus = consensus;
             virtualReads = new HashSet<VirtualPlacedRead<P>>();
         }
-        public void addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
+        public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
             
             NucleotideEncodedGlyphs referenceEncoded = new DefaultReferencedEncodedNucleotideGlyph(consensus,basecalls, offset,validRange);
             final P actualPlacedRead = createPlacedRead(new DefaultRead(id, referenceEncoded), offset,dir );
             
-            addRead(new VirtualPlacedReadAdapter<P>(actualPlacedRead));
+            return addRead(new VirtualPlacedReadAdapter<P>(actualPlacedRead));
         }
-        protected <V extends VirtualPlacedRead<P>> void  addRead(V read){
+        protected <V extends VirtualPlacedRead<P>> AbstractContigBuilder<P,C>  addRead(V read){
             virtualReads.add(read);
+            return this;
         }
         protected abstract P createPlacedRead(Read<ReferencedEncodedNucleotideGlyphs> read, long offset, SequenceDirection dir);
         
@@ -63,6 +64,14 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
         }
         public String getId() {
             return id;
+        }
+        public AbstractContigBuilder<P,C> changeConsensus(NucleotideEncodedGlyphs newConsensus){
+            this.consensus = newConsensus;
+            return this;
+        }
+        public AbstractContigBuilder<P,C> setId(String id){
+            this.id = id;
+            return this;
         }
         public Set<VirtualPlacedRead<P>> getVirtualReads() {
             return virtualReads;

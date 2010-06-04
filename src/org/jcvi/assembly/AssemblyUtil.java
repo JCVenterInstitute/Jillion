@@ -30,14 +30,45 @@ import org.jcvi.Range;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
-
+/**
+ * {@code AssemblyUtil} is a utility class for working
+ * with {@link PlacedRead}s and gapped {@link NucleotideEncodedGlyphs}.
+ * @author dkatzel
+ *
+ *
+ */
 public final class AssemblyUtil {
 
     private AssemblyUtil(){}
-    
+    /**
+     * Create a List of {@link NucleotideGlyph}s that corresponds to the gapped full range
+     * (untrimmed, uncomplimented, gapped) version of the given PlacedRead.
+     * This method is equivalent to 
+     * {@link #buildGappedComplimentedFullRangeBases(NucleotideEncodedGlyphs, SequenceDirection, Range, List)
+     * buildGappedComplimentedFullRangeBases(placedRead.getEncodedGlyphs(), placedRead.getSequenceDirection(), placedRead.getValidRange(), ungappedUncomplimentedFullRangeBases)}
+     * @param <R> The PlacedRead Type.
+     * @param placedRead the read to work on.
+     * @param ungappedUncomplimentedFullRangeBases the ungapped uncomplimented
+     * full (raw) version of the basecalls as originally called from the sequencer.
+     * @return a new List of {@link NucleotideGlyph}s of the gapped, untrimmed uncomplimented
+     * basecalls of the given read.
+     * @see #buildGappedComplimentedFullRangeBases(NucleotideEncodedGlyphs, SequenceDirection, Range, List)
+     */
     public static <R extends PlacedRead> List<NucleotideGlyph> buildGappedComplimentedFullRangeBases(R placedRead, List<NucleotideGlyph> ungappedUncomplimentedFullRangeBases){
        return buildGappedComplimentedFullRangeBases(placedRead.getEncodedGlyphs(), placedRead.getSequenceDirection(), placedRead.getValidRange(), ungappedUncomplimentedFullRangeBases);
     }
+    /**
+     * Create a List of {@link NucleotideGlyph}s that corresponds to the gapped full range
+     * (untrimmed, uncomplimented, gapped) version of the given sequence.
+     * @param gappedValidRange the {@link Range} that corresponds to the gapped
+     * valid range of the read currently in an Assembly.
+     * @param dir the direction of the read in the Assembly.
+     * @param validRange the ungapped version of the valid range.
+     * @param ungappedUncomplimentedFullRangeBases the ungapped uncomplimented
+     * full (raw) version of the basecalls as originally called from the sequencer.
+     * @return a new List of {@link NucleotideGlyph}s of the gapped, untrimmed uncomplimented
+     * basecalls of the given read.
+     */
     public static List<NucleotideGlyph> buildGappedComplimentedFullRangeBases(NucleotideEncodedGlyphs gappedValidRange, SequenceDirection dir, Range validRange, List<NucleotideGlyph> ungappedUncomplimentedFullRangeBases){
         List<NucleotideGlyph> fullRangeComplimented;
         if(dir == SequenceDirection.REVERSE){
@@ -57,7 +88,12 @@ public final class AssemblyUtil {
         return gappedComplimentedFullRange;
     }
     
-    
+    /**
+     * Reverse Compliment the given validRange with regards to its fullLength.
+     * @param validRange the valid Range to reverseCompliment.
+     * @param fullLength the full length of the untrimmed basecalls.
+     * @return a new Range that corresponds to the reverse complimented valid range.
+     */
     public static Range reverseComplimentValidRange(Range validRange, long fullLength){
         if(fullLength < validRange.size()){
             throw new IllegalArgumentException(
@@ -67,7 +103,15 @@ public final class AssemblyUtil {
         long newEnd = fullLength - validRange.getStart()-1;
         return Range.buildRange(newStart, newEnd).convertRange(validRange.getRangeCoordinateSystem());
     }
-    
+    /**
+     * Convert the given gapped valid range index of a given read into its
+     * corresponding ungapped full length (untrimmed) equivalent.
+     * @param <R> The PlacedRead Type.
+     * @param placedRead the read
+     * @param fullLength
+     * @param gappedIndex
+     * @return
+     */
     public static <R extends PlacedRead> int convertToUngappedFullRangeIndex(R placedRead, int fullLength,int gappedIndex) {
         Range validRange = placedRead.getValidRange();
         return convertToUngappedFullRangeIndex(placedRead, fullLength,
@@ -75,7 +119,7 @@ public final class AssemblyUtil {
     }
 
 
-
+    
     public static <R extends PlacedRead> int convertToUngappedFullRangeIndex(R placedRead,
             int fullLength, int gappedIndex, Range validRange) {
         int ungappedValidRangeIndex = convertToUngappedValidRangeIndex(placedRead, gappedIndex);        

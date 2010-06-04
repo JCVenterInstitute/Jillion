@@ -72,6 +72,14 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
             this.contigId = contigId;
         }
         
+        public Builder setContigId(String contigId){
+            this.contigId = contigId;
+            return this;
+        }
+        public String getContigId() {
+            return contigId;
+        }
+
         public Builder logger(Logger logger){
             this.logger = logger;
             return this;
