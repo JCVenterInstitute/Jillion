@@ -206,7 +206,7 @@ public class AssemblyArchiveXMLWriter<T extends PlacedRead> {
      *
      */
     private static class TraceOrderComparator<T extends PlacedRead> implements Comparator<T>{
-        
+        private static final long serialVersionUID = 42L;
         @Override
         public int compare(T o1, T o2) {
             int startCoordinate = Long.valueOf(o1.getStart()).compareTo(o2.getStart());

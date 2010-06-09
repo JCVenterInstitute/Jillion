@@ -50,6 +50,7 @@ public class HttpMultipartFormStream
     /** The padding string which starts the multi-part separator. */
     private static final String SEPARATOR_PAD = "--------------------------";
     
+    private static final Random RANDOM_GENERATOR =new Random();
     /**
      * Generates a multi-part separator string.  This string consists of the
      * {@link #SEPARATOR_PAD} followed by a string of random characters.  This
@@ -59,7 +60,7 @@ public class HttpMultipartFormStream
      */
     private static String generateSeparator()
     {
-        return HttpMultipartFormStream.SEPARATOR_PAD + new Random().nextLong();
+        return HttpMultipartFormStream.SEPARATOR_PAD + RANDOM_GENERATOR.nextLong();
     }
 
     /** The character encoding to use for text elements in the request body. */

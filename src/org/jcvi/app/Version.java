@@ -220,15 +220,15 @@ public class Version implements Comparable<Version>
     public long getSerialNumber()
     {
         long serial = 0;
-        serial += this.codebaseVersion;
+        serial += (this.codebaseVersion & 0xff);
         serial <<= Version.SERIAL_FIELD_SIZE;
-        serial += this.apiVersion;
+        serial += (this.apiVersion & 0xff);
         serial <<= Version.SERIAL_FIELD_SIZE;
-        serial += this.patchVersion;
+        serial += (this.patchVersion & 0xff);
         serial <<= Version.SERIAL_FIELD_SIZE;
         serial += this.type.ordinal();
         serial <<= Version.SERIAL_FIELD_SIZE;
-        serial += this.releaseNumber;
+        serial += (this.releaseNumber & 0xff);
 
         return serial;
     }

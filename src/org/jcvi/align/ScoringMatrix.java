@@ -414,7 +414,7 @@ public class ScoringMatrix<G extends Glyph>
         out.print("---+-");
         for(int col = 0; col < this.colCount; col++)
         {
-            out.printf("----", col);
+            out.print("----");
         }
         out.println();
         

@@ -84,9 +84,6 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
         boolean outsideValidRange=true;
         
         CasAlignment alignment =match.getChosenAlignment();
-        if(alignment ==null){
-            System.out.println("here");
-        }
         Long referenceId = alignment.contigSequenceId();
         if(!gapsByReferenceId.containsKey(referenceId)){
             gapsByReferenceId.put(referenceId, new TreeMap<Long,Insertion>());
@@ -141,8 +138,8 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
     
     private String buildGappedReferenceAsString(String contigName, TreeMap<Long, Insertion> insertions) throws DataStoreException{
         NucleotideEncodedGlyphs contigBasecalls = referenceNucleotideDataStore.get(contigName);
-        Iterator<Long> gapIterator = insertions.keySet().iterator();
-        Long nextGap;
+        Iterator<Entry<Long, Insertion>> gapIterator = insertions.entrySet().iterator();
+        Entry<Long, Insertion> nextGap;
         if(gapIterator.hasNext()){
             nextGap = gapIterator.next();
         }
@@ -151,8 +148,8 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
         }
         StringBuilder builder = new StringBuilder();
         for(long currentOffset=0; currentOffset<contigBasecalls.getLength(); currentOffset++){
-            if(nextGap !=null && nextGap ==currentOffset){
-                Insertion insertion = insertions.get(nextGap);
+            if(nextGap !=null && nextGap.getKey() ==currentOffset){
+                Insertion insertion = nextGap.getValue();
                 for(int i=0; i< insertion.getSize(); i++){
                     builder.append("-");
                 }

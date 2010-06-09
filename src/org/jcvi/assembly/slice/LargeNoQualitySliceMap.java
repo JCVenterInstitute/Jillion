@@ -15,7 +15,7 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
 public class LargeNoQualitySliceMap extends LargeSliceMap{
-    public static PhredQuality DEFAULT_PHRED_QUALITY = PhredQuality.valueOf(0);
+    public static final PhredQuality DEFAULT_PHRED_QUALITY = PhredQuality.valueOf(0);
     private final PhredQuality phredQuality;
     
     public LargeNoQualitySliceMap(

@@ -151,7 +151,7 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
         
     }
     
-    private class SingleFastQDataStore extends DefaultFastQFileDataStore{
+    private static final class SingleFastQDataStore extends DefaultFastQFileDataStore{
 
         private final String idToLookFor;
         private boolean found=false;

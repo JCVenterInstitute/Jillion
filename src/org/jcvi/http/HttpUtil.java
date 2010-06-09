@@ -47,9 +47,9 @@ public final class HttpUtil {
     public static final char VALUE_SEPARATOR = '=';
     
     /** The separator character  o place between variables as a byte array*/
-    public static final byte[] VAR_SEPARATOR_BYTES = Character.toString(VAR_SEPARATOR).getBytes(ASCII);
+    static final byte[] VAR_SEPARATOR_BYTES = Character.toString(VAR_SEPARATOR).getBytes(ASCII);
     /** The separator character to place between variable names and their values as a byte array*/
-    public static final byte[] VALUE_SEPARATOR_BYTES = Character.toString(VALUE_SEPARATOR).getBytes(ASCII);
+    static final byte[] VALUE_SEPARATOR_BYTES = Character.toString(VALUE_SEPARATOR).getBytes(ASCII);
     /**
      * Java Property key which points the trust store to 
      * use for SSL Authentication.

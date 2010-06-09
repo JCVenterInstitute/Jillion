@@ -57,8 +57,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 public class CreatePhdBallFromAceFile implements AceFileVisitor{
-    private final byte lowQualValue =20;
-    private final byte highQualValue =30;
+    private static final byte lowQualValue =20;
+    private static final byte highQualValue =30;
     private final OutputStream out;
     private String currentLine;
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("EEE MMM dd kk:mm:ss yyyy");

@@ -33,7 +33,7 @@ import org.jcvi.glyph.RunLengthEncoder;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
 public class RunLengthEncodedGlyphCodec implements GlyphCodec<PhredQuality>{
-    public static RunLengthEncodedGlyphCodec DEFAULT_INSTANCE = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
+    public static final RunLengthEncodedGlyphCodec DEFAULT_INSTANCE = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
     
     private final byte guard;
 

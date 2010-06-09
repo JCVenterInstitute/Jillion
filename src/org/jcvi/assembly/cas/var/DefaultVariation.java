@@ -19,6 +19,7 @@
 
 package org.jcvi.assembly.cas.var;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,8 +170,9 @@ public class DefaultVariation implements Variation{
     public String toString(){
         StringBuilder variationList = new StringBuilder();
         for(NucleotideGlyph base : NucleotideGlyph.getGlyphsFor("ACGTN-")){
-            if(histogram.containsKey(base)){
-                variationList.append(String.format("\t%s: %d", base, histogram.get(base)));
+            final List<NucleotideGlyph> asList = Arrays.asList(base);
+            if(histogram.containsKey(asList)){
+                variationList.append(String.format("\t%s: %d", base, histogram.get(asList)));
             }
         }
         return String.format("%d %s %s -> %s%s",coordinate,type,reference,consensus, variationList.toString());
