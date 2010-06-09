@@ -8,6 +8,7 @@
 	<property name="src" value ="src"/>
 	<property name="src-internal" value ="src-internal"/>
 	<property name="test" value ="test"/>
+	<property name="test-internal" value ="test-internal"/>
 	<property name ="lib" value="lib"/>
 	<property name ="lib-internal" value="lib-internal"/>
 	<property name ="release" value ="release"/>
@@ -88,9 +89,11 @@
 		<!-- source already compiled so only compile tests -->
 		<javac debug="true" destdir="${bin}"  classpathref="classpath">
 					<src path="${test}"/>
+					<src path="${test-internal}"/>
 	  	</javac>
 		<copy todir="${bin}">
 			<fileset dir="${test}" excludes="**/*.java"/>
+			<fileset dir="${test-internal}" excludes="**/*.java"/>
 		</copy>
 
 	 </target>
@@ -103,6 +106,7 @@
 			<!-- debug = true required for emma reports to see line coverage and link to source-->
 			<javac debug="true" destdir="${bin}"  classpathref="classpath">
 				<src path="${src}"/>
+				<src path="${src-internal}"/>
 		  	</javac>
 			<emma enabled="${emma.enabled}" >
 								      <instr instrpath="${bin}"
@@ -113,6 +117,7 @@
 						  	    </emma>
 			<copy todir="${bin}">
 				<fileset dir="${src}" excludes="**/*.java"/>
+				<fileset dir="${src-internal}" excludes="**/*.java"/>
 			</copy>
 
 		 </target>
@@ -176,6 +181,12 @@
 				<formatter type="xml"/>
 				
 			  <test name="org.jcvi.AllUnitTests"/>
+				<classpath refid = "test.classpath" />
+			</junit>
+			<junit haltonfailure="yes" showoutput="yes">		
+				<formatter type="xml"/>
+				
+			  <test name="org.jcvi.AllInternalUnitTests"/>
 				<classpath refid = "test.classpath" />
 			</junit>
 		</target>

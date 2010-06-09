@@ -35,7 +35,7 @@ import org.junit.runners.Suite.SuiteClasses;
             TestDefaultQualityClassContigMap.class,
             TestDefaultContigQualityClassComputer.class,
             TestDefaultContigQualityClassComputerComputeQualityFromRegion.class,
-            
+            TestQualityClassRegion.class,
             AllTrimUnitTests.class
         }
         )

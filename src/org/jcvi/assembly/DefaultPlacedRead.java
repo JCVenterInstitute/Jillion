@@ -128,7 +128,7 @@ public class DefaultPlacedRead implements PlacedRead {
     }
     private void checkValidRange(long validRangeIndex) {
         if(validRangeIndex <0){
-            throw new IllegalArgumentException("reference index refers to index before valid range");
+            throw new IllegalArgumentException("reference index refers to index before valid range " + validRangeIndex);
         }
         if(validRangeIndex > getLength()-1){
             throw new IllegalArgumentException("reference index refers to index after valid range");

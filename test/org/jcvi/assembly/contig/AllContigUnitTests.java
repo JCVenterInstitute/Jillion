@@ -32,7 +32,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {  
         TestContigFileWriter.class,
-        TestQualityClassRegion.class,
         TestQualityDifference.class,
         TestDefaultHighQualityDifferenceContigMap.class,
         TestDefaultBasecallCount.class,

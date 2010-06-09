@@ -34,6 +34,10 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 
 /**
+ * {@code AbstractContigTrimmer} is an abstract implementation
+ * of {@link ContigTrimmer} that applies a series
+ * of {@link PlacedReadTrimmer}s to reads in a given contig
+ * to build a new trimmed version of that contig.
  * @author dkatzel
  *
  *
@@ -44,9 +48,17 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
     
     
     /**
-     * @param trimmers
+     * Construct a new {@link AbstractContigTrimmer} using the given read trimmers.
+     * These read trimmers will be executed in the order they are given so chain trimmers
+     * appropriately.
+     * @param trimmers a non-null list of read trimmers.
+     * @throws NullPointerException if trimmers is null.
+     * @throws IllegalArgumentException if trimmers is empty.
      */
     public AbstractContigTrimmer(List<PlacedReadTrimmer<P, C>> trimmers) {
+        if(trimmers.isEmpty()){
+            throw new IllegalArgumentException("trimmer list can not be null");
+        }
         this.trimmers.addAll(trimmers);
     }
 
@@ -116,18 +128,33 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
     }
 
     /**
-     * @return
+     * Trimming has completed, construct a new Contig instance
+     * of the contig with the new trim data.
+     * @return a new instance of contig with the new trimming data;
+     * or null if the entire contig was trimmed off.
      */
     protected abstract  C buildNewContig();
 
     /**
-     * @param placedRead
-     * @param newValidRange
+     * Trim the given PlacedRead with the given current trimmed
+     * offset, basecalls and validRange.  If validRange is empty, then 
+     * current the read is completely trimmed off.
+     * @param placedRead the original untrimmed placedread
+     * @param trimmedOffset the current trimmed start offset of this 
+     * read in the contig.
+     * @param trimmedBasecalls the current trimmed gapped basecalls.
+     * @param newValidRange the current trimmed valid range (ungapped)
+     * of the read.
+     * 
      */
-    protected abstract void trimRead(P placedRead, long trimmedOffset, String trimmedBasecalls,Range newValidRange);
+    protected abstract void trimRead(P placedRead, long trimmedOffset, 
+            String trimmedBasecalls,Range newValidRange);
 
     /**
-     * @param contig
+     * This trimmer will begin trimming the given contig, any calls
+     * to {@link #trimRead(PlacedRead, long, String, Range)} will be
+     * for reads from this contig until the method {@link #buildNewContig()}.
+     * @param contig the original contig that will be trimmed.
      */
     protected abstract void beginTrimmingContig(C contig);
 

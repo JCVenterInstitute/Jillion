@@ -347,6 +347,15 @@ public class Codon
                 NucleotideGlyph.getGlyphsFor(triplet),
                 0);
     }
+    public static Codon getCodonByOffset(NucleotideEncodedGlyphs basecalls, int offset){
+        if(offset<0){
+            throw new IllegalArgumentException("offset must be >=0 "+ offset);
+        }
+        if(basecalls.getLength()<offset+3){
+            throw new IllegalArgumentException("must have at least 3 nucleotides after given offset "+ (basecalls.getLength()-(offset+3)));
+        }
+        return CODON_MAP.get(basecalls.decode(Range.buildRangeOfLength(offset, 3)));
+    }
     public static Codon getCodonByOffset(List<NucleotideGlyph> triplet, int offset){
         if(offset<0){
             throw new IllegalArgumentException("offset must be >=0 "+ offset);
