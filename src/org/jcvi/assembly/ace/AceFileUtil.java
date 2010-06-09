@@ -141,7 +141,9 @@ public class AceFileUtil {
                 qualities.add(uncomplimentedQualities.get(i));
             }
         }
-        
+        if(qualities.isEmpty()){
+            System.out.printf("qualities are empty for %s%n", readId);
+        }
         StringBuilder readRecord = new StringBuilder();
         readRecord.append(String.format("RD %s %d 0 0%n",
                                             readId,

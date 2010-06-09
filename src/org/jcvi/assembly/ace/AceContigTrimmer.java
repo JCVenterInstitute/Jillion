@@ -29,6 +29,9 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 /**
+ * {@code AceContigTrimmer} is an Ace implementation of
+ * {@link AbstractContigTrimmer} to build valid
+ * trimmed {@link AceContig}s.
  * @author dkatzel
  *
  *
@@ -63,19 +66,27 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
     @Override
     protected AceContig buildNewContig() {
         //currentRanges should now only be 1 range
-        if(currentRanges.isEmpty()){
-            throw new IllegalStateException(String.format("contig %s is empty after trimming", builder.getContigId()));
+        if(currentRanges ==null || currentRanges.isEmpty()){
+           // throw new IllegalStateException(String.format("contig %s is empty after trimming", builder.getContigId()));
+            return null;
         }
         if(currentRanges.size()>1){
             throw new IllegalStateException(String.format("contig %s broke into multiple pieces during trimming", builder.getContigId()));
         }
         Range contigRange = currentRanges.get(0);
-        int ungappedStart =oldConsensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int)contigRange.getStart());
-        int ungappedEnd =oldConsensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int)contigRange.getEnd());
-        builder.setContigId(String.format("%s_%d_%d",builder.getContigId(),ungappedStart+1, ungappedEnd+1));
+        builder.setContigId(createNewContigId(builder.getContigId(),oldConsensus,contigRange));
         return builder.build();
     }
 
+    protected String createNewContigId(String oldContigId, NucleotideEncodedGlyphs oldConsensus, Range newContigRange){
+        if(oldConsensus.getLength() == newContigRange.getLength()){
+            return oldContigId;
+        }
+        int ungappedStart =oldConsensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int)newContigRange.getStart());
+        int ungappedEnd =oldConsensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int)newContigRange.getEnd());
+        return String.format("%s_%d_%d",oldContigId,ungappedStart+1, ungappedEnd+1);
+    
+    }
     /**
     * {@inheritDoc}
     */

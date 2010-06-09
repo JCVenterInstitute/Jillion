@@ -53,8 +53,9 @@ public class MinimumEndCoverageTrimmer<P extends PlacedRead, C extends Contig<P>
     public Range trimRead(P placedRead,
             Range currentRangeOfBases) {
         
-        
-
+        if(currentRangeOfBases.isEmpty()){
+            return currentRangeOfBases;
+        }
         Range currentValidRangeOnReference =Range.buildRange(
                 placedRead.convertValidRangeIndexToReferenceIndex(currentRangeOfBases.getStart()),
                 placedRead.convertValidRangeIndexToReferenceIndex(currentRangeOfBases.getEnd()));

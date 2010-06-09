@@ -34,6 +34,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -41,9 +43,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.jcvi.Range;
 import org.jcvi.assembly.ace.AceAssembly;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceContigAdapter;
+import org.jcvi.assembly.ace.AceContigTrimmer;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.ConsensusAceTag;
 import org.jcvi.assembly.ace.DefaultAceAssembly;
@@ -53,6 +57,7 @@ import org.jcvi.assembly.ace.ReadAceTag;
 import org.jcvi.assembly.ace.WholeAssemblyAceTag;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.ace.consed.ConsedWriter;
+import org.jcvi.assembly.ace.consed.closure.NextGenCloserAceContigTrimmer;
 import org.jcvi.assembly.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.H2FastQCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.H2SffCasDataStoreFactory;
@@ -62,6 +67,9 @@ import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.assembly.slice.LargeNoQualitySliceMapFactory;
 import org.jcvi.assembly.slice.SliceMapFactory;
+import org.jcvi.assembly.trim.MinimumBidirectionalEndCoverageTrimmer;
+import org.jcvi.assembly.trim.MinimumEndCoverageTrimmer;
+import org.jcvi.assembly.trim.PlacedReadTrimmer;
 import org.jcvi.assembly.util.DefaultTrimFileDataStore;
 import org.jcvi.assembly.util.TrimDataStore;
 import org.jcvi.assembly.util.TrimDataStoreUtil;
@@ -74,6 +82,7 @@ import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
 import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.fileServer.DirectoryFileServer;
@@ -227,13 +236,20 @@ public class Cas2Consed {
                 CasIdLookup readIdLookup = sangerFileMap ==null? casAssembly.getReadIdLookup() :
                     new DifferentFileCasIdLookupAdapter(casAssembly.getReadIdLookup(), sangerFileMap);
                 Date phdDate = new Date(startTime);
+                NextGenCloserAceContigTrimmer closerContigTrimmer = new NextGenCloserAceContigTrimmer(5, 5, 10);
                 for(CasContig casContig : contigDatastore){
                     final AceContigAdapter adpatedCasContig = new AceContigAdapter(casContig, phdDate,readIdLookup);
                     CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(adpatedCasContig.getPlacedReads());
                     for(AceContig splitAceContig : ConsedUtil.split0xContig(adpatedCasContig, coverageMap)){
-                        aceContigs.put(splitAceContig.getId(), splitAceContig);
-                        consensusOut.print(new DefaultEncodedNucleotideFastaRecord(splitAceContig.getId(),
-                                NucleotideGlyph.convertToString(NucleotideGlyph.convertToUngapped(splitAceContig.getConsensus().decode()))));
+                        AceContig trimmedAceContig =closerContigTrimmer.trimContig(splitAceContig, DefaultCoverageMap.buildCoverageMap(splitAceContig.getPlacedReads()));
+                        if(trimmedAceContig ==null){
+                            System.out.printf("%s was completely trimmed... skipping%n", splitAceContig.getId());
+                            continue;
+                        }
+                        
+                       aceContigs.put(trimmedAceContig.getId(), trimmedAceContig);
+                        consensusOut.print(new DefaultEncodedNucleotideFastaRecord(trimmedAceContig.getId(),
+                                NucleotideGlyph.convertToString(NucleotideGlyph.convertToUngapped(trimmedAceContig.getConsensus().decode()))));
                     }
                     
                 }

@@ -26,12 +26,25 @@ import org.jcvi.assembly.coverage.CoverageRegion;
 
 
 /**
+ * {@code ContigTrimmer} is a way to perform complex trimming
+ * operations against a Contig to build a new trimmed version of
+ * that Contig with the consensus and/or reads trimmed.
  * @author dkatzel
- *
+ * @param <P> the type of PlacedRead
+ * @param <C> the type of Contig which has placedReads of type P
  *
  */
 public interface ContigTrimmer<P extends PlacedRead, C extends Contig<P>> {
 
-   
+   /**
+    * Trim the given contig which has the given coverage map.  
+    * @param contig the contig to trim.
+    * @param coverageMap the coverage map for the contig to trim.
+    * @return a trimmed version of the contig, the returned object may 
+    * be the given contig input if no trimming occurred, a new Contig object
+    * if any trimming did occur, or {@code null} if the entire contig
+    * was trimmed off so there are no longer any underlying reads.
+    * @throws TrimmerException if there is a problem during trimming.
+    */
     C trimContig(C contig,CoverageMap<CoverageRegion<P>> coverageMap) throws TrimmerException;
 }
