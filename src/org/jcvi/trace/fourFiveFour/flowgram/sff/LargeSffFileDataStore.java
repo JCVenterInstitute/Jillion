@@ -127,7 +127,7 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
         return new DataStoreIterator<SFFFlowgram>(this);
     }
 
-    private class SffIdIterator implements SffFileVisitor, Iterator<String>{
+    private static final class SffIdIterator implements SffFileVisitor, Iterator<String>{
         private List<String> ids = new ArrayList<String>();
         private Iterator<String> iter=null;
         @Override
@@ -172,7 +172,7 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
         }
         
     }
-    private class SffSize extends AbstractSffFileVisitor{
+    private static final class SffSize extends AbstractSffFileVisitor{
         private int size=0;
 
         @Override
@@ -187,7 +187,7 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
         
         
     }
-    private class SingleSffGetter extends DefaultSffFileDataStore{
+    private static final class SingleSffGetter extends DefaultSffFileDataStore{
 
         private final String idToFetch;
         private boolean foundRecord =false;

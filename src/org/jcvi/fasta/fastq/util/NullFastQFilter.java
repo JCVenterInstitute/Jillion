@@ -30,7 +30,7 @@ public class NullFastQFilter implements FastQFilter{
     /**
      * Singleton instance of NullFastQFilter.
      */
-    public static NullFastQFilter INSTANCE = new NullFastQFilter();
+    public static final NullFastQFilter INSTANCE = new NullFastQFilter();
     
     private NullFastQFilter(){
         

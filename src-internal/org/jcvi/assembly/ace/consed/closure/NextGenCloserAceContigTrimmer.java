@@ -98,35 +98,5 @@ public class NextGenCloserAceContigTrimmer extends AceContigTrimmer{
        return String.format("%s_%d_%d",originalId,_0xLeft +trimmedLeft, _0xLeft+trimmedRight);
     }
     
-    public static void main(String[] args) throws TrimmerException, IOException, DataStoreException{
-        File aceFile = new File("/usr/local/projects/VHTNGS/sample_data/giv3/MCE/30209/mapping/consed_with_sanger/edit_dir/cas2consed.ace.1");
-        File phdFile = new File("/usr/local/projects/VHTNGS/sample_data/giv3/MCE/30209/mapping/consed_with_sanger/edit_dir/phd.ball");
-        
-        AceContigDataStore datastore = new MemoryMappedAceFileDataStore(aceFile);
-        AceFileParser.parseAceFile(aceFile, (AceFileVisitor)datastore);
-        NextGenCloserAceContigTrimmer trimmer = new NextGenCloserAceContigTrimmer(5, 5, 10);
-        Map<String, AceContig> aceContigs = new HashMap<String, AceContig>();
-        for(AceContig aceContig : datastore){
-            AceContig trimmedAceContig =trimmer.trimContig(aceContig, DefaultCoverageMap.buildCoverageMap(aceContig.getPlacedReads()));
-            if(trimmedAceContig ==null){
-                System.out.printf("%s was completely trimmed... skipping%n", aceContig.getId());
-                continue;
-            }
-            final String id = trimmedAceContig.getId();
-            System.out.println(id);
-            aceContigs.put(id, trimmedAceContig);
-        }
-        
-        PhdDataStore phdDataStore = new LargePhdDataStore(phdFile);
-        WholeAssemblyAceTag pathToPhd = new DefaultWholeAssemblyAceTag("phdball", "cas2consed", 
-                new Date(DateTimeUtils.currentTimeMillis()), "../phd_dir/cas2consed.phd.ball");
-       
-        AceAssembly aceAssembly = new DefaultAceAssembly<AceContig>(new SimpleDataStore<AceContig>(aceContigs), 
-                phdDataStore, 
-                Collections.<File>emptyList(),
-                new DefaultAceTagMap(Collections.<ConsensusAceTag>emptyList(), Collections.<ReadAceTag>emptyList(), 
-                        Arrays.asList(pathToPhd)));
-        OutputStream out = new FileOutputStream("/usr/local/scratch/dkatzel/trimmedAce_30209.ace");
-        AceFileWriter.writeAceFile(aceAssembly, out);
-    }
+    
 }

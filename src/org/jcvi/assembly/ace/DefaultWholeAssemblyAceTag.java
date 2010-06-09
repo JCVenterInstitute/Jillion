@@ -42,13 +42,13 @@ public class DefaultWholeAssemblyAceTag implements WholeAssemblyAceTag {
             Date creationDate, String data) {
         this.type = type;
         this.creator = creator;
-        this.creationDate = creationDate;
+        this.creationDate = new Date(creationDate.getTime());
         this.data = data;
     }
 
     @Override
     public Date getCreationDate() {
-        return creationDate;
+        return new Date(creationDate.getTime());
     }
 
     @Override

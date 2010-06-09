@@ -198,8 +198,8 @@ public class Compare2VarFiles {
                 }
                 );
         keys.addAll(histogram.keySet());
-        for(List<NucleotideGlyph> var : histogram.keySet()){
-            variationList.append(String.format(" %s: %d", NucleotideGlyph.convertToString(var), histogram.get(var)));
+        for(Entry<List<NucleotideGlyph>, Integer> entry : histogram.entrySet()){
+            variationList.append(String.format(" %s: %d", NucleotideGlyph.convertToString(entry.getKey()), entry.getValue()));
         }
         
         return variationList.toString();

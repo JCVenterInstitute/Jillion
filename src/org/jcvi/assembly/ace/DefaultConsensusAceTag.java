@@ -119,7 +119,7 @@ public class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag implemen
             this.isTransient = isTransient;
             this.type = type;
             this.creator = creator;
-            this.creationDate = creationDate;
+            this.creationDate = new Date(creationDate.getTime());
         }
 
         public Builder appendData(String data){

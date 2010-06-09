@@ -52,7 +52,7 @@ public abstract class AbstractContigFileDataStore extends AbstractContigFileVisi
     @Override
     protected void visitBeginContig(String contigId, String consensus) {
         currentContigBuilder = new DefaultContig.Builder(contigId,
-                encodeBasecalls(consensus.toString()));
+                encodeBasecalls(consensus));
     }
     private DefaultNucleotideEncodedGlyphs encodeBasecalls(String basecalls) {
         return new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.getGlyphsFor(basecalls), Range.buildRange(0, basecalls.length()));
