@@ -26,6 +26,7 @@ package org.jcvi;
 import junit.framework.Test;
 
 import org.jcvi.align.AllAlignTests;
+import org.jcvi.app.AllAppUnitTests;
 import org.jcvi.assembly.AllAssemblyUnitTests;
 import org.jcvi.assembly.ace.AllAceUnitTests;
 import org.jcvi.auth.AllAuthUnitTests;
@@ -46,6 +47,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+        
         TestCommonUtil.class,
         MathUtilSuite.class,
         TestTestUtilSuite.class,
@@ -70,7 +72,8 @@ import org.junit.runners.Suite.SuiteClasses;
         AllDataStoreUnitTests.class,
         AllAlignTests.class,
         AllAuthUnitTests.class,
-        AllCliUnitTests.class
+        AllCliUnitTests.class,
+        AllAppUnitTests.class
     }
 )
 public class AllUnitTests {
