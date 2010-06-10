@@ -53,7 +53,7 @@ package org.jcvi.app;
  * differences between "alpha", "beta" and "release candidate" states.
  *
  * @author jsitz@jcvi.org
- * @author jeff@darkware.org
+ * @author dkatzel
  */
 public class Version implements Comparable<Version>
 {
@@ -62,7 +62,7 @@ public class Version implements Comparable<Version>
      * software version.  This label is set by policy, not by any quantitative
      * analysis, so some grey areas exist.
      *
-     * @author jeff@darkware.org
+     * @author jsitz@jcvi.org
      */
     public enum ReleaseType
     {
@@ -103,33 +103,6 @@ public class Version implements Comparable<Version>
 
     /** The size, in bits, of a single version field in the version serial number. */
     private static final int SERIAL_FIELD_SIZE = 8;
-
-    /**
-     *  An convenience instance of the Stable release type
-     * @see ReleaseType#STABLE
-     */
-    public static final ReleaseType STABLE = ReleaseType.STABLE;
-    /**
-     *  An convenience instance of the Release Candidate release type
-     * @see ReleaseType#RELEASE_CANDIDATE
-     */
-    public static final ReleaseType RELEASE_CANDIDATE = ReleaseType.RELEASE_CANDIDATE;
-    /**
-     *  An convenience instance of the Beta release type
-     * @see ReleaseType#BETA
-     */
-    public static final ReleaseType BETA = ReleaseType.BETA;
-    /**
-     *  An convenience instance of the Alpha release type
-     * @see ReleaseType#ALPHA
-     */
-    public static final ReleaseType ALPHA = ReleaseType.ALPHA;
-    /**
-     *  An convenience instance of the Internal release type
-     * @see ReleaseType#INTERNAL
-     */
-    public static final ReleaseType INTERNAL = ReleaseType.INTERNAL;
-
     /** The version number of the codebase. */
     private final byte codebaseVersion;
     /** The version number of the API (with respect to compatibility). */
@@ -151,7 +124,7 @@ public class Version implements Comparable<Version>
      * @param type The declared release quality.
      * @param releaseNumber The index of this release within the declared version.
      */
-    public Version(int codebaseVersion, int apiVersion, int patchVersion, ReleaseType type, int releaseNumber)
+    private Version(int codebaseVersion, int apiVersion, int patchVersion, ReleaseType type, int releaseNumber)
     {
         super();
         this.codebaseVersion = (byte)codebaseVersion;
@@ -160,51 +133,6 @@ public class Version implements Comparable<Version>
         this.type = type;
         this.releaseNumber = (byte)releaseNumber;
     }
-
-    /**
-     * Creates a new <code>Version</code>.  It is assumed that the release
-     * is the first for this version.
-     *
-     * @param codebaseVersion The version number of the codebase.
-     * @param apiVersion The version number of the API (with respect to
-     * compatibility).
-     * @param patchVersion The version of the patch release.
-     * @param type The declared release quality.
-     */
-    public Version(int codebaseVersion, int apiVersion, int patchVersion, ReleaseType type)
-    {
-        this(codebaseVersion, apiVersion, patchVersion, type, 1);
-    }
-
-    /**
-     * Creates a new <code>Version</code>.  It is assumed that this version
-     * is of {@link ReleaseType#STABLE STABLE} quality and it is the first
-     * revision for the version.
-     *
-     * @param codebaseVersion The version number of the codebase.
-     * @param apiVersion The version number of the API (with respect to
-     * compatibility).
-     * @param patchVersion The version of the patch release.
-     */
-    public Version(int codebaseVersion, int apiVersion, int patchVersion)
-    {
-        this(codebaseVersion, apiVersion, patchVersion, ReleaseType.STABLE);
-    }
-
-    /**
-     * Creates a new <code>Version</code>.  It is assumed that this version
-     * is the first {@link ReleaseType#STABLE STABLE} version of this API
-     * revision.
-     *
-     * @param codebaseVersion The version number of the codebase.
-     * @param apiVersion The version number of the API (with respect to
-     * compatibility).
-     */
-    public Version(int codebaseVersion, int apiVersion)
-    {
-        this(codebaseVersion, apiVersion, 0);
-    }
-
     /**
      * Calculates a unique serial number for this version.  The serial number
      * is packed such that two serial numbers may be compared numerically.
@@ -317,5 +245,73 @@ public class Version implements Comparable<Version>
         if (this.getClass() != obj.getClass()) return false;
         final Version other = (Version)obj;
         return (other.getSerialNumber() == this.getSerialNumber());
+    }
+    /**
+     * Build a new {@link Version} instance.
+     * @author dkatzel
+     *
+     *
+     */
+    public static class Builder implements org.jcvi.Builder<Version>{
+        private static final int UNSET= -1;
+        /** The version number of the codebase. */
+        private final int codebaseVersion;
+        /** The version number of the API (with respect to compatibility). */
+        private int apiVersion = UNSET;
+        /** The version of the patch release. */
+        private int patchVersion= UNSET;
+        /** The declared release quality. */
+        private ReleaseType type=null;
+        /** The index of this release within the declared version. */
+        private int releaseNumber= UNSET;
+        
+        public Builder(int codebaseVersion){
+            if(codebaseVersion<0){
+                throw new IllegalArgumentException("codebaseVersion can not be <0");
+            }
+            this.codebaseVersion = codebaseVersion;
+        }
+        public Builder apiVersion(int apiVersion){
+            if(apiVersion<0){
+                throw new IllegalArgumentException("apiVersion can not be <0");
+            }
+            this.apiVersion = (byte)apiVersion;
+            return this;
+        }
+        public Builder patchVersion(int patchVersion){
+            if(patchVersion<0){
+                throw new IllegalArgumentException("patchVersion can not be <0");
+            }
+            this.patchVersion = (byte)patchVersion;
+            return this;
+        }
+        public Builder release(ReleaseType type, int releaseNumber){
+            if(releaseNumber<0){
+                throw new IllegalArgumentException("releaseNumber can not be <0");
+            }
+            this.releaseNumber = (byte)releaseNumber;
+            this.type = type;
+            return this;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Version build() {
+            if(apiVersion == UNSET){
+                apiVersion =0;
+            }
+            if(patchVersion == UNSET){
+                patchVersion = 0;
+            }
+            if(releaseNumber == UNSET){
+                releaseNumber = 1;
+            }
+            if(type == null){
+                type = ReleaseType.STABLE;
+            }
+            return new Version(codebaseVersion, apiVersion,patchVersion,type,releaseNumber);
+        }
+        
     }
 }
