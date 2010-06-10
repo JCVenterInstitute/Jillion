@@ -56,11 +56,10 @@ public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
             
             //short circuit to try our currentElement first
             //to see if we can extend the current best segment
-            if(slice.containsElement(currentElement)){
-                if(slice.getSliceElement(currentElement).getBase().equals(consensusCall)){
-                    end=i;
-                    continue;
-                }
+            if(slice.containsElement(currentElement) &&
+                    slice.getSliceElement(currentElement).getBase().equals(consensusCall)){
+                end=i;
+                continue;
             }
             boolean foundMatch=false;
             for(SliceElement element : slice){

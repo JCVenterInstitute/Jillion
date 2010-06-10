@@ -278,14 +278,17 @@ public enum NucleotideGlyph implements Glyph {
             {
                 for (NucleotideGlyph constituent : NucleotideGlyph.AMBIGUITY_TO_CONSTIUENT.get(a))
                 {
-                    if (NucleotideGlyph.AMBIGUITY_TO_CONSTIUENT.get(b).contains(constituent)) return true;
+                    if (NucleotideGlyph.AMBIGUITY_TO_CONSTIUENT.get(b).contains(constituent)){
+                        return true;
+                    }
                 }
             }
-            else if (NucleotideGlyph.AMBIGUITY_TO_CONSTIUENT.get(a).contains(b)) return true;
+            else if (NucleotideGlyph.AMBIGUITY_TO_CONSTIUENT.get(a).contains(b)){
+                return true;
+            }
         }
-        else if (b.isAmbiguity())
-        {
-            if (NucleotideGlyph.AMBIGUITY_TO_CONSTIUENT.get(b).contains(a)) return true;
+        else if (b.isAmbiguity() && NucleotideGlyph.AMBIGUITY_TO_CONSTIUENT.get(b).contains(a)){
+            return true;
         }
         
         return false;

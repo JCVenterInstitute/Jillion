@@ -54,11 +54,9 @@ public class NewblerMappedPhdBallFileDataStore extends MemoryMappedPhdFileDataSt
             Properties comments, List<PhdTag> tags) {
         boolean isFakeRead=false;
         for(PhdTag tag: tags){
-            if(tag.getTagName().equals(WHOLE_READ_TAG)){
-                if(tag.getTagValue().contains(FAKE_READ_TYPE)){
-                    isFakeRead=true;
-                    break;
-                }
+            if(tag.getTagName().equals(WHOLE_READ_TAG) && tag.getTagValue().contains(FAKE_READ_TYPE)){
+                isFakeRead=true;
+                break;
             }
         }
         if(!isFakeRead){

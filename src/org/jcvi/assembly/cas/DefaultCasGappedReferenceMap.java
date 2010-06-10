@@ -95,10 +95,8 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
             regionsToConsider.remove(lastIndex);
         }
         for(CasAlignmentRegion region: regionsToConsider){
-            if(outsideValidRange){
-                if(region.getType() != CasAlignmentRegionType.INSERT){
-                    outsideValidRange=false;
-                }
+            if(outsideValidRange && region.getType() != CasAlignmentRegionType.INSERT){
+                outsideValidRange=false;
             }
             if(!outsideValidRange){
                 
