@@ -25,15 +25,62 @@ package org.jcvi.assembly;
 
 import java.util.Set;
 
+import org.jcvi.assembly.slice.consensus.ConsensusCaller;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-
+/**
+ * A {@code Contig} is a CONTIGuous region of geomic data.
+ * Contigs are assembled by overlapping reads to form a consensus.
+ * @author dkatzel
+ * @param <T> the type of {@link PlacedRead}s which were used to build
+ * this contig.
+ *
+ */
 public interface Contig<T extends PlacedRead>{
+    /**
+     * Get the id of this contig.
+     * @return the Id of this contig as a String; will never be null.
+     */
     String getId();
+    /**
+     * Get the number of reads in this contig.
+     * @return the number of reads in this contig; will always be >=1.
+     */
     int getNumberOfReads();
+    /**
+     * Get the {@link Set} of {@link PlacedRead}s
+     * in this contig. 
+     * @return a Set of {@link PlacedRead}s; will never be null or empty.
+     */
     Set<T> getPlacedReads();
+    /**
+     * Get the consensus sequence of this contig.  The Consensus
+     * is determined by the underlying reads that make up this contig.  Different
+     * consensus callers can create different consensus using various criteria
+     * and paramters.
+     * @return the consensus of this contig as {@link NucleotideEncodedGlyphs}; will
+     * never be null.
+     * @see ConsensusCaller
+     */
     NucleotideEncodedGlyphs getConsensus();
+    /**
+     * Get the {@link PlacedRead} in this contig with the given id.
+     * @param id the id of the read to get.
+     * @return the {@link PlacedRead} with that id; or {@code null}
+     * if no such read exists in this contig.
+     * @see #containsPlacedRead(String)
+     */
     VirtualPlacedRead<T> getPlacedReadById(String id);
+    /**
+     * Does this contig have a {@link PlacedRead} with the given id?
+     * @param placedReadId the id of the place read to check for.
+     * @return {@code true} if this contig has a read
+     * with the given id; {@code false} otherwise.
+     */
     boolean containsPlacedRead(String placedReadId);
+    /**
+     * Is this contig circular?
+     * @return {@code true} if circular; {@code false} otherwise.
+     */
     boolean isCircular();
     
     Set<VirtualPlacedRead<T>> getVirtualPlacedReads();
