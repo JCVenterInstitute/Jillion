@@ -29,14 +29,48 @@ import java.util.List;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-
+/**
+ * {@code Assembly} is an object which contains all 
+ * the input and output data from an assembler invocation.
+ * @author dkatzel
+ * @param <C> the type of {@link Contig}s in this assembly.
+ * @param <D> the type of {@link DataStore} of Contigs in this assembly.
+ *
+ */
 public interface Assembly<C extends Contig, D extends DataStore<C>> {
-
+    /**
+     * Get the {@link DataStore} which contains all the assembled
+     * {@link Contig}s.
+     * @return a {@link DataStore} of {@link Contig}s; will never be null.
+     */
     D getContigDataStore();
+    /**
+     * Get the {@link QualityDataStore} for all the quality values
+     * for the underyling reads in this assembly.
+     * @return a {@link QualityDataStore}; will never be null.
+     */
     QualityDataStore getQualityDataStore();
+    /**
+     * Get the actual File objects of all the input files
+     * which contain quality data.  The list of files should be the source
+     * of all the quality data contained in the {@link QualityDataStore} returned
+     * by {@link #getQualityDataStore()}.
+     * @return a List of Files; will never be null.
+     */
     List<File> getQualityFiles();
-    
+    /**
+     * Get the {@link NucleotideDataStore} for all the sequence
+     * data for the underlying reads in this assembly.
+     * @return a {@link NucleotideDataStore}; will never be null.
+     */
     NucleotideDataStore getNucleotideDataStore();
+    /**
+     * Get the actual File objects of all the input files
+     * which contain sequence data.  The list of files should be the source
+     * of all the sequence data contained in the {@link NucleotideDataStore} returned
+     * by {@link #getNucleotideDataStore()}.
+     * @return a List of Files; will never be null.
+     */
     List<File> getNuceotideFiles();
     
 }

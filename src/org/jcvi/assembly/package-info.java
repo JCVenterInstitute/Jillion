@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,39 +16,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Sep 4, 2008
- *
- * @author dkatzel
+/**
+ * This package contains classes that deal with genomic reads that have
+ * been assembled together.
  */
 package org.jcvi.assembly;
-
-/**
- * {@code Placed} is an interface to be used by any object
- * that has been placed at a particular location along
- * some axis.
- * @author dkatzel
- *
- *
- */
-public interface Placed {
-    /**
-     * Get the start coordinate of this placed object
-     * on the placed axis.
-     * @return the start as a long.
-     */
-    long getStart();
-    /**
-     * Get the end coordinate of this placed object
-     * on the placed axis.
-     * @return the end as a long.
-     */
-    long getEnd();
-    /**
-     * Get the length of this placed object
-     * on the axis.
-     * @return the length of this placed object.
-     */
-    long getLength();
-    
-}
