@@ -280,10 +280,8 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
     
         private ReadWriteDirectoryFileServer(File rootDir) throws IOException {
             super(rootDir);
-            if(!rootDir.exists()){
-                if(!rootDir.mkdirs()){
-                    throw new IOException("could not create rootDir " + rootDir);
-                }
+            if(!rootDir.exists() && !rootDir.mkdirs()){
+                throw new IOException("could not create rootDir " + rootDir);
             }
         }
     

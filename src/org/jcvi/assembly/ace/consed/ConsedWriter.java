@@ -27,9 +27,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -75,57 +78,45 @@ public class ConsedWriter {
                     }
             
         };
-        
+        List<Callable<Void>> writers = new ArrayList<Callable<Void>>();
         try {
-           
-            final CountDownLatch latch = new CountDownLatch(2);
-            final Callable phdWriter =new Callable<Void>() {
+            final Callable<Void> phdWriter =new Callable<Void>() {
                 @Override
                 public Void call() throws IOException, DataStoreException{
                   //only write phds that make it into the assembly
-                    try{
-                        for(AceContig contig : contigDataStore){
-                            for(AcePlacedRead read : contig.getPlacedReads()){
-                                String id = read.getId();
-                                PhdWriter.writePhd(id, phdDataStore.get(id), phdOutputStream);
-                            }
+                    for(AceContig contig : contigDataStore){
+                        for(AcePlacedRead read : contig.getPlacedReads()){
+                            String id = read.getId();
+                            PhdWriter.writePhd(id, phdDataStore.get(id), phdOutputStream);
                         }
-                        return null;
-                    }finally{
-                        latch.countDown();
                     }
+                    return null;
+                    
                 }
             };
-
-            final Callable aceWriter =new Callable<Void>() {
+            writers.add(phdWriter);
+            final Callable<Void> aceWriter =new Callable<Void>() {
                 @Override
                 public Void call() throws IOException, DataStoreException{
-                    try{
-                        AceFileWriter.writeAceFile(aceAssembly,sliceMapFactory, aceOutputStream, calculateBestSegments);
-                   
-                        return null;
-                    }
-                    catch(Exception e){
-                        e.printStackTrace();
-                        throw new RuntimeException("err",e);
-                    }finally{
-                        latch.countDown();
-                    }
+                    AceFileWriter.writeAceFile(aceAssembly,sliceMapFactory, aceOutputStream, calculateBestSegments);
+               
+                    return null;
+                    
                 }
             };
-            
-            executor.submit(phdWriter);
-            executor.submit(aceWriter);
-            
-            latch.await();
+            writers.add(aceWriter);
+           for(Future<Void> futures :executor.invokeAll(writers)){
+               futures.get();              
+           }
             consedFolder.createNewSymLink(phdFile.getAbsolutePath(), 
                     consedOuputDir.getAbsolutePath() +"/edit_dir/phd.ball");
             
         }finally{
+            executor.shutdownNow();
             IOUtil.closeAndIgnoreErrors(phdOutputStream);
             IOUtil.closeAndIgnoreErrors(aceOutputStream);
             IOUtil.closeAndIgnoreErrors(consedFolder);
-            executor.shutdownNow();
+            
         }
     }
     

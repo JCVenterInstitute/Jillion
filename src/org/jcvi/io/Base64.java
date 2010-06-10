@@ -120,7 +120,7 @@ public final class Base64 {
         int result=toBeEncoded[position];
         result <<=8;
         
-        result+=toBeEncoded[position+1]&0xff;;
+        result+=toBeEncoded[position+1]&0xff;
         result <<=8;
         
         result +=toBeEncoded[position+2] &0xff;

@@ -191,7 +191,7 @@ public class Frg2Parser {
                 break;
             }
             bases.append(line+CR);
-        };
+        }
         return bases.toString();
     }
 

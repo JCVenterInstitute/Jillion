@@ -258,10 +258,8 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
         @Override
         protected File getNextFile() {
             File nextFile = super.getNextFile();
-            if(nextFile ==null){
-                if(hasMoreSubDirs()){            
-                    return getNextFromSubDir();
-                }
+            if(nextFile ==null && hasMoreSubDirs()){            
+                return getNextFromSubDir();
             }
             
             return nextFile;

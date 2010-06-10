@@ -123,7 +123,8 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
             /*
              * Follow the path recorded in the score matrix.
              */
-            switch (score.getPath(cursor))
+            int path = score.getPath(cursor);
+            switch (path)
             {
                 case ScoringMatrix.PATH_DIAG:
                     
@@ -159,6 +160,10 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
                     cursor = cursor.translate(0, 1);
                     
                     break;
+                    
+                default:
+                    throw new IllegalStateException("cannot traverse score of " + path);
+     
             }
         }
         

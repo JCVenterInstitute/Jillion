@@ -104,13 +104,6 @@ public class TigrAssemblyFilePrinter implements TigrAssemblyFileVisitor{
         
     }
 
-    public static void main(String[] args) throws FileNotFoundException{
-        File tasmFile = new File("/home/dkatzel/.eclipse/JCVI-JavaCommon/src/org/jcvi/assembly/tasm/30542-upload.tasm");
-        TigrAssemblyFileVisitor visitor = new TigrAssemblyFilePrinter();
-        TigrAssemblyFileParser.parse(tasmFile, visitor);
-        
-    }
-
     /**
     * {@inheritDoc}
     */

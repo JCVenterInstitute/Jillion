@@ -147,12 +147,11 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
                 }
                 //short circuit to try our currentElement first
                 //to see if we can extend the current best segment
-                if(slice.containsElement(currentElement)){
-                    if(slice.getSliceElement(currentElement).getBase().equals(consensusCall)){
-                        end=i;
-                        i++;
-                        continue;
-                    }
+                if(slice.containsElement(currentElement) &&
+                        slice.getSliceElement(currentElement).getBase().equals(consensusCall)){
+                    end=i;
+                    i++;
+                    continue;
                 }
                 if(slice.getCoverageDepth()>0){
                     
@@ -183,7 +182,6 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
             }     
                 nextSegment =new DefaultAceBestSegment(currentElement, Range.buildRange(start,end));
                 currentStart=end+1;
-                return;
            
         }
     }
