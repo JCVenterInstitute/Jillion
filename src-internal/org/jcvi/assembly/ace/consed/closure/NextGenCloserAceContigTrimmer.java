@@ -19,47 +19,18 @@
 
 package org.jcvi.assembly.ace.consed.closure;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.ace.AceAssembly;
 import org.jcvi.assembly.ace.AceContig;
-import org.jcvi.assembly.ace.AceContigDataStore;
 import org.jcvi.assembly.ace.AceContigTrimmer;
-import org.jcvi.assembly.ace.AceFileParser;
-import org.jcvi.assembly.ace.AceFileVisitor;
-import org.jcvi.assembly.ace.AceFileWriter;
 import org.jcvi.assembly.ace.AcePlacedRead;
-import org.jcvi.assembly.ace.ConsensusAceTag;
-import org.jcvi.assembly.ace.DefaultAceAssembly;
-import org.jcvi.assembly.ace.DefaultAceTagMap;
-import org.jcvi.assembly.ace.DefaultWholeAssemblyAceTag;
-import org.jcvi.assembly.ace.ReadAceTag;
-import org.jcvi.assembly.ace.WholeAssemblyAceTag;
-import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.assembly.trim.MinimumBidirectionalEndCoverageTrimmer;
 import org.jcvi.assembly.trim.MinimumEndCoverageTrimmer;
 import org.jcvi.assembly.trim.PlacedReadTrimmer;
-import org.jcvi.assembly.trim.TrimmerException;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.MemoryMappedAceFileDataStore;
-import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.trace.sanger.phd.LargePhdDataStore;
-import org.jcvi.trace.sanger.phd.PhdDataStore;
-import org.joda.time.DateTimeUtils;
-
 /**
  * @author dkatzel
  *
@@ -95,7 +66,7 @@ public class NextGenCloserAceContigTrimmer extends AceContigTrimmer{
        int trimmedRight = Integer.parseInt(trimmedSplitmatcher.group(3));
        String originalId = _0xMatcher.group(1);
        int _0xLeft = Integer.parseInt(_0xMatcher.group(2));
-       return String.format("%s_%d_%d",originalId,_0xLeft +trimmedLeft, _0xLeft+trimmedRight);
+       return String.format("%s_%d_%d",originalId,_0xLeft +trimmedLeft-1, _0xLeft+trimmedRight);
     }
     
     
