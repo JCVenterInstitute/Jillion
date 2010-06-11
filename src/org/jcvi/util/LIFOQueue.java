@@ -34,14 +34,6 @@ import java.util.Queue;
  *
  */
 public class LIFOQueue<E> extends AbstractFOQueue<E>{
-
-    /**
-     * Constructs an empty LIFOQueue.
-     */
-    public LIFOQueue() {
-        super();
-    }
-
   
 
     @Override

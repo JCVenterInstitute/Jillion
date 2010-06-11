@@ -36,13 +36,6 @@ import java.util.Queue;
  */
 public class FIFOQueue<E> extends AbstractFOQueue<E>{
 
-    /**
-     * Construct an empty FIFOQueue.
-     */
-    public FIFOQueue() {
-        super();
-    }
-
     @Override
     protected boolean add(E e, Deque<E> deque) {
         return deque.add(e);

@@ -39,11 +39,6 @@ public class RangeArrivalComparator implements Serializable, Comparator<Range>
 {
     /** The Serial Version UID */
     private static final long serialVersionUID = -5137203626973213666L;
-
-    public RangeArrivalComparator() 
-    {
-        super();
-    }
     
     /* (non-Javadoc)
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
