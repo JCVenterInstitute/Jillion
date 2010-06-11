@@ -39,11 +39,6 @@ public class RangeDepartureComparator implements Serializable, Comparator<Range>
 {
     /** The Serial Version UID */
     private static final long serialVersionUID = -7860544714796941304L;
-
-    public RangeDepartureComparator() 
-    {
-        super();
-    }
     
     /* (non-Javadoc)
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)

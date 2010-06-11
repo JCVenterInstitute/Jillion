@@ -66,8 +66,6 @@ public class Frg2Parser {
     private static final String BEGIN_FRG = "{FRG";
     private static final String BEGIN_LKG = "{LKG";
     
-    public Frg2Parser(){}
-    
     public void parse(InputStream in, Frg2Visitor visitor){
         
         Scanner scanner = new Scanner(in).useDelimiter(CR);

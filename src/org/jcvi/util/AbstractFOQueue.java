@@ -41,12 +41,6 @@ public abstract class AbstractFOQueue<E> implements Queue<E>{
      * work off of this.
      */
     private final Deque<E> wrappedDeque = new ArrayDeque<E>();
-    /**
-     * Constructs an empty queue.
-     */
-    public AbstractFOQueue(){
-        super();
-    }
    
     /**
      * Adds E to the given deque, or throw
