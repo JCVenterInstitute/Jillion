@@ -84,7 +84,12 @@ public abstract class AbstractSpreadSheetReader implements SpreadSheetReader {
                 for(int i=0; i<rows.length; i++){
                     String columnName;
                     if(hasHeaders){
+                        try{
                         columnName = columns[i];
+                        }catch(Exception e){
+                            System.out.println("here");
+                            throw new RuntimeException(e);
+                        }
                     }
                     else{
                         columnName = Integer.valueOf(i).toString();

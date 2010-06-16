@@ -24,7 +24,7 @@
 package org.jcvi.io.idReader;
 
 
-public class TestIntegerIdParser extends AbstractIdParser<Integer> {
+public class TestIntegerIdParser extends AbstractTestIdParser<Integer> {
 
    
     @Override

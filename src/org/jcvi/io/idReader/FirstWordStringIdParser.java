@@ -16,34 +16,38 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on May 6, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.io.idReader;
 
-public class TestLongIdParser extends AbstractTestIdParser<Long>{
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-    private Long value = Long.valueOf(123456789L);
+/**
+ * {@code FirstWordStringIdParser} parses the first non whitespace
+ * word from a String.  For example "an_id comment" would return "an_id"
+ * as the id.
+ * @author dkatzel
+ *
+ *
+ */
+public class FirstWordStringIdParser extends StringIdParser{
+
+    private static final Pattern FIRST_WORD_PATTERN = Pattern.compile("(\\S+)");
     @Override
-    protected IdParser<Long> createNewIdParser() {
-        return new LongIdParser();
+    public boolean isValidId(String string) {        
+        if( super.isValidId(string)){
+            return FIRST_WORD_PATTERN.matcher(string).find();
+        }
+        return false;
     }
 
     @Override
-    protected String getInvalidId() {
-        return "not an Id";
-    }
-
-    @Override
-    protected Long getValidIdAsCorrectType() {
-        return value;
-    }
-
-    @Override
-    protected String getValidIdAsString() {
-        return value.toString();
+    public String parseIdFrom(String string) {
+        Matcher matcher =FIRST_WORD_PATTERN.matcher(string);
+        if(matcher.find()){
+            return matcher.group(1);
+        }
+        throw new IllegalStateException("could not parse first word from "+ string);
     }
 
 }
