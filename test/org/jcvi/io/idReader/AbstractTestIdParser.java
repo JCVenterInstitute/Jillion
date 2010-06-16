@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-public abstract class AbstractIdParser<T> {
+public abstract class AbstractTestIdParser<T> {
     private IdParser<T> sut;
     @Before
     public void setup(){

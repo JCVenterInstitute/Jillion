@@ -40,9 +40,9 @@ import org.jcvi.fasta.fastq.FastQFileVisitor;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.idReader.DefaultFileIdReader;
+import org.jcvi.io.idReader.FirstWordStringIdParser;
 import org.jcvi.io.idReader.IdReader;
 import org.jcvi.io.idReader.IdReaderException;
-import org.jcvi.io.idReader.StringIdParser;
 /**
  * {@code FastQFile} is meant to be a FastQ version of 454's fnafile
  * which takes in a file of reads and filter options
@@ -192,7 +192,7 @@ public class FastQFile implements FastQFileVisitor{
 
     private static Set<String> parseIdsFrom(final File idFile)
             throws IdReaderException {
-        IdReader<String> idReader = new DefaultFileIdReader<String>(idFile,new StringIdParser());
+        IdReader<String> idReader = new DefaultFileIdReader<String>(idFile,new FirstWordStringIdParser());
         Set<String> ids = new HashSet<String>();
         Iterator<String> iter =idReader.getIds();
         while(iter.hasNext()){

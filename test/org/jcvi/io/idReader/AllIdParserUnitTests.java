@@ -32,7 +32,8 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestIntegerIdParser.class,
         TestLongIdParser.class,
-        TestStringIdParser.class
+        TestStringIdParser.class,
+        TestFirstWordStringIdParser.class
     }
     )
 public class AllIdParserUnitTests {

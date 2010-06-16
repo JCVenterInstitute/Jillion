@@ -16,34 +16,37 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on May 6, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.io.idReader;
 
-public class TestLongIdParser extends AbstractTestIdParser<Long>{
+import org.junit.Test;
+import static org.junit.Assert.*;
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestFirstWordStringIdParser {
 
-    private Long value = Long.valueOf(123456789L);
-    @Override
-    protected IdParser<Long> createNewIdParser() {
-        return new LongIdParser();
+    
+    FirstWordStringIdParser sut = new FirstWordStringIdParser();
+    
+    @Test
+    public void firstWordInTabDelimmedLine(){
+        String line = "SOLEXA1_0007_1_100_1000_147#GGCTAC/1\t29\t100";
+        assertTrue(sut.isValidId(line));
+        assertEquals("SOLEXA1_0007_1_100_1000_147#GGCTAC/1", sut.parseIdFrom(line));
     }
-
-    @Override
-    protected String getInvalidId() {
-        return "not an Id";
+    @Test
+    public void only1word(){
+        String line = "id";
+        assertTrue(sut.isValidId(line));
+        assertEquals("id", sut.parseIdFrom(line));
     }
-
-    @Override
-    protected Long getValidIdAsCorrectType() {
-        return value;
+    @Test
+    public void whitespace(){
+        String line = "something completely different";
+        assertTrue(sut.isValidId(line));
+        assertEquals("something", sut.parseIdFrom(line));
     }
-
-    @Override
-    protected String getValidIdAsString() {
-        return value.toString();
-    }
-
 }
