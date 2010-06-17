@@ -52,7 +52,6 @@ public class VariationLogFileParser {
                 
                 if(contigMatcher.find()){
                     String contigId = contigMatcher.group(1);
-                    System.out.println("contig id = "+ contigId);
                     readVariationsForCurrentContig =visitor.visitContig(contigId);
                 }else if(readVariationsForCurrentContig){
                     Matcher varMatcher = VARIATION_PATTERN.matcher(line);
@@ -64,9 +63,6 @@ public class VariationLogFileParser {
                         DefaultVariation.Builder variationBuilder = new DefaultVariation.Builder(coordinate, type,ref,consensus);
                         final String group = varMatcher.group(5);
                         Scanner histogramScanner = new Scanner(group);
-                        if(group.startsWith("AT   AAT: 39  -: 3")){
-                            System.out.println("here");
-                        }
                         while(histogramScanner.hasNext()){
                             List<NucleotideGlyph> bases = NucleotideGlyph.getGlyphsFor(histogramScanner.next().replaceAll(":",""));
                             int count = histogramScanner.nextInt();

@@ -111,13 +111,13 @@ public class DefaultVariation implements Variation{
         final int prime = 31;
         int result = 1;
         result = prime * result
-                + ((consensus == null) ? 0 : consensus.hashCode());
+                +  consensus.hashCode();
         result = prime * result + (int) (coordinate ^ (coordinate >>> 32));
         result = prime * result
-                + ((histogram == null) ? 0 : histogram.hashCode());
+                + histogram.hashCode();
         result = prime * result
-                + ((reference == null) ? 0 : reference.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
+                + reference.hashCode();
+        result = prime * result + type.hashCode();
         return result;
     }
 
@@ -126,42 +126,23 @@ public class DefaultVariation implements Variation{
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof DefaultVariation)) {
             return false;
         }
         DefaultVariation other = (DefaultVariation) obj;
-        if (consensus == null) {
-            if (other.consensus != null) {
-                return false;
-            }
-        } else if (!consensus.equals(other.consensus)) {
+        if (!consensus.equals(other.consensus)) {
             return false;
         }
         if (coordinate != other.coordinate) {
             return false;
         }
-        if (histogram == null) {
-            if (other.histogram != null) {
-                return false;
-            }
-        } else if (!histogram.equals(other.histogram)) {
+        if (!histogram.equals(other.histogram)) {
             return false;
         }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
+        if (!reference.equals(other.reference)) {
             return false;
         }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
+        if (!type.equals(other.type)) {
             return false;
         }
         return true;
@@ -187,6 +168,21 @@ public class DefaultVariation implements Variation{
         public Builder(long coordinate, Type type,
                 NucleotideGlyph reference,
                 List<NucleotideGlyph> consensus ){
+            if(consensus ==null){
+                throw new NullPointerException("consensus can not be null");
+            }
+            if(consensus.isEmpty()){
+                throw new NullPointerException("consensus can not be empty");
+            }
+            if(type ==null){
+                throw new NullPointerException("type can not be null");
+            }
+            if(reference ==null){
+                throw new NullPointerException("reference can not be null");
+            }
+            if(coordinate <0){
+                throw new IllegalArgumentException("coordinate can not be <0");
+            }
             this.consensus = consensus;
             this.coordinate = coordinate;
             this.reference = reference;

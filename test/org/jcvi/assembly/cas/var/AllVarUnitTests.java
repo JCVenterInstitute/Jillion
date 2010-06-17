@@ -16,30 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 14, 2010
- *
- * @author dkatzel
- */
-package org.jcvi.assembly.cas;
 
-import org.jcvi.assembly.cas.alignment.AllCasAlignmentUnitTests;
-import org.jcvi.assembly.cas.var.AllVarUnitTests;
+package org.jcvi.assembly.cas.var;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+/**
+ * @author dkatzel
+ *
+ *
+ */
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestCasUtil.class,
-        TestDifferentFileCasIdLookupAdapter.class,
-        TestDefaultCasGappedReferenceMap.class,
-        TestDefaultCasAssembly.class,
-        AllCasAlignmentUnitTests.class,
-        AllVarUnitTests.class
+        TestDefaultVariation.class,
+        TestVariationType.class
     }
     )
-public class AllCasUnitTests {
+public class AllVarUnitTests {
 
 }
