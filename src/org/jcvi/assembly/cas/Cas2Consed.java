@@ -28,14 +28,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -43,11 +43,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.jcvi.Range;
 import org.jcvi.assembly.ace.AceAssembly;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceContigAdapter;
-import org.jcvi.assembly.ace.AceContigTrimmer;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.ConsensusAceTag;
 import org.jcvi.assembly.ace.DefaultAceAssembly;
@@ -67,9 +65,6 @@ import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.assembly.slice.LargeNoQualitySliceMapFactory;
 import org.jcvi.assembly.slice.SliceMapFactory;
-import org.jcvi.assembly.trim.MinimumBidirectionalEndCoverageTrimmer;
-import org.jcvi.assembly.trim.MinimumEndCoverageTrimmer;
-import org.jcvi.assembly.trim.PlacedReadTrimmer;
 import org.jcvi.assembly.util.DefaultTrimFileDataStore;
 import org.jcvi.assembly.util.TrimDataStore;
 import org.jcvi.assembly.util.TrimDataStoreUtil;
@@ -82,7 +77,6 @@ import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
 import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.fileServer.DirectoryFileServer;
@@ -95,6 +89,7 @@ import org.jcvi.trace.sanger.SingleSangerTraceDirectoryFileDataStore;
 import org.jcvi.trace.sanger.phd.ArtificalPhdDataStore;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.trace.sanger.phd.PhdSangerTraceDataStoreAdapter;
+import org.jcvi.util.MultipleWrapper;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Period;
@@ -140,13 +135,19 @@ public class Cas2Consed {
             int cacheSize = commandLine.hasOption("s")? Integer.parseInt(commandLine.getOptionValue("s")) : DEFAULT_CACHE_SIZE;
             
             File casFile = new File(commandLine.getOptionValue("cas"));
+            File casWorkingDirectory = casFile.getParentFile();
             ReadWriteDirectoryFileServer outputDir = 
                     DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
             
             String prefix = commandLine.hasOption("prefix")? commandLine.getOptionValue("prefix"): DEFAULT_PREFIX;
             TrimDataStore trimDatastore;
             if(commandLine.hasOption("trim")){
-                trimDatastore = new DefaultTrimFileDataStore(new File(commandLine.getOptionValue("trim")));
+                List<TrimDataStore> dataStores = new ArrayList<TrimDataStore>();
+                final String trimFiles = commandLine.getOptionValue("trim");
+                for(String trimFile : trimFiles.split(",")){
+                    dataStores.add( new DefaultTrimFileDataStore(new File(trimFile)));
+                }
+                trimDatastore = MultipleWrapper.createMultipleWrapper(TrimDataStore.class, dataStores.toArray(new TrimDataStore[0]));
             }else{
                 trimDatastore = TrimDataStoreUtil.EMPTY_DATASTORE;
             }
@@ -154,7 +155,7 @@ public class Cas2Consed {
             if(commandLine.hasOption("trimMap")){
                 trimToUntrimmedMap = new DefaultTrimFileCasTrimMap(new File(commandLine.getOptionValue("trimMap")));
             }else{
-                trimToUntrimmedMap = EmptyCasTrimMap.getInstance();
+                trimToUntrimmedMap = new UnTrimmedExtensionTrimMap();
             }
             Integer minCoverageAtEnds=null;
             if(commandLine.hasOption("coverage_trim")){
@@ -203,29 +204,30 @@ public class Cas2Consed {
                }
                 final IlluminaFastQQualityCodec illuminaQualityCodec = new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
                 MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
-                        new H2SffCasDataStoreFactory(),               
-                        new H2FastQCasDataStoreFactory(illuminaQualityCodec),
-                        new FastaCasDataStoreFactory(trimToUntrimmedMap,cacheSize)        
+                        new H2SffCasDataStoreFactory(casWorkingDirectory),               
+                        new H2FastQCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,illuminaQualityCodec),
+                        new FastaCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,cacheSize)        
                 );
                 
                 final SliceMapFactory sliceMapFactory = new LargeNoQualitySliceMapFactory();
                 
-                CasAssembly casAssembly = new DefaultCasAssembly.Builder(casFile, casDataStoreFactory, trimDatastore, trimToUntrimmedMap)
+                CasAssembly casAssembly = new DefaultCasAssembly.Builder(casFile, casDataStoreFactory, trimDatastore, trimToUntrimmedMap,casWorkingDirectory)
                 .build();
                 System.out.println("finished making casAssemblies");
                 for(File traceFile : casAssembly.getNuceotideFiles()){
                     traceFilesOut.println(traceFile.getAbsolutePath());
-                    String extension = FilenameUtils.getExtension(traceFile.getName());
-                    if("fastq".equals(extension)){
+                    final String name = traceFile.getName();
+                    String extension = FilenameUtils.getExtension(name);
+                    if(name.contains("fastq")){
                         if(!outputDir.contains("solexa_dir")){
                             outputDir.createNewDir("solexa_dir");
                         }
-                        outputDir.createNewSymLink(traceFile.getAbsolutePath(), "solexa_dir/"+traceFile.getName());
+                        outputDir.createNewSymLink(traceFile.getAbsolutePath(), "solexa_dir/"+name);
                     }else if ("sff".equals(extension)){
                         if(!outputDir.contains("sff_dir")){
                             outputDir.createNewDir("sff_dir");
                         }
-                        outputDir.createNewSymLink(traceFile.getAbsolutePath(), "sff_dir/"+traceFile.getName());
+                        outputDir.createNewSymLink(traceFile.getAbsolutePath(), "sff_dir/"+name);
                     }
                 }
                 for(File traceFile : casAssembly.getReferenceFiles()){

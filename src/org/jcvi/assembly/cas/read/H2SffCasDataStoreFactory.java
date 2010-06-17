@@ -26,6 +26,7 @@ package org.jcvi.assembly.cas.read;
 import java.io.File;
 
 import org.apache.commons.io.FilenameUtils;
+import org.jcvi.assembly.cas.EmptyCasTrimMap;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.datastore.H2NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
@@ -46,7 +47,7 @@ public class H2SffCasDataStoreFactory extends AbstractCasDataStoreFactory{
         this(null, databaseFileServer);
     }
     public H2SffCasDataStoreFactory(File workingDir,ReadWriteDirectoryFileServer databaseFileServer){
-        super(workingDir);
+        super(workingDir, EmptyCasTrimMap.getInstance());
         this.databaseFileServer = databaseFileServer;
     }
     @Override
