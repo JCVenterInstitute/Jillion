@@ -28,6 +28,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.jcvi.assembly.cas.EmptyCasTrimMap;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
@@ -47,7 +49,7 @@ public class DefaultSffCasDataStoreFactory  extends
      * @param workingDir
      */
     public DefaultSffCasDataStoreFactory(File workingDir) {
-        super(workingDir);
+        super(workingDir, EmptyCasTrimMap.getInstance());
     }
     public DefaultSffCasDataStoreFactory() {
         this(null);

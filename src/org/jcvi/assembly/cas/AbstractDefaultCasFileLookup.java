@@ -31,8 +31,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.io.FilenameUtils;
 import org.jcvi.assembly.cas.alignment.score.CasScoringScheme;
 import org.jcvi.fasta.AbstractFastaVisitor;
 import org.jcvi.fasta.FastaParser;
@@ -115,16 +113,16 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         }
     }
     private void parse(File file) throws SFFDecoderException, IOException {
-        String extension = FilenameUtils.getExtension(file.getName());
+        String fileName = file.getName();
         FileInputStream in=null;
         try{
-            if("sff".equals(extension)){
+            if(fileName.endsWith("sff")){
                 
                     in = new FileInputStream(file);
                     SffParser.parseSFF(in, new SffReadOrder(file));
                 
             }
-            else if("fastq".equals(extension)){
+            else if(fileName.endsWith("fastq") || fileName.matches("\\S*\\.fastq\\S*")){
                 in = new FileInputStream(file);
                 FastQFileParser.parse(in, new FastQReadOrder(file));
             }

@@ -46,7 +46,6 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
         {
 
     private final int cacheSize;
-    private final CasTrimMap trimToUntrimmedMap;
     /**
      * Create a FastaCasDataStoreFactory with the given cacheSize.
      * @param cacheSize the max number of fasta records to store in memory. 
@@ -69,23 +68,20 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
         this(null, trimToUntrimmedMap, cacheSize);
     }
     public FastaCasDataStoreFactory(File workingDir,CasTrimMap trimToUntrimmedMap,int cacheSize){
-        super(workingDir);
-        this.trimToUntrimmedMap = trimToUntrimmedMap;
+        super(workingDir,trimToUntrimmedMap);
         this.cacheSize = cacheSize;
     }
     @Override
-    public NucleotideDataStore getNucleotideDataStoreFor(File pathToDataStore) throws CasDataStoreFactoryException {
-        File actualDataStore = trimToUntrimmedMap.getUntrimmedFileFor(pathToDataStore);     
+    public NucleotideDataStore getNucleotideDataStoreFor(File pathToDataStore) throws CasDataStoreFactoryException {  
         return CachedDataStore.createCachedDataStore(NucleotideDataStore.class, 
-                     new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(new LargeNucleotideFastaFileDataStore(actualDataStore))),
+                     new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(new LargeNucleotideFastaFileDataStore(pathToDataStore))),
                      cacheSize);            
     }
     @Override
     public QualityDataStore getQualityDataStoreFor(
-            File pathToDataStore) throws CasDataStoreFactoryException {
-        File actualDataStore = trimToUntrimmedMap.getUntrimmedFileFor(pathToDataStore);   
+            File fastaFile) throws CasDataStoreFactoryException { 
         return CachedDataStore.createCachedDataStore(QualityDataStore.class, 
-                new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(actualDataStore))),
+                new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(fastaFile))),
                 cacheSize);  
         
     }

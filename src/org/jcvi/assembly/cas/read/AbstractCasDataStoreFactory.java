@@ -21,6 +21,7 @@ package org.jcvi.assembly.cas.read;
 
 import java.io.File;
 
+import org.jcvi.assembly.cas.CasTrimMap;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 
@@ -41,19 +42,26 @@ import org.jcvi.glyph.phredQuality.QualityDataStore;
 public abstract class AbstractCasDataStoreFactory implements CasDataStoreFactory{
 
     private final File workingDir;
-    
+    private final CasTrimMap trimMap;
     /**
      * @param workingDir
      */
-    public AbstractCasDataStoreFactory(File workingDir) {
+    public AbstractCasDataStoreFactory(File workingDir, CasTrimMap trimMap) {
         this.workingDir = workingDir;
+        this.trimMap = trimMap;
     }
 
     @Override
     public final NucleotideDataStore getNucleotideDataStoreFor(String pathToDataStore)
             throws CasDataStoreFactoryException {
-        
-        return getNucleotideDataStoreFor(new File(workingDir, pathToDataStore));
+        File trimmedDataStore = getTrimmedFileFor(pathToDataStore);   
+        return getNucleotideDataStoreFor(trimmedDataStore);
+    }
+
+    private File getTrimmedFileFor(String pathToDataStore) {
+        File dataStoreFile = new File(workingDir, pathToDataStore);
+        File trimmedDataStore = trimMap.getUntrimmedFileFor(dataStoreFile);
+        return trimmedDataStore;
     }
 
     /**
@@ -65,7 +73,8 @@ public abstract class AbstractCasDataStoreFactory implements CasDataStoreFactory
     @Override
     public final QualityDataStore getQualityDataStoreFor(String pathToDataStore)
             throws CasDataStoreFactoryException {
-        return getQualityDataStoreFor(new File(workingDir, pathToDataStore));
+        File trimmedDataStore = getTrimmedFileFor(pathToDataStore);   
+        return getQualityDataStoreFor(trimmedDataStore);
     }
     /**
      * @param file

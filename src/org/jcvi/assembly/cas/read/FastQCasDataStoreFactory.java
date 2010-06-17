@@ -26,8 +26,8 @@ package org.jcvi.assembly.cas.read;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.io.FilenameUtils;
+import org.jcvi.assembly.cas.CasTrimMap;
+import org.jcvi.assembly.cas.EmptyCasTrimMap;
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.fasta.fastq.FastQDataStore;
 import org.jcvi.fasta.fastq.FastQNucleotideDataStoreAdapter;
@@ -52,7 +52,13 @@ public class FastQCasDataStoreFactory extends AbstractCasDataStoreFactory {
      * @param cacheSize
      */
     public FastQCasDataStoreFactory(File workingDir,FastQQualityCodec quailtyCodec, int cacheSize) {
-        super(workingDir);
+        this(workingDir, EmptyCasTrimMap.getInstance(), quailtyCodec,cacheSize);
+    }
+    /**
+     * @param cacheSize
+     */
+    public FastQCasDataStoreFactory(File workingDir, CasTrimMap trimMap,FastQQualityCodec quailtyCodec, int cacheSize) {
+        super(workingDir,trimMap);
         this.cacheSize = cacheSize;
         this.quailtyCodec = quailtyCodec;
     }
@@ -64,7 +70,7 @@ public class FastQCasDataStoreFactory extends AbstractCasDataStoreFactory {
     }
     private void addDataStoreIfNeeded(File fastq) throws CasDataStoreFactoryException{
         if(!fastQDataStores.containsKey(fastq)){ 
-            if(!"fastq".equals(FilenameUtils.getExtension(fastq.getName()))){
+            if(!fastq.getName().contains("fastq")){
                 throw new CasDataStoreFactoryException("not a fastq file");
             }
             FastQDataStore<FastQRecord> dataStore = new LargeFastQFileDataStore(fastq,quailtyCodec );

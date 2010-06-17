@@ -24,8 +24,8 @@
 package org.jcvi.assembly.cas.read;
 
 import java.io.File;
-
-import org.apache.commons.io.FilenameUtils;
+import org.jcvi.assembly.cas.CasTrimMap;
+import org.jcvi.assembly.cas.EmptyCasTrimMap;
 import org.jcvi.fasta.fastq.FastQQualityCodec;
 import org.jcvi.fasta.fastq.H2NucleotideFastQDataStore;
 import org.jcvi.fasta.fastq.H2QualityFastQDataStore;
@@ -38,7 +38,6 @@ public class H2FastQCasDataStoreFactory extends AbstractCasDataStoreFactory{
 
     private final FastQQualityCodec fastqQualityCodec;
     private final boolean useTempfile;
-    
     /**
      * @param fastqQualityCodec
      */
@@ -46,7 +45,10 @@ public class H2FastQCasDataStoreFactory extends AbstractCasDataStoreFactory{
         this(null, fastqQualityCodec, useTempFile);
     }
     public H2FastQCasDataStoreFactory(File workingDir,FastQQualityCodec fastqQualityCodec, boolean useTempFile) {
-        super(workingDir);
+        this(workingDir, EmptyCasTrimMap.getInstance(), fastqQualityCodec, useTempFile);
+    }
+    public H2FastQCasDataStoreFactory(File workingDir,CasTrimMap trimMap,FastQQualityCodec fastqQualityCodec, boolean useTempFile) {
+        super(workingDir,trimMap);
         this.fastqQualityCodec = fastqQualityCodec;
         this.useTempfile = useTempFile;
     }
@@ -59,10 +61,14 @@ public class H2FastQCasDataStoreFactory extends AbstractCasDataStoreFactory{
     public H2FastQCasDataStoreFactory(File workingDir,FastQQualityCodec fastqQualityCodec) {
         this(workingDir,fastqQualityCodec, false);
     }
+    public H2FastQCasDataStoreFactory(File workingDir,CasTrimMap trimMap,FastQQualityCodec fastqQualityCodec) {
+        this(workingDir,trimMap,fastqQualityCodec, false);
+    }
     @Override
     public NucleotideDataStore getNucleotideDataStoreFor(File fastq)
             throws CasDataStoreFactoryException {
-        if(!"fastq".equals(FilenameUtils.getExtension(fastq.getName()))){
+        
+        if(!fastq.getName().contains("fastq")){
             throw new CasDataStoreFactoryException("not a fastq file");
         }
         try {
@@ -83,7 +89,7 @@ public class H2FastQCasDataStoreFactory extends AbstractCasDataStoreFactory{
     @Override
     public QualityDataStore getQualityDataStoreFor(File fastq)
             throws CasDataStoreFactoryException {
-        if(!"fastq".equals(FilenameUtils.getExtension(fastq.getName()))){
+        if(!fastq.getName().contains("fastq")){
             throw new CasDataStoreFactoryException("not a fastq file");
         }
         try {
