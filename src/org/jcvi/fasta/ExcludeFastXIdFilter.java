@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,31 +16,30 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+package org.jcvi.fasta;
 
-package org.jcvi.fasta.fastq.util;
+import java.util.Collection;
 
 /**
- * {@code NullFastQFilter} is a Null Object implementation
- * of {@link FastQFilter} that accepts all ids.
+ * {@code ExcludeFastXIdFilter} is an implementation of
+ * {@link AbstractFastXIdFilter} that excludes
+ * any records in the provided list.
  * @author dkatzel
  *
  *
  */
-public class NullFastQFilter implements FastQFilter{
+public class ExcludeFastXIdFilter extends AbstractFastXIdFilter{
     /**
-     * Singleton instance of NullFastQFilter.
+     * Exclude any records which have ids contained in the given list.
+     * @param ids the list of ids to exclude.
      */
-    public static final NullFastQFilter INSTANCE = new NullFastQFilter();
-    
-    private NullFastQFilter(){
-        
+    public ExcludeFastXIdFilter(Collection<String> ids) {
+        super(ids);
     }
-    /**
-    * Accepts all ids.
-    */
+
     @Override
-    public boolean accept(String id, String optionalComment) {
-        return true;
+    protected boolean accept(boolean idContainedInList) {
+        return !idContainedInList;
     }
 
 }

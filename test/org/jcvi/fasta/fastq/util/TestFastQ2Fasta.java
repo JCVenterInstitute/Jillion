@@ -31,6 +31,7 @@ import org.jcvi.fasta.DefaultNucleotideFastaRecordFactory;
 import org.jcvi.fasta.DefaultQualityFastaFileDataStore;
 import org.jcvi.fasta.DefaultQualityFastaRecordFactory;
 import org.jcvi.fasta.FastaParser;
+import org.jcvi.fasta.NullFastXFilter;
 import org.jcvi.fasta.fastq.DefaultFastQFileDataStore;
 import org.jcvi.fasta.fastq.FastQFileParser;
 import org.jcvi.fasta.fastq.FastQQualityCodec;
@@ -55,7 +56,7 @@ public class TestFastQ2Fasta {
         ByteArrayOutputStream seqOut = new ByteArrayOutputStream();
         ByteArrayOutputStream qualOut = new ByteArrayOutputStream();
         
-        Fastq2Fasta sut = new Fastq2Fasta(NullFastQFilter.INSTANCE,codec , seqOut, qualOut);
+        Fastq2Fasta sut = new Fastq2Fasta(NullFastXFilter.INSTANCE,codec , seqOut, qualOut);
         int numberOfRecords =parseAndAssertFastQFile(seqOut, qualOut, sut);
         assertEquals(2, numberOfRecords);
     }

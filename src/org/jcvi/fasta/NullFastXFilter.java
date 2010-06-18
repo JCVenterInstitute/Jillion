@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- *  This file is part of JCVI Java Common
+ * 	This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,20 +16,32 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi.fasta.fastq.util;
+
+package org.jcvi.fasta;
+
+
 /**
- * {@code FastQFilter} filters a FastaQ file.
+ * {@code NullFastXFilter} is a Null Object implementation
+ * of {@link FastXFilter} that accepts all ids.
  * @author dkatzel
  *
  *
  */
-public interface FastQFilter {
+public class NullFastXFilter implements FastXFilter{
     /**
-     * filters the fastQ record with the given read id and optional comment.
-     * @param id the id of the read to possibly filter.
-     * @param optionalComment the comment of the read, will be {@code null}
-     * if no comment exists.
-     * @return {@code true} if the read meets the filter criteria {@code false} otherwise.
+     * Singleton instance of NullFastQFilter.
      */
-    boolean accept(String id, String optionalComment);
+    public static final NullFastXFilter INSTANCE = new NullFastXFilter();
+    
+    private NullFastXFilter(){
+        
+    }
+    /**
+    * Accepts all ids.
+    */
+    @Override
+    public boolean accept(String id, String optionalComment) {
+        return true;
+    }
+
 }

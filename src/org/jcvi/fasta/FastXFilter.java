@@ -16,19 +16,20 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi.fasta.fastq.util;
-
-import java.util.Collection;
-
-public class IncludeFastQIdFilter extends AbstractFastQIdFilter{
-
-    public IncludeFastQIdFilter(Collection<String> ids) {
-        super(ids);
-    }
-
-    @Override
-    protected boolean accept(boolean idContainedInList) {
-        return idContainedInList;
-    }
-
+package org.jcvi.fasta;
+/**
+ * {@code FastXFilter} filters a FastX (Fasta or Fastq) file.
+ * @author dkatzel
+ *
+ *
+ */
+public interface FastXFilter {
+    /**
+     * filters the fastX record with the given read id and optional comment.
+     * @param id the id of the read to possibly filter.
+     * @param optionalComment the comment of the read, will be {@code null}
+     * if no comment exists.
+     * @return {@code true} if the read meets the filter criteria {@code false} otherwise.
+     */
+    boolean accept(String id, String optionalComment);
 }

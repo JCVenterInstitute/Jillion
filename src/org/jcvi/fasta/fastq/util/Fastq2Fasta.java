@@ -38,6 +38,10 @@ import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.cli.CommandLineUtils;
 import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
 import org.jcvi.fasta.DefaultQualityFastaRecord;
+import org.jcvi.fasta.ExcludeFastXIdFilter;
+import org.jcvi.fasta.FastXFilter;
+import org.jcvi.fasta.IncludeFastXIdFilter;
+import org.jcvi.fasta.NullFastXFilter;
 import org.jcvi.fasta.fastq.AbstractFastQFileVisitor;
 import org.jcvi.fasta.fastq.FastQFileParser;
 import org.jcvi.fasta.fastq.FastQQualityCodec;
@@ -62,7 +66,7 @@ import org.jcvi.io.idReader.StringIdParser;
  *
  */
 public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
-    private final FastQFilter filter;
+    private final FastXFilter filter;
     private final OutputStream seqOut;
     private final OutputStream qualOut;
     private final FastQQualityCodec qualityCodec;
@@ -74,7 +78,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
      * @param filter
      * @param out
      */
-    public Fastq2Fasta(FastQFilter filter, FastQQualityCodec qualityCodec,OutputStream seqOut,OutputStream qualOut) {
+    public Fastq2Fasta(FastXFilter filter, FastQQualityCodec qualityCodec,OutputStream seqOut,OutputStream qualOut) {
         this.filter = filter;
         this.seqOut = seqOut;
         this.qualOut = qualOut;
@@ -164,7 +168,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
                 qualOut = new FileOutputStream(commandLine.getOptionValue("q"));
             }
             final File idFile;
-            final FastQFilter filter;
+            final FastXFilter filter;
             if(commandLine.hasOption("i")){
                 idFile =new File(commandLine.getOptionValue("i"));
                 Set<String> includeList=parseIdsFrom(idFile);
@@ -172,13 +176,13 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
                     Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue("e")));
                     includeList.removeAll(excludeList);
                 }
-                filter = new IncludeFastQIdFilter(includeList);
+                filter = new IncludeFastXIdFilter(includeList);
                 
             }else if(commandLine.hasOption("e")){
                 idFile =new File(commandLine.getOptionValue("e"));
-                filter = new ExcludeFastQIdFilter(parseIdsFrom(idFile));
+                filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile));
             }else{
-                filter = NullFastQFilter.INSTANCE;
+                filter = NullFastXFilter.INSTANCE;
             }
             final FastQQualityCodec fastqQualityCodec;
             if(commandLine.hasOption("sanger")){

@@ -16,19 +16,42 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi.fasta.fastq.util;
+package org.jcvi.fasta;
 
 import java.util.Collection;
 
-public class ExcludeFastQIdFilter extends AbstractFastQIdFilter{
+/**
+ * {@code AbstractFastXIdFilter} is an abstract implementation
+ * of {@link FastXFilter} to accept or not accept
+ * fastX records based on def lines.
+ * @author dkatzel
+ *
+ *
+ */
+public abstract class AbstractFastXIdFilter implements FastXFilter{
 
-    public ExcludeFastQIdFilter(Collection<String> ids) {
-        super(ids);
+    private final Collection<String> ids;
+
+    /**
+     * @param ids
+     */
+    public AbstractFastXIdFilter(Collection<String> ids) {
+        this.ids = ids;
     }
+    /**
+     * Should the given Id be accepted?
+     * @param idContainedInList is the id contained in the list
+     * provided.
+     * @return {@code true} if the id should be accepted; {@code false}
+     * otherwise.
+     */
+    protected abstract boolean accept(boolean idContainedInList);
+
 
     @Override
-    protected boolean accept(boolean idContainedInList) {
-        return !idContainedInList;
+    public boolean accept(String id, String optionalComment) {
+        return accept(ids.contains(id));
     }
-
+    
+    
 }

@@ -40,8 +40,13 @@ import org.jcvi.glyph.Glyph;
 public abstract class AbstractFastaH2DataStore <G extends Glyph, E extends EncodedGlyphs<G>> implements FastaVisitor, DataStore<E>{
 
     private final AbstractH2EncodedGlyphDataStore<G, E> h2Datastore;
+    private final FastXFilter filter;
     public AbstractFastaH2DataStore(File fastaFile,AbstractH2EncodedGlyphDataStore<G, E> h2Datastore) throws FileNotFoundException{
+        this(fastaFile, h2Datastore, NullFastXFilter.INSTANCE);
+    }
+    public AbstractFastaH2DataStore(File fastaFile,AbstractH2EncodedGlyphDataStore<G, E> h2Datastore, FastXFilter filter) throws FileNotFoundException{
         this.h2Datastore = h2Datastore;
+        this.filter = filter;
         FastaParser.parseFasta(fastaFile, this);
     }
     /**
@@ -66,7 +71,9 @@ public abstract class AbstractFastaH2DataStore <G extends Glyph, E extends Encod
     @Override
     public void visitRecord(String id, String comment, String entireBody) {
         try{
-            h2Datastore.insertRecord(id, entireBody);
+            if(filter.accept(id, comment)){
+                h2Datastore.insertRecord(id, entireBody);
+            }
         }
         catch (DataStoreException e) {
             throw new IllegalStateException("could not insert record into datastore",e);
