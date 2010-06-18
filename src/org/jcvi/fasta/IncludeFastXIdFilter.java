@@ -16,28 +16,30 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi.fasta.fastq.util;
+package org.jcvi.fasta;
 
 import java.util.Collection;
 
-public abstract class AbstractFastQIdFilter implements FastQFilter{
-
-    private final Collection<String> ids;
-
+/**
+ * {@code IncludeFastXIdFilter} is an implementation of
+ * {@link AbstractFastXIdFilter} that includes
+ * any records in the provided list.
+ * @author dkatzel
+ *
+ *
+ */
+public class IncludeFastXIdFilter extends AbstractFastXIdFilter{
     /**
-     * @param ids
+     * Include any records which have ids contained in the given list.
+     * @param ids the list of ids to exclude.
      */
-    public AbstractFastQIdFilter(Collection<String> ids) {
-        this.ids = ids;
+    public IncludeFastXIdFilter(Collection<String> ids) {
+        super(ids);
     }
-    
-    protected abstract boolean accept(boolean idContainedInList);
-
 
     @Override
-    public boolean accept(String id, String optionalComment) {
-        return accept(ids.contains(id));
+    protected boolean accept(boolean idContainedInList) {
+        return idContainedInList;
     }
-    
-    
+
 }

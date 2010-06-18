@@ -35,6 +35,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.cli.CommandLineUtils;
+import org.jcvi.fasta.ExcludeFastXIdFilter;
+import org.jcvi.fasta.FastXFilter;
+import org.jcvi.fasta.IncludeFastXIdFilter;
 import org.jcvi.fasta.fastq.FastQFileParser;
 import org.jcvi.fasta.fastq.FastQFileVisitor;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -53,7 +56,7 @@ import org.jcvi.io.idReader.IdReaderException;
  */
 public class FastQFile implements FastQFileVisitor{
     private static final String DEFAULT_FILE_OUTPUT = "Reads.fastq";
-    private final FastQFilter filter;
+    private final FastXFilter filter;
     private final OutputStream out;
     private boolean shouldWrite=false;
     private String currentLine;
@@ -62,7 +65,7 @@ public class FastQFile implements FastQFileVisitor{
      * @param filter
      * @param out
      */
-    public FastQFile(FastQFilter filter, OutputStream out) {
+    public FastQFile(FastXFilter filter, OutputStream out) {
         this.filter = filter;
         this.out = out;
     }
@@ -161,7 +164,7 @@ public class FastQFile implements FastQFileVisitor{
             }
             
             final File idFile;
-            final FastQFilter filter;
+            final FastXFilter filter;
             if(commandLine.hasOption("i")){
                 idFile =new File(commandLine.getOptionValue("i"));
                 Set<String> includeList=parseIdsFrom(idFile);
@@ -169,11 +172,11 @@ public class FastQFile implements FastQFileVisitor{
                     Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue("e")));
                     includeList.removeAll(excludeList);
                 }
-                filter = new IncludeFastQIdFilter(includeList);
+                filter = new IncludeFastXIdFilter(includeList);
                 
             }else{
                 idFile =new File(commandLine.getOptionValue("e"));
-                filter = new ExcludeFastQIdFilter(parseIdsFrom(idFile));
+                filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile));
             }
             FastQFile fastQFileAdapter = new FastQFile(filter, out);
             FastQFileParser.parse(fastQFile, fastQFileAdapter);
