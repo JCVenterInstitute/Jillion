@@ -153,6 +153,10 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
         options.addOptionGroup(group);
         OutputStream seqOut =null;
         OutputStream qualOut =null;
+        if(args.length ==1 && args[0].endsWith("-h")){
+            printHelp(options);
+            System.exit(0);
+        }
         if(args.length <1){
             printHelp(options);
             System.exit(1);
