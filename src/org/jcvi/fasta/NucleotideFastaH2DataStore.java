@@ -16,42 +16,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 11, 2010
- *
- * @author dkatzel
- */
+
 package org.jcvi.fasta;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.nuc.datastore.H2NucleotideDataStore;
+
 /**
- * {@code AbstractNucleotideFastaFileDataStore} is an implementation
- * of {@link AbstractFastaFileDataStore} for {@link NucleotideSequenceFastaRecord}s.
+ * {@code NucleotideFastaH2DataStore} is an {@link AbstractFastaH2DataStore}
+ * implementation that stores nucleotide from Fasta files inside an H2 datastore.
  * @author dkatzel
  *
  *
  */
-public abstract class AbstractNucleotideFastaFileDataStore extends AbstractFastaFileDataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> implements NucleotideFastaDataStore{
-
-    private final NucleotideFastaRecordFactory fastaRecordFactory;
+public class NucleotideFastaH2DataStore extends AbstractFastaH2DataStore<NucleotideGlyph,NucleotideEncodedGlyphs> implements NucleotideDataStore{
 
     /**
-     * @param fastaRecordFactory
+     * @param fastaFile
+     * @param h2Datastore
+     * @throws FileNotFoundException
      */
-    public AbstractNucleotideFastaFileDataStore(
-            NucleotideFastaRecordFactory fastaRecordFactory) {
-        this.fastaRecordFactory = fastaRecordFactory;
+    public NucleotideFastaH2DataStore(
+            File fastaFile,
+            H2NucleotideDataStore h2Datastore)
+            throws FileNotFoundException {
+        super(fastaFile, h2Datastore);
     }
-    
-    public AbstractNucleotideFastaFileDataStore(){
-        this(DefaultNucleotideFastaRecordFactory.getInstance());
-    }
-
-    protected final NucleotideFastaRecordFactory getFastaRecordFactory() {
-        return fastaRecordFactory;
-    }
-
-    
-    
 
 }

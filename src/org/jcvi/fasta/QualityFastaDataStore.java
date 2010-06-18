@@ -16,42 +16,19 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 11, 2010
- *
- * @author dkatzel
- */
+
 package org.jcvi.fasta;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.phredQuality.PhredQuality;
+
 /**
- * {@code AbstractNucleotideFastaFileDataStore} is an implementation
- * of {@link AbstractFastaFileDataStore} for {@link NucleotideSequenceFastaRecord}s.
+ * {@code QualityFastaDataStore}is a FastaDataStore
+ * for storing {@link PhredQuality}s.
  * @author dkatzel
  *
  *
  */
-public abstract class AbstractNucleotideFastaFileDataStore extends AbstractFastaFileDataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> implements NucleotideFastaDataStore{
-
-    private final NucleotideFastaRecordFactory fastaRecordFactory;
-
-    /**
-     * @param fastaRecordFactory
-     */
-    public AbstractNucleotideFastaFileDataStore(
-            NucleotideFastaRecordFactory fastaRecordFactory) {
-        this.fastaRecordFactory = fastaRecordFactory;
-    }
-    
-    public AbstractNucleotideFastaFileDataStore(){
-        this(DefaultNucleotideFastaRecordFactory.getInstance());
-    }
-
-    protected final NucleotideFastaRecordFactory getFastaRecordFactory() {
-        return fastaRecordFactory;
-    }
-
-    
-    
+public interface QualityFastaDataStore extends FastaDataStore<PhredQuality, EncodedGlyphs<PhredQuality>, QualityFastaRecord<EncodedGlyphs<PhredQuality>>>{
 
 }

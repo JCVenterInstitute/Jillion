@@ -51,7 +51,7 @@ import org.jcvi.util.AbstractLargeIdIterator;
  *
  *
  */
-public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore{
+public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore implements QualityFastaDataStore{
     private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
     private final File fastaFile;
 
