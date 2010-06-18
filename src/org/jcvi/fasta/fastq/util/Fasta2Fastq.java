@@ -147,7 +147,7 @@ public class Fasta2Fastq {
                                 throw new IllegalStateException("no quality values for "+ id);
                             }
                             FastQRecord fastq = new DefaultFastQRecord(id, 
-                                    new DefaultNucleotideEncodedGlyphs(entireBody.replaceAll("\\s+", "")), qualities);
+                                    new DefaultNucleotideEncodedGlyphs(entireBody.replaceAll("\\s+", "")), qualities,comment);
     
                             writer.print(FastQUtil.encode(fastq, fastqQualityCodec));
                         }

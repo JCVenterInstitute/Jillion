@@ -71,7 +71,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
     private final OutputStream qualOut;
     private final FastQQualityCodec qualityCodec;
     private boolean shouldWrite=false;
-    
+    private String currentComment;
     private String currentId;
     
     /**
@@ -92,6 +92,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
         shouldWrite= filter.accept(id, optionalComment);
         if(shouldWrite){
             currentId = id;
+            currentComment= optionalComment;
         }
         return shouldWrite;
     }
@@ -113,7 +114,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
     public boolean visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
         if(seqOut!=null && shouldWrite){
             try {
-                seqOut.write(new DefaultEncodedNucleotideFastaRecord( currentId,nucleotides) 
+                seqOut.write(new DefaultEncodedNucleotideFastaRecord( currentId,currentComment,nucleotides) 
                         .toString().getBytes());
             } catch (IOException e) {
                 throw new RuntimeException("could not write to sequence data for "+ currentId, e);
