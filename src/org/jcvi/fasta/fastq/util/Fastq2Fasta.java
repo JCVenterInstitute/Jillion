@@ -135,6 +135,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
                     .build());
         options.addOption(new CommandLineOptionBuilder("sanger", 
                         "input fastq file is encoded as a SANGER fastq file (default is SOLEXA)")
+                    .isFlag(true)
                        .build());
         OptionGroup group = new OptionGroup();
         group.setRequired(true);

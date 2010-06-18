@@ -37,6 +37,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultFastQFileDataStore.class,
         TestLargeFastQFileDataStore.class,
         AllIlluminaUnitTests.class,
+        TestFastQUtil.class,
         AllFastQUtilUnitTests.class
         
     }

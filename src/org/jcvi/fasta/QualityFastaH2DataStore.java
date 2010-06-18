@@ -16,42 +16,37 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 11, 2010
- *
- * @author dkatzel
- */
+
 package org.jcvi.fasta;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import java.io.File;
+import java.io.FileNotFoundException;
+
+import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
+
 /**
- * {@code AbstractNucleotideFastaFileDataStore} is an implementation
- * of {@link AbstractFastaFileDataStore} for {@link NucleotideSequenceFastaRecord}s.
+ * {@code QualityFastaH2DataStore} is an {@link AbstractFastaH2DataStore}
+ * implementation for storing Quality data from quality fasta records
+ * in an H2 database.
  * @author dkatzel
  *
  *
  */
-public abstract class AbstractNucleotideFastaFileDataStore extends AbstractFastaFileDataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> implements NucleotideFastaDataStore{
-
-    private final NucleotideFastaRecordFactory fastaRecordFactory;
+public class QualityFastaH2DataStore extends AbstractFastaH2DataStore<PhredQuality,EncodedGlyphs<PhredQuality>> implements QualityDataStore{
 
     /**
-     * @param fastaRecordFactory
+     * @param fastaFile
+     * @param h2Datastore
+     * @throws FileNotFoundException
      */
-    public AbstractNucleotideFastaFileDataStore(
-            NucleotideFastaRecordFactory fastaRecordFactory) {
-        this.fastaRecordFactory = fastaRecordFactory;
+    public QualityFastaH2DataStore(
+            File fastaFile,
+            H2QualityDataStore h2Datastore)
+            throws FileNotFoundException {
+        super(fastaFile, h2Datastore);
     }
-    
-    public AbstractNucleotideFastaFileDataStore(){
-        this(DefaultNucleotideFastaRecordFactory.getInstance());
-    }
-
-    protected final NucleotideFastaRecordFactory getFastaRecordFactory() {
-        return fastaRecordFactory;
-    }
-
-    
-    
 
 }

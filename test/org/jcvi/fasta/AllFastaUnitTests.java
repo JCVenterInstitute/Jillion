@@ -49,7 +49,8 @@ import org.junit.runners.Suite.SuiteClasses;
      TestDefaultPositionsFastaDataStore.class,
      TestLargePositionsFastaMap.class,
      TestLargeQualityFastaMap.class,
-     
+     TestNucleotideFastaH2DataStore.class,
+     TestQualityFastaH2DataStore.class,
      TestNucleotideDataStoreFastaAdatper.class,
      
      AllFastqUnitTests.class

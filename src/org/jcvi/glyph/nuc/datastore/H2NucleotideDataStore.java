@@ -27,6 +27,7 @@ import java.io.File;
 import java.sql.SQLException;
 
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.fasta.SequenceFastaRecordUtil;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.DefaultNucleotideGlyphCodec;
@@ -55,7 +56,7 @@ public class H2NucleotideDataStore extends AbstractH2EncodedGlyphDataStore<Nucle
     @Override
     public void insertRecord(String id, String basecalls) throws DataStoreException{
         try {
-           this.insertRecord(id,CODEC.encode(NucleotideGlyph.getGlyphsFor(basecalls)));          
+           this.insertRecord(id,CODEC.encode(NucleotideGlyph.getGlyphsFor(SequenceFastaRecordUtil.removeWhitespace(basecalls))));          
         } catch (SQLException e) {
             throw new DataStoreException("could not insert "+ id, e);
         }

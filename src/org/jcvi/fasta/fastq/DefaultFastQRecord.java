@@ -71,5 +71,60 @@ public class DefaultFastQRecord implements FastQRecord {
     public EncodedGlyphs<PhredQuality> getQualities() {
         return qualities;
     }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((comments == null) ? 0 : comments.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result
+                + ((nucleotides == null) ? 0 : nucleotides.decode().hashCode());
+        result = prime * result
+                + ((qualities == null) ? 0 : qualities.decode().hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof FastQRecord)) {
+            return false;
+        }
+        FastQRecord other = (FastQRecord) obj;
+        if (comments == null) {
+            if (other.getComment() != null) {
+                return false;
+            }
+        } else if (!comments.equals(other.getComment())) {
+            return false;
+        }
+        if (id == null) {
+            if (other.getId()!= null) {
+                return false;
+            }
+        } else if (!id.equals(other.getId())) {
+            return false;
+        }
+        if (nucleotides == null) {
+            if (other.getNucleotides() != null) {
+                return false;
+            }
+        } else if (!nucleotides.decode().equals(other.getNucleotides().decode())) {
+            return false;
+        }
+        if (qualities == null) {
+            if (other.getQualities() != null) {
+                return false;
+            }
+        } else if (!qualities.decode().equals(other.getQualities().decode())) {
+            return false;
+        }
+        return true;
+    }
 
 }
