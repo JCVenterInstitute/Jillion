@@ -138,7 +138,6 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
                     .isFlag(true)
                        .build());
         OptionGroup group = new OptionGroup();
-        group.setRequired(true);
         
         group.addOption(new CommandLineOptionBuilder("i", "include file of ids to include")
                             .build());
