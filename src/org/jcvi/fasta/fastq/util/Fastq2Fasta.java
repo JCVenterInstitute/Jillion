@@ -143,6 +143,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
                     .isFlag(true)
                        .build());
         OptionGroup group = new OptionGroup();
+        options.addOption(CommandLineUtils.createHelpOption());
         
         group.addOption(new CommandLineOptionBuilder("i", "include file of ids to include")
                             .build());
@@ -161,7 +162,10 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
         try {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, 
                     Arrays.copyOf(args, args.length-1));
-            
+            if(commandLine.hasOption("h")){
+                printHelp(options);
+                System.exit(0);
+            }
             if(commandLine.hasOption("s")){
                 seqOut = new FileOutputStream(commandLine.getOptionValue("s"));
             }

@@ -85,7 +85,7 @@ public class Fasta2Fastq {
                     .longName("quality")
                     .build());
         options.addOption(new CommandLineOptionBuilder("sanger", 
-                        "should encode output fastq file in SANGER fastq file (default is ILLUMINA 1.3+)")
+                        "should encode output fastq file in SANGER fastq file format (default is ILLUMINA 1.3+)")
                         .isFlag(true)
                        .build());
         
@@ -93,7 +93,7 @@ public class Fasta2Fastq {
                         "output fastq file")
                         .isRequired(true)
                         .build());
-        
+        options.addOption(CommandLineUtils.createHelpOption());
         OptionGroup group = new OptionGroup();
         
         group.addOption(new CommandLineOptionBuilder("i", "include file of ids to include")
@@ -103,6 +103,11 @@ public class Fasta2Fastq {
         options.addOptionGroup(group);
         try {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
+            if(commandLine.hasOption("h")){
+                printHelp(options);
+                System.exit(0);
+            }
+            
             boolean useSanger = commandLine.hasOption("sanger");
             
             final File idFile;
