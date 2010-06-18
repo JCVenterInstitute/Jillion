@@ -151,12 +151,20 @@ public class FastQFile implements FastQFileVisitor{
                             .build());
         group.addOption(new CommandLineOptionBuilder("e", "exclude file of ids to exclude")
                             .build());
-        
+        options.addOption(CommandLineUtils.createHelpOption());
         options.addOptionGroup(group);
         OutputStream out=null;
+        if(args.length ==1 && args[0].endsWith("-h")){
+            printHelp(options);
+            System.exit(0);
+        }
         try {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, 
                     Arrays.copyOf(args, args.length-1));
+            if(commandLine.hasOption("h")){
+                printHelp(options);
+                System.exit(0);
+            }
             if(commandLine.hasOption("o")){
                 out = new FileOutputStream(commandLine.getOptionValue("o"));
             }else{
