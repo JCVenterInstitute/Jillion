@@ -52,7 +52,7 @@ public class TestFastQUtil {
         expectedDataStore.close();
     }
     @Test
-    public void encode() throws DataStoreException{
+    public void encodedDataCanBeReParsed() throws DataStoreException{
         FastQRecord fastq = expectedDataStore.get("SOLEXA1:4:1:12:1489#0/1");
         String encodedFastQ = FastQUtil.encode(fastq, qualityCodec);
         ByteArrayInputStream in = new ByteArrayInputStream(encodedFastQ.getBytes());
@@ -60,5 +60,25 @@ public class TestFastQUtil {
         DefaultFastQFileDataStore actualDataStore = new DefaultFastQFileDataStore(qualityCodec);
         FastQFileParser.parse(in, actualDataStore);
         assertEquals(fastq, actualDataStore.get("SOLEXA1:4:1:12:1489#0/1"));
+    }
+    @Test
+    public void withQualityLineDuplicated() throws DataStoreException{
+        String expected = "@SOLEXA1:4:1:12:1489#0/1\n"+
+                "TATTTAAAATCTAATANGTCTTGATTTGAAATTGAAAGAGCAAAAATCTGATTGATTTTATTGAAGAATAATTTGATTTAATATATTCTTAAGTCTGTTT\n"+
+                "+SOLEXA1:4:1:12:1489#0/1\n"+
+                "abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S\n";
+        FastQRecord fastq = expectedDataStore.get("SOLEXA1:4:1:12:1489#0/1");
+        String actual = FastQUtil.encode(fastq, qualityCodec,true);
+        assertEquals(expected, actual);
+    }
+    @Test
+    public void withoutQualityLineDuplicated() throws DataStoreException{
+        String expected = "@SOLEXA1:4:1:12:1489#0/1\n"+
+                "TATTTAAAATCTAATANGTCTTGATTTGAAATTGAAAGAGCAAAAATCTGATTGATTTTATTGAAGAATAATTTGATTTAATATATTCTTAAGTCTGTTT\n"+
+                "+\n"+
+                "abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S\n";
+        FastQRecord fastq = expectedDataStore.get("SOLEXA1:4:1:12:1489#0/1");
+        String actual = FastQUtil.encode(fastq, qualityCodec);
+        assertEquals(expected, actual);
     }
 }
