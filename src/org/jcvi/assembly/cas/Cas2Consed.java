@@ -75,6 +75,8 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
+import org.jcvi.fasta.fastq.FastQQualityCodec;
+import org.jcvi.fasta.fastq.SangerFastQQualityCodec;
 import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -127,6 +129,10 @@ public class Cas2Consed {
                                 .longName("cache_size")
                                         .build());
         options.addOption(new CommandLineOptionBuilder("coverage_trim", "perform additional contig ends trimming based on coverage.  The value of coverage_trim is the min level coverage required at ends.")                                
+                            .build());
+        
+        options.addOption(new CommandLineOptionBuilder("useIllumina", "any FASTQ files in this assembly are encoded in Illumina 1.3+ format (default is Sanger)")                                
+                            .isFlag(true)
                             .build());
         CommandLine commandLine;
         try {
@@ -202,10 +208,13 @@ public class Cas2Consed {
                        }
                    }
                }
-                final IlluminaFastQQualityCodec illuminaQualityCodec = new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
-                MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
+               FastQQualityCodec qualityCodec=  commandLine.hasOption("useIllumina")?  
+                       new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE)
+                    : new SangerFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
+               
+               MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                         new H2SffCasDataStoreFactory(casWorkingDirectory),               
-                        new H2FastQCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,illuminaQualityCodec),
+                        new H2FastQCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,qualityCodec),
                         new FastaCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,cacheSize)        
                 );
                 
