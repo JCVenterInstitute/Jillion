@@ -19,6 +19,9 @@
 
 package org.jcvi.fasta.fastq.solexa;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
 /**
@@ -30,7 +33,34 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
  *
  */
 public final class SolexaUtil {
-
+    /**
+     * Cache of solexa to phred quality mappings so we
+     * only have to perform the expensive calculations once.
+     */
+    private static final Map<Integer, PhredQuality> SOLEXA_2_PHRED_MAP;
+    /**
+     * Cache of phred  to solexa quality mappings so we
+     * only have to perform the expensive calculations once.
+     */
+    private static final Map<PhredQuality, Integer> PHRED_2_SOLEXA_MAP;
+    /**
+     * Populate the caches.
+     */
+    static{
+        SOLEXA_2_PHRED_MAP = new HashMap<Integer, PhredQuality>();
+        PHRED_2_SOLEXA_MAP = new HashMap<PhredQuality, Integer>();
+        for(int solexaValue=-5; solexaValue<=62; solexaValue++){
+            PhredQuality phred = _convertSolexaQualityToPhredQuality(solexaValue);
+            SOLEXA_2_PHRED_MAP.put(solexaValue, phred);           
+        }
+        //do the phred calcuations separately because
+        //there isn't a 1:1 mapping
+        for(byte i=0; i<PhredQuality.MAX_VALUE; i++){
+            PhredQuality phred = PhredQuality.valueOf(i);
+            int solexaValue = _convertPhredQualityToSolexaQuality(phred);
+            PHRED_2_SOLEXA_MAP.put(phred, solexaValue);
+        }
+    }
     private SolexaUtil(){}
     /**
      * Convert a solexa quality value into the more common
@@ -42,7 +72,7 @@ public final class SolexaUtil {
      * @param solexaQuality the solexa quality value to convert.
      * @return a {@link PhredQuality} equivalent.
      */
-    public static PhredQuality convertSolexaQualityToPhredQuality(int solexaQuality){
+    private static PhredQuality _convertSolexaQualityToPhredQuality(int solexaQuality){
         if(solexaQuality ==-5){
             return PhredQuality.valueOf(0);
         }
@@ -68,7 +98,7 @@ public final class SolexaUtil {
      * @param phredQuality the {@link PhredQuality} to convert.
      * @return the Solexa quality equivalent.
      */
-    public static int convertPhredQualityToSolexaQuality(PhredQuality phredQuality){
+    private static int _convertPhredQualityToSolexaQuality(PhredQuality phredQuality){
         
         final byte qualityValue = phredQuality.getNumber().byteValue();
         if(qualityValue ==0){
@@ -82,5 +112,32 @@ public final class SolexaUtil {
         }
         double math=10 * Math.log(Math.pow(10, qualityValue/10.0) -1)/Math.log(10);
         return (int)Math.round(math);
+    }
+    /**
+     * Convert a solexa quality value into the more common
+     * Phred Quality equivalent.  Since Solexa values do not use the same
+     * scale as Phred qualities, multiple low solexa values map to 
+     * the same Phred value.  Therefore, it is not possible to always convert
+     * a solexa value into a quality value and then back into the original solexa
+     * value.
+     * @param solexaQuality the solexa quality value to convert.
+     * @return a {@link PhredQuality} equivalent.
+     */
+    public static PhredQuality convertSolexaQualityToPhredQuality(int solexaQuality){
+        return SOLEXA_2_PHRED_MAP.get(solexaQuality);
+    }
+    /**
+     * Convert a {@link PhredQuality}value into the Solexa
+     * equivalent.  Since Solexa values do not use the same
+     * scale as Phred qualities, multiple low solexa values map to 
+     * the same Phred value.  Therefore, it is not possible to always convert
+     * a solexa value into a quality value and then back into the original solexa
+     * value.
+     * @param phredQuality the {@link PhredQuality} to convert.
+     * @return the Solexa quality equivalent.
+     */
+    public static int convertPhredQualityToSolexaQuality(PhredQuality phredQuality){
+        
+        return PHRED_2_SOLEXA_MAP.get(phredQuality);
     }
 }
