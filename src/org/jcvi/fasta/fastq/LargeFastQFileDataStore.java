@@ -164,7 +164,7 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
         public boolean visitBeginBlock(String id, String optionalComment) {
             if(!found && idToLookFor.equals(id)){
                 found=true;
-                super.visitBeginBlock(id, optionalComment);
+                return super.visitBeginBlock(id, optionalComment);
             }
             return !found;
         }
