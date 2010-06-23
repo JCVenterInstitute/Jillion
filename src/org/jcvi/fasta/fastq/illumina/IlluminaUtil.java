@@ -23,13 +23,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * {@code IlluminaUtil} is a utility class for working with Illumina data.
  * @author dkatzel
  *
  *
  */
 public class IlluminaUtil {
 
-    private static final Pattern NAME_PATTERN = Pattern.compile("^@(\\S+):(\\d+):(\\d+):(\\d+):(\\d+)#:(\\d+)/(\\d+)$");
+    private static final Pattern NAME_PATTERN = Pattern.compile("^(\\S+):(\\d+):(\\d+):(\\d+):(\\d+)#(\\d+)\\/(\\d+)$");
 
     /**
      * Gets the unique instrument name from the given read id.
@@ -76,7 +77,7 @@ public class IlluminaUtil {
      * Illumina Read ID.
      * @throws NullPointerException if the given id is null.
      */
-    public static final int getTileNumberWithinFlowcellLane(String illuminaReadId){
+    public static final int getTileNumber(String illuminaReadId){
         if(illuminaReadId == null){
             throw new NullPointerException();
         }
