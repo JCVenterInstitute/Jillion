@@ -37,6 +37,7 @@ import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
+import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractTestFastQFileDataStore {
@@ -64,6 +65,7 @@ public abstract class AbstractTestFastQFileDataStore {
             "example comment");
 
     protected abstract FastQFileVisitor createFastQFileDataStore(File file,FastQQualityCodec qualityCodec);
+    @Before
     public void setup() throws IOException{
         sut = createFastQFileDataStore(resources.getFile(file), QUALITY_CODEC);
     }
