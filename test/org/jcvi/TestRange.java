@@ -29,19 +29,16 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Before;
+import org.jcvi.Range.CoordinateSystem;
 import org.junit.Test;
+
 public class TestRange{
 
-    private Range range;
+    private Range range = Range.buildRange(1,10);
     private Range emptyRange = Range.buildRange(0, -1);
-
-    @Before
-    public void setUp() {
-        range = Range.buildRange(1,10);
-    }
     @Test
     public void testEquals_null_notEqual(){
         assertFalse(range.equals(null));
@@ -465,8 +462,19 @@ public class TestRange{
         Range zeroRange = Range.buildRange(0,0);
         assertEquals(1, zeroRange.size());
     }
-
-
+    
+    @Test
+    public void intersectsSingleCoordinate(){
+        assertTrue(range.intersects(5));
+    }
+    @Test
+    public void intersectsSingleCoordinateBeforeRangeShouldNotIntersect(){
+        assertFalse(range.intersects(0));
+    }
+    @Test
+    public void intersectsSingleCoordinateAfterRangeShouldNotIntersect(){
+        assertFalse(range.intersects(range.getEnd()+1));
+    }
     @Test public void testIntersects()
     {
         Range target = Range.buildRange(5, 15);
@@ -524,6 +532,7 @@ public class TestRange{
         }
     }
 
+  
     @Test public void testIntersection_normal()
     {
         Range target = Range.buildRange(5,15);
@@ -798,7 +807,18 @@ public class TestRange{
     public void buildRange(){
         assertEquals(range, Range.buildRange(range.getStart(), range.getEnd()));
     }
-    
+    @Test
+    public void buildRangeWithCoordinateSystem(){
+        assertEquals(range, Range.buildRange(CoordinateSystem.RESIDUE_BASED,range.getStart()+1, range.getEnd()+1));
+    }
+    @Test(expected = NullPointerException.class)
+    public void buildRangeWithNullCoordinateSystemShouldThrowNPE(){
+        Range.buildRange(null,range.getStart()+1, range.getEnd()+1);
+    }
+    @Test(expected = NullPointerException.class)
+    public void buildEmptyRangeWithNullCoordinateSystemShouldThrowNPE(){
+        Range.buildEmptyRange(null,range.getStart()+1);
+    }
     @Test
     public void buildEmptyRange(){
         Range emptyRange = Range.buildRange(10, 9);
@@ -994,5 +1014,59 @@ public class TestRange{
         catch(IllegalArgumentException e){
             assertEquals("cluster distance can not be negative",e.getMessage());
         }
+    }
+    
+    @Test
+    public void growRight(){
+        Range expected = Range.buildRange(1, 15);
+        assertEquals(expected, range.grow(0, 5));
+    }
+    @Test
+    public void growLeft(){
+        Range expected = Range.buildRange(-4, 10);
+        assertEquals(expected, range.grow(5, 0));
+    }
+    @Test
+    public void grow(){
+        Range expected = Range.buildRange(-4, 15);
+        assertEquals(expected, range.grow(5, 5));
+    }
+    
+    @Test
+    public void shrinkLeft(){
+        Range expected = Range.buildRange(6, 10);
+        assertEquals(expected, range.shrink(5, 0));
+    }
+    @Test
+    public void shrinkRight(){
+        Range expected = Range.buildRange(1, 5);
+        assertEquals(expected, range.shrink(0, 5));
+    }
+    @Test
+    public void shrink(){
+        Range expected = Range.buildRange(6, 5);
+        assertEquals(expected, range.shrink(5, 5));
+    }
+    
+    @Test
+    public void convertCoordinateSystem(){
+        Range convertedRange = range.convertRange(CoordinateSystem.RESIDUE_BASED);
+        assertEquals(range.getStart()+1, convertedRange.getLocalStart());
+        assertEquals(range.getEnd()+1, convertedRange.getLocalEnd());
+        assertEquals(range.getLength(), convertedRange.getLength());
+    }
+    @Test(expected = NullPointerException.class)
+    public void convertNullCoordinateSystemShouldThrowNPE(){
+        range.convertRange(null);
+    }
+    
+    @Test
+    public void iterator(){
+        Iterator<Long> iter = range.iterator();
+        assertTrue(iter.hasNext());
+        for(long l = range.getStart(); l<= range.getEnd(); l++){
+            assertEquals(Long.valueOf(l), iter.next());
+        }
+        assertFalse(iter.hasNext());
     }
 }
