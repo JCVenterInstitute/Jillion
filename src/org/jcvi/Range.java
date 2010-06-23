@@ -173,7 +173,7 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
 
     public static Range buildRange(RangeCoordinateSystem coordinateSystem,long start, long end){
         if ( coordinateSystem == null ) {
-            throw new IllegalArgumentException("Cannot build null coordinate system range");
+            throw new NullPointerException("Cannot build null coordinate system range");
         }
 
         long zeroBasedStart = coordinateSystem.getStart(start);
@@ -193,7 +193,7 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
     }
     public Range convertRange(RangeCoordinateSystem coordinateSystem) {
         if ( coordinateSystem == null ) {
-            throw new IllegalArgumentException("Cannot convert to a null range coordinate system");
+            throw new NullPointerException("Cannot convert to a null range coordinate system");
         }
 
         if ( this.isEmpty() ) {
@@ -209,7 +209,7 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
     }
     public static Range buildEmptyRange(RangeCoordinateSystem coordinateSystem,long coordinate){
         if ( coordinateSystem == null ) {
-            throw new IllegalArgumentException("Cannot build null coordinate system range");
+            throw new NullPointerException("Cannot build null coordinate system range");
         }
         
         long zeroBasedStart = coordinateSystem.getStart(coordinate);
@@ -380,12 +380,6 @@ public class Range implements Placed,Iterable<Long>, Comparable<Range>
         this.start = start;
         this.end = end;
         this.rangeCoordinateSystem = rangeCoordinateSystem;
-    }
-
-    private Range(Range range){
-        this.start = range.getStart();
-        this.end = range.getEnd();
-        this.rangeCoordinateSystem = range.getRangeCoordinateSystem();
     }
     /**
      * Fetch the left (start) coordinate.
