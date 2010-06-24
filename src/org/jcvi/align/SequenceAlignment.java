@@ -78,7 +78,7 @@ public class SequenceAlignment
     }
     
     /**
-     * Fetches the index of the first base in this sequence which aligned to the target 
+     * Fetches the index of the first base (1s-based) in this sequence which aligned to the target 
      * sequences.
      * 
      * @return The integer index of the first aligning base.
@@ -89,7 +89,7 @@ public class SequenceAlignment
     }
     
     /**
-     * Fetches the index of the last base in this sequence which aligned to the target 
+     * Fetches the index of the last base (1s-based) in this sequence which aligned to the target 
      * sequences.
      * 
      * @return The integer index of the last aligning base.
@@ -173,4 +173,5 @@ public class SequenceAlignment
         gapped.flip();
         return gapped;
     }
+    
 }

@@ -247,7 +247,12 @@ public class Version implements Comparable<Version>
         return (other.getSerialNumber() == this.getSerialNumber());
     }
     /**
-     * Build a new {@link Version} instance.
+     * Build a new {@link Version} instance.  The builder allows
+     * method chaining to set the different version fields.  If the API
+     * or patch numbers are not set, then it is assumed to be {@code 0},
+     * if the release number is not set it is assumed to be {@code 1}
+     * and if the release type is not set, it is assumed to be
+     * {@link ReleaseType#STABLE}.
      * @author dkatzel
      *
      *
@@ -264,13 +269,23 @@ public class Version implements Comparable<Version>
         private ReleaseType type=null;
         /** The index of this release within the declared version. */
         private int releaseNumber= UNSET;
-        
+        /**
+         * Create a new Builder instance with the given codebase version number.
+         * @param codebaseVersion the code base number of this version.
+         * @throws IllegalArgumentException if {@code codebaseVersion <0}.
+         */
         public Builder(int codebaseVersion){
             if(codebaseVersion<0){
                 throw new IllegalArgumentException("codebaseVersion can not be <0");
             }
             this.codebaseVersion = codebaseVersion;
         }
+        /**
+         * Sets the api number of this version.
+         * @param apiVersion the api number of this version.
+         * @return this.
+         * @throws IllegalArgumentException if {@code apiVersion <0}.
+         */
         public Builder apiVersion(int apiVersion){
             if(apiVersion<0){
                 throw new IllegalArgumentException("apiVersion can not be <0");
@@ -278,6 +293,12 @@ public class Version implements Comparable<Version>
             this.apiVersion = (byte)apiVersion;
             return this;
         }
+        /**
+         * Sets the patch number of this version.
+         * @param patchVersion the patch number of this version.
+         * @return this.
+         * @throws IllegalArgumentException if {@code patchVersion <0}.
+         */
         public Builder patchVersion(int patchVersion){
             if(patchVersion<0){
                 throw new IllegalArgumentException("patchVersion can not be <0");
@@ -285,6 +306,15 @@ public class Version implements Comparable<Version>
             this.patchVersion = (byte)patchVersion;
             return this;
         }
+        /**
+         * Sets the release number and type of this version.
+         * @param type the {@link ReleaseType} of this version; if this is
+         * set to {@code null}, then the release type is assumed
+         * to be {@link ReleaseType#STABLE}.
+         * @param releaseNumber the patch number of this version.
+         * @return this.
+         * @throws IllegalArgumentException if {@code releaseNumber <0}.
+         */
         public Builder release(ReleaseType type, int releaseNumber){
             if(releaseNumber<0){
                 throw new IllegalArgumentException("releaseNumber can not be <0");

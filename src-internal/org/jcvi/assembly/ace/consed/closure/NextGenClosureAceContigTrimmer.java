@@ -36,12 +36,12 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
  *
  *
  */
-public class NextGenCloserAceContigTrimmer extends AceContigTrimmer{
+public class NextGenClosureAceContigTrimmer extends AceContigTrimmer{
 
     /**
      * @param trimmers
      */
-    public NextGenCloserAceContigTrimmer(int minimumEndCoverage, int minBiDirectionalEndCoverage, int ignoreThresholdEndCoverage){
+    public NextGenClosureAceContigTrimmer(int minimumEndCoverage, int minBiDirectionalEndCoverage, int ignoreThresholdEndCoverage){
         super( Arrays.<PlacedReadTrimmer<AcePlacedRead, AceContig>>asList(
                         new MinimumEndCoverageTrimmer<AcePlacedRead, AceContig>(minimumEndCoverage),
                         new MinimumBidirectionalEndCoverageTrimmer<AcePlacedRead, AceContig>(minBiDirectionalEndCoverage, ignoreThresholdEndCoverage)));

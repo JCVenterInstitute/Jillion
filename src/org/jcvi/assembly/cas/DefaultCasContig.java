@@ -138,17 +138,11 @@ public class DefaultCasContig implements CasContig{
         public DefaultCasContig build() {
             System.out.printf("building cas contig %s%n",id);
             CoverageMap<CoverageRegion<PlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(placedReads);
-            long startCoordinate=0;
-            for(CoverageRegion<PlacedRead> region : coverageMap){
-                if(region.getCoverage()>0){
-                    startCoordinate = region.getStart();
-                    break;
-                }
-            }
+            
             System.out.printf("\tbuilding consensus%n");
             List<NucleotideGlyph> consensus = new ArrayList<NucleotideGlyph>();
             long endCoordinate = coverageMap.getRegion(coverageMap.getSize()-1).getEnd();
-            for(long i=startCoordinate; i<= endCoordinate; i++){
+            for(long i=0; i<= endCoordinate; i++){
                 consensus.add(findMostOccuringBase(consensusMap.get(i)));
             }
            
@@ -156,7 +150,7 @@ public class DefaultCasContig implements CasContig{
             DefaultContig.Builder builder = new DefaultContig.Builder(id, new DefaultNucleotideEncodedGlyphs(consensus));
             for(PlacedRead read : placedReads){
                 List<NucleotideGlyph> bases = read.getEncodedGlyphs().decode();           
-                builder.addRead(read.getId(), (int)(read.getStart()-startCoordinate), read.getValidRange(), 
+                builder.addRead(read.getId(), (int)(read.getStart()), read.getValidRange(), 
                         NucleotideGlyph.convertToString(bases), read.getSequenceDirection());
             }
             return new DefaultCasContig(builder.build());
