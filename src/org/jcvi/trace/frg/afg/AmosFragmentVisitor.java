@@ -16,28 +16,32 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on May 27, 2009
- *
+
+package org.jcvi.trace.frg.afg;
+
+import java.util.List;
+
+import org.jcvi.Range;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.io.TextFileVisitor;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.trace.frg;
+public interface AmosFragmentVisitor extends TextFileVisitor{
 
-import org.jcvi.trace.frg.afg.AllAfgUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestDefaultFragment.class,
-        TestFrg2Parser.class,
-        TestDefaultFragmentDataStore.class,
-        TestMemoryMappedFragmentDataStore.class,
-        AllAfgUnitTests.class
-    }
-    )
-public class AllFrgUnitTests {
-
+    boolean visitRead(int index, String id);
+    
+    void visitBasecalls(NucleotideEncodedGlyphs basecalls);
+    
+    void visitQualities(List<PhredQuality> qualities);
+    
+    void visitClearRange(Range clearRange);
+    
+    void visitVectorRange(Range vectorClearRange);
+    
+    void visitQualityRange(Range qualityClearRange);
 }

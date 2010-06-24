@@ -16,28 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on May 27, 2009
- *
+
+package org.jcvi.trace.frg.afg;
+
+import org.jcvi.Range;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.sequence.Read;
+import org.jcvi.trace.Trace;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.trace.frg;
+public interface AmosFragment extends Trace, Read<NucleotideEncodedGlyphs>{
 
-import org.jcvi.trace.frg.afg.AllAfgUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestDefaultFragment.class,
-        TestFrg2Parser.class,
-        TestDefaultFragmentDataStore.class,
-        TestMemoryMappedFragmentDataStore.class,
-        AllAfgUnitTests.class
-    }
-    )
-public class AllFrgUnitTests {
+    String getId();
+    int getIndex();
+    Range getValidRange();
+    Range getVectorClearRange();
+    Range getQualityClearRange();
 
 }

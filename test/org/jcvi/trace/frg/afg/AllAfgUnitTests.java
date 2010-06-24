@@ -16,28 +16,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on May 27, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.trace.frg;
 
-import org.jcvi.trace.frg.afg.AllAfgUnitTests;
+package org.jcvi.trace.frg.afg;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+/**
+ * @author dkatzel
+ *
+ *
+ */
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestDefaultFragment.class,
-        TestFrg2Parser.class,
-        TestDefaultFragmentDataStore.class,
-        TestMemoryMappedFragmentDataStore.class,
-        AllAfgUnitTests.class
+        TestDefaultAmosFragmentDataStore.class
     }
     )
-public class AllFrgUnitTests {
+public class AllAfgUnitTests {
 
 }
