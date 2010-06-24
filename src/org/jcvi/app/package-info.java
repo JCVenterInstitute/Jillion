@@ -17,7 +17,6 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /**
- * JCVI-JavaCommon is a library used at the J&#46; Craig Venter Institute
- * to analyze and manipulate Genomic Sequence Data.
+ * This package contains classes that are useful for managing applications.
  */
-package org.jcvi;
+package org.jcvi.app;

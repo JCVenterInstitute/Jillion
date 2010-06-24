@@ -55,7 +55,7 @@ import org.jcvi.assembly.ace.ReadAceTag;
 import org.jcvi.assembly.ace.WholeAssemblyAceTag;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.ace.consed.ConsedWriter;
-import org.jcvi.assembly.ace.consed.closure.NextGenCloserAceContigTrimmer;
+import org.jcvi.assembly.ace.consed.closure.NextGenClosureAceContigTrimmer;
 import org.jcvi.assembly.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.H2FastQCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.H2SffCasDataStoreFactory;
@@ -247,12 +247,12 @@ public class Cas2Consed {
                 CasIdLookup readIdLookup = sangerFileMap ==null? casAssembly.getReadIdLookup() :
                     new DifferentFileCasIdLookupAdapter(casAssembly.getReadIdLookup(), sangerFileMap);
                 Date phdDate = new Date(startTime);
-                NextGenCloserAceContigTrimmer closerContigTrimmer = new NextGenCloserAceContigTrimmer(5, 5, 10);
+                NextGenClosureAceContigTrimmer closureContigTrimmer = new NextGenClosureAceContigTrimmer(5, 5, 10);
                 for(CasContig casContig : contigDatastore){
                     final AceContigAdapter adpatedCasContig = new AceContigAdapter(casContig, phdDate,readIdLookup);
                     CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(adpatedCasContig.getPlacedReads());
                     for(AceContig splitAceContig : ConsedUtil.split0xContig(adpatedCasContig, coverageMap)){
-                        AceContig trimmedAceContig =closerContigTrimmer.trimContig(splitAceContig, DefaultCoverageMap.buildCoverageMap(splitAceContig.getPlacedReads()));
+                        AceContig trimmedAceContig =closureContigTrimmer.trimContig(splitAceContig, DefaultCoverageMap.buildCoverageMap(splitAceContig.getPlacedReads()));
                         if(trimmedAceContig ==null){
                             System.out.printf("%s was completely trimmed... skipping%n", splitAceContig.getId());
                             continue;
