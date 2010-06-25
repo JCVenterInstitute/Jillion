@@ -134,6 +134,9 @@ public class Cas2Consed {
         options.addOption(new CommandLineOptionBuilder("useIllumina", "any FASTQ files in this assembly are encoded in Illumina 1.3+ format (default is Sanger)")                                
                             .isFlag(true)
                             .build());
+        options.addOption(new CommandLineOptionBuilder("useClosureTrimming", "apply additional contig trimming based on JCVI Closure rules")                                
+                                                .isFlag(true)
+                                                .build());
         CommandLine commandLine;
         try {
             commandLine = CommandLineUtils.parseCommandLine(options, args);
@@ -167,6 +170,8 @@ public class Cas2Consed {
             if(commandLine.hasOption("coverage_trim")){
                 minCoverageAtEnds = Integer.parseInt(commandLine.getOptionValue("coverage_trim"));
             }
+            
+            boolean useClosureTrimming = commandLine.hasOption("useClosureTrimming");
             TraceDataStore<FileSangerTrace> sangerTraceDataStore=null;
             Map<String, File> sangerFileMap = null;
             ReadOnlyDirectoryFileServer sourceChromatogramFileServer = null;
@@ -247,20 +252,25 @@ public class Cas2Consed {
                 CasIdLookup readIdLookup = sangerFileMap ==null? casAssembly.getReadIdLookup() :
                     new DifferentFileCasIdLookupAdapter(casAssembly.getReadIdLookup(), sangerFileMap);
                 Date phdDate = new Date(startTime);
-                NextGenClosureAceContigTrimmer closureContigTrimmer = new NextGenClosureAceContigTrimmer(5, 5, 10);
+                NextGenClosureAceContigTrimmer closureContigTrimmer=null;
+                if(useClosureTrimming){
+                    closureContigTrimmer= new NextGenClosureAceContigTrimmer(5, 5, 10);
+                }
                 for(CasContig casContig : contigDatastore){
                     final AceContigAdapter adpatedCasContig = new AceContigAdapter(casContig, phdDate,readIdLookup);
                     CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(adpatedCasContig.getPlacedReads());
-                    for(AceContig splitAceContig : ConsedUtil.split0xContig(adpatedCasContig, coverageMap)){
-                        AceContig trimmedAceContig =closureContigTrimmer.trimContig(splitAceContig, DefaultCoverageMap.buildCoverageMap(splitAceContig.getPlacedReads()));
-                        if(trimmedAceContig ==null){
-                            System.out.printf("%s was completely trimmed... skipping%n", splitAceContig.getId());
-                            continue;
+                    for(AceContig aceContig : ConsedUtil.split0xContig(adpatedCasContig, coverageMap)){
+                        if(useClosureTrimming){
+                            AceContig trimmedAceContig =closureContigTrimmer.trimContig(aceContig, DefaultCoverageMap.buildCoverageMap(aceContig.getPlacedReads()));
+                            if(trimmedAceContig ==null){
+                                System.out.printf("%s was completely trimmed... skipping%n", aceContig.getId());
+                                continue;
+                            }
+                            aceContig =trimmedAceContig;
                         }
-                        
-                       aceContigs.put(trimmedAceContig.getId(), trimmedAceContig);
-                        consensusOut.print(new DefaultEncodedNucleotideFastaRecord(trimmedAceContig.getId(),
-                                NucleotideGlyph.convertToString(NucleotideGlyph.convertToUngapped(trimmedAceContig.getConsensus().decode()))));
+                       aceContigs.put(aceContig.getId(), aceContig);
+                        consensusOut.print(new DefaultEncodedNucleotideFastaRecord(aceContig.getId(),
+                                NucleotideGlyph.convertToString(NucleotideGlyph.convertToUngapped(aceContig.getConsensus().decode()))));
                     }
                     
                 }
