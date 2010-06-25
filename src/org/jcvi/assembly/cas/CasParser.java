@@ -144,7 +144,7 @@ public class CasParser {
             long numberOfContigFiles =CasUtil.parseByteCountFrom(dataIn);
            visitor.visitNumberOfContigFiles(numberOfContigFiles);            
             for(long i=0; i< numberOfContigFiles; i++){
-              boolean twoFiles =dataIn.read()==1;
+              boolean twoFiles =(dataIn.read() & 0x01)==1;
               long numberOfSequencesInFile = CasUtil.readCasUnsignedInt(dataIn);
               BigInteger residuesInFile = CasUtil.readCasUnsignedLong(dataIn);
               List<String> names = new ArrayList<String>();
@@ -158,7 +158,7 @@ public class CasParser {
             long numberOfReadFiles =CasUtil.parseByteCountFrom(dataIn);
             visitor.visitNumberOfReadFiles(numberOfReadFiles);            
              for(long i=0; i< numberOfReadFiles; i++){
-               boolean twoFiles =dataIn.readBoolean();
+               boolean twoFiles =(dataIn.read() & 0x01)==1;
                long numberOfSequencesInFile = CasUtil.readCasUnsignedInt(dataIn);
                BigInteger residuesInFile = CasUtil.readCasUnsignedLong(dataIn);
                List<String> names = new ArrayList<String>();
@@ -190,7 +190,7 @@ public class CasParser {
                 long maxContigLength=0;
                 for(long i=0; i<numberOfContigSequences; i++){
                     long contigLength = CasUtil.readCasUnsignedInt(dataIn);
-                    boolean isCircular = dataIn.readUnsignedShort()==1;
+                    boolean isCircular = (dataIn.readUnsignedShort() & 0x01)==1;
                     visitor.visitContigDescription(new DefaultCasContigDescription(contigLength, isCircular));
                     maxContigLength = Math.max(maxContigLength, contigLength);
                 }
