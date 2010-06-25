@@ -83,7 +83,6 @@ public class ContigCheckerAceFile {
         int percentReadDirectionDifferenceTheshold=Integer.parseInt(args[6]);
         int maxCoverage = Integer.parseInt(args[7]);
         ContigDataStore<AcePlacedRead, AceContig> contigDataStore = new MemoryMappedAceFileDataStore(aceFile, new DefaultMemoryMappedFileRange());
-        AceFileParser.parseAceFile(aceFile, (AceFileVisitor)contigDataStore);
         PhdDataStoreFactory phdDataStoreFactory = new LargePhdDataStoreFactory(maxCoverage);
         PhdDataStore phdDataStore = phdDataStoreFactory.createPhdDataStoreFactoryFor(phdBallFile);
        

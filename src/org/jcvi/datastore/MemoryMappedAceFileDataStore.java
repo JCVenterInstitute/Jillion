@@ -42,11 +42,12 @@ public class MemoryMappedAceFileDataStore extends AbstractAceFileDataStore{
     private int currentLineLength;
     private int currentFileOffset;
     
-    public MemoryMappedAceFileDataStore(File file, MemoryMappedFileRange memoryMappedFileRange ){
+    public MemoryMappedAceFileDataStore(File file, MemoryMappedFileRange memoryMappedFileRange ) throws IOException{
         this.memoryMappedFileRange = memoryMappedFileRange;
         this.file = file;
+        AceFileParser.parseAceFile(file, this);
     }
-    public MemoryMappedAceFileDataStore(File file){
+    public MemoryMappedAceFileDataStore(File file) throws IOException{
         this(file, new DefaultMemoryMappedFileRange());
     }
 

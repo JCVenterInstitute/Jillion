@@ -110,7 +110,6 @@ public class ContigCheckNextGenAceFile {
                                         DEFAULT_SEQ_DIR_THRESHOLD;
                                     
             ContigDataStore<AcePlacedRead, AceContig> contigDataStore = new MemoryMappedAceFileDataStore(aceFile, new DefaultMemoryMappedFileRange());
-            AceFileParser.parseAceFile(aceFile, (AceFileVisitor)contigDataStore);
             QualityDataStore qualityDataStore = new H2PhdQualityDataStore(phdBallFile, new H2QualityDataStore());
            
             

@@ -123,7 +123,6 @@ public class ConvertPositions {
             }else{
                 File aceFile = new File(commandLine.getOptionValue("a"));
                 MemoryMappedAceFileDataStore datastore = new MemoryMappedAceFileDataStore(aceFile, new DefaultMemoryMappedFileRange());
-                AceFileParser.parseAceFile(aceFile, datastore);
                 values = datastore.get(id).getConsensus();
             }
             
