@@ -70,7 +70,6 @@ public class GenerateSNPMatrix {
             String outputFilePath = commandLine.getOptionValue("out");
             
             MemoryMappedAceFileDataStore datastore = new MemoryMappedAceFileDataStore(aceFile);
-            AceFileParser.parseAceFile(aceFile, datastore);
             AceContig contig = datastore.get(contigId);
             List<Integer> coordinates = new ArrayList<Integer>();
             for(String coordinate : positions.split(",")){

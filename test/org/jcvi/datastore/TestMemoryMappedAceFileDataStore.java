@@ -46,7 +46,6 @@ public class TestMemoryMappedAceFileDataStore extends TestAceParserMatchesAce2Co
     protected List<AceContig> getContigList(File aceFile)
             throws IOException {
         MemoryMappedAceFileDataStore dataStore= new MemoryMappedAceFileDataStore(aceFile, new DefaultMemoryMappedFileRange());
-        AceFileParser.parseAceFile(aceFile, dataStore);
         List<AceContig> contigs = new ArrayList<AceContig>(dataStore.size());
         for(Iterator<String> iter = dataStore.getIds(); iter.hasNext();){
             String id = iter.next();
