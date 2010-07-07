@@ -154,9 +154,10 @@ public class Cas2Consed {
                 List<TrimDataStore> dataStores = new ArrayList<TrimDataStore>();
                 final String trimFiles = commandLine.getOptionValue("trim");
                 for(String trimFile : trimFiles.split(",")){
+                    System.out.println("adding trim file "+ trimFile);
                     dataStores.add( new DefaultTrimFileDataStore(new File(trimFile)));
                 }
-                trimDatastore = MultipleWrapper.createMultipleWrapper(TrimDataStore.class, dataStores.toArray(new TrimDataStore[0]));
+                trimDatastore = MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimDataStore.class, dataStores.toArray(new TrimDataStore[0]));
             }else{
                 trimDatastore = TrimDataStoreUtil.EMPTY_DATASTORE;
             }
