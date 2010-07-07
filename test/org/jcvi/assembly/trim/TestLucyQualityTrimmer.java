@@ -77,4 +77,20 @@ public class TestLucyQualityTrimmer {
         final EncodedGlyphs<PhredQuality> badQualities = badQualDataStore.get("SCJIA01T48H08PB26F");
         assertEquals(Range.buildEmptyRange(), sut.trim(badQualities));
     }
+    
+    @Test
+    public void bTrashShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
+        QualityDataStore trashQualDataStore =QualityFastaRecordDataStoreAdapter.adapt(
+                new DefaultQualityFastaFileDataStore(RESOURCES.getFile("files/trash.qual")));
+        final EncodedGlyphs<PhredQuality> trashQualities = trashQualDataStore.get("JBYHA01T19A06PB2A628FB");
+        assertEquals(Range.buildEmptyRange(), sut.trim(trashQualities));
+    }
+    
+    @Test
+    public void wTrashShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
+        QualityDataStore trashQualDataStore =QualityFastaRecordDataStoreAdapter.adapt(
+                new DefaultQualityFastaFileDataStore(RESOURCES.getFile("files/trash.qual")));
+        final EncodedGlyphs<PhredQuality> trashQualities = trashQualDataStore.get("JBZTB06T19E09NA1F");
+        assertEquals(Range.buildEmptyRange(), sut.trim(trashQualities));
+    }
 }
