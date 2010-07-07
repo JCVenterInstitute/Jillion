@@ -108,8 +108,8 @@ public class ConsedWriter {
            for(Future<Void> futures :executor.invokeAll(writers)){
                futures.get();              
            }
-            consedFolder.createNewSymLink(phdPath, 
-                    "../edit_dir/phd.ball");
+            consedFolder.createNewSymLink("../"+phdPath, 
+                    "edit_dir/phd.ball");
             
         }finally{
             executor.shutdownNow();
