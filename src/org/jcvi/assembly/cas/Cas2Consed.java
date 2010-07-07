@@ -157,7 +157,7 @@ public class Cas2Consed {
                     System.out.println("adding trim file "+ trimFile);
                     dataStores.add( new DefaultTrimFileDataStore(new File(trimFile)));
                 }
-                trimDatastore = MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimDataStore.class, dataStores.toArray(new TrimDataStore[0]));
+                trimDatastore = MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimDataStore.class, dataStores);
             }else{
                 trimDatastore = TrimDataStoreUtil.EMPTY_DATASTORE;
             }
