@@ -57,7 +57,8 @@ public class ConsedWriter {
         consedFolder.createNewDir("edit_dir");
         consedFolder.createNewDir("phd_dir");
         File aceFile =consedFolder.createNewFile("edit_dir/"+prefix+".ace.1");
-        File phdFile =consedFolder.createNewFile("phd_dir/"+prefix+".phd.ball");
+        final String phdPath = "phd_dir/"+prefix+".phd.ball";
+        File phdFile =consedFolder.createNewFile(phdPath);
         final OutputStream phdOutputStream = new FileOutputStream(phdFile);
         final OutputStream aceOutputStream = new FileOutputStream(aceFile);
         final DataStore<Phd> phdDataStore = aceAssembly.getPhdDataStore();
@@ -107,8 +108,8 @@ public class ConsedWriter {
            for(Future<Void> futures :executor.invokeAll(writers)){
                futures.get();              
            }
-            consedFolder.createNewSymLink(phdFile.getAbsolutePath(), 
-                    consedOuputDir.getAbsolutePath() +"/edit_dir/phd.ball");
+            consedFolder.createNewSymLink(phdPath, 
+                    "../edit_dir/phd.ball");
             
         }finally{
             executor.shutdownNow();
