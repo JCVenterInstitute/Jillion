@@ -91,7 +91,6 @@ import org.jcvi.trace.sanger.SingleSangerTraceDirectoryFileDataStore;
 import org.jcvi.trace.sanger.phd.ArtificalPhdDataStore;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.trace.sanger.phd.PhdSangerTraceDataStoreAdapter;
-import org.jcvi.util.MultipleWrapper;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Period;
