@@ -60,7 +60,6 @@ public class CasPrintAlignedReads extends AbstractOnePassCasFileVisitor{
     
     private List<DataStore<NucleotideEncodedGlyphs>> nucleotideDataStores = new ArrayList<DataStore<NucleotideEncodedGlyphs>>();
     private List<DataStore<EncodedGlyphs<PhredQuality>>> qualityDataStores = new ArrayList<DataStore<EncodedGlyphs<PhredQuality>>>();
-    private long currentReadId=0L;
     private long alignCount=0;
     private long nonalignCount=0;
     private final PrintWriter writer;
@@ -98,9 +97,8 @@ public class CasPrintAlignedReads extends AbstractOnePassCasFileVisitor{
 
 
     @Override
-    public void visitMatch(CasMatch match) {
-        super.visitMatch(match);
-        String readId = readNameLookup.getLookupIdFor(currentReadId);
+    public void visitMatch(CasMatch match, long readCounter) {
+        String readId = readNameLookup.getLookupIdFor(readCounter);
         long numberOfAlignments = match.getNumberOfReportedAlignments();
         StringBuilder builder = new StringBuilder();
         
@@ -184,7 +182,6 @@ public class CasPrintAlignedReads extends AbstractOnePassCasFileVisitor{
         else{
             nonalignCount++;
         }
-        currentReadId++;
     }
     
     private NucleotideEncodedGlyphs getContigRangeSequenceFor(String readId) throws DataStoreException{

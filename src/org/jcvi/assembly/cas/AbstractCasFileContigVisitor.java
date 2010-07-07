@@ -43,7 +43,6 @@ public abstract class AbstractCasFileContigVisitor extends AbstractOnePassCasFil
     private final CasIdLookup referenceIdLookup;
     private final CasIdLookup readIdLookup;
     private final CasGappedReferenceMap gappedReferenceMap;
-    private long readCounter =0;
     private final DataStore<NucleotideEncodedGlyphs> nucleotideDataStore;
     private final TrimDataStore validRangeDataStore;
     
@@ -68,7 +67,12 @@ public abstract class AbstractCasFileContigVisitor extends AbstractOnePassCasFil
 
     @Override
     public synchronized void visitMatch(CasMatch match) {
+        // TODO Auto-generated method stub
         super.visitMatch(match);
+    }
+
+    @Override
+    protected synchronized void visitMatch(CasMatch match, long readCounter) {
         if(match.matchReported()){
             String readId = readIdLookup.getLookupIdFor(readCounter);
             CasAlignment alignment = match.getChosenAlignment();
@@ -99,7 +103,6 @@ public abstract class AbstractCasFileContigVisitor extends AbstractOnePassCasFil
                 throw new IllegalStateException("could not create read placement for "+ alignment, e);
             }
         }
-        readCounter++;
     }
 
     protected abstract void visitPlacedRead(long referenceId, CasPlacedRead casPlacedRead);

@@ -22,11 +22,11 @@ package org.jcvi.fasta;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
 
 /**
  * {@code QualityFastaH2DataStore} is an {@link AbstractFastaH2DataStore}
@@ -47,7 +47,7 @@ public class QualityFastaH2DataStore extends AbstractFastaH2DataStore<PhredQuali
     public QualityFastaH2DataStore(
             File fastaFile,
             AbstractH2EncodedGlyphDataStore<PhredQuality, EncodedGlyphs<PhredQuality>> h2Datastore,
-            FastXFilter filter) throws FileNotFoundException {
+            DataStoreFilter filter) throws FileNotFoundException {
         super(fastaFile, h2Datastore, filter);
     }
 

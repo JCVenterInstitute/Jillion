@@ -21,6 +21,9 @@ package org.jcvi.fasta;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+
+import org.jcvi.datastore.DataStoreFilter;
+import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -43,6 +46,31 @@ public class NucleotideFastaH2DataStore extends AbstractFastaH2DataStore<Nucleot
     public NucleotideFastaH2DataStore(
             File fastaFile,
             H2NucleotideDataStore h2Datastore)
+            throws FileNotFoundException {
+        super(fastaFile, h2Datastore);
+    }
+
+    /**
+     * @param fastaFile
+     * @param h2Datastore
+     * @param filter
+     * @throws FileNotFoundException
+     */
+    private NucleotideFastaH2DataStore(
+            File fastaFile,
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> h2Datastore,
+            DataStoreFilter filter) throws FileNotFoundException {
+        super(fastaFile, h2Datastore, filter);
+    }
+
+    /**
+     * @param fastaFile
+     * @param h2Datastore
+     * @throws FileNotFoundException
+     */
+    private NucleotideFastaH2DataStore(
+            File fastaFile,
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> h2Datastore)
             throws FileNotFoundException {
         super(fastaFile, h2Datastore);
     }

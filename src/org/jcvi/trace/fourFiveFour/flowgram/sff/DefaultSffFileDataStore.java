@@ -31,7 +31,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.datastore.DataStoreIterator;
+import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
@@ -45,17 +47,31 @@ public class DefaultSffFileDataStore implements SffDataStore, SffFileVisitor{
     private boolean closed = false;
     private final GlyphCodec<PhredQuality> phredQualityGlyphCodec;
 
+    private final DataStoreFilter filter;
+    
     private SFFReadHeader currentReadHeader;
     /**
      * @param phredQualityGlyphCodec
      */
     public DefaultSffFileDataStore(
             GlyphCodec<PhredQuality> phredQualityGlyphCodec) {
+        this(phredQualityGlyphCodec, EmptyDataStoreFilter.INSTANCE);
+    }
+    public DefaultSffFileDataStore(
+            GlyphCodec<PhredQuality> phredQualityGlyphCodec, DataStoreFilter filter) {
+        if(filter ==null){
+            throw new NullPointerException("filter can not be null");
+        }
         this.phredQualityGlyphCodec = phredQualityGlyphCodec;
+        this.filter = filter;
     }
     public DefaultSffFileDataStore(File sffFile,
             GlyphCodec<PhredQuality> phredQualityGlyphCodec) throws SFFDecoderException, FileNotFoundException {
-        this.phredQualityGlyphCodec = phredQualityGlyphCodec;
+        this(sffFile, phredQualityGlyphCodec, EmptyDataStoreFilter.INSTANCE);
+    }
+    public DefaultSffFileDataStore(File sffFile,
+            GlyphCodec<PhredQuality> phredQualityGlyphCodec, DataStoreFilter filter) throws SFFDecoderException, FileNotFoundException {
+        this(phredQualityGlyphCodec, filter);
         SffParser.parseSFF(sffFile, this);
     }
     private void throwExceptionIfNotInitialized(){
@@ -131,7 +147,8 @@ public class DefaultSffFileDataStore implements SffDataStore, SffFileVisitor{
     public boolean visitReadHeader(SFFReadHeader readHeader) {
         throwExceptionIfInitialized();
         currentReadHeader = readHeader;
-        return true;
+        String id = readHeader.getName();
+        return filter.accept(id);
     }
 
     @Override

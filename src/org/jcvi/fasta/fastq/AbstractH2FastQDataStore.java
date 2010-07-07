@@ -30,6 +30,8 @@ import java.util.Iterator;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.datastore.DataStoreFilter;
+import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.Glyph;
@@ -38,13 +40,18 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 public abstract class AbstractH2FastQDataStore<G extends Glyph, E extends EncodedGlyphs<G>> implements DataStore<E>, FastQFileVisitor{
     private final AbstractH2EncodedGlyphDataStore<G, E> datastore;
     private final FastQQualityCodec qualityCodec;
+    private final DataStoreFilter filter;
+    
     private String currentId;
-    public AbstractH2FastQDataStore(File fastQFile,FastQQualityCodec qualityCodec,AbstractH2EncodedGlyphDataStore<G, E> datastore) throws FileNotFoundException {
+    public AbstractH2FastQDataStore(File fastQFile,FastQQualityCodec qualityCodec,AbstractH2EncodedGlyphDataStore<G, E> datastore,DataStoreFilter filter) throws FileNotFoundException {
         this.datastore = datastore;
         this.qualityCodec = qualityCodec;
+        this.filter= filter;
         FastQFileParser.parse(fastQFile, this);
     }
-    
+    public AbstractH2FastQDataStore(File fastQFile,FastQQualityCodec qualityCodec,AbstractH2EncodedGlyphDataStore<G, E> datastore) throws FileNotFoundException {
+        this(fastQFile,qualityCodec,datastore, EmptyDataStoreFilter.INSTANCE);
+    }
     public AbstractH2EncodedGlyphDataStore<G, E> getDatastore() {
         return datastore;
     }
@@ -86,13 +93,12 @@ public abstract class AbstractH2FastQDataStore<G extends Glyph, E extends Encode
     @Override
     public boolean visitBeginBlock(String id, String optionalComment) {
         currentId = id;
-        return true;
+        return filter.accept(id);
     }
 
 
     @Override
-    public boolean visitEndBlock() {
-        return true;
+    public void visitEndBlock() {
     }
 
 
@@ -111,13 +117,11 @@ public abstract class AbstractH2FastQDataStore<G extends Glyph, E extends Encode
         
     }
     @Override
-    public boolean visitEncodedQualities(String encodedQualities) {
-        return true;
+    public void visitEncodedQualities(String encodedQualities) {
     }
 
     @Override
-    public boolean visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
-        return true;
+    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
     }
     
 }

@@ -16,35 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 14, 2010
- *
- * @author dkatzel
- */
+
 package org.jcvi.assembly.cas.read;
 
-import org.jcvi.assembly.cas.CasFileInfo;
-import org.jcvi.assembly.cas.CasMatch;
-
-public class ReferenceCasFileNucleotideDataStore  extends AbstractCasFileNucleotideDataStore {
-
-    public ReferenceCasFileNucleotideDataStore(
-            CasDataStoreFactory casDataStoreFactory) {
-        super(casDataStoreFactory);
-    }
-
-
-    @Override
-    public synchronized void visitContigFileInfo(CasFileInfo contigFileInfo) {
-        super.visitContigFileInfo(contigFileInfo);
-        loadNucleotidesFrom(contigFileInfo);
-    }
+/**
+ * {@code ReadIndexToContigLookup} is an interface
+ * that maps .cas read indexes to their corresponding
+ * .cas contig ids.  This is needed because there is no
+ * way short of parsing the entire .cas file to map
+ * which reads go to which contig.
+ * @author dkatzel
+ *
+ *
+ */
+public interface ReadIndexToContigLookup {
     /**
-     * {@inheritDoc}
+     * Get the cas contig id for the given read id.
+     * @param readIndex
+     * @return the contig id as a long, or {@code null}
+     * if the read does not map to any contig.
      */
-     @Override
-     protected void visitMatch(CasMatch match, long readCounter) {
-         // no-op
-         
-     }
+    Long getContigIdForRead(long readIndex);
 }

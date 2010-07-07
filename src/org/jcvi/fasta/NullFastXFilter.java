@@ -43,5 +43,9 @@ public class NullFastXFilter implements FastXFilter{
     public boolean accept(String id, String optionalComment) {
         return true;
     }
+    @Override
+    public boolean accept(String id) {
+        return true;
+    }
 
 }

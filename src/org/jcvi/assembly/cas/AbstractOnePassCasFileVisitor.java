@@ -27,6 +27,7 @@ import org.jcvi.assembly.cas.alignment.score.CasScoringScheme;
 
 public abstract class AbstractOnePassCasFileVisitor extends AbstractCasFileVisitor{
     private boolean initialized = false;
+    private long readCounter =0;
     
     protected synchronized void checkNotYetInitialized(){
         if(isInitialized()){
@@ -78,13 +79,20 @@ public abstract class AbstractOnePassCasFileVisitor extends AbstractCasFileVisit
         checkNotYetInitialized();
         super.visitFile();
     }
-
+    /**
+     * 
+    * {@inheritDoc}
+     */
     @Override
     public synchronized void visitMatch(CasMatch match) {
         checkNotYetInitialized();
         super.visitMatch(match);
+        visitMatch(match, readCounter);
+        readCounter++;
     }
 
+    protected abstract void visitMatch(CasMatch match, long readCounter);
+    
     @Override
     public synchronized void visitMetaData(long numberOfContigSequences, long numberOfReads) {
         checkNotYetInitialized();

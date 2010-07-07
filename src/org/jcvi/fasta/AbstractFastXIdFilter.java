@@ -47,7 +47,19 @@ public abstract class AbstractFastXIdFilter implements FastXFilter{
      */
     protected abstract boolean accept(boolean idContainedInList);
 
-
+    
+    /**
+     * Same as {@link #accept(String, String) accept(id, null)}
+     * @see #accept(String, String)
+     */
+    @Override
+    public boolean accept(String id) {
+        return accept(id,null);
+    }
+    /**
+     * 
+    * {@inheritDoc}
+     */
     @Override
     public boolean accept(String id, String optionalComment) {
         return accept(ids.contains(id));

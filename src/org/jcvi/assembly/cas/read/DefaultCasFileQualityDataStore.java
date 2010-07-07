@@ -33,6 +33,7 @@ import java.util.Map;
 
 import org.jcvi.assembly.cas.AbstractOnePassCasFileVisitor;
 import org.jcvi.assembly.cas.CasFileInfo;
+import org.jcvi.assembly.cas.CasMatch;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
@@ -149,6 +150,12 @@ public class DefaultCasFileQualityDataStore extends AbstractOnePassCasFileVisito
     public synchronized Iterator<EncodedGlyphs<PhredQuality>> iterator() {
         checkIsInitialized();
         return delegate.iterator();
+    }
+
+    @Override
+    protected void visitMatch(CasMatch match, long readCounter) {
+        // no-op
+        
     }
     
     

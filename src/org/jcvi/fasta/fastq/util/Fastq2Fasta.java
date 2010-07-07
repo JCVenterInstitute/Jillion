@@ -99,7 +99,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
 
     
     @Override
-    public boolean visitEncodedQualities(String encodedQualities) {
+    public void visitEncodedQualities(String encodedQualities) {
         if(qualOut!=null && shouldWrite){
             try {
                 qualOut.write(new DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>>(currentId, 
@@ -108,10 +108,9 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
                 throw new RuntimeException("could not write to quality data for "+ currentId, e);
             }
         }
-        return true;
     }
     @Override
-    public boolean visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
+    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
         if(seqOut!=null && shouldWrite){
             try {
                 seqOut.write(new DefaultEncodedNucleotideFastaRecord( currentId,currentComment,nucleotides) 
@@ -120,7 +119,6 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
                 throw new RuntimeException("could not write to sequence data for "+ currentId, e);
             }
         }
-        return true;
     }
     /**
      * @param args

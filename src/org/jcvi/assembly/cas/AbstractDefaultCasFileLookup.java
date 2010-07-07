@@ -45,9 +45,11 @@ import org.jcvi.trace.fourFiveFour.flowgram.sff.SffParser;
 
 public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasFileVisitor{
 
-    private final List<String> readNameOrder = new ArrayList<String>();
+    private final Map<Long,String> readNameOrder = new HashMap<Long, String>();
+    private final Map<String,Long> name2IdMap = new HashMap<String, Long>();
     private final Map<String, File> readNameToFile = new HashMap<String, File>();
     private final CasTrimMap trimToUntrimmedMap;
+    private long readCounter=0;
     
     private final List<File> files = new ArrayList<File>();
     private boolean initialized = false;
@@ -220,14 +222,14 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
     public synchronized String getLookupIdFor(long casReadId) {
         checkIsInitialized();
         checkNotClosed();
-        return readNameOrder.get((int)casReadId);
+        return readNameOrder.get(casReadId);
     }
 
     @Override
     public synchronized long getCasIdFor(String lookupId) {
         checkIsInitialized();
         checkNotClosed();
-        return readNameOrder.indexOf(lookupId);
+        return name2IdMap.get(lookupId);
     }
     @Override
     public File getFileFor(long casReadId) {
@@ -244,6 +246,13 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         closed=true;
     }
     
+    private void addRead(String name, File source){
+        name2IdMap.put(name, readCounter);
+        readNameOrder.put(readCounter, name);
+        readNameToFile.put(name, source);
+        readCounter++;
+    }
+    
     private final class SffReadOrder extends AbstractSffFileVisitor{
         private final File file;
         SffReadOrder(File file){
@@ -252,9 +261,8 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         @Override
         public boolean visitReadHeader(SFFReadHeader readHeader) {
             final String name = readHeader.getName();
-            readNameOrder.add(name);
-            readNameToFile.put(name, file);
-            return true;
+            addRead(name,file);
+            return false;
         }
         
     }
@@ -265,8 +273,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         }
         @Override
         public void visitRecord(String id, String comment, String entireBody) {
-            readNameOrder.add(id);
-            readNameToFile.put(id, file);
+            addRead(id,file);
             
         }
         
@@ -278,9 +285,8 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         }
         @Override
         public boolean visitBeginBlock(String id, String optionalComment) {
-            readNameOrder.add(id);
-            readNameToFile.put(id, file);
-            return true;
+            addRead(id,file);
+            return false;
         }
         
     }

@@ -26,6 +26,8 @@ import java.util.Iterator;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.datastore.DataStoreFilter;
+import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.Glyph;
@@ -40,11 +42,11 @@ import org.jcvi.glyph.Glyph;
 public abstract class AbstractFastaH2DataStore <G extends Glyph, E extends EncodedGlyphs<G>> implements FastaVisitor, DataStore<E>{
 
     private final AbstractH2EncodedGlyphDataStore<G, E> h2Datastore;
-    private final FastXFilter filter;
+    private final DataStoreFilter filter;
     public AbstractFastaH2DataStore(File fastaFile,AbstractH2EncodedGlyphDataStore<G, E> h2Datastore) throws FileNotFoundException{
-        this(fastaFile, h2Datastore, NullFastXFilter.INSTANCE);
+        this(fastaFile, h2Datastore, EmptyDataStoreFilter.INSTANCE);
     }
-    public AbstractFastaH2DataStore(File fastaFile,AbstractH2EncodedGlyphDataStore<G, E> h2Datastore, FastXFilter filter) throws FileNotFoundException{
+    public AbstractFastaH2DataStore(File fastaFile,AbstractH2EncodedGlyphDataStore<G, E> h2Datastore, DataStoreFilter filter) throws FileNotFoundException{
         this.h2Datastore = h2Datastore;
         this.filter = filter;
         FastaParser.parseFasta(fastaFile, this);
@@ -71,7 +73,13 @@ public abstract class AbstractFastaH2DataStore <G extends Glyph, E extends Encod
     @Override
     public void visitRecord(String id, String comment, String entireBody) {
         try{
-            if(filter.accept(id, comment)){
+            final boolean accept;
+            if(filter instanceof FastXFilter){
+                accept=((FastXFilter)filter).accept(id, comment);
+            }else{
+                accept = filter.accept(id);
+            }
+            if(accept){
                 h2Datastore.insertRecord(id, entireBody);
             }
         }

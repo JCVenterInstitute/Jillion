@@ -16,36 +16,43 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 14, 2010
- *
+
+package org.jcvi.datastore;
+
+/**
+ * {@code InverseDataStoreFilter} is an implentation of
+ * {@link DataStoreFilter} which wraps an existing
+ * DataStoreFilter instance and returns the opposite
+ * of whatever the wrapped filter would return.
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.assembly.cas.read;
+public class InverseDataStoreFilter implements DataStoreFilter{
 
-import org.jcvi.assembly.cas.CasFileInfo;
-import org.jcvi.assembly.cas.CasMatch;
-
-public class ReadCasFileNucleotideDataStore extends
-        AbstractCasFileNucleotideDataStore {
-
-    public ReadCasFileNucleotideDataStore(
-            CasDataStoreFactory casDataStoreFactory) {
-        super(casDataStoreFactory);
+    private final DataStoreFilter filter;
+    
+    
+    /**
+     * Create a new InverseDataStoreFilter which returns
+     * the oppoiste answers as the given filter.
+     * @param filter the fitler to invert.
+     */
+    public  InverseDataStoreFilter(DataStoreFilter filter) {
+        this.filter = filter;
     }
 
-    @Override
-    public void visitReadFileInfo(CasFileInfo readFileInfo) {
-        super.visitReadFileInfo(readFileInfo);
-        loadNucleotidesFrom(readFileInfo);
-    }
 
     /**
-    * {@inheritDoc}
-    */
+     * Accepts the opposite of what the wrapped
+     * filter would have accepted.
+     * @return {@code true} if the wrapped filter
+     * would have returned {@code false}; {@code false} if the wrapped filter
+     * would have returned {@code true}.
+     */
     @Override
-    protected void visitMatch(CasMatch match, long readCounter) {
-        // no-op
-        
+    public boolean accept(String id) {
+        return !filter.accept(id);
     }
+
 }
