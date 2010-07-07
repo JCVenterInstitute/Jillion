@@ -132,7 +132,7 @@ public class LucyQualityTrimmer {
         long currentWindowSize = candidateCleanRange.getLength();
         boolean done=false;
         while(!done && currentWindowSize >=SIZE_OF_ENDS){
-            for(int i=0; i<encodedCandidateErrorRates.size() - currentWindowSize; i++){
+            for(int i=0; i<encodedCandidateErrorRates.size() - currentWindowSize && i<=currentWindowSize; i++){
                 Range currentWindowRange = Range.buildRange(i, currentWindowSize);
                 double avgErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, currentWindowRange);
                 double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.buildRangeOfLength(currentWindowRange.getStart(),SIZE_OF_ENDS));
@@ -197,6 +197,9 @@ public class LucyQualityTrimmer {
     private Range findBracketedRegion(List<Double> errorRates) {
         long leftCoordinate = findLeftBracket(errorRates);
         long rightCoordinate = findRightBracket(errorRates);
+        if(leftCoordinate > rightCoordinate-1){
+            return Range.buildEmptyRange();
+        }
         return Range.buildRange(leftCoordinate, rightCoordinate);
     }
     /**
@@ -333,7 +336,8 @@ public class LucyQualityTrimmer {
         
     }
     /**
-     * {@code Builder} is a builder 
+     * {@code Builder}  builds a {@link LucyQualityTrimmer} instance
+     * with the given trimming windows.
      * @author dkatzel
      *
      *
@@ -355,7 +359,7 @@ public class LucyQualityTrimmer {
         
         private final Set<Window> trimWindows = new TreeSet<Window>();
         
-        private Builder(int minGoodLength, Window bracketWindow){
+        public Builder(int minGoodLength, Window bracketWindow){
             this.minGoodLength = minGoodLength;
             this.bracketWindow = bracketWindow;
             this.maxAvgError = DEFAULT_MAX_AVG_ERROR;
