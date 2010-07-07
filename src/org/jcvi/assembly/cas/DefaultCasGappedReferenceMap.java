@@ -78,8 +78,7 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
 
    
     @Override
-    public synchronized void visitMatch(CasMatch match) {
-        super.visitMatch(match);
+    public synchronized void visitMatch(CasMatch match, long readCounter) {
         if(match.matchReported()){
         boolean outsideValidRange=true;
         

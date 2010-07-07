@@ -36,7 +36,7 @@ import java.io.File;
 public class UnTrimmedExtensionTrimMap implements CasTrimMap{
     /**
      * The default file extension for the untrimmed version of the file
-     * if none is provided.
+     * if none is provided currently set to {@value}.
      */
     private static final String DEFAULT_UNTRIMMED_EXT = ".untrimmed";
     
@@ -44,8 +44,8 @@ public class UnTrimmedExtensionTrimMap implements CasTrimMap{
     /**
      * Create a new UnTrimmedExtensionTrimMap instance using the default
      * untrimmed extension.  This is the same as 
-     * {@link #UnTrimmedExtensionTrimMap(String) new UnTrimmedExtensionTrimMap(DEFAULT_UNTRIMMED_EXT)}.
-     * @see {@link UnTrimmedExtensionTrimMap#DEFAULT_UNTRIMMED_EXT}
+     * {@link #UnTrimmedExtensionTrimMap(String) new UnTrimmedExtensionTrimMap(UnTrimmedExtensionTrimMap.DEFAULT_UNTRIMMED_EXT)}.
+     * @see {@link UnTrimmedExtensionTrimMap#DEFAULT_UNTRIMMED_EXT }
      */
     public UnTrimmedExtensionTrimMap(){
         this(DEFAULT_UNTRIMMED_EXT);

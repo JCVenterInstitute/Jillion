@@ -43,12 +43,11 @@ public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQR
     }
 
     @Override
-    protected boolean visitFastQRecord( String id, 
+    protected void visitFastQRecord( String id, 
             NucleotideEncodedGlyphs nucleotides,
             EncodedGlyphs<PhredQuality> qualities,
             String optionalComment) {
         builder.put(new DefaultFastQRecord(id, nucleotides, qualities, optionalComment));
-        return true;
     }
 
     

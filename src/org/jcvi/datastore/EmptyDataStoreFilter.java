@@ -16,35 +16,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 14, 2010
- *
+
+package org.jcvi.datastore;
+
+/**
+ * {@code EmptyDataStoreFilter} is an implementation of
+ * {@link DataStoreFilter} which 
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.assembly.cas.read;
-
-import org.jcvi.assembly.cas.CasFileInfo;
-import org.jcvi.assembly.cas.CasMatch;
-
-public class ReferenceCasFileNucleotideDataStore  extends AbstractCasFileNucleotideDataStore {
-
-    public ReferenceCasFileNucleotideDataStore(
-            CasDataStoreFactory casDataStoreFactory) {
-        super(casDataStoreFactory);
-    }
-
-
-    @Override
-    public synchronized void visitContigFileInfo(CasFileInfo contigFileInfo) {
-        super.visitContigFileInfo(contigFileInfo);
-        loadNucleotidesFrom(contigFileInfo);
-    }
+public final class EmptyDataStoreFilter implements DataStoreFilter{
     /**
-     * {@inheritDoc}
+     * This static singleton is the instance of EmptyDataStoreFilter
+     * that should be used.
      */
-     @Override
-     protected void visitMatch(CasMatch match, long readCounter) {
-         // no-op
-         
-     }
+    public static final EmptyDataStoreFilter INSTANCE = new EmptyDataStoreFilter();
+    /**
+     * Private constructor.
+     */
+    private EmptyDataStoreFilter(){};
+    /**
+    * Every id is always accepted.
+    * @return {@code true}.
+    */
+    @Override
+    public boolean accept(String id) {
+        return true;
+    }
+
 }

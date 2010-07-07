@@ -17,13 +17,16 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package org.jcvi.fasta;
+
+import org.jcvi.datastore.DataStoreFilter;
+
 /**
  * {@code FastXFilter} filters a FastX (Fasta or Fastq) file.
  * @author dkatzel
  *
  *
  */
-public interface FastXFilter {
+public interface FastXFilter extends DataStoreFilter{
     /**
      * filters the fastX record with the given read id and optional comment.
      * @param id the id of the read to possibly filter.
@@ -32,4 +35,5 @@ public interface FastXFilter {
      * @return {@code true} if the read meets the filter criteria {@code false} otherwise.
      */
     boolean accept(String id, String optionalComment);
+    
 }

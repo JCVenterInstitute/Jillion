@@ -16,35 +16,22 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 14, 2010
- *
+
+package org.jcvi.datastore;
+
+/**
+ * {@code DataStoreFilter} is a filter that can be applied
+ * to a DataStore to only allow certain Datastore ids.
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.assembly.cas.read;
-
-import org.jcvi.assembly.cas.CasFileInfo;
-import org.jcvi.assembly.cas.CasMatch;
-
-public class ReferenceCasFileNucleotideDataStore  extends AbstractCasFileNucleotideDataStore {
-
-    public ReferenceCasFileNucleotideDataStore(
-            CasDataStoreFactory casDataStoreFactory) {
-        super(casDataStoreFactory);
-    }
-
-
-    @Override
-    public synchronized void visitContigFileInfo(CasFileInfo contigFileInfo) {
-        super.visitContigFileInfo(contigFileInfo);
-        loadNucleotidesFrom(contigFileInfo);
-    }
+public interface DataStoreFilter {
     /**
-     * {@inheritDoc}
+     * Is the given id accepted by the filter.
+     * @param id the id to check.
+     * @return {@code true} if the id should be accepted
+     * by the filter {@code false} otherwise.
      */
-     @Override
-     protected void visitMatch(CasMatch match, long readCounter) {
-         // no-op
-         
-     }
+    boolean accept(String id);
 }

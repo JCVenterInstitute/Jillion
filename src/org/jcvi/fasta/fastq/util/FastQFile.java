@@ -82,24 +82,21 @@ public class FastQFile implements FastQFileVisitor{
     }
 
     @Override
-    public boolean visitEncodedQualities(String encodedQualities) {
+    public void visitEncodedQualities(String encodedQualities) {
         shouldWrite=false;
-        return true;
     }
 
     @Override
-    public boolean visitEndBlock() {
+    public void visitEndBlock() {
         try {
             out.flush();
         } catch (IOException e) {
             throw new RuntimeException("could not flush output file", e);
         }
-        return true;
     }
 
     @Override
-    public boolean visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
-        return true;
+    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
     }
 
     @Override

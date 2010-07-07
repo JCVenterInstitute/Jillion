@@ -77,7 +77,7 @@ public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends 
         checkNotYetInitialized();
     }
 
-    protected abstract boolean visitFastQRecord(
+    protected abstract void visitFastQRecord(
             String id, 
             NucleotideEncodedGlyphs nucleotides,
             EncodedGlyphs<PhredQuality> qualities,
@@ -91,24 +91,22 @@ public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends 
     }
 
     @Override
-    public boolean visitEncodedQualities(String encodedQualities) {
+    public void visitEncodedQualities(String encodedQualities) {
         checkNotYetInitialized();
         qualities = qualityCodec.decode(encodedQualities);  
-        return true;
     }
 
     @Override
-    public boolean visitEndBlock() {
-        return visitFastQRecord(currentId, nucleotides, qualities, currentComment);
+    public void visitEndBlock() {
+        visitFastQRecord(currentId, nucleotides, qualities, currentComment);
         
         
     }
 
     @Override
-    public boolean visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
+    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
         checkNotYetInitialized();
         this.nucleotides = nucleotides;
-        return true;
         
     }
 

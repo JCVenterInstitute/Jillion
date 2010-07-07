@@ -309,6 +309,7 @@ public class Cas2Consed {
             consensusOut.close();
             traceFilesOut.close();
             referenceFilesOut.close();
+            trimDatastore.close();
            }
         } catch (ParseException e) {
             printHelp(options);

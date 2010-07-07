@@ -25,14 +25,28 @@ package org.jcvi.fasta.fastq;
 
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.io.TextFileVisitor;
-
+/**
+ * {@code FastQFileVisitor} is a {@link TextFileVisitor}
+ * implementation for FASTQ files.
+ * @author dkatzel
+ *
+ *
+ */
 public interface FastQFileVisitor extends TextFileVisitor{
-
+    /**
+     * Begin a new FASTQ Record block for the given read.
+     * @param id the read id
+     * @param optionalComment any optional comments about the read
+     * given on the defline.
+     * @return a {@code true} if this parser should parse the 
+     * read data; {@code false} if this parser should skip this
+     * read and continue on to the next read.
+     */
     boolean visitBeginBlock(String id, String optionalComment);
     
-    boolean visitEndBlock();
+    void visitEndBlock();
     
-    boolean visitNucleotides(NucleotideEncodedGlyphs nucleotides);
+    void visitNucleotides(NucleotideEncodedGlyphs nucleotides);
     
-    boolean visitEncodedQualities(String encodedQualities);
+    void visitEncodedQualities(String encodedQualities);
 }

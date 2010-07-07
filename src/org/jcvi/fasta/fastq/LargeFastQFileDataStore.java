@@ -60,10 +60,9 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
     }
 
     @Override
-    protected boolean visitFastQRecord(String id,
+    protected void visitFastQRecord(String id,
             NucleotideEncodedGlyphs nucleotides,
             EncodedGlyphs<PhredQuality> qualities, String optionalComment) {
-        return true;
         
     }
 

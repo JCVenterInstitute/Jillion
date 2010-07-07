@@ -49,18 +49,15 @@ public abstract class AbstractFastQFileVisitor <T extends FastQRecord> implement
     }
     
     @Override
-    public boolean visitEncodedQualities(String encodedQualities) {
-        return true;
+    public void visitEncodedQualities(String encodedQualities) {
     }
 
     @Override
-    public boolean visitEndBlock() {
-        return true;
+    public void visitEndBlock() {
     }
 
     @Override
-    public boolean visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
-        return true;
+    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
     }
 
     @Override

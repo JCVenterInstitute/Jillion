@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -48,15 +49,49 @@ public class H2NucleotideFastQDataStore extends AbstractH2FastQDataStore<Nucleot
 
     }
 
+    
+    
+    /**
+     * @param fastQFile
+     * @param qualityCodec
+     * @param datastore
+     * @param filter
+     * @throws FileNotFoundException
+     */
+    public H2NucleotideFastQDataStore(
+            File fastQFile,
+            FastQQualityCodec qualityCodec,
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore,
+            DataStoreFilter filter) throws FileNotFoundException {
+        super(fastQFile, qualityCodec, datastore, filter);
+    }
+
+
+
+    /**
+     * @param fastQFile
+     * @param qualityCodec
+     * @param datastore
+     * @throws FileNotFoundException
+     */
+    public H2NucleotideFastQDataStore(
+            File fastQFile,
+            FastQQualityCodec qualityCodec,
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore)
+            throws FileNotFoundException {
+        super(fastQFile, qualityCodec, datastore);
+    }
+
+
+
     @Override
-    public boolean visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
+    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
         try {
             this.getDatastore().insertRecord(this.getCurrentId(), 
                     NucleotideGlyph.convertToString(nucleotides.decode()));
         } catch (DataStoreException e) {
             throw new IllegalStateException("could not insert qualities for into datastore",e);
         }
-        return true;
     }
 
 

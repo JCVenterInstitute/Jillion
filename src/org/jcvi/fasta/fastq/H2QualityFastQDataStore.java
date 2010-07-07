@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -49,8 +50,23 @@ public class H2QualityFastQDataStore extends AbstractH2FastQDataStore<PhredQuali
 
     }
 
+    /**
+     * @param fastQFile
+     * @param qualityCodec
+     * @param datastore
+     * @param filter
+     * @throws FileNotFoundException
+     */
+    public H2QualityFastQDataStore(
+            File fastQFile,
+            FastQQualityCodec qualityCodec,
+            AbstractH2EncodedGlyphDataStore<PhredQuality, EncodedGlyphs<PhredQuality>> datastore,
+            DataStoreFilter filter) throws FileNotFoundException {
+        super(fastQFile, qualityCodec, datastore, filter);
+    }
+
     @Override
-    public boolean visitEncodedQualities(String encodedQualities) {
+    public void visitEncodedQualities(String encodedQualities) {
         StringBuilder builder = new StringBuilder();
         for(PhredQuality quality :this.getQualityCodec().decode(encodedQualities).decode()){
             builder.append(Integer.valueOf(quality.getNumber()))
@@ -64,7 +80,6 @@ public class H2QualityFastQDataStore extends AbstractH2FastQDataStore<PhredQuali
         } catch (DataStoreException e) {
           throw new IllegalStateException("could not insert qualities for into datastore",e);
         }
-        return true;
     }
 
 
