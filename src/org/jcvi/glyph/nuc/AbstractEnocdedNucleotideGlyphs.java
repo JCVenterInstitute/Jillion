@@ -48,7 +48,7 @@ public abstract class AbstractEnocdedNucleotideGlyphs implements NucleotideEncod
 
     @Override
     public long getUngappedLength(){
-        return getLength() - getGapIndexes().size();
+        return getLength() - getNumberOfGaps();
     }
     @Override
     public int computeNumberOfInclusiveGapsInGappedValidRangeUntil(int gappedValidRangeIndex) {

@@ -98,7 +98,7 @@ public class AceFileUtil {
     }
     
     public static String createQualityRangeRecord(NucleotideEncodedGlyphs gappedValidBases, Range ungappedValidRange, SequenceDirection dir, long ungappedFullLength){
-        int numberOfGaps = gappedValidBases.getGapIndexes().size();
+        int numberOfGaps = gappedValidBases.getNumberOfGaps();
         Range gappedValidRange =buildGappedValidRangeFor(ungappedValidRange,numberOfGaps,dir,ungappedFullLength);
 
         

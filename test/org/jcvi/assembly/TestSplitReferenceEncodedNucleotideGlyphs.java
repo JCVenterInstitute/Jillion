@@ -62,7 +62,7 @@ public class TestSplitReferenceEncodedNucleotideGlyphs {
         SplitReferenceEncodedNucleotideGlyphs sut = new SplitReferenceEncodedNucleotideGlyphs(
                 consensus,circularReadBases,
                 -10,validRange);
-        
+        assertEquals(0, sut.getNumberOfGaps());
         assertEquals(circularReadBases, NucleotideGlyph.convertToString(sut.decode()));
         assertTrue(sut.getGapIndexes().isEmpty());
         assertTrue(sut.getSnps().isEmpty());
@@ -83,6 +83,7 @@ public class TestSplitReferenceEncodedNucleotideGlyphs {
         assertEquals(circularReadBases, NucleotideGlyph.convertToString(sut.decode()));
         assertEquals(1, sut.getGapIndexes().size());
         assertEquals(1, sut.getSnps().size());
+        assertEquals(1, sut.getNumberOfGaps());
         for(Integer index : sut.getGapIndexes()){
             assertEquals(NucleotideGlyph.Gap, sut.getSnps().get(index));
         }
@@ -102,6 +103,7 @@ public class TestSplitReferenceEncodedNucleotideGlyphs {
         
         assertEquals(circularReadBases, NucleotideGlyph.convertToString(sut.decode()));
         assertTrue(sut.getGapIndexes().isEmpty());
+        assertEquals(0, sut.getNumberOfGaps());
         assertEquals(1, sut.getSnps().size());
         
         assertEquals(NucleotideGlyph.getGlyphFor('M'), sut.getSnps().get(Integer.valueOf(5)));       
@@ -120,6 +122,7 @@ public class TestSplitReferenceEncodedNucleotideGlyphs {
         
         assertEquals(circularReadBases, NucleotideGlyph.convertToString(sut.decode()));
         assertTrue(sut.getGapIndexes().isEmpty());
+        assertEquals(0, sut.getNumberOfGaps());
         assertEquals(1, sut.getSnps().size());
         
         assertEquals(NucleotideGlyph.getGlyphFor('M'), sut.getSnps().get(Integer.valueOf(13)));       
@@ -138,6 +141,7 @@ public class TestSplitReferenceEncodedNucleotideGlyphs {
         
         assertEquals(circularReadBases, NucleotideGlyph.convertToString(sut.decode()));
         assertEquals(1, sut.getGapIndexes().size());
+        assertEquals(1, sut.getNumberOfGaps());
         assertEquals(1, sut.getSnps().size());
         for(Integer index : sut.getGapIndexes()){
             assertEquals(NucleotideGlyph.Gap, sut.getSnps().get(index));

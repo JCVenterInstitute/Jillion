@@ -47,6 +47,7 @@ public class TestReferenceEncodedNucleotideGlyph {
         int offset=5;
         String sequenceAsString = "CGTACGT-CGT";
         assertDecodedCorrectly(offset, sequenceAsString);
+       
     }
     @Test
     public void noGapsOneDifference(){
@@ -112,6 +113,7 @@ public class TestReferenceEncodedNucleotideGlyph {
                 encodedConsensus, sequence, offset, Range.buildRange(7,571));
         List<Integer> expectedGapIndexes = Arrays.asList(174, 178,180,181,182,186);
         assertEquals(expectedGapIndexes,actual.getGapIndexes());
+        assertEquals(expectedGapIndexes.size(), actual.getNumberOfGaps());
         assertEquals(factory.getGlyphsFor(sequence),actual.decode());
         assertEquals(sequence.length(), actual.getLength());
     }

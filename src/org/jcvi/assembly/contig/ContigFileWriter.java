@@ -105,21 +105,12 @@ public class ContigFileWriter implements Closeable{
 
         header.append(String.format("] %d bases, 00000000 checksum. {%d %d} <%d %d>\n",
                 placedRead.getEncodedGlyphs().getLength(), validLeft+1, validRight+1, 
-                placedRead.getStart()+1-computeNumberOfGapsInConsensusUntil(consensus, placedRead.getStart()), 
-                placedRead.getEnd()+1-computeNumberOfGapsInConsensusUntil(consensus, placedRead.getEnd())));
+                placedRead.getStart()+1-consensus.computeNumberOfInclusiveGapsInGappedValidRangeUntil((int) placedRead.getStart()), 
+                placedRead.getEnd()+1-consensus.computeNumberOfInclusiveGapsInGappedValidRangeUntil((int)placedRead.getEnd())));
         writeToOutputStream(header.toString());
         
     }
-    private int computeNumberOfGapsInConsensusUntil(
-            NucleotideEncodedGlyphs consensus, long start) {
-       int numberOfGaps = 0;
-       for(Integer index :consensus.getGapIndexes()){
-           if(index < start){
-               numberOfGaps++;
-           }
-       }
-        return numberOfGaps;
-    }
+ 
     private static final class ContigFormatReadSorter implements Comparator<PlacedRead>, Serializable{
         /**
          * 
