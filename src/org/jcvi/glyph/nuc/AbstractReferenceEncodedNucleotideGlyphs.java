@@ -24,7 +24,7 @@
 package org.jcvi.glyph.nuc;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -34,14 +34,14 @@ import org.jcvi.glyph.EncodedGlyphs;
 
 public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractEnocdedNucleotideGlyphs implements ReferencedEncodedNucleotideGlyphs{
 
-    private final List<Integer> gaps;
+    private final int[] gaps;
     private final Map<Integer, NucleotideGlyph> differentGlyphMap;
     private final int length;
     private final int startOffset;
     private final Range validRange;
     protected AbstractReferenceEncodedNucleotideGlyphs(Map<Integer, NucleotideGlyph> differentGlyphMap, List<Integer> gaps, int startOffset,int length,Range validRange){
         this.differentGlyphMap = differentGlyphMap;
-        this.gaps = gaps;
+        this.gaps = convertToPrimitiveArray(gaps);
         this.startOffset = startOffset;
         this.length = length;
         this.validRange = validRange;
@@ -54,7 +54,15 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         this.validRange = validRange;
         differentGlyphMap = new TreeMap<Integer, NucleotideGlyph>();
         populateFields(reference, toBeEncoded, startOffset, tempGapList);
-        gaps = Collections.unmodifiableList(tempGapList);
+        gaps = convertToPrimitiveArray(tempGapList);
+    }
+    
+    private int[] convertToPrimitiveArray(List<Integer> list){
+        int[] array = new int[list.size()];
+        for(int i=0; i<list.size(); i++){
+            array[i] = list.get(i).intValue();
+        }
+        return array;
     }
     private void populateFields(EncodedGlyphs<NucleotideGlyph> reference,
             String toBeEncoded, int startOffset, List<Integer> tempGapList) {
@@ -78,9 +86,6 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         return g!=referenceGlyph;
     }
 
-    protected List<Integer> getGaps() {
-        return gaps;
-    }
 
     protected Map<Integer, NucleotideGlyph> getDifferentGlyphMap() {
         return differentGlyphMap;
@@ -96,7 +101,7 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
     @Override
     public NucleotideGlyph get(int index) {
         final Integer indexAsInteger = Integer.valueOf(index);
-        if(gaps.contains(indexAsInteger)){
+        if(isGap(indexAsInteger)){
             return NucleotideGlyph.Gap;
         }
         if(differentGlyphMap.containsKey(indexAsInteger)){
@@ -108,7 +113,12 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
 
     @Override
     public boolean isGap(int index) {
-        return gaps.contains(Integer.valueOf(index));
+        for(int i=0; i<this.gaps.length; i++){
+            if(gaps[i] == index){
+                return true;
+            }
+        }
+        return false;
     }
     protected abstract NucleotideGlyph getFromReference(int referenceIndex);
     
@@ -119,7 +129,11 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
 
     @Override
     public List<Integer> getGapIndexes() {
-        return gaps;
+        List<Integer> result = new ArrayList<Integer>();
+        for(int i=0; i<this.gaps.length; i++){
+            result.add(this.gaps[i]);
+        }
+        return result;
     }
     @Override
     public Map<Integer, NucleotideGlyph> getSnps(){
@@ -164,7 +178,7 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
             if (other.gaps != null) {
                 return false;
             }
-        } else if (!gaps.equals(other.gaps)) {
+        } else if (!Arrays.equals(gaps,other.gaps)) {
             return false;
         }
         if (length != other.length) {
@@ -188,7 +202,7 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
      */
      @Override
      public int getNumberOfGaps() {
-         return gaps.size();
+         return gaps.length;
      }
     
     
