@@ -24,7 +24,6 @@
 package org.jcvi.glyph.nuc;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.Range;
@@ -32,7 +31,7 @@ import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 
 public class DefaultNucleotideEncodedGlyphs extends AbstractEnocdedNucleotideGlyphs{
-    private final List<Integer> gaps;
+    private final int[] gaps;
     private final Range validRange;
     private final EncodedGlyphs<NucleotideGlyph> encodedBasecalls;
     public DefaultNucleotideEncodedGlyphs(List<NucleotideGlyph> glyphs, Range validRange){
@@ -53,7 +52,7 @@ public class DefaultNucleotideEncodedGlyphs extends AbstractEnocdedNucleotideGly
     public DefaultNucleotideEncodedGlyphs(String basecalls){
         this(NucleotideGlyph.getGlyphsFor(basecalls));
     }
-    private List<Integer> computeGapIndexes(List<NucleotideGlyph> glyphs) {
+    private int[] computeGapIndexes(List<NucleotideGlyph> glyphs) {
        List<Integer> gaps = new ArrayList<Integer>();
         for(int i=0; i< glyphs.size(); i++){
            NucleotideGlyph glyph = glyphs.get(i);
@@ -61,12 +60,20 @@ public class DefaultNucleotideEncodedGlyphs extends AbstractEnocdedNucleotideGly
                 gaps.add(Integer.valueOf(i));
             }
         }
-        return Collections.unmodifiableList(gaps);
+        int[] array = new int[gaps.size()];
+        for(int i=0; i<gaps.size(); i++){
+            array[i] = gaps.get(i).intValue();
+        }
+        return array;
     }
     
     @Override
     public List<Integer> getGapIndexes() {
-        return gaps;
+        List<Integer> result = new ArrayList<Integer>();
+        for(int i=0; i<this.gaps.length; i++){
+            result.add(this.gaps[i]);
+        }
+        return result;
     }
 
     @Override
@@ -90,7 +97,12 @@ public class DefaultNucleotideEncodedGlyphs extends AbstractEnocdedNucleotideGly
     }
     @Override
     public boolean isGap(int index) {
-        return gaps.contains(Integer.valueOf(index));
+        for(int i=0; i<this.gaps.length; i++){
+            if(gaps[i] == index){
+                return true;
+            }
+        }
+        return false;
     }
     @Override
     public int hashCode() {
@@ -121,7 +133,7 @@ public class DefaultNucleotideEncodedGlyphs extends AbstractEnocdedNucleotideGly
     */
     @Override
     public int getNumberOfGaps() {
-        return gaps.size();
+        return gaps.length;
     }
 
     
