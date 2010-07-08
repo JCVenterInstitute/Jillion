@@ -32,7 +32,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.assembly.ace.AceContig;
-import org.jcvi.assembly.ace.AceFileParser;
 import org.jcvi.assembly.ace.TestAceParserMatchesAce2ContigMultipleContigs;
 import org.jcvi.util.DefaultMemoryMappedFileRange;
 

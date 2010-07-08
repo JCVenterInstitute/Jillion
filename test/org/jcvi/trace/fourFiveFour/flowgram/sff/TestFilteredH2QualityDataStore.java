@@ -16,35 +16,40 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 24, 2009
- *
+
+package org.jcvi.trace.fourFiveFour.flowgram.sff;
+
+import java.io.File;
+import java.util.List;
+
+import org.jcvi.datastore.DataStoreFilter;
+import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
+import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.datastore;
+public class TestFilteredH2QualityDataStore extends AbstractTestFilteredNucleotideDataStore<PhredQuality>{
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-        TestEmptyDataStoreFilter.class,
-        TestInverseDataStoreFilter.class,
-        TestDefaultIncludeDataStoreFilter.class,
-        TestDefaultExcludeDataStoreFilter.class,
-        TestDataStoreIterator.class,
-     TestDefaultContigFileDataStore.class,
-     TestMemoryMappedContigFileDataStore.class,
-     TestDefaultAceFileDataStore.class,
-     TestMemoryMappedAceFileDataStore.class,
-     TestCachedDataStore.class,
-     TestSimpleDataStore.class,
-     TestMultipleDataStoreWrapper.class
-     
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected QualityDataStore createSut(File sffFile, DataStoreFilter filter)
+            throws Exception {
+        return new H2QualitySffDataStore(sffFile, new H2QualityDataStore(), filter);
     }
-    )
-public class AllDataStoreUnitTests {
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected List<PhredQuality> getRelaventDataFrom(Flowgram flowgram) {
+        return flowgram.getQualities().decode();
+    }
 
 }

@@ -16,35 +16,40 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 24, 2009
- *
+
+package org.jcvi.trace.fourFiveFour.flowgram.sff;
+
+import java.io.File;
+import java.util.List;
+
+import org.jcvi.datastore.DataStoreFilter;
+import org.jcvi.glyph.nuc.NucleotideDataStore;
+import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.nuc.datastore.H2NucleotideDataStore;
+import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.datastore;
+public class TestFilteredH2NucleotideDataStore extends AbstractTestFilteredNucleotideDataStore<NucleotideGlyph>{
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-        TestEmptyDataStoreFilter.class,
-        TestInverseDataStoreFilter.class,
-        TestDefaultIncludeDataStoreFilter.class,
-        TestDefaultExcludeDataStoreFilter.class,
-        TestDataStoreIterator.class,
-     TestDefaultContigFileDataStore.class,
-     TestMemoryMappedContigFileDataStore.class,
-     TestDefaultAceFileDataStore.class,
-     TestMemoryMappedAceFileDataStore.class,
-     TestCachedDataStore.class,
-     TestSimpleDataStore.class,
-     TestMultipleDataStoreWrapper.class
-     
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected NucleotideDataStore createSut(File sffFile, DataStoreFilter filter)
+            throws Exception {
+        return new H2NucleotideSffDataStore(sffFile, new H2NucleotideDataStore(), filter);
     }
-    )
-public class AllDataStoreUnitTests {
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected List<NucleotideGlyph> getRelaventDataFrom(Flowgram flowgram) {
+        return flowgram.getBasecalls().decode();
+    }
 
 }

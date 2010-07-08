@@ -56,7 +56,7 @@ public class NucleotideFastaH2DataStore extends AbstractFastaH2DataStore<Nucleot
      * @param filter
      * @throws FileNotFoundException
      */
-    private NucleotideFastaH2DataStore(
+    public NucleotideFastaH2DataStore(
             File fastaFile,
             AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> h2Datastore,
             DataStoreFilter filter) throws FileNotFoundException {
@@ -68,7 +68,7 @@ public class NucleotideFastaH2DataStore extends AbstractFastaH2DataStore<Nucleot
      * @param h2Datastore
      * @throws FileNotFoundException
      */
-    private NucleotideFastaH2DataStore(
+    public NucleotideFastaH2DataStore(
             File fastaFile,
             AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> h2Datastore)
             throws FileNotFoundException {

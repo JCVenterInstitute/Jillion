@@ -16,35 +16,34 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 24, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.datastore;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Collection;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-        TestEmptyDataStoreFilter.class,
-        TestInverseDataStoreFilter.class,
-        TestDefaultIncludeDataStoreFilter.class,
-        TestDefaultExcludeDataStoreFilter.class,
-        TestDataStoreIterator.class,
-     TestDefaultContigFileDataStore.class,
-     TestMemoryMappedContigFileDataStore.class,
-     TestDefaultAceFileDataStore.class,
-     TestMemoryMappedAceFileDataStore.class,
-     TestCachedDataStore.class,
-     TestSimpleDataStore.class,
-     TestMultipleDataStoreWrapper.class
-     
+/**
+ * {@code DefaultIncludeDataStoreFilter} is a default implementation
+ * of a DataStoreFilter in which all the given ids should be 
+ * accepted by this filter.
+ * @author dkatzel
+ *
+ *
+ */
+public class DefaultIncludeDataStoreFilter implements DataStoreFilter{
+
+    private final Collection<String> ids;
+
+    /**
+     * Create a new IncludeDataStoreFilter.
+     * @param ids this list of ids that should be accepted
+     * by this filter.
+     */
+    public DefaultIncludeDataStoreFilter(Collection<String> ids) {
+        this.ids = ids;
     }
-    )
-public class AllDataStoreUnitTests {
 
+    @Override
+    public boolean accept(String id) {
+        return ids.contains(id);
+    }
 }

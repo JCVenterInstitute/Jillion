@@ -16,35 +16,42 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 24, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.datastore;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.Before;
+import org.junit.Test;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-        TestEmptyDataStoreFilter.class,
-        TestInverseDataStoreFilter.class,
-        TestDefaultIncludeDataStoreFilter.class,
-        TestDefaultExcludeDataStoreFilter.class,
-        TestDataStoreIterator.class,
-     TestDefaultContigFileDataStore.class,
-     TestMemoryMappedContigFileDataStore.class,
-     TestDefaultAceFileDataStore.class,
-     TestMemoryMappedAceFileDataStore.class,
-     TestCachedDataStore.class,
-     TestSimpleDataStore.class,
-     TestMultipleDataStoreWrapper.class
-     
+import static org.junit.Assert.*;
+import static org.easymock.EasyMock.*;
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestInverseDataStoreFilter {
+
+    private DataStoreFilter mock;
+    private final String id = "id";
+    private InverseDataStoreFilter sut;
+    @Before
+    public void setup(){
+        mock = createMock(DataStoreFilter.class);  
+        sut = new InverseDataStoreFilter(mock);
     }
-    )
-public class AllDataStoreUnitTests {
-
+    
+    @Test
+    public void wrappedFilterSaysTrueShouldReturnFalse(){
+        expect(mock.accept(id)).andReturn(true);
+        replay(mock);
+        assertFalse(sut.accept(id));
+        verify(mock);
+    }
+    @Test
+    public void wrappedFilterSaysFalseShouldReturnTrue(){
+        expect(mock.accept(id)).andReturn(false);
+        replay(mock);
+        assertTrue(sut.accept(id));
+        verify(mock);
+    }
 }

@@ -41,7 +41,12 @@ import org.junit.runners.Suite.SuiteClasses;
         AllIlluminaUnitTests.class,
         AllSolexaUnitTests.class,
         TestFastQUtil.class,
-        AllFastQUtilUnitTests.class
+        AllFastQUtilUnitTests.class,
+        
+        TestH2NucleotideFastQDataStore.class,
+        TestFilteredH2NucleotideFastQDataStore.class,
+        TestH2QualityFastQDataStore.class,
+        TestFilteredH2QualityFastQDataStore.class
         
     }
     )

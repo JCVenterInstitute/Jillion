@@ -19,61 +19,68 @@
 
 package org.jcvi.fasta;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
+import org.jcvi.glyph.nuc.datastore.H2NucleotideDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 /**
  * @author dkatzel
  *
  *
  */
-public class TestQualityFastaH2DataStore {
-    private static final String QUAL_FILE_PATH = "files/19150.qual";
+public class TestFilteredNucleotideFastaH2DataStore {
+
+    private static final String FASTA_FILE_PATH = "files/19150.fasta";
     private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestQualityFastaH2DataStore.class);
    
     
-    private H2QualityDataStore h2QualityDataStore;
-    private QualityFastaH2DataStore sut;
-    private QualityFastaDataStore expectedDataStore;
+    private H2NucleotideDataStore h2NucleotideDataStore;
+    private NucleotideFastaH2DataStore sut;
+    private NucleotideFastaDataStore expectedDataStore;
+    private IncludeFastXIdFilter filter= new IncludeFastXIdFilter(Arrays.asList("1", "2", "9"));
     @Before
     public void setup() throws DataStoreException, FileNotFoundException, IOException{
-        h2QualityDataStore = new H2QualityDataStore();
-        final File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-        expectedDataStore = new LargeQualityFastaFileDataStore(qualFile);
-        sut = new QualityFastaH2DataStore(qualFile, h2QualityDataStore);
+        h2NucleotideDataStore = new H2NucleotideDataStore();
+        final File fastaFile = RESOURCES.getFile(FASTA_FILE_PATH);
+        expectedDataStore = new LargeNucleotideFastaFileDataStore(fastaFile);
+        sut = new NucleotideFastaH2DataStore(fastaFile, h2NucleotideDataStore,filter);
     }
     
     @After
     public void tearDown() throws IOException{
-        h2QualityDataStore.close();
+        h2NucleotideDataStore.close();
     }
-    
     @Test
-    public void JGBAA02T21A12PB1A1F() throws DataStoreException{
-        String id= "JGBAA02T21A12PB1A1F";
+    public void size() throws DataStoreException{
+        assertEquals(3, sut.size());
+    }
+    @Test
+    public void _1() throws DataStoreException{
+        String id= "1";
         assertEquals(expectedDataStore.get(id).getValues().decode(), sut.get(id).decode());
     }
     @Test
-    public void JGBAA05T21C11NP1BF() throws DataStoreException{
-        String id= "JGBAA05T21C11NP1BF";
+    public void _2() throws DataStoreException{
+        String id= "2";
         assertEquals(expectedDataStore.get(id).getValues().decode(), sut.get(id).decode());
     }
     @Test
-    public void JGBAA06T21G05NA1128RB() throws DataStoreException{
-        String id= "JGBAA06T21G05NA1128RB";
-        assertEquals(expectedDataStore.get(id).getValues().decode(), sut.get(id).decode());
+    public void _6HasBeenFiltered() throws DataStoreException{
+        assertFalse(sut.contains("6"));
     }
     @Test
-    public void JGBAA01T21H05PB2A2341BRB() throws DataStoreException{
-        String id= "JGBAA01T21H05PB2A2341BRB";
+    public void _9() throws DataStoreException{
+        String id= "9";
         assertEquals(expectedDataStore.get(id).getValues().decode(), sut.get(id).decode());
     }
 }

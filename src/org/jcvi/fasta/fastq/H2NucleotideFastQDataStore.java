@@ -60,10 +60,9 @@ public class H2NucleotideFastQDataStore extends AbstractH2FastQDataStore<Nucleot
      */
     public H2NucleotideFastQDataStore(
             File fastQFile,
-            FastQQualityCodec qualityCodec,
             AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore,
             DataStoreFilter filter) throws FileNotFoundException {
-        super(fastQFile, qualityCodec, datastore, filter);
+        super(fastQFile,null, datastore, filter);
     }
 
 
