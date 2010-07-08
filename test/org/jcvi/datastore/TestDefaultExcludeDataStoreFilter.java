@@ -16,35 +16,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 24, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.datastore;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-        TestEmptyDataStoreFilter.class,
-        TestInverseDataStoreFilter.class,
-        TestDefaultIncludeDataStoreFilter.class,
-        TestDefaultExcludeDataStoreFilter.class,
-        TestDataStoreIterator.class,
-     TestDefaultContigFileDataStore.class,
-     TestMemoryMappedContigFileDataStore.class,
-     TestDefaultAceFileDataStore.class,
-     TestMemoryMappedAceFileDataStore.class,
-     TestCachedDataStore.class,
-     TestSimpleDataStore.class,
-     TestMultipleDataStoreWrapper.class
-     
+import java.util.Arrays;
+
+import org.junit.Test;
+
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestDefaultExcludeDataStoreFilter {
+    DefaultExcludeDataStoreFilter sut = new DefaultExcludeDataStoreFilter(Arrays.asList("include_1", "include_2"));
+    
+    @Test
+    public void idIsInIncludeListShouldNotAccept(){
+        assertFalse(sut.accept("include_1"));
+        assertFalse(sut.accept("include_2"));
     }
-    )
-public class AllDataStoreUnitTests {
-
+    
+    @Test
+    public void idIsNotInIncludeListShouldAccept(){
+        assertTrue(sut.accept("include_3"));
+        assertTrue(sut.accept("something completely different"));
+    }
 }

@@ -50,7 +50,11 @@ import org.junit.runners.Suite.SuiteClasses;
      TestLargePositionsFastaMap.class,
      TestLargeQualityFastaMap.class,
      TestNucleotideFastaH2DataStore.class,
+     TestFilteredNucleotideFastaH2DataStore.class,
+     
      TestQualityFastaH2DataStore.class,
+     TestFilteredQualityFastaH2DataStore.class,
+     
      TestNucleotideDataStoreFastaAdatper.class,
      
      AllFastqUnitTests.class

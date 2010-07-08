@@ -48,7 +48,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestSFFUtil_getTrimRange.class,
         TestSffVisitorWriter.class,
         TestH2NucleotideSffDataStore.class,
-        TestH2QualitySffDataStore.class
+        TestH2QualitySffDataStore.class,
+        TestFilteredH2QualityDataStore.class,
+        TestFilteredH2NucleotideDataStore.class
         
     }
     )

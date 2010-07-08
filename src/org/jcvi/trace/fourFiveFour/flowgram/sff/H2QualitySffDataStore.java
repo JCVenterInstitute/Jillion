@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.jcvi.Range;
+import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -60,6 +61,31 @@ public class H2QualitySffDataStore extends AbstractH2SffDataStore<PhredQuality, 
             AbstractH2EncodedGlyphDataStore<PhredQuality, EncodedGlyphs<PhredQuality>> datastore)
             throws SFFDecoderException, FileNotFoundException {
         super(sffFile, datastore);
+    }
+
+    
+    /**
+     * @param sffFile
+     * @param datastore
+     * @param filter
+     * @param trim
+     * @throws SFFDecoderException
+     * @throws FileNotFoundException
+     */
+    public H2QualitySffDataStore(
+            File sffFile,
+            AbstractH2EncodedGlyphDataStore<PhredQuality, EncodedGlyphs<PhredQuality>> datastore,
+            DataStoreFilter filter, boolean trim) throws SFFDecoderException,
+            FileNotFoundException {
+        super(sffFile, datastore, filter, trim);
+    }
+    
+    public H2QualitySffDataStore(
+            File sffFile,
+            AbstractH2EncodedGlyphDataStore<PhredQuality, EncodedGlyphs<PhredQuality>> datastore,
+            DataStoreFilter filter) throws SFFDecoderException,
+            FileNotFoundException {
+        super(sffFile, datastore, filter, false);
     }
 
     @Override

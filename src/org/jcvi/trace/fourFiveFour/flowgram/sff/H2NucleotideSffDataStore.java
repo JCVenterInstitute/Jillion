@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.jcvi.Range;
+import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -57,6 +58,38 @@ public class H2NucleotideSffDataStore extends AbstractH2SffDataStore<NucleotideG
             AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore)
             throws SFFDecoderException, FileNotFoundException {
         super(sffFile, datastore);
+    }
+    
+    
+    /**
+     * @param sffFile
+     * @param datastore
+     * @param filter
+     * @param trim
+     * @throws SFFDecoderException
+     * @throws FileNotFoundException
+     */
+    public H2NucleotideSffDataStore(
+            File sffFile,
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore,
+            DataStoreFilter filter, boolean trim) throws SFFDecoderException,
+            FileNotFoundException {
+        super(sffFile, datastore, filter, trim);
+    }
+    /**
+     * @param sffFile
+     * @param datastore
+     * @param filter
+     * @param trim
+     * @throws SFFDecoderException
+     * @throws FileNotFoundException
+     */
+    public H2NucleotideSffDataStore(
+            File sffFile,
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore,
+            DataStoreFilter filter) throws SFFDecoderException,
+            FileNotFoundException {
+        super(sffFile, datastore, filter, false);
     }
     @Override
     protected String getDataRecord(SFFReadHeader readHeader,

@@ -16,35 +16,41 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 24, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.datastore;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Collection;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-        TestEmptyDataStoreFilter.class,
-        TestInverseDataStoreFilter.class,
-        TestDefaultIncludeDataStoreFilter.class,
-        TestDefaultExcludeDataStoreFilter.class,
-        TestDataStoreIterator.class,
-     TestDefaultContigFileDataStore.class,
-     TestMemoryMappedContigFileDataStore.class,
-     TestDefaultAceFileDataStore.class,
-     TestMemoryMappedAceFileDataStore.class,
-     TestCachedDataStore.class,
-     TestSimpleDataStore.class,
-     TestMultipleDataStoreWrapper.class
-     
+/**
+ * {@code DefaultExcludeDataStoreFilter} is a default implementation
+ * of a {@link DataStoreFilter} where all the given ids
+ * should NOT be accepted by the filter.
+ * 
+ * @author dkatzel
+ *
+ *
+ */
+public class DefaultExcludeDataStoreFilter implements DataStoreFilter{
+
+    private final DataStoreFilter filter;
+    /**
+     * Create a new ExcludeDataStoreFilter.
+     * @param ids this list of ids that should NOT be accepted
+     * by this filter.
+     */
+    public DefaultExcludeDataStoreFilter(Collection<String> ids) {
+        //its just easier to invert an include filter
+        //rather than copy and paste code
+        filter = new InverseDataStoreFilter(
+                new DefaultIncludeDataStoreFilter(ids));
     }
-    )
-public class AllDataStoreUnitTests {
-
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean accept(String id) {
+        return filter.accept(id);
+    }
+    
+    
 }
