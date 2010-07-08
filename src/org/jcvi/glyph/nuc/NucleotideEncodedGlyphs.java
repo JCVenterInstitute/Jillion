@@ -42,10 +42,16 @@ import org.jcvi.glyph.EncodedGlyphs;
 public interface NucleotideEncodedGlyphs extends EncodedGlyphs<NucleotideGlyph>{
     /**
      * Get a List of all the gap indexes into the gapped basecalls
-     * which are Gaps.
+     * which are Gaps.  The size of the returned list should be
+     * the same as the value returned by {@link #getNumberOfGaps()}.
      * @return a List of gap indexes as Integers.
      */
     List<Integer> getGapIndexes();    
+    /**
+     * Get the number of gaps in the gapped basecalls.
+     * @return the number of gaps; will always be {@code >=0}.
+     */
+    int getNumberOfGaps();
     /**
      * Get the valid {@link Range} which is ungapped "good" part of the basecalls.  Depending
      * on what this {@link NucleotideEncodedGlyphs} represents can change the 

@@ -116,6 +116,13 @@ public class DefaultNucleotideEncodedGlyphs extends AbstractEnocdedNucleotideGly
     public String toString() {
         return encodedBasecalls.decode().toString();
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getNumberOfGaps() {
+        return gaps.size();
+    }
 
     
 }

@@ -62,6 +62,7 @@ public class TestReferenceEncodedNucleotideGlyph_gappedtoUngapped {
     @Test
     public void convertGappedToUngappedOneGapShouldReturnIndexMinusOne(){
         final int indexOfFirstGap = gappedBasecalls.indexOf('-');
+        assertEquals(2, sut.getNumberOfGaps());
         assertEquals(indexOfFirstGap,sut.convertGappedValidRangeIndexToUngappedValidRangeIndex(indexOfFirstGap+1));
         assertEquals(indexOfFirstGap+1,sut.convertUngappedValidRangeIndexToGappedValidRangeIndex(indexOfFirstGap));
     }
@@ -73,6 +74,7 @@ public class TestReferenceEncodedNucleotideGlyph_gappedtoUngapped {
         final int lastUngappedIndex = lastGappedIndex-numberOfGaps;
         assertEquals(lastUngappedIndex, sut.convertGappedValidRangeIndexToUngappedValidRangeIndex(lastGappedIndex));
         assertEquals(lastGappedIndex, sut.convertUngappedValidRangeIndexToGappedValidRangeIndex(lastUngappedIndex));
+        assertEquals(numberOfGaps, sut.getNumberOfGaps());
     }
     
     

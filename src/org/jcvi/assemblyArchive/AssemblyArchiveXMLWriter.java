@@ -133,7 +133,7 @@ public class AssemblyArchiveXMLWriter<T extends PlacedRead> {
             writeString(out, createTag("trace_name",read.getId()));
             writeString(out, createTag("nbasecalls", read.getEncodedGlyphs().getUngappedLength()));
             Range validRange =read.getValidRange().convertRange(CoordinateSystem.RESIDUE_BASED);
-            int numberOfGaps = read.getEncodedGlyphs().getGapIndexes().size();
+            int numberOfGaps = read.getEncodedGlyphs().getNumberOfGaps();
             writeString(out, "<valid>\n");
             writeString(out, createTag("start",validRange.getLocalStart()));
             writeString(out, createTag("stop",validRange.getLocalEnd()));

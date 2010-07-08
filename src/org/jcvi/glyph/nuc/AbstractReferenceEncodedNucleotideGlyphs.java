@@ -183,7 +183,13 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         return true;
     }
     
-    
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public int getNumberOfGaps() {
+         return gaps.size();
+     }
     
     
 

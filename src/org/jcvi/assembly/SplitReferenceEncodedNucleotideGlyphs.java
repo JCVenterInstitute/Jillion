@@ -133,6 +133,12 @@ public class SplitReferenceEncodedNucleotideGlyphs extends AbstractEnocdedNucleo
         return splitIndex;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public int getNumberOfGaps() {
+         return gaps.size();
+     }
 
 }
