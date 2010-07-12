@@ -39,7 +39,7 @@ public final class QualityFastaRecordUtil {
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
 
 
-    public static DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>> buildFastaRecord(
+    public static QualityFastaRecord<EncodedGlyphs<PhredQuality>> buildFastaRecord(
             String identifier, String comment, CharSequence sequence) {
         List<PhredQuality> qualities = parseQualities(sequence);
         return new DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>>(identifier, comment, 
