@@ -89,7 +89,8 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
         byte[] bases = new byte[numberOfBases];
         int bytesRead = IOUtil.blockingRead(in, bases, 0, numberOfBases);
         if(bytesRead != numberOfBases){
-            throw new IOException("could not read all the bases");
+            throw new IOException(String.format(
+                    "could not read all the bases %d out of %d", bytesRead, numberOfBases));
         }
         for(int i=0; i< numberOfBases; i++){
             if(bases[i]==0){
@@ -109,14 +110,14 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
         final ByteBuffer gConfidence = ByteBuffer.wrap(channelGroup.getGChannel().getConfidence().getData());
         final ByteBuffer tConfidence = ByteBuffer.wrap(channelGroup.getTChannel().getConfidence().getData());
         bulkPutPeaks(buffer, c.getPeaks().getData());
-        bulkPut(buffer,aConfidence);
-        bulkPut(buffer,cConfidence);
-        bulkPut(buffer,gConfidence);
-        bulkPut(buffer,tConfidence);
+        bulkPut(buffer,aConfidence, numberOfBases);
+        bulkPut(buffer,cConfidence, numberOfBases);
+        bulkPut(buffer,gConfidence, numberOfBases);
+        bulkPut(buffer,tConfidence, numberOfBases);
         bulkPut(buffer, c.getBasecalls());
-        bulkPutOptional(buffer, c.getSubstitutionConfidence(), numberOfBases);
-        bulkPutOptional(buffer, c.getInsertionConfidence(), numberOfBases);
-        bulkPutOptional(buffer, c.getDeletionConfidence(), numberOfBases);
+        bulkPutWithPadding(buffer, c.getSubstitutionConfidence(), numberOfBases);
+        bulkPutWithPadding(buffer, c.getInsertionConfidence(), numberOfBases);
+        bulkPutWithPadding(buffer, c.getDeletionConfidence(), numberOfBases);
 
     }
 
@@ -135,10 +136,10 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
         
     }
 
-    private void bulkPutOptional(ByteBuffer buffer,
+    private void bulkPutWithPadding(ByteBuffer buffer,
             Confidence optionalConfidence, int numberOfBases) {
-        if(optionalConfidence!=null && optionalConfidence.getData()!=null){
-            bulkPut(buffer, ByteBuffer.wrap(optionalConfidence.getData()));
+        if(optionalConfidence!=null && optionalConfidence.getData()!=null && optionalConfidence.getData().length>0){
+            bulkPut(buffer, ByteBuffer.wrap(optionalConfidence.getData()),numberOfBases);
         }
         else{
             for(int i=0; i< numberOfBases; i++){
@@ -148,8 +149,12 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
 
     }
     
-    private void bulkPut(ByteBuffer buffer, ByteBuffer data) {
+    private void bulkPut(ByteBuffer buffer, ByteBuffer data, int expectedSize) {
         buffer.put(data);
+        //padd with 0s
+        for(int i=data.position(); i<expectedSize; i++){
+            buffer.put((byte)0);
+        }
         data.rewind();
     }
 
