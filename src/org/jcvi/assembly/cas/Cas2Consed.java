@@ -236,18 +236,17 @@ public class Cas2Consed {
                         if(!outputDir.contains("solexa_dir")){
                             outputDir.createNewDir("solexa_dir");
                         }
-                        final File solexaSymlink = outputDir.getFile("solexa_dir/"+name);
-                        if(solexaSymlink.exists()){
-                            solexaSymlink.delete();
+                        if(outputDir.contains("solexa_dir/"+name)){
+                            outputDir.getFile("solexa_dir/"+name).delete();
                         }
                         outputDir.createNewSymLink(traceFile.getAbsolutePath(), "solexa_dir/"+name);
                     }else if ("sff".equals(extension)){
                         if(!outputDir.contains("sff_dir")){
                             outputDir.createNewDir("sff_dir");
                         }
-                        final File sffSymlink = outputDir.getFile("sff_dir/"+name);
-                        if(sffSymlink.exists()){
-                            sffSymlink.delete();
+                        
+                        if(outputDir.contains("sff_dir/"+name)){
+                            outputDir.getFile("sff_dir/"+name).delete();
                         }
                         outputDir.createNewSymLink(traceFile.getAbsolutePath(), "sff_dir/"+name);
                     }
