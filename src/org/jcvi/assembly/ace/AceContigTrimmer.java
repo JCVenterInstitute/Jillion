@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.Range;
+import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.trim.AbstractContigTrimmer;
 import org.jcvi.assembly.trim.PlacedReadTrimmer;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -82,8 +83,10 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
         if(oldConsensus.getLength() == newContigRange.getLength()){
             return oldContigId;
         }
-        int ungappedStart =oldConsensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int)newContigRange.getStart());
-        int ungappedEnd =oldConsensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int)newContigRange.getEnd());
+        final int start = (int)newContigRange.getStart();
+        int ungappedStart =oldConsensus.convertGappedValidRangeIndexToUngappedValidRangeIndex(AssemblyUtil.getRightFlankingNonGapIndex(oldConsensus, start));
+        final int end = (int)newContigRange.getEnd();
+        int ungappedEnd =oldConsensus.convertGappedValidRangeIndexToUngappedValidRangeIndex(AssemblyUtil.getLeftFlankingNonGapIndex(oldConsensus, end));
         return String.format("%s_%d_%d",oldContigId,ungappedStart+1, ungappedEnd+1);
     
     }
