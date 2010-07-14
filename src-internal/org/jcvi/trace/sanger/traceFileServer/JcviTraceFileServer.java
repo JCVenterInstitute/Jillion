@@ -29,8 +29,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.util.List;
-
-import org.jcvi.auth.JCVIAuthorizerUtils;
 import org.jcvi.auth.JCVIEncodedAuthorizer;
 import org.jcvi.http.HttpGetRequestBuilder;
 import org.jcvi.io.fileServer.ReadWriteFileServer;
