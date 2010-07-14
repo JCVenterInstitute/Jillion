@@ -19,6 +19,8 @@
 
 package org.jcvi.assembly.cas.read;
 
+import java.util.List;
+
 /**
  * {@code ReadIndexToContigLookup} is an interface
  * that maps .cas read indexes to their corresponding
@@ -37,4 +39,9 @@ public interface ReadIndexToContigLookup {
      * if the read does not map to any contig.
      */
     Long getContigIdForRead(long readIndex);
+    
+    
+    List<Long> getReadIdsForContig(long contigId);
+    
+    int getNumberOfContigs();
 }

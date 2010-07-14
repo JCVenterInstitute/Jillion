@@ -28,6 +28,7 @@ import java.io.File;
 import org.jcvi.assembly.cas.CasTrimMap;
 import org.jcvi.assembly.cas.EmptyCasTrimMap;
 import org.jcvi.datastore.CachedDataStore;
+import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.fasta.LargeNucleotideFastaFileDataStore;
 import org.jcvi.fasta.LargeQualityFastaFileDataStore;
@@ -71,15 +72,26 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
         super(workingDir,trimToUntrimmedMap);
         this.cacheSize = cacheSize;
     }
+    
+    /**
+     * @param workingDir
+     * @param trimMap
+     * @param filter
+     */
+    public FastaCasDataStoreFactory(File workingDir, CasTrimMap trimMap,
+            DataStoreFilter filter, int cacheSize) {
+        super(workingDir, trimMap, filter);
+        this.cacheSize = cacheSize;
+    }
     @Override
-    public NucleotideDataStore getNucleotideDataStoreFor(File pathToDataStore) throws CasDataStoreFactoryException {  
+    public NucleotideDataStore getNucleotideDataStoreFor(File pathToDataStore, DataStoreFilter filter) throws CasDataStoreFactoryException {  
         return CachedDataStore.createCachedDataStore(NucleotideDataStore.class, 
                      new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(new LargeNucleotideFastaFileDataStore(pathToDataStore))),
                      cacheSize);            
     }
     @Override
     public QualityDataStore getQualityDataStoreFor(
-            File fastaFile) throws CasDataStoreFactoryException { 
+            File fastaFile,DataStoreFilter filter) throws CasDataStoreFactoryException { 
         return CachedDataStore.createCachedDataStore(QualityDataStore.class, 
                 new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(fastaFile))),
                 cacheSize);  

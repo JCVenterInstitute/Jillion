@@ -50,9 +50,12 @@ public class CasParser {
     private  int numberOfBytesForContigPosition,numberOfBytesForContigNumber;
     private  long numberOfReads;
     private CasScoringScheme scoringScheme;
-    private CasParser(File file, CasFileVisitor visitor) throws IOException{
+    
+    private CasParser(File file, CasFileVisitor visitor, boolean parseMatches) throws IOException{
         parseMetaData(new FileInputStream(file),visitor);
-        parseMatches(new FileInputStream(file),visitor);
+        if(parseMatches){
+            parseMatches(new FileInputStream(file),visitor);
+        }
         visitor.visitEndOfFile();
     }
     private void parseMatches(InputStream in,
@@ -218,7 +221,10 @@ public class CasParser {
     };
     
     public static void parseCas(File file, CasFileVisitor visitor) throws IOException{
-        new CasParser(file, visitor);
+        new CasParser(file, visitor,true);        
+    }
+    public static void parseOnlyMetaData(File file, CasFileVisitor visitor) throws IOException{
+        new CasParser(file, visitor,false);
         
     }
 }

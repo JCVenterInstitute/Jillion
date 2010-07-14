@@ -22,6 +22,8 @@ package org.jcvi.assembly.cas.read;
 import java.io.File;
 
 import org.jcvi.assembly.cas.CasTrimMap;
+import org.jcvi.datastore.DataStoreFilter;
+import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 
@@ -43,19 +45,25 @@ public abstract class AbstractCasDataStoreFactory implements CasDataStoreFactory
 
     private final File workingDir;
     private final CasTrimMap trimMap;
+    private final DataStoreFilter filter;
     /**
      * @param workingDir
      */
     public AbstractCasDataStoreFactory(File workingDir, CasTrimMap trimMap) {
+        this(workingDir, trimMap, EmptyDataStoreFilter.INSTANCE);
+    }
+    
+    public AbstractCasDataStoreFactory(File workingDir, CasTrimMap trimMap, DataStoreFilter filter) {
         this.workingDir = workingDir;
         this.trimMap = trimMap;
+        this.filter = filter;
     }
 
     @Override
     public final NucleotideDataStore getNucleotideDataStoreFor(String pathToDataStore)
             throws CasDataStoreFactoryException {
         File trimmedDataStore = getTrimmedFileFor(pathToDataStore);   
-        return getNucleotideDataStoreFor(trimmedDataStore);
+        return getNucleotideDataStoreFor(trimmedDataStore,filter);
     }
 
     private File getTrimmedFileFor(String pathToDataStore) {
@@ -68,19 +76,19 @@ public abstract class AbstractCasDataStoreFactory implements CasDataStoreFactory
      * @param file
      * @return
      */
-    protected abstract NucleotideDataStore getNucleotideDataStoreFor(File file) throws CasDataStoreFactoryException;
+    protected abstract NucleotideDataStore getNucleotideDataStoreFor(File file,DataStoreFilter filter) throws CasDataStoreFactoryException;
 
     @Override
     public final QualityDataStore getQualityDataStoreFor(String pathToDataStore)
             throws CasDataStoreFactoryException {
         File trimmedDataStore = getTrimmedFileFor(pathToDataStore);   
-        return getQualityDataStoreFor(trimmedDataStore);
+        return getQualityDataStoreFor(trimmedDataStore,filter);
     }
     /**
      * @param file
      * @return
      */
-    protected abstract QualityDataStore getQualityDataStoreFor(File file) throws CasDataStoreFactoryException;
+    protected abstract QualityDataStore getQualityDataStoreFor(File file,DataStoreFilter filter) throws CasDataStoreFactoryException;
 
     
 }

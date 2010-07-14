@@ -29,6 +29,7 @@ import java.util.Map;
 import org.jcvi.assembly.cas.CasTrimMap;
 import org.jcvi.assembly.cas.EmptyCasTrimMap;
 import org.jcvi.datastore.CachedDataStore;
+import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.fasta.fastq.FastQDataStore;
 import org.jcvi.fasta.fastq.FastQNucleotideDataStoreAdapter;
 import org.jcvi.fasta.fastq.FastQQualitiesDataStoreAdapter;
@@ -38,33 +39,33 @@ import org.jcvi.fasta.fastq.LargeFastQFileDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 
-public class FastQCasDataStoreFactory extends AbstractCasDataStoreFactory {
+public class LargeFastQCasDataStoreFactory extends AbstractCasDataStoreFactory {
     private final int cacheSize;
     private final Map<File, FastQDataStore<FastQRecord>> fastQDataStores = new HashMap<File, FastQDataStore<FastQRecord>>();
     private final FastQQualityCodec quailtyCodec;
     /**
      * @param cacheSize
      */
-    public FastQCasDataStoreFactory(FastQQualityCodec quailtyCodec, int cacheSize) {
+    public LargeFastQCasDataStoreFactory(FastQQualityCodec quailtyCodec, int cacheSize) {
        this(null, quailtyCodec,cacheSize);
     }
     /**
      * @param cacheSize
      */
-    public FastQCasDataStoreFactory(File workingDir,FastQQualityCodec quailtyCodec, int cacheSize) {
+    public LargeFastQCasDataStoreFactory(File workingDir,FastQQualityCodec quailtyCodec, int cacheSize) {
         this(workingDir, EmptyCasTrimMap.getInstance(), quailtyCodec,cacheSize);
     }
     /**
      * @param cacheSize
      */
-    public FastQCasDataStoreFactory(File workingDir, CasTrimMap trimMap,FastQQualityCodec quailtyCodec, int cacheSize) {
+    public LargeFastQCasDataStoreFactory(File workingDir, CasTrimMap trimMap,FastQQualityCodec quailtyCodec, int cacheSize) {
         super(workingDir,trimMap);
         this.cacheSize = cacheSize;
         this.quailtyCodec = quailtyCodec;
     }
     @Override
     public synchronized NucleotideDataStore getNucleotideDataStoreFor(
-            File fastq) throws CasDataStoreFactoryException {
+            File fastq, DataStoreFilter filter) throws CasDataStoreFactoryException {
         addDataStoreIfNeeded(fastq);
         return new FastQNucleotideDataStoreAdapter(fastQDataStores.get(fastq));
     }
@@ -84,7 +85,7 @@ public class FastQCasDataStoreFactory extends AbstractCasDataStoreFactory {
     }
     @Override
     public synchronized QualityDataStore getQualityDataStoreFor(
-            File fastq) throws CasDataStoreFactoryException {
+            File fastq, DataStoreFilter filter) throws CasDataStoreFactoryException {
         addDataStoreIfNeeded(fastq);
         return new FastQQualitiesDataStoreAdapter(fastQDataStores.get(fastq));
     }

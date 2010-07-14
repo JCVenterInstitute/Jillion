@@ -49,6 +49,7 @@ import org.jcvi.assembly.util.TrimDataStore;
 import org.jcvi.cli.CommandLineOptionBuilder;
 import org.jcvi.cli.CommandLineUtils;
 import org.jcvi.datastore.DataStore;
+import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -161,7 +162,7 @@ public class CasSNPMatrix {
                
             final IlluminaFastQQualityCodec solexaQualityCodec = new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
             MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
-                    new H2SffCasDataStoreFactory(DirectoryFileServer.createTemporaryDirectoryFileServer(new File("/usr/local/scratch/dkatzel/"))),               
+                    new H2SffCasDataStoreFactory(DirectoryFileServer.createTemporaryDirectoryFileServer(new File("/usr/local/scratch/dkatzel/")), EmptyDataStoreFilter.INSTANCE),               
                     new H2FastQCasDataStoreFactory(solexaQualityCodec),
                     new FastaCasDataStoreFactory(100)        
             );

@@ -86,11 +86,13 @@ public abstract class AbstractOnePassCasFileVisitor extends AbstractCasFileVisit
     @Override
     public synchronized void visitMatch(CasMatch match) {
         checkNotYetInitialized();
-        super.visitMatch(match);
         visitMatch(match, readCounter);
-        readCounter++;
+        incrementReadCounter();
     }
 
+    protected final void incrementReadCounter(){
+        readCounter++;
+    }
     protected abstract void visitMatch(CasMatch match, long readCounter);
     
     @Override

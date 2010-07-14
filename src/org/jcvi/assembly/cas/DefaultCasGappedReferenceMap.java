@@ -80,38 +80,38 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
     @Override
     public synchronized void visitMatch(CasMatch match, long readCounter) {
         if(match.matchReported()){
-        boolean outsideValidRange=true;
-        
-        CasAlignment alignment =match.getChosenAlignment();
-        Long referenceId = alignment.contigSequenceId();
-        if(!gapsByReferenceId.containsKey(referenceId)){
-            gapsByReferenceId.put(referenceId, new TreeMap<Long,Insertion>());
-        }
-        long currentOffset = alignment.getStartOfMatch();
-        List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
-        int lastIndex = regionsToConsider.size()-1;
-        if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
-            regionsToConsider.remove(lastIndex);
-        }
-        for(CasAlignmentRegion region: regionsToConsider){
-            if(outsideValidRange && region.getType() != CasAlignmentRegionType.INSERT){
-                outsideValidRange=false;
+            boolean outsideValidRange=true;
+            
+            CasAlignment alignment =match.getChosenAlignment();
+            Long referenceId = alignment.contigSequenceId();
+            if(!gapsByReferenceId.containsKey(referenceId)){
+                gapsByReferenceId.put(referenceId, new TreeMap<Long,Insertion>());
             }
-            if(!outsideValidRange){
-                
-                if(region.getType() == CasAlignmentRegionType.INSERT){
-                    Map<Long,Insertion> insertions =gapsByReferenceId.get(referenceId);
-                    if(insertions.containsKey(currentOffset)){
-                        insertions.get(currentOffset).updateSize(region.getLength());
+            long currentOffset = alignment.getStartOfMatch();
+            List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
+            int lastIndex = regionsToConsider.size()-1;
+            if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
+                regionsToConsider.remove(lastIndex);
+            }
+            for(CasAlignmentRegion region: regionsToConsider){
+                if(outsideValidRange && region.getType() != CasAlignmentRegionType.INSERT){
+                    outsideValidRange=false;
+                }
+                if(!outsideValidRange){
+                    
+                    if(region.getType() == CasAlignmentRegionType.INSERT){
+                        Map<Long,Insertion> insertions =gapsByReferenceId.get(referenceId);
+                        if(insertions.containsKey(currentOffset)){
+                            insertions.get(currentOffset).updateSize(region.getLength());
+                        }
+                        else{
+                            insertions.put(currentOffset, new Insertion(region.getLength()));
+                        }
+                    }else{
+                        currentOffset +=region.getLength();
                     }
-                    else{
-                        insertions.put(currentOffset, new Insertion(region.getLength()));
-                    }
-                }else{
-                    currentOffset +=region.getLength();
                 }
             }
-        }
         }
     }
 
