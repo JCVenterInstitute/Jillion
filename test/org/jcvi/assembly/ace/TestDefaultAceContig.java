@@ -16,41 +16,27 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Sep 3, 2008
- *
- * @author dkatzel
- */
+
 package org.jcvi.assembly.ace;
 
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.junit.Test;
+import static org.junit.Assert.*;
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestDefaultAceContig {
 
-import org.jcvi.assembly.ace.consed.AllConsedUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-       TestDefaultPhdInfo.class,
-       TestAssembledFrom.class,
-       TestAceParserMatchesAce2ContigSingleContig.class,
-       TestAceParserMatchesAce2ContigMultipleContigs.class,
-       TestAceParserPhdInfo.class,
-       TestDefaultAceContig.class,
-       TestAceContigBuilderInvalidRead.class,
-       TestDefaultAceBestSegment.class,
-       TestDefaultAceBestSegmentMap.class,
-       TestOntheFlyAceBestSegmentMap.class,
-       TestAcePlacedReadAdapter.class,
-       TestDefaultAceFileTagMap.class,
-       TestAceFileWriter.class,
-       
-       TestAceContigTrimmer.class,
-       
-       AllConsedUnitTests.class
+    @Test
+    public void noPlacedReadsShouldMakeEmptyContig(){
+        DefaultAceContig.Builder sut =  new DefaultAceContig.Builder("id",
+                "ACGTACGTACGTACGT");
+        DefaultAceContig contig =sut.build();
+        NucleotideEncodedGlyphs consensus =contig.getConsensus();
+        assertEquals(0, consensus.getLength());
+        assertEquals("id",contig.getId());
+        assertEquals(0,contig.getNumberOfReads());
     }
-)
-public class AllAceUnitTests {
-
 }
