@@ -66,15 +66,12 @@ public abstract class AbstractCasFileContigVisitor extends AbstractOnePassCasFil
     }
 
     @Override
-    public synchronized void visitMatch(CasMatch match) {
-        // TODO Auto-generated method stub
-        super.visitMatch(match);
-    }
-
-    @Override
     protected synchronized void visitMatch(CasMatch match, long readCounter) {
         if(match.matchReported()){
             String readId = readIdLookup.getLookupIdFor(readCounter);
+            if("F66E6K401ALVO5".equals(readId)){
+                System.out.println("here");
+            }
             CasAlignment alignment = match.getChosenAlignment();
             long referenceId = alignment.contigSequenceId();
             

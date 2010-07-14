@@ -19,7 +19,9 @@
 
 package org.jcvi.assembly.cas.read;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jcvi.assembly.cas.AbstractOnePassCasFileVisitor;
@@ -38,25 +40,53 @@ import org.jcvi.assembly.cas.alignment.CasAlignment;
 public class DefaultCasFileReadIndexToContigLookup extends AbstractOnePassCasFileVisitor implements ReadIndexToContigLookup{
 
     private Map<Long, Long> read2ContigMap;
-    
+    private Map<Long, List<Long>> contig2ReadsMap;
+    private int numberOfTotalReads;
+    private int numberOfTotalContigs;
     @Override
     public synchronized void visitMetaData(long numberOfContigSequences,
             long numberOfReads) {
         super.visitMetaData(numberOfContigSequences, numberOfReads);
-        read2ContigMap = new HashMap<Long, Long>((int)numberOfReads);
+        numberOfTotalReads = (int)numberOfReads;
+        numberOfTotalContigs = (int)numberOfContigSequences;
+        read2ContigMap = new HashMap<Long, Long>(numberOfTotalReads);
+        contig2ReadsMap = new HashMap<Long, List<Long>>(numberOfTotalContigs);
+        for(long i=0; i< numberOfTotalContigs; i++){
+          //initialize capacity to avg # of reads per contig
+            //this should speed up performance a little
+            contig2ReadsMap.put(i, new ArrayList<Long>(numberOfTotalReads/numberOfTotalContigs));
+        }
     }
 
     @Override
     public synchronized void visitMatch(CasMatch match, long readCounter) {        
         if(match.matchReported()){
             CasAlignment alignment = match.getChosenAlignment();
-            long referenceId = alignment.contigSequenceId();
-            read2ContigMap.put(readCounter, referenceId);
+            Long referenceId = alignment.contigSequenceId();
+            Long readIndex = Long.valueOf(readCounter);
+            read2ContigMap.put(readIndex, referenceId);           
+            contig2ReadsMap.get(referenceId).add(readIndex);
         }
     }
     @Override
     public Long getContigIdForRead(long readIndex){
         return read2ContigMap.get(readIndex);
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public List<Long> getReadIdsForContig(long contigId) {
+        return contig2ReadsMap.get(contigId);
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getNumberOfContigs() {
+        return contig2ReadsMap.size();
     }
     
 }

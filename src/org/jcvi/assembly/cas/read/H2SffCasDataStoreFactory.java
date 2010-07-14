@@ -27,6 +27,8 @@ import java.io.File;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jcvi.assembly.cas.EmptyCasTrimMap;
+import org.jcvi.datastore.DataStoreFilter;
+import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.datastore.H2NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
@@ -38,20 +40,28 @@ import org.jcvi.trace.fourFiveFour.flowgram.sff.H2QualitySffDataStore;
 public class H2SffCasDataStoreFactory extends AbstractCasDataStoreFactory{
     private final ReadWriteDirectoryFileServer databaseFileServer;
     public H2SffCasDataStoreFactory(){
-        this(null,null);
+        this(null);
     }
     public H2SffCasDataStoreFactory(File workingDir){
-        this(workingDir,null);
+        this(workingDir,EmptyDataStoreFilter.INSTANCE);
     }
-    public H2SffCasDataStoreFactory(ReadWriteDirectoryFileServer databaseFileServer){
-        this(null, databaseFileServer);
+    public H2SffCasDataStoreFactory(File workingDir, DataStoreFilter filter){
+        this(workingDir,null, filter);
+    }
+    public H2SffCasDataStoreFactory(ReadWriteDirectoryFileServer databaseFileServer, DataStoreFilter filter){
+        this(null, databaseFileServer, filter);
     }
     public H2SffCasDataStoreFactory(File workingDir,ReadWriteDirectoryFileServer databaseFileServer){
         super(workingDir, EmptyCasTrimMap.getInstance());
         this.databaseFileServer = databaseFileServer;
     }
+    public H2SffCasDataStoreFactory(File workingDir,ReadWriteDirectoryFileServer databaseFileServer, DataStoreFilter filter){
+        super(workingDir, EmptyCasTrimMap.getInstance(), filter);
+        this.databaseFileServer = databaseFileServer;
+    }
+    
     @Override
-    public NucleotideDataStore getNucleotideDataStoreFor(File sffFile)
+    public NucleotideDataStore getNucleotideDataStoreFor(File sffFile, DataStoreFilter filter)
             throws CasDataStoreFactoryException {       
         checkForSffExtension(sffFile);
         try {
@@ -62,7 +72,7 @@ public class H2SffCasDataStoreFactory extends AbstractCasDataStoreFactory{
                 File tempFile = File.createTempFile("H2Sff", null,databaseFileServer.getRootDir());
                 datastore = new H2NucleotideDataStore(databaseFileServer.createNewFile(tempFile.getName()));
             }
-            return new H2NucleotideSffDataStore(sffFile,  datastore);
+            return new H2NucleotideSffDataStore(sffFile,  datastore, filter);
             
         } catch (Exception e) {
            throw new CasDataStoreFactoryException("could not create H2 Sff Nucleotide DataStore for "+ sffFile.getAbsolutePath(),e);
@@ -70,12 +80,20 @@ public class H2SffCasDataStoreFactory extends AbstractCasDataStoreFactory{
     }
 
     @Override
-    public QualityDataStore getQualityDataStoreFor(File sffFile)
+    public QualityDataStore getQualityDataStoreFor(File sffFile, DataStoreFilter filter)
             throws CasDataStoreFactoryException {
         checkForSffExtension(sffFile);
         try {
+            final H2QualityDataStore datastore;
+            if(databaseFileServer==null){
+                datastore = new H2QualityDataStore();
+            }else{
+                File tempFile = File.createTempFile("H2Sff", null,databaseFileServer.getRootDir());
+                datastore = new H2QualityDataStore(databaseFileServer.createNewFile(tempFile.getName()));
+            }
             return new H2QualitySffDataStore(sffFile, 
-                    new H2QualityDataStore());
+                    datastore,
+                    filter);
         } catch (Exception e) {
            throw new CasDataStoreFactoryException("could not create H2 Sff Quality DataStore for "+ sffFile.getAbsolutePath(),e);
         } 

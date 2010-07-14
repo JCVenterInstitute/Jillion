@@ -37,7 +37,7 @@ import org.jcvi.assembly.cas.alignment.CasAlignment;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegion;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegionType;
 import org.jcvi.assembly.cas.read.CasDataStoreFactory;
-import org.jcvi.assembly.cas.read.FastQCasDataStoreFactory;
+import org.jcvi.assembly.cas.read.LargeFastQCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.MultiCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.DefaultSffCasDataStoreFactory;
@@ -231,7 +231,7 @@ public class CasPrintAlignedReads extends AbstractOnePassCasFileVisitor{
         MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                 new DefaultSffCasDataStoreFactory(),
                 new FastaCasDataStoreFactory(EmptyCasTrimMap.getInstance(),cacheSize),
-                new FastQCasDataStoreFactory(new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE), cacheSize)
+                new LargeFastQCasDataStoreFactory(new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE), cacheSize)
                 );
         AbstractDefaultCasFileLookup readIdLookup = new DefaultReadCasFileLookup();
         AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup();
