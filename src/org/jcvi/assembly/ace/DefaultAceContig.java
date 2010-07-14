@@ -125,10 +125,15 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
             }
         }
         public DefaultAceContig build(){
+            Set<VirtualPlacedRead<AcePlacedRead>> placedReads = new HashSet<VirtualPlacedRead<AcePlacedRead>>(aceReadBuilders.size());
+            
+            if(numberOfReads()==0){
+                //force empty contig if no reads...
+                return new DefaultAceContig(contigId, new DefaultNucleotideEncodedGlyphs(""),placedReads,circular);
+            }
             final List<NucleotideGlyph> validConsensusGlyphs = new ArrayList<NucleotideGlyph>(fullConsensus.decode().subList(contigLeft, contigRight));
             NucleotideEncodedGlyphs validConsensus = new DefaultNucleotideEncodedGlyphs(
                     validConsensusGlyphs, Range.buildRange(0, validConsensusGlyphs.size()));
-            Set<VirtualPlacedRead<AcePlacedRead>> placedReads = new HashSet<VirtualPlacedRead<AcePlacedRead>>(aceReadBuilders.size());
             for(DefaultAcePlacedRead.Builder aceReadBuilder : aceReadBuilders){
                 int newOffset = aceReadBuilder.offset() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);
