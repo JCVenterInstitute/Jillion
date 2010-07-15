@@ -39,7 +39,8 @@ public enum SangerTrash {
     SUPERCEDED(Character.valueOf('M'),  "Sequence superceded by new sequence"),
     UNIDENTIFIED(Character.valueOf('U'),"Unidentified cause. File reading errors"),
     VECTOR(Character.valueOf('V'),"Vector found in clear range"),
-    REARRANGEMENT(Character.valueOf('R'), "Rearrangement. Vector found in middle of sequence");
+    REARRANGEMENT(Character.valueOf('R'), "Rearrangement. Vector found in middle of sequence"),
+    SHUTTLE(Character.valueOf('S'), "Shuttle vector contamination");
     private final Character code;
     private final String description;
 
@@ -62,6 +63,11 @@ public enum SangerTrash {
         SangerTrash trash= trashMap.get(trashCode);
         return (trash ==null)? SangerTrash.NONE: trash;
     }
+
+    public static SangerTrash getMappedTrashByCode(Character trashCode){
+        return trashMap.get(trashCode);
+    }
+    
     SangerTrash(Character code, String description){
         this.code = code;
         this.description = description;
