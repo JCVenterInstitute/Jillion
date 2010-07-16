@@ -46,16 +46,20 @@ public class PhdWriter {
     "EEE MMM dd kk:mm:ss yyyy");
     
     public static void writePhd(String id, Phd phd,OutputStream out) throws IOException{
-        StringBuilder phdRecord = new StringBuilder();
-        
-        phdRecord.append( String.format("%s %s%n%n",BEGIN_SEQUENCE, id));
-        
-        phdRecord.append(createComments(phd));
-        phdRecord.append(writeDnaSection(phd));
-        phdRecord.append( String.format("%n"));
-        phdRecord.append(String.format("%s%n",END_SEQUENCE));
-        phdRecord.append(createTags(phd));
-        write(out, phdRecord.toString());
+        try{
+            StringBuilder phdRecord = new StringBuilder();
+            
+            phdRecord.append( String.format("%s %s%n%n",BEGIN_SEQUENCE, id));
+            
+            phdRecord.append(createComments(phd));
+            phdRecord.append(writeDnaSection(phd));
+            phdRecord.append( String.format("%n"));
+            phdRecord.append(String.format("%s%n",END_SEQUENCE));
+            phdRecord.append(createTags(phd));
+            write(out, phdRecord.toString());
+        }catch(Throwable t){
+            throw new IOException("error writing phd record for "+id, t);
+        }
         
     }
 
