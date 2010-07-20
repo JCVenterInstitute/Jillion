@@ -192,6 +192,8 @@ public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends
         new File(dataStoreFile+".lock.db").delete();
         //database trace file if trace option is used.
         new File(dataStoreFile+".trace.db").delete();
+        
+        dataStoreFile.delete();
     }
 
     @Override

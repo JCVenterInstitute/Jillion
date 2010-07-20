@@ -20,17 +20,14 @@
 package org.jcvi.trace.sanger;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDataStore;
 import org.jcvi.trace.TraceDecoderException;
 
@@ -47,13 +44,9 @@ public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrac
     }
     public SingleSangerTraceFileDataStore(File traceFile,SangerTraceCodec traceParser) throws FileNotFoundException, TraceDecoderException{
         this.id = FilenameUtils.getBaseName(traceFile.getName());
-        InputStream in = new FileInputStream(traceFile);
-        try{
-        this.trace =traceParser.decode(in);
-        }
-        finally{
-            IOUtil.closeAndIgnoreErrors(in);
-        }
+        this.trace =traceParser.decode(traceFile);
+
+        
     }
     /**
     * {@inheritDoc}

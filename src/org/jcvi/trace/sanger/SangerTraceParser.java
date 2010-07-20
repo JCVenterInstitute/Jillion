@@ -59,15 +59,25 @@ public class SangerTraceParser implements SangerTraceCodec{
         return instance;
     }
     private SangerTraceParser(){}
-    
+    @Override
     public SangerTrace decode(File traceFile) throws TraceDecoderException, FileNotFoundException{
-        InputStream in = new FileInputStream(traceFile);
-        try{
-            return decode(in);
-        }
-        finally{
-            IOUtil.closeAndIgnoreErrors(in);
-        }
+
+            for(SangerTraceCodec decoder: decoderOrder){
+                InputStream in=null;
+                try{
+                    in = new FileInputStream(traceFile);
+                    try{
+                        return decode(in,decoder);
+                    }
+                    catch(TraceDecoderException e){
+                        //try next one...
+                    }
+                }finally{
+                    IOUtil.closeAndIgnoreErrors(in);
+                }
+            }
+            throw new TraceDecoderException("unknown trace format");
+        
     }
     @Override
     public SangerTrace decode(InputStream in) throws TraceDecoderException {
@@ -86,6 +96,8 @@ public class SangerTraceParser implements SangerTraceCodec{
         }catch(IOException ioException){
             ioException.printStackTrace();
             throw new TraceDecoderException("error resetting inputstream", ioException);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(bufferedIn);
         }
         throw new TraceDecoderException("unknown trace format");
     }
@@ -98,17 +110,6 @@ public class SangerTraceParser implements SangerTraceCodec{
         throw new UnsupportedOperationException("SangerTraceParser can not encode");
         
     }
-    
-    public static void main(String[] args) throws TraceDecoderException, IOException{
-        SangerTraceParser parser = new SangerTraceParser();
-       String folder = "/usr/local/projects/GEO/JGI_reads/scf_dir/abi_20090216_GAXP0316_RV_ABI253_094315_0_2305792_1_11376";
-       
-       String scf = folder+"/GAXP30336_test.g1";
-       SCFChromatogram chromo = (SCFChromatogram) parser.decode(new FileInputStream(scf));
-       System.out.println(NucleotideGlyph.convertToString(chromo.getBasecalls().decode()));
-       System.out.println(chromo.getPeaks().getData().decode());
-       System.out.println(chromo.getQualities().decode());
-     //  System.out.println(Arrays.toString(chromo.getChannelGroup().getAChannel().getPositions().array()));
-    }
+
 
 }

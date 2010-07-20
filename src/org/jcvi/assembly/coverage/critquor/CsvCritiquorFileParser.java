@@ -51,5 +51,6 @@ public class CsvCritiquorFileParser implements CritiquorFileParser{
             visitor.visitAmplicon(id, region, designedRange, forwardPrimer, reversePrimer);
         }
         visitor.visitEndOfFile();
+        scanner.close();
     }
 }

@@ -148,4 +148,6 @@ public class TestAceContigTrimmer {
            AssemblyTestUtil.assertPlacedReadCorrect(expectedRead, actualRead);
        }
     }
+    
+    //TODO make test to trim when consensus to start/end is a gap (test new flanking code)
 }

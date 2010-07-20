@@ -20,14 +20,11 @@
 package org.jcvi.trace.sanger;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
 
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.util.FileIterator;
@@ -99,20 +96,15 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
      public FileSangerTrace get(String id) throws DataStoreException {
          super.get(id);
          
-             InputStream inputStream =null;
              try{
                  File file = fileServer.getFile(addExtensionIfNeeded(id));
-                 inputStream= new FileInputStream(file);
-                 SangerTrace traceData= traceCodec.decode(inputStream);
+                 SangerTrace traceData= traceCodec.decode(file);
                  return new DefaultFileSangerTrace(traceData,file);
              } catch (IOException e) {
                 throw new DataStoreException("could not get trace for "+id, e);
             } catch (TraceDecoderException e) {
                 throw new DataStoreException("could not get trace for "+id, e);
             }
-             finally{
-                 IOUtil.closeAndIgnoreErrors(inputStream);
-             }
 
      }
      /**

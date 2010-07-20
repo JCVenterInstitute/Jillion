@@ -25,6 +25,7 @@ import java.util.List;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.AssemblyUtil;
+import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -123,10 +124,14 @@ public class AceFileUtil {
         
         final List<NucleotideGlyph> fullGappedValidRange;
         final List<PhredQuality> qualities;
+        final EncodedGlyphs<PhredQuality> phdQualities = phd.getQualities();
+        if(phdQualities ==null){
+            System.out.println("phdqualities is null, but nucleotides aren't");
+        }
         if(dir == SequenceDirection.FORWARD){
             fullGappedValidRange = AssemblyUtil.buildGappedComplimentedFullRangeBases(gappedValidBasecalls,dir,validRange, 
                     phdFullBases);
-            qualities = phd.getQualities().decode();
+            qualities = phdQualities.decode();
         }else{
             final List<NucleotideGlyph> complimentedFullBases = NucleotideGlyph.reverseCompliment(phdFullBases);
             Range complimentedValidRange = AssemblyUtil.reverseComplimentValidRange(validRange,complimentedFullBases.size());
@@ -135,7 +140,7 @@ public class AceFileUtil {
             fullGappedValidRange.addAll(complimentedFullBases.subList(0, (int)complimentedValidRange.getStart()));
             fullGappedValidRange.addAll(gappedValidBasecalls.decode());
             fullGappedValidRange.addAll(complimentedFullBases.subList((int)complimentedValidRange.getEnd()+1, complimentedFullBases.size()));
-            List<PhredQuality> uncomplimentedQualities = phd.getQualities().decode();
+            List<PhredQuality> uncomplimentedQualities = phdQualities.decode();
             qualities = new ArrayList<PhredQuality>(uncomplimentedQualities.size());
             for(int i=uncomplimentedQualities.size()-1; i>=0; i--){
                 qualities.add(uncomplimentedQualities.get(i));

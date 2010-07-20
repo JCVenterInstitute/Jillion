@@ -24,7 +24,6 @@
 package org.jcvi.datastore;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +34,7 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.AbstractContigFileDataStore;
 import org.jcvi.assembly.contig.DefaultContigFileParser;
+import org.jcvi.io.IOUtil;
 import org.jcvi.util.DefaultMemoryMappedFileRange;
 import org.jcvi.util.MemoryMappedFileRange;
 
@@ -45,7 +45,7 @@ public class MemoryMappedContigFileDataStore implements ContigDataStore<PlacedRe
     public MemoryMappedContigFileDataStore(File file) throws FileNotFoundException{
         this.file = file;
         this.mappedRanges = new DefaultMemoryMappedFileRange();
-        DefaultContigFileParser.parse(new FileInputStream(file),
+        DefaultContigFileParser.parse(file,
                                         new MemoryMappedContigFileVisitor(mappedRanges));
         
     }
@@ -58,15 +58,17 @@ public class MemoryMappedContigFileDataStore implements ContigDataStore<PlacedRe
     public Contig<PlacedRead> get(String contigId)
             throws DataStoreException {
         Range range = mappedRanges.getRangeFor(contigId);
-        
+        InputStream inputStream=null;
         try {
             SingleContigFileVisitor visitor = new SingleContigFileVisitor();
-            final InputStream inputStream = MemoryMappedUtil.createInputStreamFromFile(file,range);
+            inputStream = MemoryMappedUtil.createInputStreamFromFile(file,range);
             DefaultContigFileParser.parse(inputStream,visitor);
             return visitor.getContigToReturn();
         } catch (Exception e) {
             throw new DataStoreException("error trying to get contig "+ contigId,e);
-        } 
+        }finally{
+            IOUtil.closeAndIgnoreErrors(inputStream);
+        }
     }
     
 

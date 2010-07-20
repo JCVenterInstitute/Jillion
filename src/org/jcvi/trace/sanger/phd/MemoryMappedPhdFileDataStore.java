@@ -102,9 +102,11 @@ public class MemoryMappedPhdFileDataStore extends AbstractPhdFileDataStore{
         FileChannel fastaFileChannel=null;
         DefaultPhdFileDataStore dataStore=null;
         InputStream in=null;
+        FileInputStream fileInputStream=null;
         try{
             Range range = recordLocations.getRangeFor(id);
-            MappedByteBuffer buf =new FileInputStream(phdBall).getChannel().map(
+            fileInputStream = new FileInputStream(phdBall);
+            MappedByteBuffer buf =fileInputStream.getChannel().map(
                     FileChannel.MapMode.READ_ONLY, range.getStart(), range.size());
             
             in =new ByteBufferInputStream(buf);
@@ -119,6 +121,7 @@ public class MemoryMappedPhdFileDataStore extends AbstractPhdFileDataStore{
             IOUtil.closeAndIgnoreErrors(fastaFileChannel);
             IOUtil.closeAndIgnoreErrors(dataStore);
             IOUtil.closeAndIgnoreErrors(in);
+            IOUtil.closeAndIgnoreErrors(fileInputStream);
         }
     }
 

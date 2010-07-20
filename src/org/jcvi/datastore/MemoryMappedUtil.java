@@ -32,15 +32,23 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 import org.jcvi.Range;
+import org.jcvi.io.IOUtil;
 
 public class MemoryMappedUtil {
 
     public static InputStream createInputStreamFromFile(File file,Range range)throws IOException {
-        FileChannel fastaFileChannel =new FileInputStream(file).getChannel();
-        ByteBuffer buf= ByteBuffer.allocate((int)range.size());
-        fastaFileChannel.position((int)range.getStart());
-        fastaFileChannel.read(buf);
-        final ByteArrayInputStream inputStream = new ByteArrayInputStream(buf.array());
-        return inputStream;
+        final FileInputStream fileInputStream = new FileInputStream(file);
+        FileChannel fastaFileChannel=null;
+       try{
+            fastaFileChannel =fileInputStream.getChannel();
+            ByteBuffer buf= ByteBuffer.allocate((int)range.size());
+            fastaFileChannel.position((int)range.getStart());
+            fastaFileChannel.read(buf);
+            final ByteArrayInputStream inputStream = new ByteArrayInputStream(buf.array());
+            return inputStream;
+        
+       }finally{
+           IOUtil.closeAndIgnoreErrors(fileInputStream,fastaFileChannel);
+       }
     }
 }

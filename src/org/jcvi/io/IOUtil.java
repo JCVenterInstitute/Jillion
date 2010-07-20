@@ -127,6 +127,18 @@ public final class IOUtil {
         }
     }
     /**
+     * Conveience method for closing multiple
+     * {@link Closeable}s at the same time, this
+     * method is the same as calling {@link #closeAndIgnoreErrors(Closeable)}
+     * on each parameter.
+     * @param closeables the closeables to close.
+     */
+    public static void closeAndIgnoreErrors(Closeable...closeables){
+       for(Closeable closeable : closeables){
+           closeAndIgnoreErrors(closeable);
+       }
+    }
+    /**
      * Close the given Statement and ignore any exceptions
      * that are thrown.  Passing in a null will do nothing.
      * @param statement the Statement object to close

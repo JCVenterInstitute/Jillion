@@ -192,10 +192,9 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
         }
        
         
-        InputStream phdStream=null;
         try {
-            phdStream = new FileInputStream(phdDir+File.separator+phdName);
-            Phd originalPhd =codec.decode(phdStream);
+            File phd = new File(phdDir+File.separator+phdName);
+            Phd originalPhd =codec.decode(phd);
 
             map.put(currentReadId, new DefaultPhd(
                     new DefaultNucleotideEncodedGlyphs(glyphs),
@@ -206,9 +205,6 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
             currentReadId=null;
         } catch (Exception e) {
             throw new IllegalStateException("could not parse phd file", e);
-        }
-        finally{
-            IOUtil.closeAndIgnoreErrors(phdStream);
         }
         
         

@@ -25,6 +25,9 @@ package org.jcvi.trace.sanger.chromatogram.scf;
 
 
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,6 +37,10 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+
+import org.jcvi.io.IOUtil;
+import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.sanger.SangerTrace;
 import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeader;
 import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeaderCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
@@ -95,6 +102,18 @@ public abstract class AbstractSCFCodec implements SCFCodec{
            return chromoStruct.getChromatogram();
 
        
+    }
+    
+    
+    @Override
+    public SangerTrace decode(File sangerTrace) throws TraceDecoderException,
+            FileNotFoundException {
+        InputStream in = new FileInputStream(sangerTrace);
+        try{
+            return decode(in);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
     }
     /**
      * Creates a new {@link SCFChromatogramBuilder} may be overridden

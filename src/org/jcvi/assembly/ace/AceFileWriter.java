@@ -161,9 +161,18 @@ public class AceFileWriter {
         writeString(String.format("%n"), out);
         out.flush();
         for(AssembledFrom assembledFrom : assembledFroms){
-            String id = assembledFrom.getId();          
+            String id = assembledFrom.getId();    
             AcePlacedRead read = contig.getPlacedReadById(id).getRealPlacedRead();
-            writePlacedRead(read, phdDataStore.get(id),out);
+            try{
+            Phd phd = phdDataStore.get(id);
+            if(phd==null){
+                phd=  phdDataStore.get(id);
+            }
+            writePlacedRead(read, phd,out);
+            }catch(Throwable t){
+                phdDataStore.get(id);
+                throw new IOException("error trying to write ace placed read "+ id,t);
+            }
         }
         writeString(String.format("%n"), out);
         out.flush();

@@ -206,10 +206,13 @@ public class Cas2Consed {
                        String name =f.getName();
                        
                        OutputStream out = new FileOutputStream(outputDir.createNewFile("chromat_dir/"+name));
+                       final FileInputStream fileInputStream = new FileInputStream(f);
+                       
                        try{
-                       IOUtils.copy(new FileInputStream(f), out);
+                           IOUtils.copy(fileInputStream, out);
                        }finally{
                            IOUtils.closeQuietly(out);
+                           IOUtils.closeQuietly(fileInputStream);
                        }
                    }
                }

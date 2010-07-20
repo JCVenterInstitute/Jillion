@@ -80,6 +80,7 @@ public final class CasConversionUtil {
                 map.put(matcher.group(1), matcher.group(2));
             }
         }
+        scanner.close();
         return Collections.unmodifiableMap(map);
     }
 }

@@ -75,13 +75,17 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
                     done=true;
                 }
             }
+            
            
         }
         @Override
         public synchronized boolean hasNext() {
             if(needToLookAhead){
                 getNextValidString();
-            }            
+            }
+            if(!hasNext){
+                scanner.close();
+            }
             return hasNext;
         }
 

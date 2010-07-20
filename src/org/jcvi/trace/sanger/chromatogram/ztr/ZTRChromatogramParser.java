@@ -25,11 +25,15 @@ package org.jcvi.trace.sanger.chromatogram.ztr;
 
 
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.SangerTrace;
 import org.jcvi.trace.sanger.SangerTraceCodec;
@@ -69,7 +73,16 @@ public class ZTRChromatogramParser implements SangerTraceCodec {
         }
         return builder.build();
     }
-
+    @Override
+    public ZTRChromatogramImpl decode(File sangerTrace) throws TraceDecoderException,
+            FileNotFoundException {
+        InputStream in = new FileInputStream(sangerTrace);
+        try{
+            return decode(in);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+    }
     /**
      * parse the header of the .ztr file.  The header
      * should consist of 8 bytes for the ztr magic number

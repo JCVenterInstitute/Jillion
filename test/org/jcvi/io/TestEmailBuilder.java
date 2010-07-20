@@ -175,10 +175,15 @@ public class TestEmailBuilder {
             public Object answer() throws Throwable {
                 Multipart multiPart = (Multipart)getCurrentArguments()[0];
                 assertEquals(messageBody,multiPart.getBodyPart(0).getContent());
+                final FileInputStream fileInputStream = new FileInputStream(readMe);
+                try{
                 assertEquals(
-                        IOUtils.toString(new FileInputStream(readMe)), 
+                        IOUtils.toString(fileInputStream), 
                         multiPart.getBodyPart(1).getContent());
                 return null;
+                }finally{
+                    IOUtil.closeAndIgnoreErrors(fileInputStream);
+                }
             }
         });
         replay(mockMessage);

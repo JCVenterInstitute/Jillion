@@ -40,6 +40,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import javax.print.attribute.standard.OutputDeviceAssigned;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -101,6 +102,7 @@ import org.jcvi.trace.sanger.FileSangerTrace;
 import org.jcvi.trace.sanger.SangerFileDataStore;
 import org.jcvi.trace.sanger.SingleSangerTraceDirectoryFileDataStore;
 import org.jcvi.trace.sanger.phd.ArtificalPhdDataStore;
+import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.trace.sanger.phd.PhdSangerTraceDataStoreAdapter;
 import org.jcvi.trace.sanger.phd.PhdWriter;
@@ -113,18 +115,13 @@ import org.joda.time.Period;
  *
  *
  */
-public class AbstractMultiThreadedCasAssemblyBuilder implements Builder<CasAssembly>{
+public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder<CasAssembly>{
     private static final String DEFAULT_PREFIX = "cas2consed";
     private static final int DEFAULT_CACHE_SIZE = 2000;
     
     private final File casFile;
-    private boolean useIllumina =false;
-    private boolean useClosureTrimming = false;
-    private CasTrimMap trimToUntrimmedMap;
-    private TrimDataStore trimDataStore = TrimDataStoreUtil.EMPTY_DATASTORE;
     private File tempDir;
     private static final int DEFAULT_FASTA_CACHE_SIZE = 100;
-    private File chromatogramDir;
     private CommandLine commandLine;
     /**
      * @param casFile
@@ -132,37 +129,14 @@ public class AbstractMultiThreadedCasAssemblyBuilder implements Builder<CasAssem
     public AbstractMultiThreadedCasAssemblyBuilder(File casFile) {
         this.casFile = casFile;
     }
-
-    public AbstractMultiThreadedCasAssemblyBuilder useClosureTrimming(boolean useClosureTrimming){
-        this.useClosureTrimming = useClosureTrimming;
-        return this;
-    }
-    public AbstractMultiThreadedCasAssemblyBuilder useIllumina(boolean useIllumina){
-        this.useIllumina = useIllumina;
-        return this;
-    }
     
     public AbstractMultiThreadedCasAssemblyBuilder commandLine(CommandLine commandLine){
         this.commandLine = commandLine;
         return this;
     }
-    
-    
-    public AbstractMultiThreadedCasAssemblyBuilder trimToUntrimmedMap(CasTrimMap trimToUntrimmedMap){
-        this.trimToUntrimmedMap = trimToUntrimmedMap;
-        return this;
-    }
-    
-    public AbstractMultiThreadedCasAssemblyBuilder trimDataStore(TrimDataStore trimDataStore){
-        this.trimDataStore = trimDataStore;
-        return this;
-    }
+
     public AbstractMultiThreadedCasAssemblyBuilder tempDir(File tempDir){
         this.tempDir = tempDir;
-        return this;
-    }
-    public AbstractMultiThreadedCasAssemblyBuilder chromatDir(File chromatogramDir){
-        this.chromatogramDir = chromatogramDir;
         return this;
     }
     /**
@@ -170,11 +144,6 @@ public class AbstractMultiThreadedCasAssemblyBuilder implements Builder<CasAssem
     */
     @Override
     public CasAssembly build() {
-        Date phdDate = new Date(System.currentTimeMillis());
-        NextGenClosureAceContigTrimmer closureContigTrimmer=null;
-        if(useClosureTrimming){
-            closureContigTrimmer= new NextGenClosureAceContigTrimmer(5, 5, 10);
-        }
         
         DefaultCasFileReadIndexToContigLookup read2contigMap = new DefaultCasFileReadIndexToContigLookup();
         try {
@@ -183,18 +152,48 @@ public class AbstractMultiThreadedCasAssemblyBuilder implements Builder<CasAssem
             
             int numberOfCasContigs = read2contigMap.getNumberOfContigs();
             for(long i=0; i< numberOfCasContigs; i++){
-                ReadWriteFileServer aceOut = DirectoryFileServer.createReadWriteDirectoryFileServer(new File(tempDir, ""+i));
+                ReadWriteDirectoryFileServer aceOut = DirectoryFileServer.createReadWriteDirectoryFileServer(new File(tempDir, ""+i));
                 //build up command and call main method of single 
                 //contig cas2consed reusing same arguments + reference id
-                
+                List<String> args = new ArrayList<String>();
+                args.add("-casId");
+                args.add(""+i);
+                args.add("-cas");
+                args.add(commandLine.getOptionValue("cas"));
+                args.add("-o");                
+                args.add(aceOut.getRootDir().getAbsolutePath());
+                args.add("-tempDir");  
+                args.add(tempDir.getAbsolutePath());
+                args.add("-prefix");
+                args.add("temp");
+                if(commandLine.hasOption("useIllumina")){
+                    args.add("-useIllumina");
+                }
+                if(commandLine.hasOption("useClosureTrimming")){
+                    args.add("-useClosureTrimming");
+                }
+                if(commandLine.hasOption("trim")){
+                    args.add("-trim");
+                    args.add(commandLine.getOptionValue("trim"));
+                }
+                if(commandLine.hasOption("trimMap")){
+                    args.add("-trimMap");
+                    args.add(commandLine.getOptionValue("trimMap"));
+                }
+                //chromat_dir
+                if(commandLine.hasOption("chromat_dir")){
+                    args.add("-chromat_dir");
+                    args.add(commandLine.getOptionValue("chromat_dir"));
+                }
+                submitSingleCasAssemblyConversion(args);
                 
             }
             //wait till all contigs are done...
-            
+            waitForAllAssembliesToFinish();
             //here we have a fully written out all contigs map
             int numContigs=0;
             int numReads=0;
-            ReadWriteDirectoryFileServer consedOut = DirectoryFileServer.createReadWriteDirectoryFileServer(tempDir);
+            ReadWriteDirectoryFileServer consedOut = DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
             
             for(int i=0; i<numberOfCasContigs; i++){
                 File countMap = consedOut.getFile(i+"/temp.counts");
@@ -209,6 +208,8 @@ public class AbstractMultiThreadedCasAssemblyBuilder implements Builder<CasAssem
             consedOut.createNewDir("phdball_dir");
             OutputStream masterAceOut = new FileOutputStream (consedOut.createNewFile("edit_dir/cas2consed.ace.1"));
             OutputStream masterPhdOut = new FileOutputStream (consedOut.createNewFile("phdball_dir/cas2consed.phd.ball"));
+            OutputStream masterConsensusOut = new FileOutputStream (consedOut.createNewFile("cas2consed.consensus.fasta"));
+            try{
             masterAceOut.write(String.format("AS %d %d%n", numContigs, numReads).getBytes());
             for(int i=0; i<numberOfCasContigs; i++){
                 InputStream aceIn = consedOut.getFileAsStream(i+"/temp.ace");
@@ -216,26 +217,40 @@ public class AbstractMultiThreadedCasAssemblyBuilder implements Builder<CasAssem
                 
                 InputStream phdIn = consedOut.getFileAsStream(i+"/temp.phd");
                 IOUtils.copy(phdIn, masterPhdOut);
+                //".consensus.fasta"
+                InputStream consensusIn = consedOut.getFileAsStream(i+"/temp.consensus.fasta");
+                IOUtils.copy(consensusIn, masterConsensusOut);
                 
-                IOUtil.closeAndIgnoreErrors(aceIn);
-                IOUtil.closeAndIgnoreErrors(phdIn);
-                
+                IOUtil.closeAndIgnoreErrors(aceIn,phdIn,consensusIn);
+                //delete temp dirs
+                File tempDir = consedOut.getFile(i+"");
+                IOUtil.recursiveDelete(tempDir);
             }
-            IOUtil.closeAndIgnoreErrors(masterAceOut);
-            IOUtil.closeAndIgnoreErrors(masterPhdOut);
+            
             consedOut.createNewSymLink("../phdball_dir/cas2consed.phd.ball", 
                                 "edit_dir/phd.ball");
-        } catch (IOException e) {
+            }finally{
+                IOUtil.closeAndIgnoreErrors(masterAceOut,masterPhdOut,masterConsensusOut);
+            }
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
     }
+    /* try {
+    SingleContigCasAssemblyBuilder.main(args.toArray(new String[0]));
+} catch (Throwable t) {
+    throw new IOException("error converting single assembly "+ args,t);
+} */
+    protected abstract void submitSingleCasAssemblyConversion(List<String> args) throws IOException;
     
+    protected abstract void waitForAllAssembliesToFinish() throws Exception;
     public static class AceWriterCallable implements Callable<Void>{
         private final AceContig aceContig;
         private final PhdDataStore phdDataStore;
         private final OutputStream aceOutputStream;
+        private final OutputStream consensusOutputStream;
         
         
         /**
@@ -244,15 +259,18 @@ public class AbstractMultiThreadedCasAssemblyBuilder implements Builder<CasAssem
          * @param phdOutputStream
          */
         public AceWriterCallable(AceContig aceContig, PhdDataStore phdDataStore,
-                OutputStream phdOutputStream) {
+                OutputStream phdOutputStream,OutputStream consensusOutputStream) {
             this.aceContig = aceContig;
             this.phdDataStore = phdDataStore;
             this.aceOutputStream = phdOutputStream;
+            this.consensusOutputStream = consensusOutputStream;
         }
 
 
         @Override
         public Void call() throws IOException, DataStoreException{
+            consensusOutputStream.write(new DefaultEncodedNucleotideFastaRecord(aceContig.getId(),
+                    NucleotideGlyph.convertToString(NucleotideGlyph.convertToUngapped(aceContig.getConsensus().decode()))).toString().getBytes());
             AceFileWriter.writeAceFile(aceContig, phdDataStore, aceOutputStream);
             return null;
             
@@ -282,66 +300,16 @@ public class AbstractMultiThreadedCasAssemblyBuilder implements Builder<CasAssem
           //only write phds that make it into the assembly
             for(AcePlacedRead read : aceContig.getPlacedReads()){
                 String id = read.getId();
-                PhdWriter.writePhd(id, phdDataStore.get(id), phdOutputStream);
+                final Phd phd = phdDataStore.get(id);
+                if(phd ==null){
+                    throw new NullPointerException("phd is null for "+id);
+                }
+                PhdWriter.writePhd(id, phd, phdOutputStream);
             }
             
             return null;
             
         }
     }
-    public static void main(String[] args) throws FileNotFoundException, ParseException{
-        
-        
-        
-        Options options = new Options();
-        options.addOption(new CommandLineOptionBuilder("cas", "cas file")
-                            .isRequired(true)
-                            .build());
-        
-        options.addOption(new CommandLineOptionBuilder("o", "output directory")
-                            .longName("outputDir")
-                            .isRequired(true)
-                            .build());
-        options.addOption(new CommandLineOptionBuilder("prefix", "file prefix for all generated files ( default "+DEFAULT_PREFIX +" )")                                
-                                .build());
-        
-        options.addOption(new CommandLineOptionBuilder("trim", "trim file in sfffile's tab delimmed trim format")                                
-                                                        .build());
-        options.addOption(new CommandLineOptionBuilder("trimMap", "trim map file containing tab delimited trimmed fastX file to untrimmed counterpart")                                
-                                    .build());
-        options.addOption(new CommandLineOptionBuilder("chromat_dir", "directory of chromatograms to be converted into phd "+
-                "(it is assumed the read data for these chromatograms are in a fasta file which the .cas file knows about")                                
-                        .build());
-        options.addOption(new CommandLineOptionBuilder("s", "cache size ( default "+DEFAULT_CACHE_SIZE +" )")  
-                                .longName("cache_size")
-                                        .build());
-        options.addOption(new CommandLineOptionBuilder("coverage_trim", "perform additional contig ends trimming based on coverage.  The value of coverage_trim is the min level coverage required at ends.")                                
-                            .build());
-        
-        options.addOption(new CommandLineOptionBuilder("useIllumina", "any FASTQ files in this assembly are encoded in Illumina 1.3+ format (default is Sanger)")                                
-                            .isFlag(true)
-                            .build());
-        options.addOption(new CommandLineOptionBuilder("useClosureTrimming", "apply additional contig trimming based on JCVI Closure rules")                                
-                                                .isFlag(true)
-                                                .build());
-        CommandLine commandLine;
-        try {
-            commandLine = CommandLineUtils.parseCommandLine(options, args);
-            
-       // File casFile = new File("/usr/local/projects/VHTNGS/sample_data_new/giv3/MCE/30209/mapping/giv3_MCE_30209_hybrid_edited_refs.cas");
-        File casFile = new File(commandLine.getOptionValue("cas"));
-        AbstractMultiThreadedCasAssemblyBuilder builder = new AbstractMultiThreadedCasAssemblyBuilder(casFile);
-        builder.commandLine(commandLine);
-        
-        long start =System.currentTimeMillis();
-        builder.build();
-        long end =System.currentTimeMillis();
-        
-        System.out.println(new Period(end-start));
-    
-    }catch(ParseException e){
-        throw e;
-    }
-    
-    }
+
 }
