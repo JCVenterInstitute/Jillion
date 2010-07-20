@@ -60,7 +60,7 @@ public class TraceFileServerDataStore<T extends SangerTrace> implements TraceDat
     @Override
     public T get(String id) throws DataStoreException {
         try {
-            return (T)traceParser.decode(fileServer.getFileAsStream(id));
+            return (T)traceParser.decode(fileServer.getFile(id));
         } catch (Exception e) {
             throw new DataStoreException("error getting file from fileServer", e);
         }

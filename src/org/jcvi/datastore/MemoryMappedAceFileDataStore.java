@@ -32,6 +32,7 @@ import org.jcvi.Range;
 import org.jcvi.assembly.ace.AbstractAceFileDataStore;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceFileParser;
+import org.jcvi.io.IOUtil;
 import org.jcvi.util.DefaultMemoryMappedFileRange;
 import org.jcvi.util.MemoryMappedFileRange;
 
@@ -83,15 +84,17 @@ public class MemoryMappedAceFileDataStore extends AbstractAceFileDataStore{
     @Override
     public AceContig get(String contigId) throws DataStoreException {
         Range range = memoryMappedFileRange.getRangeFor(contigId);
-        
+        InputStream inputStream=null;
         try {
             DefaultAceFileDataStore visitor = new DefaultAceFileDataStore();
-            final InputStream inputStream = MemoryMappedUtil.createInputStreamFromFile(file,range);
+            inputStream = MemoryMappedUtil.createInputStreamFromFile(file,range);
             AceFileParser.parseAceFile(inputStream,visitor);
             return visitor.get(contigId);
         } catch (Exception e) {
             throw new DataStoreException("error trying to get contig "+ contigId,e);
-        } 
+        }finally{
+            IOUtil.closeAndIgnoreErrors(inputStream);
+        }
     }
 
     @Override

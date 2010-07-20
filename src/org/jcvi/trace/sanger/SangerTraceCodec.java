@@ -24,6 +24,8 @@
 package org.jcvi.trace.sanger;
 
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -48,4 +50,14 @@ public interface SangerTraceCodec<T extends SangerTrace> {
      * the trace.
      */
     T decode(InputStream in) throws TraceDecoderException;
+    
+    /**
+     * Decodes the given encoded trace, decode into a {@link SangerTrace}.
+     * @param sangerTrace the File which has the trace Data.
+     * @return a {@link SangerTrace}.
+     * @throws TraceDecoderException if there are any problems decoding
+     * the trace.
+     * @throws FileNotFoundException if the given File does not exist.
+     */
+    T decode(File sangerTrace) throws TraceDecoderException,FileNotFoundException;
 }

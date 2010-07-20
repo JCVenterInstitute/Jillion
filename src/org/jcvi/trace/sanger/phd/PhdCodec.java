@@ -23,6 +23,9 @@
  */
 package org.jcvi.trace.sanger.phd;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,6 +46,7 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.SangerTraceCodec;
@@ -65,7 +69,16 @@ public class PhdCodec implements SangerTraceCodec<Phd>{
     private static final Pattern COMMENT_PATTERN = Pattern.compile("^\\s*(\\w+):\\s+(.*?)$");
     private static final Pattern CALLED_INFO_PATTERN = Pattern.compile("^\\s*(\\w)\\s+(\\d+)\\s+(\\d+)");
     private static final Pattern END_SEQUENCE_PATTERN = Pattern.compile("^\\s*"+END_SEQUENCE+"\\s*");
-    
+    @Override
+    public Phd decode(File sangerTrace) throws TraceDecoderException,
+            FileNotFoundException {
+        InputStream in = new FileInputStream(sangerTrace);
+        try{
+            return decode(in);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+    }
     @Override
     public Phd decode(InputStream in) throws TraceDecoderException {
         Scanner scanner = new Scanner(in);

@@ -23,6 +23,7 @@
  */
 package org.jcvi.trace.sanger.phd;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
@@ -74,8 +75,12 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
        if(basecalls ==null){
            throw new NullPointerException("could not find basecalls for "+id);
        }
+    final EncodedGlyphs<PhredQuality> qualities = qualDataStore.get(id);
+    if(qualities ==null){
+        throw new NullPointerException("could not find qualities for "+id);
+    }
     return ArtificialPhd.createNewbler454Phd(basecalls, 
-                qualDataStore.get(id),
+                qualities,
                 comments,Collections.<PhdTag>emptyList());
     }
 
@@ -91,4 +96,13 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
         return seqDataStore.size();
     }
 
+    @Override
+    public synchronized void close() throws IOException {
+        super.close();
+        seqDataStore.close();
+        qualDataStore.close();
+        comments.clear();
+    }
+
+    
 }

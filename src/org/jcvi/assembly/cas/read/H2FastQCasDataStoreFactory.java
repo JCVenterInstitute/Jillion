@@ -39,35 +39,35 @@ import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
 public class H2FastQCasDataStoreFactory extends AbstractCasDataStoreFactory{
 
     private final FastQQualityCodec fastqQualityCodec;
-    private final boolean useTempfile;
+    private final File tempDir;
     /**
      * @param fastqQualityCodec
      */
-    public H2FastQCasDataStoreFactory(FastQQualityCodec fastqQualityCodec, boolean useTempFile) {
-        this(null, fastqQualityCodec, useTempFile);
+    public H2FastQCasDataStoreFactory(FastQQualityCodec fastqQualityCodec, File tempDir) {
+        this(null, fastqQualityCodec, tempDir);
     }
-    public H2FastQCasDataStoreFactory(File workingDir,FastQQualityCodec fastqQualityCodec, boolean useTempFile) {
-        this(workingDir, EmptyCasTrimMap.getInstance(), fastqQualityCodec, useTempFile);
+    public H2FastQCasDataStoreFactory(File workingDir,FastQQualityCodec fastqQualityCodec, File tempDir) {
+        this(workingDir, EmptyCasTrimMap.getInstance(), fastqQualityCodec, tempDir);
     }
-    public H2FastQCasDataStoreFactory(File workingDir,CasTrimMap trimMap,FastQQualityCodec fastqQualityCodec, boolean useTempFile) {
-        this(workingDir, trimMap, fastqQualityCodec, EmptyDataStoreFilter.INSTANCE,useTempFile);
+    public H2FastQCasDataStoreFactory(File workingDir,CasTrimMap trimMap,FastQQualityCodec fastqQualityCodec, File tempDir) {
+        this(workingDir, trimMap, fastqQualityCodec, EmptyDataStoreFilter.INSTANCE,tempDir);
     }
-    public H2FastQCasDataStoreFactory(File workingDir,CasTrimMap trimMap,FastQQualityCodec fastqQualityCodec, DataStoreFilter filter,boolean useTempFile) {
+    public H2FastQCasDataStoreFactory(File workingDir,CasTrimMap trimMap,FastQQualityCodec fastqQualityCodec, DataStoreFilter filter,File tempDir) {
         super(workingDir,trimMap,filter);
         this.fastqQualityCodec = fastqQualityCodec;
-        this.useTempfile = useTempFile;
+        this.tempDir = tempDir;
     }
     /**
      * @param fastqQualityCodec
      */
     public H2FastQCasDataStoreFactory(FastQQualityCodec fastqQualityCodec) {
-        this(null,fastqQualityCodec, false);
+        this(null,fastqQualityCodec, null);
     }
     public H2FastQCasDataStoreFactory(File workingDir,FastQQualityCodec fastqQualityCodec) {
-        this(workingDir,fastqQualityCodec, false);
+        this(workingDir,fastqQualityCodec, null);
     }
     public H2FastQCasDataStoreFactory(File workingDir,CasTrimMap trimMap,FastQQualityCodec fastqQualityCodec) {
-        this(workingDir,trimMap,fastqQualityCodec, false);
+        this(workingDir,trimMap,fastqQualityCodec, null);
     }
     
     
@@ -80,8 +80,8 @@ public class H2FastQCasDataStoreFactory extends AbstractCasDataStoreFactory{
         }
         try {
             final H2NucleotideDataStore datastore;
-            if(useTempfile){
-                datastore= new H2NucleotideDataStore(File.createTempFile("fastqNucDb", null));
+            if(tempDir !=null){
+                datastore= new H2NucleotideDataStore(File.createTempFile("fastqNucDb",null, tempDir));
             }else{
                 datastore = new H2NucleotideDataStore();
             }
@@ -102,8 +102,8 @@ public class H2FastQCasDataStoreFactory extends AbstractCasDataStoreFactory{
         }
         try {
             final H2QualityDataStore datastore;
-            if(useTempfile){
-                datastore= new H2QualityDataStore(File.createTempFile("fastqQualDb", null));
+            if(tempDir !=null){
+                datastore= new H2QualityDataStore(File.createTempFile("fastqQualDb", null,tempDir));
             }else{
                 datastore = new H2QualityDataStore();
             }

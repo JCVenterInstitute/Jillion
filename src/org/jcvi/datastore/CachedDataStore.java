@@ -72,6 +72,7 @@ public class CachedDataStore <D extends DataStore> implements InvocationHandler{
             throws Throwable {
         if("close".equals(method.getName()) && args==null){
             cache.clear();
+
         }
         else if("get".equals(method.getName()) && Arrays.equals(GET_PARAMETERS,method.getParameterTypes())){
             String id = (String)args[0];

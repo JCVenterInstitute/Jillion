@@ -117,7 +117,7 @@ public class CasParser {
                     isPartOfPair, chosenAlignment,score));
         }
         }finally{
-            IOUtil.closeAndIgnoreErrors(in);
+            IOUtil.closeAndIgnoreErrors(dataIn);
         }
         
     }

@@ -54,9 +54,21 @@ public class PhdSangerTraceDataStoreAdapter<S extends FileSangerTrace> implement
     }
     @Override
     public Phd get(String id) throws DataStoreException {
-        FileSangerTrace trace = delegate.get(id);        
+        try{
+        FileSangerTrace trace = delegate.get(id); 
+        if(trace ==null && id.startsWith("JGOA")){
+            System.out.println("here");
+        } 
         return new DefaultPhd(trace.getBasecalls(), trace.getQualities(), trace.getPeaks(),
                 comments,Collections.<PhdTag>emptyList());
+        }catch(Throwable t){
+            if(id.startsWith("JGOA")){
+                t.printStackTrace();
+                System.out.println("here");
+                
+            }
+            throw new RuntimeException(t);
+        }
     }
     @Override
     public Iterator<String> getIds() throws DataStoreException {

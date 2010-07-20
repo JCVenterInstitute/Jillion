@@ -191,7 +191,7 @@ public class AceFileParser {
                                                 visitor.visitLine(line +CR);
                                                 Matcher tagMatcher = WHOLE_ASSEMBLY_TAG_PATTERN.matcher(line);
                                                 if(!tagMatcher.find()){
-                                                    throw new IllegalStateException("expected whole assembly tag infomration: " + line); 
+                                                    throw new IllegalStateException("expected whole assembly tag information: " + line); 
                                                 }
                                                 String type = tagMatcher.group(1);
                                                 String creator = tagMatcher.group(2);

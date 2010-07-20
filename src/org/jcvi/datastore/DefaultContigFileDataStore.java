@@ -24,7 +24,6 @@
 package org.jcvi.datastore;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +47,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileDataStore impl
     /**
      * Construct an empty uninitialized Contig File DataStore.
      */
-    public DefaultContigFileDataStore(){
+    {
         contigs = new HashMap<String, Contig<PlacedRead>>();
     }
 
@@ -59,7 +58,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileDataStore impl
      * @throws FileNotFoundException if the given contig file does not exist.
      */
     public DefaultContigFileDataStore(File contigFile) throws FileNotFoundException{
-        this(new FileInputStream(contigFile));
+        DefaultContigFileParser.parse(contigFile, this);
     }
     /**
      * Construct a ContigFileDataStore containing the contig
@@ -67,7 +66,6 @@ public class DefaultContigFileDataStore extends AbstractContigFileDataStore impl
      * @param inputStream an {@link InputStream} of contig file data.
      */
     public DefaultContigFileDataStore(InputStream inputStream) {
-        this();
         DefaultContigFileParser.parse(inputStream, this);
     }
     @Override
