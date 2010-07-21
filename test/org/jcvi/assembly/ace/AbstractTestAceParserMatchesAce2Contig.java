@@ -26,7 +26,6 @@ package org.jcvi.assembly.ace;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -40,14 +39,15 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     List<AceContig> actualContigs;
     DefaultContigFileDataStore expectedContigDataStore;
     AbstractTestAceParserMatchesAce2Contig(String aceFile, String contigFile) throws IOException{
-        this.expectedContigDataStore = new DefaultContigFileDataStore(AbstractTestAceParserMatchesAce2Contig.class.getResourceAsStream(contigFile));
+        this.expectedContigDataStore = new DefaultContigFileDataStore(
+                AbstractTestAceParserMatchesAce2Contig.class.getResourceAsStream(contigFile));
         
-        this.actualContigs = getContigList(new File(AbstractTestAceParserMatchesAce2Contig.class.getResource(aceFile).getFile()));
-
+        this.actualContigs = getContigList(new File(
+                AbstractTestAceParserMatchesAce2Contig.class.getResource(aceFile).getFile()));
+        
     }
-    protected List<AceContig> getContigList(File aceFile) throws IOException {
-        return new AceParser(new FileInputStream(aceFile)).parseContigsFrom();
-    }
+    protected abstract List<AceContig> getContigList(File aceFile) throws IOException;
+    
     @Test
     public void assertParsedAceFileMatchedParsedContigFile() throws DataStoreException{
         assertContigsParsedCorrectly(actualContigs);

@@ -30,10 +30,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.assembly.ace.AceContig;
-import org.jcvi.assembly.ace.AceFileParser;
-import org.jcvi.assembly.ace.TestAceParserMatchesAce2ContigMultipleContigs;
+import org.jcvi.assembly.ace.TestAbstractAceParserMatchesAce2ContigMultipleContigs;
 import static org.junit.Assert.fail;
-public class TestDefaultAceFileDataStore extends TestAceParserMatchesAce2ContigMultipleContigs{
+public class TestDefaultAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
 
     public TestDefaultAceFileDataStore() throws IOException {
         super();        
@@ -42,8 +41,7 @@ public class TestDefaultAceFileDataStore extends TestAceParserMatchesAce2ContigM
     @Override
     protected List<AceContig> getContigList(File aceFile)
             throws IOException {
-        DefaultAceFileDataStore dataStore= new DefaultAceFileDataStore();
-        AceFileParser.parseAceFile(aceFile, dataStore);
+        DefaultAceFileDataStore dataStore= new DefaultAceFileDataStore(aceFile);
         List<AceContig> contigs = new ArrayList<AceContig>(dataStore.size());
         for(Iterator<String> iter = dataStore.getIds(); iter.hasNext();){
             String id = iter.next();

@@ -32,10 +32,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.assembly.ace.AceContig;
-import org.jcvi.assembly.ace.TestAceParserMatchesAce2ContigMultipleContigs;
+import org.jcvi.assembly.ace.TestAbstractAceParserMatchesAce2ContigMultipleContigs;
 import org.jcvi.util.DefaultMemoryMappedFileRange;
 
-public class TestMemoryMappedAceFileDataStore extends TestAceParserMatchesAce2ContigMultipleContigs{
+public class TestMemoryMappedAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
 
     public TestMemoryMappedAceFileDataStore() throws IOException {
         super();        

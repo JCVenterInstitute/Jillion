@@ -34,8 +34,6 @@ import org.junit.runners.Suite.SuiteClasses;
     {
        TestDefaultPhdInfo.class,
        TestAssembledFrom.class,
-       TestAceParserMatchesAce2ContigSingleContig.class,
-       TestAceParserMatchesAce2ContigMultipleContigs.class,
        TestAceParserPhdInfo.class,
        TestDefaultAceContig.class,
        TestAceContigBuilderInvalidRead.class,

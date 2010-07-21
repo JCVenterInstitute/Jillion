@@ -34,7 +34,6 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.AssemblyUtil;
-import org.jcvi.assembly.ace.AceFileParser;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.DataStoreException;
