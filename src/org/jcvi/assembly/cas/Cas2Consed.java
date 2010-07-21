@@ -72,6 +72,7 @@ import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.DataStore;
+import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
@@ -82,6 +83,7 @@ import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.fileServer.DirectoryFileServer;
+import org.jcvi.io.fileServer.ReadWriteFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadOnlyDirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.jcvi.trace.TraceDataStore;
@@ -114,6 +116,8 @@ public class Cas2Consed {
                             .longName("outputDir")
                             .isRequired(true)
                             .build());
+        options.addOption(new CommandLineOptionBuilder("tempDir", "temp directory")
+                                                    .build());
         options.addOption(new CommandLineOptionBuilder("prefix", "file prefix for all generated files ( default "+DEFAULT_PREFIX +" )")                                
                                 .build());
         
@@ -195,7 +199,15 @@ public class Cas2Consed {
             
             long startTime = System.currentTimeMillis();
            logOut.println(System.getProperty("user.dir"));
-        
+           
+         final ReadWriteDirectoryFileServer tempDir;
+         if(!commandLine.hasOption("tempDir")){
+             tempDir=null;
+         }else{
+             File t =new File(commandLine.getOptionValue("tempDir"));
+             t.mkdirs();
+             tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer(t);
+         }
            try{
                if(!outputDir.contains("chromat_dir")){
                    outputDir.createNewDir("chromat_dir");
@@ -221,8 +233,8 @@ public class Cas2Consed {
                     : new SangerFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
                
                MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
-                        new H2SffCasDataStoreFactory(casWorkingDirectory),               
-                        new H2FastQCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,qualityCodec),
+                        new H2SffCasDataStoreFactory(casWorkingDirectory,tempDir,EmptyDataStoreFilter.INSTANCE),               
+                        new H2FastQCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,qualityCodec,tempDir==null?null:tempDir.getRootDir()),
                         new FastaCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,cacheSize)        
                 );
                 
