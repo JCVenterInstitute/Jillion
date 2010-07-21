@@ -35,8 +35,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.cli.CommandLineOptionBuilder;
-import org.jcvi.cli.CommandLineUtils;
+import org.jcvi.command.CommandLineOptionBuilder;
+import org.jcvi.command.CommandLineUtils;
 import org.jcvi.io.IOUtil;
 
 public class SffReadInfo extends AbstractSffFileProcessor {

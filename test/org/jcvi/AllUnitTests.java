@@ -30,7 +30,6 @@ import org.jcvi.app.AllAppUnitTests;
 import org.jcvi.assembly.AllAssemblyUnitTests;
 import org.jcvi.assembly.ace.AllAceUnitTests;
 import org.jcvi.auth.AllAuthUnitTests;
-import org.jcvi.cli.AllCliUnitTests;
 import org.jcvi.command.AllCommandUnitTests;
 import org.jcvi.datastore.AllDataStoreUnitTests;
 import org.jcvi.fasta.AllFastaUnitTests;
@@ -73,7 +72,6 @@ import org.junit.runners.Suite.SuiteClasses;
         AllDataStoreUnitTests.class,
         AllAlignTests.class,
         AllAuthUnitTests.class,
-        AllCliUnitTests.class,
         AllAppUnitTests.class,
         AllCommandUnitTests.class
     }

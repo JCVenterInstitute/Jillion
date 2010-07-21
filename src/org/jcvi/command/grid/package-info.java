@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,25 +16,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
-package org.jcvi.command;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
 /**
- * @author dkatzel
- *
- *
+ * This package contains code to submit Jobs a Grid
+ * using DRMAA.
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-       TestCommandUtils.class,
-       TestCommandLineOptionBuilder.class
-    }
-    )
-public class AllCommandUnitTests {
-
-}
+package org.jcvi.command.grid;

@@ -44,8 +44,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.jcvi.assembly.cas.var.Variation.Type;
-import org.jcvi.cli.CommandLineOptionBuilder;
-import org.jcvi.cli.CommandLineUtils;
+import org.jcvi.command.CommandLineOptionBuilder;
+import org.jcvi.command.CommandLineUtils;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 /**
  * @author dkatzel
