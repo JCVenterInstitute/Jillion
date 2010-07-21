@@ -25,21 +25,32 @@ package org.jcvi.assembly.ace;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.assembly.Contig;
+import org.jcvi.datastore.DataStoreException;
+import org.jcvi.datastore.DefaultAceFileDataStore;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestAceParserPhdInfo {
     private static final String ACE_FILE = "files/sample.ace";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("EEE MMM dd kk:mm:ss yyyy");
-    private static Contig<AcePlacedRead> actualContig = new AceParser(TestAceParserMatchesAce2ContigSingleContig.class.getResourceAsStream(ACE_FILE)).parseContigsFrom().get(0);
+    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestAceParserPhdInfo.class);
+    private static Contig<AcePlacedRead> actualContig;
     
     Map<String, PhdInfo> phdInfoMap;
+    @BeforeClass
+    public static void parseContig() throws DataStoreException, IOException{
+        actualContig =new DefaultAceFileDataStore(RESOURCES.getFile(ACE_FILE))
+                            .get("Contig1");
+    }
     @Before
     public void setupMap(){
         phdInfoMap = new HashMap<String, PhdInfo>();
