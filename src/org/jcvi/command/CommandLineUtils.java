@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.cli;
+package org.jcvi.command;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;

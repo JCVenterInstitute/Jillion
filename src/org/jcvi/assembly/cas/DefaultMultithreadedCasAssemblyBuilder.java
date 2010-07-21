@@ -30,8 +30,8 @@ import java.util.concurrent.Future;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.jcvi.cli.CommandLineOptionBuilder;
-import org.jcvi.cli.CommandLineUtils;
+import org.jcvi.command.CommandLineOptionBuilder;
+import org.jcvi.command.CommandLineUtils;
 import org.jcvi.util.ExceptionIntolerantFixedSizedThreadPoolExecutor;
 import org.joda.time.Period;
 

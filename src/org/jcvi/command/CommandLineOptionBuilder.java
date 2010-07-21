@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.cli;
+package org.jcvi.command;
 
 import org.apache.commons.cli.Option;
 import org.jcvi.Builder;
@@ -31,6 +31,7 @@ import org.jcvi.Builder;
  * Commons CLI Option objects.
  * 
  * @author dkatzel
+ * @see <a ref="http://commons.apache.org/cli">Apache Commons CLI</a>
  * @see Option
  *
  */
