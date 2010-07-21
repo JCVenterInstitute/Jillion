@@ -265,7 +265,7 @@
 		    	<zipfileset src="${lib}/commons-collections-3.2.1.jar"/>
 		    	<zipfileset src="${lib}/commons-io-1.4.jar"/>
 		    	<zipfileset src="${lib}/h2-1.2.128.jar"/>
-		    	
+		    	<zipfileset src="${lib}/drmaa.jar"/>
 		    	
 		    	<zipfileset src="${lib-internal}/EUIDService.jar"/>
 		    	<zipfileset src="${lib-internal}/ChromatogramArchiver_client.jar"/>
