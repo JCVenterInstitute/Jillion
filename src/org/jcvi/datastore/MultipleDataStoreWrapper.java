@@ -24,6 +24,7 @@
 package org.jcvi.datastore;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -42,6 +43,11 @@ import org.apache.commons.collections.IteratorUtils;
  *
  */
 public class MultipleDataStoreWrapper<T, D extends DataStore<T>> implements InvocationHandler{
+    /**
+     * These are the parameters in the {@link DataStore#get(String)} method signature.
+     */
+    private static final Class[] GET_PARAMETERS = new Class[]{String.class};
+    
     /**
      * Create a dynamic proxy to wrap the given delegate {@link DataStore} instances.
      * @param <T> the interface Type of objects in the DataStores.
@@ -91,6 +97,11 @@ public class MultipleDataStoreWrapper<T, D extends DataStore<T>> implements Invo
     @Override
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
+        //special case for get
+        if("get".equals(method.getName()) && Arrays.equals(GET_PARAMETERS,method.getParameterTypes())){
+            return invokeGet((String)args[0]);
+            
+        } 
         final Class<?> returnType = method.getReturnType();
         if(void.class.equals(returnType)){
             return handleVoidMethod(method, args);            
@@ -108,16 +119,41 @@ public class MultipleDataStoreWrapper<T, D extends DataStore<T>> implements Invo
         
       
     }
-    private Object returnFirstValidResult(Method method, Object[] args) {
+    /**
+     * Special case to handle gets where we will check
+     * if the delegate contains the id before we try
+     * to invoke the get.  This avoids problems
+     * where we assume an exception thrown from the get
+     * means the datastore does not have the id which
+     * could swallow a legitimate error.
+     * @param id the id to get from the datastores.
+     * @return the object from the first delegate that contains the id;
+     * or {@code null} if no delegates have it.
+     * @throws DataStoreException
+     */
+    private Object invokeGet(String id) throws DataStoreException {
+        for(D delegate : delegates){
+            if(delegate.contains(id)){
+                return delegate.get(id);
+            }
+        }
+        return null;
+    }
+    private Object returnFirstValidResult(Method method, Object[] args) throws DataStoreException {
         for(D delegate : delegates){
             try {
                 Object result = method.invoke(delegate, args);
                 if(result !=null){
                     return result;
                 }
-            } catch (Exception e) {
-                //ignore and move on to the next
-            } 
+            } catch (IllegalArgumentException e) {
+                throw new DataStoreException("error invoking delegate datastore",e);
+            } catch (IllegalAccessException e) {
+                throw new DataStoreException("error invoking delegate datastore",e);
+            } catch (InvocationTargetException e) {
+                throw new DataStoreException("error invoking delegate datastore",e);
+            }
+                        
         }
         return null;
         
