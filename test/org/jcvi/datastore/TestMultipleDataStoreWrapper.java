@@ -24,6 +24,7 @@
 package org.jcvi.datastore;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -102,8 +103,9 @@ public class TestMultipleDataStoreWrapper {
         verify(datastore1, datastore2);
     }
     @Test
-    public void getShouldGetFirstValidFirstThowsExceptionShouldIgnore() throws DataStoreException{
-        expect(datastore1.get(id)).andThrow(datastoreException);
+    public void getShouldGetFirstDoesNotContainIdSecondDoes() throws DataStoreException{
+        expect(datastore1.contains(id)).andReturn(false);
+        expect(datastore2.contains(id)).andReturn(true);
         expect(datastore2.get(id)).andReturn(id);
         replay(datastore1, datastore2);
         assertEquals(id, sut.get(id));
@@ -111,17 +113,91 @@ public class TestMultipleDataStoreWrapper {
     }
     @Test
     public void getShouldGetFirstValidFirstFirstHasIt() throws DataStoreException{
+        expect(datastore1.contains(id)).andReturn(true);
         expect(datastore1.get(id)).andReturn(id);
         replay(datastore1, datastore2);
         assertEquals(id, sut.get(id));
         verify(datastore1, datastore2);
     }
     @Test
-    public void getShouldGetFirstValidAllThowsExceptionShouldReturnNull() throws DataStoreException{
-        expect(datastore1.get(id)).andThrow(datastoreException);
-        expect(datastore2.get(id)).andThrow(datastoreException);
+    public void getShouldGetFirstValidAllDoNotContainIdShouldReturnNull() throws DataStoreException{
+        expect(datastore1.contains(id)).andReturn(false);
+        expect(datastore2.contains(id)).andReturn(false);
         replay(datastore1, datastore2);
         assertNull(id, sut.get(id));
         verify(datastore1, datastore2);
+    }
+    
+    @Test
+    public void getFirstDataStorethatContainsIdThrowsExceptionShouldTossUp() throws DataStoreException{
+        expect(datastore1.contains(id)).andReturn(true);
+        expect(datastore1.get(id)).andThrow(datastoreException);
+        replay(datastore1, datastore2);
+        try{
+            sut.get(id);
+        }catch(DataStoreException e){
+            assertEquals(datastoreException, e);
+        }
+        verify(datastore1, datastore2);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void noDelegatesShouldThrowIllegalArgumentException(){
+        MultipleDataStoreWrapper.createMultipleDataStoreWrapper(DataStore.class);
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void nullDelegatesShouldThrowNullPointerException(){
+        MultipleDataStoreWrapper.createMultipleDataStoreWrapper(DataStore.class,datastore1,null,datastore2);
+    }
+    
+    private static interface ExtendedDataStore extends DataStore{
+        Object someOtherMethod() throws DataStoreException;
+    }
+    
+    @Test
+    public void nonGetMethodThatReturnsAnObject() throws DataStoreException{
+        ExtendedDataStore mock1 = createMock(ExtendedDataStore.class);
+        ExtendedDataStore mock2 = createMock(ExtendedDataStore.class);
+        Object expected = new Object();
+        expect(mock1.someOtherMethod()).andReturn(null);
+        expect(mock2.someOtherMethod()).andReturn(expected);
+        replay(mock1,mock2);
+        ExtendedDataStore sut =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(ExtendedDataStore.class, mock1,mock2);
+    
+        assertEquals(expected, sut.someOtherMethod());
+        verify(mock1,mock2);
+    
+    }
+    @Test
+    public void nonGetMethodAllDelegatesReturnNullShouldReturnNull() throws DataStoreException{
+        ExtendedDataStore mock1 = createMock(ExtendedDataStore.class);
+        ExtendedDataStore mock2 = createMock(ExtendedDataStore.class);
+        expect(mock1.someOtherMethod()).andReturn(null);
+        expect(mock2.someOtherMethod()).andReturn(null);
+        replay(mock1,mock2);
+        ExtendedDataStore sut =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(ExtendedDataStore.class, mock1,mock2);
+    
+        assertNull(sut.someOtherMethod());
+        verify(mock1,mock2);
+    
+    }
+    @Test
+    public void nonGetMethodThatReturnsAnObjectThrowsExceptionShouldWrapInDataStoreException() throws DataStoreException{
+        IllegalArgumentException expectedException = new IllegalArgumentException("expected");
+        ExtendedDataStore mock1 = createMock(ExtendedDataStore.class);
+        expect(mock1.someOtherMethod()).andThrow(expectedException);
+        replay(mock1);
+        ExtendedDataStore sut =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(ExtendedDataStore.class, mock1);
+    
+        try{
+            sut.someOtherMethod();
+        }catch(DataStoreException e){
+            assertEquals("error invoking delegate datastore", e.getMessage());
+            assertTrue(e.getCause() instanceof InvocationTargetException);
+            assertEquals(expectedException, e.getCause().getCause());
+        }
+        verify(mock1);
+    
     }
 }
