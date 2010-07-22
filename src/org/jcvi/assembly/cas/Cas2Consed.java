@@ -83,7 +83,6 @@ import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.fileServer.DirectoryFileServer;
-import org.jcvi.io.fileServer.ReadWriteFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadOnlyDirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.jcvi.trace.TraceDataStore;
@@ -100,6 +99,8 @@ import org.joda.time.Period;
 public class Cas2Consed {
     private static final String DEFAULT_PREFIX = "cas2consed";
     private static final int DEFAULT_CACHE_SIZE = 2000;
+    
+    private static final File DEFAULT_TEMP_DIR = new File("/usr/local/scratch");
     /**
      * @param args
      * @throws Throwable 
@@ -202,7 +203,8 @@ public class Cas2Consed {
            
          final ReadWriteDirectoryFileServer tempDir;
          if(!commandLine.hasOption("tempDir")){
-             tempDir=null;
+             //default to scratch
+             tempDir=DirectoryFileServer.createTemporaryDirectoryFileServer(DEFAULT_TEMP_DIR);
          }else{
              File t =new File(commandLine.getOptionValue("tempDir"));
              t.mkdirs();
@@ -234,7 +236,7 @@ public class Cas2Consed {
                
                MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                         new H2SffCasDataStoreFactory(casWorkingDirectory,tempDir,EmptyDataStoreFilter.INSTANCE),               
-                        new H2FastQCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,qualityCodec,tempDir==null?null:tempDir.getRootDir()),
+                        new H2FastQCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,qualityCodec,tempDir.getRootDir()),
                         new FastaCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,cacheSize)        
                 );
                 
