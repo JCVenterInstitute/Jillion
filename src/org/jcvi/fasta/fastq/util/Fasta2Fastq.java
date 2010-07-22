@@ -55,7 +55,7 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
-import org.jcvi.io.fileServer.DirectoryFileServer.TemporaryDirectoryFileServer;
+import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.jcvi.io.idReader.DefaultFileIdReader;
 import org.jcvi.io.idReader.IdReader;
 import org.jcvi.io.idReader.IdReaderException;
@@ -93,6 +93,8 @@ public class Fasta2Fastq {
                         "output fastq file")
                         .isRequired(true)
                         .build());
+        options.addOption(new CommandLineOptionBuilder("tempDir", "temp directory")
+                                        .build());
         options.addOption(CommandLineUtils.createHelpOption());
         OptionGroup group = new OptionGroup();
         
@@ -132,8 +134,15 @@ public class Fasta2Fastq {
             final FastQQualityCodec fastqQualityCodec = useSanger? new SangerFastQQualityCodec(qualityCodec): new IlluminaFastQQualityCodec(qualityCodec);
         
             //parse nucleotide data to temp file
-            TemporaryDirectoryFileServer tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer();
-     
+            final ReadWriteDirectoryFileServer tempDir;
+            if(!commandLine.hasOption("tempDir")){
+                tempDir=null;
+            }else{
+                File t =new File(commandLine.getOptionValue("tempDir"));
+                t.mkdirs();
+                tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer(t);
+            }
+           
             H2QualityDataStore h2DataStore = new H2QualityDataStore(tempDir.createNewFile("h2Qualities"));
             File qualFile = new File(commandLine.getOptionValue("q"));
             final QualityFastaH2DataStore qualityDataStore = new QualityFastaH2DataStore(qualFile, h2DataStore,filter);
