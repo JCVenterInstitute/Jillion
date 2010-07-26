@@ -110,16 +110,16 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
             throws DataStoreException {
         checkNotYetClosed();
         InputStream in=null;
-        try {
-            in = getRecordFor(id);
-        
-        if(in ==null){
-            return null;
-        }
-        final DefaultNucleotideFastaFileDataStore datastore = new DefaultNucleotideFastaFileDataStore(getFastaRecordFactory());
-        FastaParser.parseFasta(in, datastore);
-        
-        return datastore.get(id);
+            try {
+                in = getRecordFor(id);
+            
+            if(in ==null){
+                return null;
+            }
+            final DefaultNucleotideFastaFileDataStore datastore = new DefaultNucleotideFastaFileDataStore(getFastaRecordFactory());
+            FastaParser.parseFasta(in, datastore);
+            
+            return datastore.get(id);
         } catch (FileNotFoundException e) {
             throw new DataStoreException("could not get record for "+id, e);
         }
@@ -175,42 +175,46 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
 
     private InputStream getRecordFor(String id) throws FileNotFoundException{
         Scanner scanner = new Scanner(fastaFile);
-        String expectedHeader = String.format(">%s", id);
-        String line = scanner.nextLine();
-        boolean done=false;
-        //we have to do this while loop to make sure we find
-        //the actual read instead of a different read which is happens
-        //to include our id as a prefix (for example a TIGR "B" read
-        while(!done){
-            if(line.startsWith(expectedHeader)){
-                String currentId= SequenceFastaRecordUtil.parseIdentifierFromIdLine(line);
-                if(id.equals(currentId)){
+        try{
+            String expectedHeader = String.format(">%s", id);
+            String line = scanner.nextLine();
+            boolean done=false;
+            //we have to do this while loop to make sure we find
+            //the actual read instead of a different read which is happens
+            //to include our id as a prefix (for example a TIGR "B" read
+            while(!done){
+                if(line.startsWith(expectedHeader)){
+                    String currentId= SequenceFastaRecordUtil.parseIdentifierFromIdLine(line);
+                    if(id.equals(currentId)){
+                        done=true;
+                        //done
+                        continue;
+                    }
+                }
+                if(!scanner.hasNextLine()){
                     done=true;
-                    //done
                     continue;
                 }
+                line = scanner.nextLine(); 
             }
+            
             if(!scanner.hasNextLine()){
-                done=true;
-                continue;
+                return null;
             }
-            line = scanner.nextLine(); 
+            StringBuilder record = new StringBuilder(line).append("\n");
+            line =scanner.nextLine();
+            while(!line.startsWith(">") && scanner.hasNextLine()){
+                record.append(line).append("\n");
+                line = scanner.nextLine();
+            }
+            //add final line if needed
+            if(!scanner.hasNextLine()){
+                record.append(line).append("\n");
+            }
+            return new ByteArrayInputStream(record.toString().getBytes());
+        }finally{
+            scanner.close();
         }
-        
-        if(!scanner.hasNextLine()){
-            return null;
-        }
-        StringBuilder record = new StringBuilder(line).append("\n");
-        line =scanner.nextLine();
-        while(!line.startsWith(">") && scanner.hasNextLine()){
-            record.append(line).append("\n");
-            line = scanner.nextLine();
-        }
-        //add final line if needed
-        if(!scanner.hasNextLine()){
-            record.append(line).append("\n");
-        }
-        return new ByteArrayInputStream(record.toString().getBytes());
     }
 
 
