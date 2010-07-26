@@ -47,6 +47,7 @@ public abstract class AbstractLargeIdIterator implements Iterator<String>{
         }
         else{
             nextObject =endOfIterating;
+            scanner.close();
         }
     }
     protected abstract Object getNextId(Scanner scanner);
