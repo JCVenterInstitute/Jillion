@@ -56,6 +56,7 @@ import org.jcvi.assembly.ace.WholeAssemblyAceTag;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.ace.consed.ConsedWriter;
 import org.jcvi.assembly.ace.consed.closure.NextGenClosureAceContigTrimmer;
+import org.jcvi.assembly.cas.read.CasDataStoreFactory;
 import org.jcvi.assembly.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.H2FastQCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.H2SffCasDataStoreFactory;
@@ -234,7 +235,7 @@ public class Cas2Consed {
                        new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE)
                     : new SangerFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
                
-               MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
+               CasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                         new H2SffCasDataStoreFactory(casWorkingDirectory,tempDir,EmptyDataStoreFilter.INSTANCE),               
                         new H2FastQCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,qualityCodec,tempDir.getRootDir()),
                         new FastaCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,cacheSize)        
