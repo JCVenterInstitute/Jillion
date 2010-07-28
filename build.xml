@@ -273,7 +273,7 @@
 	</target>
 	<target name="jar-src-core" description="jar of all source files" depends= "revision, source.only.bin">
 		
-		    <jarjar jarfile="${project-name}-${version}-r${revision}.jar">
+		    <jarjar jarfile="${project-name}-core-${version}-r${revision}.jar">
 		        <fileset dir="${bin}"/>		        
 		    </jarjar>
 	</target>
