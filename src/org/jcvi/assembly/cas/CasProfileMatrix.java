@@ -32,6 +32,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.jcvi.assembly.cas.read.AbstractCasFileNucleotideDataStore;
 import org.jcvi.assembly.cas.read.CasDataStoreFactory;
@@ -235,6 +236,7 @@ public class CasProfileMatrix extends AbstractCasFileContigVisitor{
                 }
             }catch(Throwable t){
                 t.printStackTrace(logOut);
+                printHelp(options);
                 throw t;
             }finally{
                 if(logOut !=null){
@@ -249,5 +251,12 @@ public class CasProfileMatrix extends AbstractCasFileContigVisitor{
             }
     }
         
-
+    private static void printHelp(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp( "cas2Consed -cas <cas file> -o <output dir> [-prefix <prefix> -s <cache_size>]", 
+                
+                "convert a clc .cas assembly file into a consed package",
+                options,
+                "Created by Danny Katzel");
+    }
 }
