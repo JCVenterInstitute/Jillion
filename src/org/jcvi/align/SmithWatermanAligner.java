@@ -115,10 +115,7 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
         // traverse the optimal path and build the alignment strings
         while (cursor.y < referenceSequence.getLength() && cursor.x < querySequence.getLength())
         {
-            /*
-             * Bump the alignment length counter.
-             */
-            alignmentLength++;
+           
             
             /*
              * Follow the path recorded in the score matrix.
@@ -144,7 +141,10 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
                     }
                     
                     cursor = cursor.translate(1, 1);
-
+                    /*
+                     * Bump the alignment length counter.
+                     */
+                    alignmentLength++;
                     break;
 
                 case ScoringMatrix.PATH_HORZ:

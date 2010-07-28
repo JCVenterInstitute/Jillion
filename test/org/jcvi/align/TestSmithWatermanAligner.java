@@ -67,7 +67,7 @@ public class TestSmithWatermanAligner
                 "ATTGCATCAGGATACCCAG", 
                  new int[] { 5, 24 }, new int[] { 1, 19 }, 
                  new int[] { 8 }, new int[] { 11, 14 },
-                0.762);
+                0.888);
     }
 
     /**
@@ -138,7 +138,7 @@ public class TestSmithWatermanAligner
         this.testAlignSequences(reference, query, 
                 new int[] { 606, 705 },  new int[] { 1, 99 },
                 new int[] {  }, new int[] { 37 }, 
-                0.98);
+                0.989);
     }
 
     /**
@@ -166,5 +166,25 @@ public class TestSmithWatermanAligner
         Assert.assertEquals(identity, alignment.getIdentity(), 0.002);
     }
 
-
+    @Test
+    public void testAlignSelfWithGaps()
+    {
+        final String querySeq = "AACTGCATGGGATA";
+        this.testAlignSequences("AACTTGCATGGGATA", 
+                querySeq, 
+                new int[] { 1, querySeq.length()+1 }, new int[] { 1, querySeq.length() }, 
+                new int[] {  }, new int[] { 4 }, 
+                1.0);
+    }
+    
+    @Test
+    public void testAlignRefLongerthanQuery()
+    {
+        final String querySeq = "AACTTGCATGGGATA";
+        this.testAlignSequences("AACTTGCATGGGATANNNNNNNNNN", 
+                querySeq, 
+                new int[] { 1, querySeq.length() }, new int[] { 1, querySeq.length() }, 
+                new int[] {  }, new int[] {  }, 
+                1.0);
+    }
 }
