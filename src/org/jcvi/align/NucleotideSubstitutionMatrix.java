@@ -120,7 +120,7 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
     private void setAmbiguityScore(int score)
     {
         for(NucleotideGlyph g : NucleotideGlyph.getGlyphsFor("ACGT")){
-            this.setScores(g, score, g.getPossibleAmbiguites());
+            this.setScores(g, score, g.getNucleotides());
         }
        
     }

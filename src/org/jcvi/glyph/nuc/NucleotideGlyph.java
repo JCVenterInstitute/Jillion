@@ -293,11 +293,17 @@ public enum NucleotideGlyph implements Glyph {
         
         return false;
     }
-    
-    public static Set<NucleotideGlyph> getAmbiguitesFor(NucleotideGlyph glyph){
+    /**
+     * Get the Set of unambiguous {@link NucleotideGlyph}s that
+     * make up this ambiguity.
+     * @return the Set of unambiguous {@link NucleotideGlyph}s that
+     * make up this ambiguity or {@code this} if this is not
+     * an ambiguity or an empty set if teh given {@link NucleotideGlyph} is a gap. 
+     */
+    public static Set<NucleotideGlyph> getNucleotidesFor(NucleotideGlyph ambiguity){
         
-        if(CONSTIUENT_TO_AMBIGUITY.containsKey(glyph)){
-            return EnumSet.copyOf(CONSTIUENT_TO_AMBIGUITY.get(glyph));
+        if(CONSTIUENT_TO_AMBIGUITY.containsKey(ambiguity)){
+            return EnumSet.copyOf(CONSTIUENT_TO_AMBIGUITY.get(ambiguity));
         }
         return EnumSet.noneOf(NucleotideGlyph.class);
     }
@@ -310,9 +316,17 @@ public enum NucleotideGlyph implements Glyph {
         }
         return Gap;        
     }
-    
-    public Set<NucleotideGlyph> getPossibleAmbiguites(){
-        return getAmbiguitesFor(this);
+    /**
+     * Get the Set of unambiguous {@link NucleotideGlyph}s that
+     * make up this ambiguity.
+     * @return the Set of unambiguous {@link NucleotideGlyph}s that
+     * make up this ambiguity or {@code this} if this is not
+     * an ambiguity or an empty set if this is a gap.  This is the same as {@link #getNucleotidesFor(NucleotideGlyph)
+     * NucleotideGlyph.getNucleotidesFor(this)}.
+     * @see #getNucleotidesFor(NucleotideGlyph)
+     */
+    public Set<NucleotideGlyph> getNucleotides(){
+        return getNucleotidesFor(this);
     }
     
 }

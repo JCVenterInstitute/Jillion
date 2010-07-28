@@ -36,9 +36,12 @@ public abstract class AbstractLargeIdIterator implements Iterator<String>{
     private final Object endOfIterating = new Object();
     
     protected AbstractLargeIdIterator(File file) throws FileNotFoundException{
-        scanner = new Scanner(file);
+        scanner = createScannerFor(file);
         
         updateNextObject();
+    }
+    protected Scanner createScannerFor(File file) throws FileNotFoundException{
+        return new Scanner(file);
     }
     private void updateNextObject(){
         if(scanner.hasNextLine()){
