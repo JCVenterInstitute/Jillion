@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.Range;
+import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.sequence.SequenceDirection;
 
 public abstract class AbstractAceFileVisitor implements AceFileVisitor{
@@ -66,7 +67,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         throwExceptionIfInitialized();
         if(readingConsensus){
             readingConsensus=false;
-           visitNewContig(currentContigId, currentBasecalls.toString());
+           visitNewContig(currentContigId, ConsedUtil.convertAceGapsToContigGaps(currentBasecalls.toString()));
         }
         final AssembledFrom assembledFromObj = new AssembledFrom(readId, gappedStartOffset, dir);
         currentAssembledFromMap.put(readId, assembledFromObj);
