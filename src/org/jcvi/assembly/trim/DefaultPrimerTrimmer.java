@@ -80,7 +80,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
                 
                 Alignment bestAlignment;
                 if(forwardAlignment.getMatch() > minMatch || reverseAlignment.getMatch() > minMatch){
-                    bestAlignment= reverseAlignment.getMatch() > forwardAlignment.getMatch() ? reverseAlignment : forwardAlignment;
+                    bestAlignment= reverseAlignment.getScore() > forwardAlignment.getScore() ? reverseAlignment : forwardAlignment;
                     SequenceAlignment sequenceAlignment =bestAlignment.getQueryAlignment();
                     Range range = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
                             sequenceAlignment.getStart(), sequenceAlignment.getStop());
