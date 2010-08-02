@@ -169,12 +169,13 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private int reverseCompliment(int fullLength, int position) {
         return fullLength - position+1;
     }
-    private int computeEnd3(int clearRight, int alignRight) {
-        return Math.min(clearRight, alignRight);
+    private int computeEnd3(int alignRight, int clearRight) {
+        return alignRight;
     }
 
-    private int computeEnd5(int clearLeft, int alignLeft) {
-        return Math.max(clearLeft, alignLeft);
+    private int computeEnd5(int alignLeft, int clearLeft) {
+      //  return Math.max(clearLeft, alignLeft);
+        return alignLeft;
     }
     
     private int computeReadOffset(AssembledFrom assembledFrom, int end5) {
