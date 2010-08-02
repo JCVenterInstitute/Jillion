@@ -76,7 +76,9 @@ public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlaced
         public int offset(){
             return offset;
         }
-       
+        public String id(){
+            return readId;
+        }
         public Builder setOffset(int newOffset){
             this.offset = newOffset;
             return this;
