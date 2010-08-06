@@ -111,8 +111,9 @@ public class SFFFlowgram implements Flowgram {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + basecalls.decode().hashCode();
         result = prime * result + values.hashCode();
-        result = prime * result + qualities.hashCode();
+        result = prime * result + qualities.decode().hashCode();
         result = prime * result + qualitiesClip.hashCode();
         result = prime * result + adapterClip.hashCode();
         
@@ -135,10 +136,25 @@ public class SFFFlowgram implements Flowgram {
         }
         SFFFlowgram other = (SFFFlowgram) obj;
         
-        return CommonUtil.similarTo(values, other.values) &&
-        CommonUtil.similarTo(qualities, other.qualities) &&
+        boolean mostFieldsEqual= 
+        CommonUtil.similarTo(basecalls.decode(), other.basecalls.decode()) &&
+        CommonUtil.similarTo(qualities.decode(), other.qualities.decode()) &&
         CommonUtil.similarTo(qualitiesClip, other.qualitiesClip) &&
         CommonUtil.similarTo(adapterClip, other.adapterClip);
+        
+        if(mostFieldsEqual){
+            //have to do this because of floating point
+            //inaccuracy.. 
+            //this might technically break equals and hashcode
+            //contract.
+            for(int i=0; i< getSize(); i++){
+                if ( Math.abs( getValueAt(i) - other.getValueAt(i) ) > .01F ){
+                    return false;
+                }
+            }            
+        }
+        return true;
+        
     }
 
     

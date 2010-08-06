@@ -26,6 +26,8 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
@@ -37,7 +39,7 @@ import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 public final class SFFUtil {
    private SFFUtil(){}
    public static final Range EMPTY_CLIP = Range.buildRange(CoordinateSystem.RESIDUE_BASED, -1, -1);
-   
+   public static final Pattern SFFINFO_ENCODED_FLOWGRAM_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)");
     public static int caclulatePaddedBytes(int bytesReadInSection){
          final int remainder = bytesReadInSection % 8;
          if(remainder ==0){
@@ -48,7 +50,13 @@ public final class SFFUtil {
 
     public static float convertFlowgramValue(short encodedValue){
          return encodedValue / 100F;
-
+    }
+    public static short parseSffInfoEncodedFlowgram(String sffinfoEncodedFlowgram){
+        Matcher matcher = SFFINFO_ENCODED_FLOWGRAM_PATTERN.matcher(sffinfoEncodedFlowgram);
+        if(matcher.find()){
+            return Short.parseShort(matcher.group(1)+ matcher.group(2));
+        }
+        throw new IllegalArgumentException("could not parse sffinfo encoded flowgram value "+ sffinfoEncodedFlowgram);
     }
     public static List<Integer> computeCalledFlowIndexes(SFFReadData readData){
         final byte[] indexes = readData.getFlowIndexPerBase();

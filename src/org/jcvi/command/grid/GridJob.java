@@ -193,7 +193,7 @@ public class GridJob implements Callable<Integer>
             this.setNativeSpec(NativeSpec.MEMORY, "-l memory='" + size + unit.getGridCode()+"'");
         }
     }
-    public void setMinCPUs(String minimumCPUs)
+    public void setMinCPUs(Integer minimumCPUs)
     {
         if (minimumCPUs == null)
         {
@@ -341,13 +341,14 @@ public class GridJob implements Callable<Integer>
          * Call the post-execution hook
          */
         final int jobProgramStatus;
-        try{
+      /*  try{
         jobProgramStatus = this.gridSession.getJobProgramStatus(jobid);
         }catch (Throwable t){
             t.printStackTrace();
             throw new RuntimeException(t);
         }
-        result = this.postExecution(this.gridInfo, jobProgramStatus);
+        */
+        result = this.postExecution(this.gridInfo, 0);
 
         return Integer.valueOf(result);
     }
