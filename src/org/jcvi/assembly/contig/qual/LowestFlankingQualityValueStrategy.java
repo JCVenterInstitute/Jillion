@@ -28,8 +28,14 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 public class LowestFlankingQualityValueStrategy extends
         AbstractQualityValueStrategy {
 
-    private final PhredQuality LOWEST_QUALITY = PhredQuality.valueOf((byte)1);
+    private static final LowestFlankingQualityValueStrategy INSTANCE = new LowestFlankingQualityValueStrategy();
     
+    public static final LowestFlankingQualityValueStrategy getInstance(){
+        return INSTANCE;
+    }
+    private static final PhredQuality LOWEST_QUALITY = PhredQuality.valueOf((byte)1);
+    
+    private LowestFlankingQualityValueStrategy(){}
 
     @Override
     protected PhredQuality getQualityValueIfReadEndsWithGap() {

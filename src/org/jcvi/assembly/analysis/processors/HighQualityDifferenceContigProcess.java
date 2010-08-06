@@ -60,7 +60,7 @@ public class HighQualityDifferenceContigProcess extends AbstractContigAnalysisPr
     }
     private HighQualityDifferencesContigMap generateHighQualityDifferenceContigMap() throws DataStoreException {
         HighQualityDifferencesContigMap map = new DefaultHighQualityDifferencesContigMap(getStruct().getContig(), getStruct().getQualityDataStore(), 
-                new LowestFlankingQualityValueStrategy(),qualityThreshold);
+                LowestFlankingQualityValueStrategy.getInstance(),qualityThreshold);
         return map;
     }
 

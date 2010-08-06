@@ -116,7 +116,7 @@ public class RemoveReferenceFromNewblerMappedAce {
                     Arrays.asList(phdFile),aceTagMap);
             
             AceFileWriter.writeAceFile(aceAssembly, 
-                    new LargeSliceMapFactory(new LowestFlankingQualityValueStrategy()),
+                    new LargeSliceMapFactory(LowestFlankingQualityValueStrategy.getInstance()),
                     new FileOutputStream(aceOut), true);
             
         }
