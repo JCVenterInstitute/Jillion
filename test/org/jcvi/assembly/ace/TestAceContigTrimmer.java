@@ -62,7 +62,7 @@ public class TestAceContigTrimmer {
                                    .addRead("read3", "GTACGTAC", 0, SequenceDirection.FORWARD, Range.buildRangeOfLength(20,8), null)
                                    
                                    .build();
-       AceContig actualContig =sut.trimContig(originalContig, DefaultCoverageMap.buildCoverageMap(originalContig.getPlacedReads()));
+       AceContig actualContig =sut.trimContig(originalContig);
         
        assertEquals("trimmed id", expectedContig.getId(), actualContig.getId());
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
@@ -87,7 +87,7 @@ public class TestAceContigTrimmer {
                                    .addRead("read3", "GTACGTAC", 0, SequenceDirection.REVERSE, Range.buildRangeOfLength(20,8), null)
                                    
                                    .build();
-       AceContig actualContig =sut.trimContig(originalContig, DefaultCoverageMap.buildCoverageMap(originalContig.getPlacedReads()));
+       AceContig actualContig =sut.trimContig(originalContig);
         
        assertEquals("trimmed id", expectedContig.getId(), actualContig.getId());
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
@@ -113,7 +113,7 @@ public class TestAceContigTrimmer {
                                    .addRead("read3", "GT-ACGTAC", 0, SequenceDirection.FORWARD, Range.buildRangeOfLength(20,8), null)
                                    
                                    .build();
-       AceContig actualContig =sut.trimContig(originalContig, DefaultCoverageMap.buildCoverageMap(originalContig.getPlacedReads()));
+       AceContig actualContig =sut.trimContig(originalContig);
         
        assertEquals("trimmed id", expectedContig.getId(), actualContig.getId());
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
@@ -138,7 +138,7 @@ public class TestAceContigTrimmer {
                                    .addRead("read3", "GT-ACGTAC", 0, SequenceDirection.REVERSE, Range.buildRangeOfLength(20,8), null)
                                    
                                    .build();
-       AceContig actualContig =sut.trimContig(originalContig, DefaultCoverageMap.buildCoverageMap(originalContig.getPlacedReads()));
+       AceContig actualContig =sut.trimContig(originalContig);
         
        assertEquals("trimmed id", expectedContig.getId(), actualContig.getId());
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());

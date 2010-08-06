@@ -331,7 +331,7 @@ public class SingleContigCasAssemblyBuilder {
             try {
                 for(AceContig aceContig : ConsedUtil.split0xContig(adpatedCasContig, coverageMap)){
                     if(useClosureTrimming){
-                        AceContig trimmedAceContig =closureContigTrimmer.trimContig(aceContig, DefaultCoverageMap.buildCoverageMap(aceContig.getPlacedReads()));
+                        AceContig trimmedAceContig =closureContigTrimmer.trimContig(aceContig);
                         if(trimmedAceContig ==null){
                             System.out.printf("%s was completely trimmed... skipping%n", aceContig.getId());
                             continue;

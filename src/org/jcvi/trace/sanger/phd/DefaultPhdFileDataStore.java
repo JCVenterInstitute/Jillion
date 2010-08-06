@@ -23,6 +23,8 @@
  */
 package org.jcvi.trace.sanger.phd;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,6 +33,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
@@ -59,6 +62,23 @@ public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
         
     }
 
+    /**
+     * 
+     */
+    public DefaultPhdFileDataStore() {
+        super();
+    }
+
+    /**
+     * @param filter
+     */
+    public DefaultPhdFileDataStore(DataStoreFilter filter) {
+        super(filter);
+    }
+    public DefaultPhdFileDataStore(File phdFile, DataStoreFilter filter) throws FileNotFoundException {
+        super(filter);
+        PhdParser.parsePhd(phdFile, this);
+    }
     private synchronized void checkNotYetClosed(){
         if(closed){
             throw new IllegalStateException("datastore already closed");

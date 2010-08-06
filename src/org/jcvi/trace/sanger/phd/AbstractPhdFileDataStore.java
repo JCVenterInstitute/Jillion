@@ -28,7 +28,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.datastore.DataStoreIterator;
+import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
@@ -47,6 +49,16 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     private String currentTag;
     private boolean inTag=false;
     private StringBuilder currentTagValueBuilder;
+    
+    private final DataStoreFilter filter;
+    
+    public AbstractPhdFileDataStore(){
+        this(EmptyDataStoreFilter.INSTANCE);
+    }
+    
+    public AbstractPhdFileDataStore(DataStoreFilter filter){
+        this.filter= filter;
+    }
     
     protected abstract void visitPhd(String id,
             List<NucleotideGlyph> bases,
@@ -94,7 +106,9 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     public synchronized void visitBeginSequence(String id) {
         checkNotYetInitialized();
         if(currentId !=null){
-            visitPhd(currentId, currentBases, currentQualities, currentPositions, currentComments,tags);
+            if(filter.accept(currentId)){
+                visitPhd(currentId, currentBases, currentQualities, currentPositions, currentComments,tags);
+            }
         }
         this.currentId = id;
         resetCurrentValues();

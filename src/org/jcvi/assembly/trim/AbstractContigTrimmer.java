@@ -28,6 +28,7 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -62,11 +63,12 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
         this.trimmers.addAll(trimmers);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public C trimContig(C contig,CoverageMap<CoverageRegion<P>> coverageMap) throws TrimmerException{
+    public C trimContig(C contig) throws TrimmerException {
+        return trimContig(contig, DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads()));
+    }
+
+    protected C trimContig(C contig,CoverageMap<CoverageRegion<P>> coverageMap) throws TrimmerException{
         
         initializeTrimmers(contig,coverageMap);
         beginTrimmingContig(contig);
