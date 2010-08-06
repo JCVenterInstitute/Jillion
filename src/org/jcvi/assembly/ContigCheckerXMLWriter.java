@@ -50,7 +50,7 @@ public class ContigCheckerXMLWriter<T extends PlacedRead> implements Closeable{
     private final SnpXMLWriter<T> snpWriter;
     public ContigCheckerXMLWriter(OutputStream out) throws IOException{
         this.out = out;
-        snpWriter = new SnpXMLWriter<T>(new LowestFlankingQualityValueStrategy());
+        snpWriter = new SnpXMLWriter<T>(LowestFlankingQualityValueStrategy.getInstance());
         out.write(XML_HEADER.getBytes());
         out.write(String.format(CONTIG_CHECKER_BEGIN_HEADER, 
                 ISODateTimeFormat.dateTimeNoMillis().print(

@@ -39,7 +39,7 @@ public class TestLowestFlankingQualityValueStrategy {
     PhredQuality lower = factory.getGlyphFor((byte)5);
     PhredQuality higher = factory.getGlyphFor((byte)10);
     PhredQuality LOWEST = factory.getGlyphFor((byte)1);
-    LowestFlankingQualityValueStrategy sut = new LowestFlankingQualityValueStrategy();
+    LowestFlankingQualityValueStrategy sut = LowestFlankingQualityValueStrategy.getInstance();
     
     
     @Test

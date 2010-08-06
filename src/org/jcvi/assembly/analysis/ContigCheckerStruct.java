@@ -58,7 +58,7 @@ public class ContigCheckerStruct<R extends PlacedRead> implements ContigStruct<R
     public ContigCheckerStruct(Contig<R> contig, QualityDataStore qualityDataStore){
         this.contig = contig;
         this.qualityDataStore = qualityDataStore;
-        this.qualityValueStrategy = new LowestFlankingQualityValueStrategy();
+        this.qualityValueStrategy = LowestFlankingQualityValueStrategy.getInstance();
     }
     
     @Override
