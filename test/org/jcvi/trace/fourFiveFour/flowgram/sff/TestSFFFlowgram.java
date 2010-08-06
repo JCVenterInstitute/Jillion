@@ -30,6 +30,7 @@ import java.util.List;
 import org.jcvi.Range;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFFlowgram;
@@ -50,7 +51,12 @@ public class TestSFFFlowgram {
     SFFFlowgram sut;
     @Before
     public void setup(){
+        expect(basecalls.decode()).andStubReturn(NucleotideGlyph.getGlyphsFor("ACGT"));
+        expect(confidence.decode()).andStubReturn(PhredQuality.valueOf(new byte[]{20,15,30,15}));
+        
+        replay(basecalls,confidence);
         sut = new SFFFlowgram(basecalls,confidence,values,qualitiesClip, adapterClip);
+        
     }
 
     private static List<Short> convertIntoList(short[] values) {

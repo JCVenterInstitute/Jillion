@@ -149,13 +149,20 @@ public final class AssemblyUtil {
     public static boolean isAGap(NucleotideEncodedGlyphs glyphs, int gappedReadIndex) {
         return glyphs.isGap(gappedReadIndex);
     }
-
-    public static int getLeftFlankingNonGapIndex(NucleotideEncodedGlyphs placedRead, int gappedReadIndex) {
+    /**
+     * Get the first non-gap {@link NucleotideGlyph} from the left side of the given
+     * gappedReadIndex on the given encoded glyphs.  If the given base is not a gap, 
+     * then that is the value returned.
+     * @param gappedNucleotides the gapped nucleotides to search 
+     * @param gappedReadIndex the gapped offset (0-based) to start the search from.
+     * @return the first non-gap position on the placedRead that is {@code <= gappedReadIndex}
+     */
+    public static int getLeftFlankingNonGapIndex(NucleotideEncodedGlyphs gappedNucleotides, int gappedReadIndex) {
         if(beforeStartOfRead(gappedReadIndex)){
             return gappedReadIndex;
         }
-        if(isAGap(placedRead, gappedReadIndex)){
-            return getLeftFlankingNonGapIndex(placedRead,gappedReadIndex-1);
+        if(isAGap(gappedNucleotides, gappedReadIndex)){
+            return getLeftFlankingNonGapIndex(gappedNucleotides,gappedReadIndex-1);
         }
         
         return gappedReadIndex;
@@ -164,7 +171,14 @@ public final class AssemblyUtil {
         return gappedReadIndex<0;
     }
     
-
+    /**
+     * Get the first non-gap {@link NucleotideGlyph} from the right side of the given
+     * gappedReadIndex on the given encoded glyphs.  If the given base is not a gap, 
+     * then that is the value returned.
+     * @param gappedNucleotides the gapped nucleotides to search 
+     * @param gappedReadIndex the gapped offset (0-based) to start the search from.
+     * @return the first non-gap position on the placedRead that is {@code >= gappedReadIndex}
+     */
     public static int getRightFlankingNonGapIndex(NucleotideEncodedGlyphs placedRead, int gappedReadIndex) {
         if(afterEndOfRead(gappedReadIndex, placedRead)){
             return gappedReadIndex;
@@ -173,5 +187,15 @@ public final class AssemblyUtil {
             return getRightFlankingNonGapIndex(placedRead,gappedReadIndex+1);
         }
         return gappedReadIndex;
+    }
+    
+    public static Range convertGappedRangeIntoUngappedRange(final NucleotideEncodedGlyphs encodedGlyphs,
+            Range gappedFeatureValidRange) {
+        int ungappedLeft = encodedGlyphs.convertGappedValidRangeIndexToUngappedValidRangeIndex(
+                AssemblyUtil.getRightFlankingNonGapIndex(encodedGlyphs, (int)gappedFeatureValidRange.getStart()));
+        int ungappedRight = encodedGlyphs.convertGappedValidRangeIndexToUngappedValidRangeIndex(
+                AssemblyUtil.getLeftFlankingNonGapIndex(encodedGlyphs, (int)gappedFeatureValidRange.getEnd()));
+        Range ungappedRange = Range.buildRange(ungappedLeft, ungappedRight);
+        return ungappedRange;
     }
 }

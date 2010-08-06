@@ -50,7 +50,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestH2NucleotideSffDataStore.class,
         TestH2QualitySffDataStore.class,
         TestFilteredH2QualityDataStore.class,
-        TestFilteredH2NucleotideDataStore.class
+        TestFilteredH2NucleotideDataStore.class,
+        TestSffInfoDataStore.class
         
     }
     )
