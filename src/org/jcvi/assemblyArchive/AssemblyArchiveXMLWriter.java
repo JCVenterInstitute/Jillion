@@ -41,11 +41,10 @@ import org.jcvi.assembly.slice.SliceMap;
 import org.jcvi.assembly.slice.SliceMapFactory;
 import org.jcvi.assembly.slice.consensus.ConicConsensusCaller;
 import org.jcvi.assembly.slice.consensus.ConsensusCaller;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.XMLUtil;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
@@ -56,7 +55,7 @@ public class AssemblyArchiveXMLWriter<T extends PlacedRead> {
     private static final String XML_BEGIN = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("MM/dd/yy HH:mm:ss:");
     
-    public void  write(AssemblyArchive<T> assemblyArchive, SliceMapFactory sliceMapFactory, DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore,OutputStream out) throws IOException{
+    public void  write(AssemblyArchive<T> assemblyArchive, SliceMapFactory sliceMapFactory, QualityDataStore qualityDataStore,OutputStream out) throws IOException{
         writeString(out, XML_BEGIN);
         String submitterReference = assemblyArchive.getSubmitterReference();
         writeString(out, String.format("<assembly submitter_reference=\"%s\" type = \"%s\">\n", 

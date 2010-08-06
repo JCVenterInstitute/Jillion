@@ -95,6 +95,7 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
             MaxQualityStruct maxQualityStruct) {
         Set<NucleotideGlyph> basesTowardsAmbiguity = EnumSet.noneOf(NucleotideGlyph.class);
         basesTowardsAmbiguity.add(maxQualityStruct.base);
+       
         for(NucleotideGlyph base : BASES_TO_CONSIDER){
             if(base !=maxQualityStruct.base ){
                 double tangent = qualityValueSumMap.get(base).doubleValue()/maxQualityStruct.sum;

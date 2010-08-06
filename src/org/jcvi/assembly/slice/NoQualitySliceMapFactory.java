@@ -8,9 +8,8 @@ package org.jcvi.assembly.slice;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 
 public class NoQualitySliceMapFactory implements SliceMapFactory{
     private final PhredQuality phredQuality;
@@ -27,7 +26,7 @@ public class NoQualitySliceMapFactory implements SliceMapFactory{
     @Override
     public SliceMap createNewSliceMap(
             CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap,
-            DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore) {
+                    QualityDataStore qualityDataStore) {
         return new NoQualitySliceMap(coverageMap,phredQuality);
     }
 

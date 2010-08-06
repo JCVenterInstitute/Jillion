@@ -34,6 +34,7 @@ import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.util.LRUCache;
 
 public class LargeSliceMap extends AbstractSliceMap{
@@ -49,7 +50,7 @@ public class LargeSliceMap extends AbstractSliceMap{
     private final LRUCache<Long, Slice> cache;
     
     public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
-            DataStore<? extends EncodedGlyphs<PhredQuality>> qualityDataStore,
+            QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, Range range, int cacheSize){
         this.coverageMap = coverageMap;
         this.qualityDataStore = qualityDataStore;
@@ -59,18 +60,18 @@ public class LargeSliceMap extends AbstractSliceMap{
     }
     
     public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
-            DataStore<? extends EncodedGlyphs<PhredQuality>> qualityDataStore,
+            QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, int cacheSize){
         this(coverageMap, qualityDataStore, qualityValueStrategy, 
                 Range.buildRange(0,coverageMap.getRegion(coverageMap.getSize()-1).getEnd()),cacheSize);
     }
     public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
-            DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore,
+            QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, Range range){
         this(coverageMap, qualityDataStore,qualityValueStrategy, range, DEFAULT_CACHE_SIZE);
     }
     public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
-            DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore,
+            QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy){
         this(coverageMap, qualityDataStore, qualityValueStrategy, 
                 Range.buildRange(0,coverageMap.getRegion(coverageMap.getSize()-1).getEnd()));
