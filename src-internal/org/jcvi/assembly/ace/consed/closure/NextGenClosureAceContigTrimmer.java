@@ -27,6 +27,7 @@ import org.jcvi.Range;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceContigTrimmer;
 import org.jcvi.assembly.ace.AcePlacedRead;
+import org.jcvi.assembly.trim.ElviraSangerContigEndTrimmer;
 import org.jcvi.assembly.trim.MinimumBidirectionalEndCoverageTrimmer;
 import org.jcvi.assembly.trim.MinimumEndCoverageTrimmer;
 import org.jcvi.assembly.trim.PlacedReadTrimmer;
@@ -41,10 +42,11 @@ public class NextGenClosureAceContigTrimmer extends AceContigTrimmer{
     /**
      * @param trimmers
      */
-    public NextGenClosureAceContigTrimmer(int minimumEndCoverage, int minBiDirectionalEndCoverage, int ignoreThresholdEndCoverage){
+    public NextGenClosureAceContigTrimmer(int minSangerEndCloneCoverage,int minBiDirectionalEndCoverage, int ignoreThresholdEndCoverage){
         super( Arrays.<PlacedReadTrimmer<AcePlacedRead, AceContig>>asList(
-                        new MinimumEndCoverageTrimmer<AcePlacedRead, AceContig>(minimumEndCoverage),
-                        new MinimumBidirectionalEndCoverageTrimmer<AcePlacedRead, AceContig>(minBiDirectionalEndCoverage, ignoreThresholdEndCoverage)));
+                     //   new MinimumEndCoverageTrimmer<AcePlacedRead, AceContig>(minimumEndCoverage),
+                    //    new MinimumBidirectionalEndCoverageTrimmer<AcePlacedRead, AceContig>(minBiDirectionalEndCoverage, ignoreThresholdEndCoverage),
+                        new ElviraSangerContigEndTrimmer<AcePlacedRead, AceContig>(minSangerEndCloneCoverage,minBiDirectionalEndCoverage, ignoreThresholdEndCoverage)));
           
     }
 
