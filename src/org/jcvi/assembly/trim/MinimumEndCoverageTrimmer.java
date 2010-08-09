@@ -27,7 +27,6 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
 /**
  * @author dkatzel

@@ -101,7 +101,7 @@ public class Cas2Consed {
     private static final String DEFAULT_PREFIX = "cas2consed";
     private static final int DEFAULT_CACHE_SIZE = 2000;
     
-    private static final File DEFAULT_TEMP_DIR = new File("/usr/local/scratch");
+    static final File DEFAULT_TEMP_DIR = new File("/usr/local/scratch");
     /**
      * @param args
      * @throws Throwable 
@@ -279,7 +279,7 @@ public class Cas2Consed {
                 Date phdDate = new Date(startTime);
                 NextGenClosureAceContigTrimmer closureContigTrimmer=null;
                 if(useClosureTrimming){
-                    closureContigTrimmer= new NextGenClosureAceContigTrimmer(5, 5, 10);
+                    closureContigTrimmer= new NextGenClosureAceContigTrimmer(2,5, 10);
                 }
                 for(CasContig casContig : contigDatastore){
                     final AceContigAdapter adpatedCasContig = new AceContigAdapter(casContig, phdDate,readIdLookup);
