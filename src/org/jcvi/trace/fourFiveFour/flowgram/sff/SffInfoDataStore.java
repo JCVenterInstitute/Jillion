@@ -21,11 +21,14 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,7 +36,6 @@ import java.util.regex.Pattern;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
@@ -48,8 +50,13 @@ import org.jcvi.io.IOUtil;
  * command and parses its STDOUT output to get
  * Sffflowgram information from an sff file.
  * This may be faster than the other JavaCommon parsed
- * implementations of SffDataStore because sffinfo
+ * implementations of SffDataStore (for fetching a few reads
+ * from a large sff file) because sffinfo
  * may use undocumented indexing functions to speed up lookups.
+ * However, it is not recommended to use this implementation
+ * where lots of ids have to retrieved because of the overhead
+ * of making system calls to sffinfo makes the time to fetch data
+ * take a long time.
  * @author dkatzel
  *
  *
@@ -65,15 +72,31 @@ public class SffInfoDataStore implements SffDataStore {
     private static final Pattern BASECALLS_PATTERN = Pattern.compile("^\\s*Bases:\\s+(\\S+)\\s*$");
     private final File sffFile;
     private final String pathToSffInfo;
-    
+    private SFFCommonHeader sffHeader;
     /**
      * @param sffFile
+     * @throws FileNotFoundException 
+     * @throws SFFDecoderException 
      */
-    public SffInfoDataStore(String pathToSffInfo,File sffFile) {
+    public SffInfoDataStore(String pathToSffInfo,File sffFile) throws SFFDecoderException, FileNotFoundException {
         this.pathToSffInfo = pathToSffInfo;
         this.sffFile = sffFile;
+        //need to read the header so we get the # of flows
+        //sffinfo only puts that data for the 1st record
+        //returned so things like the iterator will need to
+        //get it from somewhere other than STDOUT.
+        SffFileVisitor headerVisitor = new AbstractSffFileVisitor() {
+            
+           
+            @Override
+            public boolean visitCommonHeader(SFFCommonHeader commonHeader) {
+                sffHeader = commonHeader;
+                return false;
+            }
+        };
+        SffParser.parseSFF(sffFile, headerVisitor);
     }
-    public SffInfoDataStore(File sffFile){
+    public SffInfoDataStore(File sffFile) throws SFFDecoderException, FileNotFoundException{
         this("sffinfo", sffFile);
     }
     /**
@@ -99,87 +122,10 @@ public class SffInfoDataStore implements SffDataStore {
         Process proc=null;
         Scanner scanner=null;
         try {
-            proc = builder.start();
-            
-            InputStream in = new BufferedInputStream(proc.getInputStream());
+            proc = builder.start();            
+            InputStream in = proc.getInputStream();
             scanner = new Scanner(in);
-            long qualLeft=0, qualRight=0, adapterLeft=0,adapterRight=0;
-            //initial size is 400 which is # of flows usually
-            List<Short> flows = new ArrayList<Short>(400);
-            List<Short> usedFlowValues=new ArrayList<Short>(400);
-            NucleotideEncodedGlyphs basecalls=null;
-            EncodedGlyphs<PhredQuality> qualities=null;
-            while(scanner.hasNextLine()){
-                String line = scanner.nextLine();
-                Matcher qualClipLeftMatcher = QUAL_LEFT_PATTERN.matcher(line);
-                if(qualClipLeftMatcher.find()){
-                    qualLeft = Long.parseLong(qualClipLeftMatcher.group(1));
-                }else{
-                    Matcher qualClipRightMatcher = QUAL_RIGHT_PATTERN.matcher(line);
-                    if(qualClipRightMatcher.find()){
-                        qualRight = Long.parseLong(qualClipRightMatcher.group(1));
-                    }else{
-                        Matcher adapterClipLeftMatcher = ADAPTER_LEFT_PATTERN.matcher(line);
-                        if(adapterClipLeftMatcher.find()){
-                            adapterLeft = Long.parseLong(adapterClipLeftMatcher.group(1));
-                        }else{
-                            Matcher adapterClipRightMatcher = ADAPTER_RIGHT_PATTERN.matcher(line);
-                            if(adapterClipRightMatcher.find()){
-                                adapterRight = Long.parseLong(adapterClipRightMatcher.group(1));
-                            }else{
-                               
-                                if(line.startsWith("Flowgram:")){
-                                    Scanner scanner2 = new Scanner(line);
-                                    scanner2.next(); // Flowgram:
-                                    while(scanner2.hasNext()){
-                                        flows.add(SFFUtil.parseSffInfoEncodedFlowgram(scanner2.next()));
-                                    }
-                                    scanner2.close();
-                                }else{
-                                    if(line.startsWith("Flow Indexes:")){
-                                        Scanner scanner2 = new Scanner(line);
-                                        scanner2.next(); //Flow
-                                        scanner2.next(); //Indexes:
-                                        int previousIndex=0;
-                                        while(scanner2.hasNextInt()){
-                                            int index = scanner2.nextInt();
-                                            if(index > previousIndex){
-                                                usedFlowValues.add(flows.get(index-1));
-                                                previousIndex = index;
-                                            }
-                                        }
-                                        scanner2.close();
-                                    }else{
-                                        Matcher basesMatcher = BASECALLS_PATTERN.matcher(line);
-                                        if(basesMatcher.find()){
-                                            basecalls = new DefaultNucleotideEncodedGlyphs(basesMatcher.group(1).trim());
-                                        }else{
-                                            
-                                            if(line.startsWith("Quality Scores:")){
-                                                Scanner scanner2 = new Scanner(line);
-                                                scanner2.next(); //Quality
-                                                scanner2.next(); //Scores:
-                                                //basecalls shouldn't be null here as long
-                                                //as 454 doesn't change the order of output
-                                                List<PhredQuality> qualitiesList = new ArrayList<PhredQuality>((int)basecalls.getLength());
-                                                while(scanner2.hasNextByte()){
-                                                    qualitiesList.add(PhredQuality.valueOf(scanner2.nextByte()));
-                                                }
-                                                scanner2.close();
-                                                qualities = new DefaultEncodedGlyphs<PhredQuality>(
-                                                        RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, qualitiesList);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return new SFFFlowgram(basecalls, qualities,
-                    usedFlowValues, Range.buildRange(CoordinateSystem.RESIDUE_BASED,qualLeft, qualRight), adapterLeft ==0? Range.buildRange(CoordinateSystem.RESIDUE_BASED, 0,0) :
-                        Range.buildRange(CoordinateSystem.RESIDUE_BASED,adapterLeft, adapterRight));
+            return parseSingleSffRecordFrom(scanner);
             
         } catch (IOException e) {
             throw new DataStoreException("could not get size", e);
@@ -190,7 +136,128 @@ public class SffInfoDataStore implements SffDataStore {
             IOUtil.closeAndIgnoreErrors(scanner);
         }
     }
+    protected SFFFlowgram parseSingleSffRecordFrom(Scanner scanner) {
+      
+        Range qualityRange = parseQualityClip(scanner);
+        Range adapterRange = parseAdapterClip(scanner);
+        short[] flows = parseAllFlows(scanner,sffHeader.getNumberOfFlowsPerRead());            
+        List<Short> usedFlowValues= parseUsedFlows(scanner.nextLine(), flows);             
+        NucleotideEncodedGlyphs basecalls=parseBasecalls(scanner.nextLine());
+        EncodedGlyphs<PhredQuality> qualities=parseQualities(scanner.nextLine(),(int)basecalls.getLength());
+        return new SFFFlowgram(basecalls, qualities,
+                usedFlowValues, qualityRange, adapterRange);
+    }
 
+    /**
+     * @param nextLine
+     * @return
+     */
+    private EncodedGlyphs<PhredQuality> parseQualities(String nextLine, int numOfQualities) {
+        if(nextLine.startsWith("Quality Scores:")){
+            Scanner scanner2 = new Scanner(nextLine);
+            scanner2.next(); //Quality
+            scanner2.next(); //Scores:
+            List<PhredQuality> qualitiesList = new ArrayList<PhredQuality>(numOfQualities);
+            while(scanner2.hasNextByte()){
+                qualitiesList.add(PhredQuality.valueOf(scanner2.nextByte()));
+            }
+            scanner2.close();
+            return new DefaultEncodedGlyphs<PhredQuality>(
+                    RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, qualitiesList);
+        }
+        throw new IllegalStateException("could not parse qualities from "+ nextLine);
+    }
+    /**
+     * @param nextLine
+     * @return
+     */
+    private NucleotideEncodedGlyphs parseBasecalls(String line) {
+        Matcher basesMatcher = BASECALLS_PATTERN.matcher(line);
+        if(basesMatcher.find()){
+           return new DefaultNucleotideEncodedGlyphs(basesMatcher.group(1).trim());
+        }
+        throw new IllegalStateException("could not parse basecalls from line: "+ line   );
+    }
+    /**
+     * @param scanner
+     * @param flows
+     * @return
+     */
+    private List<Short> parseUsedFlows(String usedFlowLine, short[] flows) {
+        List<Short> usedFlowValues= new ArrayList<Short>(flows.length);
+        Scanner scanner = new Scanner(usedFlowLine);
+        scanner.next(); //Flow
+        scanner.next(); //Indexes:
+        int previousIndex=0;
+        while(scanner.hasNextInt()){
+            int index = scanner.nextInt();
+            if(index > previousIndex){
+                usedFlowValues.add(flows[index-1]);
+                previousIndex = index;
+            }
+        }
+        scanner.close();
+        return usedFlowValues;
+    }
+    
+    /**
+     * @param scanner
+     * @return
+     */
+    private short[] parseAllFlows(Scanner scanner, int numFlows) {
+        ShortBuffer flows = ShortBuffer.allocate(numFlows);
+        String line = scanner.nextLine();
+        while(!line.startsWith("Flowgram:")){
+            line =scanner.nextLine();
+        }
+        Scanner scanner2 = new Scanner(line);
+        scanner2.next(); // Flowgram:
+        while(scanner2.hasNext()){
+            flows.put(SFFUtil.parseSffInfoEncodedFlowgram(scanner2.next()));
+        }
+        scanner2.close();
+        return flows.array();
+    }
+    /**
+     * @param scanner
+     * @return
+     */
+    private Range parseAdapterClip(Scanner scanner) {
+        String line = scanner.nextLine();
+
+        Matcher clipLeftMatcher = ADAPTER_LEFT_PATTERN.matcher(line);
+        while(!clipLeftMatcher.find()){
+            line = scanner.nextLine();
+            clipLeftMatcher = ADAPTER_LEFT_PATTERN.matcher(line);
+        }
+        int left=Integer.parseInt(clipLeftMatcher.group(1));
+        if(left==0){
+            return Range.buildRange(CoordinateSystem.RESIDUE_BASED, 0,0);
+        }
+        line =scanner.nextLine();
+        Matcher clipRightMatcher = ADAPTER_RIGHT_PATTERN.matcher(line);
+        clipRightMatcher.find();
+        int right=Integer.parseInt(clipRightMatcher.group(1));
+        return Range.buildRange(CoordinateSystem.RESIDUE_BASED,left,right);
+    }
+    /**
+     * @param scanner
+     * @return
+     */
+    private Range parseQualityClip(Scanner scanner) {
+        String line = scanner.nextLine();        
+        Matcher qualClipLeftMatcher = QUAL_LEFT_PATTERN.matcher(line);
+        while(!qualClipLeftMatcher.find()){
+            line = scanner.nextLine();  
+            qualClipLeftMatcher = QUAL_LEFT_PATTERN.matcher(line);
+        }
+        int left=Integer.parseInt(qualClipLeftMatcher.group(1));
+        line =scanner.nextLine();
+        Matcher qualClipRightMatcher = QUAL_RIGHT_PATTERN.matcher(line);
+        qualClipRightMatcher.find();
+        int right=Integer.parseInt(qualClipRightMatcher.group(1));
+        return Range.buildRange(CoordinateSystem.RESIDUE_BASED,left,right);
+    }
     /**
      * {@inheritDoc}
      */
@@ -271,10 +338,77 @@ public class SffInfoDataStore implements SffDataStore {
      */
     @Override
     public Iterator<SFFFlowgram> iterator() {
-        return new DataStoreIterator<SFFFlowgram>(this);
+        try {
+            return new SffIterator();
+        } catch (DataStoreException e) {
+           throw new IllegalStateException("error creating iterator", e);
+        }
     }
 
-    private class IdIterator implements Iterator{
+    private class SffIterator implements Iterator<SFFFlowgram>{
+        private final Scanner scanner;
+        private final Process process;
+        private Object endOfStream = new Object();
+        private Object next;
+        SffIterator() throws DataStoreException{
+            ProcessBuilder builder = new ProcessBuilder(
+                    pathToSffInfo,
+                    "-n",
+                    sffFile.getAbsolutePath()
+                    
+            );
+            
+            try {
+                process = builder.start();
+                
+                InputStream in = new BufferedInputStream(process.getInputStream());
+                scanner = new Scanner(in);
+                updateIterator();
+            } catch (Exception e) {
+                throw new DataStoreException("could not get id iterator", e);
+            }
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean hasNext() {
+            return endOfStream != next;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public SFFFlowgram next() {
+            if(!hasNext()){
+                throw new NoSuchElementException("iterator does not have any flowgrams left to iterate");
+            }
+            SFFFlowgram ret = (SFFFlowgram)next;
+            updateIterator();
+            return ret;
+        }
+
+        private void updateIterator(){
+            try{
+                next = parseSingleSffRecordFrom(scanner);
+            }catch(Exception e){
+                next= endOfStream;
+                scanner.close();
+                process.destroy();
+            }
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void remove() {
+            // TODO Auto-generated method stub
+            
+        }
+        
+    }
+    private class IdIterator implements Iterator<String>{
         private final Scanner scanner;
         private final Process process;
         IdIterator() throws DataStoreException{
@@ -311,7 +445,7 @@ public class SffInfoDataStore implements SffDataStore {
         * {@inheritDoc}
         */
         @Override
-        public Object next() {
+        public String next() {
             
             String id= scanner.next();
             if(!scanner.hasNext()){

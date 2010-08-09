@@ -74,9 +74,6 @@ public class DefaultNucleotideSffDataStore implements NucleotideDataStore{
     public NucleotideEncodedGlyphs get(String id) throws DataStoreException {
         final Flowgram flowgram = flowgramDataStore.get(id);
         NucleotideEncodedGlyphs fullRange= flowgram.getBasecalls();
-        if(id.equals("FTF2AAH02HMW3K")){
-            System.out.println("here");
-        }
         if(trim){
            
             return new DefaultNucleotideEncodedGlyphs(
