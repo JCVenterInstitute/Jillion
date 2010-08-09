@@ -77,7 +77,7 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractMultiThreade
          submissions.clear();
          executor.shutdown();
      }
-    public static void main(String[] args) throws ParseException, IOException{
+    public static void main(String[] args) throws ParseException{
         
         
         
@@ -92,6 +92,11 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractMultiThreade
                             .build());
         options.addOption(new CommandLineOptionBuilder("prefix", "file prefix for all generated files ( default "+DEFAULT_PREFIX +" )")                                
                                 .build());
+        options.addOption(new CommandLineOptionBuilder("tempDir", "temp directory")
+                                .build());
+        options.addOption(new CommandLineOptionBuilder("num_cores", "number of cores to use when converting")
+        .isRequired(true)
+        .build());
         
         options.addOption(new CommandLineOptionBuilder("trim", "trim file in sfffile's tab delimmed trim format")                                
                                                         .build());
@@ -116,11 +121,20 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractMultiThreade
         try {
             commandLine = CommandLineUtils.parseCommandLine(options, args);
             
-       // File casFile = new File("/usr/local/projects/VHTNGS/sample_data_new/giv3/MCE/30209/mapping/giv3_MCE_30209_hybrid_edited_refs.cas");
-        File casFile = new File(commandLine.getOptionValue("cas"));
-        AbstractMultiThreadedCasAssemblyBuilder builder = new DefaultMultithreadedCasAssemblyBuilder(casFile,2);
+       File casFile = new File(commandLine.getOptionValue("cas"));
+       Integer numCores = Integer.parseInt(commandLine.getOptionValue("num_cores"));
+        AbstractMultiThreadedCasAssemblyBuilder builder = new DefaultMultithreadedCasAssemblyBuilder(casFile,numCores);
         builder.commandLine(commandLine);
-        builder.tempDir(new File("/usr/local/scratch/dkatzel/multithreadedTemp"));
+        
+        if(!commandLine.hasOption("tempDir")){
+            //default to scratch
+            builder.tempDir(Cas2Consed.DEFAULT_TEMP_DIR);
+        }else{
+            File t =new File(commandLine.getOptionValue("tempDir"));
+            t.mkdirs();
+            builder.tempDir(t);
+        }
+      
         long start =System.currentTimeMillis();
         builder.build();
         long end =System.currentTimeMillis();

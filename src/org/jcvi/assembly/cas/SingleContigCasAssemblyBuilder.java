@@ -212,7 +212,7 @@ public class SingleContigCasAssemblyBuilder {
             Date phdDate = new Date(System.currentTimeMillis());
             NextGenClosureAceContigTrimmer closureContigTrimmer=null;
             if(useClosureTrimming){
-                closureContigTrimmer= new NextGenClosureAceContigTrimmer(5, 5, 10);
+                closureContigTrimmer= new NextGenClosureAceContigTrimmer(2,5, 10);
             }
             
             DefaultCasFileReadIndexToContigLookup read2contigMap = new DefaultCasFileReadIndexToContigLookup();
