@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  */
 public class TestNextGenCloserAceContigTrimmer {
 
-    NextGenClosureAceContigTrimmer sut = new NextGenClosureAceContigTrimmer(5, 5, 10);
+    NextGenClosureAceContigTrimmer sut = new NextGenClosureAceContigTrimmer(2,5, 10);
     NucleotideEncodedGlyphs consensusWithNoGaps = new DefaultNucleotideEncodedGlyphs("ACGTACGTACGT");
     long consensusLength = consensusWithNoGaps.getLength();
     
