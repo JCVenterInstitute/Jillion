@@ -27,11 +27,17 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import javax.activation.FileDataSource;
+
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.io.fileServer.DirectoryFileServer;
+import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
+import org.jcvi.io.fileServer.ReadWriteFileServer;
 import org.jcvi.util.ExceptionIntolerantFixedSizedThreadPoolExecutor;
 import org.joda.time.Period;
 
@@ -77,7 +83,7 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractMultiThreade
          submissions.clear();
          executor.shutdown();
      }
-    public static void main(String[] args) throws ParseException{
+    public static void main(String[] args) throws ParseException, IOException{
         
         
         
@@ -131,8 +137,9 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractMultiThreade
             builder.tempDir(Cas2Consed.DEFAULT_TEMP_DIR);
         }else{
             File t =new File(commandLine.getOptionValue("tempDir"));
-            t.mkdirs();
-            builder.tempDir(t);
+            ReadWriteDirectoryFileServer tempDir =DirectoryFileServer.createTemporaryDirectoryFileServer(t);
+          //  t.mkdirs();
+            builder.tempDir(tempDir.getRootDir());
         }
       
         long start =System.currentTimeMillis();
@@ -142,10 +149,18 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractMultiThreade
         System.out.println(new Period(end-start));
     
     }catch(ParseException e){
-        throw e;
+        printHelp(options);
+        System.exit(1);
     }
     
     }
-
+    private static void printHelp(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp( "multithreadedCas2Consed -cas <cas file> -o <output dir> [-prefix <prefix> -s <cache_size>]", 
+                
+                "convert a clc .cas assembly file into a consed package which runs on multiple cores on the same machine",
+                options,
+                "Created by Danny Katzel");
+    }
    
 }
