@@ -24,12 +24,35 @@
 package org.jcvi.fasta;
 
 import org.jcvi.io.TextFileVisitor;
-
+/**
+ * {@code FastaVisitor} is a {@link TextFileVisitor}
+ * that is used to visit Fasta Records.
+ * @author dkatzel
+ *
+ *
+ */
 public interface FastaVisitor extends TextFileVisitor{
-
+    /**
+     * Visit the definition line of the current fasta record.
+     * @param defline a string containing all the text of
+     * the def line including any comments and white space.
+     */
     void visitDefline(String defline);
-    
+    /**
+     * Visit a line of the body of the fasta record.
+     * @param bodyLine
+     */
     void visitBodyLine(String bodyLine);
-    
+    /**
+     * Visit the entire current fasta record which
+     * includes information parsed from the most recent 
+     * call to {@link #visitDefline(String)} and any
+     * {@link #visitBodyLine(String)}s.
+     * @param id the id of the fasta record.
+     * @param comment the comment if there is one (will be null
+     * if no comment exists.
+     * @param entireBody the entire body of the fasta record
+     * which might include new lines.
+     */
     void visitRecord(String id, String comment, String entireBody);
 }
