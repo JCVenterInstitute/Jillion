@@ -1,0 +1,459 @@
+/*******************************************************************************
+ * Copyright 2010 J. Craig Venter Institute
+ * 
+ * 	This file is part of JCVI Java Common
+ * 
+ *     JCVI Java Common is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     JCVI Java Common is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
+package org.jcvi.command.grid;
+
+
+import java.io.File;
+import java.util.List;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.ggf.drmaa.*;
+import org.jcvi.command.Command;
+
+/**
+ * A <code>GridJobImpl</code> is an abstractions for a DRMAA-supported distributed execution
+ * process.
+ *
+ * @author jsitz@jcvi.org
+ * @author dkatzel
+ */
+abstract public class GridJobImpl implements GridJob {
+
+    protected enum NativeSpec
+    {
+        BINARY_MODE,
+        QUEUE,
+        ARCHITECTURE,
+        PROJECT_CODE,
+        MEMORY,
+        CPUS
+    }
+
+    protected Session gridSession;
+    protected Command command;
+
+    protected Map<NativeSpec, String> nativeSpecs;
+    protected Set<String> otherNativeSpecs;
+    protected Properties env;
+    protected Set<String> emailRecipients;
+    protected String jobName;
+    protected File workingDirectory;
+    protected File inputFile;
+    protected File outputFile;
+    protected File errorFile;
+
+    protected long timeout;
+
+    protected JobTemplate jobTemplate;
+
+    protected List<String> jobIDList;
+    protected Map<String,JobInfo> jobInfoMap;
+
+    protected GridJobImpl(Session gridSession,
+                          Command command,
+                          Map<NativeSpec, String> nativeSpecs,
+                          Set<String> otherNativeSpecs,
+                          Properties env,
+                          Set<String> emailRecipients,
+                          String jobName,
+                          File workingDirectory,
+                          File inputFile,
+                          File outputFile,
+                          File errorFile,
+                          long timeout) {
+        super();
+
+        this.gridSession = gridSession;
+        this.command = command;
+        this.nativeSpecs = nativeSpecs;
+        this.otherNativeSpecs = otherNativeSpecs;
+        this.env = env;
+        this.emailRecipients = emailRecipients;
+        this.jobName = jobName;
+        this.workingDirectory = workingDirectory;
+        this.inputFile = inputFile;
+        this.outputFile = outputFile;
+        this.errorFile = errorFile;
+        this.timeout = timeout;
+    }
+
+    public GridJobImpl(GridJobImpl copy) throws DrmaaException
+    {
+        super();
+
+        this.gridSession = copy.gridSession;
+        this.jobTemplate = this.gridSession.createJobTemplate();
+        this.command = copy.command;
+        this.nativeSpecs = copy.nativeSpecs;
+        this.otherNativeSpecs = copy.otherNativeSpecs;
+        this.env = copy.env;
+        this.emailRecipients = copy.emailRecipients;
+        this.jobName = copy.jobName;
+        this.workingDirectory = copy.workingDirectory;
+        this.inputFile = copy.inputFile;
+        this.outputFile = copy.outputFile;
+        this.errorFile = copy.errorFile;
+        this.timeout = copy.timeout;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#finalize()
+     */
+    @Override
+    protected void finalize() throws Throwable
+    {
+        this.releaseJobTemplate();
+        super.finalize();
+    }
+
+    /**
+     * @return A <code>Command</code>.
+     */
+    @Override
+    public Command getCommand()
+    {
+        return this.command;
+    }
+
+
+    protected int preExecution()
+    {
+        // Do nothing by default.
+        return 0;
+    }
+
+    protected int postScheduling()
+    {
+        // Do nothing by default
+        return 0;
+    }
+
+    abstract protected int postExecution() throws DrmaaException;
+
+    /* (non-Javadoc)
+     * @see java.util.concurrent.Callable#call()
+     */
+    @Override
+    public Integer call() throws Exception
+    {
+        /*
+         * Call the pre-execution hook
+         */
+        int result = this.preExecution();
+        if (result != 0) return result;
+
+        /*
+         * Run the grid command and wait for it to complete.
+         */
+        this.runGridCommand();
+
+        /*
+         * Call the postScheduling hook
+         */
+        result = this.postScheduling();
+        if (result != 0) return result;
+
+        try
+        {
+            this.waitForCompletion();
+        }
+        catch (final ExitTimeoutException e)
+        {
+            // Terminate the job.
+            this.terminate();
+
+            // Throw a better exception
+            throw getGridTimeoutException();
+        }
+
+        /*
+         * Call the post-execution hook
+         */
+        return this.postExecution();
+    }
+
+    abstract protected GridException getGridTimeoutException();
+
+    /**
+     * builds the grid job template based on various fields and
+     * user-selected options.  This includes building the native spec and setting
+     * the job mode.
+     *
+     * @throws DrmaaException If there is an error while setting up the {@link JobTemplate}.
+     */
+    protected void buildJobTemplate() throws DrmaaException {
+        this.jobTemplate = this.gridSession.createJobTemplate();
+        this.jobTemplate.setRemoteCommand(this.command.getExecutablePath());
+        this.jobTemplate.setArgs(this.command.getArguments());
+        this.jobTemplate.setNativeSpecification(this.getNativeSpec());
+        this.jobTemplate.setJobEnvironment(this.env);
+
+        if (!this.emailRecipients.isEmpty()) {
+            this.jobTemplate.setEmail(this.emailRecipients);
+        }
+
+        if ( jobName != null ) {
+            jobTemplate.setJobName(jobName);
+        }
+
+        if ( workingDirectory != null ) {
+            jobTemplate.setWorkingDirectory(workingDirectory.getAbsolutePath());
+        }
+
+        if ( inputFile != null ) {
+            jobTemplate.setInputPath(getFileLocation(inputFile));
+        }
+
+        if ( outputFile != null ) {
+            jobTemplate.setOutputPath(getFileLocation(outputFile));
+        }
+
+        if ( errorFile != null ) {
+            jobTemplate.setErrorPath(getFileLocation(errorFile));
+        }
+    }
+
+    protected String getNativeSpec()
+    {
+        final StringBuilder nativeSpec = new StringBuilder();
+
+        for (final String spec : this.nativeSpecs.values())
+        {
+            if (nativeSpec.length() > 0)
+            {
+                nativeSpec.append(' ');
+            }
+            nativeSpec.append(spec);
+        }
+
+        for (final String spec : this.otherNativeSpecs)
+        {
+            if (nativeSpec.length() > 0)
+            {
+                nativeSpec.append(' ');
+            }
+            nativeSpec.append(spec);
+        }
+
+        return nativeSpec.toString();
+    }
+
+    private String getFileLocation(File file) {
+        return ":" + file.getAbsolutePath();
+    }
+
+    @Override
+    abstract public void runGridCommand() throws DrmaaException;
+
+    @Override
+    public List<String> getJobIDList() {
+        return jobIDList;
+    }
+
+    @Override
+    public Map<String, JobInfo> getJobInfoMap() {
+        return jobInfoMap;
+    }
+
+    abstract public void waitForCompletion() throws DrmaaException;
+
+    protected void releaseJobTemplate() throws DrmaaException
+    {
+        if (this.jobTemplate != null)
+        {
+            this.gridSession.deleteJobTemplate(this.jobTemplate);
+            this.jobTemplate = null;
+        }
+    }
+
+    @Override
+    abstract public void terminate() throws DrmaaException;
+
+    abstract protected static class Builder {
+        private static final int SECONDS_PER_MINUTE = 60;
+
+        protected Session gridSession;
+        protected Command command;
+
+        protected Map<NativeSpec, String> nativeSpecs;
+        protected Set<String> otherNativeSpecs;
+        protected Properties env;
+        protected Set<String> emailRecipients;
+        protected long timeout;
+
+        protected String jobName;
+        protected File workingDirectory;
+        protected File inputFile;
+        protected File outputFile;
+        protected File errorFile;
+
+        protected Builder(Session gridSession, Command command, String projectCode) {
+            this.gridSession = gridSession;
+            this.command = command;
+
+            this.nativeSpecs = new EnumMap<NativeSpec, String>(NativeSpec.class);
+            this.otherNativeSpecs = new HashSet<String>();
+            this.env = new Properties();
+            this.emailRecipients = new HashSet<String>();
+
+            this.setProjectCode(projectCode);
+            this.setBinaryMode(true);
+            this.setTimeout(TimeUnit.HOURS.toSeconds(4));
+
+            // hmm...
+            this.copyCurrentEnvironment("PATH");
+            this.copyCurrentEnvironment("ELVIRA_ETC");
+            this.copyCurrentEnvironment("LD_LIBRARY_PATH");
+        }
+
+
+        public void setBinaryMode(boolean mode) {
+            this.setNativeSpec(NativeSpec.BINARY_MODE, (mode) ? "-b y" : "-b n");
+        }
+
+        public void setProjectCode(String code) {
+            if (code == null) {
+                this.clearNativeSpec(NativeSpec.PROJECT_CODE);
+            } else {
+                this.setNativeSpec(NativeSpec.PROJECT_CODE, "-P " + code);
+            }
+        }
+
+        public void setQueue(String queueName) {
+            if (queueName == null) {
+                this.clearNativeSpec(NativeSpec.QUEUE);
+            } else {
+                this.setNativeSpec(NativeSpec.QUEUE, "-l " + queueName);
+            }
+        }
+
+        public void setMemory(Integer size, MemoryUnit unit) {
+            if (size == null || size<1 ) {
+                this.clearNativeSpec(NativeSpec.MEMORY);
+            } else {
+                if(unit ==null){
+                    throw new NullPointerException("unit can not be null");
+                }
+                this.setNativeSpec(NativeSpec.MEMORY, "-l memory='" + size + unit.getGridCode()+"'");
+            }
+        }
+
+        public Builder setMinCPUs(String minimumCPUs) {
+            if (minimumCPUs == null) {
+                this.clearNativeSpec(NativeSpec.CPUS);
+            } else {
+                this.setNativeSpec(NativeSpec.CPUS, "-pe threaded " + minimumCPUs );
+            }
+            return this;
+        }
+
+        public Builder setArchitecture(String arch) {
+            if (arch == null) {
+                this.clearNativeSpec(NativeSpec.ARCHITECTURE);
+            } else {
+                this.setNativeSpec(NativeSpec.ARCHITECTURE, "-l arch='" + arch + "'");
+            }
+            return this;
+        }
+
+        public void addEmailRecipient(String emailAddr) {
+            this.emailRecipients.add(emailAddr);
+        }
+
+        public void clearEmailRecipients() {
+            this.emailRecipients.clear();
+        }
+
+        public void setTimeout(long seconds) {
+            this.timeout = seconds;
+        }
+
+        public void setTimeoutMinutes(long minutes) {
+            this.setTimeout(minutes * SECONDS_PER_MINUTE);
+        }
+
+        public void copyCurrentEnvironment() {
+            this.env.putAll(System.getenv());
+        }
+
+        public void copyCurrentEnvironment(String var) {
+            this.setEnvironment(var, System.getenv(var));
+        }
+
+        public void setEnvironment(String var, String val) {
+            if (val == null) {
+                this.env.remove(var);
+            }
+            else {
+                this.env.setProperty(var, val);
+            }
+        }
+
+        public void setNativeSpec(String value)
+        {
+            if (value == null) return;
+            this.otherNativeSpecs.add(value);
+        }
+
+        public void clearNativeSpec(String miscSpec)
+        {
+            this.otherNativeSpecs.remove(miscSpec);
+        }
+
+        public void setName(String jobName) throws DrmaaException
+        {
+            this.jobName = jobName;
+        }
+
+        public void setWorkingDirectory(File workingDirectory) throws DrmaaException
+        {
+            this.workingDirectory = workingDirectory;
+        }
+
+        public void setInputFile(File inputFile) throws DrmaaException
+        {
+            this.inputFile = inputFile;
+        }
+
+        public void setOutputFile(File outputFile) throws DrmaaException
+        {
+            this.outputFile = outputFile;
+        }
+
+        public void setErrorFile(File errorFile) throws DrmaaException
+        {
+            this.errorFile = errorFile;
+        }
+
+        private void setNativeSpec(NativeSpec spec, String value) {
+            this.nativeSpecs.put(spec,value);
+        }
+
+        private void clearNativeSpec(NativeSpec spec) {
+            this.nativeSpecs.remove(spec);
+        }
+    }
+}
+

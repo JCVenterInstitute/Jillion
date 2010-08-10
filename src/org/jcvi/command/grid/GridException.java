@@ -22,7 +22,7 @@ package org.jcvi.command.grid;
 
 /**
  * A <code>GridException</code> is thrown when a problem is encountered while attempting to
- * execute a {@link GridJob}, or while retrieving information about a <code>GridJob</code>.  In
+ * execute a {@link GridJobImpl}, or while retrieving information about a <code>GridJobImpl</code>.  In
  * general, these exceptions cannot be recovered from easily.  They are declared as checked
  * exceptions because failures cannot be systematically avoided and recovery ranges from simple
  * termination to re-submission of a replacement job.

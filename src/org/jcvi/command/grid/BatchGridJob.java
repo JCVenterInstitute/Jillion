@@ -19,50 +19,19 @@
 
 package org.jcvi.command.grid;
 
-import org.ggf.drmaa.DrmaaException;
 import org.ggf.drmaa.JobInfo;
-import org.jcvi.command.Command;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
 
 /**
  * Created by IntelliJ IDEA.
  * User: aresnick
- * Date: Aug 9, 2010
- * Time: 5:07:52 PM
+ * Date: Aug 10, 2010
+ * Time: 11:47:15 AM
  * To change this template use File | Settings | File Templates.
  */
-public interface GridJob extends Callable<Integer> {
+public interface BatchGridJob extends GridJob {
 
-    public enum MemoryUnit{
-        MB("M"),
-        GB("G");
+    String getJobID();
 
-        private final String gridCode;
-        private MemoryUnit(String code){
-            this.gridCode = code;
-        }
-        public String getGridCode() {
-            return gridCode;
-        }
-
-
-    }
-
-    Command getCommand();
-
-    List<String> getJobIDList();
-
-    Map<String,JobInfo> getJobInfoMap();
-
-    void waitForCompletion() throws DrmaaException;
-
-    void runGridCommand() throws DrmaaException;
-
-    @Override
-    Integer call() throws Exception;
-
-    void terminate() throws DrmaaException;
+    JobInfo getJobInfo();
+    
 }
