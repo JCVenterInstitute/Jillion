@@ -25,9 +25,8 @@ import java.util.concurrent.FutureTask;
 import org.ggf.drmaa.DrmaaException;
 /**
  * {@code GridJobFuture} is a {@link Future}
- * implementation specifically for {@link GridJob}s
- * so you can access GirdJob specific fields
- * such as {@link GridJob#getJobID()}.
+ * implementation specifically for {@link GridJobImpl}s
+ * so you can access GridJob specific fields
  * @author dkatzel
  *
  *
