@@ -205,9 +205,9 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
             System.out.println("num contigs ="+ numContigs);
             System.out.println("num reads ="+ numReads);
             consedOut.createNewDir("edit_dir");
-            consedOut.createNewDir("phdball_dir");
+            consedOut.createNewDir("phd_dir");
             OutputStream masterAceOut = new FileOutputStream (consedOut.createNewFile("edit_dir/cas2consed.ace.1"));
-            OutputStream masterPhdOut = new FileOutputStream (consedOut.createNewFile("phdball_dir/cas2consed.phd.ball"));
+            OutputStream masterPhdOut = new FileOutputStream (consedOut.createNewFile("phd_dir/cas2consed.phd.ball"));
             OutputStream masterConsensusOut = new FileOutputStream (consedOut.createNewFile("cas2consed.consensus.fasta"));
             try{
             masterAceOut.write(String.format("AS %d %d%n", numContigs, numReads).getBytes());
@@ -227,7 +227,7 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
                 IOUtil.recursiveDelete(tempDir);
             }
             
-            consedOut.createNewSymLink("../phdball_dir/cas2consed.phd.ball", 
+            consedOut.createNewSymLink("../phd_dir/cas2consed.phd.ball", 
                                 "edit_dir/phd.ball");
             }finally{
                 IOUtil.closeAndIgnoreErrors(masterAceOut,masterPhdOut,masterConsensusOut);
