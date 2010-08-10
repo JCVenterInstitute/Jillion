@@ -149,11 +149,12 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
         try {
             CasParser.parseOnlyMetaData(casFile, read2contigMap);
 
+            ReadWriteDirectoryFileServer consedOut = DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
             
             int numberOfCasContigs = read2contigMap.getNumberOfContigs();
             for(long i=0; i< numberOfCasContigs; i++){
-                ReadWriteDirectoryFileServer aceOut = DirectoryFileServer.createReadWriteDirectoryFileServer(new File(tempDir, ""+i));
-                //build up command and call main method of single 
+                File outputDir =consedOut.createNewDir(""+i);
+               //build up command and call main method of single 
                 //contig cas2consed reusing same arguments + reference id
                 List<String> args = new ArrayList<String>();
                 args.add("-casId");
@@ -161,7 +162,7 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
                 args.add("-cas");
                 args.add(commandLine.getOptionValue("cas"));
                 args.add("-o");                
-                args.add(aceOut.getRootDir().getAbsolutePath());
+                args.add(outputDir.getAbsolutePath());
                 args.add("-tempDir");  
                 args.add(tempDir.getAbsolutePath());
                 args.add("-prefix");
@@ -193,8 +194,7 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
             //here we have a fully written out all contigs map
             int numContigs=0;
             int numReads=0;
-            ReadWriteDirectoryFileServer consedOut = DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
-            
+           
             for(int i=0; i<numberOfCasContigs; i++){
                 File countMap = consedOut.getFile(i+"/temp.counts");
                 Scanner scanner = new Scanner(countMap);
