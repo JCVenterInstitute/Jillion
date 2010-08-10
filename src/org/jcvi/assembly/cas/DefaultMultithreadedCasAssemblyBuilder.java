@@ -137,8 +137,10 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractMultiThreade
             builder.tempDir(Cas2Consed.DEFAULT_TEMP_DIR);
         }else{
             File t =new File(commandLine.getOptionValue("tempDir"));
+            t.mkdirs();
             ReadWriteDirectoryFileServer tempDir =DirectoryFileServer.createTemporaryDirectoryFileServer(t);
-          //  t.mkdirs();
+          System.out.println(tempDir.getRootDir());
+            //  t.mkdirs();
             builder.tempDir(tempDir.getRootDir());
         }
       
