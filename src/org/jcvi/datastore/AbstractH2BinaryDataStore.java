@@ -65,7 +65,10 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
     public AbstractH2BinaryDataStore(String fileDatabasePath) throws DataStoreException{
         StringBuilder connectionBuilder = new StringBuilder(CONNECTION_SUBSTRING)
                                             .append("file:")
-                                            .append(fileDatabasePath);
+                                            .append(fileDatabasePath)
+                                            //allows other processes/VMs to connect
+                                            //to same database
+                                            .append(";AUTO_SERVER=TRUE");
         connection = connect(connectionBuilder.toString());
         usingFiles = true;
         this.fileDatabasePath= fileDatabasePath;
