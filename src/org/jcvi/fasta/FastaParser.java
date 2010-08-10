@@ -30,10 +30,28 @@ import java.io.InputStream;
 import java.util.Scanner;
 
 import org.jcvi.io.IOUtil;
-
-public class FastaParser {
-
+/**
+ * {@code FastaParser} is a utility class
+ * to parse Fasta formated files.
+ * @author dkatzel
+ *
+ *
+ */
+public final class FastaParser {
+    /**
+     * private constructor.
+     */
     private FastaParser(){}
+    
+    /**
+     * Parse the given Fasta file and call the appropriate
+     * visitXXX methods on the given visitor.
+     * @param fastaFile the Fasta file to parse.
+     * @param visitor the visitor to call the visit methods on.
+     * @throws FileNotFoundException if the given fasta file does not 
+     * exist.
+     * @throws NullPointerException if fastaFile or visitor are null.
+     */
     public static void parseFasta(File fastaFile, FastaVisitor visitor) throws FileNotFoundException{
         InputStream in = new FileInputStream(fastaFile);
         try{
@@ -42,6 +60,13 @@ public class FastaParser {
             IOUtil.closeAndIgnoreErrors(in);
         }
     }
+    /**
+     * Parse the given InputStream of Fasta data and call the appropriate
+     * visitXXX methods on the given visitor.
+     * @param in the Inputstream of Fasta data to parse.
+     * @param visitor the visitor to call the visit methods on.
+     * @throws NullPointerException if inputstream or visitor are null.
+     */
     public static void parseFasta(InputStream in, FastaVisitor visitor){
         Scanner scanner = new Scanner(in).useDelimiter("\n");
         visitor.visitFile();
