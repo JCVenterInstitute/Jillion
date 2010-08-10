@@ -33,7 +33,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
      TestQualityFastaRecord.class ,
      TestDefaultEncodedNuclotideFastaRecord.class,
-     
+     TestFastaParser.class,
      TestDefaultQualityFastaMap.class,
      
      TestDefaultSequenceFastaMap.class,
