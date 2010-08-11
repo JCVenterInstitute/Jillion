@@ -18,15 +18,15 @@
  ******************************************************************************/
 
 package org.jcvi.command.grid;
-
+/**
+ * JCVI Grid has several different "queues" which allow
+ * jobs to run for limited periods of time.  Queues for faster
+ * running jobs have higher scheduling priority.
+ *
+ * @author dkatzel
+ */
 public enum JcviQueue {
-    /**
-     * JCVI Grid has several different "queues" which allow
-     * jobs to run for limited periods of time.  Queues for faster
-     * running jobs have higher scheduling priority.
-     *
-     * @author dkatzel
-     */
+    
 
     /**
      * Jobs running on the fast queue can only run for 1 hour
