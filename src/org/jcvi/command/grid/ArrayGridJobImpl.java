@@ -30,6 +30,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -58,7 +59,9 @@ public class ArrayGridJobImpl extends GridJobImpl {
                             long timeout,
                             int bulkJobStartLoopIndex,
                             int bulkJobEndLoopIndex,
-                            int bulkJobLoopIncrement) {
+                            int bulkJobLoopIncrement,
+                            PreExecutionHook preExecutionHook,
+                            PostExecutionHook postExecutionHook) {
         super(gridSession,
               command,
               nativeSpecs,
@@ -70,7 +73,9 @@ public class ArrayGridJobImpl extends GridJobImpl {
               inputFile,
               outputFile,
               errorFile,
-              timeout);
+              timeout,
+              preExecutionHook,
+              postExecutionHook);
         this.bulkJobStartLoopIndex = bulkJobStartLoopIndex;
         this.bulkJobEndLoopIndex = bulkJobEndLoopIndex;
         this.bulkJobLoopIncrement = bulkJobLoopIncrement;
@@ -83,11 +88,7 @@ public class ArrayGridJobImpl extends GridJobImpl {
         this.bulkJobLoopIncrement = copy.bulkJobLoopIncrement;
     }
 
-    /*
-        BatchGridJob interface methods
-     */    
-    @Override
-    protected int postExecution() throws DrmaaException {
+    protected int getExitStatus() throws DrmaaException {
         for ( String jobID : jobIDList ) {
             JobInfo info = jobInfoMap.get(jobID);
             if ( info == null ) {
@@ -101,7 +102,13 @@ public class ArrayGridJobImpl extends GridJobImpl {
 
         return Session.DONE;
     }
-
+    @Override
+    protected int callPostExecutionHook() throws Exception {
+        if(this.getPostExecutionHook()==null){
+            return getExitStatus();
+        }
+        return this.getPostExecutionHook().execute(getJobInfoMap());
+    }
     @Override
     protected void buildJobTemplate() throws DrmaaException {
         super.buildJobTemplate();
@@ -192,7 +199,9 @@ public class ArrayGridJobImpl extends GridJobImpl {
                                         timeout,
                                         bulkJobStartLoopIndex,
                                         bulkJobEndLoopIndex,
-                                        bulkJobLoopIncrement);
+                                        bulkJobLoopIncrement,
+                                        preExecutionHook,
+                                        postExecutionHook);
         }
     }
 }

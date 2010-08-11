@@ -25,6 +25,7 @@ import org.jcvi.command.Command;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * A <code>GridJobImpl</code> is an abstractions for a DRMAA-supported distributed execution
@@ -46,7 +47,9 @@ public class BatchGridJobImpl extends GridJobImpl implements BatchGridJob {
                                File inputFile,
                                File outputFile,
                                File errorFile,
-                               long timeout) {
+                               long timeout,
+                               PreExecutionHook preExecutionHook,
+                               PostExecutionHook postExecutionHook) {
         super(gridSession,
               command,
               nativeSpecs,
@@ -58,7 +61,9 @@ public class BatchGridJobImpl extends GridJobImpl implements BatchGridJob {
               inputFile,
               outputFile,
               errorFile,
-              timeout);
+              timeout,
+              preExecutionHook,
+              postExecutionHook);
     }
 
     /**
@@ -92,15 +97,13 @@ public class BatchGridJobImpl extends GridJobImpl implements BatchGridJob {
         return jobInfo;
     }
 
-    /*
-        GridJobImpl abstract method implementations
-     */
-
     @Override
-    // by default, return the job's exit status
-    protected int postExecution() throws DrmaaException
-    {
-        return getJobInfo().getExitStatus();
+    protected int callPostExecutionHook() throws Exception {
+        JobInfo jobInfo = getJobInfo();
+        if(this.getPostExecutionHook()==null){
+            return jobInfo.getExitStatus();
+        }
+        return this.getPostExecutionHook().execute(getJobInfoMap());
     }
 
     @Override
@@ -156,7 +159,10 @@ public class BatchGridJobImpl extends GridJobImpl implements BatchGridJob {
                                         inputFile,
                                         outputFile,
                                         errorFile,
-                                        timeout);
+                                        timeout,
+                                        preExecutionHook,
+                                        postExecutionHook
+                                        );
         }
     }
 }

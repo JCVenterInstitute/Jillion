@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.ggf.drmaa.*;
@@ -71,6 +72,9 @@ abstract public class GridJobImpl implements GridJob {
     protected List<String> jobIDList;
     protected Map<String,JobInfo> jobInfoMap;
 
+    private final PostExecutionHook postExecutionHook;
+    private final PreExecutionHook preExecutionHook;
+    
     protected GridJobImpl(Session gridSession,
                           Command command,
                           Map<NativeSpec, String> nativeSpecs,
@@ -82,7 +86,9 @@ abstract public class GridJobImpl implements GridJob {
                           File inputFile,
                           File outputFile,
                           File errorFile,
-                          long timeout) {
+                          long timeout,
+                          PreExecutionHook preExecutionHook,
+                          PostExecutionHook postExecutionHook) {
         super();
 
         this.gridSession = gridSession;
@@ -97,6 +103,8 @@ abstract public class GridJobImpl implements GridJob {
         this.outputFile = outputFile;
         this.errorFile = errorFile;
         this.timeout = timeout;
+        this.preExecutionHook = preExecutionHook;
+        this.postExecutionHook = postExecutionHook;
     }
 
     public GridJobImpl(GridJobImpl copy) throws DrmaaException
@@ -116,6 +124,8 @@ abstract public class GridJobImpl implements GridJob {
         this.outputFile = copy.outputFile;
         this.errorFile = copy.errorFile;
         this.timeout = copy.timeout;
+        this.postExecutionHook = copy.postExecutionHook;
+        this.preExecutionHook = copy.preExecutionHook;
     }
 
     /* (non-Javadoc)
@@ -149,9 +159,6 @@ abstract public class GridJobImpl implements GridJob {
         // Do nothing by default
         return 0;
     }
-
-    abstract protected int postExecution() throws DrmaaException;
-
     /* (non-Javadoc)
      * @see java.util.concurrent.Callable#call()
      */
@@ -191,9 +198,21 @@ abstract public class GridJobImpl implements GridJob {
         /*
          * Call the post-execution hook
          */
-        return this.postExecution();
+        if(postExecutionHook ==null){
+            return 0;
+        }
+        return callPostExecutionHook();
+    }
+    
+    protected PostExecutionHook getPostExecutionHook() {
+        return postExecutionHook;
     }
 
+    protected PreExecutionHook getPreExecutionHook() {
+        return preExecutionHook;
+    }
+
+    abstract protected int callPostExecutionHook() throws Exception;
     abstract protected GridException getGridTimeoutException();
 
     /**
@@ -308,6 +327,9 @@ abstract public class GridJobImpl implements GridJob {
         protected File inputFile;
         protected File outputFile;
         protected File errorFile;
+        protected PostExecutionHook postExecutionHook;
+        protected PreExecutionHook preExecutionHook;
+        
 
         protected Builder(Session gridSession, Command command, String projectCode) {
             this.gridSession = gridSession;
@@ -328,7 +350,14 @@ abstract public class GridJobImpl implements GridJob {
             this.copyCurrentEnvironment("LD_LIBRARY_PATH");
         }
 
-
+        public Builder preExecutionHook(PreExecutionHook preExecutionHook){
+            this.preExecutionHook = preExecutionHook;
+            return this;
+        }
+        public Builder postExecutionHook(PostExecutionHook postExecutionHook){
+            this.postExecutionHook = postExecutionHook;
+            return this;
+        }
         public void setBinaryMode(boolean mode) {
             this.setNativeSpec(NativeSpec.BINARY_MODE, (mode) ? "-b y" : "-b n");
         }
@@ -360,7 +389,7 @@ abstract public class GridJobImpl implements GridJob {
             }
         }
 
-        public Builder setMinCPUs(String minimumCPUs) {
+        public Builder setMinCPUs(Integer minimumCPUs) {
             if (minimumCPUs == null) {
                 this.clearNativeSpec(NativeSpec.CPUS);
             } else {
