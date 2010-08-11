@@ -23,6 +23,7 @@
  */
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.CommonUtil;
@@ -38,8 +39,8 @@ public class SFFFlowgram implements Flowgram {
     private EncodedGlyphs<PhredQuality> qualities;
     private Range qualitiesClip;
     private Range adapterClip;
-    private List<Short> values;
-
+   // private List<Short> values;
+    private final short[] values;
 
     /**
      * @param basecalls
@@ -53,7 +54,10 @@ public class SFFFlowgram implements Flowgram {
         canNotBeNull(basecalls, qualities, values, qualitiesClip, adapterClip);
         this.basecalls = basecalls;
         this.qualities = qualities;
-        this.values = values;
+        this.values = new short[values.size()];
+        for(int i=0; i< values.size(); i++){
+            this.values[i]= values.get(i);
+        }
         this.qualitiesClip = qualitiesClip;
         this.adapterClip = adapterClip;
     }
@@ -97,11 +101,11 @@ public class SFFFlowgram implements Flowgram {
     }
     @Override
     public int getSize() {
-        return values.size();
+        return values.length;
     }
     @Override
     public float getValueAt(int index) {
-        return SFFUtil.convertFlowgramValue(values.get(index));
+        return SFFUtil.convertFlowgramValue(values[index]);
     }
     /**
      * Returns the hash code for this {@link SFFFlowgram}.
@@ -112,7 +116,7 @@ public class SFFFlowgram implements Flowgram {
         final int prime = 31;
         int result = 1;
         result = prime * result + basecalls.decode().hashCode();
-        result = prime * result + values.hashCode();
+        result = prime * result + Arrays.hashCode(values);
         result = prime * result + qualities.decode().hashCode();
         result = prime * result + qualitiesClip.hashCode();
         result = prime * result + adapterClip.hashCode();
@@ -147,13 +151,18 @@ public class SFFFlowgram implements Flowgram {
             //inaccuracy.. 
             //this might technically break equals and hashcode
             //contract.
-            for(int i=0; i< getSize(); i++){
-                if ( Math.abs( getValueAt(i) - other.getValueAt(i) ) > .01F ){
-                    return false;
-                }
-            }            
+            
+          // final boolean ret = Arrays.equals(values, other.values);
+           for(int i=0; i<values.length; i++){
+               if(values[i] != other.values[i]){
+                   if(Math.abs(getValueAt(i) - other.getValueAt(i))>0.01F){
+                       return false;
+                   }
+               }
+           }
+           return true;          
         }
-        return true;
+        return false;
         
     }
 
