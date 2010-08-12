@@ -55,7 +55,7 @@ public class ConsedNavigationWriter implements Closeable{
         
         StringBuilder builder = new StringBuilder("BEGIN_REGION\n");
         builder.append(String.format("TYPE: %s\n",element.getType()));
-        builder.append(String.format("READ: %s\n",element.getElementId()));
+        builder.append(String.format("READ: %s\n",element.getTargetId()));
         Range range = element.getUngappedPositionRange().convertRange(CoordinateSystem.RESIDUE_BASED);
         builder.append(String.format("UNPADDED_READ_POS: %d %d\n",range.getLocalStart(), range.getLocalEnd()));
         if(element.getComment() !=null){
@@ -69,7 +69,7 @@ public class ConsedNavigationWriter implements Closeable{
         
         StringBuilder builder = new StringBuilder("BEGIN_REGION\n");
         builder.append(String.format("TYPE: %s\n",element.getType()));
-        builder.append(String.format("CONTIG: %s\n",element.getElementId()));
+        builder.append(String.format("CONTIG: %s\n",element.getTargetId()));
         Range range = element.getUngappedPositionRange().convertRange(CoordinateSystem.RESIDUE_BASED);
         builder.append(String.format("UNPADDED_CONS_POS: %d %d\n",range.getLocalStart(), range.getLocalEnd()));
         if(element.getComment() !=null){
