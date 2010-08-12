@@ -32,14 +32,12 @@ import java.util.Map;
 * Time: 4:35:35 PM
 * To change this template use File | Settings | File Templates.
 */
-public class StatusJobInfo implements JobInfo {
+public class JobInfoTimeout implements JobInfo {
 
     private String jobId;
-    private int exitStatus;
 
-    public StatusJobInfo(String jobId, int exitStatus) {
+    public JobInfoTimeout(String jobId) {
         this.jobId = jobId;
-        this.exitStatus = exitStatus;
     }
 
     @Override
@@ -54,12 +52,12 @@ public class StatusJobInfo implements JobInfo {
 
     @Override
     public boolean hasExited() throws DrmaaException {
-        return true;
+        return false;
     }
 
     @Override
     public int getExitStatus() throws DrmaaException {
-        return exitStatus;
+        throw new IllegalStateException("job did not run to completion");
     }
 
     @Override
@@ -79,6 +77,6 @@ public class StatusJobInfo implements JobInfo {
 
     @Override
     public boolean wasAborted() throws DrmaaException {
-        return false;
+        return true;
     }
 }

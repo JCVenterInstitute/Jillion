@@ -36,6 +36,14 @@ import java.util.concurrent.Callable;
  */
 public interface GridJob extends Callable<Integer> {
 
+    public enum Status {
+        UNKNOWN,
+        COMPLETED,
+        TIMED_OUT,
+        ABORTED,
+        SIGNALLED,
+    }
+
     public enum MemoryUnit{
         MB("M"),
         GB("G");

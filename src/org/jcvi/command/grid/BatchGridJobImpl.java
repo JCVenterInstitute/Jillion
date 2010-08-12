@@ -25,7 +25,6 @@ import org.jcvi.command.Command;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.Callable;
 
 /**
  * A <code>GridJobImpl</code> is an abstractions for a DRMAA-supported distributed execution
@@ -113,7 +112,7 @@ public class BatchGridJobImpl extends GridJobImpl implements BatchGridJob {
         {
             this.buildJobTemplate();
             this.jobIDList = Collections.singletonList(this.gridSession.runJob(this.jobTemplate));
-            this.jobInfoMap = new Hashtable<String,JobInfo>();
+            this.jobInfoMap = Collections.synchronizedMap(new HashMap<String,JobInfo>());
         }
         finally
         {
@@ -124,21 +123,16 @@ public class BatchGridJobImpl extends GridJobImpl implements BatchGridJob {
     @Override
     public void waitForCompletion() throws DrmaaException
     {
-        JobInfo jobInfo = this.gridSession.wait(getJobID(), this.timeout);
-        System.out.println("completed has exited= "+ jobInfo.hasExited());
-        jobInfoMap.put(getJobID(),jobInfo);
-    }
-
-    @Override
-    public void terminate() throws DrmaaException{
-        this.gridSession.control(getJobID(), Session.TERMINATE);
-        jobInfoMap.put(getJobID(),new StatusJobInfo(getJobID(), Session.TERMINATE));
-    }
-
-    @Override
-    public GridException getGridTimeoutException() {
-        return new GridException("The grid job (" + this.getJobID()
-            + ") failed to complete in the scheduled time.");
+        waiting = true;
+        try {
+            JobInfo jobInfo = this.gridSession.wait(getJobID(), this.timeout);
+            jobInfoMap.put(getJobID(),jobInfo);
+        } catch (ExitTimeoutException e) {
+            cancelGridJobs(true);
+        } finally {
+            updateGridJobStatusMap();
+            waiting = false;
+        }
     }
 
     public static class Builder extends GridJobImpl.Builder implements org.jcvi.Builder<BatchGridJob>{

@@ -20,10 +20,13 @@
 package org.jcvi.command.grid;
 
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.ggf.drmaa.DrmaaException;
+import org.ggf.drmaa.JobInfo;
 import org.ggf.drmaa.Session;
 import org.ggf.drmaa.SessionFactory;
 
@@ -107,6 +110,67 @@ public final class GridUtils
     public static Session buildNewSession() throws GridInitializationException
     {
         return buildNewSession(DEFAULT_CONTACT);
+    }
+
+    public static GridJob.Status getJobStatus(GridJob job) throws DrmaaException {
+        for ( String jobID : job.getJobIDList() ) {
+            GridJob.Status status = GridUtils.getJobStatus(job.getJobInfoMap().get(jobID));
+            if ( status != GridJob.Status.COMPLETED ) {
+                return status;
+            } else {
+                // evaluate next job result
+            }
+        }
+
+        return GridJob.Status.COMPLETED;
+    }
+
+    public static GridJob.Status getJobStatus(JobInfo jobInfo) throws DrmaaException 
+    {
+        if ( jobInfo == null ) {
+            return GridJob.Status.UNKNOWN;
+        } else if ( jobInfo.wasAborted() ) {
+            if ( jobInfo instanceof JobInfoTimeout ) {
+                return GridJob.Status.TIMED_OUT;
+            } else {
+                return GridJob.Status.ABORTED;
+            }
+        } else if ( jobInfo.hasSignaled() ) {
+            return GridJob.Status.SIGNALLED;
+        } else {
+            return GridJob.Status.COMPLETED;
+        }
+    }
+
+    public static String printJobInfo(JobInfo info) throws DrmaaException {
+        if ( info == null ) {
+            return "job info is null";
+        }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("Job " + info.getJobId() + " job status is " + GridUtils.getJobStatus(info));
+        builder.append("\nExit status value is: " + (info.hasExited() ? info.getExitStatus() : " not applicable"));
+
+        // Output usage information
+        builder.append("\nJob Usage:");
+
+        // try to get the map
+        Map rmap = null;
+        if (info != null) {
+            rmap = info.getResourceUsage();
+        }
+
+        if (rmap != null && !rmap.isEmpty()) {
+            for (Iterator i = rmap.keySet().iterator(); i.hasNext();) {
+                String name = (String) i.next();
+                String value = (String) rmap.get(name);
+                builder.append("\n  " + name + "=" + value);
+            }
+        } else {
+            builder.append("\n  not available");
+        }
+
+        return builder.toString();
     }
 
 }
