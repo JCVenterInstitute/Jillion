@@ -19,18 +19,15 @@
 
 package org.jcvi.command.grid;
 
-import org.ggf.drmaa.DrmaaException;
-import org.ggf.drmaa.JobInfo;
-import org.ggf.drmaa.Session;
-import org.ggf.drmaa.JobTemplate;
+import org.ggf.drmaa.*;
 import org.jcvi.command.Command;
 
 import java.io.File;
-import java.util.Hashtable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -88,24 +85,14 @@ public class ArrayGridJobImpl extends GridJobImpl {
         this.bulkJobLoopIncrement = copy.bulkJobLoopIncrement;
     }
 
-    protected int getExitStatus() throws DrmaaException {
-        for ( String jobID : jobIDList ) {
-            JobInfo info = jobInfoMap.get(jobID);
-            if ( info == null ) {
-                return Session.FAILED;
-            } else if ( info.getExitStatus() != Session.DONE ) {
-                return info.getExitStatus();
-            } else {
-                // evaluate next job result
-            }
-        }
-
-        return Session.DONE;
-    }
+    /*
+        BatchGridJob interface methods
+     */
+    
     @Override
     protected int callPostExecutionHook() throws Exception {
         if(this.getPostExecutionHook()==null){
-            return getExitStatus();
+            return 0;
         }
         return this.getPostExecutionHook().execute(getJobInfoMap());
     }
@@ -126,7 +113,7 @@ public class ArrayGridJobImpl extends GridJobImpl {
                                                           this.bulkJobStartLoopIndex,
                                                           this.bulkJobEndLoopIndex,
                                                           this.bulkJobLoopIncrement);
-            this.jobInfoMap = new Hashtable<String,JobInfo>();
+            this.jobInfoMap = Collections.synchronizedMap(new HashMap<String,JobInfo>());
         }
         finally
         {
@@ -137,28 +124,15 @@ public class ArrayGridJobImpl extends GridJobImpl {
 
     @Override
     public void waitForCompletion() throws DrmaaException {
-        this.gridSession.synchronize(jobIDList, this.timeout, false);
-        for ( String jobID : jobIDList ) {
-            jobInfoMap.put(jobID,this.gridSession.wait(jobID,Session.TIMEOUT_NO_WAIT));
+        waiting = true;
+        try {
+            this.gridSession.synchronize(jobIDList, this.timeout, false);
+        } catch (ExitTimeoutException e) {
+            cancelGridJobs(true);
+        } finally {
+            updateGridJobStatusMap();
+            waiting = false;
         }
-
-        System.out.println("completed has exited");
-    }
-
-    @Override
-    public void terminate() throws DrmaaException{
-        for ( String jobID : jobIDList ) {
-            if ( !jobInfoMap.containsKey(jobID) ) {
-                this.gridSession.control(jobID, Session.TERMINATE);
-                jobInfoMap.put(jobID,new StatusJobInfo(jobID, Session.TERMINATE));
-            }
-        }
-    }
-
-    @Override
-    public GridException getGridTimeoutException() {
-        return new GridException("One or more of this array grid job's grid jobs "
-            + "failed to complete in the scheduled time.");
     }
 
     public static class Builder extends GridJobImpl.Builder implements org.jcvi.Builder<GridJob>{

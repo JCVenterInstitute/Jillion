@@ -75,6 +75,8 @@ abstract public class GridJobImpl implements GridJob {
     private final PostExecutionHook postExecutionHook;
     private final PreExecutionHook preExecutionHook;
     
+    protected boolean waiting = false;
+
     protected GridJobImpl(Session gridSession,
                           Command command,
                           Map<NativeSpec, String> nativeSpecs,
@@ -159,6 +161,20 @@ abstract public class GridJobImpl implements GridJob {
         // Do nothing by default
         return 0;
     }
+
+    protected Status postExecution() throws DrmaaException {
+        for ( String jobID : jobIDList ) {
+            Status status = GridUtils.getJobStatus(jobInfoMap.get(jobID));
+            if ( status != Status.COMPLETED ) {
+                return status;
+            } else {
+                // evaluate next job result
+            }
+        }
+
+        return Status.COMPLETED;
+    }
+
     /* (non-Javadoc)
      * @see java.util.concurrent.Callable#call()
      */
@@ -182,18 +198,7 @@ abstract public class GridJobImpl implements GridJob {
         result = this.postScheduling();
         if (result != 0) return result;
 
-        try
-        {
-            this.waitForCompletion();
-        }
-        catch (final ExitTimeoutException e)
-        {
-            // Terminate the job.
-            this.terminate();
-
-            // Throw a better exception
-            throw getGridTimeoutException();
-        }
+        this.waitForCompletion();
 
         /*
          * Call the post-execution hook
@@ -213,7 +218,27 @@ abstract public class GridJobImpl implements GridJob {
     }
 
     abstract protected int callPostExecutionHook() throws Exception;
-    abstract protected GridException getGridTimeoutException();
+    
+    protected void cancelGridJobs(boolean jobTimeout) throws DrmaaException {
+        for ( String jobID : jobIDList ) {
+            int jobProgramStatus = this.gridSession.getJobProgramStatus(jobID);
+            if ( jobProgramStatus != Session.DONE && jobProgramStatus != Session.FAILED ) {
+                this.gridSession.control(jobID, Session.TERMINATE);
+                if ( jobTimeout ) {
+                    jobInfoMap.put(jobID,new JobInfoTimeout(jobID));
+                }
+            }
+        }
+    }
+
+    protected void updateGridJobStatusMap() throws DrmaaException {
+        for ( String jobID : jobIDList ) {
+            if ( !jobInfoMap.containsKey(jobID) ) {
+                jobInfoMap.put(jobID,this.gridSession.wait(jobID,1));
+            }
+        }
+    }
+
 
     /**
      * builds the grid job template based on various fields and
@@ -308,7 +333,12 @@ abstract public class GridJobImpl implements GridJob {
     }
 
     @Override
-    abstract public void terminate() throws DrmaaException;
+    public void terminate() throws DrmaaException{
+        cancelGridJobs(false);
+        if ( !waiting ) {
+            updateGridJobStatusMap();
+        }
+    }
 
     abstract protected static class Builder {
         private static final int SECONDS_PER_MINUTE = 60;
@@ -329,7 +359,7 @@ abstract public class GridJobImpl implements GridJob {
         protected File errorFile;
         protected PostExecutionHook postExecutionHook;
         protected PreExecutionHook preExecutionHook;
-        
+
 
         protected Builder(Session gridSession, Command command, String projectCode) {
             this.gridSession = gridSession;
