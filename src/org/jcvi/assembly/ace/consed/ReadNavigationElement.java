@@ -26,6 +26,9 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.sequence.SequenceDirection;
 
 /**
+ * {@code ReadNavigationElement} is a {@link NavigationElement}
+ * that tells consed how to navigate to a particular feature 
+ * of a specific read.
  * @author dkatzel
  *
  *
@@ -33,20 +36,61 @@ import org.jcvi.sequence.SequenceDirection;
 public class ReadNavigationElement extends AbstractNavigationElement{
 
     /**
-     * @param type
-     * @param elementId
-     * @param ungappedPositionRange
-     * @param comment
+     * Constructs a new {@link ReadNavigationElement}.
+     * @param targetId the id of the target of that is to be navigated.
+     * @param ungappedPositionRange the ungapped position
+     * range of this element; cannot be null.
+     * @param comment a comment that describes why this element exists
+     * (may be null).
+     * @throws NullPointerException if type, targetId or 
+     * ungappedPositionRange are null.
      */
     public ReadNavigationElement(String readId,
             Range ungappedPositionRange, String comment) {
         super(Type.READ, readId, ungappedPositionRange, comment);
     }
+    /**
+     * Constructs a new {@link ReadNavigationElement}.
+     * @param targetId the id of the target of that is to be navigated.
+     * @param ungappedPositionRange the ungapped position
+     * range of this element; cannot be null.
+     * @throws NullPointerException if type, targetId or 
+     * ungappedPositionRange are null.
+     */
     public ReadNavigationElement(String readId,
             Range ungappedPositionRange){
         super(Type.READ, readId, ungappedPositionRange);
     }
-    
+    /**
+     * Build a new {@link ReadNavigationElement} for the given
+     * PlacedRead, that will navigate to the given GAPPED range.  This
+     * is a convenience method that handles converting the gapped
+     * range into an ungapped range and reverse complimenting required by the consed.
+     * This is the same as {@link #buildReadNavigationElementFrom(PlacedRead, Range, int,String)
+     * buildReadNavigationElementFrom(read, gappedFeatureValidRange, fullLength,null)}
+     * @param read the read to make a {@link ReadNavigationElement}
+     * for; cannot be null.
+     * @param gappedFeatureRange the gapped feature range coordinates; cannot be null.
+     * @return a new ReadNavigationElement.
+     * @see #buildReadNavigationElementFrom(PlacedRead, Range, int,String)
+     */
+    public ReadNavigationElement buildReadNavigationElementFrom(PlacedRead read, 
+            Range gappedFeatureValidRange, 
+            int fullLength){
+        return buildReadNavigationElementFrom(read, gappedFeatureValidRange, fullLength,null);
+    }
+    /**
+     * Build a new {@link ReadNavigationElement} for the given
+     * PlacedRead, that will navigate to the given GAPPED range.  This
+     * is a convenience method that handles converting the gapped
+     * range into an ungapped range and reverse complimenting required by the consed.
+     * @param read the read to make a {@link ReadNavigationElement}
+     * for; cannot be null.
+     * @param gappedFeatureRange the gapped feature range coordinates; cannot be null.
+     * @param comment a comment that describes why this element exists
+     * (may be null).
+     * @return a new ReadNavigationElement.
+     */
     public ReadNavigationElement buildReadNavigationElementFrom(PlacedRead read, 
             Range gappedFeatureValidRange, 
             int fullLength,

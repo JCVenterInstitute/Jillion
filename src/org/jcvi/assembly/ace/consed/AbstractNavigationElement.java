@@ -22,6 +22,9 @@ package org.jcvi.assembly.ace.consed;
 import org.jcvi.Range;
 
 /**
+ * {@code AbstractNavigationElement} is an abstract
+ * implementation of {@link NavigationElement}
+ * that manages all the common fields of a {@link NavigationElement}.
  * @author dkatzel
  *
  *
@@ -31,30 +34,47 @@ public abstract class AbstractNavigationElement implements NavigationElement{
     private final Type type;
     private final Range ungappedPositionRange;
     private final String comment;
-    private final String elementId;
+    private final String targetId;
     
     /**
-     * @param type
-     * @param elementId
-     * @param ungappedPositionRange
-     * @param comment
+     * Constructs a new {@link NavigationElement}.
+     * @param type the Type of the element; cannot be null.
+     * @param targetId the id of the target of that is to be navigated.
+     * @param ungappedPositionRange the ungapped position
+     * range of this element; cannot be null.
+     * @param comment a comment that describes why this element exists
+     * (may be null).
+     * @throws NullPointerException if type, targetId or 
+     * ungappedPositionRange are null.
      */
-    public AbstractNavigationElement(Type type, String elementId,
+    public AbstractNavigationElement(Type type, String targetId,
             Range ungappedPositionRange, String comment) {
         if(type ==null){
             throw new NullPointerException("type can not be null");
         }
-        if(elementId ==null){
+        if(targetId ==null){
             throw new NullPointerException("element id can not be null");
         }
         if(ungappedPositionRange ==null){
             throw new NullPointerException("ungappedPositionRange can not be null");
         }
         this.type = type;
-        this.elementId = elementId;
+        this.targetId = targetId;
         this.ungappedPositionRange = ungappedPositionRange;
         this.comment = comment;
     }
+    /**
+     * Convenience constructor.  This is the same as
+     * {@link #AbstractNavigationElement(org.jcvi.assembly.ace.consed.NavigationElement.Type, String, Range, String)
+     * new AbstractNavigationElement(type, elementId, ungappedPositionRange, null)}
+     * @param type the Type of the element; cannot be null.
+     * @param targetId the id of the target of that is to be navigated.
+     * @param ungappedPositionRange the ungapped position
+     * range of this element; cannot be null.
+     * @throws NullPointerException if type, targetId or 
+     * ungappedPositionRange are null.
+     * @see #AbstractNavigationElement(org.jcvi.assembly.ace.consed.NavigationElement.Type, String, Range, String)
+     */
     public AbstractNavigationElement(Type type, String elementId,
             Range ungappedPositionRange){
         this(type, elementId, ungappedPositionRange,null);
@@ -87,8 +107,8 @@ public abstract class AbstractNavigationElement implements NavigationElement{
     * {@inheritDoc}
     */
     @Override
-    public String getElementId() {
-        return elementId;
+    public String getTargetId() {
+        return targetId;
     }
 
     @Override
@@ -96,7 +116,7 @@ public abstract class AbstractNavigationElement implements NavigationElement{
         final int prime = 31;
         int result = 1;
         result = prime * result + ((comment == null) ? 0 : comment.hashCode());
-        result = prime * result+ elementId.hashCode();
+        result = prime * result+ targetId.hashCode();
         result = prime * result + type.hashCode();
         result = prime * result + ungappedPositionRange.hashCode();
         return result;
@@ -121,7 +141,7 @@ public abstract class AbstractNavigationElement implements NavigationElement{
         } else if (!comment.equals(other.comment)) {
             return false;
         }
-       else if (!elementId.equals(other.elementId)) {
+       else if (!targetId.equals(other.targetId)) {
             return false;
         }
         if (type != other.type) {
