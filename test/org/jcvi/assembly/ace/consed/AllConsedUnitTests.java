@@ -32,7 +32,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestConsedUtil.class,
-        TestConsedUtil_Split0x.class
+        TestConsedUtil_Split0x.class,
+        TestConsensusNavigationElement.class,
+        TestConsensusNavigationElementFactoryMethod.class,
+        TestReadNavigationElement.class
     }
     )
 public class AllConsedUnitTests {
