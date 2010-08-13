@@ -66,18 +66,18 @@ public class ReadNavigationElement extends AbstractNavigationElement{
      * PlacedRead, that will navigate to the given GAPPED range.  This
      * is a convenience method that handles converting the gapped
      * range into an ungapped range and reverse complimenting required by the consed.
-     * This is the same as {@link #buildReadNavigationElementFrom(PlacedRead, Range, int,String)
+     * This is the same as {@link #buildReadNavigationElement(PlacedRead, Range, int,String)
      * buildReadNavigationElementFrom(read, gappedFeatureValidRange, fullLength,null)}
      * @param read the read to make a {@link ReadNavigationElement}
      * for; cannot be null.
      * @param gappedFeatureRange the gapped feature range coordinates; cannot be null.
      * @return a new ReadNavigationElement.
-     * @see #buildReadNavigationElementFrom(PlacedRead, Range, int,String)
+     * @see #buildReadNavigationElement(PlacedRead, Range, int,String)
      */
-    public ReadNavigationElement buildReadNavigationElementFrom(PlacedRead read, 
+    public ReadNavigationElement buildReadNavigationElement(PlacedRead read, 
             Range gappedFeatureValidRange, 
             int fullLength){
-        return buildReadNavigationElementFrom(read, gappedFeatureValidRange, fullLength,null);
+        return buildReadNavigationElement(read, gappedFeatureValidRange, fullLength,null);
     }
     /**
      * Build a new {@link ReadNavigationElement} for the given
@@ -91,7 +91,7 @@ public class ReadNavigationElement extends AbstractNavigationElement{
      * (may be null).
      * @return a new ReadNavigationElement.
      */
-    public ReadNavigationElement buildReadNavigationElementFrom(PlacedRead read, 
+    public ReadNavigationElement buildReadNavigationElement(PlacedRead read, 
             Range gappedFeatureValidRange, 
             int fullLength,
             String comment){

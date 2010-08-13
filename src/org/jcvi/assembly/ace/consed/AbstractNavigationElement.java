@@ -141,17 +141,13 @@ public abstract class AbstractNavigationElement implements NavigationElement{
         } else if (!comment.equals(other.comment)) {
             return false;
         }
-       else if (!targetId.equals(other.targetId)) {
+       if (!targetId.equals(other.targetId)) {
             return false;
         }
         if (type != other.type) {
             return false;
         }
-        if (ungappedPositionRange == null) {
-            if (other.ungappedPositionRange != null) {
-                return false;
-            }
-        } else if (!ungappedPositionRange.equals(other.ungappedPositionRange)) {
+        if(!ungappedPositionRange.equals(other.ungappedPositionRange)) {
             return false;
         }
         return true;
