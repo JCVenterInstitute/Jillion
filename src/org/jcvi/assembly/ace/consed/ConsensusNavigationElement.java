@@ -93,6 +93,9 @@ public class ConsensusNavigationElement extends AbstractNavigationElement{
      */
     public static <C extends Contig<?>> ConsensusNavigationElement buildConsensusNavigationElement(C contig,
             Range gappedFeatureRange,String comment){
+        if(gappedFeatureRange ==null){
+            throw new NullPointerException("feature range can not be null");
+        }
         Range ungappedRange = AssemblyUtil.convertGappedRangeIntoUngappedRange(contig.getConsensus(), gappedFeatureRange);
         return new ConsensusNavigationElement(contig.getId(), ungappedRange,comment);
     }
