@@ -157,6 +157,15 @@ public class ArrayGridJobImpl extends GridJobImpl {
             this.bulkJobLoopIncrement = bulkJobLoopIncrement;
         }
 
+        public Builder setMaxRunningTasks(Integer maxRunningTasks) {
+            if (maxRunningTasks == null) {
+                this.clearNativeSpec(NativeSpec.MAX_RUNNING_TASKS);
+            } else {
+                this.setNativeSpec(NativeSpec.MAX_RUNNING_TASKS, "-tc " + maxRunningTasks);
+            }
+            return this;
+        }
+
         @Override
         public ArrayGridJobImpl build() {
             return new ArrayGridJobImpl(gridSession,
