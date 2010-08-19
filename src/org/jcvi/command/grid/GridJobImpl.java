@@ -49,7 +49,8 @@ abstract public class GridJobImpl implements GridJob {
         ARCHITECTURE,
         PROJECT_CODE,
         MEMORY,
-        CPUS
+        CPUS,
+        MAX_RUNNING_TASKS
     }
 
     protected Session gridSession;
@@ -506,11 +507,11 @@ abstract public class GridJobImpl implements GridJob {
             this.errorFile = errorFile;
         }
 
-        private void setNativeSpec(NativeSpec spec, String value) {
+        protected void setNativeSpec(NativeSpec spec, String value) {
             this.nativeSpecs.put(spec,value);
         }
 
-        private void clearNativeSpec(NativeSpec spec) {
+        protected void clearNativeSpec(NativeSpec spec) {
             this.nativeSpecs.remove(spec);
         }
     }
