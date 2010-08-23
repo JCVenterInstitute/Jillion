@@ -236,6 +236,7 @@ public class Command
     public Process execute() throws IOException
     {
         this.procBuilder.command(this.getCommandLine());
+        this.procBuilder.directory(workingDir);
         return this.procBuilder.start();
 
         
