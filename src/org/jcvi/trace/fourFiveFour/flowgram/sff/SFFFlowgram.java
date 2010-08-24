@@ -39,7 +39,6 @@ public class SFFFlowgram implements Flowgram {
     private EncodedGlyphs<PhredQuality> qualities;
     private Range qualitiesClip;
     private Range adapterClip;
-   // private List<Short> values;
     private final short[] values;
 
     /**
@@ -140,29 +139,14 @@ public class SFFFlowgram implements Flowgram {
         }
         SFFFlowgram other = (SFFFlowgram) obj;
         
-        boolean mostFieldsEqual= 
+        return
         CommonUtil.similarTo(basecalls.decode(), other.basecalls.decode()) &&
         CommonUtil.similarTo(qualities.decode(), other.qualities.decode()) &&
         CommonUtil.similarTo(qualitiesClip, other.qualitiesClip) &&
-        CommonUtil.similarTo(adapterClip, other.adapterClip);
+        CommonUtil.similarTo(adapterClip, other.adapterClip) &&
+        Arrays.equals(values, other.values);
         
-        if(mostFieldsEqual){
-            //have to do this because of floating point
-            //inaccuracy.. 
-            //this might technically break equals and hashcode
-            //contract.
-            
-          // final boolean ret = Arrays.equals(values, other.values);
-           for(int i=0; i<values.length; i++){
-               if(values[i] != other.values[i]){
-                   if(Math.abs(getValueAt(i) - other.getValueAt(i))>0.01F){
-                       return false;
-                   }
-               }
-           }
-           return true;          
-        }
-        return false;
+       
         
     }
 
