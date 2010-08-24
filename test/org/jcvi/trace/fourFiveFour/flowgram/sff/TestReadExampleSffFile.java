@@ -44,11 +44,11 @@ public abstract class  TestReadExampleSffFile extends AbstractTestExampleSffFile
         
         assertEquals(5, getNumberOfFlowgrams());
         
-        assertSameValues(FF585OX02HCMO2, getFlowgram("FF585OX02HCMO2"));
-        assertSameValues(FF585OX02HCD8G, getFlowgram("FF585OX02HCD8G"));
-        assertSameValues(FF585OX02FNE4N, getFlowgram("FF585OX02FNE4N"));
-        assertSameValues(FF585OX02GMGGN, getFlowgram("FF585OX02GMGGN"));
-        assertSameValues(FF585OX02FHO5X,getFlowgram("FF585OX02FHO5X"));
+        assertEquals(FF585OX02HCMO2, getFlowgram("FF585OX02HCMO2"));
+        assertEquals(FF585OX02HCD8G, getFlowgram("FF585OX02HCD8G"));
+        assertEquals(FF585OX02FNE4N, getFlowgram("FF585OX02FNE4N"));
+        assertEquals(FF585OX02GMGGN, getFlowgram("FF585OX02GMGGN"));
+        assertEquals(FF585OX02FHO5X,getFlowgram("FF585OX02FHO5X"));
     }
     protected abstract int getNumberOfFlowgrams() throws Exception;
    protected abstract Flowgram getFlowgram(String id) throws Exception;

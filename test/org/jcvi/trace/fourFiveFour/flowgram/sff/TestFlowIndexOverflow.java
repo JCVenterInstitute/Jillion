@@ -48,7 +48,7 @@ import org.junit.Test;
  *
  *
  */
-public class TestFlowIndexOverflow extends AbstractTestReadActualSFFFile{
+public class TestFlowIndexOverflow{
 
     private static final String FILE = "files/indexOverflow.sff";
    private static final RunLengthEncodedGlyphCodec runLengthQualityCodec = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
@@ -75,7 +75,7 @@ public class TestFlowIndexOverflow extends AbstractTestReadActualSFFFile{
         assertEquals(1, dataStore.size());
         
         Flowgram actual =dataStore.get("FCPRO0N01A48YO");
-        assertSameValues(FCPRO0N01A48YO, actual);
+        assertEquals(FCPRO0N01A48YO, actual);
     }
 
 }
