@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.ggf.drmaa.*;
@@ -40,7 +39,7 @@ import org.jcvi.command.Command;
  * @author jsitz@jcvi.org
  * @author dkatzel
  */
-abstract public class GridJobImpl implements GridJob {
+abstract public class AbstractGridJob implements GridJob {
 
     protected enum NativeSpec
     {
@@ -78,7 +77,7 @@ abstract public class GridJobImpl implements GridJob {
     
     protected boolean waiting = false;
 
-    protected GridJobImpl(Session gridSession,
+    protected AbstractGridJob(Session gridSession,
                           Command command,
                           Map<NativeSpec, String> nativeSpecs,
                           Set<String> otherNativeSpecs,
@@ -110,7 +109,7 @@ abstract public class GridJobImpl implements GridJob {
         this.postExecutionHook = postExecutionHook;
     }
 
-    public GridJobImpl(GridJobImpl copy) throws DrmaaException
+    public AbstractGridJob(AbstractGridJob copy) throws DrmaaException
     {
         super();
 
@@ -137,6 +136,10 @@ abstract public class GridJobImpl implements GridJob {
     @Override
     protected void finalize() throws Throwable
     {
+        //force job template to be released
+        //incase it hasn't already
+        //this is to try to avoid a memory leak of the underlying
+        //C drmma library and properly cleanup itself.
         this.releaseJobTemplate();
         super.finalize();
     }
@@ -168,8 +171,6 @@ abstract public class GridJobImpl implements GridJob {
             Status status = GridUtils.getJobStatus(jobInfoMap.get(jobID));
             if ( status != Status.COMPLETED ) {
                 return status;
-            } else {
-                // evaluate next job result
             }
         }
 
@@ -374,11 +375,6 @@ abstract public class GridJobImpl implements GridJob {
             this.setProjectCode(projectCode);
             this.setBinaryMode(true);
             this.setTimeout(TimeUnit.HOURS.toSeconds(4));
-
-            // hmm...
-            this.copyCurrentEnvironment("PATH");
-            this.copyCurrentEnvironment("ELVIRA_ETC");
-            this.copyCurrentEnvironment("LD_LIBRARY_PATH");
         }
 
         public Builder preExecutionHook(PreExecutionHook preExecutionHook){
@@ -482,27 +478,27 @@ abstract public class GridJobImpl implements GridJob {
             this.otherNativeSpecs.remove(miscSpec);
         }
 
-        public void setName(String jobName) throws DrmaaException
+        public void setName(String jobName)
         {
             this.jobName = jobName;
         }
 
-        public void setWorkingDirectory(File workingDirectory) throws DrmaaException
+        public void setWorkingDirectory(File workingDirectory)
         {
             this.workingDirectory = workingDirectory;
         }
 
-        public void setInputFile(File inputFile) throws DrmaaException
+        public void setInputFile(File inputFile)
         {
             this.inputFile = inputFile;
         }
 
-        public void setOutputFile(File outputFile) throws DrmaaException
+        public void setOutputFile(File outputFile)
         {
             this.outputFile = outputFile;
         }
 
-        public void setErrorFile(File errorFile) throws DrmaaException
+        public void setErrorFile(File errorFile)
         {
             this.errorFile = errorFile;
         }

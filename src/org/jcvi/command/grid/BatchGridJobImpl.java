@@ -33,7 +33,7 @@ import java.util.*;
  * @author jsitz@jcvi.org
  * @author dkatzel
  */
-public class BatchGridJobImpl extends GridJobImpl implements BatchGridJob {
+public class BatchGridJobImpl extends AbstractGridJob implements BatchGridJob {
 
     protected BatchGridJobImpl(Session gridSession,
                                Command command,
@@ -135,7 +135,7 @@ public class BatchGridJobImpl extends GridJobImpl implements BatchGridJob {
         }
     }
 
-    public static class Builder extends GridJobImpl.Builder implements org.jcvi.Builder<BatchGridJob>{
+    public static class Builder extends AbstractGridJob.Builder implements org.jcvi.Builder<BatchGridJob>{
         public Builder(Session gridSession, Command command, String projectCode) {
             super(gridSession, command, projectCode);
         }

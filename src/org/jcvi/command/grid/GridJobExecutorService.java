@@ -29,7 +29,7 @@ import org.ggf.drmaa.Session;
 
 /**
  * {@code GridJobExecutorService} is an {@link ExecutorService}
- * that submits and manages {@link GridJobImpl}s.
+ * that submits and manages {@link AbstractGridJob}s.
  * @author dkatzel
  * @author jsitz@jcvi.org
  */

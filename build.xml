@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JavaCommon" default="unit.tests" basedir=".">
 	
-	<property name="version" value="2.0.3" />
+	<property name="version" value="2.0.4" />
 	<property name="project-name" value="JCVI-JavaCommon" />
 	<property name="bin" value ="bin_ant"/>
 	<property name="reports" value ="reports"/>

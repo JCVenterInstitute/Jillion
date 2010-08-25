@@ -36,7 +36,7 @@ import java.util.Set;
  * Time: 3:51:07 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ArrayGridJobImpl extends GridJobImpl {
+public class ArrayGridJobImpl extends AbstractGridJob {
 
     protected int bulkJobStartLoopIndex;
     protected int bulkJobEndLoopIndex;
@@ -135,7 +135,7 @@ public class ArrayGridJobImpl extends GridJobImpl {
         }
     }
 
-    public static class Builder extends GridJobImpl.Builder implements org.jcvi.Builder<GridJob>{
+    public static class Builder extends AbstractGridJob.Builder implements org.jcvi.Builder<GridJob>{
 
         private int bulkJobStartLoopIndex = 1;
         private int bulkJobEndLoopIndex = 1;
