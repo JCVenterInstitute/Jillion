@@ -20,6 +20,8 @@
 package org.jcvi.command.grid;
 
 /**
+ * {@code PreExecutionHook} is a callback
+ * method to invoke before the execution GridJob.
  * @author dkatzel
  *
  *

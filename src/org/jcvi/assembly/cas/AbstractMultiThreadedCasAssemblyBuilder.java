@@ -73,6 +73,7 @@ import org.jcvi.assembly.trim.TrimmerException;
 import org.jcvi.assembly.util.DefaultTrimFileDataStore;
 import org.jcvi.assembly.util.TrimDataStore;
 import org.jcvi.assembly.util.TrimDataStoreUtil;
+import org.jcvi.command.Command;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.CachedDataStore;
@@ -154,39 +155,33 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
             int numberOfCasContigs = read2contigMap.getNumberOfContigs();
             for(long i=0; i< numberOfCasContigs; i++){
                 File outputDir =consedOut.createNewDir(""+i);
+                Command aCommand = new Command(new File("fakeCommand"));
                //build up command and call main method of single 
                 //contig cas2consed reusing same arguments + reference id
                 List<String> args = new ArrayList<String>();
-                args.add("-casId");
-                args.add(""+i);
-                args.add("-cas");
-                args.add(commandLine.getOptionValue("cas"));
-                args.add("-o");                
-                args.add(outputDir.getAbsolutePath());
-                args.add("-tempDir");  
-                args.add(tempDir.getAbsolutePath());
-                args.add("-prefix");
-                args.add("temp");
+                aCommand.setOption("-casId", ""+i);
+                aCommand.setOption("-cas", commandLine.getOptionValue("cas"));
+                aCommand.setOption("-o", outputDir.getAbsolutePath());
+                aCommand.setOption("-tempDir", tempDir.getAbsolutePath());
+                aCommand.setOption("-prefix", "temp");
+                
                 if(commandLine.hasOption("useIllumina")){
-                    args.add("-useIllumina");
+                    aCommand.addFlag("-useIllumina");
                 }
                 if(commandLine.hasOption("useClosureTrimming")){
-                    args.add("-useClosureTrimming");
+                    aCommand.addFlag("-useClosureTrimming");
                 }
                 if(commandLine.hasOption("trim")){
-                    args.add("-trim");
-                    args.add(commandLine.getOptionValue("trim"));
+                    aCommand.setOption("-trim", commandLine.getOptionValue("trim"));                    
                 }
                 if(commandLine.hasOption("trimMap")){
-                    args.add("-trimMap");
-                    args.add(commandLine.getOptionValue("trimMap"));
+                    aCommand.setOption("-trimMap", commandLine.getOptionValue("trimMap")); 
                 }
                 //chromat_dir
                 if(commandLine.hasOption("chromat_dir")){
-                    args.add("-chromat_dir");
-                    args.add(commandLine.getOptionValue("chromat_dir"));
+                    aCommand.setOption("-chromat_dir", commandLine.getOptionValue("chromat_dir")); 
                 }
-                submitSingleCasAssemblyConversion(args);
+                submitSingleCasAssemblyConversion(aCommand);
                 
             }
             //wait till all contigs are done...
@@ -243,7 +238,7 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
 } catch (Throwable t) {
     throw new IOException("error converting single assembly "+ args,t);
 } */
-    protected abstract void submitSingleCasAssemblyConversion(List<String> args) throws IOException;
+    protected abstract void submitSingleCasAssemblyConversion(Command command) throws IOException;
     
     protected abstract void waitForAllAssembliesToFinish() throws Exception;
     public static class AceWriterCallable implements Callable<Void>{

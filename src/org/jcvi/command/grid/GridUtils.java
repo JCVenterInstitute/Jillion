@@ -117,8 +117,6 @@ public final class GridUtils
             GridJob.Status status = GridUtils.getJobStatus(job.getJobInfoMap().get(jobID));
             if ( status != GridJob.Status.COMPLETED ) {
                 return status;
-            } else {
-                // evaluate next job result
             }
         }
 
@@ -132,9 +130,8 @@ public final class GridUtils
         } else if ( jobInfo.wasAborted() ) {
             if ( jobInfo instanceof JobInfoTimeout ) {
                 return GridJob.Status.TIMED_OUT;
-            } else {
-                return GridJob.Status.ABORTED;
             }
+            return GridJob.Status.ABORTED;
         } else if ( jobInfo.hasSignaled() ) {
             return GridJob.Status.SIGNALLED;
         } else {
@@ -155,10 +152,7 @@ public final class GridUtils
         builder.append("\nJob Usage:");
 
         // try to get the map
-        Map rmap = null;
-        if (info != null) {
-            rmap = info.getResourceUsage();
-        }
+        Map rmap = info.getResourceUsage();
 
         if (rmap != null && !rmap.isEmpty()) {
             for (Iterator i = rmap.keySet().iterator(); i.hasNext();) {

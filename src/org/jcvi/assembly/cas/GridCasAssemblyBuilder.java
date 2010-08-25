@@ -21,7 +21,7 @@ package org.jcvi.assembly.cas;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Callable;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.commons.cli.CommandLine;
@@ -31,38 +31,70 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.command.Command;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.command.grid.BatchGridJobImpl;
+import org.jcvi.command.grid.GridJob;
+import org.jcvi.command.grid.GridJobExecutorService;
+import org.jcvi.command.grid.GridUtils;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
-import org.jcvi.util.ExceptionIntolerantFixedSizedThreadPoolExecutor;
 import org.joda.time.Period;
-
 
 /**
  * @author dkatzel
  *
  *
  */
-public class DefaultMultithreadedCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<Void>{
+public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<Integer>{
     private static final String DEFAULT_PREFIX = "cas2consed";
     private static final int DEFAULT_CACHE_SIZE = 1000;
     
+    private final String projectCode;
+    private final File singleContigCasAssemblyExecutable;
     /**
      * @param casFile
      * @param numberOfContigsToConvertAtSameTime
      */
-    public DefaultMultithreadedCasAssemblyBuilder(File casFile,
-            int numberOfContigsToConvertAtSameTime) {
+    public GridCasAssemblyBuilder(File casFile,
+            int numberOfContigsToConvertAtSameTime, File singleContigCasAssemblyExecutable,String projectCode) {
+        
         super(casFile, numberOfContigsToConvertAtSameTime);
+        this.projectCode = projectCode;
+        this.singleContigCasAssemblyExecutable = singleContigCasAssemblyExecutable;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected ExecutorService createExecutorService(
+            int numberOfContigsToConvertAtSameTime) {
+        return new GridJobExecutorService("gridCas2Consed",numberOfContigsToConvertAtSameTime);
     }
 
     @Override
-    protected ExecutorService createExecutorService(int numberOfContigsToConvertAtSameTime) {
-        return new ExceptionIntolerantFixedSizedThreadPoolExecutor(numberOfContigsToConvertAtSameTime);
+    protected GridJob createSingleAssemblyCasConversionCallable(
+            Command aCommand) {
+        Command command = new Command(singleContigCasAssemblyExecutable);
+        for(Entry<String, String> entry :aCommand.getOpt().entrySet()){
+            command.setOption(entry.getKey(), entry.getValue());
+        }
+        for(String flag :aCommand.getFlags()){
+            command.addFlag(flag);
+        }
+        for(String target :aCommand.getTargets()){
+            command.addTarget(target);
+        }
+        GridJob job = new BatchGridJobImpl.Builder(GridUtils.getGlobalSession(), command, projectCode)
+                        .build();
+        return job;
     }
-    
-    
-    
-    public static void main(String[] args) throws IOException{
+
+    @Override
+    protected void jobFinished(Integer returnedValue) {
+        // TODO Auto-generated method stub
+        
+    }
+ public static void main(String[] args) throws IOException{
         
         
         
@@ -79,7 +111,7 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractExecutorCasA
                                 .build());
         options.addOption(new CommandLineOptionBuilder("tempDir", "temp directory")
                                 .build());
-        options.addOption(new CommandLineOptionBuilder("num_cores", "number of cores to use when converting")
+        options.addOption(new CommandLineOptionBuilder("num_jobs", "number of jobs  to launch at a time when converting")
         .isRequired(true)
         .build());
         
@@ -107,7 +139,7 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractExecutorCasA
             commandLine = CommandLineUtils.parseCommandLine(options, args);
             
        File casFile = new File(commandLine.getOptionValue("cas"));
-       Integer numCores = Integer.parseInt(commandLine.getOptionValue("num_cores"));
+       Integer numCores = Integer.parseInt(commandLine.getOptionValue("num_jobs"));
         AbstractMultiThreadedCasAssemblyBuilder builder = new DefaultMultithreadedCasAssemblyBuilder(casFile,numCores);
         builder.commandLine(commandLine);
         
@@ -137,37 +169,14 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractExecutorCasA
     }
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "multithreadedCas2Consed -cas <cas file> -o <output dir> [-prefix <prefix> -s <cache_size>]", 
+        formatter.printHelp( "gridCas2Consed -cas <cas file> -o <output dir> [-prefix <prefix> -s <cache_size>]", 
                 
-                "convert a clc .cas assembly file into a consed package which runs on multiple cores on the same machine",
+                "convert a clc .cas assembly file into a consed package which will launch grid jobs," +
+                "one per contig to convert.  The number of jobs running at the same time" +
+                "can be controlled with the num_jobs option",
                 options,
                 "Created by Danny Katzel");
     }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    protected Callable createSingleAssemblyCasConversionCallable(final Command command) {
-        return new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                SingleContigCasAssemblyBuilder.main(command.getArguments().toArray(new String[0]));
-                //must return null to satisfy Void return
-                return null;
-            }
-        };
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    protected void jobFinished(Void returnedValue) {
-        // no-op
-        
-    }
-
-
    
+
 }

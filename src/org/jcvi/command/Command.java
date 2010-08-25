@@ -135,6 +135,21 @@ public class Command
         }
     }
 
+    public Map<String, String> getOpt() {
+        return opt;
+    }
+
+
+    public List<String> getFlags() {
+        return flags;
+    }
+
+
+    public List<String> getTargets() {
+        return targets;
+    }
+
+
     public void removeFlag(String flag)
     {
         this.flags.remove(flag);
