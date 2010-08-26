@@ -66,6 +66,7 @@ public class DefaultPlacedRead implements PlacedRead {
         final int prime = 31;
         int result = 1;
         result = prime * result + read.hashCode();
+        result = prime * result + sequenceDirection.hashCode();
         result = prime * result + (int) (start ^ (start >>> 32));
         return result;
     }
@@ -80,7 +81,8 @@ public class DefaultPlacedRead implements PlacedRead {
         }
         if (obj instanceof DefaultPlacedRead){           
             DefaultPlacedRead other = (DefaultPlacedRead) obj;
-            return read.equals(other.getRead()) && start== other.getStart();
+            return read.equals(other.getRead()) && start== other.getStart() 
+            && getSequenceDirection() == other.getSequenceDirection();
         }
         return false;
         
