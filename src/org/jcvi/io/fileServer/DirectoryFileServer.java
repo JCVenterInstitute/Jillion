@@ -234,7 +234,9 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
     
     @Override
     public Iterator<File> iterator() {
-        return FileIterator.createDepthFirstFileIterator(rootDir, true);
+        return FileIterator.createDepthFirstFileIteratorBuilder(rootDir)
+            .includeDirectories(true)
+            .build();
     }
     @Override
     public synchronized File getFile(String fileId) throws IOException {

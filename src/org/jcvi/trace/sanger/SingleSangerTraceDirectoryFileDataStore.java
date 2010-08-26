@@ -114,7 +114,7 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
       public Iterator<String> getIds() throws DataStoreException {
           super.getIds();
           return new Iterator<String>(){
-              Iterator<File> iter = FileIterator.createFileIterator(fileServer.getRootDir());
+              Iterator<File> iter = FileIterator.createNonRecursiveFileIteratorBuilder(fileServer.getRootDir()).build();
 
             @Override
             public boolean hasNext() {

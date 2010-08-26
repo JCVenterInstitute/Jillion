@@ -106,7 +106,8 @@ public class LegacyTigrLocalChromoTraceFileServer implements TraceFileServer, It
 
     @Override
     public Iterator<String> iterator() {
-        return new SeqNameFileIterator(FileIterator.createDepthFirstFileIterator(new File(baseDir),false));
+        return new SeqNameFileIterator(
+                FileIterator.createDepthFirstFileIteratorBuilder(new File(baseDir)).build());
     }
 
     

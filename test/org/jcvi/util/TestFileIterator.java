@@ -43,7 +43,7 @@ public class TestFileIterator {
     
     @Test
      public void doNotRecurse() throws IOException{
-         Iterator<File> sut = FileIterator.createFileIterator(fileServer.getFile("files"),false);
+         Iterator<File> sut = FileIterator.createNonRecursiveFileIteratorBuilder(fileServer.getFile("files")).build();
          assertTrue(sut.hasNext());
          assertEquals(fileServer.getFile("files/file1"),sut.next());
          assertTrue(sut.hasNext());
@@ -55,7 +55,7 @@ public class TestFileIterator {
      
      @Test
      public void shouldthrowNoSuchElementExceptionWhenEmpty() throws IOException{
-         Iterator<File> sut = FileIterator.createFileIterator(fileServer.getFile("files"),false);
+         Iterator<File> sut = FileIterator.createNonRecursiveFileIteratorBuilder(fileServer.getFile("files")).build();
          while(sut.hasNext()){
              sut.next();
          }
@@ -69,7 +69,7 @@ public class TestFileIterator {
      
      @Test
      public void removeShouldThrowUnsupportedOperationException() throws IOException{
-         Iterator<File> sut = FileIterator.createFileIterator(fileServer.getFile("files"),false);
+         Iterator<File> sut = FileIterator.createNonRecursiveFileIteratorBuilder(fileServer.getFile("files")).build();
          try{
              sut.remove();
              fail("should throw UnsupportedOperationException");

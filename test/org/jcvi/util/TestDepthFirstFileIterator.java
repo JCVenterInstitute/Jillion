@@ -43,7 +43,7 @@ public class TestDepthFirstFileIterator {
     
     @Test
     public void shouldthrowNoSuchElementExceptionWhenEmpty() throws IOException{
-        Iterator<File> sut = FileIterator.createDepthFirstFileIterator(fileServer.getFile("files"),false);
+        Iterator<File> sut = FileIterator.createDepthFirstFileIteratorBuilder(fileServer.getFile("files")).build();
         while(sut.hasNext()){
             sut.next();
         }
@@ -57,7 +57,7 @@ public class TestDepthFirstFileIterator {
     
     @Test
     public void iterateFilesOnly() throws IOException{
-        Iterator<File> sut = FileIterator.createDepthFirstFileIterator(fileServer.getFile("files"),false);
+        Iterator<File> sut = FileIterator.createDepthFirstFileIteratorBuilder(fileServer.getFile("files")).build();
         assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/file1"),sut.next());
         assertTrue(sut.hasNext());
@@ -76,7 +76,9 @@ public class TestDepthFirstFileIterator {
     }
     @Test
     public void iterateIncludeDirs() throws IOException{
-        Iterator<File> sut = FileIterator.createDepthFirstFileIterator(fileServer.getFile("files"),true);
+        Iterator<File> sut = FileIterator.createDepthFirstFileIteratorBuilder(fileServer.getFile("files"))
+                                .includeDirectories(true)
+                                .build();
         assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/file1"),sut.next());
         assertTrue(sut.hasNext());
@@ -109,7 +111,7 @@ public class TestDepthFirstFileIterator {
     
     @Test
     public void removeShouldThrowUnsupportedOperationException() throws IOException{
-        Iterator<File> sut = FileIterator.createDepthFirstFileIterator(fileServer.getFile("files"),false);
+        Iterator<File> sut = FileIterator.createDepthFirstFileIteratorBuilder(fileServer.getFile("files")).build();
         try{
             sut.remove();
             fail("should throw UnsupportedOperationException");
