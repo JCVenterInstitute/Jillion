@@ -21,6 +21,7 @@ package org.jcvi.assembly.cas;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
@@ -28,6 +29,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.ggf.drmaa.DrmaaException;
+import org.ggf.drmaa.JobInfo;
 import org.jcvi.command.Command;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
@@ -35,6 +38,7 @@ import org.jcvi.command.grid.BatchGridJobImpl;
 import org.jcvi.command.grid.GridJob;
 import org.jcvi.command.grid.GridJobExecutorService;
 import org.jcvi.command.grid.GridUtils;
+import org.jcvi.command.grid.PostExecutionHook;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.joda.time.Period;
@@ -85,7 +89,22 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
             command.addTarget(target);
         }
         GridJob job = new BatchGridJobImpl.Builder(GridUtils.getGlobalSession(), command, projectCode)
+                        .postExecutionHook(new PostExecutionHook() {
+                            
+                            @Override
+                            public int execute(Map<String, JobInfo> jobInfoMap) throws Exception {
+                                for(JobInfo jobInfo : jobInfoMap.values()){
+                                    if(jobInfo.hasExited() && jobInfo.getExitStatus() !=0){
+                                        //errored out? 
+                                        //cancel everything?
+                                        GridCasAssemblyBuilder.this.getExecutor().shutdownNow();
+                                    }
+                                }
+                                return 0;
+                            }
+                        })
                         .build();
+      
         return job;
     }
 
@@ -177,6 +196,30 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
                 options,
                 "Created by Danny Katzel");
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected void cleanup() {
+        try {
+            GridUtils.getGlobalSession().exit();
+        } catch (DrmaaException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     protected void handleException(Exception e) {
+         e.printStackTrace();
+         getExecutor().shutdownNow();
+         
+     }
    
 
 }

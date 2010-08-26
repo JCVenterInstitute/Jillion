@@ -62,10 +62,17 @@ public abstract class AbstractExecutorCasAssemblyBuilder<R> extends AbstractMult
          @Override
          protected void waitForAllAssembliesToFinish() throws Exception {
              List<Future<R>> futures = executor.invokeAll(submissions);
+             submissions.clear();
+             executor.shutdown();
              for(Future<R> future: futures){
                  jobFinished(future.get());
              }
-             submissions.clear();
-             executor.shutdown();
+             
          }
+
+        protected ExecutorService getExecutor() {
+            return executor;
+        }
+         
+         
 }
