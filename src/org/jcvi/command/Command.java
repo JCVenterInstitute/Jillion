@@ -52,7 +52,7 @@ public class Command
     /** The {@link File} representing the executable. */
     private final File executable;
     /** The base directory to use. */
-    private File workingDir;
+    private File workingDir=null;
     /** A {@link Map} of command line options. */
     private final Map<String, String> opt;
     /** A {@link List} of command line flags. */
@@ -75,7 +75,7 @@ public class Command
         this.flags = new ArrayList<String>();
         this.targets = new ArrayList<String>();
 
-        this.workingDir = new File(System.getProperty("user.dir"));
+       // this.workingDir = new File(System.getProperty("user.dir"));
     }
 
 
