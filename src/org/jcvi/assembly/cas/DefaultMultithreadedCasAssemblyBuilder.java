@@ -168,6 +168,25 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractExecutorCasA
         
     }
 
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected void cleanup() {
+        // no-op
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected void handleException(Exception e) {
+        e.printStackTrace();
+        getExecutor().shutdownNow();
+        
+    }
+
 
    
 }
