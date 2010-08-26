@@ -24,6 +24,7 @@
 package org.jcvi.trace.sanger.phd.newbler;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Properties;
 
@@ -39,7 +40,7 @@ public class NewblerMappedPhdBallFileDataStore extends MemoryMappedPhdFileDataSt
     private static final String FAKE_READ_TYPE = "type: fake\n";
     private static final String WHOLE_READ_TAG = "WR";
     public NewblerMappedPhdBallFileDataStore(File phdBall,
-            MemoryMappedFileRange recordLocations) {
+            MemoryMappedFileRange recordLocations) throws FileNotFoundException {
         super(phdBall, recordLocations);
     }
 

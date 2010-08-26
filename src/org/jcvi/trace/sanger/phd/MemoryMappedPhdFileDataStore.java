@@ -53,18 +53,25 @@ public class MemoryMappedPhdFileDataStore extends AbstractPhdFileDataStore{
     private final File phdBall;
     private int currentLineLength;
     public MemoryMappedPhdFileDataStore(File phdBall) throws FileNotFoundException{
-        this(phdBall, new DefaultMemoryMappedFileRange());
+        this(phdBall,false);
+    }
+    public MemoryMappedPhdFileDataStore(File phdBall,boolean parseNow) throws FileNotFoundException{
+        this(phdBall, new DefaultMemoryMappedFileRange(),parseNow);
     }
     /**
      * @param recordLocations
      * @throws FileNotFoundException 
      */
     public MemoryMappedPhdFileDataStore(File phdBall,MemoryMappedFileRange recordLocations) throws FileNotFoundException {
+       this(phdBall, recordLocations,false);
+    }
+    public MemoryMappedPhdFileDataStore(File phdBall,MemoryMappedFileRange recordLocations, boolean parseNow) throws FileNotFoundException {
         this.recordLocations = recordLocations;
         this.phdBall = phdBall;
-        PhdParser.parsePhd(phdBall, this);
+        if(parseNow){
+            PhdParser.parsePhd(phdBall, this);
+        }
     }
-
     @Override
     public synchronized void visitLine(String line) {
         super.visitLine(line);
