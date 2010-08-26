@@ -25,6 +25,7 @@ package org.jcvi.trace.sanger.phd;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.MappedByteBuffer;
@@ -51,15 +52,17 @@ public class MemoryMappedPhdFileDataStore extends AbstractPhdFileDataStore{
     private boolean initialized=false;
     private final File phdBall;
     private int currentLineLength;
-    public MemoryMappedPhdFileDataStore(File phdBall){
+    public MemoryMappedPhdFileDataStore(File phdBall) throws FileNotFoundException{
         this(phdBall, new DefaultMemoryMappedFileRange());
     }
     /**
      * @param recordLocations
+     * @throws FileNotFoundException 
      */
-    public MemoryMappedPhdFileDataStore(File phdBall,MemoryMappedFileRange recordLocations) {
+    public MemoryMappedPhdFileDataStore(File phdBall,MemoryMappedFileRange recordLocations) throws FileNotFoundException {
         this.recordLocations = recordLocations;
         this.phdBall = phdBall;
+        PhdParser.parsePhd(phdBall, this);
     }
 
     @Override
@@ -87,6 +90,7 @@ public class MemoryMappedPhdFileDataStore extends AbstractPhdFileDataStore{
 
     @Override
     public synchronized void visitEndOfFile() {
+        super.visitEndOfFile();
         initialized=true;
     }
 
@@ -104,7 +108,11 @@ public class MemoryMappedPhdFileDataStore extends AbstractPhdFileDataStore{
         InputStream in=null;
         FileInputStream fileInputStream=null;
         try{
+            if(!recordLocations.contains(id)){
+                throw new DataStoreException(id +" does not exist");
+            }
             Range range = recordLocations.getRangeFor(id);
+            
             fileInputStream = new FileInputStream(phdBall);
             MappedByteBuffer buf =fileInputStream.getChannel().map(
                     FileChannel.MapMode.READ_ONLY, range.getStart(), range.size());
