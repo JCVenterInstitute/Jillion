@@ -89,7 +89,8 @@ public class TraceFileServerDataStore<T extends SangerTrace> implements TraceDat
     }
 
     private class FileNameIterator implements Iterator<String>{
-        Iterator<File> iter = FileIterator.createFileIterator(fileServer.getRootDir(), false);
+        Iterator<File> iter = FileIterator.createNonRecursiveFileIteratorBuilder(fileServer.getRootDir())
+                                .build();
         private final int rootPathLength =fileServer.getRootDir().getAbsolutePath().length();
         @Override
         public boolean hasNext() {
