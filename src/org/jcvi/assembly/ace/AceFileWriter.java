@@ -152,29 +152,22 @@ public class AceFileWriter {
         writeString(String.format("%n"), out);
         out.flush();
         List<AssembledFrom> assembledFroms = getSortedAssembledFromsFor(contig, phdDataStore);
+        StringBuilder assembledFromBuilder = new StringBuilder();
+        StringBuilder placedReadBuilder = new StringBuilder();
         
         for(AssembledFrom assembledFrom : assembledFroms){
             String id = assembledFrom.getId();
-            long fullLength = phdDataStore.get(id).getBasecalls().getLength();
-            writeAssembledFromRecords(contig.getPlacedReadById(id).getRealPlacedRead(),fullLength,out);
+            final Phd phd = phdDataStore.get(id);
+            long fullLength = phd.getBasecalls().getLength();
+            final AcePlacedRead realPlacedRead = contig.getPlacedReadById(id).getRealPlacedRead();
+            assembledFromBuilder.append(createAssembledFromRecord(realPlacedRead,fullLength));
+            placedReadBuilder.append(createPlacedReadRecord(realPlacedRead, phd));
         }
-        writeString(String.format("%n"), out);
+        assembledFromBuilder.append(String.format("%n"));
+        placedReadBuilder.append(String.format("%n"));
+        writeString(assembledFromBuilder.toString(),out);
         out.flush();
-        for(AssembledFrom assembledFrom : assembledFroms){
-            String id = assembledFrom.getId();    
-            AcePlacedRead read = contig.getPlacedReadById(id).getRealPlacedRead();
-            try{
-            Phd phd = phdDataStore.get(id);
-            if(phd==null){
-                phd=  phdDataStore.get(id);
-            }
-            writePlacedRead(read, phd,out);
-            }catch(Throwable t){
-                phdDataStore.get(id);
-                throw new IOException("error trying to write ace placed read "+ id,t);
-            }
-        }
-        writeString(String.format("%n"), out);
+        writeString(placedReadBuilder.toString(),out);
         out.flush();
     }
     private static List<AssembledFrom> getSortedAssembledFromsFor(
@@ -296,10 +289,23 @@ public class AceFileWriter {
         
     }
 
-   
+    private static String createAssembledFromRecord(AcePlacedRead read, long fullLength){
+        AssembledFrom assembledFrom = AssembledFrom.createFrom(read, fullLength);
+        return AceFileUtil.createAssembledFromRecord(assembledFrom);
+    }
     private static void writeAssembledFromRecords(AcePlacedRead read, long fullLength,OutputStream out) throws IOException{
         AssembledFrom assembledFrom = AssembledFrom.createFrom(read, fullLength);
         writeString(AceFileUtil.createAssembledFromRecord(assembledFrom), out);
+    } 
+    
+    private static String createPlacedReadRecord(AcePlacedRead read, Phd phd){
+        return AceFileUtil.createAcePlacedReadRecord(
+                read.getId(),read.getEncodedGlyphs(),  
+                read.getValidRange(), 
+                read.getSequenceDirection(),
+                phd, 
+                read.getPhdInfo());
+        
     }
     
     private static void writePlacedRead(AcePlacedRead read, Phd phd,OutputStream out ) throws IOException{
