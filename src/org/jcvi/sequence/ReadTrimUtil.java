@@ -42,8 +42,8 @@ public class ReadTrimUtil {
         try{
         DefaultReadTrimMap.Builder builder = new DefaultReadTrimMap.Builder();
         while(scanner.hasNextLine()){
-            
-            String euid = scanner.next();
+            //skip euid
+            scanner.next();
             String seqName = scanner.next();
             Range clrRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
                     scanner.nextLong(), scanner.nextLong());

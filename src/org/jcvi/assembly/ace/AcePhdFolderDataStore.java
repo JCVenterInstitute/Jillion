@@ -24,9 +24,7 @@
 package org.jcvi.assembly.ace;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,7 +37,6 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.trace.sanger.SangerTraceCodec;
 import org.jcvi.trace.sanger.phd.DefaultPhd;
