@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.IOUtils;
 import org.jcvi.Builder;
@@ -43,6 +44,8 @@ import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.trace.sanger.phd.PhdWriter;
+import org.joda.time.DateTimeUtils;
+import org.joda.time.Period;
 
 
 /**
@@ -82,7 +85,7 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
             CasParser.parseOnlyMetaData(casFile, read2contigMap);
 
             ReadWriteDirectoryFileServer consedOut = DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
-            
+            long startTime = DateTimeUtils.currentTimeMillis();
             int numberOfCasContigs = read2contigMap.getNumberOfContigs();
             for(long i=0; i< numberOfCasContigs; i++){
                 File outputDir =consedOut.createNewDir(""+i);
@@ -131,9 +134,12 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
             System.out.println("num reads ="+ numReads);
             consedOut.createNewDir("edit_dir");
             consedOut.createNewDir("phd_dir");
-            OutputStream masterAceOut = new FileOutputStream (consedOut.createNewFile("edit_dir/cas2consed.ace.1"));
-            OutputStream masterPhdOut = new FileOutputStream (consedOut.createNewFile("phd_dir/cas2consed.phd.ball"));
-            OutputStream masterConsensusOut = new FileOutputStream (consedOut.createNewFile("cas2consed.consensus.fasta"));
+            String prefix = commandLine.getOptionValue("prefix");
+            OutputStream masterAceOut = new FileOutputStream (consedOut.createNewFile("edit_dir/"+prefix+".ace.1"));
+            OutputStream masterPhdOut = new FileOutputStream (consedOut.createNewFile("phd_dir/"+prefix+".phd.ball"));
+            OutputStream masterConsensusOut = new FileOutputStream (consedOut.createNewFile(prefix+".consensus.fasta"));
+            OutputStream logOut = new FileOutputStream (consedOut.createNewFile(prefix+".log"));
+            
             try{
                 masterAceOut.write(String.format("AS %d %d%n", numContigs, numReads).getBytes());
                 for(int i=0; i<numberOfCasContigs; i++){
@@ -152,10 +158,13 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
                     IOUtil.recursiveDelete(tempDir);
                 }
                 
-                consedOut.createNewSymLink("../phd_dir/cas2consed.phd.ball", 
+                consedOut.createNewSymLink("../phd_dir/"+prefix+".phd.ball", 
                                     "edit_dir/phd.ball");
+                long endTime = DateTimeUtils.currentTimeMillis();
+                logOut.write(String.format("took %s%n",new Period(endTime- startTime)).getBytes());
+                
             }finally{
-                IOUtil.closeAndIgnoreErrors(masterAceOut,masterPhdOut,masterConsensusOut);
+                IOUtil.closeAndIgnoreErrors(masterAceOut,masterPhdOut,masterConsensusOut,logOut);
             }
         } catch (Exception e) {
             handleException(e);
