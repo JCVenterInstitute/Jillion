@@ -50,10 +50,9 @@ use Java::Runner;
 
 my $runner = Java::Runner->new();
 
-$runner->useJavaPreset("6-32b");
+$runner->useJavaPreset("6");
 
 $runner->clearClassPath();
-$runner->addNativeLibraryPath('/usr/local/n1ge/lib/lx24-x86');
 $runner->initialHeapSize(48);
 
 $runner->addClassLocation("$Bin/JavaCommon.jar");
