@@ -133,7 +133,9 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
         options.addOption(new CommandLineOptionBuilder("num_jobs", "number of jobs  to launch at a time when converting")
         .isRequired(true)
         .build());
-        
+        options.addOption(new CommandLineOptionBuilder("project_code", "grid project code")
+                                .isRequired(true)
+                                .build());
         options.addOption(new CommandLineOptionBuilder("trim", "trim file in sfffile's tab delimmed trim format")                                
                                                         .build());
         options.addOption(new CommandLineOptionBuilder("trimMap", "trim map file containing tab delimited trimmed fastX file to untrimmed counterpart")                                
@@ -159,7 +161,9 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
             
        File casFile = new File(commandLine.getOptionValue("cas"));
        Integer numCores = Integer.parseInt(commandLine.getOptionValue("num_jobs"));
-        AbstractMultiThreadedCasAssemblyBuilder builder = new DefaultMultithreadedCasAssemblyBuilder(casFile,numCores);
+        AbstractMultiThreadedCasAssemblyBuilder builder = new GridCasAssemblyBuilder(casFile,numCores, 
+                new File("/usr/local/devel/DAS/software/JavaCommon2/singleContigCasAssemblyConverter.pl"),
+                commandLine.getOptionValue("project_code"));
         builder.commandLine(commandLine);
         
         if(!commandLine.hasOption("tempDir")){
