@@ -43,7 +43,6 @@ import org.joda.time.Period;
  *
  */
 public class DefaultMultithreadedCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<Void>{
-    private static final String DEFAULT_PREFIX = "cas2consed";
     private static final int DEFAULT_CACHE_SIZE = 1000;
     
     /**

@@ -54,7 +54,7 @@ import org.joda.time.Period;
  *
  */
 public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder<CasAssembly>{
-    
+    public static final String DEFAULT_PREFIX = "cas2consed";
     private final File casFile;
     private File tempDir;
     private CommandLine commandLine;
@@ -134,7 +134,8 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
             System.out.println("num reads ="+ numReads);
             consedOut.createNewDir("edit_dir");
             consedOut.createNewDir("phd_dir");
-            String prefix = commandLine.getOptionValue("prefix");
+            String prefix = commandLine.hasOption("prefix")?commandLine.getOptionValue("prefix")
+                            : DEFAULT_PREFIX;
             OutputStream masterAceOut = new FileOutputStream (consedOut.createNewFile("edit_dir/"+prefix+".ace.1"));
             OutputStream masterPhdOut = new FileOutputStream (consedOut.createNewFile("phd_dir/"+prefix+".phd.ball"));
             OutputStream masterConsensusOut = new FileOutputStream (consedOut.createNewFile(prefix+".consensus.fasta"));
