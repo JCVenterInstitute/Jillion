@@ -125,8 +125,8 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
             skipCurrentRead = true;
         }
         else{
-            int end5 = computeEnd5(alignLeft, clearLeft);
-            int end3 = computeEnd3(alignRight, clearRight); 
+            int end5 = alignLeft;
+            int end3 = alignRight; 
             AssembledFrom assembledFrom =currentAssembledFromMap.get(currentReadId);
             currentOffset = computeReadOffset(assembledFrom, end5);
             if((end3-end5) <0){
@@ -168,14 +168,6 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 
     private int reverseCompliment(int fullLength, int position) {
         return fullLength - position+1;
-    }
-    private int computeEnd3(int alignRight, int clearRight) {
-        return alignRight;
-    }
-
-    private int computeEnd5(int alignLeft, int clearLeft) {
-      //  return Math.max(clearLeft, alignLeft);
-        return alignLeft;
     }
     
     private int computeReadOffset(AssembledFrom assembledFrom, int end5) {

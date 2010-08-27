@@ -135,7 +135,8 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
             //either no files or no files we have permission to see
             return EmptyIterator.createEmptyIterator();
         }
-        //sort files
+        //sort files by name this makes
+        //iterating deterministic
         Arrays.sort(listFiles, new Comparator<File>() {
 
             @Override
