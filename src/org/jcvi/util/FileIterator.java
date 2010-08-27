@@ -87,29 +87,34 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
             return !file.isHidden();
         }
     }
+    private static final class NullFileFilter implements FileFilter {
+        @Override
+        public boolean accept(File file) {
+            return true;
+        }
+    }
     private static final FileFilter  NON_DIRECTORY_FILTER = new NonDirectoryFileFilter();
     private static final FileFilter  NON_HIDDEN_FILTER = new NonHiddenFileFilter();
+    private static final FileFilter  NULL_FILTER = new NullFileFilter();
 
     
    
     private Iterator<File> fileIterator;
-    private final boolean includeDirectories;
-    private final boolean includeHiddenFiles;
+    private final FileFilter fileFilter;
     private File nextFile;
     private final File rootDir;
-    
-    protected FileIterator(File rootDir,boolean includeDirectories){
-        this(rootDir,includeDirectories,true);
-    }
-    protected FileIterator(File rootDir,boolean includeDirectories, boolean includeHiddenFiles){
+
+    protected FileIterator(File rootDir,FileFilter fileFilter){
         if(rootDir ==null){
             throw new NullPointerException("rootDir can not be null");
         }
         if(!rootDir.isDirectory()){
             throw new IllegalArgumentException("rootDir must be a directory");
         }
-        this.includeDirectories = includeDirectories;
-        this.includeHiddenFiles = includeHiddenFiles;
+        if(fileFilter ==null){
+            throw new NullPointerException("fileFilter can not be null");
+        }
+        this.fileFilter = fileFilter;
         this.rootDir = rootDir;
         setUpInitialState(rootDir);
         
@@ -123,22 +128,8 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
     }
     
     private Iterator<File> getFilesFor(File dir){
-        final File[] listFiles;
-        if(includeHiddenFiles){
-            if(includeDirectories){
-                listFiles = dir.listFiles();
-            }else{
-                listFiles = dir.listFiles(NON_DIRECTORY_FILTER);
-            }
-        }else{
-            if(includeDirectories){
-                listFiles = dir.listFiles(NON_HIDDEN_FILTER);
-            }else{
-                listFiles = dir.listFiles(new MultipleFileFilter(
-                        NON_DIRECTORY_FILTER,NON_HIDDEN_FILTER));
-                
-            }
-        }
+        final File[] listFiles = dir.listFiles(fileFilter);
+       
        
         if(listFiles ==null){
             //either no files or no files we have permission to see
@@ -161,10 +152,10 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
      */
     @Override
     public Iterator<File> iterator() {
-        return createNewInstance(this.rootDir, this.includeDirectories, this.includeHiddenFiles);
+        return createNewInstance(this.rootDir, fileFilter);
     }
     
-    protected abstract Iterator<File> createNewInstance(File root, boolean includeSubdirs, boolean includeHiddenFiles);
+    protected abstract Iterator<File> createNewInstance(File root, FileFilter fileFilter);
     protected File getNextFile(){
         if(fileIterator.hasNext()){
             return fileIterator.next();
@@ -195,14 +186,14 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
     private static class NonRecursiveFileIterator extends FileIterator{
 
         protected NonRecursiveFileIterator(File rootDir,
-                boolean includeDirectories, boolean includeHiddenFiles) {
-            super(rootDir, includeDirectories,includeHiddenFiles);
+                FileFilter fileFilter) {
+            super(rootDir, fileFilter);
         }
 
         @Override
         protected Iterator<File> createNewInstance(File root,
-                boolean includeSubdirs, boolean includeHiddenFiles) {
-            return new NonRecursiveFileIterator(root, includeSubdirs, includeHiddenFiles);
+                FileFilter fileFilter) {
+            return new NonRecursiveFileIterator(root, fileFilter);
         }
         
     }
@@ -228,8 +219,8 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
         private static final DirectoryFileFilter  DIRECTORY_FILTER = new DirectoryFileFilter();
        
         private Queue<File> dirIterator;
-        protected RecursiveFileIterator(File rootDir,boolean includeDirectories,boolean includeHiddenFiles) {
-            super(rootDir,includeDirectories,includeHiddenFiles);
+        protected RecursiveFileIterator(File rootDir,FileFilter fileFilter) {
+            super(rootDir,fileFilter);
         }
         
         /**
@@ -279,8 +270,8 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
     }
     private static class DepthFirstFileIterator extends RecursiveFileIterator{
 
-        public DepthFirstFileIterator(File rootDir,boolean includeDirectories, boolean includeHiddenFiles) {
-            super(rootDir,includeDirectories,includeHiddenFiles);           
+        public DepthFirstFileIterator(File rootDir,FileFilter fileFilter) {
+            super(rootDir,fileFilter);           
         }
 
         
@@ -292,14 +283,14 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
 
         @Override
         protected Iterator<File> createNewInstance(File root,
-                boolean includeSubdirs, boolean includeHiddenFiles) {
-            return new DepthFirstFileIterator(root, includeSubdirs,includeHiddenFiles);
+                FileFilter fileFilter) {
+            return new DepthFirstFileIterator(root, fileFilter);
         } 
     }
     private static class BreadthFirstFileIterator extends RecursiveFileIterator{
 
-        public BreadthFirstFileIterator(File rootDir,boolean includeDirectories, boolean includeHiddenFiles) {
-            super(rootDir,includeDirectories,includeHiddenFiles);           
+        public BreadthFirstFileIterator(File rootDir,FileFilter fileFilter) {
+            super(rootDir,fileFilter);           
         }
 
         
@@ -310,8 +301,8 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
         }  
         @Override
         protected Iterator<File> createNewInstance(File root,
-                boolean includeSubdirs, boolean includeHiddenFiles) {
-            return new BreadthFirstFileIterator(root, includeSubdirs, includeHiddenFiles);
+                FileFilter fileFilter) {
+            return new BreadthFirstFileIterator(root, fileFilter);
         } 
     }
     
@@ -326,6 +317,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
         
         private boolean includeDirectories=false;
         private boolean includeHiddenFiles=false;
+        private FileFilter userDefinedFileFilter=null;
         private final File rootDir;
         
         public FileIteratorBuilder(File rootdir){
@@ -377,13 +369,47 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
             this.includeHiddenFiles = includeHiddenFiles;
             return this;
         }
-        protected abstract FileIterator createNewInstance(File rootDir, boolean includeDirectories,boolean includeHiddenFiles);
+        /**
+         * Add additional constraints to the fileIterator by specifying 
+         * a {@link FileFilter} that will be used to further restrict what
+         * files to iterate.  The given Filter (if any) is applied after
+         * the constraints set by {@link #includeDirectories(boolean)}
+         * and {@link #includeHiddenFiles(boolean)}.
+         * @param fileFilter a {@link FileFilter} instance to further
+         * filter the files to iterate; passing in {@code null}
+         * means do not do any additional filtering.
+         * @return this.
+         */
+        public FileIteratorBuilder fileFilter(FileFilter fileFilter){
+            this.userDefinedFileFilter = fileFilter;
+            return this;
+        }
+        protected abstract FileIterator createFileIterator(File rootDir, FileFilter fileFilter);
         /**
          * Constructs a new FileIterator using the options set so far.
          * @return a new FileIterator (never null).
          */
         public FileIterator build(){
-            return createNewInstance(rootDir, includeDirectories, includeHiddenFiles);
+            FileFilter fileFilter;
+            if(includeHiddenFiles){
+                if(includeDirectories){
+                    fileFilter = NULL_FILTER;
+                }else{
+                    fileFilter = NON_DIRECTORY_FILTER;
+                }
+            }else{
+                if(includeDirectories){
+                    fileFilter =NON_HIDDEN_FILTER;
+                }else{
+                    fileFilter =new MultipleFileFilter(
+                            NON_DIRECTORY_FILTER,NON_HIDDEN_FILTER);
+                    
+                }
+            }
+            if(userDefinedFileFilter !=null){
+                fileFilter = new MultipleFileFilter(fileFilter, userDefinedFileFilter);
+            }
+            return createFileIterator(rootDir, fileFilter);
         }
     }
     
@@ -399,9 +425,9 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
         * {@inheritDoc}
         */
         @Override
-        protected FileIterator createNewInstance(File rootDir,
-                boolean includeDirectories, boolean includeHiddenFiles) {
-            return new BreadthFirstFileIterator(rootDir, includeDirectories, includeHiddenFiles);
+        protected FileIterator createFileIterator(File rootDir,
+                FileFilter fileFilter) {
+            return new BreadthFirstFileIterator(rootDir, fileFilter);
         }
         
     }
@@ -417,9 +443,9 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
         * {@inheritDoc}
         */
         @Override
-        protected FileIterator createNewInstance(File rootDir,
-                boolean includeDirectories, boolean includeHiddenFiles) {
-            return new DepthFirstFileIterator(rootDir, includeDirectories, includeHiddenFiles);
+        protected FileIterator createFileIterator(File rootDir,
+                FileFilter fileFilter) {
+            return new DepthFirstFileIterator(rootDir, fileFilter);
         }
         
     }
@@ -436,9 +462,9 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
         * {@inheritDoc}
         */
         @Override
-        protected FileIterator createNewInstance(File rootDir,
-                boolean includeDirectories, boolean includeHiddenFiles) {
-            return new NonRecursiveFileIterator(rootDir, includeDirectories, includeHiddenFiles);
+        protected FileIterator createFileIterator(File rootDir,
+                FileFilter fileFilter) {
+            return new NonRecursiveFileIterator(rootDir, fileFilter);
         }
         
     }
