@@ -49,7 +49,6 @@ import org.joda.time.Period;
  *
  */
 public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<Integer>{
-    private static final String DEFAULT_PREFIX = "cas2consed";
     private static final int DEFAULT_CACHE_SIZE = 1000;
     
     private final String projectCode;
