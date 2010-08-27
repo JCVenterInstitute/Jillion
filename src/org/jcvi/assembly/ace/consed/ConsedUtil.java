@@ -177,7 +177,18 @@ public class ConsedUtil {
         }
         throw new IllegalArgumentException("consensus tag does not contain rename info : "+contigRenameTag);
     }
-    
+    /**
+     * Gets the latest ace file with the given prefix in the given edit_dir.
+     * 
+     *<p/>Consed labels each version of the ace file with a incrementing
+     *value so {@code prefix.ace.2} is newer than {@code prefix.ace.1}.
+     * @param editDir the consed edit_dir folder to inspect.
+     * @param filenamePrefix the beginning part of the file name to filter,
+     * incase there are more than 1 groups of versioned assemblies.
+     * @return the File object representing the latest version of the ace file
+     * with the given prefix in the given edit_dir; {@code null}
+     * if no such file exists.
+     */
     public static File getLatestAceFile(File editDir, final String filenamePrefix){
         int highestAceFileVersion=Integer.MIN_VALUE;
         File highestAceFile=null;
