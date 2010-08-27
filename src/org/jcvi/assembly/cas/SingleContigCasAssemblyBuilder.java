@@ -345,6 +345,12 @@ public class SingleContigCasAssemblyBuilder {
                     numContigs++;
                    
                 }
+                //this way we only write the data if we finished successfully
+                //hopefully this way we will crash later on 
+                //when we try to sum up all the count files
+                //and get an empty one.
+                countWriter.printf("%d\t%d%n", numContigs, numReads);
+                
             } catch (Exception e) {
                 e.printStackTrace();
                System.exit(1);
@@ -352,8 +358,7 @@ public class SingleContigCasAssemblyBuilder {
                 executor.shutdownNow();                 
                 IOUtil.closeAndIgnoreErrors(phdOutputStream);
                 IOUtil.closeAndIgnoreErrors(aceOutputStream,consensusOutputStream);
-                countWriter.printf("%d\t%d%n", numContigs, numReads);
-                
+               
                 IOUtil.closeAndIgnoreErrors(countWriter);
                 IOUtil.closeAndIgnoreErrors(phdDataStore);
                 IOUtil.closeAndIgnoreErrors(nucleotideDataStore);
