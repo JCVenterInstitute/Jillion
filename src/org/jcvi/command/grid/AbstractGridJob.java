@@ -39,7 +39,7 @@ import org.jcvi.command.Command;
  * @author jsitz@jcvi.org
  * @author dkatzel
  */
-abstract public class AbstractGridJob implements GridJob {
+ public abstract class AbstractGridJob implements GridJob {
 
     protected enum NativeSpec
     {
@@ -342,7 +342,7 @@ abstract public class AbstractGridJob implements GridJob {
         }
     }
 
-    abstract protected static class Builder {
+    public static abstract class Builder<J extends GridJob> implements org.jcvi.Builder<J>{
         private static final int SECONDS_PER_MINUTE = 60;
 
         protected Session gridSession;
@@ -363,7 +363,7 @@ abstract public class AbstractGridJob implements GridJob {
         protected PreExecutionHook preExecutionHook;
 
 
-        protected Builder(Session gridSession, Command command, String projectCode) {
+        public  Builder(Session gridSession, Command command, String projectCode) {
             this.gridSession = gridSession;
             this.command = command;
 
@@ -377,11 +377,11 @@ abstract public class AbstractGridJob implements GridJob {
             this.setTimeout(TimeUnit.HOURS.toSeconds(4));
         }
 
-        public Builder preExecutionHook(PreExecutionHook preExecutionHook){
+        public Builder<J> preExecutionHook(PreExecutionHook preExecutionHook){
             this.preExecutionHook = preExecutionHook;
             return this;
         }
-        public Builder postExecutionHook(PostExecutionHook postExecutionHook){
+        public Builder<J> postExecutionHook(PostExecutionHook postExecutionHook){
             this.postExecutionHook = postExecutionHook;
             return this;
         }
@@ -425,7 +425,7 @@ abstract public class AbstractGridJob implements GridJob {
             return this;
         }
 
-        public Builder setArchitecture(String arch) {
+        public Builder<J> setArchitecture(String arch) {
             if (arch == null) {
                 this.clearNativeSpec(NativeSpec.ARCHITECTURE);
             } else {

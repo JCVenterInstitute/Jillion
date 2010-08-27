@@ -135,7 +135,7 @@ public class BatchGridJobImpl extends AbstractGridJob implements BatchGridJob {
         }
     }
 
-    public static class Builder extends AbstractGridJob.Builder implements org.jcvi.Builder<BatchGridJob>{
+    public static class Builder extends AbstractGridJob.Builder<BatchGridJob>{
         public Builder(Session gridSession, Command command, String projectCode) {
             super(gridSession, command, projectCode);
         }

@@ -135,7 +135,7 @@ public class ArrayGridJobImpl extends AbstractGridJob {
         }
     }
 
-    public static class Builder extends AbstractGridJob.Builder implements org.jcvi.Builder<GridJob>{
+    public static class Builder extends AbstractGridJob.Builder<ArrayGridJobImpl>{
 
         private int bulkJobStartLoopIndex = 1;
         private int bulkJobEndLoopIndex = 1;
