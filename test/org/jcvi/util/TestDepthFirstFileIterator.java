@@ -110,6 +110,19 @@ public class TestDepthFirstFileIterator {
     }
     
     @Test
+    public void additionalFileFilter() throws IOException{
+        Iterator<File> sut = FileIterator.createDepthFirstFileIteratorBuilder(fileServer.getFile("files"))
+                                .includeDirectories(true)
+                                .fileFilter(FileIteratorTestUtil.FILE_FILTER_ANYTHING_THAT_DOESNT_END_WITH_2)
+                                .build();
+        assertTrue(sut.hasNext());
+        assertEquals(fileServer.getFile("files/file2"),sut.next());
+        
+        assertTrue(sut.hasNext());
+        assertEquals(fileServer.getFile("files/subDir/subSubDir2"),sut.next());
+        assertFalse(sut.hasNext());
+    }
+    @Test
     public void removeShouldThrowUnsupportedOperationException() throws IOException{
         Iterator<File> sut = FileIterator.createDepthFirstFileIteratorBuilder(fileServer.getFile("files")).build();
         try{
