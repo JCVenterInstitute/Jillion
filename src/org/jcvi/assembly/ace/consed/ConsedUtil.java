@@ -23,6 +23,8 @@
  */
 package org.jcvi.assembly.ace.consed;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -174,5 +176,27 @@ public class ConsedUtil {
             return matcher.group(1);
         }
         throw new IllegalArgumentException("consensus tag does not contain rename info : "+contigRenameTag);
+    }
+    
+    public static File getLatestAceFile(File editDir, final String filenamePrefix){
+        int highestAceFileVersion=Integer.MIN_VALUE;
+        File highestAceFile=null;
+        for(File file : editDir.listFiles(new FileFilter() {
+            
+            @Override
+            public boolean accept(File file) {
+                String name = file.getName();
+                return name.startsWith(filenamePrefix +".ace") && !name.endsWith("wrk");
+            }
+        
+     })){
+            String name = file.getName();
+            int version = Integer.parseInt(""+name.charAt(name.length()-1));
+            if(version > highestAceFileVersion){
+                highestAceFileVersion=version;
+                highestAceFile = file;
+            }
+        }
+        return highestAceFile;
     }
 }
