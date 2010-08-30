@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.jcvi.command.Command;
 
@@ -68,6 +69,8 @@ public abstract class AbstractExecutorCasAssemblyBuilder<R> extends AbstractMult
              }
              submissions.clear();
              executor.shutdown();
+             //wait forever...
+             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
          }
 
         protected ExecutorService getExecutor() {
