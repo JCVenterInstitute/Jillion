@@ -62,7 +62,7 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
     public GridCasAssemblyBuilder(File casFile,
             int numberOfContigsToConvertAtSameTime, File singleContigCasAssemblyExecutable,String projectCode) {
         
-       this(GridUtils.buildNewSession(), casFile, numberOfContigsToConvertAtSameTime, singleContigCasAssemblyExecutable,projectCode);
+       this(GridUtils.getGlobalSession(), casFile, numberOfContigsToConvertAtSameTime, singleContigCasAssemblyExecutable,projectCode);
     }
     public GridCasAssemblyBuilder(Session session,File casFile,
             int numberOfContigsToConvertAtSameTime, File singleContigCasAssemblyExecutable,String projectCode) {
