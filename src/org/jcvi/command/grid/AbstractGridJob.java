@@ -375,6 +375,7 @@ import org.jcvi.command.Command;
             this.setProjectCode(projectCode);
             this.setBinaryMode(true);
             this.setTimeout(TimeUnit.HOURS.toSeconds(4));
+            this.setWorkingDirectory(new File(System.getProperty("user.dir")));
         }
 
         public Builder<J> preExecutionHook(PreExecutionHook preExecutionHook){
