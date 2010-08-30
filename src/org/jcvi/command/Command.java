@@ -75,7 +75,7 @@ public class Command
         this.flags = new ArrayList<String>();
         this.targets = new ArrayList<String>();
 
-       // this.workingDir = new File(System.getProperty("user.dir"));
+        this.workingDir = new File(System.getProperty("user.dir"));
     }
 
 
