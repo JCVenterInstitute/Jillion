@@ -31,6 +31,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.ggf.drmaa.DrmaaException;
 import org.ggf.drmaa.JobInfo;
+import org.ggf.drmaa.Session;
 import org.jcvi.command.Command;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
@@ -53,6 +54,7 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
     
     private final String projectCode;
     private final File singleContigCasAssemblyExecutable;
+    private final Session gridSession;
     /**
      * @param casFile
      * @param numberOfContigsToConvertAtSameTime
@@ -60,18 +62,23 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
     public GridCasAssemblyBuilder(File casFile,
             int numberOfContigsToConvertAtSameTime, File singleContigCasAssemblyExecutable,String projectCode) {
         
+       this(GridUtils.buildNewSession(), casFile, numberOfContigsToConvertAtSameTime, singleContigCasAssemblyExecutable,projectCode);
+    }
+    public GridCasAssemblyBuilder(Session session,File casFile,
+            int numberOfContigsToConvertAtSameTime, File singleContigCasAssemblyExecutable,String projectCode) {
+        
         super(casFile, numberOfContigsToConvertAtSameTime);
+        this.gridSession = session;
         this.projectCode = projectCode;
         this.singleContigCasAssemblyExecutable = singleContigCasAssemblyExecutable;
     }
-
     /**
     * {@inheritDoc}
     */
     @Override
     protected ExecutorService createExecutorService(
             int numberOfContigsToConvertAtSameTime) {
-        return new GridJobExecutorService("gridCas2Consed",numberOfContigsToConvertAtSameTime);
+        return new GridJobExecutorService(gridSession,"gridCas2Consed",numberOfContigsToConvertAtSameTime);
     }
 
     @Override
@@ -96,6 +103,7 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
                                     if(jobInfo.hasExited() && jobInfo.getExitStatus() !=0){
                                         //errored out? 
                                         //cancel everything?
+                                        System.out.println("job " + jobInfo.getJobId() +" has errored out" + jobInfo.getExitStatus());
                                         GridCasAssemblyBuilder.this.getExecutor().shutdownNow();
                                     }
                                 }
@@ -103,7 +111,7 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
                             }
                         })
                         .build();
-      
+        
         return job;
     }
 
@@ -206,7 +214,7 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
     @Override
     protected void cleanup() {
         try {
-            GridUtils.getGlobalSession().exit();
+            gridSession.exit();
         } catch (DrmaaException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
