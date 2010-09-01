@@ -75,10 +75,11 @@ public final class TrimFileUtil {
      * @param visitor the visitor to visit with the parsed trim data.
      */
     public static void parseTrimFile(InputStream trimData, TrimFileVisitor visitor){
-        Scanner scanner = new Scanner(trimData);
-        visitor.visitFile();
-        boolean keepParsing=true;
+        Scanner scanner = null;
         try{
+            scanner = new Scanner(trimData);
+            visitor.visitFile();
+            boolean keepParsing=true;
             while(keepParsing && scanner.hasNextLine()){
                 String line = scanner.nextLine();
                 Matcher matcher = TRIM_PATTERN.matcher(line);
@@ -93,6 +94,7 @@ public final class TrimFileUtil {
         }
         finally{
             visitor.visitEndOfFile();
+            scanner.close();
         }
         
     }

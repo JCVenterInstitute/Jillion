@@ -49,6 +49,8 @@ public class GridJobFuture extends FutureTask<Integer>{
             return true;
         } catch (DrmaaException e) {
             return false;
+        }finally{
+            super.cancel(mayInterruptIfRunning);
         }
     }
     

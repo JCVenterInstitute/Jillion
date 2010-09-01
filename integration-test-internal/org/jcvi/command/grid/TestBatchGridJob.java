@@ -38,7 +38,7 @@ public class TestBatchGridJob extends TestGridJob {
             new BatchGridJobImpl.Builder(gridExecutor.getSession(),
                                          testCommand,
                                          TestGridJob.TEST_PROJECT_CODE);
-        builder.setTimeout(5);
+        builder.setTimeout(Long.valueOf(5));
         GridJobFuture future = gridExecutor.submit(builder.build());
         int exitStatus = future.get();
         System.out.println("grid job future exit status was " + exitStatus);

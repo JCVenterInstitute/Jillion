@@ -25,7 +25,6 @@ package org.jcvi.trace.sanger;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,19 +59,14 @@ public class SangerTraceParser implements SangerTraceCodec{
     @Override
     public SangerTrace decode(File traceFile) throws TraceDecoderException, FileNotFoundException{
 
-            for(SangerTraceCodec decoder: decoderOrder){
-                InputStream in=null;
+            for(SangerTraceCodec decoder: decoderOrder){                   
                 try{
-                    in = new FileInputStream(traceFile);
-                    try{
-                        return decode(in,decoder);
-                    }
-                    catch(TraceDecoderException e){
-                        //try next one...
-                    }
-                }finally{
-                    IOUtil.closeAndIgnoreErrors(in);
+                    return decoder.decode(traceFile);
                 }
+                catch(TraceDecoderException e){
+                    //try next one...
+                }
+                
             }
             throw new TraceDecoderException("unknown trace format");
         
@@ -84,7 +78,7 @@ public class SangerTraceParser implements SangerTraceCodec{
             for(SangerTraceCodec decoder: decoderOrder){
                 bufferedIn.mark(MARK_LIMIT);
                 try{
-                    return decode(bufferedIn,decoder);
+                    return decoder.decode(bufferedIn);
                 }
                 catch(TraceDecoderException e){
                     bufferedIn.reset();
@@ -98,10 +92,6 @@ public class SangerTraceParser implements SangerTraceCodec{
             IOUtil.closeAndIgnoreErrors(bufferedIn);
         }
         throw new TraceDecoderException("unknown trace format");
-    }
-
-    private SangerTrace decode(InputStream in, SangerTraceCodec decoder) throws TraceDecoderException{
-        return decoder.decode(in);
     }
     @Override
     public void encode(SangerTrace trace, OutputStream out) throws IOException {

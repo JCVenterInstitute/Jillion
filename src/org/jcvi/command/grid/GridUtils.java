@@ -22,6 +22,7 @@ package org.jcvi.command.grid;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -65,6 +66,19 @@ public final class GridUtils
             if (globalSession == null)
             {
                 globalSession = buildNewSession();
+                Runtime.getRuntime().addShutdownHook(new Thread(){
+
+                    @Override
+                    public void run() {
+                        try {
+                            globalSession.exit();
+                        } catch (DrmaaException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                    
+                });
             }
 
             return globalSession;
@@ -152,13 +166,10 @@ public final class GridUtils
         builder.append("\nJob Usage:");
 
         // try to get the map
-        Map rmap = info.getResourceUsage();
-
+        Map<String,String> rmap = info.getResourceUsage();
         if (rmap != null && !rmap.isEmpty()) {
-            for (Iterator i = rmap.keySet().iterator(); i.hasNext();) {
-                String name = (String) i.next();
-                String value = (String) rmap.get(name);
-                builder.append("\n  " + name + "=" + value);
+            for(Entry<String,String> entry : rmap.entrySet()){
+                builder.append("\n  " + entry.getKey() + "=" + entry.getValue());
             }
         } else {
             builder.append("\n  not available");

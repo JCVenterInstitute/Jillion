@@ -74,14 +74,17 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
         this.tempDir = tempDir;
         return this;
     }
+    protected abstract void prepareForBuild();
     /**
     * {@inheritDoc}
     */
     @Override
     public CasAssembly build() {
         
-        DefaultCasFileReadIndexToContigLookup read2contigMap = new DefaultCasFileReadIndexToContigLookup();
+       
         try {
+            prepareForBuild();
+            DefaultCasFileReadIndexToContigLookup read2contigMap = new DefaultCasFileReadIndexToContigLookup();
             CasParser.parseOnlyMetaData(casFile, read2contigMap);
 
             ReadWriteDirectoryFileServer consedOut = DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
@@ -126,6 +129,9 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
             for(int i=0; i<numberOfCasContigs; i++){
                 File countMap = consedOut.getFile(i+"/temp.counts");
                 Scanner scanner = new Scanner(countMap);
+                if(!scanner.hasNextInt()){
+                    throw new IllegalStateException("single assembly conversion # "+ i + " did not complete");
+                }
                 numContigs +=scanner.nextInt();
                 numReads +=scanner.nextInt();
                 scanner.close();
@@ -206,7 +212,8 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
 
         @Override
         public Void call() throws IOException, DataStoreException{
-            consensusOutputStream.write(new DefaultEncodedNucleotideFastaRecord(aceContig.getId(),
+            consensusOutputStream.write(
+                    new DefaultEncodedNucleotideFastaRecord(aceContig.getId(),
                     NucleotideGlyph.convertToString(NucleotideGlyph.convertToUngapped(aceContig.getConsensus().decode()))).toString().getBytes());
             AceFileWriter.writeAceFile(aceContig, phdDataStore, aceOutputStream);
             return null;

@@ -108,8 +108,9 @@ public abstract class AbstractSCFCodec implements SCFCodec{
     @Override
     public SangerTrace decode(File sangerTrace) throws TraceDecoderException,
             FileNotFoundException {
-        InputStream in = new FileInputStream(sangerTrace);
+        InputStream in = null;
         try{
+            in = new FileInputStream(sangerTrace);
             return decode(in);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);

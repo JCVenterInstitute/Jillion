@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.fileServer.DirectoryFileServer;
@@ -114,7 +115,9 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
       public Iterator<String> getIds() throws DataStoreException {
           super.getIds();
           return new Iterator<String>(){
-              Iterator<File> iter = FileIterator.createNonRecursiveFileIteratorBuilder(fileServer.getRootDir()).build();
+              Iterator<File> iter = FileIterator.createNonRecursiveFileIteratorBuilder(
+                      fileServer.getRootDir())
+                      .build();
 
             @Override
             public boolean hasNext() {

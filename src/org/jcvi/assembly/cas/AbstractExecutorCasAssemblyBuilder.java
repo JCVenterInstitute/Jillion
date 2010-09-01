@@ -38,39 +38,41 @@ import org.jcvi.command.Command;
  */
 public abstract class AbstractExecutorCasAssemblyBuilder<R> extends AbstractMultiThreadedCasAssemblyBuilder{
 
-        private final ExecutorService executor;
-        private final List<Callable<R>> submissions = new ArrayList<Callable<R>>();
-        
+        private ExecutorService executor;
+        private final int numberOfContigsToConvertAtSameTime;
         public AbstractExecutorCasAssemblyBuilder(File casFile,int numberOfContigsToConvertAtSameTime){
             super(casFile);
-            this.executor = createExecutorService(numberOfContigsToConvertAtSameTime);
+            this.numberOfContigsToConvertAtSameTime =numberOfContigsToConvertAtSameTime;
         }
         
         protected abstract ExecutorService createExecutorService(int numberOfContigsToConvertAtSameTime);
         protected abstract Callable<R> createSingleAssemblyCasConversionCallable(Command command);
         protected abstract void jobFinished(R returnedValue);
         
+        @Override
+        protected void prepareForBuild() {
+           executor = createExecutorService(numberOfContigsToConvertAtSameTime);
+            
+        }
+
         /**
          * {@inheritDoc}
          */
          @Override
          protected void submitSingleCasAssemblyConversion(Command command)
                  throws IOException {
-             submissions.add(createSingleAssemblyCasConversionCallable(command));
+             executor.submit(createSingleAssemblyCasConversionCallable(command));
              
          }
 
+         protected abstract int countActiveTasks();
          @Override
          protected void waitForAllAssembliesToFinish() throws Exception {
-             List<Future<R>> futures = executor.invokeAll(submissions);
-       
-             for(Future<R> future: futures){
-                 jobFinished(future.get());
-             }
-             submissions.clear();
              executor.shutdown();
-             //wait forever...
+           //wait forever...
              executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+             
+             
          }
 
         protected ExecutorService getExecutor() {

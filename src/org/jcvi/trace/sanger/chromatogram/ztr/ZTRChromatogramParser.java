@@ -76,8 +76,9 @@ public class ZTRChromatogramParser implements SangerTraceCodec {
     @Override
     public ZTRChromatogramImpl decode(File sangerTrace) throws TraceDecoderException,
             FileNotFoundException {
-        InputStream in = new FileInputStream(sangerTrace);
+        InputStream in=null;
         try{
+            in = new FileInputStream(sangerTrace);
             return decode(in);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
