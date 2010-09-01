@@ -195,7 +195,7 @@ public class TestArrayGridJob extends TestGridJob {
                                          TestGridJob.TEST_PROJECT_CODE);
         builder.setBulkJobStartLoopIndex(1);
         builder.setBulkJobEndLoopIndex(5);
-        builder.setTimeout(5);
+        builder.setTimeout(Long.valueOf(5));
         builder.setInputFile(inputFile);
         builder.setOutputFile(outputFile);
         builder.setErrorFile(errorFile);
@@ -265,7 +265,7 @@ public class TestArrayGridJob extends TestGridJob {
                                          TestGridJob.TEST_PROJECT_CODE);
         builder.setBulkJobStartLoopIndex(1);
         builder.setBulkJobEndLoopIndex(5);
-        builder.setTimeout(5);
+        builder.setTimeout(Long.valueOf(5));
         builder.setInputFile(inputFile);
         builder.setOutputFile(outputFile);
         builder.setErrorFile(errorFile);

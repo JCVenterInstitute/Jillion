@@ -73,10 +73,14 @@ public class LargePhdDataStore implements PhdDataStore{
     @Override
     public synchronized boolean contains(String id) throws DataStoreException {
         checkIfClosed();
+        InputStream in=null;
         try {
-            return getRecordFor(id) !=null;
+            in= getRecordFor(id);
+            return in!=null;
         } catch (FileNotFoundException e) {
            throw new DataStoreException("could not parse phd file "+phdFile, e);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
         }
     }
 

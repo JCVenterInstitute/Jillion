@@ -80,18 +80,23 @@ public class BatchGridJobImpl extends AbstractGridJob implements BatchGridJob {
     public String getJobID()
     {
         String jobID = null;
-        if ( jobIDList != null ) {
+        if (jobIDList!=null && !jobIDList.isEmpty() ) {
             jobID = this.jobIDList.get(0);
         }
         return jobID;
     }
 
     @Override
+    public String toString() {
+        return "BatchGridJobImpl [getJobID()=" + getJobID() + "]";
+    }
+
+    @Override
     public JobInfo getJobInfo()
     {
         JobInfo jobInfo = null;
-        if ( jobInfoMap != null ) {
-            jobInfo = jobInfoMap.get(jobIDList.get(0));
+        if ( jobInfoMap != null && !jobInfoMap.isEmpty()) {
+            jobInfo = jobInfoMap.get(getJobID());
         }
         return jobInfo;
     }

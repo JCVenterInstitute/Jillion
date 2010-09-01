@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -184,6 +185,15 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractExecutorCasA
         e.printStackTrace();
         getExecutor().shutdownNow();
         
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected int countActiveTasks() {
+        final ThreadPoolExecutor executor = (ThreadPoolExecutor)getExecutor();
+        return executor.getActiveCount() + executor.getQueue().size();
     }
 
 

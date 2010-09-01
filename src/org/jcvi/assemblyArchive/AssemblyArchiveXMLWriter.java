@@ -25,6 +25,7 @@ package org.jcvi.assemblyArchive;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.SortedSet;
@@ -204,7 +205,7 @@ public class AssemblyArchiveXMLWriter<T extends PlacedRead> {
      *
      *
      */
-    private static class TraceOrderComparator<T extends PlacedRead> implements Comparator<T>{
+    private static class TraceOrderComparator<T extends PlacedRead> implements Comparator<T>, Serializable{
         private static final long serialVersionUID = 42L;
         @Override
         public int compare(T o1, T o2) {

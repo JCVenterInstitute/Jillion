@@ -78,7 +78,10 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
     @Override
     protected ExecutorService createExecutorService(
             int numberOfContigsToConvertAtSameTime) {
-        return new GridJobExecutorService(gridSession,"gridCas2Consed",numberOfContigsToConvertAtSameTime);
+        final GridJobExecutorService executor = new GridJobExecutorService(gridSession,"gridCas2Consed",numberOfContigsToConvertAtSameTime);
+        
+        return executor;
+        
     }
 
     @Override
@@ -117,7 +120,7 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
 
     @Override
     protected void jobFinished(Integer returnedValue) {
-        // TODO Auto-generated method stub
+        System.out.println("job finished with value "+ returnedValue);
         
     }
  public static void main(String[] args) throws IOException{
@@ -231,6 +234,14 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
          getExecutor().shutdownNow();
          
      }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected int countActiveTasks() {
+        
+        return ((GridJobExecutorService) getExecutor()).countActiveTasks();
+    }
    
 
 }

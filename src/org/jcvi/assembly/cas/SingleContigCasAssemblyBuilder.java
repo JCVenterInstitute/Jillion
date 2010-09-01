@@ -169,7 +169,8 @@ public class SingleContigCasAssemblyBuilder {
                     System.out.println("adding trim file "+ trimFile);
                     dataStores.add( new DefaultTrimFileDataStore(new File(trimFile)));
                 }
-                trimDatastore = MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimDataStore.class, dataStores);
+                trimDatastore = MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimDataStore.class,
+                        dataStores);
             }else{
                 trimDatastore = TrimDataStoreUtil.EMPTY_DATASTORE;
             }
@@ -186,19 +187,12 @@ public class SingleContigCasAssemblyBuilder {
             
             boolean useClosureTrimming = commandLine.hasOption("useClosureTrimming");
             TraceDataStore<FileSangerTrace> sangerTraceDataStore=null;
-            Map<String, File> sangerFileMap = null;
             ReadOnlyDirectoryFileServer sourceChromatogramFileServer = null;
             
             if(commandLine.hasOption("chromat_dir")){
                 sourceChromatogramFileServer = DirectoryFileServer.createReadOnlyDirectoryFileServer(new File(commandLine.getOptionValue("chromat_dir")));
                 sangerTraceDataStore = new SingleSangerTraceDirectoryFileDataStore(
-                        sourceChromatogramFileServer, ".scf");
-                sangerFileMap = new HashMap<String, File>();
-                Iterator<String> iter = sangerTraceDataStore.getIds();
-                while(iter.hasNext()){
-                    String id = iter.next();
-                    sangerFileMap.put(id, sangerTraceDataStore.get(id).getFile());
-                }
+                        sourceChromatogramFileServer, ".scf");               
             }
             
             boolean useIllumina = commandLine.hasOption("useIllumina");

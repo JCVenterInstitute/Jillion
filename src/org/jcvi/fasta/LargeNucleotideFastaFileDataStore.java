@@ -98,10 +98,14 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
     @Override
     public boolean contains(String id) throws DataStoreException {
         checkNotYetClosed();
+        InputStream in=null;
         try {
-            return getRecordFor(id)!=null;
+            in= getRecordFor(id);
+            return in !=null;
         } catch (FileNotFoundException e) {
            throw new DataStoreException("could not get record for "+id,e);
+        }finally{
+           IOUtil.closeAndIgnoreErrors(in);
         }
     }
 
@@ -110,21 +114,24 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
             throws DataStoreException {
         checkNotYetClosed();
         InputStream in=null;
-            try {
-                in = getRecordFor(id);
-            
+        DefaultNucleotideFastaFileDataStore datastore=null;
+        try {
+            in = getRecordFor(id);
+        
             if(in ==null){
                 return null;
             }
-            final DefaultNucleotideFastaFileDataStore datastore = new DefaultNucleotideFastaFileDataStore(getFastaRecordFactory());
+      
+            datastore= new DefaultNucleotideFastaFileDataStore(getFastaRecordFactory());
             FastaParser.parseFasta(in, datastore);
             
             return datastore.get(id);
+           
         } catch (FileNotFoundException e) {
             throw new DataStoreException("could not get record for "+id, e);
         }
         finally{
-            IOUtil.closeAndIgnoreErrors(in);
+            IOUtil.closeAndIgnoreErrors(in,datastore);
         }
     }
 
@@ -174,8 +181,9 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
     }
 
     private InputStream getRecordFor(String id) throws FileNotFoundException{
-        Scanner scanner = new Scanner(fastaFile);
+        Scanner scanner = null;
         try{
+            scanner = new Scanner(fastaFile);
             String expectedHeader = String.format(">%s", id);
             String line = scanner.nextLine();
             boolean done=false;
@@ -213,7 +221,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
             }
             return new ByteArrayInputStream(record.toString().getBytes());
         }finally{
-            scanner.close();
+            IOUtil.closeAndIgnoreErrors(scanner);
         }
     }
 

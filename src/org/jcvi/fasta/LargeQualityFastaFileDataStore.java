@@ -108,13 +108,14 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
             throws DataStoreException {
         checkNotYetClosed();
         InputStream in=null;
+        DefaultQualityFastaFileDataStore datastore=null;
         try {
             in = getRecordFor(id);
         
         if(in ==null){
             return null;
         }
-        final DefaultQualityFastaFileDataStore datastore = new DefaultQualityFastaFileDataStore(getFastaRecordFactory());
+        datastore = new DefaultQualityFastaFileDataStore(getFastaRecordFactory());
         FastaParser.parseFasta(in, datastore);
         
         return datastore.get(id);
@@ -122,7 +123,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
             throw new DataStoreException("could not get record for "+id, e);
         }
         finally{
-            IOUtil.closeAndIgnoreErrors(in);
+            IOUtil.closeAndIgnoreErrors(in,datastore);
         }
     }
 
@@ -139,9 +140,11 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     @Override
     public synchronized int size() throws DataStoreException {
         checkNotYetClosed();
-        if(size ==null){
-            try {
-                Scanner scanner = new Scanner(fastaFile);
+        Scanner scanner=null;
+        try {
+            if(size ==null){
+           
+                scanner = new Scanner(fastaFile);
                 int counter =0;
                 while(scanner.hasNextLine()){
                     String line = scanner.nextLine();
@@ -150,11 +153,14 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
                         counter++;
                     }
                 }
-                size= counter;            
-            } catch (FileNotFoundException e) {
-                throw new IllegalStateException("could not get record count");
-            }
-        }   
+                size= counter;           
+            
+            } 
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException("could not get record count");
+        }finally{
+            IOUtil.closeAndIgnoreErrors(scanner);
+        }
         return size;
 
     }
@@ -172,27 +178,33 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     }
 
     private InputStream getRecordFor(String id) throws FileNotFoundException{
-        Scanner scanner = new Scanner(fastaFile);
-        String expectedHeader = String.format(">%s", id);
-        String line = scanner.nextLine();
+        Scanner scanner=null;
+        try{
+            scanner= new Scanner(fastaFile);
         
-        while(!line.startsWith(expectedHeader) && scanner.hasNextLine()){
-            line = scanner.nextLine();            
+            String expectedHeader = String.format(">%s", id);
+            String line = scanner.nextLine();
+            
+            while(!line.startsWith(expectedHeader) && scanner.hasNextLine()){
+                line = scanner.nextLine();            
+            }
+            if(!scanner.hasNextLine()){
+                return null;
+            }
+            StringBuilder record = new StringBuilder(line).append("\n");
+            line =scanner.nextLine();
+            while(!line.startsWith(">") && scanner.hasNextLine()){
+                record.append(line).append("\n");
+                line = scanner.nextLine();
+            }
+            //add final line if needed
+            if(!scanner.hasNextLine()){
+                record.append(line).append("\n");
+            }
+            return new ByteArrayInputStream(record.toString().getBytes());
+        }finally{
+            IOUtil.closeAndIgnoreErrors(scanner);
         }
-        if(!scanner.hasNextLine()){
-            return null;
-        }
-        StringBuilder record = new StringBuilder(line).append("\n");
-        line =scanner.nextLine();
-        while(!line.startsWith(">") && scanner.hasNextLine()){
-            record.append(line).append("\n");
-            line = scanner.nextLine();
-        }
-        //add final line if needed
-        if(!scanner.hasNextLine()){
-            record.append(line).append("\n");
-        }
-        return new ByteArrayInputStream(record.toString().getBytes());
     }
 
 

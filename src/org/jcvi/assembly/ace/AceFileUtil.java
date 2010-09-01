@@ -125,9 +125,6 @@ public class AceFileUtil {
         final List<NucleotideGlyph> fullGappedValidRange;
         final List<PhredQuality> qualities;
         final EncodedGlyphs<PhredQuality> phdQualities = phd.getQualities();
-        if(phdQualities ==null){
-            System.out.println("phdqualities is null, but nucleotides aren't");
-        }
         if(dir == SequenceDirection.FORWARD){
             fullGappedValidRange = AssemblyUtil.buildGappedComplimentedFullRangeBases(gappedValidBasecalls,dir,validRange, 
                     phdFullBases);

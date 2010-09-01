@@ -82,9 +82,7 @@ public class TestNextGenCloserAceContigTrimmer {
         String id= "id_10_22";
         final Range trimRange = Range.buildRangeOfLength(2, consensusLength-2).convertRange(CoordinateSystem.RESIDUE_BASED);
         String newId =sut.createNewContigId(id, consensusWithNoGaps, trimRange);
-        assertEquals(String.format("id_12_22", 
-                10+trimRange.getLocalStart(),
-                10+trimRange.getLocalEnd()), 
+        assertEquals("id_12_22",
                 newId);
     }
     @Test

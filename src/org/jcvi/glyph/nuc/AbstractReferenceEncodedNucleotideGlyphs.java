@@ -148,7 +148,7 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         final int prime = 31;
         int result = 1;
         result = prime * result + differentGlyphMap.hashCode();
-        result = prime * result + gaps.hashCode();
+        result = prime * result + Arrays.hashCode(gaps);
         result = prime * result + length;
         result = prime * result + startOffset;
         result = prime * result

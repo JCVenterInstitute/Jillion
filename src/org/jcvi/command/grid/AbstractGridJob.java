@@ -21,13 +21,13 @@ package org.jcvi.command.grid;
 
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.ggf.drmaa.*;
 import org.jcvi.command.Command;
@@ -69,8 +69,8 @@ import org.jcvi.command.Command;
 
     protected JobTemplate jobTemplate;
 
-    protected List<String> jobIDList;
-    protected Map<String,JobInfo> jobInfoMap;
+    protected List<String> jobIDList=Collections.emptyList();
+    protected Map<String,JobInfo> jobInfoMap = Collections.emptyMap();
 
     private final PostExecutionHook postExecutionHook;
     private final PreExecutionHook preExecutionHook;
@@ -176,7 +176,6 @@ import org.jcvi.command.Command;
 
         return Status.COMPLETED;
     }
-
     /* (non-Javadoc)
      * @see java.util.concurrent.Callable#call()
      */
@@ -186,7 +185,9 @@ import org.jcvi.command.Command;
         /*
          * Call the pre-execution hook
          */
+       
         int result = this.preExecution();
+
         if (result != 0) return result;
 
         /*
@@ -198,8 +199,9 @@ import org.jcvi.command.Command;
          * Call the postScheduling hook
          */
         result = this.postScheduling();
-        if (result != 0) return result;
 
+        if (result != 0) return result;
+        
         this.waitForCompletion();
 
         /*
@@ -352,7 +354,7 @@ import org.jcvi.command.Command;
         protected Set<String> otherNativeSpecs;
         protected Properties env;
         protected Set<String> emailRecipients;
-        protected long timeout;
+        protected long timeout = Session.TIMEOUT_WAIT_FOREVER;
 
         protected String jobName;
         protected File workingDirectory;
@@ -374,7 +376,6 @@ import org.jcvi.command.Command;
 
             this.setProjectCode(projectCode);
             this.setBinaryMode(true);
-            this.setTimeout(TimeUnit.HOURS.toSeconds(4));
             this.setWorkingDirectory(new File(System.getProperty("user.dir")));
         }
 
@@ -443,8 +444,14 @@ import org.jcvi.command.Command;
             this.emailRecipients.clear();
         }
 
-        public void setTimeout(long seconds) {
-            this.timeout = seconds;
+        public void setTimeout(Long seconds) {
+            if(seconds ==null){
+                this.timeout = Session.TIMEOUT_WAIT_FOREVER;
+            }else if(seconds <0){
+               throw new IllegalArgumentException("timeout cannot be negative");
+            }else{
+                this.timeout = seconds;
+            }
         }
 
         public void setTimeoutMinutes(long minutes) {

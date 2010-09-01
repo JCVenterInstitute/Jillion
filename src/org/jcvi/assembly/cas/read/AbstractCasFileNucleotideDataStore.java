@@ -33,11 +33,12 @@ import org.jcvi.assembly.cas.CasFileInfo;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
+import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
 public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePassCasFileVisitor implements CasNucleotideDataStore {
 
-    private List<DataStore<NucleotideEncodedGlyphs>> nucleotideDataStores = new ArrayList<DataStore<NucleotideEncodedGlyphs>>();
+    private List<NucleotideDataStore> nucleotideDataStores = new ArrayList<NucleotideDataStore>();
     
     private final CasDataStoreFactory casDataStoreFactory;
     private DataStore<NucleotideEncodedGlyphs> delegate;
@@ -70,6 +71,9 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
 
     @Override
     public synchronized void close() throws IOException {
+        for(NucleotideDataStore nucleotideDataStore: nucleotideDataStores){
+            nucleotideDataStore.close();
+        }
         delegate.close();
         nucleotideDataStores.clear();
         

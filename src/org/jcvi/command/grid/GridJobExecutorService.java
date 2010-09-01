@@ -18,10 +18,19 @@
  ******************************************************************************/
 
 package org.jcvi.command.grid;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import javax.management.RuntimeErrorException;
 
 import org.ggf.drmaa.DrmaaException;
 import org.ggf.drmaa.JobTemplate;
@@ -38,6 +47,7 @@ public class GridJobExecutorService extends ThreadPoolExecutor
 
     private final Session gridSession;
     private final String name;
+    Map<GridJob,GridJobFuture> futures = new HashMap<GridJob,GridJobFuture>();
 
     /**
      * Creates a new <code>GridPoolExecutor</code>.
@@ -95,13 +105,51 @@ public class GridJobExecutorService extends ThreadPoolExecutor
     protected GridJobFuture newTaskFor(GridJob gridJob) {
         return new GridJobFuture(gridJob);
     }
-
-    public GridJobFuture submit(GridJob job) {
-        if (job == null) throw new NullPointerException();
-        GridJobFuture ftask = newTaskFor(job);
-        execute(ftask);
-        return ftask;
+    /**
+     * Special implementation logic for handling new Tasks for 
+     * instances of {@link GridJob}.  We need to keep track
+     * of GridJobs in case we need to cancel one.
+     */
+    @Override
+    protected <T> RunnableFuture<T> newTaskFor(Callable<T> callable) {
+        if(callable instanceof GridJob){
+            GridJob gridJob = (GridJob)callable;
+            final GridJobFuture gridJobTask = newTaskFor(gridJob);
+            futures.put(gridJob,gridJobTask);
+            return (RunnableFuture<T>)gridJobTask;
+        }
+        return super.newTaskFor(callable);
     }
+    
+    public GridJobFuture submit(GridJob gridJob) {
+        return(GridJobFuture) submit((Callable<Integer>) gridJob);
+    }
+   
+    
+    @Override
+    public synchronized List<Runnable> shutdownNow() {
+       
+        //must force cancel all non-complete jobs
+        //normal Executor shutdown uses
+        //interrupt which relies on implementation
+        //checking interrupt flag
+        //and won't work if drmma is blocking on completion
+        
+        //copy of list to iterate over so we don't get 
+        //concurrent modification errors when we remove items
+       
+        Map<GridJob,GridJobFuture> jobsToCancel = new HashMap<GridJob, GridJobFuture>(futures);
+
+        System.out.println("shutting down now ... "+ jobsToCancel.size() + " jobs to cancel");
+        for(Entry<GridJob,GridJobFuture> entry : jobsToCancel.entrySet()){
+                GridJobFuture future = entry.getValue();
+                future.cancel(true);
+        }
+        futures.clear();
+        return  super.shutdownNow();
+    }
+   
+  
     
     
 }
