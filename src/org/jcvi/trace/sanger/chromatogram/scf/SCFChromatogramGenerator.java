@@ -5,6 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.OptionGroup;
+import org.apache.commons.cli.Options;
+import org.jcvi.command.CommandLineOptionBuilder;
+import org.jcvi.command.CommandLineUtils;
 import org.jcvi.fasta.*;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -26,22 +32,57 @@ public class SCFChromatogramGenerator {
 
     private SCFCodec codec;
 
+    private static final String SEQUENCE_FILE_OPTION_NAME = "sequenceFile";
+    private static final String QUALITY_FILE_OPTION_NAME = "qualityFile";
+    private static final String OUTPUT_DIRECTORY_OPTION_NAME = "outputDir";
+    private static final String SCF_VERSION_OPTION_NAME = "scfVersion";
+
     public static final void main(String[] args) throws Exception {
-        if ( args.length != 3 ) {
-            System.err.println(
-                "SCFChromatogramGenerator called with invalid number of arguments\n"+
-                "Proper usage is\n" +
-                "\tSCFChromatogramGenerator <seqeuence fasta file> <quality fasta file> <chromatrogram output dir>"
-            );
+        File sequenceFasta = null;
+        File qualityFasta = null;
+        File outputDir = new File(System.getProperty("user.dir"));
+        SCFCodec codec = new Version3SCFCodec();
+
+        try {
+            CommandLine commandLine = CommandLineUtils.parseCommandLine(buildOptions(),args);
+
+            sequenceFasta = new File(commandLine.getOptionValue(SEQUENCE_FILE_OPTION_NAME));
+            qualityFasta = new File(commandLine.getOptionValue(QUALITY_FILE_OPTION_NAME));
+
+            String outDir = commandLine.getOptionValue(OUTPUT_DIRECTORY_OPTION_NAME);
+            if ( outDir != null ) {
+                outputDir = new File(outDir);
+            }
+            if ( !outputDir.exists() ) {
+                if ( !outputDir.mkdirs() ) {
+                    throw new RuntimeException("Can't create target output dir " + outputDir);
+                }
+            } else {
+                if ( !(outputDir.canWrite() && outputDir.isDirectory()) ) {
+                    throw new IllegalArgumentException("Target output dir " + outputDir
+                        + " is not a writable directory");
+                }
+            }
+
+            String versionName = commandLine.getOptionValue(SCF_VERSION_OPTION_NAME);
+            if ( versionName != null ) {
+                if ( "2".equals(versionName) ) {
+                    codec = new Version2SCFCodec();
+                } else if ( "3".equals(versionName) ) {
+                    codec = new Version3SCFCodec();
+                } else {
+                    throw new IllegalArgumentException(versionName + " is not a valid scf version identifier");
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+            printHelp();
             System.exit(1);
         }
 
-        try {
-            File sequenceFasta = new File(args[0]);
-            File qualityFasta = new File(args[1]);
-            File outputDir = new File(args[2]);
 
-            SCFChromatogramGenerator generator = new SCFChromatogramGenerator(new Version3SCFCodec());
+        try {
+            SCFChromatogramGenerator generator = new SCFChromatogramGenerator(codec);
 
             DefaultNucleotideFastaFileDataStore sequences = new DefaultNucleotideFastaFileDataStore(sequenceFasta);
             DefaultQualityFastaFileDataStore qualities = new DefaultQualityFastaFileDataStore(qualityFasta);
@@ -72,6 +113,57 @@ public class SCFChromatogramGenerator {
         }
     }
 
+    private static Options buildOptions() {
+        Options options = new Options();
+        options.addOption(
+            new CommandLineOptionBuilder(
+                    SEQUENCE_FILE_OPTION_NAME,
+                    "multi-fasta file",
+                    "source sequence data")
+                    .isRequired(true)
+                    .build()
+        );
+        options.addOption(
+            new CommandLineOptionBuilder(
+                    QUALITY_FILE_OPTION_NAME,
+                    "multi-fasta file",
+                    "source quality data")
+                    .isRequired(true)
+                    .build()
+        );
+        options.addOption(
+            new CommandLineOptionBuilder(
+                    OUTPUT_DIRECTORY_OPTION_NAME,
+                    "directory name",
+                    "chromatogram file output directory (default is current working directory)")
+                    .isRequired(false)
+                    .build()
+        );
+        options.addOption(
+            new CommandLineOptionBuilder(
+                    SCF_VERSION_OPTION_NAME,
+                    "2|3",
+                    "scf file format version (default is version 3)")
+                    .isRequired(false)
+                    .build()
+        );
+        return options;
+    }
+
+    public static void printHelp() {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp(
+            "SCFChromatogramGenerator"
+                + " -" + SEQUENCE_FILE_OPTION_NAME + " <filename>"
+                + " -" + QUALITY_FILE_OPTION_NAME + " <filename>"
+                + " [-" + OUTPUT_DIRECTORY_OPTION_NAME + " <dirname>]"
+                + " [-" + SCF_VERSION_OPTION_NAME + " <2|3>]"
+            ,
+            "\nWrite \"synthetic\" scf chromatograms based on input sequence and quality files",
+            buildOptions(),
+            "\nCreated by Adam Resnick");
+    }
+
     public SCFChromatogramGenerator(SCFCodec codec) {
         this.codec = codec;
     }
@@ -80,11 +172,14 @@ public class SCFChromatogramGenerator {
                                       String sequenceName,
                                       NucleotideEncodedGlyphs basecalls,
                                       EncodedGlyphs<PhredQuality> qualities) {
-
         OutputStream outputStream = null;
         try {
+            SCFChromatogram syntheticChromatogram =
+               new SCFChromatogramImpl(
+                   buildSyntheticChromatogram(sequenceName,basecalls,qualities)
+                );
             outputStream = new BufferedOutputStream(new FileOutputStream(outputFile,false));
-            codec.encode(new SimpleSCFChromatogram(sequenceName,basecalls,qualities) ,outputStream);
+            codec.encode(syntheticChromatogram,outputStream);
         } catch (Exception e) {
             throw new RuntimeException("Failed to create scf chromatogram file " + outputFile, e);
         } finally {
@@ -93,188 +188,22 @@ public class SCFChromatogramGenerator {
 
     }
 
-    private static class SimpleSCFChromatogram implements SCFChromatogram {
+    private Chromatogram buildSyntheticChromatogram(String sequenceName,
+                                                    NucleotideEncodedGlyphs basecalls,
+                                                    EncodedGlyphs<PhredQuality> qualities) {
+        Peaks fakePeaks = ChromatogramUtil.buildFakePeaks((int)basecalls.getLength());
+        ChannelGroup fakeChannelGroup =
+            new ChromatogramUtil.FakeChannelGroupBuilder(basecalls,qualities, fakePeaks).build();
 
-        private final short[] FALSE_WAVEFORM = { 21, 74, 202, 441, 769, 1073, 1200, 1073, 769, 441, 202, 74, 21 };
+        // build properties form
+        Properties properties = new Properties();
+        properties.put("MODL","NONE");
+        properties.put("MCHN","NONE");
+        properties.put("NAME",sequenceName);
 
-        SCFChromatogramImpl impl;
+        properties.put("COMM",
+            "WARNING: THIS IS A SYNTHETIC CHROMATOGRAM CONSTRUCTED FROM STORED SEQUENCE AND QUALITY VALUES");
 
-        private SimpleSCFChromatogram(String sequenceName,
-                                      NucleotideEncodedGlyphs basecalls,
-                                      EncodedGlyphs<PhredQuality> qualities) {
-            List<NucleotideGlyph> bases = basecalls.decodeUngapped();
-            if ( bases.size() != qualities.getLength() ) {
-                throw new RuntimeException("Number of basecalls " + basecalls.decodeUngapped().size()
-                    + " does not match number of qualities " + qualities.getLength());
-            }
-
-            // build bogus peaks
-            Peaks peaks = buildPeaks(bases.size());
-
-            // build bogus Channels/ChannelGroup
-            ChannelGroup channelGroup = buildChannelGroup(bases,qualities,peaks);
-
-            // build properties form
-            Properties properties = new Properties();
-            properties.put("MODL","NONE");
-            properties.put("MCHN","NONE");
-            if ( sequenceName != null ) {
-                properties.put("NAME",sequenceName);
-            }
-            properties.put("COMM",
-                "WARNING: THIS IS A SYNTHETIC CHROMATOGRAM CONSTRUCTED FROM STORED SEQUENCE AND QUALITY VALUES");
-
-            impl = new SCFChromatogramImpl(
-                new BasicChromatogram(basecalls,qualities,peaks,channelGroup,properties)
-            );
-        }
-
-        private Peaks buildPeaks(int tracePositions) {
-            short[] fakePeaks = new short[tracePositions];
-            for ( int i = 0; i < tracePositions; i++ ) {
-                fakePeaks[i] = (short)((FALSE_WAVEFORM.length-1)*(i+1));
-            }
-            return new Peaks(fakePeaks);
-        }
-
-        private ChannelGroup buildChannelGroup(List<NucleotideGlyph> bases,
-                                               EncodedGlyphs<PhredQuality> qualities,
-                                               Peaks peaks) {
-            // build bogus Channels/ChannelGroup
-
-            // build bogus confidence arrays
-            byte[] aConfidence = new byte[bases.size()];
-            byte[] cConfidence = new byte[bases.size()];
-            byte[] gConfidence = new byte[bases.size()];
-            byte[] tConfidence = new byte[bases.size()];
-
-            // build bogus signal waveforms
-            short[] aSignal = new short[(FALSE_WAVEFORM.length-1)*(bases.size()+1)];
-            short[] cSignal = new short[(FALSE_WAVEFORM.length-1)*(bases.size()+1)];
-            short[] tSignal = new short[(FALSE_WAVEFORM.length-1)*(bases.size()+1)];
-            short[] gSignal = new short[(FALSE_WAVEFORM.length-1)*(bases.size()+1)];
-
-            short[] peakLocations = ShortGlyph.toArray(peaks.getData().decode());
-            for ( int i = 0; i < bases.size(); i++ ) {
-                short peakLocation = peakLocations[i];
-                NucleotideGlyph glyph = bases.get(i);
-                switch (glyph) {
-                    case Adenine:
-                        // set confidence to base confidence value
-                        aConfidence[i] = qualities.get(i).getNumber();
-                        cConfidence[i] = 0;
-                        gConfidence[i] = 0;
-                        tConfidence[i] = 0;
-
-                        // add base waveform for base call
-                        buildWaveform(aSignal,peakLocation);
-
-                        break;
-                    case Cytosine:
-                        // set confidence to base confidence value
-                        aConfidence[i] = 0;
-                        cConfidence[i] = qualities.get(i).getNumber();
-                        gConfidence[i] = 0;
-                        tConfidence[i] = 0;
-
-                        // add base waveform for base call
-                        buildWaveform(cSignal,peakLocation);
-
-                        break;
-                    case Guanine:
-                        // set confidence to base confidence value
-                        aConfidence[i] = 0;
-                        cConfidence[i] = 0;
-                        gConfidence[i] = qualities.get(i).getNumber();
-                        tConfidence[i] = 0;
-
-                        // add base waveform for base call
-                        buildWaveform(gSignal,peakLocation);
-
-                        break;
-                    case Thymine:
-                        // set confidence to base confidence value
-                        aConfidence[i] = 0;
-                        cConfidence[i] = 0;
-                        gConfidence[i] = 0;
-                        tConfidence[i] = qualities.get(i).getNumber();
-
-                        // add base waveform for base call
-                        buildWaveform(tSignal,peakLocation);
-
-                        break;
-                    default:
-                        aConfidence[i] = 0;
-                        cConfidence[i] = 0;
-                        gConfidence[i] = 0;
-                        tConfidence[i] = 0;
-
-                }
-            }
-
-            return new DefaultChannelGroup(
-                    new Channel(aConfidence,aSignal),
-                    new Channel(cConfidence,cSignal),
-                    new Channel(gConfidence,gSignal),
-                    new Channel(tConfidence,tSignal));
-
-        }
-
-        private void buildWaveform(short[] signal, short peakLocation) {
-            int waveStart = peakLocation - (FALSE_WAVEFORM.length-1)/2;
-            for ( int i = 0; i < FALSE_WAVEFORM.length; i++ ) {
-                signal[waveStart+i] += FALSE_WAVEFORM[i];
-            }
-        }
-
-        @Override
-        public PrivateData getPrivateData() {
-            return impl.getPrivateData();  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        public Confidence getSubstitutionConfidence() {
-            return impl.getSubstitutionConfidence();  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        public Confidence getInsertionConfidence() {
-            return impl.getInsertionConfidence();  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        public Confidence getDeletionConfidence() {
-            return impl.getDeletionConfidence();  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        public ChannelGroup getChannelGroup() {
-            return impl.getChannelGroup();  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        public Properties getProperties() {
-            return impl.getProperties();  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        public Peaks getPeaks() {
-            return impl.getPeaks();  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        public int getNumberOfTracePositions() {
-            return impl.getNumberOfTracePositions();  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        public NucleotideEncodedGlyphs getBasecalls() {
-            return impl.getBasecalls();  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        public EncodedGlyphs<PhredQuality> getQualities() {
-            return impl.getQualities();  //To change body of implemented methods use File | Settings | File Templates.
-        }
+        return new BasicChromatogram(basecalls,qualities,fakePeaks,fakeChannelGroup,properties);
     }
 }
