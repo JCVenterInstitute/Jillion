@@ -26,6 +26,7 @@ package org.jcvi.trace.sanger.chromatogram.ztr.chunk;
 import java.nio.ByteBuffer;
 
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
 
 
@@ -53,5 +54,21 @@ public class BASEChunk extends Chunk {
         builder.basecalls(new String(buf.array()));
 
     }
+
+    @Override
+    protected String parseData(byte[] unEncodedData,
+            ChromatogramFileVisitor visitor,String ignored) throws TraceDecoderException {
+      //first byte is padding
+        final int numberOfBases = unEncodedData.length -1;
+        ByteBuffer buf = ByteBuffer.allocate(numberOfBases);
+        buf.put(unEncodedData, 1, numberOfBases);
+        
+        final String basecalls = new String(buf.array());
+        visitor.visitBasecalls(basecalls);
+        return basecalls;
+        
+    }
+    
+    
 
 }

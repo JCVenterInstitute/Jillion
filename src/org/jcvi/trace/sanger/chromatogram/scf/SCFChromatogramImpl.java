@@ -103,10 +103,10 @@ public class SCFChromatogramImpl extends BasicChromatogram implements SCFChromat
             return true;
         if (!super.equals(obj))
             return false;
-        if (!(obj instanceof SCFChromatogramImpl)){
+        if (!(obj instanceof SCFChromatogram)){
             return false;
         }
-        final SCFChromatogramImpl other = (SCFChromatogramImpl) obj;
+        final SCFChromatogram other = (SCFChromatogram) obj;
         return CommonUtil.similarTo(getDeletionConfidence(), other.getDeletionConfidence())
             && CommonUtil.similarTo(getInsertionConfidence(), other.getInsertionConfidence())
             && CommonUtil.similarTo(getSubstitutionConfidence(), other.getSubstitutionConfidence())

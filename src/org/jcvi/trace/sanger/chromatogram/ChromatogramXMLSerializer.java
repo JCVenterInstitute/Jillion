@@ -300,8 +300,7 @@ public class ChromatogramXMLSerializer {
            return new
            ZTRChromatogramImpl(
                new BasicChromatogram(chromatogram),
-               chromatogram.getClip(),
-               chromatogram.getComment()
+               chromatogram.getClip()
               );
        }
        /**
@@ -325,8 +324,7 @@ public class ChromatogramXMLSerializer {
                                       "new",
                                       new Object[]{
                     new BasicChromatogram(chromatogram), 
-                    chromatogram.getClip(),
-                    chromatogram.getComment(),
+                    chromatogram.getClip()
                    } );
             }
         }

@@ -32,6 +32,7 @@ import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.jcvi.io.IOUtil;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramBuilder;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
@@ -85,6 +86,35 @@ public class CommentSectionCodec implements SectionCodec {
         ByteBuffer buffer = ByteBuffer.wrap(builder.toString().getBytes());
         header.setCommentSize(builder.length());
         return new EncodedSection(buffer,Section.COMMENTS);
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long decode(DataInputStream in, long currentOffset,
+            SCFHeader header, ChromatogramFileVisitor c)
+            throws SectionDecoderException {
+        long bytesToSkip = header.getCommentOffset() - currentOffset;
+        try {
+            IOUtil.blockingSkip(in,bytesToSkip);
+            byte[] comments = new byte[header.getCommentSize()];
+            int bytesRead = IOUtil.blockingRead(in,comments, 0, comments.length);
+            if(bytesRead != comments.length){
+                throw new SectionDecoderException("could not read entire comment section");
+            }
+            Properties props = new Properties();
+            props.load(new InputStreamReader(
+                        new ByteArrayInputStream(comments)));
+            //SCF has a \0 at the end of the comment section
+            //java will interpret this as an extra property
+            //remove it
+            props.remove(NULL);
+            c.visitComments(props);
+            return currentOffset+bytesToSkip+comments.length;
+        } catch (IOException e) {
+            throw new SectionDecoderException("error parsing Comment",e);
+        }
     }
 
 }

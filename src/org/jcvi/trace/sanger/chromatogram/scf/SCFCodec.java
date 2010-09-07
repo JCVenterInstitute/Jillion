@@ -23,12 +23,14 @@
  */
 package org.jcvi.trace.sanger.chromatogram.scf;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.jcvi.trace.sanger.SangerTrace;
 import org.jcvi.trace.sanger.SangerTraceCodec;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 
 /**
  * <code>SCFCodec</code> is used to encode and decode {@link SCFChromatogram}s.
@@ -54,4 +56,7 @@ public interface SCFCodec extends SangerTraceCodec{
      * the SCF Data.
      */
     SCFChromatogram decode(InputStream in) throws SCFDecoderException;
+    
+    void parse(InputStream in, ChromatogramFileVisitor visitor) throws SCFDecoderException;
+    void parse(File scfFile, ChromatogramFileVisitor visitor) throws IOException,SCFDecoderException;
 }

@@ -27,7 +27,9 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.Range;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
+import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramFileVisitor;
 
 /**
  * <code>CLIPChunk</code> contains the suggested quality clip points (0- based).
@@ -49,6 +51,25 @@ public class CLIPChunk extends Chunk {
         ByteBuffer buf = ByteBuffer.wrap(unEncodedData);
         buf.position(1); //skip padding
         builder.clip(Range.buildRange(buf.getInt(), buf.getInt()));
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected String parseData(byte[] unEncodedData,
+            ChromatogramFileVisitor visitor,String basecalls) throws TraceDecoderException {
+        if(unEncodedData.length !=9){
+            throw new TraceDecoderException("Invalid DefaultClip size, num of bytes = " +unEncodedData.length );
+        }
+        ByteBuffer buf = ByteBuffer.wrap(unEncodedData);
+        buf.position(1); //skip padding
+        Range clipRange = Range.buildRange(buf.getInt(), buf.getInt());
+        if(visitor instanceof ZTRChromatogramFileVisitor){
+            ((ZTRChromatogramFileVisitor)visitor).visitClipRange(clipRange);
+        }
+        
+        return basecalls;
     }
 
 }

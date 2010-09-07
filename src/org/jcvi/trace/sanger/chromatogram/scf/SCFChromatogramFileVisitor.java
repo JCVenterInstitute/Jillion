@@ -16,55 +16,23 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Dec 29, 2008
- *
- * @author dkatzel
- */
-package org.jcvi.trace.sanger.chromatogram.ztr;
 
+package org.jcvi.trace.sanger.chromatogram.scf;
 
-import org.jcvi.Range;
-import org.jcvi.trace.sanger.chromatogram.BasicChromatogramBuilder;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 
 /**
- * <code>ZTRChromatogramBuilder</code> uses the Builder Pattern
- * to build a {@link ZTRChromatogramImpl}
  * @author dkatzel
  *
  *
  */
-public class ZTRChromatogramBuilder extends BasicChromatogramBuilder{
-    
-    /**
-     * Hints for valid range of this sequence.
-     */
-    private Range clip;
+public interface SCFChromatogramFileVisitor extends ChromatogramFileVisitor{
 
-   /**
-    * Gets the ZTR's clip points..
-    * @return a Clip, may be null.
-    */
-    public final Range clip() {
-        return clip;
-    }
-    /**
-     * Sets the clip.
-     * @param clip the clip to set.
-     * @return this.
-     */
-    public final ZTRChromatogramBuilder clip(Range clip) {
-        this.clip = clip;
-        return this;
-    }
-    /**
-     * 
-    * {@inheritDoc}
-     */
-    @Override
-    public ZTRChromatogramImpl build() {
-        return new ZTRChromatogramImpl(super.build(),
-                clip());
-    }
+    void visitPrivateData(byte[] privateData);
     
+    void visitSubstitutionConfidence(byte[] confidence);
+    
+    void visitInsertionConfidence(byte[] confidence);
+    
+    void visitDeletionConfidence(byte[] confidence);
 }

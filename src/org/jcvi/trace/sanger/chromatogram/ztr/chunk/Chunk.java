@@ -29,6 +29,7 @@ import java.io.InputStream;
 
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRUtil;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.Data;
@@ -55,7 +56,13 @@ public abstract class Chunk {
         readMetaData(inputStream);
         readData(builder,inputStream);
     }
-
+    public String parseChunk(InputStream inputStream, ChromatogramFileVisitor visitor,String basecalls) throws TraceDecoderException{
+        if(inputStream ==null){
+            throw new TraceDecoderException("inputStream can not be null");
+        }
+        readMetaData(inputStream);
+        return readData(inputStream,visitor,basecalls);
+    }
     /**
      * Read the meta data portion of the chunk
      * Some implementations of chunk may not have
@@ -125,7 +132,19 @@ public abstract class Chunk {
 
         parseData(decodeChunk(inputStream,length), builder);
     }
+    /**
+     * Read the data portion of the chunk.
+     * This method calls parseData to interpret
+     * the data and returns the result.
+     */
+    private String readData(InputStream inputStream,ChromatogramFileVisitor visitor, String basecalls)throws TraceDecoderException{
+        int length = readLength(inputStream);
 
+        //the data may be encoded
+        //call dataFactory to get the data implementation
+
+        return parseData(decodeChunk(inputStream,length), visitor, basecalls);
+    }
     /**
      * Performs the actual conversion from the data stored in the chunk
      * into the appropriate format and SETS the data to the given
@@ -136,6 +155,7 @@ public abstract class Chunk {
      * @throws TraceDecoderException if there are any problems parsing the data.
      */
     protected abstract void parseData(byte[] unEncodedData, ZTRChromatogramBuilder builder) throws TraceDecoderException;
+    protected abstract String parseData(byte[] unEncodedData, ChromatogramFileVisitor visitor, String basecalls) throws TraceDecoderException;
 
 
     protected byte[] decodeChunk(InputStream inputStream, int datalength) throws TraceDecoderException{

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.jcvi.io.IOUtil;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramBuilder;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
@@ -48,7 +49,31 @@ public abstract class AbstractBasesSectionCodec implements SectionCodec{
         }
     }
 
+    
+    
+    
+    @Override
+    public long decode(DataInputStream in, long currentOffset,
+            SCFHeader header, ChromatogramFileVisitor visitor)
+            throws SectionDecoderException {
+        long bytesToSkip = header.getBasesOffset() - currentOffset;
+        int numberOfBases = header.getNumberOfBases();
+        try{
+            IOUtil.blockingSkip(in,bytesToSkip);
+            readBasesData(in, visitor, numberOfBases);
+            return currentOffset+bytesToSkip + numberOfBases*12;
+        }
+        catch(IOException e){
+            throw new SectionDecoderException("error reading bases section",e);
+        }
+    }
+
+
+
+
     protected abstract void readBasesData(DataInputStream in, SCFChromatogramBuilder c,
+            int numberOfBases) throws IOException;
+    protected abstract void readBasesData(DataInputStream in, ChromatogramFileVisitor c,
             int numberOfBases) throws IOException;
 
     protected static SCFChromatogramBuilder setConfidences(SCFChromatogramBuilder c, byte[][] probability) {

@@ -33,33 +33,20 @@ public class ZTRChromatogramImpl extends BasicChromatogram implements ZTRChromat
      * Hints for valid range of this sequence.
      */
     private Range clip;
-
-    /**
-     * Comment on this chromatogram, may be null.
-     */
-    private String comment;
     /**
      * Constructor that takes a Chromatogram without
      * ztr specific paramters.
      * @param c
      */
     public ZTRChromatogramImpl(Chromatogram c){
-        this(c, null, null);
+        this(c, null);
     }
     /**
      * @param c
      */
-    public ZTRChromatogramImpl(Chromatogram c, Range clip, String comment) {
+    public ZTRChromatogramImpl(Chromatogram c, Range clip) {
         super(c);
         this.clip = clip;
-        this.comment = comment;
-    }
-    /**
-     * Gets the ZTR Specific comment.
-     * @return a comment, may be null.
-     */
-    public String getComment() {
-        return comment;
     }
     /**
      * Gets the ZTR Specific clip.

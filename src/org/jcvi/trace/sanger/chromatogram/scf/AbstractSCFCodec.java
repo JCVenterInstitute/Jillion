@@ -41,6 +41,7 @@ import java.util.Map.Entry;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.SangerTrace;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeader;
 import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeaderCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
@@ -99,12 +100,39 @@ public abstract class AbstractSCFCodec implements SCFCodec{
               SectionDecoder sp=sectionCodecFactory.getSectionParserFor(entry.getValue(), header);
               currentOffset = sp.decode(dataIn, currentOffset, header, chromoStruct);
            }
-           return chromoStruct.getChromatogram();
+           return chromoStruct.build();
 
        
     }
     
     
+    @Override
+    public void parse(InputStream in, ChromatogramFileVisitor visitor)
+            throws SCFDecoderException {
+        visitor.visitFile();
+        DataInputStream dataIn = new DataInputStream(in);
+        SCFHeader header= headerCodec.decode(dataIn);
+        SortedMap<Integer, Section> sectionsByOffset = createSectionsByOffsetMap(header);
+        long currentOffset =HEADER_SIZE;
+        for(Entry<Integer, Section> entry: sectionsByOffset.entrySet()){
+           SectionDecoder sp=sectionCodecFactory.getSectionParserFor(entry.getValue(), header);
+           currentOffset = sp.decode(dataIn, currentOffset, header, visitor);
+        }
+        visitor.visitEndOfFile();
+        
+    }
+    @Override
+    public void parse(File scfFile, ChromatogramFileVisitor visitor)
+            throws SCFDecoderException, FileNotFoundException {
+        InputStream in = null;
+        try{
+            in = new FileInputStream(scfFile);
+            parse(in,visitor);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+        
+    }
     @Override
     public SangerTrace decode(File sangerTrace) throws TraceDecoderException,
             FileNotFoundException {

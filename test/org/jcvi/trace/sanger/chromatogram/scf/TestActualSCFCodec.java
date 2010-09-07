@@ -49,5 +49,6 @@ public class TestActualSCFCodec {
         SCFChromatogram decodedAgain = sut.decode(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
 
         assertEquals(decoded, decodedAgain);
+        
     }
 }

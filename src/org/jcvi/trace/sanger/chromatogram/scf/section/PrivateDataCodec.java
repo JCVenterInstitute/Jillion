@@ -28,9 +28,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.jcvi.io.IOUtil;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.PrivateData;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramBuilder;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
 /**
  * <code>PrivateDataCodec</code> is the SectionCodec implementation
@@ -74,6 +76,34 @@ public class PrivateDataCodec implements SectionCodec{
                     throw new SectionDecoderException("could not read entire private data section");
                 }
                 c.privateData(privateData);
+            }
+            return currentOffset+bytesToSkip+privateDataSize;
+        } catch (IOException e) {
+           throw new SectionDecoderException("error trying to decode Private Data",e);
+        }
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long decode(DataInputStream in, long currentOffset,
+            SCFHeader header, ChromatogramFileVisitor c)
+            throws SectionDecoderException {
+        long bytesToSkip = header.getPrivateDataOffset() - currentOffset;
+        try {
+            IOUtil.blockingSkip(in,bytesToSkip);
+            final int privateDataSize = header.getPrivateDataSize();
+            if(privateDataSize !=0){              
+                byte[] privateData = new byte[privateDataSize];
+                int bytesRead = in.read(privateData);
+                if(bytesRead != privateDataSize){
+                    throw new SectionDecoderException("could not read entire private data section");
+                }
+                if(c instanceof SCFChromatogramFileVisitor){
+                    ((SCFChromatogramFileVisitor) c).visitPrivateData(privateData);
+                }
+                
             }
             return currentOffset+bytesToSkip+privateDataSize;
         } catch (IOException e) {

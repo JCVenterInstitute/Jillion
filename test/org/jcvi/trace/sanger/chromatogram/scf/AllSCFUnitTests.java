@@ -42,7 +42,8 @@ import org.junit.runners.Suite.SuiteClasses;
        AllSectionUnitTests.class,
 
        TestActualSCFCodec.class,
-       TestSCFChromatogramWithGaps.class
+       TestSCFChromatogramWithGaps.class,
+       TestSCFChromatogramFile.class
     }
     )
 public class AllSCFUnitTests {

@@ -33,8 +33,10 @@ import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Confidence;
 import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramBuilder;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFileVisitor;
 
 public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
 
@@ -50,6 +52,31 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
         .deletionConfidence(parseSpareConfidence(in, numberOfBases).array());
         
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     protected void readBasesData(DataInputStream in, ChromatogramFileVisitor visitor,
+             int numberOfBases) throws IOException {
+         visitor.visitPeaks( parsePeaks(in, numberOfBases));
+         byte[][] confidences =parseConfidenceData(in, numberOfBases);
+         
+         visitor.visitAConfidence(confidences[0]);
+         visitor.visitCConfidence(confidences[1]);
+         visitor.visitGConfidence(confidences[2]);
+         visitor.visitTConfidence(confidences[3]);
+         visitor.visitBasecalls(parseBasecalls(in, numberOfBases));
+         
+         if(visitor instanceof SCFChromatogramFileVisitor){
+             SCFChromatogramFileVisitor scfVisitor = (SCFChromatogramFileVisitor) visitor;
+             scfVisitor.visitSubstitutionConfidence(parseSpareConfidence(in, numberOfBases).array());
+             scfVisitor.visitInsertionConfidence(parseSpareConfidence(in, numberOfBases).array());
+             scfVisitor.visitDeletionConfidence(parseSpareConfidence(in, numberOfBases).array());
+         }
+        
+         
+     }
 
     private ByteBuffer parseSpareConfidence(DataInputStream in,
             int numberOfBases) throws IOException {
@@ -157,5 +184,7 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
         }
         data.rewind();
     }
+
+    
 
 }

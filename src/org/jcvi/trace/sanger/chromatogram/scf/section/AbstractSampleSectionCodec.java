@@ -32,6 +32,7 @@ import java.util.Collections;
 
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramBuilder;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
@@ -54,6 +55,34 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
             if(positions!=null){
                 extractActualPositions(positionStrategy, positions);
                 setPositions(c, positions);
+    
+                return currentOffset+bytesToSkip + numberOfSamples*header.getSampleSize()*4;
+            }
+            return currentOffset+bytesToSkip;
+        }
+        catch(IOException e){
+            throw new SectionDecoderException("error reading version "+header.getVersion() + " samples",e);
+        }
+
+    }
+    
+    @Override
+    public long decode(DataInputStream in, long currentOffset, SCFHeader header,
+            ChromatogramFileVisitor visitor) throws SectionDecoderException {
+        int numberOfSamples = header.getNumberOfSamples();
+        PositionStrategy positionStrategy = PositionStrategyFactory.getPositionStrategy(header);
+        long bytesToSkip = header.getSampleOffset() - currentOffset;
+
+        try{
+            IOUtil.blockingSkip(in,bytesToSkip);
+            short[][] positions = parseRawPositions(in, numberOfSamples,
+                    positionStrategy);
+            if(positions!=null){
+                extractActualPositions(positionStrategy, positions);
+                visitor.visitAPositions(positions[0]);
+                visitor.visitCPositions(positions[1]);
+                visitor.visitGPositions(positions[2]);
+                visitor.visitTPositions(positions[3]);
     
                 return currentOffset+bytesToSkip + numberOfSamples*header.getSampleSize()*4;
             }
