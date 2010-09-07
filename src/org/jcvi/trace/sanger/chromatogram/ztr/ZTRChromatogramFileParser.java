@@ -34,6 +34,8 @@ import org.jcvi.trace.sanger.chromatogram.ztr.chunk.ChunkException;
 import org.jcvi.trace.sanger.chromatogram.ztr.chunk.ChunkFactory;
 
 /**
+ * {@code ZTRChromatogramFileParser} is a utility class 
+ * for parsing ZTR encoded chromatogram files.
  * @author dkatzel
  *
  *
@@ -47,8 +49,23 @@ public class ZTRChromatogramFileParser {
         new byte[]{(byte)0xAE,(byte)0x5A,(byte)0x54,(byte)0x52,
                 (byte)0x0D,(byte)0x0A,(byte)0x1A,(byte)0x0A,};
     
-    
+    /**
+     * Parse the given ZTR encoded chromatogram file
+     * and call the appropriate visitXXX methods of the given
+     * visitor while parsing.
+     * @param ztrFile the ZTR chromatogram file
+     * to parse.
+     * @param visitor the visitor instance to call visitXXX methods on
+     * (can not be null).
+     * @throws TraceDecoderException if there is  a problem
+     * parsing the ZTR file.
+     * @throws IOException if there is a problem reading the file.
+     * @throws NullPointerException if visitor is null.
+     */
     public static void parseZTRFile(File ztrFile, ChromatogramFileVisitor visitor) throws FileNotFoundException, TraceDecoderException{
+        if(visitor ==null){
+            throw new NullPointerException("visitor can not be null");
+        }
         InputStream in = new FileInputStream(ztrFile);
         try{
             parseZTRFile(in, visitor);
@@ -57,7 +74,19 @@ public class ZTRChromatogramFileParser {
         }
         
     }
-    
+    /**
+     * Parse the given ZTR encoded chromatogram inputStream
+     * and call the appropriate visitXXX methods of the given
+     * visitor while parsing.
+     * @param ztrFile the ZTR chromatogram input stream
+     * to parse.
+     * @param visitor the visitor instance to call visitXXX methods on
+     * (can not be null).
+     * @throws TraceDecoderException if there is  a problem
+     * parsing the ZTR file.
+     * @throws IOException if there is a problem reading the file.
+     * @throws NullPointerException if visitor is null.
+     */
     public static void parseZTRFile(InputStream ztrStream, ChromatogramFileVisitor visitor) throws TraceDecoderException{
         visitor.visitFile();
         parseHeader(ztrStream);

@@ -24,6 +24,8 @@ import java.util.Properties;
 import org.jcvi.io.FileVisitor;
 
 /**
+ * {@code ChromatogramFileVisitor} is a {@link FileVisitor}
+ * used for visiting chromatogram files.
  * @author dkatzel
  *
  *
@@ -31,56 +33,91 @@ import org.jcvi.io.FileVisitor;
 public interface ChromatogramFileVisitor extends FileVisitor{
 
     /**
-     * @param string
+     * Visit the basecalls in the chromatogram file
+     * being visited.
+     * @param string the basecalls as a string,
+     * although unlikely, it is possible there are 
+     * gaps.
      */
     void visitBasecalls(String basecalls);
 
     /**
-     * @param peaks
+     * Visit the raw peak values of the
+     * chromatogram file being visited.
+     * @param peaks the raw peaks as shorts,
+     * may be null.
      */
     void visitPeaks(short[] peaks);
 
     /**
-     * @param array
+     * Visit the raw positions of the A channel of the
+     * chromatogram file being visited.
+     * @param positions the raw positions as shorts,
+     * may be null.
      */
     void visitAPositions(short[] positions);
 
     /**
-     * @param array
+     * Visit the raw positions of the C channel of the
+     * chromatogram file being visited.
+     * @param positions the raw positions as shorts,
+     * may be null.
      */
     void visitCPositions(short[] positions);
     /**
-     * @param array
+     * Visit the raw positions of the G channel of the
+     * chromatogram file being visited.
+     * @param positions the raw positions as shorts,
+     * may be null.
      */
     void visitGPositions(short[] positions);
     /**
-     * @param array
+     * Visit the raw positions of the T channel of the
+     * chromatogram file being visited.
+     * @param positions the raw positions as shorts,
+     * may be null.
      */
     void visitTPositions(short[] positions);
 
     /**
-     * @param array
+     * Visit the raw confidence (quality) of the A channel of the
+     * chromatogram file being visited.
+     * @param confidence the raw confidence as bytes,
+     * may be null.
      */
-    void visitAConfidence(byte[] array);
+    void visitAConfidence(byte[] confidence);
 
     /**
-     * @param array
+     * Visit the raw confidence (quality) of the C channel of the
+     * chromatogram file being visited.
+     * @param confidence the raw confidence as bytes,
+     * may be null.
      */
-    void visitCConfidence(byte[] array);
+    void visitCConfidence(byte[] confidence);
 
     /**
-     * @param array
+     * Visit the raw confidence (quality) of the G channel of the
+     * chromatogram file being visited.
+     * @param confidence the raw confidence as bytes,
+     * may be null.
      */
-    void visitGConfidence(byte[] array);
+    void visitGConfidence(byte[] confidence);
 
     /**
-     * @param array
+     * Visit the raw confidence (quality) of the T channel of the
+     * chromatogram file being visited.
+     * @param confidence the raw confidence as bytes,
+     * may be null.
      */
-    void visitTConfidence(byte[] array);
+    void visitTConfidence(byte[] confidence);
     
 
     /**
-     * @param parseText
+     * Visit any comments associated with 
+     * this chromatogram. 
+     * @param comments the comments associated
+     * with this chromatogram file stored
+     * as key-value pairs.
      */
     void visitComments(Properties comments);
 
