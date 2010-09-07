@@ -23,6 +23,8 @@ import org.jcvi.Range;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 
 /**
+ * {@code ZTRChromatogramFileVisitor} is a {@link ChromatogramFileVisitor}
+ * that has additional visitXXX methods for ZTR specific fields.
  * @author dkatzel
  *
  *
@@ -31,7 +33,9 @@ public interface ZTRChromatogramFileVisitor extends ChromatogramFileVisitor{
 
   
     /**
-     * @param clipRange
+     * Visit the clip points of the ZTR chromatogram.
+     * @param clipRange the clip points which describe
+     * the valid range of the data (may be null or empty).
      */
     void visitClipRange(Range clipRange);
 

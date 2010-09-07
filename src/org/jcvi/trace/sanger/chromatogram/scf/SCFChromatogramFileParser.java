@@ -25,30 +25,49 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.jcvi.io.IOUtil;
+import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeaderCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeaderCodec;
 
 /**
+ * {@code SCFChromatogramFileParser} is a utility class 
+ * for parsing SCF encoded chromatogram files.
  * @author dkatzel
  *
  *
  */
-public class SCFChromatogramFileParser {
+public final class SCFChromatogramFileParser {
 
     private static final SCFHeaderCodec HEADER_CODEC =new DefaultSCFHeaderCodec();
     private static final SCFCodec VERSION3 =new Version3SCFCodec();
     private static final SCFCodec VERSION2 =new Version2SCFCodec();
     
-    
-    
-    public static void parseSCFFile(File scfFile, ChromatogramFileVisitor visitor) throws SCFDecoderException, IOException{
+    private SCFChromatogramFileParser(){}
+    /**
+     * Parse the given SCF encoded chromatogram file
+     * and call the appropriate visitXXX methods of the given
+     * visitor while parsing.  This method can handle SCF version
+     * 2 AND version 3 formats.
+     * @param scfFile the SCF version 2 or version 3 chromatogram file
+     * to parse.
+     * @param visitor the visitor instance to call visitXXX methods on
+     * (can not be null).
+     * @throws TraceDecoderException if there is  a problem
+     * parsing the SCF file.
+     * @throws IOException if there is a problem reading the file.
+     * @throws NullPointerException if visitor is null.
+     */
+    public static void parseSCFFile(File scfFile, ChromatogramFileVisitor visitor) throws TraceDecoderException, IOException{
+        if(visitor ==null){
+            throw new NullPointerException("visitor can not be null");
+        }
         DataInputStream in=null;
         try{
             in = new DataInputStream(new FileInputStream(scfFile));
              SCFHeader header =HEADER_CODEC.decode(in);
-             if(header.getVersion()==3F){
+             if(header.getVersion()>=3F){
                  VERSION3.parse(scfFile, visitor);
              }else{
                  VERSION2.parse(scfFile, visitor);

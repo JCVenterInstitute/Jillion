@@ -28,6 +28,7 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Confidence;
 import org.jcvi.sequence.Peaks;
+import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
 
 /**
@@ -45,7 +46,7 @@ public class SCFChromatogramFile implements SCFChromatogram, SCFChromatogramFile
         builder = new SCFChromatogramBuilder();
     }
     
-    public SCFChromatogramFile(File scfFile) throws SCFDecoderException, IOException{
+    public SCFChromatogramFile(File scfFile) throws TraceDecoderException, IOException{
        this();
        SCFChromatogramFileParser.parseSCFFile(scfFile, this);
     }
