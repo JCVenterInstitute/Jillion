@@ -59,16 +59,16 @@ public class TestDataFactory {
     }
     
     @Test
-    public void ZeroIsRawData() throws TraceDecoderException{
+    public void zeroIsRawData() throws TraceDecoderException{
         assertTrue(DataFactory.getDataImplementation(new byte[]{0} ) instanceof RawData);
     }
     @Test
-    public void OneIsRunLengthEncoded() throws TraceDecoderException{
+    public void oneIsRunLengthEncoded() throws TraceDecoderException{
         assertTrue(DataFactory.getDataImplementation(new byte[]{1} ) instanceof RunLengthEncodedData);
     }
 
     @Test
-    public void TwoIsZLibData() throws TraceDecoderException{
+    public void twoIsZLibData() throws TraceDecoderException{
         assertTrue(DataFactory.getDataImplementation(new byte[]{2} ) instanceof ZLibData);
     }
     @Test

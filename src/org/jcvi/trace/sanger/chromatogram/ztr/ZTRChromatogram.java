@@ -32,9 +32,4 @@ public interface ZTRChromatogram extends Chromatogram{
      * @return a clip, may be null or empty.
      */
     Range getClip();
-    /**
-     * Gets the ZTR Specific comment.
-     * @return a comment, may be null.
-     */
-    String getComment();
 }

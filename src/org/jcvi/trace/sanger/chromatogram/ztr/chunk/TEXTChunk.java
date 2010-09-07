@@ -30,6 +30,7 @@ import java.util.Properties;
 import java.util.Scanner;
 
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
 
 
@@ -79,6 +80,19 @@ public class TEXTChunk extends Chunk {
                 scanner.close();
             }
         }
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected String parseData(byte[] decodedData,
+            ChromatogramFileVisitor visitor,String basecalls) throws TraceDecoderException {
+        InputStream in = new ByteArrayInputStream(decodedData);
+        final Properties comments = parseText(in);
+        visitor.visitComments(comments);
+        return basecalls;
+        
     }
 
 }

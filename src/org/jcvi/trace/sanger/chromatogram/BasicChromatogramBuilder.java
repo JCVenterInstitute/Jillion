@@ -197,7 +197,7 @@ public class BasicChromatogramBuilder {
             return new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,qualities);
         }
         
-        public BasicChromatogram build() {
+        public Chromatogram build() {
             final ChannelGroup channelGroup = new DefaultChannelGroup(
                     new Channel(aConfidence(),aPositions()),
                     new Channel(cConfidence(),cPositions()),

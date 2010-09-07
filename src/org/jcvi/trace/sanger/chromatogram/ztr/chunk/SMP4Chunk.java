@@ -28,6 +28,7 @@ import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
 
 
@@ -81,6 +82,38 @@ public class SMP4Chunk extends Chunk {
         for(int i=0; i< aPositions.capacity(); i++){
             aPositions.put(buf.get());
         }
+    }
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected String parseData(byte[] unEncodedData,
+            ChromatogramFileVisitor visitor, String basecalls) throws TraceDecoderException {
+   //read first 2 byte is padded bytes?
+        
+        ShortBuffer buf = ByteBuffer.wrap(unEncodedData).asShortBuffer();
+        //skip padding
+        buf.position(1);
+        int length = buf.capacity()-1;
+        int numberOfPositions = length/4;
+        ShortBuffer aPositions = ShortBuffer.allocate(numberOfPositions);
+        ShortBuffer cPositions = ShortBuffer.allocate(numberOfPositions);
+        ShortBuffer gPositions = ShortBuffer.allocate(numberOfPositions);
+        ShortBuffer tPositions = ShortBuffer.allocate(numberOfPositions);
+        
+        populatePositionData(buf, aPositions);
+        populatePositionData(buf, cPositions);
+        populatePositionData(buf, gPositions);
+        populatePositionData(buf, tPositions);
+        
+        visitor.visitAPositions(aPositions.array());
+        visitor.visitCPositions(cPositions.array());
+        visitor.visitGPositions(gPositions.array());
+        visitor.visitTPositions(tPositions.array());
+        
+        return basecalls;
     }
 
 

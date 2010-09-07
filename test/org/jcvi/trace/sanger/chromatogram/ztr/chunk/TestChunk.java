@@ -30,6 +30,7 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.testUtil.EasyMockUtil;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
 import org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk;
 import org.junit.Before;
@@ -52,6 +53,16 @@ public class TestChunk {
             protected void parseData(byte[] unEncodedData,
                     ZTRChromatogramBuilder builder)
                     throws TraceDecoderException { }
+
+            @Override
+            protected String parseData(byte[] unEncodedData,
+                    ChromatogramFileVisitor visitor, String basecalls)
+                    throws TraceDecoderException {
+                return null;
+            }
+
+          
+
            
             
         };

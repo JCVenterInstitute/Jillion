@@ -29,6 +29,7 @@ import java.util.List;
 
 
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
 
 
@@ -124,5 +125,34 @@ public class CNF4Chunk extends Chunk {
         for(ByteBuffer uncalledBuf : uncalledConfidenceChannels){
             uncalledBuf.put(unCalledConfidence.get());
         }
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected String parseData(byte[] unEncodedData,
+            ChromatogramFileVisitor visitor,String basecalls)throws TraceDecoderException {
+       
+        int numberOfBases = basecalls.length();
+        ByteBuffer aConfidence = ByteBuffer.allocate(numberOfBases);
+        ByteBuffer cConfidence = ByteBuffer.allocate(numberOfBases);
+        ByteBuffer gConfidence = ByteBuffer.allocate(numberOfBases);
+        ByteBuffer tConfidence = ByteBuffer.allocate(numberOfBases);
+           
+        ByteBuffer calledConfidence = ByteBuffer.wrap(unEncodedData);       
+        ByteBuffer unCalledConfidence = calledConfidence.slice();
+        //skip padding
+        calledConfidence.position(1);
+        unCalledConfidence.position(1+numberOfBases);
+        populateConfidenceBuffers(basecalls, aConfidence, cConfidence,
+                gConfidence, tConfidence, calledConfidence, unCalledConfidence);
+        
+        visitor.visitAConfidence(aConfidence.array());
+        visitor.visitCConfidence(cConfidence.array());
+        visitor.visitGConfidence(gConfidence.array());
+        visitor.visitTConfidence(tConfidence.array());
+        return basecalls;
+        
     }
 }

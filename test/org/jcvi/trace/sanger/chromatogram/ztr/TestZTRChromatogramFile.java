@@ -16,29 +16,38 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Dec 29, 2008
- *
- * @author dkatzel
- */
+
 package org.jcvi.trace.sanger.chromatogram.ztr;
 
+import java.io.File;
+import java.io.IOException;
 
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramXMLSerializer;
-import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramImpl;
-import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramParser;
 import org.junit.Test;
 import static org.junit.Assert.*;
-public class TestZTRChromatogramParser {
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestZTRChromatogramFile {
 
-    ZTRChromatogramParser sut = new ZTRChromatogramParser();
-    static ZTRChromatogramImpl expected = (ZTRChromatogramImpl)ChromatogramXMLSerializer.fromXML(TestZTRChromatogramParser.class.getResourceAsStream("files/GBKAK82TF.ztr.xml"));
-
+    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestZTRChromatogramFile.class);
+    private static final ZTRChromatogramImpl EXPECTED_ZTR;
+    static{
+        try {
+            EXPECTED_ZTR= (ZTRChromatogramImpl)ChromatogramXMLSerializer.fromXML(RESOURCES.getFileAsStream("files/GBKAK82TF.ztr.xml"));
+        } catch (IOException e) {
+            throw new IllegalStateException("could not parse expected chromatogram",e);
+        }
+    }
+    
     @Test
-    public void parse() throws TraceDecoderException{
-        ZTRChromatogramImpl actual =sut.decode(TestZTRChromatogramParser.class.getResourceAsStream("files/GBKAK82TF.ztr"));
-        assertEquals(expected,actual);
-        assertEquals(actual.getClip(), expected.getClip());
+    public void parseZtrFile() throws IOException, TraceDecoderException{
+        File ztrFile = RESOURCES.getFile("files/GBKAK82TF.ztr");
+        ZTRChromatogram actual = new ZTRChromatogramFile(ztrFile);
+        assertEquals(EXPECTED_ZTR, actual);
     }
 }

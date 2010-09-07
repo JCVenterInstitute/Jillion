@@ -33,8 +33,11 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.sequence.Confidence;
 import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramBuilder;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFileVisitor;
+import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
 
 public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
 
@@ -131,6 +134,50 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
         else{
             buffer.put((byte)0);
         }
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long decode(DataInputStream in, long currentOffset,
+            SCFHeader header, ChromatogramFileVisitor c)
+            throws SectionDecoderException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected void readBasesData(DataInputStream in, ChromatogramFileVisitor visitor,
+            int numberOfBases) throws IOException {
+        ShortBuffer peaks = ShortBuffer.allocate(numberOfBases);
+        byte[][] probability = new byte[4][numberOfBases];
+        ByteBuffer substitutionConfidence = ByteBuffer.allocate(numberOfBases);
+        ByteBuffer insertionConfidence = ByteBuffer.allocate(numberOfBases);
+        ByteBuffer deletionConfidence = ByteBuffer.allocate(numberOfBases);
+
+        StringBuilder bases = new StringBuilder();
+        populateFields(in, numberOfBases, peaks, probability,
+                substitutionConfidence, insertionConfidence,
+                deletionConfidence, bases);
+        visitor.visitAConfidence(probability[0]);
+        visitor.visitCConfidence(probability[1]);
+        visitor.visitGConfidence(probability[2]);
+        visitor.visitTConfidence(probability[3]);
+
+        visitor.visitPeaks(peaks.array());
+        visitor.visitBasecalls(bases.toString());
+        if(visitor instanceof SCFChromatogramFileVisitor){
+            SCFChromatogramFileVisitor scfVisitor = (SCFChromatogramFileVisitor) visitor;
+            scfVisitor.visitSubstitutionConfidence(substitutionConfidence.array());
+            scfVisitor.visitInsertionConfidence(insertionConfidence.array());
+            scfVisitor.visitDeletionConfidence(deletionConfidence.array());
+        }
+
+        
     }
 
 }

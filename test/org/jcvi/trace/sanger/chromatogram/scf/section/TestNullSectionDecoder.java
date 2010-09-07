@@ -25,6 +25,7 @@ package org.jcvi.trace.sanger.chromatogram.scf.section;
 
 import org.junit.Assert;
 
+import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.section.NullSectionCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.section.SectionDecoderException;
 import org.junit.Test;
@@ -36,6 +37,6 @@ public class TestNullSectionDecoder {
         long currentOffset = 123456L;
         Assert.assertEquals("current offset should not change",
                 currentOffset,
-                new NullSectionCodec().decode(null, currentOffset, null, null));
+                new NullSectionCodec().decode(null, currentOffset, null, (SCFChromatogramFileVisitor)null));
     }
 }

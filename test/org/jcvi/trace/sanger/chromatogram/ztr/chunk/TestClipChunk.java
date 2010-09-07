@@ -52,7 +52,7 @@ public class TestClipChunk {
     @Test
     public void invalidLengthTooSmallShouldThrowTraceDecoderException(){
         try{
-            sut.parseData(new byte[8], null);
+            sut.parseData(new byte[8], (ZTRChromatogramBuilder)null);
             fail("should throw exception if array length < 9");
         }catch(TraceDecoderException e){
             assertEquals("Invalid DefaultClip size, num of bytes = 8", e.getMessage());
@@ -61,7 +61,7 @@ public class TestClipChunk {
     @Test
     public void invalidLengthTooBigShouldThrowTraceDecoderException(){
         try{
-            sut.parseData(new byte[10], null);
+            sut.parseData(new byte[10], (ZTRChromatogramBuilder)null);
             fail("should throw exception if array length > 9");
         }catch(TraceDecoderException e){
             assertEquals("Invalid DefaultClip size, num of bytes = 10", e.getMessage());

@@ -45,14 +45,14 @@ public class SCFChromatogramBuilder extends BasicChromatogramBuilder{
      * @return the substitutionConfidence
      */
     public byte[] substitutionConfidence() {
-        return Arrays.copyOf(substitutionConfidence, substitutionConfidence.length);
+        return substitutionConfidence==null?null:Arrays.copyOf(substitutionConfidence, substitutionConfidence.length);
     }
 
     /**
      * @param substitutionConfidence the substitutionConfidence to set
      */
     public SCFChromatogramBuilder substitutionConfidence(byte[] substitutionConfidence) {
-        this.substitutionConfidence = Arrays.copyOf(substitutionConfidence, substitutionConfidence.length);
+        this.substitutionConfidence = substitutionConfidence ==null?null:Arrays.copyOf(substitutionConfidence, substitutionConfidence.length);
         return this;
     }
 
@@ -60,14 +60,14 @@ public class SCFChromatogramBuilder extends BasicChromatogramBuilder{
      * @return the insertionConfidence
      */
     public byte[] insertionConfidence() {
-        return Arrays.copyOf(insertionConfidence, insertionConfidence.length);
+        return insertionConfidence==null?null:Arrays.copyOf(insertionConfidence, insertionConfidence.length);
     }
 
     /**
      * @param insertionConfidence the insertionConfidence to set
      */
     public SCFChromatogramBuilder insertionConfidence(byte[] insertionConfidence) {
-        this.insertionConfidence = Arrays.copyOf(insertionConfidence, insertionConfidence.length);
+        this.insertionConfidence = insertionConfidence ==null?null:Arrays.copyOf(insertionConfidence, insertionConfidence.length);
         return this;
     }
 
@@ -75,14 +75,15 @@ public class SCFChromatogramBuilder extends BasicChromatogramBuilder{
      * @return the deletionConfidence
      */
     public byte[] deletionConfidence() {
-        return Arrays.copyOf(deletionConfidence, deletionConfidence.length);
+        return deletionConfidence==null?null:Arrays.copyOf(deletionConfidence, deletionConfidence.length);
     }
 
     /**
      * @param deletionConfidence the deletionConfidence to set
      */
     public SCFChromatogramBuilder deletionConfidence(byte[] deletionConfidence) {
-        this.deletionConfidence = Arrays.copyOf(deletionConfidence, deletionConfidence.length);
+        this.deletionConfidence = deletionConfidence ==null?null:Arrays.copyOf(deletionConfidence, deletionConfidence.length);
+        
         return this;
     }
 
@@ -101,7 +102,7 @@ public class SCFChromatogramBuilder extends BasicChromatogramBuilder{
         return this;
     }
 
-    public SCFChromatogram getChromatogram() {
+    public SCFChromatogram build() {
         Chromatogram basicChromo = super.build();
         return new SCFChromatogramImpl(basicChromo,
                 createOptionalConfidence(substitutionConfidence()),

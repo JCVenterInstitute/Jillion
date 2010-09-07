@@ -16,44 +16,46 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Sep 11, 2008
- *
- * @author dkatzel
- */
-package org.jcvi.trace.sanger.chromatogram.scf.section;
+
+package org.jcvi.trace.sanger.chromatogram.scf;
 
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.jcvi.io.IOUtil;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
-import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
-import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramBuilder;
+import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeaderCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
+import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeaderCodec;
 
-public class NullSectionCodec implements SectionCodec{
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class SCFChromatogramFileParser {
 
-    @Override
-    public long decode(DataInputStream in, long currentOffset, SCFHeader header,
-            SCFChromatogramBuilder c) throws SectionDecoderException {
-        return currentOffset;
+    private static final SCFHeaderCodec HEADER_CODEC =new DefaultSCFHeaderCodec();
+    private static final SCFCodec VERSION3 =new Version3SCFCodec();
+    private static final SCFCodec VERSION2 =new Version2SCFCodec();
+    
+    
+    
+    public static void parseSCFFile(File scfFile, ChromatogramFileVisitor visitor) throws SCFDecoderException, IOException{
+        DataInputStream in=null;
+        try{
+            in = new DataInputStream(new FileInputStream(scfFile));
+             SCFHeader header =HEADER_CODEC.decode(in);
+             if(header.getVersion()==3F){
+                 VERSION3.parse(scfFile, visitor);
+             }else{
+                 VERSION2.parse(scfFile, visitor);
+             }
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+        
     }
-
-    @Override
-    public EncodedSection encode(SCFChromatogram c, SCFHeader header)
-            throws IOException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public long decode(DataInputStream in, long currentOffset,
-            SCFHeader header, ChromatogramFileVisitor c)
-            throws SectionDecoderException {
-        return currentOffset;
-    }
-
 }

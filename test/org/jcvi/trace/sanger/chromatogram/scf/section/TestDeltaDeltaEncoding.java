@@ -29,7 +29,6 @@ import java.util.Collection;
 
 
 import org.jcvi.trace.sanger.chromatogram.scf.SCFUtils;
-import org.jcvi.trace.sanger.chromatogram.scf.section.Version3SampleSectionCodec;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -39,8 +38,7 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class TestDeltaDeltaEncoding {
 
-    Version3SampleSectionCodec sut = new Version3SampleSectionCodec();
-
+   
     short[] original,expectedDeltaDelta;
     @Parameters
     public static Collection<?> data(){

@@ -111,7 +111,7 @@ public class TestAbstractSCFCodecDecoder {
         expect(mockDecoder.decode(isA(DataInputStream.class), eq(300L), eq(expectedSCFHeader), eq(mockChromoStruct))).andReturn(400L);
         expect(mockDecoder.decode(isA(DataInputStream.class), eq(400L), eq(expectedSCFHeader), eq(mockChromoStruct))).andReturn(500L);
 
-        expect(mockChromoStruct.getChromatogram()).andReturn(expectedChromo);
+        expect(mockChromoStruct.build()).andReturn(expectedChromo);
         replay(mockInputStream, mockHeaderCodec, mockSectionCodecFactory,mockChromoStruct,mockDecoder);
         assertEquals(expectedChromo,sut.decode(mockInputStream));
         verify(mockInputStream, mockHeaderCodec, mockSectionCodecFactory,mockChromoStruct,mockDecoder);
