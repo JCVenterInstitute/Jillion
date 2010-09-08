@@ -195,6 +195,7 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
         System.out.println(new Period(end-start));
     
     }catch(ParseException e){
+        e.printStackTrace();
         printHelp(options);
         System.exit(1);
     }
