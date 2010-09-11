@@ -66,7 +66,7 @@ public enum TaggedDataName {
 	 * processed display traces at which
 	 * the basecalls are centered.
 	 */
-	SCAN_LOCATIONS("PLOC"),
+	PEAK_LOCATIONS("PLOC"),
 	
 	/**
 	 * the scan number of the raw data stream at which the
@@ -74,7 +74,7 @@ public enum TaggedDataName {
 	 * (linking the time lines of the raw and 
 	 * display trace data streams).
 	 */
-	SCAN_POSITIONS("PPOS"),
+	PEAK_POSITIONS("PPOS"),
 	
 	/**
 	 * The start and stop dates of the gel run.
@@ -193,8 +193,10 @@ public enum TaggedDataName {
 	MODEL("MODL"),
 	
 	NOIS("NOIS"),
-	
-	PCON("PCON"),
+	/**
+	 * Possibly quality values?
+	 */
+	QUALITY("PCON"),
 	
 	PSZE("PSZE"),
 	

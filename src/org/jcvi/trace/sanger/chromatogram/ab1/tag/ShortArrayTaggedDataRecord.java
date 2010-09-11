@@ -1,6 +1,7 @@
 package org.jcvi.trace.sanger.chromatogram.ab1.tag;
 
 import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 
 public class ShortArrayTaggedDataRecord extends AbstractTaggedDataRecord<short[]>{
 
@@ -13,7 +14,13 @@ public class ShortArrayTaggedDataRecord extends AbstractTaggedDataRecord<short[]
 
 	@Override
 	protected short[] parseDataFrom(byte[] data) {
-		return ByteBuffer.wrap(data).asShortBuffer().array();
+		//have to manually build short array 
+		ByteBuffer buffer= ByteBuffer.wrap(data);
+		ShortBuffer result = ShortBuffer.allocate(data.length/2);
+		while(buffer.hasRemaining()){
+			result.put(buffer.getShort());
+		}
+		return result.array();
 		
 	}
 

@@ -1,6 +1,7 @@
 package org.jcvi.trace.sanger.chromatogram.ab1.tag;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 public class FloatTaggedDataRecord extends AbstractTaggedDataRecord<float[]>{
 
@@ -13,8 +14,13 @@ public class FloatTaggedDataRecord extends AbstractTaggedDataRecord<float[]>{
 
 	@Override
 	protected float[] parseDataFrom(byte[] data) {
-		return ByteBuffer.wrap(data).asFloatBuffer().array();
-
+		//have to manually build
+		ByteBuffer buffer= ByteBuffer.wrap(data);
+		FloatBuffer result = FloatBuffer.allocate(data.length/4);
+		while(buffer.hasRemaining()){
+			result.put(buffer.getFloat());
+		}
+		return result.array();
 	}
 
 }

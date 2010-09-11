@@ -2,10 +2,12 @@ package org.jcvi.trace.sanger.chromatogram.ab1;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.trace.sanger.chromatogram.ab1.tag.TaggedDataRecord;
 
 public class Ab1ChromatogramFilePrinter implements Ab1ChromatogramFileVisitor{
 
@@ -34,13 +36,17 @@ public class Ab1ChromatogramFilePrinter implements Ab1ChromatogramFileVisitor{
 
 	@Override
 	public void visitAConfidence(byte[] confidence) {
-		// TODO Auto-generated method stub
+		byte[] head = new byte[5];
+		System.arraycopy(confidence, 0, head, 0, 5);
+		out.println("visited A confidence " + confidence.length +
+				"  head = "+Arrays.toString(head));
 		
 	}
 
 	@Override
 	public void visitAPositions(short[] positions) {
-		// TODO Auto-generated method stub
+		out.println("visited A pos " + positions.length);
+		
 		
 	}
 
@@ -52,13 +58,17 @@ public class Ab1ChromatogramFilePrinter implements Ab1ChromatogramFileVisitor{
 
 	@Override
 	public void visitCConfidence(byte[] confidence) {
-		// TODO Auto-generated method stub
+		byte[] head = new byte[5];
+		System.arraycopy(confidence, 0, head, 0, 5);
+		out.println("visited C confidence " + confidence.length +
+				"  head = "+Arrays.toString(head));
 		
 	}
 
 	@Override
 	public void visitCPositions(short[] positions) {
-		// TODO Auto-generated method stub
+		out.println("visited C pos " + positions.length);
+		
 		
 	}
 
@@ -70,43 +80,133 @@ public class Ab1ChromatogramFilePrinter implements Ab1ChromatogramFileVisitor{
 
 	@Override
 	public void visitGConfidence(byte[] confidence) {
-		// TODO Auto-generated method stub
+		byte[] head = new byte[5];
+		System.arraycopy(confidence, 0, head, 0, 5);
+		out.println("visited G confidence " + confidence.length +
+				"  head = "+Arrays.toString(head));
 		
 	}
 
 	@Override
 	public void visitGPositions(short[] positions) {
-		// TODO Auto-generated method stub
+		out.println("visited G pos " + positions.length);
+		
 		
 	}
 
 	@Override
 	public void visitPeaks(short[] peaks) {
-		// TODO Auto-generated method stub
+		out.println("visited peaks " + peaks.length);
+		
 		
 	}
 
 	@Override
 	public void visitTConfidence(byte[] confidence) {
-		// TODO Auto-generated method stub
+		byte[] head = new byte[5];
+		System.arraycopy(confidence, 0, head, 0, 5);
+		out.println("visited T confidence " + confidence.length +
+				"  head = "+Arrays.toString(head));
+		
 		
 	}
 
 	@Override
 	public void visitTPositions(short[] positions) {
-		// TODO Auto-generated method stub
+		out.println("visited T pos " + positions.length);
+		
 		
 	}
 
 	@Override
 	public void visitEndOfFile() {
-		// TODO Auto-generated method stub
+		out.println("end parsing");
 		
 	}
 
 	@Override
 	public void visitFile() {
-		// TODO Auto-generated method stub
+		out.println("starting parsing");
+		
+	}
+
+	@Override
+	public void visitTaggedDataRecord(TaggedDataRecord<?> record) {
+		out.println("tagged Record = "+ record);
+		
+	}
+
+	@Override
+	public void visitElectrophoreticPower(short[] electrophoreticPowerData) {
+		out.println("visited elctroPower" + "  length ="+ electrophoreticPowerData.length);
+		
+	}
+
+	@Override
+	public void visitGelCurrentData(short[] gelCurrent) {
+		out.println("visited gelCurrent" + "  length ="+ gelCurrent.length);
+		
+		
+	}
+
+	@Override
+	public void visitGelTemperatureData(short[] gelTemp) {
+		out.println("visited gelTemp" + "  length ="+ gelTemp.length);
+		
+		
+	}
+
+	@Override
+	public void visitGelVoltageData(short[] gelVoltage) {
+		out.println("visited gelVoltage" + "  length ="+ gelVoltage.length);
+		
+		
+	}
+
+	@Override
+	public void visitPhotometricData(short[] rawTraceData, int opticalFilterId) {
+		out.println("visited photometric data for optical #" + opticalFilterId + "  length ="+ rawTraceData.length);
+		
+	}
+
+	@Override
+	public void visitOriginalPeaks(short[] originalPeaks) {
+		out.println("visited ORIGINAL peaks " + originalPeaks.length);
+	}
+
+	@Override
+	public void visitOriginalAConfidence(byte[] originalConfidence) {
+		byte[] head = new byte[5];
+		System.arraycopy(originalConfidence, 0, head, 0, 5);
+		out.println("visited ORIGINAL A confidence " + originalConfidence.length +
+				"  head = "+Arrays.toString(head));
+		
+	}
+
+	@Override
+	public void visitOriginalCConfidence(byte[] originalConfidence) {
+		byte[] head = new byte[5];
+		System.arraycopy(originalConfidence, 0, head, 0, 5);
+		out.println("visited ORIGINAL C confidence " + originalConfidence.length +
+				"  head = "+Arrays.toString(head));
+		
+	}
+
+	@Override
+	public void visitOriginalGConfidence(byte[] originalConfidence) {
+		byte[] head = new byte[5];
+		System.arraycopy(originalConfidence, 0, head, 0, 5);
+		out.println("visited ORIGINAL G confidence " + originalConfidence.length +
+				"  head = "+Arrays.toString(head));
+		
+	}
+
+	@Override
+	public void visitOriginalTConfidence(byte[] originalConfidence) {
+		byte[] head = new byte[5];
+		System.arraycopy(originalConfidence, 0, head, 0, 5);
+		out.println("visited ORIGINAL T confidence " + originalConfidence.length +
+				"  head = "+Arrays.toString(head));
 		
 	}
 
