@@ -1,6 +1,4 @@
-package org.jcvi.trace.sanger.chromatogram.ab1;
-
-import java.util.Arrays;
+package org.jcvi.trace.sanger.chromatogram.abi;
 
 public final class Ab1Util {
 

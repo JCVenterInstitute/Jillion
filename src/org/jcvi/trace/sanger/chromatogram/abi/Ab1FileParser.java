@@ -1,4 +1,4 @@
-package org.jcvi.trace.sanger.chromatogram.ab1;
+package org.jcvi.trace.sanger.chromatogram.abi;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,19 +19,18 @@ import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.ASCIITaggedDataRecord;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.DateTaggedDataRecord;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.DefaultTaggedDataRecord;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.FloatTaggedDataRecord;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.IntegerArrayTaggedDataRecord;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.PascalStringTaggedDataRecord;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.ShortArrayTaggedDataRecord;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.TaggedDataName;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.TaggedDataRecord;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.TaggedDataRecordBuilder;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.TaggedDataType;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.TimeTaggedDataRecord;
-import org.jcvi.util.ArrayIterator;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultAsciiTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultDateTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultFloatTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultIntegerArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultPascalStringTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultShortArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultTimeTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataName;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataRecordBuilder;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataType;
 
 public final class Ab1FileParser {
 
@@ -98,7 +97,7 @@ public final class Ab1FileParser {
 			ChromatogramFileVisitor visitor) {
 		
 		if(visitor instanceof Ab1ChromatogramFileVisitor){
-			ShortArrayTaggedDataRecord scalingFactors =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.SCALE_FACTOR).get(0);
+			DefaultShortArrayTaggedDataRecord scalingFactors =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.SCALE_FACTOR).get(0);
 			short aScale=-1,cScale=-1,gScale=-1,tScale =-1;
 			List<Short> list = new ArrayList<Short>();
 			for(short s: scalingFactors.parseDataRecordFrom(traceData)){
@@ -133,9 +132,9 @@ public final class Ab1FileParser {
 			List<String> basecallsList,
 			ChromatogramFileVisitor visitor) {
 		
-		List<ASCIITaggedDataRecord> qualityRecords =groupedDataRecordMap.asciiDataRecords.get(TaggedDataName.QUALITY);
+		List<DefaultAsciiTaggedDataRecord> qualityRecords =groupedDataRecordMap.asciiDataRecords.get(TaggedDataName.QUALITY);
 		for(int i=0; i<qualityRecords.size(); i++){
-			ASCIITaggedDataRecord qualityRecord = qualityRecords.get(i);
+			DefaultAsciiTaggedDataRecord qualityRecord = qualityRecords.get(i);
 			List<NucleotideGlyph> basecalls = NucleotideGlyph.getGlyphsFor(basecallsList.get(i));
 			byte[][] qualities = splitQualityDataByChannel(basecalls, qualityRecord.parseDataRecordFrom(traceData).getBytes());
 			if(i == ORIGINAL_VERSION && visitor instanceof Ab1ChromatogramFileVisitor){
@@ -210,7 +209,7 @@ public final class Ab1FileParser {
 	private static void parsePeakData(
 			GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
 			ChromatogramFileVisitor visitor) {
-		List<ShortArrayTaggedDataRecord> peakRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.PEAK_LOCATIONS);
+		List<DefaultShortArrayTaggedDataRecord> peakRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.PEAK_LOCATIONS);
 		
 		if(visitor instanceof Ab1ChromatogramFileVisitor){
 			short[] originalPeakData =peakRecords.get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);
@@ -226,7 +225,7 @@ public final class Ab1FileParser {
 			List<NucleotideGlyph> channelOrder,
 			byte[] traceData,
 			ChromatogramFileVisitor visitor) {
-		List<ShortArrayTaggedDataRecord> dataRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.DATA);
+		List<DefaultShortArrayTaggedDataRecord> dataRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.DATA);
 		if(visitor instanceof Ab1ChromatogramFileVisitor){
 			Ab1ChromatogramFileVisitor ab1Visitor = (Ab1ChromatogramFileVisitor) visitor;
 			//parse extra ab1 data
@@ -273,14 +272,14 @@ public final class Ab1FileParser {
 			GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
 			ChromatogramFileVisitor visitor) {
 		Properties props = new Properties();
-		for(Entry<TaggedDataName, List<PascalStringTaggedDataRecord>> entry :groupedDataRecordMap.pascalStringDataRecords.entrySet()){
+		for(Entry<TaggedDataName, List<DefaultPascalStringTaggedDataRecord>> entry :groupedDataRecordMap.pascalStringDataRecords.entrySet()){
 			props = addAsComments(entry.getValue(),traceData,props);
 		}
 		
-		for(Entry<TaggedDataName, List<DateTaggedDataRecord>> entry :groupedDataRecordMap.dateDataRecords.entrySet()){
+		for(Entry<TaggedDataName, List<DefaultDateTaggedDataRecord>> entry :groupedDataRecordMap.dateDataRecords.entrySet()){
 			props = addAsComments(entry.getValue(),traceData,props);						
 		}
-		for(Entry<TaggedDataName, List<TimeTaggedDataRecord>> entry :groupedDataRecordMap.timeDataRecords.entrySet()){
+		for(Entry<TaggedDataName, List<DefaultTimeTaggedDataRecord>> entry :groupedDataRecordMap.timeDataRecords.entrySet()){
 			props = addAsComments(entry.getValue(),traceData,props);						
 		}
 		visitor.visitComments(props);
@@ -308,7 +307,7 @@ public final class Ab1FileParser {
 			GroupedTaggedRecords groupedDataRecordMap, byte[] ab1DataBlock,
 			ChromatogramFileVisitor visitor) {
 		List<String> basecallsList = new ArrayList<String>(2);
-		for(ASCIITaggedDataRecord basecallRecord : groupedDataRecordMap.asciiDataRecords.get(TaggedDataName.BASECALLS)){
+		for(DefaultAsciiTaggedDataRecord basecallRecord : groupedDataRecordMap.asciiDataRecords.get(TaggedDataName.BASECALLS)){
 			String basecalls = basecallRecord.parseDataRecordFrom(ab1DataBlock);
 			basecallsList.add(basecalls);
 			if(basecallRecord.getTagNumber()==CURRENT_VERSION){
@@ -324,7 +323,7 @@ public final class Ab1FileParser {
 	}
 
 	private static List<NucleotideGlyph> parseChannelOrder(GroupedTaggedRecords dataRecordMap ){
-		ASCIITaggedDataRecord order = dataRecordMap.asciiDataRecords.get(TaggedDataName.FILTER_WHEEL_ORDER).get(0);
+		DefaultAsciiTaggedDataRecord order = dataRecordMap.asciiDataRecords.get(TaggedDataName.FILTER_WHEEL_ORDER).get(0);
 		
 		return NucleotideGlyphFactory.getInstance().getGlyphsFor(order.parseDataRecordFrom(null));
 
@@ -404,21 +403,21 @@ public final class Ab1FileParser {
 	}
 	
 	private static class GroupedTaggedRecords{
-		private final Map<TaggedDataName,List<ASCIITaggedDataRecord>> asciiDataRecords = new EnumMap<TaggedDataName, List<ASCIITaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<DefaultAsciiTaggedDataRecord>> asciiDataRecords = new EnumMap<TaggedDataName, List<DefaultAsciiTaggedDataRecord>>(TaggedDataName.class);
 	
-		private final Map<TaggedDataName,List<FloatTaggedDataRecord>> floatDataRecords = new EnumMap<TaggedDataName, List<FloatTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<DefaultFloatTaggedDataRecord>> floatDataRecords = new EnumMap<TaggedDataName, List<DefaultFloatTaggedDataRecord>>(TaggedDataName.class);
 		
-		private final Map<TaggedDataName,List<ShortArrayTaggedDataRecord>> shortArrayDataRecords = new EnumMap<TaggedDataName, List<ShortArrayTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<DefaultShortArrayTaggedDataRecord>> shortArrayDataRecords = new EnumMap<TaggedDataName, List<DefaultShortArrayTaggedDataRecord>>(TaggedDataName.class);
 		
-		private final Map<TaggedDataName,List<IntegerArrayTaggedDataRecord>> intArrayDataRecords = new EnumMap<TaggedDataName, List<IntegerArrayTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<DefaultIntegerArrayTaggedDataRecord>> intArrayDataRecords = new EnumMap<TaggedDataName, List<DefaultIntegerArrayTaggedDataRecord>>(TaggedDataName.class);
 		
-		private final Map<TaggedDataName,List<PascalStringTaggedDataRecord>> pascalStringDataRecords = new EnumMap<TaggedDataName, List<PascalStringTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<DefaultPascalStringTaggedDataRecord>> pascalStringDataRecords = new EnumMap<TaggedDataName, List<DefaultPascalStringTaggedDataRecord>>(TaggedDataName.class);
 		
 		private final Map<TaggedDataName,List<DefaultTaggedDataRecord>> defaultDataRecords = new EnumMap<TaggedDataName, List<DefaultTaggedDataRecord>>(TaggedDataName.class);
 		
-		private final Map<TaggedDataName,List<DateTaggedDataRecord>> dateDataRecords = new EnumMap<TaggedDataName, List<DateTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<DefaultDateTaggedDataRecord>> dateDataRecords = new EnumMap<TaggedDataName, List<DefaultDateTaggedDataRecord>>(TaggedDataName.class);
 		
-		private final Map<TaggedDataName,List<TimeTaggedDataRecord>> timeDataRecords = new EnumMap<TaggedDataName, List<TimeTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<DefaultTimeTaggedDataRecord>> timeDataRecords = new EnumMap<TaggedDataName, List<DefaultTimeTaggedDataRecord>>(TaggedDataName.class);
 		
 		public void add(TaggedDataRecord record){
 			switch(record.getDataType()){
@@ -432,7 +431,7 @@ public final class Ab1FileParser {
 				add(record, floatDataRecords);
 				break;
 			case INTEGER:
-				if(record instanceof ShortArrayTaggedDataRecord){
+				if(record instanceof DefaultShortArrayTaggedDataRecord){
 					add(record, shortArrayDataRecords);
 				}else{
 					add(record, intArrayDataRecords);

@@ -1,10 +1,10 @@
-package org.jcvi.trace.sanger.chromatogram.ab1;
+package org.jcvi.trace.sanger.chromatogram.abi;
 
 import java.util.List;
 
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.TaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataRecord;
 /**
  * {@code Ab1ChromatogramFileVisitor} is an ABI
  * Chromatogram specific implementation of 

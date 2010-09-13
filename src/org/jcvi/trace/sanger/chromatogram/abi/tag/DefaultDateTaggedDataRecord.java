@@ -1,13 +1,13 @@
-package org.jcvi.trace.sanger.chromatogram.ab1.tag;
+package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
 import java.nio.ByteBuffer;
 import java.util.Date;
 
 import org.joda.time.DateTime;
 
-public class DateTaggedDataRecord extends AbstractTaggedDataRecord<Date>{
+public class DefaultDateTaggedDataRecord extends AbstractTaggedDataRecord<Date>{
 
-	public DateTaggedDataRecord(TaggedDataName name, long number,
+	public DefaultDateTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
 			long recordLength, long dataRecord, long crypticValue) {
 		super(name, number, dataType, elementLength, numberOfElements, recordLength,
