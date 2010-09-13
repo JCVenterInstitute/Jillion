@@ -1,11 +1,11 @@
-package org.jcvi.trace.sanger.chromatogram.ab1.tag;
+package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
-public class ShortArrayTaggedDataRecord extends AbstractTaggedDataRecord<short[]>{
+public class DefaultShortArrayTaggedDataRecord extends AbstractTaggedDataRecord<short[]>{
 
-	public ShortArrayTaggedDataRecord(TaggedDataName name, long number,
+	public DefaultShortArrayTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
 			long recordLength, long dataRecord, long crypticValue) {
 		super(name, number, dataType, elementLength, numberOfElements, recordLength,

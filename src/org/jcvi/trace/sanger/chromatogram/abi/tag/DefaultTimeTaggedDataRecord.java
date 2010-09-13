@@ -1,12 +1,12 @@
-package org.jcvi.trace.sanger.chromatogram.ab1.tag;
+package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
 import java.nio.ByteBuffer;
 
 import org.joda.time.LocalTime;
 
-public class TimeTaggedDataRecord extends AbstractTaggedDataRecord<LocalTime>{
+public class DefaultTimeTaggedDataRecord extends AbstractTaggedDataRecord<LocalTime>{
 
-	public TimeTaggedDataRecord(TaggedDataName name, long number,
+	public DefaultTimeTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
 			long recordLength, long dataRecord, long crypticValue) {
 		super(name, number, dataType, elementLength, numberOfElements, recordLength,

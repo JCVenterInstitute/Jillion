@@ -1,4 +1,4 @@
-package org.jcvi.trace.sanger.chromatogram.ab1;
+package org.jcvi.trace.sanger.chromatogram.abi;
 
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.TaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataRecord;
 
 public class Ab1ChromatogramFilePrinter implements Ab1ChromatogramFileVisitor{
 

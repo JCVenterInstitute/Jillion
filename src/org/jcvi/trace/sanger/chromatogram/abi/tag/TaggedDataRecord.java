@@ -1,4 +1,4 @@
-package org.jcvi.trace.sanger.chromatogram.ab1.tag;
+package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
 
 public interface TaggedDataRecord<T> {

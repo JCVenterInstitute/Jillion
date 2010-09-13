@@ -1,11 +1,11 @@
-package org.jcvi.trace.sanger.chromatogram.ab1.tag;
+package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
-public class FloatTaggedDataRecord extends AbstractTaggedDataRecord<float[]>{
+public class DefaultIntegerArrayTaggedDataRecord  extends AbstractTaggedDataRecord<int[]>{
 
-	public FloatTaggedDataRecord(TaggedDataName name, long number,
+	public DefaultIntegerArrayTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
 			long recordLength, long dataRecord, long crypticValue) {
 		super(name, number, dataType, elementLength, numberOfElements, recordLength,
@@ -13,14 +13,15 @@ public class FloatTaggedDataRecord extends AbstractTaggedDataRecord<float[]>{
 	}
 
 	@Override
-	protected float[] parseDataFrom(byte[] data) {
+	protected int[] parseDataFrom(byte[] data) {		
 		//have to manually build
 		ByteBuffer buffer= ByteBuffer.wrap(data);
-		FloatBuffer result = FloatBuffer.allocate(data.length/4);
+		IntBuffer result = IntBuffer.allocate(data.length/4);
 		while(buffer.hasRemaining()){
-			result.put(buffer.getFloat());
+			result.put(buffer.getInt());
 		}
 		return result.array();
 	}
+
 
 }

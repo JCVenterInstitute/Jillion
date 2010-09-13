@@ -1,7 +1,7 @@
-package org.jcvi.trace.sanger.chromatogram.ab1.tag;
+package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
 import org.jcvi.io.IOUtil;
-import org.jcvi.trace.sanger.chromatogram.ab1.Ab1Util;
+import org.jcvi.trace.sanger.chromatogram.abi.Ab1Util;
 
 
 public abstract class AbstractTaggedDataRecord<T> implements TaggedDataRecord<T>{

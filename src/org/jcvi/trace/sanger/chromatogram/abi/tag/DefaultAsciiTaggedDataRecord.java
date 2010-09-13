@@ -1,8 +1,8 @@
-package org.jcvi.trace.sanger.chromatogram.ab1.tag;
+package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
-public class ASCIITaggedDataRecord extends AbstractTaggedDataRecord<String>{
+public class DefaultAsciiTaggedDataRecord extends AbstractTaggedDataRecord<String>{
 
-	public ASCIITaggedDataRecord(TaggedDataName name, long number,
+	public DefaultAsciiTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
 			long recordLength, long dataRecord, long crypticValue) {
 		super(name, number, dataType, elementLength, numberOfElements, recordLength,
