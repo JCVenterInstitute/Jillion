@@ -212,7 +212,10 @@ public class CasSNPMatrix {
            
             PrintWriter writer = new PrintWriter(new FileOutputStream(outputFilePath),true);
             writer.printf("#id\t%s%n", contigId);
-            writer.printf("#loc\t%s%n", StringUtilities.join('\t', varaintMap.getVariationsFor(contigId).keySet()));
+            writer.printf("#loc\t%s%n", new StringUtilities.JoinedStringBuilder(
+                    varaintMap.getVariationsFor(contigId).keySet())
+                    .glue('\t')
+                    .build());
             CasSNPMatrixGenerator snpGenerator = new CasSNPMatrixGenerator(referenceIdLookup,
                     readIdLookup,
                     gappedReferenceMap,

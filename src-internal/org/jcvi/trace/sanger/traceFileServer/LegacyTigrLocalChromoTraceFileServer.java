@@ -51,12 +51,14 @@ public class LegacyTigrLocalChromoTraceFileServer implements TraceFileServer, It
     
     protected String generateLocalChromoPathFor(String seqName){
         
-        return StringUtilities.join("/", 
+        return new StringUtilities.JoinedStringBuilder(
                 baseDir, 
                 seqName.substring(0, 3),
                 seqName.substring(0, 4),
                 seqName.substring(0, 5),
-                seqName);
+                seqName)
+                .glue('/')
+                .build();
        
     }
     private File getFileFor(String seqName){

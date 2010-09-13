@@ -120,7 +120,11 @@ public class TestJcviTraceFileServer_getting {
     public void getMultipleFileAsStream() throws MalformedURLException, IOException{
         List<String> idsAsList = Arrays.asList("id_1","id_2", "id_3");
         InputStream expectedInputStream = createMock(InputStream.class);
-        expect(sut.createURLConnectionFor(StringUtilities.join(",", idsAsList), RequestType.SEQ_NAME, FileType.ZTR, ReturnFormat.JAR)).andReturn(mockConnection);
+        expect(sut.createURLConnectionFor(new StringUtilities.JoinedStringBuilder(
+                idsAsList)
+        .glue(",")
+        .build()
+        , RequestType.SEQ_NAME, FileType.ZTR, ReturnFormat.JAR)).andReturn(mockConnection);
         mockConnection.connect();
         setUpValidResponse();
         expect(mockConnection.getInputStream()).andReturn(expectedInputStream);

@@ -345,7 +345,10 @@ public abstract class JcviTraceFileServer implements TraceFileServer{
     public InputStream getMultipleFilesAsStream(List<String> ids,
             final RequestType requestType, final FileType fileType, ReturnFormat returnFormat)
             throws IOException {
-        return getFileAsStream(StringUtilities.join(",", ids),requestType, fileType, returnFormat);
+        return getFileAsStream(new StringUtilities.JoinedStringBuilder(ids)
+                                .glue(',')
+                                .build()
+                                ,requestType, fileType, returnFormat);
     }
     @Override
     public void close() throws IOException {
