@@ -16,55 +16,18 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi.trace.sanger.chromatogram.abi.tag;
+package org.jcvi.trace.sanger.chromatogram.abi;
 
-import java.util.HashMap;
-import java.util.Map;
+public final class AbiUtil {
 
-public enum TaggedDataType {
-
-	CHAR(2),
-	INTEGER(4),
-	FLOAT(7),
-	DATE(10),
-	TIME(11),
-	PASCAL_STRING(18),
-	TYPE_19(19),
-	TYPE_5(5),
-	TYPE_1(1),
-	TYPE_1024(1024),
-	;
+	private AbiUtil(){}
 	
-	private static final Map<Integer, TaggedDataType> MAP;
-	
-	static{
-		MAP = new HashMap<Integer, TaggedDataType>();
-		for(TaggedDataType type : values()){
-			MAP.put(Integer.valueOf(type.getValue()), type);
-		}
+	public static final int HEADER_SIZE = 30;
+	public static String parseASCIIStringFrom(byte[] data){
+		return new String(data);
 	}
 	
-	public static TaggedDataType parseTaggedDataName(int dataTypeValue){
-		Integer key = Integer.valueOf(dataTypeValue);
-		if(!MAP.containsKey(key)){
-			throw new IllegalArgumentException("Unknown TaggedDataType "+dataTypeValue);
-		}
-		return MAP.get(key);
-		
+	public static String parsePascalStringFrom(byte[] data){
+		return new String(data,1, data.length-1);
 	}
-	
-	private final int value;
-
-	private TaggedDataType(int type) {
-		this.value = type;
-	}
-
-	/**
-	 * @return the value.
-	 */
-	public int getValue() {
-		return value;
-	}
-	
-	
 }

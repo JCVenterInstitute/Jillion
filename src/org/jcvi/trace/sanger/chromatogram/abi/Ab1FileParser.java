@@ -1,3 +1,21 @@
+/*******************************************************************************
+ * Copyright 2010 J. Craig Venter Institute
+ * 
+ *  This file is part of JCVI Java Common
+ * 
+ *     JCVI Java Common is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     JCVI Java Common is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
 package org.jcvi.trace.sanger.chromatogram.abi;
 
 import java.io.File;
@@ -77,7 +95,7 @@ public final class Ab1FileParser {
 			//from all inputstream implementations)
 			//we have to cache the raw data into a byte array for
 			//later handling.
-			byte[] traceData = parseTraceDataBlock(in, datablockOffset-Ab1Util.HEADER_SIZE);
+			byte[] traceData = parseTraceDataBlock(in, datablockOffset-AbiUtil.HEADER_SIZE);
 			GroupedTaggedRecords groupedDataRecordMap = parseTaggedDataRecords(in,numberOfTaggedRecords,visitor);
 	
 			List<NucleotideGlyph> channelOrder =parseChannelOrder(groupedDataRecordMap);
@@ -96,7 +114,7 @@ public final class Ab1FileParser {
 			List<NucleotideGlyph> channelOrder, byte[] traceData,
 			ChromatogramFileVisitor visitor) {
 		
-		if(visitor instanceof Ab1ChromatogramFileVisitor){
+		if(visitor instanceof AbiChromatogramFileVisitor){
 			DefaultShortArrayTaggedDataRecord scalingFactors =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.SCALE_FACTOR).get(0);
 			short aScale=-1,cScale=-1,gScale=-1,tScale =-1;
 			List<Short> list = new ArrayList<Short>();
@@ -122,7 +140,7 @@ public final class Ab1FileParser {
 				}
 			}
 			
-			((Ab1ChromatogramFileVisitor) visitor).visitScaleFactors(aScale,cScale,gScale,tScale);
+			((AbiChromatogramFileVisitor) visitor).visitScaleFactors(aScale,cScale,gScale,tScale);
 		}
 		
 	}
@@ -137,8 +155,8 @@ public final class Ab1FileParser {
 			DefaultAsciiTaggedDataRecord qualityRecord = qualityRecords.get(i);
 			List<NucleotideGlyph> basecalls = NucleotideGlyph.getGlyphsFor(basecallsList.get(i));
 			byte[][] qualities = splitQualityDataByChannel(basecalls, qualityRecord.parseDataRecordFrom(traceData).getBytes());
-			if(i == ORIGINAL_VERSION && visitor instanceof Ab1ChromatogramFileVisitor){
-				Ab1ChromatogramFileVisitor ab1Visitor = (Ab1ChromatogramFileVisitor)visitor;
+			if(i == ORIGINAL_VERSION && visitor instanceof AbiChromatogramFileVisitor){
+				AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor)visitor;
 				ab1Visitor.visitOriginalAConfidence(qualities[0]);
 				ab1Visitor.visitOriginalCConfidence(qualities[1]);
 				ab1Visitor.visitOriginalGConfidence(qualities[2]);
@@ -211,10 +229,10 @@ public final class Ab1FileParser {
 			ChromatogramFileVisitor visitor) {
 		List<DefaultShortArrayTaggedDataRecord> peakRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.PEAK_LOCATIONS);
 		
-		if(visitor instanceof Ab1ChromatogramFileVisitor){
+		if(visitor instanceof AbiChromatogramFileVisitor){
 			short[] originalPeakData =peakRecords.get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);
 			
-			((Ab1ChromatogramFileVisitor) visitor).visitOriginalPeaks(originalPeakData);
+			((AbiChromatogramFileVisitor) visitor).visitOriginalPeaks(originalPeakData);
 		}
 		short[] peakData =peakRecords.get(CURRENT_VERSION).parseDataRecordFrom(traceData);
 		visitor.visitPeaks(peakData);
@@ -226,8 +244,8 @@ public final class Ab1FileParser {
 			byte[] traceData,
 			ChromatogramFileVisitor visitor) {
 		List<DefaultShortArrayTaggedDataRecord> dataRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.DATA);
-		if(visitor instanceof Ab1ChromatogramFileVisitor){
-			Ab1ChromatogramFileVisitor ab1Visitor = (Ab1ChromatogramFileVisitor) visitor;
+		if(visitor instanceof AbiChromatogramFileVisitor){
+			AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor) visitor;
 			//parse extra ab1 data
 			for(int i=0; i< 4; i++){
 				short[] rawTraceData =dataRecords.get(i).parseDataRecordFrom(traceData);
@@ -263,8 +281,8 @@ public final class Ab1FileParser {
 
 	private static void visitChannelOrderIfAble(
 			ChromatogramFileVisitor visitor, List<NucleotideGlyph> channelOrder) {
-		if(visitor instanceof Ab1ChromatogramFileVisitor){
-			((Ab1ChromatogramFileVisitor) visitor).visitChannelOrder(channelOrder);
+		if(visitor instanceof AbiChromatogramFileVisitor){
+			((AbiChromatogramFileVisitor) visitor).visitChannelOrder(channelOrder);
 		}
 	}
 	
@@ -312,8 +330,8 @@ public final class Ab1FileParser {
 			basecallsList.add(basecalls);
 			if(basecallRecord.getTagNumber()==CURRENT_VERSION){
 				visitor.visitBasecalls(basecalls);
-			}else if(visitor instanceof Ab1ChromatogramFileVisitor){
-				((Ab1ChromatogramFileVisitor) visitor).visitOriginalBasecalls(basecalls);
+			}else if(visitor instanceof AbiChromatogramFileVisitor){
+				((AbiChromatogramFileVisitor) visitor).visitOriginalBasecalls(basecalls);
 				
 			}
 		}
@@ -334,7 +352,7 @@ public final class Ab1FileParser {
 			long numberOfTaggedRecords,
 			ChromatogramFileVisitor visitor) throws TraceDecoderException {
 		GroupedTaggedRecords map = new GroupedTaggedRecords();
-		boolean isAb1ChromatogramVisitor = visitor instanceof Ab1ChromatogramFileVisitor;
+		boolean isAb1ChromatogramVisitor = visitor instanceof AbiChromatogramFileVisitor;
 		try{
 			for(long i=0; i<numberOfTaggedRecords; i++){
 				String rawTagName = new String(IOUtil.readByteArray(in, 4),"UTF-8");
@@ -353,7 +371,7 @@ public final class Ab1FileParser {
 						.setCrypticValue(IOUtil.readUnsignedInt(in));
 				TaggedDataRecord record = builder.build();
 				if(isAb1ChromatogramVisitor){
-					((Ab1ChromatogramFileVisitor) visitor).visitTaggedDataRecord(record);
+					((AbiChromatogramFileVisitor) visitor).visitTaggedDataRecord(record);
 				}
 				map.add(record);
 			}
