@@ -34,6 +34,7 @@ import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.num.DefaultShortGlyphCodec;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 
 public abstract class AbstractTestPositionsFastaDataStore {
@@ -113,10 +114,13 @@ public abstract class AbstractTestPositionsFastaDataStore {
                     9502, 9519, 9532, 9551, 9563, 9580, 9598, 9612,
             }
             )));
+    ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultPositionsFastaDataStore.class);
     @Test
     public void parseFile() throws Exception{
-        DataStore<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> sut = createPositionFastaMap(new File(TestDefaultPositionsFastaDataStore.class.getResource(QUAL_FILE_PATH).getFile()));
-        assertEquals(1, sut.size());
+        DataStore<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> sut = 
+        	createPositionFastaMap(
+        			RESOURCES.getFile(QUAL_FILE_PATH));
+       assertEquals(1, sut.size());
         assertEquals(expected, sut.get("1119369023656"));
     }
     

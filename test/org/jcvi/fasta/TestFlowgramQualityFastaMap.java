@@ -23,7 +23,6 @@
  */
 package org.jcvi.fasta;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -32,6 +31,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSffFileDataStore;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.QualitySffDataStore;
@@ -46,13 +46,16 @@ public class TestFlowgramQualityFastaMap {
     String QUAL_ACTUAL = "files/5readExample.sff";
     DataStore<EncodedGlyphs<PhredQuality>> expected;
     DataStore<EncodedGlyphs<PhredQuality>> actual;
+    ResourceFileServer RESOURCES = new ResourceFileServer(TestFlowgramQualityFastaMap.class);
+    
     @Before
     public void setup() throws IOException, TraceDecoderException{
         expected = QualityFastaRecordDataStoreAdapter.adapt(
                 new DefaultQualityFastaFileDataStore(
-                new File(TestFlowgramQualityFastaMap.class.getResource(QUAL_EXPECTED).getFile())));
+                		RESOURCES.getFile(QUAL_EXPECTED)));
         DefaultSffFileDataStore datastore = new DefaultSffFileDataStore(new RunLengthEncodedGlyphCodec((byte)70));
-        SffParser.parseSFF(TestFlowgramQualityFastaMap.class.getResourceAsStream(QUAL_ACTUAL), datastore);
+        SffParser.parseSFF(
+        		RESOURCES.getFileAsStream(QUAL_ACTUAL), datastore);
         
         actual = new QualitySffDataStore(datastore);
         

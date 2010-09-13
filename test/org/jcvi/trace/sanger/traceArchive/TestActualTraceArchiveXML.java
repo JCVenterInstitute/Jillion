@@ -26,18 +26,20 @@ package org.jcvi.trace.sanger.traceArchive;
 import java.io.IOException;
 
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestActualTraceArchiveXML {
     private static final String FOLDER_ROOT_DIR = "files/exampleTraceArchive";
     private static final TraceArchiveRecordIdGenerator ID_GENERATOR= new NameTagTraceArchiveRecordIdGenerator();
-    
+    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestActualTraceArchiveXML.class);
+	
     @Test
     public void parseTraceInfo() throws IOException, DataStoreException{
         TraceArchiveInfo traceInfo = new DefaultTraceArchiveInfo(
                 new TraceInfoXMLTraceArchiveInfoBuilder<TraceArchiveRecord>(
                 ID_GENERATOR, 
-                TestDefaultFolderTraceArchiveDataStore.class.getResourceAsStream(FOLDER_ROOT_DIR+"/TRACEINFO.xml")));
+                RESOURCES.getFileAsStream(FOLDER_ROOT_DIR+"/TRACEINFO.xml")));
        TraceArchiveRecord actualRecord = traceInfo.get("XX08A02T44F09PB11F");
        
        assertEquals("XX08A02T44F09PB11F", actualRecord.getAttribute(TraceInfoField.TRACE_NAME));

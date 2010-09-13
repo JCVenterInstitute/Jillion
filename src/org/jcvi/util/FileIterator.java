@@ -70,7 +70,13 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
     public static FileIteratorBuilder createNonRecursiveFileIteratorBuilder(File dir){
         return new NonRecursiveFileIteratorBuilder(dir);
     }
-    /**
+    private static final class FileNameComparator implements Comparator<File> {
+		@Override
+		public int compare(File o1, File o2) {
+		    return o1.getName().compareTo(o2.getName());
+		}
+	}
+	/**
      * A FileFilter that only accepts files that are not 
      * directories.
      * @author dkatzel
@@ -96,7 +102,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
     private static final FileFilter  NON_DIRECTORY_FILTER = new NonDirectoryFileFilter();
     private static final FileFilter  NON_HIDDEN_FILTER = new NonHiddenFileFilter();
     private static final FileFilter  NULL_FILTER = new NullFileFilter();
-
+    private static final FileNameComparator FILE_NAME_SORTER = new FileNameComparator();
     
    
     private Iterator<File> fileIterator;
@@ -137,14 +143,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
         }
         //sort files by name this makes
         //iterating deterministic
-        Arrays.sort(listFiles, new Comparator<File>() {
-
-            @Override
-            public int compare(File o1, File o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-            
-        });
+        Arrays.sort(listFiles, FILE_NAME_SORTER);
         return new ArrayIterable<File>(listFiles).iterator();
     }
     /**
@@ -240,7 +239,9 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
                 //either no files or no files we have permission to see
                 return Collections.emptyList();
             }
+            Arrays.sort(listFiles,FILE_NAME_SORTER);
             return Arrays.asList(listFiles);
+            
         }
         @Override
         protected void setUpInitialState(File rootDir) {

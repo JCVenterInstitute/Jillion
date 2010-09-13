@@ -25,6 +25,7 @@ package org.jcvi.datastore;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.AssemblyTestUtil;
@@ -37,6 +38,7 @@ import org.jcvi.glyph.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 import org.jcvi.glyph.nuc.DefaultReferencedEncodedNucleotideGlyph;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.sequence.DefaultRead;
 import org.jcvi.sequence.SequenceDirection;
 import org.junit.Test;
@@ -49,6 +51,8 @@ public abstract class TestContigFileParser {
     int numberOfReads= 210;
     DefaultNucleotideGlyphCodec consensusCodec = DefaultNucleotideGlyphCodec.getInstance();
     NucleotideGlyphFactory factory = NucleotideGlyphFactory.getInstance();
+    ResourceFileServer RESOURCES = new ResourceFileServer(TestContigFileParser.class);
+    
     EncodedGlyphs<NucleotideGlyph> contigConsensus = 
         new DefaultEncodedGlyphs<NucleotideGlyph>(consensusCodec,
                 factory.getGlyphsFor(
@@ -483,7 +487,7 @@ public abstract class TestContigFileParser {
     "AGATGATTTAGTGCCCCGCAGTTATTATTTAATTAAGAGTGGCCAGGCCTACACCTCGAT"+
     "GATGGTTAATTTTAGCCATGAGGTGATTGACATGTGTATGGACATGGCATTATTGTTC";
     @Test
-    public void decode() throws FileNotFoundException{
+    public void decode() throws IOException{
         final File file = getFile();
         Contig contig925 = getContig925From(file);
         assertEquals(contig_id, Integer.parseInt(contig925.getId()));
@@ -502,9 +506,8 @@ public abstract class TestContigFileParser {
 
     protected abstract Contig getContig928From(File file) throws Exception;
     
-    public File getFile() {
-        final File file = new File(TestContigFileParser.class.getResource(pathToFile).getFile());
-        return file;
+    public File getFile() throws IOException {
+        return RESOURCES.getFile(pathToFile);
     }
 
     

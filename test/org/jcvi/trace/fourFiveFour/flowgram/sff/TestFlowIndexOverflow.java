@@ -24,6 +24,7 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
@@ -36,6 +37,7 @@ import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 import org.junit.Test;
@@ -51,6 +53,10 @@ import org.junit.Test;
 public class TestFlowIndexOverflow{
 
     private static final String FILE = "files/indexOverflow.sff";
+    
+    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestFlowIndexOverflow.class);
+    
+    
    private static final RunLengthEncodedGlyphCodec runLengthQualityCodec = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
     short[] encodedValues = new short[]{213,0,2, 97, 120};
     
@@ -66,8 +72,8 @@ public class TestFlowIndexOverflow{
         );
     
     @Test
-    public void validDecode() throws TraceDecoderException, DataStoreException{
-        InputStream in = TestReadExampleSffFile.class.getResourceAsStream(FILE);
+    public void validDecode() throws TraceDecoderException, DataStoreException, IOException{
+        InputStream in = RESOURCES.getFileAsStream(FILE);
         DefaultSffFileDataStore dataStore = new DefaultSffFileDataStore(runLengthQualityCodec);
         SffParser.parseSFF(in, dataStore);
 

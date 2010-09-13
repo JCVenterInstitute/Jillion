@@ -32,6 +32,7 @@ import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestQualityFastaDataStore {
@@ -171,9 +172,11 @@ public abstract class AbstractTestQualityFastaDataStore {
                                         20, 20, 20, 27, 17, 17, 9, 9, 20, 9, 9, 27, 24, 35, 26, 30, 33,
                                         33, 33, 35, 44, 44, 22, 16, 9, 7, 7
                                 })));
+    ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestQualityFastaDataStore.class);
     @Test
     public void parseFile() throws IOException, DataStoreException{
-        DataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> sut = buildQualityFastaMapFrom(new File(AbstractTestQualityFastaDataStore.class.getResource(QUAL_FILE_PATH).getFile()));
+    	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
+        DataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> sut = buildQualityFastaMapFrom(qualFile);
         assertEquals(321, sut.size());
         assertEquals(JGBAA02T21A12PB1A1F, sut.get("JGBAA02T21A12PB1A1F"));
         assertEquals(JGBAA07T21D08MP605F, sut.get("JGBAA07T21D08MP605F"));

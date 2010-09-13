@@ -25,7 +25,8 @@
  */
 package org.jcvi.util;
 
-import org.jcvi.util.ArrayIterable;
+import java.util.Iterator;
+
 
 /**
  * The <code>StringUtilities</code> library contains a set of utility methods
@@ -48,15 +49,15 @@ public final class StringUtilities
      * @param list An ordered, {@link Iterable} list of objects to join.
      * @return A {@link String} containing the list of joined elements.
      */
-    public static String join(String glue, Iterable<? extends Object> list)
+    public static <T>  String join(Character glue, Iterable<T>array)
     {
         final StringBuilder joined = new StringBuilder();
 
-        for (final Object item : list) 
+        for (final T item : array) 
         {
             if (item != null)
-            {
-                final String itemString = item.toString();
+            {	
+            	String itemString = item.toString();
                 if (glue != null && joined.length() > 0 && itemString.length() > 0)
                 {
                     joined.append(glue);
@@ -67,52 +68,14 @@ public final class StringUtilities
 
         return joined.toString();
     }
-    
-    /**
-     * Join the {@link String} representation of a collection of objects
-     * together without a delimiter.  Except for the lack of a delimiter,
-     * this operates identically to {@link #join(String, Iterable)}.
-     * 
-     * @param list An ordered, {@link Iterable} list of objects to join.
-     * @return A {@link String} containing the list of joined elements.
-     */
-    public static String join(Iterable<? extends Object> list)
-    {
-        return StringUtilities.join(null, list);
+    public static  String join(Character glue,String... array){
+    	return join(glue,new ArrayIterable<String>(array));
     }
-    
-    /**
-     * Join the {@link String} representation of an array of objects
-     * together using the supplied glue <code>String</code>.  The 
-     * {@link Object#toString()} method is used for generating the 
-     * representation.  The final result of this method will contain the 
-     * <code>String</code> versions joined in the array order.
-     * <p>
-     * This method delegates to {@link #join(String, Iterable)} using the 
-     * {@link ArrayIterable} class as an adapter.
-     * 
-     * @param glue A {@link String} to separate the supplied objects, or 
-     * <code>null</code> if no separator is desired.
-     * @param array An array of objects to join.
-     * @return A {@link String} containing the list of joined elements.
-     * @see #join(String, Iterable)
-     */
-    public static String join(String glue, Object ... array)
-    {
-        return StringUtilities.join(glue, new ArrayIterable<Object>(array));
+    public static <T>  String join(T... array){
+    	return join(new ArrayIterable<T>(array));
     }
-    
-    /**
-     * Join the {@link String} representation of a collection of objects
-     * together without a delimiter.  Except for the lack of a delimiter,
-     * this operates identically to {@link #join(Object...)}.
-     * 
-     * @param list An ordered, {@link Iterable} list of objects to join.
-     * @return A {@link String} containing the list of joined elements.
-     */
-    public static String join(Object ... array)
-    {
-        return StringUtilities.join(null, array);
+    public static <T> String join(Iterable<T>array){
+    	return join(null,array);
     }
     
     /**

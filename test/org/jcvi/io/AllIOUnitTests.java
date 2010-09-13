@@ -46,8 +46,8 @@ import org.junit.runners.Suite.SuiteClasses;
         AllIdReaderUnitTests.class,
         
         AllFileServerUnitTests.class,
-        TestEmailBuilder.class
-        
+        TestEmailBuilder.class,
+        TestFileUtil.class
     }
 )
 public class AllIOUnitTests {

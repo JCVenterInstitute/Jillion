@@ -29,6 +29,7 @@ import java.io.IOException;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestSequenceFastaDataStore {
@@ -137,8 +138,10 @@ public abstract class AbstractTestSequenceFastaDataStore {
             "CGGAAACGGGACTCTAGCATACTTACTGACAGCCAGACAGCGACCAAAAGGATTCGGATG" +
             "GCCATCAATTAATGTCGAATTGTTTAA"
     );
-    protected File getFile() {
-        return new File(AbstractTestSequenceFastaDataStore.class.getResource(FASTA_FILE_PATH).getFile());
+    
+    ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestSequenceFastaDataStore.class);
+    protected File getFile() throws IOException {
+        return RESOURCES.getFile(FASTA_FILE_PATH);
     }
     
     @Test

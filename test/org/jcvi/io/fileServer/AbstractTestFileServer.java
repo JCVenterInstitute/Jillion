@@ -34,15 +34,17 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class  AbstractTestFileServer {
-
-    protected final String PATH_TO_ROOT_DIR = AbstractTestFileServer.class.getResource("files").getFile();
+	ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestFileServer.class);
+	
+    protected File PATH_TO_ROOT_DIR;
     protected FileServer sut;
     
     protected abstract FileServer createFileServer(File file) throws IOException;
-    
+   
     @Before
     public void setup() throws IOException{
-        sut = createFileServer(new File(this.PATH_TO_ROOT_DIR));
+    	PATH_TO_ROOT_DIR = RESOURCES.getFile("files");
+        sut = createFileServer(PATH_TO_ROOT_DIR);
     }
    
     

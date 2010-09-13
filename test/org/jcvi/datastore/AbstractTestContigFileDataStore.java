@@ -25,6 +25,7 @@ package org.jcvi.datastore;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
@@ -33,7 +34,7 @@ import static org.junit.Assert.*;
 public abstract class AbstractTestContigFileDataStore extends TestContigFileParser{
 
     @Test
-    public void thereAre4Contigs() throws FileNotFoundException, DataStoreException{
+    public void thereAre4Contigs() throws DataStoreException, IOException{
         ContigDataStore<PlacedRead, Contig<PlacedRead>> dataStore = buildContigFileDataStore(getFile());
         assertEquals(4, dataStore.size());
     }

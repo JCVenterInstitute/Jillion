@@ -30,8 +30,10 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,12 +42,16 @@ public class TestDefaultFileIdParser {
     IdParser<String> mockIdReader;
     
     String commaSepList = "first,second,third,fourth";
-    File file = new File(TestDefaultFileIdParser.class.getResource("files/ids.txt").getFile());
+    ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultFileIdParser.class);
+    
+    File file;
     
     @Before
-    public void setup(){
+    public void setup() throws IOException{
         mockIdReader = createMock(IdParser.class);
+        file = RESOURCES.getFile("files/ids.txt");
         sut = new DefaultFileIdReader<String>(file,mockIdReader);
+       
     }
     
     @Test

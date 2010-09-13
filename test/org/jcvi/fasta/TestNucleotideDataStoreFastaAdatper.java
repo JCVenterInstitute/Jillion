@@ -45,7 +45,7 @@ public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFas
     public void adaptFasta() throws IOException, DataStoreException{
         NucleotideDataStore sut=
         new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(buildMap(
-                new File(TestNucleotideDataStoreFastaAdatper.class.getResource(FASTA_FILE_PATH).getFile()))));
+        		RESOURCES.getFile(FASTA_FILE_PATH))));
     
         assertEquals(
                 sut.get("hrv-61").decode(), hrv_61.getValues().decode());
