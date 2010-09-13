@@ -23,7 +23,10 @@
  */
 package org.jcvi.trace.sanger.chromatogram.scf;
 
+import java.io.IOException;
+
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -35,12 +38,14 @@ import static org.junit.Assert.*;
  *
  */
 public class TestSCFChromatogramWithGaps {
-
+	 private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestSCFChromatogramWithGaps.class);
+		
     private static final String File_path = "files/containsGaps.scf";
     
     @Test
-    public void parse() throws SCFDecoderException{
-        SCFChromatogram actual =new Version3SCFCodec().decode(TestSCFChromatogramWithGaps.class.getResourceAsStream(File_path));
+    public void parse() throws SCFDecoderException, IOException{
+        SCFChromatogram actual =new Version3SCFCodec().decode(
+        		RESOURCES.getFileAsStream(File_path));
         assertEquals(NucleotideGlyph.convertToString(actual.getBasecalls().decode()), "-----");
         
     }

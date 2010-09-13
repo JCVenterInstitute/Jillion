@@ -8,22 +8,18 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
-
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 import org.jcvi.io.IOUtil;
-import org.jcvi.io.IOUtil.ENDIAN;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.ab1.tag.ASCIITaggedDataRecord;
-import org.jcvi.trace.sanger.chromatogram.ab1.tag.AbstractTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.ab1.tag.DateTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.ab1.tag.DefaultTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.ab1.tag.FloatTaggedDataRecord;
@@ -35,7 +31,7 @@ import org.jcvi.trace.sanger.chromatogram.ab1.tag.TaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.ab1.tag.TaggedDataRecordBuilder;
 import org.jcvi.trace.sanger.chromatogram.ab1.tag.TaggedDataType;
 import org.jcvi.trace.sanger.chromatogram.ab1.tag.TimeTaggedDataRecord;
-import org.joda.time.LocalTime;
+import org.jcvi.util.ArrayIterator;
 
 public final class Ab1FileParser {
 
@@ -43,8 +39,22 @@ public final class Ab1FileParser {
 	}
 	
 	private static final byte[] MAGIC_NUMBER = new byte[]{(char)'A',(char)'B',(char)'I',(char)'F'};
+	/**
+	 * ABI files store both the original and current
+	 * (possibly edited) data.  This is the index
+	 * order the original version
+	 * of the tag when both are present.
+	 */
 	private static final int ORIGINAL_VERSION = 0;
+	/**
+	 * ABI files store both the original and current
+	 * (possibly edited) data.  This is the index
+	 * order the current version
+	 * of the tag when both are present.
+	 */
 	private static final int CURRENT_VERSION =1;
+	
+	
 	public static void parseAb1File(File ab1File, ChromatogramFileVisitor visitor) throws FileNotFoundException, TraceDecoderException{
 		InputStream in = null;
 		try{
@@ -61,17 +71,61 @@ public final class Ab1FileParser {
 			visitor.visitFile();
 			long numberOfTaggedRecords = parseNumTaggedRecords(in);
 			int datablockOffset = parseTaggedRecordOffset(in);
+			//All the record info is actually stored
+			//AFTER the raw data.
+			//In order to avoid re-parsing the stream
+			//(we can't guarantee being able to seek backwards
+			//from all inputstream implementations)
+			//we have to cache the raw data into a byte array for
+			//later handling.
 			byte[] traceData = parseTraceDataBlock(in, datablockOffset-Ab1Util.HEADER_SIZE);
 			GroupedTaggedRecords groupedDataRecordMap = parseTaggedDataRecords(in,numberOfTaggedRecords,visitor);
 	
 			List<NucleotideGlyph> channelOrder =parseChannelOrder(groupedDataRecordMap);
 			visitChannelOrderIfAble(visitor, channelOrder);			
 			List<String> basecalls =parseBasecallsFrom(groupedDataRecordMap,traceData,visitor);	
+			parseSignalScalingFactor(groupedDataRecordMap, channelOrder, traceData,visitor);
 			parseCommentsFrom(groupedDataRecordMap,traceData,visitor);
 			parseDataChannels(groupedDataRecordMap,channelOrder,traceData,visitor);
 			parsePeakData(groupedDataRecordMap,traceData,visitor);
 			parseQualityData(groupedDataRecordMap,traceData,basecalls,visitor);
 			visitor.visitEndOfFile();
+	}
+
+	private static void parseSignalScalingFactor(
+			GroupedTaggedRecords groupedDataRecordMap,
+			List<NucleotideGlyph> channelOrder, byte[] traceData,
+			ChromatogramFileVisitor visitor) {
+		
+		if(visitor instanceof Ab1ChromatogramFileVisitor){
+			ShortArrayTaggedDataRecord scalingFactors =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.SCALE_FACTOR).get(0);
+			short aScale=-1,cScale=-1,gScale=-1,tScale =-1;
+			List<Short> list = new ArrayList<Short>();
+			for(short s: scalingFactors.parseDataRecordFrom(traceData)){
+				list.add(Short.valueOf(s));
+			}
+			Iterator<Short> scaleIterator = list.iterator();
+			for(NucleotideGlyph channel : channelOrder){
+				short scale = scaleIterator.next();
+				switch(channel){
+					case Adenine:
+						aScale = scale;
+						break;
+					case Cytosine:
+						cScale = scale;
+						break;
+					case Guanine:
+						gScale = scale;
+						break;
+					default:
+						tScale = scale;
+						break;
+				}
+			}
+			
+			((Ab1ChromatogramFileVisitor) visitor).visitScaleFactors(aScale,cScale,gScale,tScale);
+		}
+		
 	}
 
 	private static void parseQualityData(
@@ -81,11 +135,9 @@ public final class Ab1FileParser {
 		
 		List<ASCIITaggedDataRecord> qualityRecords =groupedDataRecordMap.asciiDataRecords.get(TaggedDataName.QUALITY);
 		for(int i=0; i<qualityRecords.size(); i++){
-			
-		
 			ASCIITaggedDataRecord qualityRecord = qualityRecords.get(i);
 			List<NucleotideGlyph> basecalls = NucleotideGlyph.getGlyphsFor(basecallsList.get(i));
-			byte[][] qualities = parseQualityData(basecalls, qualityRecord.parseDataRecordFrom(traceData).getBytes());
+			byte[][] qualities = splitQualityDataByChannel(basecalls, qualityRecord.parseDataRecordFrom(traceData).getBytes());
 			if(i == ORIGINAL_VERSION && visitor instanceof Ab1ChromatogramFileVisitor){
 				Ab1ChromatogramFileVisitor ab1Visitor = (Ab1ChromatogramFileVisitor)visitor;
 				ab1Visitor.visitOriginalAConfidence(qualities[0]);
@@ -100,15 +152,22 @@ public final class Ab1FileParser {
 				visitor.visitTConfidence(qualities[3]);
 			}
 		}
-		
-		System.out.println("# qual records = " + qualityRecords.size());
-		String qualData =qualityRecords.get(CURRENT_VERSION).parseDataRecordFrom(traceData);
-		System.out.println("QUALITY = " + Arrays.toString(qualData.getBytes()));
-		System.out.println(qualData.length());
-		//visitor.visit;
 	}
-
-	private static byte[][] parseQualityData(List<NucleotideGlyph> basecalls,byte[] qualities ){
+	/**
+	 * To conform with {@link ChromatogramFileVisitor},
+	 * each Channel must have its own quality data.
+	 * ABI traces don't have that information,
+	 * so we must create it based on the basecalls.
+	 * Any called base that is not an A,C or G is put in the T
+	 * quality channel.
+	 * @param basecalls the basecalls to use to split the qualities.
+	 * @param qualities the quality values of the called base.
+	 * @return a byte matrix containing the quality channel
+	 * data for A,C,G,T in that order.
+	 */
+	private static byte[][] splitQualityDataByChannel(List<NucleotideGlyph> basecalls,byte[] qualities ){
+		//The channel of the given basecall gets that
+		// quality value, the other channels get zero
 		int size = basecalls.size();
 		ByteBuffer aQualities = ByteBuffer.allocate(size);
 		ByteBuffer cQualities = ByteBuffer.allocate(size);
@@ -137,17 +196,15 @@ public final class Ab1FileParser {
 				gQualities.put(quality);
 				tQualities.put(zero);
 				break;
-			case Thymine:
+			//anything else is automatically a T
+			default:
 				aQualities.put(zero);
 				cQualities.put(zero);
 				gQualities.put(zero);
 				tQualities.put(quality);				
 				break;
-			default:
-				throw new IllegalStateException("invalid basecall "+basecalls.get(i));
 			}
 		}
-		
 		return new byte[][]{aQualities.array(),cQualities.array(),gQualities.array(),tQualities.array()};
 	}
 	private static void parsePeakData(
@@ -227,8 +284,6 @@ public final class Ab1FileParser {
 			props = addAsComments(entry.getValue(),traceData,props);						
 		}
 		visitor.visitComments(props);
-		
-		
 	}
 
 	private static Properties addAsComments(List<? extends TaggedDataRecord> records,byte[] traceData, Properties comments){
@@ -301,7 +356,6 @@ public final class Ab1FileParser {
 				if(isAb1ChromatogramVisitor){
 					((Ab1ChromatogramFileVisitor) visitor).visitTaggedDataRecord(record);
 				}
-				
 				map.add(record);
 			}
 		}catch(IOException e){
@@ -405,8 +459,4 @@ public final class Ab1FileParser {
 			map.get(name).add((T)record);
 		}
 	}
-	
-	
-	
-	
 }

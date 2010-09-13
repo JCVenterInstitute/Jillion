@@ -59,16 +59,19 @@ public class TestBreadthFirstFileIterator {
         assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/file2"),sut.next()); 
         assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/subDir/file3"),sut.next());
-        assertTrue(sut.hasNext());
         
         assertEquals(fileServer.getFile("files/siblingSubDir/file6"),sut.next());
         assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/subDir/subSubDir2/file5"),sut.next());
-       
+        
+        assertEquals(fileServer.getFile("files/subDir/file3"),sut.next());
+        assertTrue(sut.hasNext());
+        
         assertTrue(sut.hasNext());                
         assertEquals(fileServer.getFile("files/subDir/subSubDir/file4"),sut.next());
       
+        assertEquals(fileServer.getFile("files/subDir/subSubDir2/file5"),sut.next());
+       
+       
         assertFalse(sut.hasNext());
         
     }
@@ -85,25 +88,24 @@ public class TestBreadthFirstFileIterator {
         assertEquals(fileServer.getFile("files/siblingSubDir/"),sut.next());
         assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/subDir/"),sut.next());
-        
-        
         assertTrue(sut.hasNext());  
+        
+        assertTrue(sut.hasNext()); 
+        assertEquals(fileServer.getFile("files/siblingSubDir/file6"),sut.next());
+        
+        
         assertEquals(fileServer.getFile("files/subDir/file3"),sut.next());
         assertTrue(sut.hasNext());        
         assertEquals(fileServer.getFile("files/subDir/subSubDir/"),sut.next());
         assertTrue(sut.hasNext()); 
         assertEquals(fileServer.getFile("files/subDir/subSubDir2/"),sut.next());
-        
-        assertTrue(sut.hasNext());        
-              
-               
-        assertEquals(fileServer.getFile("files/siblingSubDir/file6"),sut.next());
-        assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/subDir/subSubDir2/file5"),sut.next());
-        
         assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/subDir/subSubDir/file4"),sut.next());
-        assertFalse(sut.hasNext());
+        
+       assertTrue(sut.hasNext());
+        assertEquals(fileServer.getFile("files/subDir/subSubDir2/file5"),sut.next());
+        
+       assertFalse(sut.hasNext());
     }
     
     @Test

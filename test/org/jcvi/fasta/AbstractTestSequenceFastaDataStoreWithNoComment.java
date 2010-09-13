@@ -28,10 +28,12 @@ import java.io.IOException;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.io.fileServer.ResourceFileServer;
 
 public  abstract class AbstractTestSequenceFastaDataStoreWithNoComment {
     static final String FASTA_FILE_PATH = "files/noComment.fasta";
-
+    ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestSequenceFastaMapWithNoComment.class);
+    
 DefaultEncodedNucleotideFastaRecord hrv_61 = new DefaultEncodedNucleotideFastaRecord("hrv-61",null,
         "TTAAAACTGGGTCTGGGTTGCTCCCACCCAGACCACCCATGTGGTGTTGTACACTGTTAT" +
         "TCCGGTAACTTTGTACGCCAGTTTTGAACTCCCCTACCCCTTTTGTAACTTAGAAGCTAA" +

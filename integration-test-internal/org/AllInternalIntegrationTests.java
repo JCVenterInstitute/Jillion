@@ -17,23 +17,24 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.trace.fourFiveFour.flowgram.sff;
+package org;
 
-import java.io.File;
+import org.jcvi.trace.sanger.traceFileServer.AllTraceFileServerIntegrationTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * @author dkatzel
  *
  *
  */
-public class TestSffInfoDataStore extends AbstractTestSffFileDataStore{
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    protected SffDataStore parseDataStore(File f) throws Exception {
-        return new SffInfoDataStore(f);
+@RunWith(Suite.class)
+@SuiteClasses(
+    {
+        AllTraceFileServerIntegrationTests.class
     }
+    )
+public class AllInternalIntegrationTests {
 
 }

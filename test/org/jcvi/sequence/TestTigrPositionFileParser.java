@@ -23,8 +23,10 @@
  */
 package org.jcvi.sequence;
 
+import java.io.IOException;
 import org.jcvi.glyph.num.EncodedShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -202,10 +204,11 @@ public class TestTigrPositionFileParser {
 
             })
     );
+    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestTigrPositionFileParser.class);
     
     @Test
-    public void parse(){
-        PeakMap actualMap = TigrPositionsFileParser.getPeakMap(TestTigrPositionFileParser.class.getResourceAsStream(pathToPosfile));
+    public void parse() throws IOException{
+        PeakMap actualMap = TigrPositionsFileParser.getPeakMap(RESOURCES.getFileAsStream(pathToPosfile));
         assertEquals(IWKNA07T07A12MP1027R.decode(), actualMap.getPeaksFor("IWKNA07T07A12MP1027R").decode());
         assertEquals(IWKNA07T08G07MP461F.decode(), actualMap.getPeaksFor("IWKNA07T08G07MP461F").decode());
         

@@ -24,20 +24,30 @@
 package org.jcvi.trace.sanger.chromatogram.ztr;
 
 
+import java.io.IOException;
+
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramXMLSerializer;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramImpl;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramParser;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestZTRChromatogramParser {
-
+	 private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestZTRChromatogramParser.class);
+		
     ZTRChromatogramParser sut = new ZTRChromatogramParser();
-    static ZTRChromatogramImpl expected = (ZTRChromatogramImpl)ChromatogramXMLSerializer.fromXML(TestZTRChromatogramParser.class.getResourceAsStream("files/GBKAK82TF.ztr.xml"));
+    static ZTRChromatogramImpl expected;
 
+    @Before
+    public void setup() throws IOException{
+    	expected = (ZTRChromatogramImpl)ChromatogramXMLSerializer.fromXML(
+        		RESOURCES.getFileAsStream("files/GBKAK82TF.ztr.xml"));
+    }
     @Test
-    public void parse() throws TraceDecoderException{
-        ZTRChromatogramImpl actual =sut.decode(TestZTRChromatogramParser.class.getResourceAsStream("files/GBKAK82TF.ztr"));
+    public void parse() throws TraceDecoderException, IOException{
+        ZTRChromatogramImpl actual =sut.decode(RESOURCES.getFileAsStream("files/GBKAK82TF.ztr"));
         assertEquals(expected,actual);
         assertEquals(actual.getClip(), expected.getClip());
     }

@@ -26,6 +26,10 @@ package org.jcvi.io.fileServer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
+import org.jcvi.io.FileUtil;
 /**
  * {@code ResourceFileServer} is a {@link FileServer}
  * that wraps a Class's classLoader's getResource methods.
@@ -36,18 +40,11 @@ public class ResourceFileServer extends AbstractFileServer {
 
     
     private final Class<?> clazz;
-    private final String subDirPath;
-    /**
-     * Construct a new ResourceFileServer using
-     * the given class's ClassLoader to as the file server.
-     * Same as 
-     * <p>
-     * {@code new ResourceFileServer(clazz, null)}.
-     * </p>
-     * @param clazz
-     */
+    private final String relativeStartPath;
+    
     public ResourceFileServer(Class<?> clazz){
-        this(clazz,null);
+    	this.clazz = clazz;
+    	relativeStartPath=null;
     }
     /**
      * Construct a new ResourceFileServer using
@@ -55,27 +52,40 @@ public class ResourceFileServer extends AbstractFileServer {
      * @param clazz
      * @param rootPath the path from this resource to use as the root,
      * may be null
+     * @throws IOException 
      */
-    public ResourceFileServer(Class<?> clazz, String rootPath){
+    public ResourceFileServer(Class<?> clazz, File rootDir) throws IOException{
         this.clazz = clazz;
-        this.subDirPath=rootPath;
-    }
-    private String convertFileIdToPath(String fileId){
-        if(subDirPath ==null){
-            return fileId;
+        if(rootDir==null){
+        	relativeStartPath=null;
+        }else{
+        	relativeStartPath = FileUtil.createRelavitePathFrom(
+        			getClassRootDir(), rootDir).replace(File.separator, "/");
         }
-        return subDirPath+ File.separatorChar + fileId;
+    }
+   
+    private String getRelativePath(String fileId){
+    	return String.format("%s%s",
+    			relativeStartPath==null?"":relativeStartPath+"/",
+    					fileId);
     }
 
     @Override
     public File getFile(String fileId) throws IOException {
         verifyNotClosed();
-        return new File(clazz.getResource(convertFileIdToPath(fileId)).getFile());
+
+	        String relativePath = getRelativePath(fileId);
+			URL url = clazz.getResource(relativePath);
+			if(url==null){
+				return null;
+			}
+			return new File(URLdecode(url.getFile()));
+        
     }
 
     @Override
     public InputStream getFileAsStream(String fileId) throws IOException {
-        return clazz.getResourceAsStream(convertFileIdToPath(fileId));
+        return clazz.getResourceAsStream(getRelativePath(fileId));
     }
 
     
@@ -86,10 +96,24 @@ public class ResourceFileServer extends AbstractFileServer {
 
     @Override
     public boolean contains(String fileId) throws IOException {
-        return clazz.getResource(convertFileIdToPath(fileId)) !=null;
+        return getFile(fileId) !=null;
     }
-
+    /**
+     * Replace any URL encoding in the file path with the UTF-8 equivalent.
+     * This is needed so paths like in Windows "{@code Docuements%20and%20Settings}"
+     * becomes "Documents and Settings"
+     * @param path
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    private String URLdecode(String path) throws UnsupportedEncodingException{
+    	return URLDecoder.decode(path, "UTF-8");
+    }
     public File getRootDir(){
         return new File(clazz.getName().replaceAll("\\.", "/")).getParentFile();
+    }
+    private final File getClassRootDir() throws UnsupportedEncodingException{
+    	return new File(URLdecode(clazz.getResource(".").getFile()));
+        //return new File(clazz.getName().replaceAll("\\.", "/")).getParentFile();
     }
 }

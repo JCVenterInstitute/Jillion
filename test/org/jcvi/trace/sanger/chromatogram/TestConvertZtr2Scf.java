@@ -60,7 +60,8 @@ public class TestConvertZtr2Scf {
     
     @Test
     public void scfequalsZtr() throws TraceDecoderException, IOException{
-        Chromatogram decodedScf = scfCodec.decode(new DataInputStream(TestConvertZtr2Scf.class.getResourceAsStream("scf/files/GBKAK82TF.scf")));
+        Chromatogram decodedScf = scfCodec.decode(new DataInputStream(
+        		RESOURCES.getFileAsStream("scf/files/GBKAK82TF.scf")));
         Chromatogram decodedZTR = ztrParser.decode(
                 RESOURCES.getFileAsStream("ztr/files/GBKAK82TF.ztr"));
         assertEquals(decodedZTR, decodedScf);        

@@ -35,6 +35,7 @@ import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.sequence.DefaultLibrary;
 import org.jcvi.sequence.Library;
 import org.jcvi.sequence.MateOrientation;
@@ -106,9 +107,12 @@ public abstract class  AbstractTestFragmentDataStore {
                             clearRangeFor061, clearRangeFor061,library,""
         );
     AbstractFragmentDataStore sut;
+    
+    ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestFragmentDataStore.class);
+    
     @Before
     public void setup() throws Exception{
-        File fileToParse = new File(AbstractTestFragmentDataStore.class.getResource(FILE).getFile());
+        File fileToParse = RESOURCES.getFile(FILE);
         sut = createFragmentDataStore(fileToParse);
         new Frg2Parser().parse(new FileInputStream(fileToParse), sut);
     }

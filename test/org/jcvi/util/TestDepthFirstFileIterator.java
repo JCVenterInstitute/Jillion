@@ -63,15 +63,19 @@ public class TestDepthFirstFileIterator {
         assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/file2"),sut.next());
         assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/siblingSubDir/file6"),sut.next());
-        assertTrue(sut.hasNext());
+        
         assertEquals(fileServer.getFile("files/subDir/file3"),sut.next());
+        assertTrue(sut.hasNext());
+        assertEquals(fileServer.getFile("files/subDir/subSubDir2/file5"),sut.next());
+        
+        
         assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/subDir/subSubDir/file4"),sut.next());
         
+        
         assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/subDir/subSubDir2/file5"),sut.next());
-       
+        assertEquals(fileServer.getFile("files/siblingSubDir/file6"),sut.next());
+        
         assertFalse(sut.hasNext());
     }
     @Test
@@ -80,18 +84,17 @@ public class TestDepthFirstFileIterator {
                                 .includeDirectories(true)
                                 .build();
         assertTrue(sut.hasNext());
+        
         assertEquals(fileServer.getFile("files/file1"),sut.next());
         assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/file2"),sut.next());
-        
         assertTrue(sut.hasNext());
+            
         assertEquals(fileServer.getFile("files/siblingSubDir/"), sut.next());
         assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/subDir"),sut.next());
-        assertTrue(sut.hasNext());
+        assertTrue(sut.hasNext());   
         
-        assertEquals(fileServer.getFile("files/siblingSubDir/file6"),sut.next());
-        assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/subDir/file3"),sut.next());
         assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/subDir/subSubDir"),sut.next());
@@ -101,10 +104,16 @@ public class TestDepthFirstFileIterator {
         
         
         
+        
+        
+        assertEquals(fileServer.getFile("files/subDir/subSubDir2/file5"),sut.next());        
+        assertTrue(sut.hasNext());
+        
        
         assertEquals(fileServer.getFile("files/subDir/subSubDir/file4"),sut.next());
         assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/subDir/subSubDir2/file5"),sut.next());        
+        
+        assertEquals(fileServer.getFile("files/siblingSubDir/file6"),sut.next());
         
         assertFalse(sut.hasNext());
     }

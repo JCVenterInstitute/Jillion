@@ -43,6 +43,7 @@ import java.util.Arrays;
  */
 public final class Base64 {
 
+
     private static final int SIX_BIT_MASK = 0x3F;
     public static String encode(byte[] toBeEncoded){
         int position =0;

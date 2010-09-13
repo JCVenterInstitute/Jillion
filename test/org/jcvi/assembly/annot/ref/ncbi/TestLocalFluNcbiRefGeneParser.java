@@ -26,17 +26,20 @@ package org.jcvi.assembly.annot.ref.ncbi;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jcvi.io.fileServer.ResourceFileServer;
+
 public class TestLocalFluNcbiRefGeneParser extends
         AbstractTestFluNcbiRefGeneParser {
-
+	ResourceFileServer RESOURCES = new ResourceFileServer(TestLocalFluNcbiRefGeneParser.class);
+    
     @Override
     InputStream getStreamForOneGeneGbf() throws IOException {
-        return TestLocalFluNcbiRefGeneParser.class.getResourceAsStream("files/oneGene.fcgi");
+        return RESOURCES.getFileAsStream("files/oneGene.fcgi");
     }
 
     @Override
     InputStream getStreamFortwoGenesGbf() throws IOException {
-        return TestLocalFluNcbiRefGeneParser.class.getResourceAsStream("files/twoGenes.fcgi");
+        return RESOURCES.getFileAsStream("files/twoGenes.fcgi");
         
     }
 

@@ -31,6 +31,7 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.datastore.DefaultContigFileDataStore;
 import org.jcvi.io.IOUtil;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,10 +41,11 @@ public class TestContigFileWriter {
     ContigFileWriter sut;
     static DefaultContigFileDataStore dataStore;
     private static String pathToFile = "files/gcv_23918.contig";
+    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestContigFileWriter.class);
+    
     @BeforeClass
-    public static void parseContigs(){
-        final InputStream resourceAsStream = TestContigFileWriter.class.getResourceAsStream(pathToFile);
-       dataStore = new DefaultContigFileDataStore(resourceAsStream);
+    public static void parseContigs() throws IOException{
+       dataStore = new DefaultContigFileDataStore(RESOURCES.getFileAsStream(pathToFile));
     }
     @Before
     public void setup(){
@@ -56,13 +58,17 @@ public class TestContigFileWriter {
         for(Contig<PlacedRead> contig : dataStore){
             sut.write(contig);
         }
-        
-        final InputStream resourceAsStream = TestContigFileWriter.class.getResourceAsStream(pathToFile);
-        
-        byte[] expected =IOUtil.readStream(resourceAsStream).getBytes();
-        ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
-        fileOut.write(out.toByteArray());
-        assertEquals(new String(expected), new String(out.toByteArray()));
+     
+        InputStream inputStream=null;
+        try{
+	        inputStream= RESOURCES.getFileAsStream(pathToFile);
+			byte[] expected =IOUtil.readStream(inputStream).getBytes();
+	        ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
+	        fileOut.write(out.toByteArray());
+	        assertEquals(new String(expected), new String(out.toByteArray()));
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(inputStream);
+        }
     }
 
 }

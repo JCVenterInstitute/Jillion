@@ -1,7 +1,6 @@
 package org.jcvi.trace.sanger.chromatogram.ab1;
 
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -207,6 +206,13 @@ public class Ab1ChromatogramFilePrinter implements Ab1ChromatogramFileVisitor{
 		System.arraycopy(originalConfidence, 0, head, 0, 5);
 		out.println("visited ORIGINAL T confidence " + originalConfidence.length +
 				"  head = "+Arrays.toString(head));
+		
+	}
+
+	@Override
+	public void visitScaleFactors(short aScale, short cScale, short gScale,
+			short tScale) {
+		out.printf("visiting scale factor A:%d C:%d G:%d T:%d%n", aScale, cScale,gScale,tScale);
 		
 	}
 

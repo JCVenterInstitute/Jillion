@@ -91,7 +91,7 @@ public enum TaggedDataName {
 	 * for the average signals recovered from the 
 	 * bases.
 	 */
-	SCALE("S/N%"),
+	SCALE_FACTOR("S/N%"),
 	
 	/**
 	 * The name of the sample.
@@ -144,7 +144,7 @@ public enum TaggedDataName {
 	
 	BCTS("BCTS"),
 	
-	CMNT("CMNT"),
+	COMMENT("CMNT"),
 	
 	CTID("CTID"),
 	

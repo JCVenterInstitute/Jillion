@@ -29,6 +29,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFDecoderException;
@@ -39,10 +40,12 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestActualSCFCodec {
 
+	 private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestActualSCFCodec.class);
+	   
     private SCFCodec sut = new Version3SCFCodec(new DefaultSCFHeaderCodec(), new DefaultSectionCodecFactory());
     @Test
     public void decodeAndEncodeMatch() throws SCFDecoderException, IOException{
-        InputStream in = TestActualSCFCodec.class.getResourceAsStream("files/GBKAK82TF.scf");
+        InputStream in = RESOURCES.getFileAsStream("files/GBKAK82TF.scf");
         SCFChromatogram decoded = sut.decode(new DataInputStream(in));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         sut.encode(decoded, out);

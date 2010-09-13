@@ -33,18 +33,20 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultContigFileDataStore;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 
 public abstract class  AbstractTestAceParserMatchesAce2Contig {
     List<AceContig> actualContigs;
     DefaultContigFileDataStore expectedContigDataStore;
+    ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestAceParserMatchesAce2Contig.class);
+    
     AbstractTestAceParserMatchesAce2Contig(String aceFile, String contigFile) throws IOException{
         this.expectedContigDataStore = new DefaultContigFileDataStore(
-                AbstractTestAceParserMatchesAce2Contig.class.getResourceAsStream(contigFile));
+        		RESOURCES.getFileAsStream(contigFile));
         
-        this.actualContigs = getContigList(new File(
-                AbstractTestAceParserMatchesAce2Contig.class.getResource(aceFile).getFile()));
-        
+        this.actualContigs = getContigList(
+        		RESOURCES.getFile(aceFile));       
     }
     protected abstract List<AceContig> getContigList(File aceFile) throws IOException;
     

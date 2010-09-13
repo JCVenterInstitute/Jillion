@@ -23,9 +23,9 @@
  */
 package org.jcvi.trace.sanger.traceArchive;
 
-import java.io.File;
 import java.io.IOException;
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,15 +38,16 @@ public class TestDefaultFolderTraceArchiveDataStore {
     private static final TraceArchiveRecordIdGenerator ID_GENERATOR= new NameTagTraceArchiveRecordIdGenerator();
     private TraceArchiveInfo traceInfo ;
     private String absoluteRootPath;
-    
+    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultFolderTraceArchiveDataStore.class);
+	
     @Before
     public void setup() throws IOException{
        traceInfo = new DefaultTraceArchiveInfo(
                 new TraceInfoXMLTraceArchiveInfoBuilder<TraceArchiveRecord>(
                 ID_GENERATOR, 
-                TestDefaultFolderTraceArchiveDataStore.class.getResourceAsStream(FOLDER_ROOT_DIR+"/TRACEINFO.xml")));
+                RESOURCES.getFileAsStream(FOLDER_ROOT_DIR+"/TRACEINFO.xml")));
        
-       absoluteRootPath = new File(TestDefaultFolderTraceArchiveDataStore.class.getResource(FOLDER_ROOT_DIR).getFile()).getAbsolutePath();
+       absoluteRootPath = RESOURCES.getFile(FOLDER_ROOT_DIR).getAbsolutePath();
        sut = new DefaultFolderTraceArchiveDataStore(
                absoluteRootPath ,
                 traceInfo);

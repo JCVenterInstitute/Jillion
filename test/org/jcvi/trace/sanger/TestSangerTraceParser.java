@@ -23,6 +23,9 @@
  */
 package org.jcvi.trace.sanger;
 
+import java.io.IOException;
+
+import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.scf.Version3SCFCodec;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramParser;
@@ -36,23 +39,24 @@ public class TestSangerTraceParser {
     private static final String PHD_FILE = "phd/files/1095595674585.phd.1";
     
     SangerTraceParser sut = SangerTraceParser.getInstance();
+    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestSangerTraceParser.class);
     
     @Test
-    public void parseZTR() throws TraceDecoderException{
-        SangerTrace actual =sut.decode(TestSangerTraceParser.class.getResourceAsStream(ZTR_FILE));
-        SangerTrace expected = new ZTRChromatogramParser().decode(TestSangerTraceParser.class.getResourceAsStream(ZTR_FILE));
+    public void parseZTR() throws TraceDecoderException, IOException{
+        SangerTrace actual =sut.decode(RESOURCES.getFileAsStream(ZTR_FILE));
+        SangerTrace expected = new ZTRChromatogramParser().decode(RESOURCES.getFileAsStream(ZTR_FILE));
         assertEquals(expected, actual);
     }
     @Test
-    public void parseSCF_v3() throws TraceDecoderException{
-        SangerTrace actual =sut.decode(TestSangerTraceParser.class.getResourceAsStream(SCF3_FILE));
-        SangerTrace expected = new Version3SCFCodec().decode(TestSangerTraceParser.class.getResourceAsStream(SCF3_FILE));
+    public void parseSCF_v3() throws TraceDecoderException, IOException{
+        SangerTrace actual =sut.decode(RESOURCES.getFileAsStream(SCF3_FILE));
+        SangerTrace expected = new Version3SCFCodec().decode(RESOURCES.getFileAsStream(SCF3_FILE));
         assertEquals(expected, actual);
     }
     @Test
-    public void parsePhd() throws TraceDecoderException{
-        SangerTrace actual =sut.decode(TestSangerTraceParser.class.getResourceAsStream(PHD_FILE));
-        SangerTrace expected = new PhdCodec().decode(TestSangerTraceParser.class.getResourceAsStream(PHD_FILE));
+    public void parsePhd() throws TraceDecoderException, IOException{
+        SangerTrace actual =sut.decode(RESOURCES.getFileAsStream(PHD_FILE));
+        SangerTrace expected = new PhdCodec().decode(RESOURCES.getFileAsStream(PHD_FILE));
         assertEquals(expected, actual);
     }
 }
