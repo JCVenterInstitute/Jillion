@@ -27,6 +27,8 @@ package org.jcvi.util;
 
 import java.util.Iterator;
 
+import org.jcvi.Builder;
+
 
 /**
  * The <code>StringUtilities</code> library contains a set of utility methods
@@ -37,45 +39,51 @@ import java.util.Iterator;
  */
 public final class StringUtilities
 {
-    /**
-     * Join the {@link String} representation of a collection of objects
-     * together using the supplied glue <code>String</code>.  The 
-     * {@link Object#toString()} method is used for generating the 
-     * representation.  The final result of this method will contain the 
-     * <code>String</code> versions joined in the iterated order.
-     * 
-     * @param glue A {@link String} to separate the supplied objects, or 
-     * <code>null</code> if no separator is desired.
-     * @param list An ordered, {@link Iterable} list of objects to join.
-     * @return A {@link String} containing the list of joined elements.
-     */
-    public static <T>  String join(Character glue, Iterable<T>array)
-    {
-        final StringBuilder joined = new StringBuilder();
-
-        for (final T item : array) 
-        {
-            if (item != null)
-            {	
-            	String itemString = item.toString();
-                if (glue != null && joined.length() > 0 && itemString.length() > 0)
-                {
-                    joined.append(glue);
-                }
-                joined.append(itemString);
-            }
+    public static class JoinedStringBuilder implements Builder<String>{
+        private final Iterable<?> elements;
+        private String glue;
+        public JoinedStringBuilder(Iterable<?> elements){
+            this.elements = elements;
         }
+        public JoinedStringBuilder(Object... elements){
+            this(new ArrayIterable<Object>(elements));
+        }
+        
+        public JoinedStringBuilder glue(String glue){
+            this.glue = glue;
+            return this;
+        }
+        
+        public JoinedStringBuilder glue(Character glue){ 
+            if(glue==null){
+                return glue((String)null);
+            }
+            return glue(glue.toString());
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String build() {
+            final StringBuilder joined = new StringBuilder();
 
-        return joined.toString();
-    }
-    public static  String join(Character glue,String... array){
-    	return join(glue,new ArrayIterable<String>(array));
-    }
-    public static <T>  String join(T... array){
-    	return join(new ArrayIterable<T>(array));
-    }
-    public static <T> String join(Iterable<T>array){
-    	return join(null,array);
+            for (final Object item : elements) 
+            {
+                if (item != null)
+                {   
+                    String itemString = item.toString();
+                    if (glue != null && joined.length() > 0 && itemString.length() > 0)
+                    {
+                        joined.append(glue);
+                    }
+                    joined.append(itemString);
+                }
+            }
+
+            return joined.toString();
+        }
+        
+        
     }
     
     /**
