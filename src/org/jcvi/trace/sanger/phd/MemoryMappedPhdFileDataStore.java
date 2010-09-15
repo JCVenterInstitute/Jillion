@@ -53,7 +53,7 @@ public class MemoryMappedPhdFileDataStore extends AbstractPhdFileDataStore{
     private final File phdBall;
     private int currentLineLength;
     public MemoryMappedPhdFileDataStore(File phdBall) throws FileNotFoundException{
-        this(phdBall,false);
+        this(phdBall,true);
     }
     public MemoryMappedPhdFileDataStore(File phdBall,boolean parseNow) throws FileNotFoundException{
         this(phdBall, new DefaultMemoryMappedFileRange(),parseNow);

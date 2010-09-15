@@ -23,8 +23,8 @@
  */
 package org.jcvi.util;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.Range;
@@ -34,7 +34,8 @@ public class DefaultMemoryMappedFileRange implements MemoryMappedFileRange{
     Map<String, Range> ranges;
     
     public DefaultMemoryMappedFileRange(){
-        ranges = new HashMap<String, Range>();
+        //presevers insertion order
+        ranges = new LinkedHashMap<String, Range>();
     }
     
     @Override

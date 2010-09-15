@@ -26,11 +26,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import javax.management.RuntimeErrorException;
 
 import org.ggf.drmaa.DrmaaException;
 import org.ggf.drmaa.JobTemplate;
@@ -140,8 +137,7 @@ public class GridJobExecutorService extends ThreadPoolExecutor
        
         Map<GridJob,GridJobFuture> jobsToCancel = new HashMap<GridJob, GridJobFuture>(futures);
 
-        System.out.println("shutting down now ... "+ jobsToCancel.size() + " jobs to cancel");
-        for(Entry<GridJob,GridJobFuture> entry : jobsToCancel.entrySet()){
+       for(Entry<GridJob,GridJobFuture> entry : jobsToCancel.entrySet()){
                 GridJobFuture future = entry.getValue();
                 future.cancel(true);
         }

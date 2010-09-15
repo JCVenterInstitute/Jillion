@@ -19,8 +19,6 @@
 
 package org.jcvi.command.grid;
 
-
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
@@ -73,8 +71,6 @@ public final class GridUtils
                         try {
                             globalSession.exit();
                         } catch (DrmaaException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
                         }
                     }
                     
