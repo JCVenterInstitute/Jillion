@@ -24,6 +24,6 @@ package org.jcvi.trace.sanger.chromatogram.abi.tag;
  *
  *
  */
-public interface IntArrayTaggedDataRecord extends TaggedDataRecord<int[]>{
+public interface IntArrayTaggedDataRecord extends TaggedDataRecord<IntArrayTaggedDataRecord,int[]>{
 
 }

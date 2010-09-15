@@ -20,7 +20,7 @@ package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
 import org.jcvi.trace.sanger.chromatogram.abi.AbiUtil;
 
-public class DefaultPascalStringTaggedDataRecord extends AbstractTaggedDataRecord<String>{
+public class DefaultPascalStringTaggedDataRecord extends AbstractTaggedDataRecord<StringTaggedDataRecord,String> implements PascalStringTaggedDataRecord{
 
 	public DefaultPascalStringTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
@@ -33,5 +33,21 @@ public class DefaultPascalStringTaggedDataRecord extends AbstractTaggedDataRecor
 	protected String parseDataFrom(byte[] data) {		
 		return AbiUtil.parsePascalStringFrom(data);
 	}
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<String> getParsedDataType() {
+        return String.class;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<StringTaggedDataRecord> getType() {
+        return StringTaggedDataRecord.class;
+    }
 
 }

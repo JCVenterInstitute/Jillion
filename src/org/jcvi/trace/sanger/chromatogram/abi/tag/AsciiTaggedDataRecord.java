@@ -24,6 +24,6 @@ package org.jcvi.trace.sanger.chromatogram.abi.tag;
  *
  *
  */
-public interface AsciiTaggedDataRecord extends TaggedDataRecord<String>{
+public interface AsciiTaggedDataRecord extends StringTaggedDataRecord{
 
 }
