@@ -20,11 +20,19 @@ package org.jcvi.trace.sanger.chromatogram.abi;
 
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.ByteArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.DateTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.FloatArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.IntArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.ShortArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.StringTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.TimeTaggedDataRecord;
+import org.joda.time.LocalTime;
 
 public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
 
@@ -53,17 +61,15 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
 
 	@Override
 	public void visitAConfidence(byte[] confidence) {
-		byte[] head = new byte[5];
-		System.arraycopy(confidence, 0, head, 0, 5);
-		out.println("visited A confidence " + confidence.length +
-				"  head = "+Arrays.toString(head));
+		out.println("visited A confidence " + confidence.length);
+		out.println(Arrays.toString(confidence));
 		
 	}
 
 	@Override
 	public void visitAPositions(short[] positions) {
 		out.println("visited A pos " + positions.length);
-		
+		out.println(Arrays.toString(positions));
 		
 	}
 
@@ -75,55 +81,50 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
 
 	@Override
 	public void visitCConfidence(byte[] confidence) {
-		byte[] head = new byte[5];
-		System.arraycopy(confidence, 0, head, 0, 5);
-		out.println("visited C confidence " + confidence.length +
-				"  head = "+Arrays.toString(head));
+		out.println("visited C confidence " + confidence.length);
+		out.println(Arrays.toString(confidence));
 		
 	}
 
 	@Override
 	public void visitCPositions(short[] positions) {
 		out.println("visited C pos " + positions.length);
-		
+		out.println(Arrays.toString(positions));
 		
 	}
 
 	@Override
 	public void visitComments(Properties comments) {
+	    System.out.println("generated comments");
 		out.println(comments);
 		
 	}
 
 	@Override
 	public void visitGConfidence(byte[] confidence) {
-		byte[] head = new byte[5];
-		System.arraycopy(confidence, 0, head, 0, 5);
-		out.println("visited G confidence " + confidence.length +
-				"  head = "+Arrays.toString(head));
+		out.println("visited G confidence " + confidence.length); 
+		out.println(Arrays.toString(confidence));
 		
 	}
 
 	@Override
 	public void visitGPositions(short[] positions) {
 		out.println("visited G pos " + positions.length);
-		
+		out.println(Arrays.toString(positions));
 		
 	}
 
 	@Override
 	public void visitPeaks(short[] peaks) {
 		out.println("visited peaks " + peaks.length);
-		
+		out.println(Arrays.toString(peaks));
 		
 	}
 
 	@Override
 	public void visitTConfidence(byte[] confidence) {
-		byte[] head = new byte[5];
-		System.arraycopy(confidence, 0, head, 0, 5);
-		out.println("visited T confidence " + confidence.length +
-				"  head = "+Arrays.toString(head));
+		out.println("visited T confidence " + confidence.length);
+		out.println(Arrays.toString(confidence));
 		
 		
 	}
@@ -131,7 +132,7 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
 	@Override
 	public void visitTPositions(short[] positions) {
 		out.println("visited T pos " + positions.length);
-		
+		out.println(Arrays.toString(positions));
 		
 	}
 
@@ -147,83 +148,71 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
 		
 	}
 
-	@Override
-	public void visitTaggedDataRecord(TaggedDataRecord<?> record) {
-		out.println("tagged Record = "+ record);
-		
-	}
 
 	@Override
 	public void visitElectrophoreticPower(short[] electrophoreticPowerData) {
 		out.println("visited elctroPower" + "  length ="+ electrophoreticPowerData.length);
-		
+		out.println(Arrays.toString(electrophoreticPowerData));
 	}
 
 	@Override
 	public void visitGelCurrentData(short[] gelCurrent) {
 		out.println("visited gelCurrent" + "  length ="+ gelCurrent.length);
-		
+		out.println(Arrays.toString(gelCurrent));
 		
 	}
 
 	@Override
 	public void visitGelTemperatureData(short[] gelTemp) {
 		out.println("visited gelTemp" + "  length ="+ gelTemp.length);
-		
+		out.println(Arrays.toString(gelTemp));
 		
 	}
 
 	@Override
 	public void visitGelVoltageData(short[] gelVoltage) {
 		out.println("visited gelVoltage" + "  length ="+ gelVoltage.length);
-		
+		out.println(Arrays.toString(gelVoltage));
 		
 	}
 
 	@Override
 	public void visitPhotometricData(short[] rawTraceData, int opticalFilterId) {
 		out.println("visited photometric data for optical #" + opticalFilterId + "  length ="+ rawTraceData.length);
-		
+		out.println(Arrays.toString(rawTraceData));
 	}
 
 	@Override
 	public void visitOriginalPeaks(short[] originalPeaks) {
 		out.println("visited ORIGINAL peaks " + originalPeaks.length);
+		out.println(Arrays.toString(originalPeaks));
 	}
 
 	@Override
 	public void visitOriginalAConfidence(byte[] originalConfidence) {
-		byte[] head = new byte[5];
-		System.arraycopy(originalConfidence, 0, head, 0, 5);
-		out.println("visited ORIGINAL A confidence " + originalConfidence.length +
-				"  head = "+Arrays.toString(head));
+		out.println("visited ORIGINAL A confidence " + originalConfidence.length);
+		out.println(Arrays.toString(originalConfidence));
 		
 	}
 
 	@Override
 	public void visitOriginalCConfidence(byte[] originalConfidence) {
-		byte[] head = new byte[5];
-		System.arraycopy(originalConfidence, 0, head, 0, 5);
-		out.println("visited ORIGINAL C confidence " + originalConfidence.length +
-				"  head = "+Arrays.toString(head));
+		out.println("visited ORIGINAL C confidence " + originalConfidence.length);
+		out.println(Arrays.toString(originalConfidence));
 		
 	}
 
 	@Override
 	public void visitOriginalGConfidence(byte[] originalConfidence) {
-		byte[] head = new byte[5];
-		System.arraycopy(originalConfidence, 0, head, 0, 5);
-		out.println("visited ORIGINAL G confidence " + originalConfidence.length +
-				"  head = "+Arrays.toString(head));
+		out.println("visited ORIGINAL G confidence " + originalConfidence.length);
+		out.println(Arrays.toString(originalConfidence));
 		
 	}
 
 	@Override
 	public void visitOriginalTConfidence(byte[] originalConfidence) {
-		byte[] head = new byte[5];
-		System.arraycopy(originalConfidence, 0, head, 0, 5);
-		out.println("visited ORIGINAL T confidence " + originalConfidence.length +
-				"  head = "+Arrays.toString(head));
+		out.println("visited ORIGINAL T confidence " + originalConfidence.length);
+		out.println(Arrays.toString(originalConfidence));
 		
 	}
 
@@ -233,5 +222,81 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
 		out.printf("visiting scale factor A:%d C:%d G:%d T:%d%n", aScale, cScale,gScale,tScale);
 		
 	}
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitTaggedDataRecord(
+            ByteArrayTaggedDataRecord record, byte[] data) {
+        out.println("byte array Record = "+ record);
+        out.println(Arrays.toString(data));
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitTaggedDataRecord(
+            ShortArrayTaggedDataRecord record, short[] data) {
+        out.println("short array Record = "+ record);
+        out.println(Arrays.toString(data));
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitTaggedDataRecord(IntArrayTaggedDataRecord record,
+            int[] data) {
+        out.println("int array Record = "+ record);
+        out.println(Arrays.toString(data));
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitTaggedDataRecord(
+            FloatArrayTaggedDataRecord record, float[] data) {
+        out.println("float array Record = "+ record);
+        out.println(Arrays.toString(data));
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitTaggedDataRecord(StringTaggedDataRecord record,
+            String data) {
+        out.println("String Record = "+ record);
+        out.println(data);
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitTaggedDataRecord(TimeTaggedDataRecord record,
+            LocalTime time) {
+        out.println("Time Record = "+ record);
+        out.println(time);
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitTaggedDataRecord(DateTaggedDataRecord record, Date date) {
+        out.println("Date Record = "+ record);
+        out.println(date);
+        
+    }
 
 }

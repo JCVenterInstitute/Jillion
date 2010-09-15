@@ -21,7 +21,7 @@ package org.jcvi.trace.sanger.chromatogram.abi.tag;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-public class DefaultFloatTaggedDataRecord extends AbstractTaggedDataRecord<float[]> implements FloatTaggedDataRecord{
+public class DefaultFloatTaggedDataRecord extends AbstractTaggedDataRecord<FloatArrayTaggedDataRecord,float[]> implements FloatArrayTaggedDataRecord{
 
 	public DefaultFloatTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
@@ -40,5 +40,21 @@ public class DefaultFloatTaggedDataRecord extends AbstractTaggedDataRecord<float
 		}
 		return result.array();
 	}
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<float[]> getParsedDataType() {
+        return float[].class;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<FloatArrayTaggedDataRecord> getType() {
+        return FloatArrayTaggedDataRecord.class;
+    }
 
 }

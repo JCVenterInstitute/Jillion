@@ -18,13 +18,21 @@
  ******************************************************************************/
 package org.jcvi.trace.sanger.chromatogram.abi;
 
+import java.util.Date;
 import java.util.List;
 
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
-import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.ByteArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.DateTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.FloatArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.IntArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.ShortArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.StringTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.TimeTaggedDataRecord;
+import org.joda.time.LocalTime;
 /**
- * {@code Ab1ChromatogramFileVisitor} is an ABI
+ * {@code AbiChromatogramFileVisitor} is an ABI
  * Chromatogram specific implementation of 
  * {@link ChromatogramFileVisitor}.
  * @author dkatzel
@@ -46,14 +54,6 @@ public interface AbiChromatogramFileVisitor extends ChromatogramFileVisitor{
 	 * channels during the run (never null or empty).
 	 */
 	void visitChannelOrder(List<NucleotideGlyph> order);
-	/**
-	 * Visit a single {@link TaggedDataRecord}
-	 * that describes the format, type, length
-	 * and file offset of a  particular ABI data
-	 * block.
-	 * @param record a TaggedDataRecord, never null.
-	 */
-	void  visitTaggedDataRecord(TaggedDataRecord<?> record);
 	/**
 	 * Visit a raw data traces, representing photometric
 	 * data as recorded through a single optical filter.
@@ -131,4 +131,19 @@ public interface AbiChromatogramFileVisitor extends ChromatogramFileVisitor{
 	 */
 	void visitScaleFactors(short aScale, short cScale, short gScale,
 			short tScale);
+	
+	void visitTaggedDataRecord(ByteArrayTaggedDataRecord record, byte[] data);
+	
+	void visitTaggedDataRecord(ShortArrayTaggedDataRecord record, short[] data);
+	
+	void visitTaggedDataRecord(IntArrayTaggedDataRecord record, int[] data);
+	
+	void visitTaggedDataRecord(FloatArrayTaggedDataRecord record, float[] data);
+    
+	void visitTaggedDataRecord(StringTaggedDataRecord record, String data);
+	
+	void visitTaggedDataRecord(TimeTaggedDataRecord record, LocalTime time);
+    
+    void visitTaggedDataRecord(DateTaggedDataRecord record, Date date);
+    
 }

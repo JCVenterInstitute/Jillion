@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,14 +38,15 @@ import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.ByteArrayTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultAsciiTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultDateTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultFloatTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultIntegerArrayTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultPascalStringTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultShortArrayTaggedDataRecord;
-import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultTimeTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.StringTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataName;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataRecordBuilder;
@@ -96,7 +98,7 @@ public final class Ab1FileParser {
 			//we have to cache the raw data into a byte array for
 			//later handling.
 			byte[] traceData = parseTraceDataBlock(in, datablockOffset-AbiUtil.HEADER_SIZE);
-			GroupedTaggedRecords groupedDataRecordMap = parseTaggedDataRecords(in,numberOfTaggedRecords,visitor);
+			GroupedTaggedRecords groupedDataRecordMap = parseTaggedDataRecords(in,numberOfTaggedRecords,traceData,visitor);
 	
 			List<NucleotideGlyph> channelOrder =parseChannelOrder(groupedDataRecordMap);
 			visitChannelOrderIfAble(visitor, channelOrder);			
@@ -150,11 +152,11 @@ public final class Ab1FileParser {
 			List<String> basecallsList,
 			ChromatogramFileVisitor visitor) {
 		
-		List<DefaultAsciiTaggedDataRecord> qualityRecords =groupedDataRecordMap.asciiDataRecords.get(TaggedDataName.QUALITY);
+		List<ByteArrayTaggedDataRecord> qualityRecords =groupedDataRecordMap.byteArrayRecords.get(TaggedDataName.QUALITY);
 		for(int i=0; i<qualityRecords.size(); i++){
-			DefaultAsciiTaggedDataRecord qualityRecord = qualityRecords.get(i);
+		    ByteArrayTaggedDataRecord qualityRecord = qualityRecords.get(i);
 			List<NucleotideGlyph> basecalls = NucleotideGlyph.getGlyphsFor(basecallsList.get(i));
-			byte[][] qualities = splitQualityDataByChannel(basecalls, qualityRecord.parseDataRecordFrom(traceData).getBytes());
+			byte[][] qualities = splitQualityDataByChannel(basecalls, qualityRecord.parseDataRecordFrom(traceData));
 			if(i == ORIGINAL_VERSION && visitor instanceof AbiChromatogramFileVisitor){
 				AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor)visitor;
 				ab1Visitor.visitOriginalAConfidence(qualities[0]);
@@ -350,6 +352,7 @@ public final class Ab1FileParser {
 	private static GroupedTaggedRecords parseTaggedDataRecords(
 			InputStream in,
 			long numberOfTaggedRecords,
+			byte[] abiDataBlock,
 			ChromatogramFileVisitor visitor) throws TraceDecoderException {
 		GroupedTaggedRecords map = new GroupedTaggedRecords();
 		boolean isAb1ChromatogramVisitor = visitor instanceof AbiChromatogramFileVisitor;
@@ -371,7 +374,7 @@ public final class Ab1FileParser {
 						.setCrypticValue(IOUtil.readUnsignedInt(in));
 				TaggedDataRecord record = builder.build();
 				if(isAb1ChromatogramVisitor){
-					((AbiChromatogramFileVisitor) visitor).visitTaggedDataRecord(record);
+				    visitCorrectTaggedDataRecordViaReflection((AbiChromatogramFileVisitor) visitor,record, abiDataBlock);
 				}
 				map.add(record);
 			}
@@ -381,6 +384,15 @@ public final class Ab1FileParser {
 		return map;
 	}
 
+	private static void visitCorrectTaggedDataRecordViaReflection(AbiChromatogramFileVisitor visitor, TaggedDataRecord record, byte[] abiDataBlock){
+	    try {
+            Method method =visitor.getClass().getMethod("visitTaggedDataRecord", record.getType(),record.getParsedDataType());
+            
+            method.invoke(visitor, record, record.parseDataRecordFrom(abiDataBlock));
+	    } catch (Exception e) {
+            throw new IllegalArgumentException("could not visit tagged data record "+ record,e);
+        }
+	}
 	private static byte[] parseTraceDataBlock(InputStream in, int lengthOfDataBlock) throws TraceDecoderException{
 		
 		try {
@@ -424,24 +436,21 @@ public final class Ab1FileParser {
 		private final Map<TaggedDataName,List<DefaultAsciiTaggedDataRecord>> asciiDataRecords = new EnumMap<TaggedDataName, List<DefaultAsciiTaggedDataRecord>>(TaggedDataName.class);
 	
 		private final Map<TaggedDataName,List<DefaultFloatTaggedDataRecord>> floatDataRecords = new EnumMap<TaggedDataName, List<DefaultFloatTaggedDataRecord>>(TaggedDataName.class);
-		
+		private final Map<TaggedDataName,List<ByteArrayTaggedDataRecord>> byteArrayRecords = new EnumMap<TaggedDataName, List<ByteArrayTaggedDataRecord>>(TaggedDataName.class);
+	    
 		private final Map<TaggedDataName,List<DefaultShortArrayTaggedDataRecord>> shortArrayDataRecords = new EnumMap<TaggedDataName, List<DefaultShortArrayTaggedDataRecord>>(TaggedDataName.class);
 		
 		private final Map<TaggedDataName,List<DefaultIntegerArrayTaggedDataRecord>> intArrayDataRecords = new EnumMap<TaggedDataName, List<DefaultIntegerArrayTaggedDataRecord>>(TaggedDataName.class);
 		
 		private final Map<TaggedDataName,List<DefaultPascalStringTaggedDataRecord>> pascalStringDataRecords = new EnumMap<TaggedDataName, List<DefaultPascalStringTaggedDataRecord>>(TaggedDataName.class);
-		
-		private final Map<TaggedDataName,List<DefaultTaggedDataRecord>> defaultDataRecords = new EnumMap<TaggedDataName, List<DefaultTaggedDataRecord>>(TaggedDataName.class);
-		
+
 		private final Map<TaggedDataName,List<DefaultDateTaggedDataRecord>> dateDataRecords = new EnumMap<TaggedDataName, List<DefaultDateTaggedDataRecord>>(TaggedDataName.class);
 		
 		private final Map<TaggedDataName,List<DefaultTimeTaggedDataRecord>> timeDataRecords = new EnumMap<TaggedDataName, List<DefaultTimeTaggedDataRecord>>(TaggedDataName.class);
 		
 		public void add(TaggedDataRecord record){
 			switch(record.getDataType()){
-			case CHAR:
-				add(record, asciiDataRecords);
-				break;				
+							
 			case DATE:
 				add(record, dateDataRecords);
 				break;
@@ -463,7 +472,11 @@ public final class Ab1FileParser {
 				break;
 			
 			default:
-				add(record, defaultDataRecords);
+			    if(record instanceof StringTaggedDataRecord){
+			        add(record, asciiDataRecords);
+			    }else{
+			        add(record, byteArrayRecords);
+			    }
 				break;
 			}
 		}

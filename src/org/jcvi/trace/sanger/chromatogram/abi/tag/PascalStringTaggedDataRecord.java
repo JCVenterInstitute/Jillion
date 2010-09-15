@@ -24,6 +24,6 @@ package org.jcvi.trace.sanger.chromatogram.abi.tag;
  *
  *
  */
-public interface FloatTaggedDataRecord extends TaggedDataRecord<float[]>{
+public interface PascalStringTaggedDataRecord extends StringTaggedDataRecord{
 
 }
