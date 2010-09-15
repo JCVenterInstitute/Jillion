@@ -79,6 +79,11 @@ public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
         super(filter);
         PhdParser.parsePhd(phdFile, this);
     }
+    
+    public DefaultPhdFileDataStore(File phdFile) throws FileNotFoundException {
+        super();
+        PhdParser.parsePhd(phdFile, this);
+    }
     private synchronized void checkNotYetClosed(){
         if(closed){
             throw new IllegalStateException("datastore already closed");
