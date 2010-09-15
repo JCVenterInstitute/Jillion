@@ -26,6 +26,6 @@ import org.joda.time.LocalTime;
  *
  *
  */
-public interface TimeTaggedDataRecord extends TaggedDataRecord<LocalTime>{
+public interface TimeTaggedDataRecord extends TaggedDataRecord<TimeTaggedDataRecord,LocalTime>{
 
 }

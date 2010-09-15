@@ -85,9 +85,8 @@ public class TaggedDataRecordBuilder implements org.jcvi.Builder<TaggedDataRecor
 							numberOfElements * elementLength
 							));
 		}
+		
 		switch(dataType){
-			case CHAR :
-					return new DefaultAsciiTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
 			case FLOAT:
 					return new DefaultFloatTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
 			case PASCAL_STRING:
@@ -104,6 +103,16 @@ public class TaggedDataRecordBuilder implements org.jcvi.Builder<TaggedDataRecor
 				
 			
 			default:
+			  //special case for known null-terminated strings
+		        if(name == TaggedDataName.APrN ||name == TaggedDataName.BASECALLS || 
+		                name == TaggedDataName.CT_ID || name == TaggedDataName.CT_NAME || name == TaggedDataName.CT_OWNER ||
+		                name == TaggedDataName.FILTER_WHEEL_ORDER|| name == TaggedDataName.HCFG || name == TaggedDataName.PLATE_TYPE
+		                || name == TaggedDataName.RESULTS_GROUP_NAME || name ==TaggedDataName.RMdN || name == TaggedDataName.RMdX
+		                || name == TaggedDataName.RPrN || name == TaggedDataName.RunN){
+		            
+		            return new DefaultAsciiTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
+		             
+		        }
 				return new DefaultTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
 		}
 	}

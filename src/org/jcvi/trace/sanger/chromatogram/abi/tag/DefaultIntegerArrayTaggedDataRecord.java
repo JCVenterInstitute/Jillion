@@ -21,7 +21,7 @@ package org.jcvi.trace.sanger.chromatogram.abi.tag;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-public class DefaultIntegerArrayTaggedDataRecord  extends AbstractTaggedDataRecord<int[]> implements IntArrayTaggedDataRecord{
+public class DefaultIntegerArrayTaggedDataRecord  extends AbstractTaggedDataRecord<IntArrayTaggedDataRecord,int[]> implements IntArrayTaggedDataRecord{
 
 	public DefaultIntegerArrayTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
@@ -40,6 +40,22 @@ public class DefaultIntegerArrayTaggedDataRecord  extends AbstractTaggedDataReco
 		}
 		return result.array();
 	}
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<int[]> getParsedDataType() {
+        return int[].class;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<IntArrayTaggedDataRecord> getType() {
+        return IntArrayTaggedDataRecord.class;
+    }
 
 
 }

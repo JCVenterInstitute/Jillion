@@ -23,7 +23,7 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 
-public class DefaultDateTaggedDataRecord extends AbstractTaggedDataRecord<Date> implements DateTaggedDataRecord{
+public class DefaultDateTaggedDataRecord extends AbstractTaggedDataRecord<DateTaggedDataRecord,Date> implements DateTaggedDataRecord{
 
 	public DefaultDateTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
@@ -41,5 +41,23 @@ public class DefaultDateTaggedDataRecord extends AbstractTaggedDataRecord<Date> 
 		
 		return new DateTime(year, month, day, 0,0,0,0).toDate();
 	}
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<Date> getParsedDataType() {
+        return Date.class;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<DateTaggedDataRecord> getType() {
+        return DateTaggedDataRecord.class;
+    }
+
+
 
 }

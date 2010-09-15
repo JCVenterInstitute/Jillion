@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 
 import org.joda.time.LocalTime;
 
-public class DefaultTimeTaggedDataRecord extends AbstractTaggedDataRecord<LocalTime> implements TimeTaggedDataRecord{
+public class DefaultTimeTaggedDataRecord extends AbstractTaggedDataRecord<TimeTaggedDataRecord,LocalTime> implements TimeTaggedDataRecord{
 
 	public DefaultTimeTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
@@ -37,5 +37,22 @@ public class DefaultTimeTaggedDataRecord extends AbstractTaggedDataRecord<LocalT
 		
 		return new LocalTime(buf.get(), buf.get(), buf.get());
 	}
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<LocalTime> getParsedDataType() {
+        return LocalTime.class;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<TimeTaggedDataRecord> getType() {
+        return TimeTaggedDataRecord.class;
+    }
+
 
 }
