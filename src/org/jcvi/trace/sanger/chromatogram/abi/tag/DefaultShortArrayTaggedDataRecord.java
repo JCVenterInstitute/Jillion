@@ -21,7 +21,7 @@ package org.jcvi.trace.sanger.chromatogram.abi.tag;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
-public class DefaultShortArrayTaggedDataRecord extends AbstractTaggedDataRecord<short[]> implements ShortArrayTaggedDataRecord{
+public class DefaultShortArrayTaggedDataRecord extends AbstractTaggedDataRecord<ShortArrayTaggedDataRecord,short[]> implements ShortArrayTaggedDataRecord{
 
 	public DefaultShortArrayTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
@@ -41,5 +41,21 @@ public class DefaultShortArrayTaggedDataRecord extends AbstractTaggedDataRecord<
 		return result.array();
 		
 	}
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<short[]> getParsedDataType() {
+        return short[].class;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<ShortArrayTaggedDataRecord> getType() {
+        return ShortArrayTaggedDataRecord.class;
+    }
 
 }

@@ -164,11 +164,11 @@ public enum TaggedDataName {
 	
 	COMMENT("CMNT"),
 	
-	CTID("CTID"),
+	CT_ID("CTID"),
 	
-	CTNM("CTNM"),
+	CT_NAME("CTNM"),
 	
-	CTOw("CTOw"),
+	CT_OWNER("CTOw"),
 	
 	CTTL("CTTL"),
 	
@@ -207,7 +207,9 @@ public enum TaggedDataName {
 	MCHN("MCHN"),
 	
 	MODF("MODF"),
-	
+	/**
+	 * The ABI sequencing machine model number.
+	 */
 	MODEL("MODL"),
 	
 	NOIS("NOIS"),
@@ -215,14 +217,21 @@ public enum TaggedDataName {
 	 * Possibly quality values?
 	 */
 	QUALITY("PCON"),
-	
-	PSZE("PSZE"),
-	
-	PTYP("PTYP"),
+	/**
+	 * The size of the Sequencing Plate being sequenced.
+	 */
+	PLATE_SZE("PSZE"),
+	/**
+	 * The type of plate being sequenced.
+	 */
+	PLATE_TYPE("PTYP"),
 	
 	PXLB("PXLB"),
-	
-	RGNm("RGNm"),
+	/**
+	 * The name of the "Results Group"
+	 * this data belongs to.
+	 */
+	RESULTS_GROUP_NAME("RGNm"),
 	
 	RMXV("RMXV"),
 	RMdN("RMdN"),
@@ -289,7 +298,7 @@ public enum TaggedDataName {
 	 */
 	@Override
 	public String toString() {
-		return name;
+	   return name;
 	}
 	
 	

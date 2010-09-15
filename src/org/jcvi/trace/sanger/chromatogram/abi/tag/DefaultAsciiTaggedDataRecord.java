@@ -19,7 +19,7 @@
 
 package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
-public class DefaultAsciiTaggedDataRecord extends AbstractTaggedDataRecord<String> implements AsciiTaggedDataRecord{
+public class DefaultAsciiTaggedDataRecord extends AbstractTaggedDataRecord<StringTaggedDataRecord,String> implements AsciiTaggedDataRecord{
 
 	public DefaultAsciiTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
@@ -32,6 +32,22 @@ public class DefaultAsciiTaggedDataRecord extends AbstractTaggedDataRecord<Strin
 	protected String parseDataFrom(byte[] data) {
 		return new String(data);
 	}
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<String> getParsedDataType() {
+        return String.class;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<StringTaggedDataRecord> getType() {
+        return StringTaggedDataRecord.class;
+    }
 
 
 }

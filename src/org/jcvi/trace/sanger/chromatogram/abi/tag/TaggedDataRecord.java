@@ -19,7 +19,7 @@
 package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
 
-public interface TaggedDataRecord<T> {
+public interface TaggedDataRecord<T,D> {
 	
 	TaggedDataName getTagName();
 	long getTagNumber();
@@ -30,5 +30,9 @@ public interface TaggedDataRecord<T> {
 	long getDataRecord();
 	long getCrypticValue();
 	
-	T parseDataRecordFrom(byte[] ab1DataBlock);
+	Class<D> getParsedDataType();
+	
+	Class<T> getType();
+	
+	D parseDataRecordFrom(byte[] ab1DataBlock);
 }

@@ -23,7 +23,7 @@ import org.jcvi.io.IOUtil;
 import org.jcvi.trace.sanger.chromatogram.abi.AbiUtil;
 
 
-public abstract class AbstractTaggedDataRecord<T> implements TaggedDataRecord<T>{
+public abstract class AbstractTaggedDataRecord<T,D> implements TaggedDataRecord<T,D>{
 	private final TaggedDataName name;
 	private final long tagNumber;
 	private final TaggedDataType dataType;
@@ -32,6 +32,7 @@ public abstract class AbstractTaggedDataRecord<T> implements TaggedDataRecord<T>
 	private final long recordLength;
 	private final long dataRecord;
 	private final long crypticValue;
+	
 	
 	
 	public AbstractTaggedDataRecord(TaggedDataName name, long number,
@@ -87,11 +88,11 @@ public abstract class AbstractTaggedDataRecord<T> implements TaggedDataRecord<T>
 		return recordLength;
 	}
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see org.jcvi.trace.sanger.chromatogram.ab1.tag.TaggedDataRecord#parseDataRecordFrom(byte[])
 	 */
 	@Override
-	public T parseDataRecordFrom(byte[] ab1DataBlock) {
+	public D parseDataRecordFrom(byte[] ab1DataBlock) {
 		if(recordLength<5){
 			return parseDataFrom(IOUtil.convertUnsignedIntToByteArray(dataRecord));
 		}
@@ -102,7 +103,7 @@ public abstract class AbstractTaggedDataRecord<T> implements TaggedDataRecord<T>
 		return parseDataFrom(data);
 	}
 
-	protected abstract T parseDataFrom(byte[] data);
+	protected abstract D parseDataFrom(byte[] data);
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

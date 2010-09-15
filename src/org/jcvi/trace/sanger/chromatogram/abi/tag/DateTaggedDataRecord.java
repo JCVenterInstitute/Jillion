@@ -26,6 +26,6 @@ import java.util.Date;
  *
  *
  */
-public interface DateTaggedDataRecord extends TaggedDataRecord<Date>{
+public interface DateTaggedDataRecord extends TaggedDataRecord<DateTaggedDataRecord,Date>{
 
 }

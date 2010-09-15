@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
-public class DefaultTaggedDataRecord extends AbstractTaggedDataRecord<byte[]> implements ByteArrayTaggedDataRecord{
+public class DefaultTaggedDataRecord extends AbstractTaggedDataRecord<ByteArrayTaggedDataRecord,byte[]> implements ByteArrayTaggedDataRecord{
 
 	public DefaultTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
@@ -35,6 +35,22 @@ public class DefaultTaggedDataRecord extends AbstractTaggedDataRecord<byte[]> im
 
 		return data;
 	}
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<byte[]> getParsedDataType() {
+        return byte[].class;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Class<ByteArrayTaggedDataRecord> getType() {
+        return ByteArrayTaggedDataRecord.class;
+    }
 
 	
 
