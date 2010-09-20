@@ -506,8 +506,8 @@ public final class Ab1FileParser {
         if(map.containsKey(TaggedDataName.Scan)){
             props.put("Scan", ""+map.get(TaggedDataName.Scan).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
         }
-        if(map.containsKey(TaggedDataName.LNTD)){
-            props.put("LNTD",""+ map.get(TaggedDataName.LNTD).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+        if(map.containsKey(TaggedDataName.LENGTH_OF_DETECTOR)){
+            props.put("LNTD",""+ map.get(TaggedDataName.LENGTH_OF_DETECTOR).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
         }
         if(map.containsKey(TaggedDataName.JTC_START_POINT)){
             final short value = map.get(TaggedDataName.JTC_START_POINT).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0];

@@ -189,10 +189,22 @@ public enum TaggedDataName {
 	ELECTROPHERSIS_VOLTAGE("EPVt"),
 	
 	EVENT("EVNT"),
-	
-	GTyp("GTyp"),
-	
-	HCFG("HCFG"),
+	/**
+	 * Polymer/Gel Type.
+	 */
+	GEL_TYPE("GTyp"),
+	/**
+	 * There are usually several instrument information tags.  Each
+	 * succeeding tag is a more specific datum of this particular instrument.
+	 * For example: here is the order for some abi 3100 machine:
+	 * <ol>
+	 * <li>Instrument Class = "CE"</li>
+	 * <li>Instrument Family = "31XX"</li>
+	 * <li>Instrument Model = "3130xl"</li>
+	 * <li>Instrument Parameters = "UnitID=7;CPUBoard=ECPU500;ArraySize=16;SerialNumber=1211-010"</li>
+	 * </ol>
+	 */
+	INSTRUMENT_INFORMATION("HCFG"),
 	
 	InSc("InSc"),
 	
@@ -200,7 +212,7 @@ public enum TaggedDataName {
 	
 	LIMS("LIMS"),
 	
-	LNTD("LNTD"),
+	LENGTH_OF_DETECTOR("LNTD"),
 	
 	LASER_POWER("LsrP"),
 	
