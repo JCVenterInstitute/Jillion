@@ -17,15 +17,15 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.trace.sanger.chromatogram.abi.tag;
+package org.jcvi.trace.sanger.chromatogram.abi.tag.rate;
 
-import org.joda.time.LocalDate;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.UserDefinedTaggedDataRecord;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface DateTaggedDataRecord extends TaggedDataRecord<DateTaggedDataRecord,LocalDate>{
+public interface ScanRateTaggedDataType extends UserDefinedTaggedDataRecord<ScanRateTaggedDataType, ScanRate>{
 
 }

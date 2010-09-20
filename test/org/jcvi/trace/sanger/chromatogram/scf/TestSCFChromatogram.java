@@ -23,7 +23,8 @@
  */
 package org.jcvi.trace.sanger.chromatogram.scf;
 
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -47,7 +48,7 @@ public class TestSCFChromatogram {
     Peaks mockPeaks= createMock(Peaks.class);
     NucleotideEncodedGlyphs basecalls = createMock(NucleotideEncodedGlyphs.class);
     EncodedGlyphs<PhredQuality> qualities = createMock(EncodedGlyphs.class);
-    Properties expectedProperties = new Properties();
+    Map<String,String> expectedProperties = new HashMap<String, String>();
     Confidence mockInsertionConfidence= createMock(DefaultConfidence.class);
     Confidence mockDeletionConfidence= createMock(DefaultConfidence.class);
     Confidence mockSubstitutionConfidence= createMock(DefaultConfidence.class);

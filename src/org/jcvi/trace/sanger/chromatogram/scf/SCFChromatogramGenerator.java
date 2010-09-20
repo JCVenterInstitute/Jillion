@@ -1,8 +1,10 @@
 package org.jcvi.trace.sanger.chromatogram.scf;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.cli.CommandLine;
@@ -196,7 +198,7 @@ public class SCFChromatogramGenerator {
             new ChromatogramUtil.FakeChannelGroupBuilder(basecalls,qualities, fakePeaks).build();
 
         // build properties form
-        Properties properties = new Properties();
+        Map<String, String> properties = new HashMap<String, String>();
         properties.put("MODL","NONE");
         properties.put("MCHN","NONE");
         properties.put("NAME",sequenceName);

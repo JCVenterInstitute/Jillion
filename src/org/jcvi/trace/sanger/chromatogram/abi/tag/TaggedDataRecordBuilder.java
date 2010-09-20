@@ -18,6 +18,9 @@
  ******************************************************************************/
 package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
+import org.jcvi.trace.sanger.chromatogram.abi.tag.rate.DefaultScanRate;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.rate.DefaultScanRateTaggedDataType;
+
 
 public class TaggedDataRecordBuilder implements org.jcvi.Builder<TaggedDataRecord>{
 	private final TaggedDataName name;
@@ -101,15 +104,23 @@ public class TaggedDataRecordBuilder implements org.jcvi.Builder<TaggedDataRecor
 				}
 				return new DefaultIntegerArrayTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
 				
-			
+			case USER_DEFINED:
+			    if(name == TaggedDataName.Rate){
+			        return new DefaultScanRateTaggedDataType(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
+		        }
+			    return new DefaultUserDefinedTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
+
 			default:
+			    if(dataType == TaggedDataType.TYPE_1){
+			       System.out.println("type 1 defined types = "+ name); 
+			    }
 			  //special case for known null-terminated strings
 		        if(name == TaggedDataName.APrN ||name == TaggedDataName.BASECALLS || 
 		                name == TaggedDataName.CT_ID || name == TaggedDataName.CT_NAME || name == TaggedDataName.CT_OWNER ||
 		                name == TaggedDataName.FILTER_WHEEL_ORDER|| name == TaggedDataName.HCFG || name == TaggedDataName.PLATE_TYPE
 		                || name == TaggedDataName.RESULTS_GROUP_NAME || name ==TaggedDataName.RMdN || name == TaggedDataName.RMdX
-		                || name == TaggedDataName.RPrN || name == TaggedDataName.RunN){
-		            
+		                || name == TaggedDataName.RPrN || name == TaggedDataName.JTC_RUN_NAME
+		                || name == TaggedDataName.JTC_PROTOCOL_VERSION || name == TaggedDataName.MODEL){
 		            return new DefaultAsciiTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
 		             
 		        }

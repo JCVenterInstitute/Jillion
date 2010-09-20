@@ -27,7 +27,9 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +40,9 @@ import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.AsciiTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.ByteArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.DateTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultAsciiTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultDateTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultFloatTaggedDataRecord;
@@ -46,11 +50,25 @@ import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultIntegerArrayTaggedDataR
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultPascalStringTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultShortArrayTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.DefaultTimeTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.FloatArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.IntArrayTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.PascalStringTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.ShortArrayTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.StringTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataName;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataRecordBuilder;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataType;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.TimeTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.UserDefinedTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.rate.ScanRateTaggedDataType;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.rate.ScanRateUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
+import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public final class Ab1FileParser {
 
@@ -58,6 +76,8 @@ public final class Ab1FileParser {
 	}
 	
 	private static final byte[] MAGIC_NUMBER = new byte[]{(char)'A',(char)'B',(char)'I',(char)'F'};
+	
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("EEE dd MMM HH:mm:ss YYYY");
 	/**
 	 * ABI files store both the original and current
 	 * (possibly edited) data.  This is the index
@@ -103,21 +123,22 @@ public final class Ab1FileParser {
 			List<NucleotideGlyph> channelOrder =parseChannelOrder(groupedDataRecordMap);
 			visitChannelOrderIfAble(visitor, channelOrder);			
 			List<String> basecalls =parseBasecallsFrom(groupedDataRecordMap,traceData,visitor);	
-			parseSignalScalingFactor(groupedDataRecordMap, channelOrder, traceData,visitor);
-			parseCommentsFrom(groupedDataRecordMap,traceData,visitor);
-			parseDataChannels(groupedDataRecordMap,channelOrder,traceData,visitor);
+			String signalScale =parseSignalScalingFactor(groupedDataRecordMap, channelOrder, traceData,visitor);
+			Map<String,String> comments =parseDataChannels(groupedDataRecordMap,channelOrder,traceData,visitor);
 			parsePeakData(groupedDataRecordMap,traceData,visitor);
 			parseQualityData(groupedDataRecordMap,traceData,basecalls,visitor);
+			parseCommentsFrom(comments,groupedDataRecordMap,channelOrder,traceData,signalScale,basecalls,visitor);
+            
 			visitor.visitEndOfFile();
 	}
 
-	private static void parseSignalScalingFactor(
+	private static String parseSignalScalingFactor(
 			GroupedTaggedRecords groupedDataRecordMap,
 			List<NucleotideGlyph> channelOrder, byte[] traceData,
 			ChromatogramFileVisitor visitor) {
 		
-		if(visitor instanceof AbiChromatogramFileVisitor){
-			DefaultShortArrayTaggedDataRecord scalingFactors =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.SCALE_FACTOR).get(0);
+		
+			ShortArrayTaggedDataRecord scalingFactors =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.SCALE_FACTOR).get(0);
 			short aScale=-1,cScale=-1,gScale=-1,tScale =-1;
 			List<Short> list = new ArrayList<Short>();
 			for(short s: scalingFactors.parseDataRecordFrom(traceData)){
@@ -141,9 +162,10 @@ public final class Ab1FileParser {
 						break;
 				}
 			}
-			
-			((AbiChromatogramFileVisitor) visitor).visitScaleFactors(aScale,cScale,gScale,tScale);
-		}
+			if(visitor instanceof AbiChromatogramFileVisitor){
+			    ((AbiChromatogramFileVisitor) visitor).visitScaleFactors(aScale,cScale,gScale,tScale);
+			}
+			return String.format("A:%d,C:%d,G:%d,T:%d", aScale,cScale,gScale,tScale);
 		
 	}
 
@@ -152,7 +174,7 @@ public final class Ab1FileParser {
 			List<String> basecallsList,
 			ChromatogramFileVisitor visitor) {
 		
-		List<ByteArrayTaggedDataRecord> qualityRecords =groupedDataRecordMap.byteArrayRecords.get(TaggedDataName.QUALITY);
+		List<ByteArrayTaggedDataRecord> qualityRecords =groupedDataRecordMap.byteArrayRecords.get(TaggedDataName.JTC_QUALITY_VALUES);
 		for(int i=0; i<qualityRecords.size(); i++){
 		    ByteArrayTaggedDataRecord qualityRecord = qualityRecords.get(i);
 			List<NucleotideGlyph> basecalls = NucleotideGlyph.getGlyphsFor(basecallsList.get(i));
@@ -229,7 +251,7 @@ public final class Ab1FileParser {
 	private static void parsePeakData(
 			GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
 			ChromatogramFileVisitor visitor) {
-		List<DefaultShortArrayTaggedDataRecord> peakRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.PEAK_LOCATIONS);
+		List<ShortArrayTaggedDataRecord> peakRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.PEAK_LOCATIONS);
 		
 		if(visitor instanceof AbiChromatogramFileVisitor){
 			short[] originalPeakData =peakRecords.get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);
@@ -240,12 +262,12 @@ public final class Ab1FileParser {
 		visitor.visitPeaks(peakData);
 	}
 
-	private static void parseDataChannels(
+	private static Map<String,String> parseDataChannels(
 			GroupedTaggedRecords groupedDataRecordMap,
 			List<NucleotideGlyph> channelOrder,
 			byte[] traceData,
 			ChromatogramFileVisitor visitor) {
-		List<DefaultShortArrayTaggedDataRecord> dataRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.DATA);
+		List<ShortArrayTaggedDataRecord> dataRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.DATA);
 		if(visitor instanceof AbiChromatogramFileVisitor){
 			AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor) visitor;
 			//parse extra ab1 data
@@ -259,12 +281,14 @@ public final class Ab1FileParser {
 			ab1Visitor.visitGelTemperatureData(dataRecords.get(7).parseDataRecordFrom(traceData));
 			
 		}
+		Map<String,String> props = new HashMap<String, String>();
 		for(int i=0; i<4; i++){
 			NucleotideGlyph channel = channelOrder.get(i);
 			short[] channelData =dataRecords.get(i+8).parseDataRecordFrom(traceData);
 			switch(channel){
 				case Adenine:
 					visitor.visitAPositions(channelData);
+					props.put("NPTS", ""+channelData.length);
 					break;
 				case Thymine:
 					visitor.visitTPositions(channelData);
@@ -279,6 +303,7 @@ public final class Ab1FileParser {
 					throw new IllegalStateException("invalid channel "+ channel);	
 			}
 		}
+		return props;
 	}
 
 	private static void visitChannelOrderIfAble(
@@ -287,47 +312,289 @@ public final class Ab1FileParser {
 			((AbiChromatogramFileVisitor) visitor).visitChannelOrder(channelOrder);
 		}
 	}
-	
+	/**
+	 * create comments to match IO_LIb implementation for 100%
+	 * compatibility.
+	 * @param groupedDataRecordMap
+	 * @param traceData
+	 * @param visitor
+	 */
 	private static void parseCommentsFrom(
-			GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+	        Map<String,String> props,
+			GroupedTaggedRecords groupedDataRecordMap, 
+			List<NucleotideGlyph> channelOrder,byte[] traceData,
+			String signalScale, List<String> basecalls,
 			ChromatogramFileVisitor visitor) {
-		Properties props = new Properties();
-		for(Entry<TaggedDataName, List<DefaultPascalStringTaggedDataRecord>> entry :groupedDataRecordMap.pascalStringDataRecords.entrySet()){
+		props.put("SIGN", signalScale);
+		props = addStringComments(groupedDataRecordMap, traceData, props);
+		props = addSingleShortValueComments(groupedDataRecordMap, traceData, props);
+	//	props = extractSingleIntValueComments(groupedDataRecordMap, traceData, props);
+		props = addChannelOrderComment(channelOrder,props);
+		props = addSpacingComment(groupedDataRecordMap, traceData, props);
+		props = addTimeStampComment(groupedDataRecordMap, traceData, props);
+		props = addNoiseComment(groupedDataRecordMap, channelOrder,traceData,props);
+		props = addNumberOfBases(basecalls,props);
+		props = parseSamplingRateFrom(groupedDataRecordMap, traceData, props);
+/*		
+		for(Entry<TaggedDataName, List<PascalStringTaggedDataRecord>> entry :groupedDataRecordMap.pascalStringDataRecords.entrySet()){
 			props = addAsComments(entry.getValue(),traceData,props);
 		}
 		
-		for(Entry<TaggedDataName, List<DefaultDateTaggedDataRecord>> entry :groupedDataRecordMap.dateDataRecords.entrySet()){
+		for(Entry<TaggedDataName, List<DateTaggedDataRecord>> entry :groupedDataRecordMap.dateDataRecords.entrySet()){
 			props = addAsComments(entry.getValue(),traceData,props);						
 		}
-		for(Entry<TaggedDataName, List<DefaultTimeTaggedDataRecord>> entry :groupedDataRecordMap.timeDataRecords.entrySet()){
+		for(Entry<TaggedDataName, List<TimeTaggedDataRecord>> entry :groupedDataRecordMap.timeDataRecords.entrySet()){
 			props = addAsComments(entry.getValue(),traceData,props);						
 		}
+		*/
+		System.out.println(props);
 		visitor.visitComments(props);
 	}
 
-	private static Properties addAsComments(List<? extends TaggedDataRecord> records,byte[] traceData, Properties comments){
-		boolean shouldNumber = records.size()>1;
-		for(TaggedDataRecord  record : records){
-			//if more than one record with that
-			//name, then append the tag number to it 
-			//to make it unique
-			final String key;
-			if(shouldNumber){
-				key= String.format("%s_%d",record.getTagName(),record.getTagNumber());
-			}else{
-				key = record.getTagName().toString();
-			}
-			
-			comments.put(key, record.parseDataRecordFrom(traceData));
-			
+
+    /**
+     * @param groupedDataRecordMap
+     * @param traceData
+     * @param props
+     * @return
+     */
+    private static Map<String,String> parseSamplingRateFrom(
+            GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+            Map<String,String> props) {
+        Map<TaggedDataName, List<UserDefinedTaggedDataRecord>>map= groupedDataRecordMap.userDefinedDataRecords;
+        if(map.containsKey(TaggedDataName.Rate)){
+            ScanRateTaggedDataType scanRate = (ScanRateTaggedDataType)map.get(TaggedDataName.Rate).get(0);
+            props.put("SamplingRate", String.format("%.3f",
+                    ScanRateUtils.getSamplingRateFor(scanRate.parseDataRecordFrom(traceData))));
+        }
+        
+        return props;
+    }
+
+    /**
+     * @param groupedDataRecordMap
+     * @param traceData
+     * @param props
+     * @return
+     */
+    private static Map<String,String> addNumberOfBases(
+            List<String> basecalls,
+            Map<String,String> props) {
+        props.put("NBAS", ""+basecalls.get(ORIGINAL_VERSION).length());
+        return props;
+    }
+
+    /**
+     * @param groupedDataRecordMap
+     * @param traceData
+     * @param props
+     * @return
+     */
+    private static Map<String,String> addNoiseComment(
+            GroupedTaggedRecords groupedDataRecordMap,
+            List<NucleotideGlyph> channelOrder,
+            byte[] traceData,
+            Map<String,String> props) {
+        Map<TaggedDataName, List<FloatArrayTaggedDataRecord>>map= groupedDataRecordMap.floatDataRecords;
+        if(map.containsKey(TaggedDataName.JTC_NOISE)){
+            float[] noise = map.get(TaggedDataName.JTC_NOISE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);
+            float aNoise=0F,cNoise=0F,gNoise=0F,tNoise=0F;
+            int i=0;
+            for(NucleotideGlyph channel:channelOrder){
+                switch(channel){
+                    case Adenine:   aNoise= noise[i];
+                                    break;
+                    case Cytosine:   cNoise= noise[i];
+                                    break;
+                    case Guanine:   gNoise= noise[i];
+                                    break;
+                    default:        tNoise= noise[i];
+                                    break;
+                }
+                i++;
+            }
+            props.put("NOIS",String.format("A:%f,C:%f,G:%f,T:%f", aNoise,cNoise,gNoise,tNoise)); 
+        }
+        return props;
+    }
+
+    /**
+     * @param groupedDataRecordMap
+     * @param traceData
+     * @param props
+     * @return
+     */
+    private static Map<String,String> addTimeStampComment(
+            GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+            Map<String,String> props) {
+        Map<TaggedDataName, List<DateTaggedDataRecord>> dates= groupedDataRecordMap.dateDataRecords;
+        Map<TaggedDataName, List<TimeTaggedDataRecord>> times= groupedDataRecordMap.timeDataRecords;
+        if(dates.containsKey(TaggedDataName.RUN_DATE) && times.containsKey(TaggedDataName.RUN_TIME)){
+            LocalDate startDate =dates.get(TaggedDataName.RUN_DATE).get(0).parseDataRecordFrom(traceData);
+            LocalDate endDate =dates.get(TaggedDataName.RUN_DATE).get(1).parseDataRecordFrom(traceData);
+            
+            LocalTime startTime = times.get(TaggedDataName.RUN_TIME).get(0).parseDataRecordFrom(traceData);
+            LocalTime endTime = times.get(TaggedDataName.RUN_TIME).get(1).parseDataRecordFrom(traceData);
+            final DateTime startDateTime = startDate.toDateTime(startTime);
+            final DateTime endDateTime = endDate.toDateTime(endTime);
+            props.put("DATE", String.format("%s to %s",
+            		DATE_FORMATTER.print(startDateTime),
+            		DATE_FORMATTER.print(endDateTime)
+            		));
+            System.out.println(new Period(startDateTime,endDateTime));
+            props.put("RUND", String.format("%04d%02d%02d.%02d%02d%02d - %04d%02d%02d.%02d%02d%02d",
+                    startDateTime.getYear(), startDateTime.getMonthOfYear(), startDateTime.getDayOfMonth(),
+                    startDateTime.getHourOfDay(),startDateTime.getMinuteOfHour(), startDateTime.getSecondOfMinute(),
+                    endDateTime.getYear(), endDateTime.getMonthOfYear(), endDateTime.getDayOfMonth(),
+                    endDateTime.getHourOfDay(),endDateTime.getMinuteOfHour(), endDateTime.getSecondOfMinute()
+                   
+            ));
+        }
+        return props;
+    }
+
+    /**
+     * @param groupedDataRecordMap
+     * @param traceData
+     * @param props
+     * @return
+     */
+    private static Map<String,String> addSpacingComment(
+            GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+            Map<String,String> props) {
+        Map<TaggedDataName, List<FloatArrayTaggedDataRecord>> map= groupedDataRecordMap.floatDataRecords;
+        if(map.containsKey(TaggedDataName.SPACING)){
+            props.put("SPAC", String.format("%-6.2f",map.get(TaggedDataName.SPACING).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]));
+        }
+        
+        return props;
+
+    }
+
+    /**
+     * @param channelOrder
+     * @param props
+     * @return
+     */
+    private static Map<String,String> addChannelOrderComment(
+            List<NucleotideGlyph> channelOrder, Map<String,String> props) {
+        StringBuilder order = new StringBuilder();
+        for(NucleotideGlyph channel: channelOrder){
+            order.append(channel.getCharacter());
+        }
+        props.put("FWO_", order.toString() );
+        return props;
+    }
+
+    protected static Properties extractSingleIntValueComments(
+            GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+            Properties props) {
+        Map<TaggedDataName, List<IntArrayTaggedDataRecord>> map= groupedDataRecordMap.intArrayDataRecords;
+        if(map.containsKey(TaggedDataName.JTC_TEMPERATURE)){
+            props.put("Tmpr", map.get(TaggedDataName.JTC_TEMPERATURE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+        }
+        if(map.containsKey(TaggedDataName.ELECTROPHERSIS_VOLTAGE)){
+            props.put("EPVt", map.get(TaggedDataName.ELECTROPHERSIS_VOLTAGE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+        }
+        return props;
+    }
+    protected static Map<String,String> addSingleShortValueComments(
+            GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+            Map<String,String> props) {
+        Map<TaggedDataName, List<ShortArrayTaggedDataRecord>> map= groupedDataRecordMap.shortArrayDataRecords;
+        if(map.containsKey(TaggedDataName.LANE)){
+            props.put("LANE", ""+map.get(TaggedDataName.LANE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+        }
+        if(map.containsKey(TaggedDataName.LASER_POWER)){
+            props.put("LsrP", ""+map.get(TaggedDataName.LASER_POWER).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+        }
+        if(map.containsKey(TaggedDataName.B1Pt)){
+            props.put("B1Pt", ""+map.get(TaggedDataName.B1Pt).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+        }
+        if(map.containsKey(TaggedDataName.Scan)){
+            props.put("Scan", ""+map.get(TaggedDataName.Scan).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+        }
+        if(map.containsKey(TaggedDataName.LNTD)){
+            props.put("LNTD",""+ map.get(TaggedDataName.LNTD).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+        }
+        if(map.containsKey(TaggedDataName.JTC_START_POINT)){
+            final short value = map.get(TaggedDataName.JTC_START_POINT).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0];
+            props.put("ASPT", ""+value);
+        }
+        if(map.containsKey(TaggedDataName.JTC_END_POINT)){
+            final short value = map.get(TaggedDataName.JTC_END_POINT).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0];
+            props.put("AEPT", ""+value);
+        }
+        return props;
+    }
+
+    protected static Map<String,String> addStringComments(
+            GroupedTaggedRecords groupedDataRecordMap,byte[] traceData, Map<String,String> props) {
+        Map<TaggedDataName, List<PascalStringTaggedDataRecord>> pascalStrings= groupedDataRecordMap.pascalStringDataRecords;
+		//asciiStrings
+        Map<TaggedDataName, List<AsciiTaggedDataRecord>> asciiStrings= groupedDataRecordMap.asciiDataRecords;
+        
+        
+        if(pascalStrings.containsKey(TaggedDataName.COMMENT)){
+		    props.put("COMM", pascalStrings.get(TaggedDataName.COMMENT).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
 		}
-		return comments;
-	}
+		if(pascalStrings.containsKey(TaggedDataName.SAMPLE_NAME)){
+            props.put("NAME", pascalStrings.get(TaggedDataName.SAMPLE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		if(pascalStrings.containsKey(TaggedDataName.DYE_PRIMER_CORRECTION_FILE)){
+            props.put("DYEP", pascalStrings.get(TaggedDataName.DYE_PRIMER_CORRECTION_FILE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		if(pascalStrings.containsKey(TaggedDataName.MACHINE_NAME)){
+            props.put("MCHN", pascalStrings.get(TaggedDataName.MACHINE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		if(asciiStrings.containsKey(TaggedDataName.MODEL)){
+            props.put("MODL", asciiStrings.get(TaggedDataName.MODEL).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		if(pascalStrings.containsKey(TaggedDataName.MODF)){
+            props.put("MODF", pascalStrings.get(TaggedDataName.MODF).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		if(pascalStrings.containsKey(TaggedDataName.MATRIX_FILE_NAME)){
+            props.put("MTFX", pascalStrings.get(TaggedDataName.MATRIX_FILE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		if(pascalStrings.containsKey(TaggedDataName.SPACING)){
+            props.put("BCAL", pascalStrings.get(TaggedDataName.SPACING).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		if(pascalStrings.containsKey(TaggedDataName.SMLt)){
+            props.put("SMLt", pascalStrings.get(TaggedDataName.SMLt).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		if(pascalStrings.containsKey(TaggedDataName.SMED)){
+            props.put("SMED", pascalStrings.get(TaggedDataName.SMED).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		if(pascalStrings.containsKey(TaggedDataName.SOFTWARE_VERSION)){
+            final List<PascalStringTaggedDataRecord> versions = pascalStrings.get(TaggedDataName.SOFTWARE_VERSION);
+            //match IO_Lib and only get the first 2 software version records...
+            for(int i=0; i<versions.size() && i<2;i++){
+                props.put("VER"+(i+1), versions.get(i).parseDataRecordFrom(traceData).trim());
+             }
+        }
+		if(pascalStrings.containsKey(TaggedDataName.JTC_PROTOCOL_NAME)){
+            props.put("PRON", pascalStrings.get(TaggedDataName.JTC_PROTOCOL_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		
+		
+		if(pascalStrings.containsKey(TaggedDataName.JTC_TUBE)){
+            props.put("TUBE", pascalStrings.get(TaggedDataName.JTC_TUBE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		if(asciiStrings.containsKey(TaggedDataName.JTC_RUN_NAME)){
+            props.put("RUNN", asciiStrings.get(TaggedDataName.JTC_RUN_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		if(asciiStrings.containsKey(TaggedDataName.JTC_PROTOCOL_VERSION)){
+            props.put("PROV", asciiStrings.get(TaggedDataName.JTC_PROTOCOL_VERSION).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+        }
+		return props;
+    }
+
+	
 	private static List<String> parseBasecallsFrom(
 			GroupedTaggedRecords groupedDataRecordMap, byte[] ab1DataBlock,
 			ChromatogramFileVisitor visitor) {
 		List<String> basecallsList = new ArrayList<String>(2);
-		for(DefaultAsciiTaggedDataRecord basecallRecord : groupedDataRecordMap.asciiDataRecords.get(TaggedDataName.BASECALLS)){
+		for(AsciiTaggedDataRecord basecallRecord : groupedDataRecordMap.asciiDataRecords.get(TaggedDataName.BASECALLS)){
 			String basecalls = basecallRecord.parseDataRecordFrom(ab1DataBlock);
 			basecallsList.add(basecalls);
 			if(basecallRecord.getTagNumber()==CURRENT_VERSION){
@@ -343,7 +610,7 @@ public final class Ab1FileParser {
 	}
 
 	private static List<NucleotideGlyph> parseChannelOrder(GroupedTaggedRecords dataRecordMap ){
-		DefaultAsciiTaggedDataRecord order = dataRecordMap.asciiDataRecords.get(TaggedDataName.FILTER_WHEEL_ORDER).get(0);
+		AsciiTaggedDataRecord order = dataRecordMap.asciiDataRecords.get(TaggedDataName.FILTER_WHEEL_ORDER).get(0);
 		
 		return NucleotideGlyphFactory.getInstance().getGlyphsFor(order.parseDataRecordFrom(null));
 
@@ -433,21 +700,22 @@ public final class Ab1FileParser {
 	}
 	
 	private static class GroupedTaggedRecords{
-		private final Map<TaggedDataName,List<DefaultAsciiTaggedDataRecord>> asciiDataRecords = new EnumMap<TaggedDataName, List<DefaultAsciiTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<AsciiTaggedDataRecord>> asciiDataRecords = new EnumMap<TaggedDataName, List<AsciiTaggedDataRecord>>(TaggedDataName.class);
 	
-		private final Map<TaggedDataName,List<DefaultFloatTaggedDataRecord>> floatDataRecords = new EnumMap<TaggedDataName, List<DefaultFloatTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<FloatArrayTaggedDataRecord>> floatDataRecords = new EnumMap<TaggedDataName, List<FloatArrayTaggedDataRecord>>(TaggedDataName.class);
 		private final Map<TaggedDataName,List<ByteArrayTaggedDataRecord>> byteArrayRecords = new EnumMap<TaggedDataName, List<ByteArrayTaggedDataRecord>>(TaggedDataName.class);
 	    
-		private final Map<TaggedDataName,List<DefaultShortArrayTaggedDataRecord>> shortArrayDataRecords = new EnumMap<TaggedDataName, List<DefaultShortArrayTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<ShortArrayTaggedDataRecord>> shortArrayDataRecords = new EnumMap<TaggedDataName, List<ShortArrayTaggedDataRecord>>(TaggedDataName.class);
 		
-		private final Map<TaggedDataName,List<DefaultIntegerArrayTaggedDataRecord>> intArrayDataRecords = new EnumMap<TaggedDataName, List<DefaultIntegerArrayTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<IntArrayTaggedDataRecord>> intArrayDataRecords = new EnumMap<TaggedDataName, List<IntArrayTaggedDataRecord>>(TaggedDataName.class);
 		
-		private final Map<TaggedDataName,List<DefaultPascalStringTaggedDataRecord>> pascalStringDataRecords = new EnumMap<TaggedDataName, List<DefaultPascalStringTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<PascalStringTaggedDataRecord>> pascalStringDataRecords = new EnumMap<TaggedDataName, List<PascalStringTaggedDataRecord>>(TaggedDataName.class);
 
-		private final Map<TaggedDataName,List<DefaultDateTaggedDataRecord>> dateDataRecords = new EnumMap<TaggedDataName, List<DefaultDateTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<DateTaggedDataRecord>> dateDataRecords = new EnumMap<TaggedDataName, List<DateTaggedDataRecord>>(TaggedDataName.class);
 		
-		private final Map<TaggedDataName,List<DefaultTimeTaggedDataRecord>> timeDataRecords = new EnumMap<TaggedDataName, List<DefaultTimeTaggedDataRecord>>(TaggedDataName.class);
-		
+		private final Map<TaggedDataName,List<TimeTaggedDataRecord>> timeDataRecords = new EnumMap<TaggedDataName, List<TimeTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<UserDefinedTaggedDataRecord>> userDefinedDataRecords = new EnumMap<TaggedDataName, List<UserDefinedTaggedDataRecord>>(TaggedDataName.class);
+        
 		public void add(TaggedDataRecord record){
 			switch(record.getDataType()){
 							
@@ -470,7 +738,9 @@ public final class Ab1FileParser {
 			case TIME:
 				add(record, timeDataRecords);
 				break;
-			
+			case USER_DEFINED:
+			    add(record, userDefinedDataRecords);
+			    break;
 			default:
 			    if(record instanceof StringTaggedDataRecord){
 			        add(record, asciiDataRecords);

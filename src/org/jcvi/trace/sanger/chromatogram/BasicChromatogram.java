@@ -24,8 +24,11 @@
 package org.jcvi.trace.sanger.chromatogram;
 
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.jcvi.CommonUtil;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
@@ -58,7 +61,7 @@ public class BasicChromatogram implements Chromatogram {
     /**
      * Used to store the TEXT properties of a ZTR file.
      */
-    private Properties properties;
+    private Map<String,String> properties;
 
 
     public BasicChromatogram(Chromatogram c){
@@ -70,11 +73,11 @@ public class BasicChromatogram implements Chromatogram {
     }
     public BasicChromatogram(NucleotideEncodedGlyphs basecalls,EncodedGlyphs<PhredQuality> qualities, Peaks peaks,
             ChannelGroup channelGroup){
-        this(basecalls, qualities, peaks, channelGroup, new Properties());
+        this(basecalls, qualities, peaks, channelGroup, new HashMap<String,String>());
     }
     public BasicChromatogram(String basecalls, byte[] qualities,Peaks peaks,
             ChannelGroup channelGroup,
-             Properties properties){
+            Map<String,String> properties){
         this(new DefaultNucleotideEncodedGlyphs( FACTORY.getGlyphsFor(basecalls)),
                 new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,PhredQuality.valueOf(qualities)),
                 peaks,
@@ -82,7 +85,7 @@ public class BasicChromatogram implements Chromatogram {
     }
     public BasicChromatogram(NucleotideEncodedGlyphs basecalls, EncodedGlyphs<PhredQuality> qualities,Peaks peaks,
            ChannelGroup channelGroup,
-            Properties properties){
+           Map<String,String> properties){
         canNotBeNull(basecalls, peaks, channelGroup, properties);
         this.peaks = peaks;        
         this.properties = properties;
@@ -108,11 +111,11 @@ public class BasicChromatogram implements Chromatogram {
         return peaks;
     }
 
-    public Properties getProperties() {
+    public Map<String,String> getProperties() {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(Map<String,String> properties) {
         this.properties = properties;
     }
 

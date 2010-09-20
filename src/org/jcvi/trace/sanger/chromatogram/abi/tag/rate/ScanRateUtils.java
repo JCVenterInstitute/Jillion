@@ -17,15 +17,21 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.trace.sanger.chromatogram.abi.tag;
-
-import org.joda.time.LocalDate;
+package org.jcvi.trace.sanger.chromatogram.abi.tag.rate;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface DateTaggedDataRecord extends TaggedDataRecord<DateTaggedDataRecord,LocalDate>{
-
+public class ScanRateUtils {
+    /**
+     * Get the Sampling Rate (Hz) that is displayed in the
+     * Seq Analysis annotation report.
+     * @param scanRate
+     * @return
+     */
+    public static float getSamplingRateFor(ScanRate scanRate){
+        return 1000F/scanRate.getScanPeriod();
+    }
 }

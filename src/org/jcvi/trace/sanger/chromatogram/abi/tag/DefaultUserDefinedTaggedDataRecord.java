@@ -19,13 +19,28 @@
 
 package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
-import org.joda.time.LocalDate;
-
 /**
  * @author dkatzel
  *
  *
  */
-public interface DateTaggedDataRecord extends TaggedDataRecord<DateTaggedDataRecord,LocalDate>{
+public class DefaultUserDefinedTaggedDataRecord extends DefaultTaggedDataRecord implements UserDefinedTaggedDataRecord<ByteArrayTaggedDataRecord,byte[]>{
+
+    /**
+     * @param name
+     * @param number
+     * @param dataType
+     * @param elementLength
+     * @param numberOfElements
+     * @param recordLength
+     * @param dataRecord
+     * @param crypticValue
+     */
+    public DefaultUserDefinedTaggedDataRecord(TaggedDataName name, long number,
+            TaggedDataType dataType, int elementLength, long numberOfElements,
+            long recordLength, long dataRecord, long crypticValue) {
+        super(name, number, dataType, elementLength, numberOfElements, recordLength,
+                dataRecord, crypticValue);
+    }
 
 }

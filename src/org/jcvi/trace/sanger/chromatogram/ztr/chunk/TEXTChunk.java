@@ -26,7 +26,8 @@ package org.jcvi.trace.sanger.chromatogram.ztr.chunk;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.jcvi.trace.TraceDecoderException;
@@ -55,10 +56,10 @@ public class TEXTChunk extends Chunk {
         builder.properties(parseText(in));
     }
 
-    protected Properties parseText(InputStream in)
+    protected Map<String,String> parseText(InputStream in)
             throws TraceDecoderException {
         Scanner scanner=null;
-        Properties textProps = new Properties();
+        Map<String,String> textProps = new HashMap<String, String>();
         try{
             //skip first byte
             in.read();
@@ -89,7 +90,7 @@ public class TEXTChunk extends Chunk {
     protected String parseData(byte[] decodedData,
             ChromatogramFileVisitor visitor,String basecalls) throws TraceDecoderException {
         InputStream in = new ByteArrayInputStream(decodedData);
-        final Properties comments = parseText(in);
+        final Map<String,String> comments = parseText(in);
         visitor.visitComments(comments);
         return basecalls;
         

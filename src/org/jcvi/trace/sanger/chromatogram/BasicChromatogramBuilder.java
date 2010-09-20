@@ -25,7 +25,9 @@ package org.jcvi.trace.sanger.chromatogram;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jcvi.glyph.DefaultEncodedGlyphs;
@@ -56,7 +58,7 @@ public class BasicChromatogramBuilder {
         private short[] gPositions;
         private short[] tPositions;
 
-        private Properties properties;
+        private Map<String,String> properties;
         /**
          * empty constructor.
          */
@@ -69,7 +71,7 @@ public class BasicChromatogramBuilder {
          *  position and confidence data on all 4 channels can not be null.
          * @param properties the properties may be null.
          */
-        public BasicChromatogramBuilder(String basecalls, short[] peaks, ChannelGroup channelGroup, Properties properties){
+        public BasicChromatogramBuilder(String basecalls, short[] peaks, ChannelGroup channelGroup, Map<String,String> properties){
             basecalls(basecalls);
             peaks(peaks);
             aConfidence(channelGroup.getAChannel().getConfidence().getData());
@@ -172,12 +174,12 @@ public class BasicChromatogramBuilder {
             return this;
         }
 
-        public final Properties properties() {
-            return properties ==null? null :(Properties)properties.clone();
+        public final Map<String,String> properties() {
+            return properties ==null? null :new HashMap<String, String>(properties);
         }
 
-        public final BasicChromatogramBuilder properties(Properties properties) {
-            this.properties = (Properties)properties.clone();
+        public final BasicChromatogramBuilder properties(Map<String,String> properties) {
+            this.properties = new HashMap<String, String>(properties);
             return this;
         }
 

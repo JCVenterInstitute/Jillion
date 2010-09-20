@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jcvi.Range;
@@ -286,7 +287,7 @@ public class ChromatogramXMLSerializer {
        }
        
        public static BasicChromatogram buildBasicChromatogram(String basecalls, String encodedQualities, 
-               Peaks peaks, ChannelGroup group, Properties props){
+               Peaks peaks, ChannelGroup group, Map<String,String> props){
            return new
                    BasicChromatogram(
                            basecalls,

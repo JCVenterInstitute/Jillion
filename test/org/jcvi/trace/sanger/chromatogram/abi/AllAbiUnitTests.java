@@ -17,15 +17,23 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.trace.sanger.chromatogram.abi.tag;
+package org.jcvi.trace.sanger.chromatogram.abi;
 
-import org.joda.time.LocalDate;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface DateTaggedDataRecord extends TaggedDataRecord<DateTaggedDataRecord,LocalDate>{
+@RunWith(Suite.class)
+@SuiteClasses(
+    {
+     TestAbiChromatogramTraceParserMatchesZTR.class   
+    }
+    )
+public class AllAbiUnitTests {
 
 }

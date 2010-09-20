@@ -21,6 +21,7 @@ package org.jcvi.trace.sanger.chromatogram.scf;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jcvi.glyph.EncodedGlyphs;
@@ -56,7 +57,7 @@ public class SCFChromatogramFile implements SCFChromatogram, SCFChromatogramFile
     }
 
     @Override
-    public Properties getProperties() {
+    public Map<String,String> getProperties() {
         return delegate.getProperties();
     }
 
@@ -131,7 +132,7 @@ public class SCFChromatogramFile implements SCFChromatogram, SCFChromatogramFile
     }
 
     @Override
-    public void visitComments(Properties comments) {
+    public void visitComments(Map<String,String> comments) {
         builder.properties(comments);
         
     }

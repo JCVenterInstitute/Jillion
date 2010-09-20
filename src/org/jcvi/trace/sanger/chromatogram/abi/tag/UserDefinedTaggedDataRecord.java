@@ -19,13 +19,11 @@
 
 package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
-import org.joda.time.LocalDate;
-
 /**
  * @author dkatzel
  *
  *
  */
-public interface DateTaggedDataRecord extends TaggedDataRecord<DateTaggedDataRecord,LocalDate>{
+public interface UserDefinedTaggedDataRecord<T, D> extends TaggedDataRecord<T,D>{
 
 }
