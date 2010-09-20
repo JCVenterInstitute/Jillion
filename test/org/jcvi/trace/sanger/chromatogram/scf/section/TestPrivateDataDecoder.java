@@ -23,7 +23,7 @@
  */
 package org.jcvi.trace.sanger.chromatogram.scf.section;
 
-import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.EasyMock.createMock;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -40,7 +40,7 @@ import org.jcvi.trace.sanger.chromatogram.scf.section.SectionDecoderException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestPrivateDataDecoder {
     private byte[] data = new byte[]{20,30,40, -20, -67,125};
     private PrivateData expectedPrivateData = new PrivateData(data);

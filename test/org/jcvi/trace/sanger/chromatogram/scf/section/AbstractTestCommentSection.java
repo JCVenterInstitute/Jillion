@@ -23,7 +23,7 @@
  */
 package org.jcvi.trace.sanger.chromatogram.scf.section;
 
-import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.EasyMock.createMock;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 public class TestIOUtil_deleteDir {
 

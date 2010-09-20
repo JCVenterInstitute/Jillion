@@ -23,7 +23,7 @@
  */
 package org.jcvi.assembly.contig;
 
-import org.easymock.classextension.ConstructorArgs;
+import org.easymock.ConstructorArgs;
 import org.jcvi.assembly.Placed;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
@@ -39,7 +39,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestDefaultContigQualityClassComputer {
     
     
@@ -57,18 +57,11 @@ public class TestDefaultContigQualityClassComputer {
     @Before
     public void setup() throws SecurityException, NoSuchMethodException{
         qualityValueStrategy = createMock(QualityValueStrategy.class);
-        ConstructorArgs args = new ConstructorArgs(
-                DefaultContigQualityClassComputer.class.getDeclaredConstructor(
-                        QualityValueStrategy.class, 
-                        PhredQuality.class),
-                        qualityValueStrategy,
-                        threshold
-                        );
-        sut = createMock(DefaultContigQualityClassComputer.class, args, 
-                DefaultContigQualityClassComputer.class.getDeclaredMethod("computeQualityClassFor", 
-                        new Class[]{DataStore.class,Integer.TYPE, CoverageRegion.class, NucleotideGlyph.class}));
-        
-        
+
+        sut = createMockBuilder(DefaultContigQualityClassComputer.class)
+            .withConstructor(qualityValueStrategy,threshold)
+            .addMockedMethod("computeQualityClassFor",DataStore.class,Integer.TYPE, CoverageRegion.class, NucleotideGlyph.class)
+        .createMock();
                 
         coverageMap = createMock(CoverageMap.class);
         qualityFastaMap = createMock(DataStore.class);

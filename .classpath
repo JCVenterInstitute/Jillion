@@ -29,8 +29,6 @@
 			<attribute name="javadoc_location" value="http://commons.apache.org/io/api-release"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/easymock.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/easymockclassextension.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/finj-1.1.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/guice-2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/h2-1.2.128.jar"/>
@@ -64,5 +62,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/easymock-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/objenesis-1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

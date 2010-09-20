@@ -23,7 +23,7 @@
  */
 package org.jcvi.trace.sanger.chromatogram;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 
 import java.nio.ShortBuffer;
 

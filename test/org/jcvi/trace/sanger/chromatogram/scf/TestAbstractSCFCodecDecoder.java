@@ -43,7 +43,7 @@ import org.jcvi.trace.sanger.chromatogram.scf.section.SectionDecoderException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestAbstractSCFCodecDecoder {
     private static class TestDouble extends AbstractSCFCodec{
         private SCFChromatogramBuilder struct;

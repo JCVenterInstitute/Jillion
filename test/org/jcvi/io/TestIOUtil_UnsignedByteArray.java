@@ -30,7 +30,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestIOUtil_UnsignedByteArray {
 
     private short[] expectedShortArray = new short[]{255, 200, 0, 14, 128,56,254,127};

@@ -35,7 +35,7 @@ import org.jcvi.trace.sanger.chromatogram.ztr.chunk.SMP4Chunk;
 import org.jcvi.trace.sanger.chromatogram.ztr.chunk.TEXTChunk;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestChunkFactory {
 
     InputStream inputStream = createMock(InputStream.class);

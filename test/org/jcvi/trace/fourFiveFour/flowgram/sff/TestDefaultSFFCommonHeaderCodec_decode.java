@@ -33,7 +33,7 @@ import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFDecoderException;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestDefaultSFFCommonHeaderCodec_decode extends AbstractTestDefaultSFFCommonHeaderCodec{
 
     @Test

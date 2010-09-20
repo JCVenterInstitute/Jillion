@@ -32,7 +32,7 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.junit.Before;
 import org.junit.Test;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 public class TestDefaultQualityClassContigMap {
     CoverageMap<CoverageRegion<PlacedRead>> coverageMap;
