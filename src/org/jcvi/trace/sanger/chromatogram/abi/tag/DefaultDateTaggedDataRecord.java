@@ -22,8 +22,9 @@ import java.nio.ByteBuffer;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
-public class DefaultDateTaggedDataRecord extends AbstractTaggedDataRecord<DateTaggedDataRecord,Date> implements DateTaggedDataRecord{
+public class DefaultDateTaggedDataRecord extends AbstractTaggedDataRecord<DateTaggedDataRecord,LocalDate> implements DateTaggedDataRecord{
 
 	public DefaultDateTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
@@ -33,21 +34,21 @@ public class DefaultDateTaggedDataRecord extends AbstractTaggedDataRecord<DateTa
 	}
 
 	@Override
-	protected Date parseDataFrom(byte[] data) {
+	protected LocalDate parseDataFrom(byte[] data) {
 		ByteBuffer buf = ByteBuffer.wrap(data);
 		short year =buf.getShort();
 		byte month = buf.get();
 		byte day = buf.get();
 		
-		return new DateTime(year, month, day, 0,0,0,0).toDate();
+		return new LocalDate(year, month, day);
 	}
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public Class<Date> getParsedDataType() {
-        return Date.class;
+    public Class<LocalDate> getParsedDataType() {
+        return LocalDate.class;
     }
 
     /**

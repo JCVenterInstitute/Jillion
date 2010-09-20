@@ -23,6 +23,7 @@
  */
 package org.jcvi.trace.sanger.chromatogram;
 
+import org.jcvi.trace.sanger.chromatogram.abi.AllAbiUnitTests;
 import org.jcvi.trace.sanger.chromatogram.scf.AllSCFUnitTests;
 import org.jcvi.trace.sanger.chromatogram.ztr.AllZTRUnitTests;
 import org.junit.runner.RunWith;
@@ -44,7 +45,8 @@ import org.junit.runners.Suite.SuiteClasses;
         AllZTRUnitTests.class,
         
         TestConvertZtr2Scf.class,
-        TestMixAndMatchChromatogramParsers.class
+        TestMixAndMatchChromatogramParsers.class,
+        AllAbiUnitTests.class
     }
     )
 public class AllChromatogramUnitTests {

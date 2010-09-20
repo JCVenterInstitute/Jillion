@@ -28,6 +28,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
@@ -59,7 +61,11 @@ public class CommentSectionCodec implements SectionCodec {
             //java will interpret this as an extra property
             //remove it
             props.remove(NULL);
-            c.properties(props);
+            Map<String,String> map = new HashMap<String, String>();
+            for(Entry<Object,Object> entry : props.entrySet()){
+                map.put((String)entry.getKey(), (String) entry.getValue());
+            }
+            c.properties(map);
             return currentOffset+bytesToSkip+comments.length;
         } catch (IOException e) {
             throw new SectionDecoderException("error parsing Comment",e);
@@ -70,13 +76,13 @@ public class CommentSectionCodec implements SectionCodec {
     @Override
     public EncodedSection encode(SCFChromatogram c, SCFHeader header)
             throws IOException {
-        Properties props =c.getProperties();
+        Map<String,String> props =c.getProperties();
         if(props ==null){
             header.setCommentSize(0);
             return new EncodedSection(null,Section.COMMENTS);
         }
         StringBuilder builder = new StringBuilder();
-        for(Entry<Object, Object> entry :props.entrySet()){
+        for(Entry<String, String> entry :props.entrySet()){
             builder.append(entry.getKey());
             builder.append("=");
             builder.append(entry.getValue());
@@ -110,7 +116,11 @@ public class CommentSectionCodec implements SectionCodec {
             //java will interpret this as an extra property
             //remove it
             props.remove(NULL);
-            c.visitComments(props);
+            Map<String,String> map = new HashMap<String, String>();
+            for(Entry<Object,Object> entry : props.entrySet()){
+                map.put((String)entry.getKey(), (String) entry.getValue());
+            }
+            c.visitComments(map);
             return currentOffset+bytesToSkip+comments.length;
         } catch (IOException e) {
             throw new SectionDecoderException("error parsing Comment",e);

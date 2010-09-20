@@ -155,7 +155,7 @@ public class NextGenClosureAceContigTrimmer extends AceContigTrimmer{
             InputStream tempInput = new FileInputStream(tempFile);
             IOUtils.copy(tempInput, masterAceOut);
         } catch (ParseException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
             printHelp(options);
         }finally{
             IOUtil.closeAndIgnoreErrors(phdDataStore,datastore);

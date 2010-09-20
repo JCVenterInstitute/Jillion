@@ -77,7 +77,7 @@ public enum TaggedDataName {
 	 * external primer-dye mobility
 	 * correction file
 	 */
-	CORRECTION_FILE("PDMF"),
+	DYE_PRIMER_CORRECTION_FILE("PDMF"),
 	
 	/**
 	 * scan numbers of the ABI
@@ -139,11 +139,11 @@ public enum TaggedDataName {
 	TRACKING_INITIAL_ADJUSTMENT("TRKP"),
 	
 	
-	AEPt("AEPt"),
+	JTC_END_POINT("AEPt"),
 	
-	APFN("APFN"),
+	JTC_PROTOCOL_NAME("APFN"),
 	
-	APXV("APXV"),
+	JTC_PROTOCOL_VERSION("APXV"),
 	
 	APrN("APrN"),
 	
@@ -154,7 +154,7 @@ public enum TaggedDataName {
 	
 	ASPF("ASPF"),
 	
-	ASPt("ASPt"),
+	JTC_START_POINT("ASPt"),
 	
 	AUDT("AUDT"),
 	
@@ -186,7 +186,7 @@ public enum TaggedDataName {
 	
 	DyeW("DyeW"),
 	
-	EPVt("EPVt"),
+	ELECTROPHERSIS_VOLTAGE("EPVt"),
 	
 	EVENT("EVNT"),
 	
@@ -202,9 +202,9 @@ public enum TaggedDataName {
 	
 	LNTD("LNTD"),
 	
-	LsrP("LsrP"),
+	LASER_POWER("LsrP"),
 	
-	MCHN("MCHN"),
+	MACHINE_NAME("MCHN"),
 	
 	MODF("MODF"),
 	/**
@@ -212,11 +212,9 @@ public enum TaggedDataName {
 	 */
 	MODEL("MODL"),
 	
-	NOIS("NOIS"),
-	/**
-	 * Possibly quality values?
-	 */
-	QUALITY("PCON"),
+	JTC_NOISE("NOIS"),
+	
+	JTC_QUALITY_VALUES("PCON"),
 	/**
 	 * The size of the Sequencing Plate being sequenced.
 	 */
@@ -243,17 +241,20 @@ public enum TaggedDataName {
 	
 	Rate("Rate"),
 	RevC("RevC"),
-	RunN("RunN"),
+	JTC_RUN_NAME("RunN"),
 	SCAN("SCAN"),
 	SMED("SMED"),
 	SMLt("SMLt"),
 	
-	SVER("SVER"),
+	SOFTWARE_VERSION("SVER"),
 	Scal("Scal"),
 	
 	Scan("Scan"),
-	TUBE("TUBE"),
-	Tmpr("Tmpr"),
+	/**
+	 * The Tube/ Well this trace came from.
+	 */
+	JTC_TUBE("TUBE"),
+	JTC_TEMPERATURE("Tmpr"),
 	USER("User"),
 	
 	phAR("phAR"),
@@ -263,7 +264,7 @@ public enum TaggedDataName {
 	phQL("phQL"),
 	phTR("phTR"),
 	
-	
+	MATRIX_FILE_NAME("MTFX")
 	
 	
 	

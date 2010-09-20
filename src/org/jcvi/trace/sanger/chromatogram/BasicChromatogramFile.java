@@ -17,37 +17,28 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.trace.sanger.chromatogram.ztr;
-
-import java.io.File;
-import java.io.FileNotFoundException;
+package org.jcvi.trace.sanger.chromatogram;
 import java.util.Map;
 import java.util.Properties;
 
-import org.jcvi.Range;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Peaks;
-import org.jcvi.trace.TraceDecoderException;
-import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
 
 /**
  * @author dkatzel
  *
  *
  */
-public class ZTRChromatogramFile implements ZTRChromatogramFileVisitor, ZTRChromatogram{
+public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisitor{
 
-    private ZTRChromatogram delegate;
-    private ZTRChromatogramBuilder builder;
-    public ZTRChromatogramFile(){
-        builder = new ZTRChromatogramBuilder();
+    private Chromatogram delegate;
+    private BasicChromatogramBuilder builder;
+    public BasicChromatogramFile(){
+        builder = new BasicChromatogramBuilder();
     }
-    public ZTRChromatogramFile(File ztrFile) throws FileNotFoundException, TraceDecoderException{
-        this();
-        ZTRChromatogramFileParser.parseZTRFile(ztrFile, this);
-    }
+   
     
     /**
     * {@inheritDoc}
@@ -85,14 +76,7 @@ public class ZTRChromatogramFile implements ZTRChromatogramFileVisitor, ZTRChrom
         
     }
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitClipRange(Range clipRange) {
-        builder.clip(clipRange);
-        
-    }
+   
 
     /**
     * {@inheritDoc}
@@ -187,14 +171,7 @@ public class ZTRChromatogramFile implements ZTRChromatogramFileVisitor, ZTRChrom
         return delegate.getQualities();
     }
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Range getClip() {
-        return delegate.getClip();
-    }
-
+  
     /**
     * {@inheritDoc}
     */

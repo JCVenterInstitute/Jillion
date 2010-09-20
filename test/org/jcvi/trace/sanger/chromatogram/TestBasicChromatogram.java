@@ -23,6 +23,8 @@
  */
 package org.jcvi.trace.sanger.chromatogram;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jcvi.glyph.EncodedGlyphs;
@@ -43,14 +45,14 @@ public class TestBasicChromatogram {
     Peaks mockPeaks= createMock(Peaks.class);
     NucleotideEncodedGlyphs basecalls = createMock(NucleotideEncodedGlyphs.class);
     EncodedGlyphs<PhredQuality> qualities = createMock(EncodedGlyphs.class);
-    Properties expectedProperties;
+    Map<String,String> expectedProperties;
     private static final String PROP_1_KEY = "a key";
     private static final String PROP_2_KEY = "a different key";
 
     BasicChromatogram sut;
     @Before
     public void setup(){
-        expectedProperties = new Properties();
+        expectedProperties = new HashMap<String, String>();
         expectedProperties.put(PROP_1_KEY, "a value");
         expectedProperties.put(PROP_2_KEY, "a different value");
 
@@ -198,7 +200,7 @@ public class TestBasicChromatogram {
    
     @Test
     public void notEqualsExtraProperties(){
-        Properties differentProperties = new Properties(expectedProperties);
+        HashMap<String, String> differentProperties = new HashMap<String,String>(expectedProperties);
         differentProperties.put("extra key", "extra value");
         BasicChromatogram hasDifferentProperties = new BasicChromatogram(basecalls, qualities,mockPeaks, mockChannelGroup,
                                         differentProperties);
@@ -206,7 +208,8 @@ public class TestBasicChromatogram {
     }
     @Test
     public void notEqualsMissingProperties(){
-        Properties differentProperties = new Properties(expectedProperties);
+        HashMap<String, String> differentProperties = new HashMap<String,String>(expectedProperties);
+        
         differentProperties.remove(PROP_1_KEY);
         BasicChromatogram hasDifferentProperties = new BasicChromatogram(basecalls, qualities,mockPeaks, mockChannelGroup,
                                         differentProperties);

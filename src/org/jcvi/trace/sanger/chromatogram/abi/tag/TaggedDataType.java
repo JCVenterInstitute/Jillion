@@ -32,7 +32,11 @@ public enum TaggedDataType {
 	TYPE_19(19),
 	TYPE_5(5),
 	TYPE_1(1),
-	TYPE_1024(1024),
+	/**
+	 * User defined type whose data representations are up 
+	 * to the creators of this type to know how to parse.
+	 */
+	USER_DEFINED(1024),
 	;
 	
 	private static final Map<Integer, TaggedDataType> MAP;

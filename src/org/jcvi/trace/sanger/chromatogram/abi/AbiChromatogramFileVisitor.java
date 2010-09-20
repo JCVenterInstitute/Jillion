@@ -30,6 +30,10 @@ import org.jcvi.trace.sanger.chromatogram.abi.tag.IntArrayTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.ShortArrayTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.StringTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.TimeTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.UserDefinedTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.rate.ScanRate;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.rate.ScanRateTaggedDataType;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 /**
  * {@code AbiChromatogramFileVisitor} is an ABI
@@ -133,7 +137,9 @@ public interface AbiChromatogramFileVisitor extends ChromatogramFileVisitor{
 			short tScale);
 	
 	void visitTaggedDataRecord(ByteArrayTaggedDataRecord record, byte[] data);
+	void visitTaggedDataRecord(UserDefinedTaggedDataRecord record, byte[] data);
 	
+	void visitTaggedDataRecord(ScanRateTaggedDataType record, ScanRate scanRate);
 	void visitTaggedDataRecord(ShortArrayTaggedDataRecord record, short[] data);
 	
 	void visitTaggedDataRecord(IntArrayTaggedDataRecord record, int[] data);
@@ -144,6 +150,6 @@ public interface AbiChromatogramFileVisitor extends ChromatogramFileVisitor{
 	
 	void visitTaggedDataRecord(TimeTaggedDataRecord record, LocalTime time);
     
-    void visitTaggedDataRecord(DateTaggedDataRecord record, Date date);
+    void visitTaggedDataRecord(DateTaggedDataRecord record, LocalDate date);
     
 }

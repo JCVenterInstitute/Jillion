@@ -387,27 +387,30 @@ import org.jcvi.command.Command;
             this.postExecutionHook = postExecutionHook;
             return this;
         }
-        public void setBinaryMode(boolean mode) {
+        public Builder setBinaryMode(boolean mode) {
             this.setNativeSpec(NativeSpec.BINARY_MODE, (mode) ? "-b y" : "-b n");
+            return this;
         }
 
-        public void setProjectCode(String code) {
+        public Builder<J> setProjectCode(String code) {
             if (code == null) {
                 this.clearNativeSpec(NativeSpec.PROJECT_CODE);
             } else {
                 this.setNativeSpec(NativeSpec.PROJECT_CODE, "-P " + code);
             }
+            return this;
         }
 
-        public void setQueue(String queueName) {
+        public Builder<J> setQueue(String queueName) {
             if (queueName == null) {
                 this.clearNativeSpec(NativeSpec.QUEUE);
             } else {
                 this.setNativeSpec(NativeSpec.QUEUE, "-l " + queueName);
             }
+            return this;
         }
 
-        public void setMemory(Integer size, MemoryUnit unit) {
+        public Builder<J> setMemory(Integer size, MemoryUnit unit) {
             if (size == null || size<1 ) {
                 this.clearNativeSpec(NativeSpec.MEMORY);
             } else {
@@ -416,9 +419,10 @@ import org.jcvi.command.Command;
                 }
                 this.setNativeSpec(NativeSpec.MEMORY, "-l memory='" + size + unit.getGridCode()+"'");
             }
+            return this;
         }
 
-        public Builder setMinCPUs(Integer minimumCPUs) {
+        public Builder<J> setMinCPUs(Integer minimumCPUs) {
             if (minimumCPUs == null) {
                 this.clearNativeSpec(NativeSpec.CPUS);
             } else {
@@ -436,15 +440,17 @@ import org.jcvi.command.Command;
             return this;
         }
 
-        public void addEmailRecipient(String emailAddr) {
+        public Builder<J> addEmailRecipient(String emailAddr) {
             this.emailRecipients.add(emailAddr);
+            return this;
         }
 
-        public void clearEmailRecipients() {
+        public Builder<J> clearEmailRecipients() {
             this.emailRecipients.clear();
+            return this;
         }
 
-        public void setTimeout(Long seconds) {
+        public Builder<J> setTimeout(Long seconds) {
             if(seconds ==null){
                 this.timeout = Session.TIMEOUT_WAIT_FOREVER;
             }else if(seconds <0){
@@ -452,71 +458,86 @@ import org.jcvi.command.Command;
             }else{
                 this.timeout = seconds;
             }
+            return this;
         }
 
-        public void setTimeoutMinutes(long minutes) {
+        public Builder<J> setTimeoutMinutes(long minutes) {
             this.setTimeout(minutes * SECONDS_PER_MINUTE);
+            return this;
         }
 
-        public void copyCurrentEnvironment() {
+        public Builder<J> copyCurrentEnvironment() {
             this.env.putAll(System.getenv());
+            return this;
         }
 
-        public void copyCurrentEnvironment(String var) {
+        public Builder<J> copyCurrentEnvironment(String var) {
             this.setEnvironment(var, System.getenv(var));
+            return this;
         }
 
-        public void setEnvironment(String var, String val) {
+        public Builder<J> setEnvironment(String var, String val) {
             if (val == null) {
                 this.env.remove(var);
             }
             else {
                 this.env.setProperty(var, val);
             }
+            return this;
         }
 
-        public void setNativeSpec(String value)
+        public Builder<J> setNativeSpec(String value)
         {
-            if (value == null) return;
-            this.otherNativeSpecs.add(value);
+            if (value != null){
+                this.otherNativeSpecs.add(value);
+            }
+            return this;
         }
 
-        public void clearNativeSpec(String miscSpec)
+        public Builder<J> clearNativeSpec(String miscSpec)
         {
             this.otherNativeSpecs.remove(miscSpec);
+            return this;
         }
 
-        public void setName(String jobName)
+        public Builder<J> setName(String jobName)
         {
             this.jobName = jobName;
+            return this;
         }
 
-        public void setWorkingDirectory(File workingDirectory)
+        public Builder<J> setWorkingDirectory(File workingDirectory)
         {
             this.workingDirectory = workingDirectory;
+            return this;
         }
 
-        public void setInputFile(File inputFile)
+        public Builder<J> setInputFile(File inputFile)
         {
             this.inputFile = inputFile;
+            return this;
         }
 
-        public void setOutputFile(File outputFile)
+        public Builder<J> setOutputFile(File outputFile)
         {
             this.outputFile = outputFile;
+            return this;
         }
 
-        public void setErrorFile(File errorFile)
+        public Builder<J> setErrorFile(File errorFile)
         {
             this.errorFile = errorFile;
+            return this;
         }
 
-        protected void setNativeSpec(NativeSpec spec, String value) {
+        protected Builder<J> setNativeSpec(NativeSpec spec, String value) {
             this.nativeSpecs.put(spec,value);
+            return this;
         }
 
-        protected void clearNativeSpec(NativeSpec spec) {
+        protected Builder<J> clearNativeSpec(NativeSpec spec) {
             this.nativeSpecs.remove(spec);
+            return this;
         }
     }
 }

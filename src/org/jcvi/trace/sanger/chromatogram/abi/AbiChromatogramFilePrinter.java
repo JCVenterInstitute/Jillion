@@ -20,8 +20,8 @@ package org.jcvi.trace.sanger.chromatogram.abi;
 
 import java.io.PrintStream;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -32,6 +32,10 @@ import org.jcvi.trace.sanger.chromatogram.abi.tag.IntArrayTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.ShortArrayTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.StringTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.TimeTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.UserDefinedTaggedDataRecord;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.rate.ScanRate;
+import org.jcvi.trace.sanger.chromatogram.abi.tag.rate.ScanRateTaggedDataType;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
@@ -94,7 +98,7 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
 	}
 
 	@Override
-	public void visitComments(Properties comments) {
+	public void visitComments(Map<String,String> comments) {
 	    System.out.println("generated comments");
 		out.println(comments);
 		
@@ -293,10 +297,30 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
     * {@inheritDoc}
     */
     @Override
-    public void visitTaggedDataRecord(DateTaggedDataRecord record, Date date) {
+    public void visitTaggedDataRecord(DateTaggedDataRecord record, LocalDate date) {
         out.println("Date Record = "+ record);
         out.println(date);
         
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitTaggedDataRecord(UserDefinedTaggedDataRecord record,
+            byte[] data) {
+        out.println("user defined Record = "+ record);
+        out.println(Arrays.toString(data));
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitTaggedDataRecord(ScanRateTaggedDataType record,
+            ScanRate scanRate) {
+        out.println("scan rate Record = "+ record);
+        out.println(scanRate);
     }
 
 }

@@ -135,15 +135,17 @@ public class Fasta2Fastq {
         
             //parse nucleotide data to temp file
             final ReadWriteDirectoryFileServer tempDir;
+            H2QualityDataStore h2DataStore;
             if(!commandLine.hasOption("tempDir")){
                 tempDir=null;
+                h2DataStore = new H2QualityDataStore();
             }else{
                 File t =new File(commandLine.getOptionValue("tempDir"));
                 t.mkdirs();
                 tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer(t);
+                h2DataStore = new H2QualityDataStore(tempDir.createNewFile("h2Qualities"));
             }
-           
-            H2QualityDataStore h2DataStore = new H2QualityDataStore(tempDir.createNewFile("h2Qualities"));
+          
             File qualFile = new File(commandLine.getOptionValue("q"));
             final QualityFastaH2DataStore qualityDataStore = new QualityFastaH2DataStore(qualFile, h2DataStore,filter);
             

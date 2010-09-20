@@ -25,6 +25,8 @@ package org.jcvi.trace.sanger.chromatogram.scf.section;
 
 import static org.easymock.classextension.EasyMock.createMock;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
@@ -40,20 +42,20 @@ public class AbstractTestCommentSection {
     SCFChromatogramBuilder chromaStruct;
     SCFChromatogramImpl mockChroma;
     int currentOffset = 0;
-    Properties expectedComments;
+    Map<String,String> expectedComments;
     @Before
     public void setup(){
         mockHeader = createMock(SCFHeader.class);
         chromaStruct = new SCFChromatogramBuilder();
         mockChroma = createMock(SCFChromatogramImpl.class);
-        expectedComments = new Properties();
+        expectedComments = new HashMap<String,String>();
         expectedComments.put("key","value");
         expectedComments.put("test","testing");
     }
 
-    protected String convertPropertiesToSCFComment(Properties props){
+    protected String convertPropertiesToSCFComment(Map<String,String>  props){
         StringBuilder result =new StringBuilder();
-        for(Entry<Object,Object> entry : props.entrySet()){
+        for(Entry<String,String> entry : props.entrySet()){
             result.append(entry.getKey());
             result.append("=");
             result.append(entry.getValue());

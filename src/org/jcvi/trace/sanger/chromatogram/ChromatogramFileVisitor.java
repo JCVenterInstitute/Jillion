@@ -19,6 +19,7 @@
 
 package org.jcvi.trace.sanger.chromatogram;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.jcvi.io.FileVisitor;
@@ -119,6 +120,6 @@ public interface ChromatogramFileVisitor extends FileVisitor{
      * with this chromatogram file stored
      * as key-value pairs.
      */
-    void visitComments(Properties comments);
+    void visitComments(Map<String,String> comments);
 
 }

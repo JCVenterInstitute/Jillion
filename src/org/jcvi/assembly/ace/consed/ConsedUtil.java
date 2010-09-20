@@ -58,6 +58,8 @@ public class ConsedUtil {
      * be named instead of the given ID.
      */
     private static final Pattern CONTIG_RENAME_PATTERN = Pattern.compile("U(\\w+)");
+    
+    private static final Pattern CONSED_ACE_VERSION_PATTERN = Pattern.compile("((.+?)\\.)?ace\\.(\\d+)$");
     /**
      * Convert a string of basecalls with '*' to 
      * represent gaps (which is what consed uses) with '-' instead. 
@@ -201,13 +203,36 @@ public class ConsedUtil {
             }
         
      })){
-            String name = file.getName();
-            int version = Integer.parseInt(""+name.charAt(name.length()-1));
+           
+            int version = getAceVersionFor(file);
             if(version > highestAceFileVersion){
                 highestAceFileVersion=version;
                 highestAceFile = file;
             }
         }
         return highestAceFile;
+    }
+    
+    public static int getAceVersionFor(File consedAceFile){
+        String name = consedAceFile.getName();
+        Matcher matcher = CONSED_ACE_VERSION_PATTERN.matcher(name);
+        if(!matcher.matches()){
+            throw new IllegalArgumentException("could not parse version from "+ name);
+        }
+        return Integer.parseInt(matcher.group(3));
+    }
+    
+    public static String generateNextAceVersionNameFor(File consedAceFile){
+        String name = consedAceFile.getName();
+        Matcher matcher = CONSED_ACE_VERSION_PATTERN.matcher(name);
+        if(!matcher.matches()){
+            throw new IllegalArgumentException("could not parse version from "+ name);
+        }
+        String prefix = matcher.group(2);
+        int version= Integer.parseInt(matcher.group(3));
+        
+        return String.format("%sace.%d",
+                prefix==null?"": prefix+".", 
+                        version+1);
     }
 }

@@ -23,7 +23,7 @@
  */
 package org.jcvi.trace.sanger.chromatogram;
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.jcvi.trace.sanger.SangerTrace;
 
@@ -31,6 +31,6 @@ public interface Chromatogram extends SangerTrace{
    
     
     ChannelGroup getChannelGroup();
-    Properties getProperties();
+    Map<String,String> getProperties();
 
 }
