@@ -30,7 +30,7 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestQualityFastaRecord {
 
     private String id = "identifier";

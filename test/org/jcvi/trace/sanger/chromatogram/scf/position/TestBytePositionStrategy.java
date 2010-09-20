@@ -31,7 +31,7 @@ import java.nio.ByteBuffer;
 import org.jcvi.trace.sanger.chromatogram.scf.position.BytePositionStrategy;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestBytePositionStrategy {
     BytePositionStrategy sut = new BytePositionStrategy();
     @Test

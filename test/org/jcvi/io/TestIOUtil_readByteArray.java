@@ -30,7 +30,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestIOUtil_readByteArray {
 
     byte[] array = new byte[]{20,15,30,40};

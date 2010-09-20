@@ -30,9 +30,9 @@ import org.jcvi.sequence.SequenceDirection;
 public class TestAbstractQualityValueStrategyWithComplimentedRead extends TestAbstractQualityValueStrategy{
     
     private int convertToFullRangeComplimentedIndex(int index){
-        int switchedValidLeft = LENGTH - (int)validRange.getEnd();
-        int distanceFromLeftValidRange = index+switchedValidLeft;
-        return LENGTH - distanceFromLeftValidRange;
+        long switchedValidLeft = LENGTH - validRange.getEnd();
+        long distanceFromLeftValidRange = index+switchedValidLeft;
+        return (int)(LENGTH - distanceFromLeftValidRange);
     }
 
     @Override

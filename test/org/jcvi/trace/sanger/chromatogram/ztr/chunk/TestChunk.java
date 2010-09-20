@@ -36,7 +36,7 @@ import org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestChunk {
 
     Chunk sut;

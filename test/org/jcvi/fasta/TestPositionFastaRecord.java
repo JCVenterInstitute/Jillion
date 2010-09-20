@@ -24,7 +24,7 @@
 package org.jcvi.fasta;
 
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.EasyMock.createMock;
 
 import java.util.List;
 

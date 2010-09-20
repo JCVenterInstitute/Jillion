@@ -21,16 +21,16 @@ package org.jcvi.log;
 import java.nio.ByteBuffer;
 
 import org.apache.log4j.Logger;
-import org.easymock.classextension.internal.ClassInstantiatorFactory;
-import org.easymock.classextension.internal.DefaultClassInstantiator;
-import org.easymock.classextension.internal.IClassInstantiator;
+import org.easymock.internal.ClassInstantiatorFactory;
+import org.easymock.internal.DefaultClassInstantiator;
+import org.easymock.internal.IClassInstantiator;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 
 /**
  * A <code>TestLog4jFacility</code>.

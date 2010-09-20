@@ -35,7 +35,7 @@ import org.jcvi.trace.sanger.chromatogram.ztr.chunk.TEXTChunk;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestTEXTChunk {
 
     private static final byte NULL_TERMINATOR = 0;

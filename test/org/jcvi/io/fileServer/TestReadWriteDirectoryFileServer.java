@@ -34,7 +34,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestReadWriteDirectoryFileServer extends
 AbstractTestDirectoryFileServer {
     private static final String TEST_DIR_CREATION_PATH = "Test_ReadWriteRootDir_Creation";

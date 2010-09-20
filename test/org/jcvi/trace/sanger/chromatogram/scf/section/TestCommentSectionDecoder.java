@@ -31,7 +31,7 @@ import java.io.InputStream;
 import org.jcvi.testUtil.EasyMockUtil;
 import org.jcvi.trace.sanger.chromatogram.scf.section.SectionDecoderException;
 import org.junit.Test;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 public class TestCommentSectionDecoder extends AbstractTestCommentSection{
 

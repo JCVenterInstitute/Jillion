@@ -23,7 +23,7 @@
  */
 package org.jcvi.assembly.annot.ref;
 
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.annot.Strand;

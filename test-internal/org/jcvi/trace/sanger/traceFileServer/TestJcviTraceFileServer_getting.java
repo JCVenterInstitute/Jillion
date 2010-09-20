@@ -30,7 +30,7 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.easymock.classextension.ConstructorArgs;
+import org.easymock.ConstructorArgs;
 import org.jcvi.auth.JCVIEncodedAuthorizer;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.FileType;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.RequestType;
@@ -39,7 +39,7 @@ import org.jcvi.util.StringUtilities;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestJcviTraceFileServer_getting {
 
     private HttpURLConnection mockConnection;
@@ -49,21 +49,16 @@ public class TestJcviTraceFileServer_getting {
     String id= "id";
     
     @Before
-    public void setup() throws SecurityException, NoSuchMethodException{
+    public void setup() throws SecurityException{
         mockConnection = createMock(HttpURLConnection.class);
         authorizer = createMock(JCVIEncodedAuthorizer.class);
+
+        sut = createMockBuilder(JcviTraceFileServer.class)
+            .withConstructor(urlBase,authorizer)
+            .addMockedMethod("createURLConnectionFor",                        
+                        String.class,RequestType.class,FileType.class,ReturnFormat.class)
+            .createMock();
       
-        ConstructorArgs args = new ConstructorArgs(
-                JcviTraceFileServer.class.getDeclaredConstructor(
-                        String.class, 
-                        JCVIEncodedAuthorizer.class),
-                        urlBase,
-                        authorizer
-                        );
-        sut = createMock(JcviTraceFileServer.class, 
-                args,
-                JcviTraceFileServer.class.getDeclaredMethod("createURLConnectionFor",                        
-                        String.class,RequestType.class,FileType.class,ReturnFormat.class));
     }
     
     @Test

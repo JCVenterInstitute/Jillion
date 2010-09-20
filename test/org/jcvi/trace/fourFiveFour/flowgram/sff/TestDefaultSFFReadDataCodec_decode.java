@@ -32,7 +32,7 @@ import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadData;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestDefaultSFFReadDataCodec_decode extends AbstractTestSFFReadDataCodec{
 
 

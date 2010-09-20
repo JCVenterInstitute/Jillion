@@ -35,7 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestJcviTraceFileServer {
     String urlBase = "traceFileServer_URL_BASE";
     JCVIEncodedAuthorizer authorizer;

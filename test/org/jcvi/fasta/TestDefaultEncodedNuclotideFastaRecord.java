@@ -32,7 +32,7 @@ import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestDefaultEncodedNuclotideFastaRecord {
 
     private String id = "1234";

@@ -24,7 +24,7 @@
 package org.jcvi.trace.sanger.chromatogram.scf.section;
 
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 
 
 import java.io.ByteArrayInputStream;

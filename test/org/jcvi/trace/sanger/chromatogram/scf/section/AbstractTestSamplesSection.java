@@ -35,7 +35,7 @@ import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
 import org.jcvi.trace.sanger.chromatogram.scf.section.AbstractSampleSectionCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.section.EncodedSection;
 import static org.junit.Assert.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 
 public abstract class AbstractTestSamplesSection {
     protected  short[] aSamplesAsShorts = new short[]{200,-199,0,0};

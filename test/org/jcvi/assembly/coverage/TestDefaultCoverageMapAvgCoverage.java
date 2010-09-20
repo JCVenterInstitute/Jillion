@@ -45,12 +45,12 @@ public class TestDefaultCoverageMapAvgCoverage {
     private static double getAvgCoverageOf(CoverageRegion<Placed>...regions){
         return new DefaultCoverageMapTestDouble(Arrays.asList(regions)).getAverageCoverage();
     }
-    private static CoverageRegion<Placed> createCoverageRegion(int start, int end, int depth){
+    private static CoverageRegion<Placed> createCoverageRegion(long start, long end, int depth){
         CoverageRegion<Placed>  mock = createMock(CoverageRegion.class);
         expect(mock.getCoverage()).andStubReturn(depth);
         expect(mock.getStart()).andStubReturn(start);
         expect(mock.getEnd()).andStubReturn(end);
-        expect(mock.getLength()).andStubReturn((int)Range.buildRange(start, end).size());
+        expect(mock.getLength()).andStubReturn(Range.buildRange(start, end).size());
         replay(mock);
         return mock;
     }

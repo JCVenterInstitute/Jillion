@@ -34,11 +34,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.*;
 public class TestAbstractQualityValueStrategy {
     private static final int LAST_INDEX = 10;
-    protected static final int LENGTH = LAST_INDEX+1;
+    protected static final long LENGTH = LAST_INDEX+1;
     PlacedRead placedRead;
     int gappedIndex = 5;
     QualityFastaRecord<EncodedGlyphs<PhredQuality>> qualityFasta;
@@ -51,19 +50,18 @@ public class TestAbstractQualityValueStrategy {
     PhredQuality rightQuality = PhredQuality.valueOf(30);
     PhredQuality expectedQuality = PhredQuality.valueOf(40);
     @Before
-    public void setup() throws SecurityException, NoSuchMethodException{
+    public void setup() throws SecurityException{
         placedRead = createMock(PlacedRead.class);
         qualityFasta = createMock(QualityFastaRecord.class);
         encodedGlyphs = createMock(NucleotideEncodedGlyphs.class);
         qualities = createMock(EncodedGlyphs.class);
-        sut = createMock(AbstractQualityValueStrategy.class,
-                AbstractQualityValueStrategy.class.getDeclaredMethod("getQualityValueIfReadStartsWithGap",(Class[])null),
-                AbstractQualityValueStrategy.class.getDeclaredMethod("getQualityValueIfReadEndsWithGap",(Class[])null),
-                AbstractQualityValueStrategy.class.getDeclaredMethod("computeQualityValueForGap",
-                                        new Class[]{int.class, int.class,PhredQuality.class, PhredQuality.class}));
+        sut = createMockBuilder(AbstractQualityValueStrategy.class)
+            .addMockedMethod( "computeQualityValueForGap",
+                    int.class, int.class,PhredQuality.class, PhredQuality.class)            
+            .createMock();
         expect(placedRead.getEncodedGlyphs()).andStubReturn(encodedGlyphs);
         expect(placedRead.getValidRange()).andStubReturn(validRange);
-        expect(encodedGlyphs.getLength()).andStubReturn((long)LENGTH);
+        expect(encodedGlyphs.getLength()).andStubReturn(LENGTH);
         expect(qualityFasta.getValues()).andStubReturn(qualities);
         expect(placedRead.getSequenceDirection()).andReturn(getSequenceDirection()).anyTimes();
         expect(qualities.getLength()).andStubReturn((LENGTH));
