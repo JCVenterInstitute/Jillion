@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.jcvi.trace.sanger.chromatogram.abi;
 
-import java.util.Date;
 import java.util.List;
 
 import org.jcvi.glyph.nuc.NucleotideGlyph;

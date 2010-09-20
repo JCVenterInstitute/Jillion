@@ -33,7 +33,6 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Map;
-import java.util.Properties;
 
 import org.jcvi.Range;
 import org.jcvi.glyph.EncodedGlyphs;

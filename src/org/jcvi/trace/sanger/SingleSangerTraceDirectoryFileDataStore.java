@@ -22,8 +22,6 @@ package org.jcvi.trace.sanger;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-
-import org.apache.commons.io.FilenameUtils;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.fileServer.DirectoryFileServer;

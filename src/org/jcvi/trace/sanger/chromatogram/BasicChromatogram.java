@@ -26,9 +26,6 @@ package org.jcvi.trace.sanger.chromatogram;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.collections.map.HashedMap;
 import org.jcvi.CommonUtil;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
