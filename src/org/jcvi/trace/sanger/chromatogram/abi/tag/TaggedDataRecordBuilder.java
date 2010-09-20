@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
-import org.jcvi.trace.sanger.chromatogram.abi.tag.rate.DefaultScanRate;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.rate.DefaultScanRateTaggedDataType;
 
 

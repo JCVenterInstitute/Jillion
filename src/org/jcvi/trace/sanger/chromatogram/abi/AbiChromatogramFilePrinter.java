@@ -22,7 +22,6 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.ByteArrayTaggedDataRecord;

@@ -22,7 +22,6 @@ package org.jcvi.trace.sanger.chromatogram.ztr;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Map;
-import java.util.Properties;
 
 import org.jcvi.Range;
 import org.jcvi.glyph.EncodedGlyphs;

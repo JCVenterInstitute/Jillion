@@ -19,9 +19,6 @@
 package org.jcvi.trace.sanger.chromatogram.abi.tag;
 
 import java.nio.ByteBuffer;
-import java.util.Date;
-
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 public class DefaultDateTaggedDataRecord extends AbstractTaggedDataRecord<DateTaggedDataRecord,LocalDate> implements DateTaggedDataRecord{

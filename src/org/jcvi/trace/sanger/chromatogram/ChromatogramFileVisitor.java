@@ -20,7 +20,6 @@
 package org.jcvi.trace.sanger.chromatogram;
 
 import java.util.Map;
-import java.util.Properties;
 
 import org.jcvi.io.FileVisitor;
 
