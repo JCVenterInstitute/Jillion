@@ -23,6 +23,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
@@ -63,18 +64,23 @@ public final class SCFChromatogramFileParser {
         if(visitor ==null){
             throw new NullPointerException("visitor can not be null");
         }
-        DataInputStream in=null;
+        InputStream fileInputStream =null;
         try{
-            in = new DataInputStream(new FileInputStream(scfFile));
-             SCFHeader header =HEADER_CODEC.decode(in);
-             if(header.getVersion()>=3F){
-                 VERSION3.parse(scfFile, visitor);
-             }else{
-                 VERSION2.parse(scfFile, visitor);
-             }
+            fileInputStream = new FileInputStream(scfFile);
+            parseSCFFile(fileInputStream, visitor);
         }finally{
-            IOUtil.closeAndIgnoreErrors(in);
+            IOUtil.closeAndIgnoreErrors(fileInputStream);
         }
         
+    }
+    
+    public static void parseSCFFile(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
+        DataInputStream dIn = new DataInputStream(in);
+        SCFHeader header =HEADER_CODEC.decode(dIn);
+        if(header.getVersion()>=3F){
+            VERSION3.parse(in, visitor);
+        }else{
+            VERSION2.parse(in, visitor);
+        }
     }
 }

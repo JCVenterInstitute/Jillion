@@ -67,7 +67,6 @@ public final class Ab1FileParser {
 	private Ab1FileParser() {
 	}
 	
-	private static final byte[] MAGIC_NUMBER = new byte[]{(char)'A',(char)'B',(char)'I',(char)'F'};
 	
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("EEE dd MMM HH:mm:ss YYYY");
 	/**
@@ -97,9 +96,9 @@ public final class Ab1FileParser {
 	}
 	
 	public static void parseAb1File(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
-		
+	        visitor.visitFile();
 			verifyMagicNumber(in);
-			visitor.visitFile();
+			visitor.visitNewTrace();
 			long numberOfTaggedRecords = parseNumTaggedRecords(in);
 			int datablockOffset = parseTaggedRecordOffset(in);
 			//All the record info is actually stored
@@ -120,7 +119,7 @@ public final class Ab1FileParser {
 			parsePeakData(groupedDataRecordMap,traceData,visitor);
 			parseQualityData(groupedDataRecordMap,traceData,basecalls,visitor);
 			parseCommentsFrom(comments,groupedDataRecordMap,channelOrder,traceData,signalScale,basecalls,visitor);
-            
+            visitor.visitEndOfTrace();
 			visitor.visitEndOfFile();
 	}
 
@@ -681,7 +680,7 @@ public final class Ab1FileParser {
 	private static void verifyMagicNumber(InputStream in) throws TraceDecoderException {
 		try {
 			byte[] actual = IOUtil.readByteArray(in, 4);
-			if(!Arrays.equals(MAGIC_NUMBER, actual)){
+			if(!Arrays.equals(AbiUtil.MAGIC_NUMBER, actual)){
 				throw new TraceDecoderException("magic number does not match AB1 format "+ Arrays.toString(actual));
 			}
 		} catch (IOException e) {

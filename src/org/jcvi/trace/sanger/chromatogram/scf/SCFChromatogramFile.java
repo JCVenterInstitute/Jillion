@@ -210,6 +210,22 @@ public class SCFChromatogramFile implements SCFChromatogram, SCFChromatogramFile
         return delegate.equals(obj);
     }
 
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitNewTrace() {
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitEndOfTrace() {
+        
+    }
+
     
     
 }

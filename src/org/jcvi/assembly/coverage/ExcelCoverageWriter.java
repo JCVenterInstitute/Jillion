@@ -48,13 +48,13 @@ public class ExcelCoverageWriter<T extends Placed> implements CoverageWriter<T> 
         row.createCell(0).setCellValue(new HSSFRichTextString("coordinate"));
         row.createCell(1).setCellValue(new HSSFRichTextString("coverage"));
 
-        for(int i=0; i<coverageMap.getSize(); i++){
+        for(int i=0; i<coverageMap.getNumberOfRegions(); i++){
             CoverageRegion<T> region = coverageMap.getRegion(i);
             writeRow(region, s.createRow(i+1));
             
         }
-        CoverageRegion<T> lastRegion =coverageMap.getRegion(coverageMap.getSize()-1);
-        writeRow(lastRegion, s.createRow(coverageMap.getSize()+1));
+        CoverageRegion<T> lastRegion =coverageMap.getRegion(coverageMap.getNumberOfRegions()-1);
+        writeRow(lastRegion, s.createRow(coverageMap.getNumberOfRegions()+1));
         wb.write(out);
         
     }

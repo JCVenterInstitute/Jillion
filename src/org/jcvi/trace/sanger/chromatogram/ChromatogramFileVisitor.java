@@ -19,9 +19,8 @@
 
 package org.jcvi.trace.sanger.chromatogram;
 
-import java.util.Map;
-
 import org.jcvi.io.FileVisitor;
+import org.jcvi.trace.sanger.SangerTraceFileVisitor;
 
 /**
  * {@code ChromatogramFileVisitor} is a {@link FileVisitor}
@@ -30,25 +29,9 @@ import org.jcvi.io.FileVisitor;
  *
  *
  */
-public interface ChromatogramFileVisitor extends FileVisitor{
+public interface ChromatogramFileVisitor extends SangerTraceFileVisitor{
 
-    /**
-     * Visit the basecalls in the chromatogram file
-     * being visited.
-     * @param string the basecalls as a string,
-     * although unlikely, it is possible there are 
-     * gaps.
-     */
-    void visitBasecalls(String basecalls);
-
-    /**
-     * Visit the raw peak values of the
-     * chromatogram file being visited.
-     * @param peaks the raw peaks as shorts,
-     * may be null.
-     */
-    void visitPeaks(short[] peaks);
-
+   
     /**
      * Visit the raw positions of the A channel of the
      * chromatogram file being visited.
@@ -110,15 +93,5 @@ public interface ChromatogramFileVisitor extends FileVisitor{
      * may be null.
      */
     void visitTConfidence(byte[] confidence);
-    
-
-    /**
-     * Visit any comments associated with 
-     * this chromatogram. 
-     * @param comments the comments associated
-     * with this chromatogram file stored
-     * as key-value pairs.
-     */
-    void visitComments(Map<String,String> comments);
 
 }

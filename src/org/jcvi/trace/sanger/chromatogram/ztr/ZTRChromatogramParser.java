@@ -50,13 +50,7 @@ import org.jcvi.trace.sanger.chromatogram.ztr.chunk.ChunkFactory;
  *
  */
 public class ZTRChromatogramParser implements SangerTraceCodec {
-    /**
-     * ZTR magic number to let us know that 
-     * this is a valid ztr file.
-     */
-    private static final byte[] ZTR_MAGIC_NUMBER = 
-        new byte[]{(byte)0xAE,(byte)0x5A,(byte)0x54,(byte)0x52,
-                (byte)0x0D,(byte)0x0A,(byte)0x1A,(byte)0x0A,};
+
     /**
      * 
     * {@inheritDoc}
@@ -137,7 +131,7 @@ public class ZTRChromatogramParser implements SangerTraceCodec {
             throws TraceDecoderException, IOException {
 
         byte[] ztrMagic = readZTRMagicNumber(inputStream);
-        if(!Arrays.equals(ztrMagic, ZTR_MAGIC_NUMBER)){
+        if(!Arrays.equals(ztrMagic, ZTRUtil.ZTR_MAGIC_NUMBER)){
 
            //does not match
             String message = "ZTR header magic number does not match expected " +new String(ztrMagic) ;

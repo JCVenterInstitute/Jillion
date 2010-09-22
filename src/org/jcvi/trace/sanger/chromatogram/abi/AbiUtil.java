@@ -21,7 +21,11 @@ package org.jcvi.trace.sanger.chromatogram.abi;
 public final class AbiUtil {
 
 	private AbiUtil(){}
-	
+	/**
+	 * The magic number of an Ab1 file.
+	 */
+	public static final byte[] MAGIC_NUMBER = new byte[]{(char)'A',(char)'B',(char)'I',(char)'F'};
+    
 	public static final int HEADER_SIZE = 30;
 	public static String parseASCIIStringFrom(byte[] data){
 		return new String(data);

@@ -322,4 +322,22 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
         out.println(scanRate);
     }
 
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitNewTrace() {
+        out.println("visiting new trace");
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitEndOfTrace() {
+        out.println("end of trace");
+        
+    }
+
 }

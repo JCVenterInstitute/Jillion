@@ -54,7 +54,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         this.regions = regions;
     }
     @Override
-    public int getSize() {
+    public int getNumberOfRegions() {
         return regions.size();
     }
     @Override
@@ -72,10 +72,10 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         }
         if(obj instanceof DefaultCoverageMap){
             DefaultCoverageMap other = (DefaultCoverageMap) obj;
-            if(getSize() !=other.getSize()){
+            if(getNumberOfRegions() !=other.getNumberOfRegions()){
                 return false;
             }
-            for( int i=0; i<getSize(); i++){
+            for( int i=0; i<getNumberOfRegions(); i++){
                 if(! getRegion(i).equals(other.getRegion(i))){
                     return false;
                 }
@@ -217,7 +217,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
 
     @Override
     public CoverageMap<T> shiftLeft(int units) {
-        List<T> shiftedRegions = new ArrayList<T>(getSize());
+        List<T> shiftedRegions = new ArrayList<T>(getNumberOfRegions());
         for(T region : this.regions){
             shiftedRegions.add((T)region.shiftLeft(units));
         }
@@ -225,7 +225,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
     }
     @Override
     public CoverageMap<T> shiftRight(int units) {
-        List<T> shiftedRegions = new ArrayList<T>(getSize());
+        List<T> shiftedRegions = new ArrayList<T>(getNumberOfRegions());
         for(T region : this.regions){
             shiftedRegions.add((T)region.shiftRight(units));
         }
@@ -245,7 +245,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         return avgCoverage;
     }
     private double computeAvgCoverage() {
-        if(getSize()==0){
+        if(getNumberOfRegions()==0){
             //no coverage
             return 0F;
         }
@@ -281,6 +281,16 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
             minCoverage = Math.min(minCoverage, region.getCoverage());
         }
         return minCoverage;
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getLength() {
+        if(regions.isEmpty()){
+            return 0L;
+        }
+        return regions.get(regions.size()-1).getEnd();
     }
 
 

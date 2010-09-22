@@ -67,6 +67,11 @@ public class TestMagicNumberInputStream {
         MagicNumberInputStream sut = new MagicNumberInputStream(bin,2);
         assertTrue(Arrays.equals(data, IOUtil.readByteArray(sut, data.length)));
         assertEquals("@M", new String(sut.peekMagicNumber()));
-   
+    }
+    
+    @Test(expected = IOException.class)
+    public void notEnoughBytesToFillMagicNumberShouldThrowIOException() throws IOException{
+        ByteArrayInputStream bin = new ByteArrayInputStream(data);
+        new MagicNumberInputStream(bin,data.length+1);
     }
 }

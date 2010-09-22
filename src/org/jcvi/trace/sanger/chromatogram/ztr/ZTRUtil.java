@@ -36,7 +36,13 @@ public final class ZTRUtil {
      *
      */
     private ZTRUtil(){}
-
+    /**
+     * ZTR magic number to let us know that 
+     * this is a valid ztr file.
+     */
+    public static final byte[] ZTR_MAGIC_NUMBER = 
+        new byte[]{(byte)0xAE,(byte)0x5A,(byte)0x54,(byte)0x52,
+                (byte)0x0D,(byte)0x0A,(byte)0x1A,(byte)0x0A,};
     /**
      * Utility method to convert a 4 byte array into
      * a long value.

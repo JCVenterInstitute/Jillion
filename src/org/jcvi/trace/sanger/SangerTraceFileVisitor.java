@@ -16,37 +16,49 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 16, 2009
- *
+
+package org.jcvi.trace.sanger;
+
+import java.util.Map;
+
+import org.jcvi.io.FileVisitor;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.assembly.coverage;
+public interface SangerTraceFileVisitor extends FileVisitor{
 
-import java.util.List;
-
-import org.jcvi.Range;
-
-
-public interface CoverageMap <T extends CoverageRegion<?>> extends Iterable<T>{
-
-    int getNumberOfRegions();
-
-    T getRegion(int i);
-    List<T> getRegions();
+    void visitNewTrace();
     
-    List<T> getRegionsWithin(Range range);
-    List<T> getRegionsWhichIntersect(Range range);
-    T getRegionWhichCovers(long consensusIndex);
+    void visitEndOfTrace();
+    /**
+     * Visit the basecalls in the chromatogram file
+     * being visited.
+     * @param string the basecalls as a string,
+     * although unlikely, it is possible there are 
+     * gaps.
+     */
+    void visitBasecalls(String basecalls);
+
+    /**
+     * Visit the raw peak values of the
+     * chromatogram file being visited.
+     * @param peaks the raw peaks as shorts,
+     * may be null.
+     */
+    void visitPeaks(short[] peaks);
+
     
-    int getRegionIndexWhichCovers(long consensusIndex);
-    
-    CoverageMap<T> shiftLeft(int units);
-    CoverageMap<T> shiftRight(int units);
-    
-    double getAverageCoverage();
-    int getMaxCoverage();
-    int getMinCoverage();
-    long getLength();
+    /**
+     * Visit any comments associated with 
+     * this chromatogram. 
+     * @param comments the comments associated
+     * with this chromatogram file stored
+     * as key-value pairs.
+     */
+    void visitComments(Map<String,String> comments);
+
 
 }

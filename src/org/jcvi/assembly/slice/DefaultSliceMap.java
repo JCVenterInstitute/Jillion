@@ -43,7 +43,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
     public DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
                         DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore,
                         QualityValueStrategy qualityValueStrategy){
-        this.size = coverageMap.getRegion(coverageMap.getSize()-1).getEnd()+1;
+        this.size = coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()+1;
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
             for(long i=region.getStart(); i<=region.getEnd(); i++ ){
                 List<SliceElement> sliceElements = createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy);
