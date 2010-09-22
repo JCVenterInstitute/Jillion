@@ -214,4 +214,22 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     public boolean equals(Object obj) {
         return delegate.equals(obj);
     }
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitNewTrace() {
+        
+    }
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitEndOfTrace() {
+        
+    }
 }

@@ -19,7 +19,12 @@
 
 package org.jcvi.trace.sanger.chromatogram;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ShortBuffer;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.Builder;
@@ -27,7 +32,15 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.io.IOUtil;
+import org.jcvi.io.MagicNumberInputStream;
 import org.jcvi.sequence.Peaks;
+import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.sanger.chromatogram.abi.Ab1FileParser;
+import org.jcvi.trace.sanger.chromatogram.abi.AbiUtil;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFileParser;
+import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramFileParser;
+import org.jcvi.trace.sanger.chromatogram.ztr.ZTRUtil;
 
 /**
  * {@code ChromatogramUtil} is a utility class for working with {@link Chromatogram}s.
@@ -169,5 +182,29 @@ public  final class ChromatogramUtil {
      */
     public static  Peaks buildFakePeaks(int numberOfPeaks) {
         return buildFakePeaks(numberOfPeaks, FALSE_WAVEFORM.length-1);
+    }
+    public static void parseChromatogram(File chromatogramFile, ChromatogramFileVisitor visitor) throws IOException, TraceDecoderException{
+        if(visitor ==null){
+            throw new NullPointerException("visitor can not be null");
+        }
+        InputStream fileInputStream =null;
+        try{
+            fileInputStream = new FileInputStream(chromatogramFile);
+            parseChromatogram(fileInputStream, visitor);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(fileInputStream);
+        }
+    }
+        
+    public static void parseChromatogram(InputStream in, ChromatogramFileVisitor visitor) throws IOException, TraceDecoderException{
+        MagicNumberInputStream mIn = new MagicNumberInputStream(in);
+        byte[] magicNumber = mIn.peekMagicNumber();
+        if(Arrays.equals(AbiUtil.MAGIC_NUMBER, magicNumber)){
+            Ab1FileParser.parseAb1File(mIn, visitor);
+        }else if(Arrays.equals(ZTRUtil.ZTR_MAGIC_NUMBER, magicNumber)){
+            ZTRChromatogramFileParser.parseZTRFile(mIn, visitor);
+        }else{
+            SCFChromatogramFileParser.parseSCFFile(mIn, visitor);
+        }
     }
 }

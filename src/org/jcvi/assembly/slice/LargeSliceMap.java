@@ -63,7 +63,7 @@ public class LargeSliceMap extends AbstractSliceMap{
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, int cacheSize){
         this(coverageMap, qualityDataStore, qualityValueStrategy, 
-                Range.buildRange(0,coverageMap.getRegion(coverageMap.getSize()-1).getEnd()),cacheSize);
+                Range.buildRange(0,coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()),cacheSize);
     }
     public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
             QualityDataStore qualityDataStore,
@@ -74,7 +74,7 @@ public class LargeSliceMap extends AbstractSliceMap{
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy){
         this(coverageMap, qualityDataStore, qualityValueStrategy, 
-                Range.buildRange(0,coverageMap.getRegion(coverageMap.getSize()-1).getEnd()));
+                Range.buildRange(0,coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()));
     }
     @Override
     public long getSize() {

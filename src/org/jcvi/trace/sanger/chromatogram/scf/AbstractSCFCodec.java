@@ -110,14 +110,17 @@ public abstract class AbstractSCFCodec implements SCFCodec{
     public void parse(InputStream in, ChromatogramFileVisitor visitor)
             throws SCFDecoderException {
         visitor.visitFile();
+        
         DataInputStream dataIn = new DataInputStream(in);
         SCFHeader header= headerCodec.decode(dataIn);
+        visitor.visitNewTrace();
         SortedMap<Integer, Section> sectionsByOffset = createSectionsByOffsetMap(header);
         long currentOffset =HEADER_SIZE;
         for(Entry<Integer, Section> entry: sectionsByOffset.entrySet()){
            SectionDecoder sp=sectionCodecFactory.getSectionParserFor(entry.getValue(), header);
            currentOffset = sp.decode(dataIn, currentOffset, header, visitor);
         }
+        visitor.visitEndOfTrace();
         visitor.visitEndOfFile();
         
     }

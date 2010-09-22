@@ -47,7 +47,8 @@ import org.junit.runners.Suite.SuiteClasses;
         
         AllFileServerUnitTests.class,
         TestEmailBuilder.class,
-        TestFileUtil.class
+        TestFileUtil.class,
+        TestMagicNumberInputStream.class
     }
 )
 public class AllIOUnitTests {

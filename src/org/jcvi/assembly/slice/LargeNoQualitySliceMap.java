@@ -43,7 +43,7 @@ public class LargeNoQualitySliceMap extends LargeSliceMap{
             CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap,
              PhredQuality phredQuality) {
         this(coverageMap,
-                Range.buildRange(0,coverageMap.getRegion(coverageMap.getSize()-1).getEnd()),
+                Range.buildRange(0,coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()),
                 phredQuality);
     }
     public LargeNoQualitySliceMap(
@@ -51,7 +51,7 @@ public class LargeNoQualitySliceMap extends LargeSliceMap{
                     int cacheSize,
              PhredQuality phredQuality) {
         this(coverageMap,
-                Range.buildRange(0,coverageMap.getRegion(coverageMap.getSize()-1).getEnd()),
+                Range.buildRange(0,coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()),
                 cacheSize,phredQuality);
     }
 
