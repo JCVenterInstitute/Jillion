@@ -27,17 +27,17 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
 public abstract class SingleNucleotideFastaVisitor extends AbstractNucleotideFastaVisitor{
 
-    private NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> record=null;
+    private NucleotideSequenceFastaRecord record=null;
     @Override
     protected synchronized void visitNucleotideFastaRecord(
-            NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> fastaRecord) {
+            NucleotideSequenceFastaRecord fastaRecord) {
         //only accept first record
         if(acceptVisitedFasta()){
             record = fastaRecord;        
         }
     }
     protected abstract boolean acceptVisitedFasta();
-    public synchronized NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> getRecord() {
+    public synchronized NucleotideSequenceFastaRecord getRecord() {
         return record;
     }
     

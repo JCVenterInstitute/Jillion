@@ -28,7 +28,6 @@ import java.io.IOException;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -147,16 +146,14 @@ public abstract class AbstractTestSequenceFastaDataStore {
     @Test
     public void parseFile() throws IOException, DataStoreException{
         
-        DataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> sut = buildSequenceFastaMap(getFile());
+        DataStore<NucleotideSequenceFastaRecord> sut = buildSequenceFastaMap(getFile());
         assertParsedCorrectly(sut);
     }
     
-    protected abstract DataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> buildSequenceFastaMap(File file) throws IOException;
-    protected void assertParsedCorrectly(DataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> sut) throws DataStoreException {
+    protected abstract DataStore<NucleotideSequenceFastaRecord> buildSequenceFastaMap(File file) throws IOException;
+    protected void assertParsedCorrectly(DataStore<NucleotideSequenceFastaRecord> sut) throws DataStoreException {
         assertEquals(9, sut.size());
-        final NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> nucleotideSequenceFastaRecord = sut.get("1");
-        System.out.println(nucleotideSequenceFastaRecord);
-        assertEquals(contig_1, nucleotideSequenceFastaRecord);
+        assertEquals(contig_1, sut.get("1"));
         assertEquals(contig_5, sut.get("5"));
         assertEquals(contig_9, sut.get("9"));
     }

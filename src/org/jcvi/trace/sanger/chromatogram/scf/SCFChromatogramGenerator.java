@@ -82,7 +82,7 @@ public class SCFChromatogramGenerator {
 
             DefaultNucleotideFastaFileDataStore sequences = new DefaultNucleotideFastaFileDataStore(sequenceFasta);
             DefaultQualityFastaFileDataStore qualities = new DefaultQualityFastaFileDataStore(qualityFasta);
-
+            
             for ( Iterator<String> ids = sequences.getIds(); ids.hasNext(); ) {
                 String id = ids.next();
                 System.out.println("Creating sequence " + id + " scf file");

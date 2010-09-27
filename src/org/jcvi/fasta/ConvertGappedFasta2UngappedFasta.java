@@ -29,7 +29,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 
 /**
@@ -66,8 +65,8 @@ public class ConvertGappedFasta2UngappedFasta {
 
                 @Override
                 protected void visitNucleotideFastaRecord(
-                        NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> fastaRecord) {
-                    NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> ungapped =
+                        NucleotideSequenceFastaRecord fastaRecord) {
+                    NucleotideSequenceFastaRecord ungapped =
                         new DefaultEncodedNucleotideFastaRecord(fastaRecord.getIdentifier(), fastaRecord.getComments(),
                                 fastaRecord.getValues().decodeUngapped());
                     output.print(ungapped);

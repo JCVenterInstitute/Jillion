@@ -157,5 +157,5 @@ DefaultEncodedNucleotideFastaRecord hrv_61 = new DefaultEncodedNucleotideFastaRe
 
 
 
-protected abstract DataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> buildMap(File file) throws IOException;
+protected abstract DataStore<NucleotideSequenceFastaRecord> buildMap(File file) throws IOException;
 }

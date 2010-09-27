@@ -31,7 +31,7 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 
-public class DefaultEncodedNucleotideFastaRecord extends AbstractNucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>{
+public class DefaultEncodedNucleotideFastaRecord extends AbstractNucleotideSequenceFastaRecord{
 
     private static NucleotideGlyphFactory factory = NucleotideGlyphFactory.getInstance();
     

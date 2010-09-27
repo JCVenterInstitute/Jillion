@@ -23,7 +23,6 @@
  */
 package org.jcvi.fasta;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 /**
  * {@code NucleotideFastaRecordFactory} is an implementation 
  * of {@link FastaRecordFactory} that makes 
@@ -32,6 +31,6 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
  *
  *
  */
-public interface NucleotideFastaRecordFactory extends FastaRecordFactory<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>>{
+public interface NucleotideFastaRecordFactory extends FastaRecordFactory<NucleotideSequenceFastaRecord>{
 
 }

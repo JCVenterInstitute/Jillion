@@ -33,6 +33,6 @@ public abstract class AbstractNucleotideFastaVisitor extends AbstractFastaVisito
                 new DefaultEncodedNucleotideFastaRecord(id, comment, sequence.replace("\\s+", "")));
     }
     
-    protected abstract void visitNucleotideFastaRecord(NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> fastaRecord);
+    protected abstract void visitNucleotideFastaRecord(NucleotideSequenceFastaRecord fastaRecord);
 
 }

@@ -29,14 +29,13 @@ import java.io.IOException;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFastaDataStoreWithNoComment{
 
     @Override
-    protected DataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> buildMap(
+    protected DataStore<NucleotideSequenceFastaRecord> buildMap(
             File file) throws IOException {
         return new DefaultNucleotideFastaFileDataStore(file);
     }
