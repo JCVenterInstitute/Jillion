@@ -34,14 +34,14 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
  *
  *
  */
-public class NucleotideFastaRecordDataStoreAdatper<F extends NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> extends FastaRecordDataStoreAdapter<NucleotideEncodedGlyphs,F> implements NucleotideDataStore{
+public class NucleotideFastaRecordDataStoreAdatper<F extends NucleotideSequenceFastaRecord> extends FastaRecordDataStoreAdapter<NucleotideEncodedGlyphs,F> implements NucleotideDataStore{
     /**
      * Convert of {@code DataStore<F>} into a DataStore{@code DataStore<T>}
      * @param <F> a {@code FastaRecord<Nucleotide>}.
      * @param datastoreOfFastaRecords the DataStore of F to wrap.
      * @return a new {@code DataStore<T>} which wraps the given datastore. 
      */
-    public static <F extends NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> NucleotideFastaRecordDataStoreAdatper adapt(DataStore<F> datastoreOfFastaRecords){
+    public static <F extends NucleotideSequenceFastaRecord> NucleotideFastaRecordDataStoreAdatper adapt(DataStore<F> datastoreOfFastaRecords){
         return new NucleotideFastaRecordDataStoreAdatper<F>(datastoreOfFastaRecords);
     }
     private NucleotideFastaRecordDataStoreAdatper(

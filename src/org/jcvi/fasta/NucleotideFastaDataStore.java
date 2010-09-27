@@ -29,6 +29,6 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
  *
  *
  */
-public interface NucleotideFastaDataStore extends FastaDataStore<NucleotideGlyph, NucleotideEncodedGlyphs, NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>>{
+public interface NucleotideFastaDataStore extends FastaDataStore<NucleotideGlyph, NucleotideEncodedGlyphs, NucleotideSequenceFastaRecord>{
 
 }

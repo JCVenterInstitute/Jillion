@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.AbstractLargeIdIterator;
 /**
@@ -110,7 +109,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
     }
 
     @Override
-    public synchronized NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> get(String id)
+    public synchronized NucleotideSequenceFastaRecord get(String id)
             throws DataStoreException {
         checkNotYetClosed();
         InputStream in=null;
@@ -175,7 +174,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
     }
 
     @Override
-    public synchronized Iterator<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> iterator() {
+    public synchronized Iterator<NucleotideSequenceFastaRecord> iterator() {
         checkNotYetClosed();
         return new FastaIterator();
     }
@@ -253,7 +252,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
         
     }
     
-    private class FastaIterator implements Iterator<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>>{
+    private class FastaIterator implements Iterator<NucleotideSequenceFastaRecord>{
         private final Iterator<String> identifierIterator;
 
         private FastaIterator(){
@@ -269,7 +268,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
          }
      
          @Override
-         public NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> next() {
+         public NucleotideSequenceFastaRecord next() {
              try {
                 return get(identifierIterator.next());
             } catch (DataStoreException e) {

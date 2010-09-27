@@ -23,9 +23,8 @@
  */
 package org.jcvi.fasta;
 
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
-public interface NucleotideSequenceFastaRecord<T extends EncodedGlyphs<NucleotideGlyph>> extends FastaRecord<T> {
+public interface NucleotideSequenceFastaRecord extends FastaRecord<NucleotideEncodedGlyphs> {
 
 }

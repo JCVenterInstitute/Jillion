@@ -36,9 +36,9 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
  *
  * @author jsitz@jcvi.org
  */
-public abstract class AbstractNucleotideSequenceFastaRecord<T extends NucleotideEncodedGlyphs> extends AbstractFastaRecord<T> implements NucleotideSequenceFastaRecord<T>
+public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFastaRecord<NucleotideEncodedGlyphs> implements NucleotideSequenceFastaRecord
 {
-    private final T sequence;
+    private final NucleotideEncodedGlyphs sequence;
     private final long checksum;
     
     /**
@@ -53,7 +53,7 @@ public abstract class AbstractNucleotideSequenceFastaRecord<T extends Nucleotide
         
     }
 
-    protected abstract T encodeNucleotides(CharSequence sequence2);
+    protected abstract NucleotideEncodedGlyphs encodeNucleotides(CharSequence sequence2);
 
     protected abstract CharSequence decodeNucleotides();
     /**
@@ -86,7 +86,7 @@ public abstract class AbstractNucleotideSequenceFastaRecord<T extends Nucleotide
     }
 
     @Override
-    public T getValues() 
+    public NucleotideEncodedGlyphs getValues() 
     {
         return this.sequence;
     }

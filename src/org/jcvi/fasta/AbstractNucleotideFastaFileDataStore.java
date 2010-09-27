@@ -31,7 +31,7 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
  *
  *
  */
-public abstract class AbstractNucleotideFastaFileDataStore extends AbstractFastaFileDataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> implements NucleotideFastaDataStore{
+public abstract class AbstractNucleotideFastaFileDataStore extends AbstractFastaFileDataStore<NucleotideSequenceFastaRecord> implements NucleotideFastaDataStore{
 
     private final NucleotideFastaRecordFactory fastaRecordFactory;
 

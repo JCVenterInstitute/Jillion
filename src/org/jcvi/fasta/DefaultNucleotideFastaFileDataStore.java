@@ -47,8 +47,8 @@ import org.jcvi.io.IOUtil;
  *
  */
 public class DefaultNucleotideFastaFileDataStore extends AbstractNucleotideFastaFileDataStore{
-    private final Map<String, NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> map = new HashMap<String, NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>>();
-    private DataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> datastore;
+    private final Map<String, NucleotideSequenceFastaRecord> map = new HashMap<String, NucleotideSequenceFastaRecord>();
+    private DataStore<NucleotideSequenceFastaRecord> datastore;
     /**
      * @param fastaRecordFactory
      */
@@ -98,14 +98,14 @@ public class DefaultNucleotideFastaFileDataStore extends AbstractNucleotideFasta
     @Override
     public void visitEndOfFile() {
         super.visitEndOfFile();
-        datastore = new SimpleDataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>>(map);
+        datastore = new SimpleDataStore<NucleotideSequenceFastaRecord>(map);
     }
     @Override
     public boolean contains(String id) throws DataStoreException {
         return datastore.contains(id);
     }
     @Override
-    public NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> get(String id)
+    public NucleotideSequenceFastaRecord get(String id)
             throws DataStoreException {
         return datastore.get(id);
     }
@@ -118,7 +118,7 @@ public class DefaultNucleotideFastaFileDataStore extends AbstractNucleotideFasta
         return datastore.size();
     }
     @Override
-    public Iterator<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> iterator() {
+    public Iterator<NucleotideSequenceFastaRecord> iterator() {
         return datastore.iterator();
     }
     

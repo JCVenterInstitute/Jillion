@@ -23,7 +23,6 @@
  */
 package org.jcvi.fasta;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
 public class DefaultNucleotideFastaRecordFactory implements NucleotideFastaRecordFactory{
 
@@ -35,13 +34,13 @@ public class DefaultNucleotideFastaRecordFactory implements NucleotideFastaRecor
         return INSTANCE;
     }
     @Override
-    public NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> createFastaRecord(
+    public NucleotideSequenceFastaRecord createFastaRecord(
             String id, String comments, String recordBody) {
         return new DefaultEncodedNucleotideFastaRecord(id,comments, recordBody.replace("\\s+", ""));
     }
 
     @Override
-    public NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> createFastaRecord(
+    public NucleotideSequenceFastaRecord createFastaRecord(
             String id, String recordBody) {
         return createFastaRecord(id, null,recordBody);
     }
