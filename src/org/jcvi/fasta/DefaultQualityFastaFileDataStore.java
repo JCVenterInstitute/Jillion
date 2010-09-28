@@ -49,8 +49,8 @@ import org.jcvi.io.IOUtil;
  */
 public class DefaultQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore{
 
-    private final Map<String, QualityFastaRecord<EncodedGlyphs<PhredQuality>>> map = new HashMap<String, QualityFastaRecord<EncodedGlyphs<PhredQuality>>>();
-    private DataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> datastore;
+    private final Map<String, QualityFastaRecord> map = new HashMap<String, QualityFastaRecord>();
+    private DataStore<QualityFastaRecord> datastore;
     /**
      * @param fastaRecordFactory
      */
@@ -98,14 +98,14 @@ public class DefaultQualityFastaFileDataStore extends AbstractQualityFastaFileDa
     @Override
     public void visitEndOfFile() {
         super.visitEndOfFile();
-        datastore = new SimpleDataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>>(map);
+        datastore = new SimpleDataStore<QualityFastaRecord>(map);
     }
     @Override
     public boolean contains(String id) throws DataStoreException {
         return datastore.contains(id);
     }
     @Override
-    public QualityFastaRecord<EncodedGlyphs<PhredQuality>> get(String id)
+    public QualityFastaRecord get(String id)
             throws DataStoreException {
         return datastore.get(id);
     }
@@ -118,7 +118,7 @@ public class DefaultQualityFastaFileDataStore extends AbstractQualityFastaFileDa
         return datastore.size();
     }
     @Override
-    public Iterator<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> iterator() {
+    public Iterator<QualityFastaRecord> iterator() {
         return datastore.iterator();
     }
     

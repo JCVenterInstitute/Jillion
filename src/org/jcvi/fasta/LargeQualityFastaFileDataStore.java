@@ -104,7 +104,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     }
 
     @Override
-    public synchronized QualityFastaRecord<EncodedGlyphs<PhredQuality>> get(String id)
+    public synchronized QualityFastaRecord get(String id)
             throws DataStoreException {
         checkNotYetClosed();
         InputStream in=null;
@@ -172,7 +172,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     }
 
     @Override
-    public synchronized Iterator<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> iterator() {
+    public synchronized Iterator<QualityFastaRecord> iterator() {
         checkNotYetClosed();
         return new FastaIterator();
     }
@@ -235,7 +235,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
         
     }
     
-    private class FastaIterator implements Iterator<QualityFastaRecord<EncodedGlyphs<PhredQuality>>>{
+    private class FastaIterator implements Iterator<QualityFastaRecord>{
         private final Iterator<String> identifierIterator;
 
         private FastaIterator(){
@@ -251,7 +251,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
          }
      
          @Override
-         public QualityFastaRecord<EncodedGlyphs<PhredQuality>> next() {
+         public QualityFastaRecord next() {
              try {
                 return get(identifierIterator.next());
             } catch (DataStoreException e) {

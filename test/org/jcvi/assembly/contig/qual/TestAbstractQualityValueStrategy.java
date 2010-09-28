@@ -40,7 +40,7 @@ public class TestAbstractQualityValueStrategy {
     protected static final long LENGTH = LAST_INDEX+1;
     PlacedRead placedRead;
     int gappedIndex = 5;
-    QualityFastaRecord<EncodedGlyphs<PhredQuality>> qualityFasta;
+    QualityFastaRecord qualityFasta;
     
     AbstractQualityValueStrategy sut;
     NucleotideEncodedGlyphs encodedGlyphs;

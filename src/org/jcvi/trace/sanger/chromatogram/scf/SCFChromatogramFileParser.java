@@ -42,8 +42,8 @@ import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeaderCodec;
 public final class SCFChromatogramFileParser {
 
     private static final SCFHeaderCodec HEADER_CODEC =new DefaultSCFHeaderCodec();
-    private static final SCFCodec VERSION3 =new Version3SCFCodec();
-    private static final SCFCodec VERSION2 =new Version2SCFCodec();
+    private static final AbstractSCFCodec VERSION3 =new Version3SCFCodec();
+    private static final AbstractSCFCodec VERSION2 =new Version2SCFCodec();
     
     private SCFChromatogramFileParser(){}
     /**
@@ -73,14 +73,27 @@ public final class SCFChromatogramFileParser {
         }
         
     }
-    
+    /**
+     * Parse the given SCF encoded chromatogram InputStream
+     * and call the appropriate visitXXX methods of the given
+     * visitor while parsing.  This method can handle SCF version
+     * 2 AND version 3 formats.
+     * @param in the SCF version 2 or version 3 chromatogram file
+     * Inputstream to parse.
+     * @param visitor the visitor instance to call visitXXX methods on
+     * (can not be null).
+     * @throws TraceDecoderException if there is  a problem
+     * parsing the SCF file.
+     * @throws IOException if there is a problem reading the file.
+     * @throws NullPointerException if visitor is null.
+     */
     public static void parseSCFFile(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
         DataInputStream dIn = new DataInputStream(in);
         SCFHeader header =HEADER_CODEC.decode(dIn);
         if(header.getVersion()>=3F){
-            VERSION3.parse(in, visitor);
+            VERSION3.parse(dIn,header, visitor);
         }else{
-            VERSION2.parse(in, visitor);
+            VERSION2.parse(dIn, header,visitor);
         }
     }
 }

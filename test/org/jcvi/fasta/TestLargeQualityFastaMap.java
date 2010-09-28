@@ -27,13 +27,11 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 
 public class TestLargeQualityFastaMap extends AbstractTestQualityFastaDataStore{
 
     @Override
-    protected  DataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> buildQualityFastaMapFrom(File file)
+    protected  DataStore<QualityFastaRecord> buildQualityFastaMapFrom(File file)
             throws IOException {
         return new LargeQualityFastaFileDataStore(file);
     }

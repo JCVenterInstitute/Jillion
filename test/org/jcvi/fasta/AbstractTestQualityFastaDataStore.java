@@ -29,7 +29,6 @@ import java.io.IOException;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
@@ -41,8 +40,8 @@ public abstract class AbstractTestQualityFastaDataStore {
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
 
     
-    DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>> JGBAA02T21A12PB1A1F = 
-            new DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>>(
+    DefaultQualityFastaRecord JGBAA02T21A12PB1A1F = 
+            new DefaultQualityFastaRecord(
                     "JGBAA02T21A12PB1A1F",null,
                     new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,
                             PhredQuality.valueOf(
@@ -88,8 +87,8 @@ public abstract class AbstractTestQualityFastaDataStore {
                                     })));
     
     
-    DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>> JGBAA07T21D08MP605F = 
-        new DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>>(
+    DefaultQualityFastaRecord JGBAA07T21D08MP605F = 
+        new DefaultQualityFastaRecord(
                 "JGBAA07T21D08MP605F",null,
                 new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,
                         PhredQuality.valueOf(
@@ -123,8 +122,8 @@ public abstract class AbstractTestQualityFastaDataStore {
                                 })));
     
     
-    DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>> JGBAA01T21H05PB2A2341BRB = 
-        new DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>>(
+    DefaultQualityFastaRecord JGBAA01T21H05PB2A2341BRB = 
+        new DefaultQualityFastaRecord(
                 "JGBAA01T21H05PB2A2341BRB",null,
                 new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,
                         PhredQuality.valueOf(
@@ -176,12 +175,12 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void parseFile() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-        DataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> sut = buildQualityFastaMapFrom(qualFile);
+        DataStore<QualityFastaRecord> sut = buildQualityFastaMapFrom(qualFile);
         assertEquals(321, sut.size());
         assertEquals(JGBAA02T21A12PB1A1F, sut.get("JGBAA02T21A12PB1A1F"));
         assertEquals(JGBAA07T21D08MP605F, sut.get("JGBAA07T21D08MP605F"));
         assertEquals(JGBAA01T21H05PB2A2341BRB, sut.get("JGBAA01T21H05PB2A2341BRB"));
     }
     
-    protected abstract DataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>> buildQualityFastaMapFrom(File file) throws IOException;
+    protected abstract DataStore<QualityFastaRecord> buildQualityFastaMapFrom(File file) throws IOException;
 }

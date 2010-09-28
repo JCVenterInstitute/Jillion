@@ -23,7 +23,6 @@
  */
 package org.jcvi.fasta;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
 public abstract class AbstractNucleotideFastaVisitor extends AbstractFastaVisitor{
 

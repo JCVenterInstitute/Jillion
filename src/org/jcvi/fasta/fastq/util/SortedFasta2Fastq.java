@@ -43,6 +43,7 @@ import org.jcvi.fasta.FastaParser;
 import org.jcvi.fasta.FastaRecord;
 import org.jcvi.fasta.FastaVisitor;
 import org.jcvi.fasta.IncludeFastXIdFilter;
+import org.jcvi.fasta.NucleotideSequenceFastaRecord;
 import org.jcvi.fasta.NullFastXFilter;
 import org.jcvi.fasta.QualityFastaRecord;
 import org.jcvi.fasta.QualityFastaRecordUtil;
@@ -79,7 +80,7 @@ public class SortedFasta2Fastq {
      * This is our end of file token which tell us we are
      * done parsing by the time we get to this object in our quality queue.
      */
-    private static final QualityFastaRecord<EncodedGlyphs<PhredQuality>> QUALITY_END_OF_FILE = QualityFastaRecordUtil.buildFastaRecord("NULL", "", "");
+    private static final QualityFastaRecord QUALITY_END_OF_FILE = QualityFastaRecordUtil.buildFastaRecord("NULL", "", "");
     /**
      * This is our end of file token which tell us we are
      * done parsing by the time we get to this object in our seq queue.
@@ -89,7 +90,7 @@ public class SortedFasta2Fastq {
     private static final int DEFAULT_QUEUE_SIZE = 1000;
     
     private abstract static class BlockedFastaVisitor<T extends Glyph,E extends EncodedGlyphs<T>, F extends FastaRecord<E>> extends Thread{
-        final BlockingQueue<FastaRecord<E>> queue;
+        final BlockingQueue<F> queue;
         final File file;
        
         private final FastXFilter filter;
@@ -100,13 +101,13 @@ public class SortedFasta2Fastq {
          * @param queue
          */
         public BlockedFastaVisitor(File file,
-                BlockingQueue<FastaRecord<E>> queue, FastXFilter filter) {
+                BlockingQueue<F> queue, FastXFilter filter) {
             this.file = file;
             this.queue = queue;
             this.filter = filter;
         }
        
-        protected BlockingQueue<FastaRecord<E>> getQueue() {
+        protected BlockingQueue<F> getQueue() {
             return queue;
         }
 
@@ -116,14 +117,14 @@ public class SortedFasta2Fastq {
         
         
     }
-    private static class QualityBlockedFastaVisitor extends BlockedFastaVisitor<PhredQuality, EncodedGlyphs<PhredQuality>, QualityFastaRecord<EncodedGlyphs<PhredQuality>>>{
+    private static class QualityBlockedFastaVisitor extends BlockedFastaVisitor<PhredQuality, EncodedGlyphs<PhredQuality>, QualityFastaRecord>{
 
         /**
          * @param file
          * @param queue
          */
         public QualityBlockedFastaVisitor(File file,
-                BlockingQueue<FastaRecord<EncodedGlyphs<PhredQuality>>> queue,FastXFilter filter) {
+                BlockingQueue<QualityFastaRecord> queue,FastXFilter filter) {
             super(file, queue,filter);
         }
 
@@ -164,14 +165,14 @@ public class SortedFasta2Fastq {
         }
     }
     
-    private static class SequenceBlockedFastaVisitor extends BlockedFastaVisitor<NucleotideGlyph, NucleotideEncodedGlyphs, DefaultEncodedNucleotideFastaRecord>{
+    private static class SequenceBlockedFastaVisitor extends BlockedFastaVisitor<NucleotideGlyph, NucleotideEncodedGlyphs, NucleotideSequenceFastaRecord>{
         
     /**
          * @param file
          * @param queue
          */
         public SequenceBlockedFastaVisitor(File file,
-                BlockingQueue<FastaRecord<NucleotideEncodedGlyphs>> queue,FastXFilter filter) {
+                BlockingQueue<NucleotideSequenceFastaRecord> queue,FastXFilter filter) {
             super(file, queue, filter);
         }
         @Override
@@ -283,8 +284,8 @@ public class SortedFasta2Fastq {
             RunLengthEncodedGlyphCodec qualityCodec = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
             final FastQQualityCodec fastqQualityCodec = useSanger? new SangerFastQQualityCodec(qualityCodec): new IlluminaFastQQualityCodec(qualityCodec);
         
-            final BlockingQueue<FastaRecord<EncodedGlyphs<PhredQuality>>> qualityQueue = new ArrayBlockingQueue<FastaRecord<EncodedGlyphs<PhredQuality>>>(bufferSize);
-            final BlockingQueue<FastaRecord<NucleotideEncodedGlyphs>> sequenceQueue = new ArrayBlockingQueue<FastaRecord<NucleotideEncodedGlyphs>>(bufferSize);
+            final BlockingQueue<QualityFastaRecord> qualityQueue = new ArrayBlockingQueue<QualityFastaRecord>(bufferSize);
+            final BlockingQueue<NucleotideSequenceFastaRecord> sequenceQueue = new ArrayBlockingQueue<NucleotideSequenceFastaRecord>(bufferSize);
             
             final PrintWriter writer = new PrintWriter(commandLine.getOptionValue("o"));
             boolean done = false;
