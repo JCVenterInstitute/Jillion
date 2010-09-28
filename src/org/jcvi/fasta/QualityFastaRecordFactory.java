@@ -23,8 +23,6 @@
  */
 package org.jcvi.fasta;
 
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 /**
  * {@code NucleotideFastaRecordFactory} is an implementation 
  * of {@link FastaRecordFactory} that makes 
@@ -33,6 +31,6 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
  *
  *
  */
-public interface QualityFastaRecordFactory extends FastaRecordFactory<QualityFastaRecord<EncodedGlyphs<PhredQuality>>>{
+public interface QualityFastaRecordFactory extends FastaRecordFactory<QualityFastaRecord>{
 
 }

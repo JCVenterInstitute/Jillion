@@ -23,11 +23,9 @@
  */
 package org.jcvi.fasta;
 
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 
-public class FlowgramQualityFastaRecord extends DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>>{
+public class FlowgramQualityFastaRecord extends DefaultQualityFastaRecord{
 
     public FlowgramQualityFastaRecord(String id, Flowgram flowgram) {
         super(id, null,flowgram.getQualities());

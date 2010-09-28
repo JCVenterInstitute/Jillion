@@ -40,7 +40,7 @@ public class TestQualityFastaRecord {
     byte[] bytes = new byte[]{10,20,70,50,60,0,55,1,2,3,4,5,6,7,8,9,10,10,20,30,12,11,2,5};
    
     private EncodedGlyphs<PhredQuality> encodedBytes = new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,PhredQuality.valueOf(bytes));
-    DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>> sut = new DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>>(id,comment,encodedBytes);
+    DefaultQualityFastaRecord sut = new DefaultQualityFastaRecord(id,comment,encodedBytes);
     
     @Test
     public void constructor(){
@@ -81,7 +81,7 @@ public class TestQualityFastaRecord {
     }
     @Test
     public void equalsSameId(){
-        DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>> sameIdAndComment = new DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>>(
+        DefaultQualityFastaRecord sameIdAndComment = new DefaultQualityFastaRecord(
                 id,comment,createMock(EncodedGlyphs.class));
         TestUtil.assertEqualAndHashcodeSame(sut, sameIdAndComment);
     }
@@ -95,13 +95,13 @@ public class TestQualityFastaRecord {
     }
     @Test
     public void equalsDifferentComment(){
-        DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>> differentComment = new DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>>(
+        DefaultQualityFastaRecord differentComment = new DefaultQualityFastaRecord(
                 id,null,createMock(EncodedGlyphs.class));
         TestUtil.assertEqualAndHashcodeSame(sut, differentComment);
     }
     @Test
     public void notEqualsDifferentId(){
-        DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>> differentId = new DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>>(
+        DefaultQualityFastaRecord differentId = new DefaultQualityFastaRecord(
                 "different"+id,comment,createMock(EncodedGlyphs.class));
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentId);
     }

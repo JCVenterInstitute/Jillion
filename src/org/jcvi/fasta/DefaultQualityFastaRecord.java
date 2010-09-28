@@ -28,12 +28,12 @@ import java.util.List;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
-public class DefaultQualityFastaRecord<T extends EncodedGlyphs<PhredQuality>> extends AbstractFastaRecord<T> implements QualityFastaRecord<T>{
-    private final T qualities;
-    public DefaultQualityFastaRecord(String id, T qualities){
+public class DefaultQualityFastaRecord extends AbstractFastaRecord<EncodedGlyphs<PhredQuality>> implements QualityFastaRecord{
+    private final EncodedGlyphs<PhredQuality> qualities;
+    public DefaultQualityFastaRecord(String id, EncodedGlyphs<PhredQuality> qualities){
         this(id, null, qualities);
     }
-    public DefaultQualityFastaRecord(String id, String comments, T qualities){
+    public DefaultQualityFastaRecord(String id, String comments, EncodedGlyphs<PhredQuality> qualities){
         super(id,comments);
         this.qualities = qualities;
         
@@ -58,7 +58,7 @@ public class DefaultQualityFastaRecord<T extends EncodedGlyphs<PhredQuality>> ex
     }
 
     @Override
-    public T getValues() {
+    public EncodedGlyphs<PhredQuality> getValues() {
         return qualities;
     }
     

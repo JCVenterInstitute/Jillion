@@ -29,6 +29,6 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
  *
  *
  */
-public interface QualityFastaDataStore extends FastaDataStore<PhredQuality, EncodedGlyphs<PhredQuality>, QualityFastaRecord<EncodedGlyphs<PhredQuality>>>{
+public interface QualityFastaDataStore extends FastaDataStore<PhredQuality, EncodedGlyphs<PhredQuality>, QualityFastaRecord>{
 
 }

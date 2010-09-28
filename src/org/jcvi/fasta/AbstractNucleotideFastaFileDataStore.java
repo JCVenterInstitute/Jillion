@@ -23,7 +23,6 @@
  */
 package org.jcvi.fasta;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 /**
  * {@code AbstractNucleotideFastaFileDataStore} is an implementation
  * of {@link AbstractFastaFileDataStore} for {@link NucleotideSequenceFastaRecord}s.

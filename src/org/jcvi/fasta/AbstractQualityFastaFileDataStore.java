@@ -23,8 +23,6 @@
  */
 package org.jcvi.fasta;
 
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 /**
  * {@code AbstractQualityFastaFileDataStore} is an implementation
  * of {@link AbstractFastaFileDataStore} for {@code  FastaRecord<EncodedGlyphs<PhredQuality>>}s.
@@ -32,7 +30,7 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
  *
  *
  */
-public abstract class AbstractQualityFastaFileDataStore extends AbstractFastaFileDataStore<QualityFastaRecord<EncodedGlyphs<PhredQuality>>>{
+public abstract class AbstractQualityFastaFileDataStore extends AbstractFastaFileDataStore<QualityFastaRecord>{
 
     private final QualityFastaRecordFactory fastaRecordFactory;
 

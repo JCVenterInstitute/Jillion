@@ -23,8 +23,6 @@
  */
 package org.jcvi.fasta;
 
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 
 public class DefaultQualityFastaRecordFactory implements QualityFastaRecordFactory{
     private static final DefaultQualityFastaRecordFactory INSTANCE = new DefaultQualityFastaRecordFactory();
@@ -35,14 +33,14 @@ public class DefaultQualityFastaRecordFactory implements QualityFastaRecordFacto
         return INSTANCE;
     }
     @Override
-    public QualityFastaRecord<EncodedGlyphs<PhredQuality>> createFastaRecord(
+    public QualityFastaRecord createFastaRecord(
             String id, String comments, String recordBody) {
         return QualityFastaRecordUtil.buildFastaRecord(id,comments, recordBody);
         
     }
 
     @Override
-    public QualityFastaRecord<EncodedGlyphs<PhredQuality>> createFastaRecord(
+    public QualityFastaRecord createFastaRecord(
             String id, String recordBody) {
         return createFastaRecord(id, null,recordBody);
     }

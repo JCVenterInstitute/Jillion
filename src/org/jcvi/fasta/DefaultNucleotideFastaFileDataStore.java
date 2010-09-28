@@ -35,7 +35,6 @@ import java.util.Map;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 /**
  * {@code DefaultNucleotideFastaFileDataStore} is the default implementation

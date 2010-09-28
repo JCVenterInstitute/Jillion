@@ -52,6 +52,7 @@ import org.jcvi.trace.sanger.chromatogram.scf.section.Section;
 import org.jcvi.trace.sanger.chromatogram.scf.section.SectionCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.section.SectionCodecFactory;
 import org.jcvi.trace.sanger.chromatogram.scf.section.SectionDecoder;
+import org.jcvi.trace.sanger.chromatogram.scf.section.SectionDecoderException;
 import org.jcvi.trace.sanger.chromatogram.scf.section.SectionEncoder;
 
 import static org.jcvi.trace.sanger.chromatogram.scf.SCFUtils.*;
@@ -104,15 +105,7 @@ public abstract class AbstractSCFCodec implements SCFCodec{
 
        
     }
-    
-    
-    @Override
-    public void parse(InputStream in, ChromatogramFileVisitor visitor)
-            throws SCFDecoderException {
-        visitor.visitFile();
-        
-        DataInputStream dataIn = new DataInputStream(in);
-        SCFHeader header= headerCodec.decode(dataIn);
+    public void parse(DataInputStream dataIn,SCFHeader header, ChromatogramFileVisitor visitor) throws SectionDecoderException{
         visitor.visitNewTrace();
         SortedMap<Integer, Section> sectionsByOffset = createSectionsByOffsetMap(header);
         long currentOffset =HEADER_SIZE;
@@ -122,6 +115,16 @@ public abstract class AbstractSCFCodec implements SCFCodec{
         }
         visitor.visitEndOfTrace();
         visitor.visitEndOfFile();
+    }
+    
+    @Override
+    public void parse(InputStream in, ChromatogramFileVisitor visitor)
+            throws SCFDecoderException {
+        visitor.visitFile();
+        
+        DataInputStream dataIn = new DataInputStream(in);
+        SCFHeader header= headerCodec.decode(dataIn);
+        parse(dataIn,header, visitor);
         
     }
     @Override

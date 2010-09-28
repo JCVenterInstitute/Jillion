@@ -48,10 +48,8 @@ import org.jcvi.fasta.fastq.FastQQualityCodec;
 import org.jcvi.fasta.fastq.FastQRecord;
 import org.jcvi.fasta.fastq.SangerFastQQualityCodec;
 import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.idReader.DefaultFileIdReader;
 import org.jcvi.io.idReader.IdReader;
@@ -102,7 +100,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
     public void visitEncodedQualities(String encodedQualities) {
         if(qualOut!=null && shouldWrite){
             try {
-                qualOut.write(new DefaultQualityFastaRecord<EncodedGlyphs<PhredQuality>>(currentId, 
+                qualOut.write(new DefaultQualityFastaRecord(currentId, 
                         qualityCodec.decode(encodedQualities)).toString().getBytes());
             } catch (IOException e) {
                 throw new RuntimeException("could not write to quality data for "+ currentId, e);

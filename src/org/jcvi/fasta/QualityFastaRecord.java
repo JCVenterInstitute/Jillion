@@ -26,6 +26,6 @@ package org.jcvi.fasta;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
-public interface QualityFastaRecord<T extends EncodedGlyphs<PhredQuality>> extends FastaRecord<T> {
+public interface QualityFastaRecord extends FastaRecord<EncodedGlyphs<PhredQuality>> {
 
 }
