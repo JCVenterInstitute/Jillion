@@ -25,8 +25,6 @@
  */
 package org.jcvi.util;
 
-import java.util.Iterator;
-
 import org.jcvi.Builder;
 
 
@@ -39,27 +37,54 @@ import org.jcvi.Builder;
  */
 public final class StringUtilities
 {
+    /**
+     * {@code JoinedStringBuilder}
+     * is a Builder that builds a single String
+     * object from a collection of Objects
+     * that can optionally be concatenated with 
+     * another "glue" Object. Objects
+     * to be joined use their {@link Object#toString()}
+     * method to get their String representation.
+     * @author dkatzel
+     *
+     *
+     */
     public static class JoinedStringBuilder implements Builder<String>{
         private final Iterable<?> elements;
-        private String glue;
+        private Object glue;
+        /**
+         * Join the given elements together
+         * in their iteration order.
+         * @param elements the Objects to be joined.
+         * If an element is null, then it will be skipped
+         * during the join.
+         */
         public JoinedStringBuilder(Iterable<?> elements){
             this.elements = elements;
         }
+        /**
+         * Join the given elements together
+         * in their iteration order.
+         * @param elements the Objects to be joined.
+         * If an element is null, then it will be skipped
+         * during the join.
+         */
         public JoinedStringBuilder(Object... elements){
             this(new ArrayIterable<Object>(elements));
         }
-        
-        public JoinedStringBuilder glue(String glue){
+        /**
+         * The given glue's {@link Object#toString()} is what is concatenated
+         * between the joined the elements.
+         * @param glue the String to put between concatenated
+         * elements, if glue is set to {@code null}
+         * then no glue will be used.
+         * @return this
+         */
+        public JoinedStringBuilder glue(Object glue){
             this.glue = glue;
             return this;
-        }
-        
-        public JoinedStringBuilder glue(Character glue){ 
-            if(glue==null){
-                return glue((String)null);
-            }
-            return glue(glue.toString());
-        }
+        }        
+       
         /**
         * {@inheritDoc}
         */
@@ -74,7 +99,7 @@ public final class StringUtilities
                     String itemString = item.toString();
                     if (glue != null && joined.length() > 0 && itemString.length() > 0)
                     {
-                        joined.append(glue);
+                        joined.append(glue.toString());
                     }
                     joined.append(itemString);
                 }
@@ -189,10 +214,8 @@ public final class StringUtilities
     /**
      * This class is a utility method library and should not be instatiated.
      */
-    @Deprecated
     private StringUtilities()
     {
-        super();
     }
     
     

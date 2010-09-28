@@ -23,13 +23,11 @@
  */
 package org.jcvi.io;
 
-import java.util.Arrays;
-
 import org.junit.Test;
 
 import sun.misc.BASE64Encoder;
 import static org.junit.Assert.*;
-@SuppressWarnings("restriction")
+
 public class TestBase64Encoder {
     //example text taken from Wikipedia Base64 article and is text of Thomas Hobbes' Leviathan 
     //permanent link:
