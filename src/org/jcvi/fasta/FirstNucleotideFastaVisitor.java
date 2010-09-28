@@ -22,7 +22,13 @@
  * @author dkatzel
  */
 package org.jcvi.fasta;
-
+/**
+ * {@code FirstNucleotideFastaVisitor} only accepts
+ * the first FastaRecord to be visited.
+ * @author dkatzel
+ *
+ *
+ */
 public class FirstNucleotideFastaVisitor extends SingleNucleotideFastaVisitor{
 
     

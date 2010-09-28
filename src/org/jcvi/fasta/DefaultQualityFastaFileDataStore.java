@@ -35,8 +35,6 @@ import java.util.Map;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
 /**
  * {@code DefaultQualityFastaFileDataStore} is the default implementation

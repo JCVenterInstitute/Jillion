@@ -18,19 +18,14 @@
  ******************************************************************************/
 
 package org.jcvi.trace.frg.afg;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.Range;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
-import org.jcvi.glyph.encoder.TigrQualitiesEncoder;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;

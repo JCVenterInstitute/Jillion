@@ -287,10 +287,17 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
     */
     @Override
     public long getLength() {
-        if(regions.isEmpty()){
+        if(isEmpty()){
             return 0L;
         }
         return regions.get(regions.size()-1).getEnd();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isEmpty() {
+        return regions.isEmpty();
     }
 
 

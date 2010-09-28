@@ -22,7 +22,13 @@
  * @author dkatzel
  */
 package org.jcvi.fasta;
-
+/**
+ * {@code LastNucleotideFastaVisitor} only keeps around 
+ * the last FastaRecord that was visited.
+ * @author dkatzel
+ *
+ *
+ */
 public class LastNucleotideFastaVisitor extends SingleNucleotideFastaVisitor{
 
     @Override

@@ -23,7 +23,6 @@
  */
 package org.jcvi.assembly.contig;
 
-import org.easymock.ConstructorArgs;
 import org.jcvi.assembly.Placed;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
@@ -55,7 +54,7 @@ public class TestDefaultContigQualityClassComputer {
     DataStore<EncodedGlyphs<PhredQuality>> qualityFastaMap;
     EncodedGlyphs<NucleotideGlyph> consensus;
     @Before
-    public void setup() throws SecurityException, NoSuchMethodException{
+    public void setup() throws SecurityException{
         qualityValueStrategy = createMock(QualityValueStrategy.class);
 
         sut = createMockBuilder(DefaultContigQualityClassComputer.class)

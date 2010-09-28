@@ -23,8 +23,13 @@
  */
 package org.jcvi.fasta;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-
+/**
+ * {@code SingleNucleotideFastaVisitor} is a {@link FastaVisitor}
+ * that only accepts at most one FastaRecord.
+ * @author dkatzel
+ *
+ *
+ */
 public abstract class SingleNucleotideFastaVisitor extends AbstractNucleotideFastaVisitor{
 
     private NucleotideSequenceFastaRecord record=null;

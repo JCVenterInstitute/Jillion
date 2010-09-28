@@ -34,7 +34,7 @@ public interface CoverageMap <T extends CoverageRegion<?>> extends Iterable<T>{
 
     T getRegion(int i);
     List<T> getRegions();
-    
+    boolean isEmpty();
     List<T> getRegionsWithin(Range range);
     List<T> getRegionsWhichIntersect(Range range);
     T getRegionWhichCovers(long consensusIndex);

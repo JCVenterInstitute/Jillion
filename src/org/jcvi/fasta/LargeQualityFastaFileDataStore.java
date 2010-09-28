@@ -35,8 +35,6 @@ import java.util.regex.Pattern;
 
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.AbstractLargeIdIterator;
 /**

@@ -30,7 +30,6 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.easymock.ConstructorArgs;
 import org.jcvi.auth.JCVIEncodedAuthorizer;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.FileType;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.RequestType;
