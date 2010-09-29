@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jcvi.Range;
 import org.jcvi.assembly.AssemblyTestUtil;
-import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.assembly.trim.MinimumEndCoverageTrimmer;
 import org.jcvi.assembly.trim.PlacedReadTrimmer;
 import org.jcvi.assembly.trim.TrimmerException;

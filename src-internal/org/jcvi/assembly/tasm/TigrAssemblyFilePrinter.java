@@ -19,8 +19,6 @@
 
 package org.jcvi.assembly.tasm;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 import org.jcvi.Range;

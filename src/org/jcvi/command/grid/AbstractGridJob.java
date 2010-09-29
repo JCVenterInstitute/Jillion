@@ -387,7 +387,7 @@ import org.jcvi.command.Command;
             this.postExecutionHook = postExecutionHook;
             return this;
         }
-        public Builder setBinaryMode(boolean mode) {
+        public Builder<J> setBinaryMode(boolean mode) {
             this.setNativeSpec(NativeSpec.BINARY_MODE, (mode) ? "-b y" : "-b n");
             return this;
         }

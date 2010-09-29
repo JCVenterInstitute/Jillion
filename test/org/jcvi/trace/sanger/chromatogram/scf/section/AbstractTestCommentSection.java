@@ -27,7 +27,6 @@ import static org.easymock.EasyMock.createMock;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramBuilder;

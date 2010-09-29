@@ -42,7 +42,6 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.MemoryMappedContigFileDataStore;
 import org.jcvi.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.fasta.LargeQualityFastaFileDataStore;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.jcvi.io.idReader.IdReaderException;
