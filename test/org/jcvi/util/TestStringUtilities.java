@@ -47,5 +47,33 @@ public class TestStringUtilities {
         assertFalse("word",StringUtilities.isNumber("nope"));
         assertFalse("sentence",StringUtilities.isNumber("not a number"));
     }
+    
+    @Test
+    public void joinBuilderStringsWithNoGlue(){
+        assertEquals("LarryMoeCurly",
+                new StringUtilities.JoinedStringBuilder("Larry","Moe","Curly").build());
+    }
+    
+    @Test
+    public void joinBuilderStringsWithGlue(){
+        assertEquals("Larry,Moe,Curly",
+                new StringUtilities.JoinedStringBuilder("Larry","Moe","Curly")
+                        .glue(",")
+                        .build());
+    }
+    
+    @Test
+    public void joinBuilderObjectsWithNoGlue(){
+        assertEquals("LarryMoeCurly",
+                new StringUtilities.JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"}).build());
+    }
+    
+    @Test
+    public void joinBuilderObjectsWithGlue(){
+        assertEquals("Larry,Moe,Curly",
+                new StringUtilities.JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"})
+                        .glue(",")
+                        .build());
+    }
 
 }

@@ -131,8 +131,6 @@ public class SingleContigCasAssemblyBuilder {
         options.addOption(new CommandLineOptionBuilder("s", "cache size ( default "+DEFAULT_CACHE_SIZE +" )")  
                                 .longName("cache_size")
                                         .build());
-        options.addOption(new CommandLineOptionBuilder("coverage_trim", "perform additional contig ends trimming based on coverage.  The value of coverage_trim is the min level coverage required at ends.")                                
-                            .build());
         
         options.addOption(new CommandLineOptionBuilder("useIllumina", "any FASTQ files in this assembly are encoded in Illumina 1.3+ format (default is Sanger)")                                
                             .isFlag(true)
@@ -177,10 +175,7 @@ public class SingleContigCasAssemblyBuilder {
             }else{
                 trimToUntrimmedMap = new UnTrimmedExtensionTrimMap();
             }
-            Integer minCoverageAtEnds=null;
-            if(commandLine.hasOption("coverage_trim")){
-                minCoverageAtEnds = Integer.parseInt(commandLine.getOptionValue("coverage_trim"));
-            }
+          
             
             boolean useClosureTrimming = commandLine.hasOption("useClosureTrimming");
             TraceDataStore<FileSangerTrace> sangerTraceDataStore=null;

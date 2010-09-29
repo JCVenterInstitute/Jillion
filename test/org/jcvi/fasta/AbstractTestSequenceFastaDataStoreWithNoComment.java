@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.io.fileServer.ResourceFileServer;
 
 public  abstract class AbstractTestSequenceFastaDataStoreWithNoComment {

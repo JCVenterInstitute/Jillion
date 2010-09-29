@@ -35,8 +35,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.assembly.ContigCheckerXMLWriter;
 import org.jcvi.assembly.ace.AceContig;
-import org.jcvi.assembly.ace.AceFileParser;
-import org.jcvi.assembly.ace.AceFileVisitor;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.analysis.ContigChecker;
 import org.jcvi.assembly.analysis.ContigCheckerStruct;
