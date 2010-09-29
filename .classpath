@@ -56,7 +56,7 @@
 			<attribute name="javadoc_location" value="http://java.sun.com/products/javamail/javadocs/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/drmaa.jar">
+	<classpathentry exported="true" kind="lib" path="lib/drmaa.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://gridengine.sunsource.net/nonav/source/browse/~checkout~/gridengine/doc/javadocs"/>
 		</attributes>
