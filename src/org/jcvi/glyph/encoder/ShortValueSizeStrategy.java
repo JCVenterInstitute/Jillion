@@ -25,22 +25,28 @@ package org.jcvi.glyph.encoder;
 
 import java.nio.ByteBuffer;
 
-import org.jcvi.io.IOUtil;
 /**
  * <code>ShortValueSizeStrategy</code> is an implementation
  * of {@link ValueSizeStrategy} that reads/writes single bytes.
  * @author dkatzel
  *
  */
-public class ShortValueSizeStrategy implements ValueSizeStrategy {
-    /**
+public class ShortValueSizeStrategy implements ValueSizeStrategy<Short> {
+    
+	private static ShortValueSizeStrategy INSTANCE = new ShortValueSizeStrategy();
+	
+	public static ShortValueSizeStrategy getInstance(){
+		return INSTANCE;
+	}
+	private ShortValueSizeStrategy(){}
+	/**
      * get the next short from the buffer.
      * @param buf the buffer to read the byte from.
      * @return a short value as an int.
      */
     @Override
-    public long getNext(ByteBuffer buf) {
-        return IOUtil.convertToUnsignedShort(buf.getShort());
+    public Short getNext(ByteBuffer buf) {
+        return buf.getShort();
     }
     /**
      * puts the given short value into the given buffer.

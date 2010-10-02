@@ -30,13 +30,13 @@ import java.nio.ByteBuffer;
  * @author dkatzel
  *
  */
-public class IntValueSizeStrategy implements ValueSizeStrategy {
+public class IntValueSizeStrategy implements ValueSizeStrategy<Integer> {
     /**
      * 
     * {@inheritDoc}
      */
     @Override
-    public long getNext(ByteBuffer buf) {
+    public Integer getNext(ByteBuffer buf) {
         return buf.getInt();
     }
     /**

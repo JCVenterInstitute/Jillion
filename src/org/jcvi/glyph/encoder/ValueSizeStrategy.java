@@ -34,13 +34,13 @@ import java.nio.ByteBuffer;
  *
  *
  */
-public interface ValueSizeStrategy {
+public interface ValueSizeStrategy<N extends Number> {
     /**
      * Gets the next value from the given buffer.
      * @param buf the ByteBuffer to read from.
      * @return the value read from the buffer as an long.
      */
-    long getNext(ByteBuffer buf);
+    N getNext(ByteBuffer buf);
     /**
      * Puts the given value into the buffer. If this
      * implementation reads/writes data smaller than an long,
