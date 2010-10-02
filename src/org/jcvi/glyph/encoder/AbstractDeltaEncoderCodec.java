@@ -29,25 +29,41 @@ import java.util.List;
 import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.num.NumericGlyph;
 
-public abstract class AbstractDeltaEncoderCodec<N extends NumericGlyph> implements GlyphCodec<N>{
+public abstract class AbstractDeltaEncoderCodec<G extends NumericGlyph, N extends Number> implements GlyphCodec<G>{
 
     private final DeltaEncoder deltaEncoder;
-    private final ValueSizeStrategy valueSizeStrategy;
+    private final ValueSizeStrategy<N> valueSizeStrategy;
     
-    public AbstractDeltaEncoderCodec(DeltaEncoder deltaEncoder,ValueSizeStrategy valueSizeStrategy){
+    public AbstractDeltaEncoderCodec(DeltaEncoder deltaEncoder,ValueSizeStrategy<N> valueSizeStrategy){
         this.deltaEncoder = deltaEncoder;
         this.valueSizeStrategy = valueSizeStrategy;
     }
     
-    @Override
-    public List<N> decode(byte[] encodedGlyphs) {
+    /**
+	 * @return the valueSizeStrategy
+	 */
+	public ValueSizeStrategy<N> getValueSizeStrategy() {
+		return valueSizeStrategy;
+	}
+
+	private ByteBuffer convertToByteBuffer(List<G> glyphs) {
+		ByteBuffer buf = ByteBuffer.allocate(glyphs.size() * valueSizeStrategy.numberOfBytesPerValue());
+		for(G glyph : glyphs){
+			valueSizeStrategy.put(glyph.getNumber().longValue(), buf);
+		}
+		buf.flip();
+		return buf;
+	}
+	@Override
+    public List<G> decode(byte[] encodedGlyphs) {
         ByteBuffer buffer = ByteBuffer.wrap(encodedGlyphs);
-        int uncompressedSize = buffer.getInt();
+        int uncompressedSize = encodedGlyphs.length/valueSizeStrategy.numberOfBytesPerValue(); 
         ByteBuffer decompressedBuffer = ByteBuffer.allocate(uncompressedSize);
         
         long lastValue=0, secondToLastValue=0, thirdToLastValue=0;
+        
         while(buffer.hasRemaining()){
-            long value =valueSizeStrategy.getNext(buffer) + deltaEncoder.computeDelta(lastValue, secondToLastValue, thirdToLastValue);
+            long value =valueSizeStrategy.getNext(buffer).longValue() + deltaEncoder.computeDelta(lastValue, secondToLastValue, thirdToLastValue);
             valueSizeStrategy.put(value, decompressedBuffer);
             thirdToLastValue = secondToLastValue;
             secondToLastValue = lastValue;
@@ -57,11 +73,9 @@ public abstract class AbstractDeltaEncoderCodec<N extends NumericGlyph> implemen
         return convertToGlyphs(decompressedBuffer);
     }
 
-    protected abstract List<N> convertToGlyphs(ByteBuffer decodedData);
-    protected abstract ByteBuffer convertToByteBuffer(List<N> glyphs);    
-    protected abstract int numberOfBytesPerGlyph();
+    protected abstract List<G> convertToGlyphs(ByteBuffer decodedData);   
     @Override
-    public N decode(byte[] encodedGlyphs, int index) {
+    public G decode(byte[] encodedGlyphs, int index) {
         // TODO make more efficient
         return decode(encodedGlyphs).get(index);
     }
@@ -73,21 +87,28 @@ public abstract class AbstractDeltaEncoderCodec<N extends NumericGlyph> implemen
     }
 
     @Override
-    public byte[] encode(List<N> glyphs) {
-        int size = glyphs.size() *numberOfBytesPerGlyph();
-        ByteBuffer result = ByteBuffer.allocate(4+ valueSizeStrategy.numberOfBytesPerValue() *size);
-        result.putInt(size);
+    public byte[] encode(List<G> glyphs) {
+        int length = glyphs.size() *valueSizeStrategy.numberOfBytesPerValue();
+        ByteBuffer result = ByteBuffer.allocate(length);
         ByteBuffer glyphsAsBytes = convertToByteBuffer(glyphs);
         long delta=0;
         long prevValue=0;
         long prevPrevValue=0;
         long prevPrevPrevValue =0;
-        while(glyphsAsBytes.hasRemaining()){           
-            delta = 3*prevValue - 3*prevPrevValue + prevPrevPrevValue;
+        
+        //special case for 1st glyph
+        if(glyphsAsBytes.hasRemaining()){
+        	 prevValue =  valueSizeStrategy.getNext(glyphsAsBytes).longValue();
+             valueSizeStrategy.put(prevValue,result );
+        }
+        while(glyphsAsBytes.hasRemaining()){     
+        	delta = deltaEncoder.computeDelta(prevValue, prevPrevValue, prevPrevPrevValue);
+             
+          
             prevPrevPrevValue= prevPrevValue;
             prevPrevValue= prevValue;
-            prevValue =  valueSizeStrategy.getNext(glyphsAsBytes);
-            valueSizeStrategy.put(prevValue -delta,result );
+            prevValue =  valueSizeStrategy.getNext(glyphsAsBytes).longValue();
+            valueSizeStrategy.put(prevValue-delta,result );
         }
         
         return result.array();

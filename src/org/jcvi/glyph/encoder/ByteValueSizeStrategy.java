@@ -24,23 +24,21 @@
 package org.jcvi.glyph.encoder;
 
 import java.nio.ByteBuffer;
-
-import org.jcvi.io.IOUtil;
 /**
  * <code>ByteValueSizeStrategy</code> is an implementation
  * of {@link ValueSizeStrategy} that reads/writes single bytes.
  * @author dkatzel
  *
  */
-public class ByteValueSizeStrategy implements ValueSizeStrategy {
+public class ByteValueSizeStrategy implements ValueSizeStrategy<Byte> {
     /**
      * get the next (unsigned) byte from the buffer.
      * @param buf the buffer to read the byte from.
      * @return an unsigned byte value as an int.
      */
     @Override
-    public long getNext(ByteBuffer buf) {
-        return IOUtil.convertToUnsignedByte(buf.get());
+    public Byte getNext(ByteBuffer buf) {
+        return buf.get();
     }
     /**
      * puts the given byte value into the given buffer.

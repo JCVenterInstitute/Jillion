@@ -25,6 +25,12 @@ package org.jcvi.glyph.encoder;
 
 public class Level1DeltaEncoder implements DeltaEncoder{
 
+	public static Level1DeltaEncoder INSTANCE = new Level1DeltaEncoder();
+	public static Level1DeltaEncoder getInstance(){
+		return INSTANCE;
+	}
+	private Level1DeltaEncoder(){}
+	
     @Override
     public long computeDelta(long lastValue, long secondToLastValue,
             long thirdToLastValue) {

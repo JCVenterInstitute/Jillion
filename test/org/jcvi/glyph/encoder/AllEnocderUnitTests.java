@@ -35,7 +35,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestTigrQualitiesEncoder.class,
         TestTigrQualitiesEncoderCodec.class,
         TestTigrPeaksEncoder.class,
-        TestTigrPeaksEncoderCodec.class
+        TestTigrPeaksEncoderCodec.class,
+        TestShortGlyphDeltaEncoder.class
     }
     )
 public class AllEnocderUnitTests {

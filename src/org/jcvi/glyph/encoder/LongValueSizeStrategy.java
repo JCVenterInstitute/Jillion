@@ -25,10 +25,10 @@ package org.jcvi.glyph.encoder;
 
 import java.nio.ByteBuffer;
 
-public class LongValueSizeStrategy implements ValueSizeStrategy {
+public class LongValueSizeStrategy implements ValueSizeStrategy<Long> {
 
     @Override
-    public long getNext(ByteBuffer buf) {
+    public Long getNext(ByteBuffer buf) {
         return buf.getLong();
     }
 
