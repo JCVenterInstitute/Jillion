@@ -31,7 +31,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestPhredQuality.class
+        TestPhredQuality.class,
+        TestZipPhredQualityCodec.class
     }
     )
 public class AllPhredQualityTests {

@@ -27,9 +27,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.glyph.GlyphCodec;
 
-public abstract class AbstractByteGlyphCodec<G extends ByteGlyph> implements GlyphCodec<G>{
+public abstract class AbstractByteGlyphCodec<G extends ByteGlyph> implements ByteGlyphCodec<G>{
 
     protected abstract G getValueOf(byte b);
     @Override
