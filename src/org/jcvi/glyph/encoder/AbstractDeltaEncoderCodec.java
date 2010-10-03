@@ -38,13 +38,6 @@ public abstract class AbstractDeltaEncoderCodec<G extends NumericGlyph, N extend
         this.deltaEncoder = deltaEncoder;
         this.valueSizeStrategy = valueSizeStrategy;
     }
-    
-    /**
-	 * @return the valueSizeStrategy
-	 */
-	public ValueSizeStrategy<N> getValueSizeStrategy() {
-		return valueSizeStrategy;
-	}
 
 	private ByteBuffer convertToByteBuffer(List<G> glyphs) {
 		ByteBuffer buf = ByteBuffer.allocate(glyphs.size() * valueSizeStrategy.numberOfBytesPerValue());
@@ -57,8 +50,7 @@ public abstract class AbstractDeltaEncoderCodec<G extends NumericGlyph, N extend
 	@Override
     public List<G> decode(byte[] encodedGlyphs) {
         ByteBuffer buffer = ByteBuffer.wrap(encodedGlyphs);
-        int uncompressedSize = encodedGlyphs.length/valueSizeStrategy.numberOfBytesPerValue(); 
-        ByteBuffer decompressedBuffer = ByteBuffer.allocate(uncompressedSize);
+        ByteBuffer decompressedBuffer = ByteBuffer.allocate(encodedGlyphs.length);
         
         long lastValue=0, secondToLastValue=0, thirdToLastValue=0;
         
@@ -82,8 +74,8 @@ public abstract class AbstractDeltaEncoderCodec<G extends NumericGlyph, N extend
 
     @Override
     public int decodedLengthOf(byte[] encodedGlyphs) {
-        ByteBuffer buffer = ByteBuffer.wrap(encodedGlyphs);
-        return buffer.getInt();
+    	return encodedGlyphs.length /valueSizeStrategy.numberOfBytesPerValue();
+        
     }
 
     @Override
