@@ -1,6 +1,7 @@
 package org.jcvi.glyph.encoder;
 
 import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 import java.util.List;
 
 import org.jcvi.glyph.num.ShortGlyph;
@@ -19,7 +20,11 @@ public class ShortGlyphDeltaEncoder extends AbstractDeltaEncoderCodec<ShortGlyph
 
 	@Override
 	protected List<ShortGlyph> convertToGlyphs(ByteBuffer decodedData) {
-		return ShortGlyphFactory.getInstance().getGlyphsFor(decodedData.asShortBuffer().array());
+		ShortBuffer buf = ShortBuffer.allocate(decodedData.remaining()/2);
+		while(decodedData.hasRemaining()){
+			buf.put(decodedData.getShort());
+		}
+		return ShortGlyphFactory.getInstance().getGlyphsFor(buf.array());
 	}
 
 	
