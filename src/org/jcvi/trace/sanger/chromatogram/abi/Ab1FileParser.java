@@ -58,10 +58,15 @@ import org.jcvi.trace.sanger.chromatogram.abi.tag.rate.ScanRateUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
-import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
+/**
+ * {@code Ab1FileParser} can parse an
+ * Applied BioSystems "ab1" formatted chromatogram
+ * file.
+ * @author dkatzel
+ *
+ */
 public final class Ab1FileParser {
 
 	private Ab1FileParser() {
@@ -84,7 +89,18 @@ public final class Ab1FileParser {
 	 */
 	private static final int CURRENT_VERSION =1;
 	
-	
+	/**
+	 * Parse the given Applied BioSystems 
+	 * "ab1" formatted chromatogram file
+	 * and call the appropriate visitXXX
+	 * methods on the given {@link ChromatogramFileVisitor}.
+	 * @param ab1File the ab1 file to be parsed.
+	 * @param visitor  {@link ChromatogramFileVisitor} to call visitXXX
+	 * methods on.
+	 * @throws FileNotFoundException if the given File does not exist.
+	 * @throws TraceDecoderException if there are problems 
+	 * parsing the chromatogram.
+	 */
 	public static void parseAb1File(File ab1File, ChromatogramFileVisitor visitor) throws FileNotFoundException, TraceDecoderException{
 		InputStream in = null;
 		try{
@@ -94,7 +110,17 @@ public final class Ab1FileParser {
 			IOUtil.closeAndIgnoreErrors(in);
 		}
 	}
-	
+	/**
+	 * Parse the given Applied BioSystems 
+	 * "ab1" formatted chromatogram InputStream.
+	 * and call the appropriate visitXXX
+	 * methods on the given {@link ChromatogramFileVisitor}.
+	 * @param in the ab1 formatted InputStream to be parsed.
+	 * @param visitor  {@link ChromatogramFileVisitor} to call visitXXX
+	 * methods on.
+	 * @throws TraceDecoderException if there are problems 
+	 * parsing the chromatogram.
+	 */
 	public static void parseAb1File(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
 	        visitor.visitFile();
 			verifyMagicNumber(in);
@@ -326,19 +352,6 @@ public final class Ab1FileParser {
 		props = addNoiseComment(groupedDataRecordMap, channelOrder,traceData,props);
 		props = addNumberOfBases(basecalls,props);
 		props = parseSamplingRateFrom(groupedDataRecordMap, traceData, props);
-/*		
-		for(Entry<TaggedDataName, List<PascalStringTaggedDataRecord>> entry :groupedDataRecordMap.pascalStringDataRecords.entrySet()){
-			props = addAsComments(entry.getValue(),traceData,props);
-		}
-		
-		for(Entry<TaggedDataName, List<DateTaggedDataRecord>> entry :groupedDataRecordMap.dateDataRecords.entrySet()){
-			props = addAsComments(entry.getValue(),traceData,props);						
-		}
-		for(Entry<TaggedDataName, List<TimeTaggedDataRecord>> entry :groupedDataRecordMap.timeDataRecords.entrySet()){
-			props = addAsComments(entry.getValue(),traceData,props);						
-		}
-		*/
-		System.out.println(props);
 		visitor.visitComments(props);
 	}
 
@@ -432,7 +445,6 @@ public final class Ab1FileParser {
             		DATE_FORMATTER.print(startDateTime),
             		DATE_FORMATTER.print(endDateTime)
             		));
-            System.out.println(new Period(startDateTime,endDateTime));
             props.put("RUND", String.format("%04d%02d%02d.%02d%02d%02d - %04d%02d%02d.%02d%02d%02d",
                     startDateTime.getYear(), startDateTime.getMonthOfYear(), startDateTime.getDayOfMonth(),
                     startDateTime.getHourOfDay(),startDateTime.getMinuteOfHour(), startDateTime.getSecondOfMinute(),
