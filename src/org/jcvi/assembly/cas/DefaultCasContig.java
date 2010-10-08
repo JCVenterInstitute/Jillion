@@ -142,7 +142,7 @@ public class DefaultCasContig implements CasContig{
             System.out.printf("\tbuilding consensus%n");
             List<NucleotideGlyph> consensus = new ArrayList<NucleotideGlyph>();
             if(coverageMap.getNumberOfRegions()>0){
-                long endCoordinate = coverageMap.getLength();
+                long endCoordinate = coverageMap.getLength()-1;
                 for(long i=0; i<= endCoordinate; i++){
                     consensus.add(findMostOccuringBase(consensusMap.get(i)));
                 }
