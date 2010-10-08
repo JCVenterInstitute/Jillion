@@ -34,7 +34,13 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.jcvi.glyph.Glyph;
-
+/**
+ * {@code NucleotideGlyph} is a {@link Glyph}
+ * implementation for Nucleotides.
+ * @author dkatzel
+ *
+ *
+ */
 public enum NucleotideGlyph implements Glyph {
     //order is in ambiguity traversal order that is most efficient.
     Unknown(Character.valueOf('N')),
@@ -154,9 +160,16 @@ public enum NucleotideGlyph implements Glyph {
     
     private final Character c;
     
-    NucleotideGlyph(Character c){
+    private NucleotideGlyph(Character c){
         this.c = c;
     }
+    /**
+     * Return the Character equivalent of this
+     * {@link NucleotideGlyph}.  For example
+     * calling this method for {@link #Adenine}
+     * will return 'A'.
+     * @return the Character equivalent of this.
+     */
     public Character getCharacter() {
         return c;
     }
@@ -164,11 +177,19 @@ public enum NucleotideGlyph implements Glyph {
     public String getName() {
         return toString();
     }
-
+    /**
+     * Reverse Compliment this {@link NucleotideGlyph}.
+     * @return the reverse compliment of this.
+     */
     public NucleotideGlyph reverseCompliment() {
        return COMPLIMENT_MAP.get(this);
     }
-    
+    /**
+     * Given the input List of {@link NucleotideGlyph}s
+     * return the reverse compliment as a new List.
+     * @param glyphs the {@link NucleotideGlyph}s to reverse compliment.
+     * @return the reverse compliment of the given List as a new List.
+     */
     public static List<NucleotideGlyph> reverseCompliment(List<NucleotideGlyph> glyphs) {
         List<NucleotideGlyph> reversed = new ArrayList<NucleotideGlyph>(glyphs.size());
         for(int i=glyphs.size()-1; i>=0; i--){
@@ -176,16 +197,38 @@ public enum NucleotideGlyph implements Glyph {
         }
         return reversed;
      }
+    /**
+     * Get the {@link NucleotideGlyph} for the given
+     * String  representation.  If the given String is more than
+     * one character long, only the first character will be considered.
+     * For example,
+     * {@link #getGlyphFor(String) getGlyphFor("A")} will return
+     * {@link #Adenine}.
+     * @param base the nucleotide as a String of length 1.
+     * @return a {@link NucleotideGlyph} equivalent.
+     * @throws IllegalArgumentException if the given
+     * character can not be mapped to a {@link NucleotideGlyph}.
+     */
     public static NucleotideGlyph getGlyphFor(String base){
         return getGlyphFor(base.charAt(0));
     }
-    public static NucleotideGlyph getGlyphFor(Character c){
+    /**
+     * Get the {@link NucleotideGlyph} for the given
+     * character representation.  For example,
+     * {@link #getGlyphFor(char) getGlyphFor('A')} will return
+     * {@link #Adenine}.
+     * @param base the nucleotide as a character.
+     * @return a {@link NucleotideGlyph} equivalent.
+     * @throws IllegalArgumentException if the given
+     * character can not be mapped to a {@link NucleotideGlyph}.
+     */
+    public static NucleotideGlyph getGlyphFor(char base){
         
-        Character upperCased = Character.toUpperCase(c);
+        Character upperCased = Character.toUpperCase(base);
         if(CHARACTER_MAP.containsKey(upperCased)){
             return CHARACTER_MAP.get(upperCased);
         }
-        throw new IllegalArgumentException("invalid character " + c + " ascii value " + (int)c.charValue());
+        throw new IllegalArgumentException("invalid character " + base + " ascii value " + (int)base);
     }
     /**
      * Returns this glyph as a single character String.  For example {@link #Adenine} 
@@ -195,11 +238,19 @@ public enum NucleotideGlyph implements Glyph {
     public String toString() {
         return getCharacter().toString();
     }
-    
+    /**
+     * Is This glyph a gap?
+     * @return {@code true} if it is a gap;
+     * {@code false} otherwise.
+     */
     public boolean isGap(){
         return this == Gap;
     }
-    
+    /**
+     * Is This glyph an ambiguity?
+     * @return {@code true} if it is am ambiguity;
+     * {@code false} otherwise.
+     */
     public boolean isAmbiguity(){
         return !isGap() && this !=Adenine && 
         this !=Cytosine && this != Guanine && this != Thymine;
@@ -270,7 +321,9 @@ public enum NucleotideGlyph implements Glyph {
      */
     public static boolean calculateMatch(NucleotideGlyph a, NucleotideGlyph b)
     {
-        if (a.equals(b)) return true;
+        if (a.equals(b)){
+            return true;
+        }
         
         if (a.isAmbiguity())
         {
@@ -307,6 +360,15 @@ public enum NucleotideGlyph implements Glyph {
         }
         return EnumSet.noneOf(NucleotideGlyph.class);
     }
+    /**
+     * Give the ambiguity {@link NucleotideGlyph} for
+     * the corresponding collection of unambigious {@link NucleotideGlyph}s
+     * 
+     * @param unambiguiousBases collection of unambigious {@link NucleotideGlyph}s
+     * to be turned into a single ambiguity.
+     * @return the ambiguity {@link NucleotideGlyph} or {@link #Gap}
+     * if no ambiguity exists for all the given unambigiuous bases.
+     */
     public static NucleotideGlyph getAmbiguityFor(Collection<NucleotideGlyph> unambiguiousBases){
         
         for(Entry<NucleotideGlyph, Set<NucleotideGlyph>> entry : AMBIGUITY_TO_CONSTIUENT.entrySet()){

@@ -16,35 +16,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
+package org.jcvi.ncbi;
+
+import org.jcvi.fasta.NucleotideSequenceFastaRecord;
+
 /**
- * 
+ * @author dkatzel
+ * @see <a href="http://www.ncbi.nlm.nih.gov/Sequin/sequin.hlp.html#FASTAFormatforGappedSequence">
+  NCBI FASTA Format for Gapped Sequence</a>
+ *
  */
-package org.jcvi.fasta;
-
-
-/**
- * 
- * 
- * @author jsitz
- */
-public interface FastaRecord<T>
-{
-    /**
-     * @return A <code>String</code>.
-     */
-    String getIdentifier();
-
-    /**
-     * @return A <code>String</code>.
-     */
-    String getComments();
-    /**
-     * Gets the entire formatted fasta record as a {@link CharSequence}.
-     */
-    CharSequence getStringRecord();
-
-    long getChecksum();
-    
-    T getValues();
+public interface NcbiGappedFastaRecord extends NucleotideSequenceFastaRecord{
 
 }

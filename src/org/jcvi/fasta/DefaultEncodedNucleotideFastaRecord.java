@@ -44,6 +44,9 @@ public class DefaultEncodedNucleotideFastaRecord extends AbstractNucleotideSeque
     public DefaultEncodedNucleotideFastaRecord(String identifier, String comments, List<NucleotideGlyph> sequence){
         super(identifier, comments,NucleotideGlyph.convertToString(sequence));
     }
+    public DefaultEncodedNucleotideFastaRecord(String identifier,  List<NucleotideGlyph> sequence){
+        this(identifier, null,sequence);
+    }
     /**
      * @param identifier
      * @param sequence

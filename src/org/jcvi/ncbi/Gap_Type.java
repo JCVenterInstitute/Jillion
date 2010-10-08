@@ -16,35 +16,15 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/**
- * 
- */
-package org.jcvi.fasta;
 
+package org.jcvi.ncbi;
 
 /**
- * 
- * 
- * @author jsitz
+ * @author dkatzel
+ *
+ *
  */
-public interface FastaRecord<T>
-{
-    /**
-     * @return A <code>String</code>.
-     */
-    String getIdentifier();
-
-    /**
-     * @return A <code>String</code>.
-     */
-    String getComments();
-    /**
-     * Gets the entire formatted fasta record as a {@link CharSequence}.
-     */
-    CharSequence getStringRecord();
-
-    long getChecksum();
-    
-    T getValues();
-
+public enum Gap_Type {
+    UNKNOWN,
+    KNOWN;  
 }

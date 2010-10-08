@@ -90,9 +90,7 @@ public abstract class AbstractFastaRecord<T> implements FastaRecord<T>
     {
         return this.comments;
     }
-    /**
-     * Gets the entire formatted fasta record as a {@link CharSequence}.
-     */
+  
     public CharSequence getStringRecord()
     {
         final StringBuilder record = new StringBuilder();

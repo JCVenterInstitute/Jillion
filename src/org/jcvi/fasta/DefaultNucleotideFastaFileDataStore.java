@@ -28,8 +28,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.datastore.DataStore;
@@ -46,7 +46,7 @@ import org.jcvi.io.IOUtil;
  *
  */
 public class DefaultNucleotideFastaFileDataStore extends AbstractNucleotideFastaFileDataStore{
-    private final Map<String, NucleotideSequenceFastaRecord> map = new HashMap<String, NucleotideSequenceFastaRecord>();
+    private final Map<String, NucleotideSequenceFastaRecord> map = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
     private DataStore<NucleotideSequenceFastaRecord> datastore;
     /**
      * @param fastaRecordFactory

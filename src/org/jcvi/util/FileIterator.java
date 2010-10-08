@@ -25,6 +25,7 @@ package org.jcvi.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -70,8 +71,13 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
     public static FileIteratorBuilder createNonRecursiveFileIteratorBuilder(File dir){
         return new NonRecursiveFileIteratorBuilder(dir);
     }
-    private static final class FileNameComparator implements Comparator<File> {
-		@Override
+    private static final class FileNameComparator implements Comparator<File>, Serializable {
+		/**
+         * 
+         */
+        private static final long serialVersionUID = 4585888483429023724L;
+
+        @Override
 		public int compare(File o1, File o2) {
 		    return o1.getName().compareTo(o2.getName());
 		}
