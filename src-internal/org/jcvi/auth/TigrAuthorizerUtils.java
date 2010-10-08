@@ -79,6 +79,10 @@ public final class TigrAuthorizerUtils {
        
         return authorizers;
     }
+    public static TigrAuthorizer getProjectDbAuthorizerFrom(
+            CommandLine commandLine) throws FileNotFoundException{
+        return getProjectDbAuthorizerFrom(commandLine, System.console());
+    }
     /**
      * Reads Project DB Login Options created by {@link #addProjectDbLoginOptionsTo(Options, boolean)}
      * @param commandLine the {@link CommandLine} instance to read.
