@@ -37,6 +37,7 @@ import org.jcvi.glyph.AllGlyphUnitTests;
 import org.jcvi.glyph.qualClass.AllQualityClassUnitTests;
 import org.jcvi.http.AllHttpUnitTests;
 import org.jcvi.io.AllIOUnitTests;
+import org.jcvi.ncbi.AllNcbiUnitTests;
 import org.jcvi.sequence.AllSequencingTests;
 import org.jcvi.trace.AllTraceUnitTests;
 import org.jcvi.util.AllUtilUnitTests;
@@ -73,7 +74,8 @@ import org.junit.runners.Suite.SuiteClasses;
         AllAlignTests.class,
         AllAuthUnitTests.class,
         AllAppUnitTests.class,
-        AllCommandUnitTests.class
+        AllCommandUnitTests.class,
+        AllNcbiUnitTests.class
     }
 )
 public class AllUnitTests {
