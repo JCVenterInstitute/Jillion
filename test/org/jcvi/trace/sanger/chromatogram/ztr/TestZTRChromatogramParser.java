@@ -38,7 +38,7 @@ public class TestZTRChromatogramParser {
 	 private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestZTRChromatogramParser.class);
 		
     ZTRChromatogramParser sut = new ZTRChromatogramParser();
-    static ZTRChromatogramImpl expected;
+    ZTRChromatogramImpl expected;
 
     @Before
     public void setup() throws IOException{
