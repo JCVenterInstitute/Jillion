@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JavaCommon" default="unit.tests" basedir=".">
 	
-	<property name="version" value="2.0.6" />
+	<property name="version" value="2.0.7" />
 	<property name="project-name" value="JCVI-JavaCommon" />
 	<property name="bin" value ="bin_ant"/>
 	<property name="reports" value ="reports"/>
@@ -248,7 +248,7 @@
 		    	<zipfileset src="${lib}/cglib-nodep.jar"/>		    	
 		    	<zipfileset src="${lib}/log4j-1.2.15.jar"/>
 		    	<zipfileset src="${lib}/joda-time-1.5.2.jar"/>
-		    	<zipfileset src="${lib}/junit-4.4.jar"/>
+		    	<zipfileset src="${lib}/junit-4.8.2.jar"/>
 		    	<zipfileset src="${lib}/poi-3.5-FINAL-20090928.jar"/>
 		    	<zipfileset src="${lib}/poi-ooxml-3.5-FINAL-20090928.jar"/>
 		    	<zipfileset src="${lib}/jcommon-1.0.15.jar"/>
