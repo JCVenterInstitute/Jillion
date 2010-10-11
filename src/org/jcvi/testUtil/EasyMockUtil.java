@@ -34,7 +34,14 @@ import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.jcvi.io.IOUtil;
 
-
+/**
+ * {@code EasyMockUtil} is utility class
+ * which contains helper functions to make working with
+ * EasyMock more intent revealing.
+ * @author dkatzel
+ *
+ *
+ */
 public class EasyMockUtil {
     /**
      * Argument matcher for EasyMock to allow easyMock to
