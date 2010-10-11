@@ -16,7 +16,7 @@ abstract class TestGridJob {
         }
     }
 
-    protected class JobCancellation implements Runnable {
+    protected static class JobCancellation implements Runnable {
 
         private GridJobFuture future;
         private int cancellationDelay;
