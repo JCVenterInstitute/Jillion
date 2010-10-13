@@ -25,7 +25,7 @@ package org.jcvi.assembly.slice.conflict;
 
 import org.jcvi.assembly.Placed;
 
-public interface ConflictedRegion extends Placed{
+public interface ConflictedRegion extends Placed<ConflictedRegion>{
 
     Conflict getConflict();
 }

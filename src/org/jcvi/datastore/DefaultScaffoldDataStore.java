@@ -20,8 +20,6 @@ package org.jcvi.datastore;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.DefaultScaffold;
-import org.jcvi.assembly.PlacedContig;
-import org.jcvi.assembly.DefaultPlacedContig;
 import org.jcvi.datastore.ScaffoldDataStore;
 import org.jcvi.assembly.agp.AgpFileVisitor;
 import org.jcvi.sequence.SequenceDirection;
@@ -56,8 +54,7 @@ public class DefaultScaffoldDataStore implements ScaffoldDataStore, AgpFileVisit
             builderMap.put(scaffoldId, new DefaultScaffold.Builder(scaffoldId));
         }
         DefaultScaffold.Builder builder = builderMap.get(scaffoldId);
-        PlacedContig contig = new DefaultPlacedContig(contigId, contigRange, dir);
-        builder.add(contig);
+        builder.add(contigId, contigRange, dir);
     }
 
     public void visitLine(String line) {

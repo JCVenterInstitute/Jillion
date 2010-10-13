@@ -110,6 +110,11 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
         return 0;
     }
 
+    @Override
+    public String toString() {
+        return getStringRecord().toString();
+    }
+
     /**
      * Generate a single {@link NucleotideEncodedGlyphs}
      * with {@link NucleotideGlyph#Gap}s filling
@@ -188,12 +193,12 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
 
     private static class Gap{
         private final Gap_Type type;
-        private final int length;
+        private final long length;
         /**
          * @param type
          * @param length
          */
-        private Gap(Gap_Type type, int length) {
+        private Gap(Gap_Type type, long length) {
             this.type = type;
             this.length = length;
         }
@@ -207,8 +212,8 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + length;
-            result = prime * result + type.hashCode();
+            result = prime * result + (int) (length ^ (length >>> 32));
+            result = prime * result + ((type == null) ? 0 : type.hashCode());
             return result;
         }
         @Override
@@ -231,7 +236,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
             }
             return true;
         }
-        
+       
         
     }
     /**
@@ -284,7 +289,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
          * @param length the length of the gap.
          * @return this.
          */
-        public Builder addGap(int length){
+        public Builder addGap(long length){
             gaps.add(new Gap(Gap_Type.KNOWN, length));
             return this;
         }
@@ -297,6 +302,17 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
          * @throws NullPointerException if sequence is null.
          */
         public Builder addSequence(String sequence){
+            return addSequence(new DefaultNucleotideEncodedGlyphs(sequence));
+        }
+        /**
+         * Add a sequence which will be separated by other sequences
+         * (to be given by additional addSequence calls)
+         * by gaps.
+         * @param sequence the basecalls of the sequence to add.
+         * @return this.
+         * @throws NullPointerException if sequence is null.
+         */
+        public Builder addSequence(List<NucleotideGlyph> sequence){
             return addSequence(new DefaultNucleotideEncodedGlyphs(sequence));
         }
         /**

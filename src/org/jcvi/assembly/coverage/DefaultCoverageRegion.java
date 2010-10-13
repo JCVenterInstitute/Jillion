@@ -173,4 +173,14 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
         }
         
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compareTo(T o) {
+        Range otherRange = Range.buildRange(o.getStart(), o.getEnd());
+        return range.compareTo(otherRange);
+    }
+
 }

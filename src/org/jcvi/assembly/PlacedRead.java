@@ -30,7 +30,7 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
 
-public interface PlacedRead extends Read, Placed{
+public interface PlacedRead extends Read, Placed<PlacedRead>{
 
 
     Map<Integer, NucleotideGlyph> getSnps();

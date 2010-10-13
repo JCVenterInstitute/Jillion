@@ -133,6 +133,13 @@ public class DefaultCritiquorAmplicon implements CritiquorAmplicon {
                 + ", region=" + region + ", reversePrimerSequence="
                 + reversePrimerSequence + "]";
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compareTo(CritiquorAmplicon o) {
+        return getRange().compareTo(o.getRange());
+    }
     
     
     

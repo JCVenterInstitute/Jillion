@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.jcvi.Range;
+import org.jcvi.assembly.PlacedRead;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.Read;
@@ -130,6 +131,15 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
         if (startOffset != other.startOffset)
             return false;
         return true;
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compareTo(PlacedRead o) {
+        Range range= Range.buildRange(getStart(), getEnd());
+        Range otherRange = Range.buildRange(o.getStart(), o.getEnd());
+        return range.compareTo(otherRange);
     }
    
 }

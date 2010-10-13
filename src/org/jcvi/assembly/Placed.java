@@ -31,7 +31,7 @@ package org.jcvi.assembly;
  *
  *
  */
-public interface Placed {
+public interface Placed<P extends Placed> extends Comparable<P>{
     /**
      * Get the start coordinate of this placed object
      * on the placed axis.

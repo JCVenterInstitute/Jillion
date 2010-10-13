@@ -59,7 +59,7 @@ import org.jcvi.assembly.Placed;
  * @author jsitz
  * @author dkatzel
  */
-public class Range implements Placed,Iterable<Long>, Comparable<Range>
+public class Range implements Placed<Range>,Iterable<Long>
 {
     /**
      * Enumeration of available range coordinate systems

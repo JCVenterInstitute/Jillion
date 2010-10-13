@@ -30,7 +30,20 @@ public class DefaultPlacedContig implements PlacedContig{
     private final String contigId;
     private final Range range;
     private final SequenceDirection direction;
-    
+    /**
+     * Convenience constructor, defaults direction to {@link SequenceDirection#FORWARD}
+     * @param id the id of the contig to be placed.
+     * @param range the range this contig should be placed on the scaffold.
+     */
+    public DefaultPlacedContig(String id, Range range){
+        this(id,range,SequenceDirection.FORWARD);
+    }
+    /**
+     * Constructs a new DefaultPlacedContig.
+     * @param id the id of the contig to be placed.
+     * @param range the range this contig should be placed on the scaffold.
+     * @param direction the direction this contig faces.
+     */
     public DefaultPlacedContig(String id, Range range,SequenceDirection direction){
         contigId = id;
         this.range = range;
@@ -104,6 +117,15 @@ public class DefaultPlacedContig implements PlacedContig{
     public String toString() {
         return "DefaultPlacedContig [contigId=" + contigId + ", direction="
                 + direction + ", range=" + range + "]";
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compareTo(PlacedContig o) {
+        Range range= Range.buildRange(getStart(), getEnd());
+        Range otherRange = Range.buildRange(o.getStart(), o.getEnd());
+        return range.compareTo(otherRange);
     }
 
 }

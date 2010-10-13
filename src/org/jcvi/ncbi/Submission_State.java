@@ -16,26 +16,21 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Aug 13, 2009
- *
+
+package org.jcvi.ncbi;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.assembly.coverage.critquor;
+public enum Submission_State {
 
-import org.jcvi.Range;
-import org.jcvi.assembly.Placed;
-
-public interface CritiquorAmplicon extends Placed<CritiquorAmplicon>{
-
-    String getId();
-
-    String getRegion();
-
-    Range getRange();
-
-    String getForwardPrimerSequence();
-
-    String getReversePrimerSequence();
-
+    STANDARD_DRAFT,
+    HIGH_QUALITY_DRAFT,
+    IMPROVED_HIGH_QUALITY_DRAFT,
+    ANNOTATION_GRADE,
+    NON_CONTIGUOUS_FINISHED,
+    FINISHED;
+    
 }

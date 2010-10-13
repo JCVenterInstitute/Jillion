@@ -27,7 +27,7 @@ import java.util.Collection;
 
 import org.jcvi.assembly.Placed;
 
-public interface CoverageRegion<T extends Placed> extends Placed {
+public interface CoverageRegion<T extends Placed> extends Placed<T> {
         /**
          * Get the Coverage depth of this coverage region.
          * should be the same as the number of elements.

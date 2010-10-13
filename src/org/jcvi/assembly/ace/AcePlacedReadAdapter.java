@@ -111,5 +111,13 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return "AcePlacedReadAdapter [placedRead="
                 + placedRead + ", phdInfo=" + phdInfo +  "]";
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compareTo(PlacedRead o) {
+        return placedRead.compareTo(o);
+    }
     
 }
