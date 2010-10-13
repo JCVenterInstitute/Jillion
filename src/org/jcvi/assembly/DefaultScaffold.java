@@ -175,18 +175,37 @@ public class DefaultScaffold implements Scaffold {
 
     public static class Builder implements org.jcvi.Builder<DefaultScaffold>{
         private final String id;
-        private final Set<PlacedContig> contigs;
+        private Set<PlacedContig> contigs;
+        private boolean shiftContigs=false;
         public Builder(String id){
             this.id =id;
-            contigs = new HashSet<PlacedContig>();
+            contigs = new TreeSet<PlacedContig>();
         }
-        
-        public Builder add(PlacedContig contig){
-            contigs.add(contig);
+        public Builder add(String contigId, Range contigRange, SequenceDirection contigDirection){
+            contigs.add(new DefaultPlacedContig(contigId, contigRange,contigDirection));
             return this;
         }
-        
+       
+        /**
+         * Shift all contigs in the scaffold so that the first
+         * contig will start at scaffold position 1.
+         * @param shiftContigs
+         * @return this
+         */
+        public Builder shiftContigs(boolean shiftContigs){
+            this.shiftContigs = shiftContigs;
+            return this;
+        }
         public DefaultScaffold build(){
+            if(shiftContigs){
+                Set<PlacedContig> shiftedContigs = new TreeSet<PlacedContig>();
+                PlacedContig firstContig = contigs.iterator().next();
+                long shiftOffset = firstContig.getStart();
+                for(PlacedContig contig : contigs){
+                    shiftedContigs.add(new DefaultPlacedContig(contig.getContigId(), contig.getValidRange().shiftLeft(shiftOffset)));
+                }
+                contigs = shiftedContigs;
+            }
             return new DefaultScaffold(id, contigs);
         }
         

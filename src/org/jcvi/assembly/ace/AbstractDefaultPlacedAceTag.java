@@ -25,6 +25,7 @@ package org.jcvi.assembly.ace;
 
 import java.util.Date;
 
+import org.jcvi.Range;
 import org.jcvi.assembly.Placed;
 
 public abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag implements PlacedAceTag{
@@ -122,6 +123,15 @@ public abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag 
             return false;
         }
         return true;
+    }
+
+
+
+    @Override
+    public int compareTo(PlacedAceTag o) {
+        Range range= Range.buildRange(getStart(), getEnd());
+        Range otherRange = Range.buildRange(o.getStart(), o.getEnd());
+        return range.compareTo(otherRange);
     }
     
 

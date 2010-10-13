@@ -23,6 +23,7 @@
  */
 package org.jcvi.assembly.slice.conflict;
 
+import org.jcvi.Range;
 import org.jcvi.assembly.Placed;
 
 public class DefaultConflictedRegion implements ConflictedRegion {
@@ -89,6 +90,16 @@ public class DefaultConflictedRegion implements ConflictedRegion {
         } else if (!placed.equals(other.placed))
             return false;
         return true;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compareTo(ConflictedRegion o) {
+        Range otherRange = Range.buildRange(o.getStart(), o.getEnd());
+        Range range = Range.buildRange(getStart(), getEnd());
+        return range.compareTo(otherRange);
     }
 
 }

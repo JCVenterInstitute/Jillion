@@ -25,7 +25,7 @@ package org.jcvi.assembly.ace;
 
 import org.jcvi.assembly.Placed;
 
-public interface PlacedAceTag extends AceTag, Placed {
+public interface PlacedAceTag extends AceTag, Placed<PlacedAceTag> {
 
     String getId();
     /**

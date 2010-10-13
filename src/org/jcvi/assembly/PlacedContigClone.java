@@ -25,7 +25,7 @@ package org.jcvi.assembly;
 
 
 
-public interface PlacedContigClone extends Placed{
+public interface PlacedContigClone extends Placed<PlacedContigClone>{
 
     Clone getClone();
     Contig getContig();

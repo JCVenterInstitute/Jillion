@@ -191,6 +191,17 @@ public final class DefaultPlacedContigClone<T> implements PlacedContigClone{
             return placed;
         }
     }
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compareTo(PlacedContigClone o) {
+        Range range= Range.buildRange(getStart(), getEnd());
+        Range otherRange = Range.buildRange(o.getStart(), o.getEnd());
+        return range.compareTo(otherRange);
+    }
   
 
 }

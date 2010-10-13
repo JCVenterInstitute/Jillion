@@ -16,26 +16,19 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Aug 13, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.assembly.coverage.critquor;
+
+package org.jcvi.assembly.feature;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.Placed;
 
-public interface CritiquorAmplicon extends Placed<CritiquorAmplicon>{
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public interface Feature {
 
-    String getId();
-
-    String getRegion();
-
+    FeatureType getType();
     Range getRange();
-
-    String getForwardPrimerSequence();
-
-    String getReversePrimerSequence();
-
+    String getParentId();
 }

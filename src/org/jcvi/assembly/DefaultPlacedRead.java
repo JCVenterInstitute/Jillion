@@ -136,5 +136,14 @@ public class DefaultPlacedRead implements PlacedRead {
             throw new IllegalArgumentException("reference index refers to index after valid range");
         }
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compareTo(PlacedRead o) {
+        Range range= Range.buildRange(getStart(), getEnd());
+        Range otherRange = Range.buildRange(o.getStart(), o.getEnd());
+        return range.compareTo(otherRange);
+    }
 
 }

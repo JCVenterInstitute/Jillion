@@ -100,5 +100,12 @@ public class VirtualPlacedReadAdapter<T extends PlacedRead> implements VirtualPl
     public long convertValidRangeIndexToReferenceIndex(long validRangeIndex) {
         return realRead.convertValidRangeIndexToReferenceIndex(validRangeIndex);
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compareTo(PlacedRead o) {
+        return realRead.compareTo(o);
+    }
 
 }
