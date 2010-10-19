@@ -65,6 +65,7 @@
 			<attribute name="javadoc_location" value="http://gridengine.sunsource.net/nonav/source/browse/~checkout~/gridengine/doc/javadocs"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/JSAP-2.1.jar">
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/easymock-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/objenesis-1.2.jar"/>
