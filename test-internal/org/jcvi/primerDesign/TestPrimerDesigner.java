@@ -49,7 +49,7 @@ public class TestPrimerDesigner {
                 new File(this.getClass().getResource("files/454AllContigs.fasta").getFile())
         );
         primerConfigurationStub =
-            this.getClass().getClassLoader().getResourceAsStream("resource/closure.pcrStrict.config.stub");
+            this.getClass().getClassLoader().getResourceAsStream("closure.pcrStrict.config.stub");
         List<PrimerDesignTarget> targets = getTestTargets();
         Map<PrimerDesignTarget,Collection<PrimerDesignResult>> expectedResults = getExpectedResults(targets);
 
@@ -85,22 +85,12 @@ public class TestPrimerDesigner {
         List<PrimerDesignResult> expectedPrimers = new ArrayList<PrimerDesignResult>();
         expectedPrimers.add(
             new PrimerDesignResult.Builder()
-                .setDesignGroupID("4_00000_0000")
+                .setDesignGroupID("4_10000_0001")
                 .setDesignGroupLocationHash(0)
                 .setParentID("contig00070")
-                .setRange(Range.parseRange("17989 - 18015"))
+                .setRange(Range.parseRange("17988 - 18013"))
                 .setOrientation(SequenceDirection.REVERSE)
-                .setPrimerSequence(new DefaultNucleotideEncodedGlyphs("GTGAACTTCAGGGTTAGCCTCGTTAT"))
-                .build()
-        );
-        expectedPrimers.add(
-            new PrimerDesignResult.Builder()
-                .setDesignGroupID("4_00000_0000")
-                .setDesignGroupLocationHash(0)
-                .setParentID("contig00070")
-                .setRange(Range.parseRange("17180 - 17202"))
-                .setOrientation(SequenceDirection.FORWARD)
-                .setPrimerSequence(new DefaultNucleotideEncodedGlyphs("GGCAGGCGTGGTTTATTTCATC"))
+                .setPrimerSequence(new DefaultNucleotideEncodedGlyphs("GAACTTCAGGGTTAGCCTCGTTATC"))
                 .build()
         );
         expectedPrimers.add(
@@ -108,19 +98,29 @@ public class TestPrimerDesigner {
                 .setDesignGroupID("4_10000_0001")
                 .setDesignGroupLocationHash(0)
                 .setParentID("contig00070")
-                .setRange(Range.parseRange("17960 - 17986"))
-                .setOrientation(SequenceDirection.REVERSE)
-                .setPrimerSequence(new DefaultNucleotideEncodedGlyphs("ATTGGCGCGGCATAAAGTAAGTATCT"))
+                .setRange(Range.parseRange("17182 - 17205"))
+                .setOrientation(SequenceDirection.FORWARD)
+                .setPrimerSequence(new DefaultNucleotideEncodedGlyphs("CAGGCGTGGTTTATTTCATCTTG"))
                 .build()
         );
         expectedPrimers.add(
             new PrimerDesignResult.Builder()
-                .setDesignGroupID("4_10000_0001")
+                .setDesignGroupID("4_00000_0000")
                 .setDesignGroupLocationHash(0)
                 .setParentID("contig00070")
-                .setRange(Range.parseRange("17066 - 17092"))
+                .setRange(Range.parseRange("17960 - 17983"))
+                .setOrientation(SequenceDirection.REVERSE)
+                .setPrimerSequence(new DefaultNucleotideEncodedGlyphs("GGCGCGGCATAAAGTAAGTATCT"))
+                .build()
+        );
+        expectedPrimers.add(
+            new PrimerDesignResult.Builder()
+                .setDesignGroupID("4_00000_0000")
+                .setDesignGroupLocationHash(0)
+                .setParentID("contig00070")
+                .setRange(Range.parseRange("17242 - 17266"))
                 .setOrientation(SequenceDirection.FORWARD)
-                .setPrimerSequence(new DefaultNucleotideEncodedGlyphs("TATCGATGACTGCAGTAAAACGGAAG"))
+                .setPrimerSequence(new DefaultNucleotideEncodedGlyphs("TGAAAATTTATGCCTTGAAACCGA"))
                 .build()
         );
         expectedResults.put(targets.get(3),expectedPrimers);
@@ -141,9 +141,9 @@ public class TestPrimerDesigner {
                 .setDesignGroupLocationHash(1)
                 .setDesignGroupID("5_00000_0000")
                 .setParentID("contig00070")
-                .setRange(Range.parseRange("54306 - 54331"))
+                .setRange(Range.parseRange("54300 - 54325"))
                 .setOrientation(SequenceDirection.REVERSE)
-                .setPrimerSequence(new DefaultNucleotideEncodedGlyphs("AGCAGGAAGCAAATTTATTGACACC"))
+                .setPrimerSequence(new DefaultNucleotideEncodedGlyphs("AAGCAAATTTATTGACACCCATCAC"))
                 .build()
         );
         expectedPrimers.add(
@@ -161,9 +161,9 @@ public class TestPrimerDesigner {
                 .setDesignGroupID("5_10000_0001")
                 .setDesignGroupLocationHash(1)
                 .setParentID("contig00070")
-                .setRange(Range.parseRange("53586 - 53612"))
+                .setRange(Range.parseRange("53579 - 53605"))
                 .setOrientation(SequenceDirection.FORWARD)
-                .setPrimerSequence(new DefaultNucleotideEncodedGlyphs("TATGTTGCTTGTTACCCTGCTACCTG"))
+                .setPrimerSequence(new DefaultNucleotideEncodedGlyphs("TCAAGTTTATGTTGCTTGTTACCCTG"))
                 .build()
         );
         expectedResults.put(targets.get(4),expectedPrimers);
