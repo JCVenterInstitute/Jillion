@@ -133,7 +133,7 @@ public class ArrayBasedPrimerDesignerExecutorService implements PrimerDesignerEx
         OutputStream outputStream = null;
         try {
             File arrayGridJobTemplate = new File(executorRoot,"runClsrPDArrayScript.sh");
-            inputStream = this.getClass().getClassLoader().getResourceAsStream("resource/runClsrPDArrayScript.sh");
+            inputStream = this.getClass().getClassLoader().getResourceAsStream("runClsrPDArrayScript.sh");
             outputStream = new BufferedOutputStream(new FileOutputStream(arrayGridJobTemplate));
             IOUtil.writeToOutputStream(inputStream,outputStream);
             arrayGridJobTemplate.setExecutable(true,true);
