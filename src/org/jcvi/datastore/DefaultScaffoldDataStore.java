@@ -24,10 +24,10 @@ import org.jcvi.datastore.ScaffoldDataStore;
 import org.jcvi.assembly.agp.AgpFileVisitor;
 import org.jcvi.sequence.SequenceDirection;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.HashMap;
 
 /**
  * User: aresnick
@@ -46,7 +46,7 @@ public class DefaultScaffoldDataStore implements ScaffoldDataStore, AgpFileVisit
     private Map<String, DefaultScaffold> scaffolds;
 
     public DefaultScaffoldDataStore() {
-        builderMap = new HashMap<String, DefaultScaffold.Builder>();
+        builderMap = new LinkedHashMap<String, DefaultScaffold.Builder>();
     }
 
     public void visitContigEntry(String scaffoldId, Range contigRange, String contigId, SequenceDirection dir) {
@@ -62,7 +62,7 @@ public class DefaultScaffoldDataStore implements ScaffoldDataStore, AgpFileVisit
     }
 
     public void visitEndOfFile() {
-        scaffolds = new HashMap<String, DefaultScaffold>(builderMap.size());
+        scaffolds = new LinkedHashMap<String, DefaultScaffold>(builderMap.size());
         for(Map.Entry<String, DefaultScaffold.Builder> entry : builderMap.entrySet()){
             scaffolds.put(entry.getKey(), entry.getValue().build());
         }
