@@ -27,6 +27,9 @@ public final class TigrAuthorizerUtils {
     public static TigrAuthorizer readTigrPasswordFile(String pathToPassFile) throws FileNotFoundException{
         return readTigrPasswordFile(new FileInputStream(pathToPassFile));
     }
+    public static boolean hasProjectDbAuthorizer(CommandLine commandLine){
+        return commandLine.hasOption("-D") || commandLine.hasOption("-p");
+    }
     public static TigrAuthorizer readTigrPasswordFile(InputStream passFileInputStream){
         Scanner scanner=null;
         char[] password=null;
