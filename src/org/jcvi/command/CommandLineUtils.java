@@ -50,11 +50,38 @@ public class CommandLineUtils {
         return parser.parse(options, args);
         
     }
-    
+    /**
+     * Create a new {@link Option}
+     * that will "show this message" if {@code -h} or {@code --h}
+     * or {@code -help} or {@code --help} are provided 
+     * to the CommandLine.
+     * @return a new Option to show help.
+     * @see #helpRequested(String[])
+     */
     public static Option createHelpOption(){
         return new CommandLineOptionBuilder("h", "show this message")
             .longName("help")
             .build();
+    }
+    /**
+     * Does the given argument list ask for help.  This
+     * check should be done before the commandline
+     * is parsed since  not all of the required
+     * parameters may exist.
+     * @param args the command line arguments to inspect.
+     * @return {@true} if {@code -h} or {@code --h}
+     * or {@code -help} or {@code --help} are anywhere
+     * in the given argument list.
+     */
+    public static boolean helpRequested(String[] args){
+        for(int i=0; i< args.length; i++){
+            String arg = args[i];
+            if("-h".equals(arg) || "--h".equals(arg) ||
+                    "-help".equals(arg) || "--help".equals(arg)){
+                return true;
+            }
+        }
+        return false;
     }
    
 }
