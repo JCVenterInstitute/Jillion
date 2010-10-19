@@ -37,8 +37,8 @@ public class TestPrimerDesigner {
     private String projectCode = "8010AM";
     private String architecture = "lx24-amd64";
 
-    private NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> templateRecord;
-    private DataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> referenceFastaRecords;
+    private NucleotideSequenceFastaRecord templateRecord;
+    private DataStore<NucleotideSequenceFastaRecord> referenceFastaRecords;
     private InputStream primerConfigurationStub;
 
     @Test

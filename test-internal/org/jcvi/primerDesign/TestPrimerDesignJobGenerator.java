@@ -38,8 +38,8 @@ public class TestPrimerDesignJobGenerator {
         targets.add(new DefaultPrimerDesignTarget("contig00070", Range.buildRange(1,243)));
         targets.add(new DefaultPrimerDesignTarget("contig00070", Range.buildRange(17618,17660)));
         targets.add(new DefaultPrimerDesignTarget("contig00070", Range.buildRange(53990,53993)));
-        NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs> templateRecord = null; // safe for now
-        DataStore<NucleotideSequenceFastaRecord<NucleotideEncodedGlyphs>> referenceFastaRecords =
+        NucleotideSequenceFastaRecord templateRecord = null; // safe for now
+        DataStore<NucleotideSequenceFastaRecord> referenceFastaRecords =
             new DefaultNucleotideFastaFileDataStore(
                 new File(this.getClass().getResource("files/454AllContigs.fasta").getFile())
         );
