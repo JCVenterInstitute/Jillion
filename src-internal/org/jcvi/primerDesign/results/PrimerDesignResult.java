@@ -202,15 +202,14 @@ public class PrimerDesignResult {
                     );
                 }
                 return designGroupKey;
-            } else {
-                if ( designGroupLocationHash == null || designGroupID == null ) {
-                    throw new IllegalStateException(
-                        "designGroupID|designGroupLocationHash values must be non-null" +
-                            " when building a PrimerDesignResult object using these values"
-                    );
-                }
-                return new DesignGroupKey(designGroupID,designGroupLocationHash);
+            } 
+            if ( designGroupLocationHash == null || designGroupID == null ) {
+                throw new IllegalStateException(
+                    "designGroupID|designGroupLocationHash values must be non-null" +
+                        " when building a PrimerDesignResult object using these values"
+                );
             }
+            return new DesignGroupKey(designGroupID,designGroupLocationHash);
         }
     }
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry including="AllTests.java|AllUnitTests.java" kind="src" path=""/>
+	<classpathentry excluding="resource/" including="AllTests.java|AllUnitTests.java" kind="src" path=""/>
+	<classpathentry kind="src" path="resource"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="integration-test"/>
 	<classpathentry kind="src" path="test"/>
@@ -65,7 +66,7 @@
 			<attribute name="javadoc_location" value="http://gridengine.sunsource.net/nonav/source/browse/~checkout~/gridengine/doc/javadocs"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/JSAP-2.1.jar">
+	<classpathentry exported="true" kind="lib" path="lib/JSAP-2.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/easymock-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/objenesis-1.2.jar"/>

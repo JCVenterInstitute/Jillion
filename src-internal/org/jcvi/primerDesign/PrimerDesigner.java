@@ -3,7 +3,6 @@ package org.jcvi.primerDesign;
 import org.apache.log4j.Logger;
 import org.jcvi.primerDesign.domain.PrimerDesignTarget;
 import org.jcvi.primerDesign.gridJob.PrimerDesignerArrayGridJob;
-import org.jcvi.primerDesign.gridJob.PrimerDesignerGridJob;
 import org.jcvi.primerDesign.results.PrimerDesignResult;
 import org.jcvi.primerDesign.results.PrimerDesignResultsRetriever;
 
@@ -54,29 +53,7 @@ public class PrimerDesigner {
         return PrimerDesignResultsRetriever.retrievePrimerDesignResults(primerDesignerScratchRoot);
     }
 
-    private PrimerDesignerExecutorService gridMultiJobDesign() {
-        List<PrimerDesignerGridJob> primerDesignJobs =
-            new ArrayList<PrimerDesignerGridJob>();
-
-        for ( Map.Entry<File,PrimerDesignRequest> entry : requestMap.entrySet() ) {
-            PrimerDesignRequest request = entry.getValue();
-
-            PrimerDesignerMultipleGridJobsVisitor visitor = new PrimerDesignerMultipleGridJobsVisitor();
-            PrimerDesignJobGenerator jobGenerator = new PrimerDesignJobGenerator(entry.getKey(),visitor);
-            jobGenerator.createPrimerDesignJobs(request.getTargets(),
-                                                request.getTemplateFastaRecord(),
-                                                request.getReferenceFastaRecords(),
-                                                request.getPrimerConfigurationStub(),
-                                                request.getProjectCode(),
-                                                request.getArchitecture());
-            primerDesignJobs.addAll(visitor.getGridJobs());
-        }
-
-        // run/monitor these jobs
-        PrimerDesignerExecutorService gridExecutor =
-            new SimplePrimerDesignerExecutorService("primer designer grid executor",100,primerDesignJobs);
-        return gridExecutor;
-    }
+    
 
     private PrimerDesignerExecutorService gridArrayJobDesign() {
         List<PrimerDesignerArrayGridJob> primerDesignJobs =
@@ -91,8 +68,7 @@ public class PrimerDesigner {
                                                 request.getTemplateFastaRecord(),
                                                 request.getReferenceFastaRecords(),
                                                 request.getPrimerConfigurationStub(),
-                                                request.getProjectCode(),
-                                                request.getArchitecture());
+                                                request.getProjectCode());
             primerDesignJobs.addAll(visitor.getGridJobs());
         }
 

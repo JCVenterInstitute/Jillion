@@ -93,7 +93,6 @@ public class PrimerDesignerArrayGridJob {
         }
 
         public PrimerDesignerArrayGridJob build() {
-            // validateData();
             return new PrimerDesignerArrayGridJob(projectCode,
                                                   architecture,
                                                   configFile,
@@ -102,7 +101,5 @@ public class PrimerDesignerArrayGridJob {
                                                   primerFastaFile);
         }
 
-        private void validateData() {
-        }
     }
 }

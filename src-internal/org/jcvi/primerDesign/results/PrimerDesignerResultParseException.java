@@ -13,6 +13,11 @@ package org.jcvi.primerDesign.results;
  * Description:
  */
 public class PrimerDesignerResultParseException extends RuntimeException {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3599765954320254983L;
+
     public PrimerDesignerResultParseException() {
         super();    //To change body of overridden methods use File | Settings | File Templates.
     }

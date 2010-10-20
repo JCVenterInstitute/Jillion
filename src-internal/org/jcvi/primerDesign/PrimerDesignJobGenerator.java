@@ -11,7 +11,6 @@ import org.jcvi.Range;
 import org.jcvi.command.Command;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.fasta.NucleotideSequenceFastaRecord;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.primerDesign.domain.PrimerDesignTarget;
 
 
@@ -74,11 +73,9 @@ public class PrimerDesignJobGenerator {
                                        NucleotideSequenceFastaRecord templateRecord,
                                        DataStore<NucleotideSequenceFastaRecord> referenceFastaRecords,
                                        InputStream primerConfigurationStub,
-                                       String projectCode,
-                                       String architecture) {
-        File sourceTemplateFastaDirectory = null;
+                                       String projectCode) {
         if ( templateRecord != null ) {
-            sourceTemplateFastaDirectory = buildTemplateFastaDirectory(templateRecord);
+            buildTemplateFastaDirectory(templateRecord);
         }
 
         // generate the targets file and dump it in root dir
