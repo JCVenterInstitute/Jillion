@@ -1,19 +1,18 @@
 package org.jcvi.primerDesign;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 
+import org.jcvi.io.IOUtil;
 import org.jcvi.Range;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.fasta.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.fasta.NucleotideSequenceFastaRecord;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
 import org.jcvi.primerDesign.domain.DefaultPrimerDesignTarget;
 import org.jcvi.primerDesign.domain.PrimerDesignTarget;
 import org.jcvi.primerDesign.gridJob.PrimerDesignerGridJob;
-import org.jcvi.primerDesign.results.PrimerDesignResult;
+
 import org.junit.*;
 /**
  * Created by IntelliJ IDEA.
@@ -44,19 +43,27 @@ public class TestPrimerDesignJobGenerator {
                 new File(this.getClass().getResource("files/454AllContigs.fasta").getFile())
         );
         InputStream primerConfigurationStub =
-            this.getClass().getClassLoader().getResourceAsStream("resource/closure.pcrStrict.config.stub");
-
-        PrimerDesignerMultipleGridJobsVisitor visitor = new PrimerDesignerMultipleGridJobsVisitor();
+            this.getClass().getClassLoader().getResourceAsStream("closure.pcrStrict.config.stub");
         File root = new File("/usr/local/scratch/ClosurePrimerDesigner/test");
-        PrimerDesignJobGenerator jobGenerator = new PrimerDesignJobGenerator(root,visitor);
-        jobGenerator.createPrimerDesignJobs(targets,
-                                            templateRecord,
-                                            referenceFastaRecords,
-                                            primerConfigurationStub,
-                                            projectCode,
-                                            architecture);
-        for ( PrimerDesignerGridJob gridJob : visitor.getGridJobs() ) {
-            System.out.println(gridJob);
+        try {
+            PrimerDesignerMultipleGridJobsVisitor visitor = new PrimerDesignerMultipleGridJobsVisitor();
+            PrimerDesignJobGenerator jobGenerator = new PrimerDesignJobGenerator(root,visitor);
+            jobGenerator.createPrimerDesignJobs(targets,
+                                                templateRecord,
+                                                referenceFastaRecords,
+                                                primerConfigurationStub,
+                                                projectCode,
+                                                architecture);
+            for ( PrimerDesignerGridJob gridJob : visitor.getGridJobs() ) {
+                System.out.println(gridJob);
+            }
+        } catch (Exception e) {
+            try {
+                IOUtil.recursiveDelete(root);
+            } catch (IOException ioe) {
+                System.err.println("Warning - unable to clean up test directory " + root);
+                e.printStackTrace();
+            }
         }
     }
 }
