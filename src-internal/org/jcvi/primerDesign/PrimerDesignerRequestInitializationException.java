@@ -8,6 +8,11 @@ package org.jcvi.primerDesign;
  * To change this template use File | Settings | File Templates.
  */
 public class PrimerDesignerRequestInitializationException extends RuntimeException {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7070358332474822137L;
+
     public PrimerDesignerRequestInitializationException() {
         super();    //To change body of overridden methods use File | Settings | File Templates.
     }

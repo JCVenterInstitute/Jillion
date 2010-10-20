@@ -1,18 +1,6 @@
 package org.jcvi.primerDesign;
 
-import org.jcvi.datastore.DataStore;
-import org.jcvi.fasta.NucleotideSequenceFastaRecord;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.io.IOUtil;
-
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Collection;
-import java.util.Iterator;
-
 /**
  * Created by IntelliJ IDEA.
  * User: aresnick

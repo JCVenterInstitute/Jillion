@@ -1,6 +1,5 @@
 package org.jcvi.primerDesign;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.fasta.NucleotideSequenceFastaRecord;
 import org.jcvi.datastore.DataStore;
 

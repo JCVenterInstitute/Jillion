@@ -31,7 +31,7 @@ public class PrimerDesignResultsRetriever {
 
         Collection files = FileUtils.listFiles(rootDirectory,
                                                new NameFileFilter("targets.simple"),
-                                               DirectoryFileFilter.INSTANCE);
+                                               DirectoryFileFilter.DIRECTORY);
         for ( Object o : files ) {
             File targetFile = (File) o;
             PrimerDesignTarget target =
@@ -72,8 +72,7 @@ public class PrimerDesignResultsRetriever {
             File primerDesignResultsFile = new File(targetFile.getParentFile(),"primers.fasta");
             if ( primerDesignResultsFile.exists() ) {
                 return PrimerDesignerResultParser.parseResultsFile(primerDesignResultsFile);
-            } else {
-                return Collections.emptyList();
-            }
+            } 
+            return Collections.emptyList();
     }
 }

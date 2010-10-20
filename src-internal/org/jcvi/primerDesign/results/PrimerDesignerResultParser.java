@@ -3,7 +3,6 @@ package org.jcvi.primerDesign.results;
 import org.jcvi.fasta.FastaParser;
 import org.jcvi.fasta.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.fasta.NucleotideSequenceFastaRecord;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.Range;
 
