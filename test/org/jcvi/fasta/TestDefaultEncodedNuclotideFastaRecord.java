@@ -23,6 +23,7 @@
  */
 package org.jcvi.fasta;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
@@ -139,5 +140,17 @@ public class TestDefaultEncodedNuclotideFastaRecord {
 
     private String formatBasecalls() {
         return bases.replaceAll("(.{60})", "$1"+AbstractFastaRecord.CR);
+    }
+    
+    @Test
+    public void whenFastaSequenceEndsAtEndOfLineShouldNotMakeAdditionalBlankLine(){
+        char[] bases = new char[60];
+        Arrays.fill(bases, 'A');
+        String sixtyBases= new String(bases);
+        DefaultEncodedNucleotideFastaRecord record = new DefaultEncodedNucleotideFastaRecord(id, 
+                null, sixtyBases);
+        String expectedStringRecord = ">"+id+"\n"+sixtyBases+"\n";
+        assertEquals(expectedStringRecord, record.toString());
+        
     }
 }
