@@ -95,7 +95,15 @@ public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFast
     
     protected CharSequence getRecordBody()
     {
-        return this.decodeNucleotides().toString().replaceAll("(.{60})", "$1"+CR);
+        String result= this.decodeNucleotides().toString().replaceAll("(.{60})", "$1"+CR);
+        //some fasta parsers such as blast's formatdb
+        //break if there is an extra blank line between records
+        //this can happen if the sequence ends at the exact lenght of 1 line
+        //(60 characters)
+        if(sequence.getLength() >0 && sequence.getLength()%60==0){
+            return result.substring(0, result.length()-1);
+        }
+        return result;
     }
     
     protected long calculateCheckSum(CharSequence data)
