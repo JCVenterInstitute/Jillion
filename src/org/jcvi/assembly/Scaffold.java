@@ -34,6 +34,7 @@ public interface Scaffold {
     String getId();
     PlacedContig getPlacedContig(String id);
 
+    boolean hasContig(String contigId);
     Set<PlacedContig> getPlacedContigs();
     CoverageMap<CoverageRegion<PlacedContig>> getContigMap();
     int getNumberOfContigs();

@@ -79,7 +79,13 @@ public class DefaultScaffold implements Scaffold {
     public CoverageMap<CoverageRegion<PlacedContig>> getContigMap() {
         return contigMap;
     }
-
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public boolean hasContig(String contigId) {
+         return contigbyId.containsKey(contigId);
+     }
     /**
      * Converts contig range coordinates into scaffold range coordinates
      * based on contig's scaffold location and orientation
@@ -197,7 +203,7 @@ public class DefaultScaffold implements Scaffold {
             return this;
         }
         public DefaultScaffold build(){
-            if(shiftContigs){
+            if(shiftContigs && !contigs.isEmpty()){
                 Set<PlacedContig> shiftedContigs = new TreeSet<PlacedContig>();
                 PlacedContig firstContig = contigs.iterator().next();
                 long shiftOffset = firstContig.getStart();
@@ -210,6 +216,9 @@ public class DefaultScaffold implements Scaffold {
         }
         
     }
+
+
+   
    
 
    
