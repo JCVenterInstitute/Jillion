@@ -265,6 +265,9 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
     }
     @Override
     public int getMaxCoverage() {
+        if(regions.isEmpty()){
+            return 0;
+        }
         int maxCoverage=0;
         for(T region : regions){
             maxCoverage = Math.max(maxCoverage, region.getCoverage());
