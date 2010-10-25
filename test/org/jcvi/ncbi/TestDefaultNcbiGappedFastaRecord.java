@@ -257,4 +257,20 @@ public class TestDefaultNcbiGappedFastaRecord {
                                                 .build();
         TestUtil.assertNotEqualAndHashcodeDifferent(rec1, rec2);
     }
+    
+    @Test
+    public void whenSequenceLengthMatchesLengthOfLineShouldNotMakeExtraBlank(){
+        char[] array = new char[60];
+        Arrays.fill(array, 'A');
+        String sixtyBasesLong = new String(array);
+        DefaultNcbiGappedFastaRecord rec = new DefaultNcbiGappedFastaRecord.Builder(id)
+                    .addSequence(sixtyBasesLong)
+                    .addGap(10)
+                    .addSequence(sixtyBasesLong)
+                    .build();
+        String expected = ">"+id+"\n"+sixtyBasesLong+"\n"+">?10\n"+sixtyBasesLong;
+        String actual =rec.toString();
+       assertThat(actual, is(equalTo((expected))));
+        
+    }
 }
