@@ -102,7 +102,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
     protected String formatSequence(NucleotideEncodedGlyphs basecalls){
         String result= NucleotideGlyph.convertToString(basecalls.decode()).replaceAll("(.{60})", "$1\n");
         if(basecalls.getLength() >0 && basecalls.getLength() %60 ==0){
-            return result.substring(1, result.length()-1);
+            return result.substring(0, result.length()-1);
         }
         return result;
     }
