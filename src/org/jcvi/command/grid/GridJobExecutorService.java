@@ -76,20 +76,19 @@ public class GridJobExecutorService extends ThreadPoolExecutor
         return this.name;
     }
 
-    public int countRunningTasks()
-    {
-        return this.getActiveCount();
-    }
 
     public int countActiveTasks()
     {
-        return this.countRunningTasks() + this.countWaitingTasks();
+        int stillRunning = 0;
+        for(Entry<GridJob,GridJobFuture> entry : futures.entrySet()){
+            GridJobFuture future = entry.getValue();
+            if( !future.isDone() && !future.isCancelled()){
+                stillRunning++;
+            }
+        }
+        return stillRunning;
     }
-
-    public int countWaitingTasks()
-    {
-        return this.getQueue().size();
-    }
+   
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
