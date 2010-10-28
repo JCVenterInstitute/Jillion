@@ -20,7 +20,9 @@
 package org.jcvi.assembly.cas;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,6 +30,7 @@ import java.util.Scanner;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.jcvi.Builder;
 import org.jcvi.assembly.ace.AceContig;
@@ -44,6 +47,7 @@ import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.trace.sanger.phd.PhdWriter;
+import org.jcvi.util.MultipleWrapper;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Period;
 
@@ -84,8 +88,10 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
        
         try {
             prepareForBuild();
+            File casWorkingDirectory = casFile.getParentFile();
             DefaultCasFileReadIndexToContigLookup read2contigMap = new DefaultCasFileReadIndexToContigLookup();
-            CasParser.parseOnlyMetaData(casFile, read2contigMap);
+            AbstractDefaultCasFileLookup readIdLookup = new DefaultReadCasFileLookup(casWorkingDirectory);
+            CasParser.parseOnlyMetaData(casFile, MultipleWrapper.createMultipleWrapper(CasFileVisitor.class,read2contigMap,readIdLookup));
 
             ReadWriteDirectoryFileServer consedOut = DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
             long startTime = DateTimeUtils.currentTimeMillis();
@@ -167,6 +173,48 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
                 
                 consedOut.createNewSymLink("../phd_dir/"+prefix+".phd.ball", 
                                     "edit_dir/phd.ball");
+                
+                if(commandLine.hasOption("chromat_dir")){
+                        consedOut.createNewDir("chromat_dir");
+                        File originalChromatDir = new File(commandLine.getOptionValue("chromat_dir"));
+                        for(File chromat : originalChromatDir.listFiles(new FilenameFilter() {
+                            
+                            @Override
+                            public boolean accept(File dir, String name) {
+                                return name.endsWith(".scf");
+                            }
+                        })){
+                            File newChromatFile = consedOut.createNewFile("chromat_dir/"+FilenameUtils.getBaseName(chromat.getName()));
+                            FileOutputStream newChromat = new FileOutputStream(newChromatFile);
+                            InputStream in = new FileInputStream(chromat);
+                            IOUtils.copy(in, newChromat);
+                            IOUtil.closeAndIgnoreErrors(in, newChromat);
+                        }
+                }
+                System.out.println("finished making casAssemblies");
+                for(File traceFile : readIdLookup.getFiles()){
+                    
+                    final String name = traceFile.getName();
+                    String extension = FilenameUtils.getExtension(name);
+                    if(name.contains("fastq")){
+                        if(!consedOut.contains("solexa_dir")){
+                            consedOut.createNewDir("solexa_dir");
+                        }
+                        if(consedOut.contains("solexa_dir/"+name)){
+                            consedOut.getFile("solexa_dir/"+name).delete();
+                        }
+                        consedOut.createNewSymLink(traceFile.getAbsolutePath(), "solexa_dir/"+name);
+                    }else if ("sff".equals(extension)){
+                        if(!consedOut.contains("sff_dir")){
+                            consedOut.createNewDir("sff_dir");
+                        }
+                        
+                        if(consedOut.contains("sff_dir/"+name)){
+                            consedOut.getFile("sff_dir/"+name).delete();
+                        }
+                        consedOut.createNewSymLink(traceFile.getAbsolutePath(), "sff_dir/"+name);
+                    }
+                }
                 long endTime = DateTimeUtils.currentTimeMillis();
                 logOut.write(String.format("took %s%n",new Period(endTime- startTime)).getBytes());
                 
