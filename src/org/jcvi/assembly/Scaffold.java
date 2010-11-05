@@ -40,6 +40,8 @@ public interface Scaffold {
     int getNumberOfContigs();
     long getLength();
 
-    /* converts contig based coordinates into scaffold coordinates */
+    /**
+     *  converts contig based coordinates into scaffold coordinates.
+     */
     Range convertContigRangeToScaffoldRange(String placedContigId, Range placedContigRange);
 }

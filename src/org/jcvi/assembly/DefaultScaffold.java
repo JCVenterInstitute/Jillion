@@ -191,7 +191,9 @@ public class DefaultScaffold implements Scaffold {
             contigs.add(new DefaultPlacedContig(contigId, contigRange,contigDirection));
             return this;
         }
-       
+        public Builder add(String contigId, Range contigRange){
+            return add(contigId, contigRange, SequenceDirection.FORWARD);
+        }
         /**
          * Shift all contigs in the scaffold so that the first
          * contig will start at scaffold position 1.
