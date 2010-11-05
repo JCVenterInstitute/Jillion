@@ -138,7 +138,7 @@ public class DefaultJCVIAuthorizer implements JCVIAuthorizer {
      *
      *
      */
-    static final class UncloseableJCVIAuthorizer extends DefaultJCVIAuthorizer{
+    public static final class UncloseableJCVIAuthorizer extends DefaultJCVIAuthorizer{
 
         public UncloseableJCVIAuthorizer(String username, char[] pass) {
             super(username, pass);
