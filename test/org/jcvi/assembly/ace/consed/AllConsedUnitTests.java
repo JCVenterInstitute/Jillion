@@ -37,7 +37,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestConsensusNavigationElement.class,
         TestConsensusNavigationElementFactoryMethod.class,
         TestReadNavigationElement.class,
-        TestConsedUtilGetNextAceVersion.class
+        TestConsedUtilGetNextAceVersion.class,
+        TestConsedNavigationWriter.class,
     }
     )
 public class AllConsedUnitTests {
