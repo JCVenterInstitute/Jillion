@@ -38,6 +38,15 @@ import org.jcvi.Range.CoordinateSystem;
 public class ConsedNavigationWriter implements Closeable{
 
     private final OutputStream out;
+    /**
+     * Creates a new ConsedNavigationWriter which will
+     * write out navigation data to the given {@link OutputStream}.
+     * @param title the title of this navigation file.
+     * @param out the OutputStream to write to.
+     * @throws IOException if there is a problem writing
+     * to the outputStream.
+     * @throws NullPointerException if title or outputStream are {@code null}.
+     */
     public ConsedNavigationWriter(String title, OutputStream out) throws IOException{
         if(title ==null){
             throw new NullPointerException("title can not be null");
