@@ -24,6 +24,8 @@
 package org.jcvi.trace.sanger.chromatogram.ztr.data;
 
 import java.nio.ByteBuffer;
+
+import org.jcvi.io.IOUtil;
 /**
  * <code>ValueSizeStrategy</code> is a strategy pattern
  * implementation to abstract away the number of bytes
@@ -34,13 +36,74 @@ import java.nio.ByteBuffer;
  *
  *
  */
-public interface ValueSizeStrategy {
+public enum ValueSizeStrategy {
+	
+	BYTE{
+		/**
+	     * get the next (unsigned) byte from the buffer.
+	     * @param buf the buffer to read the byte from.
+	     * @return an unsigned byte value as an int.
+	     */
+	    @Override
+	    public int getNext(ByteBuffer buf) {
+	        return IOUtil.convertToUnsignedByte(buf.get());
+	    }
+	    /**
+	     * puts the given byte value into the given buffer.
+	     * @param value the value to write (must be able to be cast to a <code>byte</code>)
+	     * @param buf the Buffer to write to.
+	     */
+	    @Override
+	    public void put(int value, ByteBuffer buf) {
+	        buf.put((byte)value);
+
+	    }    
+	},
+	SHORT{
+		/**
+	     * get the next short from the buffer.
+	     * @param buf the buffer to read the byte from.
+	     * @return a short value as an int.
+	     */
+	    @Override
+	    public int getNext(ByteBuffer buf) {
+	        return IOUtil.convertToUnsignedShort(buf.getShort());
+	    }
+	    /**
+	     * puts the given short value into the given buffer.
+	     * @param value the value to write (must be able to be cast to a <code>short</code>)
+	     * @param buf the Buffer to write to.
+	     */
+	    @Override
+	    public void put(int value, ByteBuffer buf) {
+	        buf.putShort((short)value);
+
+	    }
+	},
+	INTEGER{
+		 /**
+	     * 
+	    * {@inheritDoc}
+	     */
+	    @Override
+	    public int getNext(ByteBuffer buf) {
+	        return buf.getInt();
+	    }
+	    /**
+	     * 
+	    * {@inheritDoc}
+	     */
+	    @Override
+	    public void put(int value, ByteBuffer buf) {
+	        buf.putInt(value);
+	    }
+	};
     /**
      * Gets the next value from the given buffer.
      * @param buf the ByteBuffer to read from.
      * @return the value read from the buffer as an int.
      */
-    int getNext(ByteBuffer buf);
+    abstract int getNext(ByteBuffer buf);
     /**
      * puts the given value into the buffer. If this
      * implementation reads/writes data smaller than an int,
@@ -49,5 +112,5 @@ public interface ValueSizeStrategy {
      * the MAX_SIZE of the implementation value size.
      * @param buf the buffer to write to.
      */
-    void put(int value, ByteBuffer buf);
+    abstract void put(int value, ByteBuffer buf);
 }

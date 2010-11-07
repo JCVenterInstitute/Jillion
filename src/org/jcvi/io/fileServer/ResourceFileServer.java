@@ -77,7 +77,6 @@ public class ResourceFileServer extends AbstractFileServer {
         verifyNotClosed();
 
 	        String relativePath = getRelativePath(fileId);
-	        System.out.println(relativePath);
 			URL url = clazz.getResource(relativePath);
 			
 			if(url==null){

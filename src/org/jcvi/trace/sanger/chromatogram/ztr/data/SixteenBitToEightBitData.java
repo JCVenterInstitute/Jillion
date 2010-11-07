@@ -33,7 +33,7 @@ public class SixteenBitToEightBitData extends AbstractToEightBitData {
      * Constructor.
      */
     public SixteenBitToEightBitData() {
-        super(new ShortValueSizeStrategy());
+        super(ValueSizeStrategy.SHORT);
     }
     /**
      * 

@@ -51,9 +51,9 @@ public final class DataFactory {
         map.put(Byte.valueOf((byte)0), new RawData());
         map.put(Byte.valueOf((byte)1), new RunLengthEncodedData());
         map.put(Byte.valueOf((byte)2), new ZLibData());
-        map.put(Byte.valueOf((byte)64), new Delta8Data());
-        map.put(Byte.valueOf((byte)65), new Delta16Data());
-        map.put(Byte.valueOf((byte)66), new Delta32Data());
+        map.put(Byte.valueOf((byte)64), DeltaEncodedData.BYTE);
+        map.put(Byte.valueOf((byte)65), DeltaEncodedData.SHORT);
+        map.put(Byte.valueOf((byte)66), DeltaEncodedData.INTEGER);
         map.put(Byte.valueOf((byte)70), new SixteenBitToEightBitData());
         map.put(Byte.valueOf((byte)71), new ThirtyTwoToEightBitData());
         map.put(Byte.valueOf((byte)72), new FollowData());

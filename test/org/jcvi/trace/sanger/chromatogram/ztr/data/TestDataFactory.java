@@ -25,9 +25,6 @@ package org.jcvi.trace.sanger.chromatogram.ztr.data;
 
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.DataFactory;
-import org.jcvi.trace.sanger.chromatogram.ztr.data.Delta16Data;
-import org.jcvi.trace.sanger.chromatogram.ztr.data.Delta32Data;
-import org.jcvi.trace.sanger.chromatogram.ztr.data.Delta8Data;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.FollowData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.RawData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.RunLengthEncodedData;
@@ -73,15 +70,18 @@ public class TestDataFactory {
     }
     @Test
     public void siztyFourIs8bit() throws TraceDecoderException{
-        assertTrue(DataFactory.getDataImplementation(new byte[]{64} ) instanceof Delta8Data);
+        assertSame(DataFactory.getDataImplementation(new byte[]{64} ),
+        		DeltaEncodedData.BYTE);
     }
     @Test
     public void siztyFiveIs16bit() throws TraceDecoderException{
-        assertTrue(DataFactory.getDataImplementation(new byte[]{65} ) instanceof Delta16Data);
+        assertSame(DataFactory.getDataImplementation(new byte[]{65} ),
+        		DeltaEncodedData.SHORT);
     }
     @Test
     public void siztySixIs32bit() throws TraceDecoderException{
-        assertTrue(DataFactory.getDataImplementation(new byte[]{66} ) instanceof Delta32Data);
+        assertSame(DataFactory.getDataImplementation(new byte[]{66} ),
+        		DeltaEncodedData.INTEGER);
     }
     @Test
     public void seventyIs16_to_8() throws TraceDecoderException{
