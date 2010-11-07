@@ -36,7 +36,7 @@ public class ThirtyTwoToEightBitData extends AbstractToEightBitData {
      * Constructor.
      */
     public ThirtyTwoToEightBitData() {
-        super(new IntValueSizeStrategy());
+        super(ValueSizeStrategy.INTEGER);
     }
 
     @Override

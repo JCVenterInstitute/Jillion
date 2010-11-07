@@ -24,6 +24,8 @@
 package org.jcvi.trace.sanger.chromatogram.ztr.data;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 /**
  * There are several different possible Delta strategies
  * that can be used to compute the delta between 2 consecutive
@@ -32,13 +34,73 @@ import java.nio.ByteBuffer;
  *
  *
  */
-public interface DeltaStrategy {
+public enum DeltaStrategy {
+	
+	LEVEL_1(1){
+		 @Override
+		    protected int computeDelta(int u1, int u2, int u3) {
+		        return u1;
+		    }
+	},
+	LEVEL_2(2){
+		@Override
+	    protected int computeDelta(int u1, int u2, int u3) {
+	        return  2*u1 - u2;
+	    }
+	},
+	LEVEL_3(3){
+		@Override
+	    protected int computeDelta(int u1, int u2, int u3) {
+	        return 3*u1 - 3*u2 + u3;
+	    }
+	};
+	
+	private final int level;
+	
+	private DeltaStrategy(int level){
+		this.level = level;
+	}
+	private static final Map<Integer, DeltaStrategy> MAP;
+	static{
+		MAP = new HashMap<Integer, DeltaStrategy>();
+		for(DeltaStrategy strategy : values()){
+			MAP.put(Integer.valueOf(strategy.level), strategy);
+		}
+	}
+	
+	public static DeltaStrategy getStrategyFor(int level){
+		Integer i = Integer.valueOf(level);
+		if(MAP.containsKey(i)){
+			return MAP.get(i);
+		}
+		throw new IllegalArgumentException("no delta strategy for level "+level);
+	}
     /**
      * use the delta strategy computation
      * to uncompress the next value from the given compressed buffer
      * and write it to the given out buffer. 
      * @param compressed buffer containing compressed data.
      * @param out buffer to write uncompressed (undelta'ed) value.
+     */    
+    public void unCompress(ByteBuffer compressed, ValueSizeStrategy valueSizeStrategy ,ByteBuffer out) {
+        int u1 = 0,u2 = 0,u3=0;
+        
+        while(compressed.hasRemaining()){
+            int value =valueSizeStrategy.getNext(compressed) + computeDelta(u1, u2, u3);
+            valueSizeStrategy.put(value, out);
+            //update previous values for next round
+            u3 = u2;
+            u2 = u1;            
+            u1 = value;            
+        }
+
+    }
+    /**
+     * Computes the current Delta given the previous 3 delta values. 
+     * @param u1 previous delta value.
+     * @param u2 the 2nd previous delta value.
+     * @param u3 the 3rd previous delta value.
+     * @return the current delta value.
      */
-    void unCompress(ByteBuffer compressed, ByteBuffer out);
+    protected abstract int computeDelta(int u1, int u2, int u3);
 }

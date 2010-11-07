@@ -27,12 +27,11 @@ import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
 
-import org.jcvi.trace.sanger.chromatogram.ztr.data.Delta16Data;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDelta16Data {
     private static byte[] uncompressedArray = new byte[]{16,32,49,16};
-    Delta16Data sut = new Delta16Data();
+    DeltaEncodedData sut = DeltaEncodedData.SHORT;
     @Test
     public void level1(){
         ShortBuffer uncompressed = ByteBuffer.wrap(uncompressedArray).asShortBuffer();

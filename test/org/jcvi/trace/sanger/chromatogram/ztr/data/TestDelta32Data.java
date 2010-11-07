@@ -26,12 +26,11 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 
-import org.jcvi.trace.sanger.chromatogram.ztr.data.Delta32Data;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDelta32Data {
     private static byte[] uncompressedArray = new byte[]{16,32,49,16, 0,50,90,-80, 127,127,64,48};
-    Delta32Data sut = new Delta32Data();
+    DeltaEncodedData sut = DeltaEncodedData.INTEGER;
     @Test
     public void level1(){
         IntBuffer uncompressed = ByteBuffer.wrap(uncompressedArray).asIntBuffer();

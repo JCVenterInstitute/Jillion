@@ -33,11 +33,48 @@ import java.nio.ByteBuffer;
  * of <code>AbstractDeltaData</code> are used for the different
  * sizes of the encoded values.
  * @author dkatzel
- *
+ * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
  *
  */
-public abstract class AbstractDeltaData implements Data {
-    /**
+public enum DeltaEncodedData implements Data {
+	/**
+	 * Implementation of the ZTR Delta8 Data Format which encodes the deltas between
+	 * successive byte values.
+	 * @author dkatzel
+	 * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
+	 */
+	BYTE(ValueSizeStrategy.BYTE),
+	/**
+	 * Implementation of the ZTR Delta16 Data Format
+	 * which encodes the deltas between successive short values.
+	 */
+	SHORT(ValueSizeStrategy.SHORT),
+	/**
+	 * Implementation of the ZTR Delta32 Data Format 
+	 * which encodes the deltas between successive int values.
+	 * @author dkatzel
+	 * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
+	 *
+	 *
+	 */
+	INTEGER(ValueSizeStrategy.INTEGER){
+		/**
+	     * 2 extra bytes of padding are needed to make 
+	     * the total length divisible by 4.
+	     */
+	    @Override
+	    protected final int getPaddingSize() {
+	        return 2;
+	    }
+	};
+	
+	private final ValueSizeStrategy valueSizeStrategy;
+	
+    private DeltaEncodedData(ValueSizeStrategy valueSizeStrategy) {
+		this.valueSizeStrategy = valueSizeStrategy;
+	}
+    
+	/**
      * 
     * {@inheritDoc}
      */
@@ -50,16 +87,11 @@ public abstract class AbstractDeltaData implements Data {
         compressed.put(data, startPosition, data.length-startPosition);
         compressed.flip();
         ByteBuffer unCompressedData = ByteBuffer.allocate(compressed.capacity());
-        getDeltaStrategy(level).unCompress(compressed, unCompressedData);
+        DeltaStrategy.getStrategyFor(level).unCompress(compressed,valueSizeStrategy, unCompressedData);
         return unCompressedData.array();
 
     }
-    /**
-     * Retrieves which DeltaStrategy to use.
-     * @param level
-     * @return
-     */
-    protected abstract DeltaStrategy getDeltaStrategy(int level);
+    
     /**
      * Some implementations may have additional
      * padding between the format byte and
