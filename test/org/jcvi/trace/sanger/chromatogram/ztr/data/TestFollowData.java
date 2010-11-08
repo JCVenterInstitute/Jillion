@@ -36,7 +36,7 @@ public class TestFollowData {
     private static byte[] followBytes;
     //should have follow values [21, 1, -5, 4, -9, 17, 23]
     private byte[] uncompressedData = new byte[]{21,30,45,51,70,63,50};
-    FollowData sut = new FollowData();
+    FollowData sut = FollowData.INSTANCE;
     @BeforeClass
     public static void setupFollowBytes(){
         followBytes = new byte[256];

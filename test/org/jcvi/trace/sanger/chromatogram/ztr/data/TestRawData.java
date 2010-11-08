@@ -35,6 +35,6 @@ public class TestRawData {
     
     @Test
     public void parseReturnsSameDataAsInput() throws TraceDecoderException{
-        assertTrue(Arrays.equals(new RawData().parseData(data), data));
+        assertTrue(Arrays.equals(RawData.INSTANCE.parseData(data), data));
     }
 }

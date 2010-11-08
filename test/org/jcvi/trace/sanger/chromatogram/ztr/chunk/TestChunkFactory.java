@@ -25,54 +25,51 @@ package org.jcvi.trace.sanger.chromatogram.ztr.chunk;
 
 import java.io.InputStream;
 
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.BASEChunk;
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.BPOSChunk;
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.CLIPChunk;
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.CNF4Chunk;
+
 import org.jcvi.trace.sanger.chromatogram.ztr.chunk.ChunkException;
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.ChunkFactory;
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.SMP4Chunk;
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.TEXTChunk;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
+import static org.hamcrest.Matchers.*;
 public class TestChunkFactory {
 
     InputStream inputStream = createMock(InputStream.class);
     @Test
     public void smp4() throws ChunkException{
-        assertTrue(ChunkFactory.getChunk("SMP4") instanceof SMP4Chunk);
+        assertThat(Chunk.getChunk("SMP4"), is(Chunk.SMP4));
     }
     
     @Test
     public void base() throws ChunkException{
-        assertTrue(ChunkFactory.getChunk("BASE") instanceof BASEChunk);
+        assertThat(Chunk.getChunk("BASE"), is(Chunk.BASE));
     }
     
     @Test
     public void bpos() throws ChunkException{
-        assertTrue(ChunkFactory.getChunk("BPOS") instanceof BPOSChunk);
+        assertThat(Chunk.getChunk("BPOS"), is(Chunk.POSITIONS));
+        
     }
     @Test
     public void cnf4() throws ChunkException{
-        assertTrue(ChunkFactory.getChunk("CNF4") instanceof CNF4Chunk);
+        assertThat(Chunk.getChunk("CNF4"), is(Chunk.CONFIDENCES));
     }
     @Test
     public void text() throws ChunkException{
-        assertTrue(ChunkFactory.getChunk("TEXT") instanceof TEXTChunk);
+        assertThat(Chunk.getChunk("TEXT"), is(Chunk.COMMENTS));
     }
     @Test
     public void clip() throws ChunkException{
-        assertTrue(ChunkFactory.getChunk("CLIP") instanceof CLIPChunk);
+        assertThat(Chunk.getChunk("CLIP"), is(Chunk.CLIP));
     }
     
     @Test
     public void invalidChunkShouldThrowChunkException() {
         try {
-            ChunkFactory.getChunk("invalid");
+            Chunk.getChunk("invalid");
             fail("should throw chunkException if unknown chunk encountered");
         } catch (ChunkException e) {
-            assertEquals("Could not find Chunk type invalid", e.getMessage());
+            assertEquals("header 'invalid' is unknown", e.getMessage());
         }
     }
 

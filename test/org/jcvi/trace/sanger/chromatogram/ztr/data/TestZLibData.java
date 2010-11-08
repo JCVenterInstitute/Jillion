@@ -36,7 +36,7 @@ public class TestZLibData {
 
     byte[] uncompressed = "blahblahblah??".getBytes();
     
-    ZLibData sut = new ZLibData();
+    ZLibData sut = ZLibData.INSTANCE;
     @Test
     public void parse() throws TraceDecoderException{
         Deflater compresser = new Deflater();

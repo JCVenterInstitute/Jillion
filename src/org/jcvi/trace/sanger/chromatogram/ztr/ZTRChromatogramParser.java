@@ -39,7 +39,6 @@ import org.jcvi.trace.sanger.SangerTrace;
 import org.jcvi.trace.sanger.SangerTraceCodec;
 import org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk;
 import org.jcvi.trace.sanger.chromatogram.ztr.chunk.ChunkException;
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.ChunkFactory;
 
 
 /**
@@ -168,7 +167,7 @@ public class ZTRChromatogramParser implements SangerTraceCodec {
             if(bytesRead < 4){
                 throw new ChunkException("Can not parse Chunk Type");
             }
-            return ChunkFactory.getChunk(new String(chunkType));
+            return Chunk.getChunk(new String(chunkType));
         }
         catch(Exception e)
         {

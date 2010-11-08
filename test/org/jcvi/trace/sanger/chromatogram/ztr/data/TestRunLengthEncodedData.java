@@ -35,7 +35,7 @@ public class TestRunLengthEncodedData {
     static byte[] uncompressedData = new byte[]{20,9,9,9,9,9,10,9,8,7};
     static byte[] encodedData = new byte[15];
     static byte guard = (byte)8;
-    RunLengthEncodedData sut = new RunLengthEncodedData();
+    RunLengthEncodedData sut = RunLengthEncodedData.INSTANCE;
     static{
         
         ByteBuffer buf = ByteBuffer.wrap(encodedData);

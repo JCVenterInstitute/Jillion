@@ -28,7 +28,6 @@ import java.util.Arrays;
 
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.SMP4Chunk;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestSMP4Chunk {
@@ -38,7 +37,7 @@ public class TestSMP4Chunk {
     private static short[] gTraces = new short[]{1,0,0,2,1,0,3,8,4,2,0};
     private static short[] tTraces = new short[]{0,0,2,4,2,3,2,0,5,8,25};
    
-    SMP4Chunk sut= new SMP4Chunk();
+    Chunk sut = Chunk.SMP4;
 
     
     @Test

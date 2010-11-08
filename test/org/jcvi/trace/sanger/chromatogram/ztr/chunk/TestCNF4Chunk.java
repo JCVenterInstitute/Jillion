@@ -28,7 +28,6 @@ import java.util.Arrays;
 
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.CNF4Chunk;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestCNF4Chunk {
@@ -39,7 +38,7 @@ public class TestCNF4Chunk {
     byte[] gconf = new byte[]{0,0,35,0,0};
     //- confidence is put in T
     byte[] tconf = new byte[]{0,0,0,38,37};
-    CNF4Chunk sut = new CNF4Chunk();
+    Chunk sut = Chunk.CONFIDENCES;
     @Test
     public void valid() throws TraceDecoderException{
         ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder();
