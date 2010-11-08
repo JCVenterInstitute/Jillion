@@ -34,7 +34,11 @@ import org.jcvi.trace.TraceDecoderException;
  * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
  *
  */
-public class RawData implements Data {
+public enum RawData implements Data {
+    /**
+     * Singleton instance of RawData.
+     */
+    INSTANCE;
     /**
      * Since the given data is not encoded, 
      * return the data back as is.

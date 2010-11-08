@@ -30,8 +30,6 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.testUtil.EasyMockUtil;
 import org.jcvi.trace.TraceDecoderException;
-import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
-import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
 import org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,35 +37,14 @@ import org.junit.Test;
 import static org.easymock.EasyMock.*;
 public class TestChunk {
 
-    Chunk sut;
+    Chunk sut= Chunk.BASE;
     private InputStream mockInputStream;
     IOException expectedException = new IOException("expected");
     
     @Before
-    public void setup(){
-        
+    public void setup(){        
         mockInputStream = createMock(InputStream.class);
-        sut = new Chunk(){
-
-            @Override
-            protected void parseData(byte[] unEncodedData,
-                    ZTRChromatogramBuilder builder)
-                    throws TraceDecoderException { }
-
-            @Override
-            protected String parseData(byte[] unEncodedData,
-                    ChromatogramFileVisitor visitor, String basecalls)
-                    throws TraceDecoderException {
-                return null;
-            }
-
-          
-
-           
-            
-        };
     }
-    
     
     @Test
     public void readLength() throws TraceDecoderException, IOException{

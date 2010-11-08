@@ -39,7 +39,11 @@ import org.jcvi.trace.TraceDecoderException;
  * @author dkatzel
  * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
  */
-public class FollowData implements Data {
+public enum FollowData implements Data {
+    /**
+     * Singleton instance of FollowData.
+     */
+    INSTANCE;
     /**
      * This is the index where the actual encoded values start.
      */

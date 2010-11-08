@@ -45,7 +45,11 @@ import org.jcvi.trace.sanger.chromatogram.ztr.ZTRUtil;
  *
  *
  */
-public class RunLengthEncodedData implements Data {
+public enum RunLengthEncodedData implements Data {
+    /**
+     * Singleton instance of ZTR RunLengthEncodedData.
+     */
+    INSTANCE;
     /**
      * 
     * {@inheritDoc}

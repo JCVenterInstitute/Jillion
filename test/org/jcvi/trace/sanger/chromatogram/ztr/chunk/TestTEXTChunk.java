@@ -23,24 +23,20 @@
  */
 package org.jcvi.trace.sanger.chromatogram.ztr.chunk;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.TEXTChunk;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 public class TestTEXTChunk {
 
     private static final byte NULL_TERMINATOR = 0;
     Properties expected ;
-    TEXTChunk sut= new TEXTChunk();
+    Chunk sut = Chunk.COMMENTS;
     
     @Before
     public void setup(){
@@ -69,19 +65,5 @@ public class TestTEXTChunk {
         assertEquals(struct.properties(), expected);
     }
     
-    @Test
-    public void invalidShouldThrowTraceDecoderException() throws IOException{
-        IOException expectedException = new IOException("expected");
-        InputStream mockInputStream = createMock(InputStream.class);
-        expect(mockInputStream.read()).andThrow(expectedException);
-        replay(mockInputStream);
-        try {
-            sut.parseText(mockInputStream);
-            fail("should throw TraceDecoderException on error");
-        } catch (TraceDecoderException e) {
-            assertEquals("error reading text data", e.getMessage());
-            assertEquals(expectedException, e.getCause());
-        }
-        verify(mockInputStream);
-    }
+    
 }

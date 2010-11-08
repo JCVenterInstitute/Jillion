@@ -48,15 +48,15 @@ public final class DataFactory {
     private static final  Map<Byte, Data> DATA_MAP;
     static{
         Map<Byte, Data> map = new HashMap<Byte, Data>();
-        map.put(Byte.valueOf((byte)0), new RawData());
-        map.put(Byte.valueOf((byte)1), new RunLengthEncodedData());
-        map.put(Byte.valueOf((byte)2), new ZLibData());
-        map.put(Byte.valueOf((byte)64), DeltaEncodedData.BYTE);
-        map.put(Byte.valueOf((byte)65), DeltaEncodedData.SHORT);
-        map.put(Byte.valueOf((byte)66), DeltaEncodedData.INTEGER);
-        map.put(Byte.valueOf((byte)70), new SixteenBitToEightBitData());
-        map.put(Byte.valueOf((byte)71), new ThirtyTwoToEightBitData());
-        map.put(Byte.valueOf((byte)72), new FollowData());
+        map.put(DataHeader.RAW, RawData.INSTANCE);
+        map.put(DataHeader.RUN_LENGTH_ENCODED, RunLengthEncodedData.INSTANCE);
+        map.put(DataHeader.ZLIB_ENCODED, ZLibData.INSTANCE);
+        map.put(DataHeader.BYTE_DELTA_ENCODED, DeltaEncodedData.BYTE);
+        map.put(DataHeader.SHORT_DELTA_ENCODED, DeltaEncodedData.SHORT);
+        map.put(DataHeader.INTEGER_DELTA_ENCODED, DeltaEncodedData.INTEGER);
+        map.put(DataHeader.SHRINK_SHORT_TO_BYTE_ENCODED, ShrinkToEightBitData.SHORT_TO_BYTE);
+        map.put(DataHeader.SHRINK_INTEGER_TO_BYTE_ENCODED, ShrinkToEightBitData.INTEGER_TO_BYTE);
+        map.put(DataHeader.FOLLOW_DATA_ENCODED, FollowData.INSTANCE);
         DATA_MAP = Collections.unmodifiableMap(map);
     }
     /**

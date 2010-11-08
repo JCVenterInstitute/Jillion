@@ -28,14 +28,13 @@ import java.util.Arrays;
 
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.BPOSChunk;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 public class TestBPOSChunk {
 
     private short[] expected = new short[]{10,20,30,41,53,60,68};
-    BPOSChunk sut= new BPOSChunk();
+    Chunk sut =Chunk.POSITIONS;
 
     @Test
     public void valid() throws TraceDecoderException{

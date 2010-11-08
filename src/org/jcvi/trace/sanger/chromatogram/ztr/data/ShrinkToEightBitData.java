@@ -34,7 +34,27 @@ import java.nio.ByteBuffer;
  * format since after a delta format, most values can fit in a single byte.
  * @author dkatzel
  */
-public abstract class AbstractToEightBitData implements Data {
+public enum ShrinkToEightBitData implements Data {
+    /**
+     * {@code SHORT_TO_BYTE} is the implementation 
+     * of the ZTR 16 bit to 8 bit conversion format.
+     */
+    SHORT_TO_BYTE(ValueSizeStrategy.SHORT){
+        @Override
+        protected int getMaxPossibleDecodedSize(int numberOfEncodedBytes) {
+            return numberOfEncodedBytes*2;
+        }
+    },
+    /**
+     * {@code INTEGER_TO_BYTE} is the implementation
+     *  of the ZTR 32 bit to 8 bit conversion format.
+     */
+    INTEGER_TO_BYTE(ValueSizeStrategy.INTEGER){
+        @Override
+        protected int getMaxPossibleDecodedSize(int numberOfEncodedBytes) {
+            return numberOfEncodedBytes*4;
+        }
+    };
     /**
      * guard value which tells decoder that the the following
      * byte values are are number larger than can fit in a single byte.
@@ -46,7 +66,7 @@ public abstract class AbstractToEightBitData implements Data {
      * @param valueSizeStrategy the implementation 
      * of {@link ValueSizeStrategy} to use.
      */
-    public AbstractToEightBitData(ValueSizeStrategy valueSizeStrategy){
+    private ShrinkToEightBitData(ValueSizeStrategy valueSizeStrategy){
         this.valueSizeStrategy = valueSizeStrategy;
     }
     

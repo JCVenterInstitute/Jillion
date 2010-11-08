@@ -28,12 +28,11 @@ import java.nio.ByteBuffer;
 import org.jcvi.Range;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
-import org.jcvi.trace.sanger.chromatogram.ztr.chunk.CLIPChunk;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestClipChunk {
 
-   CLIPChunk sut = new CLIPChunk();
+   Chunk sut = Chunk.CLIP;
     Range expected = Range.buildRange(12345678, 987654321);
 
     @Test

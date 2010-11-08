@@ -41,8 +41,11 @@ import org.jcvi.trace.sanger.chromatogram.ztr.ZTRUtil;
  *
  *
  */
-public class ZLibData implements Data {
-
+public enum ZLibData implements Data {
+    /**
+     * Singleton instance of ZLibData.
+     */
+    INSTANCE;
     /**
      * 
     * {@inheritDoc}

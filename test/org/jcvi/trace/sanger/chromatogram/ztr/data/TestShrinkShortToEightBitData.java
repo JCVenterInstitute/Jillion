@@ -17,32 +17,25 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Nov 3, 2006
+ * Created on Dec 23, 2008
  *
  * @author dkatzel
  */
 package org.jcvi.trace.sanger.chromatogram.ztr.data;
 
+import java.util.Arrays;
 
-/**
-* <code>ThirtyTwoToEightBitData</code> is the implementation of the ZTR 32 bit to 8 bit conversion format.
- * @author dkatzel
- * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
- *
- *
- */
-public class ThirtyTwoToEightBitData extends AbstractToEightBitData {
-    /**
-     * Constructor.
-     */
-    public ThirtyTwoToEightBitData() {
-        super(ValueSizeStrategy.INTEGER);
+import org.jcvi.trace.TraceDecoderException;
+import org.junit.Test;
+import static org.junit.Assert.*;
+public class TestShrinkShortToEightBitData {
+    static byte[] uncompressed = new byte[]{0,10,0,5,-1,-5,0,(byte)200,-4,-32};
+    static byte[] compressed = new byte[]{70,10,5,-5,-128,0,(byte)200,-128,-4,-32};
+    
+    @Test
+    public void decode() throws TraceDecoderException{
+        Data sut = ShrinkToEightBitData.SHORT_TO_BYTE;
+        byte[] actual =sut.parseData(compressed);
+        assertTrue(Arrays.equals(actual, uncompressed));
     }
-
-    @Override
-    protected int getMaxPossibleDecodedSize(int numberOfEncodedBytes) {
-        return numberOfEncodedBytes*4;
-    }
-
-
 }

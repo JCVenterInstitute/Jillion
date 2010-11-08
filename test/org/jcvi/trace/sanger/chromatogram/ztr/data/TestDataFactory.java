@@ -28,8 +28,6 @@ import org.jcvi.trace.sanger.chromatogram.ztr.data.DataFactory;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.FollowData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.RawData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.RunLengthEncodedData;
-import org.jcvi.trace.sanger.chromatogram.ztr.data.SixteenBitToEightBitData;
-import org.jcvi.trace.sanger.chromatogram.ztr.data.ThirtyTwoToEightBitData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.ZLibData;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -57,16 +55,19 @@ public class TestDataFactory {
     
     @Test
     public void zeroIsRawData() throws TraceDecoderException{
-        assertTrue(DataFactory.getDataImplementation(new byte[]{0} ) instanceof RawData);
+        assertSame(DataFactory.getDataImplementation(new byte[]{0} ),
+                RawData.INSTANCE);
     }
     @Test
     public void oneIsRunLengthEncoded() throws TraceDecoderException{
-        assertTrue(DataFactory.getDataImplementation(new byte[]{1} ) instanceof RunLengthEncodedData);
+        assertSame(DataFactory.getDataImplementation(new byte[]{1} ),
+                RunLengthEncodedData.INSTANCE);
     }
 
     @Test
     public void twoIsZLibData() throws TraceDecoderException{
-        assertTrue(DataFactory.getDataImplementation(new byte[]{2} ) instanceof ZLibData);
+        assertSame(DataFactory.getDataImplementation(new byte[]{2} ),
+                ZLibData.INSTANCE);
     }
     @Test
     public void siztyFourIs8bit() throws TraceDecoderException{
@@ -85,15 +86,18 @@ public class TestDataFactory {
     }
     @Test
     public void seventyIs16_to_8() throws TraceDecoderException{
-        assertTrue(DataFactory.getDataImplementation(new byte[]{70} ) instanceof SixteenBitToEightBitData);
+        assertSame(DataFactory.getDataImplementation(new byte[]{70} ),
+                ShrinkToEightBitData.SHORT_TO_BYTE);
     }
     @Test
     public void seventyoneIs32_to_8() throws TraceDecoderException{
-        assertTrue(DataFactory.getDataImplementation(new byte[]{71} ) instanceof ThirtyTwoToEightBitData);
+        assertSame(DataFactory.getDataImplementation(new byte[]{71} ),
+                ShrinkToEightBitData.INTEGER_TO_BYTE);
     }
     @Test
     public void seventyoneIsFollow() throws TraceDecoderException{
-        assertTrue(DataFactory.getDataImplementation(new byte[]{72} ) instanceof FollowData);
+        assertSame(DataFactory.getDataImplementation(new byte[]{72} ),
+                FollowData.INSTANCE);
     }
     @Test
     public void unknownthrowsTraceDecoderException(){
