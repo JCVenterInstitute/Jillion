@@ -185,15 +185,15 @@ public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends
         }
     }
 
-    private void deleteH2DatabaseFiles() {
+    private void deleteH2DatabaseFiles() throws IOException {
         //containing logs, index and data for all tables
-        new File(dataStoreFile+".h2.db").delete();
+        IOUtil.delete(new File(dataStoreFile+".h2.db"));
         //lock file when database is in use.
-        new File(dataStoreFile+".lock.db").delete();
+        IOUtil.delete(new File(dataStoreFile+".lock.db"));
         //database trace file if trace option is used.
-        new File(dataStoreFile+".trace.db").delete();
+        IOUtil.delete(new File(dataStoreFile+".trace.db"));
         
-        dataStoreFile.delete();
+        IOUtil.delete(dataStoreFile);
     }
 
     @Override

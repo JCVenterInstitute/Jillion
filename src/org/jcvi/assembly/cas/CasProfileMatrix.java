@@ -168,7 +168,7 @@ public class CasProfileMatrix extends AbstractCasFileContigVisitor{
                     tempDir=DirectoryFileServer.createTemporaryDirectoryFileServer(DEFAULT_TEMP_DIR);
                 }else{
                     File t =new File(commandLine.getOptionValue("tempDir"));
-                    t.mkdirs();
+                    IOUtil.mkdirs(t);
                     tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer(t);
                 }
                 CasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(

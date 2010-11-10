@@ -150,7 +150,7 @@ public class ArrayBasedPrimerDesignerExecutorService implements PrimerDesignerEx
         return gridExecutor.countActiveTasks() == 0;
     }
 
-    private class ArrayJobKey {
+    private static class ArrayJobKey {
         private String projectCode;
         private String architecture;
 

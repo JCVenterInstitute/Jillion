@@ -201,7 +201,7 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
                             consedOut.createNewDir("solexa_dir");
                         }
                         if(consedOut.contains("solexa_dir/"+name)){
-                            consedOut.getFile("solexa_dir/"+name).delete();
+                            IOUtil.delete(consedOut.getFile("solexa_dir/"+name));
                         }
                         consedOut.createNewSymLink(traceFile.getAbsolutePath(), "solexa_dir/"+name);
                     }else if ("sff".equals(extension)){
@@ -210,7 +210,7 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
                         }
                         
                         if(consedOut.contains("sff_dir/"+name)){
-                            consedOut.getFile("sff_dir/"+name).delete();
+                            IOUtil.delete(consedOut.getFile("sff_dir/"+name));
                         }
                         consedOut.createNewSymLink(traceFile.getAbsolutePath(), "sff_dir/"+name);
                     }

@@ -202,13 +202,13 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
         }
     }
 
-    private void deleteH2DatabaseFiles() {
+    private void deleteH2DatabaseFiles() throws IOException {
         //containing logs, index and data for all tables
-        new File(fileDatabasePath+".h2.db").delete();
+        IOUtil.delete(new File(fileDatabasePath+".h2.db"));
         //lock file when database is in use.
-        new File(fileDatabasePath+".lock.db").delete();
+        IOUtil.delete(new File(fileDatabasePath+".lock.db"));
         //database trace file if trace option is used.
-        new File(fileDatabasePath+".trace.db").delete();
+        IOUtil.delete(new File(fileDatabasePath+".trace.db"));
     }
 
     @Override
