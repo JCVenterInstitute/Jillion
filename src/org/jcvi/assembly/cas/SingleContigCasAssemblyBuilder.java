@@ -221,7 +221,7 @@ public class SingleContigCasAssemblyBuilder {
             
             File tempDir = new File(commandLine.getOptionValue("tempDir"));
             if(!tempDir.exists()){
-                tempDir.mkdirs();
+                IOUtil.mkdirs(tempDir);
             }
             /////
             String referenceName = referenceIdLookup.getLookupIdFor(referenceId);

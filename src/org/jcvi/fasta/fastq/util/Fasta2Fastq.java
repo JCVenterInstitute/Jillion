@@ -141,7 +141,7 @@ public class Fasta2Fastq {
                 h2DataStore = new H2QualityDataStore();
             }else{
                 File t =new File(commandLine.getOptionValue("tempDir"));
-                t.mkdirs();
+                IOUtil.mkdirs(t);
                 tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer(t);
                 h2DataStore = new H2QualityDataStore(tempDir.createNewFile("h2Qualities"));
             }

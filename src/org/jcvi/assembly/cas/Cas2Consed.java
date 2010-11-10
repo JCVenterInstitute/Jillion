@@ -83,6 +83,7 @@ import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadOnlyDirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
@@ -202,7 +203,7 @@ public class Cas2Consed {
              tempDir=DirectoryFileServer.createTemporaryDirectoryFileServer(DEFAULT_TEMP_DIR);
          }else{
              File t =new File(commandLine.getOptionValue("tempDir"));
-             t.mkdirs();
+             IOUtil.mkdirs(t);
              tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer(t);
          }
            try{
@@ -249,7 +250,7 @@ public class Cas2Consed {
                             outputDir.createNewDir("solexa_dir");
                         }
                         if(outputDir.contains("solexa_dir/"+name)){
-                            outputDir.getFile("solexa_dir/"+name).delete();
+                            IOUtil.delete(outputDir.getFile("solexa_dir/"+name));
                         }
                         outputDir.createNewSymLink(traceFile.getAbsolutePath(), "solexa_dir/"+name);
                     }else if ("sff".equals(extension)){
@@ -258,7 +259,7 @@ public class Cas2Consed {
                         }
                         
                         if(outputDir.contains("sff_dir/"+name)){
-                            outputDir.getFile("sff_dir/"+name).delete();
+                            IOUtil.delete(outputDir.getFile("sff_dir/"+name));
                         }
                         outputDir.createNewSymLink(traceFile.getAbsolutePath(), "sff_dir/"+name);
                     }

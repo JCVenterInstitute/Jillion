@@ -40,6 +40,7 @@ import org.jcvi.command.grid.GridJob;
 import org.jcvi.command.grid.GridJobExecutorService;
 import org.jcvi.command.grid.GridUtils;
 import org.jcvi.command.grid.PostExecutionHook;
+import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.joda.time.Period;
@@ -181,7 +182,7 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
             builder.tempDir(Cas2Consed.DEFAULT_TEMP_DIR);
         }else{
             File t =new File(commandLine.getOptionValue("tempDir"));
-            t.mkdirs();
+            IOUtil.mkdirs(t);
             ReadWriteDirectoryFileServer tempDir =DirectoryFileServer.createTemporaryDirectoryFileServer(t);
           System.out.println(tempDir.getRootDir());
             //  t.mkdirs();

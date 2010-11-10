@@ -32,6 +32,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.command.Command;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.jcvi.util.ExceptionIntolerantFixedSizedThreadPoolExecutor;
@@ -116,7 +117,7 @@ public class DefaultMultithreadedCasAssemblyBuilder extends AbstractExecutorCasA
             builder.tempDir(Cas2Consed.DEFAULT_TEMP_DIR);
         }else{
             File t =new File(commandLine.getOptionValue("tempDir"));
-            t.mkdirs();
+            IOUtil.mkdirs(t);
             ReadWriteDirectoryFileServer tempDir =DirectoryFileServer.createTemporaryDirectoryFileServer(t);
           System.out.println(tempDir.getRootDir());
             //  t.mkdirs();

@@ -63,13 +63,52 @@ public final class IOUtil {
             }
         
             //we are here if dir is an empty dir or a file
-            if(!file.delete()){
-                throw new IOException("unable to delete "+ file);
-            }
+            delete(file);
         }
 
     }
+    /**
+     * Deletes the given file and throw an Exception
+     * if the delete fails.  This should be used in preference
+     * over {@link File#delete()} since that method returns a boolean
+     * result to indicate success or failure instead of 
+     * throwing an exception.
+     * @param file the file to be deleted.
+     * @throws IOException if there is a problem deleting the file.
+     */
+    public static void delete(File file) throws IOException{
+        if(!file.delete()){
+            throw new IOException("unable to delete "+ file);
+        }
+    }
     
+    /**
+     * Make the given directory and any non-existence 
+     * parent directory as well.  This method should be used
+     * in preference over {@link File#mkdirs()} since that method returns a boolean
+     * result to indicate success or failure instead of 
+     * throwing an exception.
+     * @param dir the directory to be created.
+     * @throws IOException if there is a problem making the directories.
+     */
+    public static void mkdirs(File dir) throws IOException{
+        if(!dir.mkdirs()){
+            throw new IOException("unable to mkdirs for "+ dir);
+        }
+    }
+    /**
+     * Make the given directory.  This method should be used
+     * in preference over {@link File#mkdir()} since that method returns a boolean
+     * result to indicate success or failure instead of 
+     * throwing an exception.
+     * @param dir the directory to be created.
+     * @throws IOException if there is a problem making the directory.
+     */
+    public static void mkdir(File dir) throws IOException{
+        if(!dir.mkdir()){
+            throw new IOException("unable to mkdir for "+ dir);
+        }
+    }
     /**
      * Convenience method for {@link #writeToOutputStream(InputStream, OutputStream)}
      * with a default block size of {@code 1024}.
