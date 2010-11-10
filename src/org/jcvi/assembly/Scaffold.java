@@ -23,6 +23,7 @@
  */
 package org.jcvi.assembly;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.jcvi.assembly.coverage.CoverageRegion;
@@ -44,4 +45,6 @@ public interface Scaffold {
      *  converts contig based coordinates into scaffold coordinates.
      */
     Range convertContigRangeToScaffoldRange(String placedContigId, Range placedContigRange);
+    
+    Iterator<String> getContigIds();
 }

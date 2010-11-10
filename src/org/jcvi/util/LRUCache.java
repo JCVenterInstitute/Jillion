@@ -24,8 +24,17 @@
  */
 package org.jcvi.util;
 
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * A <code>LRUCache</code> is a simplistic implementation of a 
@@ -46,7 +55,6 @@ import java.util.Map.Entry;
  * @author jsitz@jcvi.org
  * @author dkatzel@jcvi.org
  */
-//TODO Needs Javadoc.
 public class LRUCache<K, V> extends LinkedHashMap<K, V>
 {
     /** The Serial Version UID */
@@ -56,20 +64,53 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
     
     private static final int DEFAULT_CAPACITY = 16;
     
+    
+    
+    public static <K,V> LRUCache<K,V> createLRUCache(){
+        return createLRUCache(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
+    }
+    public static <K,V> LRUCache<K,V> createLRUCache(int capacity){
+        return createLRUCache(capacity, DEFAULT_LOAD_FACTOR);
+    }
+    public static <K,V> LRUCache<K,V> createLRUCache(int capacity, float loadFactor){
+        return new LRUCache<K, V>(capacity, loadFactor);
+    }
+    
+    public static <K,V> SoftReferenceLRUCache<K,V> createSoftReferenceLRUCache(){
+        return createSoftReferenceLRUCache(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
+    }
+    public static <K,V> SoftReferenceLRUCache<K,V> createSoftReferenceLRUCache(int capacity){
+        return createSoftReferenceLRUCache(capacity, DEFAULT_LOAD_FACTOR);
+    }
+    public static <K,V> SoftReferenceLRUCache<K,V> createSoftReferenceLRUCache(int capacity, float loadFactor){
+        return new SoftReferenceLRUCache<K, V>(capacity, loadFactor);
+    }
+    
+    
+    public static <K,V> WeakReferenceLRUCache<K,V> createWeakReferenceLRUCache(){
+        return createWeakReferenceLRUCache(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
+    }
+    public static <K,V> WeakReferenceLRUCache<K,V> createWeakReferenceLRUCache(int capacity){
+        return createWeakReferenceLRUCache(capacity, DEFAULT_LOAD_FACTOR);
+    }
+    public static <K,V> WeakReferenceLRUCache<K,V> createWeakReferenceLRUCache(int capacity, float loadFactor){
+        return new WeakReferenceLRUCache<K, V>(capacity, loadFactor);
+    }
+    
     private final int capacity;
     
-    public LRUCache()
+    protected LRUCache()
     {
         this(LRUCache.DEFAULT_CAPACITY, LRUCache.DEFAULT_LOAD_FACTOR);
     }
 
-    public LRUCache(int capacity, float loadFactor)
+    protected LRUCache(int capacity, float loadFactor)
     {
         super(capacity+1, loadFactor, true);
         this.capacity = capacity;
     }
 
-    public LRUCache(int capacity)
+    protected LRUCache(int capacity)
     {
         this(capacity, LRUCache.DEFAULT_LOAD_FACTOR);
     }
@@ -81,5 +122,184 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
     protected boolean removeEldestEntry(Entry<K, V> eldest)
     {
         return this.size() > this.capacity;
+    }
+    
+    /**
+     * {@code AbstractReferencedLRUCache} is an adapter so we can make an LRUCache
+     * but the values are not strong Java References.  This will allow
+     * the JVM to remove entries from the cache if we need more memory.
+     * @author dkatzel
+     *
+     *
+     */
+    private static abstract class AbstractReferencedLRUCache<K,V,R extends Reference<V>> extends AbstractMap<K,V>{
+        
+        protected abstract R createReferenceFor(V value);
+        
+        private final LRUCache<K, R> cache;
+
+        
+        /**
+         * @param capacity
+         * @param loadFactor
+         */
+        public AbstractReferencedLRUCache(int capacity, float loadFactor) {
+            cache = createLRUCache(capacity, loadFactor);
+        }
+
+        @Override
+        public int size() {
+            return cache.size();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return cache.isEmpty();
+        }
+
+        @Override
+        public boolean containsKey(Object key) {
+            return cache.containsKey(key);
+        }
+
+        @Override
+        public V get(Object key) {
+            R softReference= cache.get(key);
+            return getReference(softReference);
+        }
+
+        @Override
+        public V put(K key, V value) {
+            R oldReference= cache.put(key, createReferenceFor(value));
+            return getReference(oldReference);
+            
+        }
+
+
+        @Override
+        public V remove(Object key) {
+            R oldReference= cache.remove(key);
+            return getReference(oldReference);
+        }
+
+        private V getReference(R ref){
+            if(ref ==null){
+                return null;
+            }
+            return ref.get();
+        }
+
+        @Override
+        public void clear() {
+            cache.clear();
+        }
+        @Override
+        public Set<K> keySet() {
+            return cache.keySet();
+        }
+
+        @Override
+        public Collection<V> values() {
+            Collection<R> softValues =cache.values();
+            List<V> actualValues = new ArrayList<V>(softValues.size());
+            for(R softValue : softValues){
+                if(softValue !=null){
+                    actualValues.add(softValue.get());
+                }
+            }
+            return actualValues;
+        }
+
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Set<Entry<K, V>> entrySet() {
+            Set<Entry<K,V>> result = new LinkedHashSet<Entry<K, V>>();
+            for(final Entry<K,R> entry : cache.entrySet()){
+                final K key = entry.getKey();
+                final V value =entry.getValue().get();
+                if(value !=null){
+                    //we still have it
+                    result.add(new Entry<K, V>() {
+
+                        @Override
+                        public K getKey() {
+                            return key;
+                        }
+
+                        @Override
+                        public V getValue() {
+                            return value;
+                        }
+
+                        @Override
+                        public V setValue(V newValue) {
+                            entry.setValue(createReferenceFor(newValue));
+                            return value;
+                        }
+                        
+                    });
+                }
+            }
+            return result;
+        }
+        
+    }
+    /**
+     * {@code SoftReferenceLRUCache} creates an LRUCache which uses
+     * {@link SoftReference}s for the values.
+     * @author dkatzel
+     * @see SoftReference
+     *
+     */
+    private static class SoftReferenceLRUCache<K,V> extends AbstractReferencedLRUCache<K,V, SoftReference<V>>{
+       
+       
+        /**
+         * @param capacity
+         * @param loadFactor
+         */
+        public SoftReferenceLRUCache(int capacity, float loadFactor) {
+          super(capacity,loadFactor);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected SoftReference<V> createReferenceFor(V value) {
+            return new SoftReference<V>(value);
+        }
+
+    }
+    /**
+     * {@code SoftReferenceLRUCache} creates an LRUCache which uses
+     * {@link WeakReference}s for the values.
+     * @author dkatzel
+     * @see WeakReference
+     *
+     */
+    private static class WeakReferenceLRUCache<K,V> extends AbstractReferencedLRUCache<K,V, WeakReference<V>>{
+        
+        
+        /**
+         * @param capacity
+         * @param loadFactor
+         */
+        public WeakReferenceLRUCache(int capacity, float loadFactor) {
+          super(capacity,loadFactor);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected WeakReference<V> createReferenceFor(V value) {
+            return new WeakReference<V>(value);
+        }
+
     }
 }

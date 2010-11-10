@@ -64,7 +64,7 @@ public class CachedDataStore <D extends DataStore> implements InvocationHandler{
    
     private CachedDataStore(D delegate, int cacheSize){
         this.delegate = delegate;
-        cache= new LRUCache<String, Object>(cacheSize);
+        cache= LRUCache.createLRUCache(cacheSize);
     }
    
     @Override

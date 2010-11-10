@@ -52,7 +52,7 @@ public class CachedTraceArchiveDataStore implements TraceArchiveDataStore<TraceA
             throw new NullPointerException("traceArchiveDataStore can not be null");
         }
         this.traceArchiveDataStore = traceArchiveDataStore;
-        lruCahce = new LRUCache<String, TraceArchiveTrace>(cacheSize);
+        lruCahce = LRUCache.createLRUCache(cacheSize);
     }
 
     @Override

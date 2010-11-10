@@ -22,18 +22,32 @@ package org.jcvi.util;
 import java.util.Iterator;
 
 /**
+ * {@code IteratorIterableAdapter} is an adapter
+ * for {@link Iterator}s to adapt them into {@link Iterable}s
+ * so that they can be used inside
+ * Java 5 enhanced for loops.
  * @author dkatzel
  *
  *
  */
 public class IteratorIterableAdapter<T> implements Iterable<T> {
-
+    /**
+     * Builder method that handles the generic type
+     * information for you so client code is less cluttered.
+     * @param <T> the Type being iterated over.
+     * @param iterator the iterator instance to adapt.
+     * @return a new IteratorIterableAdapter which adapts the given
+     * iterator into an iterable.
+     */
+    public static <T> IteratorIterableAdapter<T> createIterableAdapterFor(Iterator<T> iterator){
+        return new IteratorIterableAdapter<T>(iterator);
+    }
     private final Iterator<T> iterator;
     
     /**
      * @param iterator
      */
-    public IteratorIterableAdapter(Iterator<T> iterator) {
+    private IteratorIterableAdapter(Iterator<T> iterator) {
         this.iterator = iterator;
     }
 
