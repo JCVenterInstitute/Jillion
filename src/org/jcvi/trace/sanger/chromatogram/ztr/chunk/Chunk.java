@@ -58,7 +58,7 @@ public enum Chunk {
     
     
     /**
-     * The <code>BASEChunk</code> contains the actual base calls
+     * The <code>BASE</code> Chunk contains the actual base calls
      * for this Chromatogram.
      * @author dkatzel
      */
@@ -163,7 +163,8 @@ public enum Chunk {
         }
     },
     /**
-     * The <code>CNF4Chunk</code> Chunk encodes the quality values for
+     * The <code>Confidences</code> Chunk is an implemention of
+     * ZTR 1.2 format for {@code CNF4Chunk} which encodes the quality values for
      * all 4 channels.  The format of the data is:
      *  the confidence of the called
      * base followed by the confidences of the uncalled bases.
@@ -600,9 +601,4 @@ public enum Chunk {
         }
         return data;
     }
-
-
-
-
-
 }
