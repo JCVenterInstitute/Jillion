@@ -220,6 +220,15 @@ public class DefaultScaffold implements Scaffold {
     }
 
 
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Iterator<String> getContigIds() {
+        return contigbyId.keySet().iterator();
+    }
+
+
    
    
 

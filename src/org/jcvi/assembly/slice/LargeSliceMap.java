@@ -56,7 +56,7 @@ public class LargeSliceMap extends AbstractSliceMap{
         this.qualityDataStore = qualityDataStore;
         this.qualityValueStrategy = qualityValueStrategy;
         this.range = range;
-        cache = new LRUCache<Long, Slice>(cacheSize);
+        cache = LRUCache.createLRUCache(cacheSize);
     }
     
     public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
