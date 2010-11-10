@@ -20,10 +20,6 @@
 package org.jcvi.assembly.ace.consed;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-
-import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -38,14 +34,21 @@ public class TestConsedUtilGetLatestAce {
     File mockEditDir;
     
     @Before
-    public void setupMockEditDir(){
-        mockEditDir = createMock(File.class);
+    public void setupMockEditDir() throws SecurityException, NoSuchMethodException{
+        //creates a mock File (directory) object which thinks its located at root
+        //and allows us to mock the list() method so we can
+        //change which files are under it.
+        mockEditDir = createMockBuilder(File.class)
+        .withConstructor(String.class)
+        .withArgs("/")
+        .addMockedMethod(File.class.getMethod("list"))
+                .createMock();
     }
     
     @Test
     public void noAceFilesShouldReturnNull(){
-        expect(mockEditDir.listFiles(isA(FileFilter.class)))
-            .andReturn(new File[0]);
+        expect(mockEditDir.list())
+        .andReturn(new String[]{});
         replay(mockEditDir);
         assertNull(ConsedUtil.getLatestAceFile(mockEditDir, "prefix"));
         verify(mockEditDir);
@@ -53,39 +56,52 @@ public class TestConsedUtilGetLatestAce {
     
     @Test
     public void oneAceShouldReturnIt(){
-        File aceFile = createFakeFile("prefix.ace.1");
-        expect(mockEditDir.listFiles(isA(FileFilter.class)))
-                        .andReturn(new File[]{aceFile});
+        expect(mockEditDir.list())
+        .andReturn(new String[]{
+            "prefix.ace.1",});
         
         replay(mockEditDir);
-        assertEquals(aceFile,ConsedUtil.getLatestAceFile(mockEditDir, "prefix"));
+        assertEquals("prefix.ace.1",
+                ConsedUtil.getLatestAceFile(mockEditDir, "prefix").getName());
         verify(mockEditDir);
     }
     @Test
     public void multipleAcesShouldReturnHighestVersion(){
-        File ace1 = createFakeFile("prefix.ace.1");
-        File ace2 = createFakeFile("prefix.ace.2");
-        File ace3 = createFakeFile("prefix.ace.3");
-        expect(mockEditDir.listFiles(isA(FileFilter.class)))
-                        .andReturn(new File[]{ace2,ace3,ace1});
+
+        expect(mockEditDir.list())
+        .andReturn(new String[]{
+            "prefix.ace.1",
+            "prefix.ace.2",
+            "prefix.ace.3"});
         
         replay(mockEditDir);
-        assertEquals(ace3,ConsedUtil.getLatestAceFile(mockEditDir, "prefix"));
+        assertEquals("prefix.ace.3",ConsedUtil.getLatestAceFile(mockEditDir, "prefix").getName());
         verify(mockEditDir);
     }
    
     @Test
-    public void ignoreOtherPrefixedAceFiles() throws IOException{
-        ResourceFileServer resources = new ResourceFileServer(TestConsedUtilGetLatestAce.class);
-        File editDir = resources.getFile("edit_dir");
-        File expectedHighestVersion = resources.getFile("edit_dir/prefix.ace.3");
-        assertEquals(expectedHighestVersion,ConsedUtil.getLatestAceFile(editDir, "prefix"));
+    public void otherPrefixedAceFilesShouldBeIgnored(){
+        expect(mockEditDir.list())
+                        .andReturn(new String[]{
+                            "prefix.ace.1",
+                            "prefix.ace.2",
+                            "otherPrefix.ace.3"});
+        
+        replay(mockEditDir);
+        assertEquals("prefix.ace.2",ConsedUtil.getLatestAceFile(mockEditDir, "prefix").getName());
+        verify(mockEditDir);
     }
     
-    private File createFakeFile(String filename){
-        File fakeFile = createMock(File.class);
-        expect(fakeFile.getName()).andStubReturn(filename);
-        replay(fakeFile);
-        return fakeFile;
+    @Test
+    public void otherSuffixedFilesButWhichContainAceVersionPrefixInNameShouldBeIgnored(){
+        expect(mockEditDir.list())
+        .andReturn(new String[]{
+            "prefix.ace.1",
+            "prefix.ace.2",
+            "prefix.ace.2.consensus.fasta"});
+        
+        replay(mockEditDir);
+        assertEquals("prefix.ace.2",ConsedUtil.getLatestAceFile(mockEditDir, "prefix").getName());
+        verify(mockEditDir);
     }
 }

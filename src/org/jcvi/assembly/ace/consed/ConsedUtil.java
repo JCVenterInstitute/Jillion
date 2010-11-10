@@ -59,6 +59,8 @@ public class ConsedUtil {
      */
     private static final Pattern CONTIG_RENAME_PATTERN = Pattern.compile("U(\\w+)");
     
+    private static final Pattern CONSED_ACE_PATTERN = Pattern.compile("((.+?)\\.)?ace(\\.(\\d+))?$");
+    
     private static final Pattern CONSED_ACE_VERSION_PATTERN = Pattern.compile("((.+?)\\.)?ace\\.(\\d+)$");
     /**
      * Convert a string of basecalls with '*' to 
@@ -199,7 +201,7 @@ public class ConsedUtil {
             @Override
             public boolean accept(File file) {
                 String name = file.getName();
-                return name.startsWith(filenamePrefix +".ace") && !name.endsWith("wrk");
+                return name.startsWith(filenamePrefix) && CONSED_ACE_PATTERN.matcher(name).find();
             }
         
      })){
