@@ -23,6 +23,7 @@
  */
 package org.jcvi;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,6 +62,111 @@ import org.jcvi.assembly.Placed;
  */
 public class Range implements Placed<Range>,Iterable<Long>
 {
+    /**
+     * {@code Comparators} is an enum of common Range
+     * {@link Comparator} implementations.
+     * @author dkatzel
+     *
+     *
+     */
+    public enum Comparators implements Comparator<Range>{
+        /**
+         * A <code>Arrival</code> compares a pair of {@link Range}s
+         * and assigns the lower comparative value to the Range which begins earlier.
+         * In the case of two ranges having identical start coordinates, the one
+         * with the lower end coordinate (the shorter range) will be ranked lower.
+         * Empty ranges are considered lower in comparative value than any non-empty
+         * Range.
+         * 
+         * @author jsitz@jcvi.org
+         * @author dkatzel
+         */
+        ARRIVAL{
+            @Override
+            public int compare(Range first, Range second) 
+            {
+                /*
+                 * We don't accept null values for comparison.
+                 */
+                if (first == null) throw new InvalidParameterException("The first parameter in the comparison is null.");
+                if (second == null) throw new InvalidParameterException("The second parameter in the comparison is null.");
+
+                /*
+                 * Compare first by the start values, then by the end values, if the ranges start
+                 * in the same place.
+                 */
+                final int startComparison = Long.valueOf(first.getStart()).compareTo(Long.valueOf(second.getStart()));
+                if (startComparison == 0)
+                {
+                    return Long.valueOf(first.getEnd()).compareTo(Long.valueOf(second.getEnd()));
+                }
+                return startComparison;
+            }
+        },
+        /**
+         * A <code>RangeDepartureComparator</code> compares a pair of {@link Range}s
+         * and assigns the lower comparative value to the Range which ends earlier.
+         * In the case of two ranges having identical end coordinates, the one
+         * with the start end coordinate (the longer range) will be ranked lower.
+         * Empty ranges are considered lower in comparative value than any non-empty
+         * Range.
+         * 
+         * @author jsitz@jcvi.org
+         * @author dkatzel
+         */
+        DEPARTURE{
+            @Override
+            public int compare(Range first, Range second) 
+            {
+                /*
+                 * We don't accept null values for comparison.
+                 */
+                if (first == null) throw new InvalidParameterException("The first parameter in the comparison is null.");
+                if (second == null) throw new InvalidParameterException("The second parameter in the comparison is null.");
+                
+                /*
+                 * Compare first by the end values, then by the start values, if the ranges end
+                 * in the same place.
+                 */
+                final int endComparison = Long.valueOf(first.getEnd()).compareTo(Long.valueOf(second.getEnd()));
+                if (endComparison == 0)
+                {
+                    return Long.valueOf(first.getStart()).compareTo(Long.valueOf(second.getStart()));
+                }
+                return endComparison;
+            }
+        },
+        /**
+         * {@code LONGEST_TO_SHORTEST} compares Ranges by length
+         * and orders them longest to shortest.
+         * @author dkatzel
+         */
+        LONGEST_TO_SHORTEST{
+
+            @Override
+            public int compare(Range o1, Range o2) {
+                return -1 * Long.valueOf(o1.getLength()).compareTo(o2.getLength());
+            }
+            
+        },
+        /**
+         * {@code LONGEST_TO_SHORTEST} compares Ranges by length
+         * and orders them shortest to longest.
+         * @author dkatzel
+         */
+        SHORTEST_TO_LONGEST{
+
+            @Override
+            public int compare(Range o1, Range o2) {
+                return Long.valueOf(o1.getLength()).compareTo(o2.getLength());
+            }
+            
+        }
+        ;
+
+       
+        
+    }
     /**
      * Enumeration of available range coordinate systems
      */
@@ -157,7 +263,7 @@ public class Range implements Placed<Range>,Iterable<Long>
     private static Pattern COMMA_PATTERN = Pattern.compile("(\\d+)\\s*,\\s*(\\d+)");
     
     
-    private static final Comparator<Range> DEFAULT_COMPARATOR = new RangeArrivalComparator();
+    private static final Comparator<Range> DEFAULT_COMPARATOR = Comparators.ARRIVAL;
 
     /**
      * Factory method to build a {@link Range} object.

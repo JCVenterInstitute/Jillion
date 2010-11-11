@@ -17,28 +17,30 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly.trim;
+package org.jcvi;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
 
 /**
  * @author dkatzel
  *
  *
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-    TestDefaultPrimerTrimmer.class,
-    TestDefaultPrimerTrimmer_ActualData.class,
-    TestInternalPrimerHit.class,
-    
-    TestLucyQualityTrimmer.class,
-    TestMinimumEndCoverageTrimmer.class,
-    TestMinimumBidirectionalEndCoverageTrimmer.class
-}
-)
-public class AllTrimUnitTests {
+public abstract class AbstractTestSizeRangeComparator {
 
+    Range small = Range.buildRangeOfLength(0, 10);
+    Range medium = Range.buildRangeOfLength(-10, 30);
+    Range large = Range.buildRangeOfLength(-50, 100);
+    
+    List<Range> ranges;
+    @Before
+    public void setup(){
+        ranges = new ArrayList<Range>(3);
+        ranges.add(small);
+        ranges.add(medium);
+        ranges.add(large);
+    }
 }

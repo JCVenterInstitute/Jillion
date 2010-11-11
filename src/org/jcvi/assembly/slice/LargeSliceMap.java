@@ -24,6 +24,7 @@
 package org.jcvi.assembly.slice;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import org.jcvi.Range;
 import org.jcvi.RangeIterator;
@@ -47,7 +48,7 @@ public class LargeSliceMap extends AbstractSliceMap{
     private final        DataStore<? extends EncodedGlyphs<PhredQuality>> qualityDataStore;
     private final        QualityValueStrategy qualityValueStrategy;
     private final Range range;
-    private final LRUCache<Long, Slice> cache;
+    private final Map<Long, Slice> cache;
     
     public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
             QualityDataStore qualityDataStore,

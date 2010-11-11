@@ -21,6 +21,8 @@ package org.jcvi.assembly.trim;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.Range;
@@ -99,10 +101,12 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
            Range intersection = mergedRanges.get(0).intersection(sequenceRange);
            Range left = Range.buildRange(sequenceRange.getStart(), intersection.getStart()-1).convertRange(CoordinateSystem.RESIDUE_BASED);
            Range right = Range.buildRange(intersection.getEnd()+1, sequenceRange.getEnd()).convertRange(CoordinateSystem.RESIDUE_BASED);
-           if(left.size() > right.size()){
-               return left;
-           }
-           return right;
+           
+           List<Range> candidateRanges = Arrays.asList(intersection, left, right);
+           Collections.sort(candidateRanges, Range.Comparators.LONGEST_TO_SHORTEST);
+           //return the largest range
+           return candidateRanges.get(0);           
+          
         }
         return sequenceRange;
         

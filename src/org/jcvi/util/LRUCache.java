@@ -25,14 +25,17 @@
 package org.jcvi.util;
 
 import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -66,35 +69,35 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
     
     
     
-    public static <K,V> LRUCache<K,V> createLRUCache(){
+    public static <K,V> Map<K,V> createLRUCache(){
         return createLRUCache(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
     }
-    public static <K,V> LRUCache<K,V> createLRUCache(int capacity){
+    public static <K,V> Map<K,V> createLRUCache(int capacity){
         return createLRUCache(capacity, DEFAULT_LOAD_FACTOR);
     }
-    public static <K,V> LRUCache<K,V> createLRUCache(int capacity, float loadFactor){
+    public static <K,V> Map<K,V> createLRUCache(int capacity, float loadFactor){
         return new LRUCache<K, V>(capacity, loadFactor);
     }
     
-    public static <K,V> SoftReferenceLRUCache<K,V> createSoftReferenceLRUCache(){
+    public static <K,V> Map<K,V> createSoftReferenceLRUCache(){
         return createSoftReferenceLRUCache(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
     }
-    public static <K,V> SoftReferenceLRUCache<K,V> createSoftReferenceLRUCache(int capacity){
+    public static <K,V> Map<K,V> createSoftReferenceLRUCache(int capacity){
         return createSoftReferenceLRUCache(capacity, DEFAULT_LOAD_FACTOR);
     }
-    public static <K,V> SoftReferenceLRUCache<K,V> createSoftReferenceLRUCache(int capacity, float loadFactor){
+    public static <K,V> Map<K,V> createSoftReferenceLRUCache(int capacity, float loadFactor){
         return new SoftReferenceLRUCache<K, V>(capacity, loadFactor);
     }
     
     
-    public static <K,V> WeakReferenceLRUCache<K,V> createWeakReferenceLRUCache(){
+    public static <K,V> Map<K,V> createWeakReferenceLRUCache(){
         return createWeakReferenceLRUCache(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
     }
-    public static <K,V> WeakReferenceLRUCache<K,V> createWeakReferenceLRUCache(int capacity){
+    public static <K,V> Map<K,V> createWeakReferenceLRUCache(int capacity){
         return createWeakReferenceLRUCache(capacity, DEFAULT_LOAD_FACTOR);
     }
-    public static <K,V> WeakReferenceLRUCache<K,V> createWeakReferenceLRUCache(int capacity, float loadFactor){
-        return new WeakReferenceLRUCache<K, V>(capacity, loadFactor);
+    public static <K,V> Map<K,V> createWeakReferenceLRUCache(int capacity, float loadFactor){
+        return new WeakReferenceLRUCache<K,V>(capacity, loadFactor);
     }
     
     private final int capacity;
@@ -134,11 +137,11 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
      */
     private static abstract class AbstractReferencedLRUCache<K,V,R extends Reference<V>> extends AbstractMap<K,V>{
         
-        protected abstract R createReferenceFor(V value);
+        protected abstract R createReferenceFor(V value,final ReferenceQueue<V> referenceQueue);
         
-        private final LRUCache<K, R> cache;
-
-        
+        private final Map<K, R> cache;
+        private final ReferenceQueue<V> referenceQueue = new ReferenceQueue<V>();
+        private final Map<Reference<? extends V>, K> referenceKeyMap = new HashMap<Reference<? extends V>, K>();
         /**
          * @param capacity
          * @param loadFactor
@@ -146,31 +149,50 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
         public AbstractReferencedLRUCache(int capacity, float loadFactor) {
             cache = createLRUCache(capacity, loadFactor);
         }
+        /**
+         * Remove any entries in the 
+         * cache that have had their values
+         * garbage collected.  The GC could have collected any of the values
+         * we still have keys for so poll our registered references
+         * to see what was collected and remove them from our cache.
+         */
+        private synchronized void removeAnyGarbageCollectedEntries(){
+            Reference<? extends V> collectedReference;
+            while((collectedReference = referenceQueue.poll()) !=null){
+                K key =referenceKeyMap.remove(collectedReference);
+                cache.remove(key);                
+            }
+        }
 
         @Override
         public int size() {
+            removeAnyGarbageCollectedEntries();
             return cache.size();
         }
 
         @Override
         public boolean isEmpty() {
+            removeAnyGarbageCollectedEntries();
             return cache.isEmpty();
         }
 
         @Override
         public boolean containsKey(Object key) {
+            removeAnyGarbageCollectedEntries();
             return cache.containsKey(key);
         }
 
         @Override
         public V get(Object key) {
+            removeAnyGarbageCollectedEntries();
             R softReference= cache.get(key);
             return getReference(softReference);
         }
 
         @Override
         public V put(K key, V value) {
-            R oldReference= cache.put(key, createReferenceFor(value));
+            removeAnyGarbageCollectedEntries();
+            R oldReference= cache.put(key, createReferenceFor(value,referenceQueue));
             return getReference(oldReference);
             
         }
@@ -178,6 +200,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
 
         @Override
         public V remove(Object key) {
+            removeAnyGarbageCollectedEntries();
             R oldReference= cache.remove(key);
             return getReference(oldReference);
         }
@@ -191,15 +214,18 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
 
         @Override
         public void clear() {
+            removeAnyGarbageCollectedEntries();
             cache.clear();
         }
         @Override
         public Set<K> keySet() {
+            removeAnyGarbageCollectedEntries();
             return cache.keySet();
         }
 
         @Override
         public Collection<V> values() {
+            removeAnyGarbageCollectedEntries();
             Collection<R> softValues =cache.values();
             List<V> actualValues = new ArrayList<V>(softValues.size());
             for(R softValue : softValues){
@@ -217,6 +243,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
         */
         @Override
         public Set<Entry<K, V>> entrySet() {
+            removeAnyGarbageCollectedEntries();
             Set<Entry<K,V>> result = new LinkedHashSet<Entry<K, V>>();
             for(final Entry<K,R> entry : cache.entrySet()){
                 final K key = entry.getKey();
@@ -237,7 +264,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
 
                         @Override
                         public V setValue(V newValue) {
-                            entry.setValue(createReferenceFor(newValue));
+                            entry.setValue(createReferenceFor(newValue,referenceQueue));
                             return value;
                         }
                         
@@ -270,8 +297,8 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
         * {@inheritDoc}
         */
         @Override
-        protected SoftReference<V> createReferenceFor(V value) {
-            return new SoftReference<V>(value);
+        protected SoftReference<V> createReferenceFor(V value, ReferenceQueue<V> referenceQueue) {
+            return new SoftReference<V>(value, referenceQueue);
         }
 
     }
@@ -297,8 +324,8 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
         * {@inheritDoc}
         */
         @Override
-        protected WeakReference<V> createReferenceFor(V value) {
-            return new WeakReference<V>(value);
+        protected WeakReference<V> createReferenceFor(V value, ReferenceQueue<V> referenceQueue) {
+            return new WeakReference<V>(value,referenceQueue);
         }
 
     }

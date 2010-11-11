@@ -26,13 +26,11 @@ package org.jcvi.assembly;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.jcvi.Range;
-import org.jcvi.RangeArrivalComparator;
 
 public final class DefaultPlacedContigClone<T> implements PlacedContigClone{
 
@@ -40,7 +38,6 @@ public final class DefaultPlacedContigClone<T> implements PlacedContigClone{
     private final Contig contig;
     private final Placed placed;
     private final Set<T> elements;
-    private static final Comparator<Range> RANGE_ARRIVAL_COMPARATOR = new RangeArrivalComparator();
     
     private DefaultPlacedContigClone(Contig contig, Clone clone, Placed placed,Set<T> elements){
         this.contig = contig;
@@ -146,7 +143,7 @@ public final class DefaultPlacedContigClone<T> implements PlacedContigClone{
             final Range combinedRange = Range.buildInclusiveRange(range,nextRange);
             replaceNewRangeForOld(combinedRange,range,nextRange );                            
                          
-            Collections.sort(placementRanges, RANGE_ARRIVAL_COMPARATOR);
+            Collections.sort(placementRanges, Range.Comparators.ARRIVAL);
         }
         private  void remove(Range... rangesToRemove){
             for(Range range : rangesToRemove){
@@ -161,7 +158,7 @@ public final class DefaultPlacedContigClone<T> implements PlacedContigClone{
             if(cannotAddToExistingRange(readRange)){
                 placementRanges.add(readRange);
             }
-            Collections.sort(placementRanges, RANGE_ARRIVAL_COMPARATOR);
+            Collections.sort(placementRanges, Range.Comparators.ARRIVAL);
         }
         private  boolean cannotAddToExistingRange(Range readRange) {
             boolean cannotAdd=true;

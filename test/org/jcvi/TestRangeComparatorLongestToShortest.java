@@ -17,28 +17,25 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly.trim;
+package org.jcvi;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
+import org.junit.Test;
+import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
  *
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-    TestDefaultPrimerTrimmer.class,
-    TestDefaultPrimerTrimmer_ActualData.class,
-    TestInternalPrimerHit.class,
-    
-    TestLucyQualityTrimmer.class,
-    TestMinimumEndCoverageTrimmer.class,
-    TestMinimumBidirectionalEndCoverageTrimmer.class
-}
-)
-public class AllTrimUnitTests {
+public class TestRangeComparatorLongestToShortest extends AbstractTestSizeRangeComparator{
 
+    @Test
+    public void sort(){
+        Collections.sort(ranges, Range.Comparators.LONGEST_TO_SHORTEST);
+        List<Range> expectedOrder = Arrays.asList(large,medium,small);
+        
+        assertEquals(expectedOrder, ranges);
+    }
 }

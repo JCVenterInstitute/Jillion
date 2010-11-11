@@ -19,26 +19,26 @@
 
 package org.jcvi.assembly.trim;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jcvi.datastore.SimpleDataStore;
+import org.jcvi.glyph.nuc.NucleotideDataStore;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 
 /**
  * @author dkatzel
  *
  *
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-    TestDefaultPrimerTrimmer.class,
-    TestDefaultPrimerTrimmer_ActualData.class,
-    TestInternalPrimerHit.class,
-    
-    TestLucyQualityTrimmer.class,
-    TestMinimumEndCoverageTrimmer.class,
-    TestMinimumBidirectionalEndCoverageTrimmer.class
-}
-)
-public class AllTrimUnitTests {
+public final class TestPrimerTrimmerUtil {
 
+    public static NucleotideDataStore createDataStoreFor(NucleotideEncodedGlyphs...primers){
+        Map<String, NucleotideEncodedGlyphs> map = new HashMap<String, NucleotideEncodedGlyphs>();
+        for(int i=0; i<primers.length; i++){
+            map.put("primer_"+i, primers[i]);
+        }
+        return new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(map));
+    }
 }
