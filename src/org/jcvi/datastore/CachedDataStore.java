@@ -27,6 +27,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.Map;
+
 import org.jcvi.util.LRUCache;
 
 /**
@@ -40,7 +42,7 @@ import org.jcvi.util.LRUCache;
 public class CachedDataStore <D extends DataStore> implements InvocationHandler{
 
     private final D delegate;
-    private final LRUCache<String, Object> cache;
+    private final Map<String, Object> cache;
     private static final Class[] GET_PARAMETERS = new Class[]{String.class};
     /**
      * Create a new Proxy wrapping the given DataStore.

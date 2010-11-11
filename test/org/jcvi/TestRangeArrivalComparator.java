@@ -18,9 +18,9 @@
  ******************************************************************************/
 package org.jcvi;
 
-import org.junit.Assert;
+import java.util.Comparator;
 
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class TestRangeArrivalComparator 
@@ -33,7 +33,7 @@ public class TestRangeArrivalComparator
     private Range f;
     private Range g;
     
-    private RangeArrivalComparator comp;
+    private final Comparator<Range> comp = Range.Comparators.ARRIVAL;
     
     public TestRangeArrivalComparator() 
     {
@@ -48,11 +48,7 @@ public class TestRangeArrivalComparator
         this.g = Range.buildEmptyRange(30);
     }
     
-    @Before
-    public void setupComparator()
-    {
-        this.comp = new RangeArrivalComparator();
-    }
+    
     
     @Test
     public void testCompare_inverseCommutativity() 

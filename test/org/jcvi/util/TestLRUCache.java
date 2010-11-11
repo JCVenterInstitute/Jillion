@@ -23,6 +23,8 @@
  */
 package org.jcvi.util;
 
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -33,10 +35,14 @@ public class TestLRUCache {
     String third = "third";
     String fourth = "fourth";
     
-    LRUCache<String, String> sut;
+    protected Map<String, String> sut;
+    
+    protected Map<String,String> createLRUCache(int size){
+        return LRUCache.createLRUCache(size);
+    }
     @Before
     public void setup(){
-        sut = new LRUCache<String, String>(3);
+        sut = createLRUCache(3);
         sut.put(first, first);
         sut.put(second, second);
         sut.put(third, third);

@@ -58,6 +58,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestRangeDepartureComparator.class,
         TestEmptyRange.class,
         TestRangeIterator.class,
+        TestRangeComparatorShortestToLongest.class,
+        TestRangeComparatorLongestToShortest.class,
         
         AllHttpUnitTests.class,
         AllGlyphUnitTests.class,
