@@ -41,6 +41,8 @@ public enum DeltaStrategy {
 		    protected int computeDelta(int u1, int u2, int u3) {
 		        return u1;
 		    }
+
+		 
 	},
 	LEVEL_2(2){
 		@Override
@@ -53,6 +55,7 @@ public enum DeltaStrategy {
 	    protected int computeDelta(int u1, int u2, int u3) {
 	        return 3*u1 - 3*u2 + u3;
 	    }
+		
 	};
 	
 	private final int level;
@@ -93,7 +96,19 @@ public enum DeltaStrategy {
             u2 = u1;            
             u1 = value;            
         }
-
+    }
+    
+    public void compress(ByteBuffer uncompressed, ValueSizeStrategy valueSizeStrategy, ByteBuffer out){
+    	 int u1 = 0,u2 = 0,u3=0;
+    	 while(uncompressed.hasRemaining()){
+             int next = valueSizeStrategy.getNext(uncompressed);
+			int value =next - computeDelta(u1, u2, u3);
+             valueSizeStrategy.put(value, out);
+             //update previous values for next round
+             u3 = u2;
+             u2 = u1;            
+             u1 = next;            
+         }
     }
     /**
      * Computes the current Delta given the previous 3 delta values. 
@@ -103,4 +118,5 @@ public enum DeltaStrategy {
      * @return the current delta value.
      */
     protected abstract int computeDelta(int u1, int u2, int u3);
+    
 }

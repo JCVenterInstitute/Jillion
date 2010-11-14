@@ -23,7 +23,10 @@
  */
 package org.jcvi.trace.sanger.chromatogram.ztr.data;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import org.jcvi.trace.TraceEncoderException;
 
 /**
  * <code>AbstractToEightBitData</code> is an abstract
@@ -39,35 +42,30 @@ public enum ShrinkToEightBitData implements Data {
      * {@code SHORT_TO_BYTE} is the implementation 
      * of the ZTR 16 bit to 8 bit conversion format.
      */
-    SHORT_TO_BYTE(ValueSizeStrategy.SHORT){
-        @Override
-        protected int getMaxPossibleDecodedSize(int numberOfEncodedBytes) {
-            return numberOfEncodedBytes*2;
-        }
-    },
+    SHORT_TO_BYTE(ValueSizeStrategy.SHORT, 2,DataHeader.SHRINK_SHORT_TO_BYTE_ENCODED ),
     /**
      * {@code INTEGER_TO_BYTE} is the implementation
      *  of the ZTR 32 bit to 8 bit conversion format.
      */
-    INTEGER_TO_BYTE(ValueSizeStrategy.INTEGER){
-        @Override
-        protected int getMaxPossibleDecodedSize(int numberOfEncodedBytes) {
-            return numberOfEncodedBytes*4;
-        }
-    };
+    INTEGER_TO_BYTE(ValueSizeStrategy.INTEGER,4, DataHeader.SHRINK_INTEGER_TO_BYTE_ENCODED)
+      ;
     /**
      * guard value which tells decoder that the the following
      * byte values are are number larger than can fit in a single byte.
      */
     private static final byte GUARD = -128;
     private final ValueSizeStrategy valueSizeStrategy;
+    private final byte formatByte;
+    private final int numberOfBytesPerElement;
     /**
      * Constructor.
      * @param valueSizeStrategy the implementation 
      * of {@link ValueSizeStrategy} to use.
      */
-    private ShrinkToEightBitData(ValueSizeStrategy valueSizeStrategy){
+    private ShrinkToEightBitData(ValueSizeStrategy valueSizeStrategy, int numberOfBytesPerElement, byte formatByte){
         this.valueSizeStrategy = valueSizeStrategy;
+        this.formatByte = formatByte;
+        this.numberOfBytesPerElement = numberOfBytesPerElement;
     }
     
     private boolean isGuard(byte value){
@@ -114,12 +112,52 @@ public enum ShrinkToEightBitData implements Data {
         return toByteArray(result);
     }
     /**
-     * Gets the maximum possible size the decoded dat can be for
+     * Gets the maximum possible size the decoded data can be for
      * this format.
      * @param numberOfEncodedBytes the number of encoded bytes of data.
      * @return the length of the largest possible decoded data.
      */
-    protected abstract int getMaxPossibleDecodedSize(int numberOfEncodedBytes);
+    protected int getMaxPossibleDecodedSize(int numberOfEncodedBytes){
+    	return numberOfEncodedBytes*numberOfBytesPerElement;
+    }
+
+	/* (non-Javadoc)
+	 * @see org.jcvi.trace.sanger.chromatogram.ztr.data.Data#encodeData(byte[])
+	 */
+	@Override
+	public byte[] encodeData(byte[] data) throws TraceEncoderException {
+		ByteBuffer encodedBuffer = ByteBuffer.allocate(4*data.length);
+		encodedBuffer.put(formatByte);
+		ByteBuffer inputBuffer = ByteBuffer.wrap(data);
+		while(inputBuffer.hasRemaining()){
+			byte[] next = getNext(inputBuffer);
+			 int nextAsInt = new BigInteger(next).intValue();
+			 if(nextAsInt <=127 && nextAsInt >= -127){
+				 encodedBuffer.put((byte)nextAsInt);
+			 }else{
+				 encodedBuffer.put(GUARD);
+				 encodedBuffer.put(next);
+			 }
+			
+		}
+		encodedBuffer.flip();
+		return Arrays.copyOfRange(encodedBuffer.array(), 0, encodedBuffer.limit());
+	}
+
+	protected byte[] getNext(ByteBuffer inputBuffer){
+		byte[] array = new byte[numberOfBytesPerElement];
+		inputBuffer.get(array);
+		return array;
+	}
+	/**
+	 * This returns the same result as {@link #encodeData(byte[])}
+	 * the optional parameter is ignored. 
+	 */
+	@Override
+	public byte[] encodeData(byte[] data, byte ignored)
+			throws TraceEncoderException {
+		return encodeData(data);
+	}
 
 
 }

@@ -27,7 +27,6 @@ import java.io.IOException;
 
 import org.jcvi.Range;
 import org.jcvi.datastore.DefaultScaffoldDataStore;
-import org.jcvi.assembly.DefaultPlacedContig;
 import org.jcvi.assembly.DefaultScaffold;
 import org.jcvi.assembly.Scaffold;
 import org.jcvi.io.fileServer.ResourceFileServer;

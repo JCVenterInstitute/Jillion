@@ -31,6 +31,7 @@ import java.util.List;
 import org.jcvi.glyph.RunLength;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRUtil;
 
 
@@ -46,10 +47,21 @@ import org.jcvi.trace.sanger.chromatogram.ztr.ZTRUtil;
  *
  */
 public enum RunLengthEncodedData implements Data {
+	
+	
     /**
      * Singleton instance of ZTR RunLengthEncodedData.
      */
     INSTANCE;
+    private static final byte GUARD_ESCAPE = 0;
+	private static final int MIN_RUN_LENGTH = 4;
+	private static final int MAX_RUN_LENGTH = 255;
+	/**
+     * IO_Lib uses 150 as the guard byte 
+     * when encoding Run Length chunks
+     * so that's what we will use as default.
+     */
+    public final byte DEFAULT_GUARD = (byte)150;
     /**
      * 
     * {@inheritDoc}
@@ -125,4 +137,80 @@ public enum RunLengthEncodedData implements Data {
     private int getCount(ByteBuffer in) {
         return IOUtil.convertToUnsignedByte(in.get());
     }
+    /**
+     * Same as {@link #encodeData(byte[], byte) encodeData(data, DEFAULT_GUARD)}
+     */
+	@Override
+	public byte[] encodeData(byte[] data) throws TraceEncoderException {
+		return encodeData(data, DEFAULT_GUARD);
+	}
+	/**
+	 * Encodes the given data as run length encoded data.
+	 * @param data the data to encode.
+	 * @param guard the guard byte used to specify run length blocks.
+	 * @return a byte array containing the given input data but as
+	 * run length encoded.
+	 * @throws TraceEncoderException if there is a problem
+	 * encoding the data.
+	 */
+	@Override
+	public byte[] encodeData(byte[] data, byte guard) throws TraceEncoderException {
+		ByteBuffer encodedBuffer = ByteBuffer.allocate(2*data.length+6);
+		encodedBuffer.put(DataHeader.RUN_LENGTH_ENCODED);
+		ByteBuffer lengthBuffer = ByteBuffer.allocate(4);
+        lengthBuffer.putInt(data.length);
+        encodedBuffer.put(IOUtil.switchEndian(lengthBuffer.array()));
+        encodedBuffer.put(guard);      
+        runLengthEncode(data, guard,encodedBuffer);
+		encodedBuffer.flip();
+        return Arrays.copyOfRange(encodedBuffer.array(), 0, encodedBuffer.limit());
+	}
+	
+	private void runLengthEncode(byte[] dataToEncode, byte guard, ByteBuffer out){
+		int i=0;
+		while(i<dataToEncode.length){
+			int runLength = getNextRunLength(dataToEncode, i);
+			if (runLengthIsTooSmall(runLength)) {
+				encodeUnrunLenghEncodedBlock(dataToEncode, guard, out, i, runLength); 
+			}else{			
+				encodeRunLengthEncodedBlock(dataToEncode, guard, out, i, runLength); 
+			}
+			i+=runLength;
+		}
+	}
+
+	private void encodeRunLengthEncodedBlock(byte[] dataToEncode, byte guard,
+			ByteBuffer out, int i, int runLength) {
+		out.put( guard);
+		out.put((byte)runLength);
+		out.put( dataToEncode[i]);
+	}
+
+	private void encodeUnrunLenghEncodedBlock(byte[] dataToEncode, byte guard,
+			ByteBuffer out, int i, int runLength) {
+		for (int j =0; j<runLength; j++) {
+			//if  our next byte is the same as 
+			//guard, escape it
+			byte nextByte = dataToEncode[i+j];
+			if (nextByte == guard) {
+				out.put(guard);
+				out.put(GUARD_ESCAPE);
+			} else {
+				out.put(nextByte);
+			}
+		}
+	}
+
+	private boolean runLengthIsTooSmall(int runLength) {
+		return runLength< MIN_RUN_LENGTH;
+	}
+
+	private int getNextRunLength(byte[] dataToEncode, int currentOffset) {
+		int k;
+		for (k = currentOffset; 
+		k < dataToEncode.length && dataToEncode[currentOffset] == dataToEncode[k] && k-currentOffset != MAX_RUN_LENGTH;
+		
+		k++);
+		return k-currentOffset;
+	}
 }

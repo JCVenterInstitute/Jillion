@@ -26,6 +26,7 @@ package org.jcvi.trace.sanger.chromatogram.ztr.data;
 import java.util.Arrays;
 
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestShrinkShortToEightBitData {
@@ -37,5 +38,12 @@ public class TestShrinkShortToEightBitData {
         Data sut = ShrinkToEightBitData.SHORT_TO_BYTE;
         byte[] actual =sut.parseData(compressed);
         assertTrue(Arrays.equals(actual, uncompressed));
+    }
+    
+    @Test
+    public void encode() throws TraceEncoderException{
+    	Data sut = ShrinkToEightBitData.SHORT_TO_BYTE;
+    	byte[] actual = sut.encodeData(uncompressed);
+    	assertTrue(Arrays.equals(actual, compressed));
     }
 }

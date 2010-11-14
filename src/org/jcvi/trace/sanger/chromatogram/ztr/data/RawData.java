@@ -23,7 +23,10 @@
  */
 package org.jcvi.trace.sanger.chromatogram.ztr.data;
 
+import java.nio.ByteBuffer;
+
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
 
 
 
@@ -50,5 +53,28 @@ public enum RawData implements Data {
         //this is raw data
        return data;
     }
+    /**
+     * Creates a new array with the first element as {@link DataHeader#RAW}
+     * and the rest of the array exactly matches the elements in the given
+     * byte array.
+     * @param data the raw data to encode.
+     * @throws TraceEncoderException if there is a problem encoding the data.
+     */
+	@Override
+	public byte[] encodeData(byte[] data) throws TraceEncoderException {
+		ByteBuffer encodedData = ByteBuffer.allocate(data.length+1);
+		encodedData.put(DataHeader.RAW);
+		encodedData.put(data);
+		return encodedData.array();
+	}
+	/**
+	 * This returns the same result as {@link #encodeData(byte[])}
+	 * the optional parameter is ignored. 
+	 */
+	@Override
+	public byte[] encodeData(byte[] data, byte ignored)
+			throws TraceEncoderException {
+		return encodeData(data);
+	}
 
 }

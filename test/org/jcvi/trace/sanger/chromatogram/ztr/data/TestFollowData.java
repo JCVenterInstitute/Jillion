@@ -27,6 +27,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.FollowData;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -60,5 +61,11 @@ public class TestFollowData {
 
        byte[] actual = sut.parseData(compressed.array());
        assertTrue(Arrays.equals(actual, uncompressedData));
+    }
+    
+    @Test
+    public void encodeAndDecode() throws TraceEncoderException, TraceDecoderException{
+    	byte[] encodedData=sut.encodeData(uncompressedData);
+    	assertArrayEquals(uncompressedData,sut.parseData(encodedData));
     }
 }

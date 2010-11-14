@@ -29,17 +29,19 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.ZLibData;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestZLibData {
 
     byte[] uncompressed = "blahblahblah??".getBytes();
+    private byte[] compressed;
     
-    ZLibData sut = ZLibData.INSTANCE;
-    @Test
-    public void parse() throws TraceDecoderException{
-        Deflater compresser = new Deflater();
+    @Before
+    public void setup(){
+    	Deflater compresser = new Deflater();
         compresser.setInput(uncompressed);
         compresser.finish();
         byte[] compressed = new byte[100];
@@ -53,8 +55,14 @@ public class TestZLibData {
         compressedInput.put((byte)0);
         
         compressedInput.put(compressed, 0, compressedDataLength);
+        this.compressed = Arrays.copyOfRange(compressedInput.array(),0 ,compressedInput.position());
  
-        byte[] actual = sut.parseData(compressedInput.array());
+    }
+    ZLibData sut = ZLibData.INSTANCE;
+    @Test
+    public void parse() throws TraceDecoderException{
+       
+        byte[] actual = sut.parseData(compressed);
         assertTrue(Arrays.equals(actual, uncompressed));
     }
     
@@ -75,6 +83,12 @@ public class TestZLibData {
             assertEquals("could not parse ZLibData", e.getMessage());
             assertTrue(e.getCause() instanceof DataFormatException);
         }
+    }
+    
+    @Test
+    public void encode() throws TraceEncoderException{
+    	byte[] encodedData = sut.encodeData(uncompressed);
+    	assertArrayEquals(encodedData, compressed);
     }
 
 }

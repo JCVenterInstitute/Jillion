@@ -28,6 +28,7 @@ import java.util.Arrays;
 
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.RunLengthEncodedData;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -63,10 +64,13 @@ public class TestRunLengthEncodedData {
     
     @Test
     public void parse() throws TraceDecoderException{
-
-        //param isn't used?
         byte[] actualUncompressed = sut.parseData(encodedData);
         assertTrue(Arrays.equals(actualUncompressed, uncompressedData));
+    }
+    @Test
+    public void encode() throws TraceEncoderException{
+    	byte[] actual = sut.encodeData(uncompressedData, guard);
+    	assertArrayEquals(actual, encodedData);
     }
     
     @Test
