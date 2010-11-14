@@ -25,37 +25,41 @@ package org.jcvi.trace.sanger.chromatogram.ztr.data;
 
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
-import java.util.Arrays;
 
+import org.jcvi.trace.TraceEncoderException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDelta8Data {
 
     private static byte[] uncompressed = new byte[]{10,20,10,(byte)200, (byte)190, 5};
+    private static final byte[] COMPRESSED_LEVEL_1;
+    private static final byte[] COMPRESSED_LEVEL_2;
+    private static final byte[] COMPRESSED_LEVEL_3;
+    
     DeltaEncodedData sut = DeltaEncodedData.BYTE;
-    @Test
-    public void level1(){
-        ShortBuffer compressed = ShortBuffer.allocate(8);
-        compressed.put((byte)64);
-        compressed.put((short)1);  //level
-        int delta=0;
-        int prevValue=0;
-        for(int i=0; i< uncompressed.length; i++){
-            delta = prevValue;
-            prevValue = fixSign(uncompressed[i]);
-            compressed.put((short)fixSign(prevValue -delta));
-        }        
-        compressed.flip();
-        
-        //test
-        ByteBuffer toBytes = convertToByteBuffer(compressed);
-
-        byte[] actual = sut.parseData(toBytes.array());
-        assertTrue(Arrays.equals(actual, uncompressed));
+    
+    static{
+    	COMPRESSED_LEVEL_1 = createCompressedLevel1();
+    	COMPRESSED_LEVEL_2 = createCompressedLevel2();
+    	COMPRESSED_LEVEL_3 = createCompressedLevel3();
     }
-    @Test
-    public void level2(){
-        ShortBuffer compressed = ShortBuffer.allocate(8);
+    
+    private static byte[] createCompressedLevel1() {
+    	 ShortBuffer compressed = ShortBuffer.allocate(8);
+         compressed.put((byte)64);
+         compressed.put((short)1);  //level
+         int delta=0;
+         int prevValue=0;
+         for(int i=0; i< uncompressed.length; i++){
+             delta = prevValue;
+             prevValue = fixSign(uncompressed[i]);
+             compressed.put((short)fixSign(prevValue -delta));
+         }        
+         compressed.flip();
+         return convertToByteBuffer(compressed).array();
+	}
+    private static byte[] createCompressedLevel2() {
+    	ShortBuffer compressed = ShortBuffer.allocate(8);
         compressed.put((byte)64);
         compressed.put((short)2);  //level
         int delta=0;
@@ -68,42 +72,67 @@ public class TestDelta8Data {
             compressed.put((short)fixSign(prevValue -delta));
         }        
         compressed.flip();
-        //test
-        ByteBuffer toBytes = convertToByteBuffer(compressed);
-        byte[] actual = sut.parseData(toBytes.array());
-        assertTrue(Arrays.equals(actual, uncompressed));
+        return convertToByteBuffer(compressed).array();
+    }
+    
+    private static byte[] createCompressedLevel3() {
+    	 ShortBuffer compressed = ShortBuffer.allocate(8);
+         compressed.put((byte)64);
+         compressed.put((short)3);  //level
+         int delta=0;
+         int prevValue=0;
+         int prevPrevValue=0;
+         int prevPrevPrevValue =0;
+         for(int i=0; i< uncompressed.length; i++){
+             delta = 3*prevValue - 3*prevPrevValue + prevPrevPrevValue;
+             prevPrevPrevValue= prevPrevValue;
+             prevPrevValue= prevValue;
+             prevValue = fixSign(uncompressed[i]);
+             compressed.put((short)fixSign(prevValue -delta));
+         }        
+         compressed.flip();
+         return convertToByteBuffer(compressed).array();
+    }
+    @Test
+    public void level1(){
+        byte[] actual = sut.parseData(COMPRESSED_LEVEL_1);
+        assertArrayEquals(actual, uncompressed);
+    }
+    @Test
+    public void compressedLevel1() throws TraceEncoderException{
+    	byte[] actual = sut.encodeData(uncompressed, DeltaEncodedData.Level.DELTA_LEVEL_1);
+    	assertArrayEquals(COMPRESSED_LEVEL_1, actual);
+    }
+    
+	@Test
+    public void level2(){
+        byte[] actual = sut.parseData(COMPRESSED_LEVEL_2);
+        assertArrayEquals(actual, uncompressed);
+    }
+	@Test
+    public void compressedLevel2() throws TraceEncoderException{
+    	byte[] actual = sut.encodeData(uncompressed, DeltaEncodedData.Level.DELTA_LEVEL_2);
+    	assertArrayEquals(COMPRESSED_LEVEL_2, actual);
     }
     
     @Test
     public void level3(){
-        ShortBuffer compressed = ShortBuffer.allocate(8);
-        compressed.put((byte)64);
-        compressed.put((short)3);  //level
-        int delta=0;
-        int prevValue=0;
-        int prevPrevValue=0;
-        int prevPrevPrevValue =0;
-        for(int i=0; i< uncompressed.length; i++){
-            delta = 3*prevValue - 3*prevPrevValue + prevPrevPrevValue;
-            prevPrevPrevValue= prevPrevValue;
-            prevPrevValue= prevValue;
-            prevValue = fixSign(uncompressed[i]);
-            compressed.put((short)fixSign(prevValue -delta));
-        }        
-        compressed.flip();
-        //test
-        ByteBuffer toBytes = convertToByteBuffer(compressed);
-        byte[] actual = sut.parseData(toBytes.array());
-        assertTrue(Arrays.equals(actual, uncompressed));
+      byte[] actual = sut.parseData(COMPRESSED_LEVEL_3);
+      assertArrayEquals(actual, uncompressed);
     }
-    private ByteBuffer convertToByteBuffer(ShortBuffer compressed) {
+    @Test
+    public void compressedLevel3() throws TraceEncoderException{
+    	byte[] actual = sut.encodeData(uncompressed, DeltaEncodedData.Level.DELTA_LEVEL_3);
+    	assertArrayEquals(COMPRESSED_LEVEL_3, actual);
+    }
+    private static ByteBuffer convertToByteBuffer(ShortBuffer compressed) {
         ByteBuffer toBytes = ByteBuffer.allocate(8);
         while(compressed.hasRemaining()){
             toBytes.put((byte)compressed.get());
         }
         return toBytes;
     }
-    private int fixSign(int prevValue) {
+    private static int fixSign(int prevValue) {
         if(prevValue<0){
             prevValue +=256;
         }

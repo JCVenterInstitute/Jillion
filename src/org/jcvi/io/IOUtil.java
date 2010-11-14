@@ -414,6 +414,10 @@ public final class IOUtil {
         return new BigInteger(1,
                  IOUtil.readByteArray(in, 4, endian)).longValue();
      }
+    public static long readUnsignedInt(byte[] array, ENDIAN endian) throws IOException{
+        return new BigInteger(1,
+                 array).longValue();
+     }
     public static int readUnsignedShort(InputStream in, ENDIAN endian) throws IOException{
         return new BigInteger(1,
                  IOUtil.readByteArray(in, 2, endian)).intValue();

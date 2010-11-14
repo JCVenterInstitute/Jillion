@@ -25,11 +25,14 @@ package org.jcvi.trace.sanger.chromatogram.ztr.data;
 
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import java.util.zip.DataFormatException;
 
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRUtil;
 
 /**
@@ -72,4 +75,31 @@ public enum ZLibData implements Data {
         }
     }
 
+	@Override
+	public byte[] encodeData(byte[] data) throws TraceEncoderException {
+		
+		Deflater zlibCompresser= new Deflater();
+		zlibCompresser.setInput(data);
+		zlibCompresser.finish();
+		byte[] compressedData = new byte[data.length*2];
+		int numberOfCompressedBytes =zlibCompresser.deflate(compressedData);
+		//5 = header length + uncompressed size as int
+		ByteBuffer encodedBuffer = ByteBuffer.allocate(numberOfCompressedBytes+5);
+		encodedBuffer.put(DataHeader.ZLIB_ENCODED);
+		//for some reason length is different endian...
+		byte size[] =IOUtil.switchEndian(IOUtil.convertUnsignedIntToByteArray(data.length));
+		encodedBuffer.put(size);
+		encodedBuffer.put(compressedData,0, numberOfCompressedBytes);
+		encodedBuffer.flip();
+		return Arrays.copyOfRange(encodedBuffer.array(), 0, encodedBuffer.limit());
+	}
+	/**
+	 * This returns the same result as {@link #encodeData(byte[])}
+	 * the optional parameter is ignored. 
+	 */
+	@Override
+	public byte[] encodeData(byte[] data, byte ignored)
+			throws TraceEncoderException {
+		return encodeData(data);
+	}
 }

@@ -24,6 +24,9 @@
 package org.jcvi.trace.sanger.chromatogram.ztr.data;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+
+import org.jcvi.trace.TraceEncoderException;
 
 /**
  * <code>AbstractDeltaData</code> is an abstract
@@ -43,12 +46,12 @@ public enum DeltaEncodedData implements Data {
 	 * @author dkatzel
 	 * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
 	 */
-	BYTE(ValueSizeStrategy.BYTE),
+	BYTE(ValueSizeStrategy.BYTE, DataHeader.BYTE_DELTA_ENCODED),
 	/**
 	 * Implementation of the ZTR Delta16 Data Format
 	 * which encodes the deltas between successive short values.
 	 */
-	SHORT(ValueSizeStrategy.SHORT),
+	SHORT(ValueSizeStrategy.SHORT, DataHeader.SHORT_DELTA_ENCODED),
 	/**
 	 * Implementation of the ZTR Delta32 Data Format 
 	 * which encodes the deltas between successive int values.
@@ -57,7 +60,7 @@ public enum DeltaEncodedData implements Data {
 	 *
 	 *
 	 */
-	INTEGER(ValueSizeStrategy.INTEGER){
+	INTEGER(ValueSizeStrategy.INTEGER, DataHeader.INTEGER_DELTA_ENCODED){
 		/**
 	     * 2 extra bytes of padding are needed to make 
 	     * the total length divisible by 4.
@@ -67,11 +70,27 @@ public enum DeltaEncodedData implements Data {
 	        return 2;
 	    }
 	};
+	public enum Level{
+		DELTA_LEVEL_1((byte)1),
+		DELTA_LEVEL_2((byte)2),
+		DELTA_LEVEL_3((byte)3),
+		;
+		private final byte level;
+
+		private Level(byte level) {
+			this.level = level;
+		}
+		
+	}
+	public static final byte DELTA_LEVEL_1 = (byte)1;
+	public static final byte DELTA_LEVEL_2 = (byte)2;
+	public static final byte DELTA_LEVEL_3 = (byte)3;
 	
 	private final ValueSizeStrategy valueSizeStrategy;
-	
-    private DeltaEncodedData(ValueSizeStrategy valueSizeStrategy) {
+	private final byte headerByte;
+    private DeltaEncodedData(ValueSizeStrategy valueSizeStrategy, byte headerByte) {
 		this.valueSizeStrategy = valueSizeStrategy;
+		this.headerByte = headerByte;
 	}
     
 	/**
@@ -105,4 +124,39 @@ public enum DeltaEncodedData implements Data {
     protected int getPaddingSize(){
         return 0;
     }
+    /**
+     * Same as {@link #encodeData(byte[], byte), encodeData(data,DEFAULT_LEVEL)}
+     * @see #encodeData(byte[], byte)
+     */
+	@Override
+	public byte[] encodeData(byte[] data) throws TraceEncoderException {
+		return encodeData(data, Level.DELTA_LEVEL_1);
+	}
+
+	public byte[] encodeData(byte[] data, Level deltaLevel) throws TraceEncoderException {
+		return encodeData(data, deltaLevel.level);
+	}
+	/**
+	 * Encodes given byte array data as delta encoded using the 
+	 * given level of deltas.
+	 * @param data the data to delta encode.
+	 * @param level the number of delta levels to use (1,2 or 3 permitted)
+	 * @throws TraceEncoderException if there is a problem encoding the data.
+	 * @return a new array containing the given input data as delta encoded.
+	 * @throws IllegalArgumentException if the given level is not 1,2 or 3.
+	 */
+	public byte[] encodeData(byte[] data, byte level) throws TraceEncoderException {
+		if(level<1 && level >3){
+			throw new IllegalArgumentException("level must be between 1 and 3 inclusive: " + level);
+		}
+		ByteBuffer result = ByteBuffer.allocate(data.length +2+getPaddingSize());
+		result.put(headerByte);
+		result.put((byte)level);
+		for(int i=0; i< getPaddingSize(); i++){
+			result.put((byte)0);
+		}
+		DeltaStrategy.getStrategyFor(level).compress(ByteBuffer.wrap(data),valueSizeStrategy, result );
+		result.flip();
+		return Arrays.copyOfRange(result.array(), 0, result.limit());
+	}
 }

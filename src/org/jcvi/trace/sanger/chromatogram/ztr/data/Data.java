@@ -24,6 +24,7 @@
 package org.jcvi.trace.sanger.chromatogram.ztr.data;
 
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
 
 
 
@@ -49,6 +50,29 @@ public interface Data {
      * parsing the data.
      */
     byte[] parseData(byte[] data)throws TraceDecoderException;
+    /**
+     * Encode the given data and return the encoded values
+     * as a byte array.
+     * @param data the data to encode.
+     * @return  the encoded data as a byte array.
+     * @throws TraceEncoderException if there are any problems
+     * encoding the data.
+     */
+    byte[] encodeData(byte[] data) throws TraceEncoderException;
+    /**
+     * Encode the given data and return the encoded values
+     * as a byte array.
+     * @param data the data to encode.
+     * @param optionalParameter an optional parameter which some
+     * encodings might need if their encoding
+     * scheme can take parameters to vary how the data
+     * is encoded. If no optional parameters can be
+     * passed in then any value would be ignored.
+     * @return  the encoded data as a byte array.
+     * @throws TraceEncoderException if there are any problems
+     * encoding the data.
+     */
+    byte[] encodeData(byte[] data, byte optionalParameter) throws TraceEncoderException;
 
 
 }

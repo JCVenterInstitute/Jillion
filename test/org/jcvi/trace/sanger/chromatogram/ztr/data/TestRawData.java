@@ -26,6 +26,7 @@ package org.jcvi.trace.sanger.chromatogram.ztr.data;
 import java.util.Arrays;
 
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.RawData;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -36,5 +37,14 @@ public class TestRawData {
     @Test
     public void parseReturnsSameDataAsInput() throws TraceDecoderException{
         assertTrue(Arrays.equals(RawData.INSTANCE.parseData(data), data));
+    }
+    @Test
+    public void encode() throws TraceEncoderException{
+    	byte[] actual = RawData.INSTANCE.encodeData(data);
+    	assertEquals("size", actual.length, data.length+1);
+    	assertEquals(actual[0], 0);
+    	for(int i=1; i< actual.length; i++){
+    		assertEquals(actual[i], data[i-1]);
+    	}
     }
 }

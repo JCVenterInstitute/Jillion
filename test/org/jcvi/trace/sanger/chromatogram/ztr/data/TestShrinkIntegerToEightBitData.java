@@ -27,6 +27,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestShrinkIntegerToEightBitData {
@@ -41,7 +42,7 @@ public class TestShrinkIntegerToEightBitData {
         }
         
         ByteBuffer buf2 = ByteBuffer.wrap(compressed);
-        buf2.put((byte)47);
+        buf2.put((byte)71);
         buf2.put((byte)20);
         buf2.put(guard);
         buf2.putInt(400);
@@ -60,6 +61,13 @@ public class TestShrinkIntegerToEightBitData {
         Data sut = ShrinkToEightBitData.INTEGER_TO_BYTE;
         byte[] actual =sut.parseData(compressed);
         assertTrue(Arrays.equals(actual, uncompressed));
+    }
+    
+    @Test
+    public void encode() throws TraceEncoderException{
+    	Data sut = ShrinkToEightBitData.INTEGER_TO_BYTE;
+    	byte[] actual = sut.encodeData(uncompressed);
+    	assertTrue(Arrays.equals(actual, compressed));
     }
     
 }

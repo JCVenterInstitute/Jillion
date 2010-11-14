@@ -27,6 +27,7 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
 
 
 /**
@@ -91,5 +92,47 @@ public enum FollowData implements Data {
         }
         return next;
     }
+
+	@Override
+	public byte[] encodeData(byte[] data) throws TraceEncoderException {
+		ByteBuffer result = ByteBuffer.allocate(data.length+256+1);
+		result.put(DataHeader.FOLLOW_DATA_ENCODED);
+		byte[] followArray = generateFollowArray(data);
+		result.put(followArray);
+		//put 1st byte without follow encoding
+		result.put(data[0]);
+		//follow encode the rest
+		for(int i=1; i<data.length; i++){
+			result.put((byte)(followArray[data[i-1]] - data[i]));
+		}
+		result.flip();
+		return result.array();
+	}
+
+	private byte[] generateFollowArray(byte[] data) {
+		byte[][] frequencyMatrix = new byte[256][256];
+		byte[] countsArray = new byte[256];
+		byte[] followArray = new byte[256];
+		
+		for(int i=0; i< data.length-1; i++){
+			byte current = data[i];
+			byte next = data[i+1];
+			byte frequencyCount = ++frequencyMatrix[current][next];
+			if(frequencyCount > countsArray[current]){
+				countsArray[current]=frequencyCount;
+				followArray[current]=next;
+			}
+		}
+		return followArray;
+	}
+	/**
+	 * This returns the same result as {@link #encodeData(byte[])}
+	 * the optional parameter is ignored.
+	 */
+	@Override
+	public byte[] encodeData(byte[] data, byte ignored)
+			throws TraceEncoderException {
+		return encodeData(data);
+	}
 
 }
