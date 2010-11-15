@@ -27,19 +27,31 @@ package org.jcvi.trace.sanger.chromatogram.ztr.chunk;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.Map.Entry;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jcvi.Range;
+import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
+import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
+import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRUtil;
@@ -87,6 +99,24 @@ public enum Chunk {
             return basecalls;
             
         }
+
+		/* (non-Javadoc)
+		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
+		 */
+		@Override
+		public byte[] encodeChunk(ZTRChromatogram ztrChromatogram)
+				throws TraceEncoderException {
+			String basecalls = NucleotideGlyph.convertToString(ztrChromatogram.getBasecalls().decode());
+			
+			ByteBuffer buffer = ByteBuffer.allocate(basecalls.length()+1);
+			buffer.put(PADDING_BYTE);
+			for(int i=0; i< basecalls.length(); i++){
+				buffer.put((byte)basecalls.charAt(i));
+			}
+			return buffer.array();
+		}
+        
+        
     },
     /**
      * The <code>POSITIONS</code> Chunk contains the positions of the
@@ -127,6 +157,23 @@ public enum Chunk {
             return basecalls;
             
         }
+
+		/* (non-Javadoc)
+		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
+		 */
+		@Override
+		public byte[] encodeChunk(ZTRChromatogram ztrChromatogram)
+				throws TraceEncoderException {
+			short[] peaks =ShortGlyph.toArray(ztrChromatogram.getPeaks().getData().decode());
+			ByteBuffer buffer = ByteBuffer.allocate(peaks.length*4+4);
+			//raw byte + 3 pads
+			buffer.putInt(0);
+			for(int i=0; i< peaks.length; i++){
+				buffer.putInt(peaks[i]);
+			}
+			return buffer.array();
+		}
+        
     },
     /**
      * <code>CLIP</code> contains the suggested quality clip points (0- based).
@@ -161,6 +208,26 @@ public enum Chunk {
             
             return basecalls;
         }
+
+		/* (non-Javadoc)
+		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
+		 */
+		@Override
+		public byte[] encodeChunk(ZTRChromatogram ztrChromatogram)
+				throws TraceEncoderException {
+			Range clip =ztrChromatogram.getClip();
+			if(clip ==null){
+				//store as 0,0?
+				clip = Range.buildRange(0, 0);
+			}
+			ByteBuffer buffer= ByteBuffer.allocate(9);
+			buffer.put(PADDING_BYTE);
+			buffer.putInt((int)clip.getStart());
+			buffer.putInt((int)clip.getEnd());
+			return buffer.array();
+		}
+        
+        
     },
     /**
      * The <code>Confidences</code> Chunk is an implemention of
@@ -178,6 +245,31 @@ public enum Chunk {
      *
      */
     CONFIDENCES{
+    	
+    	EnumSet<NucleotideGlyph> notA = EnumSet.of(
+				NucleotideGlyph.Cytosine, NucleotideGlyph.Guanine, NucleotideGlyph.Thymine);
+		EnumSet<NucleotideGlyph> notC = EnumSet.of(
+				NucleotideGlyph.Adenine, NucleotideGlyph.Guanine, NucleotideGlyph.Thymine);
+		EnumSet<NucleotideGlyph> notG = EnumSet.of(
+				NucleotideGlyph.Adenine, NucleotideGlyph.Cytosine, NucleotideGlyph.Thymine);
+		EnumSet<NucleotideGlyph> notACorG = EnumSet.of(
+				NucleotideGlyph.Adenine, NucleotideGlyph.Cytosine, NucleotideGlyph.Guanine);
+		Map<NucleotideGlyph, Set<NucleotideGlyph>> otherChannelMap = new EnumMap<NucleotideGlyph, Set<NucleotideGlyph>>(NucleotideGlyph.class);
+		{
+			otherChannelMap.put(NucleotideGlyph.Adenine, notA);
+			otherChannelMap.put(NucleotideGlyph.Cytosine, notC);
+			otherChannelMap.put(NucleotideGlyph.Guanine, notG);
+		}
+		
+		private Set<NucleotideGlyph> getOtherChannelsThan(NucleotideGlyph channel){
+			
+			if(otherChannelMap.containsKey(channel)){
+				return otherChannelMap.get(channel);
+			}
+			return notACorG;
+			
+		}
+		
         @Override
         protected void parseData(byte[] unEncodedData, ZTRChromatogramBuilder builder)
                 throws TraceDecoderException {
@@ -280,6 +372,37 @@ public enum Chunk {
             return basecalls;
             
         }
+
+		/* (non-Javadoc)
+		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
+		 */
+		@Override
+		public byte[] encodeChunk(ZTRChromatogram ztrChromatogram)
+				throws TraceEncoderException {
+			
+			
+			
+			
+			ChannelGroup channelGroup =ztrChromatogram.getChannelGroup();
+			List<NucleotideGlyph> basecalls =ztrChromatogram.getBasecalls().decode();
+			ByteBuffer calledBaseConfidences = ByteBuffer.allocate(basecalls.size());
+			ByteBuffer otherConfidences = ByteBuffer.allocate(calledBaseConfidences.capacity()*3);
+			for(int i=0; i< basecalls.size();i++){
+				NucleotideGlyph base = basecalls.get(i);
+				calledBaseConfidences.put(channelGroup.getChannel(base).getConfidence().getData()[i]);
+				
+				for(NucleotideGlyph other: getOtherChannelsThan(base)){
+					otherConfidences.put(channelGroup.getChannel(other).getConfidence().getData()[i]);
+				}
+			}
+			ByteBuffer result = ByteBuffer.allocate(basecalls.size()*4+1);
+			result.put(PADDING_BYTE);
+			result.put(calledBaseConfidences.array());
+			result.put(otherConfidences.array());
+			return result.array();
+		}
+        
+        
     },
     /**
     * <code>SMP4</code> is the chromatogram scan points for all 4 channels
@@ -353,6 +476,40 @@ public enum Chunk {
             
             return basecalls;
         }
+
+
+		/* (non-Javadoc)
+		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
+		 */
+		@Override
+		public byte[] encodeChunk(ZTRChromatogram ztrChromatogram)
+				throws TraceEncoderException {
+			int numTracePositions = ztrChromatogram.getNumberOfTracePositions();
+			ChannelGroup channelGroup = ztrChromatogram.getChannelGroup();
+			short[] aConfidence= channelGroup.getAChannel().getPositions().array();
+			short[] cConfidence= channelGroup.getCChannel().getPositions().array();
+			short[] gConfidence= channelGroup.getGChannel().getPositions().array();
+			short[] tConfidence= channelGroup.getTChannel().getPositions().array();
+			
+			ByteBuffer result = ByteBuffer.allocate(8 *numTracePositions+2);
+			//first 2 bytes are padding
+			result.putShort(PADDING_BYTE);
+				for(int i=0; i< numTracePositions; i++){
+					result.putShort(aConfidence[i]);
+				}
+				for(int i=0; i< numTracePositions; i++){
+					result.putShort(cConfidence[i]);
+				}
+				for(int i=0; i< numTracePositions; i++){
+					result.putShort(gConfidence[i]);
+				}
+				for(int i=0; i< numTracePositions; i++){
+					result.putShort(tConfidence[i]);
+				}
+			return result.array();
+		}
+        
+        
     },
     /**
      * Implementation of the ZTR TEXT Chunk.
@@ -378,7 +535,8 @@ public enum Chunk {
         protected Map<String,String> parseText(InputStream in)
                 throws TraceDecoderException {
             Scanner scanner=null;
-            Map<String,String> textProps = new HashMap<String, String>();
+            //linked hash preserves insertion order
+            Map<String,String> textProps = new LinkedHashMap<String, String>();
             try{
                 //skip first byte
                 in.read();
@@ -414,6 +572,32 @@ public enum Chunk {
             return basecalls;
             
         }
+
+		/* (non-Javadoc)
+		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
+		 */
+		@Override
+		public byte[] encodeChunk(ZTRChromatogram ztrChromatogram)
+				throws TraceEncoderException {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			out.write(PADDING_BYTE);
+			for(Entry<String, String> entry : ztrChromatogram.getProperties().entrySet()){
+				try {
+					out.write(entry.getKey().getBytes("UTF-8"));
+					out.write(PADDING_BYTE);
+					out.write(entry.getValue().getBytes("UTF-8"));
+					out.write(PADDING_BYTE);
+				} catch (UnsupportedEncodingException e) {
+					throw new TraceEncoderException("could not convert comment into UTF-8",e);
+				} catch (IOException e) {
+					throw new TraceEncoderException(String.format("error writing comment key='%s' value ='%s'", entry.getKey(), entry.getValue()),e);
+				}
+			}
+			out.write(PADDING_BYTE);
+			return out.toByteArray();
+		}
+        
+        
     }
     ;
 
@@ -422,6 +606,8 @@ public enum Chunk {
      * map of all supported chunk implementations mapped by header.
      */
     private static final Map<ChunkType, Chunk> CHUNK_MAP;
+    
+    private static final byte PADDING_BYTE = (byte)0;
     /**
      * populate chunk_map.
      */
@@ -556,6 +742,7 @@ public enum Chunk {
     protected abstract void parseData(byte[] unEncodedData, ZTRChromatogramBuilder builder) throws TraceDecoderException;
     protected abstract String parseData(byte[] unEncodedData, ChromatogramFileVisitor visitor, String basecalls) throws TraceDecoderException;
 
+    public abstract byte[] encodeChunk(ZTRChromatogram ztrChromatogram) throws TraceEncoderException;
 
     protected byte[] decodeChunk(InputStream inputStream, int datalength) throws TraceDecoderException{
         try{

@@ -24,12 +24,17 @@
 package org.jcvi.trace.sanger.chromatogram.ztr.chunk;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
+import org.jcvi.trace.sanger.chromatogram.Channel;
+import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
+import org.jcvi.trace.sanger.chromatogram.DefaultChannelGroup;
+import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.easymock.EasyMock.*;
 public class TestSMP4Chunk {
 
     private static short[] aTraces = new short[]{0,0,2,4,5,3,2,0,0,0,1};
@@ -38,11 +43,9 @@ public class TestSMP4Chunk {
     private static short[] tTraces = new short[]{0,0,2,4,2,3,2,0,5,8,25};
    
     Chunk sut = Chunk.SMP4;
-
-    
-    @Test
-    public void valid() throws TraceDecoderException{
-        ByteBuffer buf = ByteBuffer.allocate(aTraces.length *8 + 2);
+    private static final byte[] encodedBytes;
+    static{
+    	ByteBuffer buf = ByteBuffer.allocate(aTraces.length *8 + 2);
         buf.putShort((short)0);
         for(int i=0; i<aTraces.length; i++){
             buf.putShort(aTraces[i]);
@@ -56,13 +59,35 @@ public class TestSMP4Chunk {
         for(int i=0; i<aTraces.length; i++){
             buf.putShort(tTraces[i]);
         }
-        ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder();
-
-        sut.parseData(buf.array(), struct);
-        assertTrue(Arrays.equals(struct.aPositions(),aTraces));
-        assertTrue(Arrays.equals(struct.cPositions(),cTraces));
-        assertTrue(Arrays.equals(struct.gPositions(),gTraces));
-        assertTrue(Arrays.equals(struct.tPositions(),tTraces));
+        encodedBytes = buf.array();
     }
     
+    @Test
+    public void parse() throws TraceDecoderException{
+        
+        ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder();
+
+        sut.parseData(encodedBytes, struct);
+        assertArrayEquals(struct.aPositions(),aTraces);
+        assertArrayEquals(struct.cPositions(),cTraces);
+        assertArrayEquals(struct.gPositions(),gTraces);
+        assertArrayEquals(struct.tPositions(),tTraces);
+    }
+    
+    @Test
+    public void encode() throws TraceEncoderException{
+    	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
+    	ChannelGroup channelGroup = new DefaultChannelGroup(
+    			new Channel(new byte[0],aTraces), 
+    			new Channel(new byte[0],cTraces), 
+    			new Channel(new byte[0],gTraces), 
+    			new Channel(new byte[0],tTraces));
+    	expect(mockChromatogram.getNumberOfTracePositions()).andReturn(aTraces.length);
+    	expect(mockChromatogram.getChannelGroup()).andReturn(channelGroup);
+    	replay(mockChromatogram);
+    	byte[] actual =sut.encodeChunk(mockChromatogram);
+    	assertArrayEquals(encodedBytes, actual);
+    	verify(mockChromatogram);
+    
+    }
 }

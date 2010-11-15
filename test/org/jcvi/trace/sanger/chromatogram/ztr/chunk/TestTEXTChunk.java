@@ -24,34 +24,37 @@
 package org.jcvi.trace.sanger.chromatogram.ztr.chunk;
 
 import java.nio.ByteBuffer;
-import java.util.Properties;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
+import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
-import org.junit.Before;
 import org.junit.Test;
+
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.*;
 public class TestTEXTChunk {
 
     private static final byte NULL_TERMINATOR = 0;
-    Properties expected ;
+    static Map<String,String> expected ;
     Chunk sut = Chunk.COMMENTS;
     
-    @Before
-    public void setup(){
-        expected = new Properties();
-        expected.put("DATE", "Sun 09 Sep 20:29:52 2007 to Sun 09 Sep 21:48:16 2007");
-        expected.put("SIGN", "A:5503,C:5140,G:3030,T:5266");
-        expected.put("NAME", "TIGR_GBKAK82TF_980085_1106817232495");
-       
-    }
-    
-    @Test
-    public void valid() throws TraceDecoderException{
-        ByteBuffer buf = ByteBuffer.allocate(134);
+    private static final byte[] encodedBytes;
+    static{
+    	 expected = new LinkedHashMap<String,String>();
+         expected.put("DATE", "Sun 09 Sep 20:29:52 2007 to Sun 09 Sep 21:48:16 2007");
+         expected.put("SIGN", "A:5503,C:5140,G:3030,T:5266");
+         expected.put("NAME", "TIGR_GBKAK82TF_980085_1106817232495");
+         
+    	ByteBuffer buf = ByteBuffer.allocate(134);
         buf.put((byte)0);
-        for(Entry<Object, Object>  entry : expected.entrySet()){
+        for(Entry<String, String>  entry : expected.entrySet()){
             final String key = entry.getKey().toString();
             final String value = entry.getValue().toString();
             buf.put(key.getBytes());
@@ -60,9 +63,28 @@ public class TestTEXTChunk {
             buf.put(NULL_TERMINATOR);
         }
         buf.put(NULL_TERMINATOR);
+        
+        encodedBytes = buf.array();
+    }
+   
+    
+    @Test
+    public void parse() throws TraceDecoderException{
+        
         ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder();
-        sut.parseData(buf.array(), struct);
+        sut.parseData(encodedBytes, struct);
         assertEquals(struct.properties(), expected);
+    }
+
+    	@Test
+        public void encode() throws TraceEncoderException, TraceDecoderException{
+        	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
+        	expect(mockChromatogram.getProperties()).andReturn(expected);
+        	
+        	replay(mockChromatogram);
+        	byte[] actual =sut.encodeChunk(mockChromatogram);
+        	assertArrayEquals(encodedBytes, actual);
+        	verify(mockChromatogram);
     }
     
     
