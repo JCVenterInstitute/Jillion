@@ -27,27 +27,57 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.Range;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
+import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.easymock.EasyMock.*;
+
 public class TestClipChunk {
 
    Chunk sut = Chunk.CLIP;
-    Range expected = Range.buildRange(12345678, 987654321);
+   static final Range expectedClip = Range.buildRange(12345678, 987654321);
 
+    private static final byte[] encodedClip;
+    static{    	
+    	encodedClip = encode(expectedClip);
+    }
+	private static byte[] encode(Range clip) {
+		ByteBuffer buf = ByteBuffer.allocate(9);
+        buf.put((byte)0); // clip chunk
+        buf.putInt((int)clip.getStart());
+        buf.putInt((int)clip.getEnd());
+        byte[] temp = buf.array();
+		return temp;
+	}
     @Test
     public void validParse() throws TraceDecoderException{
-        ByteBuffer buf = ByteBuffer.allocate(9);
-        buf.put((byte)0); // clip chunk
-        buf.putInt((int)expected.getStart());
-        buf.putInt((int)expected.getEnd());
-        
+       
         
         ZTRChromatogramBuilder mockStruct = new ZTRChromatogramBuilder();
-        sut.parseData(buf.array(),mockStruct);
-        assertEquals(expected, mockStruct.clip());
+        sut.parseData(encodedClip,mockStruct);
+        assertEquals(expectedClip, mockStruct.clip());
     }
     
+    @Test
+    public void encode() throws TraceEncoderException{
+    	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
+    	expect(mockChromatogram.getClip()).andReturn(expectedClip);
+    	replay(mockChromatogram);
+    	byte[] actual =sut.encodeChunk(mockChromatogram);
+    	assertArrayEquals(encodedClip, actual);
+    	verify(mockChromatogram);
+    }
+    @Test
+    public void encodeNullClipShouldEncodeZeroZero() throws TraceEncoderException{
+    	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
+    	expect(mockChromatogram.getClip()).andReturn(null);
+    	replay(mockChromatogram);
+    	byte[] actual =sut.encodeChunk(mockChromatogram);
+    	assertArrayEquals(encode(Range.buildRange(0,0)), actual);
+    	verify(mockChromatogram);
+    }
     @Test
     public void invalidLengthTooSmallShouldThrowTraceDecoderException(){
         try{

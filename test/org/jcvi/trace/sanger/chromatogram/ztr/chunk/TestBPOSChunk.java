@@ -24,28 +24,44 @@
 package org.jcvi.trace.sanger.chromatogram.ztr.chunk;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
+import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
+import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.easymock.EasyMock.*;
 public class TestBPOSChunk {
 
-    private short[] expected = new short[]{10,20,30,41,53,60,68};
+    private static final short[] decodedPeaks = new short[]{10,20,30,41,53,60,68};
     Chunk sut =Chunk.POSITIONS;
 
-    @Test
-    public void valid() throws TraceDecoderException{
-        ByteBuffer buf = ByteBuffer.allocate(expected.length*4 + 4);
+    private static final byte[] encodedPositions;
+    static{
+    	ByteBuffer buf = ByteBuffer.allocate(decodedPeaks.length*4 + 4);
         buf.putInt(0); //padding
-        for(int i=0; i< expected.length; i++){
-            buf.putInt(expected[i]);
+        for(int i=0; i< decodedPeaks.length; i++){
+            buf.putInt(decodedPeaks[i]);
         }
+        encodedPositions = buf.array();
+    }
+    @Test
+    public void valid() throws TraceDecoderException{        
         ZTRChromatogramBuilder mockStruct = new ZTRChromatogramBuilder();
-
-        sut.parseData(buf.array(), mockStruct);
-        assertTrue(Arrays.equals(expected, mockStruct.peaks()));
+        sut.parseData(encodedPositions, mockStruct);
+        assertArrayEquals(decodedPeaks, mockStruct.peaks());
+    }
+    
+    @Test
+    public void encode() throws TraceEncoderException{
+    	ZTRChromatogram chromatogram = createMock(ZTRChromatogram.class);
+    	expect(chromatogram.getPeaks()).andReturn(new Peaks(decodedPeaks));
+    	replay(chromatogram);
+    	byte[] actual =sut.encodeChunk(chromatogram);
+    	assertArrayEquals(encodedPositions, actual);
+    	verify(chromatogram);
     }
 }

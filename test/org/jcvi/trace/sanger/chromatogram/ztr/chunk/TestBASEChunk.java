@@ -25,23 +25,45 @@ package org.jcvi.trace.sanger.chromatogram.ztr.chunk;
 
 import java.nio.ByteBuffer;
 
+import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.TraceEncoderException;
+import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.easymock.EasyMock.*;
 public class TestBASEChunk {
    
-    private String decodedBases = "ACGTACGTNW-";
+    private static final String decodedBases = "ACGTACGTNW-";
    Chunk sut =Chunk.BASE;
-
+   private static final byte[] encodedBases;
+	static{
+		ByteBuffer buf = ByteBuffer.allocate(decodedBases.length()+1);
+	    buf.put((byte)0 ); //padding
+	    buf.put(decodedBases.getBytes());
+	    encodedBases = buf.array();
+	}
+	
     @Test
     public void valid() throws TraceDecoderException{
-        ByteBuffer buf = ByteBuffer.allocate(decodedBases.length()+1);
-        buf.put((byte)0 ); //padding
-        buf.put(decodedBases.getBytes());
+       
         ZTRChromatogramBuilder builder = new ZTRChromatogramBuilder();
-        sut.parseData(buf.array(), builder);        
+        sut.parseData(encodedBases, builder);        
         assertEquals(decodedBases, builder.basecalls());
+    }
+    
+    @Test
+    public void encode() throws TraceEncoderException, TraceDecoderException{
+    	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
+    	NucleotideEncodedGlyphs basecalls = new DefaultNucleotideEncodedGlyphs(decodedBases);
+    	expect(mockChromatogram.getBasecalls()).andReturn(basecalls);
+    	
+    	replay(mockChromatogram);
+    	byte[] actual =sut.encodeChunk(mockChromatogram);
+    	assertArrayEquals(encodedBases, actual);
+    	verify(mockChromatogram);
     }
 }
