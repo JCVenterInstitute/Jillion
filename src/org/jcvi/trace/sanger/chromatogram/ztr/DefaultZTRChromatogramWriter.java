@@ -33,7 +33,6 @@ import org.jcvi.trace.sanger.chromatogram.ztr.chunk.ChunkType;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.Data;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.DeltaEncodedData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.FollowData;
-import org.jcvi.trace.sanger.chromatogram.ztr.data.RawData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.RunLengthEncodedData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.ShrinkToEightBitData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.ZLibData;
@@ -45,9 +44,10 @@ public class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
 	
 	static{
 		DefaultZTRChromatogramWriterBuilder builder = new DefaultZTRChromatogramWriterBuilder();
-		builder.forBasecallChunkEncoder().addDataEncoder(ZLibData.INSTANCE);
+		builder.forBasecallChunkEncoder()
+		        .addDataEncoder(ZLibData.INSTANCE);
 		builder.forPositionsChunkEncoder()
-			.addDeltaEncoder(DeltaEncodedData.SHORT, Level.DELTA_LEVEL_2)
+			.addDeltaEncoder(DeltaEncodedData.SHORT, Level.DELTA_LEVEL_3)
 			.addDataEncoder(ShrinkToEightBitData.SHORT_TO_BYTE)
 			.addDataEncoder(FollowData.INSTANCE)
 			.addRunLengthEncoder()
@@ -97,12 +97,13 @@ public class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
 		try {
 			out.write(ZTRUtil.ZTR_MAGIC_NUMBER);
 			out.write(ZTR_VERSION);
-			out.write(basecallEncoder.encode(chromatogram));
+			
 			out.write(positionsEncoder.encode(chromatogram));
+			out.write(basecallEncoder.encode(chromatogram));
 			out.write(peaksEncoder.encode(chromatogram));
-			out.write(confidenceEncoder.encode(chromatogram));
-			out.write(clipEncoder.encode(chromatogram));
+			out.write(confidenceEncoder.encode(chromatogram));			
 			out.write(commentsEncoder.encode(chromatogram));
+			out.write(clipEncoder.encode(chromatogram));
 			
 		} catch (IOException e) {
 			throw new TraceEncoderException("error writing ZTR", e);
