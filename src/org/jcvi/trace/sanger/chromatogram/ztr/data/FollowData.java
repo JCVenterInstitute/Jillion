@@ -103,28 +103,32 @@ public enum FollowData implements Data {
 		result.put(data[0]);
 		//follow encode the rest
 		for(int i=1; i<data.length; i++){
-			result.put((byte)(followArray[data[i-1]] - data[i]));
+			int value = IOUtil.convertToUnsignedByte(followArray[
+			                         IOUtil.convertToUnsignedByte(data[i-1])]) -
+							IOUtil.convertToUnsignedByte(data[i]);
+			result.put(IOUtil.convertUnsignedByteToSignedByte(value));
 		}
 		result.flip();
 		return result.array();
 	}
 
 	private byte[] generateFollowArray(byte[] data) {
-		byte[][] frequencyMatrix = new byte[256][256];
-		byte[] countsArray = new byte[256];
+		int[][] frequencyMatrix = new int[256][256];
+		int[] countsArray = new int[256];
 		byte[] followArray = new byte[256];
 		
 		for(int i=0; i< data.length-1; i++){
-			byte current = data[i];
-			byte next = data[i+1];
-			byte frequencyCount = ++frequencyMatrix[current][next];
+			int current = IOUtil.convertToUnsignedByte(data[i]);
+			int next = IOUtil.convertToUnsignedByte(data[i+1]);
+			int frequencyCount = ++frequencyMatrix[current][next];
 			if(frequencyCount > countsArray[current]){
 				countsArray[current]=frequencyCount;
-				followArray[current]=next;
+				followArray[current]=IOUtil.convertUnsignedByteToSignedByte(next);
 			}
 		}
 		return followArray;
 	}
+	
 	/**
 	 * This returns the same result as {@link #encodeData(byte[])}
 	 * the optional parameter is ignored.

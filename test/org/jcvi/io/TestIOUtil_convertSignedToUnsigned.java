@@ -39,6 +39,27 @@ public class TestIOUtil_convertSignedToUnsigned {
     }
     
     @Test
+    public void convertUnsignedByteToSignedByte(){
+    	assertConvertsCorrectly(0);
+    	assertConvertsCorrectly(50);
+    	assertConvertsCorrectly(100);
+    	assertConvertsCorrectly(127);
+    	assertConvertsCorrectly(-1);
+    	assertConvertsCorrectly(-4);
+    	assertConvertsCorrectly(-100);
+    	assertConvertsCorrectly(Byte.MAX_VALUE);
+    	assertConvertsCorrectly(Byte.MIN_VALUE);
+    }
+    
+    
+    private void assertConvertsCorrectly(int i) {
+		byte signed = (byte)i;
+		int unsigned =IOUtil.convertToUnsignedByte(signed);
+		assertEquals(signed, IOUtil.convertUnsignedByteToSignedByte(unsigned));
+		
+	}
+
+	@Test
     public void convertShort(){
         assertEquals(0, IOUtil.convertToUnsignedShort((short)0));
         assertEquals(256, IOUtil.convertToUnsignedShort((short)256));

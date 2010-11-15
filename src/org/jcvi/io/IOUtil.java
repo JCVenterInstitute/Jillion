@@ -340,6 +340,13 @@ public final class IOUtil {
     public static int convertToUnsignedByte(byte value){
        return value & 0xFF;
     }
+    
+    public static byte convertUnsignedByteToSignedByte(int unsignedByte){
+    	if(unsignedByte>127){
+    		return (byte)(unsignedByte-256);
+    	}
+    	return (byte)unsignedByte;
+    }
     /**
      * Converts signed java short value into an unsigned value.
      * @param value the signed value to convert.
