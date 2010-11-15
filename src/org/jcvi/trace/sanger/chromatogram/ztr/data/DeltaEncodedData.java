@@ -80,6 +80,13 @@ public enum DeltaEncodedData implements Data {
 		private Level(byte level) {
 			this.level = level;
 		}
+
+		/**
+		 * @return the level
+		 */
+		public byte getLevel() {
+			return level;
+		}
 		
 	}
 	public static final byte DELTA_LEVEL_1 = (byte)1;

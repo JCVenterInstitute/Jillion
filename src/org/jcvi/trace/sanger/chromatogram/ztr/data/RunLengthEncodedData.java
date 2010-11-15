@@ -61,7 +61,7 @@ public enum RunLengthEncodedData implements Data {
      * when encoding Run Length chunks
      * so that's what we will use as default.
      */
-    public final byte DEFAULT_GUARD = (byte)150;
+    public static final byte DEFAULT_GUARD = (byte)150;
     /**
      * 
     * {@inheritDoc}
