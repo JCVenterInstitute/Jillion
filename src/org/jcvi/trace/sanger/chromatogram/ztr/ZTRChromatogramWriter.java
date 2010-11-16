@@ -22,8 +22,9 @@ package org.jcvi.trace.sanger.chromatogram.ztr;
 import java.io.OutputStream;
 
 import org.jcvi.trace.TraceEncoderException;
+import org.jcvi.trace.sanger.chromatogram.Chromatogram;
 
 public interface ZTRChromatogramWriter {
 
-	void write(ZTRChromatogram chromatogram, OutputStream out) throws TraceEncoderException;
+	void write(Chromatogram chromatogram, OutputStream out) throws TraceEncoderException;
 }

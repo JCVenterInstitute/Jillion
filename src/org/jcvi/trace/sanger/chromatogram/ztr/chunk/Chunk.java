@@ -50,6 +50,7 @@ import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
+import org.jcvi.trace.sanger.chromatogram.Chromatogram;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramBuilder;
@@ -104,7 +105,7 @@ public enum Chunk {
 		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
 		 */
 		@Override
-		public byte[] encodeChunk(ZTRChromatogram ztrChromatogram)
+		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
 			String basecalls = NucleotideGlyph.convertToString(ztrChromatogram.getBasecalls().decode());
 			
@@ -162,7 +163,7 @@ public enum Chunk {
 		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
 		 */
 		@Override
-		public byte[] encodeChunk(ZTRChromatogram ztrChromatogram)
+		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
 			short[] peaks =ShortGlyph.toArray(ztrChromatogram.getPeaks().getData().decode());
 			ByteBuffer buffer = ByteBuffer.allocate(peaks.length*4+4);
@@ -213,9 +214,13 @@ public enum Chunk {
 		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
 		 */
 		@Override
-		public byte[] encodeChunk(ZTRChromatogram ztrChromatogram)
+		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
-			Range clip =ztrChromatogram.getClip();
+		    Range clip=null;
+		    if(ztrChromatogram instanceof ZTRChromatogram){
+		        clip =((ZTRChromatogram)ztrChromatogram).getClip();
+		    }
+			
 			if(clip ==null){
 				//store as 0,0?
 				clip = Range.buildRange(0, 0);
@@ -377,7 +382,7 @@ public enum Chunk {
 		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
 		 */
 		@Override
-		public byte[] encodeChunk(ZTRChromatogram ztrChromatogram)
+		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
 			
 			
@@ -482,7 +487,7 @@ public enum Chunk {
 		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
 		 */
 		@Override
-		public byte[] encodeChunk(ZTRChromatogram ztrChromatogram)
+		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
 			int numTracePositions = ztrChromatogram.getNumberOfTracePositions();
 			ChannelGroup channelGroup = ztrChromatogram.getChannelGroup();
@@ -577,7 +582,7 @@ public enum Chunk {
 		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
 		 */
 		@Override
-		public byte[] encodeChunk(ZTRChromatogram ztrChromatogram)
+		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			out.write(PADDING_BYTE);
@@ -742,7 +747,7 @@ public enum Chunk {
     protected abstract void parseData(byte[] unEncodedData, ZTRChromatogramBuilder builder) throws TraceDecoderException;
     protected abstract String parseData(byte[] unEncodedData, ChromatogramFileVisitor visitor, String basecalls) throws TraceDecoderException;
 
-    public abstract byte[] encodeChunk(ZTRChromatogram ztrChromatogram) throws TraceEncoderException;
+    public abstract byte[] encodeChunk(Chromatogram ztrChromatogram) throws TraceEncoderException;
 
     protected byte[] decodeChunk(InputStream inputStream, int datalength) throws TraceDecoderException{
         try{
