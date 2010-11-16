@@ -341,11 +341,24 @@ public final class IOUtil {
        return value & 0xFF;
     }
     
-    public static byte convertUnsignedByteToSignedByte(int unsignedByte){
+    public static byte convertUnsignedByteToSignedByte(long unsignedByte){
     	if(unsignedByte>127){
     		return (byte)(unsignedByte-256);
     	}
     	return (byte)unsignedByte;
+    }
+
+    public static short convertUnsignedShortToSignedShort(long unsignedShort){
+        if(unsignedShort > Short.MAX_VALUE){
+            return (short)(unsignedShort -(2*(Short.MAX_VALUE+1)));
+        }
+        return (short)unsignedShort;
+    }
+    public static int convertUnsignedIntToSignedInt(long unsignedInt){
+        if(unsignedInt > Integer.MAX_VALUE){
+            return (int)(unsignedInt -(2*(Integer.MAX_VALUE+1)));
+        }
+        return (int)unsignedInt;
     }
     /**
      * Converts signed java short value into an unsigned value.
@@ -355,6 +368,8 @@ public final class IOUtil {
     public static int convertToUnsignedShort(short value){
         return value & 0xFFFF;
     }
+    
+    
     /**
      * Converts signed java short value into an unsigned value.
      * @param value the signed value to convert.
@@ -421,9 +436,17 @@ public final class IOUtil {
         return new BigInteger(1,
                  IOUtil.readByteArray(in, 4, endian)).longValue();
      }
-    public static long readUnsignedInt(byte[] array, ENDIAN endian) throws IOException{
+    public static long readUnsignedInt(byte[] array){
         return new BigInteger(1,
                  array).longValue();
+     }
+    public static int readUnsignedShort(byte[] array){
+        return new BigInteger(1,
+                 array).intValue();
+     }
+    public static short readUnsignedByte(byte[] array){
+        return new BigInteger(1,
+                 array).shortValue();
      }
     public static int readUnsignedShort(InputStream in, ENDIAN endian) throws IOException{
         return new BigInteger(1,
