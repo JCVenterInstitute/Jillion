@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import org.jcvi.trace.sanger.SangerTrace;
 import org.jcvi.trace.sanger.SangerTraceCodec;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramWriter;
 
 /**
  * <code>SCFCodec</code> is used to encode and decode {@link SCFChromatogram}s.
@@ -38,7 +39,7 @@ import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
  *
  *
  */
-public interface SCFCodec extends SangerTraceCodec{
+public interface SCFCodec extends SangerTraceCodec, ChromatogramWriter{
     /**
      * Encodes the given {@link SangerTrace} into SCF Format
      * and writes the encoded data to the given {@link OutputStream}.

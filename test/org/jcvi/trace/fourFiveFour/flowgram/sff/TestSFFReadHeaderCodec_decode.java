@@ -47,15 +47,16 @@ public class TestSFFReadHeaderCodec_decode extends AbstractTestSFFReadHeaderCode
         verify(mockInputStream);
     }
     @Test
-    public void sequenceNameLengthEncodedIncorrectlyShouldThrowSFFDecoderException() throws  IOException{
+    public void sequenceNameLengthEncodedIncorrectlyShouldThrowIOException() throws  IOException{
         InputStream mockInputStream = createMock(InputStream.class);
         encodeHeaderWithWrongSequenceLength(mockInputStream, expectedReadHeader);
         replay(mockInputStream);
         try{
             sut.decodeReadHeader(new DataInputStream(mockInputStream));
             fail("should throw SFFDecoderException if name length encoded wrong");
-        }catch(SFFDecoderException expected){
-            assertEquals("error decoding seq name", expected.getMessage());
+        }catch(IOException e){
+            Throwable cause = e.getCause();
+            assertEquals("error decoding seq name", cause.getMessage());
         }
 
 

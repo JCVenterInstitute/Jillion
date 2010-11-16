@@ -158,7 +158,7 @@ public enum DeltaEncodedData implements Data {
 		}
 		ByteBuffer result = ByteBuffer.allocate(data.length +2+getPaddingSize());
 		result.put(headerByte);
-		result.put((byte)level);
+		result.put(level);
 		for(int i=0; i< getPaddingSize(); i++){
 			result.put((byte)0);
 		}

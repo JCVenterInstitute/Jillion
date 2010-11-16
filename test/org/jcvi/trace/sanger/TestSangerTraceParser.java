@@ -50,7 +50,7 @@ public class TestSangerTraceParser {
     @Test
     public void parseSCF_v3() throws TraceDecoderException, IOException{
         SangerTrace actual =sut.decode(RESOURCES.getFileAsStream(SCF3_FILE));
-        SangerTrace expected = new Version3SCFCodec().decode(RESOURCES.getFileAsStream(SCF3_FILE));
+        SangerTrace expected = Version3SCFCodec.INSTANCE.decode(RESOURCES.getFileAsStream(SCF3_FILE));
         assertEquals(expected, actual);
     }
     @Test

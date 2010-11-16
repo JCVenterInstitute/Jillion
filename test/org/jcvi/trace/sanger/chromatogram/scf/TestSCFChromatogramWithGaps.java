@@ -44,7 +44,7 @@ public class TestSCFChromatogramWithGaps {
     
     @Test
     public void parse() throws SCFDecoderException, IOException{
-        SCFChromatogram actual =new Version3SCFCodec().decode(
+        SCFChromatogram actual =Version3SCFCodec.INSTANCE.decode(
         		RESOURCES.getFileAsStream(File_path));
         assertEquals(NucleotideGlyph.convertToString(actual.getBasecalls().decode()), "-----");
         

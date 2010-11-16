@@ -44,8 +44,8 @@ public class SangerTraceParser implements SangerTraceCodec{
     private static final int MARK_LIMIT = 1024;
     private static final ZTRChromatogramParser ZTR_PARSER = new ZTRChromatogramParser();
     private static final PhdCodec PHD_CODEC = new PhdCodec();
-    private static final SCFCodec SCF_VERSION_2_CODEC = new Version2SCFCodec();
-    private static final SCFCodec SCF_VERSION_3_CODEC = new Version3SCFCodec();
+    private static final SCFCodec SCF_VERSION_2_CODEC = Version2SCFCodec.INSTANCE;
+    private static final SCFCodec SCF_VERSION_3_CODEC = Version3SCFCodec.INSTANCE;
     
     private static final List<SangerTraceCodec> decoderOrder = Arrays.asList(
             ZTR_PARSER, SCF_VERSION_3_CODEC, SCF_VERSION_2_CODEC, PHD_CODEC);

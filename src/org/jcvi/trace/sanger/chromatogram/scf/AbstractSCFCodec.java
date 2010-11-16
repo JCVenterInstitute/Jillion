@@ -41,6 +41,7 @@ import java.util.Map.Entry;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.SangerTrace;
+import org.jcvi.trace.sanger.chromatogram.Chromatogram;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeader;
 import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeaderCodec;
@@ -177,6 +178,12 @@ public abstract class AbstractSCFCodec implements SCFCodec{
         return sectionsByOffset;
     }
 
+    @Override
+    public void write(Chromatogram chromatogram, OutputStream out)
+            throws IOException {
+        encode(chromatogram, out);
+        
+    }
     /**
      * Encodes the given {@link SCFChromatogram} into SCF version specific
      * format.

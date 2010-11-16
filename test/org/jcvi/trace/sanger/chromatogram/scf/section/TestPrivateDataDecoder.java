@@ -23,8 +23,6 @@
  */
 package org.jcvi.trace.sanger.chromatogram.scf.section;
 
-import static org.easymock.EasyMock.createMock;
-
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -95,8 +93,10 @@ public class TestPrivateDataDecoder {
         try {
             sut.decode(new DataInputStream(mockInputStream), 0L, mockHeader, c);
             fail("should throw exception if not expected number of bytes read");
-        } catch (SectionDecoderException e) {
-            assertEquals("could not read entire private data section", e.getMessage());
+        } catch(IOException e){
+            SectionDecoderException decoderException = (SectionDecoderException)e.getCause();
+            
+            assertEquals("could not read entire private data section", decoderException.getMessage());
         }
     }
     @Test
