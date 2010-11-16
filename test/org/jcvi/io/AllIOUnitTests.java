@@ -41,6 +41,10 @@ import org.junit.runners.Suite.SuiteClasses;
         TestIOUtil_deleteDir.class,
         TestIOUtil_convertToUnsignedByteArray.class,
         TestIOUtil_whenMakingDirectories.class,
+        TestIOUtil_unsignedByteToSignedByte.class,
+        TestIOUtil_unsignedShortToSignedShort.class,
+        TestIOUtil_unsignedIntToSignedInt.class,
+        
         TestCheckSumUtil.class,
         
         AllBase64UnitTests.class,
