@@ -26,18 +26,45 @@ package org.jcvi.glyph;
 import java.util.List;
 
 import org.jcvi.Range;
-
+/**
+ * {@code EncodedGlyphs} is an interface for 
+ * encoding or compressing a list of {@link Glyph}s
+ * so that they take up less memory.
+ * @author dkatzel
+ *
+ *
+ */
 public interface EncodedGlyphs<T extends Glyph> {
-
+    /**
+     * Decode the entire list of encoded glyphs into
+     * a List.
+     * @return a List of Glyphs.
+     */
     List<T> decode();
+    /**
+     * Gets the specific glyph at the specified index.
+     * this should return the same Glyph as
+     * {@code decode().get(index)} but hopefully
+     * in a more efficient manner.
+     * @param index the index of the Glyph to get.
+     * @return the Glyph at the specified index.
+     */
     T get(int index);
+    /**
+     * Get the number of glyphs that are encoded.
+     * This should return the same value as
+     * {@code decode().size()}.
+     * @return the length of the encoded glyphs will never
+     * be less than {@code 0}.
+     */
     long getLength();
-
+    @Override
     int hashCode();
-
+    
+    @Override
     boolean equals(Object obj);
     /**
-     * Decodes the Glyphs for the given TrimRange
+     * Decodes the Glyphs for the given range
      * @param range the range to trim against, if null, then decode
      * all glyphs (the same as {@link #decode()}).
      * @return

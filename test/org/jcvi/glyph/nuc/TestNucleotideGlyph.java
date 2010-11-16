@@ -65,8 +65,8 @@ public class TestNucleotideGlyph {
 
     @Test
     public void reverseCompliment(){
-        assertEquals(reverseGlyph, glyph.reverseCompliment());
-        assertEquals(glyph, reverseGlyph.reverseCompliment());
+        assertEquals(reverseGlyph, glyph.compliment());
+        assertEquals(glyph, reverseGlyph.compliment());
         assertEquals(glyph.isAmbiguity(), reverseGlyph.isAmbiguity());
     }
     @Test

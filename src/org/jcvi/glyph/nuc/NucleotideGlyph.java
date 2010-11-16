@@ -178,10 +178,10 @@ public enum NucleotideGlyph implements Glyph {
         return toString();
     }
     /**
-     * Reverse Compliment this {@link NucleotideGlyph}.
-     * @return the reverse compliment of this.
+     * Get the compliment this {@link NucleotideGlyph}.
+     * @return the compliment of this.
      */
-    public NucleotideGlyph reverseCompliment() {
+    public NucleotideGlyph compliment() {
        return COMPLIMENT_MAP.get(this);
     }
     /**
@@ -193,7 +193,7 @@ public enum NucleotideGlyph implements Glyph {
     public static List<NucleotideGlyph> reverseCompliment(List<NucleotideGlyph> glyphs) {
         List<NucleotideGlyph> reversed = new ArrayList<NucleotideGlyph>(glyphs.size());
         for(int i=glyphs.size()-1; i>=0; i--){
-            reversed.add(glyphs.get(i).reverseCompliment());
+            reversed.add(glyphs.get(i).compliment());
         }
         return reversed;
      }
