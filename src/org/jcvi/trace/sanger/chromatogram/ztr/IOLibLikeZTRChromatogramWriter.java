@@ -22,6 +22,7 @@ package org.jcvi.trace.sanger.chromatogram.ztr;
 import java.io.OutputStream;
 
 import org.jcvi.trace.TraceEncoderException;
+import org.jcvi.trace.sanger.chromatogram.Chromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.DefaultZTRChromatogramWriter.DefaultZTRChromatogramWriterBuilder;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.DeltaEncodedData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.FollowData;
@@ -74,7 +75,7 @@ public enum IOLibLikeZTRChromatogramWriter implements ZTRChromatogramWriter{
 		writer = builder.build();
 	}
 	@Override
-	public void write(ZTRChromatogram chromatogram, OutputStream out)
+	public void write(Chromatogram chromatogram, OutputStream out)
 			throws TraceEncoderException {
 		writer.write(chromatogram, out);
 		

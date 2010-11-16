@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.jcvi.Builder;
 import org.jcvi.trace.TraceEncoderException;
+import org.jcvi.trace.sanger.chromatogram.Chromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk;
 import org.jcvi.trace.sanger.chromatogram.ztr.chunk.ChunkType;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.Data;
@@ -82,7 +83,7 @@ public class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
 	 * are null.
 	 */
 	@Override
-	public void write(ZTRChromatogram chromatogram, OutputStream out)
+	public void write(Chromatogram chromatogram, OutputStream out)
 			throws TraceEncoderException {
 		if(chromatogram ==null){
 			throw new NullPointerException("chromatogram can not be null");
@@ -143,7 +144,7 @@ public class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
 			this.dataEncoders = dataEncoders;
 		}
 		
-		public byte[] encode(ZTRChromatogram chromatogram) throws TraceEncoderException{
+		public byte[] encode(Chromatogram chromatogram) throws TraceEncoderException{
 			
 			byte[] currentData = chunk.encodeChunk(chromatogram);
 			for(DataEncoder encoder : dataEncoders){

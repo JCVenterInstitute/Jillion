@@ -36,9 +36,15 @@ import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRUtil;
 
 /**
- * <code>ZLibData</code> Data format uses a zipped algorithm
- * to compress the data.  Most common form of compression is
- * <code> HUFFMAN</code>
+ * <code>ZLibData</code> is the {@link Data} implementation
+ * that uses the zip algorithm
+ * to compress the data. The {@link #encodeData(byte[])}
+ * method
+ * will encode chromatgoram data but will create about a 5% larger filesize
+ * compared to the staden IO_Lib zip implementation.
+ * This is probably due to the standard Java implementation of zip does not allow
+ * changing the "windowbits" size which could result in better
+ * compression.
  * @author dkatzel
  * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
  *
