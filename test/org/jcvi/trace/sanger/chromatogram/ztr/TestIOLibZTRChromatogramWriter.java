@@ -22,8 +22,6 @@ package org.jcvi.trace.sanger.chromatogram.ztr;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.TraceDecoderException;
@@ -38,7 +36,7 @@ public class TestIOLibZTRChromatogramWriter {
 	public void testEncodeAndDecode() throws FileNotFoundException, TraceDecoderException, IOException, TraceEncoderException{
 		ZTRChromatogram chromatogram = new ZTRChromatogramFile(RESOURCES.getFile("files/GBKAK82TF.ztr"));
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		DefaultZTRChromatogramWriter.IO_LIB_ZTR_WRITER.write(chromatogram, out);
+		IOLibLikeZTRChromatogramWriter.INSTANCE.write(chromatogram, out);
 		ZTRChromatogramFile reParsed = new ZTRChromatogramFile();
 		ByteArrayInputStream ztrStream = new ByteArrayInputStream(out.toByteArray());
 		ZTRChromatogramFileParser.parseZTRFile(ztrStream, reParsed);
