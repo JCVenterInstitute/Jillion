@@ -44,7 +44,7 @@ public class TestConvertZtr2Scf {
     private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestConvertZtr2Scf.class);
     
     ZTRChromatogramParser ztrParser = new ZTRChromatogramParser();
-    SCFCodec scfCodec = new Version3SCFCodec();
+    SCFCodec scfCodec = Version3SCFCodec.INSTANCE;
     
     @Test
     public void ztr2scf() throws TraceDecoderException, IOException{

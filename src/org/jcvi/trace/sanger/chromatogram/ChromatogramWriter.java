@@ -16,39 +16,29 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Oct 3, 2008
- *
- * @author dkatzel
- */
-package org.jcvi.trace.sanger.chromatogram.scf;
+
+package org.jcvi.trace.sanger.chromatogram;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.jcvi.trace.sanger.SangerTrace;
-import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeaderCodec;
-import org.jcvi.trace.sanger.chromatogram.scf.section.SectionCodecFactory;
-
-public class Version2SCFCodec extends AbstractSCFCodec {
-
-    public static final Version2SCFCodec INSTANCE = new Version2SCFCodec();
+/**
+ * {@code ChromatogramWriter} can write
+ * {@link Chromatogram} objects to outputstreams.
+ * Various implementations may encode the chromatogram writer
+ * in various ways.
+ * @author dkatzel
+ *
+ *
+ */
+public interface ChromatogramWriter {
     /**
-     * 
+     * Writes the given {@link Chromatogram}
+     * to the given {@link OutputStream}.
+     * @param chromatogram the {@link Chromatogram} to write.
+     * @param out the outputStream to write to.
+     * @throws IOException if there are any problems encoding the chromatogram
+     * or any problems writing to the {@link OutputStream}.
      */
-    private Version2SCFCodec() {
-        super();
-    }
-
-    public Version2SCFCodec(SCFHeaderCodec headerCodec,
-            SectionCodecFactory sectionCodecFactory) {
-        super(headerCodec, sectionCodecFactory);
-    }
-
-    @Override
-    public void encode(SangerTrace c, OutputStream out) throws IOException {
-        this.encode(out, (SCFChromatogram)c, 2);
-
-    }
-
+    void write(Chromatogram chromatogram, OutputStream out) throws IOException;
 }

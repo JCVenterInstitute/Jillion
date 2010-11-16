@@ -42,8 +42,8 @@ import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeaderCodec;
 public final class SCFChromatogramFileParser {
 
     private static final SCFHeaderCodec HEADER_CODEC =new DefaultSCFHeaderCodec();
-    private static final AbstractSCFCodec VERSION3 =new Version3SCFCodec();
-    private static final AbstractSCFCodec VERSION2 =new Version2SCFCodec();
+    private static final AbstractSCFCodec VERSION3 =Version3SCFCodec.INSTANCE;
+    private static final AbstractSCFCodec VERSION2 =Version2SCFCodec.INSTANCE;
     
     private SCFChromatogramFileParser(){}
     /**

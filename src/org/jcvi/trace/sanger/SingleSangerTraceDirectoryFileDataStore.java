@@ -25,7 +25,6 @@ import java.util.Iterator;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.fileServer.DirectoryFileServer;
-import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.util.FileIterator;
 
 /**
@@ -101,9 +100,7 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
                  return new DefaultFileSangerTrace(traceData,file);
              } catch (IOException e) {
                 throw new DataStoreException("could not get trace for "+id, e);
-            } catch (TraceDecoderException e) {
-                throw new DataStoreException("could not get trace for "+id, e);
-            }
+             }
 
      }
      /**

@@ -32,10 +32,13 @@ import org.jcvi.trace.sanger.chromatogram.scf.section.SectionCodecFactory;
 
 public class Version3SCFCodec  extends AbstractSCFCodec {
 
+    public static final Version3SCFCodec INSTANCE =new Version3SCFCodec();
+
+      
     /**
      * 
      */
-    public Version3SCFCodec() {
+    private Version3SCFCodec() {
         super();
     }
 

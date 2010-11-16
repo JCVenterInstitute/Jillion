@@ -69,9 +69,10 @@ public class TestDefaultSFFCommonHeaderCodec_decode extends AbstractTestDefaultS
         try{
             sut.decodeHeader(new DataInputStream(mockInputStream));
             fail("should wrap IOException in SFFDecoderException");
-        }catch(SFFDecoderException e){
-            assertEquals("magic number does not match expected", e.getMessage());
-            assertNull(e.getCause());
+        }catch(IOException e){
+            SFFDecoderException decoderException = (SFFDecoderException)e.getCause();
+            assertEquals("magic number does not match expected", decoderException.getMessage());
+            assertNull(decoderException.getCause());
         }
         verify(mockInputStream);
     }
@@ -83,9 +84,10 @@ public class TestDefaultSFFCommonHeaderCodec_decode extends AbstractTestDefaultS
         try{
             sut.decodeHeader(new DataInputStream(mockInputStream));
             fail("should wrap IOException in SFFDecoderException");
-        }catch(SFFDecoderException e){
-            assertEquals("version not compatible with decoder", e.getMessage());
-            assertNull(e.getCause());
+        }catch(IOException e){
+            SFFDecoderException decoderException = (SFFDecoderException)e.getCause();
+            assertEquals("version not compatible with decoder", decoderException.getMessage());
+            assertNull(decoderException.getCause());
         }
         verify(mockInputStream);
     }
@@ -98,9 +100,10 @@ public class TestDefaultSFFCommonHeaderCodec_decode extends AbstractTestDefaultS
         try{
             sut.decodeHeader(new DataInputStream(mockInputStream));
             fail("should wrap IOException in SFFDecoderException");
-        }catch(SFFDecoderException e){
-            assertEquals("unknown flowgram format code", e.getMessage());
-            assertNull(e.getCause());
+        }catch(IOException e){
+            SFFDecoderException decoderException = (SFFDecoderException)e.getCause();
+            assertEquals("unknown flowgram format code", decoderException.getMessage());
+            assertNull(decoderException.getCause());
         }
         verify(mockInputStream);
     }
@@ -113,9 +116,10 @@ public class TestDefaultSFFCommonHeaderCodec_decode extends AbstractTestDefaultS
         try{
             sut.decodeHeader(new DataInputStream(mockInputStream));
             fail("should wrap IOException in SFFDecoderException");
-        }catch(SFFDecoderException e){
-            assertEquals("error decoding flow", e.getMessage());
-            assertNull(e.getCause());
+        }catch(IOException e){
+            SFFDecoderException decoderException = (SFFDecoderException)e.getCause();
+            assertEquals("error decoding flow", decoderException.getMessage());
+            assertNull(decoderException.getCause());
         }
         verify(mockInputStream);
     }
@@ -128,9 +132,10 @@ public class TestDefaultSFFCommonHeaderCodec_decode extends AbstractTestDefaultS
         try{
             sut.decodeHeader(new DataInputStream(mockInputStream));
             fail("should wrap IOException in SFFDecoderException");
-        }catch(SFFDecoderException e){
-            assertEquals("error decoding keySequence", e.getMessage());
-            assertNull(e.getCause());
+        }catch(IOException e){
+            SFFDecoderException decoderException = (SFFDecoderException)e.getCause();
+            assertEquals("error decoding keySequence", decoderException.getMessage());
+            assertNull(decoderException.getCause());
         }
         verify(mockInputStream);
     }

@@ -37,7 +37,7 @@ public class SCFChromatogramGenerator {
         File sequenceFasta = null;
         File qualityFasta = null;
         File outputDir = new File(System.getProperty("user.dir"));
-        SCFCodec codec = new Version3SCFCodec();
+        SCFCodec codec = Version3SCFCodec.INSTANCE;
 
         try {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(buildOptions(),args);
@@ -63,9 +63,9 @@ public class SCFChromatogramGenerator {
             String versionName = commandLine.getOptionValue(SCF_VERSION_OPTION_NAME);
             if ( versionName != null ) {
                 if ( "2".equals(versionName) ) {
-                    codec = new Version2SCFCodec();
+                    codec = Version2SCFCodec.INSTANCE;
                 } else if ( "3".equals(versionName) ) {
-                    codec = new Version3SCFCodec();
+                    codec = Version3SCFCodec.INSTANCE;
                 } else {
                     throw new IllegalArgumentException(versionName + " is not a valid scf version identifier");
                 }

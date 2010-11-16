@@ -23,8 +23,9 @@ import java.io.OutputStream;
 
 import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.Chromatogram;
+import org.jcvi.trace.sanger.chromatogram.ChromatogramWriter;
 
-public interface ZTRChromatogramWriter {
+public interface ZTRChromatogramWriter extends ChromatogramWriter{
 
 	void write(Chromatogram chromatogram, OutputStream out) throws TraceEncoderException;
 }

@@ -28,7 +28,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-
 import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeader;
 import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeaderCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
@@ -114,8 +113,10 @@ public class TestDefaultSCFHeaderCodec {
         try {
             sut.decode(in);
             fail("if input is too small for magic number should throw SCFHeaderDecoderException");
-        } catch (SCFHeaderDecoderException e) {
-            assertEquals("File does not have magic number", e.getMessage());
+        } catch(IOException e){
+            SCFHeaderDecoderException decoderException = (SCFHeaderDecoderException)e.getCause();
+            
+            assertEquals("File does not have magic number", decoderException.getMessage());
         }
     }
     @Test
@@ -125,8 +126,10 @@ public class TestDefaultSCFHeaderCodec {
         try {
             sut.decode(in);
             fail("wrong magic number should throw SCFHeaderDecoderException");
-        } catch (SCFHeaderDecoderException e) {
-            assertEquals("Magic number .ZTR does not match expected", e.getMessage());
+        } catch(IOException e){
+            SCFHeaderDecoderException decoderException = (SCFHeaderDecoderException)e.getCause();
+            
+            assertEquals("Magic number .ZTR does not match expected", decoderException.getMessage());
         }
     }
     @Test

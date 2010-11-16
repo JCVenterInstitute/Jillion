@@ -23,7 +23,9 @@
  */
 package org.jcvi.trace;
 
-public class TraceDecoderException extends Exception {
+import java.io.IOException;
+
+public class TraceDecoderException extends IOException {
 
 
 
