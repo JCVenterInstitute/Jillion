@@ -35,5 +35,9 @@ public interface TigrAssemblerPlacedRead extends PlacedRead{
      * @return a non-null {@link Map} containing all
      * the attributes of this read as Key Value pairs.
      */
-    Map<String,String> getAttributes();
+    Map<TigrAssemblerReadAttribute,String> getAttributes();
+    
+    boolean hasAttribute(TigrAssemblerReadAttribute attribute);
+    
+    String getAttributeValue(TigrAssemblerReadAttribute attribute);
 }

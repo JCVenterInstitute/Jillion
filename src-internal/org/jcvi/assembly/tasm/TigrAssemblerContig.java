@@ -35,5 +35,9 @@ public interface TigrAssemblerContig extends Contig<TigrAssemblerPlacedRead>{
      * @return a non-null {@link Map} containing all
      * the attributes of this contig as Key Value pairs.
      */
-    Map<String,String> getAttributes();
+    Map<TigrAssemblerContigAttribute,String> getAttributes();
+    
+    boolean hasAttribute(TigrAssemblerContigAttribute attribute);
+    
+    String getAttributeValue(TigrAssemblerContigAttribute attribute);
 }

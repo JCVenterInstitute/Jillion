@@ -22,8 +22,8 @@ package org.jcvi.assembly.tasm;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.jcvi.datastore.DataStoreException;
 
@@ -85,7 +85,7 @@ public class DefaultTigrAssemblerFileContigDataStore extends AbstractTigrAssembl
     */
     @Override
     protected void initialize(File tasmFile) {
-        contigs = new HashMap<String, TigrAssemblerContig>();
+        contigs = new LinkedHashMap<String, TigrAssemblerContig>();
         
     }
     
