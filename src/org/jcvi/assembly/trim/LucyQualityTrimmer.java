@@ -21,6 +21,7 @@ package org.jcvi.assembly.trim;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -98,18 +99,25 @@ public class LucyQualityTrimmer {
     public Range trim(EncodedGlyphs<PhredQuality> qualities){
         List<Double> errorRates = convertToErrorRates(qualities);
         Range bracketedRegion = findBracketedRegion(errorRates);
+        Range largestRange = findLargestCleanRangeFrom(bracketedRegion, errorRates);
+        if(largestRange.size() < minGoodLength){
+            return Range.buildEmptyRange(CoordinateSystem.RESIDUE_BASED,1);
+        }
+        return largestRange.shiftRight(bracketedRegion.getStart()).convertRange(CoordinateSystem.RESIDUE_BASED);
+    }
+
+
+    private Range findLargestCleanRangeFrom(Range bracketedRegion,
+            List<Double> errorRates) {
         List<Double> bracketedErrorRates = getSubList(errorRates, bracketedRegion);
         List<Range> largestRanges = new ArrayList<Range>();
-        for(Range candidateCleanRange : findCandidateCleanRangesFrom(bracketedErrorRates)){
+        for(Range candidateCleanRange : findCandidateCleanRangesFrom(bracketedErrorRates,trimWindows)){
             List<Double> candidateErrorRates = getSubList(bracketedErrorRates, candidateCleanRange);
             largestRanges.add(findLargestRangeThatPassesTotalAvgErrorRate(candidateErrorRates, candidateCleanRange));
         }
         
         Range largestRange= getLargestRangeFrom(largestRanges);
-        if(largestRange.size() < minGoodLength){
-            return Range.buildEmptyRange(CoordinateSystem.RESIDUE_BASED,1);
-        }
-        return largestRange.shiftRight(bracketedRegion.getStart()).convertRange(CoordinateSystem.RESIDUE_BASED);
+        return largestRange;
     }
 
 
@@ -132,12 +140,15 @@ public class LucyQualityTrimmer {
         long currentWindowSize = candidateCleanRange.getLength();
         boolean done=false;
         while(!done && currentWindowSize >=SIZE_OF_ENDS){
+           
             for(int i=0; i<encodedCandidateErrorRates.size() - currentWindowSize && i<=currentWindowSize; i++){
                 Range currentWindowRange = Range.buildRange(i, currentWindowSize);
                 double avgErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, currentWindowRange);
                 double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.buildRangeOfLength(currentWindowRange.getStart(),SIZE_OF_ENDS));
                 double rightEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.buildRangeOfLength(currentWindowRange.getEnd()-SIZE_OF_ENDS,SIZE_OF_ENDS));
-                if(avgErrorRate <= this.maxTotalAvgError && leftEndErrorRate <= this.maxErrorAtEnds && rightEndErrorRate <= this.maxErrorAtEnds){
+                if(avgErrorRate <= this.maxTotalAvgError && 
+                        leftEndErrorRate <= this.maxErrorAtEnds 
+                        && rightEndErrorRate <= this.maxErrorAtEnds){
                     //found a good range!
                     return currentWindowRange;
                 }
@@ -152,8 +163,8 @@ public class LucyQualityTrimmer {
      * @param decode
      * @return
      */
-    private List<Range> findCandidateCleanRangesFrom(List<Double> bracketedErrorRates) {
-        Iterator<Window> iterator = trimWindows.iterator();
+    private List<Range> findCandidateCleanRangesFrom(List<Double> bracketedErrorRates, Set<Window> slidingWindows) {
+        Iterator<Window> iterator = slidingWindows.iterator();
         
         Window firstTrimWindow = iterator.next();
         List<Range> candidateCleanRanges = trim(bracketedErrorRates, firstTrimWindow);
@@ -191,13 +202,19 @@ public class LucyQualityTrimmer {
 
 
     /**
+     * The {@code bracket} is the resulting
+     * region of qualities once it is trimmed to remove the low
+     * quality data from each end.
      * @param qualities
      * @return
      */
     private Range findBracketedRegion(List<Double> errorRates) {
-        long leftCoordinate = findLeftBracket(errorRates);
-        long rightCoordinate = findRightBracket(errorRates);
-        if(leftCoordinate > rightCoordinate-1){
+        long leftCoordinate = findLeftBracketCoordinate(errorRates);
+        long rightCoordinate = findRightBracketCoordinate(errorRates);
+        //right could be several hundred bases smaller
+        //so we must check before we pass to build range
+        //buildRange will throw an exception if left >= right-1
+        if(leftCoordinate > rightCoordinate-2){
             return Range.buildEmptyRange();
         }
         return Range.buildRange(leftCoordinate, rightCoordinate);
@@ -206,7 +223,7 @@ public class LucyQualityTrimmer {
      * @param qualities
      * @return
      */
-    private long findRightBracket(List<Double> errorRates) {
+    private long findRightBracketCoordinate(List<Double> errorRates) {
         long coordinate=errorRates.size()-1;
         final int bracketSize = bracketWindow.getSize();
         while(coordinate >= bracketSize){
@@ -225,7 +242,7 @@ public class LucyQualityTrimmer {
      * @param qualities
      * @return
      */
-    private int findLeftBracket(List<Double> errorRates) {
+    private int findLeftBracketCoordinate(List<Double> errorRates) {
         int coordinate=0;
         final int bracketSize = bracketWindow.getSize();
         while(coordinate < errorRates.size()- bracketSize){
@@ -254,14 +271,10 @@ public class LucyQualityTrimmer {
         if(goodQualityRanges.isEmpty()){
             return Range.buildEmptyRange();
         }
-        Range largestRangeSoFar = goodQualityRanges.get(0);
-           for(int i=1; i<goodQualityRanges.size();i++ ){
-               Range currentRange =goodQualityRanges.get(i);
-               if(currentRange.size()> largestRangeSoFar.size()){
-                   largestRangeSoFar = currentRange;
-               }
-           }
-        return largestRangeSoFar;
+        List<Range> sorted = new ArrayList<Range>(goodQualityRanges);
+        Collections.sort(sorted, Range.Comparators.LONGEST_TO_SHORTEST);
+        return sorted.get(0);
+        
     }
     
     public final static class Window implements Comparable<Window>{
@@ -344,13 +357,13 @@ public class LucyQualityTrimmer {
      */
     public static class Builder implements org.jcvi.Builder<LucyQualityTrimmer>{
 
-        private static final Window DEFAULT_BRACKET_WINDOW = new Window(10, 0.02D);
-        private static final int DEFAULT_MIN_GOOD_LENGTH = 100;
+        public static final Window DEFAULT_BRACKET_WINDOW = new Window(10, 0.02D);
+        public static final int DEFAULT_MIN_GOOD_LENGTH = 100;
         private static final List<Window> DEFAULT_TRIM_WINDOWS = Arrays.asList(
                                                         new Window(50,0.08D),
                                                         new Window(10,0.3D));
-        private static final double DEFAULT_MAX_AVG_ERROR = 0.025D;
-        private static final double DEFAULT_ERROR_AT_ENDS = 0.02D;
+        public static final double DEFAULT_MAX_AVG_ERROR = 0.025D;
+        public static final double DEFAULT_ERROR_AT_ENDS = 0.02D;
         
         private int minGoodLength;
         private Window bracketWindow;
@@ -366,7 +379,14 @@ public class LucyQualityTrimmer {
             this.maxErrorAtEnds = DEFAULT_ERROR_AT_ENDS;
             
         }
-
+        public Builder maxAvgError(double maxAvgError){
+            this.maxAvgError = maxAvgError;
+            return this;
+        }
+        public Builder maxErrorAtEnds(double maxErrorAtEnds){
+            this.maxErrorAtEnds = maxErrorAtEnds;
+            return this;
+        }
         public Builder(int minGoodLength){
             this(minGoodLength, DEFAULT_BRACKET_WINDOW);
         }

@@ -23,7 +23,9 @@
  */
 package org.jcvi.assembly;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.jcvi.Range;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -102,7 +104,13 @@ public class DefaultPlacedRead implements PlacedRead {
     }
 
     public Map<Integer, NucleotideGlyph> getSnps(){
-        return read.getEncodedGlyphs().getSnps();
+        Map<Integer, NucleotideGlyph> map = new TreeMap<Integer, NucleotideGlyph>();
+        final ReferencedEncodedNucleotideGlyphs encodedGlyphs = read.getEncodedGlyphs();
+        for(Integer offset : encodedGlyphs.getSnps()){
+            map.put(offset, encodedGlyphs.get(offset));
+        }
+        return Collections.unmodifiableMap(map);
+        
     }
     @Override
     public NucleotideEncodedGlyphs getEncodedGlyphs() {

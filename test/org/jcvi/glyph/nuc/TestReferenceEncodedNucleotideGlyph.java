@@ -27,21 +27,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.GlyphCodec;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestReferenceEncodedNucleotideGlyph {
     GlyphCodec codec = DefaultNucleotideGlyphCodec.getInstance();
-    
-    NucleotideGlyphFactory factory = NucleotideGlyphFactory.getInstance();
     String referenceAsString = "ACGTACGTACGTACGTACGTACGTACGT";
+
     
-   
-    List<NucleotideGlyph> referenceGlyphs =factory.getGlyphsFor(referenceAsString);
-    
-    EncodedGlyphs encodedReference = new DefaultEncodedGlyphs(codec,referenceGlyphs);
+    NucleotideEncodedGlyphs encodedReference = new DefaultNucleotideEncodedGlyphs(referenceAsString);
     @Test
     public void oneGapNoDifferences(){
         int offset=5;
@@ -57,9 +51,8 @@ public class TestReferenceEncodedNucleotideGlyph {
     }
     private void assertDecodedCorrectly(int offset, String sequenceAsString) {
         DefaultReferencedEncodedNucleotideGlyph sut = new DefaultReferencedEncodedNucleotideGlyph(encodedReference,sequenceAsString, offset, Range.buildRange(0,sequenceAsString.length()-1));
-        List<NucleotideGlyph> decodedGlyphs =sut.decode();
-        assertEquals(factory.getGlyphsFor(sequenceAsString), decodedGlyphs);
         assertEquals(sequenceAsString.length(), sut.getLength());
+        assertEquals(sequenceAsString, NucleotideGlyph.convertToString(sut.decode()));
     }
     @Test
     public void exactlyTheSame(){
@@ -70,8 +63,7 @@ public class TestReferenceEncodedNucleotideGlyph {
     
     @Test
     public void fullSequence(){
-        EncodedGlyphs encodedConsensus = new DefaultEncodedGlyphs(codec,
-                factory.getGlyphsFor(
+        NucleotideEncodedGlyphs encodedConsensus = new DefaultNucleotideEncodedGlyphs(
                 "GACATGGAAGTTTTATATTCATTGTCAAAAACTCTTAAAGATGCTAGGGACAAAATTGTT" +
                 "GAAGGTACACTATATTCTAATGTTAGCGATCTCATTCAACAATTCAATCAAATGATAGTA" +
                 "ACTATGAATGGAAATGACTTTCAAACTGGAGGAATTGGTAATTTGCCTATCAGAAACTGG" +
@@ -93,7 +85,7 @@ public class TestReferenceEncodedNucleotideGlyph {
                 "CAGTATTTCCACCAGGCATGAATTGGACTGAATTAATTACTAATTACTCACCATCTAGAG" + 
                 "AAGATAATTTACAACGTGTTTTTACAGTAGCTTCTATTAGAAGCATGTTGATTAAGTGAG" + 
                 "GACCAGACTAACTATCTGGTATCCAATCTTAGTTGGCATGTAGCTATATCAAGTCATTCA" + 
-                "GACTCTTCAAGTAAGGACATGTTTTCATGTTCGCTACGTAGAGTAACTGTCTGAATGATA"));
+                "GACTCTTCAAGTAAGGACATGTTTTCATGTTCGCTACGTAGAGTAACTGTCTGAATGATA");
         
         String sequence = 
                 "ACAACTGTACTGTGATTATAATTTGGTATTAATGAAGTATGACGCTACATTGCAATTAGA" +
@@ -114,8 +106,9 @@ public class TestReferenceEncodedNucleotideGlyph {
         List<Integer> expectedGapIndexes = Arrays.asList(174, 178,180,181,182,186);
         assertEquals(expectedGapIndexes,actual.getGapIndexes());
         assertEquals(expectedGapIndexes.size(), actual.getNumberOfGaps());
-        assertEquals(factory.getGlyphsFor(sequence),actual.decode());
+       
         assertEquals(sequence.length(), actual.getLength());
+        assertEquals(sequence,NucleotideGlyph.convertToString(actual.decode()));
     }
     
     

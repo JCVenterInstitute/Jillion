@@ -19,7 +19,7 @@
 
 package org.jcvi.assembly;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.jcvi.Builder;
@@ -44,7 +44,7 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
         public AbstractContigBuilder(String id, NucleotideEncodedGlyphs consensus){
             this.id = id;
             this.consensus = consensus;
-            virtualReads = new HashSet<VirtualPlacedRead<P>>();
+            virtualReads = new LinkedHashSet<VirtualPlacedRead<P>>();
         }
         public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
             

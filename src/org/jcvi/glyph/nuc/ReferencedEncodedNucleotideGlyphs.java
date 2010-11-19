@@ -23,9 +23,9 @@
  */
 package org.jcvi.glyph.nuc;
 
-import java.util.Map;
+import java.util.List;
 
 public interface ReferencedEncodedNucleotideGlyphs extends NucleotideEncodedGlyphs{
 
-    Map<Integer, NucleotideGlyph> getSnps();
+    List<Integer> getSnps();
 }

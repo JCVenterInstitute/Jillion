@@ -24,8 +24,8 @@
 package org.jcvi.assembly.contig;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,15 +47,15 @@ public abstract class AbstractContig<T extends PlacedRead> implements Contig<T>{
     protected AbstractContig(String id, NucleotideEncodedGlyphs consensus, Set<VirtualPlacedRead<T>> virtualReads,boolean circular){
         this.id = id;
         this.consensus = consensus;
-        this.virtualIdToActualIdMap = new HashMap<String, String>();
+        this.virtualIdToActualIdMap = new LinkedHashMap<String, String>();
         
 
         this.circular = circular;
-        mapByStart = new HashMap<Long, List<VirtualPlacedRead<T>>>();
-        mapById = new HashMap<String, VirtualPlacedRead<T>>();
+        mapByStart = new LinkedHashMap<Long, List<VirtualPlacedRead<T>>>();
+        mapById = new LinkedHashMap<String, VirtualPlacedRead<T>>();
         
-        this.virtualReads = new HashSet<VirtualPlacedRead<T>>(virtualReads);
-        this.realPlacedReads = new HashSet<T>();
+        this.virtualReads = new LinkedHashSet<VirtualPlacedRead<T>>(virtualReads);
+        this.realPlacedReads = new LinkedHashSet<T>();
         for(VirtualPlacedRead<T> r : virtualReads){
             addVirtualReadToStartMap(r);
             mapById.put(r.getId(), r);

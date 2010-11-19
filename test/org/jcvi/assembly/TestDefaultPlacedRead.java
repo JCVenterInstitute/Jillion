@@ -23,7 +23,11 @@
  */
 package org.jcvi.assembly;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jcvi.Range;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -53,7 +57,16 @@ public class TestDefaultPlacedRead {
         long length = 200L;
         Range validRange = Range.buildRange(start, length);
         ReferencedEncodedNucleotideGlyphs glyphs = createMock(ReferencedEncodedNucleotideGlyphs.class);
-        Map<Integer, NucleotideGlyph> snps = createMock(Map.class);
+   
+        Map<Integer,NucleotideGlyph> snpMap = new HashMap<Integer, NucleotideGlyph>();
+        snpMap.put(Integer.valueOf(1), NucleotideGlyph.Adenine);
+        snpMap.put(Integer.valueOf(3), NucleotideGlyph.Cytosine);
+        snpMap.put(Integer.valueOf(5), NucleotideGlyph.Guanine);
+        
+        List<Integer> snps = new ArrayList<Integer>(snpMap.keySet());
+        for(Entry<Integer,NucleotideGlyph> entry : snpMap.entrySet()){
+            expect(glyphs.get(entry.getKey().intValue())).andReturn(entry.getValue());
+        }
         expect(read.getId()).andReturn(id);
         expect(read.getEncodedGlyphs()).andReturn(glyphs).times(3);
         expect(read.getLength()).andReturn(length).times(2);
@@ -68,7 +81,7 @@ public class TestDefaultPlacedRead {
         assertEquals(length, sut.getLength());
         assertEquals(start+ length-1 , sut.getEnd());
         assertEquals(validRange, sut.getValidRange());
-        assertEquals(snps, sut.getSnps());
+        assertEquals(snpMap, sut.getSnps());
         verify(read, glyphs);        
     }
     

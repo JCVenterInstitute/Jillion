@@ -24,7 +24,7 @@
 package org.jcvi.glyph.num;
 
 import java.nio.ShortBuffer;
-import java.util.List;
+import java.util.Collection;
 
 public class ShortGlyph extends DefaultNumericGlyph implements Comparable<ShortGlyph>{
 
@@ -48,7 +48,7 @@ public class ShortGlyph extends DefaultNumericGlyph implements Comparable<ShortG
     public int hashCode() {
         return super.hashCode();
     }
-    public static short[] toArray(List<ShortGlyph> shorts){
+    public static short[] toArray(Collection<ShortGlyph> shorts){
         ShortBuffer buf = ShortBuffer.allocate(shorts.size());
         for(ShortGlyph aShort : shorts){
             buf.put(aShort.getNumber());

@@ -24,17 +24,15 @@
 package org.jcvi.glyph.nuc;
 
 import java.util.List;
-import java.util.Map;
-
 import org.jcvi.Range;
 import org.jcvi.glyph.EncodedGlyphs;
 
 public class PrecomputedReferenceEncodedNucleotideGlyphs extends AbstractReferenceEncodedNucleotideGlyphs{
     private final EncodedGlyphs<NucleotideGlyph> reference;
     public PrecomputedReferenceEncodedNucleotideGlyphs(EncodedGlyphs<NucleotideGlyph> reference,
-            Map<Integer, NucleotideGlyph> differentGlyphMap,
+            int[] snpIndex, NucleotideEncodedGlyphs snpValues,
             List<Integer> gaps, int startOffset, int length, Range validRange) {
-        super(differentGlyphMap, gaps, startOffset, length, validRange);
+        super(snpIndex, snpValues,gaps, startOffset, length, validRange);
         this.reference = reference;
     }
 

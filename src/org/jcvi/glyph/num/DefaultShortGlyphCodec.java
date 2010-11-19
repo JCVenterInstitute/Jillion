@@ -26,6 +26,7 @@ package org.jcvi.glyph.num;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.glyph.GlyphCodec;
@@ -66,7 +67,7 @@ public final class DefaultShortGlyphCodec implements GlyphCodec<ShortGlyph>{
     }
 
     @Override
-    public byte[] encode(List<ShortGlyph> glyphs) {
+    public byte[] encode(Collection<ShortGlyph> glyphs) {
         ByteBuffer buf = ByteBuffer.allocate(glyphs.size()*2);
         for(ShortGlyph g : glyphs){
             buf.putShort(g.getNumber());

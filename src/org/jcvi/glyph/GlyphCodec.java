@@ -23,12 +23,13 @@
  */
 package org.jcvi.glyph;
 
+import java.util.Collection;
 import java.util.List;
 
 
 public interface GlyphCodec<T extends Glyph> {
 
-    byte[] encode(List<T> glyphs);
+    byte[] encode(Collection<T> glyphs);
     
     List<T> decode(byte[] encodedGlyphs);
     T decode(byte[] encodedGlyphs, int index);

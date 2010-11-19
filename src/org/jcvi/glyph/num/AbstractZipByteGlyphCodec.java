@@ -21,6 +21,7 @@ package org.jcvi.glyph.num;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.DataFormatException;
@@ -98,14 +99,17 @@ public abstract class AbstractZipByteGlyphCodec<G extends ByteGlyph> implements 
 	 * @see org.jcvi.glyph.GlyphCodec#encode(java.util.List)
 	 */
 	@Override
-	public byte[] encode(List<G> glyphs) {
+	public byte[] encode(Collection<G> glyphs) {
 		if(glyphs.isEmpty()){
 			return new byte[0];
 		}
 		byte[] data = new byte[glyphs.size()];
-		for(int i=0; i< glyphs.size(); i++){
-			data[i]= glyphs.get(i).getNumber();
+		int i=0;
+		for(G glyph : glyphs){
+		    data[i]= glyph.getNumber();
+		    i++;
 		}
+		
 		 Deflater compresser = new Deflater();
 	     compresser.setInput(data);
 	     compresser.finish();
