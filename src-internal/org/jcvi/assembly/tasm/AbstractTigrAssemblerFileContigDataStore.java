@@ -21,7 +21,7 @@ package org.jcvi.assembly.tasm;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import org.jcvi.Range;
@@ -40,15 +40,15 @@ import org.jcvi.sequence.SequenceDirection;
  *
  *
  */
-public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractDataStore<TigrAssemblerContig> implements TigrAssemblyFileVisitor {
+public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractDataStore<TigrAssemblerContig> implements TigrAssemblyFileVisitor,TigrAssemblerContigDataStore {
 
         private DefaultTigrAssemblerContig.Builder currentBuilder;
 
         private String currentContigId;
         private NucleotideEncodedGlyphs currentContigConsensus;
-        private Map<String, String> currentContigAttributes;
+        private Map<TigrAssemblerContigAttribute, String> currentContigAttributes;
         
-        private Map<String, String> currentReadAttributes;
+        private EnumMap<TigrAssemblerReadAttribute, String> currentReadAttributes;
         private String currentReadId;
         private int currentOffset;
         private Range currentValidRange;
@@ -72,7 +72,7 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         */
         @Override
         public void visitContigAttribute(String key, String value) {
-            currentContigAttributes.put(key, value);
+            currentContigAttributes.put(TigrAssemblerContigAttribute.getAttributeFor(key), value);
             
         }
 
@@ -81,7 +81,7 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         */
         @Override
         public void visitReadAttribute(String key, String value) {
-            currentReadAttributes.put(key, value);
+            currentReadAttributes.put(TigrAssemblerReadAttribute.getAttributeFor(key), value);
             
         }
 
@@ -157,7 +157,7 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
                 visitContig(currentBuilder.build());
             }
             currentBuilder=null;
-            currentContigAttributes= new HashMap<String, String>();
+            currentContigAttributes= new EnumMap<TigrAssemblerContigAttribute, String>(TigrAssemblerContigAttribute.class);
         }
         /**
          * Visit the given {@link TigrAssemblerContig} to this DataStore.
@@ -173,7 +173,7 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
             currentOffset=0;
             currentValidRange=null;
             currentDirection=null;
-            currentReadAttributes = new HashMap<String, String>();
+            currentReadAttributes = new EnumMap<TigrAssemblerReadAttribute, String>(TigrAssemblerReadAttribute.class);
             
         }
 

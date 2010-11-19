@@ -45,7 +45,7 @@ public class TigrAssemblyFileParser {
      * Each contig data is separated by a pipe ('|').
      */
     private static final String END_OF_CONTIG = "|";
-    private static final Pattern KEY_VALUE_PATTERN = Pattern.compile("(\\S+)\\s+(\\S+)");
+    private static final Pattern KEY_VALUE_PATTERN = Pattern.compile("(\\S+)\\s+(\\S+.*$)");
     /**
      * Parse the given TIGR Assembly file and call the appropriate 
      * visitXXX methods in the given {@link ContigFileVisitor}.

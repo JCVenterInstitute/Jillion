@@ -32,7 +32,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-       TestTigrAssemblerContigDataStore.class 
+       TestTigrAssemblerContigDataStore.class ,
+       TestTigrAssemblerWriter.class
     }
     )
 public class AllTasmUnitTests {

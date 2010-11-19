@@ -20,8 +20,9 @@
 package org.jcvi.assembly.tasm;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.jcvi.assembly.DefaultPlacedRead;
 import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
@@ -35,7 +36,7 @@ import org.jcvi.sequence.SequenceDirection;
  */
 public class DefaultTigrAssemblerPlacedRead extends DefaultPlacedRead implements TigrAssemblerPlacedRead{
 
-    private final Map<String,String> attributes;
+    private final Map<TigrAssemblerReadAttribute,String> attributes;
     /**
      * @param read
      * @param start
@@ -44,7 +45,7 @@ public class DefaultTigrAssemblerPlacedRead extends DefaultPlacedRead implements
     public DefaultTigrAssemblerPlacedRead(
             Read<ReferencedEncodedNucleotideGlyphs> read, long start,
             SequenceDirection sequenceDirection) {
-        this(read, start, sequenceDirection,Collections.<String,String>emptyMap());
+        this(read, start, sequenceDirection,new EnumMap<TigrAssemblerReadAttribute,String>(TigrAssemblerReadAttribute.class));
     }
     /**
      * @param read
@@ -53,15 +54,26 @@ public class DefaultTigrAssemblerPlacedRead extends DefaultPlacedRead implements
      */
     public DefaultTigrAssemblerPlacedRead(
             Read<ReferencedEncodedNucleotideGlyphs> read, long start,
-            SequenceDirection sequenceDirection, Map<String, String> attributes) {
+            SequenceDirection sequenceDirection, EnumMap<TigrAssemblerReadAttribute, String> attributes) {
         super(read, start, sequenceDirection);
-        Map<String, String> map = new HashMap<String, String>(attributes);
+        Map<TigrAssemblerReadAttribute, String> map = new EnumMap<TigrAssemblerReadAttribute, String>(attributes);
         this.attributes = Collections.unmodifiableMap(map);
     }
     @Override
-    public Map<String, String> getAttributes() {
+    public Map<TigrAssemblerReadAttribute, String> getAttributes() {
         return attributes;
     }
+	@Override
+	public String getAttributeValue(TigrAssemblerReadAttribute attribute) {
+		if(!hasAttribute(attribute)){
+			throw new NoSuchElementException("read does not contain attribute "+attribute);
+		}
+		return attributes.get(attribute);
+	}
+	@Override
+	public boolean hasAttribute(TigrAssemblerReadAttribute attribute) {
+		return attributes.containsKey(attribute);
+	}
     
 
 }

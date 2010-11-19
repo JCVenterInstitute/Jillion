@@ -20,8 +20,10 @@
 package org.jcvi.assembly.tasm;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jcvi.assembly.AbstractContigBuilder;
@@ -41,7 +43,7 @@ import org.jcvi.sequence.SequenceDirection;
  *
  */
 public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlacedRead> implements TigrAssemblerContig{
-    private final Map<String,String> attributes;
+    private final Map<TigrAssemblerContigAttribute,String> attributes;
     /**
      * @param id
      * @param consensus
@@ -50,19 +52,33 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
      */
     protected DefaultTigrAssemblerContig(String id,
             NucleotideEncodedGlyphs consensus,
-            Set<VirtualPlacedRead<TigrAssemblerPlacedRead>> virtualReads, boolean circular, Map<String,String> attributes) {
+            Set<VirtualPlacedRead<TigrAssemblerPlacedRead>> virtualReads, boolean circular, 
+            EnumMap<TigrAssemblerContigAttribute, String> attributes) {
         super(id, consensus, virtualReads, circular);
-        this.attributes = Collections.unmodifiableMap(new HashMap<String, String>(attributes));
+        this.attributes = Collections.unmodifiableMap(new EnumMap(attributes));
     }
 
     @Override
-    public Map<String, String> getAttributes() {
+	public String getAttributeValue(TigrAssemblerContigAttribute attribute) {
+		if(!hasAttribute(attribute)){
+			throw new NoSuchElementException("contig does not have an attribute "+attribute);
+		}
+		return attributes.get(attribute);
+	}
+
+
+	@Override
+	public boolean hasAttribute(TigrAssemblerContigAttribute attribute) {
+		return attributes.containsKey(attribute);
+	}
+    @Override
+    public Map<TigrAssemblerContigAttribute, String> getAttributes() {
         return attributes;
     }
 
     public static class Builder extends AbstractContigBuilder<TigrAssemblerPlacedRead, DefaultTigrAssemblerContig>{
-        private Map<String,String> contigAttributes = new HashMap<String, String>();
-        private Map<String, Map<String,String>> readAttributeMaps = new HashMap<String, Map<String,String>>();
+        private EnumMap<TigrAssemblerContigAttribute,String> contigAttributes = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
+        private Map<String, EnumMap<TigrAssemblerReadAttribute,String>> readAttributeMaps = new LinkedHashMap<String, EnumMap<TigrAssemblerReadAttribute,String>>();
         /**
          * @param id
          * @param consensus
@@ -70,16 +86,16 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
         public Builder(String id, NucleotideEncodedGlyphs consensus) {
             super(id, consensus);
         }
-        public Builder(String id, NucleotideEncodedGlyphs consensus,Map<String,String> attributes) {
+        public Builder(String id, NucleotideEncodedGlyphs consensus,Map<TigrAssemblerContigAttribute,String> attributes) {
             super(id, consensus);
             this.contigAttributes.putAll(attributes);
         }
-        public Builder addAttribute(String key, String value){
-            this.contigAttributes.put(key, value);
+        public Builder addAttribute(TigrAssemblerContigAttribute attribute, String value){
+            this.contigAttributes.put(attribute, value);
             return this;
         }
-        public Builder removeAttribute(String key){
-            this.contigAttributes.remove(key);
+        public Builder removeAttribute(TigrAssemblerContigAttribute attribute){
+            this.contigAttributes.remove(attribute);
             return this;
         }
         @Override
@@ -88,7 +104,7 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
                     getVirtualReads(),isCircular(),contigAttributes);
         }
     
-        public Builder addReadAttributes(String id, Map<String, String> readAttributes) {
+        public Builder addReadAttributes(String id, EnumMap<TigrAssemblerReadAttribute, String> readAttributes) {
             readAttributeMaps.put(id, readAttributes);
             return this;
         }
@@ -104,4 +120,6 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
         
         
     }
+
+	
 }
