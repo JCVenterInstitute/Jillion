@@ -24,6 +24,7 @@
 package org.jcvi.glyph.nuc;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.Range;
@@ -34,13 +35,13 @@ public class DefaultNucleotideEncodedGlyphs extends AbstractEnocdedNucleotideGly
     private final int[] gaps;
     private final Range validRange;
     private final EncodedGlyphs<NucleotideGlyph> encodedBasecalls;
-    public DefaultNucleotideEncodedGlyphs(List<NucleotideGlyph> glyphs, Range validRange){
+    public DefaultNucleotideEncodedGlyphs(Collection<NucleotideGlyph> glyphs, Range validRange){
         this.validRange = validRange;
         this.gaps = computeGapIndexes(glyphs);
         this.encodedBasecalls = new DefaultEncodedGlyphs<NucleotideGlyph>(DefaultNucleotideGlyphCodec.getInstance(),glyphs);
    
     }
-    public DefaultNucleotideEncodedGlyphs(List<NucleotideGlyph> glyphs){
+    public DefaultNucleotideEncodedGlyphs(Collection<NucleotideGlyph> glyphs){
         this(glyphs, Range.buildRange(0, glyphs.size()-1));
     }
     public DefaultNucleotideEncodedGlyphs(String basecalls, Range validRange){
@@ -52,17 +53,18 @@ public class DefaultNucleotideEncodedGlyphs extends AbstractEnocdedNucleotideGly
     public DefaultNucleotideEncodedGlyphs(String basecalls){
         this(NucleotideGlyph.getGlyphsFor(basecalls));
     }
-    private int[] computeGapIndexes(List<NucleotideGlyph> glyphs) {
+    private int[] computeGapIndexes(Collection<NucleotideGlyph> glyphs) {
        List<Integer> gaps = new ArrayList<Integer>();
-        for(int i=0; i< glyphs.size(); i++){
-           NucleotideGlyph glyph = glyphs.get(i);
+       int i=0;
+        for(NucleotideGlyph glyph :glyphs){
             if(glyph.isGap()){
                 gaps.add(Integer.valueOf(i));
             }
+            i++;
         }
         int[] array = new int[gaps.size()];
-        for(int i=0; i<gaps.size(); i++){
-            array[i] = gaps.get(i).intValue();
+        for(int j=0; j<gaps.size(); j++){
+            array[j] = gaps.get(j).intValue();
         }
         return array;
     }

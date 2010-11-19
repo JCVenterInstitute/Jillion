@@ -24,7 +24,6 @@
 package org.jcvi.glyph.nuc;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
 /**
  * <code>ReferenceEncodedNucleotideGlyph</code> is a 
  * glyph encoding that only stores the differences
@@ -36,9 +35,9 @@ import org.jcvi.glyph.EncodedGlyphs;
  *
  *
  */
-public class DefaultReferencedEncodedNucleotideGlyph extends AbstractReferenceEncodedNucleotideGlyphs{
+public class DefaultReferencedEncodedNucleotideGlyph extends AbstractReferenceEncodedNucleotideGlyphs implements ReferencedEncodedNucleotideGlyphs{
 
-    private final EncodedGlyphs<NucleotideGlyph> reference;
+    private final NucleotideEncodedGlyphs reference;
 
     
     /**
@@ -48,7 +47,7 @@ public class DefaultReferencedEncodedNucleotideGlyph extends AbstractReferenceEn
      * @param startOffset the startOffset in the reference where
      * this sequence starts.
      */
-    public DefaultReferencedEncodedNucleotideGlyph(EncodedGlyphs<NucleotideGlyph> reference,
+    public DefaultReferencedEncodedNucleotideGlyph(NucleotideEncodedGlyphs reference,
             String toBeEncoded, int startOffset, Range validRange){
         super(reference, toBeEncoded, startOffset, validRange);
         this.reference = reference;
@@ -58,5 +57,7 @@ public class DefaultReferencedEncodedNucleotideGlyph extends AbstractReferenceEn
     protected NucleotideGlyph getFromReference(int referenceIndex) {
         return reference.get(referenceIndex);
     }
+
+    
 
 }

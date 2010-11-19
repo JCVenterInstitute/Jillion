@@ -26,6 +26,7 @@ package org.jcvi.glyph;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.CommonUtil;
@@ -54,7 +55,7 @@ public class  DefaultEncodedGlyphs<T extends Glyph> implements EncodedGlyphs<T> 
      * @param codec
      * @param glyphsToEncode
      */
-    public DefaultEncodedGlyphs(GlyphCodec<T> codec, List<T> glyphsToEncode) {
+    public DefaultEncodedGlyphs(GlyphCodec<T> codec, Collection<T> glyphsToEncode) {
         this(codec, codec.encode(glyphsToEncode));
     }
     /**

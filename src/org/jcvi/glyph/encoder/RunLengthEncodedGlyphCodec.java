@@ -25,6 +25,7 @@ package org.jcvi.glyph.encoder;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.glyph.GlyphCodec;
@@ -101,7 +102,7 @@ public class RunLengthEncodedGlyphCodec implements GlyphCodec<PhredQuality>{
     }
 
     @Override
-    public byte[] encode(List<PhredQuality> glyphs) {
+    public byte[] encode(Collection<PhredQuality> glyphs) {
         List<RunLength<PhredQuality>> runLengthList = RunLengthEncoder.encode(glyphs);
         int size = computeSize(runLengthList);
         ByteBuffer buf = ByteBuffer.allocate(size);

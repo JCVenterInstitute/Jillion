@@ -26,8 +26,10 @@ package org.jcvi.glyph.nuc;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -142,19 +144,20 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
     }
 
     @Override
-    public byte[] encode(List<NucleotideGlyph> glyphs) {
+    public byte[] encode(Collection<NucleotideGlyph> glyphs) {
         final int unEncodedSize = glyphs.size();
         
         int encodedSize = computeEncodedSize(unEncodedSize);
         return encodeGlyphs(glyphs, unEncodedSize, encodedSize);
         
     }
-    private byte[] encodeGlyphs(List<NucleotideGlyph> glyphs,
+    private byte[] encodeGlyphs(Collection<NucleotideGlyph> glyphs,
             final int unEncodedSize, int encodedSize) {
         ByteBuffer result = ByteBuffer.allocate(encodedSize);
         result.putInt(unEncodedSize);
-        encodeAllButTheLastByte(glyphs, unEncodedSize, result);
-        encodeFinalByte(glyphs, unEncodedSize, result);
+        Iterator<NucleotideGlyph> iterator = glyphs.iterator();
+        encodeAllButTheLastByte(iterator, unEncodedSize, result);
+        encodeFinalByte(iterator, unEncodedSize, result);
         return result.array();
     }
     /**
@@ -165,10 +168,10 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
      * @param unEncodedSize
      * @param result
      */
-    private void encodeAllButTheLastByte(List<NucleotideGlyph> glyphs,
+    private void encodeAllButTheLastByte(Iterator<NucleotideGlyph> glyphs,
             final int unEncodedSize, ByteBuffer result) {
         for(int i=0; i<unEncodedSize-2; i+=2){
-            encodeNext2Values(glyphs, i, result);
+            encodeNext2Values(glyphs, result);
         }
     }
     /**
@@ -179,12 +182,12 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
      * @param unEncodedSize
      * @param result
      */
-    private void encodeFinalByte(List<NucleotideGlyph> glyphs,
+    private void encodeFinalByte(Iterator<NucleotideGlyph> glyphs,
             final int unEncodedSize, ByteBuffer result) {
         if(unEncodedSize>0){
             final boolean even = isEven(unEncodedSize);
             if(even){
-                encodeNext2Values(glyphs, unEncodedSize-2, result);
+                encodeNext2Values(glyphs, result);
             }
             else{
                 encodeLastValue(glyphs, result);
@@ -198,13 +201,13 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
     private boolean isEven(final int size) {
         return size%2==0;
     }
-    private void encodeLastValue(List<NucleotideGlyph> glyphs, ByteBuffer result) {
-        byte hi = GLYPH_TO_BYTE_MAP.get(glyphs.get(glyphs.size()-1));
+    private void encodeLastValue(Iterator<NucleotideGlyph> glyphs, ByteBuffer result) {
+        byte hi = GLYPH_TO_BYTE_MAP.get(glyphs.next());
         result.put((byte) ((hi<<4) &0xFF));
     }
-    private void encodeNext2Values(List<NucleotideGlyph> glyphs, int i, ByteBuffer result) {
-        byte hi = GLYPH_TO_BYTE_MAP.get(glyphs.get(i));
-        byte low = GLYPH_TO_BYTE_MAP.get(glyphs.get(i+1));
+    private void encodeNext2Values(Iterator<NucleotideGlyph> glyphs, ByteBuffer result) {
+        byte hi = GLYPH_TO_BYTE_MAP.get(glyphs.next());
+        byte low = GLYPH_TO_BYTE_MAP.get(glyphs.next());
         result.put((byte) ((hi<<4 | low) &0xFF));
     }
     private List<NucleotideGlyph> decodeNext2Values(byte b) {

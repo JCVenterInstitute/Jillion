@@ -24,8 +24,8 @@
 package org.jcvi.assembly;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -33,11 +33,8 @@ import static org.junit.Assert.*;
 public class TestSplitReferenceEncodedNucleotideGlyphs {
 
     private static final String CONSENSUS_AS_STRING = "GGGGGTTTTTNNNNNNNNAAAAACCCCC";
-            
-    EncodedGlyphs<NucleotideGlyph> consensus = new DefaultNucleotideEncodedGlyphs(
-            NucleotideGlyph.getGlyphsFor(CONSENSUS_AS_STRING),             
-            Range.buildRangeOfLength(0, CONSENSUS_AS_STRING.length())
-            );
+
+    NucleotideEncodedGlyphs consensus = new DefaultNucleotideEncodedGlyphs(CONSENSUS_AS_STRING);
     
     @Test
     public void nonNegativeOffsetShouldThrowIllegalArgumentException(){
@@ -85,7 +82,7 @@ public class TestSplitReferenceEncodedNucleotideGlyphs {
         assertEquals(1, sut.getSnps().size());
         assertEquals(1, sut.getNumberOfGaps());
         for(Integer index : sut.getGapIndexes()){
-            assertEquals(NucleotideGlyph.Gap, sut.getSnps().get(index));
+            assertEquals(NucleotideGlyph.Gap, sut.get(index));
         }
         assertEquals(Integer.valueOf(5), sut.getGapIndexes().get(0));        
         assertEquals(circularReadBases.length(), sut.getLength());
@@ -106,7 +103,7 @@ public class TestSplitReferenceEncodedNucleotideGlyphs {
         assertEquals(0, sut.getNumberOfGaps());
         assertEquals(1, sut.getSnps().size());
         
-        assertEquals(NucleotideGlyph.getGlyphFor('M'), sut.getSnps().get(Integer.valueOf(5)));       
+        assertEquals(NucleotideGlyph.getGlyphFor('M'), sut.get(5));       
         assertEquals(circularReadBases.length(), sut.getLength());
         assertSame(validRange, sut.getValidRange());
         assertBasesDecodeCorrectly(circularReadBases, sut);
@@ -125,7 +122,7 @@ public class TestSplitReferenceEncodedNucleotideGlyphs {
         assertEquals(0, sut.getNumberOfGaps());
         assertEquals(1, sut.getSnps().size());
         
-        assertEquals(NucleotideGlyph.getGlyphFor('M'), sut.getSnps().get(Integer.valueOf(13)));       
+        assertEquals(NucleotideGlyph.getGlyphFor('M'), sut.get(13));       
         assertEquals(circularReadBases.length(), sut.getLength());
         assertSame(validRange, sut.getValidRange());
         assertBasesDecodeCorrectly(circularReadBases, sut);
@@ -144,7 +141,7 @@ public class TestSplitReferenceEncodedNucleotideGlyphs {
         assertEquals(1, sut.getNumberOfGaps());
         assertEquals(1, sut.getSnps().size());
         for(Integer index : sut.getGapIndexes()){
-            assertEquals(NucleotideGlyph.Gap, sut.getSnps().get(index));
+            assertEquals(NucleotideGlyph.Gap, sut.get(index));
         }
         assertEquals(Integer.valueOf(13), sut.getGapIndexes().get(0));        
         assertEquals(circularReadBases.length(), sut.getLength());

@@ -25,6 +25,7 @@ package org.jcvi.glyph.phredQuality;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,7 +104,7 @@ public final class PhredQuality extends ByteGlyph{
         }
         return list;
     }
-    public static byte[] toArray(List<PhredQuality> qualities){
+    public static byte[] toArray(Collection<PhredQuality> qualities){
         ByteBuffer buf = ByteBuffer.allocate(qualities.size());
         for(PhredQuality quality : qualities){
             buf.put(quality.getNumber());

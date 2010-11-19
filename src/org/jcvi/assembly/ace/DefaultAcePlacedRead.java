@@ -109,7 +109,7 @@ public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlaced
         public ReferencedEncodedNucleotideGlyphs buildReferenceEncodedNucleotideGlyphWithCorrectedReference(
                 EncodedGlyphs<NucleotideGlyph> reference,int startOffset, int length, Range validRange){
             return new PrecomputedReferenceEncodedNucleotideGlyphs(reference,
-                    this.getDifferentGlyphMap(), this.getGapIndexes(),startOffset, length, validRange );
+                    this.getSnpIndexes(),this.getSnpValues(), this.getGapIndexes(),startOffset, length, validRange );
         }
         
     }

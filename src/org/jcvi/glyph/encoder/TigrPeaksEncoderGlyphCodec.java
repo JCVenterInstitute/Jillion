@@ -24,6 +24,7 @@
 package org.jcvi.glyph.encoder;
 
 import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.glyph.GlyphCodec;
@@ -64,7 +65,7 @@ public class TigrPeaksEncoderGlyphCodec implements GlyphCodec<ShortGlyph>{
     }
 
     @Override
-    public byte[] encode(List<ShortGlyph> glyphs) {
+    public byte[] encode(Collection<ShortGlyph> glyphs) {
         return TigrPeaksEncoder.encode(ShortGlyph.toArray(glyphs)).getBytes(CHARSET);
     }
 

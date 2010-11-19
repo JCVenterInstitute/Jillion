@@ -25,6 +25,7 @@ package org.jcvi.glyph.num;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -52,7 +53,7 @@ public abstract class AbstractByteGlyphCodec<G extends ByteGlyph> implements Byt
     }
 
     @Override
-    public byte[] encode(List<G> glyphs) {
+    public byte[] encode(Collection<G> glyphs) {
         ByteBuffer buf = ByteBuffer.allocate(glyphs.size());
         for(ByteGlyph g : glyphs){
             buf.put(g.getNumber().byteValue());

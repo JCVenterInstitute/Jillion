@@ -24,6 +24,7 @@
 package org.jcvi.glyph.encoder;
 
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.glyph.GlyphCodec;
@@ -39,7 +40,7 @@ public abstract class AbstractDeltaEncoderCodec<G extends NumericGlyph, N extend
         this.valueSizeStrategy = valueSizeStrategy;
     }
 
-	private ByteBuffer convertToByteBuffer(List<G> glyphs) {
+	private ByteBuffer convertToByteBuffer(Collection<G> glyphs) {
 		ByteBuffer buf = ByteBuffer.allocate(glyphs.size() * valueSizeStrategy.numberOfBytesPerValue());
 		for(G glyph : glyphs){
 			valueSizeStrategy.put(glyph.getNumber().longValue(), buf);
@@ -79,7 +80,7 @@ public abstract class AbstractDeltaEncoderCodec<G extends NumericGlyph, N extend
     }
 
     @Override
-    public byte[] encode(List<G> glyphs) {
+    public byte[] encode(Collection<G> glyphs) {
         int length = glyphs.size() *valueSizeStrategy.numberOfBytesPerValue();
         ByteBuffer result = ByteBuffer.allocate(length);
         ByteBuffer glyphsAsBytes = convertToByteBuffer(glyphs);

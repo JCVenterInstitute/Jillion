@@ -32,11 +32,9 @@ import org.jcvi.assembly.AssemblyTestUtil;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultPlacedRead;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.DefaultNucleotideGlyphCodec;
+import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 import org.jcvi.glyph.nuc.DefaultReferencedEncodedNucleotideGlyph;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.sequence.DefaultRead;
@@ -49,13 +47,9 @@ public abstract class TestContigFileParser {
     int contig_id=925;
     int contig_length = 21249;
     int numberOfReads= 210;
-    DefaultNucleotideGlyphCodec consensusCodec = DefaultNucleotideGlyphCodec.getInstance();
-    NucleotideGlyphFactory factory = NucleotideGlyphFactory.getInstance();
     ResourceFileServer RESOURCES = new ResourceFileServer(TestContigFileParser.class);
-    
-    EncodedGlyphs<NucleotideGlyph> contigConsensus = 
-        new DefaultEncodedGlyphs<NucleotideGlyph>(consensusCodec,
-                factory.getGlyphsFor(
+
+                        NucleotideEncodedGlyphs contigConsensus = new DefaultNucleotideEncodedGlyphs(
         "TAAAGTGGCCACTAAATATGTTAAGAAGGTTACTGGCAAACTAGCCGTGCGCTTTAAGGC" +
         "GTTAGGTGTAGTCGTTGTCAGGAAAATTACTGAATGGTTTGATTTAGCCGTGGACATTGC" +
         "TGCTAGTGCCGCTGGATGGCTTTGCTACCAGCTGGTAAATGGCTTATTCGCAGTGGCCAA" +
@@ -410,7 +404,7 @@ public abstract class TestContigFileParser {
         "CCCACCTTCATTTCGAAGGAGTCCAATCATGTTGATTATTACTATGAGAGTGAGGCTAAT" +
         "TTCACACTACAAGGTTGTGATGAATTTATAGTACCGCTCTGCGTTTTTAATGGCCGTTCC" +
         "AAGGGCAGCTCTTCGGACCCTGCCAATAAATATTATACAGACTCTCAGAGTTACTATAAT" +
-        "ATTGATACT"));
+        "ATTGATACT");
     
     DefaultPlacedRead CVGWB15T06B037761RM = new DefaultPlacedRead(
             new DefaultRead("CVGWB15T06B037761RM",

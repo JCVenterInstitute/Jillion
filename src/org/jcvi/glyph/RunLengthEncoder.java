@@ -24,6 +24,7 @@
 package org.jcvi.glyph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.Range;
@@ -32,8 +33,9 @@ public class RunLengthEncoder {
 
     
     
-    public static <T> List<RunLength<T>> encode(List<T> elements){
+    public static <T> List<RunLength<T>> encode(Collection<T> collectionOfElements){
         List<RunLength<T>> encoding = new ArrayList<RunLength<T>>();
+        List<T> elements = new ArrayList<T>(collectionOfElements);
         if(elements.isEmpty()){
             return encoding;
         }

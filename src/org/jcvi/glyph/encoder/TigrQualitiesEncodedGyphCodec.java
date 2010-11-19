@@ -23,6 +23,7 @@
  */
 package org.jcvi.glyph.encoder;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.glyph.GlyphCodec;
@@ -54,7 +55,7 @@ public final class TigrQualitiesEncodedGyphCodec implements GlyphCodec<PhredQual
     }
 
     @Override
-    public byte[] encode(List<PhredQuality> glyphs) {
+    public byte[] encode(Collection<PhredQuality> glyphs) {
         return TigrQualitiesEncoder.encode(PhredQuality.toArray(glyphs)).getBytes();
     }
 

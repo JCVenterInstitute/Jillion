@@ -26,7 +26,6 @@ package org.jcvi.glyph.nuc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import org.jcvi.Range;
@@ -35,28 +34,66 @@ import org.jcvi.glyph.EncodedGlyphs;
 public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractEnocdedNucleotideGlyphs implements ReferencedEncodedNucleotideGlyphs{
 
     private final int[] gaps;
-    private final Map<Integer, NucleotideGlyph> differentGlyphMap;
+    private final int[] snpIndexes;
+    private final NucleotideEncodedGlyphs snpValues;
+    
     private final int length;
     private final int startOffset;
     private final Range validRange;
-    protected AbstractReferenceEncodedNucleotideGlyphs(Map<Integer, NucleotideGlyph> differentGlyphMap, List<Integer> gaps, int startOffset,int length,Range validRange){
-        this.differentGlyphMap = differentGlyphMap;
+    protected AbstractReferenceEncodedNucleotideGlyphs(int[] snpIndex, NucleotideEncodedGlyphs snpValues,List<Integer> gaps, int startOffset,int length,Range validRange){
         this.gaps = convertToPrimitiveArray(gaps);
         this.startOffset = startOffset;
         this.length = length;
         this.validRange = validRange;
+        this.snpIndexes = snpIndex;
+        this.snpValues = snpValues;
     }
+    
+    protected int[] getSnpIndexes() {
+        return snpIndexes;
+    }
+
+    
+    @Override
+    public List<Integer> getSnps() {
+        List<Integer> snps = new ArrayList<Integer>(snpIndexes.length);
+        for(int i =0; i< snpIndexes.length; i++){
+            snps.add(Integer.valueOf(snpIndexes[i]));
+        }
+        return snps;
+    }
+
+    protected NucleotideEncodedGlyphs getSnpValues() {
+        return snpValues;
+    }
+
     public AbstractReferenceEncodedNucleotideGlyphs(EncodedGlyphs<NucleotideGlyph> reference,
             String toBeEncoded, int startOffset,Range validRange){
         List<Integer> tempGapList = new ArrayList<Integer>();     
         this.startOffset = startOffset;
         this.length = toBeEncoded.length();
         this.validRange = validRange;
-        differentGlyphMap = new TreeMap<Integer, NucleotideGlyph>();
-        populateFields(reference, toBeEncoded, startOffset, tempGapList);
+        TreeMap<Integer, NucleotideGlyph> differentGlyphMap = new TreeMap<Integer, NucleotideGlyph>();
+        populateFields(reference, toBeEncoded, startOffset, tempGapList,differentGlyphMap);
         gaps = convertToPrimitiveArray(tempGapList);
+        snpIndexes = createSNPIndexes(differentGlyphMap);
+        snpValues = createSNPValues(differentGlyphMap);
     }
-    
+
+    private NucleotideEncodedGlyphs createSNPValues(
+            TreeMap<Integer, NucleotideGlyph> differentGlyphMap) {
+        return new DefaultNucleotideEncodedGlyphs(differentGlyphMap.values());
+
+    }
+    private int[] createSNPIndexes(TreeMap<Integer, NucleotideGlyph> snpMap){
+        int[]snps = new int[snpMap.size()];
+        int i=0;
+        for(Integer index : snpMap.keySet()){
+            snps[i]=index.intValue();
+            i++;
+        }
+        return snps;
+    }
     private int[] convertToPrimitiveArray(List<Integer> list){
         int[] array = new int[list.size()];
         for(int i=0; i<list.size(); i++){
@@ -64,8 +101,9 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         }
         return array;
     }
-    private void populateFields(EncodedGlyphs<NucleotideGlyph> reference,
-            String toBeEncoded, int startOffset, List<Integer> tempGapList) {
+    private TreeMap<Integer, NucleotideGlyph> populateFields(EncodedGlyphs<NucleotideGlyph> reference,
+            String toBeEncoded, int startOffset, List<Integer> tempGapList,TreeMap<Integer, NucleotideGlyph> differentGlyphMap) {
+        
         for(int i=0; i<toBeEncoded.length(); i++){
             //get the corresponding index to this reference
             int referenceIndex = i + startOffset;
@@ -80,16 +118,13 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
                     differentGlyphMap.put(indexAsInteger, g);
             }
         }
+        return differentGlyphMap;
     }
 
     private boolean isDifferent(NucleotideGlyph g, final NucleotideGlyph referenceGlyph) {
         return g!=referenceGlyph;
     }
 
-
-    protected Map<Integer, NucleotideGlyph> getDifferentGlyphMap() {
-        return differentGlyphMap;
-    }
     @Override
     public List<NucleotideGlyph> decode() {
         List<NucleotideGlyph> result = new ArrayList<NucleotideGlyph>(length);
@@ -104,8 +139,9 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         if(isGap(indexAsInteger)){
             return NucleotideGlyph.Gap;
         }
-        if(differentGlyphMap.containsKey(indexAsInteger)){
-            return differentGlyphMap.get(indexAsInteger);
+        int snpIndex =Arrays.binarySearch(snpIndexes, index);
+        if(snpIndex>=0){
+            return snpValues.get(snpIndex);
         }
         int referenceIndex = index+startOffset;
         return getFromReference(referenceIndex);
@@ -136,10 +172,6 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         return result;
     }
     @Override
-    public Map<Integer, NucleotideGlyph> getSnps(){
-        return differentGlyphMap;
-    }
-    @Override
     public Range getValidRange() {
         return validRange;
     }
@@ -147,7 +179,8 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + differentGlyphMap.hashCode();
+        result = prime * result + Arrays.hashCode(snpIndexes);
+        result = prime * result + snpValues.hashCode();
         result = prime * result + Arrays.hashCode(gaps);
         result = prime * result + length;
         result = prime * result + startOffset;
@@ -167,11 +200,14 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
             return false;
         }
         AbstractReferenceEncodedNucleotideGlyphs other = (AbstractReferenceEncodedNucleotideGlyphs) obj;
-        if (differentGlyphMap == null) {
-            if (other.differentGlyphMap != null) {
+        if (!Arrays.equals(snpIndexes,other.snpIndexes)) {
+            return false;
+        }
+        if (snpValues == null) {
+            if (other.snpValues != null) {
                 return false;
             }
-        } else if (!differentGlyphMap.equals(other.differentGlyphMap)) {
+        } else if (!snpValues.equals(other.snpValues)) {
             return false;
         }
         if (gaps == null) {

@@ -24,15 +24,12 @@
 package org.jcvi.assembly;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.AbstractEnocdedNucleotideGlyphs;
 import org.jcvi.glyph.nuc.DefaultReferencedEncodedNucleotideGlyph;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
 
@@ -40,11 +37,11 @@ public class SplitReferenceEncodedNucleotideGlyphs extends AbstractEnocdedNucleo
 
     private final ReferencedEncodedNucleotideGlyphs leftSplit, rightSplit;
     private final int splitIndex;
-    private final Map<Integer, NucleotideGlyph> snps;
+    private final List<Integer> snps;
     private final Range validRange;
     private final List<Integer> gaps;
     
-    public SplitReferenceEncodedNucleotideGlyphs(EncodedGlyphs<NucleotideGlyph> reference,
+    public SplitReferenceEncodedNucleotideGlyphs(NucleotideEncodedGlyphs reference,
             String gappedSequenceToEncode, int negativeStartOffset,Range validRange){
         if(negativeStartOffset >-1){
             throw new IllegalArgumentException("start offset must be < 0");
@@ -66,11 +63,12 @@ public class SplitReferenceEncodedNucleotideGlyphs extends AbstractEnocdedNucleo
                 gappedSequenceToEncode.substring(splitIndex), 
                 0, 
                 validRange);
-        snps = new HashMap<Integer, NucleotideGlyph>();
-        snps.putAll(leftSplit.getSnps());
         
-        for(Entry<Integer, NucleotideGlyph> entry : rightSplit.getSnps().entrySet()){
-            snps.put(Integer.valueOf(entry.getKey().intValue()+splitIndex), entry.getValue());
+        snps = new ArrayList<Integer>();
+        snps.addAll(leftSplit.getSnps());
+        
+        for(Integer snp : rightSplit.getSnps()){
+            snps.add(Integer.valueOf(snp.intValue()+splitIndex));
         }
         gaps = new ArrayList<Integer>();
         gaps.addAll(leftSplit.getGapIndexes());
@@ -79,10 +77,7 @@ public class SplitReferenceEncodedNucleotideGlyphs extends AbstractEnocdedNucleo
         }
     }
     
-    @Override
-    public Map<Integer, NucleotideGlyph> getSnps() {
-        return snps;
-    }
+   
 
     @Override
     public Range getValidRange() {
@@ -140,5 +135,15 @@ public class SplitReferenceEncodedNucleotideGlyphs extends AbstractEnocdedNucleo
      public int getNumberOfGaps() {
          return gaps.size();
      }
+
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public List<Integer> getSnps() {
+        return Collections.unmodifiableList(snps);
+    }
 
 }
