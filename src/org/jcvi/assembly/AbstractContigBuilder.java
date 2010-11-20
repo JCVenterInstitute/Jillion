@@ -20,6 +20,7 @@
 package org.jcvi.assembly;
 
 import java.util.LinkedHashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.jcvi.Builder;
