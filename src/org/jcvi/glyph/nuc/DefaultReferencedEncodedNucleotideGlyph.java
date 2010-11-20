@@ -52,7 +52,9 @@ public class DefaultReferencedEncodedNucleotideGlyph extends AbstractReferenceEn
         super(reference, toBeEncoded, startOffset, validRange);
         this.reference = reference;
     }
-
+    public DefaultReferencedEncodedNucleotideGlyph(NucleotideEncodedGlyphs reference){
+    	this(reference,NucleotideGlyph.convertToString(reference.decode()),0,Range.buildRangeOfLength(0, reference.getLength()));
+    }
     @Override
     protected NucleotideGlyph getFromReference(int referenceIndex) {
         return reference.get(referenceIndex);

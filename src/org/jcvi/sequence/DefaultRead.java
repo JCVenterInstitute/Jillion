@@ -26,15 +26,15 @@ package org.jcvi.sequence;
 import org.jcvi.CommonUtil;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
-public class DefaultRead implements Read{
+public class DefaultRead<T extends NucleotideEncodedGlyphs> implements Read<T>{
     private final String id;
-    private final NucleotideEncodedGlyphs glyphs;
-    public DefaultRead(String id, NucleotideEncodedGlyphs glyphs){
+    private final T glyphs;
+    public DefaultRead(String id, T glyphs){
         this.id= id;
         this.glyphs = glyphs;
     }
     @Override
-    public NucleotideEncodedGlyphs getEncodedGlyphs() {
+    public T getEncodedGlyphs() {
         return glyphs;
     }
 
