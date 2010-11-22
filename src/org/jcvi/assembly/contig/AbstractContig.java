@@ -26,8 +26,6 @@ package org.jcvi.assembly.contig;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -115,6 +113,68 @@ public abstract class AbstractContig<T extends PlacedRead> implements Contig<T>{
     public boolean containsPlacedRead(String placedReadId) {
         return mapById.containsKey(placedReadId);
     }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (circular ? 1231 : 1237);
+		result = prime * result
+				+ ((consensus == null) ? 0 : consensus.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + numberOfReads;
+		result = prime * result
+				+ ((realPlacedReads == null) ? 0 : realPlacedReads.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Contig)) {
+			return false;
+		}
+		Contig other = (Contig) obj;
+		if (circular != other.isCircular()) {
+			return false;
+		}
+		if (consensus == null) {
+			if (other.getConsensus()!= null) {
+				return false;
+			}
+		} else if (!consensus.equals(other.getConsensus())) {
+			return false;
+		}
+		if (id == null) {
+			if (other.getId() != null) {
+				return false;
+			}
+		} else if (!id.equals(other.getId())) {
+			return false;
+		}
+		if (numberOfReads != other.getNumberOfReads()) {
+			return false;
+		}
+		if (realPlacedReads == null) {
+			if (other.getPlacedReads() != null) {
+				return false;
+			}
+		} else if (!realPlacedReads.equals(other.getPlacedReads())) {
+			return false;
+		}
+		return true;
+	}
     
     
 }

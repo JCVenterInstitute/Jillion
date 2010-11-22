@@ -86,6 +86,30 @@ public class DefaultPlacedRead implements PlacedRead {
             return read.equals(other.getRead()) && start== other.getStart() 
             && getSequenceDirection() == other.getSequenceDirection();
         }
+        else if (obj instanceof PlacedRead){           
+        	PlacedRead other = (PlacedRead) obj;
+        	if(read.getId()==null && other.getId() !=null){
+        		return false;
+        	}
+        	if(!read.getId().equals(other.getId())){
+        		return false;
+        	}
+        	if(read.getEncodedGlyphs()==null && other.getEncodedGlyphs() !=null){
+        		return false;
+        	}
+        	if(other.getEncodedGlyphs() ==null){
+        		return false;
+        	}
+        	if(!read.getEncodedGlyphs().decode().equals(other.getEncodedGlyphs().decode())){
+        		System.out.println(NucleotideGlyph.convertToString(read.getEncodedGlyphs().decode()));
+        		System.out.println(NucleotideGlyph.convertToString(other.getEncodedGlyphs().decode()));
+        		System.out.println();
+        		return false;
+        	}
+        	
+            return start== other.getStart() 
+            && getSequenceDirection() == other.getSequenceDirection();
+        }
         return false;
         
     }

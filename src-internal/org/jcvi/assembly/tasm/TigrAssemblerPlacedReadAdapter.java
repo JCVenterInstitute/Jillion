@@ -140,4 +140,58 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 		return delegatePlacedRead.compareTo(o);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((attributes == null) ? 0 : attributes.hashCode());
+		result = prime
+				* result
+				+ ((delegatePlacedRead == null) ? 0 : delegatePlacedRead
+						.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof PlacedRead)) {
+			return false;
+		}
+		PlacedRead other = (PlacedRead) obj;
+		
+		if (delegatePlacedRead == null) {
+			if (other != null) {
+				return false;
+			}
+		} else if (!delegatePlacedRead.equals(other)) {
+			return false;
+		}
+		
+		if (!(obj instanceof TigrAssemblerPlacedRead)) {
+			return true;
+		}
+		TigrAssemblerPlacedRead otherTigrRead = (TigrAssemblerPlacedRead) obj;
+		if (attributes == null) {
+			if (otherTigrRead.getAttributes() != null) {
+				return false;
+			}
+		} else if (!attributes.equals(otherTigrRead.getAttributes())) {
+			return false;
+		}
+		return true;
+	}
+
 }

@@ -75,8 +75,53 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
     public Map<TigrAssemblerContigAttribute, String> getAttributes() {
         return attributes;
     }
+    
 
-    public static class Builder extends AbstractContigBuilder<TigrAssemblerPlacedRead, DefaultTigrAssemblerContig>{
+    
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((attributes == null) ? 0 : attributes.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof TigrAssemblerContig)) {
+			return false;
+		}
+		TigrAssemblerContig other = (TigrAssemblerContig) obj;
+		if (attributes == null) {
+			if (other.getAttributes() != null) {
+				return false;
+			}
+		} else if (!attributes.equals(other.getAttributes())) {
+			return false;
+		}
+		return true;
+	}
+
+
+
+
+
+	public static class Builder extends AbstractContigBuilder<TigrAssemblerPlacedRead, DefaultTigrAssemblerContig>{
         private EnumMap<TigrAssemblerContigAttribute,String> contigAttributes = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
         private Map<String, EnumMap<TigrAssemblerReadAttribute,String>> readAttributeMaps = new LinkedHashMap<String, EnumMap<TigrAssemblerReadAttribute,String>>();
         /**
