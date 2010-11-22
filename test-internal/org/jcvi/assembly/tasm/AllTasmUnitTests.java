@@ -34,7 +34,8 @@ import org.junit.runners.Suite.SuiteClasses;
     {
        TestTigrAssemblerContigDataStore.class ,
        TestTigrAssemblerWriter.class,
-       TestTigrAssemblerPlacedReadAdapter.class
+       TestTigrAssemblerPlacedReadAdapter.class,
+       TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes.class
     }
     )
 public class AllTasmUnitTests {

@@ -55,6 +55,9 @@ public class DefaultReferencedEncodedNucleotideGlyph extends AbstractReferenceEn
     public DefaultReferencedEncodedNucleotideGlyph(NucleotideEncodedGlyphs reference){
     	this(reference,NucleotideGlyph.convertToString(reference.decode()),0,Range.buildRangeOfLength(0, reference.getLength()));
     }
+    public DefaultReferencedEncodedNucleotideGlyph(String reference){
+    	this(new DefaultNucleotideEncodedGlyphs(reference));
+    }
     @Override
     protected NucleotideGlyph getFromReference(int referenceIndex) {
         return reference.get(referenceIndex);

@@ -44,7 +44,23 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
         super(id, consensus, virtualReads,circular);
     }
     
-    public static class Builder extends AbstractContigBuilder<PlacedRead, DefaultContig<PlacedRead>>{
+    /* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	public static class Builder extends AbstractContigBuilder<PlacedRead, DefaultContig<PlacedRead>>{
         public Builder(String id, String consensus){
            this(id, new DefaultNucleotideEncodedGlyphs(consensus));
         }

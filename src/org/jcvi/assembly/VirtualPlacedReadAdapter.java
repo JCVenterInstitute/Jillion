@@ -107,5 +107,36 @@ public class VirtualPlacedReadAdapter<T extends PlacedRead> implements VirtualPl
     public int compareTo(PlacedRead o) {
         return realRead.compareTo(o);
     }
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((realRead == null) ? 0 : realRead.hashCode());
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof PlacedRead)) {
+			return false;
+		}
+		PlacedRead other = (PlacedRead) obj;
+		if (!realRead.equals(other)) {
+			return false;
+		}
+		return true;
+	}
 
 }
