@@ -76,7 +76,6 @@ public class TestConvertZtr2Scf {
     @Test
     public void ztrWithNoQualitiesShouldGetPaddedQualitiesInScf() throws TraceDecoderException, IOException{
         Chromatogram ztr = ztrParser.decode(RESOURCES.getFileAsStream("ztr/files/515866_G07_AFIXF40TS_026.ab1.afg.trash.ztr"));
-        System.out.println(ztr.getProperties());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         scfCodec.encode(new SCFChromatogramImpl(ztr), out);
         

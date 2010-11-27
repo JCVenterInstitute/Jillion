@@ -193,7 +193,6 @@ public abstract class JcviTraceFileServer implements TraceFileServer{
         System.setProperty(TraceFileServerUtil.TRACE_FILE_SERVER_WRITER_URL_BASE_KEY, 
                 url);
         DEFAULT_CHROMATOGRAM_ARCHIVER = createDefaultChromatogramArchiver();
-            System.out.println(DEFAULT_CHROMATOGRAM_ARCHIVER.toString());
     }
     
     private static final JTCChromatogramArchiver createDefaultChromatogramArchiver() throws IllegalStateException{

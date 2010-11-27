@@ -178,7 +178,7 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
         @Override
         public boolean visitReadData(SFFReadData readData) {
             size++;
-            return super.visitReadData(readData);
+            return true;
         }
 
         public int getSize() {
