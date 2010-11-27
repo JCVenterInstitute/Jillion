@@ -61,14 +61,22 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		for(PlacedRead read : delegate.getPlacedReads()){
 			adaptedReads.put(read.getId(), new TigrAssemblerPlacedReadAdapter(read));
 		}
-		attributes = createAttributes(delegate,optionalAttributes);
+		attributes = createNonConsensusAttributes(delegate,optionalAttributes);
 	}
-
-	private Map<TigrAssemblerContigAttribute,String> createAttributes(
+	/**
+	 * It's silly to store the gapped and ungapped consensus as
+	 * Strings when we have encoded glyph representations
+	 * so we will store all the other attributes
+	 * but generate the consensus attributes 
+	 * only when needed.
+	 * @param delegate
+	 * @param optionalAttributes
+	 * @return a Map containing all the adapted
+	 * attributes except for gapped and ungapped consensus.
+	 */
+	private Map<TigrAssemblerContigAttribute,String> createNonConsensusAttributes(
 			Contig<? extends PlacedRead> delegate, Map<TigrAssemblerContigAttribute, String> optionalAttributes) {
 		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
-		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, NucleotideGlyph.convertToString(delegate.getConsensus().decodeUngapped()));
-		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, NucleotideGlyph.convertToString(delegate.getConsensus().decode()));
 		map.put(TigrAssemblerContigAttribute.ASMBL_ID, delegate.getId());
 		map.put(TigrAssemblerContigAttribute.NUMBER_OF_READS, ""+delegate.getNumberOfReads());
 		
@@ -80,6 +88,14 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		map.put(TigrAssemblerContigAttribute.PERCENT_N,String.format("%.2f",percentN));
 		
 		map.putAll(optionalAttributes);
+		return map;
+	}
+	
+	private Map<TigrAssemblerContigAttribute,String> generateConsensusAttributes(){
+		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
+		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, NucleotideGlyph.convertToString(delegate.getConsensus().decodeUngapped()));
+		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, NucleotideGlyph.convertToString(delegate.getConsensus().decode()));
+	
 		return map;
 	}
 
@@ -103,17 +119,37 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 
 	@Override
 	public String getAttributeValue(TigrAssemblerContigAttribute attribute) {
-		return attributes.get(attribute);
+		switch(attribute){
+		case UNGAPPED_CONSENSUS:
+		case GAPPED_CONSENSUS:
+			return generateConsensusAttributes().get(attribute);
+		default : 
+			return attributes.get(attribute);
+		}
 	}
 
+	private Map<TigrAssemblerContigAttribute, String> createAllAttributes(){
+		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
+		map.putAll(attributes);
+		map.putAll(generateConsensusAttributes());
+		return map;
+		
+	}
 	@Override
 	public Map<TigrAssemblerContigAttribute, String> getAttributes() {
-		return Collections.unmodifiableMap(attributes);
+		return Collections.unmodifiableMap(createAllAttributes());
 	}
 
+	
 	@Override
 	public boolean hasAttribute(TigrAssemblerContigAttribute attribute) {
-		return attributes.containsKey(attribute);
+		switch(attribute){
+		case UNGAPPED_CONSENSUS:
+		case GAPPED_CONSENSUS:
+			return true;
+		default : 
+			return attributes.containsKey(attribute);
+		}
 	}
 
 	@Override
