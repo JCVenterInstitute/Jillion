@@ -70,7 +70,6 @@ public class DefaultScanRateTaggedDataType extends AbstractTaggedDataRecord<Scan
     */
     @Override
     protected ScanRate parseDataFrom(byte[] data) {
-        System.out.println(Arrays.toString(data));
       ByteBuffer buf = ByteBuffer.wrap(data);
        DefaultScanRate.Builder builder = new DefaultScanRate.Builder();
        builder.time(buf.getInt())

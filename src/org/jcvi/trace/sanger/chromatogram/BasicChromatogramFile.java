@@ -26,6 +26,10 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Peaks;
 
 /**
+ * {@code BasicChromatogramFile} is a Chromatogram implementation
+ * that is also a {@link ChromatogramFileVisitor}.  This chromatogram
+ * object gets built by listening to the visit messages
+ * it receives from a {@link Chromatogram} parser.
  * @author dkatzel
  *
  *

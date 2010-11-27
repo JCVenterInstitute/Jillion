@@ -41,11 +41,11 @@ import java.util.Set;
  * <p/>
  * Description:
  */
-public class DefaultScaffoldDataStore implements ScaffoldDataStore, AgpFileVisitor {
+public class DefaultAgpScaffoldDataStore implements ScaffoldDataStore, AgpFileVisitor {
     private Map<String, DefaultScaffold.Builder> builderMap;
     private Map<String, DefaultScaffold> scaffolds;
 
-    public DefaultScaffoldDataStore() {
+    public DefaultAgpScaffoldDataStore() {
         builderMap = new LinkedHashMap<String, DefaultScaffold.Builder>();
     }
 

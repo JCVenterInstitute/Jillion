@@ -46,7 +46,9 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestConvertZtr2Scf.class,
         TestMixAndMatchChromatogramParsers.class,
-        AllAbiUnitTests.class
+        AllAbiUnitTests.class,
+        TestChromatogramFileParser.class,
+        TestChromatogram2Fasta.class
     }
     )
 public class AllChromatogramUnitTests {

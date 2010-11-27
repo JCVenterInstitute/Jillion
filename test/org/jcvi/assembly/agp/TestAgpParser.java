@@ -26,7 +26,7 @@ package org.jcvi.assembly.agp;
 import java.io.IOException;
 
 import org.jcvi.Range;
-import org.jcvi.datastore.DefaultScaffoldDataStore;
+import org.jcvi.datastore.DefaultAgpScaffoldDataStore;
 import org.jcvi.assembly.DefaultScaffold;
 import org.jcvi.assembly.Scaffold;
 import org.jcvi.io.fileServer.ResourceFileServer;
@@ -38,7 +38,7 @@ public class TestAgpParser {
     ResourceFileServer resourceFS = new ResourceFileServer(TestAgpParser.class);
     @Test
     public void parseScaffold() throws IOException{
-        DefaultScaffoldDataStore scaffolds = new DefaultScaffoldDataStore();
+        DefaultAgpScaffoldDataStore scaffolds = new DefaultAgpScaffoldDataStore();
         AgpParser.parseAgpFile(resourceFS.getFileAsStream("files/example.agp"),scaffolds);
         Scaffold actualScaffold = scaffolds.getScaffold("chrY");
         Scaffold expectedScaffold = new DefaultScaffold.Builder("chrY")

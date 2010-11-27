@@ -33,8 +33,10 @@ import org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk;
 import org.jcvi.trace.sanger.chromatogram.ztr.chunk.ChunkType;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.Data;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.DeltaEncodedData;
+import org.jcvi.trace.sanger.chromatogram.ztr.data.FollowData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.RunLengthEncodedData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.ShrinkToEightBitData;
+import org.jcvi.trace.sanger.chromatogram.ztr.data.ZLibData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.DeltaEncodedData.Level;
 
 /**
@@ -195,20 +197,7 @@ public class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
 			}
 			this.chunk = chunk;
 			this.chunkType = chunkType;
-		}
-		/**
-		 * Add the given {@link Data} implementation
-		 * to the chain of encoders.  The Encoders will
-		 * be invoked in the order that they are added.
-		 * @param data the {@link Data} implementation to 
-		 * use as the encoder; may not be null.
-		 * @return this
-		 * @throws NullPointerException if data is null.
-		 */
-		public ChunkEncoderBuilder addEncoder(Data data){			
-			encoders.add(new DataEncoder(data));
-			return this;
-		}
+		}		
 		/**
 		 * Adds a runLength Encoder using the default
 		 * guard value.  This is the same as
@@ -219,6 +208,34 @@ public class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
 		 */
 		public ChunkEncoderBuilder addRunLengthEncoder(){
 			return addRunLengthEncoder(RunLengthEncodedData.DEFAULT_GUARD);
+		}
+		/**
+		 * Adds a ZLIB Encoder (for
+		 * compressing data via ZIP).
+		 * @return this.
+		 */
+		public ChunkEncoderBuilder addZLibEncoder(){
+			encoders.add(new DataEncoder(ZLibData.INSTANCE));
+			return this;
+		}
+		/**
+		 * Adds a FollowData Encoder.
+		 * @see FollowData
+		 * @return this.
+		 */
+		public ChunkEncoderBuilder addFollowEncoder(){
+			encoders.add(new DataEncoder(FollowData.INSTANCE));
+			return this;
+		}
+		/**
+		 * Adds a {@link ShrinkToEightBitData} encoder.
+		 * @param shrinker the {@link ShrinkToEightBitData} encoder
+		 * to use.
+		 * @return this.
+		 */
+		public ChunkEncoderBuilder addShrinkEncoder(ShrinkToEightBitData shrinker){
+			encoders.add(new DataEncoder(shrinker));
+			return this;
 		}
 		/**
 		 * Adds a runLength Encoder using the given

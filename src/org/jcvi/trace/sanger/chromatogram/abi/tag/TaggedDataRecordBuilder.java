@@ -110,9 +110,6 @@ public class TaggedDataRecordBuilder implements org.jcvi.Builder<TaggedDataRecor
 			    return new DefaultUserDefinedTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
 
 			default:
-			    if(dataType == TaggedDataType.TYPE_1){
-			       System.out.println("type 1 defined types = "+ name); 
-			    }
 			  //special case for known null-terminated strings
 		        if(name == TaggedDataName.APrN ||name == TaggedDataName.BASECALLS || 
 		                name == TaggedDataName.CT_ID || name == TaggedDataName.CT_NAME || name == TaggedDataName.CT_OWNER ||

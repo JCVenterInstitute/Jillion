@@ -41,8 +41,6 @@ import org.jcvi.io.idReader.DefaultFileIdReader;
 import org.jcvi.io.idReader.IdReader;
 import org.jcvi.io.idReader.StringIdParser;
 import org.jcvi.trace.TraceDecoderException;
-import org.jcvi.trace.sanger.SangerTrace;
-import org.jcvi.trace.sanger.SangerTraceParser;
 
 /**
  * {@code Chromatogram2fasta} is a program that will convert a list 
@@ -55,7 +53,37 @@ import org.jcvi.trace.sanger.SangerTraceParser;
 public class Chromatogram2fasta {
 
     public static final String DEFAULT_FASTA_PREFIX = "chromatogram2fasta";
-    /**
+    
+    private final OutputStream seqOut, posOut, qualOut;
+    
+    
+    
+    public Chromatogram2fasta(OutputStream seqOut, OutputStream qualOut,
+			OutputStream posOut) {
+    	if(seqOut ==null && qualOut ==null && posOut==null){
+    		throw new NullPointerException("must have at least 1 non-null outputStream");
+    	}
+		this.seqOut = seqOut;
+		this.posOut = posOut;
+		this.qualOut = qualOut;
+	}
+
+    public void writeChromatogram(String id, Chromatogram chromo) throws IOException{
+    	 if(seqOut !=null){
+             seqOut.write(new DefaultEncodedNucleotideFastaRecord(id, chromo.getBasecalls())
+                             .toString().getBytes());
+         }
+         if(qualOut !=null){
+             qualOut.write(new DefaultQualityFastaRecord(id, chromo.getQualities())
+                             .toString().getBytes());
+         }
+         if(posOut !=null){
+             posOut.write(new DefaultPositionFastaRecord(id, chromo.getPeaks().getData())
+                             .toString().getBytes());
+         }
+    }
+
+	/**
      * Executable to convert group of chromatogram files into multi fastas.
      * @param args
      * @throws IOException 
@@ -107,7 +135,7 @@ public class Chromatogram2fasta {
         final OutputStream posOut = commandLine.hasOption("p")? 
                 new FileOutputStream(outputFileServer.createNewFile(prefix +".pos"))
                 : null;
-        SangerTraceParser parser = SangerTraceParser.getInstance();
+        Chromatogram2fasta chromo2Fasta = new Chromatogram2fasta(seqOut,qualOut,posOut);
         try{
             for(String chromatogramFilePath : chromatogramFiles){
                 if(chromatogramFilePath.trim().isEmpty()){
@@ -116,19 +144,11 @@ public class Chromatogram2fasta {
                 File chromatogramFile = new File(chromatogramFilePath);
                 
                 String id = FilenameUtils.getBaseName(chromatogramFile.getName());
-                SangerTrace chromo =parser.decode(chromatogramFile);
-                if(seqOut !=null){
-                    seqOut.write(new DefaultEncodedNucleotideFastaRecord(id, chromo.getBasecalls())
-                                    .toString().getBytes());
-                }
-                if(qualOut !=null){
-                    qualOut.write(new DefaultQualityFastaRecord(id, chromo.getQualities())
-                                    .toString().getBytes());
-                }
-                if(posOut !=null){
-                    posOut.write(new DefaultPositionFastaRecord(id, chromo.getPeaks().getData())
-                                    .toString().getBytes());
-                }
+                BasicChromatogramFile chromo = new BasicChromatogramFile();
+                ChromatogramParser.parse(chromatogramFile, chromo);
+                
+                chromo2Fasta.writeChromatogram(id, chromo);
+               
             }
         }finally{
             IOUtil.closeAndIgnoreErrors(seqOut);

@@ -25,9 +25,7 @@ import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.Chromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.DefaultZTRChromatogramWriter.DefaultZTRChromatogramWriterBuilder;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.DeltaEncodedData;
-import org.jcvi.trace.sanger.chromatogram.ztr.data.FollowData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.ShrinkToEightBitData;
-import org.jcvi.trace.sanger.chromatogram.ztr.data.ZLibData;
 import org.jcvi.trace.sanger.chromatogram.ztr.data.DeltaEncodedData.Level;
 /**
  * {@code IOLibLikeZTRChromatogramWriter} is a {@link ZTRChromatogramWriter}
@@ -46,31 +44,38 @@ public enum IOLibLikeZTRChromatogramWriter implements ZTRChromatogramWriter{
 	 * Singleton instance of {@link IOLibLikeZTRChromatogramWriter}.
 	 */
 	INSTANCE;
-
+	/**
+	 * This is the guard value that IO_Lib uses for run length
+	 * encoding its confidence values, I guess
+	 * it assumes no traces will ever
+	 * get a quality value of 77.
+	 */
+	public static final byte IO_LIB_CONFIDENCE_RUN_LENGTH_GUARD_VALUE = (byte)77;
 	private final DefaultZTRChromatogramWriter writer;
 	
 	{
 		//these are the same encoders with the same parameters
-		//with in the same order
+		//with in the same order as the stadden IO_Lib C library's
+		//ZTR 1.2 writer.
 		DefaultZTRChromatogramWriterBuilder builder = new DefaultZTRChromatogramWriterBuilder();
 		builder.forBasecallChunkEncoder()
-	        .addEncoder(ZLibData.INSTANCE);
+	        .addZLibEncoder();
 		builder.forPositionsChunkEncoder()
 			.addDeltaEncoder(DeltaEncodedData.SHORT, Level.DELTA_LEVEL_3)
-			.addEncoder(ShrinkToEightBitData.SHORT_TO_BYTE)
-			.addEncoder(FollowData.INSTANCE)
+			.addShrinkEncoder(ShrinkToEightBitData.SHORT_TO_BYTE)
+			.addFollowEncoder()
 			.addRunLengthEncoder()
-			.addEncoder(ZLibData.INSTANCE);
+			.addZLibEncoder();
 		builder.forConfidenceChunkEncoder()
 			.addDeltaEncoder(DeltaEncodedData.BYTE, Level.DELTA_LEVEL_1)
-			.addRunLengthEncoder((byte)77)
-			.addEncoder(ZLibData.INSTANCE);
+			.addRunLengthEncoder(IO_LIB_CONFIDENCE_RUN_LENGTH_GUARD_VALUE)
+			.addZLibEncoder();
 		builder.forPeaksChunkEncoder()
 			.addDeltaEncoder(DeltaEncodedData.INTEGER, Level.DELTA_LEVEL_1)
-			.addEncoder(ShrinkToEightBitData.INTEGER_TO_BYTE)
-			.addEncoder(ZLibData.INSTANCE);
+			.addShrinkEncoder(ShrinkToEightBitData.INTEGER_TO_BYTE)
+			.addZLibEncoder();
 		builder.forCommentsChunkEncoder()
-			.addEncoder(ZLibData.INSTANCE);
+			.addZLibEncoder();
 			
 		writer = builder.build();
 	}
