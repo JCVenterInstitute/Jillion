@@ -19,7 +19,6 @@
 
 package org.jcvi.assembly.tasm;
 
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -37,7 +36,6 @@ import org.jcvi.sequence.SequenceDirection;
 public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 
 	private final PlacedRead delegatePlacedRead;
-	private final Map<TigrAssemblerReadAttribute, String> attributes = new EnumMap<TigrAssemblerReadAttribute, String>(TigrAssemblerReadAttribute.class);
 	
 	/**
 	 * Adapt the given placedRead into a TigrAssemblerPlacedRead.
@@ -47,10 +45,15 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	 */
 	public TigrAssemblerPlacedReadAdapter(PlacedRead delegatePlacedRead) {
 		this.delegatePlacedRead = delegatePlacedRead;
-		populateAttributes();
+		generateAttributes();
 	}
-
-	private void populateAttributes() {
+	/**
+	 * Rather than waste memory, we will regenerate
+	 * attributes on the fly
+	 * @return
+	 */
+	private Map<TigrAssemblerReadAttribute, String> generateAttributes() {
+		Map<TigrAssemblerReadAttribute, String> attributes = new EnumMap<TigrAssemblerReadAttribute, String>(TigrAssemblerReadAttribute.class);
 		attributes.put(TigrAssemblerReadAttribute.NAME, getId());
 		
 		//TODO is asm_lend / asm_rend ungapped or gapped?
@@ -68,21 +71,28 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_RIGHT, ""+(validRange.getStart()+1));
 			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_LEFT, ""+(validRange.getEnd()+1));
 		}
+		return attributes;
 	}
 
 	@Override
 	public String getAttributeValue(TigrAssemblerReadAttribute attribute) {
-		return attributes.get(attribute);
+		return generateAttributes().get(attribute);
 	}
 
 	@Override
 	public Map<TigrAssemblerReadAttribute, String> getAttributes() {
-		return Collections.unmodifiableMap(attributes);
+		return generateAttributes();
 	}
 
 	@Override
 	public boolean hasAttribute(TigrAssemblerReadAttribute attribute) {
-		return attributes.containsKey(attribute);
+		switch( attribute){
+			case BEST :
+			case COMMENT:
+			case DB: return false;
+			default :
+				return true;
+		}		
 	}
 
 	@Override
@@ -147,12 +157,9 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((attributes == null) ? 0 : attributes.hashCode());
 		result = prime
 				* result
-				+ ((delegatePlacedRead == null) ? 0 : delegatePlacedRead
-						.hashCode());
+				+ delegatePlacedRead.hashCode();
 		return result;
 	}
 
@@ -184,14 +191,7 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 			return true;
 		}
 		TigrAssemblerPlacedRead otherTigrRead = (TigrAssemblerPlacedRead) obj;
-		if (attributes == null) {
-			if (otherTigrRead.getAttributes() != null) {
-				return false;
-			}
-		} else if (!attributes.equals(otherTigrRead.getAttributes())) {
-			return false;
-		}
-		return true;
+		return !generateAttributes().equals(otherTigrRead.getAttributes());
 	}
 
 }
