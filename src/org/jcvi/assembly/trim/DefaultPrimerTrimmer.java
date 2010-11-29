@@ -44,6 +44,34 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
  *
  */
 public class DefaultPrimerTrimmer implements PrimerTrimmer{
+    
+    private static final Alignment NULL_ALIGNMENT_OBJECT = new Alignment() {
+        
+        @Override
+        public double getScore() {
+            return 0;
+        }
+        
+        @Override
+        public SequenceAlignment getReferenceAlignment() {
+            return null;
+        }
+        
+        @Override
+        public SequenceAlignment getQueryAlignment() {
+            return null;
+        }
+        
+        @Override
+        public double getMatch() {
+            return 0;
+        }
+        
+        @Override
+        public double getIdentity() {
+            return 0;
+        }
+    };
     /** The substitution matrix to use in the alignment. */
     private final NucleotideSubstitutionMatrix matrix = new NucleotideSubstitutionMatrix.Builder("default")
                                                         .defaultScore(-4)
@@ -56,16 +84,19 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
     
     private final int minLength;
     private final double minMatch;
-    
+    private final boolean alsoCheckReverseCompliment;
     /**
      * @param minLength
      * @param minMatch
      */
     public DefaultPrimerTrimmer(int minLength, double minMatch) {
+        this(minLength, minMatch, true);
+    }
+    public DefaultPrimerTrimmer(int minLength, double minMatch, boolean alsoCheckReverseCompliment) {
         this.minLength = minLength;
         this.minMatch = minMatch;
+        this.alsoCheckReverseCompliment = alsoCheckReverseCompliment;
     }
-
     /**
     * {@inheritDoc}
     */
@@ -76,10 +107,14 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
         for(NucleotideEncodedGlyphs primer : primersToTrimAgainst){
             if(primer.getLength()>=minLength){
                 Alignment forwardAlignment = aligner.alignSequence(sequence, primer);
-                Alignment reverseAlignment = aligner.alignSequence(
-                        new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.reverseCompliment(sequence.decode())),
-                        primer);
-                
+                final Alignment reverseAlignment;
+                if(alsoCheckReverseCompliment){
+                    reverseAlignment = aligner.alignSequence(
+                            new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.reverseCompliment(sequence.decode())),
+                            primer);
+                }else{
+                    reverseAlignment = NULL_ALIGNMENT_OBJECT;
+                }
                 Alignment bestAlignment;
                 if(forwardAlignment.getMatch() > minMatch || reverseAlignment.getMatch() > minMatch){
                     bestAlignment= reverseAlignment.getScore() > forwardAlignment.getScore() ? reverseAlignment : forwardAlignment;

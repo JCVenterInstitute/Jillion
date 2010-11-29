@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.util.List;
 import org.jcvi.auth.JCVIEncodedAuthorizer;
 import org.jcvi.http.HttpGetRequestBuilder;
 import org.jcvi.io.fileServer.ReadWriteFileServer;
@@ -336,12 +335,12 @@ public abstract class JcviTraceFileServer implements TraceFileServer{
             throws IOException {
         return connection.getResponseCode() == HttpURLConnection.HTTP_OK;
     }
-    public InputStream getMultipleFilesAsStream(List<String> ids,
+    public InputStream getMultipleFilesAsStream(Iterable<String> ids,
             final RequestType requestType, final FileType fileType)
             throws IOException {
         return getMultipleFilesAsStream(ids,requestType, fileType, ReturnFormat.JAR);
     }
-    public InputStream getMultipleFilesAsStream(List<String> ids,
+    public InputStream getMultipleFilesAsStream(Iterable<String> ids,
             final RequestType requestType, final FileType fileType, ReturnFormat returnFormat)
             throws IOException {
         return getFileAsStream(new StringUtilities.JoinedStringBuilder(ids)

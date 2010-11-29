@@ -51,7 +51,7 @@ public enum IOLibLikeZTRChromatogramWriter implements ZTRChromatogramWriter{
 	 * get a quality value of 77.
 	 */
 	public static final byte IO_LIB_CONFIDENCE_RUN_LENGTH_GUARD_VALUE = (byte)77;
-	private final DefaultZTRChromatogramWriter writer;
+	private final ZTRChromatogramWriter writer;
 	
 	{
 		//these are the same encoders with the same parameters
