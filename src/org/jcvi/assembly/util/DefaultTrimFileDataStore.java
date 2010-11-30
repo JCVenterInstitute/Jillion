@@ -23,13 +23,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.Range;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
+import org.jcvi.util.CloseableIterator;
 
 /**
  * {@code DefaultTrimFileDataStore} is a implementation
@@ -110,7 +110,7 @@ public class DefaultTrimFileDataStore implements TrimDataStore, TrimFileVisitor{
     * {@inheritDoc}
     */
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return delegate.getIds();
     }
 
@@ -135,7 +135,7 @@ public class DefaultTrimFileDataStore implements TrimDataStore, TrimFileVisitor{
     * {@inheritDoc}
     */
     @Override
-    public Iterator<Range> iterator() {
+    public CloseableIterator<Range> iterator() {
         return delegate.iterator();
     }
 

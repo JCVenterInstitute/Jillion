@@ -24,11 +24,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.zip.ZipInputStream;
 
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.H2BinaryDataStore;
+import org.jcvi.util.CloseableIterator;
 
 /**
  * {@code H2ZipDataStore} is a {@link ZipDataStore}
@@ -90,7 +90,7 @@ public class H2ZipDataStore extends AbstractInMemoryZipDataStore{
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
         return datastore.getIds();
     }

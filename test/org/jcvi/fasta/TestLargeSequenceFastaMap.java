@@ -31,7 +31,7 @@ import org.jcvi.datastore.DataStore;
 public class TestLargeSequenceFastaMap  extends AbstractTestSequenceFastaDataStore {
 
     @Override
-    protected DataStore<NucleotideSequenceFastaRecord> buildSequenceFastaMap(File file)
+    protected DataStore<NucleotideSequenceFastaRecord> parseFile(File file)
             throws IOException {
         return new LargeNucleotideFastaFileDataStore(file);
     }

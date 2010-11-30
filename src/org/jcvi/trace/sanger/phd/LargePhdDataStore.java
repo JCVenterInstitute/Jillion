@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +37,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.AbstractLargeIdIterator;
+import org.jcvi.util.CloseableIterator;
 /**
  * {@code LargePhdDataStore} is a {@link PhdDataStore} implementation
  * to be used a very large phd files or phdballs.  No data contained in this
@@ -100,7 +100,7 @@ public class LargePhdDataStore implements PhdDataStore{
     }
 
     @Override
-    public synchronized Iterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         checkIfClosed();
         try {
             return new PhdIdIterator();
@@ -142,7 +142,7 @@ public class LargePhdDataStore implements PhdDataStore{
     }
 
     @Override
-    public synchronized Iterator<Phd> iterator() {
+    public synchronized CloseableIterator<Phd> iterator() {
         checkIfClosed();
         return new DataStoreIterator<Phd>(this);
     }

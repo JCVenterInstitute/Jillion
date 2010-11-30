@@ -24,7 +24,6 @@
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
@@ -32,6 +31,7 @@ import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
+import org.jcvi.util.CloseableIterator;
 
 public class DefaultNucleotideSffDataStore implements NucleotideDataStore{
 
@@ -83,7 +83,7 @@ public class DefaultNucleotideSffDataStore implements NucleotideDataStore{
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return flowgramDataStore.getIds();
     }
 
@@ -99,7 +99,7 @@ public class DefaultNucleotideSffDataStore implements NucleotideDataStore{
     }
 
     @Override
-    public Iterator<NucleotideEncodedGlyphs> iterator() {
+    public CloseableIterator<NucleotideEncodedGlyphs> iterator() {
         return new DataStoreIterator<NucleotideEncodedGlyphs>(this);
     }
 

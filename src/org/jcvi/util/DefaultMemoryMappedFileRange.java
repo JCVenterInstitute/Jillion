@@ -23,7 +23,6 @@
  */
 package org.jcvi.util;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -34,7 +33,7 @@ public class DefaultMemoryMappedFileRange implements MemoryMappedFileRange{
     Map<String, Range> ranges;
     
     public DefaultMemoryMappedFileRange(){
-        //presevers insertion order
+        //preserves insertion order
         ranges = new LinkedHashMap<String, Range>();
     }
     
@@ -59,8 +58,8 @@ public class DefaultMemoryMappedFileRange implements MemoryMappedFileRange{
     }
 
     @Override
-    public Iterator<String> getIds() {
-        return ranges.keySet().iterator();
+    public CloseableIterator<String> getIds() {
+        return CloseableIteratorAdapter.adapt(ranges.keySet().iterator());
     }
 
     @Override

@@ -25,7 +25,6 @@ package org.jcvi.assembly.cas;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.jcvi.assembly.cas.read.CasPlacedRead;
@@ -34,6 +33,7 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.util.CloseableIterator;
 
 public class DefaultCasFileContigDataStore extends AbstractCasFileContigVisitor implements CasContigDataStore<CasContig>{
 
@@ -95,7 +95,7 @@ public class DefaultCasFileContigDataStore extends AbstractCasFileContigVisitor 
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return datastore.getIds();
     }
 
@@ -111,7 +111,7 @@ public class DefaultCasFileContigDataStore extends AbstractCasFileContigVisitor 
     }
 
     @Override
-    public Iterator<CasContig> iterator() {
+    public CloseableIterator<CasContig> iterator() {
         return datastore.iterator();
     }
 

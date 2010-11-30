@@ -25,6 +25,9 @@ package org.jcvi.datastore;
 
 import java.io.Closeable;
 import java.util.Iterator;
+
+import org.jcvi.util.CloseableIterable;
+import org.jcvi.util.CloseableIterator;
 /**
  * A {@code DataStore} is an interface for fetching objects by
  * an id.  How the data in the datastore is stored is implementation
@@ -33,14 +36,14 @@ import java.util.Iterator;
  *
  *
  */
-public interface DataStore<T> extends Closeable,Iterable<T>{
+public interface DataStore<T> extends Closeable,CloseableIterable<T>{
     /**
      * Get all the ids contained in this DataStore.
      * @return an {@link Iterator} of the ids in this datastore.
      * @throws DataStoreException if there is a problem fetching
      * data from this DataStore.
      */
-    Iterator<String> getIds() throws DataStoreException;
+    CloseableIterator<String> getIds() throws DataStoreException;
     /**
      * Get the Object in this datastore with the given id.
      * @param id the id of the object to fetch.

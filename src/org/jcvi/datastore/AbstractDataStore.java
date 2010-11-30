@@ -24,7 +24,8 @@
 package org.jcvi.datastore;
 
 import java.io.IOException;
-import java.util.Iterator;
+
+import org.jcvi.util.CloseableIterator;
 
 public abstract class  AbstractDataStore<T> implements DataStore<T>{
     private boolean isClosed;
@@ -45,7 +46,7 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
     }
     
     @Override
-    public synchronized Iterator<T> iterator() {
+    public synchronized CloseableIterator<T> iterator() {
         return new DataStoreIterator<T>(this);
     }
 
@@ -62,7 +63,7 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
     }
 
     @Override
-    public synchronized Iterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         throwExceptionIfClosed();
         return null;
     }

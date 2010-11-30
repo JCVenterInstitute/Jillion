@@ -23,8 +23,6 @@
  */
 package org.jcvi.util;
 
-import java.util.Iterator;
-
 import org.jcvi.Range;
 
 public interface MemoryMappedFileRange {
@@ -36,5 +34,5 @@ public interface MemoryMappedFileRange {
     
     void close();
     int size();
-    Iterator<String> getIds();
+    CloseableIterator<String> getIds();
 }

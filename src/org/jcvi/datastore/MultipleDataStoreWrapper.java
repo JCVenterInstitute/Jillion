@@ -32,8 +32,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.commons.collections.IteratorUtils;
+import org.jcvi.util.ChainedCloseableIterator;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 /**
  * {@code MultipleDataStoreWrapper} is a special proxy to wrap
  * several DataStore instances behind a single iterface.  This
@@ -112,13 +113,15 @@ public class MultipleDataStoreWrapper<T, D extends DataStore<T>> implements Invo
         if(int.class.equals(returnType)){
             return handleSumMethod(method, args);
         }
-        if(Iterator.class.equals(returnType)){
+        if(Iterator.class.isAssignableFrom(returnType)){
             return handleIterator(method, args);
         }
         return returnFirstValidResult(method, args);
         
       
     }
+    
+   
     /**
      * Special case to handle gets where we will check
      * if the delegate contains the id before we try
@@ -159,11 +162,16 @@ public class MultipleDataStoreWrapper<T, D extends DataStore<T>> implements Invo
         
     }
     private Object handleIterator(Method method, Object[] args) throws Throwable{
-        List<Iterator<T>> iterators = new ArrayList<Iterator<T>>();
+        List<CloseableIterator<T>> iterators = new ArrayList<CloseableIterator<T>>();
         for(D delegate : delegates){
-            iterators.add((Iterator<T>)(method.invoke(delegate, args)));
+            final Iterator<T> delegateIterator = (Iterator<T>)method.invoke(delegate, args);
+            if(delegateIterator instanceof CloseableIterator){
+                iterators.add((CloseableIterator<T>)delegateIterator);
+            }else{
+                iterators.add(CloseableIteratorAdapter.adapt(delegateIterator));
+            }
         }
-        return IteratorUtils.chainedIterator(iterators);
+        return new ChainedCloseableIterator<T>(iterators);
     }
     private Object handleSumMethod(Method method, Object[] args) throws Throwable {
         int sum=0;

@@ -31,7 +31,6 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.Distance;
@@ -42,6 +41,7 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Library;
 import org.jcvi.sequence.MateOrientation;
+import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.MemoryMappedFileRange;
 
 public class MemoryMappedFragmentDataStore extends AbstractFragmentDataStore{
@@ -121,7 +121,7 @@ public class MemoryMappedFragmentDataStore extends AbstractFragmentDataStore{
     }
 
     @Override
-    public Iterator<String> getIds() {
+    public CloseableIterator<String> getIds() {
         throwErrorIfClosed();
         return fragmentInfomemoryMappedFileRange.getIds();
     }

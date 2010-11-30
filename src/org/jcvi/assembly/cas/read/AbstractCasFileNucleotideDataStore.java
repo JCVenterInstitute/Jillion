@@ -25,7 +25,6 @@ package org.jcvi.assembly.cas.read;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.assembly.cas.AbstractOnePassCasFileVisitor;
@@ -35,6 +34,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.util.CloseableIterator;
 
 public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePassCasFileVisitor implements CasNucleotideDataStore {
 
@@ -92,7 +92,7 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
     }
 
     @Override
-    public synchronized Iterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         checkIsInitialized();
         return delegate.getIds();
     }
@@ -104,7 +104,7 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
     }
 
     @Override
-    public synchronized Iterator<NucleotideEncodedGlyphs> iterator() {
+    public synchronized CloseableIterator<NucleotideEncodedGlyphs> iterator() {
         checkIsInitialized();
         return delegate.iterator();
     }

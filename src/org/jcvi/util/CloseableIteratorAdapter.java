@@ -16,40 +16,68 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 21, 2009
- *
+
+package org.jcvi.util;
+
+import java.io.IOException;
+import java.util.Iterator;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.fasta;
+public class CloseableIteratorAdapter<E> implements CloseableIterator<E>{
 
+    
+    public static <E> CloseableIteratorAdapter<E> adapt(Iterator<E> iterator){
+        return new CloseableIteratorAdapter<E>(iterator);
+    }
+    private final Iterator<E> iterator;
 
-public abstract class AbstractFastaVisitor implements FastaVisitor{
+    /**
+     * @param iterator
+     */
+    private CloseableIteratorAdapter(Iterator<E> iterator) {
+        this.iterator = iterator;
+    }
 
-   
-
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    public void visitEndOfFile() {
+    public void close() throws IOException {
         //no-op
+        if(iterator instanceof CloseableIterator){
+            ((CloseableIterator)iterator).close();
+        }
     }
 
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    public void visitLine(String line) {
-        //no-op
+    public boolean hasNext() {
+        return iterator.hasNext();
     }
 
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    public boolean visitBodyLine(String bodyLine) {
-        return true;
+    public E next() {
+        return iterator.next();
     }
 
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    public boolean visitDefline(String defline) {
-        return true;
-    }
-
-    @Override
-    public void visitFile() {
+    public void remove() {
+        iterator.remove();
         
     }
+    
+    
+    
 }

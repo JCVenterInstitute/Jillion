@@ -31,13 +31,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 
 import org.jcvi.io.IOUtil;
+import org.jcvi.util.CloseableIterator;
 /**
  * {@code AbstractH2EncodedGlyphDataStore} is an {@link DataStore} of
  * {@link EncodedGlyphs}.
@@ -147,7 +147,7 @@ public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends
     
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         try {
             return new IdIterator();
         } catch (SQLException e) {
@@ -197,11 +197,11 @@ public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public CloseableIterator<E> iterator() {
         return new DataStoreIterator<E>(this);
     }
     
-    private class IdIterator implements Iterator<String>{
+    private class IdIterator implements CloseableIterator<String>{
 
         private final ResultSet resultSet;
         private final Object endOfIterator = new Object();
@@ -223,7 +223,7 @@ public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends
         public boolean hasNext() {
             boolean hasNext= nextObject !=endOfIterator;
             if(!hasNext){
-                IOUtil.closeAndIgnoreErrors(resultSet);
+                IOUtil.closeAndIgnoreErrors(this);
             }
             return hasNext;
         }
@@ -242,6 +242,19 @@ public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends
         @Override
         public void remove() {
             throw new UnsupportedOperationException("can not remove");
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void close() throws IOException {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+               throw new IOException("error closing result set",e);
+            }
             
         }
         

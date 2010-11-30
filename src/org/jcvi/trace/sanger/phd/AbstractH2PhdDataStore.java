@@ -22,7 +22,6 @@ package org.jcvi.trace.sanger.phd;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.jcvi.datastore.DataStore;
@@ -32,6 +31,7 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.Glyph;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.util.CloseableIterator;
 
 /**
  * {@code AbstractH2PhdDataStore} is a DataStore of EncodedGlyphs
@@ -60,7 +60,7 @@ public abstract class AbstractH2PhdDataStore<G extends Glyph, E extends EncodedG
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return h2Datastore.getIds();
     }
 
@@ -76,7 +76,7 @@ public abstract class AbstractH2PhdDataStore<G extends Glyph, E extends EncodedG
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public CloseableIterator<E> iterator() {
         return h2Datastore.iterator();
     }
 

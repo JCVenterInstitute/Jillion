@@ -28,6 +28,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -88,8 +90,8 @@ public class TestMultipleDataStoreWrapper {
     
     @Test
     public void iteratorShouldIterateOverAll(){
-        Iterator<String> iter1 = Arrays.asList("one","two").iterator();
-        Iterator<String> iter2 = Arrays.asList("three","four").iterator();
+        CloseableIterator<String> iter1 = CloseableIteratorAdapter.adapt(Arrays.asList("one","two").iterator());
+        CloseableIterator<String> iter2 = CloseableIteratorAdapter.adapt(Arrays.asList("three","four").iterator());
         
         Iterator<String> expectedIterator = Arrays.asList("one","two","three","four").iterator();
         expect(datastore1.iterator()).andReturn(iter1);
@@ -101,6 +103,20 @@ public class TestMultipleDataStoreWrapper {
         }
         assertFalse(actualIterator.hasNext());
         verify(datastore1, datastore2);
+    }
+    
+    @Test
+    public void closingIteratorShouldCloseAllIterators() throws IOException{
+        CloseableIterator<String> iter1 = createMock(CloseableIterator.class);
+        CloseableIterator<String> iter2 = createMock(CloseableIterator.class);
+        iter1.close();
+        iter2.close();
+        expect(datastore1.iterator()).andReturn(iter1);
+        expect(datastore2.iterator()).andReturn(iter2);
+        replay(datastore1, datastore2,iter1,iter2);
+        CloseableIterator<String> actualIterator = sut.iterator();
+        actualIterator.close();       
+        verify(datastore1, datastore2,iter1,iter2);
     }
     @Test
     public void getShouldGetFirstDoesNotContainIdSecondDoes() throws DataStoreException{
@@ -200,4 +216,6 @@ public class TestMultipleDataStoreWrapper {
         verify(mock1);
     
     }
+    
+    
 }

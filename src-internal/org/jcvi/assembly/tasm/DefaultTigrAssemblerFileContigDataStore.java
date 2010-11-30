@@ -22,10 +22,11 @@ package org.jcvi.assembly.tasm;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 /**
  * {@code DefaultTigrAssemblerFileContigDataStore} is an implemenation
@@ -56,14 +57,14 @@ public class DefaultTigrAssemblerFileContigDataStore extends AbstractTigrAssembl
         return contigs.get(id);
     }
     @Override
-    public synchronized Iterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
-        return contigs.keySet().iterator();
+        return CloseableIteratorAdapter.adapt(contigs.keySet().iterator());
     }
     @Override
-    public synchronized Iterator<TigrAssemblerContig> iterator() {
+    public synchronized CloseableIterator<TigrAssemblerContig> iterator() {
         super.iterator();
-        return contigs.values().iterator();
+        return CloseableIteratorAdapter.adapt(contigs.values().iterator());
     }
     @Override
     public synchronized int size() throws DataStoreException {

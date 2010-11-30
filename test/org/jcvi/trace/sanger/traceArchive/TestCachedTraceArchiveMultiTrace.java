@@ -25,9 +25,10 @@ package org.jcvi.trace.sanger.traceArchive;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
 
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -88,7 +89,8 @@ public class TestCachedTraceArchiveMultiTrace {
     
     @Test
     public void iterator(){
-        Iterator<String> expectedIterator = Arrays.asList("one","two","three").iterator();
+        CloseableIterator<String> expectedIterator = CloseableIteratorAdapter.adapt(
+                        Arrays.asList("one","two","three").iterator());
         expect(mockTraceArchive.iterator()).andReturn(expectedIterator);
         replay(mockTraceArchive);
         assertSame(expectedIterator, sut.iterator());

@@ -32,7 +32,7 @@ package org.jcvi.fasta;
 public class LastNucleotideFastaVisitor extends SingleNucleotideFastaVisitor{
 
     @Override
-    protected boolean acceptVisitedFasta() {
+    protected boolean keepParsingFasta() {
         //always accept
         return true;
     }

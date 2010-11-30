@@ -25,6 +25,7 @@ import java.util.Iterator;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.fileServer.DirectoryFileServer;
+import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.FileIterator;
 
 /**
@@ -107,9 +108,9 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
       * {@inheritDoc}
       */
       @Override
-      public Iterator<String> getIds() throws DataStoreException {
+      public CloseableIterator<String> getIds() throws DataStoreException {
           super.getIds();
-          return new Iterator<String>(){
+          return new CloseableIterator(){
               Iterator<File> iter = FileIterator.createNonRecursiveFileIteratorBuilder(
                       fileServer.getRootDir())
                       .build();
@@ -131,6 +132,12 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
             @Override
             public void remove() {
                 iter.remove();
+                
+            }
+
+            @Override
+            public void close() throws IOException {
+                //no-op
                 
             }
               

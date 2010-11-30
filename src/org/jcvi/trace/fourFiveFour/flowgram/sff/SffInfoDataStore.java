@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -43,6 +42,7 @@ import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
+import org.jcvi.util.CloseableIterator;
 
 /**
  * {@code SffInfoDataStore} is an {@link SffDataStore}
@@ -103,7 +103,7 @@ public class SffInfoDataStore implements SffDataStore {
      * {@inheritDoc}
      */
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
        return new IdIterator();
     }
 
@@ -337,7 +337,7 @@ public class SffInfoDataStore implements SffDataStore {
      * {@inheritDoc}
      */
     @Override
-    public Iterator<SFFFlowgram> iterator() {
+    public CloseableIterator<SFFFlowgram> iterator() {
         try {
             return new SffIterator();
         } catch (DataStoreException e) {
@@ -345,7 +345,7 @@ public class SffInfoDataStore implements SffDataStore {
         }
     }
 
-    private class SffIterator implements Iterator<SFFFlowgram>{
+    private class SffIterator implements CloseableIterator<SFFFlowgram>{
         private final Scanner scanner;
         private final Process process;
         private Object endOfStream = new Object();
@@ -392,10 +392,8 @@ public class SffInfoDataStore implements SffDataStore {
         private void updateIterator(){
             try{
                 next = parseSingleSffRecordFrom(scanner);
-            }catch(Exception e){
-                next= endOfStream;
-                scanner.close();
-                process.destroy();
+            }catch(Exception e){                
+                IOUtil.closeAndIgnoreErrors(this);
             }
         }
         /**
@@ -403,12 +401,21 @@ public class SffInfoDataStore implements SffDataStore {
         */
         @Override
         public void remove() {
-            // TODO Auto-generated method stub
+            
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void close() throws IOException {
+            next= endOfStream;
+            scanner.close();
+            process.destroy();
             
         }
         
     }
-    private class IdIterator implements Iterator<String>{
+    private class IdIterator implements CloseableIterator<String>{
         private final Scanner scanner;
         private final Process process;
         IdIterator() throws DataStoreException{
@@ -449,8 +456,7 @@ public class SffInfoDataStore implements SffDataStore {
             
             String id= scanner.next();
             if(!scanner.hasNext()){
-                scanner.close();
-                process.destroy();
+                IOUtil.closeAndIgnoreErrors(this);
             }
             return id;
         }
@@ -460,7 +466,15 @@ public class SffInfoDataStore implements SffDataStore {
         */
         @Override
         public void remove() {
-            // TODO Auto-generated method stub
+            
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void close() throws IOException {
+            scanner.close();
+            process.destroy();
             
         }
         

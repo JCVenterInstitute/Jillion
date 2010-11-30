@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,6 +36,7 @@ import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.AbstractLargeIdIterator;
+import org.jcvi.util.CloseableIterator;
 /**
  * {@code LargeQualityFastaFileDataStore} is an implementation
  * of {@link AbstractQualityFastaFileDataStore} which does not
@@ -88,7 +88,8 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     }
     
     @Override
-    public void visitRecord(String id, String comment, String entireBody) {        
+    public boolean visitRecord(String id, String comment, String entireBody) {
+        return true;
     }
 
     @Override
@@ -126,7 +127,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     }
 
     @Override
-    public synchronized Iterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         checkNotYetClosed();
         try {
             return new LargeFastaIdIterator();
@@ -170,7 +171,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     }
 
     @Override
-    public synchronized Iterator<QualityFastaRecord> iterator() {
+    public synchronized CloseableIterator<QualityFastaRecord> iterator() {
         checkNotYetClosed();
         return new FastaIterator();
     }
@@ -233,8 +234,8 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
         
     }
     
-    private class FastaIterator implements Iterator<QualityFastaRecord>{
-        private final Iterator<String> identifierIterator;
+    private class FastaIterator implements CloseableIterator<QualityFastaRecord>{
+        private final CloseableIterator<String> identifierIterator;
 
         private FastaIterator(){
             try {
@@ -262,6 +263,14 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
              throw new UnsupportedOperationException("can not remove from iterator");
              
          }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void close() throws IOException {
+            identifierIterator.close();
+            
+        }
 
     }
 }

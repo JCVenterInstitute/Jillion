@@ -22,6 +22,7 @@
  * @author dkatzel
  */
 package org.jcvi.fasta;
+
 import org.jcvi.datastore.DataStore;
 /**
  * {@code AbstractFastaFileDataStore} is a {@link DataStore} implementation
@@ -48,14 +49,14 @@ public abstract class AbstractFastaFileDataStore<T extends FastaRecord> implemen
     }
 
     @Override
-    public void visitBodyLine(String bodyLine) {
-        
+    public boolean visitBodyLine(String bodyLine) {
+        return true;
     }
 
     @Override
-    public void visitDefline(String defline) {
-        
+    public boolean visitDefline(String defline) {
+        return true;
     }
-
+    
     
 }

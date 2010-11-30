@@ -25,12 +25,13 @@ package org.jcvi.fasta.fastq;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 public class DefaultFastQDataStore<T extends FastQRecord> implements DataStore<T> {
 
@@ -68,9 +69,9 @@ public class DefaultFastQDataStore<T extends FastQRecord> implements DataStore<T
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         checkNotClosed();
-        return map.keySet().iterator();
+        return CloseableIteratorAdapter.adapt(map.keySet().iterator());
     }
 
     @Override
@@ -81,17 +82,17 @@ public class DefaultFastQDataStore<T extends FastQRecord> implements DataStore<T
     }
 
     @Override
-    public Iterator<T> iterator() {
+    public CloseableIterator<T> iterator() {
         try {
             checkNotClosed();
         } catch (DataStoreException e) {
             throw new IllegalStateException("could not create iterator", e);
         }
-        return map.values().iterator();
+        return CloseableIteratorAdapter.adapt(map.values().iterator());
     }
     
     public static class Builder<T extends FastQRecord> implements org.jcvi.Builder<DefaultFastQDataStore>{
-        private final Map<String, T> map = new HashMap<String, T>();
+        private final Map<String, T> map = new LinkedHashMap<String, T>();
         
         public Builder put(T fastQRecord){
             map.put(fastQRecord.getId(), fastQRecord);

@@ -272,9 +272,9 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
             this.file =file;
         }
         @Override
-        public void visitRecord(String id, String comment, String entireBody) {
+        public boolean visitRecord(String id, String comment, String entireBody) {
             addRead(id,file);
-            
+            return true;
         }
         
     }

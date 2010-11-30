@@ -25,13 +25,14 @@ package org.jcvi.datastore;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.assembly.ace.AbstractAceFileDataStore;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceFileParser;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 public class DefaultAceFileDataStore extends AbstractAceFileDataStore {
 
@@ -69,8 +70,8 @@ public class DefaultAceFileDataStore extends AbstractAceFileDataStore {
         return contigMap.get(contigId);
     }
     @Override
-    public Iterator<String> getIds() {       
-        return contigMap.keySet().iterator();
+    public CloseableIterator<String> getIds() {       
+        return CloseableIteratorAdapter.adapt(contigMap.keySet().iterator());
     }
     @Override
     public int size() {
@@ -82,8 +83,8 @@ public class DefaultAceFileDataStore extends AbstractAceFileDataStore {
         contigMap.clear();
     }
     @Override
-    public Iterator<AceContig> iterator() {
-        return contigMap.values().iterator();
+    public CloseableIterator<AceContig> iterator() {
+        return CloseableIteratorAdapter.adapt(contigMap.values().iterator());
     }
 
 }

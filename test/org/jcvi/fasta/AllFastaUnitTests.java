@@ -36,7 +36,8 @@ import org.junit.runners.Suite.SuiteClasses;
      TestFastaParser.class,
      TestDefaultQualityFastaMap.class,
      
-     TestDefaultSequenceFastaMap.class,
+     TestDefaultSequenceFastaDataStore.class,
+     TestStreamingDefaultSequenceDataStore.class,
      TestLargeSequenceFastaMap.class,
      
      TestDefaultSequenceFastaDataStoreWithNoComment.class,

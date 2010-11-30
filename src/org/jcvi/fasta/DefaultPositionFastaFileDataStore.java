@@ -29,7 +29,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.datastore.DataStore;
@@ -38,6 +37,7 @@ import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.io.IOUtil;
+import org.jcvi.util.CloseableIterator;
 
 public class DefaultPositionFastaFileDataStore extends AbstractPositionFastaFileDataStore{
 
@@ -78,9 +78,9 @@ private void parseFastaFile(File fastaFile) throws FileNotFoundException {
     }
 }
 @Override
-public void visitRecord(String id, String comment, String recordBody) {
+public boolean visitRecord(String id, String comment, String recordBody) {
     map.put(id  , this.getFastaRecordFactory().createFastaRecord(id, comment,recordBody));
-    
+    return true;
 }
 @Override
 public void close() throws IOException {
@@ -104,7 +104,7 @@ public PositionFastaRecord<EncodedGlyphs<ShortGlyph>> get(String id)
     return datastore.get(id);
 }
 @Override
-public Iterator<String> getIds() throws DataStoreException {
+public CloseableIterator<String> getIds() throws DataStoreException {
     return datastore.getIds();
 }
 @Override
@@ -112,7 +112,7 @@ public int size() throws DataStoreException {
     return datastore.size();
 }
 @Override
-public Iterator<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> iterator() {
+public CloseableIterator<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> iterator() {
     return datastore.iterator();
 }
 }

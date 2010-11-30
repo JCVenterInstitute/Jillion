@@ -16,53 +16,69 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jun 23, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.datastore;
+
+package org.jcvi.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.jcvi.util.CloseableIterator;
+import org.apache.commons.collections.IteratorUtils;
+import org.jcvi.io.IOUtil;
 
-public class DataStoreIterator<T> implements CloseableIterator<T>{
-    private final CloseableIterator<String> ids; 
-    private final DataStore<T> dataStore;
-    public DataStoreIterator(DataStore<T> dataStore){
-        this.dataStore =  dataStore;
-        try {
-            ids = dataStore.getIds();
-        } catch (DataStoreException e) {
-            throw new IllegalStateException("could not iterate over ids", e);
-        }
-    }
-    @Override
-    public boolean hasNext() {
-        return ids.hasNext();
-    }
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class ChainedCloseableIterator<E> implements CloseableIterator<E>{
 
-    @Override
-    public T next() {
-        try {
-            return dataStore.get(ids.next());
-        } catch (DataStoreException e) {
-            throw new IllegalStateException("could not get next element", e);
-        }
+    private final List<CloseableIterator<E>> delegates;
+    private final Iterator<E> iterator;
+    
+    /**
+     * @param delegates
+     */
+    public ChainedCloseableIterator(List<CloseableIterator<E>> delegates) {
+        this.delegates = new ArrayList<CloseableIterator<E>>(delegates);
+        this.iterator = IteratorUtils.chainedIterator(this.delegates);
     }
 
-    @Override
-    public void remove() {
-       throw new UnsupportedOperationException("can not remove");
-        
-    }
     /**
     * {@inheritDoc}
     */
     @Override
     public void close() throws IOException {
-        ids.close();
+        for(CloseableIterator<E> delegate : delegates){
+            IOUtil.closeAndIgnoreErrors(delegate);
+        }
         
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean hasNext() {
+        return iterator.hasNext();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public E next() {
+        return iterator.next();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void remove() {
+        iterator.remove();
+        
+    }
+
 }

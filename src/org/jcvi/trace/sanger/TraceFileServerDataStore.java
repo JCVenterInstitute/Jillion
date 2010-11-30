@@ -31,6 +31,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.trace.TraceDataStore;
+import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.FileIterator;
 
 public class TraceFileServerDataStore<T extends SangerTrace> implements TraceDataStore<T> {
@@ -72,7 +73,7 @@ public class TraceFileServerDataStore<T extends SangerTrace> implements TraceDat
     }
 
     @Override
-    public Iterator<T> iterator() {
+    public CloseableIterator<T> iterator() {
         return new DataStoreIterator<T>(this);
     }
 
@@ -83,12 +84,12 @@ public class TraceFileServerDataStore<T extends SangerTrace> implements TraceDat
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return new FileNameIterator();
         
     }
 
-    private class FileNameIterator implements Iterator<String>{
+    private class FileNameIterator implements CloseableIterator<String>{
         Iterator<File> iter = FileIterator.createNonRecursiveFileIteratorBuilder(fileServer.getRootDir())
                                 .build();
         private final int rootPathLength =fileServer.getRootDir().getAbsolutePath().length();
@@ -106,6 +107,15 @@ public class TraceFileServerDataStore<T extends SangerTrace> implements TraceDat
         @Override
         public void remove() {
             iter.remove();
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void close() throws IOException {
+            // no-op
             
         }
         

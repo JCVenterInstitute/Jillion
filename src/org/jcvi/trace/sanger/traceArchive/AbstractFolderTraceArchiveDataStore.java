@@ -23,10 +23,9 @@
  */
 package org.jcvi.trace.sanger.traceArchive;
 
-import java.util.Iterator;
-
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
+import org.jcvi.util.CloseableIterator;
 
 public abstract class AbstractFolderTraceArchiveDataStore implements TraceArchiveDataStore<TraceArchiveTrace> {
 
@@ -70,14 +69,14 @@ public abstract class AbstractFolderTraceArchiveDataStore implements TraceArchiv
 
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return traceArchiveInfo.getIds();
     }
     
     
 
     @Override
-    public Iterator<TraceArchiveTrace> iterator() {
+    public CloseableIterator<TraceArchiveTrace> iterator() {
         return new DataStoreIterator<TraceArchiveTrace>(this);
     }
 

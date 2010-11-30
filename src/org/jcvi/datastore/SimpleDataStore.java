@@ -24,13 +24,15 @@
 package org.jcvi.datastore;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 public class SimpleDataStore<T> extends AbstractDataStore<T> {
 
-    private final Map<String, T> map = new HashMap<String, T>();
+    private final Map<String, T> map = new LinkedHashMap<String, T>();
     public SimpleDataStore(Map<String, T> map){
         this.map.putAll(map);
     }
@@ -45,9 +47,9 @@ public class SimpleDataStore<T> extends AbstractDataStore<T> {
         return map.get(id);
     }
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
-        return map.keySet().iterator();
+        return CloseableIteratorAdapter.adapt(map.keySet().iterator());
     }
     @Override
     public int size() throws DataStoreException {

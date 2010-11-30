@@ -25,11 +25,12 @@ package org.jcvi.trace.sanger.traceArchive;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 public class DefaultTraceArchiveInfo<T extends TraceArchiveRecord> implements TraceArchiveInfo{
     private final Map<String, T> map;
@@ -51,8 +52,8 @@ public class DefaultTraceArchiveInfo<T extends TraceArchiveRecord> implements Tr
     }
 
     @Override
-    public Iterator<String> getIds() {
-        return map.keySet().iterator();
+    public CloseableIterator<String> getIds() {
+        return CloseableIteratorAdapter.adapt(map.keySet().iterator());
     }
 
     @Override
@@ -65,7 +66,7 @@ public class DefaultTraceArchiveInfo<T extends TraceArchiveRecord> implements Tr
     }
 
     @Override
-    public Iterator<TraceArchiveRecord> iterator() {
+    public CloseableIterator<TraceArchiveRecord> iterator() {
         return new DataStoreIterator<TraceArchiveRecord>(this);
     }
 

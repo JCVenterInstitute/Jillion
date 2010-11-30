@@ -22,7 +22,6 @@ package org.jcvi.fasta;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
@@ -31,6 +30,7 @@ import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.Glyph;
+import org.jcvi.util.CloseableIterator;
 
 /**
  * {@code AbstractFastaH2DataStore} is an abstract implementation to the record
@@ -55,23 +55,23 @@ public abstract class AbstractFastaH2DataStore <G extends Glyph, E extends Encod
     * {@inheritDoc}
     */
     @Override
-    public void visitBodyLine(String bodyLine) {
-        
+    public boolean visitBodyLine(String bodyLine) {
+        return true;
     }
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public void visitDefline(String defline) {
-        
+    public boolean visitDefline(String defline) {
+        return true;
     }
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public void visitRecord(String id, String comment, String entireBody) {
+    public boolean visitRecord(String id, String comment, String entireBody) {
         try{
             final boolean accept;
             if(filter instanceof FastXFilter){
@@ -86,6 +86,7 @@ public abstract class AbstractFastaH2DataStore <G extends Glyph, E extends Encod
         catch (DataStoreException e) {
             throw new IllegalStateException("could not insert record into datastore",e);
         }
+        return true;
         
     }
 
@@ -112,7 +113,6 @@ public abstract class AbstractFastaH2DataStore <G extends Glyph, E extends Encod
     public void visitFile() {
         
     }
-
     @Override
     public boolean contains(String id) throws DataStoreException {
         return h2Datastore.contains(id);
@@ -124,7 +124,7 @@ public abstract class AbstractFastaH2DataStore <G extends Glyph, E extends Encod
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return h2Datastore.getIds();
     }
 
@@ -140,7 +140,7 @@ public abstract class AbstractFastaH2DataStore <G extends Glyph, E extends Encod
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public CloseableIterator<E> iterator() {
         return h2Datastore.iterator();
     }
 

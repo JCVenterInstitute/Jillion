@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.concurrent.Semaphore;
 
 import org.jcvi.io.IOUtil;
 /**
@@ -61,42 +62,68 @@ public final class FastaParser {
         }
     }
     /**
+     * Parse the given Fasta file and call the appropriate
+     * visitXXX methods on the given visitor.  This version
+     * will try to acquire this given semaphore
+     * before parsing each fasta record in the file
+     * (or block until a permit has been released).
+     * This is useful if parsing needs to be halted
+     * and restarted where the parser left off. 
+     * @param fastaFile the Fasta file to parse.
+     * @param visitor the visitor to call the visit methods on.
+     * @param semaphore the {@link Semaphore} which 
+     * this parser will try to acquire when parsing each fasta
+     * record.
+     * @throws FileNotFoundException if the given fasta file does not 
+     * exist.
+     * @throws NullPointerException if fastaFile or visitor are null.
+     */
+    public static void blockingParseFasta(File fastaFile, FastaVisitor visitor) throws FileNotFoundException{
+        InputStream in = new FileInputStream(fastaFile);
+        try{
+            parseFasta(in,visitor);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+    }
+    /**
      * Parse the given InputStream of Fasta data and call the appropriate
      * visitXXX methods on the given visitor.
      * @param in the Inputstream of Fasta data to parse.
      * @param visitor the visitor to call the visit methods on.
      * @throws NullPointerException if inputstream or visitor are null.
-     */
+     */    
     public static void parseFasta(InputStream in, FastaVisitor visitor){
         Scanner scanner = new Scanner(in).useDelimiter("\n");
         visitor.visitFile();
         String currentId=null;
         String currentComment=null;
         StringBuilder currentBody=null;
+        boolean keepParsing=true;
         try{
-            while(scanner.hasNextLine()){
+            while(keepParsing && scanner.hasNextLine()){
                 String line = scanner.nextLine();
                 final String lineWithCR = line+"\n";
                 visitor.visitLine(lineWithCR);
                 if(line.startsWith(">")){
-                    if(currentBody!=null){
-                        visitor.visitRecord(currentId, currentComment, currentBody.toString());
+                    if(currentBody!=null){                        
+                        keepParsing = visitor.visitRecord(currentId, currentComment, currentBody.toString());
                         currentBody = null;
-                    }
-                    visitor.visitDefline(line);
+                    }                    
+                    keepParsing = visitor.visitDefline(line);
                     currentId = SequenceFastaRecordUtil.parseIdentifierFromIdLine(line);
                     currentComment = SequenceFastaRecordUtil.parseCommentFromIdLine(line);
                     
                 }
                 else{
-                    visitor.visitBodyLine(line);
+                    keepParsing = visitor.visitBodyLine(line);
                     if(currentBody ==null){
                         currentBody= new StringBuilder();
                     }
                     currentBody.append(lineWithCR);
                 }
             }
-            if(currentBody!=null){
+            if(keepParsing && currentBody!=null){
                 visitor.visitRecord(currentId, currentComment, currentBody.toString());
                 currentBody = null;
             }

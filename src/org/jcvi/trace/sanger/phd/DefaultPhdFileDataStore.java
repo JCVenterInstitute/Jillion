@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -42,6 +41,8 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Peaks;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
     private static final GlyphCodec<PhredQuality> QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
@@ -102,9 +103,9 @@ public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
     }
 
     @Override
-    public synchronized Iterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         checkNotYetClosed();
-        return map.keySet().iterator();
+        return CloseableIteratorAdapter.adapt(map.keySet().iterator());
     }
 
     @Override
