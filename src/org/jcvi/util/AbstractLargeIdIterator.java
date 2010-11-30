@@ -25,16 +25,17 @@ package org.jcvi.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Iterator;
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public abstract class AbstractLargeIdIterator implements Iterator<String>{
+import org.jcvi.io.IOUtil;
+
+public abstract class AbstractLargeIdIterator implements CloseableIterator<String>{
 
     private final Scanner scanner;
     private Object nextObject;
     private final Object endOfIterating = new Object();
-    
     protected AbstractLargeIdIterator(File file) throws FileNotFoundException{
         scanner = createScannerFor(file);
         
@@ -72,6 +73,7 @@ public abstract class AbstractLargeIdIterator implements Iterator<String>{
             updateNextObject();
             return next;
         }
+        IOUtil.closeAndIgnoreErrors(this);
         throw new NoSuchElementException();
     }
 
@@ -80,4 +82,13 @@ public abstract class AbstractLargeIdIterator implements Iterator<String>{
         // TODO Auto-generated method stub
         
     }
+    /**
+     * Closes the scanner used to iterate over the ids.
+     */
+    @Override
+    public void close() throws IOException {
+        scanner.close();
+        
+    }
+    
 }

@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +40,8 @@ import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.trace.sanger.SangerTraceCodec;
 import org.jcvi.trace.sanger.phd.DefaultPhd;
 import org.jcvi.trace.sanger.phd.Phd;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
 
@@ -99,9 +100,9 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         checkInitializedAndOpen();
-        return map.keySet().iterator();
+        return CloseableIteratorAdapter.adapt(map.keySet().iterator());
     }
 
     @Override
@@ -118,7 +119,7 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
     }
 
     @Override
-    public Iterator<Phd> iterator() {
+    public CloseableIterator<Phd> iterator() {
         checkInitializedAndOpen();
         return new DataStoreIterator<Phd>(this);
     }

@@ -27,29 +27,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.AbstractContigFileDataStore;
 import org.jcvi.assembly.contig.DefaultContigFileParser;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 public class DefaultContigFileDataStore extends AbstractContigFileDataStore implements ContigDataStore<PlacedRead, Contig<PlacedRead>>{
-    private final Map<String,Contig<PlacedRead>> contigs;
+    private final Map<String,Contig<PlacedRead>> contigs = new TreeMap<String, Contig<PlacedRead>>();
 
     private boolean isClosed = false;
-    
-    /**
-     * Construct an empty uninitialized Contig File DataStore.
-     */
-    {
-        contigs = new HashMap<String, Contig<PlacedRead>>();
-    }
 
     /**
      * Construct a ContigFileDataStore containing the contig
@@ -111,10 +102,8 @@ public class DefaultContigFileDataStore extends AbstractContigFileDataStore impl
 
 
     @Override
-    public Iterator<String> getIds() {
-        final List<String> sortedIds = new ArrayList<String>(contigs.keySet());
-        Collections.sort(sortedIds);
-        return sortedIds.iterator();
+    public CloseableIterator<String> getIds() {
+        return CloseableIteratorAdapter.adapt(contigs.keySet().iterator());
     }
 
 
@@ -125,7 +114,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileDataStore impl
 
 
     @Override
-    public Iterator<Contig<PlacedRead>> iterator() {
+    public CloseableIterator<Contig<PlacedRead>> iterator() {
         return new DataStoreIterator<Contig<PlacedRead>>(this);
     }
 }

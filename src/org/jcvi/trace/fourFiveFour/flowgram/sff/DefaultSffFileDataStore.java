@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.datastore.DataStoreException;
@@ -39,6 +38,8 @@ import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 public class DefaultSffFileDataStore implements SffDataStore, SffFileVisitor{
 
@@ -106,9 +107,9 @@ public class DefaultSffFileDataStore implements SffDataStore, SffFileVisitor{
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         throwExceptionIfNotInitializedOrClosed();
-        return map.keySet().iterator();
+        return CloseableIteratorAdapter.adapt(map.keySet().iterator());
     }
 
     @Override
@@ -124,7 +125,7 @@ public class DefaultSffFileDataStore implements SffDataStore, SffFileVisitor{
     }
 
     @Override
-    public Iterator<SFFFlowgram> iterator() {
+    public CloseableIterator<SFFFlowgram> iterator() {
         throwExceptionIfNotInitializedOrClosed();
         return new DataStoreIterator<SFFFlowgram>(this);
     }

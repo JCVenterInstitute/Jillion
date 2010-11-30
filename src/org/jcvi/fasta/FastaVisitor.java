@@ -36,13 +36,17 @@ public interface FastaVisitor extends TextFileVisitor{
      * Visit the definition line of the current fasta record.
      * @param defline a string containing all the text of
      * the def line including any comments and white space.
+     * @return {@code true} if the parser should keep parsing
+     * {@code false} if it should stop parsing.
      */
-    void visitDefline(String defline);
+    boolean visitDefline(String defline);
     /**
      * Visit a line of the body of the fasta record.
      * @param bodyLine
+     * @return {@code true} if the parser should keep parsing
+     * {@code false} if it should stop parsing.
      */
-    void visitBodyLine(String bodyLine);
+    boolean visitBodyLine(String bodyLine);
     /**
      * Visit the entire current fasta record which
      * includes information parsed from the most recent 
@@ -53,6 +57,8 @@ public interface FastaVisitor extends TextFileVisitor{
      * if no comment exists.
      * @param entireBody the entire body of the fasta record
      * which might include new lines.
+     * @return {@code true} if the parser should keep parsing
+     * {@code false} if it should stop parsing.
      */
-    void visitRecord(String id, String comment, String entireBody);
+    boolean visitRecord(String id, String comment, String entireBody);
 }

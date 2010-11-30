@@ -24,7 +24,6 @@
 package org.jcvi.trace.sanger.phd;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -35,6 +34,7 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.util.CloseableIterator;
 
 public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileVisitor{
 
@@ -166,7 +166,7 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
 
 
     @Override
-    public Iterator<Phd> iterator() {
+    public CloseableIterator<Phd> iterator() {
         return new DataStoreIterator<Phd>(this);
     }
 

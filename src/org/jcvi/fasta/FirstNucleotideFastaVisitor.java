@@ -33,8 +33,8 @@ public class FirstNucleotideFastaVisitor extends SingleNucleotideFastaVisitor{
 
     
     @Override
-    protected boolean acceptVisitedFasta() {        
-        return getRecord()==null;
+    protected boolean keepParsingFasta() {        
+        return false;
     }
 
 }

@@ -28,7 +28,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,6 +35,7 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.io.IOUtil;
+import org.jcvi.util.CloseableIterator;
 /**
  * {@code DefaultNucleotideFastaFileDataStore} is the default implementation
  * of {@link AbstractNucleotideFastaFileDataStore} which stores
@@ -83,9 +83,9 @@ public class DefaultNucleotideFastaFileDataStore extends AbstractNucleotideFasta
         }
     }
     @Override
-    public void visitRecord(String id, String comment, String recordBody) {
+    public boolean visitRecord(String id, String comment, String recordBody) {
         map.put(id  , this.getFastaRecordFactory().createFastaRecord(id, comment,recordBody));
-        
+        return true;
     }
     @Override
     public void close() throws IOException {
@@ -109,7 +109,7 @@ public class DefaultNucleotideFastaFileDataStore extends AbstractNucleotideFasta
         return datastore.get(id);
     }
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return datastore.getIds();
     }
     @Override
@@ -117,7 +117,7 @@ public class DefaultNucleotideFastaFileDataStore extends AbstractNucleotideFasta
         return datastore.size();
     }
     @Override
-    public Iterator<NucleotideSequenceFastaRecord> iterator() {
+    public CloseableIterator<NucleotideSequenceFastaRecord> iterator() {
         return datastore.iterator();
     }
     

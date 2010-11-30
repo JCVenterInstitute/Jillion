@@ -25,6 +25,7 @@ package org.jcvi.fasta;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
@@ -144,18 +145,43 @@ public abstract class AbstractTestSequenceFastaDataStore {
     }
     
     @Test
-    public void parseFile() throws IOException, DataStoreException{
+    public void parseFileGet() throws IOException, DataStoreException{
         
-        DataStore<NucleotideSequenceFastaRecord> sut = buildSequenceFastaMap(getFile());
-        assertParsedCorrectly(sut);
-    }
-    
-    protected abstract DataStore<NucleotideSequenceFastaRecord> buildSequenceFastaMap(File file) throws IOException;
-    protected void assertParsedCorrectly(DataStore<NucleotideSequenceFastaRecord> sut) throws DataStoreException {
+        DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
         assertEquals(9, sut.size());
         assertEquals(contig_1, sut.get("1"));
         assertEquals(contig_5, sut.get("5"));
         assertEquals(contig_9, sut.get("9"));
     }
+    
+    @Test
+    public void parseFileIdIterator() throws IOException, DataStoreException{
+        
+        DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
+        Iterator<String> iter = sut.getIds();
+        assertTrue(iter.hasNext());
+        for(int i=1; i<=9; i++){
+            assertEquals(""+i, iter.next());
+        }
+        assertFalse(iter.hasNext());
+    }
+    
+    @Test
+    public void parseFileRecordIterator() throws IOException{
+        
+        DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
+        Iterator<NucleotideSequenceFastaRecord> iter = sut.iterator();
+        assertTrue(iter.hasNext());
+        for(int i=1; i<=9; i++){
+            System.out.println(i);
+            final NucleotideSequenceFastaRecord next = iter.next();
+            assertEquals(""+i, next.getIdentifier());
+        }
+        assertFalse(iter.hasNext());
+    }
+    
+    protected abstract DataStore<NucleotideSequenceFastaRecord> parseFile(File file) throws IOException;
+    
+   
     
 }

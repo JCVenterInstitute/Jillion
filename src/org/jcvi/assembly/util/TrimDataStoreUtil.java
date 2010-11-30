@@ -20,11 +20,12 @@
 package org.jcvi.assembly.util;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.jcvi.Range;
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 /**
  * @author dkatzel
@@ -39,8 +40,8 @@ public final class TrimDataStoreUtil {
     public static final TrimDataStore EMPTY_DATASTORE = new TrimDataStore() {
         
         @Override
-        public Iterator<Range> iterator() {
-            return IteratorUtils.emptyIterator();
+        public CloseableIterator<Range> iterator() {
+            return CloseableIteratorAdapter.adapt(IteratorUtils.emptyIterator());
         }
         
         @Override
@@ -55,8 +56,9 @@ public final class TrimDataStoreUtil {
         }
         
         @Override
-        public Iterator<String> getIds() throws DataStoreException {
-            return IteratorUtils.emptyIterator();
+        public CloseableIterator<String> getIds() throws DataStoreException {
+            return CloseableIteratorAdapter.adapt(IteratorUtils.emptyIterator());
+            
         }
         
         @Override

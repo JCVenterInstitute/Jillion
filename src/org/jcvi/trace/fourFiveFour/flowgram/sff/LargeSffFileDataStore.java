@@ -26,6 +26,7 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,6 +38,7 @@ import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
+import org.jcvi.util.CloseableIterator;
 
 public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implements SffDataStore{
 
@@ -78,7 +80,7 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
         SffIdIterator iter = new SffIdIterator();
         InputStream in = null;
@@ -122,12 +124,12 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
    
 
     @Override
-    public Iterator<SFFFlowgram> iterator() {
+    public CloseableIterator<SFFFlowgram> iterator() {
         super.iterator();
         return new DataStoreIterator<SFFFlowgram>(this);
     }
 
-    private static final class SffIdIterator implements SffFileVisitor, Iterator<String>{
+    private static final class SffIdIterator implements SffFileVisitor, CloseableIterator<String>{
         private List<String> ids = new ArrayList<String>();
         private Iterator<String> iter=null;
         @Override
@@ -169,6 +171,15 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
         @Override
         public void remove() {
             iter.remove();            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void close() throws IOException {
+            ids.clear();
+            
         }
         
     }

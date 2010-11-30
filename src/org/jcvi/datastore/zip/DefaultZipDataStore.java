@@ -26,12 +26,12 @@ package org.jcvi.datastore.zip;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
+import org.jcvi.util.CloseableIterator;
 
 /**
  * {@code DefaultZipDataStore} is a default implementation
@@ -80,7 +80,7 @@ public class DefaultZipDataStore implements ZipDataStore{
     }
 
     @Override
-    public Iterator<String> getIds() {
+    public CloseableIterator<String> getIds() {
         return new EntryNameIterator(zipfile.entries());
     }
 
@@ -95,11 +95,11 @@ public class DefaultZipDataStore implements ZipDataStore{
     }
 
     @Override
-    public Iterator<InputStream> iterator() {
+    public CloseableIterator<InputStream> iterator() {
         return new DataStoreIterator<InputStream>(this);
     }
     
-    private static final class EntryNameIterator<E extends ZipEntry> implements Iterator<String>{
+    private static final class EntryNameIterator<E extends ZipEntry> implements CloseableIterator<String>{
         private Enumeration<E> entryEnumerator;
         private EntryNameIterator(Enumeration<E> entryEnumerator){
             this.entryEnumerator = entryEnumerator;
@@ -115,6 +115,14 @@ public class DefaultZipDataStore implements ZipDataStore{
         @Override
         public void remove() {
             throw new UnsupportedOperationException("can not remove elements from Enumeration");
+            
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void close() throws IOException {
+            //no-op
             
         }
         

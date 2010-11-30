@@ -28,13 +28,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.assembly.contig.DefaultContigFileParser;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
+import org.jcvi.util.CloseableIterator;
 
 public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileDataStore implements AceContigDataStore{
 
@@ -73,7 +73,7 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return dataStore.getIds();
     }
 
@@ -89,7 +89,7 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     }
 
     @Override
-    public Iterator<AceContig> iterator() {
+    public CloseableIterator<AceContig> iterator() {
         return dataStore.iterator();
     }
 

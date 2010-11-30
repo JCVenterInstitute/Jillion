@@ -25,12 +25,12 @@
 package org.jcvi.glyph.nuc.datastore;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.util.CloseableIterator;
 
 
 /**
@@ -79,7 +79,7 @@ public class NucleotideDataStoreAdapter implements NucleotideDataStore
      * @see org.jcvi.datastore.DataStore#getIds()
      */
     @Override
-    public Iterator<String> getIds() throws DataStoreException
+    public CloseableIterator<String> getIds() throws DataStoreException
     {
         return datastore.getIds();
     }
@@ -106,7 +106,7 @@ public class NucleotideDataStoreAdapter implements NucleotideDataStore
      * @see java.lang.Iterable#iterator()
      */
     @Override
-    public Iterator<NucleotideEncodedGlyphs> iterator()
+    public CloseableIterator<NucleotideEncodedGlyphs> iterator()
     {
         return this.datastore.iterator();
     }

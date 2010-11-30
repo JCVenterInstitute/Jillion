@@ -16,32 +16,16 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 20, 2009
- *
+
+package org.jcvi.util;
+
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.fasta;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.jcvi.datastore.DataStoreException;
-import org.junit.Test;
-
-public class TestDefaultSequenceFastaMap extends AbstractTestSequenceFastaDataStore {
-
-    @Test
-    public void parseStream() throws DataStoreException, IOException{
-        DefaultNucleotideFastaFileDataStore sut = new DefaultNucleotideFastaFileDataStore();
-        FastaParser.parseFasta(getFile(),sut);
-        assertParsedCorrectly(sut);
-    }
-
+public interface CloseableIterable<T> extends Iterable<T>{
     @Override
-    protected DefaultNucleotideFastaFileDataStore buildSequenceFastaMap(File file)
-            throws IOException {
-        return new DefaultNucleotideFastaFileDataStore(file);
-    }
-    
+    CloseableIterator<T> iterator();
 }

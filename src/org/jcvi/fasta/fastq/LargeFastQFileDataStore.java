@@ -25,7 +25,6 @@ package org.jcvi.fasta.fastq;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Iterator;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,6 +35,7 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.util.AbstractLargeIdIterator;
+import org.jcvi.util.CloseableIterator;
 /**
  * {@code LargeFastQFileDataStore} is a {@link FastQDataStore} implementation
  * to be used a very large FastQ Files.  No data contained in this
@@ -85,7 +85,7 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         throwExceptionIfClosed();
         try {
             return new FastQIdIterator();

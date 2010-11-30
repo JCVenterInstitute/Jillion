@@ -20,11 +20,11 @@
 package org.jcvi.assembly.util;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jcvi.Range;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.util.CloseableIterator;
 
 /**
  * {@code TrimDataStoreAdatper} wraps
@@ -84,7 +84,7 @@ public class TrimDataStoreAdatper implements TrimDataStore{
     * {@inheritDoc}
     */
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return delegate.getIds();
     }
 
@@ -109,7 +109,7 @@ public class TrimDataStoreAdatper implements TrimDataStore{
     * {@inheritDoc}
     */
     @Override
-    public Iterator<Range> iterator() {
+    public CloseableIterator<Range> iterator() {
         return delegate.iterator();
     }
 

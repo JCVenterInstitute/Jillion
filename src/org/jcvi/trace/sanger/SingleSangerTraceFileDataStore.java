@@ -22,7 +22,6 @@ package org.jcvi.trace.sanger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -30,6 +29,8 @@ import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.trace.TraceDataStore;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 /**
  * @author dkatzel
@@ -73,9 +74,9 @@ public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrac
     * {@inheritDoc}
     */
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
-        return IteratorUtils.singletonIterator(id);
+        return CloseableIteratorAdapter.adapt(IteratorUtils.singletonIterator(id));
     }
 
     /**

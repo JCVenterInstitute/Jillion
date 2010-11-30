@@ -24,10 +24,10 @@
 package org.jcvi.trace.sanger.traceArchive;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.LRUCache;
 /**
  * {@code CachedTraceArchiveDataStore} is a {@link TraceArchiveDataStore}
@@ -82,12 +82,12 @@ public class CachedTraceArchiveDataStore implements TraceArchiveDataStore<TraceA
     }
 
     @Override
-    public Iterator<TraceArchiveTrace> iterator() {
+    public CloseableIterator<TraceArchiveTrace> iterator() {
         return traceArchiveDataStore.iterator();
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return traceArchiveDataStore.getIds();
     }
 

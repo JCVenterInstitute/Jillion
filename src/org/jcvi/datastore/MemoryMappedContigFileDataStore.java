@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.Contig;
@@ -35,6 +34,7 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.AbstractContigFileDataStore;
 import org.jcvi.assembly.contig.DefaultContigFileParser;
 import org.jcvi.io.IOUtil;
+import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.DefaultMemoryMappedFileRange;
 import org.jcvi.util.MemoryMappedFileRange;
 
@@ -78,7 +78,7 @@ public class MemoryMappedContigFileDataStore implements ContigDataStore<PlacedRe
     }
     
     @Override
-    public Iterator<String> getIds() {
+    public CloseableIterator<String> getIds() {
         return mappedRanges.getIds();
     }
     @Override
@@ -136,7 +136,7 @@ public class MemoryMappedContigFileDataStore implements ContigDataStore<PlacedRe
 
 
     @Override
-    public Iterator<Contig<PlacedRead>> iterator() {
+    public CloseableIterator<Contig<PlacedRead>> iterator() {
         return new DataStoreIterator<Contig<PlacedRead>>(this);
     }
     

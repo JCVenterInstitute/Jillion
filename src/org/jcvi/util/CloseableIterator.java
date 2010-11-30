@@ -16,35 +16,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Nov 11, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.fasta;
+
+package org.jcvi.util;
+
+import java.io.Closeable;
+import java.util.Iterator;
 
 /**
- * {@code SingleNucleotideFastaVisitor} is a {@link FastaVisitor}
- * that only accepts at most one FastaRecord.
  * @author dkatzel
  *
  *
  */
-public abstract class SingleNucleotideFastaVisitor extends AbstractNucleotideFastaVisitor{
-
-    private NucleotideSequenceFastaRecord record=null;
-    @Override
-    protected synchronized boolean visitNucleotideFastaRecord(
-            NucleotideSequenceFastaRecord fastaRecord) {
-        //only accept first record
-        record = fastaRecord;        
-        return keepParsingFasta();
-    }
-    protected abstract boolean keepParsingFasta();
-    public synchronized NucleotideSequenceFastaRecord getRecord() {
-        return record;
-    }
-    
-    
+public interface CloseableIterator<E> extends Closeable, Iterator<E>{
 
 }

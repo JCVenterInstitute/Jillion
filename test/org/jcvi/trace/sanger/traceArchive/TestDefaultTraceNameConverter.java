@@ -31,6 +31,7 @@ import java.util.NoSuchElementException;
 import java.util.Map.Entry;
 
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.util.CloseableIteratorAdapter;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -63,7 +64,7 @@ public class TestDefaultTraceNameConverter {
             mockTraceRecords.add(mockRecord);
             replay(mockRecord);
         }
-        expect(mockTraceArchiveInfo.iterator()).andReturn(mockTraceRecords.iterator());
+        expect(mockTraceArchiveInfo.iterator()).andReturn(CloseableIteratorAdapter.adapt(mockTraceRecords.iterator()));
         expect(mockTraceArchiveInfo.size()).andReturn(EXPECTED_MAPPING.size());
         replay(mockTraceArchiveInfo,traceIdGenerator);
         sut = new DefaultTraceNameConverter(mockTraceArchiveInfo, traceIdGenerator);

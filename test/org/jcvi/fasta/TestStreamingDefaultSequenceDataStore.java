@@ -16,35 +16,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Nov 11, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.fasta;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.jcvi.io.IOUtil;
+
 /**
- * {@code SingleNucleotideFastaVisitor} is a {@link FastaVisitor}
- * that only accepts at most one FastaRecord.
  * @author dkatzel
  *
  *
  */
-public abstract class SingleNucleotideFastaVisitor extends AbstractNucleotideFastaVisitor{
+public class TestStreamingDefaultSequenceDataStore extends TestDefaultSequenceFastaDataStore{
 
-    private NucleotideSequenceFastaRecord record=null;
     @Override
-    protected synchronized boolean visitNucleotideFastaRecord(
-            NucleotideSequenceFastaRecord fastaRecord) {
-        //only accept first record
-        record = fastaRecord;        
-        return keepParsingFasta();
+    protected DefaultNucleotideFastaFileDataStore parseFile(File file)
+            throws IOException {
+        InputStream in =null;
+        try{
+            in = new FileInputStream(file);
+            DefaultNucleotideFastaFileDataStore datastore = new DefaultNucleotideFastaFileDataStore();
+            FastaParser.parseFasta(in, datastore);
+            return datastore;
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
     }
-    protected abstract boolean keepParsingFasta();
-    public synchronized NucleotideSequenceFastaRecord getRecord() {
-        return record;
-    }
-    
-    
 
 }

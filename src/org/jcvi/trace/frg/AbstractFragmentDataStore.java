@@ -25,7 +25,6 @@ package org.jcvi.trace.frg;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.Distance;
@@ -34,6 +33,7 @@ import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.sequence.DefaultLibrary;
 import org.jcvi.sequence.Library;
 import org.jcvi.sequence.MateOrientation;
+import org.jcvi.util.CloseableIterator;
 
 public abstract class AbstractFragmentDataStore implements Frg2Visitor, FragmentDataStore{
 
@@ -93,7 +93,7 @@ public abstract class AbstractFragmentDataStore implements Frg2Visitor, Fragment
         
     }
     @Override
-    public Iterator<Fragment> iterator() {
+    public CloseableIterator<Fragment> iterator() {
         throwErrorIfClosed();
         return new DataStoreIterator<Fragment>(this);
     }

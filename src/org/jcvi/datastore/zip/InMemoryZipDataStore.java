@@ -30,12 +30,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 /**
  * An {@code InMemoryZipDataStore} is a {@link ZipDataStore} implementation
  * that unzips the given
@@ -112,9 +113,9 @@ public class InMemoryZipDataStore extends AbstractInMemoryZipDataStore{
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
-        return contents.keySet().iterator();
+        return CloseableIteratorAdapter.adapt(contents.keySet().iterator());
     }
 
     @Override

@@ -24,12 +24,12 @@
 package org.jcvi.fasta.fastq;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.util.CloseableIterator;
 
 public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQRecord>{
 
@@ -68,7 +68,7 @@ public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQR
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return dataStore.getIds();
     }
 
@@ -83,7 +83,7 @@ public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQR
     }
 
     @Override
-    public Iterator<FastQRecord> iterator() {
+    public CloseableIterator<FastQRecord> iterator() {
         return dataStore.iterator();
     }
 }

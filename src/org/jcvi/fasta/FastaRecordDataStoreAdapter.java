@@ -24,11 +24,10 @@
 package org.jcvi.fasta;
 
 import java.io.IOException;
-import java.util.Iterator;
-
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
+import org.jcvi.util.CloseableIterator;
 /**
  * {@code FastaRecordDataStoreAdapter} adapts a {@link DataStore} of {@link FastaRecord}s
  * into a {@link DataStore} of the value returned by {@link FastaRecord#getValues()}.
@@ -64,7 +63,7 @@ public class FastaRecordDataStoreAdapter<T,F extends FastaRecord<T>> implements 
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return delegate.getIds();
     }
 
@@ -80,7 +79,7 @@ public class FastaRecordDataStoreAdapter<T,F extends FastaRecord<T>> implements 
     }
 
     @Override
-    public Iterator<T> iterator() {
+    public CloseableIterator<T> iterator() {
         return new DataStoreIterator<T>(this);
     }
     

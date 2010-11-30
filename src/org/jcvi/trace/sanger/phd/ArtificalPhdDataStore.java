@@ -25,7 +25,6 @@ package org.jcvi.trace.sanger.phd;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.jcvi.datastore.AbstractDataStore;
@@ -34,6 +33,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.util.CloseableIterator;
 import org.joda.time.DateTime;
 /**
  * {@code ArtificialPhdDataStore} is a {@link DataStore} of
@@ -85,7 +85,7 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
         return seqDataStore.getIds();
     }

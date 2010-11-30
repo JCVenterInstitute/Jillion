@@ -25,13 +25,13 @@
 package org.jcvi.glyph.phredQuality.datastore;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.util.CloseableIterator;
 
 /**
  * A <code>QualityDataStoreAdapter</code> adapts the heavily parameterized
@@ -79,7 +79,7 @@ public class QualityDataStoreAdapter implements QualityDataStore
      * @see org.jcvi.datastore.DataStore#getIds()
      */
     @Override
-    public Iterator<String> getIds() throws DataStoreException
+    public CloseableIterator<String> getIds() throws DataStoreException
     {
         return datastore.getIds();
     }
@@ -106,7 +106,7 @@ public class QualityDataStoreAdapter implements QualityDataStore
      * @see java.lang.Iterable#iterator()
      */
     @Override
-    public Iterator<EncodedGlyphs<PhredQuality>> iterator()
+    public CloseableIterator<EncodedGlyphs<PhredQuality>> iterator()
     {
         return this.datastore.iterator();
     }

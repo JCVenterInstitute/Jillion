@@ -27,11 +27,11 @@ package org.jcvi.fasta;
 public abstract class AbstractNucleotideFastaVisitor extends AbstractFastaVisitor{
 
     @Override
-    public void visitRecord(String id, String comment, String sequence) {
-        visitNucleotideFastaRecord(
+    public boolean visitRecord(String id, String comment, String sequence) {
+        return visitNucleotideFastaRecord(
                 new DefaultEncodedNucleotideFastaRecord(id, comment, sequence.replace("\\s+", "")));
     }
     
-    protected abstract void visitNucleotideFastaRecord(NucleotideSequenceFastaRecord fastaRecord);
+    protected abstract boolean visitNucleotideFastaRecord(NucleotideSequenceFastaRecord fastaRecord);
 
 }

@@ -24,7 +24,6 @@
 package org.jcvi.trace.frg;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.jcvi.Range;
@@ -33,6 +32,8 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Library;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 public class DefaultFragmentDataStore extends AbstractFragmentDataStore{
     
@@ -113,9 +114,9 @@ public class DefaultFragmentDataStore extends AbstractFragmentDataStore{
     }
 
     @Override
-    public Iterator<String> getIds() {
+    public CloseableIterator<String> getIds() {
         throwErrorIfClosed();
-        return fragments.keySet().iterator();
+        return CloseableIteratorAdapter.adapt(fragments.keySet().iterator());
     }
 
     @Override

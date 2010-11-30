@@ -21,13 +21,13 @@ package org.jcvi.trace.sanger.phd;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.trace.TraceDataStore;
 import org.jcvi.trace.sanger.FileSangerTrace;
+import org.jcvi.util.CloseableIterator;
 import org.joda.time.DateTime;
 
 /**
@@ -63,7 +63,7 @@ public class PhdSangerTraceDataStoreAdapter<S extends FileSangerTrace> implement
         }
     }
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return delegate.getIds();
     }
     @Override
@@ -76,7 +76,7 @@ public class PhdSangerTraceDataStoreAdapter<S extends FileSangerTrace> implement
         
     }
     @Override
-    public Iterator<Phd> iterator() {
+    public CloseableIterator<Phd> iterator() {
         return new DataStoreIterator<Phd>(this);
     }
     

@@ -31,6 +31,8 @@ import org.apache.commons.collections.IteratorUtils;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 public abstract class AbstractArtificialDataStoreFromContig<T> extends AbstractDataStore<T>{
 
@@ -66,13 +68,13 @@ public abstract class AbstractArtificialDataStoreFromContig<T> extends AbstractD
 
     protected abstract T createArtificalTypefor(PlacedRead read);
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
         List<Iterator<String>> iterators = new ArrayList<Iterator<String>>();
         for(Contig contig : contigs){
             iterators.add(new ContigReadIdIterator(contig));
         }
-        return IteratorUtils.chainedIterator(iterators);
+        return CloseableIteratorAdapter.adapt(IteratorUtils.chainedIterator(iterators));
     }
 
     @Override

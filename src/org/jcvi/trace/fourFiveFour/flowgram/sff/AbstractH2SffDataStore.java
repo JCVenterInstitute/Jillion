@@ -26,7 +26,6 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
@@ -35,6 +34,7 @@ import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.Glyph;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
+import org.jcvi.util.CloseableIterator;
 /**
  * {@code AbstractH2SffDataStore} is an abstract implementation
  * of a {@link DataStore} of {@link EncodedGlyphs} from an {@link SffDataStore}.
@@ -110,7 +110,7 @@ public abstract class AbstractH2SffDataStore<G extends Glyph, E extends EncodedG
         return datastore.get(id);
     }
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return datastore.getIds();
     }
     @Override
@@ -123,7 +123,7 @@ public abstract class AbstractH2SffDataStore<G extends Glyph, E extends EncodedG
         
     }
     @Override
-    public Iterator<E> iterator() {
+    public CloseableIterator<E> iterator() {
         return datastore.iterator();
     }
     @Override

@@ -43,6 +43,7 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.util.CloseableIterator;
 
 public class DefaultCasFileQualityDataStore extends AbstractOnePassCasFileVisitor implements CasQualityDataStore {
 
@@ -135,7 +136,7 @@ public class DefaultCasFileQualityDataStore extends AbstractOnePassCasFileVisito
     }
 
     @Override
-    public synchronized Iterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         checkIsInitialized();
         return delegate.getIds();
     }
@@ -147,7 +148,7 @@ public class DefaultCasFileQualityDataStore extends AbstractOnePassCasFileVisito
     }
 
     @Override
-    public synchronized Iterator<EncodedGlyphs<PhredQuality>> iterator() {
+    public synchronized CloseableIterator<EncodedGlyphs<PhredQuality>> iterator() {
         checkIsInitialized();
         return delegate.iterator();
     }

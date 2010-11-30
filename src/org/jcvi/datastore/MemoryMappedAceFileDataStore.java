@@ -26,13 +26,13 @@ package org.jcvi.datastore;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.ace.AbstractAceFileDataStore;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceFileParser;
 import org.jcvi.io.IOUtil;
+import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.DefaultMemoryMappedFileRange;
 import org.jcvi.util.MemoryMappedFileRange;
 
@@ -98,7 +98,7 @@ public class MemoryMappedAceFileDataStore extends AbstractAceFileDataStore{
     }
 
     @Override
-    public Iterator<String> getIds() {
+    public CloseableIterator<String> getIds() {
         return memoryMappedFileRange.getIds();
     }
 
@@ -116,7 +116,7 @@ public class MemoryMappedAceFileDataStore extends AbstractAceFileDataStore{
     
 
     @Override
-    public Iterator<AceContig> iterator() {
+    public CloseableIterator<AceContig> iterator() {
         return new DataStoreIterator<AceContig>(this);
     }
 }

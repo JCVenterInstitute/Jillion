@@ -155,7 +155,7 @@ public class Fasta2Fastq {
             FastaVisitor visitor = new AbstractFastaVisitor() {
                 
                 @Override
-                public void visitRecord(String id, String comment, String entireBody) {
+                public boolean visitRecord(String id, String comment, String entireBody) {
                     try {
                         if(filter.accept(id, comment)){
                             EncodedGlyphs<PhredQuality> qualities =qualityDataStore.get(id);
@@ -170,6 +170,7 @@ public class Fasta2Fastq {
                     } catch (DataStoreException e) {
                         throw new IllegalStateException("error getting quality data for "+ id);
                     }
+                    return true;
                     
                 }
             };

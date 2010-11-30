@@ -133,7 +133,7 @@ public class SortedFasta2Fastq {
             FastaVisitor qualVisitor = new AbstractFastaVisitor() {
                 
                 @Override
-                public void visitRecord(String id, String comment, String entireBody) {
+                public boolean visitRecord(String id, String comment, String entireBody) {
                     if(getFilter().accept(id)){
                         try {
                             getQueue().put(QualityFastaRecordUtil.buildFastaRecord(id, comment, entireBody));
@@ -142,6 +142,7 @@ public class SortedFasta2Fastq {
                             e.printStackTrace();
                         }
                     }
+                    return true;
                 }
                 
 
@@ -179,7 +180,7 @@ public class SortedFasta2Fastq {
         public void run() {
             FastaVisitor seqVisitor = new AbstractFastaVisitor() {
                 @Override
-                public void visitRecord(String id, String comment, String entireBody) {
+                public boolean visitRecord(String id, String comment, String entireBody) {
                     if(getFilter().accept(id)){
                         try {
                             getQueue().put(new DefaultEncodedNucleotideFastaRecord(id, comment, entireBody));
@@ -188,6 +189,7 @@ public class SortedFasta2Fastq {
                             e.printStackTrace();
                         }
                     }
+                    return true;
                 }
                 @Override
                 public void visitEndOfFile() {

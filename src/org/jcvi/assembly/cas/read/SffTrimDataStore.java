@@ -21,7 +21,6 @@ package org.jcvi.assembly.cas.read;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.Range;
@@ -32,6 +31,8 @@ import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadData;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadHeader;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffFileVisitor;
+import org.jcvi.util.CloseableIterator;
+import org.jcvi.util.CloseableIteratorAdapter;
 
 /**
  * @author dkatzel
@@ -61,8 +62,8 @@ public class SffTrimDataStore implements TrimDataStore, SffFileVisitor{
     * {@inheritDoc}
     */
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
-        return trimRanges.keySet().iterator();
+    public CloseableIterator<String> getIds() throws DataStoreException {
+        return CloseableIteratorAdapter.adapt(trimRanges.keySet().iterator());
     }
 
     /**
@@ -86,8 +87,8 @@ public class SffTrimDataStore implements TrimDataStore, SffFileVisitor{
     * {@inheritDoc}
     */
     @Override
-    public Iterator<Range> iterator() {
-        return trimRanges.values().iterator();
+    public CloseableIterator<Range> iterator() {
+        return CloseableIteratorAdapter.adapt(trimRanges.values().iterator());
     }
 
    

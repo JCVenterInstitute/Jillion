@@ -26,7 +26,6 @@ package org.jcvi.fasta.fastq;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
@@ -36,6 +35,7 @@ import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.Glyph;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.util.CloseableIterator;
 
 public abstract class AbstractH2FastQDataStore<G extends Glyph, E extends EncodedGlyphs<G>> implements DataStore<E>, FastQFileVisitor{
     private final AbstractH2EncodedGlyphDataStore<G, E> datastore;
@@ -73,7 +73,7 @@ public abstract class AbstractH2FastQDataStore<G extends Glyph, E extends Encode
         return datastore.get(id);
     }
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return datastore.getIds();
     }
     @Override
@@ -86,7 +86,7 @@ public abstract class AbstractH2FastQDataStore<G extends Glyph, E extends Encode
         
     }
     @Override
-    public Iterator<E> iterator() {
+    public CloseableIterator<E> iterator() {
         return datastore.iterator();
     }
 

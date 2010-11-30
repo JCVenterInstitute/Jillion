@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -41,6 +40,7 @@ import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.ByteBufferInputStream;
+import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.DefaultMemoryMappedFileRange;
 import org.jcvi.util.MemoryMappedFileRange;
 
@@ -141,7 +141,7 @@ public class MemoryMappedPhdFileDataStore extends AbstractPhdFileDataStore{
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         checkIfNotYetInitialized();
         return recordLocations.getIds();
     }

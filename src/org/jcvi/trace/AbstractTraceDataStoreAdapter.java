@@ -24,11 +24,11 @@
 package org.jcvi.trace;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
+import org.jcvi.util.CloseableIterator;
 
 public abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implements DataStore<T> {
 
@@ -53,7 +53,7 @@ public abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implemen
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return delegate.getIds();
     }
 
@@ -69,7 +69,7 @@ public abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implemen
     }
 
     @Override
-    public Iterator<T> iterator() {
+    public CloseableIterator<T> iterator() {
         return new DataStoreIterator<T>(this);
     }
 }

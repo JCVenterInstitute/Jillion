@@ -24,7 +24,6 @@
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
@@ -36,6 +35,7 @@ import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
+import org.jcvi.util.CloseableIterator;
 
 public class QualitySffDataStore implements QualityDataStore{
 
@@ -73,7 +73,7 @@ public class QualitySffDataStore implements QualityDataStore{
     }
 
     @Override
-    public Iterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> getIds() throws DataStoreException {
         return flowgramDataStore.getIds();
     }
 
@@ -89,7 +89,7 @@ public class QualitySffDataStore implements QualityDataStore{
     }
 
     @Override
-    public Iterator<EncodedGlyphs<PhredQuality>> iterator() {
+    public CloseableIterator<EncodedGlyphs<PhredQuality>> iterator() {
         return new DataStoreIterator<EncodedGlyphs<PhredQuality>>(this);
     }
 

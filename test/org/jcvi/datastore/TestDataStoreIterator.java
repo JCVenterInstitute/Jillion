@@ -26,20 +26,20 @@ package org.jcvi.datastore;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.jcvi.util.CloseableIterator;
 import org.junit.Before;
 import org.junit.Test;
 public class TestDataStoreIterator {
     private DataStore<Object> mockDataStore;
-    private Iterator<String> mockIterator;
+    private CloseableIterator<String> mockIterator;
     
     private DataStoreIterator<Object> sut;
     @Before
     public void setup() throws DataStoreException{
         mockDataStore = createMock(DataStore.class);
-        mockIterator = createMock(Iterator.class);
+        mockIterator = createMock(CloseableIterator.class);
         expect(mockDataStore.getIds()).andReturn(mockIterator);
         replay(mockDataStore);
         sut = new DataStoreIterator<Object>(mockDataStore);
