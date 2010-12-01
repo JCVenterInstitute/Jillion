@@ -19,13 +19,22 @@
 
 package org.jcvi.util;
 
+import java.util.Iterator;
+
 
 /**
+ * {@code CloseableIterable} is an {@link Iterable}
+ * implementation that returns a {@link CloseableIterator}
+ * instance instead of just an {@link Iterator}.
  * @author dkatzel
  *
  *
  */
 public interface CloseableIterable<T> extends Iterable<T>{
+	/**
+	 * Get a {@link CloseableIterator}.
+	 * @return an instance of {@link CloseableIterator}.
+	 */
     @Override
     CloseableIterator<T> iterator();
 }

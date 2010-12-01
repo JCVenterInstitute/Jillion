@@ -6,7 +6,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jcvi.glyph.GlyphCodec;
 
@@ -15,6 +14,7 @@ import org.jcvi.glyph.GlyphCodec;
  * of {@link GlyphCodec} that can converts {@link AminoAcid}s
  * into a 1 byte representation. 
  * @author naxelrod
+ * @author dkatzel
  *
  */
 public final class DefaultAminoAcidGlyphCodec implements GlyphCodec<AminoAcid> {
@@ -23,29 +23,11 @@ public final class DefaultAminoAcidGlyphCodec implements GlyphCodec<AminoAcid> {
     private static final Map<AminoAcid, Byte> GLYPH_TO_BYTE_MAP = new EnumMap<AminoAcid, Byte>(AminoAcid.class);
 
 	static{
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Isoleucine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Leucine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Lysine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Methionine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Phenylalanine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Threonine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Tryptophan.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Valine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Cysteine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Glutamine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Glycine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Proline.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Serine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Tyrosine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Arginine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Histidine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Alanine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Asparagine.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Aspartic_Acid.getAbbreviation().toString()), AminoAcid.Alanine);
-		BYTE_TO_GLYPH_MAP.put(Byte.valueOf(AminoAcid.Glutamic_Acid.getAbbreviation().toString()), AminoAcid.Alanine);
-        for(Entry<Byte, AminoAcid> entry : BYTE_TO_GLYPH_MAP.entrySet()){
-            GLYPH_TO_BYTE_MAP.put(entry.getValue(), entry.getKey());           
+		for(AminoAcid aa : AminoAcid.values()){
+        	BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)aa.ordinal()), aa);
+        	GLYPH_TO_BYTE_MAP.put(aa,Byte.valueOf((byte)aa.ordinal()));
         }
+		
     }
 
 	// Singleton instance of our class

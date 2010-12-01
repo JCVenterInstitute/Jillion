@@ -26,7 +26,7 @@ public class DefaultAminoAcidEncodedGlyphs implements EncodedGlyphs<AminoAcid> {
         if (range == null){
             return decode();
         }
-        List<AminoAcid> result = new ArrayList<AminoAcid>();
+        List<AminoAcid> result = new ArrayList<AminoAcid>((int)range.size());
         for (long index : range){
             result.add(get((int)index));
         }

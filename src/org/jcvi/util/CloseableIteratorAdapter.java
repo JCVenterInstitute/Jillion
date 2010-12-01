@@ -21,36 +21,62 @@ package org.jcvi.util;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
+ * {@code CloseableIteratorAdapter} is an adapter
+ * that will adapt an {@link Iterator} instance
+ * into a {@link CloseableIterator}.
  * @author dkatzel
  *
  *
  */
-public class CloseableIteratorAdapter<E> implements CloseableIterator<E>{
+public class CloseableIteratorAdapter<T> implements CloseableIterator<T>{
 
-    
-    public static <E> CloseableIteratorAdapter<E> adapt(Iterator<E> iterator){
-        return new CloseableIteratorAdapter<E>(iterator);
+    /**
+     * Adapt the given (non-null) {@link Iterator} instance
+     * into a {@link CloseableIterator}.
+     * @param <T> the type of elements the iterator iterates over.
+     * @param iterator the iterator to adapt into a CloseableIterator.
+     * @return a new {@link CloseableIterator}
+     * @throws NullPointerException if iterator is {@code null}.
+     */
+    public static <T> CloseableIteratorAdapter<T> adapt(Iterator<T> iterator){
+        return new CloseableIteratorAdapter<T>(iterator);
     }
-    private final Iterator<E> iterator;
-
+    private final Iterator<T> iterator;
+    private boolean isClosed=false;
     /**
      * @param iterator
      */
-    private CloseableIteratorAdapter(Iterator<E> iterator) {
+    private CloseableIteratorAdapter(Iterator<T> iterator) {
+    	if(iterator ==null){
+    		throw new NullPointerException("iterator can not be null");
+    	}
         this.iterator = iterator;
     }
 
     /**
-    * {@inheritDoc}
+    * Close this iterator.  If the adapted
+    * iterator happens to be a {@link CloseableIterator}
+    * before adaption, then its {@link #close()}
+    * method will be called too.  This will
+    * force this iterator's {@link #hasNext()}
+    * to return {@code false}
+    * and {@link #next()} to throw
+    * a {@link NoSuchElementException}
+    * as if there were no more elements
+    * to iterate over.
     */
     @Override
     public void close() throws IOException {
-        //no-op
+        if(isClosed){
+        	return ; //no-op
+        }
         if(iterator instanceof CloseableIterator){
             ((CloseableIterator)iterator).close();
         }
+        isClosed=true;
     }
 
     /**
@@ -58,6 +84,9 @@ public class CloseableIteratorAdapter<E> implements CloseableIterator<E>{
     */
     @Override
     public boolean hasNext() {
+    	if(isClosed){
+    		return false;
+    	}
         return iterator.hasNext();
     }
 
@@ -65,7 +94,10 @@ public class CloseableIteratorAdapter<E> implements CloseableIterator<E>{
     * {@inheritDoc}
     */
     @Override
-    public E next() {
+    public T next() {
+    	if(isClosed){
+    		throw new NoSuchElementException("iterator has been closed");
+    	}
         return iterator.next();
     }
 

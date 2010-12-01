@@ -33,7 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestAminoAcid.class,
         TestCodon.class,
-        TestCodonCreationMethods.class
+        TestCodonCreationMethods.class,
+        TestDefaultAminoAcidEncodedGlyphs.class
     }
     )
 public class AllAminoAcidUnitTests {

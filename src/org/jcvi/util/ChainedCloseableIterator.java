@@ -21,6 +21,7 @@ package org.jcvi.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,29 +29,38 @@ import org.apache.commons.collections.IteratorUtils;
 import org.jcvi.io.IOUtil;
 
 /**
+ * {@code ChainedCloseableIterator}
+ * is a CloseableIterator that chains
+ * multiple {@link CloseableIterator}s
+ * together similar to Apache Commons
+ * Collections chainedIterator works 
+ * for {@link Iterator}s.
+ * @see IteratorUtils#chainedIterator(java.util.Collection)
+ * 
  * @author dkatzel
  *
  *
  */
-public class ChainedCloseableIterator<E> implements CloseableIterator<E>{
+public class ChainedCloseableIterator<T> implements CloseableIterator<T>{
 
-    private final List<CloseableIterator<E>> delegates;
-    private final Iterator<E> iterator;
+    private final List<CloseableIterator<T>> delegates;
+    private final Iterator<T> iterator;
     
     /**
      * @param delegates
      */
-    public ChainedCloseableIterator(List<CloseableIterator<E>> delegates) {
-        this.delegates = new ArrayList<CloseableIterator<E>>(delegates);
+    public ChainedCloseableIterator(Collection<? extends CloseableIterator<T>> delegates) {
+        this.delegates = new ArrayList<CloseableIterator<T>>(delegates);
         this.iterator = IteratorUtils.chainedIterator(this.delegates);
     }
 
     /**
-    * {@inheritDoc}
+    * Close all the iterators
+    * being chained together.
     */
     @Override
     public void close() throws IOException {
-        for(CloseableIterator<E> delegate : delegates){
+        for(CloseableIterator<T> delegate : delegates){
             IOUtil.closeAndIgnoreErrors(delegate);
         }
         
@@ -68,7 +78,7 @@ public class ChainedCloseableIterator<E> implements CloseableIterator<E>{
     * {@inheritDoc}
     */
     @Override
-    public E next() {
+    public T next() {
         return iterator.next();
     }
 

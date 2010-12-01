@@ -62,6 +62,11 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
      * The header will contain an int value specifying how many glyphs are encoded.
      */
     private static final int HEADER_LENGTH = 4;
+    
+    /**
+     * The header will contain an int value specifying how many glyphs are encoded.
+     */
+    private static final int BITS_PER_GLYPH = 4;
     /**
      * populate the maps.
      * Each byte key has been specially assigned so
@@ -195,7 +200,7 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
         }
     }
     private int computeEncodedSize(final int size) {
-        int encodedSize = 4 + size/2 + (isEven(size)?0:1);
+        int encodedSize = HEADER_LENGTH + size/2 + (isEven(size)?0:1);
         return encodedSize;
     }
     private boolean isEven(final int size) {
@@ -203,20 +208,20 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
     }
     private void encodeLastValue(Iterator<NucleotideGlyph> glyphs, ByteBuffer result) {
         byte hi = GLYPH_TO_BYTE_MAP.get(glyphs.next());
-        result.put((byte) ((hi<<4) &0xFF));
+        result.put((byte) ((hi<<BITS_PER_GLYPH) &0xFF));
     }
     private void encodeNext2Values(Iterator<NucleotideGlyph> glyphs, ByteBuffer result) {
         byte hi = GLYPH_TO_BYTE_MAP.get(glyphs.next());
         byte low = GLYPH_TO_BYTE_MAP.get(glyphs.next());
-        result.put((byte) ((hi<<4 | low) &0xFF));
+        result.put((byte) ((hi<<BITS_PER_GLYPH | low) &0xFF));
     }
     private List<NucleotideGlyph> decodeNext2Values(byte b) {
-        byte hi = (byte)(b>>>4 &0x0F);
+        byte hi = (byte)(b>>>BITS_PER_GLYPH &0x0F);
         byte low = (byte)(b & 0x0F);
        return Arrays.asList(BYTE_TO_GLYPH_MAP.get(hi),BYTE_TO_GLYPH_MAP.get(low));
     }
     private NucleotideGlyph decodeLastValues(byte b) {
-        byte hi = (byte)(b>>>4 &0x0F);
+        byte hi = (byte)(b>>>BITS_PER_GLYPH &0x0F);
        return BYTE_TO_GLYPH_MAP.get(hi);
     }
     @Override
