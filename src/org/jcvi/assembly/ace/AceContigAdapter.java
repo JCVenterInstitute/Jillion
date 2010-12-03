@@ -92,7 +92,6 @@ public class AceContigAdapter implements AceContig{
 
     @Override
     public boolean isCircular() {
-        // TODO Auto-generated method stub
         return delegate.isCircular();
     }
 

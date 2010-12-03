@@ -33,7 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
      TestPhdCodecDecode.class,
      TestDefaultPhdFileDataStore.class,
      TestFakePhdReadParser.class,
-     TestBuildArtificialPhd.class
+     TestBuildArtificialPhd.class,
+     TestPhdWriter.class
     }
     )
 public class AllPhdUnitTests {

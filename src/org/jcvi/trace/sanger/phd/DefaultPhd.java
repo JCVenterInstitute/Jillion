@@ -53,11 +53,15 @@ public class DefaultPhd implements Phd {
         this.comments = comments;
         this.tags = tags;
     }
-    
+    public DefaultPhd(NucleotideEncodedGlyphs basecalls,
+            EncodedGlyphs<PhredQuality> qualities,
+            Peaks peaks,Properties comments){
+        this(basecalls, qualities, peaks, comments,Collections.<PhdTag>emptyList());
+    }
     public DefaultPhd(NucleotideEncodedGlyphs basecalls,
             EncodedGlyphs<PhredQuality> qualities,
             Peaks peaks){
-        this(basecalls, qualities, peaks, new Properties(),Collections.<PhdTag>emptyList());
+        this(basecalls, qualities, peaks, new Properties());
     }
     
     @Override
@@ -100,16 +104,16 @@ public class DefaultPhd implements Phd {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof DefaultPhd))
+        if (!(obj instanceof Phd))
             return false;
-        DefaultPhd other = (DefaultPhd) obj;
-       if (!basecalls.decode().equals(other.basecalls.decode()))
+        Phd other = (Phd) obj;
+       if (!basecalls.decode().equals(other.getBasecalls().decode()))
             return false;
-        if (!comments.equals(other.comments))
+        if (!comments.equals(other.getComments()))
             return false;
-        if (!peaks.getData().decode().equals(other.peaks.getData().decode()))
+        if (!peaks.getData().decode().equals(other.getPeaks().getData().decode()))
             return false;
-        if (!qualities.decode().equals(other.qualities.decode()))
+        if (!qualities.decode().equals(other.getQualities().decode()))
             return false;
         return true;
     }
