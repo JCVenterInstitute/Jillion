@@ -37,6 +37,7 @@ import org.jcvi.assembly.PlacedStartComparator;
 public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> implements CoverageMap<T> {
 
 
+    @SuppressWarnings("unchecked")
     public static <V extends Placed,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
             buildCoverageMap(Collection<V> elements){
         return (DefaultCoverageMap<V,T>)new Builder(elements).build();
@@ -215,6 +216,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public CoverageMap<T> shiftLeft(int units) {
         List<T> shiftedRegions = new ArrayList<T>(getNumberOfRegions());
@@ -223,6 +225,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         }
         return new DefaultCoverageMap<V, T>(shiftedRegions);
     }
+    @SuppressWarnings("unchecked")
     @Override
     public CoverageMap<T> shiftRight(int units) {
         List<T> shiftedRegions = new ArrayList<T>(getNumberOfRegions());
