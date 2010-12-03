@@ -11,6 +11,9 @@
 	<property name="test-internal" value ="test-internal"/>
 	<property name ="lib" value="lib"/>
 	<property name ="lib-internal" value="lib-internal"/>
+	<property name ="exe" value="exe"/>
+	<property name ="exe-internal" value="exe-internal"/>
+	
 	<property name ="release" value ="release"/>
 	<property name ="scripts" value = "scripts"/>
 	
@@ -90,10 +93,14 @@
 		<javac debug="true" destdir="${bin}"  classpathref="classpath">
 					<src path="${test}"/>
 					<src path="${test-internal}"/>
+					<src path="${exe}"/>
+					<src path="${exe-internal}"/>
 	  	</javac>
 		<copy todir="${bin}">
 			<fileset dir="${test}" excludes="**/*.java"/>
 			<fileset dir="${test-internal}" excludes="**/*.java"/>
+			<fileset dir="${exe}" excludes="**/*.java"/>
+			<fileset dir="${exe-internal}" excludes="**/*.java"/>
 		</copy>
 
 	 </target>
@@ -107,6 +114,8 @@
 			<javac debug="true" destdir="${bin}"  classpathref="classpath">
 				<src path="${src}"/>
 				<src path="${src-internal}"/>
+				<src path="${exe}"/>
+				<src path="${exe-internal}"/>
 		  	</javac>
 			<emma enabled="${emma.enabled}" >
 								      <instr instrpath="${bin}"
@@ -130,6 +139,7 @@
 				<!-- debug = true required for emma reports to see line coverage and link to source-->
 				<javac debug="true" destdir="${bin}"  classpathref="classpath">
 					<src path="${src-internal}"/>
+					<src path="${exe-internal}"/>
 			  	</javac>
 				<emma enabled="${emma.enabled}" >
 									      <instr instrpath="${bin}"
@@ -140,6 +150,7 @@
 							  	    </emma>
 				<copy todir="${bin}">
 					<fileset dir="${src-internal}" excludes="**/*.java"/>
+					<fileset dir="${exe-internal}" excludes="**/*.java"/>
 				</copy>
 
 			 </target>
