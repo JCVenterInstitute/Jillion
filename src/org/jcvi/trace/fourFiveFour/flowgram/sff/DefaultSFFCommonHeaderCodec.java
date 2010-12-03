@@ -48,7 +48,8 @@ public class DefaultSFFCommonHeaderCodec implements SFFCommonHeaderCodec {
             BigInteger indexOffset = IOUtil.readUnsignedLong(in);
             long indexLength = IOUtil.readUnsignedInt(in);
             long numReads = IOUtil.readUnsignedInt(in);
-            int headerLength = IOUtil.readUnsignedShort(in);
+            //skip header length
+            IOUtil.readUnsignedShort(in);
             int keyLength = IOUtil.readUnsignedShort(in);
             int flowsPerRead = IOUtil.readUnsignedShort(in);
             verifyFlowgramFormatCode(in);
@@ -60,7 +61,7 @@ public class DefaultSFFCommonHeaderCodec implements SFFCommonHeaderCodec {
 
             return new DefaultSFFCommonHeader(indexOffset, indexLength,
             numReads, flowsPerRead, flow,
-            keySequence, headerLength);
+            keySequence);
 
         }
         catch(IOException e){

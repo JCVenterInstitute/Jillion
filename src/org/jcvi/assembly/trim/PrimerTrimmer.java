@@ -31,4 +31,5 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 public interface PrimerTrimmer {
 
     Range trim(NucleotideEncodedGlyphs sequence,NucleotideDataStore primersToTrimAgainst);
+    Range trim(String sequence,NucleotideDataStore primersToTrimAgainst);
 }

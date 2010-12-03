@@ -82,9 +82,11 @@ public class TestSFFReadHeaderCodec_decode extends AbstractTestSFFReadHeaderCode
 
 
     void encodeHeader(InputStream mockInputStream, SFFReadHeader readHeader) throws IOException{
-        putShort(mockInputStream,readHeader.getHeaderLength());
         final String seqName = readHeader.getName();
         final int nameLength = seqName.length();
+        int unpaddedLength = 16+nameLength;
+        final long padds = SFFUtil.caclulatePaddedBytes(unpaddedLength);
+        putShort(mockInputStream,(short)(padds+unpaddedLength));
         putShort(mockInputStream,(short)nameLength);
         putInt(mockInputStream,readHeader.getNumberOfBases());
         putShort(mockInputStream,(short)readHeader.getQualityClip().getLocalStart());
@@ -93,13 +95,15 @@ public class TestSFFReadHeaderCodec_decode extends AbstractTestSFFReadHeaderCode
         putShort(mockInputStream,(short)readHeader.getAdapterClip().getLocalEnd());
         expect(mockInputStream.read(isA(byte[].class), eq(0),eq(nameLength)))
             .andAnswer(EasyMockUtil.writeArrayToInputStream(seqName.getBytes()));
-        final long bytesToSkip = readHeader.getHeaderLength()-16-nameLength;
-        expect(mockInputStream.skip(bytesToSkip)).andReturn(bytesToSkip);
+        
+        expect(mockInputStream.skip(padds)).andReturn(padds);
     }
     void encodeHeaderWithWrongSequenceLength(InputStream mockInputStream, SFFReadHeader readHeader) throws IOException{
-        putShort(mockInputStream,readHeader.getHeaderLength());
         final String seqName = readHeader.getName();
         final int nameLength = seqName.length();
+        int unpaddedLength = 16+nameLength;
+        final long padds = SFFUtil.caclulatePaddedBytes(unpaddedLength);
+        putShort(mockInputStream,(short)(padds+unpaddedLength));
         putShort(mockInputStream,(short)(nameLength+1));
         putInt(mockInputStream,readHeader.getNumberOfBases());
         putShort(mockInputStream,(short)readHeader.getQualityClip().getStart());

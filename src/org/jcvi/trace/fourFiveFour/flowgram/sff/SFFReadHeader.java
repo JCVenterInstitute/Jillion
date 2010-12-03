@@ -24,12 +24,42 @@
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import org.jcvi.Range;
-
+/**
+ * {@code SFFReadHeader} contains
+ * the information about the a specific
+ * SFF Read.
+ * @author dkatzel
+ *
+ *
+ */
 public interface SFFReadHeader {
-    short getHeaderLength();
+    /**
+     * The number of bases called for this read.
+     * @return a positive number.
+     */
     int getNumberOfBases();
+    /**
+     * The quality clip points that
+     * specify the subset of the basecalls
+     * that are good quality.  If no
+     * clip is set, then the Range should be
+     * equal to Range.buildRange(0,0);
+     * @return a Range (never null).
+     */
     Range getQualityClip();
+    /**
+     * The adapter clip points that
+     * specify the subset of the basecalls
+     * that are not adapter sequence.  If no
+     * clip is set, then the Range should be
+     * equal to Range.buildRange(0,0);
+     * @return a Range (never null).
+     */
     Range getAdapterClip();
+    /**
+     * The name of this read.
+     * @return a non-null String.
+     */
     String getName();
 
 }

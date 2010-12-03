@@ -30,18 +30,16 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 public class TestDefaultSFFReadHeader {
-    short headerLength=200;
     int numberOfBases=100;
     Range qualityClip = Range.buildRange(10,90);
     Range adapterClip= Range.buildRange(5,95);
     String name = "sequence name";
 
-    DefaultSFFReadHeader sut = new DefaultSFFReadHeader(headerLength, numberOfBases,
+    DefaultSFFReadHeader sut = new DefaultSFFReadHeader( numberOfBases,
             qualityClip, adapterClip, name);
 
     @Test
     public void constructor(){
-        assertEquals(headerLength, sut.getHeaderLength());
         assertEquals(numberOfBases, sut.getNumberOfBases());
         assertEquals(qualityClip, sut.getQualityClip());
         assertEquals(adapterClip, sut.getAdapterClip());
@@ -63,25 +61,17 @@ public class TestDefaultSFFReadHeader {
 
     @Test
     public void equalsSameValues(){
-        DefaultSFFReadHeader sameValues = new DefaultSFFReadHeader(headerLength,
+        DefaultSFFReadHeader sameValues = new DefaultSFFReadHeader(
                 numberOfBases,
                 qualityClip,
                 adapterClip,
                 name);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
-    @Test
-    public void notEqualsDifferentHeaderLength(){
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader((short)(headerLength+1),
-                numberOfBases,
-                qualityClip,
-                adapterClip,
-                name);
-        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
-    }
+   
     @Test
     public void notEqualsDifferentNumberOfBases(){
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(headerLength,
+        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
                 numberOfBases+1,
                 qualityClip,
                 adapterClip,
@@ -90,7 +80,7 @@ public class TestDefaultSFFReadHeader {
     }
     @Test
     public void notEqualsNullQualityClip(){
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(headerLength,
+        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
                 numberOfBases,
                 null,
                 adapterClip,
@@ -100,7 +90,7 @@ public class TestDefaultSFFReadHeader {
     @Test
     public void notEqualsDifferentQualityClip(){
         Range differentQualityClip = qualityClip.shiftRight(2);
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(headerLength,
+        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
                 numberOfBases,
                 differentQualityClip,
                 adapterClip,
@@ -110,7 +100,7 @@ public class TestDefaultSFFReadHeader {
 
     @Test
     public void notEqualsNullAdapterClip(){
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(headerLength,
+        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
                 numberOfBases,
                 qualityClip,
                 null,
@@ -120,7 +110,7 @@ public class TestDefaultSFFReadHeader {
     @Test
     public void notEqualsDifferentAdapterClip(){
         Range differentAdapterClip = adapterClip.shiftRight(2);
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(headerLength,
+        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
                 numberOfBases,
                 qualityClip,
                 differentAdapterClip,
@@ -130,7 +120,7 @@ public class TestDefaultSFFReadHeader {
 
     @Test
     public void notEqualsDifferentName(){
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(headerLength,
+        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
                 numberOfBases,
                 qualityClip,
                 adapterClip,
@@ -140,7 +130,7 @@ public class TestDefaultSFFReadHeader {
 
     @Test
     public void notEqualsNullName(){
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(headerLength,
+        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
                 numberOfBases,
                 qualityClip,
                 adapterClip,

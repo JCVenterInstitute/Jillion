@@ -27,7 +27,6 @@ import java.math.BigInteger;
 
 import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFCommonHeader;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFCommonHeaderCodec;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
 
 public class AbstractTestDefaultSFFCommonHeaderCodec {
 
@@ -41,7 +40,7 @@ public class AbstractTestDefaultSFFCommonHeaderCodec {
 
     protected DefaultSFFCommonHeader expectedHeader = new DefaultSFFCommonHeader(indexOffset,  indexLength,
              numberOfReads,  numberOfFlowsPerRead,  flow,
-             keySequence,  headerLength);
+             keySequence);
 
     protected DefaultSFFCommonHeaderCodec sut = new DefaultSFFCommonHeaderCodec();
 }

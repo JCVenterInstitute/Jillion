@@ -146,5 +146,12 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
         return sequenceRange;
         
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range trim(String sequence, NucleotideDataStore primersToTrimAgainst) {
+        return trim(new DefaultNucleotideEncodedGlyphs(sequence), primersToTrimAgainst);
+    }
 
 }

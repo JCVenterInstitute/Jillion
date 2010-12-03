@@ -38,6 +38,34 @@ import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 
 public final class SFFUtil {
    private SFFUtil(){}
+   
+   /**
+    * This is the magic number all SFF files
+    * must start with to be recognized as sff 
+    * binary files.
+    */
+   public static final byte[] SFF_MAGIC_NUMBER = new byte[]{
+       0x2E,
+       0x73,
+       0x66,
+       0x66,
+       0,
+       0,
+       0,
+       1
+   };
+   /**
+    * Currently SFF only has 1 format code which has a value of <code>1</code>.
+    */
+   public static final byte FORMAT_CODE = 1;
+   /**
+    * If a clip point is not set,
+    * then this is the default value
+    * for an empty clip specified by the SFF
+    * format.
+    */
+   public static final byte[] EMPTY_CLIP_BYTES = new byte[]{0,0,0,0};
+   
    public static final Range EMPTY_CLIP = Range.buildRange(CoordinateSystem.RESIDUE_BASED, -1, -1);
    public static final Pattern SFFINFO_ENCODED_FLOWGRAM_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)");
     public static int caclulatePaddedBytes(int bytesReadInSection){

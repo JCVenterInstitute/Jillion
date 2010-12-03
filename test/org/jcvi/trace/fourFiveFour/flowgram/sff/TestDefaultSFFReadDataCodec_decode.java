@@ -33,8 +33,21 @@ import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
-public class TestDefaultSFFReadDataCodec_decode extends AbstractTestSFFReadDataCodec{
+public class TestDefaultSFFReadDataCodec_decode {
 
+    protected int numberOfFlows = 5;
+    protected int numberOfBases=4;
+
+    protected byte[] qualities = new byte[]{20,30,40,35};
+    protected short[] values = new short[]{100,8,97,4,200};
+    protected byte[] indexes = new byte[]{1,2,2,0};
+    protected String bases = "TATT";
+
+
+    protected DefaultSFFReadDataCodec sut = new DefaultSFFReadDataCodec();
+
+    protected DefaultSFFReadData expectedReadData = new DefaultSFFReadData(bases, indexes,  values,
+                                            qualities);
 
 
     @Test
