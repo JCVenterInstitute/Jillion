@@ -143,8 +143,9 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
         private String currentComment=null;
         private NucleotideEncodedGlyphs currentBasecalls;
         private EncodedGlyphs<PhredQuality> currentQualities;
-        private 
-        FastQIterator() throws InterruptedException{
+        
+        
+        private FastQIterator() throws InterruptedException{
             new Thread(){
 
                 @Override
