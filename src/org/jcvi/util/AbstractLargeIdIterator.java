@@ -83,12 +83,13 @@ public abstract class AbstractLargeIdIterator implements CloseableIterator<Strin
         
     }
     /**
-     * Closes the scanner used to iterate over the ids.
+     * Closes the scanner used to iterate over the ids
+     * and set hasNext() to false.
      */
     @Override
     public void close() throws IOException {
         scanner.close();
-        
+        nextObject = endOfIterating;
     }
     
 }

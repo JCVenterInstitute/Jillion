@@ -36,11 +36,10 @@ public class TestDefaultSFFCommonHeader {
     private short numberOfFlowsPerRead = 400;
     private String flow = "TCAGTCAGTCAG";
     private String keySequence = "TCAG";
-    private short headerLength = 440;
 
     DefaultSFFCommonHeader sut = new DefaultSFFCommonHeader(indexOffset,  indexLength,
              numberOfReads,  numberOfFlowsPerRead,  flow,
-             keySequence,  headerLength);
+             keySequence);
 
     @Test
     public void constructor(){
@@ -50,7 +49,6 @@ public class TestDefaultSFFCommonHeader {
         assertEquals(numberOfFlowsPerRead, sut.getNumberOfFlowsPerRead());
         assertEquals(flow , sut.getFlow());
         assertEquals(keySequence , sut.getKeySequence());
-        assertEquals(headerLength , sut.getHeaderLength());
     }
 
     @Test
@@ -71,7 +69,7 @@ public class TestDefaultSFFCommonHeader {
         DefaultSFFCommonHeader sameValues = new DefaultSFFCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads,  numberOfFlowsPerRead,  flow,
-                                    keySequence,  headerLength);
+                                    keySequence);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
 
@@ -80,7 +78,7 @@ public class TestDefaultSFFCommonHeader {
         DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
                                     indexOffset.add(BigInteger.valueOf(1)),  indexLength,
                                     numberOfReads,  numberOfFlowsPerRead,  flow,
-                                    keySequence,  headerLength);
+                                    keySequence);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
 
@@ -89,7 +87,7 @@ public class TestDefaultSFFCommonHeader {
         DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
                                     indexOffset,  indexLength+1,
                                     numberOfReads,  numberOfFlowsPerRead,  flow,
-                                    keySequence,  headerLength);
+                                    keySequence);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
     @Test
@@ -97,7 +95,7 @@ public class TestDefaultSFFCommonHeader {
         DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads+1,  numberOfFlowsPerRead,  flow,
-                                    keySequence,  headerLength);
+                                    keySequence);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
 
@@ -106,24 +104,16 @@ public class TestDefaultSFFCommonHeader {
         DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads,  (short)(numberOfFlowsPerRead+1),  flow,
-                                    keySequence,  headerLength);
+                                    keySequence);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
 
-    @Test
-    public void notEqualsDifferentHeaderLength(){
-        DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
-                                    indexOffset,  indexLength,
-                                    numberOfReads,  numberOfFlowsPerRead,  flow,
-                                    keySequence,  (short)(headerLength+1));
-        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
-    }
     @Test
     public void notEqualsDifferentFlow(){
         DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads,  numberOfFlowsPerRead,  "not"+flow,
-                                    keySequence,  headerLength);
+                                    keySequence);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
 
@@ -132,7 +122,7 @@ public class TestDefaultSFFCommonHeader {
         DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads,  numberOfFlowsPerRead,  null,
-                                    keySequence,  headerLength);
+                                    keySequence);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
 
@@ -141,7 +131,7 @@ public class TestDefaultSFFCommonHeader {
         DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads,  numberOfFlowsPerRead,  flow,
-                                    null,  headerLength);
+                                    null);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
 
@@ -150,7 +140,7 @@ public class TestDefaultSFFCommonHeader {
         DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads,  numberOfFlowsPerRead,  flow,
-                                    "not"+keySequence,  headerLength);
+                                    "not"+keySequence);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
 }

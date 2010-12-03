@@ -22,12 +22,38 @@
  * @author dkatzel
  */
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
-
+/**
+ * {@code SFFReadData} contains the raw
+ * sequencing data from a given SFF read.
+ * @author dkatzel
+ *
+ *
+ */
 public interface SFFReadData {
-
+    /**
+     * The flowgram values contains the homopolymer
+     * stretch estimates for each flow of the read.
+     * @return an array conaining homopolymer
+     * estimates for each flow; never null.
+     */
     short[] getFlowgramValues();
+    /**
+     * the flow index in the array
+     * returned by {@link #getFlowgramValues()} for each base
+     * in the called sequence.
+     * @return
+     */
     byte[] getFlowIndexPerBase();
+    /**
+     * The called basecalls.
+     * @return
+     */
     String getBasecalls();
+    /**
+     * The quality scores for each bases in the sequence
+     * stored as Phred values.
+     * @return
+     */
     byte[] getQualities();
 
 }

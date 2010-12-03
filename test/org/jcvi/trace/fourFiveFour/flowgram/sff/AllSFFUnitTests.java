@@ -34,9 +34,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultSFFReadHeader.class,
         TestDefaultSFFCommonHeader.class,
         TestSFFReadHeaderCodec_decode.class,
-        TestSFFReadHeaderCodec_encoder.class,
         TestDefaultSFFReadDataCodec_decode.class,
-        TestDefaultSFFReadDataCodec_encode.class,
         TestDefaultSFFCommonHeaderCodec_decode.class,
         TestDefaultSFFCommonHeaderCodec_encode.class,
         TestSFFFlowgram.class,
@@ -50,8 +48,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestH2NucleotideSffDataStore.class,
         TestH2QualitySffDataStore.class,
         TestFilteredH2QualityDataStore.class,
-        TestFilteredH2NucleotideDataStore.class
-        
+        TestFilteredH2NucleotideDataStore.class,
+        TestSffWriter.class
     }
     )
 public class AllSFFUnitTests {

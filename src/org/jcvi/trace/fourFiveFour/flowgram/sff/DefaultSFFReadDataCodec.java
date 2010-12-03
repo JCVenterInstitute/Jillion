@@ -25,8 +25,6 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import org.jcvi.io.IOUtil;
 
 public class DefaultSFFReadDataCodec implements SFFReadDataCodec {
@@ -49,21 +47,5 @@ public class DefaultSFFReadDataCodec implements SFFReadDataCodec {
         }
 
     }
-
-    
-
-    public byte[] encode(SFFReadData readData){
-        int basesLength =readData.getBasecalls().length();
-        int numberOfFlows = readData.getFlowgramValues().length;
-        int readDataLength = SFFUtil.getReadDataLengthIncludingPadding(numberOfFlows, basesLength);
-        ByteBuffer buf = ByteBuffer.wrap(new byte[readDataLength]);
-        IOUtil.putShortArray(buf, readData.getFlowgramValues());
-        buf.put(readData.getFlowIndexPerBase());
-        buf.put(readData.getBasecalls().getBytes());
-        buf.put(readData.getQualities());
-        return buf.array();
-    }
-
-
 
 }

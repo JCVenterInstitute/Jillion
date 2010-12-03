@@ -36,10 +36,17 @@ import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
+import org.jcvi.trace.fourFiveFour.flowgram.sff.AbstractSffFileVisitor;
+import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFCommonHeaderCodec;
+import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFReadDataCodec;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.LargeSffFileDataStore;
+import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFCommonHeader;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFDecoderException;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFFlowgram;
+import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadData;
+import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadHeader;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffDataStore;
+import org.jcvi.trace.fourFiveFour.flowgram.sff.SffFileVisitor;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffInfoDataStore;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffParser;
 
@@ -75,6 +82,36 @@ public class PrototypeTrimNexteraSff {
         NucleotideDataStore reverseTransposonDataStore = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(revesrseTransposon));
         
         System.out.println(sffFile.getAbsolutePath());
+        DefaultSFFCommonHeaderCodec headerCodec = new DefaultSFFCommonHeaderCodec();
+        DefaultSFFReadDataCodec readCodec = new DefaultSFFReadDataCodec();
+        
+        SffFileVisitor visitor = new AbstractSffFileVisitor() {
+
+            @Override
+            public boolean visitCommonHeader(SFFCommonHeader commonHeader) {
+                // TODO Auto-generated method stub
+                return super.visitCommonHeader(commonHeader);
+            }
+
+            @Override
+            public boolean visitReadData(SFFReadData readData) {
+                // TODO Auto-generated method stub
+                return super.visitReadData(readData);
+            }
+
+            @Override
+            public boolean visitReadHeader(SFFReadHeader readHeader) {
+                // TODO Auto-generated method stub
+                return super.visitReadHeader(readHeader);
+            }
+
+            @Override
+            public void visitEndOfFile() {
+                // TODO Auto-generated method stub
+                super.visitEndOfFile();
+            }
+            
+        };
         SffDataStore dataStore = new SffInfoDataStore(sffFile);
         final Iterator<String> ids = dataStore.getIds();
         

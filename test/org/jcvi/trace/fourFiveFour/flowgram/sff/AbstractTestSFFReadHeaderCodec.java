@@ -40,7 +40,7 @@ public class AbstractTestSFFReadHeaderCodec {
     protected String name = "sequence name";
     protected short headerLength= (short)(16+name.length()+SFFUtil.caclulatePaddedBytes(16+name.length()));
 
-    protected DefaultSFFReadHeader expectedReadHeader = new DefaultSFFReadHeader(headerLength, numberOfBases,
+    protected DefaultSFFReadHeader expectedReadHeader = new DefaultSFFReadHeader(numberOfBases,
             qualityClip, adapterClip, name);
     protected DefaultSFFReadHeaderCodec sut = new DefaultSFFReadHeaderCodec();
 }

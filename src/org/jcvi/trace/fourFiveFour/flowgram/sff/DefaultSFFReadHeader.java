@@ -27,7 +27,6 @@ import org.jcvi.CommonUtil;
 import org.jcvi.Range;
 
 public class DefaultSFFReadHeader implements SFFReadHeader {
-    private final short headerLength;
     private final int numberOfBases;
     private final Range qualityClip;
     private final Range adapterClip;
@@ -41,9 +40,8 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
      * @param adapterClip
      * @param name
      */
-    public DefaultSFFReadHeader(short headerLength, int numberOfBases,
+    public DefaultSFFReadHeader(int numberOfBases,
             Range qualityClip, Range adapterClip, String name) {
-        this.headerLength = headerLength;
         this.numberOfBases = numberOfBases;
         this.qualityClip = qualityClip;
         this.adapterClip = adapterClip;
@@ -54,11 +52,6 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
     @Override
     public Range getAdapterClip() {
         return adapterClip;
-    }
-
-    @Override
-    public short getHeaderLength() {
-        return headerLength;
     }
 
     @Override
@@ -83,8 +76,6 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-
-        result = prime * result + headerLength;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + numberOfBases;
         result = prime * result
@@ -105,8 +96,7 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
             return false;
         }
         final DefaultSFFReadHeader other = (DefaultSFFReadHeader) obj;
-        return CommonUtil.similarTo(getHeaderLength(), other.getHeaderLength())
-        && CommonUtil.similarTo(getName(), other.getName())
+        return CommonUtil.similarTo(getName(), other.getName())
         && CommonUtil.similarTo(getNumberOfBases(), other.getNumberOfBases())
         && CommonUtil.similarTo(getAdapterClip(), other.getAdapterClip())
         && CommonUtil.similarTo(getQualityClip(), other.getQualityClip());
@@ -115,14 +105,12 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
 
 
     public static class Builder implements org.jcvi.Builder<DefaultSFFReadHeader>{
-        private  short headerLength;
         private  int numberOfBases;
         private  Range qualityClip;
         private  Range adapterClip;
         private  String name;
         
         public Builder(SFFReadHeader header){
-            this.headerLength = header.getHeaderLength();
             this.numberOfBases = header.getNumberOfBases();
             this.qualityClip = header.getQualityClip();
             this.adapterClip = header.getAdapterClip();
@@ -136,7 +124,7 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
         @Override
         public DefaultSFFReadHeader build() {
             return new DefaultSFFReadHeader(
-                    headerLength, numberOfBases, 
+                    numberOfBases, 
                     qualityClip, adapterClip, name);
         }
         
