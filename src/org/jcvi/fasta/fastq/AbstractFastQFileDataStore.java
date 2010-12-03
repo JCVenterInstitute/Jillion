@@ -38,7 +38,7 @@ public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends 
     private String currentId, currentComment;
     private EncodedGlyphs<PhredQuality> qualities;
     private NucleotideEncodedGlyphs nucleotides;
-    private final FastQQualityCodec qualityCodec;
+    protected final FastQQualityCodec qualityCodec;
     private boolean isClosed =false;
     public AbstractFastQFileDataStore(FastQQualityCodec qualityCodec){
         this.qualityCodec = qualityCodec;
