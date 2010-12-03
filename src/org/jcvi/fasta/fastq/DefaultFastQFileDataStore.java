@@ -23,6 +23,8 @@
  */
 package org.jcvi.fasta.fastq;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.datastore.DataStoreException;
@@ -41,7 +43,10 @@ public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQR
     public DefaultFastQFileDataStore(FastQQualityCodec qualityCodec) {
         super(qualityCodec);        
     }
-
+    public DefaultFastQFileDataStore(File fastQFile,FastQQualityCodec qualityCodec) throws FileNotFoundException {
+        super(qualityCodec);
+        FastQFileParser.parse(fastQFile, this);
+    }
     @Override
     protected void visitFastQRecord( String id, 
             NucleotideEncodedGlyphs nucleotides,

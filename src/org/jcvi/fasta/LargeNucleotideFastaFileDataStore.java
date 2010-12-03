@@ -297,8 +297,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
             isClosed=true;
             nextRecord=endOfFileToken;
             //remove element from queue
-            queue.poll();
-            
+            queue.poll();            
         }
 
         /**

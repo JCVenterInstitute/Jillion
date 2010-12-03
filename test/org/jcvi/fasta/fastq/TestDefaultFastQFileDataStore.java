@@ -24,11 +24,12 @@
 package org.jcvi.fasta.fastq;
 
 import java.io.File;
+import java.io.IOException;
 
 public class TestDefaultFastQFileDataStore extends AbstractTestFastQFileDataStore{
     @Override
-    protected FastQFileVisitor createFastQFileDataStore(File file, FastQQualityCodec qualityCodec) {
-        return new DefaultFastQFileDataStore(qualityCodec);
+    protected DefaultFastQFileDataStore createFastQFileDataStore(File file, FastQQualityCodec qualityCodec) throws IOException {
+        return new DefaultFastQFileDataStore(file,qualityCodec);
     }
     
 }

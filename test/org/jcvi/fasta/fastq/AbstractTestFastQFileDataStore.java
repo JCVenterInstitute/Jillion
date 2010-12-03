@@ -27,6 +27,10 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.jcvi.CommonUtil;
 import org.jcvi.datastore.DataStore;
@@ -37,13 +41,14 @@ import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.util.CloseableIterator;
 import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractTestFastQFileDataStore {
     static final IlluminaFastQQualityCodec QUALITY_CODEC = new IlluminaFastQQualityCodec(
             new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE));
-    FastQFileVisitor sut = new DefaultFastQFileDataStore(QUALITY_CODEC);
+    DataStore<FastQRecord> sut;
     String file = "files/example.fastq";
     ResourceFileServer resources = new ResourceFileServer(
             TestDefaultFastQFileDataStore.class);
@@ -64,26 +69,95 @@ public abstract class AbstractTestFastQFileDataStore {
                     .decode("`a\\a`^\\a^ZZa[]^WB_aaaa^^a`]^a`^`aaa`]``aXaaS^a^YaZaTW]a_aPY\\_UVY[P_ZHQY_NLZUR[^UZ\\TZWT_[_VWMWaRFW]BB"),
             "example comment");
 
-    protected abstract FastQFileVisitor createFastQFileDataStore(File file,FastQQualityCodec qualityCodec);
+    protected abstract DataStore<FastQRecord> createFastQFileDataStore(File file,FastQQualityCodec qualityCodec) throws IOException;
     @Before
     public void setup() throws IOException{
         sut = createFastQFileDataStore(resources.getFile(file), QUALITY_CODEC);
     }
     @Test
-    public void parse() throws IOException, DataStoreException {
-        FastQFileParser.parse(resources.getFileAsStream(file), sut);
-        DataStore<FastQRecord> dataStore = (DataStore<FastQRecord>)sut;
-        assertEquals(2, dataStore.size());
-        assertTrue(dataStore.contains(solexa_1489.getId()));
-        assertFalse(dataStore.contains("notInDataStore"));
-        assertFastQRecordsEqual(solexa_1489, dataStore.get(solexa_1489.getId()));
-        assertFastQRecordsEqual(solexa_1692, dataStore.get(solexa_1692.getId()));
-        dataStore.close();
+    public void size() throws DataStoreException{
+        assertEquals(2, sut.size());
+    }
+    @Test
+    public void contains() throws DataStoreException{
+        assertTrue(sut.contains(solexa_1489.getId()));
+    }
+    @Test
+    public void containQueryForIdThatIsNotContainedShouldReturnFalse() throws DataStoreException{
+        assertFalse(sut.contains("notInDataStore"));
+    }
+    
+    @Test
+    public void get() throws DataStoreException{
+        assertFastQRecordsEqual(solexa_1489, sut.get(solexa_1489.getId()));
+        assertFastQRecordsEqual(solexa_1692, sut.get(solexa_1692.getId()));
+    }
+    @Test
+    public void shouldThrowExceptionIfTryToGetAfterClose() throws IOException{
+        sut.close();
         try{
-            dataStore.get(solexa_1489.getId());
+            sut.get(solexa_1489.getId());
             fail("should throw exception when get called when already closed");
         }catch(DataStoreException e){
             //pass
+        }
+    }
+    
+    @Test
+    public void idIterator() throws DataStoreException{
+        List<String> expectedIds = Arrays.asList(solexa_1489.getId(),solexa_1692.getId());
+        Iterator<String> iterator = sut.getIds();
+        assertTrue(iterator.hasNext());
+        for(String expectedId : expectedIds){
+            assertTrue(iterator.hasNext());
+            assertEquals(expectedId, iterator.next());
+        }
+        assertFalse(iterator.hasNext());
+        try{
+            iterator.next();
+            fail("should throw exception after !hasNext()");
+        }catch(NoSuchElementException expected ){
+        }
+    }
+    @Test
+    public void closingIdIteratorEarlyShouldHaltIterating() throws DataStoreException, IOException{
+        CloseableIterator<String> iter = sut.getIds();
+        iter.next();
+        iter.close();
+        assertFalse(iter.hasNext());
+        try{
+            iter.next();
+            fail("should throw exception after closing");
+        }catch(NoSuchElementException expected ){
+        }
+    }
+    @Test
+    public void iterator(){
+        Iterator<FastQRecord> iter = sut.iterator();
+        assertTrue(iter.hasNext());
+        assertFastQRecordsEqual(solexa_1489, iter.next());
+        assertTrue(iter.hasNext());
+        assertFastQRecordsEqual(solexa_1692, iter.next());
+        assertFalse(iter.hasNext());
+        try{
+            iter.next();
+            fail("should throw exception after !hasNext()");
+        }catch(NoSuchElementException expected ){
+        }
+    }
+    
+    @Test
+    public void closingIteratorEarlyShouldStopIterating() throws IOException{
+        CloseableIterator<FastQRecord> iter = sut.iterator();
+        assertTrue(iter.hasNext());
+        assertFastQRecordsEqual(solexa_1489, iter.next());
+        assertTrue(iter.hasNext());
+        iter.close();
+        assertFalse(iter.hasNext());
+        try{
+            iter.next();
+            fail("should throw exception after !hasNext()");
+        }catch(NoSuchElementException expected ){
         }
     }
 

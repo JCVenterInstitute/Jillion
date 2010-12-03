@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import org.jcvi.datastore.DataStore;
 
-public class TestLargeSequenceFastaMap  extends AbstractTestSequenceFastaDataStore {
+public class TestLargeNucleotideFastaFileDataStore  extends AbstractTestSequenceFastaDataStore {
 
     @Override
     protected DataStore<NucleotideSequenceFastaRecord> parseFile(File file)
