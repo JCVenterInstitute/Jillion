@@ -23,11 +23,9 @@
  */
 package org.jcvi.assembly.annot.ref.ncbi;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,8 +40,6 @@ import org.jcvi.assembly.annot.ref.DefaultCodingRegion;
 import org.jcvi.assembly.annot.ref.DefaultRefGene;
 import org.jcvi.assembly.annot.ref.RefGene;
 import org.jcvi.assembly.annot.ref.RefUtil;
-import org.jcvi.assembly.annot.ref.writer.RefGeneTxtWriter;
-import org.jcvi.fasta.FastaRecord;
 import org.jcvi.io.IOUtil;
 
 
@@ -133,38 +129,6 @@ public class FluNcbiRefGeneParser {
             return CodingRegionState.INCOMPLETE;
         }
         return CodingRegionState.COMPLETE;
-    }
-    
-    public static void main(String[] args) throws Exception{
-        FluNcbiRefGeneParser refGeneParser = new FluNcbiRefGeneParser();
-        FileOutputStream refGeneOut = new FileOutputStream("tmp.refGene");
-        FileOutputStream fastaOut = new FileOutputStream("tmp.fna");
-        RefGeneTxtWriter refGeneWriter = new RefGeneTxtWriter(refGeneOut);
-        List<String> urls = Arrays.asList(
-                "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nuccore&id=221328994",
-                "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nuccore&id=221328991"
-                
-                
-        );
-        List<RefGene> refGenes = new ArrayList<RefGene>();
-        List<FastaRecord> fastas = new ArrayList<FastaRecord>();
-        for(String url : urls){
-            
-            refGenes.addAll(refGeneParser.parse(NCBIUtil.getResponseFromNcbi(url)));
-            String fastaURL = url+"&dopt=fasta";
-           
-            fastas.add(NCBIFastaParser.parseFastaFrom(NCBIUtil.getResponseFromNcbi(fastaURL)));
-        }
-        for(FastaRecord fasta : fastas){
-            fastaOut.write(fasta.toString().getBytes());            
-        }
-        fastaOut.flush();
-        fastaOut.close();
-        refGeneWriter.write(refGenes);
-        refGeneOut.flush();
-        refGeneOut.close();
-        System.out.println("done");
-        
     }
     
 }
