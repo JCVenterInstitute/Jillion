@@ -39,7 +39,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestStringUtilities.class,
         TestMultipleWrapper.class,
         TestCloseableIteratorAdapter.class,
-        TestChainedCloseableIterator.class
+        TestChainedCloseableIterator.class,
+        TestGenericUtil.class
     }
     )
 public class AllUtilUnitTests {

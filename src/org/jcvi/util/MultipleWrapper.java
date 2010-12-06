@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 /**
  * {@code MultipleWrapper} uses dymanic proxies to wrap
@@ -65,7 +66,7 @@ public class  MultipleWrapper<T> implements InvocationHandler{
      * @throws IllegalArgumentException if no delegates are given
      * @throws NullpointerException if classType ==null or policy ==null or any delegate ==null.
      */
-    public static <T, I extends T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy, I... delegates){
+    public static <T, I extends T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy, Iterable<I> delegates){
         
         return (T) Proxy.newProxyInstance(classType.getClassLoader(), new Class[]{classType}, 
                 new MultipleWrapper<T>(policy,delegates));
@@ -76,27 +77,45 @@ public class  MultipleWrapper<T> implements InvocationHandler{
      * createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates)}
      * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
      */
-    public static <T,I extends T> T createMultipleWrapper(Class<T> classType,I... delegates){
+    public static <T,I extends T> T createMultipleWrapper(Class<T> classType,Iterable<I> delegates){
        return createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates);
     }
-    
+    /**
+     * Convenience constructor which is the same as calling
+     * {@link #createMultipleWrapper(Class, ReturnPolicy, Object...)
+     * createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates)}
+     * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
+     */
+    public static <T,I extends T> T createMultipleWrapper(Class<T> classType,I... delegates){
+       return createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,new ArrayIterable<T>(delegates));
+    }
+    /**
+     * Convenience constructor which is the same as calling
+     * {@link #createMultipleWrapper(Class, ReturnPolicy, Object...)
+     * createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates)}
+     * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
+     */
+    public static <T,I extends T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy,I... delegates){
+       return createMultipleWrapper(classType,policy,new ArrayIterable<T>(delegates));
+    }
     private final ReturnPolicy policy;
     private final List<T> delegates = new ArrayList<T>();
     
-    private MultipleWrapper(ReturnPolicy policy,T ... delegates){
+    private MultipleWrapper(ReturnPolicy policy,Iterable<? extends T> delegates){
         if(policy==null){
             throw new NullPointerException("policy can not be null");
         }
-        if(delegates.length==0){
-            throw new IllegalArgumentException("must wrap at least one delegate");
-        }
+        
         this.policy = policy;
         for(T delegate : delegates){
             if(delegate ==null){
                 throw new NullPointerException("delegate can not be null");
             }
             this.delegates.add(delegate);
-        }        
+        }    
+        if(this.delegates.size()==0){
+            throw new IllegalArgumentException("must wrap at least one delegate");
+        }
     }
     @Override
     public Object invoke(Object proxy, Method method, Object[] args)
