@@ -48,8 +48,6 @@
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/poi-3.5-FINAL-20090928.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.5-FINAL-20090928.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib-internal/ChromatogramArchiver_client.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib-internal/EUIDService.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/activation.jar">
@@ -76,5 +74,11 @@
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/objenesis-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/junit-4.8.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xmlbeans-2.3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geronimo-stax-api_1.0_spec-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ooxml-schemas-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/poi-3.7-20101029.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.7-20101029.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

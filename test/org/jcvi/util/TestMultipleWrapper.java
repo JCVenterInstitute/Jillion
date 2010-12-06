@@ -78,6 +78,24 @@ public class TestMultipleWrapper {
        assertEquals(2, collection1.size());
        assertEquals(1, collection2.size());
     }
+    @Test
+    public void wrapCollection(){
+        Collection<Integer> collection1 = new ArrayList<Integer>();
+        Collection<Integer> collection2 = new HashSet<Integer>();
+        
+        Collection<Collection<Integer>> collections = new ArrayList<Collection<Integer>>();
+        collections.add(collection1);
+        collections.add(collection2);
+        
+        Collection<Integer> multiCollection = MultipleWrapper.createMultipleWrapper(
+                Collection.class,
+                collections);
+        
+        assertTrue( multiCollection.add(42));
+       assertTrue( multiCollection.add(42));
+       assertEquals(2, collection1.size());
+       assertEquals(1, collection2.size());
+    }
     
     @Test(expected = NullPointerException.class)
     public void nullReturnPolicyShouldThrowNullPointerException(){
