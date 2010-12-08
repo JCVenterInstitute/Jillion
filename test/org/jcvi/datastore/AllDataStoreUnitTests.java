@@ -36,9 +36,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultExcludeDataStoreFilter.class,
         TestDataStoreIterator.class,
      TestDefaultContigFileDataStore.class,
-     TestMemoryMappedContigFileDataStore.class,
+     TestIndexedContigFileDataStore.class,
      TestDefaultAceFileDataStore.class,
-     TestMemoryMappedAceFileDataStore.class,
+     TestIndexedAceFileDataStore.class,
      TestCachedDataStore.class,
      TestSimpleDataStore.class,
      TestMultipleDataStoreWrapper.class

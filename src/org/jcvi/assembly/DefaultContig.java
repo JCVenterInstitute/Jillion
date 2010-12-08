@@ -71,7 +71,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             
             if(offset <0){
                 SplitReferenceEncodedNucleotideGlyphs referenceEncodedGlyphs = new SplitReferenceEncodedNucleotideGlyphs(getConsensus(), basecalls,offset, validRange);
-                final DefaultPlacedRead actualPlacedRead = new DefaultPlacedRead(new DefaultRead(id, referenceEncodedGlyphs), offset,dir );
+                final DefaultPlacedRead actualPlacedRead = new DefaultPlacedRead(new DefaultRead<ReferencedEncodedNucleotideGlyphs>(id, referenceEncodedGlyphs), offset,dir );
                 
                 long leftOffset = getConsensus().getLength() + offset;
                 Range leftRange = Range.buildRangeOfLength(leftOffset, -1L*offset);
@@ -97,8 +97,8 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             return new DefaultPlacedRead(read,offset,dir);
         }
        
-        public DefaultContig build(){
-            return new DefaultContig(getId(), getConsensus(), getVirtualReads(),isCircular());
+        public DefaultContig<PlacedRead> build(){
+            return new DefaultContig<PlacedRead>(getId(), getConsensus(), getVirtualReads(),isCircular());
         }
     }
 

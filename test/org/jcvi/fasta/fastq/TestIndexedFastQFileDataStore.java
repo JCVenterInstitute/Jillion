@@ -16,23 +16,23 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 23, 2009
- *
+
+package org.jcvi.fasta.fastq;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.util;
+public class TestIndexedFastQFileDataStore extends AbstractTestFastQFileDataStore{
 
-import org.jcvi.Range;
+    @Override
+    protected IndexedFastaQFileDataStore createFastQFileDataStore(File file,
+            FastQQualityCodec qualityCodec) throws FileNotFoundException {
+        return new IndexedFastaQFileDataStore(file, qualityCodec);
+    }
 
-public interface MemoryMappedFileRange {
-
-    Range getRangeFor(String id);
-    boolean contains(String id);
-    void put(String id, Range range);
-    void remove(String id);
-    
-    void close();
-    int size();
-    CloseableIterator<String> getIds();
 }

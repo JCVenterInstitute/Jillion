@@ -52,13 +52,14 @@ public class FastQFileParser {
     }
     public static void parse(InputStream in, FastQFileVisitor visitor ){
         Scanner scanner = new Scanner(in).useDelimiter("\n");
+        visitor.visitFile();
         boolean visitCurrentBlock;
         while(scanner.hasNextLine()){
             String seqLine = scanner.nextLine();
             String basecalls = scanner.nextLine();
             String qualLine = scanner.nextLine();
             String qualities = scanner.nextLine();
-            visitor.visitLine(seqLine);
+            visitor.visitLine(seqLine+"\n");
             Matcher beginSeqMatcher =BEGIN_SEQ_PATTERN.matcher(seqLine);
             if(!beginSeqMatcher.find()){
                 throw new IllegalStateException("invalid fastq file, could not parse seq id from "+ seqLine);
@@ -67,23 +68,39 @@ public class FastQFileParser {
             String optionalComment =beginSeqMatcher.group(3);
             visitCurrentBlock = visitor.visitBeginBlock(id, optionalComment);
             if(visitCurrentBlock){
-                visitor.visitLine(basecalls);
+                visitor.visitLine(basecalls+"\n");
                 NucleotideEncodedGlyphs encodedNucleotides = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.getGlyphsFor(basecalls));
                 visitor.visitNucleotides(encodedNucleotides);
-                visitor.visitLine(qualLine);
+                visitor.visitLine(qualLine+"\n");
                 Matcher beginQualityMatcher =BEGIN_QUALITY_PATTERN.matcher(qualLine);
                 if(!beginQualityMatcher.find()){ 
                     throw new IllegalStateException("invalid fastq file, could not parse qual id from "+ qualLine);
                 }
-                visitor.visitLine(qualities);
+                visitQualitiesLine(visitor, qualities, scanner);
                 visitor.visitEncodedQualities(qualities);
             }else{
-                visitor.visitLine(basecalls);
-                visitor.visitLine(qualLine);
-                visitor.visitLine(qualities);
+                visitor.visitLine(basecalls+"\n");
+                visitor.visitLine(qualLine+"\n");
+                visitQualitiesLine(visitor, qualities, scanner);
             }
             visitor.visitEndBlock();
         }
         visitor.visitEndOfFile();
+    }
+    /**
+     * The final line in a fastQFile may or may not have 
+     * a new line at the end, this could throw off visitors
+     * that are counting bytes.  It's safer to always skip
+     * the final newline since parsers shouldn't care
+     * @param visitor
+     * @param qualities
+     * @param scanner
+     */
+    private static void visitQualitiesLine(FastQFileVisitor visitor,String qualities, Scanner scanner){
+        if(scanner.hasNextLine()){
+            visitor.visitLine(qualities+"\n");
+        }else{
+            visitor.visitLine(qualities);
+        }
     }
 }

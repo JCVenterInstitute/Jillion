@@ -59,8 +59,6 @@ public class ResourceFileServer extends AbstractFileServer {
         if(rootDir==null){
         	relativeStartPath=null;
         }else{
-            System.out.println("root dir = "+ rootDir.getAbsolutePath());
-            System.out.println("class root dir = "+ getClassRootDir().getAbsolutePath());
         	relativeStartPath = FileUtil.createRelavitePathFrom(
         			getClassRootDir(), rootDir).replace(File.separator, "/");
         }

@@ -41,21 +41,36 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Library;
 import org.jcvi.sequence.MateOrientation;
+import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.MemoryMappedFileRange;
+import org.jcvi.util.DefaultIndexedFileRange;
+import org.jcvi.util.IndexedFileRange;
+/**
+ * {@code FragmentDataStore} is an implementation of 
+ * {@link PhdDataStore} that only stores an index containing
+ * file offsets to the various phd records contained
+ * inside the phdball file.  This allows large files to provide random 
+ * access without taking up much memory.  The downside is each phd
+ * must be re-parsed each time.
+ * @author dkatzel
+ *
+ *
+ */
+public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
 
-public class MemoryMappedFragmentDataStore extends AbstractFragmentDataStore{
-
-    private final MemoryMappedFileRange fragmentInfomemoryMappedFileRange, mateInfoMemoryMappedFileRange;
+    private final IndexedFileRange fragmentInfoIndexFileRange, mateInfoIndexFileRange;
     private final FileChannel fragFile;
     private final Frg2Parser parser;
     private int currentStart=0;
     private int currentPosition=-1;
-    public MemoryMappedFragmentDataStore(File file, MemoryMappedFileRange fragmentInfomemoryMappedFileRange, MemoryMappedFileRange mateInfoMemoryMappedFileRange, Frg2Parser parser) throws FileNotFoundException{
-        this.fragmentInfomemoryMappedFileRange = fragmentInfomemoryMappedFileRange;
-        this.mateInfoMemoryMappedFileRange = mateInfoMemoryMappedFileRange;
+    public IndexedFragmentDataStore(File file, IndexedFileRange fragmentInfoIndexFileRange, IndexedFileRange mateInfoIndexFileRange, Frg2Parser parser) throws FileNotFoundException{
+        this.fragmentInfoIndexFileRange = fragmentInfoIndexFileRange;
+        this.mateInfoIndexFileRange = mateInfoIndexFileRange;
         this.parser = parser;
         this.fragFile = new RandomAccessFile(file, "r").getChannel();
+    }
+    public IndexedFragmentDataStore(File file, Frg2Parser parser) throws FileNotFoundException{
+        this(file, new DefaultIndexedFileRange(), new DefaultIndexedFileRange(),parser);
     }
     @Override
     public void visitFragment(FrgVisitorAction action, String fragmentId,
@@ -65,11 +80,11 @@ public class MemoryMappedFragmentDataStore extends AbstractFragmentDataStore{
         throwErrorIfAlreadyInitialized();
         if(this.isAddOrModify(action)){
             Range fragmentRange = Range.buildRange(currentStart, currentPosition);
-            fragmentInfomemoryMappedFileRange.put(fragmentId, fragmentRange);
+            fragmentInfoIndexFileRange.put(fragmentId, fragmentRange);
             updateRangeStartPosition();
         }
         else if (this.isDelete(action)){
-            fragmentInfomemoryMappedFileRange.remove(fragmentId);
+            fragmentInfoIndexFileRange.remove(fragmentId);
         }
         
     }
@@ -94,13 +109,13 @@ public class MemoryMappedFragmentDataStore extends AbstractFragmentDataStore{
     @Override
     public boolean contains(String fragmentId) throws DataStoreException {
         throwErrorIfClosed();
-        return fragmentInfomemoryMappedFileRange.contains(fragmentId);
+        return fragmentInfoIndexFileRange.contains(fragmentId);
     }
 
     @Override
     public Fragment get(String id) throws DataStoreException {
         throwErrorIfClosed();
-        Range range =fragmentInfomemoryMappedFileRange.getRangeFor(id);
+        Range range =fragmentInfoIndexFileRange.getRangeFor(id);
         InputStream in = getInputStreamFor(range);
         final SingleFragVisitor singleFragVisitor = new SingleFragVisitor();
         parser.parse(in, singleFragVisitor);
@@ -123,19 +138,19 @@ public class MemoryMappedFragmentDataStore extends AbstractFragmentDataStore{
     @Override
     public CloseableIterator<String> getIds() {
         throwErrorIfClosed();
-        return fragmentInfomemoryMappedFileRange.getIds();
+        return fragmentInfoIndexFileRange.getIds();
     }
 
     @Override
     public int size() throws DataStoreException {
         throwErrorIfClosed();
-        return fragmentInfomemoryMappedFileRange.size();
+        return fragmentInfoIndexFileRange.size();
     }
 
     @Override
     public void close() throws IOException {
         super.close();
-        fragmentInfomemoryMappedFileRange.close();
+        fragmentInfoIndexFileRange.close();
         fragFile.close();
     }
 
@@ -153,7 +168,7 @@ public class MemoryMappedFragmentDataStore extends AbstractFragmentDataStore{
         return getMateIdOf(fragId) !=null;
     }
     private String getMateIdOf(final String fragId) throws DataStoreException {
-        Range range = mateInfoMemoryMappedFileRange.getRangeFor(fragId);
+        Range range = mateInfoIndexFileRange.getRangeFor(fragId);
         InputStream in = getInputStreamFor(range);
         SingleLinkVisitor singleLinkVisitor = new SingleLinkVisitor(fragId);
         parser.parse(in, singleLinkVisitor);
@@ -165,13 +180,13 @@ public class MemoryMappedFragmentDataStore extends AbstractFragmentDataStore{
         if(this.isAddOrModify(action)){
             Range fragmentRange = Range.buildRange(currentStart, currentPosition);
             for(String fragmentId: fragIds){
-                mateInfoMemoryMappedFileRange.put(fragmentId, fragmentRange);
+                mateInfoIndexFileRange.put(fragmentId, fragmentRange);
             }
             updateRangeStartPosition();
         }
         else if (this.isDelete(action)){
             for(String fragmentId: fragIds){
-                mateInfoMemoryMappedFileRange.remove(fragmentId);
+                mateInfoIndexFileRange.remove(fragmentId);
             }
         }
         
@@ -213,9 +228,7 @@ public class MemoryMappedFragmentDataStore extends AbstractFragmentDataStore{
         public void visitLine(String line) {}
 
         @Override
-        public void visitFile() {
-            // TODO Auto-generated method stub
-            
+        public void visitFile() {            
         }
     }
     
@@ -255,9 +268,7 @@ public class MemoryMappedFragmentDataStore extends AbstractFragmentDataStore{
         @Override
         public void visitLine(String line) {}
         @Override
-        public void visitFile() {
-            // TODO Auto-generated method stub
-            
+        public void visitFile() {            
         }
     }
     

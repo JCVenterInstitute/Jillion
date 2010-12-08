@@ -25,7 +25,13 @@ package org.jcvi.io.idReader;
 
 import java.io.IOException;
 import java.util.Iterator;
-
+/**
+ * {@code CommaSeparatedIdReader} is an {@link IdReader}
+ * that reads ids separated by ",".
+ * @author dkatzel
+ *
+ *
+ */
 public final class CommaSeparatedIdReader<T> implements IdReader<T> {
     private final String ids;
     private final IdParser<T> idParser;
@@ -36,7 +42,7 @@ public final class CommaSeparatedIdReader<T> implements IdReader<T> {
     }
     @Override
     public Iterator<T> getIds() {
-        return new ArrayIterator(ids.split(","),idParser);
+        return new ArrayIterator<T>(ids.split(","),idParser);
     }
 
     @Override

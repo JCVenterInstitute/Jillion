@@ -28,47 +28,68 @@ import java.util.Map;
 
 import org.jcvi.Range;
 
-public class DefaultMemoryMappedFileRange implements MemoryMappedFileRange{
+public class DefaultIndexedFileRange implements IndexedFileRange{
 
-    Map<String, Range> ranges;
-    
-    public DefaultMemoryMappedFileRange(){
+    private final Map<String, Range> ranges;
+    private boolean closed=false;
+    public DefaultIndexedFileRange(){
         //preserves insertion order
         ranges = new LinkedHashMap<String, Range>();
+    }
+    public DefaultIndexedFileRange(int initialSize){
+        //preserves insertion order
+        ranges = new LinkedHashMap<String, Range>(initialSize);
     }
     
     @Override
     public boolean contains(String id) {
+        checkIfClosed();
         return ranges.containsKey(id);
     }
 
     @Override
     public Range getRangeFor(String id) {
+        checkIfClosed();
         return ranges.get(id);
     }
 
+    private void checkIfClosed(){
+        if(closed){
+            throw new IllegalStateException("closed");
+        }
+    }
     @Override
     public void put(String id, Range range) {
+        checkIfClosed();
         ranges.put(id,range);
     }
 
     @Override
     public void close() {
         ranges.clear();
+        closed = true;
     }
+    
 
     @Override
+    public boolean isClosed() {
+        return closed;
+    }
+    @Override
     public CloseableIterator<String> getIds() {
+        checkIfClosed();
         return CloseableIteratorAdapter.adapt(ranges.keySet().iterator());
     }
 
     @Override
     public int size() {
+        checkIfClosed();
         return ranges.size();
     }
 
     @Override
     public void remove(String id) {
+        checkIfClosed();
         ranges.remove(id);
         
     }

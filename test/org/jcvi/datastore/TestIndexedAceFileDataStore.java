@@ -33,24 +33,25 @@ import java.util.List;
 
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.TestAbstractAceParserMatchesAce2ContigMultipleContigs;
-import org.jcvi.util.DefaultMemoryMappedFileRange;
+import org.jcvi.util.DefaultIndexedFileRange;
 
-public class TestMemoryMappedAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
+public class TestIndexedAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
 
-    public TestMemoryMappedAceFileDataStore() throws IOException {
+    public TestIndexedAceFileDataStore() throws IOException {
         super();        
     }
 
     @Override
     protected List<AceContig> getContigList(File aceFile)
             throws IOException {
-        MemoryMappedAceFileDataStore dataStore= new MemoryMappedAceFileDataStore(aceFile, new DefaultMemoryMappedFileRange());
+        IndexedAceFileDataStore dataStore= new IndexedAceFileDataStore(aceFile, new DefaultIndexedFileRange());
         List<AceContig> contigs = new ArrayList<AceContig>(dataStore.size());
         for(Iterator<String> iter = dataStore.getIds(); iter.hasNext();){
             String id = iter.next();
             try {
                 contigs.add(dataStore.get(id));
             } catch (DataStoreException e) {
+                e.printStackTrace();
                 fail("error getting contig " + id);
             }
         }

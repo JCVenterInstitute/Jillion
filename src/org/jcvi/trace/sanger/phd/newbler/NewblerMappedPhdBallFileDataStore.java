@@ -31,16 +31,16 @@ import java.util.Properties;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.trace.sanger.phd.MemoryMappedPhdFileDataStore;
+import org.jcvi.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.trace.sanger.phd.PhdTag;
-import org.jcvi.util.MemoryMappedFileRange;
+import org.jcvi.util.IndexedFileRange;
 
-public class NewblerMappedPhdBallFileDataStore extends MemoryMappedPhdFileDataStore{
+public class NewblerMappedPhdBallFileDataStore extends IndexedPhdFileDataStore{
 
     private static final String FAKE_READ_TYPE = "type: fake\n";
     private static final String WHOLE_READ_TAG = "WR";
     public NewblerMappedPhdBallFileDataStore(File phdBall,
-            MemoryMappedFileRange recordLocations) throws FileNotFoundException {
+            IndexedFileRange recordLocations) throws FileNotFoundException {
         super(phdBall, recordLocations);
     }
 

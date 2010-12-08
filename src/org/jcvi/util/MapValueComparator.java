@@ -48,6 +48,7 @@ public class MapValueComparator<K,V extends Comparable> implements Comparator<K>
     /**
     * {@inheritDoc}
     */
+    @SuppressWarnings("unchecked")
     @Override
     public int compare(K o1, K o2) {
         

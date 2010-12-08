@@ -17,23 +17,22 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Jul 21, 2009
+ * Created on Apr 23, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.trace.frg;
+package org.jcvi.util;
 
-import java.io.File;
+import org.jcvi.Range;
 
-import org.jcvi.util.DefaultMemoryMappedFileRange;
+public interface IndexedFileRange {
 
-public class TestMemoryMappedFragmentDataStore extends AbstractTestFragmentDataStore{
-
-    @Override
-    protected AbstractFragmentDataStore createFragmentDataStore(File file)
-            throws Exception {
-        return new MemoryMappedFragmentDataStore(file, 
-                new DefaultMemoryMappedFileRange(), new DefaultMemoryMappedFileRange(), new Frg2Parser());
-    }
-
+    Range getRangeFor(String id);
+    boolean contains(String id);
+    void put(String id, Range range);
+    void remove(String id);
+    boolean isClosed();
+    void close();
+    int size();
+    CloseableIterator<String> getIds();
 }

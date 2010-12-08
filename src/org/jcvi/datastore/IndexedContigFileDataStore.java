@@ -35,18 +35,34 @@ import org.jcvi.assembly.contig.AbstractContigFileDataStore;
 import org.jcvi.assembly.contig.DefaultContigFileParser;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.DefaultMemoryMappedFileRange;
-import org.jcvi.util.MemoryMappedFileRange;
-
-public class MemoryMappedContigFileDataStore implements ContigDataStore<PlacedRead, Contig<PlacedRead>>{
+import org.jcvi.util.DefaultIndexedFileRange;
+import org.jcvi.util.IndexedFileRange;
+/**
+ * {@code IndexedContigFileDataStore} is an implementation of 
+ * {@link ContigDataStore} that only stores an index containing
+ * file offsets to the various contigs contained
+ * inside a contig file.  This allows large files to provide random 
+ * access without taking up much memory.  The downside is each contig
+ * must be re-parsed each time.
+ * @author dkatzel
+ *
+ *
+ */
+public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, Contig<PlacedRead>>{
 
     private final File file;
-    private final MemoryMappedFileRange mappedRanges;
-    public MemoryMappedContigFileDataStore(File file) throws FileNotFoundException{
+    private final IndexedFileRange mappedRanges;
+    /**
+     * Construct an new instance of IndexedContigFileDataStore and create
+     * the internal index.
+     * @param file the contig file to create the datastore for.
+     * @throws FileNotFoundException if the contig file does not exist.
+     */
+    public IndexedContigFileDataStore(File file) throws FileNotFoundException{
         this.file = file;
-        this.mappedRanges = new DefaultMemoryMappedFileRange();
+        this.mappedRanges = new DefaultIndexedFileRange();
         DefaultContigFileParser.parse(file,
-                                        new MemoryMappedContigFileVisitor(mappedRanges));
+                                        new IndexedContigFileVisitor(mappedRanges));
         
     }
     @Override
@@ -61,7 +77,7 @@ public class MemoryMappedContigFileDataStore implements ContigDataStore<PlacedRe
         InputStream inputStream=null;
         try {
             SingleContigFileVisitor visitor = new SingleContigFileVisitor();
-            inputStream = MemoryMappedUtil.createInputStreamFromFile(file,range);
+            inputStream = IOUtil.createInputStreamFromFile(file,range);
             DefaultContigFileParser.parse(inputStream,visitor);
             return visitor.getContigToReturn();
         } catch (Exception e) {
@@ -87,30 +103,30 @@ public class MemoryMappedContigFileDataStore implements ContigDataStore<PlacedRe
     }
     
     private static class SingleContigFileVisitor extends AbstractContigFileDataStore{
-        private Contig contigToReturn;
+        private Contig<PlacedRead> contigToReturn;
 
         @Override
-        protected synchronized void addContig(Contig contig) {
+        protected synchronized void addContig(Contig<PlacedRead>  contig) {
             if(contigToReturn !=null){
                 throw new IllegalStateException("can not add more than one contig");
             }
             contigToReturn= contig;
         }
-        public Contig getContigToReturn(){
+        public Contig<PlacedRead>  getContigToReturn(){
             return contigToReturn;
         }
 
     }
     
     
-    private static class MemoryMappedContigFileVisitor extends AbstractContigFileDataStore{
+    private static class IndexedContigFileVisitor extends AbstractContigFileDataStore{
 
         private int sizeOfCurrentContig;
         private int currentStartOffset;
         private int currentLineLength;
-        private final MemoryMappedFileRange mappedRanges;
+        private final IndexedFileRange mappedRanges;
         
-        MemoryMappedContigFileVisitor(MemoryMappedFileRange mappedRanges){
+        IndexedContigFileVisitor(IndexedFileRange mappedRanges){
             resetCurrentContigSize(0);
             this.mappedRanges = mappedRanges;
         }

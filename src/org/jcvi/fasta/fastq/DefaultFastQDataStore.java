@@ -27,13 +27,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
 
-public class DefaultFastQDataStore<T extends FastQRecord> implements DataStore<T> {
+public class DefaultFastQDataStore<T extends FastQRecord> implements FastQDataStore<T> {
 
     private final Map<String, T> map;
     private boolean closed = false;
@@ -91,7 +89,7 @@ public class DefaultFastQDataStore<T extends FastQRecord> implements DataStore<T
         return CloseableIteratorAdapter.adapt(map.values().iterator());
     }
     
-    public static class Builder<T extends FastQRecord> implements org.jcvi.Builder<DefaultFastQDataStore>{
+    public static class Builder<T extends FastQRecord> implements org.jcvi.Builder<DefaultFastQDataStore<T>>{
         private final Map<String, T> map = new LinkedHashMap<String, T>();
         
         public Builder put(T fastQRecord){
@@ -116,7 +114,7 @@ public class DefaultFastQDataStore<T extends FastQRecord> implements DataStore<T
             return this;
         }
         @Override
-        public DefaultFastQDataStore build() {
+        public DefaultFastQDataStore<T> build() {
             return new DefaultFastQDataStore<T>(map);
         }
         

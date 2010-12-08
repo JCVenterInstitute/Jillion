@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
+@SuppressWarnings("unchecked")
 public class TestMultipleDataStoreWrapper {
 
     DataStore<String> datastore1, datastore2;
@@ -41,6 +42,7 @@ public class TestMultipleDataStoreWrapper {
     DataStore<String> sut;
     String id = "id";
     DataStoreException datastoreException = new DataStoreException("expected exception");
+    
     @Before
     public void setup(){
         datastore1 = createMock(DataStore.class);

@@ -25,11 +25,7 @@ package org.jcvi.fasta.fastq;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -127,122 +123,14 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
     @Override
     public CloseableIterator<FastQRecord> iterator() {
         try {
-            return new FastQIterator();
+            return new LargeFastQFileIterator(fastQFile,qualityCodec);
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         }
     }
     
-    private class FastQIterator extends AbstractFastQFileVisitor<FastQRecord> implements CloseableIterator<FastQRecord>{
-
-        private Object endOfFileToken = new Object();
-        private BlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1);
-        private Object nextRecord=null;
-        private boolean isClosed=false;
-        private String currentId = null;
-        private String currentComment=null;
-        private NucleotideEncodedGlyphs currentBasecalls;
-        private EncodedGlyphs<PhredQuality> currentQualities;
-        
-        
-        private FastQIterator() throws InterruptedException{
-            new Thread(){
-
-                @Override
-                public void run() {
-                    try {
-                        FastQFileParser.parse(fastQFile, FastQIterator.this);
-                    } catch (FileNotFoundException e) {
-                        //should never happen
-                        throw new RuntimeException(e);
-                    }
-                }
-                
-            }.start();
-            blockingGetNextRecord();
-        }
-        /**
-         * @throws InterruptedException 
-         * 
-         */
-        private void blockingGetNextRecord() throws InterruptedException {
-            nextRecord = queue.take();            
-        }
-        @Override
-        public boolean visitBeginBlock(String id, String optionalComment) {
-            currentId=id;
-            currentComment=optionalComment;
-            return !isClosed;
-        }
-        @Override
-        public void visitEndOfFile() {
-            blockingPut(endOfFileToken);
-        }
-        private void blockingPut(Object obj){
-            try {
-                queue.put(obj);
-            } catch (InterruptedException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        @Override
-        public void visitEncodedQualities(String encodedQualities) {
-            currentQualities = qualityCodec.decode(encodedQualities);
-        }
-        @Override
-        public void visitEndBlock() {
-            FastQRecord record = new DefaultFastQRecord(currentId,currentBasecalls, currentQualities,currentComment);
-            blockingPut(record);
-        }
-        @Override
-        public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
-            currentBasecalls = nucleotides;
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-            
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public boolean hasNext() {
-            return nextRecord !=endOfFileToken;
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void close() throws IOException {
-            isClosed=true;
-            nextRecord=endOfFileToken;
-            //remove element from queue
-            queue.poll();            
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public FastQRecord next() {
-            if(!hasNext()){
-                throw new NoSuchElementException("no more fasta records");
-            }
-            FastQRecord next = (FastQRecord)nextRecord;
-            try {
-                blockingGetNextRecord();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            return next;
-        }
-        
-        
-    }
-    private class FastQIdIterator extends AbstractLargeIdIterator{
+    
+    protected class FastQIdIterator extends AbstractLargeIdIterator{
 
         private FastQIdIterator() throws FileNotFoundException{
                 super(fastQFile);

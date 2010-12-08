@@ -75,6 +75,7 @@ public class MultipleDataStoreWrapper<T, D extends DataStore<T>> implements Invo
      * @throws IllegalArgumentException if no delegates are given
      * @throws NullpointerException if classType ==null or or any delegate ==null.
      */
+    @SuppressWarnings("unchecked")
     public static <T,D extends DataStore<T>> D createMultipleDataStoreWrapper(Class<D> classType,Collection<D> delegates){
         return (D) Proxy.newProxyInstance(classType.getClassLoader(), new Class[]{classType}, 
                 new MultipleDataStoreWrapper<T,D>(delegates));
@@ -164,6 +165,7 @@ public class MultipleDataStoreWrapper<T, D extends DataStore<T>> implements Invo
     private Object handleIterator(Method method, Object[] args) throws Throwable{
         List<CloseableIterator<T>> iterators = new ArrayList<CloseableIterator<T>>();
         for(D delegate : delegates){
+            @SuppressWarnings("unchecked")
             final Iterator<T> delegateIterator = (Iterator<T>)method.invoke(delegate, args);
             if(delegateIterator instanceof CloseableIterator){
                 iterators.add((CloseableIterator<T>)delegateIterator);

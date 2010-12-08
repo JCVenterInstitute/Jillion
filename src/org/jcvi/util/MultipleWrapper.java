@@ -27,7 +27,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 /**
  * {@code MultipleWrapper} uses dymanic proxies to wrap
@@ -66,6 +65,7 @@ public class  MultipleWrapper<T> implements InvocationHandler{
      * @throws IllegalArgumentException if no delegates are given
      * @throws NullpointerException if classType ==null or policy ==null or any delegate ==null.
      */
+    @SuppressWarnings("unchecked")
     public static <T, I extends T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy, Iterable<I> delegates){
         
         return (T) Proxy.newProxyInstance(classType.getClassLoader(), new Class[]{classType}, 
@@ -120,7 +120,7 @@ public class  MultipleWrapper<T> implements InvocationHandler{
     @Override
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
-        List returns = new ArrayList(delegates.size());
+        List<Object> returns = new ArrayList<Object>(delegates.size());
         for(T delegate :delegates){
             returns.add(method.invoke(delegate, args));
         }

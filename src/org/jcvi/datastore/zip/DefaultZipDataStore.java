@@ -99,9 +99,9 @@ public class DefaultZipDataStore implements ZipDataStore{
         return new DataStoreIterator<InputStream>(this);
     }
     
-    private static final class EntryNameIterator<E extends ZipEntry> implements CloseableIterator<String>{
-        private Enumeration<E> entryEnumerator;
-        private EntryNameIterator(Enumeration<E> entryEnumerator){
+    private static final class EntryNameIterator implements CloseableIterator<String>{
+        private Enumeration<? extends ZipEntry> entryEnumerator;
+        private EntryNameIterator(Enumeration<? extends ZipEntry> entryEnumerator){
             this.entryEnumerator = entryEnumerator;
         }
         @Override

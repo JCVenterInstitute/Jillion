@@ -37,10 +37,10 @@ import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.MemoryMappedAceFileDataStore;
-import org.jcvi.datastore.MemoryMappedContigFileDataStore;
+import org.jcvi.datastore.IndexedAceFileDataStore;
+import org.jcvi.datastore.IndexedContigFileDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.util.DefaultMemoryMappedFileRange;
+import org.jcvi.util.DefaultIndexedFileRange;
 
 public class ConvertPositions {
 
@@ -117,11 +117,11 @@ public class ConvertPositions {
                 values= datastore.get(id).getValues();
             }else if(commandLine.hasOption("c")){
                 File contigFile = new File(commandLine.getOptionValue("c"));
-                MemoryMappedContigFileDataStore datastore = new MemoryMappedContigFileDataStore(contigFile);
+                IndexedContigFileDataStore datastore = new IndexedContigFileDataStore(contigFile);
                 values= datastore.get(id).getConsensus();
             }else{
                 File aceFile = new File(commandLine.getOptionValue("a"));
-                MemoryMappedAceFileDataStore datastore = new MemoryMappedAceFileDataStore(aceFile, new DefaultMemoryMappedFileRange());
+                IndexedAceFileDataStore datastore = new IndexedAceFileDataStore(aceFile, new DefaultIndexedFileRange());
                 values = datastore.get(id).getConsensus();
             }
             

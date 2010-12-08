@@ -31,7 +31,7 @@ import org.jcvi.assembly.slice.SliceElement;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.MemoryMappedAceFileDataStore;
+import org.jcvi.datastore.IndexedAceFileDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
@@ -68,7 +68,7 @@ public class GenerateSNPMatrix {
             boolean isGapped = commandLine.hasOption("g");
             String outputFilePath = commandLine.getOptionValue("out");
             
-            MemoryMappedAceFileDataStore datastore = new MemoryMappedAceFileDataStore(aceFile);
+            IndexedAceFileDataStore datastore = new IndexedAceFileDataStore(aceFile);
             AceContig contig = datastore.get(contigId);
             List<Integer> coordinates = new ArrayList<Integer>();
             for(String coordinate : positions.split(",")){

@@ -42,11 +42,11 @@ import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.ContigDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.MemoryMappedAceFileDataStore;
+import org.jcvi.datastore.IndexedAceFileDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
 import org.jcvi.trace.sanger.phd.H2PhdQualityDataStore;
-import org.jcvi.util.DefaultMemoryMappedFileRange;
+import org.jcvi.util.DefaultIndexedFileRange;
 
 public class ContigCheckNextGenAceFile {
     private static final int DEFAULT_SEQ_DIR_THRESHOLD = 10;
@@ -107,7 +107,7 @@ public class ContigCheckNextGenAceFile {
                                     Integer.parseInt(commandLine.getOptionValue("dirTheshold")):
                                         DEFAULT_SEQ_DIR_THRESHOLD;
                                     
-            ContigDataStore<AcePlacedRead, AceContig> contigDataStore = new MemoryMappedAceFileDataStore(aceFile, new DefaultMemoryMappedFileRange());
+            ContigDataStore<AcePlacedRead, AceContig> contigDataStore = new IndexedAceFileDataStore(aceFile, new DefaultIndexedFileRange());
             QualityDataStore qualityDataStore = new H2PhdQualityDataStore(phdBallFile, new H2QualityDataStore());
            
             

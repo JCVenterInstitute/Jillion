@@ -44,6 +44,7 @@ public final class EmptyIterator<E> implements Iterator<E> {
      * @param <E> the type of element to be iterated over.
      * @return an instance of EmptyIterator.
      */
+    @SuppressWarnings("unchecked")
     public static <E>  EmptyIterator<E> createEmptyIterator(){
         return INSTANCE;
     }

@@ -35,7 +35,7 @@ import org.jcvi.util.CloseableIterator;
 
 public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQRecord>{
 
-   private DefaultFastQDataStore dataStore;
+   private DefaultFastQDataStore<FastQRecord> dataStore;
    private final DefaultFastQDataStore.Builder<FastQRecord> builder = new DefaultFastQDataStore.Builder<FastQRecord>();
     /**
      * @param qualityCodec

@@ -46,7 +46,7 @@ import org.jcvi.assembly.trim.TrimmerException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.MemoryMappedAceFileDataStore;
+import org.jcvi.datastore.IndexedAceFileDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.sanger.phd.DefaultPhdFileDataStore;
@@ -134,7 +134,7 @@ public class NextGenClosureAceContigTrimmer extends AceContigTrimmer{
             File aceFile = new File(commandLine.getOptionValue("ace"));
             File phdFile = new File(commandLine.getOptionValue("phd"));
             phdDataStore=new DefaultPhdFileDataStore(phdFile);
-            datastore = new MemoryMappedAceFileDataStore(aceFile);
+            datastore = new IndexedAceFileDataStore(aceFile);
             File tempFile = File.createTempFile("nextGenClosureAceTrimmer", ".ace");
             tempFile.deleteOnExit();
             OutputStream tempOut = new FileOutputStream(tempFile);
