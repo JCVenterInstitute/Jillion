@@ -30,7 +30,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Scanner;
-
+/**
+ * {@code DefaultFileIdReader}
+ * is an {@link IdReader}
+ * that reads in ids from a file, each
+ * line should only have 1 id.
+ * @author dkatzel
+ *
+ *
+ */
 public class DefaultFileIdReader<T> implements IdReader<T> {
     private final File file;
     private final IdParser<T> idParser;
@@ -42,7 +50,7 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
     @Override
     public Iterator<T> getIds() throws IdReaderException{
         try {
-            return new FileIdIterator(new FileInputStream(file), idParser);
+            return new FileIdIterator<T>(new FileInputStream(file), idParser);
         } catch (FileNotFoundException e) {
            throw new IdReaderException("error trying to read file", e);
         }

@@ -49,6 +49,7 @@ public class ChainedCloseableIterator<T> implements CloseableIterator<T>{
     /**
      * @param delegates
      */
+    @SuppressWarnings("unchecked")
     public ChainedCloseableIterator(Collection<? extends CloseableIterator<T>> delegates) {
         this.delegates = new ArrayList<CloseableIterator<T>>(delegates);
         this.iterator = IteratorUtils.chainedIterator(this.delegates);

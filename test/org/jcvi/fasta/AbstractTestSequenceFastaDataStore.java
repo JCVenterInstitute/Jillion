@@ -185,7 +185,6 @@ public abstract class AbstractTestSequenceFastaDataStore {
         Iterator<NucleotideSequenceFastaRecord> iter = sut.iterator();
         assertTrue(iter.hasNext());
         for(int i=1; i<=9; i++){
-            System.out.println(i);
             final NucleotideSequenceFastaRecord next = iter.next();
             assertEquals(""+i, next.getIdentifier());
         }

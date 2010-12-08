@@ -28,12 +28,12 @@ import java.io.FileNotFoundException;
 
 import org.jcvi.assembly.Contig;
 
-public class TestMemoryMappedContigFileDataStore extends AbstractTestContigFileDataStore{
+public class TestIndexedContigFileDataStore extends AbstractTestContigFileDataStore{
    
     @Override
-    protected MemoryMappedContigFileDataStore buildContigFileDataStore(
+    protected IndexedContigFileDataStore buildContigFileDataStore(
             File file) throws FileNotFoundException {
-        return new MemoryMappedContigFileDataStore(file);
+        return new IndexedContigFileDataStore(file);
     }
     @Override
     protected Contig getContig928From(File file) throws FileNotFoundException, DataStoreException{

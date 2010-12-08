@@ -30,26 +30,35 @@ import java.io.InputStream;
 import org.jcvi.Range;
 import org.jcvi.assembly.ace.AbstractAceFileDataStore;
 import org.jcvi.assembly.ace.AceContig;
+import org.jcvi.assembly.ace.AceContigDataStore;
 import org.jcvi.assembly.ace.AceFileParser;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.DefaultMemoryMappedFileRange;
-import org.jcvi.util.MemoryMappedFileRange;
-
-public class MemoryMappedAceFileDataStore extends AbstractAceFileDataStore{
-    private final MemoryMappedFileRange memoryMappedFileRange;
+import org.jcvi.util.DefaultIndexedFileRange;
+import org.jcvi.util.IndexedFileRange;
+/**
+ * {@code IndexedAceFileDataStore} is an implementation of 
+ * {@link AceContigDataStore} that only stores an index containing
+ * file offsets to the various contigs contained
+ * inside the ace file.  This allows large files to provide random 
+ * access without taking up much memory.  The downside is each contig
+ * must be re-parsed each time.
+ * @author dkatzel
+ */
+public class IndexedAceFileDataStore extends AbstractAceFileDataStore{
+    private final IndexedFileRange indexFileRange;
     private final File file;
     private int currentStartOffset;
     private int currentLineLength;
     private int currentFileOffset;
     
-    public MemoryMappedAceFileDataStore(File file, MemoryMappedFileRange memoryMappedFileRange ) throws IOException{
-        this.memoryMappedFileRange = memoryMappedFileRange;
+    public IndexedAceFileDataStore(File file, IndexedFileRange indexFileRange ) throws IOException{
+        this.indexFileRange = indexFileRange;
         this.file = file;
         AceFileParser.parseAceFile(file, this);
     }
-    public MemoryMappedAceFileDataStore(File file) throws IOException{
-        this(file, new DefaultMemoryMappedFileRange());
+    public IndexedAceFileDataStore(File file) throws IOException{
+        this(file, new DefaultIndexedFileRange());
     }
 
     @Override
@@ -72,22 +81,22 @@ public class MemoryMappedAceFileDataStore extends AbstractAceFileDataStore{
 
     @Override
     protected void visitContig(AceContig contig) {
-        memoryMappedFileRange.put(contig.getId(), Range.buildRange(currentStartOffset, currentFileOffset));
+        indexFileRange.put(contig.getId(), Range.buildRange(currentStartOffset, currentFileOffset));
         currentStartOffset=currentFileOffset+1;
     }
 
     @Override
     public boolean contains(String contigId) throws DataStoreException {
-        return memoryMappedFileRange.contains(contigId);
+        return indexFileRange.contains(contigId);
     }
 
     @Override
     public AceContig get(String contigId) throws DataStoreException {
-        Range range = memoryMappedFileRange.getRangeFor(contigId);
+        Range range = indexFileRange.getRangeFor(contigId);
         InputStream inputStream=null;
         try {
             DefaultAceFileDataStore visitor = new DefaultAceFileDataStore();
-            inputStream = MemoryMappedUtil.createInputStreamFromFile(file,range);
+            inputStream = IOUtil.createInputStreamFromFile(file,range);
             AceFileParser.parseAceFile(inputStream,visitor);
             return visitor.get(contigId);
         } catch (Exception e) {
@@ -99,17 +108,17 @@ public class MemoryMappedAceFileDataStore extends AbstractAceFileDataStore{
 
     @Override
     public CloseableIterator<String> getIds() {
-        return memoryMappedFileRange.getIds();
+        return indexFileRange.getIds();
     }
 
     @Override
     public int size() {
-        return memoryMappedFileRange.size();
+        return indexFileRange.size();
     }
 
     @Override
     public void close() throws IOException {
-        memoryMappedFileRange.close();
+        indexFileRange.close();
         
     }
 

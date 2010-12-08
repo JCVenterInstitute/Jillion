@@ -39,7 +39,7 @@ import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.ContigDataStore;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.MemoryMappedContigFileDataStore;
+import org.jcvi.datastore.IndexedContigFileDataStore;
 import org.jcvi.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.fasta.LargeQualityFastaFileDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
@@ -76,7 +76,7 @@ public class ContigCheckerContigFile {
         int highSequenceCoverageThreshold=Integer.parseInt(args[5]);
         int percentReadDirectionDifferenceTheshold=Integer.parseInt(args[6]);
         try{
-        ContigDataStore<PlacedRead, Contig<PlacedRead>> contigDataStore = new MemoryMappedContigFileDataStore(contigFile);
+        ContigDataStore<PlacedRead, Contig<PlacedRead>> contigDataStore = new IndexedContigFileDataStore(contigFile);
         QualityDataStore qualityFastaMap = CachedDataStore.createCachedDataStore(
                 DataStore.class, 
                 new QualityDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(qualityFastaFile)))

@@ -16,28 +16,23 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on May 27, 2009
- *
+
+package org.jcvi.trace.sanger.phd;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.trace.frg;
+public class TestIndexPhdFileDataStore extends AbstractTestPhdDataStore{
 
-import org.jcvi.trace.frg.afg.AllAfgUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestDefaultFragment.class,
-        TestFrg2Parser.class,
-        TestDefaultFragmentDataStore.class,
-        TestIndexedFragmentDataStore.class,
-        AllAfgUnitTests.class
+    @Override
+    protected PhdDataStore createPhdDataStore(File phdfile)
+            throws FileNotFoundException {
+        return new IndexedPhdFileDataStore(phdfile);
     }
-    )
-public class AllFrgUnitTests {
 
 }

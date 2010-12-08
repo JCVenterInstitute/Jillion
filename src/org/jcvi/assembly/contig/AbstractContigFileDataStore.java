@@ -26,6 +26,7 @@ package org.jcvi.assembly.contig;
 import org.jcvi.Range;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultContig;
+import org.jcvi.assembly.PlacedRead;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
@@ -34,7 +35,7 @@ public abstract class AbstractContigFileDataStore extends AbstractContigFileVisi
 
     private DefaultContig.Builder currentContigBuilder;
     
-    protected abstract void  addContig(Contig contig);
+    protected abstract void  addContig(Contig<PlacedRead> contig);
 
     @Override
     protected void visitRead(String readId, int offset, Range validRange,

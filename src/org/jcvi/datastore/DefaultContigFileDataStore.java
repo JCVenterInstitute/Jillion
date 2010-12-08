@@ -60,7 +60,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileDataStore impl
         DefaultContigFileParser.parse(inputStream, this);
     }
     @Override
-    protected void addContig(Contig contig) {
+    protected void addContig(Contig<PlacedRead> contig) {
         contigs.put(contig.getId(), contig);
         
     }

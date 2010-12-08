@@ -72,7 +72,12 @@ public class AceFileParser {
         
         while(scanner.hasNextLine()){
             String line = scanner.nextLine();
-            visitor.visitLine(line +CR);
+            if(scanner.hasNextLine()){
+                visitor.visitLine(line +CR);
+            }else{
+                visitor.visitLine(line); 
+            }
+            
             Matcher headerMatcher = ACE_HEADER_PATTERN.matcher(line);
             if(headerMatcher.find()){
                 int numberOfContigs = Integer.parseInt(headerMatcher.group(1));

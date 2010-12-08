@@ -36,7 +36,7 @@ import org.jcvi.assembly.analysis.ContigChecker;
 import org.jcvi.assembly.analysis.ContigCheckerStruct;
 import org.jcvi.datastore.ContigDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.MemoryMappedAceFileDataStore;
+import org.jcvi.datastore.IndexedAceFileDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.idReader.IdReaderException;
 import org.jcvi.trace.TraceDecoderException;
@@ -45,7 +45,7 @@ import org.jcvi.trace.sanger.phd.LargePhdDataStoreFactory;
 import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.trace.sanger.phd.PhdDataStoreFactory;
-import org.jcvi.util.DefaultMemoryMappedFileRange;
+import org.jcvi.util.DefaultIndexedFileRange;
 
 public class ContigCheckerAceFile {
 
@@ -80,7 +80,7 @@ public class ContigCheckerAceFile {
         int highSequenceCoverageThreshold=Integer.parseInt(args[5]);
         int percentReadDirectionDifferenceTheshold=Integer.parseInt(args[6]);
         int maxCoverage = Integer.parseInt(args[7]);
-        ContigDataStore<AcePlacedRead, AceContig> contigDataStore = new MemoryMappedAceFileDataStore(aceFile, new DefaultMemoryMappedFileRange());
+        ContigDataStore<AcePlacedRead, AceContig> contigDataStore = new IndexedAceFileDataStore(aceFile, new DefaultIndexedFileRange());
         PhdDataStoreFactory phdDataStoreFactory = new LargePhdDataStoreFactory(maxCoverage);
         PhdDataStore phdDataStore = phdDataStoreFactory.createPhdDataStoreFactoryFor(phdBallFile);
        

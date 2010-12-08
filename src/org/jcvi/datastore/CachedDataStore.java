@@ -53,6 +53,7 @@ public class CachedDataStore <D extends DataStore> implements InvocationHandler{
      * "gotten" objects.
      * @return a proxy instance of type D which wraps the given delegate.
      */
+    @SuppressWarnings("unchecked")
     public static <D extends DataStore> D createCachedDataStore(Class<? super D> c,D delegate, int cacheSize){
         try {
             c.getMethod("get", GET_PARAMETERS).getReturnType();

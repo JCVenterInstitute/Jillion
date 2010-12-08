@@ -68,11 +68,11 @@ public class DefaultAssemblyArchive<T extends PlacedRead> implements AssemblyArc
         long consensusBasecalls =0;
         long totalNumberOfBasecalls =0;
         long numberOfTraces = 0;
-        for(AssemblyArchiveContigRecord contigRecord : contigs){
-            Contig<PlacedRead> contig =contigRecord.getContig();
+        for(AssemblyArchiveContigRecord<T> contigRecord : contigs){
+            Contig<T> contig =contigRecord.getContig();
             consensusBasecalls += contig.getConsensus().getUngappedLength();
             numberOfTraces += contig.getNumberOfReads();
-            for(VirtualPlacedRead<PlacedRead> virtualRead : contig.getVirtualPlacedReads()){
+            for(VirtualPlacedRead<T> virtualRead : contig.getVirtualPlacedReads()){
                 final NucleotideEncodedGlyphs encodedGlyphs = virtualRead.getEncodedGlyphs();
                 //only count non-gaps
                 totalNumberOfBasecalls +=encodedGlyphs.getUngappedLength();
@@ -185,8 +185,8 @@ public class DefaultAssemblyArchive<T extends PlacedRead> implements AssemblyArc
             return this;
         }
         @Override
-        public DefaultAssemblyArchive build() {
-            return new DefaultAssemblyArchive(this);
+        public DefaultAssemblyArchive<T> build() {
+            return new DefaultAssemblyArchive<T>(this);
         }
 
     }

@@ -17,24 +17,20 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Apr 20, 2009
+ * Created on Jul 21, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.fasta;
+package org.jcvi.trace.frg;
 
-public class MemoryMapReadException extends RuntimeException {
-   
+import java.io.File;
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 2831540439813335523L;
+public class TestIndexedFragmentDataStore extends AbstractTestFragmentDataStore{
 
-    public MemoryMapReadException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    protected AbstractFragmentDataStore createFragmentDataStore(File file)
+            throws Exception {
+        return new IndexedFragmentDataStore(file, new Frg2Parser());
     }
-    public MemoryMapReadException(String message) {
-        super(message);
-    }
+
 }
