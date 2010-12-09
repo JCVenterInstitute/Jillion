@@ -63,7 +63,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
         }
         return sliceElements;
     }
-    protected DefaultSliceElement createSliceElementFor(
+    protected SliceElement createSliceElementFor(
             QualityValueStrategy qualityValueStrategy, int gappedIndex,
             PlacedRead realRead,
             final EncodedGlyphs<PhredQuality> qualities) {

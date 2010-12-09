@@ -81,11 +81,12 @@ public class IndexedFastaQFileDataStore implements FastQDataStore<FastQRecord>, 
         return true;
     }
     @Override
-    public void visitEndBlock() {
+    public boolean visitEndBlock() {
         final Range range = Range.buildRangeOfLength(currentStartOffset, currentRecordLength);
         indexFileRange.put(currentId, range);
         currentStartOffset+=currentRecordLength;
         currentRecordLength=0;
+        return true;
     }
     @Override
     public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
@@ -142,6 +143,13 @@ public class IndexedFastaQFileDataStore implements FastQDataStore<FastQRecord>, 
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         }
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return indexFileRange.isClosed();
     }
     
     

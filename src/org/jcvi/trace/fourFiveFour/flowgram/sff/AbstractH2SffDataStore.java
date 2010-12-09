@@ -119,8 +119,13 @@ public abstract class AbstractH2SffDataStore<G extends Glyph, E extends EncodedG
     }
     @Override
     public void close() throws IOException {
-        datastore.close();
-        
+        datastore.close();        
+    }
+    
+    
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return datastore.isClosed();
     }
     @Override
     public CloseableIterator<E> iterator() {

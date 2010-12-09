@@ -114,6 +114,10 @@ public class DefaultContigFileDataStore extends AbstractContigFileDataStore impl
 
 
     @Override
+    public boolean isClosed() throws DataStoreException {
+        return isClosed;
+    }
+    @Override
     public CloseableIterator<Contig<PlacedRead>> iterator() {
         return new DataStoreIterator<Contig<PlacedRead>>(this);
     }

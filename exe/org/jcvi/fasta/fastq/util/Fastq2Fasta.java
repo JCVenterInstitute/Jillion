@@ -228,5 +228,12 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
                 String.format("Example invocation%nfastq2Fasta.pl -i ids.lst -s filtered.seq.fasta original.fastq%nCreated by Danny Katzel"
                   ));
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean visitEndBlock() {
+        return true;
+    }
 
 }

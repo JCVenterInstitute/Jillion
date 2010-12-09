@@ -120,4 +120,12 @@ public class TraceFileServerDataStore<T extends SangerTrace> implements TraceDat
         }
         
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return fileServer.isClosed();
+    }
 }

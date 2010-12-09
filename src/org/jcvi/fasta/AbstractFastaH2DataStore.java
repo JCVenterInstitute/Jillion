@@ -138,7 +138,12 @@ public abstract class AbstractFastaH2DataStore <G extends Glyph, E extends Encod
         h2Datastore.close();
         
     }
+    
 
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return h2Datastore.isClosed();
+    }
     @Override
     public CloseableIterator<E> iterator() {
         return h2Datastore.iterator();

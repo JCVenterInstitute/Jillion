@@ -68,6 +68,10 @@ public interface DataStore<T> extends Closeable,CloseableIterable<T>{
      * data from this Datastore.
      */
     int size() throws DataStoreException;
-    
+    /**
+     * Has this datastore been closed by the {@link #close()}
+     * method?
+     */
+    boolean isClosed() throws DataStoreException;
     
 }

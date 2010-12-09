@@ -479,4 +479,11 @@ public class SffInfoDataStore implements SffDataStore {
         }
         
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return false;
+    }
 }

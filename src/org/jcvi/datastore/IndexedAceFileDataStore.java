@@ -128,4 +128,11 @@ public class IndexedAceFileDataStore extends AbstractAceFileDataStore{
     public CloseableIterator<AceContig> iterator() {
         return new DataStoreIterator<AceContig>(this);
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return indexFileRange.isClosed();
+    }
 }

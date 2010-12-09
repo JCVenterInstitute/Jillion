@@ -47,8 +47,9 @@ public class ElviraSangerContigEndTrimmer<P extends PlacedRead, C extends Contig
         super(minimumBiDirectionalCoverage,maxCoverageToConsider);
         this.minimumEndCloneCoverage = minimumEndCloneCoverage;
     }
-
     private static Pattern templatePattern =Pattern.compile("^.{4}(.)(\\d{2})([A-Z]\\d{2})([A-HXZ])(\\d{2}).*");
+    
+    private static Pattern CLOSURE_READ_NAME_PATTERN = Pattern.compile("^.{4}(.)(\\d{2})T00(\\S+?)([F|R])M?([A-Z]?)$");
     
     public static Map<String, Set<String>> binByClone(Collection<String> seqnames){
         Map<String, Set<String>> bins = new HashMap<String, Set<String>>();
@@ -73,7 +74,10 @@ public class ElviraSangerContigEndTrimmer<P extends PlacedRead, C extends Contig
      */
     public static boolean isElviraSangerRead(String sequenceName){
         final Matcher matcher = templatePattern.matcher(sequenceName);
-        return matcher.matches();
+        return matcher.matches() || isElviraClosureRead(sequenceName);
+    }
+    private static boolean isElviraClosureRead(String sequenceName){
+        return CLOSURE_READ_NAME_PATTERN.matcher(sequenceName).matches();
     }
 
     @Override

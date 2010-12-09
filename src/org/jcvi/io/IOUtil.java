@@ -23,6 +23,7 @@
  */
 package org.jcvi.io;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.DataInputStream;
@@ -33,12 +34,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 import java.util.Scanner;
+
+import org.jcvi.Range;
 
 public final class IOUtil {
 
@@ -520,5 +524,24 @@ public final class IOUtil {
         paddingString.append(hexString);
         String asHex = paddingString.toString();
         return asHex;
+    }
+    
+    public static InputStream createInputStreamFromFile(File file,Range range)throws IOException {
+        final FileInputStream fileInputStream = new FileInputStream(file);
+        FileChannel fastaFileChannel=null;
+       try{
+            fastaFileChannel =fileInputStream.getChannel();
+            ByteBuffer buf= ByteBuffer.allocate((int)range.size());
+            fastaFileChannel.position((int)range.getStart());
+            int bytesRead =fastaFileChannel.read(buf);
+            if(bytesRead !=range.size()){
+                throw new IOException(String.format("did not read enough bytes! %d expected %d",bytesRead, range.size()));
+            }
+            final ByteArrayInputStream inputStream = new ByteArrayInputStream(buf.array());
+            return inputStream;
+        
+       }finally{
+           IOUtil.closeAndIgnoreErrors(fileInputStream,fastaFileChannel);
+       }
     }
 }

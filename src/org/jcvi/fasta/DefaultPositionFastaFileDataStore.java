@@ -84,6 +84,7 @@ public boolean visitRecord(String id, String comment, String recordBody) {
 }
 @Override
 public void close() throws IOException {
+    super.close();
     map.clear();
     datastore.close();
 }

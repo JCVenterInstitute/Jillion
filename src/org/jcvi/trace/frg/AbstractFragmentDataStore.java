@@ -47,7 +47,8 @@ public abstract class AbstractFragmentDataStore implements Frg2Visitor, Fragment
     protected boolean isInitialized() {
         return initialized;
     }
-    protected boolean isClosed() {
+    @Override
+    public boolean isClosed() {
         return closed;
     }
 

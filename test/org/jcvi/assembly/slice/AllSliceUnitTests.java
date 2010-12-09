@@ -31,6 +31,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     { 
+        
+        TestDefaultSliceElement.class,
+        TestCompactedSliceElement.class,
         TestDefaultSliceLocation.class,
         TestDefaultContigSlice.class,
         

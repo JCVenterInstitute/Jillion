@@ -87,9 +87,10 @@ public class FastQFile implements FastQFileVisitor{
     }
 
     @Override
-    public void visitEndBlock() {
+    public boolean visitEndBlock() {
         try {
             out.flush();
+            return true;
         } catch (IOException e) {
             throw new RuntimeException("could not flush output file", e);
         }

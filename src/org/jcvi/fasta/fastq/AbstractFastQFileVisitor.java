@@ -53,10 +53,6 @@ public abstract class AbstractFastQFileVisitor <T extends FastQRecord> implement
     }
 
     @Override
-    public void visitEndBlock() {
-    }
-
-    @Override
     public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
     }
 

@@ -36,23 +36,35 @@ import org.jcvi.util.CloseableIterator;
 public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQRecord>{
 
    private DefaultFastQDataStore<FastQRecord> dataStore;
-   private final DefaultFastQDataStore.Builder<FastQRecord> builder = new DefaultFastQDataStore.Builder<FastQRecord>();
+   private final DefaultFastQDataStore.Builder<FastQRecord> builder;
     /**
      * @param qualityCodec
      */
+    public DefaultFastQFileDataStore(FastQQualityCodec qualityCodec, int numberOfRecords) {
+        super(qualityCodec);
+        builder = new DefaultFastQDataStore.Builder<FastQRecord>(numberOfRecords);
+    }
     public DefaultFastQFileDataStore(FastQQualityCodec qualityCodec) {
         super(qualityCodec);        
+        builder = new DefaultFastQDataStore.Builder<FastQRecord>();
     }
     public DefaultFastQFileDataStore(File fastQFile,FastQQualityCodec qualityCodec) throws FileNotFoundException {
         super(qualityCodec);
+        builder = new DefaultFastQDataStore.Builder<FastQRecord>();
+        FastQFileParser.parse(fastQFile, this);
+    }
+    public DefaultFastQFileDataStore(File fastQFile,FastQQualityCodec qualityCodec, int numberOfRecords) throws FileNotFoundException {
+        super(qualityCodec);
+        builder = new DefaultFastQDataStore.Builder<FastQRecord>(numberOfRecords);
         FastQFileParser.parse(fastQFile, this);
     }
     @Override
-    protected void visitFastQRecord( String id, 
+    protected boolean visitFastQRecord( String id, 
             NucleotideEncodedGlyphs nucleotides,
             EncodedGlyphs<PhredQuality> qualities,
             String optionalComment) {
         builder.put(new DefaultFastQRecord(id, nucleotides, qualities, optionalComment));
+        return true;
     }
 
     

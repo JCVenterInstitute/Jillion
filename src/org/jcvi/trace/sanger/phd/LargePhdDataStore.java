@@ -205,4 +205,12 @@ public class LargePhdDataStore implements PhdDataStore{
         
         
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return closed;
+    }
 }

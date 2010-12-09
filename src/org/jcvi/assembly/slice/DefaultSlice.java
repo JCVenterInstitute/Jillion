@@ -42,7 +42,7 @@ public class DefaultSlice implements Slice{
     }
     @Override
     public List<SliceElement> getSliceElements() {
-        return new ArrayList(elements.values());
+        return new ArrayList<SliceElement>(elements.values());
     }
     @Override
     public int hashCode() {

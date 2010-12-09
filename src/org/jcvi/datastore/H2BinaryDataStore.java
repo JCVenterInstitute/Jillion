@@ -56,7 +56,6 @@ public class H2BinaryDataStore extends AbstractH2BinaryDataStore<ByteBuffer>{
             if(data==null){
                 return null;
             }
-            //why do I have to upcast to InputStream?
             return ByteBuffer.wrap(data);
         } catch (SQLException e) {
             throw new DataStoreException("error getting data for "+id,e);

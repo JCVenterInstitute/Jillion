@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.jcvi.assembly.cas.AbstractOnePassCasFileVisitor;
 import org.jcvi.assembly.cas.CasFileInfo;
+import org.jcvi.assembly.cas.CasMatch;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
@@ -75,9 +76,25 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
             nucleotideDataStore.close();
         }
         delegate.close();
-        nucleotideDataStores.clear();
+        nucleotideDataStores.clear();        
+    }
+    
+    
+
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return delegate.isClosed();
+    }
+
+
+
+    @Override
+    protected void visitMatch(CasMatch match, long readCounter) {
+        // TODO Auto-generated method stub
         
     }
+
+
 
     @Override
     public synchronized boolean contains(String id) throws DataStoreException {

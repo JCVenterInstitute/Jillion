@@ -134,4 +134,13 @@ public class SffTrimDataStore implements TrimDataStore, SffFileVisitor{
         return false;
     }
 
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

@@ -112,5 +112,12 @@ public class TrimDataStoreAdatper implements TrimDataStore{
     public CloseableIterator<Range> iterator() {
         return delegate.iterator();
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return delegate.isClosed();
+    }
 
 }

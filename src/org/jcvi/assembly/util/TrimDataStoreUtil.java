@@ -69,5 +69,11 @@ public final class TrimDataStoreUtil {
         public boolean contains(String id) throws DataStoreException {
             return false;
         }
+
+        @Override
+        public boolean isClosed() throws DataStoreException {
+            //always open
+            return true;
+        }
     };
 }

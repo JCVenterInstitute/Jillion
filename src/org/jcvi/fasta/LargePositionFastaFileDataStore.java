@@ -46,13 +46,6 @@ private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
 private final File fastaFile;
 
 private Integer size;
-private boolean closed;
-
-private synchronized void checkNotYetClosed(){
-    if(closed){
-        throw new IllegalStateException("already closed");
-    }
-}
 /**
  * Construct a {@link LargeNucleotideFastaFileDataStore}
  * for the given Fasta file and the given {@link NucleotideFastaRecordFactory}.
@@ -153,11 +146,6 @@ public synchronized int size() throws DataStoreException {
 
 }
 
-@Override
-public synchronized void close() throws IOException {
-    closed =true;
-    
-}
 
 @Override
 public synchronized CloseableIterator<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> iterator() {

@@ -83,6 +83,12 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
             throw new IllegalStateException("already closed");
         }
     }
+    
+    
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return closed;
+    }
     private void checkInitializedAndOpen(){
         throwExceptionIfNotYetInitialized();
         throwExceptionIfAlreadyClosed();

@@ -202,6 +202,17 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
         }
     }
 
+    
+    
+    
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        try {
+            return CONTAINS_STATEMENT.isClosed();
+        } catch (SQLException e) {
+            throw new DataStoreException("error checking if datastore is closed",e);
+        }
+    }
     private void deleteH2DatabaseFiles() throws IOException {
         //containing logs, index and data for all tables
         IOUtil.delete(new File(fileDatabasePath+".h2.db"));

@@ -110,6 +110,13 @@ public class DefaultCasFileContigDataStore extends AbstractCasFileContigVisitor 
         
     }
 
+    
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return datastore.isClosed();
+    }
+
+
     @Override
     public CloseableIterator<CasContig> iterator() {
         return datastore.iterator();

@@ -88,6 +88,7 @@ public class DefaultQualityFastaFileDataStore extends AbstractQualityFastaFileDa
     }
     @Override
     public void close() throws IOException {
+        super.close();
         map.clear();
         datastore.close();
     }

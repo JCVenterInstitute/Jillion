@@ -82,6 +82,13 @@ public class FastaRecordDataStoreAdapter<T,F extends FastaRecord<T>> implements 
     public CloseableIterator<T> iterator() {
         return new DataStoreIterator<T>(this);
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return delegate.isClosed();
+    }
     
     
 }

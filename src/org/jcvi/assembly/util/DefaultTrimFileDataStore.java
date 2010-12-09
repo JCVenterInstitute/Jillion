@@ -138,5 +138,12 @@ public class DefaultTrimFileDataStore implements TrimDataStore, TrimFileVisitor{
     public CloseableIterator<Range> iterator() {
         return delegate.iterator();
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return delegate.isClosed();
+    }
 
 }

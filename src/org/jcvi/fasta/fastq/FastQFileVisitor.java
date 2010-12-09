@@ -43,8 +43,12 @@ public interface FastQFileVisitor extends TextFileVisitor{
      * read and continue on to the next read.
      */
     boolean visitBeginBlock(String id, String optionalComment);
-    
-    void visitEndBlock();
+    /**
+     * The current FastQRecord Block is done visiting.
+     * @return {@code true} if the fastq file should continue to be parsed;
+     * {@code false} if the fastq parsing should stop.
+     */
+    boolean visitEndBlock();
     
     void visitNucleotides(NucleotideEncodedGlyphs nucleotides);
     

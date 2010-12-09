@@ -57,13 +57,8 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
     private final File fastaFile;
 
     private Integer size;
-    private boolean closed;
     
-    private synchronized void checkNotYetClosed(){
-        if(closed){
-            throw new IllegalStateException("already closed");
-        }
-    }
+   
     /**
      * Construct a {@link LargeNucleotideFastaFileDataStore}
      * for the given Fasta file and the given {@link NucleotideFastaRecordFactory}.
@@ -169,12 +164,6 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
         }   
         return size;
 
-    }
-
-    @Override
-    public synchronized void close() throws IOException {
-        closed =true;
-        
     }
 
     @Override

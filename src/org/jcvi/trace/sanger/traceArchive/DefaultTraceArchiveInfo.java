@@ -34,7 +34,7 @@ import org.jcvi.util.CloseableIteratorAdapter;
 
 public class DefaultTraceArchiveInfo<T extends TraceArchiveRecord> implements TraceArchiveInfo{
     private final Map<String, T> map;
-    
+    private boolean closed=false;
     public DefaultTraceArchiveInfo(TraceArchiveInfoBuilder<T> builder){
         this.map = Collections.unmodifiableMap(builder.getTraceArchiveRecordMap());
     }
@@ -63,11 +63,20 @@ public class DefaultTraceArchiveInfo<T extends TraceArchiveRecord> implements Tr
 
     @Override
     public void close() throws IOException {
+        map.clear();
+        closed=true;
     }
 
     @Override
     public CloseableIterator<TraceArchiveRecord> iterator() {
         return new DataStoreIterator<TraceArchiveRecord>(this);
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return closed;
     }
 
    

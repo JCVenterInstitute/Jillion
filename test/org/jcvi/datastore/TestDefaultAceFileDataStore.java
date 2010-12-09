@@ -42,7 +42,7 @@ public class TestDefaultAceFileDataStore extends TestAbstractAceParserMatchesAce
     protected List<AceContig> getContigList(File aceFile)
             throws IOException {
         DefaultAceFileDataStore dataStore= new DefaultAceFileDataStore(aceFile);
-        List<AceContig> contigs = new ArrayList<AceContig>(dataStore.size());
+        List<AceContig> contigs = new ArrayList<AceContig>((int)dataStore.size());
         for(Iterator<String> iter = dataStore.getIds(); iter.hasNext();){
             String id = iter.next();
             try {

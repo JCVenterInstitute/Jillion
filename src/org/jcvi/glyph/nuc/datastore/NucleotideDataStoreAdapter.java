@@ -110,4 +110,12 @@ public class NucleotideDataStoreAdapter implements NucleotideDataStore
     {
         return this.datastore.iterator();
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return datastore.isClosed();
+    }
 }

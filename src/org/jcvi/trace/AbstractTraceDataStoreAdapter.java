@@ -67,7 +67,12 @@ public abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implemen
         delegate.close();
         
     }
+    
 
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return delegate.isClosed();
+    }
     @Override
     public CloseableIterator<T> iterator() {
         return new DataStoreIterator<T>(this);

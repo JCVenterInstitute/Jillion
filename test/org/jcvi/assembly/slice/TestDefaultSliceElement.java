@@ -16,40 +16,27 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jul 10, 2009
- *
+
+package org.jcvi.assembly.slice;
+
+import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.sequence.SequenceDirection;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.trace.sanger.traceArchive;
+public class TestDefaultSliceElement extends AbstractTestSliceElement{
 
-import java.io.IOException;
-
-import org.jcvi.datastore.DataStoreException;
-
-public class DefaultFolderTraceArchiveDataStore extends AbstractFolderTraceArchiveDataStore{
-
-    public DefaultFolderTraceArchiveDataStore(String rootDirPath,
-            TraceArchiveInfo traceArchiveInfo) {
-        super(rootDirPath, traceArchiveInfo);
-    }
-
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    public TraceArchiveTrace get(String id) throws DataStoreException {
-        return createTraceArchiveTrace(id);
-    }
-    protected TraceArchiveTrace createTraceArchiveTrace(String id)
-                                        throws DataStoreException {
-      return new DefaultTraceArchiveTrace(getTraceArchiveInfo().get(id),getRootDirPath());
-      
+    protected SliceElement create(String id, NucleotideGlyph base,
+            PhredQuality qual, SequenceDirection direction) {
+        return new DefaultSliceElement(id, base, qual, direction);
     }
 
-    @Override
-    public String toString() {
-        return "Trace archive for folder " + getRootDirPath();
-    }
-
-    
-    
-    
 }

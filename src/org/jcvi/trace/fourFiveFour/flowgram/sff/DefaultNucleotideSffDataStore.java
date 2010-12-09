@@ -102,5 +102,12 @@ public class DefaultNucleotideSffDataStore implements NucleotideDataStore{
     public CloseableIterator<NucleotideEncodedGlyphs> iterator() {
         return new DataStoreIterator<NucleotideEncodedGlyphs>(this);
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return flowgramDataStore.isClosed();
+    }
 
 }
