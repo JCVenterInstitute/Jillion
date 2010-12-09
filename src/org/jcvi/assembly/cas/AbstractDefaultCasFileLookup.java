@@ -288,6 +288,13 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
             addRead(id,file);
             return false;
         }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean visitEndBlock() {
+            return true;
+        }
         
     }
 

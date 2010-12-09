@@ -71,10 +71,14 @@ public abstract class AbstractH2PhdDataStore<G extends Glyph, E extends EncodedG
 
     @Override
     public void close() throws IOException {
-        h2Datastore.close();
-        
+        h2Datastore.close();        
     }
+    
 
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return h2Datastore.isClosed();
+    }
     @Override
     public CloseableIterator<E> iterator() {
         return h2Datastore.iterator();

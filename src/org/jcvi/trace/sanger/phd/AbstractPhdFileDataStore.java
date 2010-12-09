@@ -23,10 +23,12 @@
  */
 package org.jcvi.trace.sanger.phd;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.datastore.EmptyDataStoreFilter;
@@ -51,7 +53,26 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     private StringBuilder currentTagValueBuilder;
     
     private final DataStoreFilter filter;
+    private boolean closed = false;
     
+    @Override
+    public synchronized void close() throws IOException {
+        closed =true;        
+    }
+    protected synchronized void checkNotYetClosed(){
+        if(closed){
+            throw new IllegalStateException("datastore already closed");
+        }
+    }
+    
+    
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return closed;
+    }
+
+
+
     public AbstractPhdFileDataStore(){
         this(EmptyDataStoreFilter.INSTANCE);
     }

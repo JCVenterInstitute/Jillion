@@ -79,6 +79,13 @@ public class PhdSangerTraceDataStoreAdapter<S extends FileSangerTrace> implement
     public CloseableIterator<Phd> iterator() {
         return new DataStoreIterator<Phd>(this);
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return delegate.isClosed();
+    }
     
     
 }

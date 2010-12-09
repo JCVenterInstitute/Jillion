@@ -61,6 +61,24 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
 
    }
    @Test
+   public void _1xClosureSangerShouldTrimOff(){
+       Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
+       .addRead("JHVXC05T00NP01F", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
+       .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", SequenceDirection.REVERSE)
+       .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", SequenceDirection.REVERSE)
+       .build();
+       
+        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig.getPlacedReads()));
+        PlacedRead readToTrim = _1xContig.getPlacedReadById("JHVXC05T00NP01F").getRealPlacedRead();
+        PlacedRead readThatDoesntGetTrimmed = _1xContig.getPlacedReadById("read2").getRealPlacedRead();
+        Range expectedTrimRange = Range.buildRange(2, 7);
+        Range actualValidRange =sut.trimRead(readToTrim, readToTrim.getValidRange());
+        assertEquals("new trimmed range",expectedTrimRange, actualValidRange);
+        final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
+        assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
+
+   }
+   @Test
    public void _1xSangerCloneCoverageShouldTrimOff(){
        Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
        .addRead("IVAAA04T26B11NA512F", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
@@ -90,6 +108,22 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
        
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig.getPlacedReads()));
         PlacedRead readThatDoesntGetTrimmed = _1xContig.getPlacedReadById("IVAAA04T26B11NA512F").getRealPlacedRead();
+        final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
+        assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
+
+   }
+  
+   @Test
+   public void _2xClosureAndNonClosureMixSangerCloneCoverageShouldNotTrim(){
+       Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
+       .addRead("IVAAB04T26B11NA512F", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
+       .addRead("JHVXC05T00NP0334F", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
+       .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", SequenceDirection.REVERSE)
+       .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", SequenceDirection.REVERSE)
+       .build();
+       
+        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig.getPlacedReads()));
+        PlacedRead readThatDoesntGetTrimmed = _1xContig.getPlacedReadById("JHVXC05T00NP0334F").getRealPlacedRead();
         final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
         assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
 

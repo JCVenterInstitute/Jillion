@@ -158,6 +158,14 @@ public class DefaultCasFileQualityDataStore extends AbstractOnePassCasFileVisito
         // no-op
         
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return delegate.isClosed();
+    }
     
     
 }

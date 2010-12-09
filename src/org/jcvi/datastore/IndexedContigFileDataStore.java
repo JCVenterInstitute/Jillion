@@ -155,5 +155,12 @@ public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, C
     public CloseableIterator<Contig<PlacedRead>> iterator() {
         return new DataStoreIterator<Contig<PlacedRead>>(this);
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return mappedRanges.isClosed();
+    }
     
 }

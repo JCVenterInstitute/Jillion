@@ -90,8 +90,14 @@ public class DefaultFastQDataStore<T extends FastQRecord> implements FastQDataSt
     }
     
     public static class Builder<T extends FastQRecord> implements org.jcvi.Builder<DefaultFastQDataStore<T>>{
-        private final Map<String, T> map = new LinkedHashMap<String, T>();
+        private final Map<String, T> map;
         
+        public Builder(){
+            map = new LinkedHashMap<String, T>();
+        }
+        public Builder(int numberOfRecords){
+            map = new LinkedHashMap<String, T>(numberOfRecords);
+        }
         public Builder put(T fastQRecord){
             map.put(fastQRecord.getId(), fastQRecord);
             return this;
@@ -118,6 +124,14 @@ public class DefaultFastQDataStore<T extends FastQRecord> implements FastQDataSt
             return new DefaultFastQDataStore<T>(map);
         }
         
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return closed;
     }
 
 }

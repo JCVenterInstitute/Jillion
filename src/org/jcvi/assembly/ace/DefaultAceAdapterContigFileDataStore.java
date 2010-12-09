@@ -92,5 +92,12 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     public CloseableIterator<AceContig> iterator() {
         return dataStore.iterator();
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return dataStore.isClosed();
+    }
 
 }

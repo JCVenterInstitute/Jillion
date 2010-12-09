@@ -54,7 +54,8 @@ public class FastQFileParser {
         Scanner scanner = new Scanner(in).useDelimiter("\n");
         visitor.visitFile();
         boolean visitCurrentBlock;
-        while(scanner.hasNextLine()){
+        boolean keepParsing=true;
+        while(keepParsing && scanner.hasNextLine()){
             String seqLine = scanner.nextLine();
             String basecalls = scanner.nextLine();
             String qualLine = scanner.nextLine();
@@ -83,7 +84,7 @@ public class FastQFileParser {
                 visitor.visitLine(qualLine+"\n");
                 visitQualitiesLine(visitor, qualities, scanner);
             }
-            visitor.visitEndBlock();
+            keepParsing =visitor.visitEndBlock();
         }
         visitor.visitEndOfFile();
     }

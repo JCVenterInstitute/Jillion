@@ -44,6 +44,7 @@ import org.jcvi.util.CloseableIterator;
 public class DefaultZipDataStore implements ZipDataStore{
 
     private final ZipFile zipfile;
+    private boolean isClosed=false;
     /**
      * Construct a ZipDataStore for the given {@link ZipFile}.
      * @param zipfile the {@link ZipFile} to wrap, can not be null.
@@ -91,7 +92,8 @@ public class DefaultZipDataStore implements ZipDataStore{
 
     @Override
     public void close() throws IOException {
-        zipfile.close();        
+        zipfile.close();
+        isClosed=true;
     }
 
     @Override
@@ -127,5 +129,13 @@ public class DefaultZipDataStore implements ZipDataStore{
         }
         
         
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return isClosed;
     }
 }

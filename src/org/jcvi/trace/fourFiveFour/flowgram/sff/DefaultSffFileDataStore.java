@@ -174,4 +174,11 @@ public class DefaultSffFileDataStore implements SffDataStore, SffFileVisitor{
                 readHeader.getQualityClip(),
                 readHeader.getAdapterClip());
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return closed;
+    }
 }

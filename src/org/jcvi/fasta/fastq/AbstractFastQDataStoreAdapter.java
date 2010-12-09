@@ -69,6 +69,11 @@ public abstract class AbstractFastQDataStoreAdapter<T> implements DataStore<T>{
     }
 
     @Override
+    public boolean isClosed() throws DataStoreException {
+        return dataStore.isClosed();
+    }
+
+    @Override
     public CloseableIterator<T> iterator() {
         return new DataStoreIterator<T>(this);
     }

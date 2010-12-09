@@ -89,6 +89,7 @@ public class DefaultNucleotideFastaFileDataStore extends AbstractNucleotideFasta
     }
     @Override
     public void close() throws IOException {
+        super.close();
         map.clear();
         datastore.close();
     }

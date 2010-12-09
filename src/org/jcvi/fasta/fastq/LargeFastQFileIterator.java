@@ -95,9 +95,10 @@ public class LargeFastQFileIterator extends AbstractFastQFileVisitor<FastQRecord
         currentQualities = qualityCodec.decode(encodedQualities);
     }
     @Override
-    public void visitEndBlock() {
+    public boolean visitEndBlock() {
         FastQRecord record = new DefaultFastQRecord(currentId,currentBasecalls, currentQualities,currentComment);
         blockingPut(record);
+        return true;
     }
     @Override
     public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {

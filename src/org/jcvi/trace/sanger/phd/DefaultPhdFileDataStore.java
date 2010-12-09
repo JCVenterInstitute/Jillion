@@ -48,7 +48,7 @@ public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
     private static final GlyphCodec<PhredQuality> QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
     
     private final Map<String, DefaultPhd> map = new HashMap<String, DefaultPhd>();
-    private boolean closed = false;
+   
     
     @Override
     protected void visitPhd(String id, List<NucleotideGlyph> bases,
@@ -85,11 +85,7 @@ public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
         super();
         PhdParser.parsePhd(phdFile, this);
     }
-    private synchronized void checkNotYetClosed(){
-        if(closed){
-            throw new IllegalStateException("datastore already closed");
-        }
-    }
+    
     @Override
     public synchronized boolean contains(String id) throws DataStoreException {
         checkNotYetClosed();
@@ -116,8 +112,8 @@ public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
 
     @Override
     public synchronized void close() throws IOException {
+        super.close();
         map.clear();
-        closed =true;
         
     }
 

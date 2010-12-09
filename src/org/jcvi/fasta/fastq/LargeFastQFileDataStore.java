@@ -61,10 +61,10 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
     }
 
     @Override
-    protected void visitFastQRecord(String id,
+    protected boolean visitFastQRecord(String id,
             NucleotideEncodedGlyphs nucleotides,
             EncodedGlyphs<PhredQuality> qualities, String optionalComment) {
-        
+        return true;
     }
 
     @Override
@@ -77,8 +77,7 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
         throwExceptionIfClosed();
         try {
             
-            DefaultFastQFileDataStore dataStore = new SingleFastQDataStore(id,this.getQualityCodec());
-            FastQFileParser.parse(fastQFile, dataStore);
+            DefaultFastQFileDataStore dataStore = new SingleFastQDataStore(id,fastQFile,this.getQualityCodec());
             return dataStore.get(id);
         } catch (FileNotFoundException e) {
             throw new DataStoreException("could not parse fasta q file",e);
@@ -166,8 +165,8 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
         private final String idToLookFor;
         private boolean found=false;
         
-        public SingleFastQDataStore(String idToLookFor,FastQQualityCodec qualityCodec) {
-            super(qualityCodec);
+        public SingleFastQDataStore(String idToLookFor,File fastQFile,FastQQualityCodec qualityCodec) throws FileNotFoundException {
+            super(fastQFile,qualityCodec,1);
             this.idToLookFor = idToLookFor;
         }
         @Override
@@ -178,6 +177,14 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
             }
             return !found;
         }
+        
+        @Override
+        public boolean visitEndBlock() {
+            super.visitEndBlock();
+            return !found;
+        }
+        
+        
         
     }
 }

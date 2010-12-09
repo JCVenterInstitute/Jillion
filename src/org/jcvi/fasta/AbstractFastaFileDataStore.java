@@ -23,7 +23,10 @@
  */
 package org.jcvi.fasta;
 
+import java.io.IOException;
+
 import org.jcvi.datastore.DataStore;
+import org.jcvi.datastore.DataStoreException;
 /**
  * {@code AbstractFastaFileDataStore} is a {@link DataStore} implementation
  * of FastaRecords parsed from a Fasta file.
@@ -32,6 +35,24 @@ import org.jcvi.datastore.DataStore;
  *
  */
 public abstract class AbstractFastaFileDataStore<T extends FastaRecord> implements FastaVisitor, DataStore<T>{
+
+    private boolean closed =false;
+    
+    protected synchronized void checkNotYetClosed(){
+        if(closed){
+            throw new IllegalStateException("already closed");
+        }
+    }
+    @Override
+    public void close() throws IOException {
+        closed=true;
+        
+    }
+
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return closed;
+    }
 
     @Override
     public void visitLine(String line) {

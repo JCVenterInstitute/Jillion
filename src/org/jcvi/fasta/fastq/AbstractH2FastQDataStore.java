@@ -82,8 +82,13 @@ public abstract class AbstractH2FastQDataStore<G extends Glyph, E extends Encode
     }
     @Override
     public void close() throws IOException {
-        datastore.close();
-        
+        datastore.close();        
+    }
+    
+    
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return datastore.isClosed();
     }
     @Override
     public CloseableIterator<E> iterator() {
@@ -98,7 +103,8 @@ public abstract class AbstractH2FastQDataStore<G extends Glyph, E extends Encode
 
 
     @Override
-    public void visitEndBlock() {
+    public boolean visitEndBlock() {
+        return true;
     }
 
 

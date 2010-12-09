@@ -92,6 +92,13 @@ public class QualitySffDataStore implements QualityDataStore{
     public CloseableIterator<EncodedGlyphs<PhredQuality>> iterator() {
         return new DataStoreIterator<EncodedGlyphs<PhredQuality>>(this);
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return flowgramDataStore.isClosed();
+    }
 
 
 }

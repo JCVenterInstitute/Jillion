@@ -23,6 +23,8 @@
  */
 package org.jcvi.trace.sanger.traceArchive;
 
+import java.io.IOException;
+
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.util.CloseableIterator;
@@ -32,13 +34,22 @@ public abstract class AbstractFolderTraceArchiveDataStore implements TraceArchiv
     private final String rootDirPath;
     private final TraceArchiveInfo traceArchiveInfo;
     
-    
     public String getRootDirPath() {
         return rootDirPath;
     }
 
     public TraceArchiveInfo getTraceArchiveInfo() {
         return traceArchiveInfo;
+    }
+
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return traceArchiveInfo.isClosed();
+    }
+
+    @Override
+    public void close() throws IOException {
+        traceArchiveInfo.close();
     }
 
     /**
