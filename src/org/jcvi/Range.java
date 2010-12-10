@@ -650,6 +650,26 @@ public class Range implements Placed<Range>,Iterable<Long>
         }
 
     }
+    
+    public List<Range> compliment(Range other){
+        //this - other
+        //anything in this that doesn't intersect with other
+        Range intersection = intersection(other);
+        if(intersection.isEmpty()){
+            return Arrays.asList(this);
+        }
+        
+        Range beforeOther = Range.buildRange(getStart(), intersection.getStart()-1);
+        Range afterOther = Range.buildRange(intersection.getEnd()+1, getEnd());
+        List<Range> complimentedRanges = new ArrayList<Range>();
+        if(!beforeOther.isEmpty()){
+            complimentedRanges.add(beforeOther);
+        }
+        if(!afterOther.isEmpty()){
+            complimentedRanges.add(afterOther);
+        }
+        return Range.mergeRanges(complimentedRanges);
+    }
 
     /**
      * Checks to see if this <code>Range</code> starts before the given

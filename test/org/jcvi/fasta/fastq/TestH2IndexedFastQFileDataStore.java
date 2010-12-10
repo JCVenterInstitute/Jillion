@@ -16,35 +16,30 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Mar 16, 2009
- *
+
+package org.jcvi.fasta.fastq;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+
+import org.jcvi.datastore.DataStoreException;
+import org.jcvi.datastore.H2IndexedFileRange;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.assembly;
+public class TestH2IndexedFastQFileDataStore extends AbstractTestFastQFileDataStore{
 
-import java.util.Iterator;
-import java.util.Set;
+    @Override
+    protected IndexedFastaQFileDataStore createFastQFileDataStore(File file,
+            FastQQualityCodec qualityCodec) throws FileNotFoundException {
+        try {
+            return new IndexedFastaQFileDataStore(file, qualityCodec, new H2IndexedFileRange());
+        } catch (DataStoreException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
-import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.assembly.coverage.CoverageMap;
-import org.jcvi.Range;
-
-public interface Scaffold {
-
-    String getId();
-    PlacedContig getPlacedContig(String id);
-
-    boolean hasContig(String contigId);
-    Set<PlacedContig> getPlacedContigs();
-    CoverageMap<CoverageRegion<PlacedContig>> getContigCoverageMap();
-    int getNumberOfContigs();
-    long getLength();
-
-    /**
-     *  converts contig based coordinates into scaffold coordinates.
-     */
-    Range convertContigRangeToScaffoldRange(String placedContigId, Range placedContigRange);
-    
-    Iterator<String> getContigIds();
 }

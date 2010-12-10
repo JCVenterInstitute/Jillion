@@ -27,6 +27,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.NoSuchElementException;
 
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
@@ -256,6 +257,9 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
 
         @Override
         public String next() {
+            if(!hasNext()){
+                throw new NoSuchElementException();
+            }
             String ret = (String) nextObject;
             try {
                 getNextObject();
@@ -277,8 +281,10 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
         */
         @Override
         public void close() throws IOException {
+            nextObject = endOfIterator;
             try {
                 resultSet.close();
+                
             } catch (SQLException e) {
                 throw new IOException("error closing result set",e);
             }

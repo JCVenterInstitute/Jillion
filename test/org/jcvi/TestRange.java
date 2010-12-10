@@ -1069,4 +1069,36 @@ public class TestRange{
         }
         assertFalse(iter.hasNext());
     }
+    
+    @Test
+    public void complimentNoIntersectionShouldReturnOriginalRange(){
+        Range noOverlapRange = range.shiftRight(1000);
+        assertEquals(Arrays.asList(range),range.compliment(noOverlapRange));
+    }
+    
+    @Test
+    public void complimentOfSubRangeShouldReturn2DisjointRanges(){
+        Range subrange = range.shrink(2, 2);
+        assertEquals(Arrays.asList(Range.buildRange(range.getStart(),2), Range.buildRange(range.getEnd()-1, range.getEnd())),
+                range.compliment(subrange));
+    }
+    
+    @Test
+    public void complimentOfSuperRangeShouldReturnEmptyList(){
+        Range superRange = range.grow(2, 2);
+        assertEquals(Collections.emptyList(), range.compliment(superRange));
+    }
+    @Test
+    public void complimentOfLeftSideShouldReturnArrayOfOneElementContainingRightSide(){
+        Range left = range.shrink(0, 2);
+        assertEquals(Arrays.asList(Range.buildRange(range.getEnd()-1, range.getEnd())),
+                range.compliment(left));
+    }
+    
+    @Test
+    public void complimentOfRightSideShouldReturnArrayOfOneElementContainingLeftSide(){
+        Range right = range.shrink(2, 0);
+        assertEquals(Arrays.asList(Range.buildRange(range.getStart(),2)),
+                range.compliment(right));
+    }
 }
