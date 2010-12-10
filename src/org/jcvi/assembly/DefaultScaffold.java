@@ -76,7 +76,7 @@ public class DefaultScaffold implements Scaffold {
         return placedContigs.size();
     }
     @Override
-    public CoverageMap<CoverageRegion<PlacedContig>> getContigMap() {
+    public CoverageMap<CoverageRegion<PlacedContig>> getContigCoverageMap() {
         return contigMap;
     }
     /**
@@ -226,6 +226,14 @@ public class DefaultScaffold implements Scaffold {
     @Override
     public Iterator<String> getContigIds() {
         return contigbyId.keySet().iterator();
+    }
+    @Override
+    public String toString() {
+        StringBuilder builder2 = new StringBuilder();
+        builder2.append("DefaultScaffold [id=").append(id).append(", length=")
+                .append(length).append(", placedContigs=")
+                .append(placedContigs).append("]");
+        return builder2.toString();
     }
 
 

@@ -67,6 +67,9 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
         public Builder(String id, NucleotideEncodedGlyphs consensus){
             super(id,consensus);
         }
+        public Builder addRead(String id, int offset,String basecalls){
+            return addRead(id, offset, Range.buildRangeOfLength(0,basecalls.length()),basecalls, SequenceDirection.FORWARD);
+        }
         public Builder addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
             
             if(offset <0){
