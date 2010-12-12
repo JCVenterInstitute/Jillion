@@ -32,7 +32,6 @@ public class TestReferenceEncodedNucleotideGlyph_gappedtoUngapped {
     String gappedBasecalls = "ACGTACGT-ACGTACG-T";
     String ungappedBasecalls = "ACGTACGTACGTACGT";
     DefaultNucleotideGlyphCodec codec = DefaultNucleotideGlyphCodec.getInstance();
-    NucleotideGlyphFactory factory = NucleotideGlyphFactory.getInstance();
     NucleotideEncodedGlyphs encodedReference = new DefaultNucleotideEncodedGlyphs(reference);
     DefaultReferencedEncodedNucleotideGlyph sut = new DefaultReferencedEncodedNucleotideGlyph(encodedReference, gappedBasecalls,0, Range.buildRange(0, gappedBasecalls.length()-1));
     

@@ -23,11 +23,107 @@
  */
 package org.jcvi.fasta.fastq;
 
+import java.nio.ByteBuffer;
+
+import org.jcvi.fasta.fastq.solexa.SolexaUtil;
+import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.GlyphCodec;
+import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+/**
+ * {@code FastQQualityCodec} is a can encode and decode
+ * The different ways a FASTQ file can be encode
+ * quality data.
+ * @author dkatzel
+ *
+ */
+public enum FastQQualityCodec {
+	/**
+	 * {@code ILLUMINA} supports Illumina 1.3+
+	 * FastQ encoded qualities.
+	 */
+	ILLUMINA{
+		 @Override
+		    protected PhredQuality decode(char encodedQuality) {
+		        return PhredQuality.valueOf(encodedQuality -64);
+		    }
 
-public interface FastQQualityCodec {
+		    @Override
+		    protected char encode(PhredQuality quality) {
+		        return (char)(quality.getNumber().intValue()+64);
+		    }
+	},
+	/**
+	 * {@code SANGER} supports Sanger encoded qualities.
+	 */
+	SANGER{
+		 @Override
+		    protected PhredQuality decode(char encodedQuality) {
+		        return PhredQuality.valueOf(encodedQuality -33);
+		    }
 
-    EncodedGlyphs<PhredQuality> decode(String fastqQualities);
-    String encode(EncodedGlyphs<PhredQuality> qualities);
+		    @Override
+		    protected char encode(PhredQuality quality) {
+		        return (char)(quality.getNumber().intValue()+33);
+		    }
+	},
+	/**
+	 * {@code SOLEXA} is a FastQQualityCodec
+	 * that supports qualities not only encoded in
+	 * FASTQ solexa/Illumina format,
+	 * but <strong>also</strong> the quality scores are
+	 * in Solexa scale and not the Phred scale.
+	 */
+	SOLEXA{
+		    @Override
+		    protected PhredQuality decode(char encodedQuality) {
+		        int solexaQuality =encodedQuality -64;
+		        return SolexaUtil.convertSolexaQualityToPhredQuality(solexaQuality);
+		    }
+
+		    @Override
+		    protected char encode(PhredQuality quality) {
+		        int solexaQuality = SolexaUtil.convertPhredQualityToSolexaQuality(quality);
+		        return (char)(solexaQuality +64);
+		    }
+	}
+	;
+	private final GlyphCodec<PhredQuality> qualityCodec = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
+	
+	/**
+	 * Decode the given FASTQ quality encoded String
+	 * into the equivalent Encoded Qualities.
+	 * @param fastqQualities
+	 * @return a new EncodedGlyphs representing
+	 * the decoded FASTQ quality values.
+	 */
+    public EncodedGlyphs<PhredQuality> decode(String fastqQualities) {
+        ByteBuffer buffer = ByteBuffer.allocate(fastqQualities.length());
+        for(int i=0; i<fastqQualities.length(); i++){
+            buffer.put(decode(fastqQualities.charAt(i)).getNumber());
+        }
+        return new DefaultEncodedGlyphs<PhredQuality>(
+                                    qualityCodec,
+                                    PhredQuality.valueOf(buffer.array()));
+    }
+
+    /**
+     * Encode the given qualities into 
+     * a FASTQ quality encoded String.
+     * @param qualities the qualities to encode
+     * @return a String representing these
+     * quality values in the desired String encoding.
+     */
+    public String encode(EncodedGlyphs<PhredQuality> qualities) {
+        StringBuilder builder= new StringBuilder();
+        for(PhredQuality quality : qualities.decode()){
+            builder.append(encode(quality));
+        }
+        return builder.toString();
+    }
+    
+    protected abstract PhredQuality decode(char encodedQuality);
+    protected abstract char encode(PhredQuality quality);
+    
 }

@@ -46,5 +46,12 @@ public interface FastaRecord<T>
     long getChecksum();
     
     T getValues();
+    /**
+     * Gets the entire formatted fasta record as a String.
+     * @return a correctly formatted FASTA record
+     * as a String.
+     */
+    @Override
+    String toString();
 
 }

@@ -35,19 +35,15 @@ import java.util.NoSuchElementException;
 import org.jcvi.CommonUtil;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.util.CloseableIterator;
 import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractTestFastQFileDataStore {
-    static final IlluminaFastQQualityCodec QUALITY_CODEC = new IlluminaFastQQualityCodec(
-            new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE));
+    static final FastQQualityCodec QUALITY_CODEC = FastQQualityCodec.ILLUMINA;
     DataStore<FastQRecord> sut;
     String file = "files/example.fastq";
     ResourceFileServer resources = new ResourceFileServer(

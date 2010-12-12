@@ -32,7 +32,7 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
+import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Peaks;
 
@@ -47,7 +47,6 @@ import org.jcvi.sequence.Peaks;
  *
  */
 public class BasicChromatogram implements Chromatogram {
-    private static final NucleotideGlyphFactory FACTORY = NucleotideGlyphFactory.getInstance();
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
 
     private final ChannelGroup channelGroup;
@@ -75,7 +74,7 @@ public class BasicChromatogram implements Chromatogram {
     public BasicChromatogram(String basecalls, byte[] qualities,Peaks peaks,
             ChannelGroup channelGroup,
             Map<String,String> properties){
-        this(new DefaultNucleotideEncodedGlyphs( FACTORY.getGlyphsFor(basecalls)),
+        this(new DefaultNucleotideEncodedGlyphs( NucleotideGlyph.getGlyphsFor(basecalls)),
                 new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,PhredQuality.valueOf(qualities)),
                 peaks,
                      channelGroup, properties);

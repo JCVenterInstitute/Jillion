@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
@@ -40,8 +38,7 @@ import static org.junit.Assert.*;
  *
  */
 public class TestH2QualityFastQDataStore {
-    static final IlluminaFastQQualityCodec QUALITY_CODEC = new IlluminaFastQQualityCodec(
-            new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE));
+    static final FastQQualityCodec QUALITY_CODEC = FastQQualityCodec.ILLUMINA;
     
     String filepath = "files/example.fastq";
     ResourceFileServer resources = new ResourceFileServer(

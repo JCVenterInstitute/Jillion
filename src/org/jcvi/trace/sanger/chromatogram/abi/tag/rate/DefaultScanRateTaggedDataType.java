@@ -20,7 +20,6 @@
 package org.jcvi.trace.sanger.chromatogram.abi.tag.rate;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.AbstractTaggedDataRecord;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataName;
 import org.jcvi.trace.sanger.chromatogram.abi.tag.TaggedDataType;

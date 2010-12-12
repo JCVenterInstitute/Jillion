@@ -24,8 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.After;
 import org.junit.Before;
@@ -40,7 +38,7 @@ public class TestFastQUtil {
     private static final String file = "files/example.fastq";
     private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestFastQUtil.class);
    
-    FastQQualityCodec qualityCodec = new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
+    FastQQualityCodec qualityCodec = FastQQualityCodec.ILLUMINA;
     DefaultFastQFileDataStore expectedDataStore;
     @Before
     public void setup() throws FileNotFoundException, IOException{

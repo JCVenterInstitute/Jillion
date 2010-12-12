@@ -21,14 +21,14 @@ package org.jcvi.glyph.aa;
 
 import java.util.List;
 
+import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 
-public class TestDefaultAminoAcidEncodedGlyphs extends AbstractTestAminoAcidEncodedGlyphs{
-
+public class TestCompactedAminoAcidEncodedGlyphs extends AbstractTestAminoAcidEncodedGlyphs{
+	private CompactedAminoAcidGlyphCodec codec = new CompactedAminoAcidGlyphCodec();
 	@Override
 	protected EncodedGlyphs<AminoAcid> encode(List<AminoAcid> aminoAcids) {
-		return new DefaultAminoAcidEncodedGlyphs(aminoAcids);
+		return new DefaultEncodedGlyphs<AminoAcid>(codec, aminoAcids);
 	}
 
-	
 }

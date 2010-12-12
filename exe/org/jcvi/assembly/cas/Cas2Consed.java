@@ -78,9 +78,6 @@ import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
 import org.jcvi.fasta.fastq.FastQQualityCodec;
-import org.jcvi.fasta.fastq.SangerFastQQualityCodec;
-import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.IOUtil;
@@ -227,8 +224,8 @@ public class Cas2Consed {
                    }
                }
                FastQQualityCodec qualityCodec=  commandLine.hasOption("useIllumina")?  
-                       new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE)
-                    : new SangerFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
+                       FastQQualityCodec.ILLUMINA
+                    : FastQQualityCodec.SANGER;
                
                CasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                         new H2SffCasDataStoreFactory(casWorkingDirectory,tempDir,EmptyDataStoreFilter.INSTANCE),               

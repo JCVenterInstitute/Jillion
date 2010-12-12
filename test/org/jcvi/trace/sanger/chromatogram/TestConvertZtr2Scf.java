@@ -52,7 +52,7 @@ public class TestConvertZtr2Scf {
         Chromatogram decodedZTR = ztrParser.decode(
                 RESOURCES.getFileAsStream("ztr/files/GBKAK82TF.ztr"));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        scfCodec.encode(new SCFChromatogramImpl(decodedZTR), out);
+        scfCodec.write(new SCFChromatogramImpl(decodedZTR), out);
         
         Chromatogram encodedScf = scfCodec.decode(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
         assertEquals(decodedZTR, encodedScf);

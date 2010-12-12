@@ -30,14 +30,12 @@ import java.util.List;
 
 
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRunLengthEncoder {
 
-    NucleotideGlyphFactory glyphFactory = NucleotideGlyphFactory.getInstance();
-    String BasesAsString = "AAAAAAAAAAAATAAAAAAAAAAAATTTAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAA";
-    List<NucleotideGlyph> list = glyphFactory.getGlyphsFor(BasesAsString);
+   String BasesAsString = "AAAAAAAAAAAATAAAAAAAAAAAATTTAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAA";
+    List<NucleotideGlyph> list = NucleotideGlyph.getGlyphsFor(BasesAsString);
     List<RunLength<NucleotideGlyph>> expectedEncoding = Arrays.asList(
             new RunLength<NucleotideGlyph>(NucleotideGlyph.Adenine,12),
             new RunLength<NucleotideGlyph>(NucleotideGlyph.Thymine,1),

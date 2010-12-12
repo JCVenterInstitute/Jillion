@@ -70,10 +70,7 @@ import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.fasta.fastq.FastQQualityCodec;
-import org.jcvi.fasta.fastq.SangerFastQQualityCodec;
-import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.IOUtil;
@@ -232,8 +229,8 @@ public class SingleContigCasAssemblyBuilder {
             }
             DataStoreFilter readFilter =new DefaultIncludeDataStoreFilter(readIds);
             FastQQualityCodec qualityCodec=  useIllumina?  
-                    new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE)
-                 : new SangerFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
+            		FastQQualityCodec.ILLUMINA
+                 : FastQQualityCodec.SANGER;
             
             MultiCasDataStoreFactory filteredCasReadDataStoreFactory = new MultiCasDataStoreFactory(
                      new H2SffCasDataStoreFactory(casWorkingDirectory,

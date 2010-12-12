@@ -34,12 +34,10 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Peaks;
 
 public class BasicChromatogramBuilder {
-    private static NucleotideGlyphFactory NUCLEOTIDE_FACTORY = NucleotideGlyphFactory.getInstance();
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
 
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[]{};
@@ -206,7 +204,7 @@ public class BasicChromatogramBuilder {
                     new Channel(tConfidence(),tPositions()));
             
             return new BasicChromatogram(
-                    new DefaultNucleotideEncodedGlyphs(NUCLEOTIDE_FACTORY.getGlyphsFor(basecalls())),
+                    new DefaultNucleotideEncodedGlyphs(basecalls()),
                     generateQualities(channelGroup),                        
                         new Peaks(peaks()),
                                                 channelGroup,

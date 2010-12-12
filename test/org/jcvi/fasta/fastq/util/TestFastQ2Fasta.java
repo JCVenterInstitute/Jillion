@@ -36,8 +36,6 @@ import org.jcvi.fasta.fastq.DefaultFastQFileDataStore;
 import org.jcvi.fasta.fastq.FastQFileParser;
 import org.jcvi.fasta.fastq.FastQQualityCodec;
 import org.jcvi.fasta.fastq.FastQRecord;
-import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -48,7 +46,7 @@ import static org.junit.Assert.*;
  */
 public class TestFastQ2Fasta {
 
-    FastQQualityCodec codec = new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
+    FastQQualityCodec codec = FastQQualityCodec.ILLUMINA;
     ResourceFileServer RESOURCES = new ResourceFileServer(TestFastQ2Fasta.class);
     
     @Test

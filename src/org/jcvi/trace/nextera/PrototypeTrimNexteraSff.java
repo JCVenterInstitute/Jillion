@@ -31,7 +31,6 @@ import org.jcvi.assembly.trim.DefaultPrimerTrimmer;
 import org.jcvi.assembly.trim.PrimerTrimmer;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -39,7 +38,6 @@ import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.AbstractSffFileVisitor;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFCommonHeaderCodec;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFReadDataCodec;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.LargeSffFileDataStore;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFCommonHeader;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFDecoderException;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFFlowgram;
@@ -48,7 +46,6 @@ import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadHeader;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffDataStore;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffFileVisitor;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffInfoDataStore;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SffParser;
 
 /**
  * @author dkatzel

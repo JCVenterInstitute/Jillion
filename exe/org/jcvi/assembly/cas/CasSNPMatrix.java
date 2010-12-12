@@ -50,8 +50,7 @@ import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.EmptyDataStoreFilter;
-import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.fasta.fastq.FastQQualityCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.fileServer.DirectoryFileServer;
@@ -160,10 +159,10 @@ public class CasSNPMatrix {
             File variationsFile = new File(commandLine.getOptionValue("v"));
             DefaultVariationLogFile  varaintMap = new DefaultVariationLogFile(variationsFile);
                
-            final IlluminaFastQQualityCodec solexaQualityCodec = new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
+            final FastQQualityCodec illuminaQualityCodec = FastQQualityCodec.ILLUMINA;
             MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                     new H2SffCasDataStoreFactory(DirectoryFileServer.createTemporaryDirectoryFileServer(new File("/usr/local/scratch/dkatzel/")), EmptyDataStoreFilter.INSTANCE),               
-                    new H2FastQCasDataStoreFactory(solexaQualityCodec),
+                    new H2FastQCasDataStoreFactory(illuminaQualityCodec),
                     new FastaCasDataStoreFactory(100)        
             );
             AbstractDefaultCasFileLookup readIdLookup = new DefaultReadCasFileLookup();

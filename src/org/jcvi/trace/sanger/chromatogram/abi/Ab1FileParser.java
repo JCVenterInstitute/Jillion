@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
@@ -615,7 +614,7 @@ public final class Ab1FileParser {
 	private static List<NucleotideGlyph> parseChannelOrder(GroupedTaggedRecords dataRecordMap ){
 		AsciiTaggedDataRecord order = dataRecordMap.asciiDataRecords.get(TaggedDataName.FILTER_WHEEL_ORDER).get(0);
 		
-		return NucleotideGlyphFactory.getInstance().getGlyphsFor(order.parseDataRecordFrom(null));
+		return NucleotideGlyph.getGlyphsFor(order.parseDataRecordFrom(null));
 
 	}
 

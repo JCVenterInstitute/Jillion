@@ -21,14 +21,13 @@
  *
  * @author dkatzel
  */
-package org.jcvi.fasta.fastq.illumina;
+package org.jcvi.fasta.fastq;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
-import org.jcvi.glyph.GlyphCodec;
+import org.jcvi.fasta.fastq.FastQQualityCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +35,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 @RunWith(Parameterized.class)
 public class TestIlluminaFastQQualityCodec {
     @Parameters
@@ -52,8 +50,7 @@ public class TestIlluminaFastQQualityCodec {
     
     private PhredQuality quality;
     private char encodedQuality;
-    private GlyphCodec<PhredQuality> qualityCodec= createMock(GlyphCodec.class);
-    private IlluminaFastQQualityCodec sut = new IlluminaFastQQualityCodec(qualityCodec);
+    private FastQQualityCodec sut = FastQQualityCodec.ILLUMINA;
     
     public TestIlluminaFastQQualityCodec(PhredQuality quality,char encodedQuality ){
         this.quality = quality;

@@ -51,11 +51,8 @@ import org.jcvi.fasta.fastq.DefaultFastQRecord;
 import org.jcvi.fasta.fastq.FastQQualityCodec;
 import org.jcvi.fasta.fastq.FastQRecord;
 import org.jcvi.fasta.fastq.FastQUtil;
-import org.jcvi.fasta.fastq.SangerFastQQualityCodec;
-import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.Glyph;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -283,8 +280,7 @@ public class SortedFasta2Fastq {
             }else{
                 bufferSize = DEFAULT_QUEUE_SIZE;
             }
-            RunLengthEncodedGlyphCodec qualityCodec = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
-            final FastQQualityCodec fastqQualityCodec = useSanger? new SangerFastQQualityCodec(qualityCodec): new IlluminaFastQQualityCodec(qualityCodec);
+            final FastQQualityCodec fastqQualityCodec = useSanger? FastQQualityCodec.SANGER: FastQQualityCodec.ILLUMINA;
         
             final BlockingQueue<QualityFastaRecord> qualityQueue = new ArrayBlockingQueue<QualityFastaRecord>(bufferSize);
             final BlockingQueue<NucleotideSequenceFastaRecord> sequenceQueue = new ArrayBlockingQueue<NucleotideSequenceFastaRecord>(bufferSize);

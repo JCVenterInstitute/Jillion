@@ -31,9 +31,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 public class TestDefaultNucleotideGlyphCodec {
-    NucleotideGlyphFactory glyphFactory = NucleotideGlyphFactory.getInstance();
-    List<NucleotideGlyph> evenBases = glyphFactory.getGlyphsFor("ACGTACGTWS-NACGT");
-    List<NucleotideGlyph> oddBases =  glyphFactory.getGlyphsFor("ACGTACGTWS-NACGTA");
+    List<NucleotideGlyph> evenBases = NucleotideGlyph.getGlyphsFor("ACGTACGTWS-NACGT");
+    List<NucleotideGlyph> oddBases =  NucleotideGlyph.getGlyphsFor("ACGTACGTWS-NACGTA");
     
     DefaultNucleotideGlyphCodec sut = DefaultNucleotideGlyphCodec.getInstance();
     
@@ -61,7 +60,7 @@ public class TestDefaultNucleotideGlyphCodec {
     private void assertFinalBaseInOddLengthSequenceCorrectlyDecoded(
             String finalBase) {
         String basesString = "ATTTGCTATCCATA"+finalBase;
-        List<NucleotideGlyph> expectedGlyphs = glyphFactory.getGlyphsFor(basesString);
+        List<NucleotideGlyph> expectedGlyphs = NucleotideGlyph.getGlyphsFor(basesString);
         byte[] encoded =sut.encode(expectedGlyphs);
         assertEquals("did not decode final base of "+finalBase + " correctly",
                 expectedGlyphs, sut.decode(encoded));
