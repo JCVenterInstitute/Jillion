@@ -29,7 +29,6 @@ import java.util.List;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -38,9 +37,8 @@ public class TestDefaultEncodedNuclotideFastaRecord {
 
     private String id = "1234";
     private String comment = "comment";
-    private static final NucleotideGlyphFactory FACTORY = NucleotideGlyphFactory.getInstance();
     String bases = "ACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGT-N";
-    List<NucleotideGlyph> glyphs = FACTORY.getGlyphsFor(bases);
+    List<NucleotideGlyph> glyphs = NucleotideGlyph.getGlyphsFor(bases);
     NucleotideEncodedGlyphs encodedGlyphs = new DefaultNucleotideEncodedGlyphs(glyphs);
 
     DefaultEncodedNucleotideFastaRecord sut = new DefaultEncodedNucleotideFastaRecord(id, comment, bases);

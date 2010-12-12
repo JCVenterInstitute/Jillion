@@ -54,6 +54,16 @@ public class Chromatogram2fasta {
 
     public static final String DEFAULT_FASTA_PREFIX = "chromatogram2fasta";
     
+    private static class NULLOutputStream extends OutputStream{
+
+		@Override
+		public void write(int b) throws IOException {
+			//no-op
+		}
+    }
+    
+    private static final NULLOutputStream NULL_OUTPUTSTREAM= new NULLOutputStream();
+    
     private final OutputStream seqOut, posOut, qualOut;
     
     
@@ -63,24 +73,20 @@ public class Chromatogram2fasta {
     	if(seqOut ==null && qualOut ==null && posOut==null){
     		throw new NullPointerException("must have at least 1 non-null outputStream");
     	}
-		this.seqOut = seqOut;
-		this.posOut = posOut;
-		this.qualOut = qualOut;
+		this.seqOut = seqOut==null? NULL_OUTPUTSTREAM : seqOut;
+		this.posOut = posOut==null? NULL_OUTPUTSTREAM : posOut;
+		this.qualOut = qualOut==null? NULL_OUTPUTSTREAM :qualOut ;
 	}
 
     public void writeChromatogram(String id, Chromatogram chromo) throws IOException{
-    	 if(seqOut !=null){
-             seqOut.write(new DefaultEncodedNucleotideFastaRecord(id, chromo.getBasecalls())
+        //small hit converting all to fastas even if not outputing them all
+    	//is worth cleaner code, fix if this becomes a bottleneck.
+    	seqOut.write(new DefaultEncodedNucleotideFastaRecord(id, chromo.getBasecalls())
                              .toString().getBytes());
-         }
-         if(qualOut !=null){
-             qualOut.write(new DefaultQualityFastaRecord(id, chromo.getQualities())
+    	qualOut.write(new DefaultQualityFastaRecord(id, chromo.getQualities())
                              .toString().getBytes());
-         }
-         if(posOut !=null){
-             posOut.write(new DefaultPositionFastaRecord(id, chromo.getPeaks().getData())
+    	posOut.write(new DefaultPositionFastaRecord(id, chromo.getPeaks().getData())
                              .toString().getBytes());
-         }
     }
 
 	/**

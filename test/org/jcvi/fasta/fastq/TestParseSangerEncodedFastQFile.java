@@ -22,9 +22,7 @@ package org.jcvi.fasta.fastq;
 import java.io.IOException;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,8 +34,7 @@ import static org.junit.Assert.*;
  */
 public class TestParseSangerEncodedFastQFile {
 
-    static final SangerFastQQualityCodec QUALITY_CODEC = new SangerFastQQualityCodec(
-            new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE));
+    static final FastQQualityCodec QUALITY_CODEC = FastQQualityCodec.SANGER;
     String file = "files/sanger.fastq";
     ResourceFileServer resources = new ResourceFileServer(
             TestDefaultFastQFileDataStore.class);

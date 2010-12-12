@@ -38,8 +38,7 @@ import org.jcvi.datastore.ContigDataStore;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultContigFileDataStore;
-import org.jcvi.fasta.fastq.illumina.IlluminaFastQQualityCodec;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.fasta.fastq.FastQQualityCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
@@ -65,7 +64,7 @@ public class TestDefaultCasAssembly {
     public void parseCas() throws IOException, DataStoreException{
         File casFile = RESOURCES.getFile("files/flu.cas");
         final File rootDir = casFile.getParentFile();
-        final IlluminaFastQQualityCodec illuminaQualityCodec = new IlluminaFastQQualityCodec(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
+        final FastQQualityCodec illuminaQualityCodec = FastQQualityCodec.ILLUMINA;
         MultiCasDataStoreFactory casDataStoreFactory = new MultiCasDataStoreFactory(
                 new H2SffCasDataStoreFactory(rootDir),               
                 new H2FastQCasDataStoreFactory(rootDir,illuminaQualityCodec),

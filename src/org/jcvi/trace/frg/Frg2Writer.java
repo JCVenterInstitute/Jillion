@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,7 +61,9 @@ public class Frg2Writer {
     private static final String FRG_2_FORMAT = "{FRG\nact:A\nacc:%s\nrnd:1\nsta:G\nlib:%s\npla:0\nloc:0\nsrc:\n%s\n.\nseq:\n%s\n.\nqlt:\n%s\n.\nhps:\n.\nclv:%d,%d\nclr:%d,%d\n}\n";
     private static final String LKG_MESSAGE = "{LKG\nact:A\nfrg:%s\nfrg:%s\n}\n";
 
-    
+    public void writeFrg2(final Iterable<Fragment> unmatedFrgs,OutputStream out) throws IOException, InterruptedException, ExecutionException{
+    	writeFrg2(Collections.<Mated<Fragment>>emptyList(),unmatedFrgs,out);
+    }
     /**
      * Create a mated FRG 2 file. 
      * @param matedFrags list of mated fragments to write
@@ -69,7 +72,7 @@ public class Frg2Writer {
      * @throws ExecutionException 
      * @throws InterruptedException 
      */
-    public void writeFrg2(final List<Mated<Fragment>> matedFrags, final List<Fragment> unmatedFrgs,OutputStream out) throws IOException, InterruptedException, ExecutionException{
+    public void writeFrg2(final List<Mated<Fragment>> matedFrags, final Iterable<Fragment> unmatedFrgs,OutputStream out) throws IOException, InterruptedException, ExecutionException{
         ExecutorService executor = Executors.newFixedThreadPool(3);
         writeVersion(out);
         final ReadWriteDirectoryFileServer tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer();
@@ -159,7 +162,7 @@ public class Frg2Writer {
     private void writeLinkageMessage(List<Fragment> mates,OutputStream out) throws IOException{
         out.write(String.format(LKG_MESSAGE, mates.get(0).getId(),mates.get(1).getId()).getBytes());
     }
-    private void writeFragments(List<Mated<Fragment>> matedFragsList, List<Fragment> unmatedFrgs,OutputStream out) throws IOException {
+    private void writeFragments(Iterable<Mated<Fragment>> matedFragsList, Iterable<Fragment> unmatedFrgs,OutputStream out) throws IOException {
         for(Mated<Fragment> matedFrags: matedFragsList){
             for(Fragment frag: matedFrags.getMates()){
                 writeFrag(frag,out);
@@ -192,7 +195,7 @@ public class Frg2Writer {
         out.write(FRG_VERSION_2_TAG.getBytes());
     }
     
-    private void writeLibraries(List<Mated<Fragment>> matedFrags, List<Fragment> unmatedFrgs, OutputStream out) throws IOException {
+    private void writeLibraries(Iterable<Mated<Fragment>> matedFrags, Iterable<Fragment> unmatedFrgs, OutputStream out) throws IOException {
         Set<String> seen = new HashSet<String>();
         for(Fragment frag: unmatedFrgs){
             writeLibraryIfNotYetSeen(out, seen, frag);

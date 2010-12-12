@@ -166,8 +166,9 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
         private boolean found=false;
         
         public SingleFastQDataStore(String idToLookFor,File fastQFile,FastQQualityCodec qualityCodec) throws FileNotFoundException {
-            super(fastQFile,qualityCodec,1);
+            super(qualityCodec,1);
             this.idToLookFor = idToLookFor;
+            FastQFileParser.parse(fastQFile, this);
         }
         @Override
         public boolean visitBeginBlock(String id, String optionalComment) {

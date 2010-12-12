@@ -26,11 +26,9 @@ package org.jcvi.trace.frg;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.cli.CommandLine;
@@ -38,7 +36,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.Distance;
-import org.jcvi.Range;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.DataStoreException;
@@ -83,31 +80,24 @@ public class UnmatedTraceToFragConverter {
             
             TraceDataStore<SangerTrace> traceDataStore = 
                 new TraceFileServerDataStore<SangerTrace>(DirectoryFileServer.createReadOnlyDirectoryFileServer(traceDirectory),SangerTraceParser.getInstance());
-            
-                
-            
-            
             Distance libraryDistance = Distance.buildDistance(distance, distance);
-            Integer idCounter=0;
-            Library library = new DefaultLibrary(idCounter.toString(), libraryDistance, MateOrientation.UNORIENTED);
+            Library library = new DefaultLibrary("0", 
+            							libraryDistance, 
+            							MateOrientation.UNORIENTED);
     
-            Map<String, Fragment> map = new HashMap<String, Fragment>();
+            Set<Fragment> unmatedFrags = new HashSet<Fragment>();
             Iterator<String> iter =traceDataStore.getIds();
-            while(iter.hasNext()){
-                String id =iter.next();
-                    try{
+            try{
+            	while(iter.hasNext()){
+            		String id =iter.next();                    
                     SangerTrace trace = traceDataStore.get(id);
-                    Range range = Range.buildRangeOfLength(0, trace.getBasecalls().getLength());
-                    map.put(id,new DefaultFragment(id, trace, 
-                            range, range, library, null));   
-                }catch(DataStoreException e){
-                    e.printStackTrace();
-                }
+                     DefaultFragment fragment = new DefaultFragment(id, trace, library);
+					unmatedFrags.add(fragment); 
+            	}
+            }catch(DataStoreException e){
+                throw new IllegalStateException("error getting traces",e);
             }
-            new Frg2Writer().writeFrg2(Collections.EMPTY_LIST, 
-                    new ArrayList<Fragment>(map.values()), out);
-            
-            
+            new Frg2Writer().writeFrg2(unmatedFrags, out); 
             IOUtil.closeAndIgnoreErrors(out);
         }
         catch(ParseException e){

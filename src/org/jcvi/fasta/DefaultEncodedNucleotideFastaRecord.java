@@ -29,12 +29,10 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 
 public class DefaultEncodedNucleotideFastaRecord extends AbstractNucleotideSequenceFastaRecord{
 
-    private static NucleotideGlyphFactory factory = NucleotideGlyphFactory.getInstance();
-    
+   
     public DefaultEncodedNucleotideFastaRecord(String identifier, EncodedGlyphs<NucleotideGlyph> sequence){
         super(identifier, NucleotideGlyph.convertToString(sequence.decode()));
     }
@@ -96,7 +94,7 @@ public class DefaultEncodedNucleotideFastaRecord extends AbstractNucleotideSeque
     @Override
     protected NucleotideEncodedGlyphs encodeNucleotides(
             CharSequence sequence) {
-        return new DefaultNucleotideEncodedGlyphs( factory.getGlyphsFor(sequence));
+        return new DefaultNucleotideEncodedGlyphs( NucleotideGlyph.getGlyphsFor(sequence));
     }
 
 

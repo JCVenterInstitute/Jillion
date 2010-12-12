@@ -27,14 +27,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 @RunWith(Parameterized.class)
 public class TestSangerFastQQualityCodec {
 
@@ -52,8 +50,7 @@ public class TestSangerFastQQualityCodec {
     
     private PhredQuality quality;
     private char encodedQuality;
-    private GlyphCodec<PhredQuality> qualityCodec= createMock(GlyphCodec.class);
-    private SangerFastQQualityCodec sut = new SangerFastQQualityCodec(qualityCodec);
+    private FastQQualityCodec sut = FastQQualityCodec.SANGER;
     
     public TestSangerFastQQualityCodec(PhredQuality quality,char encodedQuality ){
         this.quality = quality;

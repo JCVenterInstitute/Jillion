@@ -31,8 +31,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestIlluminaUtil.class,
-        TestIlluminaFastQQualityCodec.class
+        TestIlluminaUtil.class
+        
     }
     )
 public class AllIlluminaUnitTests {

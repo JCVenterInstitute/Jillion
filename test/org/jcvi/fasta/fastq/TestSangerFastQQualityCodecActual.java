@@ -33,8 +33,7 @@ import static org.junit.Assert.*;
 public class TestSangerFastQQualityCodecActual {
 
     private static final RunLengthEncodedGlyphCodec QUALITY_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
-    SangerFastQQualityCodec sut = new SangerFastQQualityCodec(
-            QUALITY_CODEC);
+    FastQQualityCodec sut = FastQQualityCodec.SANGER;
     String encodedqualities = "I9IG9IC";
     List<PhredQuality> qualities = PhredQuality.valueOf(
             new byte[]{40,24,40,38,24,40,34});

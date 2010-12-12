@@ -19,16 +19,42 @@
 
 package org.jcvi.glyph.aa;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
+import org.jcvi.Range;
 import org.jcvi.glyph.EncodedGlyphs;
+import org.junit.Before;
+import org.junit.Test;
 
-public class TestDefaultAminoAcidEncodedGlyphs extends AbstractTestAminoAcidEncodedGlyphs{
-
-	@Override
-	protected EncodedGlyphs<AminoAcid> encode(List<AminoAcid> aminoAcids) {
-		return new DefaultAminoAcidEncodedGlyphs(aminoAcids);
+public abstract class AbstractTestAminoAcidEncodedGlyphs {
+	private final List<AminoAcid> aminoAcids = AminoAcid.getGlyphsFor("ILKMFTWVVFTWILK");
+	EncodedGlyphs<AminoAcid> sut;
+	@Before
+	public void setup(){
+		sut = encode(aminoAcids);
 	}
-
+	protected abstract EncodedGlyphs<AminoAcid> encode(List<AminoAcid> aminoAcids);
+	@Test
+	public void decode(){
+		assertEquals(aminoAcids,sut.decode());
+	}
+	@Test
+	public void length(){
+		assertEquals(aminoAcids.size(), sut.getLength());
+	}
 	
+	@Test
+	public void decodeWithRangeShouldOnlyDecodeSubrange(){
+		Range range = Range.buildRange(2, 5);
+		List<AminoAcid> expected = aminoAcids.subList(2, 6);
+		assertEquals(expected, sut.decode(range));
+	}
+	@Test
+	public void get(){
+		for(int i=0; i< aminoAcids.size(); i++){
+			assertEquals(aminoAcids.get(i), sut.get(i));
+		}
+	}
 }

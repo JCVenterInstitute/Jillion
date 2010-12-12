@@ -40,7 +40,6 @@ import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.NucleotideGlyphFactory;
 import org.jcvi.sequence.SequenceDirection;
 
 public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
@@ -54,7 +53,6 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
 
     public static class Builder{
         static int counter=0;
-        private static final NucleotideGlyphFactory FACTORY = NucleotideGlyphFactory.getInstance();
         private static final DefaultNucleotideGlyphCodec DEFAULT_CODEC =DefaultNucleotideGlyphCodec.getInstance();
         private EncodedGlyphs<NucleotideGlyph> fullConsensus;
         private String contigId;
@@ -68,7 +66,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         public Builder(String contigId, String fullConsensus){
             this.fullConsensus = new DefaultEncodedGlyphs<NucleotideGlyph>(
                     DEFAULT_CODEC, 
-                    FACTORY.getGlyphsFor(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)));
+                    NucleotideGlyph.getGlyphsFor(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)));
             this.contigId = contigId;
         }
         

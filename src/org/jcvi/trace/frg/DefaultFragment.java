@@ -41,6 +41,15 @@ public class DefaultFragment implements Fragment{
     public DefaultFragment(String id, Trace trace,Range validRange,Range vectorClearRange, Library library,String comment){
         this(id, trace.getBasecalls(), trace.getQualities(),validRange,vectorClearRange,library,comment);
     }
+    public DefaultFragment(String id, Trace trace,Range validRange,Range vectorClearRange, Library library){
+        this(id, trace,validRange,vectorClearRange,library,null);
+    }
+    public DefaultFragment(String id, Trace trace,Range validRange,Library library){
+        this(id, trace,validRange,validRange,library,null);
+    }
+    public DefaultFragment(String id, Trace trace,Library library){
+        this(id, trace,Range.buildRangeOfLength(0,trace.getBasecalls().getLength()),library);
+    }
     public DefaultFragment(String id, NucleotideEncodedGlyphs bases,
             EncodedGlyphs<PhredQuality> qualities,Range validRange,Range vectorClearRange, Library library,String comment){
         if(id ==null){
