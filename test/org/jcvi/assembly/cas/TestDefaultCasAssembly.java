@@ -100,7 +100,7 @@ public class TestDefaultCasAssembly {
         assertEquals("# reads", expected.getNumberOfReads(), actual.getNumberOfReads());
         for(PlacedRead expectedRead : expected.getPlacedReads()){
             String id = expectedRead.getId();
-            assertReadsEqual(expectedRead, actual.getPlacedReadById(id).getRealPlacedRead());
+            assertReadsEqual(expectedRead, actual.getPlacedReadById(id));
         }
         
     }

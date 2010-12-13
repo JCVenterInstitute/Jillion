@@ -76,10 +76,10 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
         for(P realRead : region.getElements()){
             final EncodedGlyphs<PhredQuality> qualityRecord = qualityFastaMap.get(realRead.getId());
             if(qualityRecord !=null){
-                int indexIntoVirtualRead = (int) (index - realRead.getStart());
-                final NucleotideGlyph calledBase = realRead.getEncodedGlyphs().get(indexIntoVirtualRead);
+                int indexIntoRead = (int) (index - realRead.getStart());
+                final NucleotideGlyph calledBase = realRead.getEncodedGlyphs().get(indexIntoRead);
                 
-                PhredQuality qualityValue =qualityValueStrategy.getQualityFor(realRead, qualityRecord, indexIntoVirtualRead);
+                PhredQuality qualityValue =qualityValueStrategy.getQualityFor(realRead, qualityRecord, indexIntoRead);
                 boolean agreesWithConsensus = isSame(consensusBase, calledBase);
                 boolean isHighQuality = isHighQuality(qualityValue);
                 SequenceDirection direction =realRead.getSequenceDirection();

@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.VirtualPlacedRead;
-import org.jcvi.assembly.VirtualPlacedReadAdapter;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -78,7 +76,7 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		map.put(TigrAssemblerContigAttribute.ASMBL_ID, delegate.getId());
 		map.put(TigrAssemblerContigAttribute.NUMBER_OF_READS, ""+delegate.getNumberOfReads());
 		
-		map.put(TigrAssemblerContigAttribute.IS_CIRCULAR, delegate.isCircular()?"1":"0");
+		map.put(TigrAssemblerContigAttribute.IS_CIRCULAR, "0");
 		
 		double averageCoverage = computeAvgCoverageFor(delegate);
 		map.put(TigrAssemblerContigAttribute.AVG_COVERAGE,String.format("%.2f",averageCoverage));
@@ -170,9 +168,9 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	}
 
 	@Override
-	public VirtualPlacedRead<TigrAssemblerPlacedRead> getPlacedReadById(
+	public TigrAssemblerPlacedRead getPlacedReadById(
 			String id) {
-		return new VirtualPlacedReadAdapter<TigrAssemblerPlacedRead>(adaptedReads.get(id));
+		return adaptedReads.get(id);
 	}
 
 	@Override
@@ -184,19 +182,7 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		return Collections.unmodifiableSet(set);
 	}
 
-	@Override
-	public Set<VirtualPlacedRead<TigrAssemblerPlacedRead>> getVirtualPlacedReads() {
-		Set<VirtualPlacedRead<TigrAssemblerPlacedRead>> set= new LinkedHashSet<VirtualPlacedRead<TigrAssemblerPlacedRead>>();
-		for(TigrAssemblerPlacedRead read: adaptedReads.values()){
-			set.add(new VirtualPlacedReadAdapter<TigrAssemblerPlacedRead>(read));
-		}
-		return Collections.unmodifiableSet(set);
-	}
-
-	@Override
-	public boolean isCircular() {
-		return delegate.isCircular();
-	}
+	
 	/**
 	 * {@code Builder} is a Builder object for making 
 	 * TigrAssemblerContigAdapter instances.  Some {@link TigrAssemblerContigAttribute}s

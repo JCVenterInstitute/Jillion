@@ -30,8 +30,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jcvi.Range;
-import org.jcvi.assembly.VirtualPlacedRead;
-import org.jcvi.assembly.VirtualPlacedReadAdapter;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.contig.AbstractContig;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
@@ -47,7 +45,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
     
 
     private DefaultAceContig(String id, NucleotideEncodedGlyphs consensus,
-            Set<VirtualPlacedRead<AcePlacedRead>> reads, boolean circular) {
+            Set<AcePlacedRead> reads, boolean circular) {
         super(id, consensus, reads, circular);
     }
 
@@ -123,7 +121,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
             }
         }
         public DefaultAceContig build(){
-            Set<VirtualPlacedRead<AcePlacedRead>> placedReads = new HashSet<VirtualPlacedRead<AcePlacedRead>>(aceReadBuilders.size());
+            Set<AcePlacedRead> placedReads = new HashSet<AcePlacedRead>(aceReadBuilders.size());
             
             if(numberOfReads()==0){
                 //force empty contig if no reads...
@@ -135,7 +133,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
             for(DefaultAcePlacedRead.Builder aceReadBuilder : aceReadBuilders){
                 int newOffset = aceReadBuilder.offset() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);
-                placedReads.add(new VirtualPlacedReadAdapter<AcePlacedRead>(aceReadBuilder.build()));                
+                placedReads.add(aceReadBuilder.build());                
             }
             return new DefaultAceContig(contigId, validConsensus,placedReads,circular);
         }

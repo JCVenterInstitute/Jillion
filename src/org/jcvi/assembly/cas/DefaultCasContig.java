@@ -35,7 +35,6 @@ import java.util.Map.Entry;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultContig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.assembly.cas.read.CasPlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
@@ -77,23 +76,13 @@ public class DefaultCasContig implements CasContig{
     }
 
     @Override
-    public VirtualPlacedRead<PlacedRead> getPlacedReadById(String id) {
+    public PlacedRead getPlacedReadById(String id) {
         return delegate.getPlacedReadById(id);
     }
 
     @Override
     public Set<PlacedRead> getPlacedReads() {
         return delegate.getPlacedReads();
-    }
-
-    @Override
-    public Set<VirtualPlacedRead<PlacedRead>> getVirtualPlacedReads() {
-        return delegate.getVirtualPlacedReads();
-    }
-
-    @Override
-    public boolean isCircular() {
-        return delegate.isCircular();
     }
 
     public static class Builder implements org.jcvi.Builder<DefaultCasContig>{

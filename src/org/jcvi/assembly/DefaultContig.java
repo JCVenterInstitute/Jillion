@@ -31,7 +31,6 @@ import org.jcvi.assembly.contig.AbstractContig;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
-import org.jcvi.sequence.DefaultRead;
 import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -40,8 +39,8 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
     
 
     protected DefaultContig(String id, NucleotideEncodedGlyphs consensus,
-            Set<VirtualPlacedRead<P>> virtualReads,boolean circular) {
-        super(id, consensus, virtualReads,circular);
+            Set<P> reads,boolean circular) {
+        super(id, consensus, reads,circular);
     }
     
     /* (non-Javadoc)
@@ -73,20 +72,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
         public Builder addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
             
             if(offset <0){
-                SplitReferenceEncodedNucleotideGlyphs referenceEncodedGlyphs = new SplitReferenceEncodedNucleotideGlyphs(getConsensus(), basecalls,offset, validRange);
-                final DefaultPlacedRead actualPlacedRead = new DefaultPlacedRead(new DefaultRead<ReferencedEncodedNucleotideGlyphs>(id, referenceEncodedGlyphs), offset,dir );
-                
-                long leftOffset = getConsensus().getLength() + offset;
-                Range leftRange = Range.buildRangeOfLength(leftOffset, -1L*offset);
-                Range rightRange = Range.buildRange(0, basecalls.length() - leftRange.size()-validRange.getStart());
-                
-                Range leftValidRange = Range.buildRangeOfLength(validRange.getStart(), leftRange.size());
-                Range rightValidRange = Range.buildRange(leftValidRange.getEnd()+1, validRange.getEnd());
-                
-                SectionOfPlacedRead<PlacedRead> leftSection = new SectionOfPlacedRead<PlacedRead>(id+"_left",actualPlacedRead, 0,leftRange, leftValidRange );
-                SectionOfPlacedRead<PlacedRead> rightSection = new SectionOfPlacedRead<PlacedRead>(id+"_right",actualPlacedRead, (int)rightValidRange.getStart(),rightRange, rightValidRange );
-                addRead(leftSection);
-                addRead(rightSection);
+                throw new IllegalArgumentException("circular reads not supported");
                 
               }
             else{
@@ -101,7 +87,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
         }
        
         public DefaultContig<PlacedRead> build(){
-            return new DefaultContig<PlacedRead>(getId(), getConsensus(), getVirtualReads(),isCircular());
+            return new DefaultContig<PlacedRead>(getId(), getConsensus(), getPlacedReads(),isCircular());
         }
     }
 

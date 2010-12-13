@@ -51,9 +51,9 @@ public abstract class  AbstractSliceMap implements SliceMap{
                 
                 qualities = qualityDataStore==null?null:qualityDataStore.get(id);
                 
-                int indexIntoVirtualRead = (int) (offset - read.getStart());
+                int indexIntoRead = (int) (offset - read.getStart());
                 final SliceElement sliceElement = createSliceElementFor(
-                        qualityValueStrategy, indexIntoVirtualRead, read,
+                        qualityValueStrategy, indexIntoRead, read,
                          qualities);
                 sliceElements.add(sliceElement);
             } catch (DataStoreException e) {

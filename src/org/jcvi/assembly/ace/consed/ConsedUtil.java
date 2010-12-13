@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.ConsensusAceTag;
@@ -133,12 +132,10 @@ public class ConsedUtil {
             DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contigId, contigConsensus);
             
             for(String readId : contigReads){
-                final VirtualPlacedRead<AcePlacedRead> placedReadById = contig.getPlacedReadById(readId);
-                if(placedReadById ==null){
+                final AcePlacedRead read = contig.getPlacedReadById(readId);
+                if(read ==null){
                     throw new NullPointerException("got a null read for id " + readId);
                 }
-                AcePlacedRead read = placedReadById.getRealPlacedRead();
-                //Range readRange = Range.buildRange(read.getStart(), read.getEnd()).union(target);
                 builder.addRead(readId, 
                         NucleotideGlyph.convertToString(read.getEncodedGlyphs().decode()), 
                         (int)(read.getStart() - contigRange.getStart()), 

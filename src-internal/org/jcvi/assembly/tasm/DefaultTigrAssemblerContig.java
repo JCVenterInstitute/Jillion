@@ -29,7 +29,6 @@ import java.util.Set;
 import org.jcvi.assembly.AbstractContigBuilder;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultContig;
-import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
 import org.jcvi.sequence.Read;
@@ -47,14 +46,14 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
     /**
      * @param id
      * @param consensus
-     * @param virtualReads
+     * @param placedReads
      * @param circular
      */
     protected DefaultTigrAssemblerContig(String id,
             NucleotideEncodedGlyphs consensus,
-            Set<VirtualPlacedRead<TigrAssemblerPlacedRead>> virtualReads, boolean circular, 
+            Set<TigrAssemblerPlacedRead> placedReads, boolean circular, 
             EnumMap<TigrAssemblerContigAttribute, String> attributes) {
-        super(id, consensus, virtualReads, circular);
+        super(id, consensus, placedReads, circular);
         this.attributes = Collections.unmodifiableMap(new EnumMap(attributes));
     }
 
@@ -146,7 +145,7 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
         @Override
         public DefaultTigrAssemblerContig build() {
             return new DefaultTigrAssemblerContig(getId(),getConsensus(),
-                    getVirtualReads(),isCircular(),contigAttributes);
+                    getPlacedReads(),isCircular(),contigAttributes);
         }
     
         public Builder addReadAttributes(String id, EnumMap<TigrAssemblerReadAttribute, String> readAttributes) {
