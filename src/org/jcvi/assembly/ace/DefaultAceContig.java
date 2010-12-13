@@ -45,8 +45,8 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
     
 
     private DefaultAceContig(String id, NucleotideEncodedGlyphs consensus,
-            Set<AcePlacedRead> reads, boolean circular) {
-        super(id, consensus, reads, circular);
+            Set<AcePlacedRead> reads) {
+        super(id, consensus, reads);
     }
 
     public static class Builder{
@@ -54,7 +54,6 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         private static final DefaultNucleotideGlyphCodec DEFAULT_CODEC =DefaultNucleotideGlyphCodec.getInstance();
         private EncodedGlyphs<NucleotideGlyph> fullConsensus;
         private String contigId;
-        private boolean circular;
         private Logger logger = Logger.getRootLogger();
         
         private List<DefaultAcePlacedRead.Builder> aceReadBuilders = new ArrayList<DefaultAcePlacedRead.Builder>();
@@ -125,7 +124,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
             
             if(numberOfReads()==0){
                 //force empty contig if no reads...
-                return new DefaultAceContig(contigId, new DefaultNucleotideEncodedGlyphs(""),placedReads,circular);
+                return new DefaultAceContig(contigId, new DefaultNucleotideEncodedGlyphs(""),placedReads);
             }
             final List<NucleotideGlyph> validConsensusGlyphs = new ArrayList<NucleotideGlyph>(fullConsensus.decode().subList(contigLeft, contigRight));
             NucleotideEncodedGlyphs validConsensus = new DefaultNucleotideEncodedGlyphs(
@@ -135,7 +134,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
                 aceReadBuilder.reference(validConsensus,newOffset);
                 placedReads.add(aceReadBuilder.build());                
             }
-            return new DefaultAceContig(contigId, validConsensus,placedReads,circular);
+            return new DefaultAceContig(contigId, validConsensus,placedReads);
         }
     }
     

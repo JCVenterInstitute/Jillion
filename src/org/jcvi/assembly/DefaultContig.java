@@ -39,8 +39,8 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
     
 
     protected DefaultContig(String id, NucleotideEncodedGlyphs consensus,
-            Set<P> reads,boolean circular) {
-        super(id, consensus, reads,circular);
+            Set<P> reads) {
+        super(id, consensus, reads);
     }
     
     /* (non-Javadoc)
@@ -87,7 +87,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
         }
        
         public DefaultContig<PlacedRead> build(){
-            return new DefaultContig<PlacedRead>(getId(), getConsensus(), getPlacedReads(),isCircular());
+            return new DefaultContig<PlacedRead>(getId(), getConsensus(), getPlacedReads());
         }
     }
 
