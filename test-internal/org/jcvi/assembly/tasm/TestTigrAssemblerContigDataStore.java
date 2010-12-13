@@ -94,7 +94,7 @@ public class TestTigrAssemblerContigDataStore {
         
         
         for(PlacedRead read : contig.getPlacedReads()){
-            assertEquals(read, tasm.getPlacedReadById(read.getId()).getRealPlacedRead());
+            assertEquals(read, tasm.getPlacedReadById(read.getId()));
         }
     }
 }

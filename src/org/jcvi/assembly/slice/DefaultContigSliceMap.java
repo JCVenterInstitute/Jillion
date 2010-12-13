@@ -35,7 +35,6 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultLocation;
 import org.jcvi.assembly.Location;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
@@ -49,22 +48,21 @@ public class DefaultContigSliceMap<T extends PlacedRead> implements ContigSliceM
 
     private final Contig<T> contig;
     Map<Integer, ContigSlice<T>> sliceMap;
-    public DefaultContigSliceMap(Contig<T> contig,CoverageMap<CoverageRegion<VirtualPlacedRead<T>>> coverageMap, QualityDataStore qualityMap, QualityValueStrategy qualityValueStrategy){
+    public DefaultContigSliceMap(Contig<T> contig,CoverageMap<CoverageRegion<T>> coverageMap, QualityDataStore qualityMap, QualityValueStrategy qualityValueStrategy){
         this.contig = contig;
         sliceMap = new HashMap<Integer, ContigSlice<T>>();
-        for(CoverageRegion<VirtualPlacedRead<T>> region : coverageMap){
+        for(CoverageRegion<T> region : coverageMap){
             for(int consensusIndex=(int)region.getStart(); consensusIndex<=region.getEnd(); consensusIndex++ ){
                 List<SliceLocation<T>> sliceLocations = new ArrayList<SliceLocation<T>>();
                 Location<EncodedGlyphs<NucleotideGlyph>> consensusLocation = getConsensusLocationFor(contig, consensusIndex);
-                for(VirtualPlacedRead<T> virtualPlacedRead : region.getElements()){
-                    T realRead = virtualPlacedRead.getRealPlacedRead();
+                for(T realRead : region.getElements()){
                     try {
                         if(qualityMap.contains(realRead.getId())){
                             EncodedGlyphs<PhredQuality> qualityRecord = qualityMap.get(realRead.getId());
                                 
                             DefaultSliceLocation<T> sliceLocation = createSliceLocationFor(
                                     qualityValueStrategy, consensusIndex,
-                                    virtualPlacedRead, realRead, qualityRecord);
+                                    realRead, qualityRecord);
                             sliceLocations.add(sliceLocation);
                         }
                     } catch (DataStoreException e) {
@@ -80,21 +78,13 @@ public class DefaultContigSliceMap<T extends PlacedRead> implements ContigSliceM
 
     protected DefaultSliceLocation<T> createSliceLocationFor(
             QualityValueStrategy qualityValueStrategy, int consensusIndex,
-            VirtualPlacedRead<T> virtualPlacedRead, T realRead,
+            T realRead,
             final EncodedGlyphs<PhredQuality> qualityRecord) {
-        final int indexIntoRead = getIndexIntoRealRead(consensusIndex, virtualPlacedRead);
+        final int indexIntoRead = consensusIndex-(int)realRead.getStart();
         PhredQuality qualityValue =qualityValueStrategy.getQualityFor(realRead, qualityRecord, indexIntoRead);
         
         DefaultSliceLocation<T> sliceLocation = new DefaultSliceLocation<T>(realRead, indexIntoRead, qualityValue);
         return sliceLocation;
-    }
-
-
-    private int getIndexIntoRealRead(int consensusIndex,
-            VirtualPlacedRead<T> virtualPlacedRead) {
-        final int indexIntoVirtualRead = consensusIndex-(int)virtualPlacedRead.getStart();
-        final int indexIntoRead = virtualPlacedRead.getRealIndexOf(indexIntoVirtualRead);
-        return indexIntoRead;
     }
 
 

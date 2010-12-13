@@ -30,7 +30,6 @@ import java.util.List;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.junit.Before;
@@ -40,27 +39,27 @@ import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 public class TestAbstractCoverageAnalyzer {
 
-    private static class CoverageAnalyzerTestDouble extends AbstractCoverageAnalyzer<VirtualPlacedRead<PlacedRead>,PlacedRead>{
+    private static class CoverageAnalyzerTestDouble extends AbstractCoverageAnalyzer<PlacedRead,PlacedRead>{
 
-        CoverageMap<CoverageRegion<VirtualPlacedRead<PlacedRead>>> coverageMap;
-        public CoverageAnalyzerTestDouble(CoverageMap<CoverageRegion<VirtualPlacedRead<PlacedRead>>> coverageMap,int lowCoverageThreshold,
+        CoverageMap<CoverageRegion<PlacedRead>> coverageMap;
+        public CoverageAnalyzerTestDouble(CoverageMap<CoverageRegion<PlacedRead>> coverageMap,int lowCoverageThreshold,
                 int highCoverageTheshold){
             super(lowCoverageThreshold, highCoverageTheshold);
             this.coverageMap = coverageMap;
             
         }
         @Override
-        protected CoverageMap<CoverageRegion<VirtualPlacedRead<PlacedRead>>> buildCoverageMap(
+        protected CoverageMap<CoverageRegion<PlacedRead>> buildCoverageMap(
                 ContigCheckerStruct<PlacedRead> struct) {
             return coverageMap;
         }
         
     }
     
-    CoverageMap<CoverageRegion<VirtualPlacedRead<PlacedRead>>> coverageMap;
+    CoverageMap<CoverageRegion<PlacedRead>> coverageMap;
     Contig contig = createMock(Contig.class);
     ContigCheckerStruct struct;
-    Iterator<CoverageRegion<VirtualPlacedRead<PlacedRead>>> mockIter;
+    Iterator<CoverageRegion<PlacedRead>> mockIter;
     private static final int LOW_COVERAGE_THRESHOLD =2;
     private static final int IGNORED_COVERAGE =3;
     private static final int HIGH_COVERAGE_THRESHOLD =4;
@@ -69,14 +68,14 @@ public class TestAbstractCoverageAnalyzer {
         coverageMap = createMock(CoverageMap.class);
         mockIter = createMock(Iterator.class);
         expect(coverageMap.iterator()).andReturn(mockIter);
-        struct = new ContigCheckerStruct<VirtualPlacedRead<PlacedRead>>(contig,null);
+        struct = new ContigCheckerStruct<PlacedRead>(contig,null);
     }
     @Test
     public void emptyMap(){
         
         finalizeIterator();
         replay(coverageMap, mockIter);
-        ContigCoverageAnalysis<VirtualPlacedRead<PlacedRead>> analysis = analyze();
+        ContigCoverageAnalysis<PlacedRead> analysis = analyze();
         
         assertEquals(contig, analysis.getContig());
         assertTrue(analysis.getLowCoverageRegions().isEmpty());
@@ -85,9 +84,9 @@ public class TestAbstractCoverageAnalyzer {
     private void finalizeIterator() {
         expect(mockIter.hasNext()).andReturn(false);
     }
-    private ContigCoverageAnalysis<VirtualPlacedRead<PlacedRead>> analyze() {
+    private ContigCoverageAnalysis<PlacedRead> analyze() {
         CoverageAnalyzerTestDouble sut = new CoverageAnalyzerTestDouble(coverageMap, LOW_COVERAGE_THRESHOLD,HIGH_COVERAGE_THRESHOLD);
-        ContigCoverageAnalysis<VirtualPlacedRead<PlacedRead>> analysis =sut.analyize(struct);
+        ContigCoverageAnalysis<PlacedRead> analysis =sut.analyize(struct);
         return analysis;
     }
     
@@ -97,7 +96,7 @@ public class TestAbstractCoverageAnalyzer {
         createNextCoverageRegion(IGNORED_COVERAGE);
         finalizeIterator();
         replay(coverageMap, mockIter);
-        ContigCoverageAnalysis<VirtualPlacedRead<PlacedRead>> analysis = analyze();
+        ContigCoverageAnalysis<PlacedRead> analysis = analyze();
         
         assertEquals(contig, analysis.getContig());
         assertTrue(analysis.getLowCoverageRegions().isEmpty());
@@ -106,12 +105,12 @@ public class TestAbstractCoverageAnalyzer {
     
     @Test
     public void lowCoverageRegions(){
-        CoverageRegion<VirtualPlacedRead<PlacedRead>> lowCoverageRegion =
+        CoverageRegion<PlacedRead> lowCoverageRegion =
                             createNextCoverageRegion(LOW_COVERAGE_THRESHOLD);
         createNextCoverageRegion(IGNORED_COVERAGE);
         finalizeIterator();
         replay(coverageMap, mockIter);
-        ContigCoverageAnalysis<VirtualPlacedRead<PlacedRead>> analysis = analyze();
+        ContigCoverageAnalysis<PlacedRead> analysis = analyze();
         
         assertEquals(contig, analysis.getContig());
         assertEquals(Arrays.asList(lowCoverageRegion), analysis.getLowCoverageRegions());
@@ -120,12 +119,12 @@ public class TestAbstractCoverageAnalyzer {
     
     @Test
     public void highCoverageRegions(){
-        CoverageRegion<VirtualPlacedRead<PlacedRead>> highCoverageRegion =
+        CoverageRegion<PlacedRead> highCoverageRegion =
                             createNextCoverageRegion(HIGH_COVERAGE_THRESHOLD);
         createNextCoverageRegion(IGNORED_COVERAGE);
         finalizeIterator();
         replay(coverageMap, mockIter);
-        ContigCoverageAnalysis<VirtualPlacedRead<PlacedRead>> analysis = analyze();
+        ContigCoverageAnalysis<PlacedRead> analysis = analyze();
         
         assertEquals(contig, analysis.getContig());
         assertTrue(analysis.getLowCoverageRegions().isEmpty());
@@ -135,14 +134,14 @@ public class TestAbstractCoverageAnalyzer {
     
     @Test
     public void lowAndhighCoverageRegions(){
-        CoverageRegion<VirtualPlacedRead<PlacedRead>> lowCoverageRegion =
+        CoverageRegion<PlacedRead> lowCoverageRegion =
                             createNextCoverageRegion(LOW_COVERAGE_THRESHOLD);
         createNextCoverageRegion(IGNORED_COVERAGE);
-        CoverageRegion<VirtualPlacedRead<PlacedRead>> highCoverageRegion =
+        CoverageRegion<PlacedRead> highCoverageRegion =
             createNextCoverageRegion(HIGH_COVERAGE_THRESHOLD);
         finalizeIterator();
         replay(coverageMap, mockIter);
-        ContigCoverageAnalysis<VirtualPlacedRead<PlacedRead>> analysis = analyze();
+        ContigCoverageAnalysis<PlacedRead> analysis = analyze();
         
         assertEquals(contig, analysis.getContig());
         assertEquals(Arrays.asList(lowCoverageRegion), analysis.getLowCoverageRegions());
@@ -151,8 +150,8 @@ public class TestAbstractCoverageAnalyzer {
     }
     @Test
     public void manyLowAndHighRegions(){
-        List<CoverageRegion<VirtualPlacedRead<PlacedRead>>> lowRegions = new ArrayList<CoverageRegion<VirtualPlacedRead<PlacedRead>>>();
-        List<CoverageRegion<VirtualPlacedRead<PlacedRead>>> highRegions = new ArrayList<CoverageRegion<VirtualPlacedRead<PlacedRead>>>();
+        List<CoverageRegion<PlacedRead>> lowRegions = new ArrayList<CoverageRegion<PlacedRead>>();
+        List<CoverageRegion<PlacedRead>> highRegions = new ArrayList<CoverageRegion<PlacedRead>>();
         
         
         lowRegions.add(createNextCoverageRegion(LOW_COVERAGE_THRESHOLD));
@@ -165,7 +164,7 @@ public class TestAbstractCoverageAnalyzer {
         createNextCoverageRegion(IGNORED_COVERAGE);
         finalizeIterator();
         replay(coverageMap, mockIter);
-        ContigCoverageAnalysis<VirtualPlacedRead<PlacedRead>> analysis = analyze();
+        ContigCoverageAnalysis<PlacedRead> analysis = analyze();
         
         assertEquals(contig, analysis.getContig());
         assertEquals(lowRegions, analysis.getLowCoverageRegions());
@@ -173,15 +172,15 @@ public class TestAbstractCoverageAnalyzer {
         
     }
     
-    private CoverageRegion<VirtualPlacedRead<PlacedRead>> createNextCoverageRegion(int coverage) {
-        CoverageRegion<VirtualPlacedRead<PlacedRead>> nextRegion = createCoverageRegion(coverage);
+    private CoverageRegion<PlacedRead> createNextCoverageRegion(int coverage) {
+        CoverageRegion<PlacedRead> nextRegion = createCoverageRegion(coverage);
         expect(mockIter.hasNext()).andReturn(true);        
         expect(mockIter.next()).andReturn(nextRegion);
         return nextRegion;
     }
     
-    private CoverageRegion<VirtualPlacedRead<PlacedRead>> createCoverageRegion(int coverage){
-        CoverageRegion<VirtualPlacedRead<PlacedRead>> region = createMock(CoverageRegion.class);
+    private CoverageRegion<PlacedRead> createCoverageRegion(int coverage){
+        CoverageRegion<PlacedRead> region = createMock(CoverageRegion.class);
         expect(region.getCoverage()).andReturn(coverage);
         replay(region);
         return region;

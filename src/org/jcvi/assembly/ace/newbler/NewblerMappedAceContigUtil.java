@@ -32,7 +32,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.DefaultAceContig;
@@ -90,7 +89,7 @@ public class NewblerMappedAceContigUtil {
 
     private static AceContig buildAceContigFor(AceContig originalAceContig, TraceDataStore<Phd> phdDataStore,String id,String consensusId,Range contigRange) throws DataStoreException{
         
-        final VirtualPlacedRead<AcePlacedRead> consensusRead = originalAceContig.getPlacedReadById(consensusId);
+        final AcePlacedRead consensusRead = originalAceContig.getPlacedReadById(consensusId);
         final String consensus = NucleotideGlyph.convertToString(consensusRead.getEncodedGlyphs().decode());
         DefaultAceContig.Builder builder = new DefaultAceContig.Builder(id,consensus);
         for(AcePlacedRead read : originalAceContig.getPlacedReads()){

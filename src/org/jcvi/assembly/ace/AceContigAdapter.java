@@ -31,8 +31,6 @@ import java.util.Set;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.VirtualPlacedRead;
-import org.jcvi.assembly.VirtualPlacedReadAdapter;
 import org.jcvi.assembly.cas.CasIdLookup;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
@@ -75,8 +73,8 @@ public class AceContigAdapter implements AceContig{
     }
 
     @Override
-    public VirtualPlacedRead<AcePlacedRead> getPlacedReadById(String id) {
-        return new VirtualPlacedReadAdapter<AcePlacedRead>(adaptedReads.get(id));
+    public AcePlacedRead getPlacedReadById(String id) {
+        return adaptedReads.get(id);
     }
 
     @Override
@@ -84,16 +82,6 @@ public class AceContigAdapter implements AceContig{
         return new HashSet<AcePlacedRead>(adaptedReads.values());
     }
 
-    @Override
-    public Set<VirtualPlacedRead<AcePlacedRead>> getVirtualPlacedReads() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean isCircular() {
-        return delegate.isCircular();
-    }
-
+   
     
 }

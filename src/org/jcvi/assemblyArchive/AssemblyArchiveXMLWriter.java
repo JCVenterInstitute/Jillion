@@ -35,7 +35,6 @@ import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceMap;
@@ -94,7 +93,7 @@ public class AssemblyArchiveXMLWriter<T extends PlacedRead> {
         final NucleotideEncodedGlyphs consensus = contig.getConsensus();
         writeString(out, createTag(AssemblyArchiveContigField.NUMBER_OF_CONSENSUS_BASES, consensus.getUngappedLength()));
         long numberOfBasecalls =0;
-        for(VirtualPlacedRead<T> read: contig.getVirtualPlacedReads()){
+        for(T read: contig.getPlacedReads()){
             numberOfBasecalls += read.getEncodedGlyphs().getUngappedLength();
         }
         writeString(out, createTag(AssemblyArchiveField.NUMBER_OF_BASES, numberOfBasecalls));
@@ -125,10 +124,10 @@ public class AssemblyArchiveXMLWriter<T extends PlacedRead> {
     private void writeTraceData(OutputStream out, Contig<T> contig) throws IOException {
         
         final NucleotideEncodedGlyphs consensus = contig.getConsensus();
-        SortedSet<VirtualPlacedRead<T>> sortedReads = new TreeSet<VirtualPlacedRead<T>>(new TraceOrderComparator<VirtualPlacedRead<T>>());
-        sortedReads.addAll(contig.getVirtualPlacedReads());
+        SortedSet<T> sortedReads = new TreeSet<T>(new TraceOrderComparator<T>());
+        sortedReads.addAll(contig.getPlacedReads());
         
-        for(VirtualPlacedRead<T> read: sortedReads ){
+        for(T read: sortedReads ){
             writeString(out, "<trace>\n");
             writeString(out, createTag("trace_name",read.getId()));
             writeString(out, createTag("nbasecalls", read.getEncodedGlyphs().getUngappedLength()));

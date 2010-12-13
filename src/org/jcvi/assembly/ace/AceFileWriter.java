@@ -159,7 +159,7 @@ public class AceFileWriter {
             String id = assembledFrom.getId();
             final Phd phd = phdDataStore.get(id);
             long fullLength = phd.getBasecalls().getLength();
-            final AcePlacedRead realPlacedRead = contig.getPlacedReadById(id).getRealPlacedRead();
+            final AcePlacedRead realPlacedRead = contig.getPlacedReadById(id);
             assembledFromBuilder.append(createAssembledFromRecord(realPlacedRead,fullLength));
             placedReadBuilder.append(createPlacedReadRecord(realPlacedRead, phd));
         }
@@ -227,7 +227,7 @@ public class AceFileWriter {
         for(AssembledFrom assembledFrom : assembledFroms){
             String id = assembledFrom.getId();
             long fullLength = phdDataStore.get(id).getBasecalls().getLength();
-            writeAssembledFromRecords(contig.getPlacedReadById(id).getRealPlacedRead(),fullLength,out);
+            writeAssembledFromRecords(contig.getPlacedReadById(id),fullLength,out);
         }
         out.flush();
         if(calculateBestSegments){
@@ -237,7 +237,7 @@ public class AceFileWriter {
         out.flush();
         for(AssembledFrom assembledFrom : assembledFroms){
             String id = assembledFrom.getId();          
-            AcePlacedRead read = contig.getPlacedReadById(id).getRealPlacedRead();
+            AcePlacedRead read = contig.getPlacedReadById(id);
             writePlacedRead(read, phdDataStore.get(id),out);
         }
         out.flush();

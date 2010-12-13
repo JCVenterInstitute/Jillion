@@ -29,7 +29,6 @@ import java.util.Set;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.VirtualPlacedRead;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
 public class DefaultAssemblyArchive<T extends PlacedRead> implements AssemblyArchive<T> {
@@ -72,8 +71,8 @@ public class DefaultAssemblyArchive<T extends PlacedRead> implements AssemblyArc
             Contig<T> contig =contigRecord.getContig();
             consensusBasecalls += contig.getConsensus().getUngappedLength();
             numberOfTraces += contig.getNumberOfReads();
-            for(VirtualPlacedRead<T> virtualRead : contig.getVirtualPlacedReads()){
-                final NucleotideEncodedGlyphs encodedGlyphs = virtualRead.getEncodedGlyphs();
+            for(T placedRead : contig.getPlacedReads()){
+                final NucleotideEncodedGlyphs encodedGlyphs = placedRead.getEncodedGlyphs();
                 //only count non-gaps
                 totalNumberOfBasecalls +=encodedGlyphs.getUngappedLength();
             }

@@ -39,22 +39,22 @@ import org.jcvi.sequence.SequenceDirection;
 public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Contig<P>> implements Builder<C>{
         private NucleotideEncodedGlyphs consensus;
         private String id;
-        private final Set<VirtualPlacedRead<P>> virtualReads;
+        private final Set<P> reads;
         private boolean circular;
         public AbstractContigBuilder(String id, NucleotideEncodedGlyphs consensus){
             this.id = id;
             this.consensus = consensus;
-            virtualReads = new LinkedHashSet<VirtualPlacedRead<P>>();
+            reads = new LinkedHashSet<P>();
         }
         public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
             
             NucleotideEncodedGlyphs referenceEncoded = new DefaultReferencedEncodedNucleotideGlyph(consensus,basecalls, offset,validRange);
             final P actualPlacedRead = createPlacedRead(new DefaultRead(id, referenceEncoded), offset,dir );
             
-            return addRead(new VirtualPlacedReadAdapter<P>(actualPlacedRead));
+            return addRead(actualPlacedRead);
         }
-        protected <V extends VirtualPlacedRead<P>> AbstractContigBuilder<P,C>  addRead(V read){
-            virtualReads.add(read);
+        protected  AbstractContigBuilder<P,C>  addRead(P read){
+            reads.add(read);
             return this;
         }
         protected abstract P createPlacedRead(Read<ReferencedEncodedNucleotideGlyphs> read, long offset, SequenceDirection dir);
@@ -73,8 +73,8 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
             this.id = id;
             return this;
         }
-        public Set<VirtualPlacedRead<P>> getVirtualReads() {
-            return virtualReads;
+        public Set<P> getPlacedReads() {
+            return reads;
         }
         public boolean isCircular() {
             return circular;

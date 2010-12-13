@@ -57,7 +57,7 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	    	assertEquals(contig.getConsensus().decode(), sut.getConsensus().decode());
 	    	assertEquals(contig.getNumberOfReads(), contig.getNumberOfReads());
 	    	for(PlacedRead expectedRead : contig.getPlacedReads()){
-	    		assertEquals(expectedRead, sut.getPlacedReadById(expectedRead.getId()).getRealPlacedRead());
+	    		assertEquals(expectedRead, sut.getPlacedReadById(expectedRead.getId()));
 	    	}
 	    	assertRequiredAttributesAreEqual(tasm, sut);
 	    }

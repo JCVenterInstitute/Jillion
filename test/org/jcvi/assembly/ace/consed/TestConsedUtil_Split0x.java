@@ -109,7 +109,7 @@ public class TestConsedUtil_Split0x {
         for(AcePlacedRead expectedRead: expected.getPlacedReads()){
             final String id = expectedRead.getId();
             assertTrue("missing read " +id,actual.containsPlacedRead(id));
-            assertAcePlacedReadsEqual(expectedRead, actual.getPlacedReadById(id).getRealPlacedRead());
+            assertAcePlacedReadsEqual(expectedRead, actual.getPlacedReadById(id));
         }
     }
 

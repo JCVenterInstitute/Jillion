@@ -67,7 +67,7 @@ public class TestAceContigTrimmer {
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
        for(AcePlacedRead expectedRead : expectedContig.getPlacedReads()){
            final String id = expectedRead.getId();
-           AcePlacedRead actualRead = actualContig.getPlacedReadById(id).getRealPlacedRead();
+           AcePlacedRead actualRead = actualContig.getPlacedReadById(id);
            AssemblyTestUtil.assertPlacedReadCorrect(expectedRead, actualRead);
        }
     }
@@ -92,7 +92,7 @@ public class TestAceContigTrimmer {
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
        for(AcePlacedRead expectedRead : expectedContig.getPlacedReads()){
            final String id = expectedRead.getId();
-           AcePlacedRead actualRead = actualContig.getPlacedReadById(id).getRealPlacedRead();
+           AcePlacedRead actualRead = actualContig.getPlacedReadById(id);
            AssemblyTestUtil.assertPlacedReadCorrect(expectedRead, actualRead);
        }
     }
@@ -118,7 +118,7 @@ public class TestAceContigTrimmer {
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
        for(AcePlacedRead expectedRead : expectedContig.getPlacedReads()){
            final String id = expectedRead.getId();
-           AcePlacedRead actualRead = actualContig.getPlacedReadById(id).getRealPlacedRead();
+           AcePlacedRead actualRead = actualContig.getPlacedReadById(id);
            AssemblyTestUtil.assertPlacedReadCorrect(expectedRead, actualRead);
        }
     }
@@ -143,7 +143,7 @@ public class TestAceContigTrimmer {
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
        for(AcePlacedRead expectedRead : expectedContig.getPlacedReads()){
            final String id = expectedRead.getId();
-           AcePlacedRead actualRead = actualContig.getPlacedReadById(id).getRealPlacedRead();
+           AcePlacedRead actualRead = actualContig.getPlacedReadById(id);
            AssemblyTestUtil.assertPlacedReadCorrect(expectedRead, actualRead);
        }
     }

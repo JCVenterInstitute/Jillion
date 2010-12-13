@@ -28,7 +28,7 @@ import java.util.Set;
 import org.jcvi.assembly.slice.consensus.ConsensusCaller;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 /**
- * A {@code Contig} is a CONTIGuous region of geomic data.
+ * A {@code Contig} is a CONTIGuous region of genomic data.
  * Contigs are assembled by overlapping reads to form a consensus.
  * @author dkatzel
  * @param <T> the type of {@link PlacedRead}s which were used to build
@@ -69,7 +69,7 @@ public interface Contig<T extends PlacedRead>{
      * if no such read exists in this contig.
      * @see #containsPlacedRead(String)
      */
-    VirtualPlacedRead<T> getPlacedReadById(String id);
+    T getPlacedReadById(String id);
     /**
      * Does this contig have a {@link PlacedRead} with the given id?
      * @param placedReadId the id of the place read to check for.
@@ -77,11 +77,4 @@ public interface Contig<T extends PlacedRead>{
      * with the given id; {@code false} otherwise.
      */
     boolean containsPlacedRead(String placedReadId);
-    /**
-     * Is this contig circular?
-     * @return {@code true} if circular; {@code false} otherwise.
-     */
-    boolean isCircular();
-    
-    Set<VirtualPlacedRead<T>> getVirtualPlacedReads();
 }
