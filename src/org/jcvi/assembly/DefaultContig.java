@@ -67,7 +67,10 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             super(id,consensus);
         }
         public Builder addRead(String id, int offset,String basecalls){
-            return addRead(id, offset, Range.buildRangeOfLength(0,basecalls.length()),basecalls, SequenceDirection.FORWARD);
+            return addRead(id, offset, basecalls, SequenceDirection.FORWARD);
+        }
+        public Builder addRead(String id, int offset,String basecalls, SequenceDirection dir){
+            return addRead(id, offset, Range.buildRangeOfLength(0,basecalls.length()),basecalls, dir);
         }
         public Builder addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
             
@@ -75,9 +78,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
                 throw new IllegalArgumentException("circular reads not supported");
                 
               }
-            else{
-                super.addRead(id, offset, validRange, basecalls, dir);
-            }
+            super.addRead(id, offset, validRange, basecalls, dir);
             return this;
             
         }
