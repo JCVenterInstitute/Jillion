@@ -51,9 +51,9 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
      */
     protected DefaultTigrAssemblerContig(String id,
             NucleotideEncodedGlyphs consensus,
-            Set<TigrAssemblerPlacedRead> placedReads, boolean circular, 
+            Set<TigrAssemblerPlacedRead> placedReads, 
             EnumMap<TigrAssemblerContigAttribute, String> attributes) {
-        super(id, consensus, placedReads, circular);
+        super(id, consensus, placedReads);
         this.attributes = Collections.unmodifiableMap(new EnumMap(attributes));
     }
 
@@ -145,7 +145,7 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
         @Override
         public DefaultTigrAssemblerContig build() {
             return new DefaultTigrAssemblerContig(getId(),getConsensus(),
-                    getPlacedReads(),isCircular(),contigAttributes);
+                    getPlacedReads(),contigAttributes);
         }
     
         public Builder addReadAttributes(String id, EnumMap<TigrAssemblerReadAttribute, String> readAttributes) {

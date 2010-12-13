@@ -40,7 +40,6 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
         private NucleotideEncodedGlyphs consensus;
         private String id;
         private final Set<P> reads;
-        private boolean circular;
         public AbstractContigBuilder(String id, NucleotideEncodedGlyphs consensus){
             this.id = id;
             this.consensus = consensus;
@@ -75,9 +74,6 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
         }
         public Set<P> getPlacedReads() {
             return reads;
-        }
-        public boolean isCircular() {
-            return circular;
         }
         public abstract C build();
    

@@ -37,7 +37,7 @@ public abstract class AbstractContig<T extends PlacedRead> implements Contig<T>{
     private Map<String, T> mapById;
     private final int numberOfReads;
     private final Set<T> placedReads;
-    protected AbstractContig(String id, NucleotideEncodedGlyphs consensus, Set<T> placedReads,boolean circular){
+    protected AbstractContig(String id, NucleotideEncodedGlyphs consensus, Set<T> placedReads){
         this.id = id;
         this.consensus = consensus;
         mapById = new LinkedHashMap<String, T>();
