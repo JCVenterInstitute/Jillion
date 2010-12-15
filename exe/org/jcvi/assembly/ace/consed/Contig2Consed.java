@@ -37,7 +37,7 @@ import org.jcvi.assembly.ace.AceAssembly;
 import org.jcvi.assembly.ace.DefaultAceAdapterContigFileDataStore;
 import org.jcvi.assembly.ace.DefaultAceAssembly;
 import org.jcvi.assembly.contig.DefaultContigFileParser;
-import org.jcvi.assembly.contig.qual.ZeroGapQualityValueStrategy;
+import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
 import org.jcvi.assembly.slice.LargeSliceMapFactory;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
@@ -141,7 +141,7 @@ public class Contig2Consed {
             AceAssembly aceAssembly = new DefaultAceAssembly(aceDataStore, phdDataStore);
             
             ConsedWriter.writeConsedPackage(aceAssembly, 
-                    new LargeSliceMapFactory(new ZeroGapQualityValueStrategy(),cacheSize),                    
+                    new LargeSliceMapFactory(GapQualityValueStrategies.ALWAYS_ZERO,cacheSize),                    
                     outputDir,"contig", false);
             long end= System.currentTimeMillis();
             System.out.printf("done! took %s%n", new Period(end-start));

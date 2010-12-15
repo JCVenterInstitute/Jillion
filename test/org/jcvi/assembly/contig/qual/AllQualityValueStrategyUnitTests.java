@@ -30,9 +30,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {  
-        TestAbstractQualityValueStrategy.class,
         TestLowestFlankingQualityValueStrategy.class,
-        TestAbstractQualityValueStrategyWithComplimentedRead.class
+        TestAlwaysZeroGapsQualityStrategy.class
     }
     )
 public class AllQualityValueStrategyUnitTests {

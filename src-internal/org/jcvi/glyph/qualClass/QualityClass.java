@@ -38,28 +38,97 @@ public enum QualityClass implements Glyph, Comparable<QualityClass>{
 
     
     ZERO_COVERAGE(0),
+    /**
+     * QualityClass 1.
+     */
     NO_CONFLICT_HIGH_QUAL_BOTH_DIRS(1),
+    /**
+     * QualityClass 2.
+     */
     NO_CONFLICT_HIGH_QUAL_ONE_DIR_LOW_QUAL_OTHER_DIR(2),
+    /**
+     * QualityClass 3.
+     */
     NO_CONFLICT_HIGH_QUAL_AND_LOW_QUAL_SAME_DIR(3),
+    /**
+     * QualityClass 4.
+     */
     NO_CONFLICT_LOW_QUAL_BOTH_DIR(4),
+    /**
+     * QualityClass 5.
+     */
     NO_CONFLICT_2_LOW_QUAL_SAME_DIR(5),
+    /**
+     * QualityClass 6.
+     */
     LOW_QUAL_CONFLICT_BUT_HIGH_QUAL_BOTH_DIRECTIONS_AGREE(6),
+    /**
+     * QualityClass 7.
+     */
     LOW_QUAL_CONFLICT_BUT_HIGH_QUAL_ONE_DIR_LOW_QUAL_OTHER_DIR_AGREE(7),
+    /**
+     * QualityClass 8.
+     */
     LOW_QUAL_CONFLICT_BUT_HIGH_QUAL_ONE_DIR_LOW_QUAL_SAME_DIR_AGREE(8),
+    /**
+     * QualityClass 9.
+     */
     ONE_X_COVERAGE_HIGH_QUAL(9),
+    /**
+     * QualityClass 10.
+     */
     LOW_QUAL_CONFLICT_BUT_LOW_QUAL_BOTH_DIRECTIONS_AGREE(10),
+    /**
+     * QualityClass 11.
+     */
     ONE_X_COVERAGE_LOW_QUAL(11),
+    /**
+     * QualityClass 12.
+     */
     LOW_QUAL_CONFLICT_BUT_2_LOW_QUAL_SAME_DIRECTION_AGREE(12),
+    /**
+     * QualityClass 13.
+     */
     TWO_X_COVERAGE_LOW_QUAL_CONFLICT_BUT_HIGH_QUAL_AGREE(13),
+    /**
+     * QualityClass 14.
+     */
     TWO_X_COVERAGE_LOW_QUAL_CONFLICT_BUT_LOW_QUAL_AGREE(14),
+    /**
+     * QualityClass 15.
+     */
     HIGH_QUAL_CONFLICT_BUT_HIGH_QUAL_BOTH_DIRS_AGREE(15),
+    /**
+     * QualityClass 16.
+     */
     HIGH_QUAL_CONFLICT_BUT_HIGH_QUAL_ONE_DIR_LOW_QUAL_OTHER_DIR_AGREE(16),
+    /**
+     * QualityClass 17.
+     */
     HIGH_QUAL_CONFLICT_BUT_HIGH_QUAL_ONE_DIR_AND_SOME_OTHER_QUAL_IN_SAME_DIR_AGREE(17),
+    /**
+     * QualityClass 18.
+     */
     HIGH_QUAL_CONFLICT_BUT_LOW_QUAL_BOTH_DIRS_AGREE(18),
+    /**
+     * QualityClass 19.
+     */
     HIGH_QUAL_CONFLICT_BUT_2_LOW_QUAL_SAME_DIR_AGREE(19),
+    /**
+     * QualityClass 20.
+     */
     TWO_X_COVERAGE_HIGH_QUAL_CONFLICT_BUT_HIGH_QUAL_AGREE(20),
+    /**
+     * QualityClass 21.
+     */
     AMBIGUIOUS_CONSENSUS_ONLY_1_AGREEMENT(21),
+    /**
+     * QualityClass 22.
+     */
     AMBIGUIOUS_CONSENSUS(22),
+    /**
+     * QualityClass 23.
+     */
     HIGH_QUAL_CONFLICT_ONLY_ONE_LOW_QUAL_AGREE(23),
     /**
      * Quality class 23 actually has 2 use cases
@@ -82,8 +151,12 @@ public enum QualityClass implements Glyph, Comparable<QualityClass>{
                 HIGH_QUAL_CONFLICT_ONLY_ONE_LOW_QUAL_AGREE);
     }
     
-    public static QualityClass valueOf(byte value){
-        return QUALITY_CLASS_BY_VALUE.get(Byte.valueOf(value));
+    public static QualityClass valueOf(Number value){
+        Byte byteValue = value.byteValue();
+        if(QUALITY_CLASS_BY_VALUE.containsKey(byteValue)){
+            return QUALITY_CLASS_BY_VALUE.get(byteValue);
+        }
+        throw new IllegalArgumentException("unknown quality class value: " +value);
     }
     private final byte value;
  

@@ -16,11 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Feb 3, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.assembly.contig.qual;
 
 import org.jcvi.assembly.AssemblyUtil;
@@ -29,8 +25,67 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
-public abstract class AbstractQualityValueStrategy implements QualityValueStrategy {
+/**
+ * {@code GapQualityValueStrategies} are {@link QualityValueStrategy}
+ * implementations that differ on what the quality value 
+ * of a gap will be.
+ * @author dkatzel
+ *
+ *
+ */
+public enum GapQualityValueStrategies implements QualityValueStrategy{
+    /**
+     * {@code LOWEST_FLANKING} will find the lowest
+     * non-gap quality value that flanks the gap.
+     */
+    LOWEST_FLANKING{
+        
+        @Override
+        protected PhredQuality getQualityValueIfReadEndsWithGap() {
+            return LOWEST_QUALITY;
+        }
 
+        @Override
+        protected PhredQuality getQualityValueIfReadStartsWithGap() {
+            return LOWEST_QUALITY;
+        }
+
+        @Override
+        protected PhredQuality computeQualityValueForGap(
+                int numberOfGapsBetweenFlanks, int ithGapToCompute,
+                PhredQuality leftFlankingQuality, PhredQuality rightFlankingQuality) {
+            if(leftFlankingQuality.compareTo(rightFlankingQuality)<0){
+                return leftFlankingQuality;
+            }
+            return rightFlankingQuality;
+        }
+    },
+    /**
+     * {@code ALWAYS_ZERO} will always give a gap a {@link PhredQuality} value 
+     * of {@code 0}.
+     */
+    ALWAYS_ZERO{
+        @Override
+        protected PhredQuality computeQualityValueForGap(
+                int numberOfGapsBetweenFlanks, int ithGapToCompute,
+                PhredQuality leftFlankingQuality, PhredQuality rightFlankingQuality) {
+            return PhredQuality.valueOf(0);
+        }
+
+        @Override
+        protected PhredQuality getQualityValueIfReadEndsWithGap() {
+            return PhredQuality.valueOf(0);
+        }
+
+        @Override
+        protected PhredQuality getQualityValueIfReadStartsWithGap() {
+            return PhredQuality.valueOf(0);
+        }   
+    }
+    ;
+    
+    private static final PhredQuality LOWEST_QUALITY = PhredQuality.valueOf(1);
+    
     @Override
     public PhredQuality getQualityFor(PlacedRead placedRead,
             EncodedGlyphs<PhredQuality> fullQualities,
@@ -83,6 +138,4 @@ public abstract class AbstractQualityValueStrategy implements QualityValueStrate
             throw new IllegalArgumentException("could not get quality for read " + placedRead +" at gapped index " +gappedReadIndexForNonGapBase,e);
         }
     }
-    
-   
 }

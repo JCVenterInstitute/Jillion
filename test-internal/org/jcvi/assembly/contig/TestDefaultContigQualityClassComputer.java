@@ -72,7 +72,7 @@ public class TestDefaultContigQualityClassComputer {
         
         expect(coverageMap.getRegionWhichCovers(index)).andReturn(null);
         replay(coverageMap,qualityFastaMap,consensus);
-        assertEquals(QualityClass.valueOf((byte)0), 
+        assertEquals(QualityClass.valueOf(0), 
                 sut.computeQualityClass(coverageMap, qualityFastaMap, consensus, index));
         verify(coverageMap,qualityFastaMap,consensus);
     }

@@ -42,7 +42,7 @@ import org.jcvi.assembly.ace.AceFileVisitor;
 import org.jcvi.assembly.ace.AceFileWriter;
 import org.jcvi.assembly.ace.DefaultAceAssembly;
 import org.jcvi.assembly.ace.DefaultAceFileTagMap;
-import org.jcvi.assembly.contig.qual.LowestFlankingQualityValueStrategy;
+import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
 import org.jcvi.assembly.slice.LargeSliceMapFactory;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
@@ -116,7 +116,7 @@ public class RemoveReferenceFromNewblerMappedAce {
                     Arrays.asList(phdFile),aceTagMap);
             
             AceFileWriter.writeAceFile(aceAssembly, 
-                    new LargeSliceMapFactory(LowestFlankingQualityValueStrategy.getInstance()),
+                    new LargeSliceMapFactory(GapQualityValueStrategies.LOWEST_FLANKING),
                     new FileOutputStream(aceOut), true);
             
         }

@@ -29,7 +29,7 @@ import java.io.OutputStream;
 
 import org.jcvi.assembly.analysis.ContigCheckerStruct;
 import org.jcvi.assembly.analysis.SnpXMLWriter;
-import org.jcvi.assembly.contig.qual.LowestFlankingQualityValueStrategy;
+import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
 import org.jcvi.assembly.coverage.DirectionalSequenceCoverageMapXMLCoverageWriter;
 import org.jcvi.assembly.coverage.XMLCoverageWriter;
 import org.jcvi.datastore.DataStoreException;
@@ -50,7 +50,7 @@ public class ContigCheckerXMLWriter<T extends PlacedRead> implements Closeable{
     private final SnpXMLWriter<T> snpWriter;
     public ContigCheckerXMLWriter(OutputStream out) throws IOException{
         this.out = out;
-        snpWriter = new SnpXMLWriter<T>(LowestFlankingQualityValueStrategy.getInstance());
+        snpWriter = new SnpXMLWriter<T>(GapQualityValueStrategies.LOWEST_FLANKING);
         out.write(XML_HEADER.getBytes());
         out.write(String.format(CONTIG_CHECKER_BEGIN_HEADER, 
                 ISODateTimeFormat.dateTimeNoMillis().print(

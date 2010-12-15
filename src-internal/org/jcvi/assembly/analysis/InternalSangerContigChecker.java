@@ -26,7 +26,7 @@ public class InternalSangerContigChecker<R extends PlacedRead> extends ContigChe
     protected List<Process> createProcesses() {
         List<Process> analyizers = new ArrayList<Process>();
         analyizers.addAll(super.createProcesses());
-        analyizers.add(new QualityClassContigMapAnalysisProcess<R>(this.getContigCheckBuilder(), this.getStruct(),QualityClass.valueOf((byte)10)));
+        analyizers.add(new QualityClassContigMapAnalysisProcess<R>(this.getContigCheckBuilder(), this.getStruct(),QualityClass.valueOf(10)));
         return analyizers;
     }
 
