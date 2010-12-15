@@ -33,7 +33,7 @@ import org.jcvi.assembly.analysis.issue.QualityDifferenceIssue;
 import org.jcvi.assembly.contig.DefaultHighQualityDifferencesContigMap;
 import org.jcvi.assembly.contig.HighQualityDifferencesContigMap;
 import org.jcvi.assembly.contig.DefaultQualityDifference;
-import org.jcvi.assembly.contig.qual.LowestFlankingQualityValueStrategy;
+import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
@@ -60,7 +60,7 @@ public class HighQualityDifferenceContigProcess extends AbstractContigAnalysisPr
     }
     private HighQualityDifferencesContigMap generateHighQualityDifferenceContigMap() throws DataStoreException {
         HighQualityDifferencesContigMap map = new DefaultHighQualityDifferencesContigMap(getStruct().getContig(), getStruct().getQualityDataStore(), 
-                LowestFlankingQualityValueStrategy.getInstance(),qualityThreshold);
+                GapQualityValueStrategies.LOWEST_FLANKING,qualityThreshold);
         return map;
     }
 

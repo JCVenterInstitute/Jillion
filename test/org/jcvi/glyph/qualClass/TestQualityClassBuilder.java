@@ -393,7 +393,7 @@ public class TestQualityClassBuilder {
         //1 high quality conflict
         sut.addHighQualityConflict(SequenceDirection.REVERSE);
         
-        assertCorrectQualityClassBuilt(QualityClass.valueOf((byte)15), sut.build());
+        assertCorrectQualityClassBuilt(QualityClass.valueOf(15), sut.build());
         
     }
     
@@ -406,6 +406,6 @@ public class TestQualityClassBuilder {
         .addHighQualityConflict(SequenceDirection.FORWARD)
         .addLowQualityConflict(SequenceDirection.FORWARD)
         .addLowQualityConflict(SequenceDirection.FORWARD);
-        assertCorrectQualityClassBuilt(QualityClass.valueOf((byte)17), sut.build());
+        assertCorrectQualityClassBuilt(QualityClass.valueOf(17), sut.build());
     }
 }

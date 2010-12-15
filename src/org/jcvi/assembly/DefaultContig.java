@@ -70,7 +70,21 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             return addRead(id, offset, basecalls, SequenceDirection.FORWARD);
         }
         public Builder addRead(String id, int offset,String basecalls, SequenceDirection dir){
-            return addRead(id, offset, Range.buildRangeOfLength(0,basecalls.length()),basecalls, dir);
+            int numberOfGaps = computeNumberOfGapsIn(basecalls);
+            return addRead(id, offset, Range.buildRangeOfLength(0,basecalls.length()-numberOfGaps),basecalls, dir);
+        }
+        /**
+         * @param basecalls
+         * @return
+         */
+        private int computeNumberOfGapsIn(String basecalls) {
+            int count=0;
+            for(int i=0; i<basecalls.length(); i++){
+                if(basecalls.charAt(i) == '-'){
+                    count++;
+                }
+            }
+            return count;
         }
         public Builder addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
             

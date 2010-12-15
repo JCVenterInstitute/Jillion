@@ -31,7 +31,7 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.ContigStruct;
 import org.jcvi.assembly.Placed;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.contig.qual.LowestFlankingQualityValueStrategy;
+import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
@@ -58,7 +58,7 @@ public class ContigCheckerStruct<R extends PlacedRead> implements ContigStruct<R
     public ContigCheckerStruct(Contig<R> contig, QualityDataStore qualityDataStore){
         this.contig = contig;
         this.qualityDataStore = qualityDataStore;
-        this.qualityValueStrategy = LowestFlankingQualityValueStrategy.getInstance();
+        this.qualityValueStrategy = GapQualityValueStrategies.LOWEST_FLANKING;
     }
     
     @Override
