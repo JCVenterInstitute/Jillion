@@ -176,7 +176,7 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
                     }
                     
                 }else{
-                    currentElement = slice.getSliceElements().get(0).getId();
+                    currentElement = slice.iterator().next().getId();
                 }
                 i++;
             }     

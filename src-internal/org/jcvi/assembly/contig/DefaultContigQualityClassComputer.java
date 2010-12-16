@@ -30,12 +30,13 @@ import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.jcvi.sequence.SequenceDirection;
 
-public class DefaultContigQualityClassComputer<P extends PlacedRead> implements QualityClassComputer<P,NucleotideGlyph>{
+public class DefaultContigQualityClassComputer<P extends PlacedRead> implements QualityClassComputer<P>{
    private final QualityValueStrategy qualityValueStrategy;
    private final PhredQuality qualityThreshold;
     
@@ -45,8 +46,8 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
     }
     @Override
     public QualityClass computeQualityClass( CoverageMap<CoverageRegion<P>> coverageMap,
-            DataStore<EncodedGlyphs<PhredQuality>> qualityFastaMap,
-    EncodedGlyphs<NucleotideGlyph> consensus,int index) {
+            DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore,
+    NucleotideEncodedGlyphs consensus,int index) {
         CoverageRegion<P> region = coverageMap.getRegionWhichCovers(index);
         if(region ==null){
             return QualityClass.ZERO_COVERAGE;
@@ -54,7 +55,7 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
         final NucleotideGlyph consensusBase = consensus.get(index);
         
         try {
-            return computeQualityClassFor(qualityFastaMap, index,
+            return computeQualityClassFor(qualityDataStore, index,
                     region, consensusBase);
         } catch (DataStoreException e) {
             throw new IllegalStateException("error getting quality values" ,e);
@@ -62,27 +63,33 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
         
     }
     
+    public QualityValueStrategy getQualityValueStrategy() {
+        return qualityValueStrategy;
+    }
+    public PhredQuality getQualityThreshold() {
+        return qualityThreshold;
+    }
     protected QualityClass computeQualityClassFor(
-            DataStore<EncodedGlyphs<PhredQuality>> qualityFastaMap, int index,
+            DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore, int index,
             CoverageRegion<P> region, final NucleotideGlyph consensusBase) throws DataStoreException {
         QualityClass.Builder builder = new QualityClass.Builder(consensusBase,qualityThreshold);
-        return computeQualityClassFor(qualityFastaMap, index, region,
+        return computeQualityClassFor(qualityDataStore, index, region,
                 consensusBase, builder);
     }
     protected QualityClass computeQualityClassFor(
-            DataStore<EncodedGlyphs<PhredQuality>> qualityFastaMap, int index,
+            DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore, int index,
             CoverageRegion<P> region, final NucleotideGlyph consensusBase,
             QualityClass.Builder builder) throws DataStoreException {
-        for(P realRead : region.getElements()){
-            final EncodedGlyphs<PhredQuality> qualityRecord = qualityFastaMap.get(realRead.getId());
+        for(P placedRead : region.getElements()){
+            final EncodedGlyphs<PhredQuality> qualityRecord = qualityDataStore.get(placedRead.getId());
             if(qualityRecord !=null){
-                int indexIntoRead = (int) (index - realRead.getStart());
-                final NucleotideGlyph calledBase = realRead.getEncodedGlyphs().get(indexIntoRead);
+                int indexIntoRead = (int) (index - placedRead.getStart());
+                final NucleotideGlyph calledBase = placedRead.getEncodedGlyphs().get(indexIntoRead);
                 
-                PhredQuality qualityValue =qualityValueStrategy.getQualityFor(realRead, qualityRecord, indexIntoRead);
+                PhredQuality qualityValue =qualityValueStrategy.getQualityFor(placedRead, qualityRecord, indexIntoRead);
                 boolean agreesWithConsensus = isSame(consensusBase, calledBase);
                 boolean isHighQuality = isHighQuality(qualityValue);
-                SequenceDirection direction =realRead.getSequenceDirection();
+                SequenceDirection direction =placedRead.getSequenceDirection();
                 addRead(builder, agreesWithConsensus, isHighQuality,
                         direction);
             }

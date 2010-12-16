@@ -89,7 +89,7 @@ public class GenerateSNPMatrix {
                     gappedOffset =consensus.convertUngappedValidRangeIndexToGappedValidRangeIndex(ungappedOffset);
                 }
                 Slice slice = sliceMap.getSlice(gappedOffset);
-                for(SliceElement element : slice.getSliceElements()){
+                for(SliceElement element : slice){
                     String id = element.getId();
                     if(!snpMap.containsKey(id)){
                         snpMap.put(id, new HashMap<Integer, NucleotideGlyph>());

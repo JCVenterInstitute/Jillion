@@ -69,7 +69,7 @@ public class AnnotationConsensusCaller extends AbstractChurchillWatermanConsensu
 
     private Set<NucleotideGlyph> findAllHighQualityBases(Slice slice) {
         Set<NucleotideGlyph> highQualityDiffs = EnumSet.noneOf(NucleotideGlyph.class);
-        for(SliceElement sliceElement : slice.getSliceElements()){
+        for(SliceElement sliceElement : slice){
             if(sliceElement.getQuality().compareTo(getHighQualityThreshold()) >=0){
                 highQualityDiffs.add(sliceElement.getBase());
             }

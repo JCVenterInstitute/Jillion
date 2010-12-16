@@ -28,6 +28,7 @@ import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.junit.Before;
@@ -36,14 +37,14 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 public class TestDefaultQualityClassContigMap {
     CoverageMap<CoverageRegion<PlacedRead>> coverageMap;
-    EncodedGlyphs<NucleotideGlyph> consensus;
+    NucleotideEncodedGlyphs consensus;
     DataStore<EncodedGlyphs<PhredQuality>> qualityFastaMap;
-    QualityClassComputer<PlacedRead, NucleotideGlyph> qualityClassComputer;
+    QualityClassComputer<PlacedRead> qualityClassComputer;
    DefaultQualityClassContigMap sut;
    @Before
    public void setup(){
        coverageMap = createMock(CoverageMap.class);
-       consensus= createMock(EncodedGlyphs.class);
+       consensus= createMock(NucleotideEncodedGlyphs.class);
        qualityFastaMap= createMock(DataStore.class);
        qualityClassComputer= createMock(QualityClassComputer.class);
    }
