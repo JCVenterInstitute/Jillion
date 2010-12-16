@@ -10,13 +10,12 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.DefaultContigQualityClassComputer;
 import org.jcvi.assembly.contig.DefaultQualityClassContigMap;
 import org.jcvi.assembly.contig.QualityClassComputer;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 
 public class InternalSangerContigCheckerStruct<R extends PlacedRead> extends ContigCheckerStruct<R> {
-    private DefaultQualityClassContigMap<R> qualityClassMap;
-    private final QualityClassComputer<R, NucleotideGlyph> qualityClassComputer;
+    private DefaultQualityClassContigMap qualityClassMap;
+    private final QualityClassComputer<R> qualityClassComputer;
     
     public InternalSangerContigCheckerStruct(Contig<R> contig,
             QualityDataStore qualityDataStore, PhredQuality qualityThreshold) {
@@ -24,14 +23,14 @@ public class InternalSangerContigCheckerStruct<R extends PlacedRead> extends Con
         this.qualityClassComputer = new DefaultContigQualityClassComputer<R>(getQualityValueStrategy(),qualityThreshold);
     }
 
-    public synchronized DefaultQualityClassContigMap<R> getQualityClassMap() {
+    public synchronized DefaultQualityClassContigMap getQualityClassMap() {
         if(qualityClassMap ==null){
             qualityClassMap = generateQualityClassContigMap();
         }
         return qualityClassMap;
     }
-    private DefaultQualityClassContigMap<R> generateQualityClassContigMap() {
-        DefaultQualityClassContigMap<R> qualityClassMap= new DefaultQualityClassContigMap(
+    private DefaultQualityClassContigMap generateQualityClassContigMap() {
+        DefaultQualityClassContigMap qualityClassMap= new DefaultQualityClassContigMap(
                 getSequenceCoverageMap(),
                 getContig().getConsensus(),
                 getQualityDataStore(),

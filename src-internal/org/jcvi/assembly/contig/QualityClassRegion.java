@@ -32,7 +32,7 @@ public class QualityClassRegion implements Placed<QualityClassRegion>{
     private QualityClass qualityClass;
     private Placed placed;
     
-    QualityClassRegion(QualityClass qualityClass, Range range){
+    public QualityClassRegion(QualityClass qualityClass, Range range){
         if(qualityClass ==null){
             throw new IllegalArgumentException("qualityClass can not be null");
         }

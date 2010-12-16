@@ -64,7 +64,7 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
     protected Map<NucleotideGlyph, Integer> generateBasecallHistogramMap(
             Slice slice) {
         Map<NucleotideGlyph, Integer> histogramMap = initalizeNucleotideMap();
-        for(SliceElement sliceElement : slice.getSliceElements()){
+        for(SliceElement sliceElement : slice){
             NucleotideGlyph basecall =sliceElement.getBase();
             histogramMap.put(basecall, Integer.valueOf(histogramMap.get(basecall) + 1));
         }
@@ -74,7 +74,7 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
     protected Map<NucleotideGlyph, Integer> generateHighQualityHistogramMap(
             Slice slice) {
         Map<NucleotideGlyph, Integer> histogramMap = initalizeNucleotideMap();
-        for(SliceElement sliceElement : slice.getSliceElements()){
+        for(SliceElement sliceElement : slice){
             NucleotideGlyph basecall =sliceElement.getBase();
             if(sliceElement.getQuality().compareTo(getHighQualityThreshold())>=0){
                 histogramMap.put(basecall, Integer.valueOf(histogramMap.get(basecall) + 1));
@@ -99,7 +99,7 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
 
     protected Map<NucleotideGlyph, Integer> generateQualityValueSumMap(Slice slice) {
         Map<NucleotideGlyph, Integer> qualityValueSumMap = initalizeNucleotideMap();
-        for(SliceElement sliceElement : slice.getSliceElements()){
+        for(SliceElement sliceElement : slice){
             NucleotideGlyph basecall =sliceElement.getBase();
             final Integer previousSum = qualityValueSumMap.get(basecall);
             //ignore not ACGT-?

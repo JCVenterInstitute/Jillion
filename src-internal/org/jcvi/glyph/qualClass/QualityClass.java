@@ -199,7 +199,7 @@ public enum QualityClass implements Glyph, Comparable<QualityClass>{
         }
         public Builder(NucleotideGlyph consensus, PhredQuality highQualitythreshold, Slice slice){
             this(consensus,highQualitythreshold);
-            for(SliceElement sliceElement : slice.getSliceElements()){
+            for(SliceElement sliceElement : slice){
                 if(isHighQuality(sliceElement.getQuality())){
                     handleHighQualitySliceElement(sliceElement,consensus);
                 }
@@ -322,6 +322,9 @@ public enum QualityClass implements Glyph, Comparable<QualityClass>{
         return toString();
     }
     
+    public String getCode(){
+        return "QC"+value;
+    }
     
     
 }

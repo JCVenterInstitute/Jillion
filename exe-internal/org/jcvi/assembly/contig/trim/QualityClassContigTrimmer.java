@@ -96,7 +96,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
     public List<TrimmedPlacedRead<R>> trim(InternalSangerContigCheckerStruct<R> struct) throws DataStoreException {
 
         Map<R, Range> trimmedReads = new HashMap<R, Range>();
-        DefaultQualityClassContigMap<R> qualityClassContigMap = struct.getQualityClassMap();
+        DefaultQualityClassContigMap qualityClassContigMap = struct.getQualityClassMap();
         CoverageMap<CoverageRegion<R>> coverageMap = struct.getSequenceCoverageMap();
         DataStore<EncodedGlyphs<PhredQuality>> qualityMap = struct.getQualityDataStore();
         for (QualityClassRegion qualityClassRegion : qualityClassContigMap) {

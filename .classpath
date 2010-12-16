@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="exe"/>
-	<classpathentry excluding="exe/|resource/|src/|integration-test/|test/|src-internal/|test-internal/|integration-test-internal/|exe-internal/" kind="src" path=""/>
+	<classpathentry excluding="bin/|bin_ant/|build-lib/|exe-internal/|exe/|integration-test-internal/|integration-test/|resource/|src-internal/|src/|test-internal/|test/" kind="src" path=""/>
 	<classpathentry kind="src" path="resource"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="integration-test"/>

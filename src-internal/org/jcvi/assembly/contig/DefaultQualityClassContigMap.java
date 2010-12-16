@@ -33,22 +33,22 @@ import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.jcvi.sequence.SequenceDirection;
 
-public class DefaultQualityClassContigMap<P extends PlacedRead> implements Iterable<QualityClassRegion>{
+public class DefaultQualityClassContigMap implements QualityClassMap{
 
     List<QualityClassRegion> qualityClassRegions;
     
    
 
-    public DefaultQualityClassContigMap(
+    public <P extends PlacedRead> DefaultQualityClassContigMap(
                     CoverageMap<CoverageRegion<P>> coverageMap, 
-                    EncodedGlyphs<NucleotideGlyph> consensus,
+                    NucleotideEncodedGlyphs consensus,
                     DataStore<EncodedGlyphs<PhredQuality>> qualityFastaMap, 
-                    QualityClassComputer<P,NucleotideGlyph> qualityClassComputer){
+                    QualityClassComputer<P> qualityClassComputer){
         qualityClassRegions = new ArrayList<QualityClassRegion>();
         QualityClass qualityClass =null;
         int qualityClassStart=0;
@@ -106,6 +106,26 @@ public class DefaultQualityClassContigMap<P extends PlacedRead> implements Itera
     @Override
     public Iterator<QualityClassRegion> iterator() {
         return qualityClassRegions.iterator();
+    }
+
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getNumberOfRegions() {
+        return qualityClassRegions.size();
+    }
+
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public QualityClassRegion getQualityClassRegion(int index) {
+        return qualityClassRegions.get(index);
     }
     
     
