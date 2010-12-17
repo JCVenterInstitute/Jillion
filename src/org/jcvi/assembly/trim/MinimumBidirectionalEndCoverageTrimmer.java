@@ -45,7 +45,7 @@ public class MinimumBidirectionalEndCoverageTrimmer<P extends PlacedRead, C exte
             if(region.getCoverage()<=maxCoverageToConsider){
                 int forwardCount=0;
                 int reverseCount=0;
-                for(P read : region.getElements()){
+                for(P read : region){
                     if(read.getSequenceDirection()==SequenceDirection.FORWARD){
                         forwardCount++;
                     }else{

@@ -120,7 +120,7 @@ public class ConsedUtil {
             Set<String> contigReads = new HashSet<String>();
             
             for(CoverageRegion<AcePlacedRead> region : coverageMap.getRegionsWithin(contigRange)){
-                for(AcePlacedRead read : region.getElements()){
+                for(AcePlacedRead read : region){
                     contigReads.add(read.getId());
                 }
             }

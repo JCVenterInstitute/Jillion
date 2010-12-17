@@ -43,7 +43,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
             long offset, DataStore<? extends EncodedGlyphs<PhredQuality>> qualityDataStore,
             QualityValueStrategy qualityValueStrategy) {
         List<SliceElement> sliceElements = new ArrayList<SliceElement>(region.getCoverage());
-        for(PlacedRead read : region.getElements()){
+        for(PlacedRead read : region){
             
             EncodedGlyphs<PhredQuality> qualities;
             try {

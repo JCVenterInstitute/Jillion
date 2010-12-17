@@ -104,7 +104,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
                 for(Long consensusIndex : new PlacedIterable(qualityClassRegion)){
                     CoverageRegion<R> coverageRegion = coverageMap.getRegionWhichCovers(consensusIndex);
 
-                    for (R read : coverageRegion.getElements()) {
+                    for (R read : coverageRegion) {
                         int gappedValidRangeIndex = (int)read.convertReferenceIndexToValidRangeIndex(consensusIndex);
                         if (isASnp(read, gappedValidRangeIndex)){                           
 

@@ -56,7 +56,7 @@ public class CompactedSliceMap implements SliceMap {
         CompactedSlice[] slices = new CompactedSlice[size];
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
             Map<String,EncodedGlyphs<PhredQuality>> qualities = new HashMap<String,EncodedGlyphs<PhredQuality>>(region.getCoverage());
-            for(PlacedRead read :region.getElements()){
+            for(PlacedRead read :region){
                 final String id = read.getId();
                 qualities.put(id,qualityDataStore.get(id));
             }
@@ -76,7 +76,7 @@ public class CompactedSliceMap implements SliceMap {
             QualityValueStrategy qualityValueStrategy,
             int i) {
         CompactedSlice.Builder builder = new CompactedSlice.Builder();
-        for (PlacedRead read : region.getElements()) {
+        for (PlacedRead read : region) {
             String id=read.getId();
             int indexIntoRead = (int) (i - read.getStart());
             PhredQuality quality = qualityValueStrategy.getQualityFor(read, qualities.get(id), indexIntoRead);

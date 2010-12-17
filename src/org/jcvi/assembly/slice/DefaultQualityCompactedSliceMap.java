@@ -55,7 +55,7 @@ public class DefaultQualityCompactedSliceMap extends AbstractCompactedSliceMap{
     protected CompactedSlice createSlice(
             CoverageRegion<? extends PlacedRead> region, int i) {
         CompactedSlice.Builder builder= new CompactedSlice.Builder();
-        for(PlacedRead read : region.getElements()){
+        for(PlacedRead read : region){
             int indexIntoRead = (int) (i - read.getStart());
             builder.addSliceElement(read.getId(),
                     read.getEncodedGlyphs().get(indexIntoRead),

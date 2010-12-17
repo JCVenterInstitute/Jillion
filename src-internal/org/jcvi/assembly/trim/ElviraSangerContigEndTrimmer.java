@@ -87,7 +87,7 @@ public class ElviraSangerContigEndTrimmer<P extends PlacedRead, C extends Contig
         }
         //only here if we don't meet requirements of bidirectional trimming...
         List<String> seqnames = new ArrayList<String>(region.getCoverage());
-        for(PlacedRead read : region.getElements()){
+        for(PlacedRead read : region){
             if(isElviraSangerRead(read.getId())){
                 seqnames.add(read.getId());
             }

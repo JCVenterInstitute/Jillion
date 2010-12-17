@@ -63,7 +63,7 @@ public class SequenceCoverageAnalysisProcess<PR extends PlacedRead> extends Abst
             NucleotideEncodedGlyphs consensus,
             CoverageRegion<PR> highCoverageRegion) {
         return  new DefaultCoverageRegion.Builder(
-                consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex(AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)highCoverageRegion.getStart())), highCoverageRegion.getElements())
+                consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex(AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)highCoverageRegion.getStart())), highCoverageRegion)
                 .end(
                         consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex(AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)highCoverageRegion.getEnd())))
                 .build();

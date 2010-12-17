@@ -25,7 +25,6 @@ package org.jcvi.assembly.contig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
@@ -38,6 +37,7 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.util.EmptyIterator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -74,7 +74,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     
     @Test
     public void zeroCoverageRegion() throws DataStoreException{
-        expect(coverageRegion.getElements()).andReturn(Collections.<PlacedRead>emptyList());
+        expect(coverageRegion.iterator()).andReturn(EmptyIterator.<PlacedRead>createEmptyIterator());
         replay(qualityFastaMap,coverageRegion,builder);
         assertEquals(expectedQuality,
                 sut.computeQualityClassFor(qualityFastaMap, index, coverageRegion, consensusBase, builder));
@@ -171,7 +171,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
 
     private void assertQualityClassBuiltCorrectly(List<PlacedRead> reads,
             List<Object> mocks) throws DataStoreException {
-        expect(coverageRegion.getElements()).andReturn(reads);
+        expect(coverageRegion.iterator()).andReturn(reads.iterator());
         replay(mocks.toArray());
         replay(qualityFastaMap,coverageRegion,builder,qualityValueStrategy);
         assertEquals(expectedQuality,

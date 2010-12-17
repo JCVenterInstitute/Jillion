@@ -23,22 +23,16 @@
  */
 package org.jcvi.assembly.coverage;
 
-import java.util.Collection;
 
 import org.jcvi.assembly.Placed;
 
-public interface CoverageRegion<T extends Placed> extends Placed<T> {
+public interface CoverageRegion<T extends Placed> extends Placed<T>, Iterable<T> {
         /**
          * Get the Coverage depth of this coverage region.
          * should be the same as the number of elements.
          * @return
          */
         int getCoverage();
-        /**
-         * Get the elements in this coverage region
-         * @return
-         */
-        Collection<T> getElements();
         /**
          * Create a new CoverageRegion which has
          * the same elements as this CoverageRegion

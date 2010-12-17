@@ -35,7 +35,7 @@ public class DirectionalSequenceCoverageMapXMLCoverageWriter<T extends PlacedRea
             Properties attriubtes) {
         int numberReversedComplimented=0;
         int numberForwardComplimented=0;
-        for(T placedRead : region.getElements()){
+        for(T placedRead : region){
             if(placedRead.getSequenceDirection()== SequenceDirection.REVERSE){
                 numberReversedComplimented++;
             }
