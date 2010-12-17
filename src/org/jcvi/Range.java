@@ -276,6 +276,12 @@ public class Range implements Placed<Range>,Iterable<Long>
     public static Range buildRange(long start, long end){
         return buildRange(CoordinateSystem.ZERO_BASED,start,end);
     }
+    public static Range buildRange(long singleCoordinate){
+        return buildRange(CoordinateSystem.ZERO_BASED,singleCoordinate);
+    }
+    public static Range buildRange(CoordinateSystem coordinateSystem, long singleCoordinate){
+        return buildRangeOfLength(coordinateSystem,singleCoordinate,1);
+    }
 
     public static Range buildRange(RangeCoordinateSystem coordinateSystem,long start, long end){
         if ( coordinateSystem == null ) {

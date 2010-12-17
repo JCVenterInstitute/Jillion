@@ -28,14 +28,12 @@ import static org.jcvi.sequence.SequenceDirection.REVERSE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.jcvi.assembly.slice.DefaultSlice;
 import org.jcvi.assembly.slice.Slice;
-import org.jcvi.assembly.slice.SliceElement;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import static org.jcvi.assembly.slice.TestSliceUtil.*;
 public final class ConsensusCallerTestUtil {
@@ -614,7 +612,7 @@ public final class ConsensusCallerTestUtil {
 }
 
 	private static List<Slice> createEmptySlice(){
-    return Arrays.<Slice>asList(new DefaultSlice(Collections.<SliceElement>emptyList()));
+    return Arrays.<Slice>asList(new DefaultSlice.Builder().build());
 }
 private static List<ConsensusResult> createConsensusResults(String basecalls, int... consensusQualities){
     List<ConsensusResult> result = new ArrayList<ConsensusResult>();

@@ -16,22 +16,39 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 17, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.assembly.slice;
 
-import org.jcvi.Range;
-import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
+import org.jcvi.assembly.coverage.CoverageMap;
+import org.jcvi.assembly.coverage.CoverageRegion;
 
-public interface ContigSliceMap<T extends PlacedRead> extends Iterable<ContigSlice<T>>{
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public abstract class AbstractCompactedSliceMap implements SliceMap{
 
-    Contig<T> getContig();
-    ContigSlice<T> getContigSliceAt(int index);
-    
-    Iterable<ContigSlice<T>> getContigSlicesWithin(Range range);
-    Iterable<ContigSlice<T>> getContigSlicesWhichIntersect(Range range);
+
+    protected CompactedSlice[] createSlices(
+            CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap) {
+        int size = (int)coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()+1;
+        CompactedSlice[] slices = new CompactedSlice[size];
+        for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
+            for(int i=(int)region.getStart(); i<=region.getEnd(); i++ ){
+                slices[i] =createSlice(region, i);                
+            }
+        }
+        return slices;
+    }
+    /**
+     * @param region
+     * @param i
+     * @return
+     */
+    protected abstract CompactedSlice createSlice(
+            CoverageRegion<? extends PlacedRead> region, int i);
+   
+
 }

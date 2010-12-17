@@ -16,31 +16,30 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 17, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.assembly.slice;
 
-import org.jcvi.assembly.slice.consensus.AllConsensusUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.assembly.Contig;
+import org.jcvi.assembly.PlacedRead;
+import org.jcvi.assembly.contig.qual.QualityValueStrategy;
+import org.jcvi.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-        
-        TestDefaultSliceElement.class,
-        TestCompactedSliceElement.class,
-        TestDefaultSlice.class,
-        TestCompactedSlice.class,
-        TestDefaultSliceMap.class,
-        TestCompactedSliceMap.class,
-        AllConsensusUnitTests.class
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestDefaultSliceMap extends AbstractTestSliceMap{
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected SliceMap createSliceMapFor(Contig<PlacedRead> contig,
+            QualityDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy) {
+        return new DefaultSliceMap(DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads()),
+                qualityDatastore, qualityValueStrategy);
     }
-    )
-public class AllSliceUnitTests {
 
 }

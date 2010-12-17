@@ -23,26 +23,23 @@
  */
 package org.jcvi.assembly.slice;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.sequence.SequenceDirection;
+
 public class DefaultSlice implements Slice{
     private final Map<String,SliceElement> elements;
     
-    public DefaultSlice(List<SliceElement> elements){
-        this.elements = new HashMap<String, SliceElement>(elements.size(),1);
-        for(SliceElement element : elements){
-            this.elements.put(element.getId(), element);
-        }
+    private DefaultSlice(Map<String,SliceElement> elements){
+        this.elements = elements;
         
-    }
-    @Override
-    public List<SliceElement> getSliceElements() {
-        return new ArrayList<SliceElement>(elements.values());
     }
     @Override
     public int hashCode() {
@@ -57,9 +54,9 @@ public class DefaultSlice implements Slice{
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof DefaultSlice))
+        if (!(obj instanceof Slice))
             return false;
-        DefaultSlice other = (DefaultSlice) obj;
+        Slice other = (Slice) obj;
         for(Entry<String,SliceElement> entry : elements.entrySet()){
             if(!other.containsElement(entry.getKey())){
                 return false;
@@ -92,5 +89,30 @@ public class DefaultSlice implements Slice{
         return elements.get(elementId);
     }
     
-
+    public static class Builder implements org.jcvi.Builder<DefaultSlice>{
+        private final Map<String,SliceElement> elements = new LinkedHashMap<String, SliceElement>();
+        
+        public Builder add(String id, NucleotideGlyph base, PhredQuality quality, SequenceDirection dir){
+            return add(new DefaultSliceElement(id, base, quality, dir));
+        }
+        public Builder addAll(Iterable<? extends SliceElement> elements){
+            for(SliceElement element : elements){
+                this.elements.put(element.getId(), element);
+            }
+            return this;
+        }
+        public Builder add(SliceElement element){
+            elements.put(element.getId(), element);
+            return this;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public DefaultSlice build() {
+            return new DefaultSlice(elements);
+        }
+        
+        
+    }
 }

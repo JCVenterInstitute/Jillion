@@ -22,8 +22,6 @@
  * @author dkatzel
  */
 package org.jcvi.assembly.slice;
-
-import java.util.List;
 /**
  * A {@code Slice} is a one base wide cut of an assembly from zero 
  * or more {@link SliceElement}s.
@@ -32,13 +30,6 @@ import java.util.List;
  *
  */
 public interface Slice extends Iterable<SliceElement>{
-    /**
-     * Get the {@link SliceElement}s
-     * that contribute to this Slice.
-     * @return a List of all the SliceElements
-     * in this Slice, never null.
-     */
-    List<SliceElement> getSliceElements();
     /**
      * Get the coverage depth of this Slice.  this 
      * should be the same as the size of the

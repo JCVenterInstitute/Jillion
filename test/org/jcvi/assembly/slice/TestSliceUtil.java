@@ -36,18 +36,18 @@ public final class TestSliceUtil {
     private TestSliceUtil(){}
     
     public static Slice createIsolatedSliceFrom(String bases, int... qualities){
-        List<SliceElement> sliceElements = new ArrayList<SliceElement>();
+        DefaultSlice.Builder builder = new DefaultSlice.Builder();
         for(int i =0; i< qualities.length; i++){
-            sliceElements.add(new DefaultSliceElement("read_"+i,NucleotideGlyph.getGlyphFor(bases.charAt(i)), PhredQuality.valueOf(qualities[i]), FORWARD));
+            builder.add("read_"+i,NucleotideGlyph.getGlyphFor(bases.charAt(i)), PhredQuality.valueOf(qualities[i]), FORWARD);
         }
-        return new DefaultSlice(sliceElements);
+        return builder.build();
     }
     public static Slice createSliceFrom(List<NucleotideGlyph> nucleotides, List<PhredQuality> qualities, List<SequenceDirection> directions){
-        List<SliceElement> sliceElements = new ArrayList<SliceElement>();
+        DefaultSlice.Builder builder = new DefaultSlice.Builder();
         for(int i=0; i<nucleotides.size(); i++){
-            sliceElements.add(new DefaultSliceElement("read_"+i,nucleotides.get(i), qualities.get(i), directions.get(i)));
+            builder.add("read_"+i,nucleotides.get(i), qualities.get(i), directions.get(i));
         }
-        return new DefaultSlice(sliceElements);
+        return builder.build();
     }
     public static Slice createSliceFrom(String nucleotides, byte[] qualities, List<SequenceDirection> directions){
         

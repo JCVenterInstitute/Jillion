@@ -16,31 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 17, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.assembly.slice;
 
-import org.jcvi.assembly.slice.consensus.AllConsensusUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.List;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-        
-        TestDefaultSliceElement.class,
-        TestCompactedSliceElement.class,
-        TestDefaultSlice.class,
-        TestCompactedSlice.class,
-        TestDefaultSliceMap.class,
-        TestCompactedSliceMap.class,
-        AllConsensusUnitTests.class
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestCompactedSlice extends AbstractTestSlice{
+
+    @Override
+    protected Slice createNew(List<SliceElement> elements) {
+        CompactedSlice.Builder builder = new CompactedSlice.Builder();
+        for(SliceElement element : elements){
+            builder.addSliceElement(element);
+        }
+        return builder.build();
     }
-    )
-public class AllSliceUnitTests {
 
 }

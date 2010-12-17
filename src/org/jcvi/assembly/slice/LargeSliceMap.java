@@ -93,7 +93,9 @@ public class LargeSliceMap extends AbstractSliceMap{
         }
         Slice result=null;
         for(long i= region.getStart(); i<=region.getEnd(); i++){
-            Slice s =new DefaultSlice(createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy));
+            Slice s =new DefaultSlice.Builder()
+                    .addAll(createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy))
+                    .build();
             if(i==offset){
                 result = s;
             }
