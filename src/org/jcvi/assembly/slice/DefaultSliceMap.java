@@ -47,7 +47,9 @@ public class DefaultSliceMap extends AbstractSliceMap{
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
             for(long i=region.getStart(); i<=region.getEnd(); i++ ){
                 List<SliceElement> sliceElements = createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy);
-                sliceMap.put(Long.valueOf(i),new DefaultSlice(sliceElements));
+                sliceMap.put(Long.valueOf(i),new DefaultSlice.Builder()
+                                            .addAll(sliceElements)
+                                            .build());
             }
         }
     }

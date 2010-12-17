@@ -16,21 +16,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 14, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.assembly.slice;
 
-import java.util.List;
-
-import org.jcvi.assembly.Location;
+import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.assembly.contig.qual.QualityValueStrategy;
+import org.jcvi.datastore.DataStoreException;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 
-public interface ContigSlice<T extends PlacedRead> {
-    List<SliceLocation<T>> getUnderlyingSliceLocations();
-    Location<EncodedGlyphs<NucleotideGlyph>> getConsensus();
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestCompactedSliceMap extends AbstractTestSliceMap{
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected SliceMap createSliceMapFor(Contig<PlacedRead> contig,
+            QualityDataStore qualityDatastore,
+            QualityValueStrategy qualityValueStrategy) {
+
+        try {
+            return new CompactedSliceMap(contig, qualityDatastore, qualityValueStrategy);
+        } catch (DataStoreException e) {
+            throw new IllegalStateException("error creating compacted sliceMap",e);
+        }
+    }
+
 }

@@ -19,10 +19,7 @@
 
 package org.jcvi.assembly.slice;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
-
-import org.jcvi.glyph.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.SequenceDirection;
@@ -34,31 +31,27 @@ import org.jcvi.sequence.SequenceDirection;
  */
 public class CompactedSliceElement implements SliceElement{
 
-    private static final DefaultNucleotideGlyphCodec CODEC = DefaultNucleotideGlyphCodec.getInstance();
     private String id;
     private byte[] encodedData = new byte[2];
-    
+    public CompactedSliceElement(String id, byte[] encodedData){
+        if(id ==null){
+            throw new NullPointerException("fields can not be null");
+        }
+        if(encodedData.length !=2){
+            throw new IllegalArgumentException("invalid encoded data");
+        }
+        this.id = id;
+        System.arraycopy(encodedData, 0, this.encodedData, 0, 2);
+    }
     public CompactedSliceElement(String id, NucleotideGlyph base, PhredQuality quality,
             SequenceDirection direction) {
         if(id ==null ||base ==null || quality ==null || direction == null){
-            throw new IllegalArgumentException("fields can not be null");
+            throw new NullPointerException("fields can not be null");
         }
         this.id= id;
-        encodedData[0] = quality.getNumber().byteValue();
-        encodedData[1]= compact(base, direction);
+        encodedData = CompactedSliceElementCodec.INSTANCE.compact(base, quality, direction);
     }
-    /**
-     * @param base
-     * @param direction
-     * @return
-     */
-    private byte compact(NucleotideGlyph base, SequenceDirection direction) {
-        byte compacted=CODEC.encode(Arrays.asList(base))[4];
-        if(direction == SequenceDirection.FORWARD){
-            compacted = (byte)(compacted | 0x01);
-        }
-        return compacted;
-    }
+   
     /**
     * {@inheritDoc}
     */
@@ -72,10 +65,7 @@ public class CompactedSliceElement implements SliceElement{
     */
     @Override
     public NucleotideGlyph getBase() {
-       ByteBuffer buf = ByteBuffer.allocate(5);
-       buf.putInt(2);
-       buf.put(encodedData[1]);
-       return CODEC.decode(buf.array(), 0);
+        return CompactedSliceElementCodec.INSTANCE.getBase(encodedData);
     }
 
     /**
@@ -83,7 +73,7 @@ public class CompactedSliceElement implements SliceElement{
     */
     @Override
     public PhredQuality getQuality() {
-        return PhredQuality.valueOf(encodedData[0]);
+        return CompactedSliceElementCodec.INSTANCE.getQuality(encodedData);
     }
 
     /**
@@ -91,10 +81,7 @@ public class CompactedSliceElement implements SliceElement{
     */
     @Override
     public SequenceDirection getSequenceDirection() {
-        if((byte)(encodedData[1] & 0x01) ==1){
-            return SequenceDirection.FORWARD;
-        }
-        return SequenceDirection.REVERSE;
+        return CompactedSliceElementCodec.INSTANCE.getSequenceDirection(encodedData);
     }
     @Override
     public int hashCode() {
@@ -112,18 +99,20 @@ public class CompactedSliceElement implements SliceElement{
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof CompactedSliceElement)) {
+        if (!(obj instanceof SliceElement)) {
             return false;
         }
-        CompactedSliceElement other = (CompactedSliceElement) obj;
-        if (!Arrays.equals(encodedData, other.encodedData)) {
+        SliceElement other = (SliceElement) obj;
+        if (!id.equals(other.getId())) {
             return false;
         }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
+        if(!getQuality().equals(other.getQuality())){
+            return false;
+        }
+        if(!getBase().equals(other.getBase())){
+            return false;
+        }
+        if(!getSequenceDirection().equals(other.getSequenceDirection())){
             return false;
         }
         return true;

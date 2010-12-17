@@ -16,17 +16,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 14, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.assembly.slice;
 
-import org.jcvi.assembly.Location;
-import org.jcvi.glyph.phredQuality.PhredQuality;
+import java.util.List;
 
-public interface SliceLocation<T> extends Location<T>{
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestDefaultSlice extends AbstractTestSlice{
 
-    PhredQuality getQuality();
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected Slice createNew(List<SliceElement> elements) {
+        return new DefaultSlice.Builder().addAll(elements).build();
+    }
+
 }
