@@ -25,6 +25,7 @@ package org.jcvi.assembly.coverage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.CommonUtil;
@@ -50,11 +51,6 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
     }
 
     @Override
-    public Collection<T> getElements() {
-        return elements;
-    }
-
-    @Override
     public long getLength() {
         return range.size();
     }
@@ -68,6 +64,10 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
         return range.getEnd();
     } 
 
+    @Override
+    public Iterator<T> iterator() {
+        return elements.iterator();
+    }
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -93,7 +93,7 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
         if (!(obj instanceof DefaultCoverageRegion))
             return false;
         DefaultCoverageRegion other = (DefaultCoverageRegion) obj;
-        return  CommonUtil.similarTo(elements,other.getElements()) &&
+        return CommonUtil.similarTo(elements,other.elements) &&
                 CommonUtil.similarTo(range.size(), other.getLength()) 
                 && CommonUtil.similarTo(range.getStart(), other.getStart());
     }
@@ -120,12 +120,15 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
             return endIsSet;
         }
 
-        public Builder(long start, Collection<T> elements){
+        public Builder(long start, Iterable<T> elements){
             if(elements ==null){
                 throw new IllegalArgumentException("elements can not be null");
             }
             this.start=start;
-            this.elements = new ArrayList<T>(elements);
+            this.elements = new ArrayList<T>();
+            for(T e : elements){
+                this.elements.add(e);
+            }
         }
         public long start(){
             return start;

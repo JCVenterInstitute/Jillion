@@ -80,7 +80,7 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
             DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore, int index,
             CoverageRegion<P> region, final NucleotideGlyph consensusBase,
             QualityClass.Builder builder) throws DataStoreException {
-        for(P placedRead : region.getElements()){
+        for(P placedRead : region){
             final EncodedGlyphs<PhredQuality> qualityRecord = qualityDataStore.get(placedRead.getId());
             if(qualityRecord !=null){
                 int indexIntoRead = (int) (index - placedRead.getStart());

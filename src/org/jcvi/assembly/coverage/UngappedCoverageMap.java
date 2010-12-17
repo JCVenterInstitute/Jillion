@@ -70,7 +70,7 @@ public class UngappedCoverageMap <V extends Placed,T extends CoverageRegion<V>> 
         long shiftedOffset = currentRegion.getStart() - ungappedStart;
         DefaultCoverageRegion.Builder<V> ungappedRegion = new DefaultCoverageRegion.Builder<V>(
                                        ungappedStart,
-                                       currentRegion.getElements());
+                                       currentRegion);
            ungappedRegion.end(currentRegion.getEnd()-numberOfGaps-shiftedOffset);
         return ungappedRegion.build();
     }

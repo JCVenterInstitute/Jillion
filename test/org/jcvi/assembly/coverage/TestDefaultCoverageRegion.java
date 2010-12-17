@@ -23,7 +23,9 @@
  */
 package org.jcvi.assembly.coverage;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.jcvi.assembly.Placed;
 import org.jcvi.testUtil.TestUtil;
@@ -48,13 +50,13 @@ public class TestDefaultCoverageRegion {
         assertEquals(start, sut.getStart());
         assertEquals(end, sut.getEnd());
         assertEquals(length, sut.getLength());
-        assertEquals(Arrays.asList(seq1,seq2), sut.getElements());
+        assertEquals(Arrays.asList(seq1,seq2), getElements(sut));
         assertEquals(2, sut.getCoverage());
     }
     @Test
     public void add(){
 
-        DefaultCoverageRegion region = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1))
+        DefaultCoverageRegion<Placed> region = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1))
                                     .add(seq2)
                                     .end(end)
                                         .build();
@@ -62,12 +64,20 @@ public class TestDefaultCoverageRegion {
         assertEquals(start, region.getStart());
         assertEquals(end, region.getEnd());
         assertEquals(length, region.getLength());
-        assertEquals(Arrays.asList(seq1,seq2), region.getElements());
+        assertEquals(Arrays.asList(seq1,seq2), getElements(region));
         assertEquals(2, region.getCoverage());
+    }
+    
+    private List<Placed> getElements(CoverageRegion<Placed> region){
+        List<Placed> actual = new ArrayList<Placed>();
+        for(Placed p : region){
+            actual.add(p);
+        }
+        return actual;
     }
     @Test
     public void remove(){
-        DefaultCoverageRegion region = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1,seq2))
+        DefaultCoverageRegion<Placed> region = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1,seq2))
                     .end(end)
                     .remove(seq2)
                     .build();
@@ -75,7 +85,7 @@ public class TestDefaultCoverageRegion {
         assertEquals(start, region.getStart());
         assertEquals(end, region.getEnd());
         assertEquals(length, region.getLength());
-        assertEquals(Arrays.asList(seq1), region.getElements());
+        assertEquals(Arrays.asList(seq1), getElements(region));
         assertEquals(1, region.getCoverage());
     }
     
