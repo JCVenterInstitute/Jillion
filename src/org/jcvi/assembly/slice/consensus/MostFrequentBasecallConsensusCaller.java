@@ -30,9 +30,20 @@ import java.util.Map.Entry;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceElement;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-
-public class MostCommonBasecallConsensusCaller implements ConsensusCaller{
-
+/**
+ * {@code MostFrequentBasecallConsensusCaller} is a {@link ConsensusCaller}
+ * implementation that will return the most frequent basecall in
+ * a Slice and the Consensus Quality is the sum of all the qualities of
+ * the reads with that basecall minus the sum of the reads 
+ * without that basecall.  If the Slice is empty, then the ConsensusResult
+ * is N with 0 quality.
+ * 
+ * @author dkatzel
+ *
+ */
+public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
+	INSTANCE;
+	
     @Override
     public ConsensusResult callConsensus(Slice slice) {
         if(slice==null){

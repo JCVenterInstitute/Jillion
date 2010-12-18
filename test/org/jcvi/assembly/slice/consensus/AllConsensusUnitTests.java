@@ -33,7 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestConicConsensusCaller.class,
         TestBasicChurchillWatermanConsensusCaller.class,
         TestAnnotationConsensusCaller.class,
-        TestNoAmbiguityConsensusCaller.class
+        TestNoAmbiguityConsensusCaller.class,
+        TestMostFrequentBasecallConsensusCaller.class
     }
     )
 public class AllConsensusUnitTests {

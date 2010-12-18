@@ -28,13 +28,19 @@ import static org.jcvi.sequence.SequenceDirection.REVERSE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.SortedMap;
+import java.util.TreeMap;
 import org.jcvi.assembly.slice.DefaultSlice;
 import org.jcvi.assembly.slice.Slice;
+import org.jcvi.assembly.slice.SliceElement;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.util.InverseComparator;
+import org.jcvi.util.MapValueComparator;
+
 import static org.jcvi.assembly.slice.TestSliceUtil.*;
 public final class ConsensusCallerTestUtil {
 
@@ -621,6 +627,46 @@ private static List<ConsensusResult> createConsensusResults(String basecalls, in
     }
     return result;
 }
+
+public static Map<List<Slice>, List<ConsensusResult>> generateMostCommonBasecallData(){
+    Map<List<Slice>, List<ConsensusResult>> map = generateConicData();
+    Map<List<Slice>, List<ConsensusResult>> ret = new LinkedHashMap<List<Slice>, List<ConsensusResult>>(map.size());
+    for(List<Slice> key : map.keySet()){
+    	List<ConsensusResult> consensusResults = new ArrayList<ConsensusResult>();
+    	
+    	for(Slice s : key){
+    		if(s.getCoverageDepth()==0){
+    			consensusResults.add(new DefaultConsensusResult(NucleotideGlyph.Unknown, 0));
+    			continue;
+    		}
+    		Map<NucleotideGlyph, Integer> histogram = new EnumMap<NucleotideGlyph, Integer>(NucleotideGlyph.class);
+    		for(NucleotideGlyph bases : NucleotideGlyph.getGlyphsFor("ACGT-")){
+    			histogram.put(bases, Integer.valueOf(0));
+    		}
+    		for(SliceElement e : s){
+    			histogram.put(e.getBase(),histogram.get(e.getBase()) +1);
+    		}
+    		SortedMap<NucleotideGlyph, Integer> sortedMap = new TreeMap<NucleotideGlyph, Integer>(InverseComparator.invert(new  MapValueComparator<NucleotideGlyph, Integer>(histogram)));
+    		sortedMap.putAll(histogram);
+    		NucleotideGlyph mostCommonBase =sortedMap.keySet().iterator().next();
+    		int consensusQuality=0;
+    		for(SliceElement e : s){
+    			if(e.getBase() == mostCommonBase){
+    				consensusQuality += e.getQuality().getNumber();
+    			}else{
+    				consensusQuality -= e.getQuality().getNumber();
+    			}
+    		}
+    		consensusResults.add(new DefaultConsensusResult(mostCommonBase, consensusQuality));
+    	}
+    	ret.put(key, consensusResults);
+    }
+    
+    return ret;
+    
+    
+}
+
 public static Map<List<Slice>, List<ConsensusResult>> generateConicData(){
     Map<List<Slice>, List<ConsensusResult>> map = new LinkedHashMap<List<Slice>, List<ConsensusResult>>();
     map.put(createEmptySlice(), createConsensusResults("-",0));
