@@ -265,5 +265,13 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
         throwExceptionIfAlreadyInitialized();
         
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitEndOfContig() {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

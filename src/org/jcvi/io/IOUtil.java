@@ -534,9 +534,10 @@ public final class IOUtil {
             ByteBuffer buf= ByteBuffer.allocate((int)range.size());
             fastaFileChannel.position((int)range.getStart());
             int bytesRead =fastaFileChannel.read(buf);
-            if(bytesRead !=range.size()){
-                throw new IOException(String.format("did not read enough bytes! %d expected %d",bytesRead, range.size()));
+            if(bytesRead <0){
+                throw new IOException("could not read any bytes from file");
             }
+            
             final ByteArrayInputStream inputStream = new ByteArrayInputStream(buf.array());
             return inputStream;
         

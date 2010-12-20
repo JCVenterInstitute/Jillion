@@ -69,7 +69,7 @@ public class AceFileParser {
     
     public static void parseAceFile(InputStream inputStream, AceFileVisitor visitor) throws IOException{
         Scanner scanner = new Scanner(inputStream).useDelimiter(CR);
-        
+        boolean firstContigBeingVisited=true;
         while(scanner.hasNextLine()){
             String line = scanner.nextLine();
             if(scanner.hasNextLine()){
@@ -80,6 +80,10 @@ public class AceFileParser {
             
             Matcher headerMatcher = ACE_HEADER_PATTERN.matcher(line);
             if(headerMatcher.find()){
+                if(!firstContigBeingVisited){
+                    firstContigBeingVisited=false;
+                    visitor.visitEndOfContig();
+                }
                 int numberOfContigs = Integer.parseInt(headerMatcher.group(1));
                 int totalNumberOfReads = Integer.parseInt(headerMatcher.group(2));
                 visitor.visitHeader(numberOfContigs, totalNumberOfReads);
@@ -166,6 +170,7 @@ public class AceFileParser {
                                         visitor.visitTraceDescriptionLine(traceName, phdName, date);
                                     }
                                     else{
+                                       
                                         //tags
                                         Matcher readTag =BEGIN_READ_TAG_PATTERN.matcher(line);
                                         if(readTag.find()){
@@ -284,6 +289,7 @@ public class AceFileParser {
             }
             
         }
+        visitor.visitEndOfContig();
         visitor.visitEndOfFile();
     }
 
