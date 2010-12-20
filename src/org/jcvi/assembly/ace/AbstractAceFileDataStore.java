@@ -48,13 +48,14 @@ public abstract class AbstractAceFileDataStore extends AbstractAceFileVisitor im
     
     
     @Override
-    protected void visitEndOfContig() {
+    public void visitEndOfContig() {
         if(contigBuilder !=null){
             visitContig(contigBuilder.build());
             contigBuilder=null;
         }
-        
     }
+    
+    
     @Override
     protected void visitNewContig(String contigId, String consensus) {
         contigBuilder= new DefaultAceContig.Builder(contigId, consensus);

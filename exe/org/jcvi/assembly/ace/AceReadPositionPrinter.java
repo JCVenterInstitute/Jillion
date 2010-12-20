@@ -54,7 +54,7 @@ public class AceReadPositionPrinter {
         }
         
         @Override
-        protected void visitEndOfContig() {
+        public void visitEndOfContig() {
            
             
         }

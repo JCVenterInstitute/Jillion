@@ -136,7 +136,7 @@ public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceT
     * {@inheritDoc}
     */
     @Override
-    protected void visitEndOfContig() {
+    public void visitEndOfContig() {
         
     }
 

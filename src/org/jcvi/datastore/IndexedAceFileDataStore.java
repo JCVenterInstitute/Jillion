@@ -62,7 +62,7 @@ public class IndexedAceFileDataStore extends AbstractAceFileDataStore{
     }
 
     @Override
-    public void visitLine(String line) {        
+    public synchronized void visitLine(String line) {        
         super.visitLine(line);
         final int length = line.length();
         currentLineLength = length;
@@ -71,7 +71,7 @@ public class IndexedAceFileDataStore extends AbstractAceFileDataStore{
     }
 
     @Override
-    public void visitContigHeader(String contigId, int numberOfBases,
+    public synchronized void visitContigHeader(String contigId, int numberOfBases,
             int numberOfReads, int numberOfBaseSegments,
             boolean reverseComplimented) {
         super.visitContigHeader(contigId, numberOfBases, numberOfReads,
@@ -81,6 +81,10 @@ public class IndexedAceFileDataStore extends AbstractAceFileDataStore{
 
     @Override
     protected void visitContig(AceContig contig) {
+        if(contig.getId().equals("NP")){
+            System.out.println("here");
+            System.out.println("current line length="+currentLineLength);
+        }
         indexFileRange.put(contig.getId(), Range.buildRange(currentStartOffset, currentFileOffset));
         currentStartOffset=currentFileOffset+1;
     }

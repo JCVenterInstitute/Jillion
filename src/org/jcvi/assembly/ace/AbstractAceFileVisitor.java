@@ -108,10 +108,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         readingConsensus = true;
         currentBasecalls = new StringBuilder();
     }
-    /**
-     * The currently contig being visited contains no more data.
-     */
-    protected abstract void visitEndOfContig();
+
     @Override
     public synchronized void visitHeader(int numberOfContigs, int totalNumberOfReads) {
         throwExceptionIfInitialized();
