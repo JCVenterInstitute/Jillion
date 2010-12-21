@@ -81,10 +81,6 @@ public class IndexedAceFileDataStore extends AbstractAceFileDataStore{
 
     @Override
     protected void visitContig(AceContig contig) {
-        if(contig.getId().equals("NP")){
-            System.out.println("here");
-            System.out.println("current line length="+currentLineLength);
-        }
         indexFileRange.put(contig.getId(), Range.buildRange(currentStartOffset, currentFileOffset));
         currentStartOffset=currentFileOffset+1;
     }
