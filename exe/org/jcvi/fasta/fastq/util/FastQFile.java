@@ -113,7 +113,7 @@ public class FastQFile implements FastQFileVisitor{
 
     private void writeToOutputStream(String line) {
         try {
-            out.write((line+"\n").getBytes());
+            out.write(line.getBytes());
         } catch (IOException e) {
             throw new RuntimeException("could not write to output file", e);
         }
