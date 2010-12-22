@@ -13,6 +13,7 @@
 	<property name ="lib-internal" value="lib-internal"/>
 	<property name ="exe" value="exe"/>
 	<property name ="exe-internal" value="exe-internal"/>
+	<property name ="exe-test" value="exe-test"/>
 	
 	<property name ="release" value ="release"/>
 	<property name ="scripts" value = "scripts"/>
@@ -95,12 +96,14 @@
 					<src path="${test-internal}"/>
 					<src path="${exe}"/>
 					<src path="${exe-internal}"/>
+					<src path="${exe-test}"/>
 	  	</javac>
 		<copy todir="${bin}">
 			<fileset dir="${test}" excludes="**/*.java"/>
 			<fileset dir="${test-internal}" excludes="**/*.java"/>
 			<fileset dir="${exe}" excludes="**/*.java"/>
 			<fileset dir="${exe-internal}" excludes="**/*.java"/>
+			<fileset dir="${exe-test}" excludes="**/*.java"/>
 		</copy>
 
 	 </target>
@@ -194,12 +197,27 @@
 			  <test name="org.jcvi.AllUnitTests"/>
 				<classpath refid = "test.classpath" />
 			</junit>
-			<junit haltonfailure="yes" showoutput="yes">		
-				<formatter type="xml"/>
-				
-			  <test name="org.jcvi.AllInternalUnitTests"/>
-				<classpath refid = "test.classpath" />
-			</junit>
+		
+		<junit haltonfailure="yes" showoutput="yes">		
+						<formatter type="xml"/>
+						
+					  <test name="org.jcvi.AllIntegrationTests"/>
+						<classpath refid = "test.classpath" />
+					</junit>
+		
+		<junit haltonfailure="yes" showoutput="yes">		
+								<formatter type="xml"/>
+								
+							  <test name="org.AllInternalIntegrationTests"/>
+								<classpath refid = "test.classpath" />
+							</junit>
+		
+		<junit haltonfailure="yes" showoutput="yes">		
+								<formatter type="xml"/>
+								
+							  <test name="org.jcvi.AllExeTests"/>
+								<classpath refid = "test.classpath" />
+							</junit>
 		</target>
 	
 	<target name = "report.emma" description = "generates emma report for instrumented classes">
