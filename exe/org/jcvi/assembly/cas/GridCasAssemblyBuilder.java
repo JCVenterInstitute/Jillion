@@ -183,7 +183,7 @@ public class GridCasAssemblyBuilder extends AbstractExecutorCasAssemblyBuilder<I
         }else{
             File t =new File(commandLine.getOptionValue("tempDir"));
             if(!t.exists()){
-                IOUtil.mkdirs(t);
+                t.mkdirs();
             }
             ReadWriteDirectoryFileServer tempDir =DirectoryFileServer.createTemporaryDirectoryFileServer(t);
           System.out.println(tempDir.getRootDir());

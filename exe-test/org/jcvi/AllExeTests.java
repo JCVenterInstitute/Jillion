@@ -1,11 +1,3 @@
-
-import org.AllInternalIntegrationTests;
-import org.jcvi.AllExeTests;
-import org.jcvi.AllIntegrationTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
@@ -25,21 +17,26 @@ import org.junit.runners.Suite.SuiteClasses;
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
+package org.jcvi;
+
+import org.jcvi.fasta.fastq.util.TestFastQFile;
+import org.jcvi.testUtil.IntegrationTests;
+import org.junit.experimental.categories.Categories;
+import org.junit.experimental.categories.Categories.IncludeCategory;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite.SuiteClasses;
+
 /**
- * Runs all unit AND integration tests which will be slow.
  * @author dkatzel
  *
  *
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        AllUnitTests.class,
-        AllIntegrationTests.class,
-        AllInternalIntegrationTests.class,
-        AllExeTests.class
-    }
-    )
-public class AllTests {
+@RunWith(Categories.class)
+@IncludeCategory(IntegrationTests.class)
+@SuiteClasses( { 
+   TestFastQFile.class
+}
+)
+public class AllExeTests {
 
 }
