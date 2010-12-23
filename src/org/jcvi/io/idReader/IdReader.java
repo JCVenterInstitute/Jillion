@@ -29,4 +29,6 @@ import java.util.Iterator;
 public interface IdReader<T> extends Closeable, Iterable<T>{
 
     Iterator<T> getIds() throws IdReaderException;
+    
+    int getNumberOfIds() throws IdReaderException;
 }

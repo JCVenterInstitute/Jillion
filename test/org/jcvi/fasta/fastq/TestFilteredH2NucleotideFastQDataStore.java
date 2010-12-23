@@ -21,6 +21,7 @@ package org.jcvi.fasta.fastq;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.jcvi.datastore.DataStoreException;
@@ -38,7 +39,7 @@ public class TestFilteredH2NucleotideFastQDataStore extends TestH2NucleotideFast
 
     @Override
     protected H2NucleotideFastQDataStore createSUT(File fastQFile,
-            H2NucleotideDataStore datastore) throws FileNotFoundException {
+            H2NucleotideDataStore datastore) throws IOException {
         return new H2NucleotideFastQDataStore(fastQFile,datastore, new ExcludeFastXIdFilter(Arrays.asList("SOLEXA1:4:1:12:1692#0/1")));
     }
 

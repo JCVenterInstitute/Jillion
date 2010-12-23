@@ -23,13 +23,18 @@
  */
 package org.jcvi.io.idReader;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
+
+import org.jcvi.io.IOUtil;
+import org.jcvi.util.CloseableIterator;
 /**
  * {@code DefaultFileIdReader}
  * is an {@link IdReader}
@@ -40,15 +45,46 @@ import java.util.Scanner;
  *
  */
 public class DefaultFileIdReader<T> implements IdReader<T> {
+    /**
+     * 
+     */
+    private static final char CR = '\n';
     private final File file;
     private final IdParser<T> idParser;
+    
+    private Integer numberOfIds=null; //lazy loaded
     public DefaultFileIdReader(File file, IdParser<T> idParser){
         this.file =file;
         this.idParser = idParser;
     }
-
+    
+    private int countNumberOfLines() throws IdReaderException {
+        //use inputstream to manually count '\n'
+        //as optimization, readLines() was taking 5x as
+        //long in benchmark tests
+        InputStream inputStream=null;
+        try{
+            inputStream= new BufferedInputStream(new FileInputStream(file));
+            //8192 is the default buffersize of buffered inputstream
+            //might as well use up the whole thing.
+            byte[] c = new byte[8192];
+            int count = 0;
+            int readChars = 0;
+            while ((readChars = inputStream.read(c)) != -1) {
+                for (int i = 0; i < readChars; ++i) {
+                    if (c[i] == CR)
+                        ++count;
+                }
+            }
+            return count;
+        }catch(IOException e){
+            throw new IdReaderException("error reading number of lines",e);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(inputStream);
+        }
+    }
     @Override
-    public Iterator<T> getIds() throws IdReaderException{
+    public CloseableIterator<T> getIds() throws IdReaderException{
         try {
             return new FileIdIterator<T>(new FileInputStream(file), idParser);
         } catch (FileNotFoundException e) {
@@ -61,12 +97,13 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
         
     }
     
-    private static class FileIdIterator<T> implements Iterator<T>{
+    private static class FileIdIterator<T> implements CloseableIterator<T>{
         private Scanner scanner;
         private IdParser<T> idParser;
         private String nextValidString;
         boolean needToLookAhead =true;
         boolean hasNext;
+        boolean isClosed=false;
         FileIdIterator(InputStream in, IdParser<T> idParser){
             scanner = new Scanner(in);
             this.idParser = idParser;
@@ -83,8 +120,6 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
                     done=true;
                 }
             }
-            
-           
         }
         @Override
         public synchronized boolean hasNext() {
@@ -92,13 +127,16 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
                 getNextValidString();
             }
             if(!hasNext){
-                scanner.close();
+                close();
             }
             return hasNext;
         }
 
         @Override
         public synchronized T next() {
+            if(isClosed){
+                throw new NoSuchElementException("iterator is closed");
+            }
             if(needToLookAhead){
                 getNextValidString();
             }
@@ -111,6 +149,16 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
         public void remove() {
             throw new UnsupportedOperationException("remove() not allowed");            
         }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void close() {
+            hasNext=false;
+            needToLookAhead=false;
+            scanner.close();
+            isClosed=true;
+        }
         
     }
 
@@ -121,5 +169,16 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
         } catch (IdReaderException e) {
             throw new IllegalStateException("could not create iterator over ids",e);
         }
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public synchronized int getNumberOfIds() throws IdReaderException {
+        if(numberOfIds==null){
+            numberOfIds = countNumberOfLines();
+        }
+        return numberOfIds;
     }
 }

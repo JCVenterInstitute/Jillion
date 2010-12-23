@@ -29,7 +29,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import java.lang.IllegalStateException;
 
@@ -39,9 +38,7 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
 
 public class FastQFileParser {
-    private static final Pattern BEGIN_SEQ_PATTERN = Pattern.compile("^@(\\S+)(\\s+)?(.+$)?");
-    private static final Pattern BEGIN_QUALITY_PATTERN = Pattern.compile("^\\+(.+$)?");
-   
+    
     public static void parse(File fastQFile, FastQFileVisitor visitor ) throws FileNotFoundException{
         InputStream in = new FileInputStream(fastQFile);
         try{
@@ -55,13 +52,13 @@ public class FastQFileParser {
         visitor.visitFile();
         boolean visitCurrentBlock;
         boolean keepParsing=true;
-        while(keepParsing && scanner.hasNextLine()){
+        while(keepParsing && scanner.hasNext()){
             String seqLine = scanner.nextLine();
             String basecalls = scanner.nextLine();
             String qualLine = scanner.nextLine();
             String qualities = scanner.nextLine();
             visitor.visitLine(seqLine+"\n");
-            Matcher beginSeqMatcher =BEGIN_SEQ_PATTERN.matcher(seqLine);
+            Matcher beginSeqMatcher =FastQUtil.SEQ_DEFLINE_PATTERN.matcher(seqLine);
             if(!beginSeqMatcher.find()){
                 throw new IllegalStateException("invalid fastq file, could not parse seq id from "+ seqLine);
             }
@@ -73,7 +70,7 @@ public class FastQFileParser {
                 NucleotideEncodedGlyphs encodedNucleotides = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.getGlyphsFor(basecalls));
                 visitor.visitNucleotides(encodedNucleotides);
                 visitor.visitLine(qualLine+"\n");
-                Matcher beginQualityMatcher =BEGIN_QUALITY_PATTERN.matcher(qualLine);
+                Matcher beginQualityMatcher =FastQUtil.QUAL_DEFLINE_PATTERN.matcher(qualLine);
                 if(!beginQualityMatcher.find()){ 
                     throw new IllegalStateException("invalid fastq file, could not parse qual id from "+ qualLine);
                 }

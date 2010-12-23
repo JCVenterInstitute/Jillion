@@ -26,7 +26,9 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -38,14 +40,13 @@ import org.jcvi.command.CommandLineUtils;
 import org.jcvi.fasta.ExcludeFastXIdFilter;
 import org.jcvi.fasta.FastXFilter;
 import org.jcvi.fasta.IncludeFastXIdFilter;
-import org.jcvi.fasta.fastq.FastQFileParser;
-import org.jcvi.fasta.fastq.FastQFileVisitor;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.fasta.fastq.FastQUtil;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.idReader.DefaultFileIdReader;
 import org.jcvi.io.idReader.FirstWordStringIdParser;
 import org.jcvi.io.idReader.IdReader;
 import org.jcvi.io.idReader.IdReaderException;
+import org.jcvi.util.StringUtilities;
 /**
  * {@code FastQFile} is meant to be a FastQ version of 454's fnafile
  * which takes in a file of reads and filter options
@@ -54,87 +55,16 @@ import org.jcvi.io.idReader.IdReaderException;
  *
  *
  */
-public class FastQFile implements FastQFileVisitor{
-    private static final String DEFAULT_FILE_OUTPUT = "Reads.fastq";
-    private final FastXFilter filter;
-    private final OutputStream out;
-    private boolean shouldWrite=false;
-    private String currentLine;
+public class FastQFile {
     
-    /**
-     * @param filter
-     * @param out
-     */
-    public FastQFile(FastXFilter filter, OutputStream out) {
-        this.filter = filter;
-        this.out = out;
-    }
-
-  
-
-    @Override
-    public boolean visitBeginBlock(String id, String optionalComment) {
-        shouldWrite= filter.accept(id, optionalComment);
-        if(shouldWrite){
-            writeToOutputStream(currentLine);
-        }
-        return shouldWrite;
-    }
-
-    @Override
-    public void visitEncodedQualities(String encodedQualities) {
-        shouldWrite=false;
-    }
-
-    @Override
-    public boolean visitEndBlock() {
-        try {
-            out.flush();
-            return true;
-        } catch (IOException e) {
-            throw new RuntimeException("could not flush output file", e);
-        }
-    }
-
-    @Override
-    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
-    }
-
-    @Override
-    public void visitLine(String line) {
-        currentLine = line;
-        if(shouldWrite){
-            writeToOutputStream(line);
-        }
-        
-    }
-
-
-
-    private void writeToOutputStream(String line) {
-        try {
-            out.write(line.getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException("could not write to output file", e);
-        }
-    }
-
-    @Override
-    public void visitEndOfFile() {
-        
-        
-    }
-
-    @Override
-    public void visitFile() {
-        
-    }
+    private static final String DEFAULT_FILE_OUTPUT = "Reads.fastq";
+   
     /**
      * @param args
      * @throws IdReaderException 
      * @throws FileNotFoundException 
      */
-    public static void main(String[] args) throws IdReaderException, FileNotFoundException {
+    public static void main(String[] args) throws IdReaderException, IOException {
         File fastQFile = new File(args[args.length-1]);
         
         Options options = new Options();
@@ -149,6 +79,9 @@ public class FastQFile implements FastQFileVisitor{
                             .build());
         group.addOption(new CommandLineOptionBuilder("e", "exclude file of ids to exclude")
                             .build());
+        options.addOption(new CommandLineOptionBuilder("n", "number of ids in file (optional optimization)")
+        
+        .build());
         options.addOption(CommandLineUtils.createHelpOption());
         options.addOptionGroup(group);
         OutputStream out=null;
@@ -168,26 +101,45 @@ public class FastQFile implements FastQFileVisitor{
             }else{
                 out = new FileOutputStream(DEFAULT_FILE_OUTPUT);
             }
-            
             final File idFile;
             final FastXFilter filter;
+            Integer numberOfIds =commandLine.hasOption("n")?Integer.parseInt(commandLine.getOptionValue("n")):null;
             if(commandLine.hasOption("i")){
                 idFile =new File(commandLine.getOptionValue("i"));
-                Set<String> includeList=parseIdsFrom(idFile);
+                Set<String> includeList=parseIdsFrom(idFile,numberOfIds);
                 if(commandLine.hasOption("e")){
-                    Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue("e")));
+                    Set<String> excludeList=parseIdsFrom(
+                            new File(commandLine.getOptionValue("e")),numberOfIds);
                     includeList.removeAll(excludeList);
                 }
                 filter = new IncludeFastXIdFilter(includeList);
                 
             }else{
                 idFile =new File(commandLine.getOptionValue("e"));
-                filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile));
+                filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile,numberOfIds));
             }
-            FastQFile fastQFileAdapter = new FastQFile(filter, out);
-            FastQFileParser.parse(fastQFile, fastQFileAdapter);
-            
-            
+            //don't use fastq parser
+            //manually read the file for speed reasons
+            Scanner scanner = new Scanner(fastQFile);
+            while(scanner.hasNext()){
+                String defLine= scanner.nextLine();
+                Matcher matcher = FastQUtil.SEQ_DEFLINE_PATTERN.matcher(defLine);
+                if(!matcher.find()){
+                    throw new IllegalStateException("invalid fastq file, could not parse id from "+defLine);
+                }
+                String id = matcher.group(1);
+                String basecalls = scanner.nextLine();
+                String qualDefLine = scanner.nextLine();
+                String qualities = scanner.nextLine();
+                if(filter.accept(id)){
+                    String record= new StringUtilities.JoinedStringBuilder(defLine,basecalls,qualDefLine,qualities)
+                                        .glue("\n")
+                                        .suffix("\n")
+                                        .build();
+                    out.write(record.getBytes("UTF-8"));
+                }
+            }
+            scanner.close();
         } catch (ParseException e) {
             printHelp(options);
             System.exit(1);
@@ -199,10 +151,15 @@ public class FastQFile implements FastQFileVisitor{
 
 
 
-    private static Set<String> parseIdsFrom(final File idFile)
+    private static Set<String> parseIdsFrom(final File idFile, Integer numberOfIds)
             throws IdReaderException {
         IdReader<String> idReader = new DefaultFileIdReader<String>(idFile,new FirstWordStringIdParser());
-        Set<String> ids = new HashSet<String>();
+        final Set<String> ids; 
+        if(numberOfIds ==null){
+            ids= new HashSet<String>();
+        }else{
+            ids= new HashSet<String>(numberOfIds.intValue(),1F);
+        }
         Iterator<String> iter =idReader.getIds();
         while(iter.hasNext()){
             ids.add(iter.next());
@@ -212,11 +169,14 @@ public class FastQFile implements FastQFileVisitor{
     
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "fastQFile [-i | -e] idFile -o <output fastQ file> [OPTIONS] <fastq file>", 
+        formatter.printHelp( "fastQFile  [-i | -e] idFile -o <output fastQ file> [OPTIONS] <fastq file>", 
                 
                 "filter  a fastQ file using the given ids to include/exclude and write the result to a new fastQ file",
                 options,
                 String.format("Example invocation%nfastQfile.pl -i ids.lst -o filtered.fastq original.fastq%nCreated by Danny Katzel"
                   ));
     }
+    
+   
+
 }

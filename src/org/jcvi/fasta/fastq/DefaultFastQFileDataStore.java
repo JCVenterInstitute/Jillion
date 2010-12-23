@@ -48,12 +48,12 @@ public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQR
         super(qualityCodec);        
         builder = new DefaultFastQDataStore.Builder<FastQRecord>();
     }
-    public DefaultFastQFileDataStore(File fastQFile,FastQQualityCodec qualityCodec) throws FileNotFoundException {
+    public DefaultFastQFileDataStore(File fastQFile,FastQQualityCodec qualityCodec) throws IOException {
         super(qualityCodec);
         builder = new DefaultFastQDataStore.Builder<FastQRecord>();
         FastQFileParser.parse(fastQFile, this);
     }
-    public DefaultFastQFileDataStore(File fastQFile,FastQQualityCodec qualityCodec, int numberOfRecords) throws FileNotFoundException {
+    public DefaultFastQFileDataStore(File fastQFile,FastQQualityCodec qualityCodec, int numberOfRecords) throws IOException {
         super(qualityCodec);
         builder = new DefaultFastQDataStore.Builder<FastQRecord>(numberOfRecords);
         FastQFileParser.parse(fastQFile, this);

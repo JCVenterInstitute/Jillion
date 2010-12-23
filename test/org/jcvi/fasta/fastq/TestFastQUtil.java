@@ -50,7 +50,7 @@ public class TestFastQUtil {
         expectedDataStore.close();
     }
     @Test
-    public void encodedDataCanBeReParsed() throws DataStoreException{
+    public void encodedDataCanBeReParsed() throws DataStoreException, IOException{
         FastQRecord fastq = expectedDataStore.get("SOLEXA1:4:1:12:1489#0/1");
         String encodedFastQ = FastQUtil.encode(fastq, qualityCodec);
         ByteArrayInputStream in = new ByteArrayInputStream(encodedFastQ.getBytes());
