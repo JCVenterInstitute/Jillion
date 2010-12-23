@@ -75,5 +75,22 @@ public class TestStringUtilities {
                         .glue(",")
                         .build());
     }
+    @Test
+    public void joinBuilderObjectsWithPrefix(){
+        assertEquals("Stooges=Larry,Moe,Curly",
+                new StringUtilities.JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"})
+                        .glue(",")
+                        .prefix("Stooges=")
+                        .build());
+    }
+    @Test
+    public void joinBuilderObjectsWithSuffix(){
+        assertEquals("Larry,Moe,Curly were the best stooges",
+                new StringUtilities.JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"})
+                        .glue(",")
+                        .suffix(" were the best stooges")
+                        .build());
+    }
+    
 
 }
