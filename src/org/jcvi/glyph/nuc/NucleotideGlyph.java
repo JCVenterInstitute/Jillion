@@ -278,7 +278,7 @@ public enum NucleotideGlyph implements Glyph {
     public static List<NucleotideGlyph> getGlyphsFor(CharSequence s){
         List<NucleotideGlyph> result = new ArrayList<NucleotideGlyph>(s.length());
         try{
-            for(int i=0; i<s.length(); i++){
+            for(int i=0; i<s.length(); i++){            
                 result.add(getGlyphFor(s.charAt(i)));
             }
             return result;

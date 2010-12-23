@@ -120,7 +120,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
      * @throws FileNotFoundException 
      * @throws IdReaderException 
      */
-    public static void main(String[] args) throws FileNotFoundException, IdReaderException {
+    public static void main(String[] args) throws IOException, IdReaderException {
         
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder("s", 

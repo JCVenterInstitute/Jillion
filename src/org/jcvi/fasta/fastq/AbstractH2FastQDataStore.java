@@ -43,13 +43,13 @@ public abstract class AbstractH2FastQDataStore<G extends Glyph, E extends Encode
     private final DataStoreFilter filter;
     
     private String currentId;
-    public AbstractH2FastQDataStore(File fastQFile,FastQQualityCodec qualityCodec,AbstractH2EncodedGlyphDataStore<G, E> datastore,DataStoreFilter filter) throws FileNotFoundException {
+    public AbstractH2FastQDataStore(File fastQFile,FastQQualityCodec qualityCodec,AbstractH2EncodedGlyphDataStore<G, E> datastore,DataStoreFilter filter) throws IOException {
         this.datastore = datastore;
         this.qualityCodec = qualityCodec;
         this.filter= filter;
         FastQFileParser.parse(fastQFile, this);
     }
-    public AbstractH2FastQDataStore(File fastQFile,FastQQualityCodec qualityCodec,AbstractH2EncodedGlyphDataStore<G, E> datastore) throws FileNotFoundException {
+    public AbstractH2FastQDataStore(File fastQFile,FastQQualityCodec qualityCodec,AbstractH2EncodedGlyphDataStore<G, E> datastore) throws IOException {
         this(fastQFile,qualityCodec,datastore, EmptyDataStoreFilter.INSTANCE);
     }
     public AbstractH2EncodedGlyphDataStore<G, E> getDatastore() {

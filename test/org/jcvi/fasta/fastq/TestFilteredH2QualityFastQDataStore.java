@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.jcvi.datastore.DataStoreException;
@@ -37,7 +38,7 @@ import org.junit.Test;
  */
 public class TestFilteredH2QualityFastQDataStore extends TestH2QualityFastQDataStore{
 
-    protected H2QualityFastQDataStore createSUT(File fastQFile, H2QualityDataStore datastore ) throws FileNotFoundException{
+    protected H2QualityFastQDataStore createSUT(File fastQFile, H2QualityDataStore datastore ) throws IOException{
         return new H2QualityFastQDataStore(fastQFile, QUALITY_CODEC,datastore,
                 new ExcludeFastXIdFilter(Arrays.asList("SOLEXA1:4:1:12:1692#0/1")));
     }

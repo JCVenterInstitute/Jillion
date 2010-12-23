@@ -52,7 +52,7 @@ public class TestH2QualityFastQDataStore {
         final H2QualityDataStore datastore = new H2QualityDataStore();
         sut = createSUT(fastqFile, datastore);
     }
-    protected H2QualityFastQDataStore createSUT(File fastQFile, H2QualityDataStore datastore ) throws FileNotFoundException{
+    protected H2QualityFastQDataStore createSUT(File fastQFile, H2QualityDataStore datastore ) throws IOException{
         return new H2QualityFastQDataStore(fastQFile, QUALITY_CODEC,datastore);
     }
     

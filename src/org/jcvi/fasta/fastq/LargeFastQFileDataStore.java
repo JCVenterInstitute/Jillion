@@ -25,6 +25,7 @@ package org.jcvi.fasta.fastq;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -79,7 +80,7 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
             
             DefaultFastQFileDataStore dataStore = new SingleFastQDataStore(id,fastQFile,this.getQualityCodec());
             return dataStore.get(id);
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new DataStoreException("could not parse fasta q file",e);
         }
     }
@@ -165,7 +166,7 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
         private final String idToLookFor;
         private boolean found=false;
         
-        public SingleFastQDataStore(String idToLookFor,File fastQFile,FastQQualityCodec qualityCodec) throws FileNotFoundException {
+        public SingleFastQDataStore(String idToLookFor,File fastQFile,FastQQualityCodec qualityCodec) throws IOException {
             super(qualityCodec,1);
             this.idToLookFor = idToLookFor;
             FastQFileParser.parse(fastQFile, this);

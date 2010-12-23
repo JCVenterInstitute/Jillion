@@ -51,13 +51,13 @@ public class IndexedFastaQFileDataStore implements FastQDataStore<FastQRecord>, 
      * @param file
      * @throws FileNotFoundException 
      */
-    public IndexedFastaQFileDataStore(File file,FastQQualityCodec qualityCodec,IndexedFileRange indexFileRange) throws FileNotFoundException {
+    public IndexedFastaQFileDataStore(File file,FastQQualityCodec qualityCodec,IndexedFileRange indexFileRange) throws IOException {
         this.file = file;
         this.qualityCodec = qualityCodec;
         this.indexFileRange = indexFileRange;
         FastQFileParser.parse(file, this);
     }
-    public IndexedFastaQFileDataStore(File file,FastQQualityCodec qualityCodec) throws FileNotFoundException {
+    public IndexedFastaQFileDataStore(File file,FastQQualityCodec qualityCodec) throws IOException {
        this(file, qualityCodec,new DefaultIndexedFileRange());
     }
     @Override

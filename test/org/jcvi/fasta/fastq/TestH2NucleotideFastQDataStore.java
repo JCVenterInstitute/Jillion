@@ -50,7 +50,7 @@ public class TestH2NucleotideFastQDataStore {
         final H2NucleotideDataStore datastore = new H2NucleotideDataStore();
         sut = createSUT(fastqFile, datastore);
     }
-    protected H2NucleotideFastQDataStore createSUT(File fastQFile, H2NucleotideDataStore datastore ) throws FileNotFoundException{
+    protected H2NucleotideFastQDataStore createSUT(File fastQFile, H2NucleotideDataStore datastore ) throws IOException{
         return new H2NucleotideFastQDataStore(fastQFile, datastore);
     }
     

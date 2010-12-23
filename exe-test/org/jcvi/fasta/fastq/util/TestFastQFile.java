@@ -20,14 +20,17 @@
 package org.jcvi.fasta.fastq.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.apache.commons.io.IOUtils;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fasta.fastq.DefaultFastQFileDataStore;
 import org.jcvi.fasta.fastq.FastQDataStore;
 import org.jcvi.fasta.fastq.FastQQualityCodec;
 import org.jcvi.fasta.fastq.FastQRecord;
+import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.io.idReader.IdReaderException;
 import org.jcvi.testUtil.IntegrationTests;
@@ -73,7 +76,6 @@ public class TestFastQFile {
         FastQFile.main(new String[]{"-i",ids.getAbsolutePath(),
                 "-o", outputFile.getAbsolutePath(),
                 fastQFile.getAbsolutePath()});
-        
         FastQDataStore<FastQRecord> filteredDataStore = new DefaultFastQFileDataStore(outputFile, FastQQualityCodec.ILLUMINA);
         assertEquals(1, filteredDataStore.size());
         assertFalse(filteredDataStore.contains(otherId));

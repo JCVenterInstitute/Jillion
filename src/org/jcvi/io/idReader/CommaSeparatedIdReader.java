@@ -78,4 +78,12 @@ public final class CommaSeparatedIdReader<T> implements IdReader<T> {
         }
         
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getNumberOfIds() throws IdReaderException {
+        return ids.split(",").length;
+    }
 }

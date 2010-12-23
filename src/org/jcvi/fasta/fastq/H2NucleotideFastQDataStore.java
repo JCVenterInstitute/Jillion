@@ -25,6 +25,7 @@ package org.jcvi.fasta.fastq;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreFilter;
@@ -44,7 +45,7 @@ public class H2NucleotideFastQDataStore extends AbstractH2FastQDataStore<Nucleot
     public H2NucleotideFastQDataStore(
             File fastQFile,
             AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore)
-            throws FileNotFoundException {
+            throws IOException {
         super(fastQFile, null, datastore);
 
     }
@@ -61,7 +62,7 @@ public class H2NucleotideFastQDataStore extends AbstractH2FastQDataStore<Nucleot
     public H2NucleotideFastQDataStore(
             File fastQFile,
             AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore,
-            DataStoreFilter filter) throws FileNotFoundException {
+            DataStoreFilter filter) throws IOException {
         super(fastQFile,null, datastore, filter);
     }
 
@@ -77,7 +78,7 @@ public class H2NucleotideFastQDataStore extends AbstractH2FastQDataStore<Nucleot
             File fastQFile,
             FastQQualityCodec qualityCodec,
             AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore)
-            throws FileNotFoundException {
+            throws IOException {
         super(fastQFile, qualityCodec, datastore);
     }
 

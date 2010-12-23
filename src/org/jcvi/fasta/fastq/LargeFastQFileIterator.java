@@ -20,7 +20,6 @@
 package org.jcvi.fasta.fastq;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
@@ -57,7 +56,7 @@ public class LargeFastQFileIterator extends AbstractFastQFileVisitor<FastQRecord
             public void run() {
                 try {
                     FastQFileParser.parse(fastQFile, LargeFastQFileIterator.this);
-                } catch (FileNotFoundException e) {
+                } catch (IOException e) {
                     //should never happen
                     throw new RuntimeException(e);
                 }

@@ -21,6 +21,7 @@ package org.jcvi.fasta.fastq;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * @author dkatzel
@@ -31,7 +32,7 @@ public class TestIndexedFastQFileDataStore extends AbstractTestFastQFileDataStor
 
     @Override
     protected IndexedFastaQFileDataStore createFastQFileDataStore(File file,
-            FastQQualityCodec qualityCodec) throws FileNotFoundException {
+            FastQQualityCodec qualityCodec) throws IOException {
         return new IndexedFastaQFileDataStore(file, qualityCodec);
     }
 
