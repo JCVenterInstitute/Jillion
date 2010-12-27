@@ -30,7 +30,7 @@ package org.jcvi.fasta;
  *
  *
  */
-public abstract class AbstractQualityFastaFileDataStore extends AbstractFastaFileDataStore<QualityFastaRecord>{
+public abstract class AbstractQualityFastaFileDataStore extends AbstractFastaFileDataStore<QualityFastaRecord> implements QualityFastaDataStore{
 
     private final QualityFastaRecordFactory fastaRecordFactory;
 
