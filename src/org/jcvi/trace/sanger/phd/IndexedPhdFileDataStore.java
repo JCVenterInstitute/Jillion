@@ -163,7 +163,7 @@ public class IndexedPhdFileDataStore extends AbstractPhdFileDataStore{
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         
         recordLocations.close();
         

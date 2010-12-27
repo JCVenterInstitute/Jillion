@@ -44,14 +44,35 @@ public class CachedDataStore <D extends DataStore> implements InvocationHandler{
     private final D delegate;
     private final Map<String, Object> cache;
     private static final Class[] GET_PARAMETERS = new Class[]{String.class};
+    
     /**
-     * Create a new Proxy wrapping the given DataStore.
+     * Clears the cache from a DataStore created by this utilty
+     * class.
+     * @param cachedDataStore a DataStore that was created by this
+     * utility (implements {@link Cacheable}.
+     * @throws IllegalArgumentException if the datastore is not
+     * {@link Cacheable}.
+     */
+    public static void clearCacheFrom(DataStore cachedDataStore){
+        if(!(cachedDataStore instanceof Cacheable)){
+            throw new IllegalArgumentException("must be cacheable");
+        }
+        ((Cacheable)cachedDataStore).clearCache();
+       
+    }
+    /**
+     * Create a new Proxy wrapping the given DataStore.  The returned
+     * object is similar to the wrapped dataStore except it also
+     * implements an additional interface {@link Cacheable}
+     * AND all {@link DataStore#get(String)} results are cached
+     * in an LRU cache of the specified size.
      * @param <D> interface of DataStore to proxy
      * @param c class object of D
      * @param delegate instance of DataStore
      * @param cacheSize the size of the cache used to keep most recently
      * "gotten" objects.
-     * @return a proxy instance of type D which wraps the given delegate.
+     * @return a proxy instance of type D which wraps the given delegate and also
+     * implements Cacheable.
      */
     @SuppressWarnings("unchecked")
     public static <D extends DataStore> D createCachedDataStore(Class<? super D> c,D delegate, int cacheSize){
@@ -61,7 +82,7 @@ public class CachedDataStore <D extends DataStore> implements InvocationHandler{
             throw new IllegalArgumentException("delegate does not have a 'get' method", e);
         } 
         
-        return (D) Proxy.newProxyInstance(c.getClassLoader(), new Class[]{c}, 
+        return (D) Proxy.newProxyInstance(c.getClassLoader(), new Class[]{c, Cacheable.class}, 
                 new CachedDataStore<D>(delegate,cacheSize));
     }
    
@@ -73,11 +94,15 @@ public class CachedDataStore <D extends DataStore> implements InvocationHandler{
     @Override
     public synchronized Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
-        if("close".equals(method.getName()) && args==null){
+        final String methodName = method.getName();
+        if("clearCache".equals(methodName) && args==null){
             cache.clear();
-
+            return null;
         }
-        else if("get".equals(method.getName()) && Arrays.equals(GET_PARAMETERS,method.getParameterTypes())){
+        if("close".equals(methodName) && args==null){
+            cache.clear();
+        }
+        else if("get".equals(methodName) && Arrays.equals(GET_PARAMETERS,method.getParameterTypes())){
             String id = (String)args[0];
             if(cache.containsKey(id)){
                 return cache.get(id);

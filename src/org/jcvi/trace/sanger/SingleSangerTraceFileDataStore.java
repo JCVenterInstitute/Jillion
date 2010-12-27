@@ -53,7 +53,7 @@ public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrac
     * {@inheritDoc}
     */
     @Override
-    public boolean contains(String id) throws DataStoreException {
+    public synchronized boolean contains(String id) throws DataStoreException {
         super.contains(id);
         return this.id.equals(id);
     }
@@ -62,7 +62,7 @@ public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrac
     * {@inheritDoc}
     */
     @Override
-    public SangerTrace get(String id) throws DataStoreException {
+    public synchronized SangerTrace get(String id) throws DataStoreException {
         super.get(id);
         if(contains(id)){
             return trace;
@@ -74,7 +74,7 @@ public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrac
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized  CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
         return CloseableIteratorAdapter.adapt(IteratorUtils.singletonIterator(id));
     }
@@ -83,7 +83,7 @@ public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrac
     * {@inheritDoc}
     */
     @Override
-    public int size() throws DataStoreException {
+    public synchronized  int size() throws DataStoreException {
         super.size();
         return 1;
     }
@@ -92,7 +92,7 @@ public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrac
     * {@inheritDoc}
     */
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         super.close();
         
     }

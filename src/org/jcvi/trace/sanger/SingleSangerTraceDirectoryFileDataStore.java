@@ -79,7 +79,7 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
      * {@inheritDoc}
      */
      @Override
-     public boolean contains(String id) throws DataStoreException {
+     public synchronized boolean contains(String id) throws DataStoreException {
          super.contains(id);
          try {
             return this.fileServer.contains(addExtensionIfNeeded(id));
@@ -92,7 +92,7 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
      * {@inheritDoc}
      */
      @Override
-     public FileSangerTrace get(String id) throws DataStoreException {
+     public synchronized FileSangerTrace get(String id) throws DataStoreException {
          super.get(id);
          
              try{
@@ -108,7 +108,7 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
       * {@inheritDoc}
       */
       @Override
-      public CloseableIterator<String> getIds() throws DataStoreException {
+      public synchronized CloseableIterator<String> getIds() throws DataStoreException {
           super.getIds();
           return new CloseableIterator(){
               Iterator<File> iter = FileIterator.createNonRecursiveFileIteratorBuilder(
