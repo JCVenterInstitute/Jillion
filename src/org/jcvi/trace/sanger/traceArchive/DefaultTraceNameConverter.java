@@ -48,7 +48,7 @@ public class DefaultTraceNameConverter implements IdConverter<String,Long> {
      * @throws DataStoreException if there is a problem reading the traceInfo.
      */
     public DefaultTraceNameConverter(TraceArchiveInfo traceInfo, TraceArchiveRecordIdGenerator traceIdGenerator ) throws DataStoreException {
-        map = new HashMap<String, Long>((int)traceInfo.size());
+        map = new HashMap<String, Long>(traceInfo.size());
         for(TraceArchiveRecord record : traceInfo){
             String traceId = traceIdGenerator.generateIdFor(record);
             Long traceName = Long.parseLong(record.getAttribute(TraceInfoField.TRACE_NAME));

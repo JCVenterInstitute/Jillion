@@ -22,7 +22,6 @@ package org.jcvi.fasta.fastq;
 import static org.junit.Assert.assertFalse;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 

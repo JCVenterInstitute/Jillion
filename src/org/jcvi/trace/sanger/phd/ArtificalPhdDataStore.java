@@ -63,13 +63,13 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
     }
 
     @Override
-    public boolean contains(String id) throws DataStoreException {
+    public synchronized boolean contains(String id) throws DataStoreException {
         super.contains(id);
         return seqDataStore.contains(id);
     }
 
     @Override
-    public Phd get(String id) throws DataStoreException {
+    public synchronized Phd get(String id) throws DataStoreException {
         super.get(id);
        final NucleotideEncodedGlyphs basecalls = seqDataStore.get(id);
        if(basecalls ==null){
@@ -85,13 +85,13 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
     }
 
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
         return seqDataStore.getIds();
     }
 
     @Override
-    public int size() throws DataStoreException {
+    public synchronized int size() throws DataStoreException {
         super.size();
         return seqDataStore.size();
     }

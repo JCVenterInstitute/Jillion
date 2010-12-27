@@ -17,33 +17,21 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.fasta.fastq;
+package org.jcvi.datastore;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.ExcludeFastXIdFilter;
-import org.jcvi.glyph.nuc.datastore.H2NucleotideDataStore;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 /**
+ * {@code Cacheable} is an interface that is used
+ * for Cached objects created by {@link CachedDataStore}.
+ * This way it is possible to determine
+ * at runtime if a given datastore has a cache.
  * @author dkatzel
  *
  *
  */
-public class TestFilteredH2NucleotideFastQDataStore extends TestH2NucleotideFastQDataStore{
-
-    @Override
-    protected H2NucleotideFastQDataStore createSUT(File fastQFile,
-            H2NucleotideDataStore datastore) throws IOException {
-        return new H2NucleotideFastQDataStore(fastQFile,datastore, new ExcludeFastXIdFilter(Arrays.asList("SOLEXA1:4:1:12:1692#0/1")));
-    }
-
-    @Test
-    public void filteredRead() throws DataStoreException{
-        assertFalse(getSut().contains("SOLEXA1:4:1:12:1692#0/1"));
-    }
+public interface Cacheable {
+    /**
+     * Clears the cache without
+     * closing the datastore.
+     */
+    void clearCache();
 }

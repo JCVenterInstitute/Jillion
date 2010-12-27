@@ -129,7 +129,8 @@ public  final class ChromatogramUtil {
                     case Guanine:
                         createFakeChannelDataFor(gConfidence, qualityValue, i, gSignal, peakLocation);   
                         break;
-                    case Thymine:
+                        //anything else is T
+                    default:
                         createFakeChannelDataFor(tConfidence, qualityValue, i, tSignal, peakLocation);   
                         break;
                 }

@@ -52,7 +52,7 @@ public class TestCachedDataStore {
     }
     
     @Test
-    public void getCached() throws DataStoreException{        
+    public void getInCacheShouldGetFromCached() throws DataStoreException{        
         expect(delegate.get(id_1)).andReturn(trace1);
         replay(delegate);
         assertEquals(trace1,cache.get(id_1));
@@ -60,7 +60,7 @@ public class TestCachedDataStore {
         verify(delegate);
     }
     @Test
-    public void get() throws DataStoreException{        
+    public void getNotInCacheShouldGetFromDelegate() throws DataStoreException{        
         expect(delegate.get(id_1)).andReturn(trace1);
         expect(delegate.get(id_2)).andReturn(trace2);
         expect(delegate.get(id_3)).andReturn(trace3);
@@ -71,7 +71,7 @@ public class TestCachedDataStore {
         verify(delegate);
     }
     @Test
-    public void kickedOutOfCache() throws DataStoreException{        
+    public void tooManyGetsCausesLRUToKickedLeastRecentlyUsedFromCache() throws DataStoreException{        
         expect(delegate.get(id_1)).andReturn(trace1).times(2);
         expect(delegate.get(id_2)).andReturn(trace2);
         expect(delegate.get(id_3)).andReturn(trace3);
@@ -84,7 +84,7 @@ public class TestCachedDataStore {
     }
     
     @Test
-    public void close() throws DataStoreException, IOException{
+    public void closeShouldCloseDelegateAndClearCache() throws DataStoreException, IOException{
         expect(delegate.get(id_1)).andReturn(trace1).times(2);
         delegate.close();
         replay(delegate);
@@ -93,4 +93,17 @@ public class TestCachedDataStore {
         assertEquals(trace1,cache.get(id_1));
         verify(delegate);
     }
+    
+    @Test
+    public void clearCacheEarly() throws DataStoreException{
+        assertTrue(cache instanceof Cacheable);
+        expect(delegate.get(id_1)).andReturn(trace1).times(2);
+        replay(delegate);
+        assertEquals(trace1,cache.get(id_1));
+        assertEquals(trace1,cache.get(id_1));
+        CachedDataStore.clearCacheFrom(cache);
+        assertEquals(trace1,cache.get(id_1));
+        verify(delegate);
+    }
+    
 }
