@@ -1,52 +1,48 @@
+
 package org.jcvi.io;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Iterator;
 
 import org.jcvi.fasta.DefaultNucleotideFastaRecordFactory;
-import org.jcvi.fasta.FastaRecord;
 import org.jcvi.fasta.FastaRecordFactory;
+import org.jcvi.fasta.NucleotideSequenceFastaRecord;
 import org.jcvi.fasta.SequenceFastaRecordUtil;
 
-public class DefaultFastaRecordIterator extends AbstractFileReader implements FastaRecordIterator {
+/*
+ * {@code DefaultNucleotideFastaRecordIO} is the default implementation for
+ * the ObjectIO of {@link NucleotideSequenceFastaRecord} objects. 
+ * 
+ * @author naxelrod
+ */
+public class DefaultNucleotideFastaRecordIO extends AbstractObjectIO<NucleotideSequenceFastaRecord> implements NucleotideFastaRecordIO {
 
-	protected FastaRecordFactory factory = null;
-	protected final DefaultNucleotideFastaRecordFactory DEFAULT_FACTORY_SINGLETON = DefaultNucleotideFastaRecordFactory.getInstance();
+	protected final FastaRecordFactory<NucleotideSequenceFastaRecord> FACTORY = DefaultNucleotideFastaRecordFactory.getInstance();
 	
-	// Use the DefaultNucleotideFastaRecordFactory by default
-	public DefaultFastaRecordIterator() {
+	public DefaultNucleotideFastaRecordIO() {
 		super();
-		this.factory = DEFAULT_FACTORY_SINGLETON;
 	}
 	
-	public DefaultFastaRecordIterator(File file) {
-		super(file);
-		this.factory = DEFAULT_FACTORY_SINGLETON;
-	}
-	
-	public DefaultFastaRecordIterator(File file, FastaRecordFactory factory) {
-		super(file);
-		this.factory = factory;
-	}
-	public DefaultFastaRecordIterator(InputStream fastaStream) {
-		super(fastaStream);
-		this.factory = DEFAULT_FACTORY_SINGLETON;
+	public DefaultNucleotideFastaRecordIO(String inFile) throws IOException {
+		super(inFile);
 	}
 
-	public FastaRecordFactory getFactory() {
-		return factory;
+	public DefaultNucleotideFastaRecordIO(BufferedReader input) {
+		super(input);
 	}
-	public void setFactory(FastaRecordFactory factory) {
-		this.factory = factory;
+
+	public DefaultNucleotideFastaRecordIO(URL url) {
+		super(url);
 	}
 
 	@Override
-	public Iterator<FastaRecord> iterator() {
+	public Iterator<NucleotideSequenceFastaRecord> iterator() {
 
-		return new Iterator<FastaRecord>() {
+		return new Iterator<NucleotideSequenceFastaRecord>() {
 			
-			private FastaRecord currentRecord = null;
+			private NucleotideSequenceFastaRecord currentRecord = null;
 	        private String currentId=null;
 	        private String currentComment=null;
 			
@@ -59,9 +55,9 @@ public class DefaultFastaRecordIterator extends AbstractFileReader implements Fa
 			}
 
 			@Override
-			public FastaRecord next() {
+			public NucleotideSequenceFastaRecord next() {
 				if (currentRecord != null) {
-					FastaRecord tmp = currentRecord;
+					NucleotideSequenceFastaRecord tmp = currentRecord;
 					currentRecord = null;
 					return tmp;
 				}
@@ -71,12 +67,12 @@ public class DefaultFastaRecordIterator extends AbstractFileReader implements Fa
 		        StringBuilder currentBody=null;
 		        
 		        try {
-					while ((line = reader.readLine()) != null) {
+					while ((line = input.readLine()) != null) {
 						if(line.startsWith(">"))
 						{
-							FastaRecord prevRecord = null;
+							NucleotideSequenceFastaRecord prevRecord = null;
 							if(currentBody != null){
-								prevRecord = factory.createFastaRecord(currentId, currentComment, currentBody.toString());
+								prevRecord = FACTORY.createFastaRecord(currentId, currentComment, currentBody.toString());
 								currentBody = null;
 							}
 							currentId = SequenceFastaRecordUtil.parseIdentifierFromIdLine(line);
@@ -98,7 +94,7 @@ public class DefaultFastaRecordIterator extends AbstractFileReader implements Fa
 				
 				// Handle last record
 				if (currentBody != null) {
-					return factory.createFastaRecord(currentId, currentComment, currentBody.toString()); 
+					return FACTORY.createFastaRecord(currentId, currentComment, currentBody.toString()); 
 				}
 				return null;
 			}
