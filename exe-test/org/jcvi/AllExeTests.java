@@ -19,6 +19,7 @@
 
 package org.jcvi;
 
+import org.jcvi.fasta.fastq.util.TestFastQ2FastaEnd2End;
 import org.jcvi.fasta.fastq.util.TestFastQFile;
 import org.jcvi.testUtil.IntegrationTests;
 import org.junit.experimental.categories.Categories;
@@ -34,7 +35,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Categories.class)
 @IncludeCategory(IntegrationTests.class)
 @SuiteClasses( { 
-   TestFastQFile.class
+   TestFastQFile.class,
+   TestFastQ2FastaEnd2End.class
 }
 )
 public class AllExeTests {
