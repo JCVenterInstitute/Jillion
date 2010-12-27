@@ -157,17 +157,21 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
         File fastQFile = new File(args[args.length-1]);
         
         try {
-            CommandLine commandLine = CommandLineUtils.parseCommandLine(options, 
-                    Arrays.copyOf(args, args.length-1));
-            if(commandLine.hasOption("h")){
+            if(CommandLineUtils.helpRequested(args)){
                 printHelp(options);
                 System.exit(0);
             }
+            CommandLine commandLine = CommandLineUtils.parseCommandLine(options, 
+                    Arrays.copyOf(args, args.length-1));
+            
             if(commandLine.hasOption("s")){
                 seqOut = new FileOutputStream(commandLine.getOptionValue("s"));
             }
             if(commandLine.hasOption("q")){
                 qualOut = new FileOutputStream(commandLine.getOptionValue("q"));
+            }
+            if(seqOut ==null && qualOut ==null){
+                throw new ParseException("must specify at least either -s or -q");
             }
             final File idFile;
             final FastXFilter filter;
@@ -198,6 +202,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
             
             
         } catch (ParseException e) {
+            e.printStackTrace();
             printHelp(options);
             System.exit(1);
         }
