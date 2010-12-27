@@ -30,7 +30,7 @@ import org.jcvi.glyph.Glyph;
  * {@code AminoAcid} is a {@link Glyph} representation 
  * of the 20 Amino Acids that are encoded by genetic code.
  * 
- * @author dkatzel
+ * @author dkatzel, naxelrod
  *
  *
  */
@@ -55,8 +55,10 @@ public enum AminoAcid implements Glyph{
     Alanine("Alanine","Ala",'A'),
     Asparagine("Asparagine","Asn",'N'),
     Aspartic_Acid("Aspartic Acid", "Asp",'D'),
-    Glutamic_Acid("Glutamic Acid","Glu",'E')
+    Glutamic_Acid("Glutamic Acid","Glu",'E'),
+    Unknown_Amino_Acid("Unknown Amino Acid", "Uknown", 'X')
     ;
+    
     private final Character abbreviation;
     private final String threeLetterAbbreviation;
     private final String name;
@@ -103,7 +105,7 @@ public enum AminoAcid implements Glyph{
     public static AminoAcid getGlyphFor(String aminoAcid){
         AminoAcid result = nameMap.get(aminoAcid.toUpperCase());
         if(result ==null){
-            throw new IllegalArgumentException(String.format("%s is not a valid AminoAcid",aminoAcid));
+            throw new IllegalArgumentException(String.format("%s is not a valid Amino Acid", aminoAcid));
         }
         return result;
     }
@@ -136,6 +138,16 @@ public enum AminoAcid implements Glyph{
     public String getName() {
         return name;
     }
+    
+    /**
+     * Returns this glyph as a single character String.  For example {@link #Adenine} 
+     * will return "A".
+     */
+    @Override
+    public String toString() {
+        return getAbbreviation().toString();
+    }
+    
     /**
      * Get the 1 letter abbreviation for this Amino Acid
      * as a Character.
@@ -151,6 +163,14 @@ public enum AminoAcid implements Glyph{
      */
     public String get3LetterAbbreviation() {
         return threeLetterAbbreviation;
+    }
+    
+    public static String convertToString(List<AminoAcid> glyphs){
+    	StringBuilder result = new StringBuilder();
+    	for(AminoAcid g: glyphs){
+     		result.append(g.getAbbreviation());
+    	}
+    	return result.toString();
     }
 
 }

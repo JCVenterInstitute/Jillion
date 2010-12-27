@@ -8,14 +8,27 @@ import org.jcvi.Range;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 
-public class DefaultAminoAcidEncodedGlyphs implements EncodedGlyphs<AminoAcid> {
+/**
+ * {@code DefaultAminoAcidEncodedGlyphs} is the default implementation
+ * of the {@link AminoAcidEncodedGlyphs} interface.
+ *
+ * @author naxelrod
+ */
+
+public class DefaultAminoAcidEncodedGlyphs implements AminoAcidEncodedGlyphs {
 
 	private final EncodedGlyphs<AminoAcid> encodedAminoAcids;
 	
 	public DefaultAminoAcidEncodedGlyphs(Collection<AminoAcid> glyphs) {
 		this.encodedAminoAcids = new DefaultEncodedGlyphs<AminoAcid>(DefaultAminoAcidGlyphCodec.getInstance(),glyphs);
 	}
-	
+	public DefaultAminoAcidEncodedGlyphs(char[] aminoAcids) {
+		this(new String(aminoAcids));
+	}
+	public DefaultAminoAcidEncodedGlyphs(String aminoAcids) {
+		this(AminoAcid.getGlyphsFor(aminoAcids));
+	}
+		
 	@Override
 	public List<AminoAcid> decode() {
 		return encodedAminoAcids.decode();

@@ -23,13 +23,13 @@
  */
 package org.jcvi.glyph.nuc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-
-
-import static org.junit.Assert.*;
 public class TestDefaultNucleotideGlyphCodec {
     List<NucleotideGlyph> evenBases = NucleotideGlyph.getGlyphsFor("ACGTACGTWS-NACGT");
     List<NucleotideGlyph> oddBases =  NucleotideGlyph.getGlyphsFor("ACGTACGTWS-NACGTA");
@@ -39,6 +39,7 @@ public class TestDefaultNucleotideGlyphCodec {
     @Test
     public void evenEncodesAndDecodes(){
         byte[] encoded =sut.encode(evenBases);
+        System.out.println(encoded.toString());
         assertEquals(evenBases, sut.decode(encoded));
     }
     
