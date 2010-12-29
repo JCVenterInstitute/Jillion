@@ -54,10 +54,10 @@ public class CachedDataStore <D extends DataStore> implements InvocationHandler{
      * {@link Cacheable}.
      */
     public static void clearCacheFrom(DataStore cachedDataStore){
-        if(!(cachedDataStore instanceof Cacheable)){
-            throw new IllegalArgumentException("must be cacheable");
+        if(cachedDataStore instanceof Cacheable){
+            ((Cacheable)cachedDataStore).clearCache();
         }
-        ((Cacheable)cachedDataStore).clearCache();
+        
        
     }
     /**
