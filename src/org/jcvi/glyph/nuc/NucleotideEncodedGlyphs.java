@@ -81,6 +81,15 @@ public interface NucleotideEncodedGlyphs extends EncodedGlyphs<NucleotideGlyph>{
      */
     int convertUngappedValidRangeIndexToGappedValidRangeIndex(int ungappedValidRangeIndex);
     /**
+     * Convert the given gapped valid range into an ungapped valid range.
+     * @param gappedValidRange the gapped valid range to convert.
+     * @return the ungapped equivalent.
+     */
+    Range convertGappedValidRangeToUngappedValidRange(Range gappedValidRange);
+    
+    Range convertUngappedValidRangeToGappedValidRange(Range ungappedValidRange);
+    
+    /**
      * Is the {@link NucleotideGlyph} at the given gapped index a gap?
      * @param gappedIndex the gappedIndex to check.
      * @return {@code true} is it is a gap; {@code false} otherwise.

@@ -42,6 +42,25 @@ public abstract class AbstractEnocdedNucleotideGlyphs implements NucleotideEncod
         return gappedValidRangeIndex-numberOfGaps;
     }
 
+    @Override
+    public Range convertGappedValidRangeToUngappedValidRange(
+            Range gappedValidRange) {
+       return Range.buildRange(
+                convertGappedValidRangeIndexToUngappedValidRangeIndex((int)gappedValidRange.getStart()),
+                convertGappedValidRangeIndexToUngappedValidRangeIndex((int)gappedValidRange.getEnd())
+                
+        );
+    }
+
+    @Override
+    public Range convertUngappedValidRangeToGappedValidRange(
+            Range ungappedValidRange) {
+        return  Range.buildRange(
+                convertUngappedValidRangeIndexToGappedValidRangeIndex((int)ungappedValidRange.getStart()),
+                convertUngappedValidRangeIndexToGappedValidRangeIndex((int)ungappedValidRange.getEnd()));
+                
+    }
+
     private boolean isAGap(int gappedValidRangeIndex) {
         return getGapIndexes().contains(Integer.valueOf(gappedValidRangeIndex));
     }
