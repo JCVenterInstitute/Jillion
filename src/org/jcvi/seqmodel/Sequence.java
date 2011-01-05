@@ -97,14 +97,6 @@ public class Sequence implements SequenceI {
 		this.accession = accession;
 	}
 	
-	public String getGiNumberAndAccession() {
-		String acc = "";
-		if (getGiNumber() != null) {
-			acc = "gi|" + getGiNumber() + "|";
-		}
-		acc += "gb|" + getAccession();
-		return acc;
-	}
 	@Override
 	public String getType() {
 		return type;
@@ -153,5 +145,22 @@ public class Sequence implements SequenceI {
 	@Override
 	public int getLength() {
 		return (int) getSequence().length();
+	}
+	
+	public String getGiNumberAndAccession() {
+		String acc = "";
+		if (getGiNumber() != null) {
+			acc = "gi|" + getGiNumber() + "|";
+		}
+		acc += "gb|" + getAccession();
+		return acc;
+	}
+
+	public String getSequenceName() {
+		return getGiNumberAndAccession();
+	}
+	
+	public String toString() {
+		return "id|" + getId() + "|gi|" + getGiNumber() + "|gb|" + getAccession();
 	}
 }
