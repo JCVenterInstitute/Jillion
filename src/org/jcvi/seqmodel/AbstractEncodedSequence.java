@@ -9,7 +9,7 @@ import org.jcvi.glyph.GlyphCodec;
 
 /*
  * {@code AbstractEncodedSequence} is an abstract class often used to
- * define any type of encode sequence such as {@link AminoAcidSequence} or
+ * define any type of encoded sequence such as {@link AminoAcidSequence} or
  * {@link NucleotideSequence}.
  * 
  * @author naxelrod

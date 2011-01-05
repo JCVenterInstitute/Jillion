@@ -28,4 +28,5 @@ public interface SequenceI {
 	public void			setSequence(String seq);
 	public int			getLength();
 	public boolean 		hasSequence();
+	public String		getSequenceName(); // giNumber and accession
 }

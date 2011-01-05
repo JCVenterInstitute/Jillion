@@ -1,5 +1,6 @@
 package org.jcvi.seqmodel.io;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Iterator;
 
@@ -28,6 +29,9 @@ public class FastaNucleotideSequenceIO extends AbstractObjectIO<NucleotideSequen
 	}
 	public FastaNucleotideSequenceIO(String inFile) {
 		super(inFile);
+	}
+	public FastaNucleotideSequenceIO(File inFile) {
+		super(inFile.toString());
 	}
 	public FastaNucleotideSequenceIO(URL inUrl) {
 		super(inUrl);
