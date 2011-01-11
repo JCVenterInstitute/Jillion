@@ -39,12 +39,23 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
     private final Range validRange;
     private final long startOffset;
     private final SequenceDirection dir;
-    public DefaultCasPlacedRead(Read read, long startOffset,Range validRange, SequenceDirection dir){
+    private final int ungappedFullLength;
+    public DefaultCasPlacedRead(Read read, long startOffset,Range validRange, 
+            SequenceDirection dir, int ungappedFullLength){
         this.read= read;
         this.validRange = validRange;
         this.startOffset = startOffset;
         this.dir= dir;
+        this.ungappedFullLength = ungappedFullLength;
     }
+    
+    
+    @Override
+    public int getUngappedFullLength() {
+        return ungappedFullLength;
+    }
+
+
     @Override
     public long getEnd() {
         return startOffset+getLength()-1;

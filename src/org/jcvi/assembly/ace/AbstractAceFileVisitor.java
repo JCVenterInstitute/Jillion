@@ -34,7 +34,8 @@ import org.jcvi.sequence.SequenceDirection;
 public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private String currentContigId;
     private String currentReadId;
-    private int currentReadFullLength;
+    private int currentReadGappedFullLength;
+    private int currentReadUngappedFullLength;
     private Map<String, AssembledFrom> currentAssembledFromMap;
     private boolean readingConsensus=true;
     private StringBuilder currentBasecalls = new StringBuilder();
@@ -42,7 +43,6 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private Range currentClearRange;
     private int currentOffset;
     private String currentValidBases;
-
     private boolean skipCurrentRead=false;
     
     private boolean initialized;
@@ -132,12 +132,13 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
                 skipCurrentRead = true;
                 System.out.printf("dropping read %s because it has a negative valid range %d%n", currentReadId, (end3-end5));
             }else{
+                //this will set currentValidBasecalls to only be the valid range
                 currentValidBases = currentBasecalls.substring(end5-1, end3); 
                 int correctedClearLeft;
                 int correctedClearRight;
                 if(assembledFrom.getSequenceDirection() == SequenceDirection.REVERSE){
-                    correctedClearLeft = reverseCompliment(currentReadFullLength, clearLeft);
-                    correctedClearRight = reverseCompliment(currentReadFullLength, clearRight);
+                    correctedClearLeft = reverseCompliment(currentReadGappedFullLength, clearLeft);
+                    correctedClearRight = reverseCompliment(currentReadGappedFullLength, clearRight);
                     int temp = correctedClearLeft;
                     correctedClearLeft = correctedClearRight;
                     correctedClearRight = temp;
@@ -147,6 +148,8 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
                     correctedClearRight = clearRight;
                 }
                 final int numberOfGaps = getNumberOfGapsIn(currentValidBases);
+                final int numberOfFullLengthGaps = getNumberOfGapsIn(currentBasecalls.toString());
+                currentReadUngappedFullLength = currentReadGappedFullLength - numberOfFullLengthGaps;
                 correctedClearRight -= numberOfGaps;
                 currentClearRange = Range.buildRange(Range.CoordinateSystem.RESIDUE_BASED,correctedClearLeft, correctedClearRight);
             }
@@ -180,7 +183,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     public synchronized void visitReadHeader(String readId, int gappedLength) {
         throwExceptionIfInitialized();
         currentReadId = readId;
-        currentReadFullLength = gappedLength;
+        currentReadGappedFullLength = gappedLength;
         currentBasecalls = new StringBuilder();
     }
 
@@ -192,7 +195,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
             currentPhdInfo =new DefaultPhdInfo(traceName, phdName, date);
             AssembledFrom assembledFrom = currentAssembledFromMap.get(currentReadId);
             visitAceRead(currentReadId, currentValidBases ,currentOffset, assembledFrom.getSequenceDirection(), 
-                    currentClearRange ,currentPhdInfo);
+                    currentClearRange ,currentPhdInfo,currentReadUngappedFullLength);
         }
         skipCurrentRead=false;
     }
@@ -206,8 +209,12 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * @param dir the direction of this read.
      * @param validRange the validRange coordinates of this read's basecalls.
      * @param phdInfo the {@link PhdInfo} for this read (not null).
+     * @param ungappedFullLength the full Length (including invalid range)
+     * of the basecalls.
      */
-    protected abstract void visitAceRead(String readId, String validBasecalls, int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo);
+    protected abstract void visitAceRead(String readId, String validBasecalls, 
+            int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo,
+            int ungappedFullLength);
     
     
     @Override

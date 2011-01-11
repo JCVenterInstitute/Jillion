@@ -36,16 +36,24 @@ import org.jcvi.sequence.SequenceDirection;
 
 public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlacedRead {
     private final PhdInfo phdInfo;
+    private final int ungappedFullLength;
     public DefaultAcePlacedRead(Read<ReferencedEncodedNucleotideGlyphs> read,
-            long start, SequenceDirection dir,PhdInfo phdInfo) {
+            long start, SequenceDirection dir,PhdInfo phdInfo, int ungappedFullLength) {
         super(read, start, dir);
         this.phdInfo =phdInfo;
+        this.ungappedFullLength =ungappedFullLength;
     }
 
     @Override
     public PhdInfo getPhdInfo() {
         return phdInfo;
     }
+
+    @Override
+    public int getUngappedFullLength() {
+        return ungappedFullLength;
+    }
+
 
     public static class Builder{
         private String readId;
@@ -56,9 +64,11 @@ public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlaced
         private PhdInfo phdInfo;
         private EncodedGlyphs<NucleotideGlyph> reference;
         private final SequenceDirection dir;
+        private final int ungappedFullLength;
         
         public Builder(EncodedGlyphs<NucleotideGlyph> reference, String readId,String validBases,
-                            int offset, SequenceDirection dir, Range clearRange,PhdInfo phdInfo){
+                            int offset, SequenceDirection dir, Range clearRange,PhdInfo phdInfo,
+                            int ungappedFullLength){
             this.readId = readId;
             this.dir =dir;
             this.length = validBases.length();
@@ -66,7 +76,9 @@ public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlaced
             this.offset = offset;
             this.phdInfo = phdInfo;
             this.referencedGlyphs = new TemporaryReferenceGlyphs(reference, validBases, offset, clearRange);
+            this.ungappedFullLength = ungappedFullLength;
         }
+        
         
         public Builder reference(EncodedGlyphs<NucleotideGlyph> reference, int newOffset){
             this.reference = reference;
@@ -87,7 +99,7 @@ public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlaced
         public DefaultAcePlacedRead build(){
             Read read = new DefaultRead(readId, 
                     referencedGlyphs.buildReferenceEncodedNucleotideGlyphWithCorrectedReference(reference,offset, length, clearRange));
-            return new DefaultAcePlacedRead(read, offset, dir, phdInfo);
+            return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength);
         }
         
     }

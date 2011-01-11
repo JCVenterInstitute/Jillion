@@ -50,7 +50,7 @@ public class TestAcePlacedReadAdapter {
         mockPlacedRead = createMock(PlacedRead.class);
         expect(mockPlacedRead.getId()).andReturn(id);
         replay(mockPlacedRead);
-        sut = new AcePlacedReadAdapter(mockPlacedRead, date,null);
+        sut = new AcePlacedReadAdapter(mockPlacedRead, date,null,(int)validRange.getLength()+5);
         reset(mockPlacedRead);
     }
     

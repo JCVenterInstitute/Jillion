@@ -72,7 +72,7 @@ public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{
     public void visitNewContig(String contigId) {
         throwExceptionIfInitialized();
         if(!readingConsensus){ 
-            visitRead(currentReadId, currentReadOffset, currentReadValidRange,currentBasecalls.toString(),currentReadSequenceDirection); 
+            visitCurrentRead(); 
             visitEndOfContig();
         }
         currentContigId = contigId;
@@ -95,7 +95,7 @@ public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{
         }
         else{
             //done previous sequence
-            this.visitRead(currentReadId, currentReadOffset, currentReadValidRange, currentBasecalls.toString(), currentReadSequenceDirection);               
+            visitCurrentRead();               
         }
         this.currentReadId = seqId;
         this.currentReadOffset = offset;
@@ -103,6 +103,10 @@ public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{
         this.currentReadValidRange= validRange;
         currentBasecalls = new StringBuilder();
         
+    }
+
+    private void visitCurrentRead() {
+        visitRead(currentReadId, currentReadOffset, currentReadValidRange, currentBasecalls.toString(), currentReadSequenceDirection);
     }
 
     

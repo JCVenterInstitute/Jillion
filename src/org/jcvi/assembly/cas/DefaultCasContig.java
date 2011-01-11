@@ -32,63 +32,41 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.jcvi.assembly.Contig;
-import org.jcvi.assembly.DefaultContig;
-import org.jcvi.assembly.PlacedRead;
+import org.jcvi.assembly.AbstractContigBuilder;
 import org.jcvi.assembly.cas.read.CasPlacedRead;
+import org.jcvi.assembly.cas.read.DefaultCasPlacedRead;
+import org.jcvi.assembly.contig.AbstractContig;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
+import org.jcvi.sequence.Read;
+import org.jcvi.sequence.SequenceDirection;
 
-public class DefaultCasContig implements CasContig{
+public class DefaultCasContig extends AbstractContig<CasPlacedRead> implements CasContig{
 
-    private final Contig<PlacedRead> delegate;
     
     
     /**
-     * @param delegate
+     * @param id
+     * @param consensus
+     * @param placedReads
      */
-    private DefaultCasContig(Contig<PlacedRead> delegate) {
-        this.delegate = delegate;
+    public DefaultCasContig(String id, NucleotideEncodedGlyphs consensus,
+            Set<CasPlacedRead> placedReads) {
+        super(id, consensus, placedReads);
     }
 
-    @Override
-    public boolean containsPlacedRead(String placedReadId) {
-        return delegate.containsPlacedRead(placedReadId);
-    }
+   
 
-    @Override
-    public NucleotideEncodedGlyphs getConsensus() {
-        return delegate.getConsensus();
-    }
-
-    @Override
-    public String getId() {
-        return delegate.getId();
-    }
-
-    @Override
-    public int getNumberOfReads() {
-        return delegate.getNumberOfReads();
-    }
-
-    @Override
-    public PlacedRead getPlacedReadById(String id) {
-        return delegate.getPlacedReadById(id);
-    }
-
-    @Override
-    public Set<PlacedRead> getPlacedReads() {
-        return delegate.getPlacedReads();
-    }
 
     public static class Builder implements org.jcvi.Builder<DefaultCasContig>{
 
         private final String id;
-        private final Set<PlacedRead> placedReads = new HashSet<PlacedRead>();
+        private final Set<CasPlacedRead> placedReads = new HashSet<CasPlacedRead>();
         Map<Long, Map<NucleotideGlyph, Integer>> consensusMap = new HashMap<Long,Map<NucleotideGlyph,Integer>>();
         /**
          * @param id
@@ -126,7 +104,7 @@ public class DefaultCasContig implements CasContig{
         @Override
         public DefaultCasContig build() {
             System.out.printf("building cas contig %s%n",id);
-            CoverageMap<CoverageRegion<PlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(placedReads);
+            CoverageMap<CoverageRegion<CasPlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(placedReads);
             
             System.out.printf("\tbuilding consensus%n");
             List<NucleotideGlyph> consensus = new ArrayList<NucleotideGlyph>();
@@ -137,13 +115,15 @@ public class DefaultCasContig implements CasContig{
                 }
             }
             System.out.printf("\tbuilding placedReads%n");
-            DefaultContig.Builder builder = new DefaultContig.Builder(id, new DefaultNucleotideEncodedGlyphs(consensus));
-            for(PlacedRead read : placedReads){
+            DefaultCasContigBuilder builder = new DefaultCasContigBuilder(id, new DefaultNucleotideEncodedGlyphs(consensus));
+            for(CasPlacedRead read : placedReads){
+                builder.setCurrentUngappedFullLength(read.getUngappedFullLength());
+                
                 List<NucleotideGlyph> bases = read.getEncodedGlyphs().decode();           
                 builder.addRead(read.getId(), (int)(read.getStart()), read.getValidRange(), 
                         NucleotideGlyph.convertToString(bases), read.getSequenceDirection());
             }
-            return new DefaultCasContig(builder.build());
+            return builder.build();
         }
 
 
@@ -162,5 +142,37 @@ public class DefaultCasContig implements CasContig{
             return mostOccuringBase;
         }
         
+    }
+    
+    private static class DefaultCasContigBuilder extends AbstractContigBuilder<CasPlacedRead, DefaultCasContig>{
+        
+        
+        /**
+         * @param id
+         * @param consensus
+         */
+        public DefaultCasContigBuilder(String id,
+                NucleotideEncodedGlyphs consensus) {
+            super(id, consensus);
+        }
+
+        private int currentUngappedFullLength=0;
+        
+        public void setCurrentUngappedFullLength(int currentUngappedFullLength){
+            this.currentUngappedFullLength = currentUngappedFullLength;
+        }
+        @Override
+        protected CasPlacedRead createPlacedRead(
+                Read<ReferencedEncodedNucleotideGlyphs> read,
+                long offset, SequenceDirection dir) {
+            return new DefaultCasPlacedRead(read, offset, 
+                    read.getEncodedGlyphs().getValidRange(), 
+                    dir, currentUngappedFullLength);
+        }
+
+        @Override
+        public DefaultCasContig build() {
+            return new DefaultCasContig(getId(),getConsensus(),this.getPlacedReads());
+        }
     }
 }

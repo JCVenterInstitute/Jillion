@@ -28,4 +28,5 @@ import org.jcvi.assembly.PlacedRead;
 
 public interface CasPlacedRead extends PlacedRead {
 
+    int getUngappedFullLength();
 }

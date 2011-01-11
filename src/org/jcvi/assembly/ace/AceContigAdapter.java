@@ -30,25 +30,26 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jcvi.assembly.Contig;
-import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.cas.CasIdLookup;
+import org.jcvi.assembly.cas.read.CasPlacedRead;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
 public class AceContigAdapter implements AceContig{
 
-    private final Contig<PlacedRead> delegate;
+    private final Contig<CasPlacedRead> delegate;
     private final Map<String, AcePlacedRead> adaptedReads = new HashMap<String, AcePlacedRead>();
     
     /**
      * @param delegate
      */
-    public AceContigAdapter(Contig<PlacedRead> delegate, Date phdDate,CasIdLookup idLookup) {
+    public AceContigAdapter(Contig<CasPlacedRead> delegate, Date phdDate,CasIdLookup idLookup) {
         this.delegate = delegate;
-        for(PlacedRead read : delegate.getPlacedReads()){
+        for(CasPlacedRead read : delegate.getPlacedReads()){
             final String readId = read.getId();
             adaptedReads.put(readId, new AcePlacedReadAdapter(read,
                     phdDate, 
-                    idLookup.getFileFor(readId)));
+                    idLookup.getFileFor(readId),
+                    read.getUngappedFullLength()));
         }
     }
 

@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jcvi.Range;
+import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.contig.AbstractContig;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
@@ -83,11 +84,16 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
             return aceReadBuilders.size();
         }
         public Builder addRead(String readId, String validBases, int offset,
-                SequenceDirection dir, Range clearRange,PhdInfo phdInfo) {
-           
+                SequenceDirection dir, Range clearRange,PhdInfo phdInfo){
+            return addRead(readId, validBases, offset, dir, clearRange, phdInfo,
+                    validBases.replaceAll("-", "").length());
+        }
+        public Builder addRead(String readId, String validBases, int offset,
+                SequenceDirection dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
             adjustContigLeftAndRight(validBases, offset);
             try{
-                DefaultAcePlacedRead.Builder aceReadBuilder = createNewAceReadBuilder(readId, validBases, offset, dir, clearRange,phdInfo);
+                DefaultAcePlacedRead.Builder aceReadBuilder = createNewAceReadBuilder(readId, validBases, offset, dir, 
+                        clearRange,phdInfo,ungappedFullLength);
                 
                 
                 aceReadBuilders.add(aceReadBuilder);
@@ -98,11 +104,11 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         }
         private DefaultAcePlacedRead.Builder createNewAceReadBuilder(
                 String readId, String validBases, int offset,
-                SequenceDirection dir, Range clearRange, PhdInfo phdInfo) {
+                SequenceDirection dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength) {
             return new DefaultAcePlacedRead.Builder(
                     fullConsensus,readId,
                     ConsedUtil.convertAceGapsToContigGaps(validBases),
-                    offset,dir,clearRange,phdInfo);
+                    offset,dir,clearRange,phdInfo,ungappedFullLength);
         }
         private void adjustContigLeftAndRight(String validBases, int offset) {
             adjustContigLeft(offset);
@@ -126,7 +132,11 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
                 //force empty contig if no reads...
                 return new DefaultAceContig(contigId, new DefaultNucleotideEncodedGlyphs(""),placedReads);
             }
-            final List<NucleotideGlyph> validConsensusGlyphs = new ArrayList<NucleotideGlyph>(fullConsensus.decode().subList(contigLeft, contigRight));
+            //here only include the gapped valid range consensus bases
+            //throw away the rest
+            final List<NucleotideGlyph> validConsensusGlyphs = new ArrayList<NucleotideGlyph>(
+                                    fullConsensus.decode().subList(contigLeft, contigRight));
+            
             NucleotideEncodedGlyphs validConsensus = new DefaultNucleotideEncodedGlyphs(
                     validConsensusGlyphs, Range.buildRange(0, validConsensusGlyphs.size()));
             for(DefaultAcePlacedRead.Builder aceReadBuilder : aceReadBuilders){

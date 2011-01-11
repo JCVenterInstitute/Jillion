@@ -61,7 +61,8 @@ public class AceReadPositionPrinter {
         
         @Override
         protected void visitAceRead(String readId, String validBasecalls,
-                int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo) {
+                int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo,
+                int ungappedFullLength) {
             Range gappedOneBasedRange = Range.buildRangeOfLength(offset, validBasecalls.length()).convertRange(CoordinateSystem.RESIDUE_BASED);
             int nonGapStartPosition = AssemblyUtil.getRightFlankingNonGapIndex(consensus, (int)gappedOneBasedRange.getStart());
             

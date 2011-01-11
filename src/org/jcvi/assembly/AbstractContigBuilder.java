@@ -52,7 +52,7 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
             
             return addRead(actualPlacedRead);
         }
-        protected  AbstractContigBuilder<P,C>  addRead(P read){
+        public  AbstractContigBuilder<P,C>  addRead(P read){
             reads.add(read);
             return this;
         }

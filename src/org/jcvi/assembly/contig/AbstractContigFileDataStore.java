@@ -40,6 +40,7 @@ public abstract class AbstractContigFileDataStore extends AbstractContigFileVisi
     @Override
     protected void visitRead(String readId, int offset, Range validRange,
             String basecalls, SequenceDirection dir) {
+       
         currentContigBuilder.addRead(readId, offset, validRange,basecalls,dir); 
         
         
