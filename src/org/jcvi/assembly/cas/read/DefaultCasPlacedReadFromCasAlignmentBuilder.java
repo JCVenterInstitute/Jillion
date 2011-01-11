@@ -149,7 +149,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         }
         Read<NucleotideEncodedGlyphs> read = new DefaultRead(readId,
                         new DefaultNucleotideEncodedGlyphs(validBases,validRange));
-        return new DefaultCasPlacedRead(read, startOffset, validRange, dir);
+        return new DefaultCasPlacedRead(read, startOffset, validRange, dir,(int)fullUngappedLength);
     }
 
 }

@@ -62,9 +62,10 @@ public abstract class AbstractAceFileDataStore extends AbstractAceFileVisitor im
         
     }
     
-    protected void visitAceRead(String readId, String validBasecalls, int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo){
+    protected void visitAceRead(String readId, String validBasecalls, int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo,
+            int ungappedFullLength){
         contigBuilder.addRead(readId, validBasecalls ,offset, dir, 
-                validRange ,phdInfo);
+                validRange ,phdInfo,ungappedFullLength);
     }
 
     

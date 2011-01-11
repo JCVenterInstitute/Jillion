@@ -128,7 +128,7 @@ public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceT
     */
     @Override
     protected void visitAceRead(String readId, String validBasecalls,
-            int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo) {
+            int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo,int ungappedFullLength) {
         
     }
 

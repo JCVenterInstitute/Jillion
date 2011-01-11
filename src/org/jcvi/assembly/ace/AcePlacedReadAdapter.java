@@ -38,10 +38,11 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
 
     private final PlacedRead placedRead;
     private final PhdInfo phdInfo;
+    private final int ungappedFullLength;
     /**
      * @param placedRead
      */
-    public AcePlacedReadAdapter(PlacedRead placedRead,Date phdDate, File traceFile) {
+    public AcePlacedReadAdapter(PlacedRead placedRead,Date phdDate, File traceFile, int ungappedFullLength) {
         this.placedRead = placedRead;
         String readId = placedRead.getId();
         final String id;
@@ -60,6 +61,7 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
             id= readId;
         }
         this.phdInfo= new DefaultPhdInfo(id, readId+".phd.1", phdDate);
+        this.ungappedFullLength = ungappedFullLength;
     }
 
     @Override
@@ -118,6 +120,14 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
     @Override
     public int compareTo(PlacedRead o) {
         return placedRead.compareTo(o);
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getUngappedFullLength() {
+        return ungappedFullLength;
     }
     
 }

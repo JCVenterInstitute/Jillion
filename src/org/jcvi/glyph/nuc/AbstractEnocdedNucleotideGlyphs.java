@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.Range;
+import org.jcvi.assembly.AssemblyUtil;
 
 public abstract class AbstractEnocdedNucleotideGlyphs implements NucleotideEncodedGlyphs{
 
@@ -46,8 +47,10 @@ public abstract class AbstractEnocdedNucleotideGlyphs implements NucleotideEncod
     public Range convertGappedValidRangeToUngappedValidRange(
             Range gappedValidRange) {
        return Range.buildRange(
-                convertGappedValidRangeIndexToUngappedValidRangeIndex((int)gappedValidRange.getStart()),
-                convertGappedValidRangeIndexToUngappedValidRangeIndex((int)gappedValidRange.getEnd())
+               convertGappedValidRangeIndexToUngappedValidRangeIndex(
+                       AssemblyUtil.getLeftFlankingNonGapIndex(this,(int)gappedValidRange.getStart())),
+               convertGappedValidRangeIndexToUngappedValidRangeIndex(
+                       AssemblyUtil.getLeftFlankingNonGapIndex(this, (int)gappedValidRange.getEnd()))
                 
         );
     }

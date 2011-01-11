@@ -38,7 +38,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
 
     
 
-    protected DefaultContig(String id, NucleotideEncodedGlyphs consensus,
+    public DefaultContig(String id, NucleotideEncodedGlyphs consensus,
             Set<P> reads) {
         super(id, consensus, reads);
     }

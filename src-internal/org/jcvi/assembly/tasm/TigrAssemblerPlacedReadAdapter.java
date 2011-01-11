@@ -179,11 +179,7 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 		}
 		PlacedRead other = (PlacedRead) obj;
 		
-		if (delegatePlacedRead == null) {
-			if (other != null) {
-				return false;
-			}
-		} else if (!delegatePlacedRead.equals(other)) {
+		if (!delegatePlacedRead.equals(other)) {
 			return false;
 		}
 		

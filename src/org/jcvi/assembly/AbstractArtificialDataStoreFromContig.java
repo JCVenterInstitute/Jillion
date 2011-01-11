@@ -45,7 +45,7 @@ public abstract class AbstractArtificialDataStoreFromContig<T> extends AbstractD
     }
 
     @Override
-    public boolean contains(String id) throws DataStoreException {
+    public synchronized boolean contains(String id) throws DataStoreException {
         super.contains(id);
         for(Contig contig : contigs){
             if(contig.containsPlacedRead(id)){
@@ -56,7 +56,7 @@ public abstract class AbstractArtificialDataStoreFromContig<T> extends AbstractD
     }
 
     @Override
-    public T get(String id) throws DataStoreException {
+    public synchronized T get(String id) throws DataStoreException {
         super.get(id);
         for(Contig contig : contigs){
             if(contig.containsPlacedRead(id)){
@@ -68,7 +68,7 @@ public abstract class AbstractArtificialDataStoreFromContig<T> extends AbstractD
 
     protected abstract T createArtificalTypefor(PlacedRead read);
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
         List<Iterator<String>> iterators = new ArrayList<Iterator<String>>();
         for(Contig contig : contigs){
@@ -78,7 +78,7 @@ public abstract class AbstractArtificialDataStoreFromContig<T> extends AbstractD
     }
 
     @Override
-    public int size() throws DataStoreException {
+    public synchronized int size() throws DataStoreException {
         super.size();
         int size=0;
         for(Contig contig : contigs){

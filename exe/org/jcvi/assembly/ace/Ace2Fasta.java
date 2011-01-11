@@ -110,7 +110,7 @@ public class Ace2Fasta {
                 
                 @Override
                 protected void visitAceRead(String readId, String validBasecalls,
-                        int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo) {
+                        int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo,int ungappedFullLength) {
                 }
             };
             AceFileParser.parseAceFile(aceIn, fastaVisitor);
