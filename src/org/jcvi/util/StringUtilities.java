@@ -125,9 +125,11 @@ public final class StringUtilities
                 joined.append(prefix);
             }
             Iterator<?> iter = elements.iterator();
-            Object firstElement= iter.next();
-            if(firstElement!=null){
-                joined.append(firstElement.toString());
+            if(iter.hasNext()){
+                Object firstElement= iter.next();
+                if(firstElement!=null){
+                    joined.append(firstElement.toString());
+                }
             }
             
             while(iter.hasNext()){

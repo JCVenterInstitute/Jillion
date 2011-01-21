@@ -55,6 +55,12 @@ public class TestStringUtilities {
     }
     
     @Test
+    public void joinBuilderNoElements(){
+        assertEquals("",
+                new StringUtilities.JoinedStringBuilder().build());
+    }
+    
+    @Test
     public void joinBuilderStringsWithGlue(){
         assertEquals("Larry,Moe,Curly",
                 new StringUtilities.JoinedStringBuilder("Larry","Moe","Curly")
