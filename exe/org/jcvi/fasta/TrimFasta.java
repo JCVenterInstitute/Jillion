@@ -98,8 +98,10 @@ public class TrimFasta {
                     String id = fastaRecord.getId();
                     final NucleotideEncodedGlyphs basecalls = fastaRecord.getValue();
                     long untrimmedLength = basecalls.getLength();
-                    Range trimRange = Range.buildRange(leftTrimPoints.get(id), 
-                                                    untrimmedLength - rightTrimPoints.get(id)-1);
+                    Integer l = leftTrimPoints.get(id);
+                    Integer r = rightTrimPoints.get(id);
+                    Range trimRange = Range.buildRange(l ==null? 0:l, 
+                                                    untrimmedLength -1 -(r==null?0:r));
                     
                     try {
                         out.write(new DefaultNucleotideEncodedSequenceFastaRecord(
