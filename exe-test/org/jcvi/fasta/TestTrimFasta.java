@@ -70,5 +70,8 @@ public class TestTrimFasta {
         assertEquals(NucleotideGlyph.convertToString(
                     actualDataStore.get("read1").getValue().decode()),
                     "CCCTTT");
+        assertEquals(NucleotideGlyph.convertToString(
+                actualDataStore.get("read2").getValue().decode()),
+                "AAACCCTTTGGGG");
     }
 }
