@@ -76,8 +76,8 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.datastore.SimpleDataStore;
-import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
-import org.jcvi.fasta.fastq.FastQQualityCodec;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.IOUtil;
@@ -286,7 +286,7 @@ public class Cas2Consed {
                             aceContig =trimmedAceContig;
                         }
                        aceContigs.put(aceContig.getId(), aceContig);
-                        consensusOut.print(new DefaultEncodedNucleotideFastaRecord(aceContig.getId(),
+                        consensusOut.print(new DefaultNucleotideEncodedSequenceFastaRecord(aceContig.getId(),
                                 NucleotideGlyph.convertToString(NucleotideGlyph.convertToUngapped(aceContig.getConsensus().decode()))));
                     }
                     

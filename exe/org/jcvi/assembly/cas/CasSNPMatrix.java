@@ -50,7 +50,7 @@ import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.EmptyDataStoreFilter;
-import org.jcvi.fasta.fastq.FastQQualityCodec;
+import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.fileServer.DirectoryFileServer;

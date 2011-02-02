@@ -43,7 +43,7 @@ import org.jcvi.assembly.cas.read.MultiCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.DefaultSffCasDataStoreFactory;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.fastq.FastQQualityCodec;
+import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;

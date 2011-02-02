@@ -69,7 +69,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
-import org.jcvi.fasta.fastq.FastQQualityCodec;
+import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;

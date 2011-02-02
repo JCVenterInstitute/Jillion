@@ -39,7 +39,7 @@ import org.jcvi.Range;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
-import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.SequenceDirection;
@@ -91,12 +91,12 @@ public class Ace2Fasta {
                                         : contigId;
                    
                     String comment = aceIn.getName()+" (whole contig)";
-                    DefaultEncodedNucleotideFastaRecord fasta = new DefaultEncodedNucleotideFastaRecord(
+                    DefaultNucleotideEncodedSequenceFastaRecord fasta = new DefaultNucleotideEncodedSequenceFastaRecord(
                                                                     id,
                                                                     comment,
                                                                     consensus);
                     try {
-                        fastaOut.write(fasta.getStringRecord().toString().getBytes());
+                        fastaOut.write(fasta.toFormattedString().toString().getBytes());
                     } catch (IOException e) {
                        throw new RuntimeException("error writing Fasta Record for " + id,e);
                     }

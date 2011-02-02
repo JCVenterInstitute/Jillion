@@ -60,7 +60,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
      * {@inheritDoc}
      */
     @Override
-    public String getIdentifier() {
+    public String getId() {
         return id;
     }
 
@@ -68,7 +68,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
      * {@inheritDoc}
      */
     @Override
-    public String getComments() {
+    public String getComment() {
         return comments;
     }
 
@@ -76,9 +76,9 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
      * {@inheritDoc}
      */
     @Override
-    public CharSequence getStringRecord() {
+    public CharSequence toFormattedString() {
         StringBuilder result = new StringBuilder(String.format(">%s",
-                getIdentifier()));
+                getId()));
         if(comments !=null){
             result.append(" ");
             result.append(comments);
@@ -116,7 +116,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
 
     @Override
     public String toString() {
-        return getStringRecord().toString();
+        return toFormattedString().toString();
     }
 
     /**
@@ -125,7 +125,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
      * in the gaps between sequences.
      */
     @Override
-    public NucleotideEncodedGlyphs getValues() {
+    public NucleotideEncodedGlyphs getValue() {
         StringBuilder result = new StringBuilder();
         Iterator<NucleotideEncodedGlyphs> sequenceIterator = sequences.iterator();
         Iterator<Gap> gapIterator = gaps.iterator();

@@ -2,7 +2,7 @@ package org.jcvi.io;
 
 import java.util.Iterator;
 
-import org.jcvi.fasta.PeptideSequenceFastaRecord;
+import org.jcvi.fastX.fasta.aa.AminoAcidSequenceFastaRecord;
 
 
 /*
@@ -12,14 +12,14 @@ import org.jcvi.fasta.PeptideSequenceFastaRecord;
  * @author naxelrod
  */
  
-public interface PeptideFastaRecordIO extends ObjectIO<PeptideSequenceFastaRecord> {
+public interface PeptideFastaRecordIO extends ObjectIO<AminoAcidSequenceFastaRecord> {
 
 	// Reader
-	Iterator<PeptideSequenceFastaRecord> iterator();
+	Iterator<AminoAcidSequenceFastaRecord> iterator();
 	
 	// Writer
-	public boolean write( PeptideSequenceFastaRecord sequence );
-	public int write( Iterable<PeptideSequenceFastaRecord> sequences );
+	public boolean write( AminoAcidSequenceFastaRecord sequence );
+	public int write( Iterable<AminoAcidSequenceFastaRecord> sequences );
 	public int write();
 
 }

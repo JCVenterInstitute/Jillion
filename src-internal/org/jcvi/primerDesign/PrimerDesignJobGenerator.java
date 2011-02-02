@@ -10,7 +10,7 @@ import org.jcvi.io.*;
 import org.jcvi.Range;
 import org.jcvi.command.Command;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.fasta.NucleotideSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.primerDesign.domain.PrimerDesignTarget;
 
 
@@ -268,11 +268,11 @@ public class PrimerDesignJobGenerator {
     private File buildTemplateFastaDirectory(NucleotideSequenceFastaRecord templateFastaRecord) {
         File templateFastaDir = getTemplateDirectory();
         templateFastaDir.mkdirs();
-        File templateFastaFile = new File(templateFastaDir,templateFastaRecord.getIdentifier());
+        File templateFastaFile = new File(templateFastaDir,templateFastaRecord.getId());
         OutputStream out = null;
         try {
             out = new FileOutputStream(templateFastaFile);
-            out.write(templateFastaRecord.getStringRecord().toString().getBytes());
+            out.write(templateFastaRecord.toFormattedString().toString().getBytes());
             out.flush();
         } catch (Exception e) {
             throw new PrimerDesignerRequestJobCreationException(
@@ -293,7 +293,7 @@ public class PrimerDesignJobGenerator {
             for ( Iterator<NucleotideSequenceFastaRecord> fastaRecords = referenceFastaRecords.iterator();
                   fastaRecords.hasNext(); ) {
                 NucleotideSequenceFastaRecord fastaRecord = fastaRecords.next();
-                out.write(fastaRecord.getStringRecord().toString().getBytes());
+                out.write(fastaRecord.toFormattedString().toString().getBytes());
             }
             out.flush();
         } catch (Exception e) {

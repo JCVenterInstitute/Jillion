@@ -26,10 +26,10 @@ package org.jcvi.trace.sanger.traceArchive;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.fasta.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.fasta.DefaultPositionFastaFileDataStore;
-import org.jcvi.fasta.DefaultQualityFastaFileDataStore;
-import org.jcvi.fasta.FastaParser;
+import org.jcvi.fastX.fasta.FastaParser;
+import org.jcvi.fastX.fasta.pos.DefaultPositionFastaFileDataStore;
+import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -49,7 +49,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
             in = getInputStreamFor(TraceInfoField.PEAK_FILE);
             datastore =new DefaultPositionFastaFileDataStore();
             FastaParser.parseFasta(in, datastore);
-            return new Peaks(datastore.iterator().next().getValues().decode());
+            return new Peaks(datastore.iterator().next().getValue().decode());
         } catch (IOException e) {
             throw new IllegalArgumentException("peak file not valid",e);
         }
@@ -66,7 +66,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         try{
             in = getInputStreamFor(TraceInfoField.BASE_FILE);
             FastaParser.parseFasta(in, datastore);
-            return datastore.iterator().next().getValues();
+            return datastore.iterator().next().getValue();
         } catch (IOException e) {
             throw new IllegalArgumentException("basecall file not valid",e);
         }
@@ -83,7 +83,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         try{
             in = getInputStreamFor(TraceInfoField.QUAL_FILE);
             FastaParser.parseFasta(in, datastore);
-            return datastore.iterator().next().getValues();
+            return datastore.iterator().next().getValue();
         } catch (IOException e) {
             throw new IllegalArgumentException("quality file not valid",e);
         }

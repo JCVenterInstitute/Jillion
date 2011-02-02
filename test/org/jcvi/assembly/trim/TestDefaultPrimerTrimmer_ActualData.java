@@ -24,9 +24,9 @@ import java.io.IOException;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.fasta.DefaultNucleotideFastaRecordFactory;
-import org.jcvi.fasta.NucleotideFastaRecordDataStoreAdatper;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaRecordFactory;
+import org.jcvi.fastX.fasta.seq.NucleotideFastaRecordDataStoreAdatper;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.io.fileServer.ResourceFileServer;
@@ -58,7 +58,7 @@ public class TestDefaultPrimerTrimmer_ActualData {
         sequence = new DefaultNucleotideFastaFileDataStore(
                                 RESOURCES.getFile("files/fullLength.fasta"),
                                 DefaultNucleotideFastaRecordFactory.getInstance())
-                        .get("SAJJA07T27G07MP1F").getValues();
+                        .get("SAJJA07T27G07MP1F").getValue();
     }
     
     @Test

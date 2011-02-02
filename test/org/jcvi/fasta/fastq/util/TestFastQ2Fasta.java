@@ -26,16 +26,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.fasta.DefaultNucleotideFastaRecordFactory;
-import org.jcvi.fasta.DefaultQualityFastaFileDataStore;
-import org.jcvi.fasta.DefaultQualityFastaRecordFactory;
-import org.jcvi.fasta.FastaParser;
-import org.jcvi.fasta.NullFastXFilter;
-import org.jcvi.fasta.fastq.DefaultFastQFileDataStore;
-import org.jcvi.fasta.fastq.FastQFileParser;
-import org.jcvi.fasta.fastq.FastQQualityCodec;
-import org.jcvi.fasta.fastq.FastQRecord;
+import org.jcvi.fastX.NullFastXFilter;
+import org.jcvi.fastX.fasta.FastaParser;
+import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
+import org.jcvi.fastX.fasta.qual.DefaultQualityFastaRecordFactory;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaRecordFactory;
+import org.jcvi.fastX.fastq.DefaultFastQFileDataStore;
+import org.jcvi.fastX.fastq.FastQFileParser;
+import org.jcvi.fastX.fastq.FastQQualityCodec;
+import org.jcvi.fastX.fastq.FastQRecord;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -62,7 +62,7 @@ public class TestFastQ2Fasta {
     private int parseAndAssertFastQFile(ByteArrayOutputStream seqOut,
             ByteArrayOutputStream qualOut, Fastq2Fasta sut) throws IOException,
             FileNotFoundException, DataStoreException {
-        final File fastqFile = RESOURCES.getFile("../files/example.fastq");
+        final File fastqFile = RESOURCES.getFile("files/example.fastq");
         FastQFileParser.parse(fastqFile, sut);
         DefaultFastQFileDataStore fastqDataStore = new DefaultFastQFileDataStore(codec);
         FastQFileParser.parse(fastqFile, fastqDataStore);
@@ -77,8 +77,8 @@ public class TestFastQ2Fasta {
 
         for(FastQRecord fastQRecord : fastqDataStore){
             String id = fastQRecord.getId();
-            assertEquals("qualities",fastQRecord.getQualities().decode(), qualFastaDataStore.get(id).getValues().decode());
-            assertEquals("seq",fastQRecord.getNucleotides().decode(), seqFastaDataStore.get(id).getValues().decode());
+            assertEquals("qualities",fastQRecord.getQualities().decode(), qualFastaDataStore.get(id).getValue().decode());
+            assertEquals("seq",fastQRecord.getNucleotides().decode(), seqFastaDataStore.get(id).getValue().decode());
         }
         return fastqDataStore.size();
     }

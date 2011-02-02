@@ -27,7 +27,7 @@ import java.io.File;
 import java.sql.SQLException;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.SequenceFastaRecordUtil;
+import org.jcvi.fastX.fasta.SequenceFastaRecordUtil;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.DefaultNucleotideGlyphCodec;

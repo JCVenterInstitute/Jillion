@@ -2,8 +2,8 @@ package org.jcvi.primerDesign;
 
 import org.jcvi.Range;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.fasta.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.fasta.NucleotideSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.primerDesign.PrimerDesigner;
 import org.jcvi.primerDesign.domain.PrimerDesignTarget;

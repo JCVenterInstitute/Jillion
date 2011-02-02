@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
 
-import org.jcvi.fasta.DefaultNucleotideFastaRecordFactory;
-import org.jcvi.fasta.FastaRecordFactory;
-import org.jcvi.fasta.NucleotideSequenceFastaRecord;
-import org.jcvi.fasta.SequenceFastaRecordUtil;
+import org.jcvi.fastX.fasta.FastaRecordFactory;
+import org.jcvi.fastX.fasta.SequenceFastaRecordUtil;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaRecordFactory;
+import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 
 /*
  * {@code DefaultNucleotideFastaRecordIO} is the default implementation for

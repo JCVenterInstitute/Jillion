@@ -32,6 +32,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.fastX.fasta.FastaParser;
+import org.jcvi.fastX.fasta.FastaVisitor;
+import org.jcvi.fastX.fasta.seq.AbstractNucleotideFastaVisitor;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
 
@@ -73,11 +78,11 @@ public class ReverseComplimentFasta {
                 protected boolean visitNucleotideFastaRecord(
                         NucleotideSequenceFastaRecord fastaRecord) {
                     List<NucleotideGlyph> revcompliment =NucleotideGlyph.reverseCompliment(
-                            fastaRecord.getValues().decode());
+                            fastaRecord.getValue().decode());
                     try {
-                        out.write(new DefaultEncodedNucleotideFastaRecord(
-                                fastaRecord.getIdentifier(),
-                                fastaRecord.getComments(),
+                        out.write(new DefaultNucleotideEncodedSequenceFastaRecord(
+                                fastaRecord.getId(),
+                                fastaRecord.getComment(),
                                 revcompliment).toString().getBytes());
                     } catch (IOException e) {
                        throw new IllegalStateException("error writing to output fasta",e);

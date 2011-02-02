@@ -8,8 +8,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 
-import org.jcvi.fasta.NucleotideSequenceFastaRecord;
-import org.jcvi.fasta.PeptideSequenceFastaRecord;
+import org.jcvi.fastX.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.junit.Test;
 
 public class TestDefaultNucleotideAndPeptideFastaRecordIO {
@@ -40,11 +40,11 @@ public class TestDefaultNucleotideAndPeptideFastaRecordIO {
 	public void testNucleotideFastaRecordIO() {
 		int i = 0;
 		for (NucleotideSequenceFastaRecord f : nucFastaIO) {
-			assertFalse(f.getIdentifier() == null);
-			assertFalse(f.getComments() == null);
-			assertFalse(f.getValues().toString().length() < 100);
-			assertEquals(1775, f.getValues().decode().size());
-			assertEquals(1775, f.getValues().getLength());
+			assertFalse(f.getId() == null);
+			assertFalse(f.getComment() == null);
+			assertFalse(f.getValue().toString().length() < 100);
+			assertEquals(1775, f.getValue().decode().size());
+			assertEquals(1775, f.getValue().getLength());
 			i++;
 		}
 		assertEquals(1044, i);
@@ -53,11 +53,11 @@ public class TestDefaultNucleotideAndPeptideFastaRecordIO {
 	@Test
 	public void testPeptideFastaRecordReader() {
 		int i = 0;
-		for (PeptideSequenceFastaRecord f : pepFastaIO) {
-			assertFalse(f.getIdentifier() == null);
-			assertFalse(f.getComments() == null);
-			assertEquals(565, f.getValues().decode().size());
-			assertEquals(565, f.getValues().getLength());
+		for (AminoAcidSequenceFastaRecord f : pepFastaIO) {
+			assertFalse(f.getId() == null);
+			assertFalse(f.getComment() == null);
+			assertEquals(565, f.getValue().decode().size());
+			assertEquals(565, f.getValue().getLength());
 			i++;
 		}
 		assertEquals(1044, i);

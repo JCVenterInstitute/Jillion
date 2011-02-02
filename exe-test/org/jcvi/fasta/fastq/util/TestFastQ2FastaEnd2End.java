@@ -27,14 +27,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.fasta.DefaultQualityFastaFileDataStore;
-import org.jcvi.fasta.NucleotideFastaDataStore;
-import org.jcvi.fasta.QualityFastaDataStore;
-import org.jcvi.fasta.fastq.DefaultFastQFileDataStore;
-import org.jcvi.fasta.fastq.FastQDataStore;
-import org.jcvi.fasta.fastq.FastQQualityCodec;
-import org.jcvi.fasta.fastq.FastQRecord;
+import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
+import org.jcvi.fastX.fasta.qual.QualityFastaDataStore;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.fastX.fasta.seq.NucleotideFastaDataStore;
+import org.jcvi.fastX.fastq.DefaultFastQFileDataStore;
+import org.jcvi.fastX.fastq.FastQDataStore;
+import org.jcvi.fastX.fastq.FastQQualityCodec;
+import org.jcvi.fastX.fastq.FastQRecord;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.io.idReader.IdReaderException;
 import org.jcvi.testUtil.IntegrationTests;
@@ -86,11 +86,11 @@ public class TestFastQ2FastaEnd2End {
          
          assertEquals(2, filteredSeqDataStore.size());
          assertEquals(2, filteredQualityDataStore.size());
-         assertEquals(originalDataStore.get(id).getNucleotides().decode(),filteredSeqDataStore.get(id).getValues().decode());
-         assertEquals(originalDataStore.get(id).getQualities().decode(),filteredQualityDataStore.get(id).getValues().decode());
+         assertEquals(originalDataStore.get(id).getNucleotides().decode(),filteredSeqDataStore.get(id).getValue().decode());
+         assertEquals(originalDataStore.get(id).getQualities().decode(),filteredQualityDataStore.get(id).getValue().decode());
          
-         assertEquals(originalDataStore.get(otherId).getNucleotides().decode(),filteredSeqDataStore.get(otherId).getValues().decode());
-         assertEquals(originalDataStore.get(otherId).getQualities().decode(),filteredQualityDataStore.get(otherId).getValues().decode());
+         assertEquals(originalDataStore.get(otherId).getNucleotides().decode(),filteredSeqDataStore.get(otherId).getValue().decode());
+         assertEquals(originalDataStore.get(otherId).getQualities().decode(),filteredQualityDataStore.get(otherId).getValue().decode());
        
      }
      @Test
@@ -107,11 +107,11 @@ public class TestFastQ2FastaEnd2End {
         
         assertEquals(2, filteredSeqDataStore.size());
         assertEquals(2, filteredQualityDataStore.size());
-        assertEquals(originalDataStore.get(id).getNucleotides().decode(),filteredSeqDataStore.get(id).getValues().decode());
-        assertEquals(originalDataStore.get(id).getQualities().decode(),filteredQualityDataStore.get(id).getValues().decode());
+        assertEquals(originalDataStore.get(id).getNucleotides().decode(),filteredSeqDataStore.get(id).getValue().decode());
+        assertEquals(originalDataStore.get(id).getQualities().decode(),filteredQualityDataStore.get(id).getValue().decode());
         
-        assertEquals(originalDataStore.get(otherId).getNucleotides().decode(),filteredSeqDataStore.get(otherId).getValues().decode());
-        assertEquals(originalDataStore.get(otherId).getQualities().decode(),filteredQualityDataStore.get(otherId).getValues().decode());
+        assertEquals(originalDataStore.get(otherId).getNucleotides().decode(),filteredSeqDataStore.get(otherId).getValue().decode());
+        assertEquals(originalDataStore.get(otherId).getQualities().decode(),filteredQualityDataStore.get(otherId).getValue().decode());
   
      }
     
@@ -130,8 +130,8 @@ public class TestFastQ2FastaEnd2End {
          assertEquals(1, filteredQualityDataStore.size());
          assertFalse(filteredSeqDataStore.contains(otherId));
          assertFalse(filteredQualityDataStore.contains(otherId));
-         assertEquals(originalDataStore.get(id).getNucleotides().decode(),filteredSeqDataStore.get(id).getValues().decode());
-         assertEquals(originalDataStore.get(id).getQualities().decode(),filteredQualityDataStore.get(id).getValues().decode());
+         assertEquals(originalDataStore.get(id).getNucleotides().decode(),filteredSeqDataStore.get(id).getValue().decode());
+         assertEquals(originalDataStore.get(id).getQualities().decode(),filteredQualityDataStore.get(id).getValue().decode());
          
      }
      @Test
@@ -151,8 +151,8 @@ public class TestFastQ2FastaEnd2End {
          assertFalse(filteredSeqDataStore.contains(id));
          assertFalse(filteredQualityDataStore.contains(id));
          
-         assertEquals(originalDataStore.get(otherId).getNucleotides().decode(),filteredSeqDataStore.get(otherId).getValues().decode());
-         assertEquals(originalDataStore.get(otherId).getQualities().decode(),filteredQualityDataStore.get(otherId).getValues().decode());
+         assertEquals(originalDataStore.get(otherId).getNucleotides().decode(),filteredSeqDataStore.get(otherId).getValue().decode());
+         assertEquals(originalDataStore.get(otherId).getQualities().decode(),filteredQualityDataStore.get(otherId).getValue().decode());
         
      }
 }

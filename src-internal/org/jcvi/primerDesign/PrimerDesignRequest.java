@@ -1,6 +1,6 @@
 package org.jcvi.primerDesign;
 
-import org.jcvi.fasta.NucleotideSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.datastore.DataStore;
 
 import org.jcvi.primerDesign.domain.PrimerDesignTarget;
