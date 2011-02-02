@@ -2,7 +2,7 @@ package org.jcvi.io;
 
 import java.util.Iterator;
 
-import org.jcvi.fasta.NucleotideSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 
 
 /*

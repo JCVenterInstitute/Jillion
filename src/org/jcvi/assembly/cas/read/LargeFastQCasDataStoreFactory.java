@@ -30,12 +30,12 @@ import org.jcvi.assembly.cas.CasTrimMap;
 import org.jcvi.assembly.cas.EmptyCasTrimMap;
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.DataStoreFilter;
-import org.jcvi.fasta.fastq.FastQDataStore;
-import org.jcvi.fasta.fastq.FastQNucleotideDataStoreAdapter;
-import org.jcvi.fasta.fastq.FastQQualitiesDataStoreAdapter;
-import org.jcvi.fasta.fastq.FastQQualityCodec;
-import org.jcvi.fasta.fastq.FastQRecord;
-import org.jcvi.fasta.fastq.LargeFastQFileDataStore;
+import org.jcvi.fastX.fastq.FastQDataStore;
+import org.jcvi.fastX.fastq.FastQNucleotideDataStoreAdapter;
+import org.jcvi.fastX.fastq.FastQQualitiesDataStoreAdapter;
+import org.jcvi.fastX.fastq.FastQQualityCodec;
+import org.jcvi.fastX.fastq.FastQRecord;
+import org.jcvi.fastX.fastq.LargeFastQFileDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 

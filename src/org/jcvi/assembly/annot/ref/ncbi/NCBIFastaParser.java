@@ -28,19 +28,19 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
 import org.jcvi.io.IOUtil;
 
 public class NCBIFastaParser {
 
     private static Pattern FASTA_PATTERN = Pattern.compile("<div\\s+class='recordbody'>>(\\S+)\\s+(.*?)([A,C,G,T,-,N,M,K,B,D,H,V,R,Y,S,W]+)\\s*</div>");
     
-    public static DefaultEncodedNucleotideFastaRecord parseFastaFrom(InputStream ncbiFastaPage) throws IOException{
+    public static DefaultNucleotideEncodedSequenceFastaRecord parseFastaFrom(InputStream ncbiFastaPage) throws IOException{
         String response = IOUtil.readStream(ncbiFastaPage);
         Matcher matcher = FASTA_PATTERN.matcher(response);
         if(matcher.find()){
             final String bases = matcher.group(3).replaceAll("\\s+", "");
-            return new DefaultEncodedNucleotideFastaRecord(matcher.group(1),matcher.group(2),bases);
+            return new DefaultNucleotideEncodedSequenceFastaRecord(matcher.group(1),matcher.group(2),bases);
         }
         throw new RuntimeException("could not parse fasta data from ncbi");
     }

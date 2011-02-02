@@ -29,6 +29,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.fastX.fasta.FastaParser;
+import org.jcvi.fastX.fasta.FastaVisitor;
+import org.jcvi.fastX.fasta.seq.AbstractNucleotideFastaVisitor;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.io.IOUtil;
 
 /**
@@ -67,8 +72,8 @@ public class ConvertGappedFasta2UngappedFasta {
                 protected boolean visitNucleotideFastaRecord(
                         NucleotideSequenceFastaRecord fastaRecord) {
                     NucleotideSequenceFastaRecord ungapped =
-                        new DefaultEncodedNucleotideFastaRecord(fastaRecord.getIdentifier(), fastaRecord.getComments(),
-                                fastaRecord.getValues().decodeUngapped());
+                        new DefaultNucleotideEncodedSequenceFastaRecord(fastaRecord.getId(), fastaRecord.getComment(),
+                                fastaRecord.getValue().decodeUngapped());
                     output.print(ungapped);
                     return true;
                     

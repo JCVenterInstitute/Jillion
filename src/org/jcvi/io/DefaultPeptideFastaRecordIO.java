@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
 
-import org.jcvi.fasta.DefaultEncodedPeptideFastaRecord;
-import org.jcvi.fasta.PeptideSequenceFastaRecord;
-import org.jcvi.fasta.SequenceFastaRecordUtil;
+import org.jcvi.fastX.fasta.SequenceFastaRecordUtil;
+import org.jcvi.fastX.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.fastX.fasta.aa.DefaultAminoAcidEncodedSequenceFastaRecord;
 
 /*
  * {@code DefaultPeptideFastaRecordIO} is the default implementation for
@@ -17,7 +17,7 @@ import org.jcvi.fasta.SequenceFastaRecordUtil;
  * @author naxelrod
  */
  
-public class DefaultPeptideFastaRecordIO extends AbstractObjectIO<PeptideSequenceFastaRecord> implements PeptideFastaRecordIO {
+public class DefaultPeptideFastaRecordIO extends AbstractObjectIO<AminoAcidSequenceFastaRecord> implements PeptideFastaRecordIO {
 
 	public DefaultPeptideFastaRecordIO() {
 		super();
@@ -36,11 +36,11 @@ public class DefaultPeptideFastaRecordIO extends AbstractObjectIO<PeptideSequenc
 	}
 
 	@Override
-	public Iterator<PeptideSequenceFastaRecord> iterator() {
+	public Iterator<AminoAcidSequenceFastaRecord> iterator() {
 
-		return new Iterator<PeptideSequenceFastaRecord>() {
+		return new Iterator<AminoAcidSequenceFastaRecord>() {
 			
-			private PeptideSequenceFastaRecord currentRecord = null;
+			private AminoAcidSequenceFastaRecord currentRecord = null;
 	        private String currentId=null;
 	        private String currentComment=null;
 			
@@ -53,9 +53,9 @@ public class DefaultPeptideFastaRecordIO extends AbstractObjectIO<PeptideSequenc
 			}
 
 			@Override
-			public PeptideSequenceFastaRecord next() {
+			public AminoAcidSequenceFastaRecord next() {
 				if (currentRecord != null) {
-					PeptideSequenceFastaRecord tmp = currentRecord;
+					AminoAcidSequenceFastaRecord tmp = currentRecord;
 					currentRecord = null;
 					return tmp;
 				}
@@ -68,9 +68,9 @@ public class DefaultPeptideFastaRecordIO extends AbstractObjectIO<PeptideSequenc
 					while ((line = input.readLine()) != null) {
 						if(line.startsWith(">"))
 						{
-							PeptideSequenceFastaRecord prevRecord = null;
+							AminoAcidSequenceFastaRecord prevRecord = null;
 							if(currentBody != null){
-								prevRecord = new DefaultEncodedPeptideFastaRecord(currentId, currentComment, currentBody.toString());
+								prevRecord = new DefaultAminoAcidEncodedSequenceFastaRecord(currentId, currentComment, currentBody.toString());
 								currentBody = null;
 							}
 							currentId = SequenceFastaRecordUtil.parseIdentifierFromIdLine(line);
@@ -92,7 +92,7 @@ public class DefaultPeptideFastaRecordIO extends AbstractObjectIO<PeptideSequenc
 				
 				// Handle last record
 				if (currentBody != null) {
-					return new DefaultEncodedPeptideFastaRecord(currentId, currentComment, currentBody.toString()); 
+					return new DefaultAminoAcidEncodedSequenceFastaRecord(currentId, currentComment, currentBody.toString()); 
 				}
 				return null;
 			}

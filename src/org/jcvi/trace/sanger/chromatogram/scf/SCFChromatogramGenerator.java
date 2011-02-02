@@ -10,6 +10,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.fasta.*;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -94,8 +96,8 @@ public class SCFChromatogramGenerator {
                         File scfFile = new File(outputDir,id+".scf");
                         generator.createSCFChromatogram(scfFile,
                                                         id,
-                                                        sequences.get(id).getValues(),
-                                                        qualities.get(id).getValues());
+                                                        sequences.get(id).getValue(),
+                                                        qualities.get(id).getValue());
                     } catch (Exception e) {
                         System.err.println("ERROR: Unexpected error creating scf file for sequence " + id);
                         e.printStackTrace();

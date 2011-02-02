@@ -27,7 +27,7 @@ import java.io.File;
 import java.sql.SQLException;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.QualityFastaRecordUtil;
+import org.jcvi.fastX.fasta.qual.QualityFastaRecordUtil;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
@@ -73,7 +73,7 @@ public class H2QualityDataStore extends AbstractH2EncodedGlyphDataStore<PhredQua
         try {
             this.insertRecord(id,
                     CODEC.encode(
-                            QualityFastaRecordUtil.buildFastaRecord(id,null,positions).getValues().decode()));
+                            QualityFastaRecordUtil.buildFastaRecord(id,null,positions).getValue().decode()));
         } catch (SQLException e) {
             throw new DataStoreException("error inserting qualities for "+id, e);
         }

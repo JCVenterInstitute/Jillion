@@ -38,7 +38,7 @@ import org.jcvi.datastore.ContigDataStore;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultContigFileDataStore;
-import org.jcvi.fasta.fastq.FastQQualityCodec;
+import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;

@@ -76,9 +76,9 @@ public class TestDefaultNcbiGappedFastaRecord {
             "AAAAATAAAAGCATTAGTAGAAATTTGTACAGAACTGGAAAAGGAAGGAAAAATTTCAAA\n"+
             "AATTGGGCCTGAAAACCCATACAATACTCCGGG";
         
-        assertThat(sut.getIdentifier(), is(equalTo(id)));
-        assertThat(sut.getComments(), is(equalTo(comments)));
-        assertThat(sut.getStringRecord().toString(), is(equalTo(expectedFastaRecord)));
+        assertThat(sut.getId(), is(equalTo(id)));
+        assertThat(sut.getComment(), is(equalTo(comments)));
+        assertThat(sut.toFormattedString().toString(), is(equalTo(expectedFastaRecord)));
         StringBuilder concatenatedSequenceBuilder = new StringBuilder("AAATGCATGGGTAAAAGTAGTAGAAGAGAAGGCTTTTAGCCCAGAAGTAATACCCATGTTTTCAGCATTAGGAAAAAGGGCTGTTG");
         for(int i=0; i<100; i++){
             concatenatedSequenceBuilder.append("-");
@@ -90,7 +90,7 @@ public class TestDefaultNcbiGappedFastaRecord {
         concatenatedSequenceBuilder.append("AAAAATAAAAGCATTAGTAGAAATTTGTACAGAACTGGAAAAGGAAGGAAAAATTTCAAAAATTGGGCCTGAAAACCCATACAATACTCCGGG");
         NucleotideEncodedGlyphs concatenatedSequence = new DefaultNucleotideEncodedGlyphs(concatenatedSequenceBuilder.toString());
         
-        assertThat(sut.getValues(), is(equalTo(concatenatedSequence)));
+        assertThat(sut.getValue(), is(equalTo(concatenatedSequence)));
     }
     @Test
     public void nullComments(){
@@ -114,9 +114,9 @@ public class TestDefaultNcbiGappedFastaRecord {
             "AAAAATAAAAGCATTAGTAGAAATTTGTACAGAACTGGAAAAGGAAGGAAAAATTTCAAA\n"+
             "AATTGGGCCTGAAAACCCATACAATACTCCGGG";
         
-        assertThat(noComments.getIdentifier(), is(equalTo(id)));
-        assertThat(noComments.getComments(), is(nullValue()));
-        assertThat(noComments.getStringRecord().toString(), is(equalTo(expectedFastaRecord)));
+        assertThat(noComments.getId(), is(equalTo(id)));
+        assertThat(noComments.getComment(), is(nullValue()));
+        assertThat(noComments.toFormattedString().toString(), is(equalTo(expectedFastaRecord)));
         StringBuilder concatenatedSequenceBuilder = new StringBuilder("AAATGCATGGGTAAAAGTAGTAGAAGAGAAGGCTTTTAGCCCAGAAGTAATACCCATGTTTTCAGCATTAGGAAAAAGGGCTGTTG");
         for(int i=0; i<100; i++){
             concatenatedSequenceBuilder.append("-");
@@ -128,7 +128,7 @@ public class TestDefaultNcbiGappedFastaRecord {
         concatenatedSequenceBuilder.append("AAAAATAAAAGCATTAGTAGAAATTTGTACAGAACTGGAAAAGGAAGGAAAAATTTCAAAAATTGGGCCTGAAAACCCATACAATACTCCGGG");
         NucleotideEncodedGlyphs concatenatedSequence = new DefaultNucleotideEncodedGlyphs(concatenatedSequenceBuilder.toString());
         
-        assertThat(noComments.getValues(), is(equalTo(concatenatedSequence)));
+        assertThat(noComments.getValue(), is(equalTo(concatenatedSequence)));
     }
     @Test
     public void sequencesBuiltWithStrings(){
@@ -152,9 +152,9 @@ public class TestDefaultNcbiGappedFastaRecord {
             "AAAAATAAAAGCATTAGTAGAAATTTGTACAGAACTGGAAAAGGAAGGAAAAATTTCAAA\n"+
             "AATTGGGCCTGAAAACCCATACAATACTCCGGG";
         
-        assertThat(noComments.getIdentifier(), is(equalTo(id)));
-        assertThat(noComments.getComments(), is(nullValue()));
-        assertThat(noComments.getStringRecord().toString(), is(equalTo(expectedFastaRecord)));
+        assertThat(noComments.getId(), is(equalTo(id)));
+        assertThat(noComments.getComment(), is(nullValue()));
+        assertThat(noComments.toFormattedString().toString(), is(equalTo(expectedFastaRecord)));
         StringBuilder concatenatedSequenceBuilder = new StringBuilder("AAATGCATGGGTAAAAGTAGTAGAAGAGAAGGCTTTTAGCCCAGAAGTAATACCCATGTTTTCAGCATTAGGAAAAAGGGCTGTTG");
         for(int i=0; i<100; i++){
             concatenatedSequenceBuilder.append("-");
@@ -166,7 +166,7 @@ public class TestDefaultNcbiGappedFastaRecord {
         concatenatedSequenceBuilder.append("AAAAATAAAAGCATTAGTAGAAATTTGTACAGAACTGGAAAAGGAAGGAAAAATTTCAAAAATTGGGCCTGAAAACCCATACAATACTCCGGG");
         NucleotideEncodedGlyphs concatenatedSequence = new DefaultNucleotideEncodedGlyphs(concatenatedSequenceBuilder.toString());
         
-        assertThat(noComments.getValues(), is(equalTo(concatenatedSequence)));
+        assertThat(noComments.getValue(), is(equalTo(concatenatedSequence)));
     }
     @Test(expected = IllegalStateException.class)
     public void moreGapsThanSequencesShouldThrowIllegalStateException(){

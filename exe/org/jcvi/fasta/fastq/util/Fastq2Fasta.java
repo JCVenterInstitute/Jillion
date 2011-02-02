@@ -36,16 +36,16 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
-import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
-import org.jcvi.fasta.DefaultQualityFastaRecord;
-import org.jcvi.fasta.ExcludeFastXIdFilter;
-import org.jcvi.fasta.FastXFilter;
-import org.jcvi.fasta.IncludeFastXIdFilter;
-import org.jcvi.fasta.NullFastXFilter;
-import org.jcvi.fasta.fastq.AbstractFastQFileVisitor;
-import org.jcvi.fasta.fastq.FastQFileParser;
-import org.jcvi.fasta.fastq.FastQQualityCodec;
-import org.jcvi.fasta.fastq.FastQRecord;
+import org.jcvi.fastX.ExcludeFastXIdFilter;
+import org.jcvi.fastX.FastXFilter;
+import org.jcvi.fastX.IncludeFastXIdFilter;
+import org.jcvi.fastX.NullFastXFilter;
+import org.jcvi.fastX.fasta.qual.DefaultQualityFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fastq.AbstractFastQFileVisitor;
+import org.jcvi.fastX.fastq.FastQFileParser;
+import org.jcvi.fastX.fastq.FastQQualityCodec;
+import org.jcvi.fastX.fastq.FastQRecord;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.idReader.DefaultFileIdReader;
@@ -108,7 +108,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
     public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
         if(seqOut!=null && shouldWrite){
             try {
-                seqOut.write(new DefaultEncodedNucleotideFastaRecord( currentId,currentComment,nucleotides) 
+                seqOut.write(new DefaultNucleotideEncodedSequenceFastaRecord( currentId,currentComment,nucleotides) 
                         .toString().getBytes());
             } catch (IOException e) {
                 throw new RuntimeException("could not write to sequence data for "+ currentId, e);

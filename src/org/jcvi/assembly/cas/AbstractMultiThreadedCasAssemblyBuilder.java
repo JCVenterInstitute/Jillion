@@ -39,7 +39,7 @@ import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.cas.read.DefaultCasFileReadIndexToContigLookup;
 import org.jcvi.command.Command;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
@@ -261,7 +261,7 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
         @Override
         public Void call() throws IOException, DataStoreException{
             consensusOutputStream.write(
-                    new DefaultEncodedNucleotideFastaRecord(aceContig.getId(),
+                    new DefaultNucleotideEncodedSequenceFastaRecord(aceContig.getId(),
                     NucleotideGlyph.convertToString(NucleotideGlyph.convertToUngapped(aceContig.getConsensus().decode()))).toString().getBytes());
             AceFileWriter.writeAceFile(aceContig, phdDataStore, aceOutputStream);
             return null;

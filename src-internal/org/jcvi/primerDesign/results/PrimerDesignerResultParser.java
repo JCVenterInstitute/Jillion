@@ -1,8 +1,8 @@
 package org.jcvi.primerDesign.results;
 
-import org.jcvi.fasta.FastaParser;
-import org.jcvi.fasta.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.fasta.NucleotideSequenceFastaRecord;
+import org.jcvi.fastX.fasta.FastaParser;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.Range;
 
@@ -54,9 +54,9 @@ public class PrimerDesignerResultParser {
                 PrimerDesignResult.Builder builder = new PrimerDesignResult.Builder(file);
 
                 builder.setParentID(parentID);
-                builder.setPrimerSequence(primerFasta.getValues());
+                builder.setPrimerSequence(primerFasta.getValue());
 
-                String primerIdString = primerFasta.getIdentifier();
+                String primerIdString = primerFasta.getId();
                 Matcher idMatcher = PRIMER_PAIR_ID_PATTERN.matcher(primerIdString);
                 if ( idMatcher.matches() ) {
                     builder.setDesignGroupID(idMatcher.group(1));
@@ -64,7 +64,7 @@ public class PrimerDesignerResultParser {
                     builder.setDesignGroupID(primerIdString);
                 }
 
-                Map<String,String> elements = parseComments(primerFasta.getComments());
+                Map<String,String> elements = parseComments(primerFasta.getComment());
 
                 SequenceDirection orientation =
                     "-1".equals(elements.get("orientation")) ? SequenceDirection.REVERSE : SequenceDirection.FORWARD;

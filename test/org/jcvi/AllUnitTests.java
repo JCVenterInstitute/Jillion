@@ -32,7 +32,7 @@ import org.jcvi.assembly.ace.AllAceUnitTests;
 import org.jcvi.auth.AllAuthUnitTests;
 import org.jcvi.command.AllCommandUnitTests;
 import org.jcvi.datastore.AllDataStoreUnitTests;
-import org.jcvi.fasta.AllFastaUnitTests;
+import org.jcvi.fastX.AllFastXTests;
 import org.jcvi.glyph.AllGlyphUnitTests;
 import org.jcvi.glyph.qualClass.AllQualityClassUnitTests;
 import org.jcvi.http.AllHttpUnitTests;
@@ -63,7 +63,7 @@ import org.junit.runners.Suite.SuiteClasses;
         
         AllHttpUnitTests.class,
         AllGlyphUnitTests.class,
-        AllFastaUnitTests.class,
+        AllFastXTests.class,
         AllAceUnitTests.class,
         AllQualityClassUnitTests.class,
         AllSequencingTests.class,

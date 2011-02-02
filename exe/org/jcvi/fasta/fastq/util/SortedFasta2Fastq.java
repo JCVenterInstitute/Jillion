@@ -35,22 +35,22 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
-import org.jcvi.fasta.AbstractFastaVisitor;
-import org.jcvi.fasta.DefaultEncodedNucleotideFastaRecord;
-import org.jcvi.fasta.ExcludeFastXIdFilter;
-import org.jcvi.fasta.FastXFilter;
-import org.jcvi.fasta.FastaParser;
-import org.jcvi.fasta.FastaRecord;
-import org.jcvi.fasta.FastaVisitor;
-import org.jcvi.fasta.IncludeFastXIdFilter;
-import org.jcvi.fasta.NucleotideSequenceFastaRecord;
-import org.jcvi.fasta.NullFastXFilter;
-import org.jcvi.fasta.QualityFastaRecord;
-import org.jcvi.fasta.QualityFastaRecordUtil;
-import org.jcvi.fasta.fastq.DefaultFastQRecord;
-import org.jcvi.fasta.fastq.FastQQualityCodec;
-import org.jcvi.fasta.fastq.FastQRecord;
-import org.jcvi.fasta.fastq.FastQUtil;
+import org.jcvi.fastX.ExcludeFastXIdFilter;
+import org.jcvi.fastX.FastXFilter;
+import org.jcvi.fastX.IncludeFastXIdFilter;
+import org.jcvi.fastX.NullFastXFilter;
+import org.jcvi.fastX.fasta.AbstractFastaVisitor;
+import org.jcvi.fastX.fasta.FastaParser;
+import org.jcvi.fastX.fasta.FastaRecord;
+import org.jcvi.fastX.fasta.FastaVisitor;
+import org.jcvi.fastX.fasta.qual.QualityFastaRecord;
+import org.jcvi.fastX.fasta.qual.QualityFastaRecordUtil;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
+import org.jcvi.fastX.fastq.DefaultFastQRecord;
+import org.jcvi.fastX.fastq.FastQQualityCodec;
+import org.jcvi.fastX.fastq.FastQRecord;
+import org.jcvi.fastX.fastq.FastQUtil;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.Glyph;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -82,7 +82,7 @@ public class SortedFasta2Fastq {
      * This is our end of file token which tell us we are
      * done parsing by the time we get to this object in our seq queue.
      */
-    private static final DefaultEncodedNucleotideFastaRecord SEQ_END_OF_FILE = new DefaultEncodedNucleotideFastaRecord("NULL", null, "A");
+    private static final DefaultNucleotideEncodedSequenceFastaRecord SEQ_END_OF_FILE = new DefaultNucleotideEncodedSequenceFastaRecord("NULL", null, "A");
     
     private static final int DEFAULT_QUEUE_SIZE = 1000;
     
@@ -180,7 +180,7 @@ public class SortedFasta2Fastq {
                 public boolean visitRecord(String id, String comment, String entireBody) {
                     if(getFilter().accept(id)){
                         try {
-                            getQueue().put(new DefaultEncodedNucleotideFastaRecord(id, comment, entireBody));
+                            getQueue().put(new DefaultNucleotideEncodedSequenceFastaRecord(id, comment, entireBody));
                         } catch (InterruptedException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -309,16 +309,16 @@ public class SortedFasta2Fastq {
                        throw new IllegalStateException("more quality records than sequences");
                    }
                    
-                   if(!seqFasta.getIdentifier().equals(qualityFasta.getIdentifier())){
+                   if(!seqFasta.getId().equals(qualityFasta.getId())){
                        throw new IllegalStateException(String.format(
                                "seq and qual records are not in the same order: seq= %s qual = %s",
-                               seqFasta.getIdentifier(),
-                               qualityFasta.getIdentifier()));
+                               seqFasta.getId(),
+                               qualityFasta.getId()));
                        
                    }
                  //here we have a valid seq and qual
-                   FastQRecord fastq = new DefaultFastQRecord(seqFasta.getIdentifier(), 
-                           seqFasta.getValues(), qualityFasta.getValues(),null);
+                   FastQRecord fastq = new DefaultFastQRecord(seqFasta.getId(), 
+                           seqFasta.getValue(), qualityFasta.getValue(),null);
 
                    writer.print(FastQUtil.encode(fastq, fastqQualityCodec));
                }
