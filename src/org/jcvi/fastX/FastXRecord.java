@@ -16,36 +16,30 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/**
- * 
- */
-package org.jcvi.fastX.fasta;
 
-import org.jcvi.fastX.FastXRecord;
-
+package org.jcvi.fastX;
 
 /**
- * {@code FastaRecord} is an interface for interacting
- * with a single FASTA record.
+ * {@code FastXRecord} is an interface for interacting
+ * with a single record in a fastX format.
  * @param <T> the type used as the value of the record
- * @author jsitz
  * @author dkatzel
  */
-public interface FastaRecord<T> extends FastXRecord<T>
+public interface FastXRecord<T>
 {
-    
     /**
-     * Gets the entire formatted fasta record as a {@link CharSequence}.
+     * Get the Id of this record.
+     * @return A <code>String</code>.
      */
-    CharSequence toFormattedString();
+    String getId();
 
-    long getChecksum();
     /**
-     * Gets the entire formatted fasta record as a String.
-     * @return a correctly formatted FASTA record
-     * as a String.
+     * Get the comment (if any) associated with this record.
+     * @return A <code>String</code> of the comment
+     * or {@code null} if there is no comment.
      */
-    @Override
-    String toString();
+    String getComment();
+    
+    T getValue();
 
 }

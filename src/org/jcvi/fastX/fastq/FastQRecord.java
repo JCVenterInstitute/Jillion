@@ -23,11 +23,12 @@
  */
 package org.jcvi.fastX.fastq;
 
+import org.jcvi.fastX.FastXRecord;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
-public interface FastQRecord {
+public interface FastQRecord extends FastXRecord<NucleotideEncodedGlyphs>{
 
     String getId();
     String getComment();

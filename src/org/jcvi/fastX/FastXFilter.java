@@ -28,7 +28,7 @@ import org.jcvi.datastore.DataStoreFilter;
  */
 public interface FastXFilter extends DataStoreFilter{
     /**
-     * filters the fastX record with the given read id and optional comment.
+     * Filters the fastX record with the given read id and optional comment.
      * @param id the id of the read to possibly filter.
      * @param optionalComment the comment of the read, will be {@code null}
      * if no comment exists.
