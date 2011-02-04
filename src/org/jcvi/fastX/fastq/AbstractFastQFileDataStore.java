@@ -31,12 +31,13 @@ import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.util.CloseableIterator;
 
 public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends AbstractFastQFileVisitor<T> implements FastQDataStore<T>{
 
     private String currentId, currentComment;
-    private EncodedGlyphs<PhredQuality> qualities;
+    private QualityEncodedGlyphs qualities;
     private NucleotideEncodedGlyphs nucleotides;
     protected final FastQQualityCodec qualityCodec;
     private boolean isClosed =false;
@@ -80,7 +81,7 @@ public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends 
     protected abstract boolean visitFastQRecord(
             String id, 
             NucleotideEncodedGlyphs nucleotides,
-            EncodedGlyphs<PhredQuality> qualities,
+            QualityEncodedGlyphs qualities,
             String optionalComment);
     @Override
     public boolean visitBeginBlock(String id, String optionalComment) {

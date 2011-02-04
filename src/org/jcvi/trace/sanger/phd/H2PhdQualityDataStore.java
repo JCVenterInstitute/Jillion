@@ -29,6 +29,7 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
 /**
  * {@code H2PhdQualityDataStore} is a {@link QualityDataStore}
@@ -37,7 +38,7 @@ import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
  *
  *
  */
-public class H2PhdQualityDataStore extends AbstractH2PhdDataStore<PhredQuality, EncodedGlyphs<PhredQuality>> implements QualityDataStore{
+public class H2PhdQualityDataStore extends AbstractH2PhdDataStore<PhredQuality, QualityEncodedGlyphs> implements QualityDataStore{
     public H2PhdQualityDataStore(File phdFile,H2QualityDataStore qualityDataStore) throws FileNotFoundException{
         super(phdFile, qualityDataStore);
     }

@@ -23,19 +23,18 @@
  */
 package org.jcvi.fastX.fastq;
 
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 
 public class DefaultFastQRecord implements FastQRecord {
 
     private final String id;
     private final String comments;
     private final NucleotideEncodedGlyphs nucleotides;
-    private final EncodedGlyphs<PhredQuality> qualities;
+    private final QualityEncodedGlyphs qualities;
     
     public DefaultFastQRecord(String id, NucleotideEncodedGlyphs nucleotides,
-            EncodedGlyphs<PhredQuality> qualities){
+            QualityEncodedGlyphs qualities){
         this(id, nucleotides, qualities,null);
     }
     /**
@@ -45,7 +44,7 @@ public class DefaultFastQRecord implements FastQRecord {
      * @param comments
      */
     public DefaultFastQRecord(String id, NucleotideEncodedGlyphs nucleotides,
-            EncodedGlyphs<PhredQuality> qualities, String comments) {
+            QualityEncodedGlyphs qualities, String comments) {
         this.id = id;
         this.nucleotides = nucleotides;
         this.qualities = qualities;
@@ -77,7 +76,7 @@ public class DefaultFastQRecord implements FastQRecord {
     }
 
     @Override
-    public EncodedGlyphs<PhredQuality> getQualities() {
+    public QualityEncodedGlyphs getQualities() {
         return qualities;
     }
     @Override

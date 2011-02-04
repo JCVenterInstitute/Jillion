@@ -28,8 +28,9 @@ import org.jcvi.fastX.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 
-public class QualityFastaRecordDataStoreAdapter extends FastaRecordDataStoreAdapter<EncodedGlyphs<PhredQuality>,QualityFastaRecord> implements QualityDataStore{
+public class QualityFastaRecordDataStoreAdapter extends FastaRecordDataStoreAdapter<QualityEncodedGlyphs,QualityFastaRecord> implements QualityDataStore{
     /**
      * Convert of {@code DataStore<F>} into a DataStore{@code DataStore<T>}
      * @param datastoreOfFastaRecords the DataStore of F to wrap.

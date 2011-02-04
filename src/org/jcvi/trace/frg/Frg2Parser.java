@@ -36,7 +36,9 @@ import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.MateOrientation;
 
@@ -143,7 +145,7 @@ public class Frg2Parser {
         }
         else{
             NucleotideEncodedGlyphs bases = FragmentUtil.parseBasesFrom(frg);
-            EncodedGlyphs<PhredQuality> qualities = parseEncodedQualitiesFrom(frg);
+            QualityEncodedGlyphs qualities = parseEncodedQualitiesFrom(frg);
             Range validRange =  FragmentUtil.parseValidRangeFrom(frg);
             Range vectorClearRange = parseVectorClearRangeFrom(frg);
             if(vectorClearRange == null && validRange !=null){
@@ -188,9 +190,9 @@ public class Frg2Parser {
     }
     
    
-    private EncodedGlyphs<PhredQuality> parseEncodedQualitiesFrom(String frg) {
+    private QualityEncodedGlyphs parseEncodedQualitiesFrom(String frg) {
        
-        return  new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,
+        return  new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
                 FragmentUtil.parseEncodedQualitiesFrom(frg));        
     }
     

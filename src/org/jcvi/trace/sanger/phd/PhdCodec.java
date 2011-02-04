@@ -45,7 +45,9 @@ import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.TraceDecoderException;
@@ -55,7 +57,7 @@ public class PhdCodec implements SangerTraceCodec<Phd>{
 
     private static final int INITIAL_LIST_SIZE = 700;
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
-    private static final GlyphCodec<PhredQuality> QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
+    private static final QualityGlyphCodec QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
 
     private static final String BEGIN_SEQUENCE = "BEGIN_SEQUENCE";
     private static final String BEGIN_COMMENT = "BEGIN_COMMENT";
@@ -109,7 +111,7 @@ public class PhdCodec implements SangerTraceCodec<Phd>{
         }
         return new DefaultPhd(
                 new DefaultNucleotideEncodedGlyphs(bases),
-                new DefaultEncodedGlyphs<PhredQuality>(QUALITY_CODEC, qualities),
+                new DefaultQualityEncodedGlyphs(QUALITY_CODEC, qualities),
                 new Peaks(peaks),
                 comments,
                 Collections.<PhdTag>emptyList());

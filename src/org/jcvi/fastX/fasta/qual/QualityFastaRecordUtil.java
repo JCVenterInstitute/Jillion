@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
 public final class QualityFastaRecordUtil {
@@ -42,7 +43,7 @@ public final class QualityFastaRecordUtil {
             String identifier, String comment, CharSequence sequence) {
         List<PhredQuality> qualities = parseQualities(sequence);
         return new DefaultQualityFastaRecord(identifier, comment, 
-                new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,qualities));
+                new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,qualities));
     }
 
     public static List<PhredQuality> parseQualities(CharSequence sequence) {

@@ -31,6 +31,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.util.CloseableIterator;
 
 /**
@@ -43,14 +44,14 @@ import org.jcvi.util.CloseableIterator;
 public class QualityDataStoreAdapter implements QualityDataStore
 {
     /** The datastore being wrapped and adapted. */
-    private final DataStore<EncodedGlyphs<PhredQuality>> datastore;
+    private final DataStore<QualityEncodedGlyphs> datastore;
 
     /**
      * Constructs a new <code>QualityDataStoreAdapter</code>.
      *
      * @param datastore The {@link DataStore} being wrapped and adapted.
      */
-    public QualityDataStoreAdapter(DataStore<EncodedGlyphs<PhredQuality>> datastore)
+    public QualityDataStoreAdapter(DataStore<QualityEncodedGlyphs> datastore)
     {
         super();
 
@@ -70,7 +71,7 @@ public class QualityDataStoreAdapter implements QualityDataStore
      * @see org.jcvi.datastore.DataStore#get(java.lang.String)
      */
     @Override
-    public EncodedGlyphs<PhredQuality> get(String id) throws DataStoreException
+    public QualityEncodedGlyphs get(String id) throws DataStoreException
     {
         return this.datastore.get(id);
     }
@@ -106,7 +107,7 @@ public class QualityDataStoreAdapter implements QualityDataStore
      * @see java.lang.Iterable#iterator()
      */
     @Override
-    public CloseableIterator<EncodedGlyphs<PhredQuality>> iterator()
+    public CloseableIterator<QualityEncodedGlyphs> iterator()
     {
         return this.datastore.iterator();
     }

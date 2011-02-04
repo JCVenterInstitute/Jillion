@@ -27,6 +27,7 @@ import org.jcvi.Range;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
@@ -182,7 +183,7 @@ public class ZTRChromatogramFile implements ZTRChromatogramFileVisitor, ZTRChrom
     * {@inheritDoc}
     */
     @Override
-    public EncodedGlyphs<PhredQuality> getQualities() {
+    public QualityEncodedGlyphs getQualities() {
         return delegate.getQualities();
     }
 

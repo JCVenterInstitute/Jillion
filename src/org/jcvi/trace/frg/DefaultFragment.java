@@ -28,13 +28,14 @@ import org.jcvi.Range;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Library;
 import org.jcvi.trace.Trace;
 
 public class DefaultFragment implements Fragment{
     private final String id;
     private final NucleotideEncodedGlyphs bases;
-    private final EncodedGlyphs<PhredQuality> qualities;
+    private final QualityEncodedGlyphs qualities;
     private final Range validRange, vectorClearRange;
     private final String comment;
     private final Library library;
@@ -51,7 +52,7 @@ public class DefaultFragment implements Fragment{
         this(id, trace,Range.buildRangeOfLength(0,trace.getBasecalls().getLength()),library);
     }
     public DefaultFragment(String id, NucleotideEncodedGlyphs bases,
-            EncodedGlyphs<PhredQuality> qualities,Range validRange,Range vectorClearRange, Library library,String comment){
+            QualityEncodedGlyphs qualities,Range validRange,Range vectorClearRange, Library library,String comment){
         if(id ==null){
             throw new IllegalArgumentException("id can not be null");
         }
@@ -71,7 +72,7 @@ public class DefaultFragment implements Fragment{
     }
 
     @Override
-    public EncodedGlyphs<PhredQuality> getQualities() {
+    public QualityEncodedGlyphs getQualities() {
         return qualities;
     }
     @Override

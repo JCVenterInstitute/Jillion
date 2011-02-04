@@ -29,6 +29,7 @@ import java.util.Map;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Confidence;
 import org.jcvi.sequence.DefaultConfidence;
 import org.jcvi.sequence.Peaks;
@@ -47,7 +48,7 @@ public class TestSCFChromatogram {
     ChannelGroup mockChannelGroup = createMock(ChannelGroup.class);
     Peaks mockPeaks= createMock(Peaks.class);
     NucleotideEncodedGlyphs basecalls = createMock(NucleotideEncodedGlyphs.class);
-    EncodedGlyphs<PhredQuality> qualities = createMock(EncodedGlyphs.class);
+    QualityEncodedGlyphs qualities = createMock(QualityEncodedGlyphs.class);
     Map<String,String> expectedProperties = new HashMap<String, String>();
     Confidence mockInsertionConfidence= createMock(DefaultConfidence.class);
     Confidence mockDeletionConfidence= createMock(DefaultConfidence.class);

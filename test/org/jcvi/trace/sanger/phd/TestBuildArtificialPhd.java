@@ -30,6 +30,7 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +40,7 @@ import static org.easymock.EasyMock.*;
 public class TestBuildArtificialPhd {
 
     NucleotideEncodedGlyphs mockBasecalls;
-    EncodedGlyphs<PhredQuality> mockQualities;
+    QualityEncodedGlyphs mockQualities;
     Properties mockProperties;
     List<PhdTag> mockTags;
     
@@ -49,7 +50,7 @@ public class TestBuildArtificialPhd {
     @Before
     public void setup(){
         mockBasecalls = createMock(NucleotideEncodedGlyphs.class);
-        mockQualities = createMock(EncodedGlyphs.class); 
+        mockQualities = createMock(QualityEncodedGlyphs.class); 
         mockProperties = createMock(Properties.class); 
         mockTags = createMock(List.class); 
     }

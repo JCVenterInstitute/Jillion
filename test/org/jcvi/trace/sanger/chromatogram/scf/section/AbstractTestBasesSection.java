@@ -37,7 +37,9 @@ import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.DefaultConfidence;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.sanger.chromatogram.BasicChromatogram;
@@ -57,7 +59,7 @@ public abstract class AbstractTestBasesSection {
     protected SCFHeader mockHeader;
     protected SCFChromatogramImpl chromatogram;
     protected byte[] calledConfidence = new byte[]{40,40,40,40,63,38,38,38};
-    protected EncodedGlyphs<PhredQuality> encodedQualities = new DefaultEncodedGlyphs(RUN_LENGTH_CODEC, 
+    protected QualityEncodedGlyphs encodedQualities = new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC, 
             PhredQuality.valueOf(calledConfidence));
     protected byte[] aConfidence = new byte[]{40,3,4,2,38,0,2,1};
     protected byte[] cConfidence = new byte[]{0,40,3,4,2,38,0,2};

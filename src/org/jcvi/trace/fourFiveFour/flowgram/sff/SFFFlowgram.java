@@ -31,12 +31,13 @@ import org.jcvi.Range;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 
 public class SFFFlowgram implements Flowgram {
 
     private NucleotideEncodedGlyphs basecalls;
-    private EncodedGlyphs<PhredQuality> qualities;
+    private QualityEncodedGlyphs qualities;
     private Range qualitiesClip;
     private Range adapterClip;
     private final short[] values;
@@ -48,7 +49,7 @@ public class SFFFlowgram implements Flowgram {
      * @param qualitiesClip
      * @param adapterClip
      */
-    public SFFFlowgram(NucleotideEncodedGlyphs basecalls, EncodedGlyphs<PhredQuality> qualities,
+    public SFFFlowgram(NucleotideEncodedGlyphs basecalls, QualityEncodedGlyphs qualities,
             List<Short> values, Range qualitiesClip, Range adapterClip) {
         canNotBeNull(basecalls, qualities, values, qualitiesClip, adapterClip);
         this.basecalls = basecalls;
@@ -80,7 +81,7 @@ public class SFFFlowgram implements Flowgram {
     }
 
     @Override
-    public EncodedGlyphs<PhredQuality> getQualities() {
+    public QualityEncodedGlyphs getQualities() {
         return qualities;
     }
 

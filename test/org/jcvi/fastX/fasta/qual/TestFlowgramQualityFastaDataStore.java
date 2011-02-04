@@ -33,6 +33,7 @@ import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSffFileDataStore;
@@ -46,8 +47,8 @@ public class TestFlowgramQualityFastaDataStore {
 
     String QUAL_EXPECTED = "files/5readExample.qual";
     String QUAL_ACTUAL = "files/5readExample.sff";
-    DataStore<EncodedGlyphs<PhredQuality>> expected;
-    DataStore<EncodedGlyphs<PhredQuality>> actual;
+    QualityDataStore expected;
+    QualityDataStore actual;
     ResourceFileServer RESOURCES = new ResourceFileServer(TestFlowgramQualityFastaDataStore.class);
     
     @Before

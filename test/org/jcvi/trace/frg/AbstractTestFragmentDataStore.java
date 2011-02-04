@@ -34,6 +34,7 @@ import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.sequence.DefaultLibrary;
@@ -65,7 +66,7 @@ public abstract class  AbstractTestFragmentDataStore {
                             "GTGTGCGTGCGTGTGTGTGCGTGTGCGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGCGTGAGACGGAAAGAGCCAAG" +
                             "AAGAGCGCGAACTAAAGGAACAACATGGAAATAGGCGCGGCACCAAAGGTGAACCCTGGGCAACCCCATGGAATCCACAGGGAATCCCGTGTAAACCAAG" +
                             "GGACCTGAGGAGAGCACCAACAAGATCAGACGANNA")), 
-            new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,
+            new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
                     QUALITY_CODEC.decode(
                             (
                                     "555566;;;666;;<<<;;<<?CDDDB?<??<<<AADDHHHPVSUUKKG;98:<<>>=???B=;;=>@CDDB?BEDDDIKDVVVKKDDDDDKKKSNNQXP"+
@@ -92,7 +93,7 @@ public abstract class  AbstractTestFragmentDataStore {
                             "GCGAGATGCTCCTCCAGCTGCGCCACCAGCTGTGCCCGGTGCGCCAGGTCCGACTCCAGCGCCCGGATCTTGGAGCCCAGCTCGCCGATCTGCGGCGTGG" +
                             "AGCCGTGGGTTGGTTGCGCGGTCCTCAGGGTCCCGTGGGGGTGATCAGTTGCATACCCGTGGGGATGCCATGGGGGATGGCGCAGGGTTCGACCGTGTGG" +
                             "AGGGCGGGCGCAGAACCAGGGCGCAGGCACTAAGGCGCGCGCATCATGGGN")), 
-            new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,
+            new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
                     QUALITY_CODEC.decode(
                             (
                                     "6689;;6687;>BG>?<??;:9??>NL?;::?9><??<??<::???G@C>888;;AGGGHKKKKKKHHKKKKPCCCCCASK=C=??COM[[bQS]bbbUU"+

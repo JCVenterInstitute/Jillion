@@ -39,6 +39,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Library;
 import org.jcvi.sequence.MateOrientation;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
@@ -75,7 +76,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     @Override
     public void visitFragment(FrgVisitorAction action, String fragmentId,
             String libraryId, NucleotideEncodedGlyphs bases,
-            EncodedGlyphs<PhredQuality> qualities, Range validRange,
+            QualityEncodedGlyphs qualities, Range validRange,
             Range vectorClearRange, String source) {
         throwErrorIfAlreadyInitialized();
         if(this.isAddOrModify(action)){
@@ -203,7 +204,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         public void visitFragment(FrgVisitorAction action,
                 String fragmentId, String libraryId,
                 NucleotideEncodedGlyphs bases,
-                EncodedGlyphs<PhredQuality> qualities, Range validRange,
+                QualityEncodedGlyphs qualities, Range validRange,
                 Range vectorClearRange, String source) {
             Library library;
             try {
@@ -249,7 +250,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         public void visitFragment(FrgVisitorAction action,
                 String fragmentId, String libraryId,
                 NucleotideEncodedGlyphs bases,
-                EncodedGlyphs<PhredQuality> qualities, Range validRange,
+                QualityEncodedGlyphs qualities, Range validRange,
                 Range vectorClearRange, String source) {}
 
         @Override

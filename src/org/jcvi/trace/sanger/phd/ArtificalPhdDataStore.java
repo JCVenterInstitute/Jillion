@@ -33,6 +33,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.util.CloseableIterator;
 import org.joda.time.DateTime;
 /**
@@ -45,7 +46,7 @@ import org.joda.time.DateTime;
  */
 public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements PhdDataStore{
     private final DataStore<NucleotideEncodedGlyphs> seqDataStore;
-    private final DataStore<EncodedGlyphs<PhredQuality>> qualDataStore;
+    private final DataStore<QualityEncodedGlyphs> qualDataStore;
     private final Properties comments = new Properties();
     
    
@@ -56,7 +57,7 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
      * @param phdDate
      */
     public ArtificalPhdDataStore(DataStore<NucleotideEncodedGlyphs> seqDataStore,
-            DataStore<EncodedGlyphs<PhredQuality>> qualDataStore, DateTime phdDate) {
+            DataStore<QualityEncodedGlyphs> qualDataStore, DateTime phdDate) {
         this.seqDataStore = seqDataStore;
         this.qualDataStore = qualDataStore;
         comments.putAll(PhdUtil.createPhdTimeStampCommentFor(phdDate));
@@ -75,7 +76,7 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
        if(basecalls ==null){
            throw new NullPointerException("could not find basecalls for "+id);
        }
-    final EncodedGlyphs<PhredQuality> qualities = qualDataStore.get(id);
+    final QualityEncodedGlyphs qualities = qualDataStore.get(id);
     if(qualities ==null){
         throw new NullPointerException("could not find qualities for "+id);
     }

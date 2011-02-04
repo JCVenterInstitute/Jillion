@@ -23,6 +23,7 @@ import org.jcvi.fastX.FastXFilter;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 
 /**
  * {@code AbstractFilteredFastQFileVisitor} is an implementation
@@ -36,7 +37,7 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 public abstract class AbstractFilteredFastQFileVisitor<T extends FastQRecord> extends AbstractFastQFileVisitor<T>{
     private String currentId;
     private String currentComment;
-    private EncodedGlyphs<PhredQuality> currentQualities;
+    private QualityEncodedGlyphs currentQualities;
     private NucleotideEncodedGlyphs currentBases;
     private boolean accept;
     private final FastXFilter filter;

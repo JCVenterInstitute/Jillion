@@ -28,13 +28,14 @@ import java.util.List;
 import org.jcvi.fastX.fasta.AbstractFastaRecord;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 
-public class DefaultQualityFastaRecord extends AbstractFastaRecord<EncodedGlyphs<PhredQuality>> implements QualityFastaRecord{
-    private final EncodedGlyphs<PhredQuality> qualities;
-    public DefaultQualityFastaRecord(String id, EncodedGlyphs<PhredQuality> qualities){
+public class DefaultQualityFastaRecord extends AbstractFastaRecord<QualityEncodedGlyphs> implements QualityFastaRecord{
+    private final QualityEncodedGlyphs qualities;
+    public DefaultQualityFastaRecord(String id, QualityEncodedGlyphs qualities){
         this(id, null, qualities);
     }
-    public DefaultQualityFastaRecord(String id, String comments, EncodedGlyphs<PhredQuality> qualities){
+    public DefaultQualityFastaRecord(String id, String comments, QualityEncodedGlyphs qualities){
         super(id,comments);
         this.qualities = qualities;
         
@@ -59,7 +60,7 @@ public class DefaultQualityFastaRecord extends AbstractFastaRecord<EncodedGlyphs
     }
 
     @Override
-    public EncodedGlyphs<PhredQuality> getValue() {
+    public QualityEncodedGlyphs getValue() {
         return qualities;
     }
     

@@ -29,6 +29,7 @@ import java.io.IOException;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Peaks;
 
 public class DefaultFileSangerTrace implements FileSangerTrace {
@@ -66,7 +67,7 @@ public class DefaultFileSangerTrace implements FileSangerTrace {
     }
 
     @Override
-    public EncodedGlyphs<PhredQuality> getQualities() {
+    public QualityEncodedGlyphs getQualities() {
         return trace.getQualities();
     }
 

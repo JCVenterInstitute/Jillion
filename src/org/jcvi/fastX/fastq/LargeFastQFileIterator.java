@@ -27,6 +27,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.util.CloseableIterator;
 
 /**
@@ -45,7 +46,7 @@ public class LargeFastQFileIterator extends AbstractFastQFileVisitor<FastQRecord
     private String currentId = null;
     private String currentComment=null;
     private NucleotideEncodedGlyphs currentBasecalls;
-    private EncodedGlyphs<PhredQuality> currentQualities;
+    private QualityEncodedGlyphs currentQualities;
     private final FastQQualityCodec qualityCodec;
     
     public LargeFastQFileIterator(final File fastQFile,FastQQualityCodec qualityCodec) throws InterruptedException{

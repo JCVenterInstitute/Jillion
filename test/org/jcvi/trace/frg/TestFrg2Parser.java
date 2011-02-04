@@ -33,6 +33,7 @@ import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.sequence.MateOrientation;
@@ -77,7 +78,7 @@ public class TestFrg2Parser {
 "GGACCTGAGGAGAGCACCAACAAGATCAGACGANNA" 
 )), 
 
-new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,
+new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
         QUALITY_CODEC.decode(
                 (
                         "555566;;;666;;<<<;;<<?CDDDB?<??<<<AADDHHHPVSUUKKG;98:<<>>=???B=;;=>@CDDB?BEDDDIKDVVVKKDDDDDKKKSNNQXP"+
@@ -104,7 +105,7 @@ new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,
 					"GCGAGATGCTCCTCCAGCTGCGCCACCAGCTGTGCCCGGTGCGCCAGGTCCGACTCCAGCGCCCGGATCTTGGAGCCCAGCTCGCCGATCTGCGGCGTGG" +
 					"AGCCGTGGGTTGGTTGCGCGGTCCTCAGGGTCCCGTGGGGGTGATCAGTTGCATACCCGTGGGGATGCCATGGGGGATGGCGCAGGGTTCGACCGTGTGG" +
 					"AGGGCGGGCGCAGAACCAGGGCGCAGGCACTAAGGCGCGCGCATCATGGGN")),
-		new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,
+		new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
 		        QUALITY_CODEC.decode((
 		                "6689;;6687;>BG>?<??;:9??>NL?;::?9><??<??<::???G@C>888;;AGGGHKKKKKKHHKKKKPCCCCCASK=C=??COM[[bQS]bbbUU"+
 		                "UbbbbbGGCCCCCCFLCFKKFFMSSSbbVVVVKGGGGGOOOOOMUUVVIIIIGGMMMKIKLULIKLbGGLLKKMMMUUUVSVSKKMVVNNNNNNNNSKKG"+

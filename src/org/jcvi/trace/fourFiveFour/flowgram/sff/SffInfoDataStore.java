@@ -35,12 +35,12 @@ import java.util.regex.Pattern;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
 
@@ -143,7 +143,7 @@ public class SffInfoDataStore implements SffDataStore {
         short[] flows = parseAllFlows(scanner,sffHeader.getNumberOfFlowsPerRead());            
         List<Short> usedFlowValues= parseUsedFlows(scanner.nextLine(), flows);             
         NucleotideEncodedGlyphs basecalls=parseBasecalls(scanner.nextLine());
-        EncodedGlyphs<PhredQuality> qualities=parseQualities(scanner.nextLine(),(int)basecalls.getLength());
+        QualityEncodedGlyphs qualities=parseQualities(scanner.nextLine(),(int)basecalls.getLength());
         return new SFFFlowgram(basecalls, qualities,
                 usedFlowValues, qualityRange, adapterRange);
     }
@@ -152,7 +152,7 @@ public class SffInfoDataStore implements SffDataStore {
      * @param nextLine
      * @return
      */
-    private EncodedGlyphs<PhredQuality> parseQualities(String nextLine, int numOfQualities) {
+    private QualityEncodedGlyphs parseQualities(String nextLine, int numOfQualities) {
         if(nextLine.startsWith("Quality Scores:")){
             Scanner scanner2 = new Scanner(nextLine);
             scanner2.next(); //Quality
@@ -162,7 +162,7 @@ public class SffInfoDataStore implements SffDataStore {
                 qualitiesList.add(PhredQuality.valueOf(scanner2.nextByte()));
             }
             scanner2.close();
-            return new DefaultEncodedGlyphs<PhredQuality>(
+            return new DefaultQualityEncodedGlyphs(
                     RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, qualitiesList);
         }
         throw new IllegalStateException("could not parse qualities from "+ nextLine);

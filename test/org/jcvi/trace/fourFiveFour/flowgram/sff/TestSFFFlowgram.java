@@ -32,6 +32,7 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFFlowgram;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
@@ -44,7 +45,7 @@ public class TestSFFFlowgram {
 
     Range qualitiesClip = Range.buildRange(10,90);
     Range adapterClip= Range.buildRange(5,95);
-    EncodedGlyphs<PhredQuality> confidence = createMock(EncodedGlyphs.class);
+    QualityEncodedGlyphs confidence = createMock(QualityEncodedGlyphs.class);
     List<Short> values = convertIntoList(new short[]{202, 310,1,232,7});
     NucleotideEncodedGlyphs basecalls = createMock(NucleotideEncodedGlyphs.class);
     

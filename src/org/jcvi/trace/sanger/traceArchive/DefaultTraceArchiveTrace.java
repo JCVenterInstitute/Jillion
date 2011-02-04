@@ -33,6 +33,7 @@ import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Peaks;
 
@@ -77,7 +78,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     }
 
     @Override
-    public EncodedGlyphs<PhredQuality> getQualities() {
+    public QualityEncodedGlyphs getQualities() {
         InputStream in=null;
         DefaultQualityFastaFileDataStore datastore = new DefaultQualityFastaFileDataStore();
         try{

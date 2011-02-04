@@ -30,6 +30,7 @@ import org.jcvi.Range;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.io.TextFileVisitor;
 import org.jcvi.sequence.MateOrientation;
 
@@ -44,7 +45,7 @@ public interface Frg2Visitor extends TextFileVisitor{
                 String fragmentId, 
                 String libraryId,
                 NucleotideEncodedGlyphs bases,
-                EncodedGlyphs<PhredQuality> qualities ,
+                QualityEncodedGlyphs qualities ,
                 Range validRange,
                 Range vectorClearRange,
                 String source);

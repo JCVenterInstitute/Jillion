@@ -24,12 +24,12 @@
 package org.jcvi.fastX.fastq;
 
 import java.nio.ByteBuffer;
-
-import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 /**
  * {@code FastQQualityCodec} is a can encode and decode
  * The different ways a FASTQ file can be encode
@@ -88,7 +88,7 @@ public enum FastQQualityCodec {
 		    }
 	}
 	;
-	private final GlyphCodec<PhredQuality> qualityCodec = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
+	private final QualityGlyphCodec qualityCodec = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
 	
 	/**
 	 * Decode the given FASTQ quality encoded String
@@ -97,12 +97,12 @@ public enum FastQQualityCodec {
 	 * @return a new EncodedGlyphs representing
 	 * the decoded FASTQ quality values.
 	 */
-    public EncodedGlyphs<PhredQuality> decode(String fastqQualities) {
+    public QualityEncodedGlyphs decode(String fastqQualities) {
         ByteBuffer buffer = ByteBuffer.allocate(fastqQualities.length());
         for(int i=0; i<fastqQualities.length(); i++){
             buffer.put(decode(fastqQualities.charAt(i)).getNumber());
         }
-        return new DefaultEncodedGlyphs<PhredQuality>(
+        return new DefaultQualityEncodedGlyphs(
                                     qualityCodec,
                                     PhredQuality.valueOf(buffer.array()));
     }

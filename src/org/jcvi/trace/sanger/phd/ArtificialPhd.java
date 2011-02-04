@@ -33,6 +33,7 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Peaks;
 
 public class ArtificialPhd implements Phd{
@@ -50,7 +51,7 @@ public class ArtificialPhd implements Phd{
     private static final int NEWBLER_454_PEAK_SPACING = 19;
     
     private final NucleotideEncodedGlyphs basecalls;
-    private final EncodedGlyphs<PhredQuality> qualities;
+    private final QualityEncodedGlyphs qualities;
    private final Properties comments;
    private final List<PhdTag> tags;
    private Peaks fakePositions=null;
@@ -71,7 +72,7 @@ public class ArtificialPhd implements Phd{
     * what would have been created by Newbler.
     */
    public static ArtificialPhd createNewbler454Phd(NucleotideEncodedGlyphs basecalls,
-            EncodedGlyphs<PhredQuality> qualities,
+           QualityEncodedGlyphs qualities,
            Properties comments, List<PhdTag> tags){
        return new ArtificialPhd(basecalls, qualities, comments, tags, NEWBLER_454_START_POSITION,NEWBLER_454_PEAK_SPACING);
    }
@@ -87,7 +88,7 @@ public class ArtificialPhd implements Phd{
     * what would have been created by Newbler.
     */
    public static ArtificialPhd createNewbler454Phd(NucleotideEncodedGlyphs basecalls,
-            EncodedGlyphs<PhredQuality> qualities){
+           QualityEncodedGlyphs qualities){
        return ArtificialPhd.createNewbler454Phd(basecalls, qualities, 
                new Properties(),Collections.<PhdTag>emptyList());
    }
@@ -109,7 +110,7 @@ public class ArtificialPhd implements Phd{
     * @see #buildArtificalPhd(NucleotideEncodedGlyphs, EncodedGlyphs, Properties, List, int)
     */
    public ArtificialPhd(NucleotideEncodedGlyphs basecalls,
-           EncodedGlyphs<PhredQuality> qualities,
+           QualityEncodedGlyphs qualities,
            int numberOfPositionsForEachPeak){
        this(basecalls, qualities, new Properties(),Collections.<PhdTag>emptyList(),numberOfPositionsForEachPeak);
    }
@@ -127,7 +128,7 @@ public class ArtificialPhd implements Phd{
     * @return a new DefaultPhd using the given values.
     */
     public ArtificialPhd(NucleotideEncodedGlyphs basecalls,
-            EncodedGlyphs<PhredQuality> qualities,
+            QualityEncodedGlyphs qualities,
            Properties comments, List<PhdTag> tags,int numberOfPositionsForEachPeak){
        this(basecalls, qualities,comments, tags,numberOfPositionsForEachPeak,numberOfPositionsForEachPeak);
         
@@ -147,7 +148,7 @@ public class ArtificialPhd implements Phd{
      * @return a new DefaultPhd using the given values.
      */
      public ArtificialPhd(NucleotideEncodedGlyphs basecalls,
-             EncodedGlyphs<PhredQuality> qualities,
+             QualityEncodedGlyphs qualities,
             Properties comments, List<PhdTag> tags,int positionOfFirstPeak,int numberOfPositionsForEachPeak){
          this.basecalls = basecalls;
          this.qualities = qualities;
@@ -195,7 +196,7 @@ public class ArtificialPhd implements Phd{
     }
 
     @Override
-    public EncodedGlyphs<PhredQuality> getQualities() {
+    public QualityEncodedGlyphs getQualities() {
         return qualities;
     }
 }

@@ -34,6 +34,7 @@ import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.TraceDecoderException;
@@ -56,7 +57,7 @@ public class TestPhdCodecDecode extends  AbstractTestPhd{
     @Test
     public void encode() throws IOException, TraceDecoderException{
         Phd phd = new DefaultPhd(new DefaultNucleotideEncodedGlyphs(expectedBasecalls), 
-                new DefaultEncodedGlyphs<PhredQuality>(new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE),expectedQualities), 
+                new DefaultQualityEncodedGlyphs(new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE),expectedQualities), 
                 new Peaks(ShortGlyph.toArray(expectedPositions)), 
                         expectedProperties,Collections.<PhdTag>emptyList());
         ByteArrayOutputStream out = new ByteArrayOutputStream();

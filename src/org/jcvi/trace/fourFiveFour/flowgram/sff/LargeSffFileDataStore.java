@@ -37,6 +37,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
 
@@ -44,24 +45,24 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
 
     private final File sffFile;
     private Integer size=null;
-    private final GlyphCodec<PhredQuality> phredQualityGlyphCodec;
+    private final QualityGlyphCodec phredQualityGlyphCodec;
     
     /**
      * @param sffFile
      */
-    public LargeSffFileDataStore(File sffFile,GlyphCodec<PhredQuality> phredQualityGlyphCodec) {
+    public LargeSffFileDataStore(File sffFile,QualityGlyphCodec phredQualityGlyphCodec) {
         this.sffFile = sffFile;
         this.phredQualityGlyphCodec = phredQualityGlyphCodec;
     }
 
     @Override
-    public boolean contains(String id) throws DataStoreException {
+    public synchronized boolean contains(String id) throws DataStoreException {
         super.contains(id);
         return get(id)!=null;
     }
 
     @Override
-    public SFFFlowgram get(String id) throws DataStoreException {
+    public synchronized SFFFlowgram get(String id) throws DataStoreException {
         super.get(id);
         SingleSffGetter datastore= new SingleSffGetter(id,phredQualityGlyphCodec);
         InputStream in = null;
@@ -205,7 +206,7 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
         /**
          * @param idToFetch
          */
-        public SingleSffGetter(String idToFetch,GlyphCodec<PhredQuality> phredQualityGlyphCodec) {
+        public SingleSffGetter(String idToFetch,QualityGlyphCodec phredQualityGlyphCodec) {
             super(phredQualityGlyphCodec);
             this.idToFetch = idToFetch;
             

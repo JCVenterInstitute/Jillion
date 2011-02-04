@@ -34,7 +34,9 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Peaks;
 
 public class BasicChromatogramBuilder {
@@ -180,7 +182,7 @@ public class BasicChromatogramBuilder {
             return this;
         }
 
-        private EncodedGlyphs<PhredQuality> generateQualities(ChannelGroup channelGroup) {
+        private QualityEncodedGlyphs generateQualities(ChannelGroup channelGroup) {
             List<PhredQuality> qualities = new ArrayList<PhredQuality>(basecalls.length());
             
             
@@ -193,7 +195,7 @@ public class BasicChromatogramBuilder {
                 }
                 qualities.add(PhredQuality.valueOf(data[i]));
             }
-            return new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,qualities);
+            return new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,qualities);
         }
         
         public Chromatogram build() {
