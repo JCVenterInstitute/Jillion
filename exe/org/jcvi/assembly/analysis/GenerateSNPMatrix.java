@@ -75,7 +75,7 @@ public class GenerateSNPMatrix {
                 coordinates.add(Integer.parseInt(coordinate));
             }
             Map<String, Map<Integer, NucleotideGlyph>> snpMap = new HashMap<String, Map<Integer,NucleotideGlyph>>();
-            CoverageMap<CoverageRegion<AcePlacedRead>> gappedCoverageMap = DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads());
+            CoverageMap<CoverageRegion<AcePlacedRead>> gappedCoverageMap = DefaultCoverageMap.buildCoverageMap(contig);
             NucleotideEncodedGlyphs consensus = contig.getConsensus();
             LargeNoQualitySliceMap sliceMap = new LargeNoQualitySliceMap(gappedCoverageMap);
             

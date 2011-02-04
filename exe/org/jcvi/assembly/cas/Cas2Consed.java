@@ -275,7 +275,7 @@ public class Cas2Consed {
                 }
                 for(CasContig casContig : contigDatastore){
                     final AceContigAdapter adpatedCasContig = new AceContigAdapter(casContig, phdDate,readIdLookup);
-                    CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(adpatedCasContig.getPlacedReads());
+                    CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(adpatedCasContig);
                     for(AceContig aceContig : ConsedUtil.split0xContig(adpatedCasContig, coverageMap)){
                         if(useClosureTrimming){
                             AceContig trimmedAceContig =closureContigTrimmer.trimContig(aceContig);

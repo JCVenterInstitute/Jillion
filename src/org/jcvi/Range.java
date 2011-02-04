@@ -541,7 +541,8 @@ public class Range implements Placed<Range>,Iterable<Long>
      * @return a new Range (not null)
      */
     public Range shiftLeft(long units){
-        return Range.buildRangeOfLength(this.start-units, this.size());
+        return Range.buildRangeOfLength(this.start-units, this.size())
+                .convertRange(rangeCoordinateSystem);
     }
     /**
      * Create a new Range of the same size
@@ -550,7 +551,8 @@ public class Range implements Placed<Range>,Iterable<Long>
      * @return a new Range (not null)
      */
     public Range shiftRight(long units){
-        return Range.buildRangeOfLength(this.start+units, this.size());
+        return Range.buildRangeOfLength(this.start+units, this.size())
+            .convertRange(rangeCoordinateSystem);
     }
     /**
      * Checks if this range is empty.

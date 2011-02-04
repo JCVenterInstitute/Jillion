@@ -50,7 +50,7 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
        .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", SequenceDirection.REVERSE)
        .build();
        
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig.getPlacedReads()));
+        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
         PlacedRead readToTrim = _1xContig.getPlacedReadById("IVAAA04T26B11NA512F");
         PlacedRead readThatDoesntGetTrimmed = _1xContig.getPlacedReadById("read2");
         Range expectedTrimRange = Range.buildRange(2, 7);
@@ -68,7 +68,7 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
        .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", SequenceDirection.REVERSE)
        .build();
        
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig.getPlacedReads()));
+        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
         PlacedRead readToTrim = _1xContig.getPlacedReadById("JHVXC05T00NP01F");
         PlacedRead readThatDoesntGetTrimmed = _1xContig.getPlacedReadById("read2");
         Range expectedTrimRange = Range.buildRange(2, 7);
@@ -87,7 +87,7 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
        .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", SequenceDirection.REVERSE)
        .build();
        
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig.getPlacedReads()));
+        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
         PlacedRead readToTrim = _1xContig.getPlacedReadById("IVAAA04T26B11NA512F");
         PlacedRead readThatDoesntGetTrimmed = _1xContig.getPlacedReadById("read2");
         Range expectedTrimRange = Range.buildRange(2, 7);
@@ -106,7 +106,7 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
        .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", SequenceDirection.REVERSE)
        .build();
        
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig.getPlacedReads()));
+        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
         PlacedRead readThatDoesntGetTrimmed = _1xContig.getPlacedReadById("IVAAA04T26B11NA512F");
         final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
         assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
@@ -122,7 +122,7 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
        .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", SequenceDirection.REVERSE)
        .build();
        
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig.getPlacedReads()));
+        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
         PlacedRead readThatDoesntGetTrimmed = _1xContig.getPlacedReadById("JHVXC05T00NP0334F");
         final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
         assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));

@@ -62,6 +62,15 @@ public class DefaultFastQRecord implements FastQRecord {
         return id;
     }
 
+    /**
+     * Delegates to {@link #getNucleotides()}.
+     * @see #getNucleotides()
+     */
+     @Override
+     public NucleotideEncodedGlyphs getValue() {
+         return getNucleotides();
+     }
+     
     @Override
     public NucleotideEncodedGlyphs getNucleotides() {
         return nucleotides;
@@ -126,5 +135,6 @@ public class DefaultFastQRecord implements FastQRecord {
         }
         return true;
     }
+   
 
 }

@@ -299,7 +299,7 @@ public class SingleContigCasAssemblyBuilder {
                 MultipleDataStoreWrapper.createMultipleDataStoreWrapper(PhdDataStore.class,
                         new PhdSangerTraceDataStoreAdapter<FileSangerTrace>(sangerTraceDataStore,phdDateTime),
                         casPhdDataStore);
-            CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(adpatedCasContig.getPlacedReads());
+            CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(adpatedCasContig);
             int numReads =0;
             int numContigs =0;
             OutputStream aceOutputStream = new FileOutputStream(outputDir.createNewFile(prefix+".ace"));
