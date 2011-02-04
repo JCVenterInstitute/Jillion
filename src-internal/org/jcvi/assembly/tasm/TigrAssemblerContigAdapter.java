@@ -108,7 +108,7 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	}
 
 	private double computeAvgCoverageFor(Contig<? extends PlacedRead> delegate) {
-		double averageCoverage = DefaultCoverageMap.buildCoverageMap(delegate.getPlacedReads()).getAverageCoverage();
+		double averageCoverage = DefaultCoverageMap.buildCoverageMap(delegate).getAverageCoverage();
 		return averageCoverage;
 	}
 

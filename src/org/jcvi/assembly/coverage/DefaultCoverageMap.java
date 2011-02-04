@@ -29,8 +29,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.jcvi.Range;
+import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.Placed;
 import org.jcvi.assembly.PlacedEndComparator;
+import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.PlacedStartComparator;
 
 
@@ -43,6 +45,10 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         return (DefaultCoverageMap<V,T>)new Builder(elements).build();
     }
 
+    public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
+    buildCoverageMap(C contig){
+        return (DefaultCoverageMap<PR,T>)new Builder(contig.getPlacedReads()).build();
+}
     private List<T> regions;
     private double avgCoverage;
     private boolean avgCoverageSet;

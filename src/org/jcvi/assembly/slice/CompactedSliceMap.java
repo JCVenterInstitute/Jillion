@@ -45,7 +45,7 @@ public class CompactedSliceMap implements SliceMap {
     public <PR extends PlacedRead> CompactedSliceMap(
             Contig<PR> contig, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
         CoverageMap<CoverageRegion<PR>> coverageMap = DefaultCoverageMap
-                .buildCoverageMap(contig.getPlacedReads());
+                .buildCoverageMap(contig);
         this.slices = createSlices(coverageMap,qualityDataStore,qualityValueStrategy);
     }
     protected CompactedSlice[] createSlices(
