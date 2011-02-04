@@ -44,7 +44,7 @@ public class DefaultQualityCompactedSliceMap extends AbstractCompactedSliceMap{
     public <PR extends PlacedRead> DefaultQualityCompactedSliceMap(Contig<PR> contig,
                     PhredQuality defaultPhredQuality) {
         this.defaultPhredQuality =defaultPhredQuality;
-        CoverageMap<CoverageRegion<PR>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads());
+        CoverageMap<CoverageRegion<PR>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
         this.slices = createSlices(coverageMap);
     }
 

@@ -38,7 +38,7 @@ public class TestDefaultSliceMap extends AbstractTestSliceMap{
     @Override
     protected SliceMap createSliceMapFor(Contig<PlacedRead> contig,
             QualityDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy) {
-        return new DefaultSliceMap(DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads()),
+        return new DefaultSliceMap(DefaultCoverageMap.buildCoverageMap(contig),
                 qualityDatastore, qualityValueStrategy);
     }
 

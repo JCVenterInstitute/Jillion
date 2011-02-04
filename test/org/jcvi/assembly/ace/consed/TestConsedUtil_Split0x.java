@@ -58,7 +58,7 @@ public class TestConsedUtil_Split0x {
                 Range.buildRange(0, 11).convertRange(CoordinateSystem.RESIDUE_BASED), 
                 createMock(PhdInfo.class));
         AceContig contig =builder.build();
-        CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads());
+        CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
     
         assertSame(contig, ConsedUtil.split0xContig(contig, coverageMap).get(0));
     }
@@ -79,7 +79,7 @@ public class TestConsedUtil_Split0x {
                 Range.buildRange(0, 9).convertRange(CoordinateSystem.RESIDUE_BASED), 
                 read2Phd);
         AceContig contig =builder.build();
-        CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads());
+        CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
     
         List<AceContig> splitContigs = ConsedUtil.split0xContig(contig, coverageMap);
         assertEquals("# of split contigs", 2, splitContigs.size());

@@ -65,7 +65,7 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
 
     @Override
     public C trimContig(C contig) throws TrimmerException {
-        return trimContig(contig, DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads()));
+        return trimContig(contig, DefaultCoverageMap.buildCoverageMap(contig));
     }
 
     protected C trimContig(C contig,CoverageMap<CoverageRegion<P>> coverageMap){

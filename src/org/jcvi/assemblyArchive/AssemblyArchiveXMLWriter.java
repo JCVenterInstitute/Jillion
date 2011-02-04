@@ -74,7 +74,7 @@ public class AssemblyArchiveXMLWriter<T extends PlacedRead> {
         
         for(AssemblyArchiveContigRecord<T> contigRecord : assemblyArchive.getContigRecords()){
             SliceMap sliceMap = sliceMapFactory.createNewSliceMap(
-                                        DefaultCoverageMap.buildCoverageMap(contigRecord.getContig().getPlacedReads()), 
+                                        DefaultCoverageMap.buildCoverageMap(contigRecord.getContig()), 
                                         qualityDataStore);
             writeContig(out,contigRecord, sliceMap);
         }
