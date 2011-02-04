@@ -39,13 +39,15 @@ import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
 
 public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
-    private static final GlyphCodec<PhredQuality> QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
+    private static final QualityGlyphCodec QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
     
     private final Map<String, DefaultPhd> map = new HashMap<String, DefaultPhd>();
    
@@ -56,7 +58,7 @@ public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
             Properties comments, List<PhdTag> tags) {
         map.put(id, new DefaultPhd(
                 new DefaultNucleotideEncodedGlyphs(bases),
-                new DefaultEncodedGlyphs<PhredQuality>(QUALITY_CODEC, qualities),
+                new DefaultQualityEncodedGlyphs(QUALITY_CODEC, qualities),
                 new Peaks(positions),
                 comments,
                 tags));

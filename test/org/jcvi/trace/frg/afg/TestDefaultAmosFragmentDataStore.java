@@ -26,6 +26,7 @@ import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
@@ -58,7 +59,7 @@ public class TestDefaultAmosFragmentDataStore {
 "actgaaatggctcgaattccatcttgttatacaaaattgtgggatcctgtgaccattgaattttcacagt" +
 "ttcccaatttctgatgatccactgataagtattgaccaacactgactcaggaccattgatctcccacatc" +
 "actggtt"),
-new DefaultEncodedGlyphs<PhredQuality>(
+new DefaultQualityEncodedGlyphs(
         RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, 
         QUALITY_CODEC.decode(
         ("66667778<<<>A>>>F>@AA>>><<GFEAA@ACAAAHLCSSMSSRR\\\\\\SSSSS\\____]V]\\SKC=>7"+

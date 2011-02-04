@@ -33,8 +33,9 @@ import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 
-public class H2QualityFastQDataStore extends AbstractH2FastQDataStore<PhredQuality, EncodedGlyphs<PhredQuality>> implements QualityDataStore{
+public class H2QualityFastQDataStore extends AbstractH2FastQDataStore<PhredQuality, QualityEncodedGlyphs> implements QualityDataStore{
     
     /**
      * @param fastQFile
@@ -45,7 +46,7 @@ public class H2QualityFastQDataStore extends AbstractH2FastQDataStore<PhredQuali
     public H2QualityFastQDataStore(
             File fastQFile,
             FastQQualityCodec qualityCodec,
-            AbstractH2EncodedGlyphDataStore<PhredQuality, EncodedGlyphs<PhredQuality>> datastore)
+            AbstractH2EncodedGlyphDataStore<PhredQuality, QualityEncodedGlyphs> datastore)
             throws IOException {
         super(fastQFile, qualityCodec, datastore);
 
@@ -61,7 +62,7 @@ public class H2QualityFastQDataStore extends AbstractH2FastQDataStore<PhredQuali
     public H2QualityFastQDataStore(
             File fastQFile,
             FastQQualityCodec qualityCodec,
-            AbstractH2EncodedGlyphDataStore<PhredQuality, EncodedGlyphs<PhredQuality>> datastore,
+            AbstractH2EncodedGlyphDataStore<PhredQuality, QualityEncodedGlyphs> datastore,
             DataStoreFilter filter) throws IOException {
         super(fastQFile, qualityCodec, datastore, filter);
     }

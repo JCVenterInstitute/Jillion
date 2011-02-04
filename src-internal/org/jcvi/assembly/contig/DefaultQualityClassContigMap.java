@@ -35,6 +35,7 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -47,7 +48,7 @@ public class DefaultQualityClassContigMap implements QualityClassMap{
     public <P extends PlacedRead> DefaultQualityClassContigMap(
                     CoverageMap<CoverageRegion<P>> coverageMap, 
                     NucleotideEncodedGlyphs consensus,
-                    DataStore<EncodedGlyphs<PhredQuality>> qualityFastaMap, 
+                    QualityDataStore qualityFastaMap, 
                     QualityClassComputer<P> qualityClassComputer){
         qualityClassRegions = new ArrayList<QualityClassRegion>();
         QualityClass qualityClass =null;

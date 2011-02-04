@@ -16,6 +16,7 @@ import org.jcvi.fasta.*;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.sanger.chromatogram.*;
@@ -169,7 +170,7 @@ public class SCFChromatogramGenerator {
     public void createSCFChromatogram(File outputFile,
                                       String sequenceName,
                                       NucleotideEncodedGlyphs basecalls,
-                                      EncodedGlyphs<PhredQuality> qualities) {
+                                      QualityEncodedGlyphs qualities) {
         OutputStream outputStream = null;
         try {
             SCFChromatogram syntheticChromatogram =
@@ -188,7 +189,7 @@ public class SCFChromatogramGenerator {
 
     private Chromatogram buildSyntheticChromatogram(String sequenceName,
                                                     NucleotideEncodedGlyphs basecalls,
-                                                    EncodedGlyphs<PhredQuality> qualities) {
+                                                    QualityEncodedGlyphs qualities) {
         Peaks fakePeaks = ChromatogramUtil.buildFakePeaks((int)basecalls.getLength());
         ChannelGroup fakeChannelGroup =
             new ChromatogramUtil.FakeChannelGroupBuilder(basecalls,qualities, fakePeaks).build();

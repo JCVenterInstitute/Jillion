@@ -23,6 +23,7 @@ import org.jcvi.Range;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 
 /**
  * @author dkatzel
@@ -34,7 +35,7 @@ public class DefaultAmosFragment implements AmosFragment{
     private final String id;
     private final int index;
     private final NucleotideEncodedGlyphs basecalls;
-    private final EncodedGlyphs<PhredQuality> qualities;
+    private final QualityEncodedGlyphs qualities;
     
     private final Range clearRange;
     private final Range vectorRange;
@@ -52,7 +53,7 @@ public class DefaultAmosFragment implements AmosFragment{
      */
     public DefaultAmosFragment(String id, int index,
             NucleotideEncodedGlyphs basecalls,
-            EncodedGlyphs<PhredQuality> qualities, Range clearRange,
+            QualityEncodedGlyphs qualities, Range clearRange,
             Range vectorRange, Range qualityRange) {
         this.id = id;
         this.index = index;
@@ -107,7 +108,7 @@ public class DefaultAmosFragment implements AmosFragment{
     * {@inheritDoc}
     */
     @Override
-    public EncodedGlyphs<PhredQuality> getQualities() {
+    public QualityEncodedGlyphs getQualities() {
         return qualities;
     }
 

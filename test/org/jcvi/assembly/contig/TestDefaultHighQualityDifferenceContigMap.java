@@ -43,6 +43,7 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.SequenceDirection;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +57,7 @@ public class TestDefaultHighQualityDifferenceContigMap {
     QualityDataStore qualityFastaMap;
     PlacedRead read1;
     String read1_id = "read1_id";
-    EncodedGlyphs<PhredQuality> read1_Qualities ;
+    QualityEncodedGlyphs read1_Qualities ;
     NucleotideEncodedGlyphs read1_EncodedGlyphs;
     PhredQuality qualityThreshold = PhredQuality.valueOf((byte)30);
     PhredQuality highQuality = PhredQuality.valueOf((byte)(31));
@@ -75,7 +76,7 @@ public class TestDefaultHighQualityDifferenceContigMap {
         expect(read1.getId()).andStubReturn(read1_id);
         expect(read1.getValidRange()).andStubReturn(validRange);
         snpMap = new HashMap<Integer, NucleotideGlyph>();
-        read1_Qualities = createMock(EncodedGlyphs.class);
+        read1_Qualities = createMock(QualityEncodedGlyphs.class);
         read1_EncodedGlyphs = createMock(NucleotideEncodedGlyphs.class);
         qualValueStrategy = createMock(QualityValueStrategy.class);
         expect(read1.getEncodedGlyphs()).andReturn(read1_EncodedGlyphs).anyTimes();

@@ -32,10 +32,12 @@ import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 
-public class H2QualityDataStore extends AbstractH2EncodedGlyphDataStore<PhredQuality, EncodedGlyphs<PhredQuality>> implements QualityDataStore{
+public class H2QualityDataStore extends AbstractH2EncodedGlyphDataStore<PhredQuality, QualityEncodedGlyphs> implements QualityDataStore{
 
     protected static final RunLengthEncodedGlyphCodec CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
     /**
@@ -54,13 +56,13 @@ public class H2QualityDataStore extends AbstractH2EncodedGlyphDataStore<PhredQua
     }
 
     @Override
-    public EncodedGlyphs<PhredQuality> get(String id) throws DataStoreException {
+    public QualityEncodedGlyphs get(String id) throws DataStoreException {
         try {
             byte[] ret = this.getData(id);
             if(ret==null){
                 return null;
             }
-            return new DefaultEncodedGlyphs<PhredQuality>(CODEC, ret);
+            return new DefaultQualityEncodedGlyphs(CODEC, ret);
         } catch (SQLException e) {
             throw new DataStoreException("could not get data for "+id, e);
         }

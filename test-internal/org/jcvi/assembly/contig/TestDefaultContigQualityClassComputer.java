@@ -33,6 +33,7 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.qualClass.QualityClass;
 
 import org.junit.Before;
@@ -52,7 +53,7 @@ public class TestDefaultContigQualityClassComputer {
     QualityValueStrategy qualityValueStrategy;
     DefaultContigQualityClassComputer  sut;
     CoverageMap<CoverageRegion<Placed>> coverageMap;
-    DataStore<EncodedGlyphs<PhredQuality>> qualityFastaMap;
+    QualityDataStore qualityFastaMap;
     NucleotideEncodedGlyphs consensus;
     @Before
     public void setup() throws SecurityException{
@@ -64,7 +65,7 @@ public class TestDefaultContigQualityClassComputer {
         .createMock();
                 
         coverageMap = createMock(CoverageMap.class);
-        qualityFastaMap = createMock(DataStore.class);
+        qualityFastaMap = createMock(QualityDataStore.class);
         consensus = createMock(NucleotideEncodedGlyphs.class);
     }
     

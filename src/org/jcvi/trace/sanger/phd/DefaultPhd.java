@@ -32,19 +32,20 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Peaks;
 
 public class DefaultPhd implements Phd {
 
     
     private final NucleotideEncodedGlyphs basecalls;
-    private final EncodedGlyphs<PhredQuality> qualities;
+    private final QualityEncodedGlyphs qualities;
     private final Peaks peaks;
     private final Properties comments;
     private final List<PhdTag> tags;
     
     public DefaultPhd(NucleotideEncodedGlyphs basecalls,
-            EncodedGlyphs<PhredQuality> qualities,
+            QualityEncodedGlyphs qualities,
             Peaks peaks, Properties comments,
             List<PhdTag> tags){
         this.basecalls = basecalls;
@@ -54,12 +55,12 @@ public class DefaultPhd implements Phd {
         this.tags = tags;
     }
     public DefaultPhd(NucleotideEncodedGlyphs basecalls,
-            EncodedGlyphs<PhredQuality> qualities,
+            QualityEncodedGlyphs qualities,
             Peaks peaks,Properties comments){
         this(basecalls, qualities, peaks, comments,Collections.<PhdTag>emptyList());
     }
     public DefaultPhd(NucleotideEncodedGlyphs basecalls,
-            EncodedGlyphs<PhredQuality> qualities,
+            QualityEncodedGlyphs qualities,
             Peaks peaks){
         this(basecalls, qualities, peaks, new Properties());
     }
@@ -80,7 +81,7 @@ public class DefaultPhd implements Phd {
     }
 
     @Override
-    public EncodedGlyphs<PhredQuality> getQualities() {
+    public QualityEncodedGlyphs getQualities() {
         return qualities;
     }
 

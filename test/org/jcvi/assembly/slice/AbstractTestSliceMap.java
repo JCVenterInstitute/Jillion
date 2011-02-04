@@ -32,8 +32,11 @@ import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,18 +50,18 @@ public abstract class AbstractTestSliceMap {
 
     protected abstract SliceMap createSliceMapFor(Contig<PlacedRead> contig, QualityDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy);
     private QualityDataStore qualityDataStore;
-    private static final GlyphCodec<PhredQuality> CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
+    private static final QualityGlyphCodec CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
     @Before
     public void setup(){
-        Map<String, EncodedGlyphs<PhredQuality>> qualities = new HashMap<String, EncodedGlyphs<PhredQuality>>();
-        qualities.put("read_0", new DefaultEncodedGlyphs<PhredQuality>(CODEC, 
+        Map<String, QualityEncodedGlyphs> qualities = new HashMap<String, QualityEncodedGlyphs>();
+        qualities.put("read_0", new DefaultQualityEncodedGlyphs(CODEC, 
                         PhredQuality.valueOf(new byte[]{10,12,14,16,18,20,22,24})));
-        qualities.put("read_1", new DefaultEncodedGlyphs<PhredQuality>(CODEC, 
+        qualities.put("read_1", new DefaultQualityEncodedGlyphs(CODEC, 
                 PhredQuality.valueOf(new byte[]{1,2,3,4,5,6,7,8})));
-        qualities.put("read_2", new DefaultEncodedGlyphs<PhredQuality>(CODEC, 
+        qualities.put("read_2", new DefaultQualityEncodedGlyphs(CODEC, 
                 PhredQuality.valueOf(new byte[]{15,16,17,18})));
         qualityDataStore = new QualityDataStoreAdapter(
-                            new SimpleDataStore<EncodedGlyphs<PhredQuality>>(qualities));
+                            new SimpleDataStore<QualityEncodedGlyphs>(qualities));
     }
     @Test
     public void allSlicesSameDepth(){

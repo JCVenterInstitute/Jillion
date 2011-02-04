@@ -28,7 +28,9 @@ import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -41,7 +43,7 @@ public class TestQualityFastaRecord {
 
     byte[] bytes = new byte[]{10,20,70,50,60,0,55,1,2,3,4,5,6,7,8,9,10,10,20,30,12,11,2,5};
    
-    private EncodedGlyphs<PhredQuality> encodedBytes = new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,PhredQuality.valueOf(bytes));
+    private QualityEncodedGlyphs encodedBytes = new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,PhredQuality.valueOf(bytes));
     DefaultQualityFastaRecord sut = new DefaultQualityFastaRecord(id,comment,encodedBytes);
     
     @Test
@@ -84,7 +86,7 @@ public class TestQualityFastaRecord {
     @Test
     public void equalsSameId(){
         DefaultQualityFastaRecord sameIdAndComment = new DefaultQualityFastaRecord(
-                id,comment,createMock(EncodedGlyphs.class));
+                id,comment,createMock(QualityEncodedGlyphs.class));
         TestUtil.assertEqualAndHashcodeSame(sut, sameIdAndComment);
     }
     @Test
@@ -98,13 +100,13 @@ public class TestQualityFastaRecord {
     @Test
     public void equalsDifferentComment(){
         DefaultQualityFastaRecord differentComment = new DefaultQualityFastaRecord(
-                id,null,createMock(EncodedGlyphs.class));
+                id,null,createMock(QualityEncodedGlyphs.class));
         TestUtil.assertEqualAndHashcodeSame(sut, differentComment);
     }
     @Test
     public void notEqualsDifferentId(){
         DefaultQualityFastaRecord differentId = new DefaultQualityFastaRecord(
-                "different"+id,comment,createMock(EncodedGlyphs.class));
+                "different"+id,comment,createMock(QualityEncodedGlyphs.class));
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentId);
     }
 }

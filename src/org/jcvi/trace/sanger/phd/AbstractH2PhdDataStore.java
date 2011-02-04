@@ -45,7 +45,7 @@ public abstract class AbstractH2PhdDataStore<G extends Glyph, E extends EncodedG
     private final AbstractH2EncodedGlyphDataStore<G, E> h2Datastore;
     private StringBuilder currentBuilder;
     private String currentId;
-    public AbstractH2PhdDataStore(File phdFile,AbstractH2EncodedGlyphDataStore<G, E> h2Datastore) throws FileNotFoundException{
+    public <T extends AbstractH2EncodedGlyphDataStore<G, E> >AbstractH2PhdDataStore(File phdFile, T h2Datastore) throws FileNotFoundException{
         this.h2Datastore = h2Datastore;
         PhdParser.parsePhd(phdFile, this);
     }

@@ -28,12 +28,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.RunLength;
 import org.jcvi.glyph.RunLengthEncoder;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 
-public class RunLengthEncodedGlyphCodec implements GlyphCodec<PhredQuality>{
+public class RunLengthEncodedGlyphCodec implements QualityGlyphCodec{
     public static final RunLengthEncodedGlyphCodec DEFAULT_INSTANCE = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
     
     private final byte guard;

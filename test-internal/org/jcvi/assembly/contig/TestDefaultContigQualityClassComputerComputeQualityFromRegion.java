@@ -35,6 +35,8 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.util.EmptyIterator;
@@ -56,7 +58,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     QualityValueStrategy qualityValueStrategy;
     DefaultContigQualityClassComputer  sut;
     CoverageRegion<PlacedRead> coverageRegion;
-    DataStore<EncodedGlyphs<PhredQuality>> qualityFastaMap;
+    QualityDataStore qualityFastaMap;
     NucleotideGlyph consensusBase = NucleotideGlyph.Adenine;
     NucleotideGlyph notConsensusBase = NucleotideGlyph.Thymine;
     
@@ -66,7 +68,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     public void setup(){
         qualityValueStrategy = createMock(QualityValueStrategy.class);
         coverageRegion = createMock(CoverageRegion.class);
-        qualityFastaMap = createMock(DataStore.class);
+        qualityFastaMap = createMock(QualityDataStore.class);
         sut = new DefaultContigQualityClassComputer(qualityValueStrategy, threshold);
         builder = createMock(QualityClass.Builder.class);
         expect(builder.build()).andReturn(expectedQuality);
@@ -207,7 +209,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
             List<PlacedRead> reads, final PhredQuality returnedQuality) throws DataStoreException {
         PlacedRead realRead = createMock(PlacedRead.class);
         NucleotideEncodedGlyphs encodedBases = createMock(NucleotideEncodedGlyphs.class);
-        EncodedGlyphs<PhredQuality> encodedQualities = createMock(EncodedGlyphs.class);
+        QualityEncodedGlyphs encodedQualities = createMock(QualityEncodedGlyphs.class);
         expect(realRead.getId()).andReturn(id);
         expect(qualityFastaMap.get(id)).andReturn(encodedQualities);
         expect(realRead.getStart()).andReturn(0L);
@@ -229,7 +231,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
             List<PlacedRead> reads, final PhredQuality returnedQuality) throws DataStoreException {
         PlacedRead realRead = createMock(PlacedRead.class);
         NucleotideEncodedGlyphs encodedBases = createMock(NucleotideEncodedGlyphs.class);
-        EncodedGlyphs<PhredQuality> encodedQualities = createMock(EncodedGlyphs.class);
+        QualityEncodedGlyphs encodedQualities = createMock(QualityEncodedGlyphs.class);
         expect(realRead.getId()).andReturn(id);
         expect(qualityFastaMap.get(id)).andReturn(encodedQualities);
         expect(realRead.getStart()).andReturn(0L);

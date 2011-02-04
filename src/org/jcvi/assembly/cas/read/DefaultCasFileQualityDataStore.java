@@ -42,15 +42,19 @@ import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.jcvi.util.CloseableIterator;
 
 public class DefaultCasFileQualityDataStore extends AbstractOnePassCasFileVisitor implements CasQualityDataStore {
 
-    private List<DataStore<EncodedGlyphs<PhredQuality>>> qualityDataStores = new ArrayList<DataStore<EncodedGlyphs<PhredQuality>>>();
+    private List<QualityDataStore> qualityDataStores = new ArrayList<QualityDataStore>();
     
     private final CasDataStoreFactory casDataStoreFactory;
-    private DataStore<EncodedGlyphs<PhredQuality>> delegate;
+    private DataStore<QualityEncodedGlyphs> delegate;
    
     /**
      * @param casDataStoreFactory
@@ -61,7 +65,7 @@ public class DefaultCasFileQualityDataStore extends AbstractOnePassCasFileVisito
     }
 
     @Override
-    public void visitReadFileInfo(CasFileInfo readFileInfo) {
+    public synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
         super.visitReadFileInfo(readFileInfo);
         handleFileInfo(readFileInfo);
     }
@@ -95,18 +99,18 @@ public class DefaultCasFileQualityDataStore extends AbstractOnePassCasFileVisito
         }
     }
     
-    private DataStore<EncodedGlyphs<PhredQuality>> createArtificalDataStoreFor(String pathtoReferenceFile) throws CasDataStoreFactoryException, DataStoreException{
-        Map<String, EncodedGlyphs<PhredQuality>> map = new HashMap<String, EncodedGlyphs<PhredQuality>>();
+    private QualityDataStore createArtificalDataStoreFor(String pathtoReferenceFile) throws CasDataStoreFactoryException, DataStoreException{
+        Map<String, QualityEncodedGlyphs> map = new HashMap<String, QualityEncodedGlyphs>();
         DataStore<NucleotideEncodedGlyphs> nucleotideDataStore =casDataStoreFactory.getNucleotideDataStoreFor(pathtoReferenceFile);
         Iterator<String> idIterator = nucleotideDataStore.getIds();
         while(idIterator.hasNext()){
             String id = idIterator.next();
             byte[] buf = new byte[(int)nucleotideDataStore.get(id).getLength()];
             Arrays.fill(buf, (byte)20);
-             map.put(id,new DefaultEncodedGlyphs<PhredQuality>(
+             map.put(id,new DefaultQualityEncodedGlyphs(
                      RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, PhredQuality.valueOf(buf)));
         }
-        return new SimpleDataStore<EncodedGlyphs<PhredQuality>>(map);
+        return new QualityDataStoreAdapter(new SimpleDataStore<QualityEncodedGlyphs>(map));
     }
 
     @Override
@@ -130,7 +134,7 @@ public class DefaultCasFileQualityDataStore extends AbstractOnePassCasFileVisito
     }
 
     @Override
-    public synchronized EncodedGlyphs<PhredQuality> get(String id) throws DataStoreException {
+    public synchronized QualityEncodedGlyphs get(String id) throws DataStoreException {
         checkIsInitialized();
         return delegate.get(id);
     }
@@ -148,7 +152,7 @@ public class DefaultCasFileQualityDataStore extends AbstractOnePassCasFileVisito
     }
 
     @Override
-    public synchronized CloseableIterator<EncodedGlyphs<PhredQuality>> iterator() {
+    public synchronized CloseableIterator<QualityEncodedGlyphs> iterator() {
         checkIsInitialized();
         return delegate.iterator();
     }

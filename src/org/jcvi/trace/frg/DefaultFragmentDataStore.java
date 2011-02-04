@@ -31,6 +31,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Library;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
@@ -76,7 +77,7 @@ public class DefaultFragmentDataStore extends AbstractFragmentDataStore{
     @Override
     public void visitFragment(FrgVisitorAction action, String fragmentId,
             String libraryId, NucleotideEncodedGlyphs bases,
-            EncodedGlyphs<PhredQuality> qualities, Range validRange,
+            QualityEncodedGlyphs qualities, Range validRange,
             Range vectorClearRange, String source) {
         throwErrorIfAlreadyInitialized();
         if(isAddOrModify(action)){

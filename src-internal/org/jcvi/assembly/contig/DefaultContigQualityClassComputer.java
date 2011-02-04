@@ -33,6 +33,7 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -46,7 +47,7 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
     }
     @Override
     public QualityClass computeQualityClass( CoverageMap<CoverageRegion<P>> coverageMap,
-            DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore,
+            QualityDataStore qualityDataStore,
     NucleotideEncodedGlyphs consensus,int index) {
         CoverageRegion<P> region = coverageMap.getRegionWhichCovers(index);
         if(region ==null){
@@ -70,14 +71,14 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
         return qualityThreshold;
     }
     protected QualityClass computeQualityClassFor(
-            DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore, int index,
+            QualityDataStore qualityDataStore, int index,
             CoverageRegion<P> region, final NucleotideGlyph consensusBase) throws DataStoreException {
         QualityClass.Builder builder = new QualityClass.Builder(consensusBase,qualityThreshold);
         return computeQualityClassFor(qualityDataStore, index, region,
                 consensusBase, builder);
     }
     protected QualityClass computeQualityClassFor(
-            DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore, int index,
+            QualityDataStore qualityDataStore, int index,
             CoverageRegion<P> region, final NucleotideGlyph consensusBase,
             QualityClass.Builder builder) throws DataStoreException {
         for(P placedRead : region){

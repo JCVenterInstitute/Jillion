@@ -32,7 +32,9 @@ import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
 
@@ -48,7 +50,7 @@ public class DefaultAmosFragmentFileDataStore extends AbstractDataStore<AmosFrag
     private String currentId;
     private int currentIndex;
     private NucleotideEncodedGlyphs currentBasecalls;
-    private EncodedGlyphs<PhredQuality> currentQualities;
+    private QualityEncodedGlyphs currentQualities;
     private Range validRange, vectorRange, qualityRange;
     
     public DefaultAmosFragmentFileDataStore(File afgFile) throws FileNotFoundException{
@@ -103,7 +105,7 @@ public class DefaultAmosFragmentFileDataStore extends AbstractDataStore<AmosFrag
     */
     @Override
     public void visitQualities(List<PhredQuality> qualities) {
-        this.currentQualities = new DefaultEncodedGlyphs<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,qualities);
+        this.currentQualities = new DefaultQualityEncodedGlyphs(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,qualities);
         
     }
 

@@ -35,13 +35,14 @@ import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 
 public class DefaultSliceMap extends AbstractSliceMap{
 
     private final Map<Long, Slice> sliceMap = new HashMap<Long, Slice>();
     private final long size;
     public DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
-                        DataStore<EncodedGlyphs<PhredQuality>> qualityDataStore,
+                        QualityDataStore qualityDataStore,
                         QualityValueStrategy qualityValueStrategy){
         this.size = coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()+1;
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){

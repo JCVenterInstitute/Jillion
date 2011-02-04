@@ -29,16 +29,17 @@ import java.io.IOException;
 import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 
 public class DefaultSffDataStoreFactory implements SffDataStoreFactory{
 
-    private final GlyphCodec<PhredQuality> qualityCodec;
+    private final QualityGlyphCodec qualityCodec;
     
     /**
      * @param shouldTrim
      * @param qualityCodec
      */
-    public DefaultSffDataStoreFactory(GlyphCodec<PhredQuality> qualityCodec) {
+    public DefaultSffDataStoreFactory(QualityGlyphCodec qualityCodec) {
         this.qualityCodec = qualityCodec;
     }
     

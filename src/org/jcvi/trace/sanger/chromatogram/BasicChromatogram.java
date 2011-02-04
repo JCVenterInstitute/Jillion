@@ -33,7 +33,9 @@ import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Peaks;
 
 
@@ -52,7 +54,7 @@ public class BasicChromatogram implements Chromatogram {
     private final ChannelGroup channelGroup;
     private final NucleotideEncodedGlyphs basecalls;
     private final Peaks peaks;
-    private final EncodedGlyphs<PhredQuality> qualities;
+    private final QualityEncodedGlyphs qualities;
 
     /**
      * Used to store the TEXT properties of a ZTR file.
@@ -67,7 +69,7 @@ public class BasicChromatogram implements Chromatogram {
                c.getChannelGroup(),
                 c.getProperties());
     }
-    public BasicChromatogram(NucleotideEncodedGlyphs basecalls,EncodedGlyphs<PhredQuality> qualities, Peaks peaks,
+    public BasicChromatogram(NucleotideEncodedGlyphs basecalls,QualityEncodedGlyphs qualities, Peaks peaks,
             ChannelGroup channelGroup){
         this(basecalls, qualities, peaks, channelGroup, new HashMap<String,String>());
     }
@@ -75,11 +77,11 @@ public class BasicChromatogram implements Chromatogram {
             ChannelGroup channelGroup,
             Map<String,String> properties){
         this(new DefaultNucleotideEncodedGlyphs( NucleotideGlyph.getGlyphsFor(basecalls)),
-                new DefaultEncodedGlyphs<PhredQuality>(RUN_LENGTH_CODEC,PhredQuality.valueOf(qualities)),
+                new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,PhredQuality.valueOf(qualities)),
                 peaks,
                      channelGroup, properties);
     }
-    public BasicChromatogram(NucleotideEncodedGlyphs basecalls, EncodedGlyphs<PhredQuality> qualities,Peaks peaks,
+    public BasicChromatogram(NucleotideEncodedGlyphs basecalls, QualityEncodedGlyphs qualities,Peaks peaks,
            ChannelGroup channelGroup,
            Map<String,String> properties){
         canNotBeNull(basecalls, peaks, channelGroup, properties);
@@ -153,7 +155,7 @@ public class BasicChromatogram implements Chromatogram {
         return channelGroup;
     }
     @Override
-    public EncodedGlyphs<PhredQuality> getQualities() {
+    public QualityEncodedGlyphs getQualities() {
         return qualities;
     }
     @Override

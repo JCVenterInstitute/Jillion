@@ -25,6 +25,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.sequence.Peaks;
@@ -45,7 +46,7 @@ public class TestChromatogram2Fasta {
 	public void setup(){
 		chromo = createMock(Chromatogram.class);
 		expect(chromo.getBasecalls()).andStubReturn(new DefaultNucleotideEncodedGlyphs(basecalls));
-		expect(chromo.getQualities()).andStubReturn(new DefaultEncodedGlyphs<PhredQuality>(
+		expect(chromo.getQualities()).andStubReturn(new DefaultQualityEncodedGlyphs(
 				RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, PhredQuality.valueOf(quals)));
 		expect(chromo.getPeaks()).andStubReturn(new Peaks(peaks));
 		replay(chromo);
