@@ -73,6 +73,7 @@ import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadOnlyDirectoryFileServer;
@@ -283,7 +284,7 @@ public class SingleContigCasAssemblyBuilder {
             CasContig casContig =contigBuilder.build();
           //  casContigMap.put(contig.getId(), contig);
             final AceContigAdapter adpatedCasContig = new AceContigAdapter(casContig, phdDate,readIdLookup);
-            DataStore<EncodedGlyphs<PhredQuality>> aceQualityDatastore;
+            DataStore<QualityEncodedGlyphs> aceQualityDatastore;
             
             if(commandLine.hasOption("chromat_dir")){                
                 aceQualityDatastore = MultipleDataStoreWrapper.createMultipleDataStoreWrapper(QualityDataStore.class, 

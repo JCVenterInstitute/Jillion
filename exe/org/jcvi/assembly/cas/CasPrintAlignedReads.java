@@ -44,10 +44,10 @@ import org.jcvi.assembly.cas.read.DefaultSffCasDataStoreFactory;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.util.MultipleWrapper;
 
 public class CasPrintAlignedReads extends AbstractOnePassCasFileVisitor{
@@ -55,10 +55,10 @@ public class CasPrintAlignedReads extends AbstractOnePassCasFileVisitor{
     private final CasIdLookup readNameLookup;
     private final CasIdLookup contigNameLookup;
     private final CasDataStoreFactory casDataStoreFactory;
-    private List<DataStore<NucleotideEncodedGlyphs>> ReferenceNucleotideDataStores = new ArrayList<DataStore<NucleotideEncodedGlyphs>>();
+    private List<NucleotideDataStore> ReferenceNucleotideDataStores = new ArrayList<NucleotideDataStore>();
     
-    private List<DataStore<NucleotideEncodedGlyphs>> nucleotideDataStores = new ArrayList<DataStore<NucleotideEncodedGlyphs>>();
-    private List<DataStore<EncodedGlyphs<PhredQuality>>> qualityDataStores = new ArrayList<DataStore<EncodedGlyphs<PhredQuality>>>();
+    private List<NucleotideDataStore> nucleotideDataStores = new ArrayList<NucleotideDataStore>();
+    private List<QualityDataStore> qualityDataStores = new ArrayList<QualityDataStore>();
     private long alignCount=0;
     private long nonalignCount=0;
     private final PrintWriter writer;

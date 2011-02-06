@@ -40,7 +40,6 @@ import org.jcvi.command.grid.GridJob;
 import org.jcvi.command.grid.GridJobExecutorService;
 import org.jcvi.command.grid.GridUtils;
 import org.jcvi.command.grid.PostExecutionHook;
-import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.joda.time.Period;

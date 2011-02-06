@@ -222,24 +222,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public CoverageMap<T> shiftLeft(int units) {
-        List<T> shiftedRegions = new ArrayList<T>(getNumberOfRegions());
-        for(T region : this.regions){
-            shiftedRegions.add((T)region.shiftLeft(units));
-        }
-        return new DefaultCoverageMap<V, T>(shiftedRegions);
-    }
-    @SuppressWarnings("unchecked")
-    @Override
-    public CoverageMap<T> shiftRight(int units) {
-        List<T> shiftedRegions = new ArrayList<T>(getNumberOfRegions());
-        for(T region : this.regions){
-            shiftedRegions.add((T)region.shiftRight(units));
-        }
-        return new DefaultCoverageMap<V, T>(shiftedRegions);
-    }
+    
     @Override
     public List<T> getRegions() {
         return Collections.unmodifiableList(regions);

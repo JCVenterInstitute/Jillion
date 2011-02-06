@@ -27,8 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.glyph.GlyphCodec;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.io.IOUtil;
 
 public class CompactedAminoAcidGlyphCodec implements GlyphCodec<AminoAcid>{
 
