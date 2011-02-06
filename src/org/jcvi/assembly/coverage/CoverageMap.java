@@ -41,9 +41,6 @@ public interface CoverageMap <T extends CoverageRegion<?>> extends Iterable<T>{
     
     int getRegionIndexWhichCovers(long consensusIndex);
     
-    CoverageMap<T> shiftLeft(int units);
-    CoverageMap<T> shiftRight(int units);
-    
     double getAverageCoverage();
     int getMaxCoverage();
     int getMinCoverage();

@@ -61,6 +61,7 @@ import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.jcvi.sequence.ReadTrimMap;
@@ -98,7 +99,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
         Map<R, Range> trimmedReads = new HashMap<R, Range>();
         DefaultQualityClassContigMap qualityClassContigMap = struct.getQualityClassMap();
         CoverageMap<CoverageRegion<R>> coverageMap = struct.getSequenceCoverageMap();
-        DataStore<EncodedGlyphs<PhredQuality>> qualityMap = struct.getQualityDataStore();
+        QualityDataStore qualityMap = struct.getQualityDataStore();
         for (QualityClassRegion qualityClassRegion : qualityClassContigMap) {
             if (isAQualityClassToTrim(qualityClassRegion.getQualityClass())) {
                 for(Long consensusIndex : new PlacedIterable(qualityClassRegion)){
@@ -138,7 +139,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
         return qualityClassesToTrim.contains(qualityClass);
     }
 
-    private Range computeNewValidRange(DataStore<EncodedGlyphs<PhredQuality>> qualityMap, R read, Range oldValidRange,int gappedValidRangeIndex) throws DataStoreException {
+    private Range computeNewValidRange(QualityDataStore qualityMap, R read, Range oldValidRange,int gappedValidRangeIndex) throws DataStoreException {
         final EncodedGlyphs<PhredQuality> qualityValues = qualityMap.get(read.getId());
 
         int gappedTrimIndex = computeGappedTrimIndex(read,gappedValidRangeIndex);

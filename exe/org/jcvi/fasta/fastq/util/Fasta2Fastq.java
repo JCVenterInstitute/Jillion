@@ -49,6 +49,7 @@ import org.jcvi.fastX.fastq.FastQUtil;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
@@ -153,7 +154,7 @@ public class Fasta2Fastq {
                 public boolean visitRecord(String id, String comment, String entireBody) {
                     try {
                         if(filter.accept(id, comment)){
-                            EncodedGlyphs<PhredQuality> qualities =qualityDataStore.get(id);
+                            QualityEncodedGlyphs qualities =qualityDataStore.get(id);
                             if(qualities ==null){
                                 throw new IllegalStateException("no quality values for "+ id);
                             }

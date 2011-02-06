@@ -56,6 +56,7 @@ import org.jcvi.glyph.Glyph;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.io.idReader.DefaultFileIdReader;
 import org.jcvi.io.idReader.IdReader;
 import org.jcvi.io.idReader.IdReaderException;
@@ -114,7 +115,7 @@ public class SortedFasta2Fastq {
         
         
     }
-    private static class QualityBlockedFastaVisitor extends BlockedFastaVisitor<PhredQuality, EncodedGlyphs<PhredQuality>, QualityFastaRecord>{
+    private static class QualityBlockedFastaVisitor extends BlockedFastaVisitor<PhredQuality, QualityEncodedGlyphs, QualityFastaRecord>{
 
         /**
          * @param file
@@ -296,8 +297,8 @@ public class SortedFasta2Fastq {
            qualVisitor.start();
            seqVisitor.start();
            while(!done){
-               FastaRecord<EncodedGlyphs<PhredQuality>> qualityFasta =qualityQueue.take();
-               FastaRecord<NucleotideEncodedGlyphs> seqFasta = sequenceQueue.take();
+               QualityFastaRecord qualityFasta =qualityQueue.take();
+               NucleotideSequenceFastaRecord seqFasta = sequenceQueue.take();
                if(qualityFasta == QUALITY_END_OF_FILE){
                    if(seqFasta == SEQ_END_OF_FILE){
                        done = true;
