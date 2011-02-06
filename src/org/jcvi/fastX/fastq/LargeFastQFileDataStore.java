@@ -32,9 +32,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.util.AbstractLargeIdIterator;
 import org.jcvi.util.CloseableIterator;

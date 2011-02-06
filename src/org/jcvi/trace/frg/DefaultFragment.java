@@ -25,9 +25,7 @@ package org.jcvi.trace.frg;
 
 import org.jcvi.CommonUtil;
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Library;
 import org.jcvi.trace.Trace;

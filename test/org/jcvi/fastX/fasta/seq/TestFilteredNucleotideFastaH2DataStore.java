@@ -28,7 +28,6 @@ import java.util.Arrays;
 
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.IncludeFastXIdFilter;
-import org.jcvi.fastX.fasta.qual.TestQualityFastaH2DataStore;
 import org.jcvi.fastX.fasta.seq.LargeNucleotideFastaFileDataStore;
 import org.jcvi.fastX.fasta.seq.NucleotideFastaDataStore;
 import org.jcvi.fastX.fasta.seq.NucleotideFastaH2DataStore;

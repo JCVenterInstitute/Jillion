@@ -26,7 +26,6 @@ package org.jcvi.fastX.fasta.qual;
 import java.util.List;
 
 import org.jcvi.fastX.fasta.AbstractFastaRecord;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 

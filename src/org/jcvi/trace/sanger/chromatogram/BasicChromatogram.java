@@ -27,8 +27,6 @@ package org.jcvi.trace.sanger.chromatogram;
 import java.util.HashMap;
 import java.util.Map;
 import org.jcvi.CommonUtil;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;

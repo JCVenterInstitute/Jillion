@@ -25,7 +25,6 @@ package org.jcvi.trace.sanger.phd;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;

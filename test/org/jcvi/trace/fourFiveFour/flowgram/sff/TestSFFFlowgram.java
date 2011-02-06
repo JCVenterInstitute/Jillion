@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;

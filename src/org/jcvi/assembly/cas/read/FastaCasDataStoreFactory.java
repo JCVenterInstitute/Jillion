@@ -36,7 +36,6 @@ import org.jcvi.fastX.fasta.seq.LargeNucleotideFastaFileDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 /**
  * {@code FastaCasDataStoreFactory} is a {@link CasDataStoreFactory}
  * implementation for .fasta files.

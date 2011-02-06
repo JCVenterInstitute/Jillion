@@ -25,9 +25,7 @@ package org.jcvi.trace.sanger.traceArchive;
 
 import java.io.InputStream;
 
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Peaks;

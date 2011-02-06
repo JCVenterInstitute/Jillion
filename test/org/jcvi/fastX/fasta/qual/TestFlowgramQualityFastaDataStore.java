@@ -26,7 +26,6 @@ package org.jcvi.fastX.fasta.qual;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;

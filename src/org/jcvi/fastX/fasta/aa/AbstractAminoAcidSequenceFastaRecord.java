@@ -5,8 +5,6 @@ import java.util.zip.Checksum;
 
 import org.jcvi.fastX.fasta.AbstractFastaRecord;
 import org.jcvi.fastX.fasta.FastaUtil;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.aa.AminoAcid;
 import org.jcvi.glyph.aa.AminoAcidEncodedGlyphs;
 
 /*

@@ -37,9 +37,6 @@ import java.util.Scanner;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
