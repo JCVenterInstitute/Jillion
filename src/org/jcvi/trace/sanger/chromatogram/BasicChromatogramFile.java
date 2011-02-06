@@ -20,9 +20,7 @@
 package org.jcvi.trace.sanger.chromatogram;
 import java.util.Map;
 
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Peaks;
 

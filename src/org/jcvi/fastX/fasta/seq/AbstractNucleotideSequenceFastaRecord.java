@@ -25,9 +25,6 @@
  */
 package org.jcvi.fastX.fasta.seq;
 
-import java.util.zip.CRC32;
-import java.util.zip.Checksum;
-
 import org.jcvi.fastX.fasta.AbstractFastaRecord;
 import org.jcvi.fastX.fasta.FastaUtil;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;

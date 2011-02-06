@@ -28,8 +28,6 @@ import java.sql.SQLException;
 
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecordUtil;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;

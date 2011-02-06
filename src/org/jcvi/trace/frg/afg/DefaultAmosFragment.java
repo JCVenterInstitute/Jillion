@@ -20,9 +20,7 @@
 package org.jcvi.trace.frg.afg;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 
 /**

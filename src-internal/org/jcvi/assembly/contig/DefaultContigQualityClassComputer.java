@@ -27,7 +27,6 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;

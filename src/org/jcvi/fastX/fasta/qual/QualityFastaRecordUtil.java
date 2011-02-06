@@ -29,7 +29,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;

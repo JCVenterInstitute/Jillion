@@ -24,8 +24,6 @@
 package org.jcvi.trace;
 
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 

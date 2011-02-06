@@ -33,8 +33,6 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.datastore.EmptyDataStoreFilter;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;

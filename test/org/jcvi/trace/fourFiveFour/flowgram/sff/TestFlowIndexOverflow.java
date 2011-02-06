@@ -31,7 +31,6 @@ import java.util.Arrays;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;

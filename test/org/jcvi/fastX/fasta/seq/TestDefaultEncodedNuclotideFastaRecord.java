@@ -26,7 +26,6 @@ package org.jcvi.fastX.fasta.seq;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.fastX.fasta.AbstractFastaRecord;
 import org.jcvi.fastX.fasta.FastaUtil;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;

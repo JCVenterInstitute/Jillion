@@ -20,7 +20,6 @@
 package org.jcvi.fastX.fasta.qual;
 
 import org.jcvi.fastX.fasta.FastaDataStore;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 

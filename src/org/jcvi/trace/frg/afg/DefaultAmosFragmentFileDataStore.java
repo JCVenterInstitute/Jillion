@@ -28,8 +28,6 @@ import java.util.Map;
 import org.jcvi.Range;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;

@@ -35,8 +35,6 @@ import java.util.List;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
-import org.jcvi.glyph.GlyphCodec;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;

@@ -25,8 +25,6 @@ package org.jcvi.fastX.fasta.qual;
 
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;

@@ -22,7 +22,6 @@ package org.jcvi.trace.sanger.chromatogram;
 import java.io.IOException;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;

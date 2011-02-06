@@ -29,7 +29,6 @@ import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -61,7 +60,7 @@ public class TestDefaultContigQualityClassComputer {
 
         sut = createMockBuilder(DefaultContigQualityClassComputer.class)
             .withConstructor(qualityValueStrategy,threshold)
-            .addMockedMethod("computeQualityClassFor",DataStore.class,Integer.TYPE, CoverageRegion.class, NucleotideGlyph.class)
+            .addMockedMethod("computeQualityClassFor",QualityDataStore.class,Integer.TYPE, CoverageRegion.class, NucleotideGlyph.class)
         .createMock();
                 
         coverageMap = createMock(CoverageMap.class);

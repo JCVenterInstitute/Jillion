@@ -24,11 +24,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Peaks;
 import org.junit.Test;
 import static org.junit.Assert.*;

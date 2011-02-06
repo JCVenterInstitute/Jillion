@@ -24,7 +24,6 @@
 package org.jcvi.fastX.fastq;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.datastore.DataStore;

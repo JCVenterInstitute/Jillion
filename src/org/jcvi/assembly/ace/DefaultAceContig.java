@@ -30,7 +30,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jcvi.Range;
-import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.contig.AbstractContig;
 import org.jcvi.glyph.DefaultEncodedGlyphs;

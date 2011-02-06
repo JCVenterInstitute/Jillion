@@ -28,7 +28,6 @@ import java.util.Arrays;
 
 import org.jcvi.Distance;
 import org.jcvi.Range;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
