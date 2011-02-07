@@ -45,6 +45,7 @@ import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.fastX.fasta.qual.LargeQualityFastaFileDataStore;
+import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.fastX.fasta.seq.LargeNucleotideFastaFileDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
@@ -120,8 +121,9 @@ public class Contig2Consed {
             QualityDataStore qualDataStore;
             if(commandLine.hasOption("qual")){
                 File qualFile = new File(commandLine.getOptionValue("qual"));
-                qualDataStore = CachedDataStore.createCachedDataStore(QualityDataStore.class, 
-                        new QualityDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(qualFile))),
+                qualDataStore = CachedDataStore.createCachedDataStore(QualityDataStore.class,
+                                QualityFastaRecordDataStoreAdapter.adapt(
+                                        new LargeQualityFastaFileDataStore(qualFile)),
                         cacheSize);
                 
                 
