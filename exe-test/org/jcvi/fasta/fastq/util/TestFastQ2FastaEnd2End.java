@@ -37,11 +37,9 @@ import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.fastX.fastq.FastQRecord;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.io.idReader.IdReaderException;
-import org.jcvi.testUtil.IntegrationTests;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
 /**
@@ -49,7 +47,6 @@ import org.junit.rules.TemporaryFolder;
  *
  *
  */
- @Category(IntegrationTests.class)
 public class TestFastQ2FastaEnd2End {
 
      private final ResourceFileServer RESOURCES = new ResourceFileServer(TestFastQ2FastaEnd2End.class);

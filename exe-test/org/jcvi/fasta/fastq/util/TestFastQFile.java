@@ -29,11 +29,9 @@ import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.fastX.fastq.FastQRecord;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.io.idReader.IdReaderException;
-import org.jcvi.testUtil.IntegrationTests;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
 import static org.junit.Assert.*;
@@ -42,7 +40,6 @@ import static org.junit.Assert.*;
  *
  *
  */
-@Category(IntegrationTests.class)
 public class TestFastQFile {
 
     private final ResourceFileServer RESOURCES = new ResourceFileServer(TestFastQFile.class);
