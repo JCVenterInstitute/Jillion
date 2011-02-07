@@ -22,10 +22,8 @@ package org.jcvi;
 import org.jcvi.fasta.TestTrimFasta;
 import org.jcvi.fasta.fastq.util.TestFastQ2FastaEnd2End;
 import org.jcvi.fasta.fastq.util.TestFastQFile;
-import org.jcvi.testUtil.IntegrationTests;
-import org.junit.experimental.categories.Categories;
-import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
@@ -33,8 +31,7 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  *
  */
-@RunWith(Categories.class)
-@IncludeCategory(IntegrationTests.class)
+@RunWith(Suite.class)
 @SuiteClasses( { 
    TestFastQFile.class,
    TestFastQ2FastaEnd2End.class,

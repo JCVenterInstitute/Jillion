@@ -16,33 +16,43 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
-package org.jcvi;
-
-import org.jcvi.assembly.AllInternalAssemblyUnitTests;
-import org.jcvi.assembly.contig.AllInternalContigUnitTests;
-import org.jcvi.auth.AllAuthUnitTests;
-import org.jcvi.trace.AllInternalTraceUnitTests;
-import org.jcvi.uid.AllUidUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-/**
+/*
+ * Created on Dec 23, 2009
+ *
  * @author dkatzel
- *
- *
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        AllInternalContigUnitTests.class,
-        AllInternalAssemblyUnitTests.class,
-        AllInternalTraceUnitTests.class,
-        AllAuthUnitTests.class,
-        AllUidUnitTests.class
-    }
-    )
-public class AllInternalUnitTests {
+package org.jcvi.auth;
+import static org.junit.Assert.*;
+import org.junit.Test;
+public class TestDefaultTigrAuthorizer {
 
+    
+    String username = "user";
+    char[] pass = "password".toCharArray();
+    
+    String server = "server";
+    String project = "project";
+    JCVIAuthorizer authorizer = new DefaultJCVIAuthorizer(username, pass);
+    
+    DefaultTigrAuthorizer sut = new DefaultTigrAuthorizer(authorizer, project, server);
+   
+    
+    @Test
+    public void getServer(){
+        assertEquals(server, sut.getServer());
+    }
+    @Test
+    public void getProject(){
+        assertEquals(project, sut.getProject());
+    }
+    
+    @Test
+    public void getUsername(){
+        assertEquals(username,sut.getUsername());
+    }
+    
+    @Test
+    public void getPassword(){
+        assertArrayEquals(pass,sut.getPassword());
+    }
 }

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,33 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
-package org.jcvi;
-
-import org.jcvi.assembly.AllInternalAssemblyUnitTests;
-import org.jcvi.assembly.contig.AllInternalContigUnitTests;
-import org.jcvi.auth.AllAuthUnitTests;
-import org.jcvi.trace.AllInternalTraceUnitTests;
-import org.jcvi.uid.AllUidUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
 /**
- * @author dkatzel
- *
- *
+ * This package contains classes to handle authorization.
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        AllInternalContigUnitTests.class,
-        AllInternalAssemblyUnitTests.class,
-        AllInternalTraceUnitTests.class,
-        AllAuthUnitTests.class,
-        AllUidUnitTests.class
-    }
-    )
-public class AllInternalUnitTests {
-
-}
+package org.jcvi.auth;
