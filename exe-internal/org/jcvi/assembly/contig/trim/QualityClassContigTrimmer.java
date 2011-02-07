@@ -54,13 +54,12 @@ import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.ContigDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultContigFileDataStore;
-import org.jcvi.fastX.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.fastX.fasta.qual.LargeQualityFastaFileDataStore;
+import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.jcvi.sequence.ReadTrimMap;
 import org.jcvi.sequence.ReadTrimUtil;
@@ -97,7 +96,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
         Map<R, Range> trimmedReads = new HashMap<R, Range>();
         DefaultQualityClassContigMap qualityClassContigMap = struct.getQualityClassMap();
         CoverageMap<CoverageRegion<R>> coverageMap = struct.getSequenceCoverageMap();
-        QualityDataStore qualityMap = struct.getQualityDataStore();
+        QualityDataStore qualityDatastore = struct.getQualityDataStore();
         for (QualityClassRegion qualityClassRegion : qualityClassContigMap) {
             if (isAQualityClassToTrim(qualityClassRegion.getQualityClass())) {
                 for(Long consensusIndex : new PlacedIterable(qualityClassRegion)){
@@ -108,7 +107,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
                         if (isASnp(read, gappedValidRangeIndex)){                           
 
                             Range oldValidRange = getPreviousValidRange(trimmedReads, read);
-                            Range newValidRange = computeNewValidRange(qualityMap, read,oldValidRange,gappedValidRangeIndex);
+                            Range newValidRange = computeNewValidRange(qualityDatastore, read,oldValidRange,gappedValidRangeIndex);
                             if (newValidRange != null) {
                                 trimmedReads.put(read, newValidRange);
                             }
@@ -235,7 +234,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
                     contigFile);
             QualityDataStore qualityFastaMap = 
                 CachedDataStore.createCachedDataStore(QualityDataStore.class, 
-                        new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(qualFastaFile))),
+                        QualityFastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(qualFastaFile)),
                         100);
          
             for (Contig<PlacedRead> contig : contigDataStore) {

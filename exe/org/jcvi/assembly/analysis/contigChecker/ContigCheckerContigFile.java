@@ -42,6 +42,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.IndexedContigFileDataStore;
 import org.jcvi.fastX.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.fastX.fasta.qual.LargeQualityFastaFileDataStore;
+import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.jcvi.io.idReader.IdReaderException;
@@ -78,8 +79,8 @@ public class ContigCheckerContigFile {
         try{
         ContigDataStore<PlacedRead, Contig<PlacedRead>> contigDataStore = new IndexedContigFileDataStore(contigFile);
         QualityDataStore qualityFastaMap = CachedDataStore.createCachedDataStore(
-                DataStore.class, 
-                new QualityDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(qualityFastaFile)))
+                QualityDataStore.class, 
+                QualityFastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(qualityFastaFile))
                 ,2000);
         
         for(Iterator<String>contigIdIterator=contigDataStore.getIds(); contigIdIterator.hasNext();){
