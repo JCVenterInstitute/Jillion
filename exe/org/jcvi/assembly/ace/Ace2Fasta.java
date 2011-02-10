@@ -60,12 +60,14 @@ public class Ace2Fasta {
                             .longName("gapped")
                             .build());
         options.addOption(CommandLineUtils.createHelpOption());
+        if(CommandLineUtils.helpRequested(args)){
+            printHelp(options);
+            System.exit(0);
+        }
+        
         try {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
-            if(commandLine.hasOption("h")){
-                printHelp(options);
-                System.exit(0);
-            }
+          
             final File aceIn = new File(commandLine.getOptionValue("ace"));
     
             final OutputStream fastaOut = new FileOutputStream(commandLine.getOptionValue("out"));

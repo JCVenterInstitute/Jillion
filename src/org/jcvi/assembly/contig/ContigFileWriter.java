@@ -46,13 +46,13 @@ public class ContigFileWriter implements Closeable{
     public ContigFileWriter(OutputStream out) {
         this.out = out;
     }
-    public void write(List<Contig<PlacedRead>> contigs) throws IOException {
-        for(Contig<PlacedRead> contig : contigs){
+    public <PR extends PlacedRead, C extends Contig<PR>> void write(List<C> contigs) throws IOException {
+        for(C contig : contigs){
             write(contig);
         }
         
     }
-    public void write(Contig<PlacedRead> contig) throws IOException,
+    public <PR extends PlacedRead, C extends Contig<PR>> void write(C contig) throws IOException,
             UnsupportedEncodingException {
         writeContigHeader(contig);
         writeBases(contig.getConsensus());
@@ -65,7 +65,7 @@ public class ContigFileWriter implements Closeable{
     }
     
    
-    private void writeContigHeader(Contig<PlacedRead> contig) throws IOException {
+    private void writeContigHeader(Contig<? extends PlacedRead> contig) throws IOException {
         String header = String.format("##%s %d %d bases, 00000000 checksum.\n",
                 contig.getId(), contig.getNumberOfReads(), contig.getConsensus().getLength());
         

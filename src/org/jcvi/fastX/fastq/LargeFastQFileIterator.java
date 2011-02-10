@@ -35,20 +35,15 @@ import org.jcvi.util.CloseableIterator;
  *
  *
  */
-public class LargeFastQFileIterator extends AbstractFastQFileVisitor<FastQRecord> implements CloseableIterator<FastQRecord>{
+public class LargeFastQFileIterator extends AbstractFastQFileVisitor implements CloseableIterator<FastQRecord>{
 
     private Object endOfFileToken = new Object();
     private BlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1);
     private Object nextRecord=null;
     private boolean isClosed=false;
-    private String currentId = null;
-    private String currentComment=null;
-    private NucleotideEncodedGlyphs currentBasecalls;
-    private QualityEncodedGlyphs currentQualities;
-    private final FastQQualityCodec qualityCodec;
     
     public LargeFastQFileIterator(final File fastQFile,FastQQualityCodec qualityCodec) throws InterruptedException{
-        this.qualityCodec = qualityCodec;
+        super(qualityCodec);
         new Thread(){
 
             @Override
@@ -73,8 +68,7 @@ public class LargeFastQFileIterator extends AbstractFastQFileVisitor<FastQRecord
     }
     @Override
     public boolean visitBeginBlock(String id, String optionalComment) {
-        currentId=id;
-        currentComment=optionalComment;
+        super.visitBeginBlock(id, optionalComment);
         return !isClosed;
     }
     @Override
@@ -88,20 +82,18 @@ public class LargeFastQFileIterator extends AbstractFastQFileVisitor<FastQRecord
             throw new IllegalStateException(e);
         }
     }
-    @Override
-    public void visitEncodedQualities(String encodedQualities) {
-        currentQualities = qualityCodec.decode(encodedQualities);
-    }
-    @Override
-    public boolean visitEndBlock() {
-        FastQRecord record = new DefaultFastQRecord(currentId,currentBasecalls, currentQualities,currentComment);
-        blockingPut(record);
-        return true;
-    }
-    @Override
-    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
-        currentBasecalls = nucleotides;
-    }
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     protected boolean visitFastQRecord(String id,
+             NucleotideEncodedGlyphs nucleotides,
+             QualityEncodedGlyphs qualities, String optionalComment) {
+         FastQRecord record = new DefaultFastQRecord(id,nucleotides, qualities,optionalComment);
+         blockingPut(record);
+         return true;
+     }
+    
     /**
     * {@inheritDoc}
     */
@@ -143,6 +135,7 @@ public class LargeFastQFileIterator extends AbstractFastQFileVisitor<FastQRecord
         }
         return next;
     }
+    
     
     
 }

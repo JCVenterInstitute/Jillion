@@ -29,20 +29,23 @@ import java.io.IOException;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.util.CloseableIterator;
 
-public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends AbstractFastQFileVisitor<T> implements FastQDataStore<T>{
+public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends AbstractFastQFileVisitor implements FastQDataStore<T>{
 
-    private String currentId, currentComment;
-    private QualityEncodedGlyphs qualities;
-    private NucleotideEncodedGlyphs nucleotides;
-    protected final FastQQualityCodec qualityCodec;
+    
+    
     private boolean isClosed =false;
+    private boolean initialized=false;
+
     public AbstractFastQFileDataStore(FastQQualityCodec qualityCodec){
-        this.qualityCodec = qualityCodec;
+        super(qualityCodec);
     }
-   
+    protected void checkNotYetInitialized(){
+        if(initialized){
+            throw new IllegalStateException("already initialized, can not visit more records");
+        }
+    }    
     public synchronized boolean isClosed() {
         return isClosed;
     }
@@ -52,10 +55,31 @@ public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends 
             throw new DataStoreException("datastore is closed");
         }
     }
-    protected FastQQualityCodec getQualityCodec() {
-        return qualityCodec;
+  
+
+    @Override
+    public void visitEndOfFile() {
+        checkNotYetInitialized();
+        super.visitEndOfFile();     
     }
 
+    @Override
+    public void visitLine(String line) {
+        checkNotYetInitialized();
+        super.visitLine(line);
+    }
+    
+    @Override
+    public void visitEncodedQualities(String encodedQualities) {
+        checkNotYetInitialized();
+        super.visitEncodedQualities(encodedQualities);
+    }
+
+    @Override
+    public void visitFile() {       
+        checkNotYetInitialized();
+        super.visitFile();
+    }
     @Override
     public CloseableIterator<T> iterator() {
         try {
@@ -71,43 +95,27 @@ public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends 
         isClosed =true;        
     }
 
-    @Override
-    public void visitFile() {       
-        checkNotYetInitialized();
-    }
+    
 
-    protected abstract boolean visitFastQRecord(
-            String id, 
-            NucleotideEncodedGlyphs nucleotides,
-            QualityEncodedGlyphs qualities,
-            String optionalComment);
     @Override
     public boolean visitBeginBlock(String id, String optionalComment) {
         checkNotYetInitialized();
-        currentId = id;
-        currentComment = optionalComment;
-        return true;
+        return super.visitBeginBlock(id, optionalComment);
     }
-
-    @Override
-    public void visitEncodedQualities(String encodedQualities) {
-        checkNotYetInitialized();
-        qualities = qualityCodec.decode(encodedQualities);  
-    }
-
-    @Override
-    public boolean visitEndBlock() {
-        return visitFastQRecord(currentId, nucleotides, qualities, currentComment);
-        
-        
-    }
-
+    
     @Override
     public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
         checkNotYetInitialized();
-        this.nucleotides = nucleotides;
+       super.visitNucleotides(nucleotides);
         
     }
+
+   
+   
+
+    
+
+    
 
 
 

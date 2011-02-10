@@ -36,6 +36,7 @@ import org.jcvi.fastX.fasta.AbstractFastaVisitor;
 import org.jcvi.fastX.fasta.FastaParser;
 import org.jcvi.fastX.fastq.AbstractFastQFileVisitor;
 import org.jcvi.fastX.fastq.FastQFileParser;
+import org.jcvi.fastX.fastq.AbstractFastQReadIdVisitor;
 import org.jcvi.fastX.fastq.FastQRecord;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.AbstractSffFileVisitor;
@@ -278,24 +279,18 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         }
         
     }
-    private final class FastQReadOrder extends AbstractFastQFileVisitor<FastQRecord>{
+    private final class FastQReadOrder extends AbstractFastQReadIdVisitor{
         private final File file;
         FastQReadOrder(File file){
             this.file =file;
-        }
-        @Override
-        public boolean visitBeginBlock(String id, String optionalComment) {
-            addRead(id,file);
-            return false;
         }
         /**
         * {@inheritDoc}
         */
         @Override
-        public boolean visitEndBlock() {
-            return true;
+        protected void visitRead(String id, String optionalComment) {
+            addRead(id,file);
         }
-        
     }
 
    

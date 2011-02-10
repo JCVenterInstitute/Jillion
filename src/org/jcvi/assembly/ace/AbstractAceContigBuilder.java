@@ -26,15 +26,15 @@ package org.jcvi.assembly.ace;
 import org.jcvi.Range;
 import org.jcvi.sequence.SequenceDirection;
 /**
- * {@code AbstractAceFileVisitor} is an abstract
+ * {@code AbstractAceContigBuilder} is an abstract
  * implementation of {@link AceFileVisitor}
  * that does all the computations required
- * to parse a valid Ace File.
+ * to parse a build AceContigs.
  * @author dkatzel
  *
  *
  */
-public abstract class AbstractAceFileDataStore extends AbstractAceFileVisitor implements AceContigDataStore{
+public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
    
    
     private DefaultAceContig.Builder contigBuilder;

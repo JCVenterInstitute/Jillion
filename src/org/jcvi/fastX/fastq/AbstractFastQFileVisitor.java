@@ -24,40 +24,66 @@
 package org.jcvi.fastX.fastq;
 
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 
 
-public abstract class AbstractFastQFileVisitor <T extends FastQRecord> implements FastQFileVisitor{
+public abstract class AbstractFastQFileVisitor implements FastQFileVisitor{
+    private String currentId, currentComment;
 
-    private boolean initialized=false;
+    private NucleotideEncodedGlyphs nucleotides;
+    private QualityEncodedGlyphs qualities;
+    protected final FastQQualityCodec qualityCodec;
 
-    protected void checkNotYetInitialized(){
-        if(initialized){
-            throw new IllegalStateException("already initialized, can not visit more records");
-        }
-    }    
-
-
+    
+   
+    public AbstractFastQFileVisitor(FastQQualityCodec qualityCodec){
+        this.qualityCodec = qualityCodec;
+    }
     @Override
-    public void visitEndOfFile() {
-        checkNotYetInitialized();
-        initialized=true;        
+    public void visitEndOfFile() {   
     }
 
     @Override
     public void visitLine(String line) {
-        checkNotYetInitialized();
     }
     
     @Override
     public void visitEncodedQualities(String encodedQualities) {
+        this.qualities = qualityCodec.decode(encodedQualities);
     }
 
+    @Override
+    public void visitFile() {       
+       
+    }
+    protected FastQQualityCodec getQualityCodec() {
+        return qualityCodec;
+    }
+    
+    @Override
+    public boolean visitBeginBlock(String id, String optionalComment) {
+        currentId = id;
+        currentComment = optionalComment;
+        return true;
+    }
+    
     @Override
     public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
-    }
-
-    @Override
-    public void visitFile() {
+        this.nucleotides = nucleotides;
         
     }
+    
+    
+    @Override
+    public boolean visitEndBlock() {
+        return visitFastQRecord(currentId, nucleotides, qualities, currentComment);
+        
+        
+    }
+    
+    protected abstract boolean visitFastQRecord(
+            String id, 
+            NucleotideEncodedGlyphs nucleotides,
+            QualityEncodedGlyphs qualities,
+            String optionalComment);
 }

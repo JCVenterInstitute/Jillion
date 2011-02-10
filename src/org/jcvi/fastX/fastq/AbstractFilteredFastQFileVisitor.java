@@ -32,27 +32,20 @@ import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
  *
  *
  */
-public abstract class AbstractFilteredFastQFileVisitor<T extends FastQRecord> extends AbstractFastQFileVisitor<T>{
-    private String currentId;
-    private String currentComment;
-    private QualityEncodedGlyphs currentQualities;
-    private NucleotideEncodedGlyphs currentBases;
+public abstract class AbstractFilteredFastQFileVisitor extends AbstractFastQFileVisitor{
     private boolean accept;
     private final FastXFilter filter;
-    private final FastQQualityCodec qualityCodec;
     
     /**
      * @param filter
      */
     public AbstractFilteredFastQFileVisitor(FastXFilter filter,FastQQualityCodec qualityCodec) {
+        super(qualityCodec);
         this.filter = filter;
-        this.qualityCodec = qualityCodec;
     }
 
     @Override
     public boolean visitBeginBlock(String id, String optionalComment) {
-        currentId = id;
-        currentComment = optionalComment;
         accept= filter.accept(id);
         return accept;
     }
@@ -61,26 +54,24 @@ public abstract class AbstractFilteredFastQFileVisitor<T extends FastQRecord> ex
      * accepted by the filter.
      * @param fastQ the fastQRecord being visited.
      */
-    protected abstract void visitFastQRecord(FastQRecord fastQ);
+    protected abstract boolean visitFastQRecord(FastQRecord fastQ);
     
     @Override
     public boolean visitEndBlock() {
         if(accept){
-            visitFastQRecord( new DefaultFastQRecord(
-                    currentId, currentBases, 
-                    currentQualities
-                    ,currentComment));
+           super.visitEndBlock();
         }
         return true;
     }
-
-    @Override
-    public void visitEncodedQualities(String encodedQualities) {
-       currentQualities = qualityCodec.decode(encodedQualities);
-    }
-
-    @Override
-    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
-        currentBases = nucleotides;
-    }
+    
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     protected boolean visitFastQRecord(String id,
+             NucleotideEncodedGlyphs nucleotides,
+             QualityEncodedGlyphs qualities, String optionalComment) {
+         return visitFastQRecord(new DefaultFastQRecord(id, nucleotides, qualities,optionalComment));
+     }
+   
 }

@@ -42,11 +42,10 @@ import org.jcvi.fastX.IncludeFastXIdFilter;
 import org.jcvi.fastX.NullFastXFilter;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
-import org.jcvi.fastX.fastq.AbstractFastQFileVisitor;
+import org.jcvi.fastX.fastq.AbstractFilteredFastQFileVisitor;
 import org.jcvi.fastX.fastq.FastQFileParser;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.fastX.fastq.FastQRecord;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.idReader.DefaultFileIdReader;
 import org.jcvi.io.idReader.IdReader;
@@ -60,61 +59,51 @@ import org.jcvi.io.idReader.StringIdParser;
  *
  *
  */
-public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
-    private final FastXFilter filter;
+public class Fastq2Fasta extends AbstractFilteredFastQFileVisitor {
     private final OutputStream seqOut;
     private final OutputStream qualOut;
-    private final FastQQualityCodec qualityCodec;
-    private boolean shouldWrite=false;
-    private String currentComment;
-    private String currentId;
     
     /**
      * @param filter
      * @param out
      */
     public Fastq2Fasta(FastXFilter filter, FastQQualityCodec qualityCodec,OutputStream seqOut,OutputStream qualOut) {
-        this.filter = filter;
+       super(filter, qualityCodec);
+       
         this.seqOut = seqOut;
         this.qualOut = qualOut;
         if(seqOut==null && qualOut==null){
             throw new IllegalArgumentException("must write at least seq or qual data");
         }
-        this.qualityCodec = qualityCodec;
     }
-    @Override
-    public boolean visitBeginBlock(String id, String optionalComment) {
-        shouldWrite= filter.accept(id, optionalComment);
-        if(shouldWrite){
-            currentId = id;
-            currentComment= optionalComment;
-        }
-        return shouldWrite;
-    }
-
     
-    @Override
-    public void visitEncodedQualities(String encodedQualities) {
-        if(qualOut!=null && shouldWrite){
-            try {
-                qualOut.write(new DefaultQualityFastaRecord(currentId, 
-                        qualityCodec.decode(encodedQualities)).toString().getBytes());
-            } catch (IOException e) {
-                throw new RuntimeException("could not write to quality data for "+ currentId, e);
-            }
-        }
-    }
-    @Override
-    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
-        if(seqOut!=null && shouldWrite){
-            try {
-                seqOut.write(new DefaultNucleotideEncodedSequenceFastaRecord( currentId,currentComment,nucleotides) 
-                        .toString().getBytes());
-            } catch (IOException e) {
-                throw new RuntimeException("could not write to sequence data for "+ currentId, e);
-            }
-        }
-    }
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     protected boolean visitFastQRecord(FastQRecord fastQ) {
+         String id = fastQ.getId();
+         if(qualOut!=null){
+             try {
+                 qualOut.write(new DefaultQualityFastaRecord(id, 
+                         fastQ.getQualities()).toString().getBytes());
+             } catch (IOException e) {
+                 throw new RuntimeException("could not write to quality data for "+ id, e);
+             }
+         }
+         if(seqOut!=null){
+             try {
+                 seqOut.write(new DefaultNucleotideEncodedSequenceFastaRecord(
+                         id,fastQ.getComment(),fastQ.getNucleotides()) 
+                         .toString().getBytes());
+             } catch (IOException e) {
+                 throw new RuntimeException("could not write to sequence data for "+ id, e);
+             }
+         }
+         return true;
+         
+     }
+    
     /**
      * @param args
      * @throws FileNotFoundException 
@@ -230,12 +219,7 @@ public class Fastq2Fasta extends AbstractFastQFileVisitor<FastQRecord> {
                 String.format("Example invocation%nfastq2Fasta.pl -i ids.lst -s filtered.seq.fasta original.fastq%nCreated by Danny Katzel"
                   ));
     }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public boolean visitEndBlock() {
-        return true;
-    }
+  
+   
 
 }

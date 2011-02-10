@@ -158,6 +158,62 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         return intersectedRegion.get(0);
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getNumberOfRegionsWithCoverage(int coverageDepth) {
+        int i=0;
+        for(T coverageRegion: regions){
+            if(coverageRegion.getCoverage() == coverageDepth){
+                i++;
+            }
+        }
+        return i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getNumberOfRegionsWithAtLeastCoverage(int coverageDepth) {
+        int i=0;
+        for(T coverageRegion: regions){
+            if(coverageRegion.getCoverage() >= coverageDepth){
+                i++;
+            }
+        }
+        return i;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getLengthOfRegionsWithCoverage(int coverageDepth) {
+        long length=0;
+        for(T coverageRegion: regions){
+            if(coverageRegion.getCoverage() == coverageDepth){
+                length +=coverageRegion.getLength();
+            }
+        }
+        return length;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getLengthOfRegionsWithAtLeastCoverage(int coverageDepth) {
+        long length=0;
+        for(T coverageRegion: regions){
+            if(coverageRegion.getCoverage() >= coverageDepth){
+                length +=coverageRegion.getLength();
+            }
+        }
+        return length;
+    }
+    
     public static  class Builder<P extends Placed> extends AbstractCoverageMapBuilder<P,CoverageRegion<P>>{
         private final List<P> startCoordinateSortedList = new ArrayList<P>();
         private final List<P> endCoordinateSortedList = new ArrayList<P>();
