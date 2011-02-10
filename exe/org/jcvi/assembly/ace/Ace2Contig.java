@@ -142,7 +142,7 @@ public class Ace2Contig {
                 
                 "create a contig file from the given ace file.  " +
                 "Please Note, if -i AND -e are specified, then " +
-                "the exclude list will be applied to the include be included in the options, not both",
+                "the exclude list will be applied to the include list",
                 options,
                 "Created by Danny Katzel");
     }
