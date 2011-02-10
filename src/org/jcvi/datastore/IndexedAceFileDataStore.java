@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.ace.AbstractAceFileDataStore;
+import org.jcvi.assembly.ace.AbstractAceContigBuilder;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceContigDataStore;
 import org.jcvi.assembly.ace.AceFileParser;
@@ -45,7 +45,7 @@ import org.jcvi.util.IndexedFileRange;
  * must be re-parsed each time.
  * @author dkatzel
  */
-public class IndexedAceFileDataStore extends AbstractAceFileDataStore{
+public class IndexedAceFileDataStore extends AbstractAceContigBuilder implements AceContigDataStore{
     private final IndexedFileRange indexFileRange;
     private final File file;
     private int currentStartOffset;

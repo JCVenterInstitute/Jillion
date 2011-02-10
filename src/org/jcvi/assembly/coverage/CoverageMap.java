@@ -45,5 +45,13 @@ public interface CoverageMap <T extends CoverageRegion<?>> extends Iterable<T>{
     int getMaxCoverage();
     int getMinCoverage();
     long getLength();
+    
+    int getNumberOfRegionsWithCoverage(int coverageDepth);
+    
+    int getNumberOfRegionsWithAtLeastCoverage(int coverageDepth);
+    
+    long getLengthOfRegionsWithCoverage(int coverageDepth);
+    
+    long getLengthOfRegionsWithAtLeastCoverage(int coverageDepth);
 
 }

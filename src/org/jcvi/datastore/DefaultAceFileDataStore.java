@@ -28,13 +28,14 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.assembly.ace.AbstractAceFileDataStore;
+import org.jcvi.assembly.ace.AbstractAceContigBuilder;
 import org.jcvi.assembly.ace.AceContig;
+import org.jcvi.assembly.ace.AceContigDataStore;
 import org.jcvi.assembly.ace.AceFileParser;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
 
-public class DefaultAceFileDataStore extends AbstractAceFileDataStore {
+public class DefaultAceFileDataStore extends AbstractAceContigBuilder implements AceContigDataStore{
 
     private Map<String, AceContig> contigMap = new LinkedHashMap<String, AceContig>();
 

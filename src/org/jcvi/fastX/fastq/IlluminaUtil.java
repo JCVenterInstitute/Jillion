@@ -30,8 +30,16 @@ import java.util.regex.Pattern;
  */
 public class IlluminaUtil {
 
-    private static final Pattern NAME_PATTERN = Pattern.compile("^(\\S+):(\\d+):(\\d+):(\\d+):(\\d+)#(\\d+)\\/(\\d+)$");
+    private static final Pattern NAME_PATTERN = Pattern.compile(
+            "^(SOLEXA\\d+).*:(\\d+):(\\d+):(\\d+):(\\d+)#(\\D+)?(\\d+)?\\/(\\d+)$");
 
+    public static boolean isIlluminaRead(String readId){
+        if(readId == null){
+            throw new NullPointerException();
+        }
+        Matcher matcher = NAME_PATTERN.matcher(readId);
+        return matcher.matches();
+    }
     /**
      * Gets the unique instrument name from the given read id.
      * @param illuminaReadId the illumina read id to parse.
@@ -142,7 +150,7 @@ public class IlluminaUtil {
         if(!matcher.matches()){
             throw new IllegalArgumentException("is not an illumina read id "+illuminaReadId);
         }
-        return Integer.parseInt(matcher.group(6));
+        return Integer.parseInt(matcher.group(7));
     }
     /**
      * Gets the pair number if this read is paired-end or mate-paired.
@@ -160,6 +168,6 @@ public class IlluminaUtil {
         if(!matcher.matches()){
             throw new IllegalArgumentException("is not an illumina read id or member of a pair"+illuminaReadId);
         }
-        return Integer.parseInt(matcher.group(7));
+        return Integer.parseInt(matcher.group(8));
     }
 }

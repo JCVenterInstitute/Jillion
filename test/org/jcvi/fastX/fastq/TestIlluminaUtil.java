@@ -30,10 +30,11 @@ import static org.junit.Assert.*;
 public class TestIlluminaUtil {
 
     private static final String ID = "SOLEXA1:4:1:12:1489#0/1";
-    
+    private static String NEW_ID = "SOLEXA3_0023_FC:4:8:17653:4072#TAGCTT/1";
     @Test
     public void instrumentName(){
         assertEquals("SOLEXA1", IlluminaUtil.getInstrumentName(ID));
+        assertEquals("SOLEXA3", IlluminaUtil.getInstrumentName(NEW_ID));
     }
     @Test(expected= NullPointerException.class)
     public void nullIdForInsrumentNameShouldThrowNPE(){
@@ -46,6 +47,7 @@ public class TestIlluminaUtil {
     @Test
     public void flowCell(){
         assertEquals(4, IlluminaUtil.getFlowcellLane(ID));
+        assertEquals(4, IlluminaUtil.getFlowcellLane(NEW_ID));
     }
     
     @Test(expected= NullPointerException.class)
@@ -59,6 +61,7 @@ public class TestIlluminaUtil {
     @Test
     public void xClusterCoordinate(){
         assertEquals(12, IlluminaUtil.getXClusterCoordinate(ID));
+        assertEquals(17653, IlluminaUtil.getXClusterCoordinate(NEW_ID));
     }
     @Test(expected= NullPointerException.class)
     public void nullIdForXClusterCoordinateShouldThrowNPE(){
@@ -72,6 +75,7 @@ public class TestIlluminaUtil {
     @Test
     public void yClusterCoordinate(){
         assertEquals(1489, IlluminaUtil.getYClusterCoordinate(ID));
+        assertEquals(4072, IlluminaUtil.getYClusterCoordinate(NEW_ID));
     }
     @Test(expected= NullPointerException.class)
     public void nullIdForYClusterCoordinateShouldThrowNPE(){
