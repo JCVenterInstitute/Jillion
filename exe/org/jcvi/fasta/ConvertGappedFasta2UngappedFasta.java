@@ -69,7 +69,7 @@ public class ConvertGappedFasta2UngappedFasta {
             FastaVisitor visitor = new AbstractNucleotideFastaVisitor() {
 
                 @Override
-                protected boolean visitNucleotideFastaRecord(
+                protected boolean visitFastaRecord(
                         NucleotideSequenceFastaRecord fastaRecord) {
                     NucleotideSequenceFastaRecord ungapped =
                         new DefaultNucleotideEncodedSequenceFastaRecord(fastaRecord.getId(), fastaRecord.getComment(),

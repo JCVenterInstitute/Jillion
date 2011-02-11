@@ -16,38 +16,38 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Nov 11, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.fastX.fasta;
 
-import org.jcvi.fastX.fasta.seq.AbstractNucleotideFastaVisitor;
-import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 
 /**
- * {@code SingleNucleotideFastaVisitor} is a {@link FastaVisitor}
- * that only accepts at most one FastaRecord.
  * @author dkatzel
  *
  *
  */
-public abstract class SingleNucleotideFastaVisitor extends AbstractNucleotideFastaVisitor{
+public abstract class AbstractFastaRecordVisitor<T, F extends FastaRecord<T>> extends AbstractFastaVisitor {
 
-    private NucleotideSequenceFastaRecord record=null;
+    private final FastaRecordFactory<F> recordFactory;
+    
+    
+    /**
+     * @param recordFactory
+     */
+    public AbstractFastaRecordVisitor(FastaRecordFactory<F> recordFactory) {
+        this.recordFactory = recordFactory;
+    }
+
     @Override
-    protected synchronized boolean visitFastaRecord(
-            NucleotideSequenceFastaRecord fastaRecord) {
-        //only accept first record
-        record = fastaRecord;        
-        return keepParsingFasta();
+    public boolean visitRecord(String id, String comment, String sequence) {
+        return visitFastaRecord(
+                recordFactory.createFastaRecord(id, comment, sequence));
     }
-    protected abstract boolean keepParsingFasta();
-    public synchronized NucleotideSequenceFastaRecord getRecord() {
-        return record;
-    }
-    
-    
+    /**
+     * Visit the current FastaRecord.
+     * @param fastaRecord the built fasta record being visited.
+     * @return {@code true} if the parser should keep parsing
+     * {@code false} if it should stop parsing.
+     */
+    protected abstract boolean visitFastaRecord(F fastaRecord);
 
 }

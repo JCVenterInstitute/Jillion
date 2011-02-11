@@ -46,6 +46,7 @@ public abstract class AbstractFilteredFastQFileVisitor extends AbstractFastQFile
 
     @Override
     public boolean visitBeginBlock(String id, String optionalComment) {
+        super.visitBeginBlock(id, optionalComment);
         accept= filter.accept(id);
         return accept;
     }

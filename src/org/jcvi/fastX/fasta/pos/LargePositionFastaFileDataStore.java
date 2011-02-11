@@ -26,7 +26,6 @@ package org.jcvi.fastX.fasta.pos;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -35,13 +34,13 @@ import java.util.regex.Pattern;
 import org.jcvi.datastore.DataStoreException;
 
 import org.jcvi.fastX.fasta.FastaParser;
+import org.jcvi.fastX.fasta.LargeFastaIdIterator;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaRecordFactory;
 import org.jcvi.fastX.fasta.seq.LargeNucleotideFastaFileDataStore;
 import org.jcvi.fastX.fasta.seq.NucleotideFastaRecordFactory;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.AbstractLargeIdIterator;
 import org.jcvi.util.CloseableIterator;
 
 public class LargePositionFastaFileDataStore extends AbstractPositionFastaFileDataStore{
@@ -120,10 +119,13 @@ public synchronized PositionFastaRecord<EncodedGlyphs<ShortGlyph>> get(String id
 @Override
 public synchronized CloseableIterator<String> getIds() throws DataStoreException {
     checkNotYetClosed();
+    
     try {
-        return new LargeFastaIdIterator();
-    } catch (FileNotFoundException e) {
-        throw new DataStoreException("could not get id iterator",e);
+        LargeFastaIdIterator iter = new LargeFastaIdIterator(fastaFile);
+        iter.start();
+        return iter;
+    } catch (InterruptedException e) {
+        throw new RuntimeException("could not start iterator",e);
     }
 }
 
@@ -154,7 +156,14 @@ public synchronized int size() throws DataStoreException {
 @Override
 public synchronized CloseableIterator<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> iterator() {
     checkNotYetClosed();
-    return new FastaIterator();
+    LargePositionFastaRecordIterator iter= new LargePositionFastaRecordIterator(fastaFile);
+    try {
+        iter.start();
+        return iter;
+    } catch (InterruptedException e) {
+        throw new RuntimeException("error starting iterator",e);
+    }
+    
 }
 
 private InputStream getRecordFor(String id) throws FileNotFoundException{
@@ -182,70 +191,7 @@ private InputStream getRecordFor(String id) throws FileNotFoundException{
 }
 
 
-private class LargeFastaIdIterator extends AbstractLargeIdIterator{
-    
-    protected LargeFastaIdIterator() throws FileNotFoundException {
-        super(fastaFile);
-    }
 
-    @Override
-    protected void advanceToNextId(Scanner scanner) {
-        //no-op
-        
-    }
 
-    @Override
-    protected Object getNextId(Scanner scanner) {
-        
-        String block= scanner.findWithinHorizon(NEXT_ID_PATTERN, 0);
-        if(block !=null){
-            Matcher matcher = NEXT_ID_PATTERN.matcher(block);
-            if(matcher.find()){
-                return matcher.group(1);
-            }
-        }
-        return getEndOfIterating();
-    }
-    
-}
 
-private class FastaIterator implements CloseableIterator<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>>{
-    private final CloseableIterator<String> identifierIterator;
-
-    private FastaIterator(){
-        try {
-            identifierIterator = getIds();
-        } catch (DataStoreException e) {
-           throw new IllegalStateException("could not get id iterator",e);
-        }
-    }
-     @Override
-     public boolean hasNext() {
-         return identifierIterator.hasNext();
-     }
- 
-     @Override
-     public PositionFastaRecord<EncodedGlyphs<ShortGlyph>> next() {
-         try {
-            return get(identifierIterator.next());
-        } catch (DataStoreException e) {
-           throw new IllegalStateException("could not get next fasta record",e);
-        }
-     }
- 
-     @Override
-     public void remove() {
-         throw new UnsupportedOperationException("can not remove from iterator");
-         
-     }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void close() throws IOException {
-        identifierIterator.close();
-        
-    }
-
-}
 }

@@ -23,17 +23,22 @@
  */
 package org.jcvi.fastX.fasta.seq;
 
-import org.jcvi.fastX.fasta.AbstractFastaVisitor;
+import org.jcvi.fastX.fasta.AbstractFastaRecordVisitor;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 
 
-public abstract class AbstractNucleotideFastaVisitor extends AbstractFastaVisitor{
+public abstract class AbstractNucleotideFastaVisitor extends AbstractFastaRecordVisitor<NucleotideEncodedGlyphs, NucleotideSequenceFastaRecord>{
 
-    @Override
-    public boolean visitRecord(String id, String comment, String sequence) {
-        return visitNucleotideFastaRecord(
-                new DefaultNucleotideEncodedSequenceFastaRecord(id, comment, sequence.replace("\\s+", "")));
+    public AbstractNucleotideFastaVisitor(){
+        this(DefaultNucleotideFastaRecordFactory.getInstance());
     }
-    
-    protected abstract boolean visitNucleotideFastaRecord(NucleotideSequenceFastaRecord fastaRecord);
+    /**
+     * @param recordFactory
+     */
+    public AbstractNucleotideFastaVisitor(
+            NucleotideFastaRecordFactory recordFactory) {
+        super(recordFactory);
+    }
 
+    
 }
