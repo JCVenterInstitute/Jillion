@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 import org.finj.FTPClient;
 import org.finj.FTPException;
 import org.finj.RemoteFile;
-import org.jcvi.auth.JCVIAuthorizer;
 
 public class FTPFileServer implements ReadWriteFileServer{
     private static final Pattern DIR_PATTERN = Pattern.compile("(.+)/(.+?)$");
@@ -50,9 +49,7 @@ public class FTPFileServer implements ReadWriteFileServer{
     public FTPFileServer(String server, String username, char[] password) throws IOException{
         this(new FTPClient(), server, username, password);
     }
-    public FTPFileServer(String server, JCVIAuthorizer auth) throws IOException{
-        this(server, auth.getUsername(), auth.getPassword());
-    }
+   
     FTPFileServer(FTPClient ftpClient,String server, String username, char[] password) throws IOException{
         client = ftpClient;
         try{

@@ -23,14 +23,17 @@
  */
 package org.jcvi.fastX.fasta;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 
 import org.jcvi.io.IOUtil;
+import org.jcvi.io.TextLineParser;
 /**
  * {@code FastaParser} is a utility class
  * to parse Fasta formated files.
@@ -94,29 +97,45 @@ public final class FastaParser {
      * @throws NullPointerException if inputstream or visitor are null.
      */    
     public static void parseFasta(InputStream in, FastaVisitor visitor){
-        Scanner scanner = new Scanner(in).useDelimiter("\n");
+       // Scanner scanner = new Scanner(in).useDelimiter("\n");
+    	if(in ==null){
+    		throw new NullPointerException("input stream can not be null");
+    	}
+    	TextLineParser parser;
+		try {
+			parser = new TextLineParser(new BufferedInputStream(in));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			throw new IllegalStateException("error reading file");
+			
+		}
         visitor.visitFile();
         String currentId=null;
         String currentComment=null;
         StringBuilder currentBody=null;
         boolean keepParsing=true;
         try{
-            while(keepParsing && scanner.hasNextLine()){
-                String line = scanner.nextLine();
-                final String lineWithCR = line+"\n";
+            while(keepParsing && parser.hasNextLine()){
+            	final String lineWithCR;
+				try {
+					lineWithCR = parser.nextLine();
+				} catch (IOException e) {
+					throw new IllegalStateException("error reading file");
+				}
                 visitor.visitLine(lineWithCR);
-                if(line.startsWith(">")){
+                String lineWithoutCR = lineWithCR.substring(0, lineWithCR.length()-1);
+                if(lineWithCR.startsWith(">")){
                     if(currentBody!=null){                        
                         keepParsing = visitor.visitRecord(currentId, currentComment, currentBody.toString());
                         currentBody = null;
                     }                    
-                    keepParsing = visitor.visitDefline(line);
-                    currentId = SequenceFastaRecordUtil.parseIdentifierFromIdLine(line);
-                    currentComment = SequenceFastaRecordUtil.parseCommentFromIdLine(line);
+                    keepParsing = visitor.visitDefline(lineWithoutCR);
+                    currentId = SequenceFastaRecordUtil.parseIdentifierFromIdLine(lineWithCR);
+                    currentComment = SequenceFastaRecordUtil.parseCommentFromIdLine(lineWithCR);
                     
                 }
                 else{
-                    keepParsing = visitor.visitBodyLine(line);
+                    keepParsing = visitor.visitBodyLine(lineWithoutCR);
                     if(currentBody ==null){
                         currentBody= new StringBuilder();
                     }
@@ -129,7 +148,7 @@ public final class FastaParser {
             }
         }
         finally{
-            scanner.close();
+            IOUtil.closeAndIgnoreErrors(parser);
         }
         visitor.visitEndOfFile();
     }

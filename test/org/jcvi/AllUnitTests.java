@@ -74,7 +74,6 @@ import org.junit.runners.Suite.SuiteClasses;
         AllUtilUnitTests.class,
         AllDataStoreUnitTests.class,
         AllAlignTests.class,
-        AllAuthUnitTests.class,
         AllAppUnitTests.class,
         AllCommandUnitTests.class,
         AllNcbiUnitTests.class
