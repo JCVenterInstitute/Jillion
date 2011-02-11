@@ -58,7 +58,27 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
      * {@link #hasNext()} or {@link #next()}.
      * @throws InterruptedException
      */
-    protected abstract void start() throws InterruptedException;
+    public void start() throws InterruptedException{
+    	new Thread(){
+            @Override
+            public void run() {
+                backgroundThreadRunMethod();
+            }
+            
+        }.start();
+        blockingGetNextRecord();
+		
+    }
+    /**
+     * This is the method that is called by the {@link Thread#run()}
+     * instance in the background thread created and started 
+     * in {@link #start()}.  Please set up and start and visiting
+     * and parsing that is required by this iterator.  Make sure
+     * all appropriate visit methods call the appropriate
+     * {@link #blockingPut(Object)} {@link #blockingGetNextRecord()}
+     * and {@link #finishedIterating()} methods.
+     */
+    protected abstract void backgroundThreadRunMethod();
 	/**
 	 * This method must be called when the visitor has finished
 	 * visiting in order to let the iterator know that there

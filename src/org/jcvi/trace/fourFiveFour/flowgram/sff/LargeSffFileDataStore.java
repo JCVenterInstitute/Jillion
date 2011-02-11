@@ -34,7 +34,6 @@ import java.util.List;
 
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
 
@@ -122,8 +121,7 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
     @Override
     public CloseableIterator<SFFFlowgram> iterator() {
         super.iterator();
-       // return new DataStoreIterator<SFFFlowgram>(this);
-        try {
+       try {
         	SffFileIterator iter= new SffFileIterator(sffFile);
         	iter.start();
         	return iter;

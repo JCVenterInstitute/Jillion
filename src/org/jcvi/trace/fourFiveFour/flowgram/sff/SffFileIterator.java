@@ -42,43 +42,27 @@ public class SffFileIterator extends AbstractBlockingCloseableIterator<SFFFlowgr
 		 
 	}
 
-
-	
 	@Override
-	protected void start() throws InterruptedException {
-		new Thread(){
+	protected void backgroundThreadRunMethod() {
+		 try {
+         	SffFileVisitor visitor = new AbstractSFFFlowgramVisitor() {
+					
+         		@Override
+         		protected boolean visitSFFFlowgram(SFFFlowgram flowgram) {
+         			SffFileIterator.this.blockingPut(flowgram);
+         			return !SffFileIterator.this.isClosed();
+         		}
 
-            @Override
-            public void run() {
-                try {
-                	SffFileVisitor visitor = new AbstractSFFFlowgramVisitor() {
-						
-                		@Override
-                		protected boolean visitSFFFlowgram(SFFFlowgram flowgram) {
-                			SffFileIterator.this.blockingPut(flowgram);
-                			return !SffFileIterator.this.isClosed();
-                		}
-
-						/* (non-Javadoc)
-						 * @see org.jcvi.trace.fourFiveFour.flowgram.sff.AbstractSFFFlowgramVisitor#visitEndOfFile()
-						 */
-						@Override
-						public void visitEndOfFile() {
-							SffFileIterator.this.finishedIterating();
-						}
-
-						
-                		
-					};
-                    SffParser.parseSFF(sffFile, visitor);
-                } catch (IOException e) {
-                    //should never happen
-                    throw new RuntimeException(e);
-                }
-            }
-            
-        }.start();
-        blockingGetNextRecord();
+					@Override
+					public void visitEndOfFile() {
+						SffFileIterator.this.finishedIterating();
+					}
+				};
+             SffParser.parseSFF(sffFile, visitor);
+         } catch (IOException e) {
+             //should never happen
+             throw new RuntimeException(e);
+         }
 		
 	}
 	

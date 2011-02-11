@@ -122,7 +122,9 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
     @Override
     public CloseableIterator<FastQRecord> iterator() {
         try {
-            return new LargeFastQFileIterator(fastQFile,qualityCodec);
+        	LargeFastQFileIterator iter= new LargeFastQFileIterator(fastQFile,qualityCodec);
+        	iter.start();
+        	return iter;
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         }
