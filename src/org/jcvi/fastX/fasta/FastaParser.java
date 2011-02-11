@@ -29,7 +29,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 
 import org.jcvi.io.IOUtil;

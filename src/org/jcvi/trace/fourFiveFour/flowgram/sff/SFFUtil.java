@@ -31,7 +31,11 @@ import java.util.regex.Pattern;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 
@@ -180,5 +184,17 @@ public final class SFFUtil {
                         adapterClip.getLocalEnd()==0?numberOfBases:adapterClip.getLocalEnd());
         
         return Range.buildRange(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
+    }
+    
+    public static SFFFlowgram buildSFFFlowgramFrom(SFFReadHeader readHeader,
+            SFFReadData readData) {
+        return new SFFFlowgram(
+                new DefaultNucleotideEncodedGlyphs(
+                        NucleotideGlyph.getGlyphsFor(readData.getBasecalls())),
+                        new DefaultQualityEncodedGlyphs(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
+                                PhredQuality.valueOf(readData.getQualities())),
+                SFFUtil.computeValues(readData),
+                readHeader.getQualityClip(),
+                readHeader.getAdapterClip());
     }
 }

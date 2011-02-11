@@ -26,8 +26,6 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 import java.io.File;
 import java.io.FileInputStream;
 
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 
@@ -47,7 +45,7 @@ public class TestDefaultSffFlowgramDataStore extends TestReadExampleSffFile{
     @Override
     protected void parseSff(File f) throws Exception {
        
-        dataStore = new DefaultSffFileDataStore(new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE));
+        dataStore = new DefaultSffFileDataStore();
         final FileInputStream in = new FileInputStream(f);
         try{
             SffParser.parseSFF(in, dataStore);

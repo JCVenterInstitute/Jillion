@@ -45,7 +45,7 @@ public abstract class AbstractTestFilteredNucleotideDataStore<G extends Glyph> e
 private final DefaultSffFileDataStore dataStore;
     
     {
-        dataStore = new DefaultSffFileDataStore(runLengthQualityCodec);
+        dataStore = new DefaultSffFileDataStore();
         try {
             SffParser.parseSFF(SFF_FILE, dataStore);
         } catch (Exception e) {

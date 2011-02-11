@@ -100,8 +100,7 @@ public class DefaultSffCasDataStoreFactory  extends
 
     private SffDataStore parseSffDataStore(File sffFile,DataStoreFilter filter)
             throws CasDataStoreFactoryException {
-        DefaultSffFileDataStore dataStore =new DefaultSffFileDataStore(
-                    RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, filter);
+        DefaultSffFileDataStore dataStore =new DefaultSffFileDataStore(filter);
         InputStream in = null;
         try {
             in = new FileInputStream(sffFile);

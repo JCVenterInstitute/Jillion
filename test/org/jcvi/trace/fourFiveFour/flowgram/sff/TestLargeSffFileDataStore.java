@@ -31,7 +31,7 @@ public class TestLargeSffFileDataStore extends AbstractTestSffFileDataStore{
     @Override
     protected SffDataStore parseDataStore(File in) throws Exception {
         
-        return new LargeSffFileDataStore( in, runLengthQualityCodec);
+        return new LargeSffFileDataStore( in);
     }
 
 }

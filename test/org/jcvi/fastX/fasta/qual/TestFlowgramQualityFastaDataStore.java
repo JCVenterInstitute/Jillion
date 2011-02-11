@@ -30,7 +30,6 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
@@ -55,7 +54,7 @@ public class TestFlowgramQualityFastaDataStore {
         expected = QualityFastaRecordDataStoreAdapter.adapt(
                 new DefaultQualityFastaFileDataStore(
                 		RESOURCES.getFile(QUAL_EXPECTED)));
-        DefaultSffFileDataStore datastore = new DefaultSffFileDataStore(new RunLengthEncodedGlyphCodec((byte)70));
+        DefaultSffFileDataStore datastore = new DefaultSffFileDataStore();
         SffParser.parseSFF(
         		RESOURCES.getFileAsStream(QUAL_ACTUAL), datastore);
         

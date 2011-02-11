@@ -25,33 +25,14 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import java.io.File;
 import java.io.IOException;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 
 public class DefaultSffDataStoreFactory implements SffDataStoreFactory{
 
-    private final QualityGlyphCodec qualityCodec;
-    
-    /**
-     * @param shouldTrim
-     * @param qualityCodec
-     */
-    public DefaultSffDataStoreFactory(QualityGlyphCodec qualityCodec) {
-        this.qualityCodec = qualityCodec;
-    }
-    
-    /**
-     * @param shouldTrim
-     * @param qualityCodec
-     */
-    public DefaultSffDataStoreFactory() {
-        this(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE);
-    }
 
     @Override
     public SffDataStore createDataStoreFor(File sffFile) throws IOException {
         try {
-            return new DefaultSffFileDataStore(sffFile, qualityCodec);
+            return new DefaultSffFileDataStore(sffFile);
         } catch (SFFDecoderException e) {
             throw new IOException("could not parse SFF file",e);
         }
