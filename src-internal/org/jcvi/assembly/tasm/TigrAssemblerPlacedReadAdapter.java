@@ -189,5 +189,12 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 		TigrAssemblerPlacedRead otherTigrRead = (TigrAssemblerPlacedRead) obj;
 		return !generateAttributes().equals(otherTigrRead.getAttributes());
 	}
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range asRange() {
+        return delegatePlacedRead.asRange();
+    }
 
 }

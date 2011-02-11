@@ -47,7 +47,7 @@ public class TestSFFFlowgram {
     QualityEncodedGlyphs confidence = createMock(QualityEncodedGlyphs.class);
     List<Short> values = convertIntoList(new short[]{202, 310,1,232,7});
     NucleotideEncodedGlyphs basecalls = createMock(NucleotideEncodedGlyphs.class);
-    
+    String id = "readId";
     SFFFlowgram sut;
     @Before
     public void setup(){
@@ -55,7 +55,7 @@ public class TestSFFFlowgram {
         expect(confidence.decode()).andStubReturn(PhredQuality.valueOf(new byte[]{20,15,30,15}));
         
         replay(basecalls,confidence);
-        sut = new SFFFlowgram(basecalls,confidence,values,qualitiesClip, adapterClip);
+        sut = new SFFFlowgram(id,basecalls,confidence,values,qualitiesClip, adapterClip);
         
     }
 
@@ -69,6 +69,7 @@ public class TestSFFFlowgram {
     
     @Test
     public void constructor(){
+        assertEquals(id, sut.getId());
         assertEquals(basecalls, sut.getBasecalls());
         assertEquals(confidence, sut.getQualities());
         assertEquals(qualitiesClip, sut.getQualitiesClip());
@@ -80,9 +81,19 @@ public class TestSFFFlowgram {
         }
     }
     @Test
+    public void nullIdShouldthrowNullPointerException(){
+        try{
+            new SFFFlowgram(null,basecalls,confidence,values,qualitiesClip, adapterClip);
+            fail("should throw nullPointerException when id is null");
+        }
+        catch(NullPointerException expected){
+            assertEquals("id can not be null", expected.getMessage());
+        }
+    }
+    @Test
     public void nullBasecallsShouldthrowNullPointerException(){
         try{
-            new SFFFlowgram(null,confidence,values,qualitiesClip, adapterClip);
+            new SFFFlowgram(id,null,confidence,values,qualitiesClip, adapterClip);
             fail("should throw nullPointerException when basecalls is null");
         }
         catch(NullPointerException expected){
@@ -92,7 +103,7 @@ public class TestSFFFlowgram {
     @Test
     public void nullQualitiesShouldthrowNullPointerException(){
         try{
-            new SFFFlowgram(basecalls,null,values,qualitiesClip, adapterClip);
+            new SFFFlowgram(id,basecalls,null,values,qualitiesClip, adapterClip);
             fail("should throw nullPointerException when qualities is null");
         }
         catch(NullPointerException expected){
@@ -102,7 +113,7 @@ public class TestSFFFlowgram {
     @Test
     public void nullValuesShouldthrowNullPointerException(){
         try{
-            new SFFFlowgram(basecalls,confidence,null,qualitiesClip, adapterClip);
+            new SFFFlowgram(id,basecalls,confidence,null,qualitiesClip, adapterClip);
             fail("should throw nullPointerException when values is null");
         }
         catch(NullPointerException expected){
@@ -112,7 +123,7 @@ public class TestSFFFlowgram {
     @Test
     public void emptyValuesShouldthrowIllegalArgumentException(){
         try{
-            new SFFFlowgram(basecalls,confidence,Collections.<Short>emptyList(),qualitiesClip, adapterClip);
+            new SFFFlowgram(id,basecalls,confidence,Collections.<Short>emptyList(),qualitiesClip, adapterClip);
             fail("should throw IllegalArgumentException when values is empty");
         }
         catch(IllegalArgumentException expected){
@@ -122,7 +133,7 @@ public class TestSFFFlowgram {
     @Test
     public void nullQualitiesClipShouldthrowNullPointerException(){
         try{
-            new SFFFlowgram(basecalls,confidence,values,null, adapterClip);
+            new SFFFlowgram(id,basecalls,confidence,values,null, adapterClip);
             fail("should throw nullPointerException when qualitiesClip is null");
         }
         catch(NullPointerException expected){
@@ -132,7 +143,7 @@ public class TestSFFFlowgram {
     @Test
     public void nullAdapterClipShouldthrowNullPointerException(){
         try{
-            new SFFFlowgram(basecalls,confidence,values,qualitiesClip, null);
+            new SFFFlowgram(id,basecalls,confidence,values,qualitiesClip, null);
             fail("should throw nullPointerException when adapterClip is null");
         }
         catch(NullPointerException expected){
@@ -154,19 +165,19 @@ public class TestSFFFlowgram {
     }
     @Test
     public void equalsSameData(){
-        SFFFlowgram sameData = new SFFFlowgram(basecalls,confidence,values,qualitiesClip, adapterClip);
+        SFFFlowgram sameData = new SFFFlowgram(id,basecalls,confidence,values,qualitiesClip, adapterClip);
         TestUtil.assertEqualAndHashcodeSame(sut, sameData);
     }
     @Test
     public void notEqualsDifferentValues(){
-        SFFFlowgram differentValues = new SFFFlowgram(basecalls,confidence,
+        SFFFlowgram differentValues = new SFFFlowgram(id,basecalls,confidence,
                 convertIntoList(new short[]{1,2,3,4,5,6,7}),
                     qualitiesClip, adapterClip);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
     @Test
     public void notEqualsValues(){
-        SFFFlowgram differentValues = new SFFFlowgram(basecalls,confidence,
+        SFFFlowgram differentValues = new SFFFlowgram(id,basecalls,confidence,
                 convertIntoList(new short[]{1,2,3,4,5,6,7}),
                     qualitiesClip, adapterClip);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);

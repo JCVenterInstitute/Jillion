@@ -52,9 +52,6 @@ public class DefaultCritiquorAmplicon implements CritiquorAmplicon {
     public String getRegion() {
         return region;
     }
-    public Range getRange() {
-        return range;
-    }
     public String getForwardPrimerSequence() {
         return forwardPrimerSequence;
     }
@@ -138,7 +135,14 @@ public class DefaultCritiquorAmplicon implements CritiquorAmplicon {
     */
     @Override
     public int compareTo(CritiquorAmplicon o) {
-        return getRange().compareTo(o.getRange());
+        return asRange().compareTo(o.asRange());
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range asRange() {
+        return range;
     }
     
     

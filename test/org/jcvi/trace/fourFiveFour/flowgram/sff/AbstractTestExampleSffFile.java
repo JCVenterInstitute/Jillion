@@ -48,7 +48,7 @@ public abstract class AbstractTestExampleSffFile{
            throw new IllegalStateException("could not read sff file");
         }
     }
-    final SFFFlowgram FF585OX02HCMO2 = new SFFFlowgram(
+    final SFFFlowgram FF585OX02HCMO2 = new SFFFlowgram("FF585OX02HCMO2",
         new DefaultNucleotideEncodedGlyphs(
         		NucleotideGlyph.getGlyphsFor(
                   "TCAGCTGGGCTCAAGTGATCTGCCCACCTCAGCTTCCCAAAGTGTTGGGATTACAGGCACGAACCACTGTGCTCGGTCAGCTCTTTTTTTGTTTTTTGGTTTTTTTCCAGGATCCAGTCAAAGTTTGGTTGGAACCGTCCGGGTTTTTAAAAACCCGGAATTCAAACCCTTTCGGTTCCAACACTCAGACCTCACCCTGAGCGGGCTGGCAAGGC")),
@@ -59,7 +59,7 @@ public abstract class AbstractTestExampleSffFile{
             Range.buildRange(CoordinateSystem.RESIDUE_BASED, 0,0)
     );
     
-    final SFFFlowgram FF585OX02HCD8G = new SFFFlowgram(
+    final SFFFlowgram FF585OX02HCD8G = new SFFFlowgram("FF585OX02HCD8G",
             new DefaultNucleotideEncodedGlyphs(
             		NucleotideGlyph.getGlyphsFor(
                       "TCAGGGGGGGTCTTCTCCTGTGTGGAGAAATGGTGGCAGAAGCCTGGGGCCAGGCAGAGGAGAGGGAAAAGGTCAAAATTAACTTCTCTCCCCAGTCCCAAACCAACGTTGGAACCGAAAGGGTTTGAATTCAAACCCTTTCGGTTCCAACATGGTGAGACTCTGGGCCACAGGCCGGTTAGCAGTCTGAGCGGGCTGGCAAGGC")),
@@ -71,7 +71,7 @@ public abstract class AbstractTestExampleSffFile{
                 Range.buildRange(CoordinateSystem.RESIDUE_BASED, 0,0)
         );
     
-    final SFFFlowgram FF585OX02FNE4N = new SFFFlowgram(
+    final SFFFlowgram FF585OX02FNE4N = new SFFFlowgram("FF585OX02FNE4N",
             new DefaultNucleotideEncodedGlyphs(
             		NucleotideGlyph.getGlyphsFor(
                       "TCAGGGGGGCACCATTTACAAGGATGATGCCTCCTAAATGTGGTGCAGCATGGTGGCCCCAGGTGTTTACTTCTATACTAAGGCCACACAGATGAATGGTCAAAAATTTGGTGACAGAAATCAATGTTAGATTCTTTAGCTTCTGTTTCCTTCCTCCTTTATTGCCACTGCCTCCAAGTTGGAACCGAAGGGTTTGAATTCAAACCCCTGAGCGGGCTGGCAAGGC")),
@@ -83,7 +83,7 @@ public abstract class AbstractTestExampleSffFile{
                 Range.buildRange(CoordinateSystem.RESIDUE_BASED, 0,0)
         );
     
-    final SFFFlowgram FF585OX02GMGGN = new SFFFlowgram(
+    final SFFFlowgram FF585OX02GMGGN = new SFFFlowgram("FF585OX02GMGGN",
             new DefaultNucleotideEncodedGlyphs(
             		NucleotideGlyph.getGlyphsFor(
                       "TCAGAATTCAAACCCTTTCGGTTCCAACTTTAAAATTAATAATTATTTTTCCCATGTTGTCTAAACAGCTTTAAATATATTTTAATGGGATGTCTCAAAGCTTAGATAAGAATGCTCAGCAAACATATCCAATTTTTAAAATGATATTCATTTATTTTGTATGATTATTGCAACATCACCTCTTCTGTATTATGTGGCCATGTGGAAGAGAATGAGAATGTCACATTCACTTACCTTTGAATAGCAGGCTACTTTGGTATGCATTTTTA")),
@@ -94,7 +94,7 @@ public abstract class AbstractTestExampleSffFile{
                 Range.buildRange(CoordinateSystem.RESIDUE_BASED, 0,0)
         );
     
-    final SFFFlowgram FF585OX02FHO5X = new SFFFlowgram(
+    final SFFFlowgram FF585OX02FHO5X = new SFFFlowgram("FF585OX02FHO5X",
             new DefaultNucleotideEncodedGlyphs(
             		NucleotideGlyph.getGlyphsFor(
                       "TCAGGGGGGCTTTGGATGTTGGAACCGAAAGGGTTTGAATTCAAACCCTTTCGGTTCCAACGATTTAAACCTACATCCATTTAACTCCAAATCCTGAACGGTTTCCAATAAACAACTTTACATTTGTGTAGCAAATTCCAGGCTATGTAAGAAAGGAGGACTCCACGGTGCACTGAGCGGGCTGGCAAGGC")),

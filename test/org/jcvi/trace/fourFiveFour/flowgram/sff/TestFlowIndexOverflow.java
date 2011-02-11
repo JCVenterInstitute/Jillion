@@ -60,7 +60,7 @@ public class TestFlowIndexOverflow{
    private static final RunLengthEncodedGlyphCodec runLengthQualityCodec = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
     short[] encodedValues = new short[]{213,0,2, 97, 120};
     
-    private final SFFFlowgram FCPRO0N01A48YO = new SFFFlowgram(
+    private final SFFFlowgram FCPRO0N01A48YO = new SFFFlowgram("FCPRO0N01A48YO",
             new DefaultNucleotideEncodedGlyphs(
                     NucleotideGlyph.getGlyphsFor(
                       "TCAGCGATACACATAGCGCGTACATCCACATCGTGGCGTCTCAAGGCACACAGGGGGATAGGN")),

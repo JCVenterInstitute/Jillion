@@ -1056,4 +1056,11 @@ public class Range implements Placed<Range>,Iterable<Long>
     public long getLength() {
         return size();
     }
+    /**
+    * @return this.
+    */
+    @Override
+    public Range asRange() {
+        return this;
+    }
 }

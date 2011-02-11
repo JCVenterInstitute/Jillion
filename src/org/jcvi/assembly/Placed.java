@@ -23,6 +23,8 @@
  */
 package org.jcvi.assembly;
 
+import org.jcvi.Range;
+
 /**
  * {@code Placed} is an interface to be used by any object
  * that has been placed at a particular location along
@@ -50,5 +52,12 @@ public interface Placed<P extends Placed> extends Comparable<P>{
      * @return the length of this placed object.
      */
     long getLength();
+    /**
+     * Convert this Placed instance into a {@link Range}
+     * object with the same location values.
+     * @return a Range that is the same as
+     * this location, never null.
+     */
+    Range asRange();
     
 }

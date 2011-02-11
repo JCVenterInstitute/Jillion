@@ -23,7 +23,6 @@
  */
 package org.jcvi.assembly.coverage.critquor;
 
-import org.jcvi.Range;
 import org.jcvi.assembly.Placed;
 
 public interface CritiquorAmplicon extends Placed<CritiquorAmplicon>{
@@ -31,8 +30,6 @@ public interface CritiquorAmplicon extends Placed<CritiquorAmplicon>{
     String getId();
 
     String getRegion();
-
-    Range getRange();
 
     String getForwardPrimerSequence();
 
