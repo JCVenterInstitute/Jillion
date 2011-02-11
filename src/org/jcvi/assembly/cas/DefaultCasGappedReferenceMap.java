@@ -26,6 +26,7 @@ package org.jcvi.assembly.cas;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -64,10 +65,10 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
             return size;
         }
     }
-    private final Map<Long, TreeMap<Long,Insertion>> gapsByReferenceId = new HashMap<Long, TreeMap<Long,Insertion>>();
+    private final Map<Long, TreeMap<Long,Insertion>> gapsByReferenceId = new LinkedHashMap<Long, TreeMap<Long,Insertion>>();
    private final CasIdLookup contigNameLookup;
     private final CasNucleotideDataStore referenceNucleotideDataStore;
-    private final Map<Long, NucleotideEncodedGlyphs> gappedReferences = new HashMap<Long, NucleotideEncodedGlyphs>();
+    private final Map<Long, NucleotideEncodedGlyphs> gappedReferences = new LinkedHashMap<Long, NucleotideEncodedGlyphs>();
     /**
      * @param casDataStoreFactory
      */
