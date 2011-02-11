@@ -28,7 +28,7 @@ import org.jcvi.Range;
 import org.jcvi.trace.Trace;
 
 public interface Flowgram extends Trace {
-
+    String getId();
     Range getAdapterClip();
     Range getQualitiesClip();
     int getSize();

@@ -173,9 +173,14 @@ public class DefaultPlacedRead implements PlacedRead {
     */
     @Override
     public int compareTo(PlacedRead o) {
-        Range range= Range.buildRange(getStart(), getEnd());
-        Range otherRange = Range.buildRange(o.getStart(), o.getEnd());
-        return range.compareTo(otherRange);
+        return asRange().compareTo(o.asRange());   
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range asRange() {
+        return Range.buildRange(getStart(), getEnd());
     }
 
 }

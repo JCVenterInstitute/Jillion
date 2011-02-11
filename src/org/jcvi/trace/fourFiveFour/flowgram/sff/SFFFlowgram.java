@@ -35,11 +35,11 @@ import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 
 public class SFFFlowgram implements Flowgram {
-
-    private NucleotideEncodedGlyphs basecalls;
-    private QualityEncodedGlyphs qualities;
-    private Range qualitiesClip;
-    private Range adapterClip;
+    private final String id;
+    private final NucleotideEncodedGlyphs basecalls;
+    private final QualityEncodedGlyphs qualities;
+    private final Range qualitiesClip;
+    private final Range adapterClip;
     private final short[] values;
 
     /**
@@ -49,9 +49,10 @@ public class SFFFlowgram implements Flowgram {
      * @param qualitiesClip
      * @param adapterClip
      */
-    public SFFFlowgram(NucleotideEncodedGlyphs basecalls, QualityEncodedGlyphs qualities,
+    public SFFFlowgram(String id,NucleotideEncodedGlyphs basecalls, QualityEncodedGlyphs qualities,
             List<Short> values, Range qualitiesClip, Range adapterClip) {
-        canNotBeNull(basecalls, qualities, values, qualitiesClip, adapterClip);
+        canNotBeNull(id,basecalls, qualities, values, qualitiesClip, adapterClip);
+        this.id = id;
         this.basecalls = basecalls;
         this.qualities = qualities;
         this.values = new short[values.size()];
@@ -62,8 +63,9 @@ public class SFFFlowgram implements Flowgram {
         this.adapterClip = adapterClip;
     }
 
-    private void canNotBeNull(NucleotideEncodedGlyphs basecalls, EncodedGlyphs<PhredQuality> qualities,
+    private void canNotBeNull(String id,NucleotideEncodedGlyphs basecalls, EncodedGlyphs<PhredQuality> qualities,
             List<Short> values, Range qualitiesClip, Range adapterClip) {
+        CommonUtil.cannotBeNull(id, "id can not be null");
         CommonUtil.cannotBeNull(basecalls, "basecalls can not be null");
         CommonUtil.cannotBeNull(qualities, "qualities can not be null");
         CommonUtil.cannotBeNull(values, "values can not be null");
@@ -74,6 +76,11 @@ public class SFFFlowgram implements Flowgram {
             throw new IllegalArgumentException("values can not be empty");
         }
     }
+
+     @Override
+     public String getId() {
+         return id;
+     }
 
     @Override
     public NucleotideEncodedGlyphs getBasecalls() {
@@ -115,6 +122,7 @@ public class SFFFlowgram implements Flowgram {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + id.hashCode();
         result = prime * result + basecalls.decode().hashCode();
         result = prime * result + Arrays.hashCode(values);
         result = prime * result + qualities.decode().hashCode();
@@ -141,6 +149,7 @@ public class SFFFlowgram implements Flowgram {
         SFFFlowgram other = (SFFFlowgram) obj;
         
         return
+        CommonUtil.similarTo(id, other.getId()) &&
         CommonUtil.similarTo(basecalls.decode(), other.basecalls.decode()) &&
         CommonUtil.similarTo(qualities.decode(), other.qualities.decode()) &&
         CommonUtil.similarTo(qualitiesClip, other.qualitiesClip) &&
@@ -150,6 +159,8 @@ public class SFFFlowgram implements Flowgram {
        
         
     }
+
+    
 
     
 }

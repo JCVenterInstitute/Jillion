@@ -67,6 +67,7 @@ public class SffInfoDataStore implements SffDataStore {
     private static final Pattern QUAL_RIGHT_PATTERN = Pattern.compile("Clip Qual Right:\\s+(\\d+)");
     private static final Pattern ADAPTER_LEFT_PATTERN = Pattern.compile("Clip Adap Left:\\s+(\\d+)");
     private static final Pattern ADAPTER_RIGHT_PATTERN = Pattern.compile("Clip Adap Right:\\s+(\\d+)");
+    private static final Pattern ID_PATTERN = Pattern.compile("^>(\\S+)");
     
     
     private static final Pattern BASECALLS_PATTERN = Pattern.compile("^\\s*Bases:\\s+(\\S+)\\s*$");
@@ -137,17 +138,28 @@ public class SffInfoDataStore implements SffDataStore {
         }
     }
     protected SFFFlowgram parseSingleSffRecordFrom(Scanner scanner) {
-      
+        String id = parseIdFrom(scanner);
         Range qualityRange = parseQualityClip(scanner);
         Range adapterRange = parseAdapterClip(scanner);
         short[] flows = parseAllFlows(scanner,sffHeader.getNumberOfFlowsPerRead());            
         List<Short> usedFlowValues= parseUsedFlows(scanner.nextLine(), flows);             
         NucleotideEncodedGlyphs basecalls=parseBasecalls(scanner.nextLine());
         QualityEncodedGlyphs qualities=parseQualities(scanner.nextLine(),(int)basecalls.getLength());
-        return new SFFFlowgram(basecalls, qualities,
+        return new SFFFlowgram(id,basecalls, qualities,
                 usedFlowValues, qualityRange, adapterRange);
     }
 
+    private String parseIdFrom(Scanner scanner){
+        String line = scanner.nextLine();
+
+        Matcher idMatcher = ID_PATTERN.matcher(line);
+        while(!idMatcher.find()){
+            line = scanner.nextLine();
+            idMatcher = ID_PATTERN.matcher(line);
+        }
+        return idMatcher.group(1);
+    }
+    
     /**
      * @param nextLine
      * @return

@@ -129,5 +129,13 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
     public int getUngappedFullLength() {
         return ungappedFullLength;
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range asRange() {
+        return placedRead.asRange();
+    }
     
 }

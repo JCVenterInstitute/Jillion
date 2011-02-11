@@ -189,6 +189,7 @@ public final class SFFUtil {
     public static SFFFlowgram buildSFFFlowgramFrom(SFFReadHeader readHeader,
             SFFReadData readData) {
         return new SFFFlowgram(
+                readHeader.getName(),
                 new DefaultNucleotideEncodedGlyphs(
                         NucleotideGlyph.getGlyphsFor(readData.getBasecalls())),
                         new DefaultQualityEncodedGlyphs(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,

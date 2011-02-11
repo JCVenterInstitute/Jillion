@@ -95,6 +95,13 @@ public class QualityClassRegion implements Placed<QualityClassRegion>{
         Range otherRange = Range.buildRange(o.getStart(), o.getEnd());
         return range.compareTo(otherRange);
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range asRange() {
+        return placed.asRange();
+    }
     
     
 }

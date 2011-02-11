@@ -122,10 +122,15 @@ public class DefaultPlacedContig implements PlacedContig{
     * {@inheritDoc}
     */
     @Override
-    public int compareTo(PlacedContig o) {
-        Range range= Range.buildRange(getStart(), getEnd());
-        Range otherRange = Range.buildRange(o.getStart(), o.getEnd());
-        return range.compareTo(otherRange);
+    public int compareTo(PlacedContig o) {       
+        return range.compareTo(o.asRange());
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range asRange() {
+        return range;
     }
 
 }

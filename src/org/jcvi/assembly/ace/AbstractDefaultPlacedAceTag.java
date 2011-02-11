@@ -81,6 +81,13 @@ public abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag 
 
 
     @Override
+    public Range asRange() {
+        return location.asRange();
+    }
+
+
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
