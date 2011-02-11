@@ -38,7 +38,7 @@ public class LargeFastQFileIterator extends AbstractBlockingCloseableIterator<Fa
    
     private final File fastQFile;
     private final FastQQualityCodec qualityCodec;
-    public LargeFastQFileIterator(File fastQFile,FastQQualityCodec qualityCodec) throws InterruptedException{
+    public LargeFastQFileIterator(File fastQFile,FastQQualityCodec qualityCodec){
         this.fastQFile = fastQFile;
         this.qualityCodec = qualityCodec;
     }

@@ -26,21 +26,17 @@ package org.jcvi.fastX.fasta.seq;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.FastaParser;
+import org.jcvi.fastX.fasta.LargeFastaIdIterator;
 import org.jcvi.fastX.fasta.SequenceFastaRecordUtil;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.AbstractLargeIdIterator;
 import org.jcvi.util.CloseableIterator;
 /**
  * {@code LargeNucleotideFastaFileDataStore} is an implementation
@@ -138,10 +134,13 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
     @Override
     public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         checkNotYetClosed();
+        
         try {
-            return new LargeFastaIdIterator();
-        } catch (FileNotFoundException e) {
-            throw new DataStoreException("could not get id iterator",e);
+            LargeFastaIdIterator iter = new LargeFastaIdIterator(fastaFile);
+            iter.start();
+            return iter;
+        } catch (InterruptedException e) {
+            throw new RuntimeException("could not start iterator",e);
         }
     }
 
@@ -172,9 +171,11 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
     public synchronized CloseableIterator<NucleotideSequenceFastaRecord> iterator() {
         checkNotYetClosed();
         try {
-            return new FastaIterator();
+            LargeNucleotideFastaIterator iter = new LargeNucleotideFastaIterator(fastaFile);
+            iter.start();
+            return iter;
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("could not start iterator",e);
         }
     }
 
@@ -224,130 +225,5 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
     }
 
 
-    private class LargeFastaIdIterator extends AbstractLargeIdIterator{
-        protected LargeFastaIdIterator() throws FileNotFoundException {
-            super(fastaFile);
-        }
-
-        @Override
-        protected void advanceToNextId(Scanner scanner) {
-            //bo-op
-            
-        }
-
-        @Override
-        protected Object getNextId(Scanner scanner) {
-            while(scanner.hasNextLine()){
-                String line = scanner.nextLine();
-                Matcher matcher = NEXT_ID_PATTERN.matcher(line);
-                if(matcher.find()){
-                    return matcher.group(1);
-                }
-            }            
-            return getEndOfIterating();
-        }
-        
-    }
-    
-    private class FastaIterator extends AbstractNucleotideFastaVisitor implements CloseableIterator<NucleotideSequenceFastaRecord>{
-        private Object endOfFileToken = new Object();
-        private BlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1);
-        private Object nextRecord=null;
-        private boolean isClosed=false;
-        private FastaIterator() throws InterruptedException{
-            new Thread(){
-
-                @Override
-                public void run() {
-                    try {
-                        FastaParser.parseFasta(fastaFile, FastaIterator.this);
-                    } catch (FileNotFoundException e) {
-                        //should never happen
-                        throw new RuntimeException(e);
-                    }
-                }
-                
-            }.start();
-            blockingGetNextRecord();
-        }
-
-        /**
-         * @throws InterruptedException 
-         * 
-         */
-        private void blockingGetNextRecord() throws InterruptedException {
-            nextRecord = queue.take();
-            
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void close() throws IOException {
-            isClosed=true;
-            nextRecord=endOfFileToken;
-            //remove element from queue
-            queue.poll();            
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public boolean hasNext() {
-            return nextRecord !=endOfFileToken;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public NucleotideSequenceFastaRecord next() {
-            if(!hasNext()){
-                throw new NoSuchElementException("no more fasta records");
-            }
-            NucleotideSequenceFastaRecord next = (NucleotideSequenceFastaRecord)nextRecord;
-            try {
-                blockingGetNextRecord();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            return next;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void remove() {
-            // TODO Auto-generated method stub
-            
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        protected boolean visitNucleotideFastaRecord(
-                NucleotideSequenceFastaRecord fastaRecord) {
-            blockingPut(fastaRecord);
-            return isClosed;
-            
-        }
-
-        @Override
-        public void visitEndOfFile() {
-            blockingPut(endOfFileToken);
-        }
-         
-        private void blockingPut(Object obj){
-            try {
-                queue.put(obj);
-            } catch (InterruptedException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-         
-    }
+   
 }

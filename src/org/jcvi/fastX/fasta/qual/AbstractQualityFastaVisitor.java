@@ -16,38 +16,28 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Nov 11, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.fastX.fasta;
 
-import org.jcvi.fastX.fasta.seq.AbstractNucleotideFastaVisitor;
-import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
+package org.jcvi.fastX.fasta.qual;
+
+import org.jcvi.fastX.fasta.AbstractFastaRecordVisitor;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 
 /**
- * {@code SingleNucleotideFastaVisitor} is a {@link FastaVisitor}
- * that only accepts at most one FastaRecord.
  * @author dkatzel
  *
  *
  */
-public abstract class SingleNucleotideFastaVisitor extends AbstractNucleotideFastaVisitor{
+public abstract class AbstractQualityFastaVisitor extends AbstractFastaRecordVisitor<QualityEncodedGlyphs, QualityFastaRecord>{
 
-    private NucleotideSequenceFastaRecord record=null;
-    @Override
-    protected synchronized boolean visitFastaRecord(
-            NucleotideSequenceFastaRecord fastaRecord) {
-        //only accept first record
-        record = fastaRecord;        
-        return keepParsingFasta();
+    public AbstractQualityFastaVisitor(){
+        this(DefaultQualityFastaRecordFactory.getInstance());
     }
-    protected abstract boolean keepParsingFasta();
-    public synchronized NucleotideSequenceFastaRecord getRecord() {
-        return record;
+    /**
+     * @param recordFactory
+     */
+    public AbstractQualityFastaVisitor(
+            QualityFastaRecordFactory recordFactory) {
+        super(recordFactory);
     }
-    
-    
 
 }

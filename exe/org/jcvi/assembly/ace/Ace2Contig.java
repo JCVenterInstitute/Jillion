@@ -71,9 +71,9 @@ public class Ace2Contig {
                 .isRequired(true)
                 .build());
         
-        options.addOption(new CommandLineOptionBuilder("i", "optional file of ids to include")
+        options.addOption(new CommandLineOptionBuilder("i", "optional file of contig ids to include")
                             .build());
-        options.addOption(new CommandLineOptionBuilder("e", "optional file of ids to exclude")
+        options.addOption(new CommandLineOptionBuilder("e", "optional file of contig ids to exclude")
                             .build());
         
         
