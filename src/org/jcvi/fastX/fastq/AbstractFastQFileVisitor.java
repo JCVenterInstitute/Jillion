@@ -80,7 +80,15 @@ public abstract class AbstractFastQFileVisitor implements FastQFileVisitor{
         
         
     }
-    
+    /**
+     * Visit the current {@link FastQRecord}.
+     * @param id
+     * @param nucleotides
+     * @param qualities
+     * @param optionalComment
+     * @return {@code true} if the fastQ file should continue
+     * to be parsed; {@code false} if parsing should stop.
+     */
     protected abstract boolean visitFastQRecord(
             String id, 
             NucleotideEncodedGlyphs nucleotides,

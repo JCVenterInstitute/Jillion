@@ -21,11 +21,9 @@ package org.jcvi.fastX.fastq;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.NoSuchElementException;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.util.AbstractBlockingCloseableIterator;
 import org.jcvi.util.CloseableIterator;
 
 /**
@@ -35,106 +33,46 @@ import org.jcvi.util.CloseableIterator;
  *
  *
  */
-public class LargeFastQFileIterator extends AbstractFastQFileVisitor implements CloseableIterator<FastQRecord>{
+public class LargeFastQFileIterator extends AbstractBlockingCloseableIterator<FastQRecord> implements CloseableIterator<FastQRecord>{
 
-    private Object endOfFileToken = new Object();
-    private BlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1);
-    private Object nextRecord=null;
-    private boolean isClosed=false;
-    
-    public LargeFastQFileIterator(final File fastQFile,FastQQualityCodec qualityCodec) throws InterruptedException{
-        super(qualityCodec);
-        new Thread(){
+   
+    private final File fastQFile;
+    private final FastQQualityCodec qualityCodec;
+    public LargeFastQFileIterator(File fastQFile,FastQQualityCodec qualityCodec) throws InterruptedException{
+        this.fastQFile = fastQFile;
+        this.qualityCodec = qualityCodec;
+    }
 
-            @Override
-            public void run() {
-                try {
-                    FastQFileParser.parse(fastQFile, LargeFastQFileIterator.this);
-                } catch (IOException e) {
-                    //should never happen
-                    throw new RuntimeException(e);
-                }
-            }
-            
-        }.start();
-        blockingGetNextRecord();
-    }
-    /**
-     * @throws InterruptedException 
-     * 
-     */
-    private void blockingGetNextRecord() throws InterruptedException {
-        nextRecord = queue.take();            
-    }
-    @Override
-    public boolean visitBeginBlock(String id, String optionalComment) {
-        super.visitBeginBlock(id, optionalComment);
-        return !isClosed;
-    }
-    @Override
-    public void visitEndOfFile() {
-        blockingPut(endOfFileToken);
-    }
-    private void blockingPut(Object obj){
-        try {
-            queue.put(obj);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-    /**
-     * {@inheritDoc}
-     */
-     @Override
-     protected boolean visitFastQRecord(String id,
-             NucleotideEncodedGlyphs nucleotides,
-             QualityEncodedGlyphs qualities, String optionalComment) {
-         FastQRecord record = new DefaultFastQRecord(id,nucleotides, qualities,optionalComment);
-         blockingPut(record);
-         return true;
-     }
-    
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
-        
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public boolean hasNext() {
-        return nextRecord !=endOfFileToken;
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void close() throws IOException {
-        isClosed=true;
-        nextRecord=endOfFileToken;
-        //remove element from queue
-        queue.poll();            
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public FastQRecord next() {
-        if(!hasNext()){
-            throw new NoSuchElementException("no more fasta records");
-        }
-        FastQRecord next = (FastQRecord)nextRecord;
-        try {
-            blockingGetNextRecord();
-        } catch (InterruptedException e) {
+	@Override
+	protected void backgroundThreadRunMethod() {
+		try {
+        	FastQFileVisitor visitor = new AbstractFastQFileVisitor(qualityCodec) {
+				
+        		 @Override
+        	     protected boolean visitFastQRecord(String id,
+        	             NucleotideEncodedGlyphs nucleotides,
+        	             QualityEncodedGlyphs qualities, String optionalComment) {
+        	         FastQRecord record = new DefaultFastQRecord(id,nucleotides, qualities,optionalComment);
+        	         blockingPut(record);
+        	         return !LargeFastQFileIterator.this.isClosed();
+        	     }
+        		 @Override
+        		    public boolean visitBeginBlock(String id, String optionalComment) {
+        		        super.visitBeginBlock(id, optionalComment);
+        		        return true;
+        		    }
+        		    @Override
+        		    public void visitEndOfFile() {
+        		    	LargeFastQFileIterator.this.finishedIterating();
+        		    }
+			};
+            FastQFileParser.parse(fastQFile, visitor);
+        } catch (IOException e) {
+            //should never happen
             throw new RuntimeException(e);
         }
-        return next;
-    }
+		
+	}
     
     
     
