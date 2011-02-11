@@ -24,11 +24,14 @@
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
+import org.jcvi.util.CloseableIterator;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -89,7 +92,21 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
         assertTrue(foundFF585OX02FNE4N);
         assertTrue(foundFF585OX02GMGGN);
         assertTrue(foundFF585OX02FHO5X);
-        
+    }
+    
+    @Test
+    public void closeIteratorEarly() throws IOException{
+        CloseableIterator<SFFFlowgram> iter = dataStore.iterator();
+        assertTrue(iter.hasNext());
+        iter.next();
+        iter.close();
+        assertFalse(iter.hasNext());
+        try{
+	        iter.next();
+	        fail("should throw no such element exception");
+        }catch(NoSuchElementException expected){
+        	
+        }
     }
 
 }

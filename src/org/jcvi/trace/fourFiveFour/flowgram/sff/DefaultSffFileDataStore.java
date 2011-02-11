@@ -33,11 +33,6 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.datastore.EmptyDataStoreFilter;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
 
@@ -46,7 +41,6 @@ public class DefaultSffFileDataStore implements SffDataStore, SffFileVisitor{
     private final Map<String, SFFFlowgram> map = new HashMap<String, SFFFlowgram>();
     private boolean initialized=false;
     private boolean closed = false;
-    private final QualityGlyphCodec phredQualityGlyphCodec;
 
     private final DataStoreFilter filter;
     
@@ -54,25 +48,21 @@ public class DefaultSffFileDataStore implements SffDataStore, SffFileVisitor{
     /**
      * @param phredQualityGlyphCodec
      */
-    public DefaultSffFileDataStore(
-            QualityGlyphCodec phredQualityGlyphCodec) {
-        this(phredQualityGlyphCodec, EmptyDataStoreFilter.INSTANCE);
+    public DefaultSffFileDataStore() {
+        this(EmptyDataStoreFilter.INSTANCE);
     }
-    public DefaultSffFileDataStore(
-            QualityGlyphCodec phredQualityGlyphCodec, DataStoreFilter filter) {
+    public DefaultSffFileDataStore(DataStoreFilter filter) {
         if(filter ==null){
             throw new NullPointerException("filter can not be null");
         }
-        this.phredQualityGlyphCodec = phredQualityGlyphCodec;
         this.filter = filter;
     }
-    public DefaultSffFileDataStore(File sffFile,
-            QualityGlyphCodec phredQualityGlyphCodec) throws SFFDecoderException, FileNotFoundException {
-        this(sffFile, phredQualityGlyphCodec, EmptyDataStoreFilter.INSTANCE);
+    public DefaultSffFileDataStore(File sffFile) throws SFFDecoderException, FileNotFoundException {
+        this(sffFile, EmptyDataStoreFilter.INSTANCE);
     }
     public DefaultSffFileDataStore(File sffFile,
-            QualityGlyphCodec phredQualityGlyphCodec, DataStoreFilter filter) throws SFFDecoderException, FileNotFoundException {
-        this(phredQualityGlyphCodec, filter);
+            DataStoreFilter filter) throws SFFDecoderException, FileNotFoundException {
+        this(filter);
         SffParser.parseSFF(sffFile, this);
     }
     private void throwExceptionIfNotInitialized(){
@@ -139,7 +129,7 @@ public class DefaultSffFileDataStore implements SffDataStore, SffFileVisitor{
     @Override
     public boolean visitReadData(SFFReadData readData) {
        throwExceptionIfInitialized();
-       map.put(currentReadHeader.getName(), buildSFFFlowgramFrom(currentReadHeader, readData));
+       map.put(currentReadHeader.getName(), SFFUtil.buildSFFFlowgramFrom(currentReadHeader, readData));
        currentReadHeader=null;
        return true;
     }
@@ -163,17 +153,7 @@ public class DefaultSffFileDataStore implements SffDataStore, SffFileVisitor{
         throwExceptionIfInitialized();
         
     }
-    protected SFFFlowgram buildSFFFlowgramFrom(SFFReadHeader readHeader,
-            SFFReadData readData) {
-        return new SFFFlowgram(
-                new DefaultNucleotideEncodedGlyphs(
-                        NucleotideGlyph.getGlyphsFor(readData.getBasecalls())),
-                        new DefaultQualityEncodedGlyphs(phredQualityGlyphCodec,
-                                PhredQuality.valueOf(readData.getQualities())),
-                SFFUtil.computeValues(readData),
-                readHeader.getQualityClip(),
-                readHeader.getAdapterClip());
-    }
+
     /**
     * {@inheritDoc}
     */

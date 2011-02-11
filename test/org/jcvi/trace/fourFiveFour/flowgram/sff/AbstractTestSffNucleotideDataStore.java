@@ -34,7 +34,7 @@ public abstract class AbstractTestSffNucleotideDataStore extends AbstractTestExa
     private final DefaultSffFileDataStore dataStore;
     
     {
-        dataStore = new DefaultSffFileDataStore(runLengthQualityCodec);
+        dataStore = new DefaultSffFileDataStore();
         try {
             SffParser.parseSFF(SFF_FILE, dataStore);
         } catch (Exception e) {

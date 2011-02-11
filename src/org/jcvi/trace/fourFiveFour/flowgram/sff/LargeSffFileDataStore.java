@@ -35,7 +35,6 @@ import java.util.List;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
-import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
 
@@ -43,14 +42,12 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
 
     private final File sffFile;
     private Integer size=null;
-    private final QualityGlyphCodec phredQualityGlyphCodec;
     
     /**
      * @param sffFile
      */
-    public LargeSffFileDataStore(File sffFile,QualityGlyphCodec phredQualityGlyphCodec) {
+    public LargeSffFileDataStore(File sffFile) {
         this.sffFile = sffFile;
-        this.phredQualityGlyphCodec = phredQualityGlyphCodec;
     }
 
     @Override
@@ -62,7 +59,7 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
     @Override
     public synchronized SFFFlowgram get(String id) throws DataStoreException {
         super.get(id);
-        SingleSffGetter datastore= new SingleSffGetter(id,phredQualityGlyphCodec);
+        SingleSffGetter datastore= new SingleSffGetter(id);
         InputStream in = null;
         try{
             in =new FileInputStream(sffFile);
@@ -125,7 +122,14 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
     @Override
     public CloseableIterator<SFFFlowgram> iterator() {
         super.iterator();
-        return new DataStoreIterator<SFFFlowgram>(this);
+       // return new DataStoreIterator<SFFFlowgram>(this);
+        try {
+        	SffFileIterator iter= new SffFileIterator(sffFile);
+        	iter.start();
+        	return iter;
+		} catch (InterruptedException e) {
+			throw new IllegalStateException("could not create iterator",e);
+		}
     }
 
     private static final class SffIdIterator implements SffFileVisitor, CloseableIterator<String>{
@@ -204,8 +208,8 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
         /**
          * @param idToFetch
          */
-        public SingleSffGetter(String idToFetch,QualityGlyphCodec phredQualityGlyphCodec) {
-            super(phredQualityGlyphCodec);
+        public SingleSffGetter(String idToFetch) {
+            super();
             this.idToFetch = idToFetch;
             
         }

@@ -39,7 +39,7 @@ public class TestSFFCodecParseActualSFFFile extends AbstractTestSffFileDataStore
         try {
             in = new FileInputStream(file);
             
-            DefaultSffFileDataStore dataStore = new DefaultSffFileDataStore(runLengthQualityCodec);
+            DefaultSffFileDataStore dataStore = new DefaultSffFileDataStore();
             SffParser.parseSFF(in, dataStore);
             return dataStore;
         } catch (FileNotFoundException e) {

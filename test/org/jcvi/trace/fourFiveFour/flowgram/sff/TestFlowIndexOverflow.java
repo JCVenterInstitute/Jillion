@@ -74,7 +74,7 @@ public class TestFlowIndexOverflow{
     @Test
     public void validDecode() throws TraceDecoderException, DataStoreException, IOException{
         InputStream in = RESOURCES.getFileAsStream(FILE);
-        DefaultSffFileDataStore dataStore = new DefaultSffFileDataStore(runLengthQualityCodec);
+        DefaultSffFileDataStore dataStore = new DefaultSffFileDataStore();
         SffParser.parseSFF(in, dataStore);
 
         IOUtil.closeAndIgnoreErrors(in);
