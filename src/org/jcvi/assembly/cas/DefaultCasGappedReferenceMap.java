@@ -65,10 +65,10 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
             return size;
         }
     }
-    private final Map<Long, TreeMap<Long,Insertion>> gapsByReferenceId = new LinkedHashMap<Long, TreeMap<Long,Insertion>>();
+    private final Map<Long, TreeMap<Long,Insertion>> gapsByReferenceId = new TreeMap<Long, TreeMap<Long,Insertion>>();
    private final CasIdLookup contigNameLookup;
     private final CasNucleotideDataStore referenceNucleotideDataStore;
-    private final Map<Long, NucleotideEncodedGlyphs> gappedReferences = new LinkedHashMap<Long, NucleotideEncodedGlyphs>();
+    private final Map<Long, NucleotideEncodedGlyphs> gappedReferences = new TreeMap<Long, NucleotideEncodedGlyphs>();
     /**
      * @param casDataStoreFactory
      */
