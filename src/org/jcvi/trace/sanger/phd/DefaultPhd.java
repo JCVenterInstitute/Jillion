@@ -36,32 +36,33 @@ import org.jcvi.sequence.Peaks;
 
 public class DefaultPhd implements Phd {
 
-    
+    private final String id;
     private final NucleotideEncodedGlyphs basecalls;
     private final QualityEncodedGlyphs qualities;
     private final Peaks peaks;
     private final Properties comments;
     private final List<PhdTag> tags;
     
-    public DefaultPhd(NucleotideEncodedGlyphs basecalls,
+    public DefaultPhd(String id, NucleotideEncodedGlyphs basecalls,
             QualityEncodedGlyphs qualities,
             Peaks peaks, Properties comments,
             List<PhdTag> tags){
+    	this.id = id;
         this.basecalls = basecalls;
         this.qualities = qualities;
         this.peaks = peaks;
         this.comments = comments;
         this.tags = tags;
     }
-    public DefaultPhd(NucleotideEncodedGlyphs basecalls,
+    public DefaultPhd(String id, NucleotideEncodedGlyphs basecalls,
             QualityEncodedGlyphs qualities,
             Peaks peaks,Properties comments){
-        this(basecalls, qualities, peaks, comments,Collections.<PhdTag>emptyList());
+        this(id,basecalls, qualities, peaks, comments,Collections.<PhdTag>emptyList());
     }
-    public DefaultPhd(NucleotideEncodedGlyphs basecalls,
+    public DefaultPhd(String id, NucleotideEncodedGlyphs basecalls,
             QualityEncodedGlyphs qualities,
             Peaks peaks){
-        this(basecalls, qualities, peaks, new Properties());
+        this(id,basecalls, qualities, peaks, new Properties());
     }
     
     @Override
@@ -84,10 +85,15 @@ public class DefaultPhd implements Phd {
         return qualities;
     }
 
-    @Override
+	@Override
+	public String getId() {
+		return id;
+	}
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + id.hashCode();
         result = prime * result
                 + basecalls.decode().hashCode();
         result = prime * result
@@ -107,6 +113,9 @@ public class DefaultPhd implements Phd {
         if (!(obj instanceof Phd))
             return false;
         Phd other = (Phd) obj;
+        if(!id.equals(other.getId())){
+        	return false;
+        }
        if (!basecalls.decode().equals(other.getBasecalls().decode()))
             return false;
         if (!comments.equals(other.getComments()))

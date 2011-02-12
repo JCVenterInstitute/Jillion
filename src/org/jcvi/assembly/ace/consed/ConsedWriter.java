@@ -87,7 +87,7 @@ public class ConsedWriter {
                     for(AceContig contig : contigDataStore){
                         for(AcePlacedRead read : contig.getPlacedReads()){
                             String id = read.getId();
-                            PhdWriter.writePhd(id, phdDataStore.get(id), phdOutputStream);
+                            PhdWriter.writePhd(phdDataStore.get(id), phdOutputStream);
                         }
                     }
                     return null;

@@ -56,7 +56,8 @@ public class PhdSangerTraceDataStoreAdapter<S extends FileSangerTrace> implement
     public Phd get(String id) throws DataStoreException {
         try{
         FileSangerTrace trace = delegate.get(id); 
-        return new DefaultPhd(trace.getBasecalls(), trace.getQualities(), trace.getPeaks(),
+        return new DefaultPhd(id,
+        		trace.getBasecalls(), trace.getQualities(), trace.getPeaks(),
                 comments,Collections.<PhdTag>emptyList());
         }catch(Throwable t){            
             throw new RuntimeException(t);

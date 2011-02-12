@@ -57,12 +57,14 @@ public class ArtificialPhd implements Phd{
    private final int numberOfPositionsForEachPeak;
    private final int numberOfBases;
    private final int positionOfFirstPeak;
+   private final String id;
    /**
     * Create an {@link ArtificialPhd} record that matches
     * the way Newbler creates phd records for 454 reads.
     * This is needed so tools like consed will correctly
     * space the fake chromatograms for 454 reads since it uses
     * 454 developed tools which rely on this spacing.
+    * @param id the id for this Phd.
     * @param basecalls the basecalls for this Phd.
     * @param qualities the qualities for this Phd.
     * @param comments the comments for this Phd.
@@ -70,10 +72,12 @@ public class ArtificialPhd implements Phd{
     * @return a new {@link ArtificialPhd} which has position data that matches
     * what would have been created by Newbler.
     */
-   public static ArtificialPhd createNewbler454Phd(NucleotideEncodedGlyphs basecalls,
+   public static ArtificialPhd createNewbler454Phd(
+		   String id,
+		   NucleotideEncodedGlyphs basecalls,
            QualityEncodedGlyphs qualities,
            Properties comments, List<PhdTag> tags){
-       return new ArtificialPhd(basecalls, qualities, comments, tags, NEWBLER_454_START_POSITION,NEWBLER_454_PEAK_SPACING);
+       return new ArtificialPhd(id,basecalls, qualities, comments, tags, NEWBLER_454_START_POSITION,NEWBLER_454_PEAK_SPACING);
    }
    /**
     * Create an {@link ArtificialPhd} record that matches
@@ -81,14 +85,16 @@ public class ArtificialPhd implements Phd{
     * This is needed so tools like consed will correctly
     * space the fake chromatograms for 454 reads since it uses
     * 454 developed tools which rely on this spacing.
+    * @param id the id for this Phd.
     * @param basecalls the basecalls for this Phd.
     * @param qualities the qualities for this Phd.
     * @return a new {@link ArtificialPhd} which has position data that matches
     * what would have been created by Newbler.
     */
-   public static ArtificialPhd createNewbler454Phd(NucleotideEncodedGlyphs basecalls,
+   public static ArtificialPhd createNewbler454Phd(String id,
+		   NucleotideEncodedGlyphs basecalls,
            QualityEncodedGlyphs qualities){
-       return ArtificialPhd.createNewbler454Phd(basecalls, qualities, 
+       return ArtificialPhd.createNewbler454Phd(id,basecalls, qualities, 
                new Properties(),Collections.<PhdTag>emptyList());
    }
    /**
@@ -100,7 +106,7 @@ public class ArtificialPhd implements Phd{
     * This method is the same as calling
     * {@link #buildArtificalPhd(NucleotideEncodedGlyphs, EncodedGlyphs, Properties, List, int)
     * buildArtificalPhd(basecalls, qualities, new Properties(),Collections.<PhdTag>emptyList(),numberOfPositionsForEachPeak)}
-    * 
+    * @param id the id for this Phd.
     * @param basecalls the basecalls for this Phd.
     * @param qualities the qualities for this Phd.
     * @param numberOfPositionsForEachPeak number of positions each
@@ -108,16 +114,18 @@ public class ArtificialPhd implements Phd{
     * @return a new DefaultPhd using the given values.
     * @see #buildArtificalPhd(NucleotideEncodedGlyphs, EncodedGlyphs, Properties, List, int)
     */
-   public ArtificialPhd(NucleotideEncodedGlyphs basecalls,
+   public ArtificialPhd(String id,
+		   NucleotideEncodedGlyphs basecalls,
            QualityEncodedGlyphs qualities,
            int numberOfPositionsForEachPeak){
-       this(basecalls, qualities, new Properties(),Collections.<PhdTag>emptyList(),numberOfPositionsForEachPeak);
+       this(id,basecalls, qualities, new Properties(),Collections.<PhdTag>emptyList(),numberOfPositionsForEachPeak);
    }
    /**
     * {@code buildArtificalPhd} creates a {@link DefaultPhd}
     * using the given basecalls and qualities, comments and tags
     * but creates artificial peak data spacing each
     * peak {@code numberOfPositionsForEachPeak} apart.
+    * @param id the id for this Phd.
     * @param basecalls the basecalls for this Phd.
     * @param qualities the qualities for this Phd.
     * @param comments the comments for this Phd.
@@ -126,10 +134,10 @@ public class ArtificialPhd implements Phd{
     * peak should be separated as.
     * @return a new DefaultPhd using the given values.
     */
-    public ArtificialPhd(NucleotideEncodedGlyphs basecalls,
+    public ArtificialPhd(String id, NucleotideEncodedGlyphs basecalls,
             QualityEncodedGlyphs qualities,
            Properties comments, List<PhdTag> tags,int numberOfPositionsForEachPeak){
-       this(basecalls, qualities,comments, tags,numberOfPositionsForEachPeak,numberOfPositionsForEachPeak);
+       this(id,basecalls, qualities,comments, tags,numberOfPositionsForEachPeak,numberOfPositionsForEachPeak);
         
         
     }
@@ -138,6 +146,7 @@ public class ArtificialPhd implements Phd{
      * using the given basecalls and qualities, comments and tags
      * but creates artificial peak data spacing each
      * peak {@code numberOfPositionsForEachPeak} apart.
+     * @param id the id for this Phd.
      * @param basecalls the basecalls for this Phd.
      * @param qualities the qualities for this Phd.
      * @param comments the comments for this Phd.
@@ -146,10 +155,11 @@ public class ArtificialPhd implements Phd{
      * peak should be separated as.
      * @return a new DefaultPhd using the given values.
      */
-     public ArtificialPhd(NucleotideEncodedGlyphs basecalls,
+     public ArtificialPhd(String id, NucleotideEncodedGlyphs basecalls,
              QualityEncodedGlyphs qualities,
             Properties comments, List<PhdTag> tags,int positionOfFirstPeak,int numberOfPositionsForEachPeak){
-         this.basecalls = basecalls;
+         this.id = id;
+    	 this.basecalls = basecalls;
          this.qualities = qualities;
          this.tags = tags;
          this.comments = comments;
@@ -168,6 +178,10 @@ public class ArtificialPhd implements Phd{
         return tags;
     }
 
+    @Override
+    public String getId(){
+    	return id;
+    }
     @Override
     public int getNumberOfTracePositions() {
         if(numberOfBases ==0){

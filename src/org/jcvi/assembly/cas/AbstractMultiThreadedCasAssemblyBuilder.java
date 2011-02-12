@@ -296,7 +296,7 @@ public abstract class AbstractMultiThreadedCasAssemblyBuilder implements Builder
                 if(phd ==null){
                     throw new NullPointerException("phd is null for "+id);
                 }
-                PhdWriter.writePhd(id, phd, phdOutputStream);
+                PhdWriter.writePhd(phd, phdOutputStream);
             }
             
             return null;

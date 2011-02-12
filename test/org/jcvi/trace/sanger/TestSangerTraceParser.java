@@ -29,7 +29,7 @@ import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.scf.Version3SCFCodec;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramParser;
-import org.jcvi.trace.sanger.phd.PhdCodec;
+import org.jcvi.trace.sanger.phd.SinglePhdFile;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestSangerTraceParser {
@@ -56,7 +56,7 @@ public class TestSangerTraceParser {
     @Test
     public void parsePhd() throws TraceDecoderException, IOException{
         SangerTrace actual =sut.decode(RESOURCES.getFileAsStream(PHD_FILE));
-        SangerTrace expected = new PhdCodec().decode(RESOURCES.getFileAsStream(PHD_FILE));
+        SangerTrace expected = new SinglePhdFile(RESOURCES.getFile(PHD_FILE));
         assertEquals(expected, actual);
     }
 }

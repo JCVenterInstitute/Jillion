@@ -201,6 +201,7 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
             Phd originalPhd =codec.decode(phd);
 
             map.put(currentReadId, new DefaultPhd(
+            		currentReadId,
                     new DefaultNucleotideEncodedGlyphs(glyphs),
                     originalPhd.getQualities(),
                     originalPhd.getPeaks(),

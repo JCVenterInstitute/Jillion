@@ -78,7 +78,8 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
     if(qualities ==null){
         throw new NullPointerException("could not find qualities for "+id);
     }
-    return ArtificialPhd.createNewbler454Phd(basecalls, 
+    return ArtificialPhd.createNewbler454Phd(id,
+    			basecalls, 
                 qualities,
                 comments,Collections.<PhdTag>emptyList());
     }

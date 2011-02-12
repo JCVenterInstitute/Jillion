@@ -30,7 +30,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-     TestPhdCodecDecode.class,
      TestDefaultPhdFileDataStore.class,
      TestIndexPhdFileDataStore.class,
      TestFakePhdReadParser.class,
