@@ -45,11 +45,11 @@ public class PhdWriter {
     static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern(
     "EEE MMM dd kk:mm:ss yyyy");
     
-    public static void writePhd(String id, Phd phd,OutputStream out) throws IOException{
+    public static void writePhd(Phd phd, OutputStream out) throws IOException{
         try{
             StringBuilder phdRecord = new StringBuilder();
             
-            phdRecord.append( String.format("%s %s%n%n",BEGIN_SEQUENCE, id));
+            phdRecord.append( String.format("%s %s%n%n",BEGIN_SEQUENCE, phd.getId()));
             
             phdRecord.append(createComments(phd));
             phdRecord.append(writeDnaSection(phd));
@@ -58,7 +58,7 @@ public class PhdWriter {
             phdRecord.append(createTags(phd));
             write(out, phdRecord.toString());
         }catch(Throwable t){
-            throw new IOException("error writing phd record for "+id, t);
+            throw new IOException("error writing phd record for "+phd.getId(), t);
         }
         
     }

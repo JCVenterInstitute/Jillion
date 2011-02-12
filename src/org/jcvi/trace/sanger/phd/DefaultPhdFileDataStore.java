@@ -54,7 +54,7 @@ public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
     protected void visitPhd(String id, List<NucleotideGlyph> bases,
             List<PhredQuality> qualities, List<ShortGlyph> positions,
             Properties comments, List<PhdTag> tags) {
-        map.put(id, new DefaultPhd(
+        map.put(id, new DefaultPhd(id,
                 new DefaultNucleotideEncodedGlyphs(bases),
                 new DefaultQualityEncodedGlyphs(QUALITY_CODEC, qualities),
                 new Peaks(positions),

@@ -29,7 +29,7 @@ import java.util.Properties;
 import org.jcvi.trace.sanger.SangerTrace;
 
 public interface Phd extends SangerTrace {
-
+	String getId();
     Properties getComments();
     List<PhdTag> getTags();
 }

@@ -42,7 +42,7 @@ public class TestBuildArtificialPhd {
     QualityEncodedGlyphs mockQualities;
     Properties mockProperties;
     List<PhdTag> mockTags;
-    
+    String id = "phdId";
     long lengthOfBases= 5;
     int numberOfPositionsForEachPeak = 13;
     
@@ -58,8 +58,8 @@ public class TestBuildArtificialPhd {
     public void noPropertiesAndTagsConstructor(){
         expect(mockBasecalls.getLength()).andReturn(lengthOfBases);
         replay(mockBasecalls, mockQualities);
-        Phd phd = new ArtificialPhd(mockBasecalls, mockQualities, numberOfPositionsForEachPeak);
-        
+        Phd phd = new ArtificialPhd(id,mockBasecalls, mockQualities, numberOfPositionsForEachPeak);
+        assertEquals(id, phd.getId());
         assertEquals(mockBasecalls, phd.getBasecalls());
         assertEquals(mockQualities, phd.getQualities());
         EncodedGlyphs<ShortGlyph> actualPeaks = phd.getPeaks().getData();
@@ -78,8 +78,8 @@ public class TestBuildArtificialPhd {
     public void withProperties(){
         expect(mockBasecalls.getLength()).andReturn(lengthOfBases);
         replay(mockBasecalls, mockQualities, mockProperties, mockTags);
-        Phd phd =new ArtificialPhd(mockBasecalls, mockQualities, mockProperties, mockTags,numberOfPositionsForEachPeak);
-        
+        Phd phd =new ArtificialPhd(id,mockBasecalls, mockQualities, mockProperties, mockTags,numberOfPositionsForEachPeak);
+        assertEquals(id, phd.getId());
         assertEquals(mockBasecalls, phd.getBasecalls());
         assertEquals(mockQualities, phd.getQualities());
         EncodedGlyphs<ShortGlyph> actualPeaks = phd.getPeaks().getData();

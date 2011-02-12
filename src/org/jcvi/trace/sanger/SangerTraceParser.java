@@ -37,18 +37,17 @@ import org.jcvi.trace.sanger.chromatogram.scf.SCFCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.Version2SCFCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.Version3SCFCodec;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramParser;
-import org.jcvi.trace.sanger.phd.PhdCodec;
+import org.jcvi.trace.sanger.phd.SinglePhdFile;
 
 public class SangerTraceParser implements SangerTraceCodec{
     
     private static final int MARK_LIMIT = 1024;
     private static final ZTRChromatogramParser ZTR_PARSER = new ZTRChromatogramParser();
-    private static final PhdCodec PHD_CODEC = new PhdCodec();
     private static final SCFCodec SCF_VERSION_2_CODEC = Version2SCFCodec.INSTANCE;
     private static final SCFCodec SCF_VERSION_3_CODEC = Version3SCFCodec.INSTANCE;
     
     private static final List<SangerTraceCodec> decoderOrder = Arrays.asList(
-            ZTR_PARSER, SCF_VERSION_3_CODEC, SCF_VERSION_2_CODEC, PHD_CODEC);
+            ZTR_PARSER, SCF_VERSION_3_CODEC, SCF_VERSION_2_CODEC);
     
     private static final SangerTraceParser instance = new SangerTraceParser();
     
@@ -68,6 +67,10 @@ public class SangerTraceParser implements SangerTraceCodec{
                 }
                 
             }
+            //try as phd            
+            try{
+            	return new SinglePhdFile(traceFile);
+            }catch(Exception e){}
             throw new TraceDecoderException("unknown trace format");
         
     }
@@ -83,8 +86,14 @@ public class SangerTraceParser implements SangerTraceCodec{
                 catch(TraceDecoderException e){
                     bufferedIn.reset();
                 }
-                
             }
+          //try as phd   
+            try{
+            	return new SinglePhdFile(bufferedIn);
+            }catch(Exception e){
+            	e.printStackTrace();
+            }
+            
         }catch(IOException ioException){
             ioException.printStackTrace();
             throw new TraceDecoderException("error resetting inputstream", ioException);

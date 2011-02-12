@@ -40,12 +40,13 @@ public class TestPhdWriter extends AbstractTestPhd{
     @Test
     public void write() throws IOException, DataStoreException{
         Phd phd = new DefaultPhd(
+        		id,
                 new DefaultNucleotideEncodedGlyphs(expectedBasecalls), 
                 new DefaultQualityEncodedGlyphs(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, expectedQualities), 
                 new Peaks(expectedPositions),
                 expectedProperties);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PhdWriter.writePhd(id, phd, out);
+        PhdWriter.writePhd(phd, out);
         DefaultPhdFileDataStore expected = new DefaultPhdFileDataStore(RESOURCE.getFile(PHD_FILE));
         DefaultPhdFileDataStore actual = new DefaultPhdFileDataStore();
         PhdParser.parsePhd(new ByteArrayInputStream(out.toByteArray()), actual);
