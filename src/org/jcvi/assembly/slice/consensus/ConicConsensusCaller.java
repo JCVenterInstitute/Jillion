@@ -94,10 +94,11 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
             Map<NucleotideGlyph, Integer> qualityValueSumMap,
             MaxQualityStruct maxQualityStruct) {
         Set<NucleotideGlyph> basesTowardsAmbiguity = EnumSet.noneOf(NucleotideGlyph.class);
-        basesTowardsAmbiguity.add(maxQualityStruct.base);
+        final NucleotideGlyph maxQualityBase = maxQualityStruct.base;
+        basesTowardsAmbiguity.add(maxQualityBase);
        
         for(NucleotideGlyph base : BASES_TO_CONSIDER){
-            if(base !=maxQualityStruct.base ){
+            if(base !=maxQualityBase ){
                 double tangent = qualityValueSumMap.get(base).doubleValue()/maxQualityStruct.sum;
                 if(tangent < upperlimit && tangent > lowerlimit){
                     basesTowardsAmbiguity.add(base);
@@ -109,7 +110,7 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
     private MaxQualityStruct createMaxQualityStruct(
             Map<NucleotideGlyph, Integer> qualityValueSumMap) {
         int maxQualitySum=0;
-        NucleotideGlyph maxQualityBase= null;
+        NucleotideGlyph maxQualityBase= NucleotideGlyph.Gap;
         for(NucleotideGlyph base : BASES_TO_CONSIDER){
             int qualitySum = qualityValueSumMap.get(base);
             if(qualitySum > maxQualitySum){
