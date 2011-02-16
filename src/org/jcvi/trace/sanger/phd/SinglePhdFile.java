@@ -178,7 +178,7 @@ public class SinglePhdFile implements  Phd{
 	       positions.add(PEAK_FACTORY.getGlyphFor(tracePosition));            
 	    }
 	    @Override
-	    public void visitBeginDna() {
+	    public synchronized void visitBeginDna() {
 	        firstRecord=false;
 	    }
 
