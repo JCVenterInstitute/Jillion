@@ -49,7 +49,12 @@ public class TestDefaultNcbiGappedFastaRecord {
     DefaultNcbiGappedFastaRecord sut;
     @Before
     public void setup(){
+        try{
         sut= createSut();
+        }catch(Throwable t){
+            t.printStackTrace();
+            throw new RuntimeException(t);
+        }
     }
 
     protected DefaultNcbiGappedFastaRecord createSut() {
