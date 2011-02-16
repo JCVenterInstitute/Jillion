@@ -15,6 +15,9 @@
 	<property name ="exe-internal" value="exe-internal"/>
 	<property name ="exe-test" value="exe-test"/>
 	
+	<property name ="integration-test" value="integration-test"/>
+		<property name ="integration-test-internal" value="integration-test"/>
+	
 	<property name ="release" value ="release"/>
 	<property name ="scripts" value = "scripts"/>
 	
@@ -97,6 +100,9 @@
 					<src path="${exe}"/>
 					<src path="${exe-internal}"/>
 					<src path="${exe-test}"/>
+					<src path="${integration-test}"/>
+								<src path="${integration-test-internal}"/>
+			
 	  	</javac>
 		<copy todir="${bin}">
 			<fileset dir="${test}" excludes="**/*.java"/>
@@ -104,6 +110,8 @@
 			<fileset dir="${exe}" excludes="**/*.java"/>
 			<fileset dir="${exe-internal}" excludes="**/*.java"/>
 			<fileset dir="${exe-test}" excludes="**/*.java"/>
+			<fileset dir="${integration-test}" excludes="**/*.java"/>
+						<fileset dir="${integration-test-internal}" excludes="**/*.java"/>
 		</copy>
 
 	 </target>
@@ -191,33 +199,53 @@
   </target>
 	
 	<target name ="unit.tests" depends ="bin">
-			<junit haltonfailure="yes" showoutput="yes">		
+			<junit haltonfailure="no" showoutput="yes"
+				errorproperty="unit.test.failed"
+				failureproperty="unit.test.failed">		
 				<formatter type="xml"/>
 				
 			  <test name="org.jcvi.AllUnitTests"/>
 				<classpath refid = "test.classpath" />
 			</junit>
-		
-		<junit haltonfailure="yes" showoutput="yes">		
+				
+		<junit haltonfailure="no" showoutput="yes"
+			errorproperty="integration.test.failed"
+							failureproperty="integration.test.failed">
 						<formatter type="xml"/>
 						
 					  <test name="org.jcvi.AllIntegrationTests"/>
 						<classpath refid = "test.classpath" />
 					</junit>
 		
-		<junit haltonfailure="yes" showoutput="yes">		
+		<junit haltonfailure="no" showoutput="yes"	
+			errorproperty="internal-integration.test.failed"
+							failureproperty="internal-integration.test.failed">
 								<formatter type="xml"/>
 								
 							  <test name="org.AllInternalIntegrationTests"/>
 								<classpath refid = "test.classpath" />
 							</junit>
 		
-		<junit haltonfailure="yes" showoutput="yes">		
+		<junit haltonfailure="no" showoutput="yes"
+			errorproperty="exe.test.failed"
+										failureproperty="exe.test.failed">		
 								<formatter type="xml"/>
 								
 							  <test name="org.jcvi.AllExeTests"/>
 								<classpath refid = "test.classpath" />
 							</junit>
+		<fail if= "unit.test.failed">
+			Unit tests failed.
+		</fail>
+		<fail if= "integration.test.failed">
+					Integration tests failed.
+				</fail>
+		<fail if= "internal-integration.test.failed">
+							Internal Integration tests failed.
+						</fail>
+		<fail if= "exe.test.failed">
+							Exe tests failed.
+						</fail>
 		</target>
 	
 	<target name = "report.emma" description = "generates emma report for instrumented classes">
