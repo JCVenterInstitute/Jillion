@@ -303,8 +303,9 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		public Builder withCDSStart(Integer cdsStart){
 			if(cdsStart ==null){
 				optionalAttributes.remove(TigrAssemblerContigAttribute.CDS_START);
+			}else{
+			    optionalAttributes.put(TigrAssemblerContigAttribute.CDS_START,cdsStart.toString());
 			}
-			optionalAttributes.put(TigrAssemblerContigAttribute.CDS_START,cdsStart.toString());
 			return this;
 		}
 		/**
@@ -322,8 +323,9 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		public Builder withCDSEnd(Integer cdsEnd){
 			if(cdsEnd ==null){
 				optionalAttributes.remove(TigrAssemblerContigAttribute.CDS_END);
+			}else{
+			    optionalAttributes.put(TigrAssemblerContigAttribute.CDS_END,cdsEnd.toString());
 			}
-			optionalAttributes.put(TigrAssemblerContigAttribute.CDS_END,cdsEnd.toString());
 			return this;
 		}
 		/**
