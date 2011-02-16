@@ -207,6 +207,14 @@
 			  <test name="org.jcvi.AllUnitTests"/>
 				<classpath refid = "test.classpath" />
 			</junit>
+		<junit haltonfailure="no" showoutput="yes"
+						errorproperty="internal-unit.test.failed"
+						failureproperty="internal-unit.test.failed">		
+						<formatter type="xml"/>
+						
+					  <test name="org.jcvi.AllInternalUnitTests"/>
+						<classpath refid = "test.classpath" />
+					</junit>
 				
 		<junit haltonfailure="no" showoutput="yes"
 			errorproperty="integration.test.failed"
@@ -234,9 +242,13 @@
 							  <test name="org.jcvi.AllExeTests"/>
 								<classpath refid = "test.classpath" />
 							</junit>
+		
 		<fail if= "unit.test.failed">
 			Unit tests failed.
 		</fail>
+		<fail if= "internal-unit.test.failed">
+					Internal Unit tests failed.
+				</fail>
 		<fail if= "integration.test.failed">
 					Integration tests failed.
 				</fail>
