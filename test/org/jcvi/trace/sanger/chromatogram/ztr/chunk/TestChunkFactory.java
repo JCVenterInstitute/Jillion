@@ -31,36 +31,35 @@ import org.jcvi.trace.sanger.chromatogram.ztr.chunk.ChunkException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
-import static org.hamcrest.Matchers.*;
 public class TestChunkFactory {
 
     InputStream inputStream = createMock(InputStream.class);
     @Test
     public void smp4() throws ChunkException{
-        assertThat(Chunk.getChunk("SMP4"), is(Chunk.SMP4));
+        assertSame(Chunk.getChunk("SMP4"),Chunk.SMP4);
     }
     
     @Test
     public void base() throws ChunkException{
-        assertThat(Chunk.getChunk("BASE"), is(Chunk.BASE));
+        assertSame(Chunk.getChunk("BASE"), Chunk.BASE);
     }
     
     @Test
     public void bpos() throws ChunkException{
-        assertThat(Chunk.getChunk("BPOS"), is(Chunk.POSITIONS));
+        assertSame(Chunk.getChunk("BPOS"), Chunk.POSITIONS);
         
     }
     @Test
     public void cnf4() throws ChunkException{
-        assertThat(Chunk.getChunk("CNF4"), is(Chunk.CONFIDENCES));
+        assertSame(Chunk.getChunk("CNF4"), Chunk.CONFIDENCES);
     }
     @Test
     public void text() throws ChunkException{
-        assertThat(Chunk.getChunk("TEXT"), is(Chunk.COMMENTS));
+        assertSame(Chunk.getChunk("TEXT"),Chunk.COMMENTS);
     }
     @Test
     public void clip() throws ChunkException{
-        assertThat(Chunk.getChunk("CLIP"), is(Chunk.CLIP));
+        assertSame(Chunk.getChunk("CLIP"),Chunk.CLIP);
     }
     
     @Test
