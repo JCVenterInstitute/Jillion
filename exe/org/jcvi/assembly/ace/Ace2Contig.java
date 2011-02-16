@@ -33,6 +33,10 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.assembly.contig.ContigFileWriter;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.datastore.DataStoreFilter;
+import org.jcvi.datastore.DefaultExcludeDataStoreFilter;
+import org.jcvi.datastore.DefaultIncludeDataStoreFilter;
+import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.fastX.ExcludeFastXIdFilter;
 import org.jcvi.fastX.FastXFilter;
 import org.jcvi.fastX.IncludeFastXIdFilter;
@@ -70,12 +74,8 @@ public class Ace2Contig {
                 .longName("contig")        
                 .isRequired(true)
                 .build());
-        
-        options.addOption(new CommandLineOptionBuilder("i", "optional file of contig ids to include")
-                            .build());
-        options.addOption(new CommandLineOptionBuilder("e", "optional file of contig ids to exclude")
-                            .build());
-        
+        CommandLineUtils.addIncludeAndExcludeDataStoreFilterOptionsTo(options);
+       
         
         options.addOption(CommandLineUtils.createHelpOption());
 
@@ -88,23 +88,7 @@ public class Ace2Contig {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             File aceFile = new File(commandLine.getOptionValue("a"));
             final ContigFileWriter writer = new ContigFileWriter(new FileOutputStream(commandLine.getOptionValue("c")));
-            final File idFile;
-            final FastXFilter filter;
-            if(commandLine.hasOption("i")){
-                idFile =new File(commandLine.getOptionValue("i"));
-                Set<String> includeList=parseIdsFrom(idFile);
-                if(commandLine.hasOption("e")){
-                    Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue("e")));
-                    includeList.removeAll(excludeList);
-                }
-                filter = new IncludeFastXIdFilter(includeList);
-                
-            }else if(commandLine.hasOption("e")){
-                idFile =new File(commandLine.getOptionValue("e"));
-                filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile));
-            }else{
-                filter = NullFastXFilter.INSTANCE;
-            }
+            final DataStoreFilter filter = CommandLineUtils.createDataStoreFilter(commandLine);
             
             
             AceFileVisitor aceVisitor = new AbstractAceContigBuilder(){
@@ -134,6 +118,8 @@ public class Ace2Contig {
         
 
     }
+
+    
     
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
@@ -147,14 +133,6 @@ public class Ace2Contig {
                 "Created by Danny Katzel");
     }
     
-    private static Set<String> parseIdsFrom(final File idFile)   throws IdReaderException {
-        IdReader<String> idReader = new DefaultFileIdReader<String>(idFile,new StringIdParser());
-        Set<String> ids = new HashSet<String>();
-        Iterator<String> iter =idReader.getIds();
-        while(iter.hasNext()){
-            ids.add(iter.next());
-        }
-        return ids;
-    }
+    
 
 }

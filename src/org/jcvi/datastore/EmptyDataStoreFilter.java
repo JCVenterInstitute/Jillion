@@ -26,16 +26,13 @@ package org.jcvi.datastore;
  *
  *
  */
-public final class EmptyDataStoreFilter implements DataStoreFilter{
+public enum EmptyDataStoreFilter implements DataStoreFilter{
     /**
      * This static singleton is the instance of EmptyDataStoreFilter
      * that should be used.
      */
-    public static final EmptyDataStoreFilter INSTANCE = new EmptyDataStoreFilter();
-    /**
-     * Private constructor.
-     */
-    private EmptyDataStoreFilter(){};
+    INSTANCE;
+
     /**
     * Every id is always accepted.
     * @return {@code true}.

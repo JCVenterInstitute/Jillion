@@ -23,7 +23,9 @@
  */
 package org.jcvi.io.idReader;
 
-public class IdReaderException extends Exception {
+import java.io.IOException;
+
+public class IdReaderException extends IOException {
 
    
     /**
