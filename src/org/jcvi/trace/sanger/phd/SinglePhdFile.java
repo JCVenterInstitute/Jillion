@@ -41,15 +41,14 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Peaks;
 
-public class SinglePhdFile implements  PhdFileVisitor, Phd{
+public class SinglePhdFile implements  Phd{
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
     private List<NucleotideGlyph> bases = new ArrayList<NucleotideGlyph>();
     private List<PhredQuality> qualities = new ArrayList<PhredQuality>();
     private List<ShortGlyph> positions = new ArrayList<ShortGlyph>();
     private List<PhdTag> tags = new ArrayList<PhdTag>();
-    private boolean initialized = false;
-    private Properties comments;
-    private String id;
+    private Properties comments=null;
+    private String id=null;
     private boolean inTag =false;
     private String currentTag;
     private StringBuilder currentTagValueBuilder;
@@ -57,7 +56,7 @@ public class SinglePhdFile implements  PhdFileVisitor, Phd{
     
     
     public SinglePhdFile(File singlePhdFile) throws FileNotFoundException {
-    	PhdParser.parsePhd(singlePhdFile, this);
+    	PhdParser.parsePhd(singlePhdFile, new SinglePhdFileVisitor());
     	
 		this.delegatePhd = new DefaultPhd(id, 
 				new DefaultNucleotideEncodedGlyphs(bases),
@@ -68,8 +67,8 @@ public class SinglePhdFile implements  PhdFileVisitor, Phd{
 					new Peaks(positions),comments,
 					tags);
 	}
-    public SinglePhdFile(InputStream singlePhdStream) throws FileNotFoundException {
-    	PhdParser.parsePhd(singlePhdStream, this);
+    public SinglePhdFile(InputStream singlePhdStream) {
+    	PhdParser.parsePhd(singlePhdStream, new SinglePhdFileVisitor());
     	
 		this.delegatePhd = new DefaultPhd(id, 
 				new DefaultNucleotideEncodedGlyphs(bases),
@@ -80,40 +79,8 @@ public class SinglePhdFile implements  PhdFileVisitor, Phd{
 					new Peaks(positions),comments,
 					tags);
 	}
-    @Override
-    public synchronized void visitBeginTag(String tagName) {
-        currentTag =tagName;
-        currentTagValueBuilder = new StringBuilder();
-        inTag =true;
-    }
-
-    @Override
-    public synchronized void visitEndTag() {
-        if(!inTag){
-            throw new IllegalStateException("invalid tag");
-        }
-        tags.add(new DefaultPhdTag(currentTag, currentTagValueBuilder.toString()));
-        inTag = false;
-    }
-
-	
-    @Override
-    public synchronized void visitBasecall(NucleotideGlyph base, PhredQuality quality,
-            int tracePosition) {
-       bases.add(base);
-       qualities.add(quality);
-       positions.add(PEAK_FACTORY.getGlyphFor(tracePosition));            
-    }
-
-
 
   
-
-
-
-    /* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -122,9 +89,7 @@ public class SinglePhdFile implements  PhdFileVisitor, Phd{
 				+ ((delegatePhd == null) ? 0 : delegatePhd.hashCode());
 		return result;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -146,56 +111,7 @@ public class SinglePhdFile implements  PhdFileVisitor, Phd{
 		}
 		return true;
 	}
-	@Override
-    public void visitBeginDna() {
-    }
-
-
-
-    @Override
-    public synchronized void visitBeginSequence(String id) {
-        this.id = id;
-    }
-
-
-
-    @Override
-    public synchronized void visitComment(Properties comments) {
-        this.comments = comments;
-    }
-
-
-
-    @Override
-    public synchronized void visitEndDna() {
-        initialized =true;
-        
-    }
-
-
-
-    @Override
-    public synchronized void visitEndSequence() {
-    }
-
-
-
-    @Override
-    public synchronized void visitLine(String line) {
-        
-    }
-
-
-
-    @Override
-    public synchronized void visitEndOfFile() {
-    }
-
-
-
-    @Override
-    public synchronized void visitFile() {
-    }
+	
 	@Override
 	public Peaks getPeaks() {
 		return delegatePhd.getPeaks();
@@ -223,6 +139,96 @@ public class SinglePhdFile implements  PhdFileVisitor, Phd{
 	@Override
 	public List<PhdTag> getTags() {
 		return delegatePhd.getTags();
+	}
+	
+	
+	/**
+	 * {@code SinglePhdFileVisitor} is a private
+	 * inner class that implements the {@link PhdFileVisitor}
+	 * interface and sets the appropriate values 
+	 * in singlePhdFile.
+	 * @author dkatzel
+	 *
+	 *
+	 */
+	private class SinglePhdFileVisitor implements PhdFileVisitor{
+	    private boolean firstRecord=true;
+	    @Override
+	    public synchronized void visitBeginTag(String tagName) {
+	        currentTag =tagName;
+	        currentTagValueBuilder = new StringBuilder();
+	        inTag =true;
+	    }
+
+	    @Override
+	    public synchronized void visitEndTag() {
+	        if(!inTag){
+	            throw new IllegalStateException("invalid tag");
+	        }
+	        tags.add(new DefaultPhdTag(currentTag, currentTagValueBuilder.toString()));
+	        inTag = false;
+	    }
+
+	    
+	    @Override
+	    public synchronized void visitBasecall(NucleotideGlyph base, PhredQuality quality,
+	            int tracePosition) {
+	       bases.add(base);
+	       qualities.add(quality);
+	       positions.add(PEAK_FACTORY.getGlyphFor(tracePosition));            
+	    }
+	    @Override
+	    public void visitBeginDna() {
+	        firstRecord=false;
+	    }
+
+
+
+	    @Override
+	    public synchronized void visitBeginSequence(String id) {
+	        if(!firstRecord){
+	            throw new IllegalStateException("found more than one record in phd file");
+	        }
+	        SinglePhdFile.this.id = id;
+	    }
+
+
+
+	    @Override
+	    public synchronized void visitComment(Properties comments) {
+	        SinglePhdFile.this.comments = comments;
+	    }
+
+
+
+	    @Override
+	    public synchronized void visitEndDna() {
+	    }
+
+
+
+	    @Override
+	    public synchronized void visitEndSequence() {
+	    }
+
+
+
+	    @Override
+	    public synchronized void visitLine(String line) {
+	        
+	    }
+
+
+
+	    @Override
+	    public synchronized void visitEndOfFile() {
+	    }
+
+
+
+	    @Override
+	    public synchronized void visitFile() {
+	    }
 	}
 
 }

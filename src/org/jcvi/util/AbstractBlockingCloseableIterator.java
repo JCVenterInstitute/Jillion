@@ -24,7 +24,6 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.hamcrest.generator.qdox.directorywalker.FileVisitor;
 /**
  * {@code AbstractBlockingCloseableIterator}
  * is a {@link CloseableIterator} that is

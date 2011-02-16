@@ -29,7 +29,7 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 import static org.jcvi.glyph.nuc.NucleotideGlyph.*;
 /**
  * <code>NoAmbiguityConsensusCaller</code>
- * will always return the non-ambigious base
+ * will always return the non-ambiguous base
  * in the consensus with the lowest error probability.
  * @author dkatzel
  *

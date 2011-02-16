@@ -80,7 +80,7 @@ public class IndexedAceFileDataStore extends AbstractAceContigBuilder implements
     }
 
     @Override
-    protected void visitContig(AceContig contig) {
+    protected synchronized void visitContig(AceContig contig) {
         indexFileRange.put(contig.getId(), Range.buildRange(currentStartOffset, currentFileOffset));
         currentStartOffset=currentFileOffset+1;
     }
