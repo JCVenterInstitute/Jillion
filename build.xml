@@ -16,7 +16,7 @@
 	<property name ="exe-test" value="exe-test"/>
 	
 	<property name ="integration-test" value="integration-test"/>
-		<property name ="integration-test-internal" value="integration-test"/>
+		<property name ="integration-test-internal" value="integration-test-internal"/>
 	
 	<property name ="release" value ="release"/>
 	<property name ="scripts" value = "scripts"/>
@@ -101,7 +101,7 @@
 					<src path="${exe-internal}"/>
 					<src path="${exe-test}"/>
 					<src path="${integration-test}"/>
-								<src path="${integration-test-internal}"/>
+					<src path="${integration-test-internal}"/>
 			
 	  	</javac>
 		<copy todir="${bin}">
