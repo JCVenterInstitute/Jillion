@@ -39,7 +39,6 @@ public class TestDefaultNucleotideGlyphCodec {
     @Test
     public void evenEncodesAndDecodes(){
         byte[] encoded =sut.encode(evenBases);
-        System.out.println(encoded.toString());
         assertEquals(evenBases, sut.decode(encoded));
     }
     
