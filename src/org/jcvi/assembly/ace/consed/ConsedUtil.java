@@ -27,22 +27,27 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.ConsensusAceTag;
 import org.jcvi.assembly.ace.DefaultAceContig;
+import org.jcvi.assembly.ace.DefaultPhdInfo;
+import org.jcvi.assembly.ace.PhdInfo;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.joda.time.DateTime;
 /**
  * This class contains utility scripts for
  * converting {@link AceContig} data into
@@ -83,6 +88,29 @@ public class ConsedUtil {
     public static String convertContigGapstoAceGaps(String basecallsWithAceGaps) {
         return basecallsWithAceGaps.replace('-', '*');
     }
+    public static PhdInfo generatePhdInfoFor(File traceFile, String readId,
+			DateTime phdDate){
+    	return generatePhdInfoFor(traceFile, readId, phdDate.toDate());
+    }
+    public static PhdInfo generatePhdInfoFor(File traceFile, String readId,
+			Date phdDate) {
+		final String id;
+        if(traceFile !=null){
+            final String extension = FilenameUtils.getExtension(traceFile.getName());
+            if("sff".equals(extension)){        
+                id="sff:"+traceFile.getName()+":"+readId;
+            }
+            else if("scf".equals(extension)){        
+                id=traceFile.getName();
+            }
+            else{
+                id= readId;
+            }
+        }else{
+            id= readId;
+        }
+        return new DefaultPhdInfo(id, readId+".phd.1", phdDate);
+	}
     /**
      * Split a contig which may contain zero coverage areas (0x)
      * into multiple contigs which all have at least some coverage at every

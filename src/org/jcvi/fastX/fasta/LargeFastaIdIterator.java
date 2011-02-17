@@ -33,11 +33,22 @@ public class LargeFastaIdIterator extends AbstractBlockingCloseableIterator<Stri
 
     private final File fastaFile;
     
-    
+    public static LargeFastaIdIterator createNewIteratorFor(File fastaFile){
+    	LargeFastaIdIterator iter;
+		try {
+			iter = new LargeFastaIdIterator(fastaFile);
+			iter.start();
+		} catch (InterruptedException e) {
+			throw new IllegalStateException("error creating fasta iterator for " + fastaFile.getAbsolutePath(),e);
+		}
+    	
+    	return iter;
+    }
+	
     /**
      * @param fastaFile
      */
-    public LargeFastaIdIterator(File fastaFile) {
+    private LargeFastaIdIterator(File fastaFile) {
         this.fastaFile = fastaFile;
     }
 

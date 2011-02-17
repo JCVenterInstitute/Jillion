@@ -37,14 +37,11 @@ import org.jcvi.assembly.analysis.ContigChecker;
 import org.jcvi.assembly.analysis.ContigCheckerStruct;
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.ContigDataStore;
-import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.IndexedContigFileDataStore;
-import org.jcvi.fastX.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.fastX.fasta.qual.LargeQualityFastaFileDataStore;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.jcvi.io.idReader.IdReaderException;
 
 public class ContigCheckerContigFile {

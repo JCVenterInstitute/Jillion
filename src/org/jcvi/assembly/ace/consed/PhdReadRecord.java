@@ -17,13 +17,13 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly.cas.read;
+package org.jcvi.assembly.ace.consed;
 
-import java.util.Iterator;
+import org.jcvi.assembly.ace.PhdInfo;
+import org.jcvi.trace.sanger.phd.Phd;
 
-import org.jcvi.trace.Trace;
+public interface PhdReadRecord {
 
-public interface CasReadTraceAdaptedIterator<T extends Trace> extends Iterator<T>{
-
-	
+	Phd getPhd();
+	PhdInfo getPhdInfo();
 }

@@ -121,7 +121,7 @@ public synchronized CloseableIterator<String> getIds() throws DataStoreException
     checkNotYetClosed();
     
     try {
-        LargeFastaIdIterator iter = new LargeFastaIdIterator(fastaFile);
+        LargeFastaIdIterator iter = LargeFastaIdIterator.createNewIteratorFor(fastaFile);
         iter.start();
         return iter;
     } catch (InterruptedException e) {

@@ -36,8 +36,19 @@ public class SffFileIterator extends AbstractBlockingCloseableIterator<SFFFlowgr
 
 	private final File sffFile;
 	
-    
-	public SffFileIterator(File sffFile) throws InterruptedException {
+    public static SffFileIterator createNewIteratorFor(File sffFile){
+    	SffFileIterator iter;
+		try {
+			iter = new SffFileIterator(sffFile);
+			iter.start();
+		} catch (InterruptedException e) {
+			throw new IllegalStateException("error creating sff iterator for " + sffFile.getAbsolutePath(),e);
+		}
+    	
+    	return iter;
+    }
+	
+	private SffFileIterator(File sffFile){
 		this.sffFile = sffFile;
 		 
 	}

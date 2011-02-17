@@ -121,13 +121,7 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
     @Override
     public CloseableIterator<SFFFlowgram> iterator() {
         super.iterator();
-       try {
-        	SffFileIterator iter= new SffFileIterator(sffFile);
-        	iter.start();
-        	return iter;
-		} catch (InterruptedException e) {
-			throw new IllegalStateException("could not create iterator",e);
-		}
+      return SffFileIterator.createNewIteratorFor(sffFile);
     }
 
     private static final class SffIdIterator implements SffFileVisitor, CloseableIterator<String>{

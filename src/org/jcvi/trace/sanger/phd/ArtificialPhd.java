@@ -88,6 +88,27 @@ public class ArtificialPhd implements Phd{
     * @param id the id for this Phd.
     * @param basecalls the basecalls for this Phd.
     * @param qualities the qualities for this Phd.
+    * @param comments the comments for this Phd.
+    * @return a new {@link ArtificialPhd} which has position data that matches
+    * what would have been created by Newbler.
+    */
+   public static ArtificialPhd createNewbler454Phd(
+		   String id,
+		   NucleotideEncodedGlyphs basecalls,
+           QualityEncodedGlyphs qualities,
+           Properties comments){
+	   return ArtificialPhd.createNewbler454Phd(id,basecalls, qualities, 
+               comments,Collections.<PhdTag>emptyList());
+   }
+   /**
+    * Create an {@link ArtificialPhd} record that matches
+    * the way Newbler creates phd records for 454 reads.
+    * This is needed so tools like consed will correctly
+    * space the fake chromatograms for 454 reads since it uses
+    * 454 developed tools which rely on this spacing.
+    * @param id the id for this Phd.
+    * @param basecalls the basecalls for this Phd.
+    * @param qualities the qualities for this Phd.
     * @return a new {@link ArtificialPhd} which has position data that matches
     * what would have been created by Newbler.
     */
