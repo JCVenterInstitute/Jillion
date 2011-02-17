@@ -17,28 +17,10 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly.cas.read;
+package org.jcvi.assembly.ace.consed;
 
-import org.jcvi.trace.sanger.phd.Phd;
+import org.jcvi.util.CloseableIterator;
 
-public class SffCasReadPhdAdaptedIterator implements CasReadTraceAdaptedIterator<Phd>{
-
-	@Override
-	public boolean hasNext() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Phd next() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void remove() {
-		// TODO Auto-generated method stub
-		
-	}
+public interface PhdReadRecordIterator extends CloseableIterator<PhdReadRecord>{
 
 }

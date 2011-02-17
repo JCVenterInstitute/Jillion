@@ -24,9 +24,8 @@
 package org.jcvi.assembly.cas;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -169,6 +168,16 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
     public NucleotideEncodedGlyphs getGappedReferenceFor(long referenceId){
         return gappedReferences.get(referenceId);
     }
+    
+    public List<NucleotideEncodedGlyphs> asList(){
+    	int size = gappedReferences.size();
+    	List<NucleotideEncodedGlyphs> list = new ArrayList<NucleotideEncodedGlyphs>(size);
+    	for(long i = 0; i<size; i++){
+    		list.add(gappedReferences.get(Long.valueOf(i)));
+    	}
+    	return Collections.unmodifiableList(list);
+    }
+    
    
 
 }

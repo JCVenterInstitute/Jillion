@@ -27,9 +27,9 @@ import java.io.File;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.commons.io.FilenameUtils;
 import org.jcvi.Range;
 import org.jcvi.assembly.PlacedRead;
+import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
@@ -43,26 +43,16 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
      * @param placedRead
      */
     public AcePlacedReadAdapter(PlacedRead placedRead,Date phdDate, File traceFile, int ungappedFullLength) {
+      this(placedRead,
+    		  ConsedUtil.generatePhdInfoFor(traceFile, placedRead.getId(), phdDate),
+    		  ungappedFullLength);
+    }
+    public AcePlacedReadAdapter(PlacedRead placedRead,PhdInfo info, int ungappedFullLength) {
         this.placedRead = placedRead;
-        String readId = placedRead.getId();
-        final String id;
-        if(traceFile !=null){
-            final String extension = FilenameUtils.getExtension(traceFile.getName());
-            if("sff".equals(extension)){        
-                id="sff:"+traceFile.getName()+":"+readId;
-            }
-            else if("scf".equals(extension)){        
-                id=traceFile.getName();
-            }
-            else{
-                id= readId;
-            }
-        }else{
-            id= readId;
-        }
-        this.phdInfo= new DefaultPhdInfo(id, readId+".phd.1", phdDate);
+        this.phdInfo= info;
         this.ungappedFullLength = ungappedFullLength;
     }
+	
 
     @Override
     public PhdInfo getPhdInfo() {

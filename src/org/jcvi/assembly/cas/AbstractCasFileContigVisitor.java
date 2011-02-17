@@ -69,15 +69,13 @@ public abstract class AbstractCasFileContigVisitor extends AbstractOnePassCasFil
     protected synchronized void visitMatch(CasMatch match, long readCounter) {
         if(match.matchReported()){
             String readId = readIdLookup.getLookupIdFor(readCounter);
-            if("F66E6K401ALVO5".equals(readId)){
-                System.out.println("here");
-            }
             CasAlignment alignment = match.getChosenAlignment();
             long referenceId = alignment.contigSequenceId();
             
             DefaultCasPlacedReadFromCasAlignmentBuilder builder;
-            long ungappedStartOffset = alignment.getStartOfMatch();
+            
             final NucleotideEncodedGlyphs gappedReference = gappedReferenceMap.getGappedReferenceFor(referenceId);
+            long ungappedStartOffset = alignment.getStartOfMatch();
             long gappedStartOffset = gappedReference.convertUngappedValidRangeIndexToGappedValidRangeIndex((int)ungappedStartOffset);
             try {
                 builder = new DefaultCasPlacedReadFromCasAlignmentBuilder(readId,

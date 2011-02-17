@@ -61,10 +61,15 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         private int contigRight = -1;
         
         public Builder(String contigId, String fullConsensus){
-            this.fullConsensus = new DefaultEncodedGlyphs<NucleotideGlyph>(
+           this(contigId,
+        		   new DefaultEncodedGlyphs<NucleotideGlyph>(
                     DEFAULT_CODEC, 
-                    NucleotideGlyph.getGlyphsFor(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)));
-            this.contigId = contigId;
+                    NucleotideGlyph.getGlyphsFor(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)))
+            );
+        }
+        public Builder(String contigId, EncodedGlyphs<NucleotideGlyph> fullConsensus){
+        	this.fullConsensus = fullConsensus;
+        	 this.contigId = contigId;
         }
         
         public Builder setContigId(String contigId){
@@ -82,6 +87,17 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         public int numberOfReads(){
             return aceReadBuilders.size();
         }
+        
+        public Builder addRead(AcePlacedRead acePlacedRead) {
+         return addRead(acePlacedRead.getId(),
+        		 NucleotideGlyph.convertToString(acePlacedRead.getEncodedGlyphs().decode()),
+        		 (int)acePlacedRead.getStart(),
+        		 acePlacedRead.getSequenceDirection(),
+        		 acePlacedRead.getValidRange(),
+        		 acePlacedRead.getPhdInfo(),
+        		 acePlacedRead.getUngappedFullLength());
+        }
+        	
         public Builder addRead(String readId, String validBases, int offset,
                 SequenceDirection dir, Range clearRange,PhdInfo phdInfo){
             return addRead(readId, validBases, offset, dir, clearRange, phdInfo,

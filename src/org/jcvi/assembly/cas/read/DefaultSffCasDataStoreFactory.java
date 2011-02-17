@@ -32,7 +32,6 @@ import java.util.Map;
 import org.jcvi.assembly.cas.CasTrimMap;
 import org.jcvi.assembly.cas.EmptyCasTrimMap;
 import org.jcvi.datastore.DataStoreFilter;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.IOUtil;

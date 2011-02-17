@@ -151,15 +151,15 @@ public class AceFileWriter {
         writeFakeUngappedConsensusQualities(consensus, out);
         writeString(String.format("%n"), out);
         out.flush();
-        List<AssembledFrom> assembledFroms = getSortedAssembledFromsFor(contig, phdDataStore);
+        List<AssembledFrom> assembledFroms = getSortedAssembledFromsFor(contig);
         StringBuilder assembledFromBuilder = new StringBuilder();
         StringBuilder placedReadBuilder = new StringBuilder();
         
         for(AssembledFrom assembledFrom : assembledFroms){
             String id = assembledFrom.getId();
             final Phd phd = phdDataStore.get(id);
-            long fullLength = phd.getBasecalls().getLength();
             final AcePlacedRead realPlacedRead = contig.getPlacedReadById(id);
+             long fullLength = realPlacedRead.getUngappedFullLength();
             assembledFromBuilder.append(createAssembledFromRecord(realPlacedRead,fullLength));
             placedReadBuilder.append(createPlacedReadRecord(realPlacedRead, phd));
         }
@@ -171,11 +171,11 @@ public class AceFileWriter {
         out.flush();
     }
     private static List<AssembledFrom> getSortedAssembledFromsFor(
-            Contig<AcePlacedRead> contig, DataStore<Phd> phdDataStore)
+            Contig<AcePlacedRead> contig)
             throws DataStoreException {
         List<AssembledFrom> assembledFroms = new ArrayList<AssembledFrom>(contig.getNumberOfReads());
         for(AcePlacedRead read : contig.getPlacedReads()){
-            long fullLength = phdDataStore.get(read.getId()).getBasecalls().getLength();
+            long fullLength =read.getUngappedFullLength();
             assembledFroms.add(AssembledFrom.createFrom(read, fullLength));
         }
         Collections.sort(assembledFroms);
@@ -222,7 +222,7 @@ public class AceFileWriter {
         writeUngappedConsensusQualities(consensus,sliceMap, out);
         
         writeString(String.format("%n"), out);
-        List<AssembledFrom> assembledFroms = getSortedAssembledFromsFor(contig, phdDataStore);
+        List<AssembledFrom> assembledFroms = getSortedAssembledFromsFor(contig);
         
         for(AssembledFrom assembledFrom : assembledFroms){
             String id = assembledFrom.getId();

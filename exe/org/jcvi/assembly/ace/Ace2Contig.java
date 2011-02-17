@@ -22,9 +22,6 @@ package org.jcvi.assembly.ace;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -34,18 +31,8 @@ import org.jcvi.assembly.contig.ContigFileWriter;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.DataStoreFilter;
-import org.jcvi.datastore.DefaultExcludeDataStoreFilter;
-import org.jcvi.datastore.DefaultIncludeDataStoreFilter;
-import org.jcvi.datastore.EmptyDataStoreFilter;
-import org.jcvi.fastX.ExcludeFastXIdFilter;
-import org.jcvi.fastX.FastXFilter;
-import org.jcvi.fastX.IncludeFastXIdFilter;
-import org.jcvi.fastX.NullFastXFilter;
 import org.jcvi.io.IOUtil;
-import org.jcvi.io.idReader.DefaultFileIdReader;
-import org.jcvi.io.idReader.IdReader;
 import org.jcvi.io.idReader.IdReaderException;
-import org.jcvi.io.idReader.StringIdParser;
 
 /**
  * {@code Ace2Contig} parses a .ace file

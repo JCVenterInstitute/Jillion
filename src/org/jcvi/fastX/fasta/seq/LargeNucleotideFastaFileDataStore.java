@@ -136,7 +136,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
         checkNotYetClosed();
         
         try {
-            LargeFastaIdIterator iter = new LargeFastaIdIterator(fastaFile);
+            LargeFastaIdIterator iter = LargeFastaIdIterator.createNewIteratorFor(fastaFile);
             iter.start();
             return iter;
         } catch (InterruptedException e) {

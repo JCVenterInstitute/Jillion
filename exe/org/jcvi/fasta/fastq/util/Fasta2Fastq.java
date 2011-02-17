@@ -48,7 +48,6 @@ import org.jcvi.fastX.fastq.FastQRecord;
 import org.jcvi.fastX.fastq.FastQUtil;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;

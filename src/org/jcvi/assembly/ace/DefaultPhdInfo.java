@@ -29,7 +29,7 @@ public class DefaultPhdInfo implements PhdInfo {
 
     private final String traceName, phdName;
     private final Date phdDate;
-    DefaultPhdInfo(String traceName, String phdName, Date phdDate){
+    public DefaultPhdInfo(String traceName, String phdName, Date phdDate){
         this.traceName = traceName;
         this.phdName = phdName;
         this.phdDate = phdDate;

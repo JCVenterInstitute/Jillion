@@ -26,7 +26,16 @@ package org.jcvi.assembly.cas;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.jcvi.Range;
+import org.jcvi.assembly.cas.alignment.CasAlignment;
+import org.jcvi.assembly.cas.alignment.CasAlignmentRegion;
+import org.jcvi.assembly.cas.alignment.CasAlignmentRegionType;
+import org.jcvi.assembly.cas.read.CasPlacedRead;
+import org.jcvi.assembly.cas.read.DefaultCasPlacedReadFromCasAlignmentBuilder;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.IOUtil.ENDIAN;
 /**
@@ -155,4 +164,31 @@ public final class CasUtil {
         return new BigInteger(1,
                  IOUtil.readByteArray(in, 8, ENDIAN.LITTLE));
      }
+    
+    
+    public static CasPlacedRead createCasPlacedRead(CasMatch match,String readId,NucleotideEncodedGlyphs fullLengthReadBasecalls, Range traceTrimRange,NucleotideEncodedGlyphs gappedReference){
+		CasAlignment alignment = match.getChosenAlignment();
+        
+        DefaultCasPlacedReadFromCasAlignmentBuilder builder;
+        
+        long ungappedStartOffset = alignment.getStartOfMatch();
+        long gappedStartOffset = gappedReference.convertUngappedValidRangeIndexToGappedValidRangeIndex((int)ungappedStartOffset);
+        builder = new DefaultCasPlacedReadFromCasAlignmentBuilder(readId,
+        		fullLengthReadBasecalls,
+                alignment.readIsReversed(),
+                gappedStartOffset,
+                traceTrimRange
+               );
+        List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
+        int lastIndex = regionsToConsider.size()-1;
+        if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
+            regionsToConsider.remove(lastIndex);
+        }
+        builder.addAlignmentRegions(regionsToConsider,gappedReference);
+        
+        
+        return builder.build();
+           
+        
+	}
 }

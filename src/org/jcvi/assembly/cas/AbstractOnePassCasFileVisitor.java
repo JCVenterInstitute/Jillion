@@ -29,7 +29,13 @@ public abstract class AbstractOnePassCasFileVisitor extends AbstractCasFileVisit
     private boolean initialized = false;
     private long readCounter =0;
     
-    protected synchronized void checkNotYetInitialized(){
+    /**
+	 * @return the readCounter
+	 */
+	public long getReadCounter() {
+		return readCounter;
+	}
+	protected synchronized void checkNotYetInitialized(){
         if(isInitialized()){
             throw new IllegalStateException("already initialized");
         }

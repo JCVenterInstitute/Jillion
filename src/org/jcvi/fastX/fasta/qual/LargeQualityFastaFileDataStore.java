@@ -124,7 +124,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
         checkNotYetClosed();
         
         try {
-            LargeFastaIdIterator iter = new LargeFastaIdIterator(fastaFile);
+            LargeFastaIdIterator iter = LargeFastaIdIterator.createNewIteratorFor(fastaFile);
             iter.start();
             return iter;
         } catch (InterruptedException e) {
