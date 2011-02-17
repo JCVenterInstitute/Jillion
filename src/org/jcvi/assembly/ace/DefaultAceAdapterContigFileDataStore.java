@@ -34,21 +34,23 @@ import org.jcvi.assembly.contig.DefaultContigFileParser;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
+import org.jcvi.fastX.FastXRecord;
+import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Glyph;
 import org.jcvi.util.CloseableIterator;
 
 public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileDataStore implements AceContigDataStore{
 
     private final Map<String, AceContig> map = new HashMap<String, AceContig>();
     private DataStore<AceContig> dataStore;
-    
     /**
      * @param phdDate
      */
-    public DefaultAceAdapterContigFileDataStore(Date phdDate) {
-        super(phdDate);
+    public DefaultAceAdapterContigFileDataStore(DataStore<? extends FastXRecord<? extends EncodedGlyphs<? extends Glyph>>> fullLengthFastXDataStore,Date phdDate) {
+        super(fullLengthFastXDataStore,phdDate);
     }
-    public DefaultAceAdapterContigFileDataStore(Date phdDate, File contigFile) throws FileNotFoundException{
-        this(phdDate);
+    public DefaultAceAdapterContigFileDataStore(DataStore<? extends FastXRecord<? extends EncodedGlyphs<? extends Glyph>>> fullLengthFastXDataStore, Date phdDate, File contigFile) throws FileNotFoundException{
+        this(fullLengthFastXDataStore,phdDate);
         DefaultContigFileParser.parse(contigFile, this);
     }
     @Override

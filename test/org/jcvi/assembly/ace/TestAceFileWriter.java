@@ -52,13 +52,16 @@ public class TestAceFileWriter {
         File contigFile = RESOURCES.getFile("files/flu_644151.contig");
         File seqFile = RESOURCES.getFile("files/flu_644151.seq");
         File qualFile = RESOURCES.getFile("files/flu_644151.qual");
+
         final Date phdDate = new Date(0L);
-        AceContigDataStore aceDataStore = new DefaultAceAdapterContigFileDataStore(phdDate,contigFile);
-        
         NucleotideDataStore nucleotideDataStore = NucleotideFastaRecordDataStoreAdatper.adapt(new DefaultNucleotideFastaFileDataStore(seqFile)); 
-        QualityDataStore qualityDataStore = QualityFastaRecordDataStoreAdapter.adapt(new DefaultQualityFastaFileDataStore(qualFile)); 
+        final DefaultQualityFastaFileDataStore qualityFastaDataStore = new DefaultQualityFastaFileDataStore(qualFile);
+        QualityDataStore qualityDataStore = QualityFastaRecordDataStoreAdapter.adapt(qualityFastaDataStore); 
         
         PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, new DateTime(phdDate));
+       
+        AceContigDataStore aceDataStore = new DefaultAceAdapterContigFileDataStore(qualityFastaDataStore,phdDate,contigFile);
+        
         
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         AceAssembly aceAssembly = new DefaultAceAssembly<AceContig>(aceDataStore, phdDataStore);
@@ -69,7 +72,7 @@ public class TestAceFileWriter {
         
         assertEquals("# contigs", aceDataStore.size(), reparsedAceDataStore.size());
         for(AceContig expectedContig : aceDataStore){
-            AceContig actualContig = reparsedAceDataStore.get(expectedContig.getId());
+            AceContig actualContig = reparsedAceDataStore.get(expectedContig.getId());            
             assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
             assertEquals("# reads", expectedContig.getNumberOfReads(), actualContig.getNumberOfReads());
             for(AcePlacedRead expectedRead : expectedContig.getPlacedReads()){
