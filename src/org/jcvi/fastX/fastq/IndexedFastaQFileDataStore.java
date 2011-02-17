@@ -138,14 +138,8 @@ public class IndexedFastaQFileDataStore implements FastQDataStore<FastQRecord>, 
     }
     @Override
     public CloseableIterator<FastQRecord> iterator() {
-        LargeFastQFileIterator iter= LargeFastQFileIterator.createNewIteratorFor(file, qualityCodec);
-        try {
-            iter.start();
-            return iter;
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-            
-        }
+        return LargeFastQFileIterator.createNewIteratorFor(file, qualityCodec);
+       
         
     }
     /**

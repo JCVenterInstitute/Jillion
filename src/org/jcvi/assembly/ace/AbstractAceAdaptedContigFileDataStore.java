@@ -27,19 +27,25 @@ import java.util.Date;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.contig.AbstractContigFileVisitor;
+import org.jcvi.datastore.DataStore;
+import org.jcvi.datastore.DataStoreException;
+import org.jcvi.fastX.FastXRecord;
+import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Glyph;
 import org.jcvi.sequence.SequenceDirection;
 
 public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractContigFileVisitor{
 
     private DefaultAceContig.Builder contigBuilder;
     private final Date phdDate;
-    
+    private final DataStore<? extends FastXRecord<? extends EncodedGlyphs<? extends Glyph>>> fullLengthFastXDataStore;
     /**
      * Create a new AceAdapted Contig File DataStore using the given phdDate.
      * @param phdDate the date all faked phd files should be timestamped with.
      */
-    public AbstractAceAdaptedContigFileDataStore(Date phdDate) {
+    public AbstractAceAdaptedContigFileDataStore(DataStore<? extends FastXRecord<? extends EncodedGlyphs<? extends Glyph>>> fullLengthFastXDataStore,Date phdDate) {
         this.phdDate = new Date(phdDate.getTime());
+        this.fullLengthFastXDataStore = fullLengthFastXDataStore;
     }
 
     @Override
@@ -58,8 +64,13 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
             String basecalls, SequenceDirection dir) {
         
         PhdInfo info =new DefaultPhdInfo(readId, readId+".phd.1", phdDate);
-        contigBuilder.addRead(readId, basecalls ,offset, dir, 
-                validRange ,info);
+        try {
+            contigBuilder.addRead(readId, basecalls ,offset, dir, 
+                    validRange ,info,
+                    (int)(fullLengthFastXDataStore.get(readId).getValue().getLength()));
+        } catch (DataStoreException e) {
+            throw new IllegalStateException("error getting full length trace for "+ readId);
+        }
         
     }
 

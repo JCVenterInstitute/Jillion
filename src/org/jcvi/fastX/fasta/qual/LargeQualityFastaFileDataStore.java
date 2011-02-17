@@ -122,14 +122,8 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     @Override
     public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         checkNotYetClosed();
-        
-        try {
-            LargeFastaIdIterator iter = LargeFastaIdIterator.createNewIteratorFor(fastaFile);
-            iter.start();
-            return iter;
-        } catch (InterruptedException e) {
-            throw new RuntimeException("could not start iterator",e);
-        }
+        return LargeFastaIdIterator.createNewIteratorFor(fastaFile);
+
     }
 
     @Override

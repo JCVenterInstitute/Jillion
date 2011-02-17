@@ -45,8 +45,10 @@ import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.fastX.fasta.qual.LargeQualityFastaFileDataStore;
+import org.jcvi.fastX.fasta.qual.QualityFastaDataStore;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.fastX.fasta.seq.LargeNucleotideFastaFileDataStore;
+import org.jcvi.fastX.fasta.seq.NucleotideFastaDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -70,9 +72,9 @@ public class Contig2Consed {
         options.addOption(new CommandLineOptionBuilder("contig", "path to contig file")
                             .isRequired(true)
                             .build());
-        options.addOption(new CommandLineOptionBuilder("seq", "path to seq file")
+        options.addOption(new CommandLineOptionBuilder("seq", "path to seq file (either seq or qual is required, but not both)")
                         .build());
-        options.addOption(new CommandLineOptionBuilder("qual", "path to qual file")
+        options.addOption(new CommandLineOptionBuilder("qual", "path to qual file (either seq or qual is required, but not both)")
                     .build());
         options.addOption(new CommandLineOptionBuilder("out", "path to output directory")
                         .build());
@@ -82,11 +84,12 @@ public class Contig2Consed {
                         .longName("help")
                             .build());
         try {
-            CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
-            if(commandLine.hasOption("h")){
+            if(CommandLineUtils.helpRequested(args)){
                 printHelp(options);
                 System.exit(0);
             }
+            CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
+           
             
             File outputDir;
             if(commandLine.hasOption("out")){
@@ -102,14 +105,35 @@ public class Contig2Consed {
             }
             File contigFile = new File(commandLine.getOptionValue("contig"));
             DateTime date = new DateTime(DateTimeUtils.currentTimeMillis());
-            DefaultAceAdapterContigFileDataStore aceDataStore = new DefaultAceAdapterContigFileDataStore(date.toDate());
+            NucleotideFastaDataStore nucleotideFastaDataStore=null;
+            QualityFastaDataStore qualityFastaDataStore =null;
+            if(commandLine.hasOption("seq")){
+                File seqFile = new File(commandLine.getOptionValue("seq"));
+                nucleotideFastaDataStore = new LargeNucleotideFastaFileDataStore(seqFile);
+            }
+            if(commandLine.hasOption("qual")){
+                File qualFile = new File(commandLine.getOptionValue("qual"));
+                qualityFastaDataStore = new LargeQualityFastaFileDataStore(qualFile);
+            }
+            if(nucleotideFastaDataStore ==null && qualityFastaDataStore ==null){
+                throw new ParseException("either -seq or -qual are required");
+            }
+            
+            final DefaultAceAdapterContigFileDataStore aceDataStore;
+            if(nucleotideFastaDataStore!=null){
+                aceDataStore= new DefaultAceAdapterContigFileDataStore(nucleotideFastaDataStore,date.toDate());
+            }else{
+                aceDataStore= new DefaultAceAdapterContigFileDataStore(qualityFastaDataStore,date.toDate());
+                
+            }
             
             DefaultContigFileParser.parse(new FileInputStream(contigFile), aceDataStore);
             NucleotideDataStore seqDataStore;
+            
             if(commandLine.hasOption("seq")){
-                File seqFile = new File(commandLine.getOptionValue("seq"));
+                
                 seqDataStore = CachedDataStore.createCachedDataStore(NucleotideDataStore.class, 
-                        new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(new LargeNucleotideFastaFileDataStore(seqFile))),
+                        new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(nucleotideFastaDataStore)),
                         cacheSize);
                
             }
@@ -122,7 +146,7 @@ public class Contig2Consed {
                 File qualFile = new File(commandLine.getOptionValue("qual"));
                 qualDataStore = CachedDataStore.createCachedDataStore(QualityDataStore.class,
                                 QualityFastaRecordDataStoreAdapter.adapt(
-                                        new LargeQualityFastaFileDataStore(qualFile)),
+                                        qualityFastaDataStore),
                         cacheSize);
                 
                 
@@ -147,6 +171,7 @@ public class Contig2Consed {
             long end= System.currentTimeMillis();
             System.out.printf("done! took %s%n", new Period(end-start));
         } catch (ParseException e) {
+            e.printStackTrace();
             printHelp(options);
             System.exit(1);
         }

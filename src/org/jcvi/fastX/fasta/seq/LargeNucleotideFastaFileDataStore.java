@@ -134,14 +134,8 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
     @Override
     public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         checkNotYetClosed();
+        return LargeFastaIdIterator.createNewIteratorFor(fastaFile);
         
-        try {
-            LargeFastaIdIterator iter = LargeFastaIdIterator.createNewIteratorFor(fastaFile);
-            iter.start();
-            return iter;
-        } catch (InterruptedException e) {
-            throw new RuntimeException("could not start iterator",e);
-        }
     }
 
     @Override

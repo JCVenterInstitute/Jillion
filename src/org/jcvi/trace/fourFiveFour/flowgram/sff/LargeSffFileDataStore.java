@@ -119,7 +119,7 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
    
 
     @Override
-    public CloseableIterator<SFFFlowgram> iterator() {
+    public synchronized CloseableIterator<SFFFlowgram> iterator() {
         super.iterator();
       return SffFileIterator.createNewIteratorFor(sffFile);
     }

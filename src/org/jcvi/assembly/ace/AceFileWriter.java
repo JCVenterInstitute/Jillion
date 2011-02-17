@@ -171,8 +171,7 @@ public class AceFileWriter {
         out.flush();
     }
     private static List<AssembledFrom> getSortedAssembledFromsFor(
-            Contig<AcePlacedRead> contig)
-            throws DataStoreException {
+            Contig<AcePlacedRead> contig){
         List<AssembledFrom> assembledFroms = new ArrayList<AssembledFrom>(contig.getNumberOfReads());
         for(AcePlacedRead read : contig.getPlacedReads()){
             long fullLength =read.getUngappedFullLength();
