@@ -32,7 +32,7 @@ public class DefaultPhdInfo implements PhdInfo {
     public DefaultPhdInfo(String traceName, String phdName, Date phdDate){
         this.traceName = traceName;
         this.phdName = phdName;
-        this.phdDate = phdDate;
+        this.phdDate = new Date(phdDate.getTime());
     }
     @Override
     public Date getPhdDate() {

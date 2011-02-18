@@ -71,7 +71,7 @@ public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceT
 
 
     @Override
-    public void visitBeginConsensusTag(String id, String type, String creator,
+    public synchronized void visitBeginConsensusTag(String id, String type, String creator,
             long gappedStart, long gappedEnd, Date creationDate,
             boolean isTransient) {
         super.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);

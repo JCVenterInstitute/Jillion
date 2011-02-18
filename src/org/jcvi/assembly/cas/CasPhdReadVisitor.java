@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.AcePlacedReadAdapter;
 import org.jcvi.assembly.ace.PhdInfo;
@@ -73,28 +72,33 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 		super.visitReadFileInfo(readFileInfo);
 		List<CloseableIterator<PhdReadRecord>> iterators = new ArrayList<CloseableIterator<PhdReadRecord>>();
 		for(String filename :readFileInfo.getFileNames()){
-			String extension =FilenameUtils.getExtension(filename);
+			
 			File file = getTrimmedFileFor(filename);
-			if(extension.equals("fastq")){
-				
-				iterators.add(new FastqConsedPhdAdaptedIterator(						
-						LargeFastQFileIterator.createNewIteratorFor(file, fastqQualityCodec),
-						file, 
-						phdDate));
-			}else if(extension.equals("sff")){
-				iterators.add(
-						new FlowgramConsedPhdAdaptedIterator(
-						SffFileIterator.createNewIteratorFor(file),
-						file,
-						phdDate));
-			}else{
-				//TODO fix for chromatograms
-				iterators.add(
-						new FastaConsedPhdAdaptedIterator(
-								LargeNucleotideFastaIterator.createNewIteratorFor(file),
-								file,
-								phdDate, PhredQuality.valueOf(30)));
-			}
+			ReadFileType readType = ReadFileType.getTypeFromFile(filename);
+			switch(readType){
+			    case ILLUMINA:
+        			    iterators.add(new FastqConsedPhdAdaptedIterator(                     
+                                LargeFastQFileIterator.createNewIteratorFor(file, fastqQualityCodec),
+                                file, 
+                                phdDate));
+        			    break;
+			    case SFF:
+			        iterators.add(
+	                        new FlowgramConsedPhdAdaptedIterator(
+	                        SffFileIterator.createNewIteratorFor(file),
+	                        file,
+	                        phdDate));
+			        break;
+			    case FASTA:
+			        iterators.add(
+	                        new FastaConsedPhdAdaptedIterator(
+	                                LargeNucleotideFastaIterator.createNewIteratorFor(file),
+	                                file,
+	                                phdDate, PhredQuality.valueOf(30)));
+			        break;
+		        default: throw new IllegalArgumentException("unsupported type "+ file.getName());
+			        
+			}			
 		}
 		phdIterator = new ChainedCloseableIterator<PhdReadRecord>(iterators);
 	}
@@ -106,7 +110,7 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	    }
 
 	@Override
-	protected void visitMatch(CasMatch match, long readCounter) {
+	protected synchronized void visitMatch(CasMatch match, long readCounter) {
 		PhdReadRecord phdReadRecord =phdIterator.next();
 		
 		if(match.matchReported()){
