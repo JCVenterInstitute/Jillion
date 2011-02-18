@@ -23,21 +23,27 @@
  */
 package org.jcvi.assembly.ace;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.io.TextLineParser;
 import org.jcvi.sequence.SequenceDirection;
-
-public class AceFileParser {
+/**
+ * {@code AceFileParser} contains methods for parsing
+ * ACE formatted files.
+ * @author dkatzel
+ *
+ *
+ */
+public final class AceFileParser {
     private static final String BEGIN_CONSENSUS_QUALITIES_LINE = "BQ\\s*";
 
-    private static final String CR = "\n";
 
     private static final Pattern BASECALL_PATTERN = Pattern.compile("^([*a-zA-Z]+)\\s*$");
 
@@ -68,15 +74,24 @@ public class AceFileParser {
     }
     
     public static void parseAceFile(InputStream inputStream, AceFileVisitor visitor) throws IOException{
-        Scanner scanner = new Scanner(inputStream).useDelimiter(CR);
+        if(inputStream ==null){
+            throw new NullPointerException("input stream can not be null");
+        }
+        TextLineParser parser;
+        try {
+            parser = new TextLineParser(new BufferedInputStream(inputStream));
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            throw new IllegalStateException("error reading file");
+            
+        }
         boolean firstContigBeingVisited=true;
-        while(scanner.hasNextLine()){
-            String line = scanner.nextLine();
-            if(scanner.hasNextLine()){
-                visitor.visitLine(line +CR);
-            }else{
-                visitor.visitLine(line); 
-            }
+        while(parser.hasNextLine()){
+            String lineWithCR = parser.nextLine();           
+            visitor.visitLine(lineWithCR);
+            String line = lineWithCR.endsWith("\n")?
+                            line = lineWithCR.substring(0, lineWithCR.length()-1):
+                                lineWithCR;            
             
             Matcher headerMatcher = ACE_HEADER_PATTERN.matcher(line);
             if(headerMatcher.find()){
@@ -174,11 +189,11 @@ public class AceFileParser {
                                         //tags
                                         Matcher readTag =BEGIN_READ_TAG_PATTERN.matcher(line);
                                         if(readTag.find()){
-                                            line = scanner.nextLine();
-                                            visitor.visitLine(line +CR);
-                                            Matcher readTagMatcher = READ_TAG_PATTERN.matcher(line);
+                                            lineWithCR = parser.nextLine();
+                                            visitor.visitLine(lineWithCR);
+                                            Matcher readTagMatcher = READ_TAG_PATTERN.matcher(lineWithCR);
                                             if(!readTagMatcher.find()){
-                                                throw new IllegalStateException("expected read tag infomration: " + line); 
+                                                throw new IllegalStateException("expected read tag infomration: " + lineWithCR); 
                                             }
                                             String id = readTagMatcher.group(1);
                                             String type = readTagMatcher.group(2);
@@ -188,20 +203,20 @@ public class AceFileParser {
                                             Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
                                                     readTagMatcher.group(6)).toDate();
                                             visitor.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, true);
-                                            line = scanner.nextLine();
-                                            visitor.visitLine(line +CR);
-                                            if(!line.startsWith("}")){
-                                                throw new IllegalStateException("expected close read tag: " + line); 
+                                            lineWithCR = parser.nextLine();
+                                            visitor.visitLine(lineWithCR);
+                                            if(!lineWithCR.startsWith("}")){
+                                                throw new IllegalStateException("expected close read tag: " + lineWithCR); 
                                             }
                                         }
                                         else{
-                                            Matcher wholeAssemblyTag =BEGIN_WHOLE_ASSEMBLY_TAG_PATTERN.matcher(line);
+                                            Matcher wholeAssemblyTag =BEGIN_WHOLE_ASSEMBLY_TAG_PATTERN.matcher(lineWithCR);
                                             if(wholeAssemblyTag.find()){
-                                                line = scanner.nextLine();
-                                                visitor.visitLine(line +CR);
-                                                Matcher tagMatcher = WHOLE_ASSEMBLY_TAG_PATTERN.matcher(line);
+                                                lineWithCR = parser.nextLine();
+                                                visitor.visitLine(lineWithCR);
+                                                Matcher tagMatcher = WHOLE_ASSEMBLY_TAG_PATTERN.matcher(lineWithCR);
                                                 if(!tagMatcher.find()){
-                                                    throw new IllegalStateException("expected whole assembly tag information: " + line); 
+                                                    throw new IllegalStateException("expected whole assembly tag information: " + lineWithCR); 
                                                 }
                                                 String type = tagMatcher.group(1);
                                                 String creator = tagMatcher.group(2);
@@ -210,11 +225,11 @@ public class AceFileParser {
                                                
                                                 boolean doneTag =false;
                                                 StringBuilder data = new StringBuilder();
-                                                while(!doneTag && scanner.hasNextLine()){
-                                                    line = scanner.nextLine();
-                                                    visitor.visitLine(line +CR);
-                                                    if(!line.startsWith("}")){
-                                                        data.append(line+CR);
+                                                while(!doneTag && parser.hasNextLine()){
+                                                    lineWithCR = parser.nextLine();
+                                                    visitor.visitLine(lineWithCR);
+                                                    if(!lineWithCR.startsWith("}")){
+                                                        data.append(lineWithCR);
                                                     }
                                                     else{
                                                         doneTag =true;
@@ -226,13 +241,13 @@ public class AceFileParser {
                                                 visitor.visitWholeAssemblyTag(type, creator, creationDate, data.toString());
                                             }
                                             else{
-                                                Matcher consensusTag =BEGIN_CONSENSUS_TAG_PATTERN.matcher(line);
+                                                Matcher consensusTag =BEGIN_CONSENSUS_TAG_PATTERN.matcher(lineWithCR);
                                                 if(consensusTag.find()){
-                                                    line = scanner.nextLine();
-                                                    visitor.visitLine(line +CR);
-                                                    Matcher tagMatcher = CONSENSUS_TAG_PATTERN.matcher(line);
+                                                    lineWithCR = parser.nextLine();
+                                                    visitor.visitLine(lineWithCR);
+                                                    Matcher tagMatcher = CONSENSUS_TAG_PATTERN.matcher(lineWithCR);
                                                     if(!tagMatcher.find()){
-                                                        throw new IllegalStateException("expected read tag infomration: " + line); 
+                                                        throw new IllegalStateException("expected read tag infomration: " + lineWithCR); 
                                                     }
                                                     String id = tagMatcher.group(1);
                                                     String type = tagMatcher.group(2);
@@ -249,22 +264,21 @@ public class AceFileParser {
                                                     boolean doneTag =false;
                                                     boolean inComment=false;
                                                     StringBuilder consensusComment=null;
-                                                    while(!doneTag && scanner.hasNextLine()){
-                                                        line = scanner.nextLine();
-                                                        String lineWithCR = line +CR;
+                                                    while(!doneTag && parser.hasNextLine()){
+                                                        lineWithCR = parser.nextLine();
                                                         visitor.visitLine(lineWithCR);
-                                                        if(line.startsWith("COMMENT{")){
+                                                        if(lineWithCR.startsWith("COMMENT{")){
                                                             inComment=true;
                                                             consensusComment = new StringBuilder();
                                                         }else{
                                                             if(inComment){
-                                                                if(line.startsWith("C}")){                                                            
+                                                                if(lineWithCR.startsWith("C}")){                                                            
                                                                     visitor.visitConsensusTagComment(consensusComment.toString());
                                                                     inComment=false;
                                                                 }else{
                                                                     consensusComment.append(lineWithCR);
                                                                 }
-                                                            }else if(!line.startsWith("}")){
+                                                            }else if(!lineWithCR.startsWith("}")){
                                                                 visitor.visitConsensusTagData(lineWithCR);
                                                             }
                                                             else{

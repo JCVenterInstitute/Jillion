@@ -86,6 +86,10 @@ public final class IOUtil {
         }
     }
     
+    public static void deleteIgnoreError(File file){
+        file.delete();
+    }
+    
     /**
      * Make the given directory and any non-existence 
      * parent directory as well.  This method should be used

@@ -89,9 +89,8 @@ public class TestDefaultPhdInfo {
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentDate);
     }
     
-    @Test
-    public void nullDateShouldNotBeEqual(){
-        DefaultPhdInfo nullDate = new DefaultPhdInfo(traceName, phdName, null);
-        TestUtil.assertNotEqualAndHashcodeDifferent(sut, nullDate);
+    @Test(expected = NullPointerException.class)
+    public void nullDateShouldThrowNPE(){
+        new DefaultPhdInfo(traceName, phdName, null);
     }
 }

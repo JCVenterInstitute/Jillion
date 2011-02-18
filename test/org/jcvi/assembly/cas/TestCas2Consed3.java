@@ -27,10 +27,13 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceContigDataStore;
 import org.jcvi.assembly.ace.AcePlacedRead;
+import org.jcvi.assembly.util.TrimDataStoreUtil;
 import org.jcvi.datastore.ContigDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultAceFileDataStore;
 import org.jcvi.datastore.DefaultContigFileDataStore;
+import org.jcvi.fastX.fastq.FastQQualityCodec;
+import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.TemporaryDirectoryFileServer;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
@@ -40,23 +43,23 @@ public class TestCas2Consed3 {
 
 	 private final ResourceFileServer RESOURCES = new ResourceFileServer(TestCas2Consed3.class); 
 	 private ContigDataStore<PlacedRead, Contig<PlacedRead>> expectedDataStore;
-	   
+	   private String prefix = "cas2consed3";
 	 
 	 TemporaryDirectoryFileServer tempDir;
 	 @Before
 	    public void setup() throws IOException{
 	        expectedDataStore = new DefaultContigFileDataStore(RESOURCES.getFile("files/expected.contig"));
-	        tempDir = TemporaryDirectoryFileServer.createTemporaryDirectoryFileServer();
+	        tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer();
 	   	    
 	 }
 	    
 	    @Test
 	    public void parseCas() throws IOException, DataStoreException{
 	        File casFile = RESOURCES.getFile("files/flu.cas");
-	      Cas2Consed3 cas2consed3 = new Cas2Consed3(casFile, tempDir.getRootDir());
-	      cas2consed3.convert();
+	      Cas2Consed3 cas2consed3 = new Cas2Consed3(casFile, tempDir,prefix);
+	      cas2consed3.convert(TrimDataStoreUtil.EMPTY_DATASTORE,new UnTrimmedExtensionTrimMap(),FastQQualityCodec.ILLUMINA);
 	      
-	      File aceFile = tempDir.getFile("edit_dir/cas2consed3.ace.1");
+	      File aceFile = tempDir.getFile("edit_dir/"+prefix+".ace.1");
 	      AceContigDataStore dataStore = new DefaultAceFileDataStore(aceFile);
 	      assertEquals("# contigs", expectedDataStore.size(), dataStore.size());
 	      
