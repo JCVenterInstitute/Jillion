@@ -23,18 +23,20 @@
  */
 package org.jcvi.trace.sanger.phd;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
+import org.jcvi.io.TextLineParser;
 /**
  * {@code PhdParser} parses .phd files (or phd.ball files).
  * @author dkatzel
@@ -83,13 +85,30 @@ public class PhdParser {
      * parsing.
      */
     public static void parsePhd(InputStream in, PhdFileVisitor visitor){
-        Scanner scanner = new Scanner(in).useDelimiter("\n");
+        if(in ==null){
+            throw new NullPointerException("input stream can not be null");
+        }
+        TextLineParser parser;
+        try {
+            parser = new TextLineParser(new BufferedInputStream(in));
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            throw new IllegalStateException("error reading file");
+            
+        }
         visitor.visitFile();
         Properties currentComments=null;
         boolean inComments=false;
-        while(scanner.hasNextLine()){
-            String line = scanner.nextLine();
-            visitor.visitLine(line+"\n");
+        while(parser.hasNextLine()){
+            String lineWithCR;
+            try {
+                lineWithCR = parser.nextLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new IllegalStateException("error reading file");
+            }
+            visitor.visitLine(lineWithCR);
+            String line = lineWithCR.substring(0,lineWithCR.length()-1);
             Matcher beginSeqMatcher = BEGIN_SEQUENCE_PATTERN.matcher(line);
             if(beginSeqMatcher.find()){
                 String id = beginSeqMatcher.group(1);
