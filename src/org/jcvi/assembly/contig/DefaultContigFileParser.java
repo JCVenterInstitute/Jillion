@@ -23,21 +23,22 @@
  */
 package org.jcvi.assembly.contig;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.io.IOUtil;
+import org.jcvi.io.TextLineParser;
 import org.jcvi.sequence.SequenceDirection;
 
 public final class DefaultContigFileParser  {
-    private static final String CR = "\n";
     private static final Pattern NEW_CONTIG_PATTERN = Pattern.compile("##(\\S+).+");
     private static final Pattern NEW_READ_PATTERN = Pattern.compile("#(\\S+)\\((-?\\d+)\\)\\s+\\[(.*)\\].+\\{(-?\\d+) (-?\\d+)\\}.+");
     /**
@@ -71,20 +72,35 @@ public final class DefaultContigFileParser  {
         if(visitor ==null){
             throw new NullPointerException("visitor can not be null");
         }
-        Scanner scanner = createScannerFor(inputStream);
+
+    	TextLineParser parser;
+		try {
+			parser = new TextLineParser(new BufferedInputStream(inputStream));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			throw new IllegalStateException("error reading file");
+			
+		}
+       
         visitor.visitFile();
         boolean inConsensus =true;
-        while(scanner.hasNextLine()){
-           String line = scanner.nextLine();
-           fireVisitLine(line, visitor);
+        while(parser.hasNextLine()){
+           String lineWithCR;
+		try {
+			lineWithCR = parser.nextLine();
+		} catch (IOException e) {
+			throw new IllegalStateException("error parsing contig",e);
+		}
+           visitor.visitLine(lineWithCR);
+           String line = lineWithCR.endsWith("\n")? lineWithCR.substring(0,lineWithCR.length()-1) : lineWithCR;
            Matcher newContigMatcher =NEW_CONTIG_PATTERN.matcher(line);
-           if(newContigMatcher.matches()){
+           if(newContigMatcher.find()){
                inConsensus=true;
                handleNewContig(newContigMatcher, visitor);
            }
            else{
                Matcher newSequenceMatcher =NEW_READ_PATTERN.matcher(line);
-               if(newSequenceMatcher.matches()){
+               if(newSequenceMatcher.find()){
                    inConsensus=false;
                    fireVisitNewRead(newSequenceMatcher, visitor);
                }
@@ -100,18 +116,11 @@ public final class DefaultContigFileParser  {
         visitor.visitEndOfFile();
    }
 
-    private static Scanner createScannerFor(InputStream inputStream) {
-        return new Scanner(inputStream).useDelimiter(CR);
-    }
-
+ 
     private static void handleNewContig(Matcher newContigMatcher,
             ContigFileVisitor visitor) {
         final String contigId = parseContigId(newContigMatcher);
            visitor.visitNewContig(contigId);
-    }
-
-    private static void fireVisitLine(String line, ContigFileVisitor visitor) {
-        visitor.visitLine(line+CR);
     }
 
     private static String parseContigId(Matcher newContigMatcher) {
