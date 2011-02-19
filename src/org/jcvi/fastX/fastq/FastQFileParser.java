@@ -23,11 +23,12 @@
  */
 package org.jcvi.fastX.fastq;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 
 import java.lang.IllegalStateException;
@@ -36,7 +37,13 @@ import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
-
+import org.jcvi.io.TextLineParser;
+/**
+ * {@code FastQFileParser} parses FASTQ encoded files
+ * regardless of how the qualities are encoded.
+ * @author dkatzel
+ *
+ */
 public class FastQFileParser {
     
     public static void parse(File fastQFile, FastQFileVisitor visitor ) throws FileNotFoundException{
@@ -48,57 +55,56 @@ public class FastQFileParser {
         }
     }
     public static void parse(InputStream in, FastQFileVisitor visitor ){
-        Scanner scanner = new Scanner(in).useDelimiter("\n");
+    	if(in ==null){
+    		throw new NullPointerException("input stream can not be null");
+    	}
+    	TextLineParser parser;
+		try {
+			parser = new TextLineParser(new BufferedInputStream(in));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			throw new IllegalStateException("error reading file");
+			
+		}
         visitor.visitFile();
         boolean visitCurrentBlock;
         boolean keepParsing=true;
-        while(keepParsing && scanner.hasNext()){
-            String seqLine = scanner.nextLine();
-            String basecalls = scanner.nextLine();
-            String qualLine = scanner.nextLine();
-            String qualities = scanner.nextLine();
-            visitor.visitLine(seqLine+"\n");
-            Matcher beginSeqMatcher =FastQUtil.SEQ_DEFLINE_PATTERN.matcher(seqLine);
-            if(!beginSeqMatcher.find()){
-                throw new IllegalStateException("invalid fastq file, could not parse seq id from "+ seqLine);
-            }
-            String id = beginSeqMatcher.group(1);
-            String optionalComment =beginSeqMatcher.group(3);
-            visitCurrentBlock = visitor.visitBeginBlock(id, optionalComment);
-            if(visitCurrentBlock){
-                visitor.visitLine(basecalls+"\n");
-                NucleotideEncodedGlyphs encodedNucleotides = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.getGlyphsFor(basecalls));
-                visitor.visitNucleotides(encodedNucleotides);
-                visitor.visitLine(qualLine+"\n");
-                Matcher beginQualityMatcher =FastQUtil.QUAL_DEFLINE_PATTERN.matcher(qualLine);
-                if(!beginQualityMatcher.find()){ 
-                    throw new IllegalStateException("invalid fastq file, could not parse qual id from "+ qualLine);
-                }
-                visitQualitiesLine(visitor, qualities, scanner);
-                visitor.visitEncodedQualities(qualities);
-            }else{
-                visitor.visitLine(basecalls+"\n");
-                visitor.visitLine(qualLine+"\n");
-                visitQualitiesLine(visitor, qualities, scanner);
-            }
-            keepParsing =visitor.visitEndBlock();
+        try{
+	        while(keepParsing && parser.hasNextLine()){
+	            String seqLine = parser.nextLine();
+	            String basecalls = parser.nextLine();
+	            String qualLine = parser.nextLine();
+	            String qualities = parser.nextLine();
+	            visitor.visitLine(seqLine);
+	            Matcher beginSeqMatcher =FastQUtil.SEQ_DEFLINE_PATTERN.matcher(seqLine);
+	            if(!beginSeqMatcher.find()){
+	                throw new IllegalStateException("invalid fastq file, could not parse seq id from "+ seqLine);
+	            }
+	            String id = beginSeqMatcher.group(1);
+	            String optionalComment =beginSeqMatcher.group(3);
+	            visitCurrentBlock = visitor.visitBeginBlock(id, optionalComment);
+	            if(visitCurrentBlock){
+	                visitor.visitLine(basecalls);
+	                NucleotideEncodedGlyphs encodedNucleotides = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.getGlyphsFor(basecalls.subSequence(0, basecalls.length()-1)));
+	                visitor.visitNucleotides(encodedNucleotides);
+	                visitor.visitLine(qualLine);
+	                Matcher beginQualityMatcher =FastQUtil.QUAL_DEFLINE_PATTERN.matcher(qualLine);
+	                if(!beginQualityMatcher.find()){ 
+	                    throw new IllegalStateException("invalid fastq file, could not parse qual id from "+ qualLine);
+	                }
+	                visitor.visitLine(qualities);
+	                String encodedQualities = qualities.endsWith("\n")?qualities.substring(0, qualities.length()-1) : qualities;
+	                visitor.visitEncodedQualities(encodedQualities);
+	            }else{
+	                visitor.visitLine(basecalls);
+	                visitor.visitLine(qualLine);
+	                visitor.visitLine(qualities);
+	            }
+	            keepParsing =visitor.visitEndBlock();
+	        }
+        }catch(IOException e){
+        	throw new IllegalStateException("error reading fastq file",e);
         }
         visitor.visitEndOfFile();
-    }
-    /**
-     * The final line in a fastQFile may or may not have 
-     * a new line at the end, this could throw off visitors
-     * that are counting bytes.  It's safer to always skip
-     * the final newline since parsers shouldn't care
-     * @param visitor
-     * @param qualities
-     * @param scanner
-     */
-    private static void visitQualitiesLine(FastQFileVisitor visitor,String qualities, Scanner scanner){
-        if(scanner.hasNextLine()){
-            visitor.visitLine(qualities+"\n");
-        }else{
-            visitor.visitLine(qualities);
-        }
     }
 }
