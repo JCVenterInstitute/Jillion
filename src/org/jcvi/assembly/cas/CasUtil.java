@@ -184,8 +184,13 @@ public final class CasUtil {
         if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
             regionsToConsider.remove(lastIndex);
         }
-        builder.addAlignmentRegions(regionsToConsider,gappedReference);
         
+        try{
+            builder.addAlignmentRegions(regionsToConsider,gappedReference);
+        }catch(Throwable t){
+            System.err.println("error computing alignment regions for "+ readId);
+            throw new RuntimeException(t);
+        }
         
         return builder.build();
            

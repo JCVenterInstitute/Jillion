@@ -40,7 +40,7 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 
-public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
+public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
 
     
 
@@ -147,19 +147,24 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
                 //force empty contig if no reads...
                 return new DefaultAceContig(contigId, new DefaultNucleotideEncodedGlyphs(""),placedReads);
             }
+            List<NucleotideGlyph> updatedConsensus = updateConsensus(fullConsensus.decode());
             //here only include the gapped valid range consensus bases
             //throw away the rest
-            final List<NucleotideGlyph> validConsensusGlyphs = new ArrayList<NucleotideGlyph>(
-                                    fullConsensus.decode().subList(contigLeft, contigRight));
+            final List<NucleotideGlyph> validConsensusGlyphs = 
+                    new ArrayList<NucleotideGlyph>(
+                            updatedConsensus.subList(contigLeft, contigRight));
             
-            NucleotideEncodedGlyphs validConsensus = new DefaultNucleotideEncodedGlyphs(
-                    validConsensusGlyphs, Range.buildRange(0, validConsensusGlyphs.size()));
+            NucleotideEncodedGlyphs validConsensus = new DefaultNucleotideEncodedGlyphs(validConsensusGlyphs);
             for(DefaultAcePlacedRead.Builder aceReadBuilder : aceReadBuilders){
                 int newOffset = aceReadBuilder.offset() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);
                 placedReads.add(aceReadBuilder.build());                
             }
             return new DefaultAceContig(contigId, validConsensus,placedReads);
+        }
+        
+        protected List<NucleotideGlyph> updateConsensus(List<NucleotideGlyph> validConsensusGlyphs){
+            return validConsensusGlyphs;
         }
     }
     

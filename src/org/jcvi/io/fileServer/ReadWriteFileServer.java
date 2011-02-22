@@ -77,6 +77,8 @@ public interface ReadWriteFileServer extends FileServer {
      */
     File createNewDir(String dirPath) throws IOException;
     
+    File createNewDirIfNeeded(String dirPath) throws IOException;
+    
     /**
      * Does this File Server support Symbolic Links?
      * @return {@code true} if symbolic links are 

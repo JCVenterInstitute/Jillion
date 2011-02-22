@@ -22,6 +22,8 @@ package org.jcvi.util;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -42,14 +44,15 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	private Object endOfFileToken = new Object();
     private BlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1);
     private Object nextRecord=null;
-    private boolean isClosed=false;
-	
+    private volatile boolean isClosed=false;
     /**
      * @throws InterruptedException 
      * 
      */
     public void blockingGetNextRecord() throws InterruptedException {
-        nextRecord = queue.take();     
+        if(!isClosed){
+            nextRecord = queue.take();     
+        }
     }
     /**
      * This starts the visiting in a separate thread.
@@ -58,7 +61,7 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
      * @throws InterruptedException
      */
     public void start() throws InterruptedException{
-    	new Thread(){
+      new Thread(){
             @Override
             public void run() {
                 backgroundThreadRunMethod();
@@ -87,12 +90,14 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
     	blockingPut(endOfFileToken);
     }
     public void blockingPut(Object obj){
+        if(!isClosed){
 	        try {
 	            queue.put(obj);
 	        } catch (InterruptedException e) {
 	            throw new IllegalStateException(e);
 	        }
 	    }
+    }
 
 
 	@Override
@@ -107,8 +112,10 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	    public void close() throws IOException {
 	        isClosed=true;
 	        nextRecord=endOfFileToken;
+	        queue.clear();
 	        //remove element from queue
-	        queue.poll();            
+	      //  queue.poll();  
+	        
 	    }
 	    /**
 	    * {@inheritDoc}
@@ -122,6 +129,7 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	        try {
 	            blockingGetNextRecord();
 	        } catch (InterruptedException e) {
+	            e.printStackTrace();
 	            throw new RuntimeException(e);
 	        }
 	        return next;
@@ -129,7 +137,7 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 
 	     @Override
 	     public boolean hasNext() {
-	         return nextRecord !=endOfFileToken;
+	         return !isClosed && nextRecord !=endOfFileToken;
 	     }
 	     
 	     /**

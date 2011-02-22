@@ -66,7 +66,7 @@ public class SffFileIterator extends AbstractBlockingCloseableIterator<SFFFlowgr
 
 					@Override
 					public void visitEndOfFile() {
-						SffFileIterator.this.finishedIterating();
+					    SffFileIterator.this.finishedIterating();
 					}
 				};
              SffParser.parseSFF(sffFile, visitor);

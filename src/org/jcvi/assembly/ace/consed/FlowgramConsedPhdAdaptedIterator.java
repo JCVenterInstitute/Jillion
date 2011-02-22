@@ -68,7 +68,7 @@ public class FlowgramConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 	}
 	@Override
 	public void close() throws IOException {
-		flowgramIterator.close();
+	   flowgramIterator.close();
 		
 	}
 

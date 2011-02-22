@@ -30,14 +30,15 @@ import org.jcvi.assembly.ace.consed.FastaConsedPhdAdaptedIterator;
 import org.jcvi.assembly.ace.consed.FastqConsedPhdAdaptedIterator;
 import org.jcvi.assembly.ace.consed.FlowgramConsedPhdAdaptedIterator;
 import org.jcvi.assembly.ace.consed.PhdReadRecord;
+import org.jcvi.assembly.cas.alignment.score.CasScoringScheme;
 import org.jcvi.assembly.cas.read.CasPlacedRead;
 import org.jcvi.assembly.util.TrimDataStore;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.seq.LargeNucleotideFastaIterator;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.fastX.fastq.LargeFastQFileIterator;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.io.IOUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffFileIterator;
 import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.util.ChainedCloseableIterator;
@@ -53,6 +54,8 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	private CloseableIterator<PhdReadRecord> phdIterator;
 	protected final List<NucleotideEncodedGlyphs> orderedGappedReferences;
 	private final TrimDataStore validRangeDataStore;
+	private final List<CloseableIterator<PhdReadRecord>> iterators = new ArrayList<CloseableIterator<PhdReadRecord>>();
+    
 	public CasPhdReadVisitor(File workingDir, CasTrimMap trimMap,
 			FastQQualityCodec fastqQualityCodec,
 			List<NucleotideEncodedGlyphs> orderedGappedReferences,
@@ -69,8 +72,8 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 
 	@Override
 	public synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
+	    System.out.println("reading file info " + readFileInfo.getFileNames());
 		super.visitReadFileInfo(readFileInfo);
-		List<CloseableIterator<PhdReadRecord>> iterators = new ArrayList<CloseableIterator<PhdReadRecord>>();
 		for(String filename :readFileInfo.getFileNames()){
 			
 			File file = getTrimmedFileFor(filename);
@@ -100,10 +103,16 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 			        
 			}			
 		}
-		phdIterator = new ChainedCloseableIterator<PhdReadRecord>(iterators);
+		
 	}
 	
-	  private File getTrimmedFileFor(String pathToDataStore) {
+	  @Override
+    public synchronized void visitScoringScheme(CasScoringScheme scheme) {
+        super.visitScoringScheme(scheme);
+        phdIterator = new ChainedCloseableIterator<PhdReadRecord>(iterators);
+    }
+
+    private File getTrimmedFileFor(String pathToDataStore) {
 	        File dataStoreFile = new File(workingDir, pathToDataStore);
 	        File trimmedDataStore = trimMap.getUntrimmedFileFor(dataStoreFile);
 	        return trimmedDataStore;
@@ -119,13 +128,15 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 			int casReferenceId = (int)match.getChosenAlignment().contigSequenceId();
 			NucleotideEncodedGlyphs gappedReference =orderedGappedReferences.get(casReferenceId);
 			String id = phd.getId();
+			
 			try {
 				CasPlacedRead placedRead = CasUtil.createCasPlacedRead(match, id, 
 						phd.getBasecalls(), 
 						validRangeDataStore.get(id), gappedReference);
 				AcePlacedRead acePlacedRead = new AcePlacedReadAdapter(placedRead, info, placedRead.getUngappedFullLength());
 				visitAcePlacedRead(acePlacedRead,phd,casReferenceId);
-			} catch (DataStoreException e) {
+			} catch (Exception e) {
+			    IOUtil.closeAndIgnoreErrors(phdIterator);
 				throw new IllegalStateException("error getting trim range for " + id, e);
 			}
 		}

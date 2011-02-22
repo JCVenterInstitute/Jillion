@@ -24,9 +24,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceFileWriter;
@@ -37,14 +39,16 @@ import org.jcvi.assembly.cas.read.AbstractCasFileNucleotideDataStore;
 import org.jcvi.assembly.cas.read.CasDataStoreFactory;
 import org.jcvi.assembly.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.ReferenceCasFileNucleotideDataStore;
+import org.jcvi.assembly.cas.read.SffTrimDataStore;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.assembly.util.TrimDataStore;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.ReadWriteFileServer;
+import org.jcvi.trace.fourFiveFour.flowgram.sff.SffParser;
 import org.jcvi.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
@@ -52,90 +56,143 @@ import org.jcvi.trace.sanger.phd.PhdWriter;
 import org.jcvi.util.DefaultIndexedFileRange;
 import org.jcvi.util.MultipleWrapper;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
+import org.joda.time.Period;
 
 public class Cas2Consed3 {
 	private final File casFile;
 	private final ReadWriteFileServer consedOutputDir;
 	private final String prefix;
-	Cas2Consed3(File casFile, ReadWriteFileServer consedOutputDir, String prefix){
+	public Cas2Consed3(File casFile, ReadWriteFileServer consedOutputDir, String prefix){
 		this.casFile=casFile;
 		this.consedOutputDir = consedOutputDir;
 		this.prefix = prefix;
 	}
-	public void convert(TrimDataStore trimDatastore,CasTrimMap trimToUntrimmedMap ,FastQQualityCodec fastqQualityCodec) throws IOException, DataStoreException{
-	    File casWorkingDirectory = casFile.getParentFile();
-	    File editDir =consedOutputDir.createNewDir("edit_dir");
-        File phdDir =consedOutputDir.createNewDir("phd_dir");
-
-         final AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup(casWorkingDirectory);
-         
-         CasDataStoreFactory referenceDataStoreFactory= new FastaCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,10);       
-         AbstractCasFileNucleotideDataStore referenceNucleotideDataStore = new ReferenceCasFileNucleotideDataStore(
-                 referenceDataStoreFactory);
-         DefaultCasGappedReferenceMap gappedReferenceMap = new DefaultCasGappedReferenceMap(referenceNucleotideDataStore, referenceIdLookup);
-         ConsedDirTraceFolderCreator numberOfReadsVisitor = new ConsedDirTraceFolderCreator(casWorkingDirectory,trimToUntrimmedMap,consedOutputDir);
-         CasParser.parseCas(casFile, 
-                 MultipleWrapper.createMultipleWrapper(CasFileVisitor.class,
-                 referenceIdLookup,referenceNucleotideDataStore,gappedReferenceMap,
-                 numberOfReadsVisitor));
-         
-         final Map<Integer, DefaultAceContig.Builder> builders = new HashMap<Integer, DefaultAceContig.Builder>();
-         
-         final File phdFile = new File(phdDir, prefix+".phd.ball");
-        final OutputStream phdOut = new FileOutputStream(phdFile);
-         CasPhdReadVisitor visitor = new CasPhdReadVisitor(
-                 casWorkingDirectory,trimToUntrimmedMap,
-                 fastqQualityCodec,gappedReferenceMap.asList(),
-                 trimDatastore,
-                 new DateTime()
-                 ) {
-            
+	public void convert(TrimDataStore trimDatastore,CasTrimMap trimToUntrimmedMap ,FastQQualityCodec fastqQualityCodec) throws IOException{
+	    final File casWorkingDirectory = casFile.getParentFile();
+	    final File editDir =consedOutputDir.createNewDirIfNeeded("edit_dir");
+	   
+        File phdDir =consedOutputDir.createNewDirIfNeeded("phd_dir");
+        File logFile = consedOutputDir.createNewFile("cas2consed.log");
+        PrintStream logOut = new PrintStream(logFile);
+        long startTime = DateTimeUtils.currentTimeMillis();
+        try{
+             final AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup(casWorkingDirectory);
+             
+             CasDataStoreFactory referenceDataStoreFactory= new FastaCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,10);       
+             AbstractCasFileNucleotideDataStore referenceNucleotideDataStore = new ReferenceCasFileNucleotideDataStore(
+                     referenceDataStoreFactory);
+             DefaultCasGappedReferenceMap gappedReferenceMap = new DefaultCasGappedReferenceMap(referenceNucleotideDataStore, referenceIdLookup);
+             ConsedDirTraceFolderCreator numberOfReadsVisitor = new ConsedDirTraceFolderCreator(casWorkingDirectory,trimToUntrimmedMap,consedOutputDir);
+             CasParser.parseCas(casFile, 
+                     MultipleWrapper.createMultipleWrapper(CasFileVisitor.class,
+                     referenceIdLookup,referenceNucleotideDataStore,gappedReferenceMap,
+                     numberOfReadsVisitor));
+             final SffTrimDataStore sffTrimDatastore = new SffTrimDataStore();
+             CasFileVisitor sffTrimDataStoreVisitor  =new AbstractOnePassCasFileVisitor() {
+                
                 @Override
-                protected void visitAcePlacedRead(AcePlacedRead acePlacedRead, Phd phd,
-                        int casReferenceId) {
-                    Integer refKey = Integer.valueOf(casReferenceId);
-                    if(!builders.containsKey(refKey)){
-                        builders.put(refKey, new DefaultAceContig.Builder(
-                                referenceIdLookup.getLookupIdFor(casReferenceId), 
-                                this.orderedGappedReferences.get(casReferenceId)));
-                    }
-                    try {
-                        PhdWriter.writePhd(phd, phdOut);
-                    } catch (IOException e) {
-                        throw new RuntimeException("error writing phd record " + phd.getId(),e);
-                    }
-                    builders.get(refKey).addRead(acePlacedRead);
+                protected void visitMatch(CasMatch match, long readCounter) {
+                    // TODO Auto-generated method stub
                     
                 }
-        };
-         CasParser.parseCas(casFile, visitor);
-         //here we are done building
-         PhdDataStore phdDataStore = new IndexedPhdFileDataStore(phdFile, 
-                     new DefaultIndexedFileRange(
-                             (int)numberOfReadsVisitor.getReadCounter()),
-                             true);
-         long numberOfContigs=0;
-         long numberOfReads =0;
-         File tempAce = new File(editDir, "temp.ace");
-        OutputStream tempOut = new FileOutputStream(tempAce);
-         for(DefaultAceContig.Builder builder : builders.values()){
-             AceContig contig =builder.build();
-             CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
-             for(AceContig splitContig : ConsedUtil.split0xContig(contig, coverageMap)){
-                 numberOfContigs++;
-                 numberOfReads+= splitContig.getNumberOfReads();
-                 AceFileWriter.writeAceFile(splitContig, phdDataStore, tempOut);
+    
+                @Override
+                public synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
+                    super.visitReadFileInfo(readFileInfo);
+                    for(String readFilename : readFileInfo.getFileNames()){
+                            String extension =FilenameUtils.getExtension(readFilename);
+                            if("sff".equals(extension)){
+                                try {
+                                    SffParser.parseSFF(new File(casWorkingDirectory,readFilename), sffTrimDatastore);
+                                } catch (Exception e) {
+                                    throw new IllegalStateException("error trying to read sff file " + readFilename,e);
+                                } 
+                            }
+                        }
+                    }
+                
+            };
+            CasParser.parseOnlyMetaData(casFile, sffTrimDataStoreVisitor);
+            TrimDataStore multiTrimDataStore =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(
+                    TrimDataStore.class, trimDatastore, sffTrimDatastore);
+            
+             final Map<Integer, DefaultAceContig.Builder> builders = new HashMap<Integer, DefaultAceContig.Builder>();
+             
+             final File phdFile = new File(phdDir, prefix+".phd.ball");
+            final OutputStream phdOut = new FileOutputStream(phdFile);
+            try{
+                 CasPhdReadVisitor visitor = new CasPhdReadVisitor(
+                         casWorkingDirectory,trimToUntrimmedMap,
+                         fastqQualityCodec,gappedReferenceMap.asList(),
+                         multiTrimDataStore,
+                         new DateTime()
+                         ) {
+                    
+                        @Override
+                        protected void visitAcePlacedRead(AcePlacedRead acePlacedRead, Phd phd,
+                                int casReferenceId) {
+                            Integer refKey = Integer.valueOf(casReferenceId);
+                            if(!builders.containsKey(refKey)){
+                                builders.put(refKey, new UpdateConsensusAceContigBuilder(
+                                        referenceIdLookup.getLookupIdFor(casReferenceId), 
+                                        this.orderedGappedReferences.get(casReferenceId)));
+                            }
+                            try {
+                                PhdWriter.writePhd(phd, phdOut);
+                            } catch (IOException e) {
+                                throw new RuntimeException("error writing phd record " + phd.getId(),e);
+                            }
+                            builders.get(refKey).addRead(acePlacedRead);
+                            
+                        }
+                        
+                };
+                 CasParser.parseCas(casFile, visitor);
+            }finally{
+                IOUtil.closeAndIgnoreErrors(phdOut);
+            }
+             //here we are done building
+             PhdDataStore phdDataStore = new IndexedPhdFileDataStore(phdFile, 
+                         new DefaultIndexedFileRange(
+                                 (int)numberOfReadsVisitor.getReadCounter()),
+                                 true);
+             long numberOfContigs=0;
+             long numberOfReads =0;
+             File tempAce = new File(editDir, "temp.ace");
+            OutputStream tempOut = new FileOutputStream(tempAce);
+             for(DefaultAceContig.Builder builder : builders.values()){
+                 AceContig contig =builder.build();
+                 CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
+                 for(AceContig splitContig : ConsedUtil.split0xContig(contig, coverageMap)){
+                     numberOfContigs++;
+                     numberOfReads+= splitContig.getNumberOfReads();
+                     AceFileWriter.writeAceFile(splitContig, phdDataStore, tempOut);
+                 }
              }
-         }
-         IOUtil.closeAndIgnoreErrors(tempOut);
-         File ace = new File(editDir, prefix+".ace.1");
-         OutputStream out = new FileOutputStream(ace);
-         out.write(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads).getBytes());
-         IOUtils.copyLarge(new FileInputStream(tempAce), out);
-         IOUtil.closeAndIgnoreErrors(out);
-         tempAce.delete();
-	
+             IOUtil.closeAndIgnoreErrors(tempOut);
+             File ace = new File(editDir, prefix+".ace.1");
+             OutputStream out = new FileOutputStream(ace);
+             out.write(String.format("AS %d %d%n", numberOfContigs, numberOfReads).getBytes());
+             IOUtils.copyLarge(new FileInputStream(tempAce), out);
+             IOUtil.closeAndIgnoreErrors(out);
+             tempAce.delete();
+             consedOutputDir.createNewSymLink("../phd_dir/"+phdFile.getName(), 
+                             "edit_dir/phd.ball");
+             long endTime = DateTimeUtils.currentTimeMillis();
+             
+             logOut.printf("took %s%n",new Period(endTime- startTime));
+        }catch(IOException e){
+            e.printStackTrace(logOut);
+            throw e;
+        }catch(Throwable t){
+            t.printStackTrace(logOut);
+            throw new RuntimeException(t);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(logOut);
+        }
 	}
+	
 	
 	
 	private static class ConsedDirTraceFolderCreator extends AbstractOnePassCasFileVisitor{
@@ -193,7 +250,7 @@ public class Cas2Consed3 {
             consedOutputDir.createNewSymLink(
                     fileToSymlink.getCanonicalPath(), dirName+"/"+fileToSymlink.getName()); 
         }
-		
- 	 
   }
+	
+	
 }

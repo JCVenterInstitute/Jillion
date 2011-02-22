@@ -338,6 +338,13 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
             return dir;
         }
         
+        @Override
+        public File createNewDirIfNeeded(String dirPath) throws IOException {
+            if(!contains(dirPath)){
+                return createNewDir(dirPath);
+            }
+            return getFile(dirPath);
+        }
 
         @Override
         public void createNewSymLink(String pathtoFileToLink,
