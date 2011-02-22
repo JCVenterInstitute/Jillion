@@ -21,6 +21,7 @@ package org.jcvi.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -52,7 +53,7 @@ public class ChainedCloseableIterator<T> implements CloseableIterator<T>{
     @SuppressWarnings("unchecked")
     public ChainedCloseableIterator(Collection<? extends CloseableIterator<T>> delegates) {
         this.delegates = new ArrayList<CloseableIterator<T>>(delegates);
-        this.iterator = IteratorUtils.chainedIterator(this.delegates);
+        this.iterator = IteratorUtils.chainedIterator(delegates);
     }
 
     /**
@@ -61,10 +62,9 @@ public class ChainedCloseableIterator<T> implements CloseableIterator<T>{
     */
     @Override
     public void close() throws IOException {
-        for(CloseableIterator<T> delegate : delegates){
+      for(CloseableIterator<T> delegate : delegates){
             IOUtil.closeAndIgnoreErrors(delegate);
         }
-        
     }
 
     /**

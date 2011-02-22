@@ -140,6 +140,11 @@ public class FTPFileServer implements ReadWriteFileServer{
     }
 
     @Override
+    public File createNewDirIfNeeded(String dirPath) throws IOException {
+        throw new UnsupportedOperationException("creating new directories not supported on ftp") ;
+    }
+
+    @Override
     public File createNewFile(String filePath) throws IOException {
         throw new UnsupportedOperationException("creating new files not supported on ftp");
     }

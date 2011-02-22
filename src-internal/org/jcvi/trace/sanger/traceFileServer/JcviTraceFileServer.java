@@ -405,6 +405,11 @@ public abstract class JcviTraceFileServer implements TraceFileServer{
         }
 
         @Override
+        public File createNewDirIfNeeded(String dirPath) throws IOException {
+            throw new UnsupportedOperationException("can not create new dirs on TraceFileServer") ;
+        }
+
+        @Override
         public File createNewFile(String filePath) throws IOException {            
             throw new UnsupportedOperationException("can not create empty files on TraceFileServer") ;
         }
