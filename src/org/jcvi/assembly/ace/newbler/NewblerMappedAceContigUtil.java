@@ -103,7 +103,8 @@ public class NewblerMappedAceContigUtil {
                         NucleotideGlyph.convertToString(read.getEncodedGlyphs().decode()),
                         newOffset,
                         read.getSequenceDirection(),
-                        read.getValidRange(), read.getPhdInfo());
+                        read.getValidRange(), read.getPhdInfo(),
+                        read.getUngappedFullLength());
             }
         }
         return builder.build();

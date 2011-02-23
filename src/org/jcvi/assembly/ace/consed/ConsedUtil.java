@@ -167,7 +167,8 @@ public class ConsedUtil {
                 builder.addRead(readId, 
                         NucleotideGlyph.convertToString(read.getEncodedGlyphs().decode()), 
                         (int)(read.getStart() - contigRange.getStart()), 
-                        read.getSequenceDirection(), read.getValidRange(), read.getPhdInfo());
+                        read.getSequenceDirection(), read.getValidRange(), read.getPhdInfo(),
+                        read.getUngappedFullLength());
             }
             newContigs.add(builder.build());
         }

@@ -69,7 +69,8 @@ public final class AssemblyUtil {
      * @return a new List of {@link NucleotideGlyph}s of the gapped, untrimmed uncomplimented
      * basecalls of the given read.
      */
-    public static List<NucleotideGlyph> buildGappedComplimentedFullRangeBases(NucleotideEncodedGlyphs gappedValidRange, SequenceDirection dir, Range validRange, List<NucleotideGlyph> ungappedUncomplimentedFullRangeBases){
+    public static List<NucleotideGlyph> buildGappedComplimentedFullRangeBases(
+            NucleotideEncodedGlyphs gappedValidRange, SequenceDirection dir, Range validRange, List<NucleotideGlyph> ungappedUncomplimentedFullRangeBases){
         List<NucleotideGlyph> fullRangeComplimented;
         if(dir == SequenceDirection.REVERSE){
             fullRangeComplimented = NucleotideGlyph.reverseCompliment(ungappedUncomplimentedFullRangeBases);

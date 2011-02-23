@@ -52,8 +52,9 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     private int numberOfGaps=0;
     private long referenceOffset;
     private final long fullUngappedLength;
+    
     public DefaultCasPlacedReadFromCasAlignmentBuilder(String readId,
-            EncodedGlyphs<NucleotideGlyph> fullRangeSequence, 
+            NucleotideEncodedGlyphs fullRangeSequence, 
             boolean isReversed, long startOffset,
             Range traceTrimRange){
         if(fullRangeSequence ==null){
@@ -63,7 +64,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         this.readId = readId;
         this.startOffset = startOffset;
         this.referenceOffset = startOffset;
-        this.fullUngappedLength = fullRangeSequence.getLength();
+        this.fullUngappedLength = fullRangeSequence.getUngappedLength();
         
         if(isReversed){
             allBases = NucleotideGlyph.reverseCompliment(fullRangeSequence.decode(traceTrimRange));

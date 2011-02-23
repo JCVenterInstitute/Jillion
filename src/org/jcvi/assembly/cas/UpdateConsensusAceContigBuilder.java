@@ -30,7 +30,7 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.DefaultAceContig;
 import org.jcvi.assembly.ace.DefaultAceContig.Builder;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 /**
@@ -46,7 +46,7 @@ public class UpdateConsensusAceContigBuilder extends DefaultAceContig.Builder{
      * @param fullConsensus
      */
     public UpdateConsensusAceContigBuilder(String contigId,
-            EncodedGlyphs<NucleotideGlyph> fullConsensus) {
+            NucleotideEncodedGlyphs fullConsensus) {
         super(contigId, fullConsensus);
         consensusMap = new HashMap<Long,Map<NucleotideGlyph,Integer>>((int)fullConsensus.getLength());
         
