@@ -97,7 +97,8 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
     protected void trimRead(AcePlacedRead placedRead, long trimmedOffset,
             String trimmedBasecalls, Range newValidRange) {
         builder.addRead(placedRead.getId(), trimmedBasecalls, (int)trimmedOffset, 
-                placedRead.getSequenceDirection(), newValidRange, placedRead.getPhdInfo());
+                placedRead.getSequenceDirection(), newValidRange, placedRead.getPhdInfo(),
+                placedRead.getUngappedFullLength());
         final Range sequenceRange = Range.buildRangeOfLength(trimmedOffset,trimmedBasecalls.length());
         
         if(currentRanges ==null){

@@ -166,7 +166,9 @@ public final class CasUtil {
      }
     
     
-    public static CasPlacedRead createCasPlacedRead(CasMatch match,String readId,NucleotideEncodedGlyphs fullLengthReadBasecalls, Range traceTrimRange,NucleotideEncodedGlyphs gappedReference){
+    public static CasPlacedRead createCasPlacedRead(CasMatch match,String readId,
+            NucleotideEncodedGlyphs fullLengthReadBasecalls, Range traceTrimRange,
+            NucleotideEncodedGlyphs gappedReference){
 		CasAlignment alignment = match.getChosenAlignment();
         
         DefaultCasPlacedReadFromCasAlignmentBuilder builder;

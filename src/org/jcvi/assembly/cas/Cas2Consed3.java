@@ -71,7 +71,9 @@ public class Cas2Consed3 {
 	public void convert(TrimDataStore trimDatastore,CasTrimMap trimToUntrimmedMap ,FastQQualityCodec fastqQualityCodec) throws IOException{
 	    final File casWorkingDirectory = casFile.getParentFile();
 	    final File editDir =consedOutputDir.createNewDirIfNeeded("edit_dir");
-	   
+	    File chromatDir = consedOutputDir.contains("chromat_dir")?
+	                        consedOutputDir.getFile("chromat_dir"):
+	                            null;
         File phdDir =consedOutputDir.createNewDirIfNeeded("phd_dir");
         File logFile = consedOutputDir.createNewFile("cas2consed.log");
         PrintStream logOut = new PrintStream(logFile);
@@ -126,7 +128,8 @@ public class Cas2Consed3 {
                          casWorkingDirectory,trimToUntrimmedMap,
                          fastqQualityCodec,gappedReferenceMap.asList(),
                          multiTrimDataStore,
-                         new DateTime()
+                         new DateTime(),
+                         chromatDir
                          ) {
                     
                         @Override

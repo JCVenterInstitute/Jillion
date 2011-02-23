@@ -32,10 +32,7 @@ import org.apache.log4j.Logger;
 import org.jcvi.Range;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.contig.AbstractContig;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
@@ -51,8 +48,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
 
     public static class Builder{
         static int counter=0;
-        private static final DefaultNucleotideGlyphCodec DEFAULT_CODEC =DefaultNucleotideGlyphCodec.getInstance();
-        private EncodedGlyphs<NucleotideGlyph> fullConsensus;
+        private NucleotideEncodedGlyphs fullConsensus;
         private String contigId;
         private Logger logger = Logger.getRootLogger();
         
@@ -62,12 +58,11 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         
         public Builder(String contigId, String fullConsensus){
            this(contigId,
-        		   new DefaultEncodedGlyphs<NucleotideGlyph>(
-                    DEFAULT_CODEC, 
+        		   new DefaultNucleotideEncodedGlyphs(
                     NucleotideGlyph.getGlyphsFor(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)))
             );
         }
-        public Builder(String contigId, EncodedGlyphs<NucleotideGlyph> fullConsensus){
+        public Builder(String contigId, NucleotideEncodedGlyphs fullConsensus){
         	this.fullConsensus = fullConsensus;
         	 this.contigId = contigId;
         }
@@ -97,7 +92,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         		 acePlacedRead.getPhdInfo(),
         		 acePlacedRead.getUngappedFullLength());
         }
-        	
+    	@Deprecated
         public Builder addRead(String readId, String validBases, int offset,
                 SequenceDirection dir, Range clearRange,PhdInfo phdInfo){
             return addRead(readId, validBases, offset, dir, clearRange, phdInfo,

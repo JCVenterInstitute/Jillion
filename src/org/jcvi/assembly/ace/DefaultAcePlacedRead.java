@@ -25,10 +25,9 @@ package org.jcvi.assembly.ace;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.DefaultPlacedRead;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.AbstractReferenceEncodedNucleotideGlyphs;
+import org.jcvi.glyph.nuc.DefaultReferencedEncodedNucleotideGlyph;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.PrecomputedReferenceEncodedNucleotideGlyphs;
 import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
 import org.jcvi.sequence.DefaultRead;
 import org.jcvi.sequence.Read;
@@ -57,30 +56,31 @@ public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlaced
 
     public static class Builder{
         private String readId;
-        private TemporaryReferenceGlyphs referencedGlyphs;
+        private ReferencedEncodedNucleotideGlyphs referencedGlyphs;
         private int offset;
-        private int length;
         private Range clearRange;
         private PhdInfo phdInfo;
-        private EncodedGlyphs<NucleotideGlyph> reference;
+        private NucleotideEncodedGlyphs reference;
         private final SequenceDirection dir;
         private final int ungappedFullLength;
         
-        public Builder(EncodedGlyphs<NucleotideGlyph> reference, String readId,String validBases,
+        public Builder(NucleotideEncodedGlyphs reference, String readId,String validBases,
                             int offset, SequenceDirection dir, Range clearRange,PhdInfo phdInfo,
                             int ungappedFullLength){
             this.readId = readId;
             this.dir =dir;
-            this.length = validBases.length();
             this.clearRange = clearRange;
             this.offset = offset;
             this.phdInfo = phdInfo;
-            this.referencedGlyphs = new TemporaryReferenceGlyphs(reference, validBases, offset, clearRange);
+            //NucleotideEncodedGlyphs reference,
+            //String toBeEncoded, int startOffset, Range validRange
+            this.referencedGlyphs = new DefaultReferencedEncodedNucleotideGlyph(
+                    reference, validBases, offset, clearRange);
             this.ungappedFullLength = ungappedFullLength;
         }
         
         
-        public Builder reference(EncodedGlyphs<NucleotideGlyph> reference, int newOffset){
+        public Builder reference(NucleotideEncodedGlyphs reference, int newOffset){
             this.reference = reference;
             this.offset = newOffset;
             return this;
@@ -97,32 +97,15 @@ public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlaced
         }
         
         public DefaultAcePlacedRead build(){
+            ReferencedEncodedNucleotideGlyphs updatedEncodedBasecalls = 
+                new DefaultReferencedEncodedNucleotideGlyph(reference,
+                        NucleotideGlyph.convertToString(referencedGlyphs.decode()),offset,clearRange);
             Read read = new DefaultRead(readId, 
-                    referencedGlyphs.buildReferenceEncodedNucleotideGlyphWithCorrectedReference(reference,offset, length, clearRange));
+                    updatedEncodedBasecalls);
             return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength);
         }
         
     }
     
-    private static class TemporaryReferenceGlyphs extends AbstractReferenceEncodedNucleotideGlyphs{
-
-        public TemporaryReferenceGlyphs(
-                EncodedGlyphs<NucleotideGlyph> reference, String toBeEncoded,
-                int startOffset, Range validRange) {
-            super(reference, toBeEncoded, startOffset, validRange);
-        }
-
-        @Override
-        protected NucleotideGlyph getFromReference(int referenceIndex) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-        
-        public ReferencedEncodedNucleotideGlyphs buildReferenceEncodedNucleotideGlyphWithCorrectedReference(
-                EncodedGlyphs<NucleotideGlyph> reference,int startOffset, int length, Range validRange){
-            return new PrecomputedReferenceEncodedNucleotideGlyphs(reference,
-                    this.getSnpIndexes(),this.getSnpValues(), this.getGapIndexes(),startOffset, length, validRange );
-        }
-        
-    }
+   
 }

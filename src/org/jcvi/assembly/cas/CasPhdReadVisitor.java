@@ -26,6 +26,7 @@ import java.util.List;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.AcePlacedReadAdapter;
 import org.jcvi.assembly.ace.PhdInfo;
+import org.jcvi.assembly.ace.consed.ChromatDirFastaConsedPhdAdaptedIterator;
 import org.jcvi.assembly.ace.consed.FastaConsedPhdAdaptedIterator;
 import org.jcvi.assembly.ace.consed.FastqConsedPhdAdaptedIterator;
 import org.jcvi.assembly.ace.consed.FlowgramConsedPhdAdaptedIterator;
@@ -55,12 +56,13 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	protected final List<NucleotideEncodedGlyphs> orderedGappedReferences;
 	private final TrimDataStore validRangeDataStore;
 	private final List<CloseableIterator<PhdReadRecord>> iterators = new ArrayList<CloseableIterator<PhdReadRecord>>();
-    
+    private final File chromatDir;
 	public CasPhdReadVisitor(File workingDir, CasTrimMap trimMap,
 			FastQQualityCodec fastqQualityCodec,
 			List<NucleotideEncodedGlyphs> orderedGappedReferences,
 			TrimDataStore validRangeDataStore,
-			DateTime phdDate) {
+			DateTime phdDate,
+			File chromatDir) {
 		super();
 		this.workingDir = workingDir;
 		this.trimMap = trimMap;
@@ -68,11 +70,11 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 		this.fastqQualityCodec = fastqQualityCodec;
 		this.orderedGappedReferences = orderedGappedReferences;
 		this.validRangeDataStore = validRangeDataStore;
+		this.chromatDir = chromatDir;
 	}
 
 	@Override
 	public synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
-	    System.out.println("reading file info " + readFileInfo.getFileNames());
 		super.visitReadFileInfo(readFileInfo);
 		for(String filename :readFileInfo.getFileNames()){
 			
@@ -93,11 +95,21 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	                        phdDate));
 			        break;
 			    case FASTA:
-			        iterators.add(
-	                        new FastaConsedPhdAdaptedIterator(
+			        CloseableIterator<PhdReadRecord> iter;
+			        
+			                if(chromatDir==null){
+			                    iter= new FastaConsedPhdAdaptedIterator(
 	                                LargeNucleotideFastaIterator.createNewIteratorFor(file),
 	                                file,
-	                                phdDate, PhredQuality.valueOf(30)));
+	                                phdDate, PhredQuality.valueOf(30));
+			                }else{
+			                    iter = new ChromatDirFastaConsedPhdAdaptedIterator(
+			                            LargeNucleotideFastaIterator.createNewIteratorFor(file),
+	                                    file,
+	                                    phdDate, PhredQuality.valueOf(30),
+	                                    chromatDir);
+			                }
+			                iterators.add(iter);
 			        break;
 		        default: throw new IllegalArgumentException("unsupported type "+ file.getName());
 			        
@@ -128,12 +140,12 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 			int casReferenceId = (int)match.getChosenAlignment().contigSequenceId();
 			NucleotideEncodedGlyphs gappedReference =orderedGappedReferences.get(casReferenceId);
 			String id = phd.getId();
-			
 			try {
 				CasPlacedRead placedRead = CasUtil.createCasPlacedRead(match, id, 
 						phd.getBasecalls(), 
 						validRangeDataStore.get(id), gappedReference);
-				AcePlacedRead acePlacedRead = new AcePlacedReadAdapter(placedRead, info, placedRead.getUngappedFullLength());
+				AcePlacedRead acePlacedRead = new AcePlacedReadAdapter(placedRead, info, 
+				        placedRead.getUngappedFullLength());
 				visitAcePlacedRead(acePlacedRead,phd,casReferenceId);
 			} catch (Exception e) {
 			    IOUtil.closeAndIgnoreErrors(phdIterator);

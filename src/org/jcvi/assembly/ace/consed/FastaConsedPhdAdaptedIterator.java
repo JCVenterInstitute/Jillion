@@ -29,6 +29,7 @@ import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.trace.sanger.phd.PhdUtil;
@@ -61,22 +62,28 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 	@Override
 	public PhdReadRecord next() {
 		NucleotideSequenceFastaRecord nextFasta = fastaIterator.next();
-		int numberOfQualities =(int) nextFasta.getValue().getLength();
-		PhredQuality[] qualities = new PhredQuality[numberOfQualities];
-		Arrays.fill(qualities, defaultQualityValue);
 		String id = nextFasta.getId();
-		DefaultQualityEncodedGlyphs qualities2 = new DefaultQualityEncodedGlyphs(
-				RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, 
-				Arrays.asList(qualities));
+		QualityEncodedGlyphs qualities = getQualitiesFor(nextFasta);
 		Phd phd = ArtificialPhd.createNewbler454Phd(
 				id, 
 				nextFasta.getValue(), 
-				qualities2,
+				qualities,
 				requiredComments);
 		
 		PhdInfo info = ConsedUtil.generatePhdInfoFor(fastaFile, id, phdDate);
 		return new DefaultPhdReadRecord(phd, info);
 	}
+    protected QualityEncodedGlyphs getQualitiesFor(
+            NucleotideSequenceFastaRecord nextFasta) {
+        int numberOfQualities =(int) nextFasta.getValue().getLength();
+		PhredQuality[] qualities = new PhredQuality[numberOfQualities];
+		Arrays.fill(qualities, defaultQualityValue);
+		
+		DefaultQualityEncodedGlyphs qualities2 = new DefaultQualityEncodedGlyphs(
+				RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, 
+				Arrays.asList(qualities));
+        return qualities2;
+    }
 
 	@Override
 	public void remove() {

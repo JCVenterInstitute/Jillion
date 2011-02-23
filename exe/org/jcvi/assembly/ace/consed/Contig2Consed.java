@@ -143,7 +143,6 @@ public class Contig2Consed {
             }
             QualityDataStore qualDataStore;
             if(commandLine.hasOption("qual")){
-                File qualFile = new File(commandLine.getOptionValue("qual"));
                 qualDataStore = CachedDataStore.createCachedDataStore(QualityDataStore.class,
                                 QualityFastaRecordDataStoreAdapter.adapt(
                                         qualityFastaDataStore),
