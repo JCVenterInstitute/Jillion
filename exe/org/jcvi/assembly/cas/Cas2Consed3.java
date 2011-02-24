@@ -56,6 +56,7 @@ import org.jcvi.assembly.util.TrimDataStoreUtil;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
@@ -108,8 +109,7 @@ public class Cas2Consed3 {
                 
                 @Override
                 protected void visitMatch(CasMatch match, long readCounter) {
-                    // TODO Auto-generated method stub
-                    
+                    //no-op
                 }
     
                 @Override
@@ -176,17 +176,24 @@ public class Cas2Consed3 {
              long numberOfContigs=0;
              long numberOfReads =0;
              File tempAce = new File(editDir, "temp.ace");
-            OutputStream tempOut = new FileOutputStream(tempAce);
+             File consensusFile = consedOutputDir.createNewFile(prefix+ ".ace.1.consensus.fasta");
+             OutputStream tempOut = new FileOutputStream(tempAce);
+             PrintStream consensusOut = new PrintStream(consensusFile);
              for(DefaultAceContig.Builder builder : builders.values()){
                  AceContig contig =builder.build();
                  CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
                  for(AceContig splitContig : ConsedUtil.split0xContig(contig, coverageMap)){
                      numberOfContigs++;
                      numberOfReads+= splitContig.getNumberOfReads();
+                     consensusOut.print(
+                             new DefaultNucleotideEncodedSequenceFastaRecord(
+                                     splitContig.getId(), 
+                                     splitContig.getConsensus().decodeUngapped())
+                             .toFormattedString());
                      AceFileWriter.writeAceFile(splitContig, phdDataStore, tempOut);
                  }
              }
-             IOUtil.closeAndIgnoreErrors(tempOut);
+             IOUtil.closeAndIgnoreErrors(tempOut,consensusOut);
              File ace = new File(editDir, prefix+".ace.1");
              OutputStream out = new FileOutputStream(ace);
              out.write(String.format("AS %d %d%n", numberOfContigs, numberOfReads).getBytes());
@@ -226,7 +233,7 @@ public class Cas2Consed3 {
 
         @Override
 		protected void visitMatch(CasMatch match, long readCounter) {
-			// TODO Auto-generated method stub
+			//no-op
 			
 		}
 
@@ -281,7 +288,11 @@ public class Cas2Consed3 {
 	                            .build());
 	        options.addOption(new CommandLineOptionBuilder("prefix", "file prefix for all generated files ( default "+DEFAULT_PREFIX +" )")                                
 	                                .build());
-	       
+	        options.addOption(new CommandLineOptionBuilder("has_untrimmed", "some of the input files given to CLC were actually trimmed versions of the files. " +
+	        		"The full length untrimmed versions are in the same directory with the same name except they have an additional '.untrimmed' extension. " +
+	        		"Ex: myReads.fastq -> myReads.fastq.untrimmed")
+	        .isFlag(true)
+            .build());
 	        options.addOption(new CommandLineOptionBuilder("trim", "trim file in sfffile's tab delimmed trim format")                                
 	                                                        .build());
 	        options.addOption(new CommandLineOptionBuilder("chromat_dir", "directory of chromatograms to be converted into phd "+
@@ -316,7 +327,10 @@ public class Cas2Consed3 {
 	            }else{
 	                trimDatastore = TrimDataStoreUtil.EMPTY_DATASTORE;
 	            }
-	            CasTrimMap trimToUntrimmedMap = new UnTrimmedExtensionTrimMap();
+	            CasTrimMap trimToUntrimmedMap = commandLine.hasOption("has_untrimmed")?
+	                                new UnTrimmedExtensionTrimMap():
+	                                    EmptyCasTrimMap.getInstance();
+	                                
 	            FastQQualityCodec qualityCodec=  commandLine.hasOption("useIllumina")?  
 	                       FastQQualityCodec.ILLUMINA
 	                    : FastQQualityCodec.SANGER;
