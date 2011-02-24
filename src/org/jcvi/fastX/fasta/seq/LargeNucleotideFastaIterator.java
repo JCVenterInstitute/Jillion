@@ -32,13 +32,9 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 public class LargeNucleotideFastaIterator extends AbstractLargeFastaRecordIterator<NucleotideEncodedGlyphs, NucleotideSequenceFastaRecord>{
 
 	 public static LargeNucleotideFastaIterator createNewIteratorFor(File fastaFile){
-		 LargeNucleotideFastaIterator iter;
-			try {
-				iter = new LargeNucleotideFastaIterator(fastaFile);
+		 LargeNucleotideFastaIterator iter = new LargeNucleotideFastaIterator(fastaFile);
 				iter.start();
-			} catch (InterruptedException e) {
-				throw new IllegalStateException("error creating fasta iterator for " + fastaFile.getAbsolutePath(),e);
-			}
+			
 	    	
 	    	return iter;
 	    }

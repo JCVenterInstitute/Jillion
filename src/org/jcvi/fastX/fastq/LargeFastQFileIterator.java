@@ -41,11 +41,8 @@ public class LargeFastQFileIterator extends AbstractBlockingCloseableIterator<Fa
     
     public static LargeFastQFileIterator createNewIteratorFor(File fastQFile,FastQQualityCodec qualityCodec){
     	LargeFastQFileIterator iter = new LargeFastQFileIterator(fastQFile, qualityCodec);
-    	try {
-			iter.start();
-    	} catch (InterruptedException e) {
-			throw new IllegalStateException("error creating fastq iterator for " + fastQFile.getAbsolutePath(),e);
-		}
+    	iter.start();
+    	
     	return iter;
     }
     private LargeFastQFileIterator(File fastQFile,FastQQualityCodec qualityCodec){

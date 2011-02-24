@@ -23,17 +23,10 @@
  */
 package org.jcvi.fastX.fasta.pos;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jcvi.datastore.DataStoreException;
 
-import org.jcvi.fastX.fasta.FastaParser;
 import org.jcvi.fastX.fasta.LargeFastaIdIterator;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaRecordFactory;
 import org.jcvi.fastX.fasta.seq.LargeNucleotideFastaFileDataStore;
@@ -45,7 +38,6 @@ import org.jcvi.util.CloseableIterator;
 
 public class LargePositionFastaFileDataStore extends AbstractPositionFastaFileDataStore{
 
-private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
 private final File fastaFile;
 
 private Integer size;
@@ -85,35 +77,33 @@ public boolean visitRecord(String id, String comment, String entireBody) {
 
 @Override
 public boolean contains(String id) throws DataStoreException {
-    checkNotYetClosed();
-    try {
-        return getRecordFor(id)!=null;
-    } catch (FileNotFoundException e) {
-       throw new DataStoreException("could not get record for "+id,e);
-    }
+	CloseableIterator<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> iter =iterator();
+	while(iter.hasNext()){
+		PositionFastaRecord<EncodedGlyphs<ShortGlyph>> fasta = iter.next();
+		if(fasta.getId().equals(id)){
+			IOUtil.closeAndIgnoreErrors(iter);
+			return true;
+		}
+	}
+	 return false;
+   
 }
 
 @Override
 public synchronized PositionFastaRecord<EncodedGlyphs<ShortGlyph>> get(String id)
         throws DataStoreException {
-    checkNotYetClosed();
-    InputStream in=null;
-    try {
-        in = getRecordFor(id);
-    
-    if(in ==null){
-        return null;
-    }
-    final DefaultPositionFastaFileDataStore datastore = new DefaultPositionFastaFileDataStore(getFastaRecordFactory());
-    FastaParser.parseFasta(in, datastore);
-    
-    return datastore.get(id);
-    } catch (FileNotFoundException e) {
-        throw new DataStoreException("could not get record for "+id, e);
-    }
-    finally{
-        IOUtil.closeAndIgnoreErrors(in);
-    }
+	
+	CloseableIterator<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> iter =iterator();
+	while(iter.hasNext()){
+		PositionFastaRecord<EncodedGlyphs<ShortGlyph>> fasta = iter.next();
+		if(fasta.getId().equals(id)){
+			IOUtil.closeAndIgnoreErrors(iter);
+			return fasta;
+		}
+	}
+	 throw new DataStoreException("could not get record for "+id);
+   
+   
 }
 
 @Override
@@ -126,20 +116,13 @@ public synchronized CloseableIterator<String> getIds() throws DataStoreException
 public synchronized int size() throws DataStoreException {
     checkNotYetClosed();
     if(size ==null){
-        try {
-            Scanner scanner = new Scanner(fastaFile);
-            int counter =0;
-            while(scanner.hasNextLine()){
-                String line = scanner.nextLine();
-                Matcher matcher = NEXT_ID_PATTERN.matcher(line);
-                if(matcher.find()){
-                    counter++;
-                }
-            }
-            size= counter;            
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException("could not get record count");
-        }
+    	CloseableIterator<String> ids = getIds();
+    	int count=0;
+    	while(ids.hasNext()){
+    		ids.next();
+    		count++;
+    	}
+    	size=count;
     }   
     return size;
 
@@ -150,41 +133,10 @@ public synchronized int size() throws DataStoreException {
 public synchronized CloseableIterator<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> iterator() {
     checkNotYetClosed();
     LargePositionFastaRecordIterator iter= new LargePositionFastaRecordIterator(fastaFile);
-    try {
         iter.start();
         return iter;
-    } catch (InterruptedException e) {
-        throw new RuntimeException("error starting iterator",e);
-    }
+   
     
 }
-
-private InputStream getRecordFor(String id) throws FileNotFoundException{
-    Scanner scanner = new Scanner(fastaFile);
-    String expectedHeader = String.format(">%s", id);
-    String line = scanner.nextLine();
-    
-    while(!line.startsWith(expectedHeader) && scanner.hasNextLine()){
-        line = scanner.nextLine();            
-    }
-    if(!scanner.hasNextLine()){
-        return null;
-    }
-    StringBuilder record = new StringBuilder(line).append("\n");
-    line =scanner.nextLine();
-    while(!line.startsWith(">") && scanner.hasNextLine()){
-        record.append(line).append("\n");
-        line = scanner.nextLine();
-    }
-    //add final line if needed
-    if(!scanner.hasNextLine()){
-        record.append(line).append("\n");
-    }
-    return new ByteArrayInputStream(record.toString().getBytes());
-}
-
-
-
-
 
 }

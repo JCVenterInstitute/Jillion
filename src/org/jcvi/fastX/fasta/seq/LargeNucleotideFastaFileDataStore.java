@@ -164,13 +164,10 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
     @Override
     public synchronized CloseableIterator<NucleotideSequenceFastaRecord> iterator() {
         checkNotYetClosed();
-        try {
-            LargeNucleotideFastaIterator iter = new LargeNucleotideFastaIterator(fastaFile);
-            iter.start();
-            return iter;
-        } catch (InterruptedException e) {
-            throw new RuntimeException("could not start iterator",e);
-        }
+        LargeNucleotideFastaIterator iter = new LargeNucleotideFastaIterator(fastaFile);
+        iter.start();
+        return iter;
+       
     }
 
     private InputStream getRecordFor(String id) throws FileNotFoundException{

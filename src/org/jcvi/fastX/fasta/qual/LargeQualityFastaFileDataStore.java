@@ -23,17 +23,14 @@
  */
 package org.jcvi.fastX.fasta.qual;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.DataStoreException;
+import org.jcvi.fastX.fasta.AbstractFastaVisitor;
 import org.jcvi.fastX.fasta.FastaParser;
+import org.jcvi.fastX.fasta.FastaVisitor;
 import org.jcvi.fastX.fasta.LargeFastaIdIterator;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
@@ -50,8 +47,7 @@ import org.jcvi.util.CloseableIterator;
  *
  */
 public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore implements QualityFastaDataStore{
-    private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
-    private final File fastaFile;
+   private final File fastaFile;
 
     private Integer size;
     /**
@@ -87,36 +83,30 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
 
     @Override
     public boolean contains(String id) throws DataStoreException {
-        checkNotYetClosed();
-        try {
-            return getRecordFor(id)!=null;
-        } catch (FileNotFoundException e) {
-           throw new DataStoreException("could not get record for "+id,e);
-        }
+    	CloseableIterator<String> iter =getIds();
+    	while(iter.hasNext()){
+    		String nextId = iter.next();
+    		if(nextId.equals(id)){
+    			IOUtil.closeAndIgnoreErrors(iter);
+    			return true;
+    		}
+    	}
+    	return false;
     }
 
     @Override
     public synchronized QualityFastaRecord get(String id)
             throws DataStoreException {
-        checkNotYetClosed();
-        InputStream in=null;
-        DefaultQualityFastaFileDataStore datastore=null;
-        try {
-            in = getRecordFor(id);
-        
-        if(in ==null){
-            return null;
-        }
-        datastore = new DefaultQualityFastaFileDataStore(getFastaRecordFactory());
-        FastaParser.parseFasta(in, datastore);
-        
-        return datastore.get(id);
-        } catch (FileNotFoundException e) {
-            throw new DataStoreException("could not get record for "+id, e);
-        }
-        finally{
-            IOUtil.closeAndIgnoreErrors(in,datastore);
-        }
+    	CloseableIterator<QualityFastaRecord> iter =iterator();
+    	while(iter.hasNext()){
+    		QualityFastaRecord fasta = iter.next();
+    		if(fasta.getId().equals(id)){
+    			IOUtil.closeAndIgnoreErrors(iter);
+    			return fasta;
+    		}
+    	}
+    	 throw new DataStoreException("could not get record for "+id);
+       
     }
 
     @Override
@@ -129,27 +119,31 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     @Override
     public synchronized int size() throws DataStoreException {
         checkNotYetClosed();
-        Scanner scanner=null;
-        try {
             if(size ==null){
-           
-                scanner = new Scanner(fastaFile);
-                int counter =0;
-                while(scanner.hasNextLine()){
-                    String line = scanner.nextLine();
-                    Matcher matcher = NEXT_ID_PATTERN.matcher(line);
-                    if(matcher.find()){
-                        counter++;
-                    }
-                }
-                size= counter;           
-            
+            	
+            	FastaVisitor visitor = new AbstractFastaVisitor() {
+            		int count=0;
+					@Override
+					public boolean visitRecord(String id, String comment, String entireBody) {
+						count++;
+						return true;
+					}
+					@Override
+					public void visitEndOfFile() {
+						
+						super.visitEndOfFile();
+						LargeQualityFastaFileDataStore.this.size=count;
+					}
+				};
+				
+				try {
+					FastaParser.parseFasta(fastaFile, visitor);
+				} catch (FileNotFoundException e) {
+					throw new DataStoreException("error parsing fasta file",e);
+				}
+            	
             } 
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException("could not get record count");
-        }finally{
-            IOUtil.closeAndIgnoreErrors(scanner);
-        }
+
         return size;
 
     }
@@ -158,45 +152,10 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     public synchronized CloseableIterator<QualityFastaRecord> iterator() {
         checkNotYetClosed();
         LargeQualityFastaIterator iter = new LargeQualityFastaIterator(fastaFile);
-        try {
             iter.start();
-        } catch (InterruptedException e) {
-           throw new RuntimeException("could not start iterator",e);
-        }
+        
         return iter;
     }
 
-    private InputStream getRecordFor(String id) throws FileNotFoundException{
-        Scanner scanner=null;
-        try{
-            scanner= new Scanner(fastaFile);
-        
-            String expectedHeader = String.format(">%s", id);
-            String line = scanner.nextLine();
-            
-            while(!line.startsWith(expectedHeader) && scanner.hasNextLine()){
-                line = scanner.nextLine();            
-            }
-            if(!scanner.hasNextLine()){
-                return null;
-            }
-            StringBuilder record = new StringBuilder(line).append("\n");
-            line =scanner.nextLine();
-            while(!line.startsWith(">") && scanner.hasNextLine()){
-                record.append(line).append("\n");
-                line = scanner.nextLine();
-            }
-            //add final line if needed
-            if(!scanner.hasNextLine()){
-                record.append(line).append("\n");
-            }
-            return new ByteArrayInputStream(record.toString().getBytes());
-        }finally{
-            IOUtil.closeAndIgnoreErrors(scanner);
-        }
-    }
-
-
-   
-   
+  
 }

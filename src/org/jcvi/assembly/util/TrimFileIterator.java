@@ -30,12 +30,9 @@ public class TrimFileIterator extends AbstractBlockingCloseableIterator<Range>{
 	private final File trimFile;
 	public static TrimFileIterator createNewIteratorFor(File trimFile){
 		TrimFileIterator iter;
-			try {
 				iter = new TrimFileIterator(trimFile);
 				iter.start();
-			} catch (InterruptedException e) {
-				throw new IllegalStateException("error creating fasta iterator for " + trimFile.getAbsolutePath(),e);
-			}
+			
 	    	
 	    	return iter;
 	    }
