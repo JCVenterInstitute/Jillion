@@ -22,9 +22,9 @@ package org.jcvi.util;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.jcvi.io.IOUtil;
 
 /**
  * {@code AbstractBlockingCloseableIterator}
@@ -49,9 +49,14 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
      * @throws InterruptedException 
      * 
      */
-    public void blockingGetNextRecord() throws InterruptedException {
+    public void blockingGetNextRecord(){
         if(!isClosed){
-            nextRecord = queue.take();     
+            try {
+				nextRecord = queue.take();
+			} catch (InterruptedException e) {
+				//assume interrupted is closed?
+				IOUtil.closeAndIgnoreErrors(this);
+			}     
         }
     }
     /**
@@ -60,7 +65,7 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
      * {@link #hasNext()} or {@link #next()}.
      * @throws InterruptedException
      */
-    public void start() throws InterruptedException{
+    public void start(){
       new Thread(){
             @Override
             public void run() {
@@ -126,12 +131,8 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	            throw new NoSuchElementException("no records");
 	        }
 	        T next = (T)nextRecord;
-	        try {
-	            blockingGetNextRecord();
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	            throw new RuntimeException(e);
-	        }
+            blockingGetNextRecord();
+	        
 	        return next;
 	    }
 
