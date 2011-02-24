@@ -23,11 +23,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.jcvi.assembly.ace.AceContig;
@@ -43,11 +50,17 @@ import org.jcvi.assembly.cas.read.SffTrimDataStore;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.assembly.util.DefaultTrimFileDataStore;
 import org.jcvi.assembly.util.TrimDataStore;
+import org.jcvi.assembly.util.TrimDataStoreUtil;
+import org.jcvi.command.CommandLineOptionBuilder;
+import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.io.IOUtil;
+import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.ReadWriteFileServer;
+import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffParser;
 import org.jcvi.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.trace.sanger.phd.Phd;
@@ -254,6 +267,95 @@ public class Cas2Consed3 {
                     fileToSymlink.getCanonicalPath(), dirName+"/"+fileToSymlink.getName()); 
         }
   }
+	 public static final String DEFAULT_PREFIX = "cas2consed";
+	 
+	public static void main(String[] args) throws IOException{
+		 Options options = new Options();
+	        options.addOption(new CommandLineOptionBuilder("cas", "cas file")
+	                            .isRequired(true)
+	                            .build());
+	        
+	        options.addOption(new CommandLineOptionBuilder("o", "output directory")
+	                            .longName("outputDir")
+	                            .isRequired(true)
+	                            .build());
+	        options.addOption(new CommandLineOptionBuilder("prefix", "file prefix for all generated files ( default "+DEFAULT_PREFIX +" )")                                
+	                                .build());
+	       
+	        options.addOption(new CommandLineOptionBuilder("trim", "trim file in sfffile's tab delimmed trim format")                                
+	                                                        .build());
+	        options.addOption(new CommandLineOptionBuilder("chromat_dir", "directory of chromatograms to be converted into phd "+
+	                "(it is assumed the read data for these chromatograms are in a fasta file(s) which the .cas file knows about")                                
+	                        .build());
+
+	        options.addOption(new CommandLineOptionBuilder("useIllumina", "any FASTQ files in this assembly are encoded in Illumina 1.3+ format (default is Sanger)")                                
+	                            .isFlag(true)
+	                            .build());
+	        
+	        if(CommandLineUtils.helpRequested(args)){
+	        	printHelp(options);
+	        	System.exit(0);
+	        }
+
+	        try {
+				CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
+				
+				File casFile = new File(commandLine.getOptionValue("cas"));
+	            ReadWriteDirectoryFileServer outputDir = 
+	                    DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
+	            
+	            String prefix = commandLine.hasOption("prefix")? commandLine.getOptionValue("prefix"): DEFAULT_PREFIX;
+	            TrimDataStore trimDatastore;
+	            if(commandLine.hasOption("trim")){
+	                List<TrimDataStore> dataStores = new ArrayList<TrimDataStore>();
+	                final String trimFiles = commandLine.getOptionValue("trim");
+	                for(String trimFile : trimFiles.split(",")){
+	                    dataStores.add( new DefaultTrimFileDataStore(new File(trimFile)));
+	                }
+	                trimDatastore = MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimDataStore.class, dataStores);
+	            }else{
+	                trimDatastore = TrimDataStoreUtil.EMPTY_DATASTORE;
+	            }
+	            CasTrimMap trimToUntrimmedMap = new UnTrimmedExtensionTrimMap();
+	            FastQQualityCodec qualityCodec=  commandLine.hasOption("useIllumina")?  
+	                       FastQQualityCodec.ILLUMINA
+	                    : FastQQualityCodec.SANGER;
+	            
+	            if(!outputDir.contains("chromat_dir")){
+	                   outputDir.createNewDir("chromat_dir");
+	               }
+	            if(commandLine.hasOption("chromat_dir")){
+	            	for(File oldChromatogram : new File(commandLine.getOptionValue("chromat_dir")).listFiles()){
+	            		File newChromatogram = outputDir.createNewFile("chromat_dir/"+oldChromatogram.getName());
+	            		InputStream in = new FileInputStream(oldChromatogram);
+	            		OutputStream out = new FileOutputStream(newChromatogram);
+	            		IOUtils.copy(in, out);
+	            		IOUtil.closeAndIgnoreErrors(in,out);
+	            	}
+	            }
+	            Cas2Consed3 cas2consed = new Cas2Consed3(casFile, outputDir, prefix);
+	            
+	            cas2consed.convert(trimDatastore, trimToUntrimmedMap, qualityCodec);
+	            
+	        } catch (ParseException e) {
+				e.printStackTrace();
+				printHelp(options);
+	        	System.exit(1);
+			}
+	        
+	}
 	
-	
+	private static void printHelp(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp( "cas2consed -cas <cas file> -o <output dir> [OPTIONS]", 
+                
+                "convert a clc .cas assembly file into a consed package. " +
+                "Please note, any 0x regions will be split into multiple " +
+                "contigs because consed can not handle 0x regions.  Also, " +
+                "the consensus will be recalled to 'most frequent basecall' " +
+                "which may sometimes differ from the .cas 'consensus' which " +
+                "is actually just the reference.",
+                options,
+                "Created by Danny Katzel");
+    }
 }
