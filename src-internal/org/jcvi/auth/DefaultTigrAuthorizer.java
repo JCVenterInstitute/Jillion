@@ -33,6 +33,14 @@ public class DefaultTigrAuthorizer implements TigrAuthorizer {
         this.project = project;
         this.server = server;
     }
+    
+    
+    @Override
+    public TigrAuthorizer switchProject(String newProject) {
+        return new DefaultTigrAuthorizer(authorizer, newProject, server);
+    }
+
+
     @Override
     public String getProject() {
         return project;
@@ -66,8 +74,9 @@ public class DefaultTigrAuthorizer implements TigrAuthorizer {
     
     public static final  class Builder implements org.jcvi.Builder<DefaultTigrAuthorizer>{
         private JCVIAuthorizer authorizer = DefaultJCVIAuthorizer.DEFAULT_TIGR_USER ;
-        private String project;
+        private String project=null;
         private String server = DEFAULT_TIGR_SERVER;
+        private boolean projectRequired=true;
         
         public Builder(){}
         public Builder(Builder copy){
@@ -76,6 +85,11 @@ public class DefaultTigrAuthorizer implements TigrAuthorizer {
             if(copy.project !=null){
                 project(copy.project);
             }
+        }
+        
+        public Builder projectRequired(boolean projectRequired){
+            this.projectRequired = projectRequired;
+            return this;
         }
         public Builder(String project){
             project(project);
@@ -87,7 +101,7 @@ public class DefaultTigrAuthorizer implements TigrAuthorizer {
             authorizer(authorizer);
         }
         public Builder project(String project){
-            if(project == null){
+            if(projectRequired && project == null){
                 throw new NullPointerException("project can not be null");
             }
             this.project = project;
@@ -115,7 +129,7 @@ public class DefaultTigrAuthorizer implements TigrAuthorizer {
         }
         @Override
         public DefaultTigrAuthorizer build() {
-            if(project ==null){
+            if(projectRequired && project ==null){
                 throw new NullPointerException("project must be set");
             }
             return new DefaultTigrAuthorizer(authorizer, project, server);

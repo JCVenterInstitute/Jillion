@@ -27,4 +27,12 @@ public interface TigrAuthorizer extends JCVIAuthorizer{
 
     String getServer();
     String getProject();
+    /**
+     * Create a new {@link TigrAuthorizer} instance
+     * with all the same field values except that the 
+     * project is now different.
+     * @param newProject the project to change to.
+     * @return a new {@link TigrAuthorizer} instance.
+     */
+    TigrAuthorizer switchProject(String newProject);
 }
