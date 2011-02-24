@@ -96,7 +96,28 @@ public final class TigrAuthorizerUtils {
     public static TigrAuthorizer getProjectDbAuthorizerFrom(
             CommandLine commandLine, final Console console)
             throws FileNotFoundException {
+        return getProjectDbAuthorizerFrom(commandLine, console, true);
+    }
+    
+    /**
+     * Reads Project DB Login Options created by {@link #addProjectDbLoginOptionsTo(Options, boolean)}
+     * except that the -D option is not required.  This is useful if you need
+     * to only use the server, and user credentials.
+     * @param commandLine the {@link CommandLine} instance to read.
+     * @param console the {@link Console} instance to use if password prompting is needed.
+     * @return an instance of {@link TigrAuthorizer} using the Project Db login credentials.
+     * @throws FileNotFoundException if the specified Password file is not found.
+     */
+    public static TigrAuthorizer getProjectDbNotRequiredAuthorizerFrom(
+            CommandLine commandLine, final Console console)
+            throws FileNotFoundException {
+        return getProjectDbAuthorizerFrom(commandLine, console, false);
+    }
+    private static TigrAuthorizer getProjectDbAuthorizerFrom(
+            CommandLine commandLine, final Console console, boolean projectRequired)
+            throws FileNotFoundException {
         DefaultTigrAuthorizer.Builder tigrAuthBuilder = new DefaultTigrAuthorizer.Builder();
+        tigrAuthBuilder.projectRequired(projectRequired);
         if(commandLine.hasOption("p")){
             tigrAuthBuilder.authorizer(readTigrPasswordFile(commandLine.getOptionValue("p")));
         }
@@ -114,6 +135,7 @@ public final class TigrAuthorizerUtils {
         TigrAuthorizer authorizer = tigrAuthBuilder.build();
         return authorizer;
     }
+   
     
     /**
      * Add common Project DB login options which allow multiple databases including:
