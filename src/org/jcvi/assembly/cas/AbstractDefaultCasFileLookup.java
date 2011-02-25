@@ -129,7 +129,6 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
             }
             else{
               //try as fasta...
-                System.out.println(file.getAbsolutePath());
                 in = new FileInputStream(file);
                 FastaParser.parseFasta(in, new FastaReadOrder(file));
                
