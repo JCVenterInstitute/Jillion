@@ -25,9 +25,6 @@ package org.jcvi.assembly;
 
 import java.util.Iterator;
 
-import org.jcvi.Range;
-import org.jcvi.RangeIterator;
-
 public class PlacedIterable implements Iterable<Long>{
 
     private final Placed placed;
@@ -37,7 +34,7 @@ public class PlacedIterable implements Iterable<Long>{
     
     @Override
     public Iterator<Long> iterator() {
-        return  new RangeIterator(Range.buildRange(placed.getStart(), placed.getEnd()));
+        return  placed.asRange().iterator();
     }
 
 }

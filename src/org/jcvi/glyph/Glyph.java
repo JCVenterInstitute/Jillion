@@ -22,10 +22,19 @@
  * @author dkatzel
  */
 package org.jcvi.glyph;
-
+/**
+ * Glyphs are symbols that represent data
+ * or information.  Groups of Glyphs of which 
+ * are used to represent similar ideas can
+ * are grouped into alphabets. 
+ * @author dkatzel
+ */
 public interface Glyph {
 
-    
+    /**
+     * Get the name of this glyph.
+     * @return a string( never null)
+     */
     String getName();
     
 }

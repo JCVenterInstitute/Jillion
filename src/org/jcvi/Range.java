@@ -171,8 +171,41 @@ public class Range implements Placed<Range>,Iterable<Long>
      * Enumeration of available range coordinate systems
      */
     public enum CoordinateSystem implements RangeCoordinateSystem {
-        ZERO_BASED("Zero Based", "0B", 0, 0, 0, 0),
+        /**
+         * Zero-based coordinate systems are exactly like
+         * array index offsets.  CoordinateSystem starts at 0
+         * and the last element in the range has an offset
+         * of {@code length() -1}.
+         * <pre> 
+         * coordinate system    0  1  2  3  4  5
+         *                    --|--|--|--|--|--|
+         * range elements       0  1  2  3  4  5
+         * </pre>
+         */
+    	ZERO_BASED("Zero Based", "0B", 0, 0, 0, 0),
+    	/**
+    	 * Residue based coordinate system is a "1s based"
+    	 * position system where there first element has a 
+    	 * position of 1 and the last element in the range
+    	 * as a position of length.
+    	 *  <pre> 
+         * coordinate system    1  2  3  4  5  6
+         *                    --|--|--|--|--|--|
+         * range elements       0  1  2  3  4  5
+         * </pre>
+    	 */
         RESIDUE_BASED("Residue Based", "RB", 1, 1, -1, -1),
+        /**
+         * Spaced based coordinate systems count the "spaces"
+         * between elements.  The first element has a coordinate
+         * of 0 while the last element in the range has a position 
+         * of length.
+         * <pre> 
+         * coordinate system   0  1  2  3  4  5  6
+         *                    --|--|--|--|--|--|--
+         * range elements       0  1  2  3  4  5
+         * </pre>
+         */
         SPACE_BASED("Space Based", "SB", 0, 1, 0, -1);
 
         /** The full name used to display this coordinate system. */
@@ -266,8 +299,9 @@ public class Range implements Placed<Range>,Iterable<Long>
     private static final Comparator<Range> DEFAULT_COMPARATOR = Comparators.ARRIVAL;
 
     /**
-     * Factory method to build a {@link Range} object.
-     * if end == start -1 then this method will return an {@link EmptyRange}.
+     * Factory method to build a {@link Range} object in
+     * the {@link CoordinateSystem#ZERO_BASED} coordinate system.
+     * If end == start -1 then this method will return an {@link EmptyRange}.
      * @param start start coordinate inclusive.
      * @param end end coordinate inclusive.
      * @return a {@link Range}.
@@ -276,49 +310,101 @@ public class Range implements Placed<Range>,Iterable<Long>
     public static Range buildRange(long start, long end){
         return buildRange(CoordinateSystem.ZERO_BASED,start,end);
     }
+    /**
+     * Factory method to build a {@link Range} object.
+     * of length 1 with the given coordinate in 
+     * the {@link CoordinateSystem#ZERO_BASED} coordinate system.
+     * @param singleCoordinate only coordinate in this range.
+     * @return a {@link Range}.
+     */
     public static Range buildRange(long singleCoordinate){
         return buildRange(CoordinateSystem.ZERO_BASED,singleCoordinate);
     }
+    
+    /**
+     * Factory method to build a {@link Range} object.
+     * of length 1 with the given coordinate in 
+     * the given coordinate system.
+     * @param coordinateSystem the {@link CoordinateSystem} to use.
+     * @param singleCoordinate only coordinate in this range.
+     * @return a {@link Range}.
+     * @throws NullPointerException if the coordinateSystem is null.
+     */
     public static Range buildRange(CoordinateSystem coordinateSystem, long singleCoordinate){
         return buildRangeOfLength(coordinateSystem,singleCoordinate,1);
     }
-
-    public static Range buildRange(RangeCoordinateSystem coordinateSystem,long start, long end){
+    /**
+     * Factory method to build a {@link Range} object.
+     * with the following local start and end
+     * coordinates in  
+     * the given coordinate system.
+     * @param coordinateSystem the {@link CoordinateSystem} to use.
+     * @param localStart the start coordinate in the given coordinateSystem.
+     * @param localEnd the end coordinate in the given coordinateSystem.
+     * @return a {@link Range}.
+     * @throws NullPointerException if the coordinateSystem is null.
+     * @throws IllegalArgumentException if localEnd < localStart -1.
+     */
+    public static Range buildRange(RangeCoordinateSystem coordinateSystem,long localStart, long localEnd){
         if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot build null coordinate system range");
         }
 
-        long zeroBasedStart = coordinateSystem.getStart(start);
-        long zeroBasedEnd = coordinateSystem.getEnd(end);
+        long zeroBasedStart = coordinateSystem.getStart(localStart);
+        long zeroBasedEnd = coordinateSystem.getEnd(localEnd);
 
         if(zeroBasedEnd >= zeroBasedStart) {
             return new Range(zeroBasedStart,zeroBasedEnd,coordinateSystem);
         } else if (zeroBasedEnd == zeroBasedStart-1) {
             return buildEmptyRange(zeroBasedStart,zeroBasedEnd,coordinateSystem);
         } else {
-            throw new IllegalArgumentException("Range coordinates" + start + "," + end
+            throw new IllegalArgumentException("Range coordinates" + localStart + "," + localEnd
                 + " are not valid " + coordinateSystem + " coordinates");
         }
     }
-    public Range copy(){
-        return buildRange(this.getRangeCoordinateSystem(),this.getLocalStart(),this.getLocalEnd());
-    }
+    /**
+     * Create a new Range object which represents
+     * the range values but converted into a different
+     * coordinate system
+     * @param coordinateSystem the coordinate system to convert to.
+     * @return a new Range with the same start and end but converted
+     * to the new coordinate system.
+     * @throws NullPointerException if the coordinateSystem is null.
+     */
     public Range convertRange(RangeCoordinateSystem coordinateSystem) {
         if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot convert to a null range coordinate system");
         }
-
+        
         if ( this.isEmpty() ) {
             return new EmptyRange(this.getStart(),this.getEnd(),coordinateSystem);
         } 
         return new Range(this.getStart(),this.getEnd(),coordinateSystem);
     }
+    /**
+     * Build and empty range in the zero-based coordinate system
+     * at coordinate 0.
+     * @return a new Empty Range.
+     */
     public static Range buildEmptyRange(){
         return buildEmptyRange(0);
     }
+    /**
+     * Build and empty range in the zero-based coordinate system
+     * at the given coordinate.
+     * @param coordinate the coordinate to set this empty range to.
+     * @return a new Empty Range.
+     */
     public static Range buildEmptyRange(long coordinate){
         return buildEmptyRange(Range.CoordinateSystem.ZERO_BASED,coordinate);
     }
+    /**
+     * Build and empty range in the given coordinate system
+     * at the given coordinate.
+     * @param coordinate the coordinate to set this empty range to.
+     * @return a new Empty Range.
+     * @throws NullPointerException if the coordinateSystem is null.
+     */
     public static Range buildEmptyRange(RangeCoordinateSystem coordinateSystem,long coordinate){
         if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot build null coordinate system range");
@@ -331,13 +417,32 @@ public class Range implements Placed<Range>,Iterable<Long>
     private static Range buildEmptyRange(long start,long end,RangeCoordinateSystem coordinateSystem) {
         return new EmptyRange(start,end,coordinateSystem);
     }
+    /**
+     * Build a new Range object of in the Zero based coordinate
+     * system at the given start offset with the given length.
+     * @param start the start coordinate of this new range.
+     * @param length the length of this range.
+     * @return a new Range.
+     */
     public static Range buildRangeOfLength(long start, long length){
         return buildRangeOfLength(CoordinateSystem.ZERO_BASED, start, length);
     }
-    public static Range buildRangeOfLength(RangeCoordinateSystem system,long start, long length){
-        long zeroBasedStart = system.getStart(start);
+    /**
+     * Build a new Range object of in the given coordinate
+     * system at the given start offset with the given length.
+     * @param coordinateSystem the coordinate system to use.
+     * @param localStart the start coordinate of this new range.
+     * @param length the length of this range.
+     * @return a new Range.
+     * @throws NullPointerException if coordinateSystem is null.
+     */
+    public static Range buildRangeOfLength(RangeCoordinateSystem coordinateSystem,long localStart, long length){
+    	if ( coordinateSystem == null ) {
+            throw new NullPointerException("Cannot build null coordinate system range");
+        }
+    	long zeroBasedStart = coordinateSystem.getStart(localStart);
         Range zeroBasedRange = buildRange(CoordinateSystem.ZERO_BASED,zeroBasedStart,zeroBasedStart+length-1);
-        return zeroBasedRange.convertRange(system);
+        return zeroBasedRange.convertRange(coordinateSystem);
     }
     public static Range buildRangeOfLengthFromEndCoordinate(long end, long rangeSize){
         return buildRangeOfLengthFromEndCoordinate(CoordinateSystem.ZERO_BASED,end,rangeSize);
@@ -347,6 +452,17 @@ public class Range implements Placed<Range>,Iterable<Long>
         Range zeroBasedRange = buildRange(CoordinateSystem.ZERO_BASED,zeroBasedEnd-rangeSize+1,zeroBasedEnd);
         return zeroBasedRange.convertRange(system);
     }
+    /**
+     * Return a single
+     * Range that covers the entire span
+     * of the given Ranges.
+     * <p>
+     * For example: passing in 2 Ranges [0,10] and [20,30]
+     * will return [0,30]
+     * @param ranges varargs of Ranges
+     * @return a new Range that covers the entire span of
+     * input ranges.
+     */
     public static Range buildInclusiveRange(Range... ranges){
         return buildInclusiveRange(Arrays.asList(ranges));
     }
@@ -357,8 +473,9 @@ public class Range implements Placed<Range>,Iterable<Long>
      * <p>
      * For example: passing in 2 Ranges [0,10] and [20,30]
      * will return [0,30]
-     * @param ranges
-     * @return
+     * @param ranges a collection of ranges
+     * @return a new Range that covers the entire span of
+     * input ranges.
      */
     public static Range buildInclusiveRange(Collection<Range> ranges){
         if(ranges.isEmpty()){
@@ -1062,5 +1179,33 @@ public class Range implements Placed<Range>,Iterable<Long>
     @Override
     public Range asRange() {
         return this;
+    }
+    
+    private class RangeIterator implements Iterator<Long>{
+        private final long from;
+        private final long to;
+        private long index;
+        
+        public RangeIterator(Range range){
+            from = range.getStart();
+            to = range.getEnd();
+            index = from;
+        }
+        @Override
+        public boolean hasNext() {
+            return index<=to;
+        }
+
+        @Override
+        public Long next() {
+            return index++;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("can not remove from Range");
+            
+        }
+        
     }
 }

@@ -24,16 +24,18 @@
 package org.jcvi;
 
 
+import java.util.Iterator;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRangeIterator {
 
     Range range = Range.buildRange(1, 10);
-    RangeIterator sut;
+    Iterator<Long> sut;
     @Before
     public void setup(){
-        sut = new RangeIterator(range);
+        sut = range.iterator();
     }
     @Test
     public void iterate(){

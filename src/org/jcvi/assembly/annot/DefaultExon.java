@@ -34,7 +34,7 @@ public class DefaultExon implements Exon {
             throw new IllegalArgumentException("frame can not be null");
         }
         this.frame = frame;
-        this.range= range.copy();
+        this.range= range;
     }
     public DefaultExon(Frame frame, long start, long end){
       this(frame, Range.buildRange(start, end));

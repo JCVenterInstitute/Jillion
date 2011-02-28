@@ -23,7 +23,7 @@
  */
 package org.jcvi;
 /**
- * {@code IdConverter} converts an Id of
+ * {@code IdConverter} converts an Id from
  * one type into the Id of another
  * ( which might be a different type)
  * that represents the same thing.
@@ -31,17 +31,18 @@ package org.jcvi;
  * For Example, IdConverter can be used
  * to map ids to external ids used by a different
  * system.
- * 
+ *  @param <F> the type of the id to be converted (aka from).
+ *  @param <T> the type of the converted id (aka to).
  * @author dkatzel
  *
  *
  */
-public interface IdConverter<K,V> {
+public interface IdConverter<F,T> {
     /**
      * Converts the given id into 
      * its corresponding other id.
      * @param id the id to convert.
      * @return another id that represents the same object.
      */
-    V convertId(K id);
+    T convertId(F id);
 }

@@ -22,7 +22,12 @@
  * @author dkatzel
  */
 package org.jcvi;
-
+/**
+ * {@code Distance} is class that represents
+ * genomic library mate distances.
+ * @author dkatzel
+ *
+ */
 public final class Distance {
     /**
      * Celera Assembly's Gatekeeper doesn't
@@ -107,17 +112,35 @@ public final class Distance {
         this.mean = mean;
         this.stdDev = stdDev;
     }
+    /**
+     * Get the mean (average) distance between
+     * mates.
+     * @return the mean as a floating point number.
+     */
     public float getMean(){
         return mean;
     }
+    /**
+     * Get the standard deviation of the mean between
+     * mates.
+     * @return the std dev as a floating point number.
+     */
     public float getStdDev(){
         return stdDev;
     }
-
+    /**
+     * Get the minimum distance between
+     * mates.
+     * @return the min as an int, should always be >=0.
+     */
     public int getMin() {
         return min;
     }
-
+    /**
+     * Get the max distance between
+     * mates.
+     * @return the max as an int, should always be >={@link #getMin()}.
+     */
     public int getMax() {
         return max;
     }
