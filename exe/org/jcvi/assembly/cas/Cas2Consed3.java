@@ -340,7 +340,8 @@ public class Cas2Consed3 {
 	               }
 	            if(commandLine.hasOption("chromat_dir")){
 	            	for(File oldChromatogram : new File(commandLine.getOptionValue("chromat_dir")).listFiles()){
-	            		File newChromatogram = outputDir.createNewFile("chromat_dir/"+oldChromatogram.getName());
+	            	    String newChromatName = FilenameUtils.getBaseName(oldChromatogram.getName());
+	            		File newChromatogram = outputDir.createNewFile("chromat_dir/"+newChromatName);
 	            		InputStream in = new FileInputStream(oldChromatogram);
 	            		OutputStream out = new FileOutputStream(newChromatogram);
 	            		IOUtils.copy(in, out);
