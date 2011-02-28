@@ -52,7 +52,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
     protected QualityEncodedGlyphs getQualitiesFor(
             NucleotideSequenceFastaRecord nextFasta) {
         final String id = nextFasta.getId();
-        File chromatFile = new File(chromatDir,id+".scf");
+        File chromatFile = new File(chromatDir,id);
         if(chromatFile.exists()){
             try {
                 return new SCFChromatogramFile(chromatFile).getQualities();
