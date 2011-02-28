@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.Range;
-import org.jcvi.RangeIterator;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
@@ -107,7 +106,7 @@ public class LargeSliceMap extends AbstractSliceMap{
 
     @Override
     public Iterator<Slice> iterator() {
-        return new SliceIterator(new RangeIterator(range), this);
+        return new SliceIterator(range.iterator(), this);
     }
 
 }

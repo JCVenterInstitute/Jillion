@@ -304,12 +304,7 @@ public class TestRange{
         assertFalse(sut.equals(emptyRange));
     }
 
-    @Test
-    public void copyConstructor(){
-        Range copy = range.copy();
-        assertEquals(range, copy);
-        assertNotSame(range, copy);
-    }
+   
 
     @Test(expected=IllegalArgumentException.class) public void testInvalidRangeConstruction(){
         int left = 0;

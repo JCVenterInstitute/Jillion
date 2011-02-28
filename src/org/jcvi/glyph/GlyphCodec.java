@@ -26,13 +26,50 @@ package org.jcvi.glyph;
 import java.util.Collection;
 import java.util.List;
 
-
+/**
+ * {@code GlyphCodec} is an interface
+ * that allows Glyphs to be encoded and decoded
+ * into byte arrays.  
+ * @author dkatzel
+ *
+ * @param <T> the Type of Glyph to be
+ * encoded and or decoded.
+ */
 public interface GlyphCodec<T extends Glyph> {
-
+	/**
+	 * Encode the given collection of glyphs
+	 * into a byte array.
+	 * @param glyphs the glyphs to encode.
+	 * @return a byte array (never null).
+	 */
     byte[] encode(Collection<T> glyphs);
-    
+    /**
+     * Decode a byte array into a list
+     * of glyphs.
+     * @param encodedGlyphs the byte 
+     * array of encoded glyphs.
+     * @return a list of glyphs (never null)
+     */
     List<T> decode(byte[] encodedGlyphs);
-    T decode(byte[] encodedGlyphs, int index);
     
+    /**
+     * Get a single Gyph from the encoded
+     * byte array at the given index.
+     * @param encodedGlyphs the byte array of 
+     * encoded glyphs.
+     * @param index the index of the glyph 
+     * to get.
+     * @return the decoded glyph
+     * at the given index.
+     */
+    T decode(byte[] encodedGlyphs, int index);
+    /**
+     * Get the number of glyphs
+     * represented by the encoded byte
+     * array.
+     * @param encodedGlyphs the byte array of
+     * glyphs.
+     * @return an int >=0.
+     */
     int decodedLengthOf(byte[] encodedGlyphs);
 }

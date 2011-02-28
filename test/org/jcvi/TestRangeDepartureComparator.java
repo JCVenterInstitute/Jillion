@@ -20,7 +20,6 @@ package org.jcvi;
 
 import org.junit.Assert;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class TestRangeDepartureComparator 
@@ -33,7 +32,7 @@ public class TestRangeDepartureComparator
     private Range f;
     private Range g;
     
-    private RangeDepartureComparator comp;
+    private Range.Comparators comp = Range.Comparators.DEPARTURE;
     
     public TestRangeDepartureComparator() 
     {
@@ -48,11 +47,7 @@ public class TestRangeDepartureComparator
         this.g = Range.buildEmptyRange(30);
     }
     
-    @Before
-    public void setupComparator()
-    {
-        this.comp = new RangeDepartureComparator();
-    }
+   
     
     @Test
     public void testCompare_inverseCommutativity() 
