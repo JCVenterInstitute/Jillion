@@ -45,7 +45,7 @@ public class TestLucyQualityTrimmer {
     private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultPrimerTrimmer_ActualData.class);
     private QualityDataStore qualities;
     
-    LucyQualityTrimmer sut = new LucyQualityTrimmer.Builder(30)
+    LucyLikeQualityTrimmer sut = new LucyLikeQualityTrimmer.Builder(30)
                             .addTrimWindow(30, 0.1F)
                             .addTrimWindow(10, 0.35F)
                             .build();

@@ -35,7 +35,7 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 
 
 /**
- * {@code LucyQualityTrimmer} performs Lucy like quality trimming.  The algorithm 
+ * {@code LucyLikeQualityTrimmer} performs Lucy like quality trimming.  The algorithm 
  * this class uses is the algorithm from the 2001 Lucy paper in
  * Bioinformatics.
  * <p>
@@ -68,7 +68,7 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
  *
  * @see <a href ="http://www.ncbi.nlm.nih.gov/pubmed/11751217">Chou HH, Holmes MH. DNA sequence quality trimming and vector removal. Bioinformatics. 2001;17:1093-1104. doi: 10.1093/bioinformatics/17.12.1093.<a>
  */
-public class LucyQualityTrimmer {
+public class LucyLikeQualityTrimmer {
     private static final int SIZE_OF_ENDS =2;
     private final int minGoodLength;
     private final Window bracketWindow;
@@ -86,7 +86,7 @@ public class LucyQualityTrimmer {
      * @param maxAvgError
      * @param maxErrorAtEnds
      */
-    private LucyQualityTrimmer(int minGoodLength, Window bracketWindow,
+    private LucyLikeQualityTrimmer(int minGoodLength, Window bracketWindow,
             Set<Window> trimWindows, double maxAvgError, double maxErrorAtEnds) {
         this.minGoodLength = minGoodLength;
         this.bracketWindow = bracketWindow;
@@ -349,13 +349,13 @@ public class LucyQualityTrimmer {
         
     }
     /**
-     * {@code Builder}  builds a {@link LucyQualityTrimmer} instance
+     * {@code Builder}  builds a {@link LucyLikeQualityTrimmer} instance
      * with the given trimming windows.
      * @author dkatzel
      *
      *
      */
-    public static class Builder implements org.jcvi.Builder<LucyQualityTrimmer>{
+    public static class Builder implements org.jcvi.Builder<LucyLikeQualityTrimmer>{
 
         public static final Window DEFAULT_BRACKET_WINDOW = new Window(10, 0.02D);
         public static final int DEFAULT_MIN_GOOD_LENGTH = 100;
@@ -408,11 +408,11 @@ public class LucyQualityTrimmer {
         * {@inheritDoc}
         */
         @Override
-        public LucyQualityTrimmer build() {
+        public LucyLikeQualityTrimmer build() {
             if(trimWindows.isEmpty()){
                 trimWindows.addAll(DEFAULT_TRIM_WINDOWS);
             }
-            return new LucyQualityTrimmer(minGoodLength, 
+            return new LucyLikeQualityTrimmer(minGoodLength, 
                                             bracketWindow, 
                                             trimWindows, 
                                             maxAvgError, 

@@ -33,6 +33,7 @@ import org.junit.runners.Suite.SuiteClasses;
     TestDefaultPrimerTrimmer.class,
     TestDefaultPrimerTrimmer_ActualData.class,
     TestInternalPrimerHit.class,
+    TestLucyTrimDataStore.class,
     
     TestLucyQualityTrimmer.class,
     TestMinimumEndCoverageTrimmer.class,
