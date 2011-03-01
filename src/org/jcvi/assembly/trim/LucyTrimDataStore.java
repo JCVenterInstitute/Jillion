@@ -22,7 +22,7 @@ package org.jcvi.assembly.trim;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.Range;
@@ -37,6 +37,10 @@ import org.jcvi.fastX.fasta.FastaVisitor;
 import org.jcvi.util.CloseableIterator;
 
 /**
+ * {@code LucyTrimDataStore} is a TrimDataStore
+ * that parses a lucy
+ * seq fasta file and gets the trimpoints
+ * from the fasta comments.
  * @author dkatzel
  *
  *
@@ -44,13 +48,20 @@ import org.jcvi.util.CloseableIterator;
 public class LucyTrimDataStore implements TrimDataStore {
 
     private final TrimDataStore datastore;
-    
+    /**
+     * 
+     * @param lucySeqFile
+     * @throws FileNotFoundException
+     */
     public LucyTrimDataStore(File lucySeqFile) throws FileNotFoundException{
-        final Map<String, Range> map = new HashMap<String, Range>();
+        final Map<String, Range> map = new LinkedHashMap<String, Range>();
+        //our fasta visitor implementation
+        //to parse the trim points from the comments
         FastaVisitor visitor = new AbstractFastaVisitor() {
             
             @Override
             public boolean visitRecord(String id, String comment, String entireBody) {
+                //ex def line >CVJHE01T00MANH08R 0 0 0 29 589
                 String[] trimpoints = comment.split("\\s+");
                 Range range = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
                         Long.parseLong(trimpoints[3]),
