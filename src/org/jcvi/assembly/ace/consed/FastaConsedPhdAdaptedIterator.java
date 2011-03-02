@@ -63,12 +63,7 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 	public PhdReadRecord next() {
 		NucleotideSequenceFastaRecord nextFasta = fastaIterator.next();
 		String id = nextFasta.getId();
-		QualityEncodedGlyphs qualities = getQualitiesFor(nextFasta);
-		Phd phd = ArtificialPhd.createNewbler454Phd(
-				id, 
-				nextFasta.getValue(), 
-				qualities,
-				requiredComments);
+		Phd phd =createPhdRecordFor(nextFasta, requiredComments);
 		
 		PhdInfo info = ConsedUtil.generatePhdInfoFor(fastaFile, id, phdDate);
 		return new DefaultPhdReadRecord(phd, info);

@@ -56,7 +56,7 @@ public class TestCas2Consed3 {
 	    @Test
 	    public void parseCas() throws IOException, DataStoreException{
 	        File casFile = RESOURCES.getFile("files/flu.cas");
-	      Cas2Consed3 cas2consed3 = new Cas2Consed3(casFile, tempDir,prefix);
+	      Cas2Consed3 cas2consed3 = new Cas2Consed3(casFile, tempDir,prefix,true);
 	      cas2consed3.convert(TrimDataStoreUtil.EMPTY_DATASTORE,new UnTrimmedExtensionTrimMap(),FastQQualityCodec.ILLUMINA);
 	      
 	      File aceFile = tempDir.getFile("edit_dir/"+prefix+".ace.1");
