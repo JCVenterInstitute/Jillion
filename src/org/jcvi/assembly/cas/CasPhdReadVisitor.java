@@ -96,7 +96,6 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 			        break;
 			    case FASTA:
 			        CloseableIterator<PhdReadRecord> iter;
-			        
 			                if(chromatDir==null){
 			                    iter= new FastaConsedPhdAdaptedIterator(
 	                                LargeNucleotideFastaIterator.createNewIteratorFor(file),
@@ -109,6 +108,7 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	                                    phdDate, PhredQuality.valueOf(30),
 	                                    chromatDir);
 			                }
+			                
 			                iterators.add(iter);
 			        break;
 		        default: throw new IllegalArgumentException("unsupported type "+ file.getName());
