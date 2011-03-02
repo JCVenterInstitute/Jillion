@@ -43,7 +43,7 @@ public final class JcviLucyTrimmers {
      * -error 0.025 0.02 -bracket 10 0.02 -window 50 0.03 10 0.07 -alignment 8 12 16 -size 10 -threshold 20 -minimum 10
      * </pre>
      */
-    public static final LucyQualityTrimmer JTRACE_NON_BAC_3100 = new LucyQualityTrimmer.Builder(10)
+    public static final LucyLikeQualityTrimmer JTRACE_NON_BAC_3100 = new LucyLikeQualityTrimmer.Builder(10)
                                                             .addTrimWindow(50, 0.03F)
                                                             .addTrimWindow(10, 0.07F)
                                                             .build();
@@ -56,7 +56,7 @@ public final class JcviLucyTrimmers {
      * -error 0.025 0.9 -bracket 10 0.02 -window 50 0.07 10 0.1 -alignment 8 12 16 -size 10 -threshold 20 -minimum 10
      * </pre>
      */
-    public static final LucyQualityTrimmer JTRACE_BAC_3100 = new LucyQualityTrimmer.Builder(10)
+    public static final LucyLikeQualityTrimmer JTRACE_BAC_3100 = new LucyLikeQualityTrimmer.Builder(10)
                                                             .maxErrorAtEnds(.9F)
                                                             .addTrimWindow(50, 0.07F)
                                                             .addTrimWindow(10, 0.1F)
@@ -71,7 +71,7 @@ public final class JcviLucyTrimmers {
      * -error 0.025 0.02 -bracket 10 0.02 -window 50 0.03 10 0.055 -alignment 8 12 16 -size 10 -threshold 20 -minimum 10
      * </pre>
      */
-    public static final LucyQualityTrimmer JTRACE_NON_BAC_3700 = new LucyQualityTrimmer.Builder(10)
+    public static final LucyLikeQualityTrimmer JTRACE_NON_BAC_3700 = new LucyLikeQualityTrimmer.Builder(10)
     .addTrimWindow(50, 0.03F)
     .addTrimWindow(10, 0.055F)
     .build();
@@ -85,7 +85,7 @@ public final class JcviLucyTrimmers {
      * -error 0.025 0.9 -bracket 10 0.02 -window 50 0.07 10 0.1 -alignment 8 12 16 -size 10 -threshold 20 -minimum 10
      * </pre>
      */
-    public static final LucyQualityTrimmer JTRACE_BAC_3700 = new LucyQualityTrimmer.Builder(10)
+    public static final LucyLikeQualityTrimmer JTRACE_BAC_3700 = new LucyLikeQualityTrimmer.Builder(10)
         .maxErrorAtEnds(.9F)
         .addTrimWindow(50, 0.07F)
         .addTrimWindow(10, 0.01F)
@@ -95,18 +95,18 @@ public final class JcviLucyTrimmers {
      * as the arguments it uses to trim 3700 reads.
      * @see {@link #JTRACE_NON_BAC_3700}
      */
-    public static final LucyQualityTrimmer JTRACE_NON_BAC_3730 = JTRACE_NON_BAC_3700;
+    public static final LucyLikeQualityTrimmer JTRACE_NON_BAC_3730 = JTRACE_NON_BAC_3700;
     /**
      * Currently, the arguments JTrace uses to trim 3730 reads is the same
      * as the arguments it uses to trim 3700 reads.
      * @see {@link #JTRACE_BAC_3700}
      */
-    public static final LucyQualityTrimmer JTRACE_BAC_3730 = JTRACE_BAC_3700;
+    public static final LucyLikeQualityTrimmer JTRACE_BAC_3730 = JTRACE_BAC_3700;
     /**
      * This is the trimming arguments used by the Elvira project
      * to trim viral sequences before assembly.
      */
-    public static final LucyQualityTrimmer ELVIRA = new LucyQualityTrimmer.Builder(30)
+    public static final LucyLikeQualityTrimmer ELVIRA = new LucyLikeQualityTrimmer.Builder(30)
                                                     .addTrimWindow(30, 0.1F)
                                                     .addTrimWindow(10, 0.35F)
                                                     .build();
