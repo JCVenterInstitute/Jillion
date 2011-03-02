@@ -50,14 +50,14 @@ public class TestAceContigTrimmer {
     public void trim1xFromEnds() throws TrimmerException{
        AceContig originalContig = new DefaultAceContig.Builder("id","ACGTACGTACGT")
                                    .addRead("read1", "ACGTACGT", 0, SequenceDirection.FORWARD, Range.buildRangeOfLength(20,8), null)
-                                   .addRead("read2", "ACGTACGT", 4, SequenceDirection.FORWARD, Range.buildRangeOfLength(20,8), null)
-                                   .addRead("read3", "GTACGTAC", 2, SequenceDirection.FORWARD, Range.buildRangeOfLength(20,8), null)
+                                   .addRead("read2",     "ACGTACGT", 4, SequenceDirection.FORWARD, Range.buildRangeOfLength(20,8), null)
+                                   .addRead("read3",   "GTACGTAC", 2, SequenceDirection.FORWARD, Range.buildRangeOfLength(20,8), null)
                                    
                                    .build();
        
        AceContig expectedContig = new DefaultAceContig.Builder("id_3_10","GTACGTAC")
                                    .addRead("read1", "GTACGT", 0, SequenceDirection.FORWARD, Range.buildRangeOfLength(22,6), null)
-                                   .addRead("read2", "ACGTAC", 2, SequenceDirection.FORWARD, Range.buildRangeOfLength(20,6), null)
+                                   .addRead("read2",   "ACGTAC", 2, SequenceDirection.FORWARD, Range.buildRangeOfLength(20,6), null)
                                    .addRead("read3", "GTACGTAC", 0, SequenceDirection.FORWARD, Range.buildRangeOfLength(20,8), null)
                                    
                                    .build();

@@ -77,10 +77,12 @@ public class Cas2Consed3 {
 	private final File casFile;
 	private final ReadWriteFileServer consedOutputDir;
 	private final String prefix;
-	public Cas2Consed3(File casFile, ReadWriteFileServer consedOutputDir, String prefix){
+	private final boolean makePhdBall;
+	public Cas2Consed3(File casFile, ReadWriteFileServer consedOutputDir, String prefix, boolean makePhdBall){
 		this.casFile=casFile;
 		this.consedOutputDir = consedOutputDir;
 		this.prefix = prefix;
+		this.makePhdBall = makePhdBall;
 	}
 	public void convert(TrimDataStore trimDatastore,CasTrimMap trimToUntrimmedMap ,FastQQualityCodec fastqQualityCodec) throws IOException{
 	    final File casWorkingDirectory = casFile.getParentFile();
@@ -88,7 +90,8 @@ public class Cas2Consed3 {
 	    File chromatDir = consedOutputDir.contains("chromat_dir")?
 	                        consedOutputDir.getFile("chromat_dir"):
 	                            null;
-        File phdDir =consedOutputDir.createNewDirIfNeeded("phd_dir");
+	                        
+        final File phdDir =consedOutputDir.createNewDirIfNeeded("phd_dir");
         File logFile = consedOutputDir.createNewFile("cas2consed.log");
         PrintStream logOut = new PrintStream(logFile);
         long startTime = DateTimeUtils.currentTimeMillis();
@@ -155,7 +158,14 @@ public class Cas2Consed3 {
                                         this.orderedGappedReferences.get(casReferenceId)));
                             }
                             try {
+                                if(!makePhdBall){
+                                    final File phdFile = new File(phdDir, phd.getId()+".phd.1");
+                                    final OutputStream singlePhdOut = new FileOutputStream(phdFile); 
+                                    PhdWriter.writePhd(phd, singlePhdOut);
+                                    IOUtil.closeAndIgnoreErrors(singlePhdOut);
+                                }
                                 PhdWriter.writePhd(phd, phdOut);
+                                
                             } catch (IOException e) {
                                 throw new RuntimeException("error writing phd record " + phd.getId(),e);
                             }
@@ -200,8 +210,12 @@ public class Cas2Consed3 {
              IOUtils.copyLarge(new FileInputStream(tempAce), out);
              IOUtil.closeAndIgnoreErrors(out);
              tempAce.delete();
-             consedOutputDir.createNewSymLink("../phd_dir/"+phdFile.getName(), 
-                             "edit_dir/phd.ball");
+             if(!makePhdBall){
+                 phdFile.delete();
+             }else{
+                 consedOutputDir.createNewSymLink("../phd_dir/"+phdFile.getName(), 
+                                 "edit_dir/phd.ball");
+             }
              long endTime = DateTimeUtils.currentTimeMillis();
              
              logOut.printf("took %s%n",new Period(endTime- startTime));
@@ -303,6 +317,10 @@ public class Cas2Consed3 {
 	                            .isFlag(true)
 	                            .build());
 	        
+	        options.addOption(new CommandLineOptionBuilder("no_phdball", "do not make a phd.ball. instead, make individual phd.1 files for each read (not recommended)")                                
+                            .isFlag(true)
+                            .build());
+	        
 	        if(CommandLineUtils.helpRequested(args)){
 	        	printHelp(options);
 	        	System.exit(0);
@@ -348,7 +366,8 @@ public class Cas2Consed3 {
 	            		IOUtil.closeAndIgnoreErrors(in,out);
 	            	}
 	            }
-	            Cas2Consed3 cas2consed = new Cas2Consed3(casFile, outputDir, prefix);
+	            boolean makePhdBall = !commandLine.hasOption("no_phdball");
+	            Cas2Consed3 cas2consed = new Cas2Consed3(casFile, outputDir, prefix,makePhdBall);
 	            
 	            cas2consed.convert(trimDatastore, trimToUntrimmedMap, qualityCodec);
 	            
