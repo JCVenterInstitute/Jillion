@@ -39,7 +39,7 @@ public class TestLucyTrimDataStore {
     @Test
     public void parseLucyTrimPoints() throws IOException, DataStoreException{
         File lucyTrimFile = RESOURCES.getFile("files/lucyTrimPoints.seq");
-        LucyTrimDataStore sut = new LucyTrimDataStore(lucyTrimFile);
+        LucySeqTrimDataStore sut = new LucySeqTrimDataStore(lucyTrimFile);
         assertEquals(127, sut.size());
         
         assertEquals("first record",
