@@ -375,6 +375,9 @@ public class Range implements Placed<Range>,Iterable<Long>
         if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot convert to a null range coordinate system");
         }
+        if(coordinateSystem.equals(this.rangeCoordinateSystem)){
+            return this;
+        }
         
         if ( this.isEmpty() ) {
             return new EmptyRange(this.getStart(),this.getEnd(),coordinateSystem);

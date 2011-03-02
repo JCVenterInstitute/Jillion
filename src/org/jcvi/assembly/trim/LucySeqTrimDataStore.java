@@ -45,7 +45,7 @@ import org.jcvi.util.CloseableIterator;
  *
  *
  */
-public class LucyTrimDataStore implements TrimDataStore {
+public class LucySeqTrimDataStore implements TrimDataStore {
 
     private final TrimDataStore datastore;
     /**
@@ -53,7 +53,7 @@ public class LucyTrimDataStore implements TrimDataStore {
      * @param lucySeqFile
      * @throws FileNotFoundException
      */
-    public LucyTrimDataStore(File lucySeqFile) throws FileNotFoundException{
+    public LucySeqTrimDataStore(File lucySeqFile) throws FileNotFoundException{
         final Map<String, Range> map = new LinkedHashMap<String, Range>();
         //our fasta visitor implementation
         //to parse the trim points from the comments
@@ -61,7 +61,8 @@ public class LucyTrimDataStore implements TrimDataStore {
             
             @Override
             public boolean visitRecord(String id, String comment, String entireBody) {
-                //ex def line >CVJHE01T00MANH08R 0 0 0 29 589
+                //ex def line 
+                //>name CLZ CLZ CLR CLR
                 String[] trimpoints = comment.split("\\s+");
                 Range range = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
                         Long.parseLong(trimpoints[3]),

@@ -20,10 +20,14 @@
 package org.jcvi.assembly.ace.consed;
 
 import java.io.File;
+import java.util.Properties;
+
 import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFile;
+import org.jcvi.trace.sanger.phd.DefaultPhd;
+import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.util.CloseableIterator;
 import org.joda.time.DateTime;
 
@@ -48,20 +52,28 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
         super(fastaIterator, fastaFile, phdDate, defaultQualityValue);
         this.chromatDir = chromatDir;
     }
+    
+    
     @Override
-    protected QualityEncodedGlyphs getQualitiesFor(
-            NucleotideSequenceFastaRecord nextFasta) {
+    protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord nextFasta,
+            Properties requiredComments) {
+
         final String id = nextFasta.getId();
         File chromatFile = new File(chromatDir,id);
         if(chromatFile.exists()){
             try {
-                return new SCFChromatogramFile(chromatFile).getQualities();
+                SCFChromatogramFile chromo = new SCFChromatogramFile(chromatFile);
+                return new DefaultPhd(id, chromo.getBasecalls(), chromo.getQualities(), chromo.getPeaks(), requiredComments);
             } catch (Exception e) {
                 throw new IllegalStateException("error parsing chromatogram for "+ id,e);
             } 
         }
-        return super.getQualitiesFor(nextFasta);
+        return super.createPhdRecordFor(nextFasta, requiredComments);
+
     }
+
+
+   
     
     
 
