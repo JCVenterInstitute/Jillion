@@ -70,7 +70,6 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 		this.fastqQualityCodec = fastqQualityCodec;
 		this.orderedGappedReferences = orderedGappedReferences;
 		this.validRangeDataStore = validRangeDataStore;
-		System.out.println(chromatDir.getAbsolutePath());
 		this.chromatDir = chromatDir;
 	}
 

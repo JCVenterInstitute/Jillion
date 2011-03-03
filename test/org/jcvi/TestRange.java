@@ -317,7 +317,7 @@ public class TestRange{
         Range.buildRange(10,0);
     }
 
-    @Test public void testConvertRange_sameCoordinateSystem(){
+    @Test public void testConvertRange_sameCoordinateSystemShouldReturnSame(){
         long rangeStart = 5;
         long rangeEnd = 15;
         Range range = Range.buildRange(Range.CoordinateSystem.ZERO_BASED,rangeStart,rangeEnd);
@@ -327,7 +327,7 @@ public class TestRange{
         assertEquals(range.getEnd(),convertedRange.getEnd());
         assertEquals(convertedRange.getLocalStart(),rangeStart);
         assertEquals(convertedRange.getLocalEnd(),rangeEnd);
-        assertNotSame(range,convertedRange);
+        assertSame(range,convertedRange);
     }
 
     @Test public void testConvertRange_zeroToSpaceCoordinateSystem(){
