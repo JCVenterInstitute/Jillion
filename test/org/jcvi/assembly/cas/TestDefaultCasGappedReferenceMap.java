@@ -45,7 +45,7 @@ public class TestDefaultCasGappedReferenceMap {
     CasNucleotideDataStore referenceNucleotideDataStore;
     CasIdLookup contigNameLookup;
     DefaultCasGappedReferenceMap sut;
-    long referenceId= 12345;
+    long referenceId= 0;
     String referenceName = "refName";
     NucleotideEncodedGlyphs referenceCalls = new DefaultNucleotideEncodedGlyphs(REFERENCE_CALLS_AS_STRING);
     @Before
