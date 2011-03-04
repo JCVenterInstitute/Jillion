@@ -206,7 +206,7 @@ public class Cas2Consed3 {
              IOUtil.closeAndIgnoreErrors(tempOut,consensusOut);
              File ace = new File(editDir, prefix+".ace.1");
              OutputStream out = new FileOutputStream(ace);
-             out.write(String.format("AS %d %d%n", numberOfContigs, numberOfReads).getBytes());
+             out.write(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads).getBytes());
              IOUtils.copyLarge(new FileInputStream(tempAce), out);
              IOUtil.closeAndIgnoreErrors(out);
              tempAce.delete();
