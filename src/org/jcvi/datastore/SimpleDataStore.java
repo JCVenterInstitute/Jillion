@@ -37,27 +37,27 @@ public class SimpleDataStore<T> extends AbstractDataStore<T> {
         this.map.putAll(map);
     }
     @Override
-    public boolean contains(String id) throws DataStoreException {
+    public synchronized boolean contains(String id) throws DataStoreException {
         super.contains(id);
         return map.containsKey(id);
     }
     @Override
-    public T get(String id) throws DataStoreException {
+    public synchronized T get(String id) throws DataStoreException {
         super.get(id);
         return map.get(id);
     }
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
         return CloseableIteratorAdapter.adapt(map.keySet().iterator());
     }
     @Override
-    public int size() throws DataStoreException {
+    public synchronized int size() throws DataStoreException {
         super.size();
         return map.size();
     }
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
        super.close();
        map.clear();
         
