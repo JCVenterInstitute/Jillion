@@ -16,40 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Sep 3, 2008
- *
- * @author dkatzel
- */
+
 package org.jcvi.assembly.ace;
 
+import org.joda.time.DateTime;
+import org.junit.Test;
+import static org.junit.Assert.*;
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestAceFileUtil {
 
-import org.jcvi.assembly.ace.consed.AllConsedUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestAceFileUtil.class,
-       TestDefaultPhdInfo.class,
-       TestAssembledFrom.class,
-       TestAceParserPhdInfo.class,
-       TestDefaultAceContig.class,
-       TestAceContigBuilderInvalidRead.class,
-       TestDefaultAceBestSegment.class,
-       TestDefaultAceBestSegmentMap.class,
-       TestOntheFlyAceBestSegmentMap.class,
-       TestAcePlacedReadAdapter.class,
-       TestDefaultAceFileTagMap.class,
-       TestAceFileWriter.class,
-       
-       TestAceContigTrimmer.class,
-       
-       AllConsedUnitTests.class
+    @Test
+    public void parseChromatogramMadeAroundMidnight(){
+        String dateAsString = "Fri Jan 7 00:40:59 2011";
+        DateTime dt =AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parseDateTime(dateAsString);
+        assertEquals(0, dt.getHourOfDay());
+        assertEquals(40, dt.getMinuteOfHour());
+        assertEquals(59, dt.getSecondOfMinute());
     }
-)
-public class AllAceUnitTests {
-
 }
