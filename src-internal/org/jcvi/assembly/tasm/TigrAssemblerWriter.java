@@ -58,7 +58,7 @@ public class TigrAssemblerWriter {
 		
 	}
 
-	private static void write(TigrAssemblerContig contig, OutputStream out) throws IOException {
+	public static void write(TigrAssemblerContig contig, OutputStream out) throws IOException {
 		for(TigrAssemblerContigAttribute contigAttribute : TigrAssemblerContigAttribute.values()){
 			String assemblyTableColumn = contigAttribute.getAssemblyTableColumn();
 			StringBuilder row = new StringBuilder(assemblyTableColumn);
