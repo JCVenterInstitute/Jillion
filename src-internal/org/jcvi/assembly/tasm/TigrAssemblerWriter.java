@@ -36,7 +36,7 @@ import org.jcvi.datastore.DataStoreException;
 public class TigrAssemblerWriter {
 
 	private static final byte[] BLANK_LINE = "\n".getBytes();
-	private static final byte[] CONTIG_SEPARATOR = "|\n".getBytes();
+	public static final byte[] CONTIG_SEPARATOR = "|\n".getBytes();
 	public static void write(TigrAssemblerContigDataStore datastore, OutputStream out) throws IOException{
 		if(datastore==null){
 			throw new NullPointerException("data store can not be null");
