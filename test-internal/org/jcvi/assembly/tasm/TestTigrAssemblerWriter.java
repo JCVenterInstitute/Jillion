@@ -44,7 +44,7 @@ public class TestTigrAssemblerWriter {
     @Test(expected = NullPointerException.class)
     public void writeNullDataStoreShouldThrowNullPointerException() throws IOException{
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
-    	TigrAssemblerWriter.write(null,out);
+    	TigrAssemblerWriter.write((DefaultTigrAssemblerFileContigDataStore)null,out);
     }
     @Test(expected = NullPointerException.class)
     public void writeNullOutputStreamShouldThrowNullPointerException() throws IOException{
