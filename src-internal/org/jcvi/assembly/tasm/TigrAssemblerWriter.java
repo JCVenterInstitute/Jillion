@@ -60,19 +60,18 @@ public class TigrAssemblerWriter {
 
 	public static void write(TigrAssemblerContig contig, OutputStream out) throws IOException {
 		for(TigrAssemblerContigAttribute contigAttribute : TigrAssemblerContigAttribute.values()){
-			String assemblyTableColumn = contigAttribute.getAssemblyTableColumn();
-			StringBuilder row = new StringBuilder(assemblyTableColumn);
-			int padding = 4-assemblyTableColumn.length()%4;
-			if(padding>0){
-				row.append("\t");
+		    if(contig.hasAttribute(contigAttribute)){
+    		    String assemblyTableColumn = contigAttribute.getAssemblyTableColumn();
+    			StringBuilder row = new StringBuilder(assemblyTableColumn);
+    			int padding = 4-assemblyTableColumn.length()%4;
+    			if(padding>0){
+    				row.append("\t");
+    			}
+    				row.append(String.format("%s\n", 
+    						contig.getAttributeValue(contigAttribute)));
+				out.write(row.toString().getBytes());
 			}
-			if(contig.hasAttribute(contigAttribute)){
-				row.append(String.format("%s\n", 
-						contig.getAttributeValue(contigAttribute)));
-			}else{
-				row.append("\n");
-			}
-			out.write(row.toString().getBytes());
+			
 		}
 		out.write(BLANK_LINE);
 		

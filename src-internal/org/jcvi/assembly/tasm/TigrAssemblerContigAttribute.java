@@ -46,7 +46,7 @@ public enum TigrAssemblerContigAttribute {
 	EDIT_DATE("ed_date"),
 	FRAME_SHIFT("frameshift"),
 	IS_CIRCULAR("is_circular"),
-	
+	BAC_ID("bac_id")
 	;
 	
 	private final String assemblyTableColumn;
