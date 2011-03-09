@@ -73,30 +73,32 @@ public class TigrAssemblerWriter {
 			}
 			
 		}
-		out.write(BLANK_LINE);
-		
-		Iterator<TigrAssemblerPlacedRead> placedReadIterator = contig.getPlacedReads().iterator();
-		while(placedReadIterator.hasNext()){
-			TigrAssemblerPlacedRead read = placedReadIterator.next();
-			for(TigrAssemblerReadAttribute readAttribute : TigrAssemblerReadAttribute.values()){
-				String assemblyTableColumn = readAttribute.getAssemblyTableColumn();
-				int padding = 4-assemblyTableColumn.length()%4;
-				StringBuilder row = new StringBuilder(assemblyTableColumn);
-				if(padding>0){
-					row.append("\t");
-				}
-				if(read.hasAttribute(readAttribute)){
-					row.append(String.format("%s\n", 
-							read.getAttributeValue(readAttribute)));
-				}else{
-					row.append("\n");
-				}
-				
-				out.write(row.toString().getBytes());				
-			}
-			if(placedReadIterator.hasNext()){
-				out.write(BLANK_LINE);
-			}
+		if(contig.getNumberOfReads()>0){
+    		out.write(BLANK_LINE);
+    		
+    		Iterator<TigrAssemblerPlacedRead> placedReadIterator = contig.getPlacedReads().iterator();
+    		while(placedReadIterator.hasNext()){
+    			TigrAssemblerPlacedRead read = placedReadIterator.next();
+    			for(TigrAssemblerReadAttribute readAttribute : TigrAssemblerReadAttribute.values()){
+    				String assemblyTableColumn = readAttribute.getAssemblyTableColumn();
+    				int padding = 4-assemblyTableColumn.length()%4;
+    				StringBuilder row = new StringBuilder(assemblyTableColumn);
+    				if(padding>0){
+    					row.append("\t");
+    				}
+    				if(read.hasAttribute(readAttribute)){
+    					row.append(String.format("%s\n", 
+    							read.getAttributeValue(readAttribute)));
+    				}else{
+    					row.append("\n");
+    				}
+    				
+    				out.write(row.toString().getBytes());				
+    			}
+    			if(placedReadIterator.hasNext()){
+    				out.write(BLANK_LINE);
+    			}
+    		}
 		}
 		
 	}
