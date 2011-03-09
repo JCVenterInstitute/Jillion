@@ -17,14 +17,8 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi;
+package org.jcvi.plate;
 
-import org.jcvi.assembly.AllInternalAssemblyUnitTests;
-import org.jcvi.assembly.contig.AllInternalContigUnitTests;
-import org.jcvi.auth.AllAuthUnitTests;
-import org.jcvi.plate.AllPlateUnitTests;
-import org.jcvi.trace.AllInternalTraceUnitTests;
-import org.jcvi.uid.AllUidUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -37,14 +31,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        AllInternalContigUnitTests.class,
-        AllInternalAssemblyUnitTests.class,
-        AllInternalTraceUnitTests.class,
-        AllAuthUnitTests.class,
-        AllUidUnitTests.class,
-        AllPlateUnitTests.class
+        TestWell.class
     }
     )
-public class AllInternalUnitTests {
+public class AllPlateUnitTests {
 
 }
