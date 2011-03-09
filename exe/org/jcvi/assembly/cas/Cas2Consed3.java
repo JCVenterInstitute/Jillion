@@ -358,7 +358,15 @@ public class Cas2Consed3 {
 	               }
 	            if(commandLine.hasOption("chromat_dir")){
 	            	for(File oldChromatogram : new File(commandLine.getOptionValue("chromat_dir")).listFiles()){
-	            	    String newChromatName = FilenameUtils.getBaseName(oldChromatogram.getName());
+	            	    //if the file name is ".something" then
+                        //newChromatName will be empty, this causes problems downstream
+                        //so skip any files that are hidden 
+	            	    // jira case [VHTNGS-205]
+	            	    if(oldChromatogram.isHidden()){
+	            	        continue;
+	            	    }
+	            	    String newChromatName = FilenameUtils.getBaseName(oldChromatogram.getName());	            	    
+	            	   
 	            		File newChromatogram = outputDir.createNewFile("chromat_dir/"+newChromatName);
 	            		InputStream in = new FileInputStream(oldChromatogram);
 	            		OutputStream out = new FileOutputStream(newChromatogram);
