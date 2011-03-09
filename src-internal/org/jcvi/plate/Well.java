@@ -103,7 +103,7 @@ public final class Well {
         if(row >'P' || row <'A'){
             throw new IllegalArgumentException("invalid row "+ row);
         }
-        if(column <1 || column >=24){
+        if(column <1 || column >24){
             throw new IllegalArgumentException("invalid column "+ column);
         }
         this.row = row;
