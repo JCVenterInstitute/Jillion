@@ -22,8 +22,9 @@ package org.jcvi.plate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.CommonUtil;
 /**
+ * {@code Well} is a class that represents a single well
+ * in a reaction plate.
  * @author dkatzel
  *
  *
@@ -34,7 +35,7 @@ public final class Well {
     /**
      * Create a new Well instance for the given well name
      * as a string.
-     * @param wellName
+     * @param wellName a well name for 96 or 384 well plates.
      * @return
      */
     public static Well create(String wellName){
@@ -61,10 +62,14 @@ public final class Well {
      * the index to make it under 384.
      *
      * @param i the index of the well to get
-     * @return a {@link Well} representing the <code>i</code>th index.
+     * @param order the {@link IndexOrder} to use for the given index.
+     * @return a {@link Well} representing the <code>i</code>th index 
+     * in the given IndexOrder.
+     * @throws NullPointerException if order is null.
+     * @throws IllegalArgumentException if i <0.
      */
-    public static Well compute384Well(int i) {
-        return computeWell(i, 384, 24);
+    public static Well compute384Well(int i,IndexOrder order) {
+        return order.getWell(i, WellType._384);
        
     }
     /**
@@ -73,19 +78,18 @@ public final class Well {
      * the index to make it under 96.
      *
      * @param i the index of the well to get
-     * @return a {@link Well} representing the <code>i</code>th index.
+     * @param order the {@link IndexOrder} to use for the given index.
+     * @return a {@link Well} representing the <code>i</code>th index 
+     * in the given IndexOrder.
+     * @throws NullPointerException if order is null.
+     * @throws IllegalArgumentException if i <0.
      */
-    public static Well compute96Well(int i) {
-        return computeWell(i, 96, 12);
+    public static Well compute96Well(int i,IndexOrder order) {
+        return order.getWell(i, WellType._96);
        
     }
 
-    private static Well computeWell(int index, int totalNumberOfWells,
-            int totalNumberOfColumns) {
-        int column =  (index % totalNumberOfColumns) +1;
-        char row = (char)( 'A'+(index %totalNumberOfWells)/ totalNumberOfColumns);
-        return new Well(row,column);
-    }
+   
     /**
      * the row of this well.
      */
@@ -123,7 +127,20 @@ public final class Well {
     public byte getColumn() {
         return column;
     }
+    
+    public int get96WellIndex(){
+        return get96WellIndex(IndexOrder.ROW_MAJOR);
+    }
+    public int get384WellIndex(){
+        return get384WellIndex(IndexOrder.ROW_MAJOR);
+    }
 
+    public int get96WellIndex(IndexOrder order){
+        return order.getIndex(this,WellType._96);
+    }
+    public int get384WellIndex(IndexOrder order){
+        return order.getIndex(this,WellType._384);
+    }
     /**
      * Returns the hash code value for this object.
      * @return the hash code for this object.
@@ -156,16 +173,10 @@ public final class Well {
             return false;
         }
         final Well other = (Well) obj;
-        return columnSimilarTo(other) && rowSimilarTo(other);
+        return this.row == other.row &&
+            this.column == other.column;
     }
-
-    private boolean rowSimilarTo(final Well other) {
-       return CommonUtil.similarTo(getRow(), other.getRow());
-    }
-    private boolean columnSimilarTo(final Well other) {
-        return CommonUtil.similarTo(getColumn(), other.getColumn());
-     }
-
+  
     /**
      * delegates to {@link #toZeroPaddedString()}.
      */
@@ -202,6 +213,92 @@ public final class Well {
         sb.append(String.format("%02d", column));
 
         return sb.toString();
+    }
+    /**
+     * {@code WellType} is a private enum for different kinds
+     * of plates.  Currently only 384 and 96 well
+     * plates are supported.
+     * @author dkatzel
+     *
+     *
+     */
+    private static enum WellType{
+        _384(384,24),
+        _96(96,12);
+        private final int numberOfWells;
+
+        private final int numberOfColumns;
+        private final int numberOfRows;
+
+        /**
+         * @param numberOfColumns
+         */
+        WellType(int numberOfWells,int numberOfColumns) {
+            this.numberOfWells = numberOfWells;
+            this.numberOfColumns = numberOfColumns;
+            this.numberOfRows =  numberOfWells/numberOfColumns;
+        }    
+      
+        
+    }
+    /**
+     * {@code IndexOrder} defines the well order of indexes
+     * into a plate.
+     * @author dkatzel
+     *
+     *
+     */
+    public enum IndexOrder{
+        /**
+         * Each row is filled first, once the row is full,
+         * then the next row starts to get populated.
+         * <p>
+         * Ex: A01, A02, A03...B01, B02, B03...
+         */
+        ROW_MAJOR{
+            @Override
+            int getIndex(Well well, WellType type){
+                return (well.getRow() -'A') * type.numberOfColumns +well.getColumn() -1;
+            }
+
+            @Override
+            Well getWell(int index, WellType type) {
+                if(index <0){
+                    throw new IllegalArgumentException("index can not be <0");
+                }
+                int modIndex = index%type.numberOfWells;
+                int column =  (modIndex % type.numberOfColumns)+1;
+                char row = (char)( 'A'+(modIndex %type.numberOfWells)/ type.numberOfColumns);
+                return new Well(row,column);
+            }
+            
+        },
+        /**
+         * Each column is filled first, once the column is full,
+         * then the next column starts to get populated.
+         * <p>
+         * Ex: A01, B01, C01...A02, B02, C02...
+         */
+        COLUMN_MAJOR{
+            int getIndex(Well well, WellType type){
+                 return ((well.getColumn()-1) * type.numberOfRows) + (well.getRow() -'A');
+            }
+            @Override
+            Well getWell(int index, WellType type) { 
+                if(index <0){
+                    throw new IllegalArgumentException("index can not be <0");
+                }
+                int modIndex = index%type.numberOfWells;
+                char row = (char)( 'A'+(modIndex %type.numberOfRows));
+                int column =  (modIndex / type.numberOfRows) +1;
+                
+                return new Well(row,column);
+            }
+        };
+        
+        abstract  int getIndex(Well well, WellType type);
+        
+        abstract Well getWell(int index, WellType type);
     }
     
 }
