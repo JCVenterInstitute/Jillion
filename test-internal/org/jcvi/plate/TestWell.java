@@ -38,31 +38,133 @@ public class TestWell {
 
     private Well expected;
     private Well actual;
+    private int expectedIndex;
+    private int actualIndex;
     
     @Parameters
     public static Collection<?> data(){
         List<Object[]> data = new ArrayList<Object[]>();
+        //a few selected wells of each type for fail fast
+        data.add(new Object[]{ 
+                Well.create("A01"),
+                Well.create("A01"),
+                0,
+                Well.create("A01").get384WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        data.add(new Object[]{ 
+                Well.create("B01"),
+                Well.create("B01"),
+                1,
+                Well.create("B01").get384WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        data.add(new Object[]{ 
+                Well.create("A02"),
+                Well.create("A02"),
+                16,
+                Well.create("A02").get384WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        
+        data.add(new Object[]{ 
+                Well.create("B03"),
+                Well.create("B03"),
+                33,
+                Well.create("B03").get384WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        
+        data.add(new Object[]{ 
+                Well.create("A01"),
+                Well.compute384Well(384, Well.IndexOrder.COLUMN_MAJOR),
+                0,
+                Well.create("A01").get384WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        data.add(new Object[]{ 
+                Well.create("B01"),
+                Well.compute384Well(384+1, Well.IndexOrder.COLUMN_MAJOR),
+                1,
+                Well.create("B01").get384WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        data.add(new Object[]{ 
+                Well.create("A02"),
+                Well.compute384Well(384+16, Well.IndexOrder.COLUMN_MAJOR),
+                16,
+                Well.create("A02").get384WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        
+        data.add(new Object[]{ 
+                Well.create("B03"),
+                Well.compute384Well(384+33, Well.IndexOrder.COLUMN_MAJOR),
+                33,
+                Well.create("B03").get384WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        
+        
+        
+        data.add(new Object[]{ 
+                Well.create("A01"),
+                Well.compute96Well(0, Well.IndexOrder.COLUMN_MAJOR),
+                0,
+                Well.create("A01").get96WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        data.add(new Object[]{ 
+                Well.create("B01"),
+                Well.compute96Well(1, Well.IndexOrder.COLUMN_MAJOR),
+                1,
+                Well.create("B01").get96WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        data.add(new Object[]{ 
+                Well.create("A02"),
+                Well.compute96Well(8, Well.IndexOrder.COLUMN_MAJOR),
+                8,
+                Well.create("A02").get96WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        
+        data.add(new Object[]{ 
+                Well.create("B03"),
+                Well.compute96Well(17, Well.IndexOrder.COLUMN_MAJOR),
+                17,
+                Well.create("B03").get96WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        
+        data.add(new Object[]{ 
+                Well.create("A01"),
+                Well.compute96Well(96, Well.IndexOrder.COLUMN_MAJOR),
+                0,
+                Well.create("A01").get96WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        data.add(new Object[]{ 
+                Well.create("B01"),
+                Well.create("B01"),
+                1,
+                Well.create("B01").get96WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        data.add(new Object[]{ 
+                Well.create("A02"),
+                Well.compute96Well(96+8, Well.IndexOrder.COLUMN_MAJOR),
+                8,
+                Well.create("A02").get96WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        
+        data.add(new Object[]{ 
+                Well.create("B03"),
+                Well.compute96Well(96+17, Well.IndexOrder.COLUMN_MAJOR),
+                17,
+                Well.create("B03").get96WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        
+        
         //384 wells
         for(int i=0; i< 384; i++){
             //zero padded
             final String zeroPaddedName = String.format("%s%02d", (char)('A'+(i/24)%16),i%24 +1 );
             final String unPaddedName = String.format("%s%d", (char)('A'+(i/24)%16),i%24 +1 );
             
-            final Well actualWell = Well.compute384Well(i);
-            final Well actualRollOverWell = Well.compute384Well(i+(384*5));
+            final Well actualWell = Well.compute384Well(i, Well.IndexOrder.ROW_MAJOR);
+            final Well actualRollOverWell = Well.compute384Well(i+(384*5),Well.IndexOrder.ROW_MAJOR);
             data.add(new Object[]{ 
                     Well.create(zeroPaddedName),
-                    actualWell});
+                    actualWell,
+                    i,
+                    actualWell.get384WellIndex()});
             data.add(new Object[]{ 
                     Well.create(unPaddedName),
-                    actualWell});
+                    actualWell,
+                    i,
+                    actualWell.get384WellIndex()});
             //roll over
             data.add(new Object[]{ 
                     Well.create(zeroPaddedName),
-                    actualRollOverWell});
+                    actualRollOverWell,
+                    i,
+                    actualWell.get384WellIndex()});
             data.add(new Object[]{ 
                     Well.create(unPaddedName),
-                    actualRollOverWell});
+                    actualRollOverWell,
+                    i,
+                    actualWell.get384WellIndex()});            
         }
         
         //96 well
@@ -71,23 +173,54 @@ public class TestWell {
             final String zeroPaddedName = String.format("%s%02d", (char)('A'+(i/12)%8),i%12 +1 );
             final String unPaddedName = String.format("%s%d", (char)('A'+(i/12)%8),i%12 +1 );
             
-            final Well actualWell = Well.compute96Well(i);
-            final Well actualRollOverWell = Well.compute96Well(i+(96*5));
+            final Well actualWell = Well.compute96Well(i,Well.IndexOrder.ROW_MAJOR);
+            final Well actualRollOverWell = Well.compute96Well(i+(96*5),Well.IndexOrder.ROW_MAJOR);
             data.add(new Object[]{ 
                     Well.create(zeroPaddedName),
-                    actualWell});
+                    actualWell,
+                    i,
+                    actualWell.get96WellIndex()});
             data.add(new Object[]{ 
                     Well.create(unPaddedName),
-                    actualWell});
+                    actualWell,
+                    i,
+                    actualWell.get96WellIndex()});
             //roll over
             data.add(new Object[]{ 
                     Well.create(zeroPaddedName),
-                    actualRollOverWell});
+                    actualRollOverWell,
+                    i,
+                    actualWell.get96WellIndex()});
             data.add(new Object[]{ 
                     Well.create(unPaddedName),
-                    actualRollOverWell});
+                    actualRollOverWell,
+                    i,
+                    actualWell.get96WellIndex()});
                     
         }
+        
+        //column order
+        for(int i=0; i<384; i++){
+            final String zeroPaddedName = String.format("%s%02d", 
+                    (char)('A'+i%16),i/16 +1);
+            final Well actualWell = Well.compute384Well(i, Well.IndexOrder.COLUMN_MAJOR);
+            data.add(new Object[]{ 
+                    Well.create(zeroPaddedName),
+                    actualWell,
+                    i,
+                    actualWell.get384WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        }
+        for(int i=0; i<96; i++){
+            final String zeroPaddedName = String.format("%s%02d", 
+                    (char)('A'+i%8),i/8 +1);
+            final Well actualWell = Well.compute96Well(i, Well.IndexOrder.COLUMN_MAJOR);
+            data.add(new Object[]{ 
+                    Well.create(zeroPaddedName),
+                    actualWell,
+                    i,
+                    actualWell.get96WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
+        }
+        
         return data;
     }
 
@@ -95,13 +228,18 @@ public class TestWell {
      * @param expected
      * @param actual
      */
-    public TestWell(Well expected, Well actual) {
+    public TestWell(Well expected, Well actual, int expectedIndex, int actualIndex) {
         this.expected = expected;
         this.actual = actual;
+        this.expectedIndex = expectedIndex;
+        this.actualIndex = actualIndex;
     }
     
     @Test
     public void computeWellMatchesParsedString(){
-        assertEquals(expected, actual);
+        
+        assertEquals("well",expected, actual);
+        assertEquals("index "+ expected,expectedIndex, actualIndex);
     }
+    
 }
