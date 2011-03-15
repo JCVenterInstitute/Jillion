@@ -62,7 +62,9 @@ public class PrivateDataCodec implements SectionCodec{
     @Override
     public long decode(DataInputStream in, long currentOffset,
             SCFHeader header, SCFChromatogramBuilder c) throws SectionDecoderException {
-        long bytesToSkip = header.getPrivateDataOffset() - currentOffset;
+        
+        long bytesToSkip =Math.max(0,  header.getPrivateDataOffset() - currentOffset);
+        
         try {
             IOUtil.blockingSkip(in,bytesToSkip);
             final int privateDataSize = header.getPrivateDataSize();

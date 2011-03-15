@@ -46,7 +46,7 @@ public class CommentSectionCodec implements SectionCodec {
     @Override
     public long decode(DataInputStream in,long currentOffset, SCFHeader header, SCFChromatogramBuilder c)
             throws SectionDecoderException {
-        long bytesToSkip = header.getCommentOffset() - currentOffset;
+        long bytesToSkip = Math.max(0, header.getCommentOffset() - currentOffset);
         try {
             IOUtil.blockingSkip(in,bytesToSkip);
             byte[] comments = new byte[header.getCommentSize()];
