@@ -46,7 +46,7 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
             SCFChromatogramBuilder c) throws SectionDecoderException {
         int numberOfSamples = header.getNumberOfSamples();
         PositionStrategy positionStrategy = PositionStrategyFactory.getPositionStrategy(header);
-        long bytesToSkip = header.getSampleOffset() - currentOffset;
+        long bytesToSkip = Math.max(0, header.getSampleOffset() - currentOffset);
 
         try{
             IOUtil.blockingSkip(in,bytesToSkip);

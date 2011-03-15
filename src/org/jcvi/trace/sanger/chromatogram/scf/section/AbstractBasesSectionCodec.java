@@ -37,7 +37,7 @@ public abstract class AbstractBasesSectionCodec implements SectionCodec{
     @Override
     public long decode(DataInputStream in, long currentOffset, SCFHeader header,
             SCFChromatogramBuilder c) throws SectionDecoderException {
-        long bytesToSkip = header.getBasesOffset() - currentOffset;
+        long bytesToSkip = Math.max(0, header.getBasesOffset() - currentOffset);
         int numberOfBases = header.getNumberOfBases();
         try{
             IOUtil.blockingSkip(in,bytesToSkip);

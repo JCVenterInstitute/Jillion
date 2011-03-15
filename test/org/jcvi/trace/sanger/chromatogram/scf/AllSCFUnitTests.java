@@ -43,7 +43,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
        TestActualSCFCodec.class,
        TestSCFChromatogramWithGaps.class,
-       TestSCFChromatogramFile.class
+       TestSCFChromatogramFile.class,
+       TestVersion2Parser.class
     }
     )
 public class AllSCFUnitTests {
