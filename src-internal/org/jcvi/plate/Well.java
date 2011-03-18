@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  *
  *
  */
-public final class Well {
+public final class Well implements Comparable<Well>{
     
     private static final Pattern wellPattern = Pattern.compile("([A-P])(\\d+)");
     /**
@@ -214,13 +214,20 @@ public final class Well {
 
         return sb.toString();
     }
+    
+    /**
+     * Wells are compared based on their String values returned by
+     * {@link #toZeroPaddedString()}.
+     */
+     @Override
+     public int compareTo(Well o) {
+         return this.toZeroPaddedString().compareTo(o.toZeroPaddedString());
+     }
     /**
      * {@code WellType} is a private enum for different kinds
      * of plates.  Currently only 384 and 96 well
      * plates are supported.
      * @author dkatzel
-     *
-     *
      */
     private static enum WellType{
         _384(384,24),
@@ -300,5 +307,6 @@ public final class Well {
         
         abstract Well getWell(int index, WellType type);
     }
+   
     
 }
