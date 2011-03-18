@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jcvi.Range;
+import org.jcvi.RangeCoordinateSystem;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.contig.AbstractContig;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
@@ -51,6 +52,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         private NucleotideEncodedGlyphs fullConsensus;
         private String contigId;
         private Logger logger = Logger.getRootLogger();
+        private RangeCoordinateSystem adjustedContigIdCoordinateSystem=null;
         
         private List<DefaultAcePlacedRead.Builder> aceReadBuilders = new ArrayList<DefaultAcePlacedRead.Builder>();
         private int contigLeft= -1;
@@ -67,6 +69,10 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         	 this.contigId = contigId;
         }
         
+        public Builder adjustContigIdToReflectCoordinates(RangeCoordinateSystem coordinateSystem){
+            adjustedContigIdCoordinateSystem = coordinateSystem;
+            return this;
+        }
         public Builder setContigId(String contigId){
             this.contigId = contigId;
             return this;
@@ -155,7 +161,18 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
                 aceReadBuilder.reference(validConsensus,newOffset);
                 placedReads.add(aceReadBuilder.build());                
             }
-            return new DefaultAceContig(contigId, validConsensus,placedReads);
+            final String newContigId;
+            if(adjustedContigIdCoordinateSystem !=null){
+                Range contigRange = Range.buildRange(contigLeft, contigRight)
+                                    .convertRange(adjustedContigIdCoordinateSystem);
+                //contig left and right are in 0 based use
+                newContigId = String.format("%s_%d_%d",contigId,
+                                contigRange.getLocalStart(),
+                                contigRange.getLocalEnd());
+            }else{
+                newContigId = contigId;
+            }
+            return new DefaultAceContig(newContigId, validConsensus,placedReads);
         }
         
         protected List<NucleotideGlyph> updateConsensus(List<NucleotideGlyph> validConsensusGlyphs){

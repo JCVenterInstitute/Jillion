@@ -59,10 +59,11 @@ public class TestConsedUtil_Split0x {
                 createMock(PhdInfo.class));
         AceContig contig =builder.build();
         CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
-    
-        assertSame(contig, ConsedUtil.split0xContig(contig, coverageMap).get(0));
+        
+        final List<AceContig> actualcontigs = ConsedUtil.split0xContig(contig, coverageMap);
+        assertEquals(1,actualcontigs.size());
+        assertSame(contig, actualcontigs.get(0));
     }
-    
     
     @Test
     public void one0xRegionShouldSplitContigIn2(){

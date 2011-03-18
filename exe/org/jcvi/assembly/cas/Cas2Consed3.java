@@ -37,6 +37,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.RangeCoordinateSystem;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceFileWriter;
 import org.jcvi.assembly.ace.AcePlacedRead;
@@ -153,9 +155,11 @@ public class Cas2Consed3 {
                                 int casReferenceId) {
                             Integer refKey = Integer.valueOf(casReferenceId);
                             if(!builders.containsKey(refKey)){
-                                builders.put(refKey, new UpdateConsensusAceContigBuilder(
+                                final UpdateConsensusAceContigBuilder builder = new UpdateConsensusAceContigBuilder(
                                         referenceIdLookup.getLookupIdFor(casReferenceId), 
-                                        this.orderedGappedReferences.get(casReferenceId)));
+                                        this.orderedGappedReferences.get(casReferenceId));
+                                builder.adjustContigIdToReflectCoordinates(CoordinateSystem.RESIDUE_BASED);
+                                builders.put(refKey, builder);
                             }
                             try {
                                 if(!makePhdBall){
