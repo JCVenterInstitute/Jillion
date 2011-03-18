@@ -33,6 +33,7 @@ import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -42,7 +43,50 @@ import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 
 public final class SFFUtil {
    private SFFUtil(){}
+   /**
+    * Mated Sff reads contain both mate data in the same
+    * read with a "linker" sequence in between. 
+    * {@code Linkers} contains the common linkers
+    * used by 454 machines.
+    * @author dkatzel
+    *
+    *
+    */
+   public static enum Linkers{
+       /**
+        * The Linker sequence used by 454 FLX machines.
+        */
+       FLX("GTTGGAACCGAAAGGGTTTGAATTCAAACCCTTTCGGTTCCAAC"),
+       /**
+        * The linker sequence used by Titanium machines.
+        */
+       TITANIUM("TCGTATAACTTCGTATAATGTATGCTATACGAAGTTATTACG")
+       ;
+       
+       private final NucleotideEncodedGlyphs forwardSequence;
+       private final NucleotideEncodedGlyphs reverseSequence;
+
+    /**
+     * @param sequence
+     */
+    private Linkers(String sequence) {
+        this.forwardSequence = new DefaultNucleotideEncodedGlyphs(sequence);
+        this.reverseSequence = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.reverseCompliment(
+                forwardSequence.decode()));
+    }
+
+    public NucleotideEncodedGlyphs getForwardSequence() {
+        return forwardSequence;
+    }
+
+    public NucleotideEncodedGlyphs getReverseSequence() {
+        return reverseSequence;
+    }
+
    
+       
+       
+   }
    /**
     * This is the magic number all SFF files
     * must start with to be recognized as sff 

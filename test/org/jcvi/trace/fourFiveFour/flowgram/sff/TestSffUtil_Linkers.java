@@ -16,26 +16,34 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Oct 7, 2008
- *
- * @author dkatzel
- */
+
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestSFFUtil_convertFlowgramValues.class,
-        TestSFFUtil_paddedBytes.class,
-        TestSFFUtil_computeValues.class,
-        TestSFFUtil_numberOfIntensities.class,
-        TestSffUtil_Linkers.class
-    }
-    )
-public class AllSFFUtilUnitTests {
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.junit.Test;
+import static org.junit.Assert.*;
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestSffUtil_Linkers {
 
+    @Test
+    public void flx(){
+        String seq = "GTTGGAACCGAAAGGGTTTGAATTCAAACCCTTTCGGTTCCAAC";
+        assertMatches(seq, SFFUtil.Linkers.FLX.getForwardSequence());
+        assertMatches(seq, SFFUtil.Linkers.FLX.getReverseSequence());
+    }
+    @Test
+    public void titanium(){
+        assertMatches("TCGTATAACTTCGTATAATGTATGCTATACGAAGTTATTACG", SFFUtil.Linkers.TITANIUM.getForwardSequence());
+        assertMatches("CGTAATAACTTCGTATAGCATACATTATACGAAGTTATACGA", SFFUtil.Linkers.TITANIUM.getReverseSequence());
+        
+    }
+    
+    private void assertMatches(String expected, NucleotideEncodedGlyphs actual){
+        assertEquals(expected, NucleotideGlyph.convertToString(actual.decode()));
+    }
 }
