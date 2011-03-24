@@ -31,7 +31,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
 
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
@@ -130,7 +129,7 @@ public class ZTRChromatogramParser implements SangerTraceCodec {
             throws TraceDecoderException, IOException {
 
         byte[] ztrMagic = readZTRMagicNumber(inputStream);
-        if(!Arrays.equals(ztrMagic, ZTRUtil.ZTR_MAGIC_NUMBER)){
+        if(!ZTRUtil.isMagicNumber(ztrMagic)){
 
            //does not match
             String message = "ZTR header magic number does not match expected " +new String(ztrMagic) ;

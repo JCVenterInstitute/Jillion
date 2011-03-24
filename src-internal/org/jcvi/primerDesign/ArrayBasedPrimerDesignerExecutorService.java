@@ -11,6 +11,7 @@ import org.jcvi.primerDesign.gridJob.PrimerDesignerArrayGridJob;
 
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
 
 import org.jcvi.io.IOUtil;
 
@@ -67,13 +68,14 @@ public class ArrayBasedPrimerDesignerExecutorService implements PrimerDesignerEx
         File arrayGridJobTemplate = getArrayGridJobTemplate();
 
         this.primerDesignJobs = new ArrayList<GridJobFuture>(arrayJobMap.size());
-        for ( ArrayJobKey key : arrayJobMap.keySet() ) {
+        for ( Entry<ArrayJobKey, List<PrimerDesignerArrayGridJob>> entry : arrayJobMap.entrySet() ) {
             // build job scratch dir for this key
+            final ArrayJobKey key = entry.getKey();
             File arrayJobRoot = new File(executorRoot,key.toString());
             arrayJobRoot.mkdirs();
 
             // for each job in the job list, write its config file
-            List<PrimerDesignerArrayGridJob> jobs = arrayJobMap.get(key);
+            List<PrimerDesignerArrayGridJob> jobs = entry.getValue();
             for ( int i = 1; i <= jobs.size(); i++ ) {
                 PrimerDesignerArrayGridJob job = jobs.get(i-1);
                 File jobConfigFile = new File(arrayJobRoot,ARRAY_JOB_CONFIG_FILENAME_ROOT+"."+i);

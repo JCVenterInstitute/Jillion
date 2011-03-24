@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class AlignmentProfileUtil {
 
-    public static List<NucleotideGlyph> ALLELE_ORDER = 
+    public static final List<NucleotideGlyph> ALLELE_ORDER = 
         Arrays.asList(NucleotideGlyph.Adenine,
                 NucleotideGlyph.Thymine,
                 NucleotideGlyph.Guanine,

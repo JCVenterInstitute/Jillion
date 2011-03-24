@@ -599,7 +599,9 @@ public enum Chunk {
 				}
 			}
 			out.write(PADDING_BYTE);
-			return out.toByteArray();
+			byte[] ret= out.toByteArray();
+			IOUtil.closeAndIgnoreErrors(out);
+			return ret;
 		}
         
         

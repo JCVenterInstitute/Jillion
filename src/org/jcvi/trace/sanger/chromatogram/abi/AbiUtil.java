@@ -18,13 +18,15 @@
  ******************************************************************************/
 package org.jcvi.trace.sanger.chromatogram.abi;
 
+import java.util.Arrays;
+
 public final class AbiUtil {
 
 	private AbiUtil(){}
 	/**
 	 * The magic number of an Ab1 file.
 	 */
-	public static final byte[] MAGIC_NUMBER = new byte[]{(char)'A',(char)'B',(char)'I',(char)'F'};
+	private static final byte[] MAGIC_NUMBER = new byte[]{(char)'A',(char)'B',(char)'I',(char)'F'};
     
 	public static final int HEADER_SIZE = 30;
 	public static String parseASCIIStringFrom(byte[] data){
@@ -33,5 +35,9 @@ public final class AbiUtil {
 	
 	public static String parsePascalStringFrom(byte[] data){
 		return new String(data,1, data.length-1);
+	}
+	
+	public static boolean isABIMagicNumber(byte[] magicNumber){
+	    return Arrays.equals(AbiUtil.MAGIC_NUMBER, magicNumber);
 	}
 }

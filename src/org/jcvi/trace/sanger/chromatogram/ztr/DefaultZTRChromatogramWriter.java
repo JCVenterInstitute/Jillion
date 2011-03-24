@@ -92,7 +92,7 @@ public class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
 		}
 		
 		try {
-			out.write(ZTRUtil.ZTR_MAGIC_NUMBER);
+			out.write(ZTRUtil.getMagicNumber());
 			out.write(ZTR_VERSION);
 			//this is the order that staden IO_Lib uses
 			//some chunks are required before

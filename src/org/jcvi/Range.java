@@ -1271,7 +1271,7 @@ public class Range implements Placed<Range>,Iterable<Long>
         return this;
     }
     
-    private class RangeIterator implements Iterator<Long>{
+    private static class RangeIterator implements Iterator<Long>{
         private final long from;
         private final long to;
         private long index;
