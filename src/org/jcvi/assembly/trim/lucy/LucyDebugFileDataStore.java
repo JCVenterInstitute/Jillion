@@ -44,14 +44,16 @@ public class LucyDebugFileDataStore implements LucyDebugTrimRecordDataStore{
     public LucyDebugFileDataStore ( File lucyDebugTrimFile) throws IOException{
         Map<String, LucyDebugTrimRecord> recordMap = new LinkedHashMap<String, LucyDebugTrimRecord>();
         BufferedReader reader = new BufferedReader(new FileReader(lucyDebugTrimFile));
-        
-        String line;
-        while((line = reader.readLine()) !=null){
-            LucyDebugTrimRecord record = createRecordFrom(line);
-            recordMap.put(record.getId(), record);
+        try{
+            String line;
+            while((line = reader.readLine()) !=null){
+                LucyDebugTrimRecord record = createRecordFrom(line);
+                recordMap.put(record.getId(), record);
+            }
+            datastore = new SimpleDataStore<LucyDebugTrimRecord>(recordMap);
+        }finally{
+            reader.close();
         }
-        datastore = new SimpleDataStore<LucyDebugTrimRecord>(recordMap);
-        
     }
     /**
      * @param line

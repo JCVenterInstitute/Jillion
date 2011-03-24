@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -66,8 +67,8 @@ public class CasProfileMatrix extends AbstractCasFileContigVisitor{
     /**
      * bases to use in the order required by the profile format.
      */
-    public static final NucleotideGlyph[] BASES_TO_USE = new NucleotideGlyph[]{
-            NucleotideGlyph.Amino,NucleotideGlyph.Thymine, NucleotideGlyph.Guanine,  NucleotideGlyph.Cytosine, NucleotideGlyph.Gap};
+    private static final List<NucleotideGlyph> BASES_TO_USE = Arrays.asList(
+            NucleotideGlyph.Amino,NucleotideGlyph.Thymine, NucleotideGlyph.Guanine,  NucleotideGlyph.Cytosine, NucleotideGlyph.Gap);
     
     
     private static final String DEFAULT_PREFIX = "cas2profile";
@@ -221,11 +222,11 @@ public class CasProfileMatrix extends AbstractCasFileContigVisitor{
                             maxNucleotide = maxNucleotides.get(random.nextInt(maxNucleotides.size()));
                         }
                         currentWriter.printf("%s\t%.02f\t%.02f\t%.02f\t%.02f\t%.02f\n",maxNucleotide,
-                                map.get(BASES_TO_USE[0]),
-                                map.get(BASES_TO_USE[1]),
-                                map.get(BASES_TO_USE[2]),
-                                map.get(BASES_TO_USE[3]),
-                                map.get(BASES_TO_USE[4]));
+                                map.get(BASES_TO_USE.get(0)),
+                                map.get(BASES_TO_USE.get(1)),
+                                map.get(BASES_TO_USE.get(2)),
+                                map.get(BASES_TO_USE.get(3)),
+                                map.get(BASES_TO_USE.get(4)));
                         currentOffset++;
                     }
                     while(currentOffset <reference.getLength()){

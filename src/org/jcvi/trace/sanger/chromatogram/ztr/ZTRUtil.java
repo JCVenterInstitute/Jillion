@@ -23,6 +23,8 @@
  */
 package org.jcvi.trace.sanger.chromatogram.ztr;
 
+import java.util.Arrays;
+
 /**
  * Utility methods for manipulating ZTR data.
  * @author dkatzel
@@ -40,9 +42,19 @@ public final class ZTRUtil {
      * ZTR magic number to let us know that 
      * this is a valid ztr file.
      */
-    public static final byte[] ZTR_MAGIC_NUMBER = 
+    private static final byte[] ZTR_MAGIC_NUMBER = 
         new byte[]{(byte)0xAE,(byte)0x5A,(byte)0x54,(byte)0x52,
                 (byte)0x0D,(byte)0x0A,(byte)0x1A,(byte)0x0A,};
+    
+    public static final byte[] getMagicNumber(){
+        byte[] ret = new byte[ZTR_MAGIC_NUMBER.length];
+        System.arraycopy(ZTR_MAGIC_NUMBER, 0, ret, 0, ret.length);
+        return ret;
+    }
+    
+    public static boolean isMagicNumber(byte[] magicNumber){
+        return Arrays.equals(ZTR_MAGIC_NUMBER, magicNumber);
+    }
     /**
      * Utility method to convert a 4 byte array into
      * a long value.

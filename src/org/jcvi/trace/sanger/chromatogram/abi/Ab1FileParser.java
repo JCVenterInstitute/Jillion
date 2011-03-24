@@ -690,9 +690,9 @@ public final class Ab1FileParser {
 
 	private static void verifyMagicNumber(InputStream in) throws TraceDecoderException {
 		try {
-			byte[] actual = IOUtil.readByteArray(in, 4);
-			if(!Arrays.equals(AbiUtil.MAGIC_NUMBER, actual)){
-				throw new TraceDecoderException("magic number does not match AB1 format "+ Arrays.toString(actual));
+			byte[] magicNumber = IOUtil.readByteArray(in, 4);
+			if(!AbiUtil.isABIMagicNumber(magicNumber)){
+				throw new TraceDecoderException("magic number does not match AB1 format "+ Arrays.toString(magicNumber));
 			}
 		} catch (IOException e) {
 			throw new TraceDecoderException("could not read magic number", e);

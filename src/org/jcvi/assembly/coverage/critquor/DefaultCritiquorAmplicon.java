@@ -125,10 +125,7 @@ public class DefaultCritiquorAmplicon implements CritiquorAmplicon {
     }
     @Override
     public String toString() {
-        return "DefaultCritiquorAmplicon [forwardPrimerSequence="
-                + forwardPrimerSequence + ", id=" + id + ", range=" + range
-                + ", region=" + region + ", reversePrimerSequence="
-                + reversePrimerSequence + "]";
+        return id + " "+range;
     }
     /**
     * {@inheritDoc}

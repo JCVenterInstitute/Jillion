@@ -24,7 +24,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ShortBuffer;
-import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.Builder;
@@ -200,9 +199,9 @@ public  final class ChromatogramUtil {
     public static void parseChromatogram(InputStream in, ChromatogramFileVisitor visitor) throws IOException, TraceDecoderException{
         MagicNumberInputStream mIn = new MagicNumberInputStream(in);
         byte[] magicNumber = mIn.peekMagicNumber();
-        if(Arrays.equals(AbiUtil.MAGIC_NUMBER, magicNumber)){
+        if(AbiUtil.isABIMagicNumber(magicNumber)){
             Ab1FileParser.parseAb1File(mIn, visitor);
-        }else if(Arrays.equals(ZTRUtil.ZTR_MAGIC_NUMBER, magicNumber)){
+        }else if(ZTRUtil.isMagicNumber(magicNumber)){
             ZTRChromatogramFileParser.parseZTRFile(mIn, visitor);
         }else{
             SCFChromatogramFileParser.parseSCFFile(mIn, visitor);
