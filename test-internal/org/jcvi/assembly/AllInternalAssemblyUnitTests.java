@@ -19,7 +19,6 @@
 
 package org.jcvi.assembly;
 
-import org.jcvi.assembly.ace.consed.closure.AllClosureConsedUnitTests;
 import org.jcvi.assembly.contig.AllInternalContigUnitTests;
 import org.jcvi.assembly.tasm.AllTasmUnitTests;
 import org.jcvi.assembly.trim.AllInternalTrimmingUnitTests;
@@ -35,7 +34,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        AllClosureConsedUnitTests.class,
         AllInternalContigUnitTests.class,
         AllTasmUnitTests.class,
         AllInternalTrimmingUnitTests.class
