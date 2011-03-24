@@ -1096,4 +1096,97 @@ public class TestRange{
         assertEquals(Arrays.asList(Range.buildRange(range.getStart(),2)),
                 range.compliment(right));
     }
+    
+    @Test
+    public void splitUnderMaxSplitLengthShouldReturnListContainingSameRange(){
+        assertEquals(Arrays.asList(range), range.split(range.getLength()+1));
+    }
+    @Test
+    public void splitInto2Ranges(){
+        List<Range> expected = Arrays.asList(
+                Range.buildRangeOfLength(range.getStart(), range.getLength()/2),
+                Range.buildRange(range.getLength()/2+1, range.getEnd())
+        );
+        
+        assertEquals(expected, range.split(range.getLength()/2));
+    }
+    @Test
+    public void splitInto4Ranges(){
+        //range is [1-10]
+        List<Range> expected = Arrays.asList(
+                Range.buildRange(1,3),
+                Range.buildRange(4,6),
+                Range.buildRange(7,9),
+                Range.buildRange(10,10)
+        );
+        
+        assertEquals(expected, range.split(3));
+    }
+    
+    @Test
+    public void mergeIntoClustersEmptyListShouldReturnEmptyList(){
+        assertTrue(
+                Range.mergeRangesIntoClusters(Collections.<Range>emptyList(), 100)
+                .isEmpty());
+    }
+    
+    @Test
+    public void mergeIntoClustersOneRangeShouldReturnSameRange(){
+        final List<Range> inputList = Arrays.asList(range);
+        assertEquals(inputList, Range.mergeRangesIntoClusters(inputList, 100));
+    }
+    @Test
+    public void mergeIntoClusters2RangesFartherAwayThanMaxClusterDistanceSame2Ranges(){
+        int maxClusterDistance=100;
+        Range farAwayRange = range.shiftRight(maxClusterDistance+1);
+        final List<Range> inputList = Arrays.asList(range,farAwayRange);
+        assertEquals(inputList, Range.mergeRangesIntoClusters(inputList, maxClusterDistance));
+    }
+    @Test
+    public void mergeIntoClusters2OverLappingRanges(){
+        int maxClusterDistance=100;
+        Range overlappingRange = range.shiftRight(5);
+        final List<Range> inputList = Arrays.asList(range,overlappingRange);
+        final List<Range> expectedList = Arrays.asList(Range.buildRange(range.getStart(), overlappingRange.getEnd()));
+        assertEquals(expectedList, Range.mergeRangesIntoClusters(inputList, maxClusterDistance));
+    }
+    @Test
+    public void mergeIntoClusters3OverLappingRanges(){
+        int maxClusterDistance=100;
+        Range overlappingRange = range.shiftRight(5);
+        Range overlappingRange2 = overlappingRange.shiftRight(10);
+        final List<Range> inputList = Arrays.asList(range,overlappingRange,overlappingRange2);
+        final List<Range> expectedList = Arrays.asList(Range.buildRange(range.getStart(), overlappingRange2.getEnd()));
+        assertEquals(expectedList, Range.mergeRangesIntoClusters(inputList, maxClusterDistance));
+    }
+    
+    @Test
+    public void mergeIntoClustersWhenRangeIsLongerThanClusterDistanceShouldSplit(){
+        int maxClusterDistance=100;
+        Range range = Range.buildRange(0,10);
+        //range [10,110] -> [10, 109][110-110]
+        Range hugeRange = Range.buildRange(10,110);
+       
+        final List<Range> inputList = Arrays.asList(range,hugeRange);
+        final List<Range> expectedList = Arrays.asList(
+                Range.buildRange(0,99),
+                Range.buildRange(100,110)
+            );
+        assertEquals(expectedList, Range.mergeRangesIntoClusters(inputList, maxClusterDistance));
+    }
+    
+    @Test
+    public void mergeIntoClustersReSplitHugeRangeToMakeMoreEfficentClusters(){
+        int maxClusterDistance=100;
+        Range range = Range.buildRange(0,10);
+        Range hugeRange = Range.buildRange(10,110);
+        Range range2 = Range.buildRange(10,20);
+        Range range3 = Range.buildRange(108,120);
+        final List<Range> inputList = Arrays.asList(range,range2,range3,hugeRange);
+        final List<Range> expectedList = Arrays.asList(
+                Range.buildRange(0,99),
+                Range.buildRange(100,120)
+            );
+        assertEquals(expectedList, Range.mergeRangesIntoClusters(inputList, maxClusterDistance));
+    }
 }

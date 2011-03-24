@@ -64,7 +64,7 @@ public class TestCas2Consed3 {
 	      assertEquals("# contigs", expectedDataStore.size(), dataStore.size());
 	      
 	      for(AceContig contig : dataStore){
-	    	  Contig<PlacedRead> expectedContig= expectedDataStore.get(contig.getId());
+	    	  Contig<PlacedRead> expectedContig= getExpectedContig(contig.getId());
 	    	  assertEquals("consensus", expectedContig.getConsensus().decode(),
 	    			  contig.getConsensus().decode());
 	    	  assertEquals("# reads", expectedContig.getNumberOfReads(), contig.getNumberOfReads());
@@ -75,5 +75,15 @@ public class TestCas2Consed3 {
 	    		  assertEquals("read offset", expectedRead.getStart(), actualRead.getStart());
 	    	  }
 	      }
+	    }
+	    /**
+	     * cas2Consed now appends coordinates to the end of the contig
+	     * if they don't get full reference length, stip that out 
+	     * to get the corresponding expected flap assembly which
+	     * doesn't do that.
+	     */
+	    private Contig<PlacedRead> getExpectedContig(String actualContigId) throws DataStoreException{
+	        String IdWithoutCoordinates = actualContigId.replaceAll("_.+", "");
+	        return expectedDataStore.get(IdWithoutCoordinates);
 	    }
 }
