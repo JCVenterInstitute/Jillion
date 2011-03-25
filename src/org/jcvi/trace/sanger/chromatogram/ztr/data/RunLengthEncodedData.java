@@ -206,11 +206,10 @@ public enum RunLengthEncodedData implements Data {
 	}
 
 	private int getNextRunLength(byte[] dataToEncode, int currentOffset) {
-		int k;
-		for (k = currentOffset; 
-		k < dataToEncode.length && dataToEncode[currentOffset] == dataToEncode[k] && k-currentOffset != MAX_RUN_LENGTH;
-		
-		k++);
+		int k = currentOffset;
+		while(k < dataToEncode.length && dataToEncode[currentOffset] == dataToEncode[k] && k-currentOffset != MAX_RUN_LENGTH){
+		    k++;
+		}
 		return k-currentOffset;
 	}
 }
