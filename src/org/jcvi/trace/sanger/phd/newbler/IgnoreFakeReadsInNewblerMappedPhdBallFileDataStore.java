@@ -35,41 +35,30 @@ import org.jcvi.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.trace.sanger.phd.PhdTag;
 import org.jcvi.util.IndexedFileRange;
 
-public class NewblerMappedPhdBallFileDataStore extends IndexedPhdFileDataStore{
+public class IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore extends IndexedPhdFileDataStore{
 
     private static final String FAKE_READ_TYPE = "type: fake\n";
     private static final String WHOLE_READ_TAG = "WR";
-    public NewblerMappedPhdBallFileDataStore(File phdBall,
+    public IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore(File phdBall,
             IndexedFileRange recordLocations) throws FileNotFoundException {
         super(phdBall, recordLocations);
     }
 
-   
-
-   
-  
-
     @Override
-    protected void visitPhd(String id, List<NucleotideGlyph> bases,
+    protected synchronized void visitPhd(String id, List<NucleotideGlyph> bases,
             List<PhredQuality> qualities, List<ShortGlyph> positions,
             Properties comments, List<PhdTag> tags) {
-        boolean isFakeRead=false;
         for(PhdTag tag: tags){
-            if(tag.getTagName().equals(WHOLE_READ_TAG) && tag.getTagValue().contains(FAKE_READ_TYPE)){
-                isFakeRead=true;
+            if(isFakeRead(tag)){
+                super.visitPhd(id, bases, qualities, positions, comments,tags);
                 break;
             }
         }
-        if(!isFakeRead){
-            super.visitPhd(id, bases, qualities, positions, comments,tags);
-        }
-    }
-
-    @Override
-    public synchronized void visitBeginSequence(String id) {
         
-        super.visitBeginSequence(id);
     }
 
+    private boolean isFakeRead(PhdTag tag) {
+        return tag.getTagName().equals(WHOLE_READ_TAG) && tag.getTagValue().contains(FAKE_READ_TYPE);
+    }
     
 }

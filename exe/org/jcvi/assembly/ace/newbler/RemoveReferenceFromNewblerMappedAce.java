@@ -55,7 +55,7 @@ import org.jcvi.trace.TraceDataStore;
 import org.jcvi.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.trace.sanger.phd.PhdParser;
-import org.jcvi.trace.sanger.phd.newbler.NewblerMappedPhdBallFileDataStore;
+import org.jcvi.trace.sanger.phd.newbler.IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore;
 import org.jcvi.util.DefaultIndexedFileRange;
 import org.jcvi.util.MultipleWrapper;
 
@@ -93,7 +93,7 @@ public class RemoveReferenceFromNewblerMappedAce {
                 aceOut = new File(DEFAULT_ACE_OUTPUT);
             }
             DefaultAceFileDataStore dataStore = new DefaultAceFileDataStore();
-            IndexedPhdFileDataStore phdDataStore = new NewblerMappedPhdBallFileDataStore(phdFile, new DefaultIndexedFileRange());
+            IndexedPhdFileDataStore phdDataStore = new IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore(phdFile, new DefaultIndexedFileRange());
             DefaultAceFileTagMap aceTagMap = new DefaultAceFileTagMap();
             AceFileParser.parseAceFile(aceFile, MultipleWrapper.createMultipleWrapper(AceFileVisitor.class,
                     dataStore,aceTagMap));
