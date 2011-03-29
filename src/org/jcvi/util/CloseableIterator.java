@@ -48,7 +48,7 @@ public interface CloseableIterator<T> extends Closeable, Iterator<T>{
 	 * elements left to iterate.
 	 */
 	@Override
-    public boolean hasNext();
+    boolean hasNext();
 	
 	/**
     * Close this iterator and clean up
@@ -61,12 +61,12 @@ public interface CloseableIterator<T> extends Closeable, Iterator<T>{
     * to iterate over.  
     */
     @Override
-    public void close() throws IOException;
+    void close() throws IOException;
     /**
      * @throws NoSuchElementException if
      * this iterator has been closed; or if there are 
      * no more elements to iterate over.
      */
     @Override
-    public T next();
+    T next();
 }
