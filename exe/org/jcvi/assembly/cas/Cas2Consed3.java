@@ -38,7 +38,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.RangeCoordinateSystem;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceFileWriter;
 import org.jcvi.assembly.ace.AcePlacedRead;
@@ -196,7 +195,7 @@ public class Cas2Consed3 {
              for(DefaultAceContig.Builder builder : builders.values()){
                  AceContig contig =builder.build();
                  CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
-                 for(AceContig splitContig : ConsedUtil.split0xContig(contig, coverageMap)){
+                 for(AceContig splitContig : ConsedUtil.split0xContig(contig, coverageMap, false)){
                      numberOfContigs++;
                      numberOfReads+= splitContig.getNumberOfReads();
                      consensusOut.print(
