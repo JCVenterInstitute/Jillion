@@ -66,6 +66,9 @@ public class ConsedUtil {
     private static final Pattern CONSED_ACE_PATTERN = Pattern.compile("((.+?)\\.)?ace(\\.(\\d+))?$");
     
     private static final Pattern CONSED_ACE_VERSION_PATTERN = Pattern.compile("((.+?)\\.)?ace\\.(\\d+)$");
+    
+    private static final Pattern ACE_CONTIG_ID_PATTERN = Pattern.compile("(\\S+)_(\\d+)_\\d+");
+    
     /**
      * Convert a string of basecalls with '*' to 
      * represent gaps (which is what consed uses) with '-' instead. 
@@ -122,11 +125,13 @@ public class ConsedUtil {
      * areas. This method removes the parts of the contig which only have consensus. 
      * @param contig an {@link AceContig} that may have 0x regions.  Can not be null.
      * @param coverageMap the coverage map that corresponds to the given contig.
+     * @param adjustIdCoordinates this contig id already has coordinates appended to the end
+     * of the id, adjust these coordinates instead of appending new ones...
      * @return a list of (possibly new) AceContigs of the broken given contig.  
      * If there are no 0x regions in the given contig, then a list containing
      * only the reference of the given contig is returned.
      */
-    public static List<AceContig> split0xContig(AceContig contig, CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap){
+    public static List<AceContig> split0xContig(AceContig contig, CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap, boolean adjustIdCoordinates){
         List<Range> coveredRegions = new ArrayList<Range>();
         for(CoverageRegion region : coverageMap){
             if(region.getCoverage()>0){
@@ -143,6 +148,14 @@ public class ConsedUtil {
         }
         List<AceContig> newContigs = new ArrayList<AceContig>(contigRanges.size());
         String originalContigId= contig.getId();
+        int oldStart=1;
+        if(adjustIdCoordinates){
+            Matcher matcher = ACE_CONTIG_ID_PATTERN.matcher(originalContigId);
+            if(matcher.matches()){
+                originalContigId = matcher.group(1);
+                oldStart=Integer.parseInt(matcher.group(2));
+            }
+        }
         NucleotideEncodedGlyphs consensus = contig.getConsensus();
         for(Range contigRange : contigRanges){
             Set<String> contigReads = new HashSet<String>();
@@ -155,8 +168,8 @@ public class ConsedUtil {
             String contigConsensus =NucleotideGlyph.convertToString(consensus.decode(contigRange));
             //id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
             String contigId = String.format("%s_%d_%d",originalContigId, 
-                    consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getStart())+1,
-                    consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getEnd())+1);
+                    oldStart + (consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getStart())),
+                    oldStart + (consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getEnd())));
             DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contigId, contigConsensus);
             
             for(String readId : contigReads){
