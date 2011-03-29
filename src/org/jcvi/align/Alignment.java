@@ -79,6 +79,6 @@ public interface Alignment
      * 
      * @return The score as a <code>double</code>.
      */
-    public abstract double getScore();
+    double getScore();
 
 }
