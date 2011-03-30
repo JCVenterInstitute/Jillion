@@ -195,7 +195,7 @@ public class Cas2Consed3 {
              for(DefaultAceContig.Builder builder : builders.values()){
                  AceContig contig =builder.build();
                  CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
-                 for(AceContig splitContig : ConsedUtil.split0xContig(contig, coverageMap, false)){
+                 for(AceContig splitContig : ConsedUtil.split0xContig(contig, coverageMap, true)){
                      numberOfContigs++;
                      numberOfReads+= splitContig.getNumberOfReads();
                      consensusOut.print(
