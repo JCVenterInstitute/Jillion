@@ -646,7 +646,7 @@ public static Map<List<Slice>, List<ConsensusResult>> generateMostCommonBasecall
     		for(SliceElement e : s){
     			histogram.put(e.getBase(),histogram.get(e.getBase()) +1);
     		}
-    		SortedMap<NucleotideGlyph, Integer> sortedMap = new TreeMap<NucleotideGlyph, Integer>(InverseComparator.invert(new  MapValueComparator<NucleotideGlyph, Integer>(histogram)));
+    		SortedMap<NucleotideGlyph, Integer> sortedMap = new TreeMap<NucleotideGlyph, Integer>(InverseComparator.invert( MapValueComparator.create(histogram)));
     		sortedMap.putAll(histogram);
     		NucleotideGlyph mostCommonBase =sortedMap.keySet().iterator().next();
     		int consensusQuality=0;

@@ -35,11 +35,13 @@ public class MapValueComparator<K,V extends Comparable> implements Comparator<K>
     private final Map<K, V> map;
     
     
-    
+    public static <K,V extends Comparable> MapValueComparator<K,V> create(Map<K, V> map){
+        return new MapValueComparator<K, V>(map);
+    }
     /**
      * @param map
      */
-    public MapValueComparator(Map<K, V> map) {
+    private MapValueComparator(Map<K, V> map) {
         this.map = map;
     }
 
@@ -51,7 +53,12 @@ public class MapValueComparator<K,V extends Comparable> implements Comparator<K>
     @SuppressWarnings("unchecked")
     @Override
     public int compare(K o1, K o2) {
-        
+        if(!map.containsKey(o1)){
+            if(!map.containsKey(o2)){
+                return 0;
+            }
+             return -1;
+        }
         return map.get(o1).compareTo(map.get(o2));
     }
 
