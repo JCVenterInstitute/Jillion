@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.Range;
+import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -115,45 +116,57 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     }
 
     @Override
-    public synchronized void visitQualityLine(int clearLeft,
-            int clearRight, int alignLeft, int alignRight) {
-        throwExceptionIfInitialized();    
-        if(clearLeft == -1 && clearRight ==-1){
+    public synchronized void visitQualityLine(int qualLeft,
+            int qualRight, int alignLeft, int alignRight) {
+        throwExceptionIfInitialized();  
+        if(qualLeft == -1 && qualRight ==-1){
             skipCurrentRead = true;
+            return;
+        }
+        if((qualRight-qualLeft) <0){
+            //invalid converted ace file? 
+            skipCurrentRead = true;
+            System.err.printf("dropping read %s because it has a negative valid range %d%n", currentReadId,
+                    (qualRight-qualLeft));
+            return;
+        }    
+        //dkatzel 4/2011 - There have been cases when qual coords and align coords
+        //do not match; usually qual is a sub set of align
+        //but occasionally, qual goes beyond the align coords.
+        //I guess this happens in a referenced based alignment for
+        //reads at the edges when the reads have good quality 
+        //beyond the reference.
+        //Therefore intersect the qual and align coords
+        //to find the region we are interested in
+        Range qualityRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
+        Range alignmentRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
+        Range validRange = qualityRange.intersection(alignmentRange)
+                    .convertRange(CoordinateSystem.RESIDUE_BASED);
+        
+        AssembledFrom assembledFrom =currentAssembledFromMap.get(currentReadId);
+        currentOffset = computeReadOffset(assembledFrom, validRange.getLocalStart());            
+        int clearLeft;
+        int clearRight;
+        if(assembledFrom.getSequenceDirection() == SequenceDirection.REVERSE){
+            clearLeft = reverseCompliment(currentReadGappedFullLength, validRange.getLocalStart());
+            clearRight = reverseCompliment(currentReadGappedFullLength, validRange.getLocalEnd());
+            int temp = clearLeft;
+            clearLeft = clearRight;
+            clearRight = temp;
         }
         else{
-            int end5 = alignLeft;
-            int end3 = alignRight; 
-            AssembledFrom assembledFrom =currentAssembledFromMap.get(currentReadId);
-            currentOffset = computeReadOffset(assembledFrom, end5);
-            if((end3-end5) <0){
-                //invalid converted ace file? 
-                //reset end3 to be absolute value of length?
-                skipCurrentRead = true;
-                System.out.printf("dropping read %s because it has a negative valid range %d%n", currentReadId, (end3-end5));
-            }else{
-                //this will set currentValidBasecalls to only be the valid range
-                currentValidBases = currentBasecalls.substring(end5-1, end3); 
-                int correctedClearLeft;
-                int correctedClearRight;
-                if(assembledFrom.getSequenceDirection() == SequenceDirection.REVERSE){
-                    correctedClearLeft = reverseCompliment(currentReadGappedFullLength, clearLeft);
-                    correctedClearRight = reverseCompliment(currentReadGappedFullLength, clearRight);
-                    int temp = correctedClearLeft;
-                    correctedClearLeft = correctedClearRight;
-                    correctedClearRight = temp;
-                }
-                else{
-                    correctedClearLeft = clearLeft;
-                    correctedClearRight = clearRight;
-                }
-                final int numberOfGaps = getNumberOfGapsIn(currentValidBases);
-                final int numberOfFullLengthGaps = getNumberOfGapsIn(currentBasecalls.toString());
-                currentReadUngappedFullLength = currentReadGappedFullLength - numberOfFullLengthGaps;
-                correctedClearRight -= numberOfGaps;
-                currentClearRange = Range.buildRange(Range.CoordinateSystem.RESIDUE_BASED,correctedClearLeft, correctedClearRight);
-            }
+            clearLeft = (int)validRange.getLocalStart();
+            clearRight = (int)validRange.getLocalEnd();
         }
+      //this will set currentValidBasecalls to only be the valid range
+        currentValidBases = currentBasecalls.substring(
+                        (int)validRange.getStart(), 
+                        (int)validRange.getEnd()+1); 
+        final int numberOfGaps = getNumberOfGapsIn(currentValidBases);
+        final int numberOfFullLengthGaps = getNumberOfGapsIn(currentBasecalls.toString());
+        currentReadUngappedFullLength = currentReadGappedFullLength - numberOfFullLengthGaps;
+        clearRight -= numberOfGaps;               
+        currentClearRange = Range.buildRange(Range.CoordinateSystem.RESIDUE_BASED,clearLeft, clearRight);
     }
     private int getNumberOfGapsIn(String validBases) {
         int count=0;
@@ -166,12 +179,12 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     }
 
 
-    private int reverseCompliment(int fullLength, int position) {
-        return fullLength - position+1;
+    private int reverseCompliment(int fullLength, long position) {
+        return fullLength - (int)position+1;
     }
     
-    private int computeReadOffset(AssembledFrom assembledFrom, int end5) {
-        return assembledFrom.getStartOffset() + end5 -2;
+    private int computeReadOffset(AssembledFrom assembledFrom, long startPosition) {
+        return assembledFrom.getStartOffset() + (int)startPosition -2;
     }
 
     @Override
