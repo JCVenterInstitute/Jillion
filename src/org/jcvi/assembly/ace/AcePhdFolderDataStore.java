@@ -170,7 +170,7 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
     }
 
     @Override
-    public void visitQualityLine(int clearLeft, int clearRight, int alignLeft,
+    public void visitQualityLine(int qualLeft, int qualRight, int alignLeft,
             int alignRight) {  
         throwExceptionIfAlreadyInitialized();
     }

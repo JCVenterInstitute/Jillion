@@ -82,12 +82,12 @@ public interface AceFileVisitor extends TextFileVisitor{
     void visitReadHeader(String readId, int gappedLength);
     /**
      * visit quality line of currently visited read.
-     * @param clearLeft left position(1-based)  of clear range.
-     * @param clearRight right position(1-based) of clear range.
+     * @param qualLeft left position(1-based)  of clear range.
+     * @param qualRight right position(1-based) of clear range.
      * @param alignLeft left alignment(1-based) position. 
      * @param alignRight right alignment(1-based) position.
      */
-    void visitQualityLine(int clearLeft, int clearRight, int alignLeft, int alignRight);
+    void visitQualityLine(int qualLeft, int qualRight, int alignLeft, int alignRight);
     /**
      * Visit Trace Description line of currently visited read.
      * @param traceName name of trace file corresponding
