@@ -301,7 +301,46 @@ public final class Well implements Comparable<Well>{
                 
                 return new Well(row,column);
             }
-        };
+        },
+        /**
+         * Well order for an Applied Biosystems
+         * 3130 machine using 16 capillaries at a time.
+         * Only {@link WellType#_96} is supported.
+         * <p>
+         * Ex: A01, A02, B01, B02,...H02, A03, A04, B03, B04....
+         */
+        ABI_3130_16_CAPILLARIES{
+            int getIndex(Well well, WellType type){
+                if(type != WellType._96){
+                    throw new IllegalArgumentException("only 96 well plates supported");
+                }
+                int rowIndex =well.getRow() -'A';
+                int colIndex =well.getColumn()-1;
+                int capilaryIndex =colIndex /2;
+                return capilaryIndex*16 + rowIndex*2 + colIndex%2;
+                
+           }
+           @Override
+           Well getWell(int index, WellType type) { 
+               if(index <0){
+                   throw new IllegalArgumentException("index can not be <0");
+               }
+               if(type != WellType._96){
+                   throw new IllegalArgumentException("only 96 well plates supported");
+               }
+               int modIndex = index%type.numberOfWells;
+               int capilaryIndex = modIndex/16;
+               int i = modIndex % 16;
+               
+               char row = (char)( 'A'+(i /2));
+              
+               int column =   (modIndex%2) +capilaryIndex*2+1;
+               
+               return new Well(row,column);
+           }
+        }
+        
+        ;
         
         abstract  int getIndex(Well well, WellType type);
         

@@ -221,6 +221,28 @@ public class TestWell {
                     actualWell.get96WellIndex(Well.IndexOrder.COLUMN_MAJOR)});
         }
         
+        
+        //3730 16 cap 96 well
+        int index=-1;
+        for(int capIndex=0; capIndex<6; capIndex++){
+            for(int row=0; row<8; row++){
+                for(int col=0; col<2; col++){
+                    index++;
+                    
+                    final String zeroPaddedName = String.format("%s%02d", 
+                            (char)('A'+row),2*capIndex + col+1);
+                    
+                    final Well actualWell = Well.compute96Well(index, Well.IndexOrder.ABI_3130_16_CAPILLARIES);
+                    data.add(new Object[]{ 
+                            Well.create(zeroPaddedName),
+                            actualWell,
+                            index,
+                            actualWell.get96WellIndex(Well.IndexOrder.ABI_3130_16_CAPILLARIES)});
+                    System.out.println(zeroPaddedName);
+                }
+            }
+        }
+        
         return data;
     }
 
