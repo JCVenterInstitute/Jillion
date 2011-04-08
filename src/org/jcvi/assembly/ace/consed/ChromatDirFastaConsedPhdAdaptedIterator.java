@@ -54,6 +54,15 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
     
     
     @Override
+    protected Properties createAdditionalCommentsFor(String id,
+            Properties preExistingComments) {
+        Properties props = new Properties(preExistingComments);
+        props.put("CHROMAT_FILE", id);
+        return props;
+    }
+
+
+    @Override
     protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord nextFasta,
             Properties requiredComments) {
         final String id = nextFasta.getId();

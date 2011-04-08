@@ -119,19 +119,21 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
     @Override
     public synchronized void visitEndOfFile() {   
         super.visitEndOfFile();
-        long maxNumberOfReferences = MathUtil.maxOf(gapsByReferenceId.keySet());
-        for(long i=0; i<=maxNumberOfReferences; i++){
-            
-            String contigName = contigNameLookup.getLookupIdFor(i);
-            try {
-
-                String gappedBasecalls = buildGappedReferenceAsString(contigName, gapsByReferenceId.get(i));
-                gappedReferences.put(i, new DefaultNucleotideEncodedGlyphs(gappedBasecalls));
+        if(!gapsByReferenceId.isEmpty()){
+            long maxNumberOfReferences = MathUtil.maxOf(gapsByReferenceId.keySet());
+            for(long i=0; i<=maxNumberOfReferences; i++){
                 
-            } catch (DataStoreException e) {
-                throw new IllegalStateException("could not generate gapped reference for reference " + i,e);
-            }
-        }        
+                String contigName = contigNameLookup.getLookupIdFor(i);
+                try {
+    
+                    String gappedBasecalls = buildGappedReferenceAsString(contigName, gapsByReferenceId.get(i));
+                    gappedReferences.put(i, new DefaultNucleotideEncodedGlyphs(gappedBasecalls));
+                    
+                } catch (DataStoreException e) {
+                    throw new IllegalStateException("could not generate gapped reference for reference " + i,e);
+                }
+            }        
+        }
         gapsByReferenceId.clear();
     }
     

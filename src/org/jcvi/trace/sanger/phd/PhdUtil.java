@@ -50,7 +50,23 @@ public class PhdUtil {
      */
     public static Properties createPhdTimeStampCommentFor(DateTime phdDate){
         Properties comments = new Properties();
-        comments.put("TIME", PHD_DATE_FORMAT.print(phdDate));
+        comments.put("TIME", PHD_DATE_FORMAT.print(phdDate));        
+        return comments;
+    }
+    /**
+     * Phd records must include a date time stamp as a comment,
+     * this method will create the correctly formatted Phd {@code TIME}
+     * comment.  
+     * @param phdDate the {@link DateTime} to make into a Phd TIME
+     * comment.
+     * @param filename the name of the chromatogram file to link back to.
+     * @return a Properties object (not null) that contains
+     * a single property, TIME.
+     */
+    public static Properties createPhdTimeStampAndChromatFileCommentsFor(DateTime phdDate, String filename){
+        Properties comments = new Properties();
+        comments.put("TIME", PHD_DATE_FORMAT.print(phdDate));    
+        comments.put("CHROMAT_FILE", filename);  
         return comments;
     }
 }

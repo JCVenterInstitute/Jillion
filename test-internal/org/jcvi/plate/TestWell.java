@@ -238,7 +238,6 @@ public class TestWell {
                             actualWell,
                             index,
                             actualWell.get96WellIndex(Well.IndexOrder.ABI_3130_16_CAPILLARIES)});
-                    System.out.println(zeroPaddedName);
                 }
             }
         }
