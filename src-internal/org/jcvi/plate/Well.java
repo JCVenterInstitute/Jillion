@@ -303,6 +303,28 @@ public final class Well implements Comparable<Well>{
             }
         },
         /**
+         * Each column is filled first, once the column is full,
+         * then the next column starts to get populated.
+         * <p>
+         * Ex: A01, C01, E01...B01, D01,...A02, C02, E02...
+         */
+        HAMILTON_OPTIMIZED_COLUMN_MAJOR{
+            int getIndex(Well well, WellType type){
+                 return ((well.getColumn()-1) * type.numberOfRows) + (well.getRow() -'A');
+            }
+            @Override
+            Well getWell(int index, WellType type) { 
+                if(index <0){
+                    throw new IllegalArgumentException("index can not be <0");
+                }
+                int modIndex = index%type.numberOfWells;
+                char row = (char)( 'A'+((modIndex %type.numberOfRows)/2 + modIndex%2));
+                int column =  (modIndex / type.numberOfRows) +1;
+                
+                return new Well(row,column);
+            }
+        },
+        /**
          * Well order for an Applied Biosystems
          * 3130 machine using 16 capillaries at a time.
          * Only {@link WellType#_96} is supported.

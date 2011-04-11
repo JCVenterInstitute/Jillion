@@ -242,6 +242,36 @@ public class TestWell {
             }
         }
         
+        
+        //hamilton optimized
+        index =-1;
+       /* for(int row=0; row<24; row++){
+            for(int col=0; col<16; col+=2){
+                index++;
+                final String zeroPaddedName = String.format("%s%d", 
+                        (char)('A'+col), row+1);
+                System.out.println(zeroPaddedName + "  " + index + "  " +Well.compute384Well(index, Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR));
+                final Well actualWell = Well.compute384Well(index, Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR);
+                data.add(new Object[]{ 
+                        Well.create(zeroPaddedName),
+                        actualWell,
+                        index,
+                        actualWell.get384WellIndex(Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR)});
+            }
+            for(int col=1; col<16; col+=2){
+                index++;
+                final String zeroPaddedName = String.format("%s%d", 
+                        (char)('A'+col), row+1);
+                System.out.println(zeroPaddedName);
+                final Well actualWell = Well.compute384Well(index, Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR);
+                data.add(new Object[]{ 
+                        Well.create(zeroPaddedName),
+                        actualWell,
+                        index,
+                        actualWell.get384WellIndex(Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR)});
+            }
+        }
+        */
         return data;
     }
 

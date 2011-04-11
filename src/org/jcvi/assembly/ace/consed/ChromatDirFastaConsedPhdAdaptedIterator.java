@@ -20,6 +20,7 @@
 package org.jcvi.assembly.ace.consed;
 
 import java.io.File;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
@@ -56,7 +57,13 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
     @Override
     protected Properties createAdditionalCommentsFor(String id,
             Properties preExistingComments) {
-        Properties props = new Properties(preExistingComments);
+        Properties props = new Properties();
+        //properties constructors only set defaults
+        //not actually populate hash table...
+        //manually put everything
+        for(Entry<Object, Object> entry : preExistingComments.entrySet()){
+            props.put(entry.getKey(), entry.getValue());
+        }
         props.put("CHROMAT_FILE", id);
         return props;
     }
