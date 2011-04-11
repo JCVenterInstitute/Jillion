@@ -33,7 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestSFFUtil_paddedBytes.class,
         TestSFFUtil_computeValues.class,
         TestSFFUtil_numberOfIntensities.class,
-        TestSffUtil_Linkers.class
+        TestSffUtil_Linkers.class,
+        TestSffNameUtil.class
     }
     )
 public class AllSFFUtilUnitTests {
