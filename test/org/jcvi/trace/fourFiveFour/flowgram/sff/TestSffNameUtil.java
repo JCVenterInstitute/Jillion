@@ -36,6 +36,7 @@ public class TestSffNameUtil {
         assertFalse(SffNameUtil.is454Read("IVAAA01T48HA2F"));
         //now check mated reads
         assertTrue("clc split mate",SffNameUtil.is454Read("F3P0QKL01AMPVE_1-93"));
+        assertTrue("newbler split mate",SffNameUtil.is454Read("ERESL0I01CLM9Q_left"));
     }
     
     @Test
@@ -43,6 +44,9 @@ public class TestSffNameUtil {
         assertEquals("C3U5GWL01CBXT2", SffNameUtil.parseUniversalAccessionNumberFrom("C3U5GWL01CBXT2"));
         assertEquals("clc split mate",
                 "F3P0QKL01AMPVE", SffNameUtil.parseUniversalAccessionNumberFrom("F3P0QKL01AMPVE_1-93"));
+        
+        assertEquals("newbler split mate",
+                "ERESL0I01CLM9Q", SffNameUtil.parseUniversalAccessionNumberFrom("ERESL0I01CLM9Q_left"));
     }
     
     @Test
