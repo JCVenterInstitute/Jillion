@@ -19,8 +19,6 @@
 
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
-import java.util.Date;
-
 import org.joda.time.DateTime;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -36,6 +34,15 @@ public class TestSffNameUtil {
         assertTrue(SffNameUtil.is454Read( "C3U5GWL01CBXT2"));
         assertFalse(SffNameUtil.is454Read("IVAAA01T48C03PB1234F"));
         assertFalse(SffNameUtil.is454Read("IVAAA01T48HA2F"));
+        //now check mated reads
+        assertTrue("clc split mate",SffNameUtil.is454Read("F3P0QKL01AMPVE_1-93"));
+    }
+    
+    @Test
+    public void getUniveralAccessionNumberFrom(){
+        assertEquals("C3U5GWL01CBXT2", SffNameUtil.parseUniversalAccessionNumberFrom("C3U5GWL01CBXT2"));
+        assertEquals("clc split mate",
+                "F3P0QKL01AMPVE", SffNameUtil.parseUniversalAccessionNumberFrom("F3P0QKL01AMPVE_1-93"));
     }
     
     @Test
@@ -44,22 +51,19 @@ public class TestSffNameUtil {
         assertEquals(expectedDate.toDate(), SffNameUtil.getDateOfRun("C3U5GWL01CBXT2"));
     }
     
-    @Test
-    public void encodeDate(){
-        DateTime expectedDate = new DateTime(2004, 9, 22, 16, 59, 10, 0);
-        assertEquals("C3U5GW", SffNameUtil.encodeDateOfRun(expectedDate.toDate()));
-    }
+   
     
     @Test
     public void parseLocation(){
-        assertEquals(new SffNameUtil.Location(838,3960), SffNameUtil.getLocationOf("C3U5GWL01CBXT2"));
+        assertEquals(new SffNameUtil.Location(838,3960), SffNameUtil.parseLocationOf("C3U5GWL01CBXT2"));
     }
     
     @Test
     public void generateAccessionName(){
         //example from 454 Data Analysis Software Manual page 533
         String rigRunName = "R_2006_10_10_20_18_48_build04_adminrig_100x7075SEQ082806BHTF960397NewBeadDep2Region4EXP106";
-        Date expectedDate = new DateTime(2006, 10, 10, 20,18,48, 0).toDate();
-        assertEquals("EBO6PME01EE3WX", SffNameUtil.generateAccessionNumberFor(expectedDate, rigRunName, 1, new SffNameUtil.Location(1695,767)));
+        assertEquals("EBO6PME01EE3WX", SffNameUtil.generateAccessionNumberFor(rigRunName, 1, new SffNameUtil.Location(1695,767)));
     }
+    
+    
 }
