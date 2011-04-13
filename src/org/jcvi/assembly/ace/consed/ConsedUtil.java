@@ -133,11 +133,13 @@ public class ConsedUtil {
      */
     public static List<AceContig> split0xContig(AceContig contig, CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap, boolean adjustIdCoordinates){
         List<Range> coveredRegions = new ArrayList<Range>();
+        NucleotideEncodedGlyphs consensus = contig.getConsensus();
         for(CoverageRegion region : coverageMap){
             if(region.getCoverage()>0){
+                
                 final Range contigRange = Range.buildRange(region.getStart(), region.getEnd())
                                             .convertRange(CoordinateSystem.RESIDUE_BASED);
-                coveredRegions.add(contigRange);
+                coveredRegions.add(consensus.convertGappedValidRangeToUngappedValidRange(contigRange));
             }
         }
         
@@ -156,7 +158,6 @@ public class ConsedUtil {
                 oldStart=Integer.parseInt(matcher.group(2));
             }
         }
-        NucleotideEncodedGlyphs consensus = contig.getConsensus();
         for(Range contigRange : contigRanges){
             Set<String> contigReads = new HashSet<String>();
             
