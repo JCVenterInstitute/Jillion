@@ -163,12 +163,13 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             }
             final String newContigId;
             if(adjustedContigIdCoordinateSystem !=null){
-                Range contigRange = Range.buildRange(contigLeft, contigRight)
+                Range gappedContigRange = Range.buildRange(contigLeft, contigRight);
+                Range ungappedContigRange = validConsensus.convertGappedValidRangeToUngappedValidRange(gappedContigRange)
                                     .convertRange(adjustedContigIdCoordinateSystem);
                 //contig left and right are in 0 based use
                 newContigId = String.format("%s_%d_%d",contigId,
-                                contigRange.getLocalStart(),
-                                contigRange.getLocalEnd());
+                        ungappedContigRange.getLocalStart(),
+                        ungappedContigRange.getLocalEnd());
             }else{
                 newContigId = contigId;
             }
