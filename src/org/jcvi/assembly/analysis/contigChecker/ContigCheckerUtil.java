@@ -55,7 +55,7 @@ public class ContigCheckerUtil {
         
         SequenceCoverageWriter<P> sequenceCoverageWriter = new SequenceCoverageWriter<P>(new File(currentContigPrefix + ".sequenceCoverage.png"),"ungapped Sequence Coverage of " +id);
         
-        sequenceCoverageWriter.write(contig, struct.getSequenceCoverageMap());
+        sequenceCoverageWriter.write(contig);
         sequenceCoverageWriter.close();
         
         PngCoverageWriter<Placed> validRangeCoverageWriter = new PngCoverageWriter<Placed>(new File(currentContigPrefix + ".validRangeCoverage.png"), "Valid Range Coverage of "+id);

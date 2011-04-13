@@ -24,9 +24,14 @@
 package org.jcvi.assembly;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.Range;
+import org.jcvi.assembly.coverage.CoverageMap;
+import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.assembly.coverage.DefaultCoverageRegion;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
@@ -198,5 +203,41 @@ public final class AssemblyUtil {
                 AssemblyUtil.getLeftFlankingNonGapIndex(encodedGlyphs, (int)gappedFeatureValidRange.getEnd()));
         Range ungappedRange = Range.buildRange(ungappedLeft, ungappedRight);
         return ungappedRange;
+    }
+    
+    public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
+        buildCoverageMap(C contig){
+        return DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads());
+    }
+    
+    public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
+    buildUngappedCoverageMap(C contig){
+        return buildUngappedCoverageMap(contig.getConsensus(), contig.getPlacedReads());
+    }
+    
+    public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
+    buildUngappedCoverageMap(NucleotideEncodedGlyphs consensus, Collection<PR> reads){
+        
+        CoverageMap<T> gappedCoverageMap =DefaultCoverageMap.buildCoverageMap(reads);
+        return createUngappedCoverageMap(consensus, gappedCoverageMap);
+    }
+    private static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR, T> createUngappedCoverageMap(
+            NucleotideEncodedGlyphs consensus, CoverageMap<T> gappedCoverageMap) {
+        List<CoverageRegion<PR>> ungappedCoverageRegions = new ArrayList<CoverageRegion<PR>>();
+        for(T gappedCoverageRegion : gappedCoverageMap){
+            Range gappedRange = gappedCoverageRegion.asRange();
+            Range ungappedRange = consensus.convertGappedValidRangeToUngappedValidRange(gappedRange);
+            List<PR> reads = new ArrayList<PR>();
+            for(PR read : gappedCoverageRegion){
+                reads.add(read);
+            }
+            
+            ungappedCoverageRegions.add(
+                    new DefaultCoverageRegion.Builder<PR>(ungappedRange.getStart(),reads)
+                                .end(ungappedRange.getEnd())
+                                .build());
+        }
+        
+        return (DefaultCoverageMap<PR, T>) new DefaultCoverageMap<PR, CoverageRegion<PR>>(ungappedCoverageRegions);
     }
 }

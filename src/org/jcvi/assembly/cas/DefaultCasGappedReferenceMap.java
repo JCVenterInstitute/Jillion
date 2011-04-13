@@ -89,6 +89,7 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
                 gapsByReferenceId.put(referenceId, new TreeMap<Long,Insertion>());
             }
             long currentOffset = alignment.getStartOfMatch();
+            
             List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
             int lastIndex = regionsToConsider.size()-1;
             if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){

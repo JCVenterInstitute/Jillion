@@ -87,7 +87,6 @@ public abstract class AbstractSpreadSheetReader implements SpreadSheetReader {
                         try{
                         columnName = columns[i];
                         }catch(Exception e){
-                            System.out.println("here");
                             throw new RuntimeException(e);
                         }
                     }

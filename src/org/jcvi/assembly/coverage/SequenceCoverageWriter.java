@@ -31,6 +31,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -43,12 +44,10 @@ public class SequenceCoverageWriter <T extends PlacedRead> implements Closeable{
         coverageMapWriter = new MultiplePngCoverageWriter<T>(fileToWrite,id);
     }
 
-    public <C extends Contig<T>> void write(C contigToWrite, CoverageMap<CoverageRegion<T>> sequenceCoverageMap){
+    public <C extends Contig<T>> void write(C contigToWrite){
             final NucleotideEncodedGlyphs consensus = contigToWrite.getConsensus();
-            CoverageMap<CoverageRegion<T>> ungappedCoverageMap = new UngappedCoverageMap.Builder<T>(
-                    sequenceCoverageMap,
-                    consensus
-                    ).build();
+
+            CoverageMap<CoverageRegion<T>> ungappedCoverageMap = AssemblyUtil.buildUngappedCoverageMap(contigToWrite);
         coverageMapWriter.add("total",ungappedCoverageMap);
         
         Map<SequenceDirection, List<T>> readmap = createReadMapByDirection(contigToWrite);
@@ -71,11 +70,9 @@ public class SequenceCoverageWriter <T extends PlacedRead> implements Closeable{
 
     private void addDirectionalCoverageMap(
             final NucleotideEncodedGlyphs consensus,
-            List<T> reverseReads, final String direction) {
-        coverageMapWriter.add(direction,new UngappedCoverageMap.Builder<T>(
-        new DefaultCoverageMap.Builder<T>(reverseReads).build(),
-        consensus
-        ).build());
+            List<T> reads, final String direction) {
+        CoverageMap<CoverageRegion<T>> coverageMap = AssemblyUtil.buildUngappedCoverageMap(consensus, reads);
+        coverageMapWriter.add(direction,coverageMap);
     }
 
     @Override

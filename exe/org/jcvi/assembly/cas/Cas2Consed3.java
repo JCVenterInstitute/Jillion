@@ -48,8 +48,6 @@ import org.jcvi.assembly.cas.read.CasDataStoreFactory;
 import org.jcvi.assembly.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.ReferenceCasFileNucleotideDataStore;
 import org.jcvi.assembly.cas.read.SffTrimDataStore;
-import org.jcvi.assembly.coverage.CoverageMap;
-import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.assembly.util.DefaultTrimFileDataStore;
 import org.jcvi.assembly.util.TrimDataStore;
@@ -194,8 +192,8 @@ public class Cas2Consed3 {
              PrintStream consensusOut = new PrintStream(consensusFile);
              for(DefaultAceContig.Builder builder : builders.values()){
                  AceContig contig =builder.build();
-                 CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
-                 for(AceContig splitContig : ConsedUtil.split0xContig(contig, coverageMap, true)){
+                 
+                 for(AceContig splitContig : ConsedUtil.split0xContig(contig,DefaultCoverageMap.buildCoverageMap(contig), true)){
                      numberOfContigs++;
                      numberOfReads+= splitContig.getNumberOfReads();
                      consensusOut.print(
