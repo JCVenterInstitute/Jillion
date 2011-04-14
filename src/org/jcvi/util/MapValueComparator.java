@@ -59,6 +59,9 @@ public class MapValueComparator<K,V extends Comparable> implements Comparator<K>
             }
              return -1;
         }
+        if(!map.containsKey(o2)){
+            return 1;
+        }
         return map.get(o1).compareTo(map.get(o2));
     }
 
