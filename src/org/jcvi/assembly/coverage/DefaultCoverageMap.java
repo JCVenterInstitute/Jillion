@@ -163,13 +163,18 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
      */
     @Override
     public int getNumberOfRegionsWithCoverage(int coverageDepth) {
-        int i=0;
+        return getRegionsWithCoverage(coverageDepth).size();
+    }
+
+    @Override
+    public List<T> getRegionsWithCoverage(int coverageDepth) {
+        List<T> regionsWithCoverage = new ArrayList<T>();
         for(T coverageRegion: regions){
             if(coverageRegion.getCoverage() == coverageDepth){
-                i++;
+                regionsWithCoverage.add(coverageRegion);
             }
         }
-        return i;
+        return regionsWithCoverage;
     }
 
     /**

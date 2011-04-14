@@ -29,8 +29,6 @@ public class DefaultCritiquorAmplicon implements CritiquorAmplicon {
     private final String id;
     private final String region;
     private final Range range;
-    private final String forwardPrimerSequence;
-    private final String reversePrimerSequence;
     /**
      * @param id
      * @param region
@@ -43,8 +41,6 @@ public class DefaultCritiquorAmplicon implements CritiquorAmplicon {
         this.id = id;
         this.region = region;
         this.range = range;
-        this.forwardPrimerSequence = forwardPrimerSequence;
-        this.reversePrimerSequence = reversePrimerSequence;
     }
     public String getId() {
         return id;
@@ -52,27 +48,15 @@ public class DefaultCritiquorAmplicon implements CritiquorAmplicon {
     public String getRegion() {
         return region;
     }
-    public String getForwardPrimerSequence() {
-        return forwardPrimerSequence;
-    }
-    public String getReversePrimerSequence() {
-        return reversePrimerSequence;
-    }
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime
-                * result
-                + ((forwardPrimerSequence == null) ? 0 : forwardPrimerSequence
-                        .hashCode());
+               
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((range == null) ? 0 : range.hashCode());
         result = prime * result + ((region == null) ? 0 : region.hashCode());
-        result = prime
-                * result
-                + ((reversePrimerSequence == null) ? 0 : reversePrimerSequence
-                        .hashCode());
+               
         return result;
     }
     @Override
@@ -84,11 +68,7 @@ public class DefaultCritiquorAmplicon implements CritiquorAmplicon {
         if (!(obj instanceof DefaultCritiquorAmplicon))
             return false;
         DefaultCritiquorAmplicon other = (DefaultCritiquorAmplicon) obj;
-        if (forwardPrimerSequence == null) {
-            if (other.forwardPrimerSequence != null)
-                return false;
-        } else if (!forwardPrimerSequence.equals(other.forwardPrimerSequence))
-            return false;
+       
         if (id == null) {
             if (other.id != null)
                 return false;
@@ -104,11 +84,7 @@ public class DefaultCritiquorAmplicon implements CritiquorAmplicon {
                 return false;
         } else if (!region.equals(other.region))
             return false;
-        if (reversePrimerSequence == null) {
-            if (other.reversePrimerSequence != null)
-                return false;
-        } else if (!reversePrimerSequence.equals(other.reversePrimerSequence))
-            return false;
+       
         return true;
     }
     @Override

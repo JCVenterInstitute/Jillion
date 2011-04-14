@@ -31,8 +31,4 @@ public interface CritiquorAmplicon extends Placed<CritiquorAmplicon>{
 
     String getRegion();
 
-    String getForwardPrimerSequence();
-
-    String getReversePrimerSequence();
-
 }
