@@ -139,7 +139,7 @@ public class ConsedUtil {
                 
                 final Range contigRange = Range.buildRange(region.getStart(), region.getEnd())
                                             .convertRange(CoordinateSystem.RESIDUE_BASED);
-                coveredRegions.add(consensus.convertGappedValidRangeToUngappedValidRange(contigRange));
+                coveredRegions.add(contigRange);
             }
         }
         
