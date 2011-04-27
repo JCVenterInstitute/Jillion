@@ -27,7 +27,9 @@ import java.io.IOException;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.abi.Ab1FileParser;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFile;
+import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramFile;
 import org.junit.Test;
 
@@ -43,8 +45,8 @@ public class TestChromatogramFileParser {
     @Test
     public void parseZTR() throws TraceDecoderException, IOException{    	
         File ztrFile = RESOURCES.getFile(ZTR_FILE);
-        ZTRChromatogramFile expected = new ZTRChromatogramFile(ztrFile);
-        ZTRChromatogramFile actual = new ZTRChromatogramFile();
+        ZTRChromatogram expected = ZTRChromatogramFile.create(ztrFile);
+        ZTRChromatogramFile actual = ZTRChromatogramFile.createUnset();
         
 		ChromatogramParser.parse(ztrFile,actual);
         assertEquals(expected, actual);
@@ -52,8 +54,8 @@ public class TestChromatogramFileParser {
     @Test
     public void parseSCF3() throws TraceDecoderException, IOException{    	
         File scfFile = RESOURCES.getFile(SCF3_FILE);
-        SCFChromatogramFile expected = new SCFChromatogramFile(scfFile);
-        SCFChromatogramFile actual = new SCFChromatogramFile();
+        SCFChromatogram expected = SCFChromatogramFile.create(scfFile);
+        SCFChromatogramFile actual = SCFChromatogramFile.createUnset();
         
 		ChromatogramParser.parse(scfFile,actual);
         assertEquals(expected, actual);
