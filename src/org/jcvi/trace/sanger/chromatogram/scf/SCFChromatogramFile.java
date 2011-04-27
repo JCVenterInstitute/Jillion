@@ -25,14 +25,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.Builder;
 import org.jcvi.io.IOUtil;
-import org.jcvi.sequence.Confidence;
-import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.TraceDecoderException;
-import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
-
 /**
  * {@code SCFChromatogramFile} is a {@link SCFChromatogramFileVisitor} implementation
  * that once populated can function as a {@link SCFChromatogram}.
@@ -40,11 +35,7 @@ import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
  *
  *
  */
-public final class SCFChromatogramFile implements SCFChromatogram, SCFChromatogramFileVisitor{
-
-    
-    private SCFChromatogram delegate;
-    private SCFChromatogramBuilder builder;
+public final class SCFChromatogramFile {
     
     /**
      * Create a new {@link SCFChromatogram} instance from the given
@@ -56,7 +47,9 @@ public final class SCFChromatogramFile implements SCFChromatogram, SCFChromatogr
      * @throws TraceDecoderException if the file is not correctly encoded.
      */
     public static SCFChromatogram create(File scfFile) throws TraceDecoderException, IOException{
-        return new SCFChromatogramFile(scfFile);
+        SCFChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
+        SCFChromatogramFileParser.parseSCFFile(scfFile, visitor);
+        return visitor.build();
     }
     /**
      * Create a new {@link SCFChromatogram} instance from the given
@@ -70,207 +63,219 @@ public final class SCFChromatogramFile implements SCFChromatogram, SCFChromatogr
      */
     public static SCFChromatogram create(InputStream scfInputStream) throws TraceDecoderException, IOException{
         try{
-            return new SCFChromatogramFile(scfInputStream);
+            SCFChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
+            SCFChromatogramFileParser.parseSCFFile(scfInputStream, visitor);
+            return visitor.build();
         }finally{
             IOUtil.closeAndIgnoreErrors(scfInputStream);
         }
     }
     /**
-     * Create an "unset" SCFChromatogramFile which needs to be 
-     * populated via {@link SCFChromatogramFileVisitor}
-     * method calls.  While this is still being populated
-     * via visitor method calls, this object is not thread safe.
-     * @return a new SCFChromatogramFile instance that needs to be populated.
+     * Creates a new {@code SCFChromatogramFileBuilderVisitor} instance
+     * that will build a SCFChromatogram when visited.
+     * @author dkatzel
+     * @see SCFChromatogramFileBuilderVisitor
+     *
      */
-    public static SCFChromatogramFile createUnset(){
-        return new SCFChromatogramFile();
+    public static SCFChromatogramFileBuilderVisitor createNewBuilderVisitor(){
+        return new SCFChromatogramFileBuilderVisitor();
     }
     
     private SCFChromatogramFile(){
-        builder = new SCFChromatogramBuilder();
+        throw new IllegalStateException("can not instantiate");
     }
     
-    private SCFChromatogramFile(File scfFile) throws TraceDecoderException, IOException{
-       this();
-       SCFChromatogramFileParser.parseSCFFile(scfFile, this);
-    }
-    private SCFChromatogramFile(InputStream scfInputStream) throws TraceDecoderException, IOException{
-        this();
-        SCFChromatogramFileParser.parseSCFFile(scfInputStream, this);
-     }
-    @Override
-    public ChannelGroup getChannelGroup() {
-        return delegate.getChannelGroup();
-    }
-
-    @Override
-    public Map<String,String> getProperties() {
-        return delegate.getProperties();
-    }
-
-    @Override
-    public NucleotideEncodedGlyphs getBasecalls() {
-        return delegate.getBasecalls();
-    }
-
-    @Override
-    public QualityEncodedGlyphs getQualities() {
-        return delegate.getQualities();
-    }
-
-    @Override
-    public void visitBasecalls(String basecalls) {
-        builder.basecalls(basecalls);
-        
-    }
-
-    @Override
-    public void visitPeaks(short[] peaks) {
-        builder.peaks(peaks);
-        
-    }
-
-    @Override
-    public void visitAPositions(short[] positions) {
-        builder.aPositions(positions);
-        
-    }
-
-    @Override
-    public void visitCPositions(short[] positions) {
-        builder.cPositions(positions);
-        
-    }
-
-    @Override
-    public void visitGPositions(short[] positions) {
-        builder.gPositions(positions);
-        
-    }
-
-    @Override
-    public void visitTPositions(short[] positions) {
-        builder.tPositions(positions);
-        
-    }
-
-    @Override
-    public void visitAConfidence(byte[] confidence) {
-        builder.aConfidence(confidence);
-        
-    }
-
-    @Override
-    public void visitCConfidence(byte[] confidence) {
-        builder.cConfidence(confidence);
-        
-    }
-
-    @Override
-    public void visitGConfidence(byte[] confidence) {
-        builder.gConfidence(confidence);
-        
-    }
-
-    @Override
-    public void visitTConfidence(byte[] confidence) {
-        builder.tConfidence(confidence);
-        
-    }
-
-    @Override
-    public void visitComments(Map<String,String> comments) {
-        builder.properties(comments);
-        
-    }
-
-    @Override
-    public void visitFile() {        
-        
-    }
-
-    @Override
-    public void visitEndOfFile() {
-        delegate = builder.build();
-        builder =null;
-        
-    }
-
-    @Override
-    public Peaks getPeaks() {
-        return delegate.getPeaks();
-    }
-
-    @Override
-    public int getNumberOfTracePositions() {
-        return delegate.getNumberOfTracePositions();
-    }
-
-    @Override
-    public void visitPrivateData(byte[] privateData) {
-        builder.privateData(privateData);
-        
-    }
-
-    @Override
-    public void visitSubstitutionConfidence(byte[] confidence) {
-        builder.substitutionConfidence(confidence);
-        
-    }
-
-    @Override
-    public void visitInsertionConfidence(byte[] confidence) {
-        builder.insertionConfidence(confidence);
-        
-    }
-
-    @Override
-    public void visitDeletionConfidence(byte[] confidence) {
-        builder.deletionConfidence(confidence);
-        
-    }
-
-    @Override
-    public PrivateData getPrivateData() {
-        return delegate.getPrivateData();
-    }
-
-    @Override
-    public Confidence getSubstitutionConfidence() {
-        return delegate.getSubstitutionConfidence();
-    }
-
-    @Override
-    public Confidence getInsertionConfidence() {
-        return delegate.getInsertionConfidence();
-    }
-
-    @Override
-    public Confidence getDeletionConfidence() {
-        return delegate.getDeletionConfidence();
-    }
-    @Override
-    public int hashCode() {
-        return delegate.hashCode();
-    }
-    @Override
-    public boolean equals(Object obj) {
-        return delegate.equals(obj);
-    }
-
+    
     /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitNewTrace() {
+     * {@code SCFChromatogramFileBuilderVisitor} is a helper class
+     * that wraps a {@link SCFChromatogramBuilder} by a {@link SCFChromatogramFileVisitor}.
+     * This way when a part of the SCF is visited, its corresponding objects get built 
+     * by the builder.
+     * @author dkatzel
+     *
+     *
+     */
+    public static final class SCFChromatogramFileBuilderVisitor implements SCFChromatogramFileVisitor, Builder<SCFChromatogram>{
+        private SCFChromatogramBuilder builder = new SCFChromatogramBuilder();
         
-    }
+        private SCFChromatogramFileBuilderVisitor(){}
+        
+        private void checkNotYetBuilt(){
+            if(builder==null){
+                throw new IllegalStateException("builder already built");
+            }
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitAConfidence(byte[] confidence) {
+            checkNotYetBuilt();
+            builder.aConfidence(confidence);            
+        }
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitEndOfTrace() {
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitCConfidence(byte[] confidence) {
+            checkNotYetBuilt();
+            builder.cConfidence(confidence);            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitGConfidence(byte[] confidence) {
+            checkNotYetBuilt();
+            builder.gConfidence(confidence);            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTConfidence(byte[] confidence) {
+            checkNotYetBuilt();
+            builder.tConfidence(confidence);            
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+         @Override
+         public void visitNewTrace() { checkNotYetBuilt();}
+         /**
+         * {@inheritDoc}
+         */
+         @Override
+         public void visitEndOfTrace() { checkNotYetBuilt();}
+         
+         /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitEndOfFile() { checkNotYetBuilt();}
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitBasecalls(String basecalls) {
+              checkNotYetBuilt();
+              builder.basecalls(basecalls);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitPeaks(short[] peaks) {
+              checkNotYetBuilt();
+              builder.peaks(peaks);              
+          }
+
+         
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitComments(Map<String,String> comments) {
+              checkNotYetBuilt();
+              builder.properties(comments);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitAPositions(short[] positions) {
+              checkNotYetBuilt();
+              builder.aPositions(positions);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitCPositions(short[] positions) {
+              checkNotYetBuilt();
+             builder.cPositions(positions);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitGPositions(short[] positions) {
+              checkNotYetBuilt();
+              builder.gPositions(positions);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitTPositions(short[] positions) {
+              checkNotYetBuilt();
+              builder.tPositions(positions);              
+          }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitFile() { checkNotYetBuilt(); }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public SCFChromatogram build() {
+            checkNotYetBuilt();
+            SCFChromatogram result= builder.build();
+            builder =null;
+            return result;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitPrivateData(byte[] privateData) {
+            checkNotYetBuilt();
+            builder.privateData(privateData);             
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitSubstitutionConfidence(byte[] confidence) {
+            checkNotYetBuilt();
+            builder.substitutionConfidence(confidence);             
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitInsertionConfidence(byte[] confidence) {
+            checkNotYetBuilt();
+            builder.insertionConfidence(confidence);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitDeletionConfidence(byte[] confidence) {
+            checkNotYetBuilt();
+            builder.deletionConfidence(confidence);
+        }
+
         
     }
 

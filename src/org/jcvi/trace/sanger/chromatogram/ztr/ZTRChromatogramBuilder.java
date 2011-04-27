@@ -62,7 +62,7 @@ public class ZTRChromatogramBuilder extends BasicChromatogramBuilder{
     * {@inheritDoc}
      */
     @Override
-    public ZTRChromatogramImpl build() {
+    public ZTRChromatogram build() {
         return new ZTRChromatogramImpl(super.build(),
                 clip());
     }
