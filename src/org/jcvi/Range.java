@@ -422,6 +422,15 @@ public class Range implements Placed<Range>,Iterable<Long>
     }
     /**
      * Build a new Range object of in the Zero based coordinate
+     * system starting at 0 and with the given length.
+     * @param length the length of this range.
+     * @return a new Range.
+     */
+    public static Range buildRangeOfLength(long length){
+        return buildRangeOfLength(0,length);
+    }
+    /**
+     * Build a new Range object of in the Zero based coordinate
      * system at the given start offset with the given length.
      * @param start the start coordinate of this new range.
      * @param length the length of this range.
