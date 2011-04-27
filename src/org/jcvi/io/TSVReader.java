@@ -23,6 +23,7 @@
  */
 package org.jcvi.io;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 
@@ -30,12 +31,13 @@ public class TSVReader extends AbstractSpreadSheetReader{
     
     /**
      * @param in
+     * @throws IOException 
      */
-    public TSVReader(InputStream in) {
+    public TSVReader(InputStream in) throws IOException {
         super(in);
     }
 
-    public TSVReader(InputStream in, boolean skipFirstLine) {
+    public TSVReader(InputStream in, boolean skipFirstLine) throws IOException {
         super(in,skipFirstLine);
     }
 

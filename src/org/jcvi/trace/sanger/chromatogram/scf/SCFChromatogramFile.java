@@ -20,35 +20,84 @@
 package org.jcvi.trace.sanger.chromatogram.scf;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Confidence;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
 
 /**
+ * {@code SCFChromatogramFile} is a {@link SCFChromatogramFileVisitor} implementation
+ * that once populated can function as a {@link SCFChromatogram}.
  * @author dkatzel
  *
  *
  */
-public class SCFChromatogramFile implements SCFChromatogram, SCFChromatogramFileVisitor{
+public final class SCFChromatogramFile implements SCFChromatogram, SCFChromatogramFileVisitor{
 
     
     private SCFChromatogram delegate;
     private SCFChromatogramBuilder builder;
     
-    public SCFChromatogramFile(){
+    /**
+     * Create a new {@link SCFChromatogram} instance from the given
+     * SCF encoded file.
+     * @param scfFile the SCF encoded file to parse
+     * @return a new {@link SCFChromatogram} instance containing data
+     * from the given SCF file.
+     * @throws FileNotFoundException if the file does not exist
+     * @throws TraceDecoderException if the file is not correctly encoded.
+     */
+    public static SCFChromatogram create(File scfFile) throws TraceDecoderException, IOException{
+        return new SCFChromatogramFile(scfFile);
+    }
+    /**
+     * Create a new {@link SCFChromatogram} instance from the given
+     * SCF encoded InputStream, This method will close the input stream regardless
+     * if this method returns or throws an exception.
+     * @param scfInputStream the SCF encoded input stream to parse
+     * @return a new {@link SCFChromatogram} instance containing data
+     * from the given SCF file.
+     * @throws FileNotFoundException if the file does not exist
+     * @throws TraceDecoderException if the file is not correctly encoded.
+     */
+    public static SCFChromatogram create(InputStream scfInputStream) throws TraceDecoderException, IOException{
+        try{
+            return new SCFChromatogramFile(scfInputStream);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(scfInputStream);
+        }
+    }
+    /**
+     * Create an "unset" SCFChromatogramFile which needs to be 
+     * populated via {@link SCFChromatogramFileVisitor}
+     * method calls.  While this is still being populated
+     * via visitor method calls, this object is not thread safe.
+     * @return a new SCFChromatogramFile instance that needs to be populated.
+     */
+    public static SCFChromatogramFile createUnset(){
+        return new SCFChromatogramFile();
+    }
+    
+    private SCFChromatogramFile(){
         builder = new SCFChromatogramBuilder();
     }
     
-    public SCFChromatogramFile(File scfFile) throws TraceDecoderException, IOException{
+    private SCFChromatogramFile(File scfFile) throws TraceDecoderException, IOException{
        this();
        SCFChromatogramFileParser.parseSCFFile(scfFile, this);
     }
+    private SCFChromatogramFile(InputStream scfInputStream) throws TraceDecoderException, IOException{
+        this();
+        SCFChromatogramFileParser.parseSCFFile(scfInputStream, this);
+     }
     @Override
     public ChannelGroup getChannelGroup() {
         return delegate.getChannelGroup();

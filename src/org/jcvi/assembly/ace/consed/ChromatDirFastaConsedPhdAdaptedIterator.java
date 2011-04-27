@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFile;
 import org.jcvi.trace.sanger.phd.DefaultPhd;
 import org.jcvi.trace.sanger.phd.Phd;
@@ -76,7 +77,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
         File chromatFile = new File(chromatDir,id);
         if(chromatFile.exists()){
             try {
-                SCFChromatogramFile chromo = new SCFChromatogramFile(chromatFile);
+                SCFChromatogram chromo = SCFChromatogramFile.create(chromatFile);
                 return new DefaultPhd(id, chromo.getBasecalls(), chromo.getQualities(), chromo.getPeaks(), requiredComments);
             } catch (Exception e) {
                 throw new IllegalStateException("error parsing chromatogram for "+ id,e);

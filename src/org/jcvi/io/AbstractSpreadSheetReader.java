@@ -23,6 +23,7 @@
  */
 package org.jcvi.io;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -34,22 +35,27 @@ import java.util.Scanner;
 
 public abstract class AbstractSpreadSheetReader implements SpreadSheetReader {
 
-    private final Scanner scanner;
+    private final TextLineParser scanner;
     private final String[] columns;
     private final boolean hasHeaders;
-    public AbstractSpreadSheetReader(InputStream in){
+    public AbstractSpreadSheetReader(InputStream in) throws IOException{
         this(in, false);
     }
-    public AbstractSpreadSheetReader(InputStream in, boolean hasHeaders){
-        this.scanner = new Scanner(in);
+    public AbstractSpreadSheetReader(InputStream in, boolean hasHeaders) throws IOException{
+       this(new TextLineParser(new BufferedInputStream(in)),hasHeaders);
+        
+    }
+    
+    public AbstractSpreadSheetReader(TextLineParser in, boolean hasHeaders) throws IOException{
+        this.scanner= in;
+        
         this.hasHeaders = hasHeaders;
         if(hasHeaders){
-            columns =scanner.nextLine().split(getColumnSeparator());
+            columns =scanner.nextLine().trim().split(getColumnSeparator());
         }
         else{
             columns =null;
         }
-        
     }
 
     protected abstract String getColumnSeparator();
@@ -77,9 +83,14 @@ public abstract class AbstractSpreadSheetReader implements SpreadSheetReader {
 
             @Override
             public Map<String, String> next() {
-                String line = scanner.nextLine();
+                String line;
+                try {
+                    line = scanner.nextLine();
+                } catch (IOException e1) {
+                    throw new IllegalStateException("error reading spreadsheet",e1);
+                }
                 Map<String,String> rowData = new HashMap<String, String>();
-                String[] rows = line.split(getColumnSeparator());
+                String[] rows = line.trim().split(getColumnSeparator());
                 
                 for(int i=0; i<rows.length; i++){
                     String columnName;
