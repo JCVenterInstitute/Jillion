@@ -24,27 +24,186 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
 
+import org.jcvi.Builder;
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.io.IOUtil;
-import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.TraceDecoderException;
-import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
 
 /**
- * {@code ZTRChromatogramFile} is a {@link ZTRChromatogramFileVisitor} implementation
- * that once populated can function as a {@link ZTRChromatogram}.
+ * {@code ZTRChromatogramFile} is a helper class
+ * that can create ZTRchromatogram objects from 
+ * ZTR encoded files.
  * @author dkatzel
  *
  *
  */
-public final class ZTRChromatogramFile implements ZTRChromatogramFileVisitor, ZTRChromatogram{
-
-    private ZTRChromatogram delegate;
-    private ZTRChromatogramBuilder builder;
+public final class ZTRChromatogramFile{
+    
     private ZTRChromatogramFile(){
-        builder = new ZTRChromatogramBuilder();
+        throw new IllegalStateException("can not instantiate");
+    }
+    /**
+     * {@code ZTRChromatogramFileBuilderVisitor} is a helper class
+     * that wraps a {@link ZTRChromatogramBuilder} by a {@link ZTRChromatogramFileVisitor}.
+     * This way when a part of the ZTR is visited, its corresponding objects get built 
+     * by the builder.
+     * @author dkatzel
+     *
+     *
+     */
+    public static final class ZTRChromatogramFileBuilderVisitor implements ZTRChromatogramFileVisitor, Builder<ZTRChromatogram>{
+        private ZTRChromatogramBuilder builder = new ZTRChromatogramBuilder();
+        
+        private ZTRChromatogramFileBuilderVisitor(){}
+        
+        private void checkNotYetBuilt(){
+            if(builder==null){
+                throw new IllegalStateException("builder already built");
+            }
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitAConfidence(byte[] confidence) {
+            checkNotYetBuilt();
+            builder.aConfidence(confidence);            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitCConfidence(byte[] confidence) {
+            checkNotYetBuilt();
+            builder.cConfidence(confidence);            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitGConfidence(byte[] confidence) {
+            checkNotYetBuilt();
+            builder.gConfidence(confidence);            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTConfidence(byte[] confidence) {
+            checkNotYetBuilt();
+            builder.tConfidence(confidence);            
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+         @Override
+         public void visitNewTrace() { checkNotYetBuilt();}
+         /**
+         * {@inheritDoc}
+         */
+         @Override
+         public void visitEndOfTrace() { checkNotYetBuilt();}
+         
+         /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitEndOfFile() { checkNotYetBuilt();}
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitBasecalls(String basecalls) {
+              checkNotYetBuilt();
+              builder.basecalls(basecalls);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitPeaks(short[] peaks) {
+              checkNotYetBuilt();
+              builder.peaks(peaks);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitClipRange(Range clipRange) {
+              checkNotYetBuilt();
+              builder.clip(clipRange);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitComments(Map<String,String> comments) {
+              checkNotYetBuilt();
+              builder.properties(comments);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitAPositions(short[] positions) {
+              checkNotYetBuilt();
+              builder.aPositions(positions);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitCPositions(short[] positions) {
+              checkNotYetBuilt();
+             builder.cPositions(positions);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitGPositions(short[] positions) {
+              checkNotYetBuilt();
+              builder.gPositions(positions);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitTPositions(short[] positions) {
+              checkNotYetBuilt();
+              builder.tPositions(positions);              
+          }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitFile() { checkNotYetBuilt(); }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ZTRChromatogram build() {
+            checkNotYetBuilt();
+            ZTRChromatogram result= builder.build();
+            builder =null;
+            return result;
+        }
+
+        
     }
     /**
      * Create a new {@link ZTRChromatogram} instance from the given
@@ -56,7 +215,9 @@ public final class ZTRChromatogramFile implements ZTRChromatogramFileVisitor, ZT
      * @throws TraceDecoderException if the file is not correctly encoded.
      */
     public static ZTRChromatogram create(File ztrFile) throws FileNotFoundException, TraceDecoderException{
-        return new ZTRChromatogramFile(ztrFile);
+        ZTRChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
+        ZTRChromatogramFileParser.parseZTRFile(ztrFile, visitor);
+        return visitor.build();
     }
     
     /**
@@ -71,238 +232,23 @@ public final class ZTRChromatogramFile implements ZTRChromatogramFileVisitor, ZT
      */
     public static ZTRChromatogram create(InputStream ztrInputStream) throws FileNotFoundException, TraceDecoderException{
         try{
-            return new ZTRChromatogramFile(ztrInputStream);
+            ZTRChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
+            ZTRChromatogramFileParser.parseZTRFile(ztrInputStream, visitor);
+            return visitor.build();
         }finally{
             IOUtil.closeAndIgnoreErrors(ztrInputStream);
         }
     }
     /**
-     * Create an "unset" ZTRChromatogramFile which needs to be 
-     * populated via {@link ZTRChromatogramFileVisitor}
-     * method calls.  While this is still being populated
-     * via visitor method calls, this object is not thread safe.
-     * @return a new ZTRChromatogramFile instance that needs to be populated.
+     * Creates a new {@code ZTRChromatogramFileBuilderVisitor} instance
+     * that will build a ZTRChromatogram when visited.
+     * @author dkatzel
+     * @see ZTRChromatogramFileBuilderVisitor
+     *
      */
-    public static ZTRChromatogramFile createUnset(){
-        return new ZTRChromatogramFile();
-    }
-    /**
-     * 
-     * @param ztrFile
-     * @throws FileNotFoundException
-     * @throws TraceDecoderException
-     */
-    private ZTRChromatogramFile(File ztrFile) throws FileNotFoundException, TraceDecoderException{
-        this();
-        ZTRChromatogramFileParser.parseZTRFile(ztrFile, this);
+    public static ZTRChromatogramFileBuilderVisitor createNewBuilderVisitor(){
+        return new ZTRChromatogramFileBuilderVisitor();
     }
     
-    private ZTRChromatogramFile(InputStream ztrInputStream) throws TraceDecoderException{
-        this();
-        ZTRChromatogramFileParser.parseZTRFile(ztrInputStream, this);
-    }
     
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitFile() {
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitEndOfFile() {
-        delegate = builder.build();
-        builder =null;
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitBasecalls(String basecalls) {
-        builder.basecalls(basecalls);
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitPeaks(short[] peaks) {
-        builder.peaks(peaks);
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitClipRange(Range clipRange) {
-        builder.clip(clipRange);
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitComments(Map<String,String> comments) {
-        builder.properties(comments);
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitAPositions(short[] positions) {
-        builder.aPositions(positions);
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitCPositions(short[] positions) {
-       builder.cPositions(positions);
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitGPositions(short[] positions) {
-        builder.gPositions(positions);
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitTPositions(short[] positions) {
-        builder.tPositions(positions);
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public ChannelGroup getChannelGroup() {        
-        return delegate.getChannelGroup();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Map<String,String> getProperties() {
-        return delegate.getProperties();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Peaks getPeaks() {
-        return delegate.getPeaks();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getNumberOfTracePositions() {
-        return delegate.getNumberOfTracePositions();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public NucleotideEncodedGlyphs getBasecalls() {
-        return delegate.getBasecalls();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public QualityEncodedGlyphs getQualities() {
-        return delegate.getQualities();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Range getClip() {
-        return delegate.getClip();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitAConfidence(byte[] confidence) {
-        builder.aConfidence(confidence);
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitCConfidence(byte[] confidence) {
-        builder.cConfidence(confidence);
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitGConfidence(byte[] confidence) {
-        builder.gConfidence(confidence);
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitTConfidence(byte[] confidence) {
-        builder.tConfidence(confidence);
-        
-    }
-    @Override
-    public int hashCode() {
-        return delegate.hashCode();
-    }
-    @Override
-    public boolean equals(Object obj) {
-        return delegate.equals(obj);
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitNewTrace() {
-        
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void visitEndOfTrace() {
-        
-    }
 }

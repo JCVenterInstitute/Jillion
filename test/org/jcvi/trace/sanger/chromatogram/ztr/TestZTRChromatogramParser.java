@@ -47,7 +47,7 @@ public class TestZTRChromatogramParser {
     }
     @Test
     public void parse() throws TraceDecoderException, IOException{
-        ZTRChromatogramImpl actual =sut.decode(RESOURCES.getFileAsStream("files/GBKAK82TF.ztr"));
+        ZTRChromatogram actual =sut.decode(RESOURCES.getFileAsStream("files/GBKAK82TF.ztr"));
         assertEquals(expected,actual);
         assertEquals(actual.getClip(), expected.getClip());
     }

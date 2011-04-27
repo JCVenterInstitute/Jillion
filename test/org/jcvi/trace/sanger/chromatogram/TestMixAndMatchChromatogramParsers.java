@@ -26,9 +26,11 @@ import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFile;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFile.SCFChromatogramFileBuilderVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFileParser;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramFile;
+import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramFile.ZTRChromatogramFileBuilderVisitor;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramFileParser;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -45,20 +47,20 @@ public class TestMixAndMatchChromatogramParsers {
     public void parseZtrAsScfFile() throws IOException, TraceDecoderException{
         File ztrFile = RESOURCES.getFile("ztr/files/GBKAK82TF.ztr");
         ZTRChromatogram ztr = ZTRChromatogramFile.create(ztrFile);
-        SCFChromatogramFile scf = SCFChromatogramFile.createUnset();
-        ZTRChromatogramFileParser.parseZTRFile(ztrFile, scf);
+        SCFChromatogramFileBuilderVisitor visitor = SCFChromatogramFile.createNewBuilderVisitor();
+        ZTRChromatogramFileParser.parseZTRFile(ztrFile, visitor);
         
-        assertValuesMatch(scf, ztr);
+        assertValuesMatch(visitor.build(), ztr);
     }
     
     @Test
     public void parseScfAsZtrFile() throws IOException, TraceDecoderException{
         File scfFile = RESOURCES.getFile("scf/files/GBKAK82TF.scf");
         SCFChromatogram scf = SCFChromatogramFile.create(scfFile);
-        ZTRChromatogramFile ztr = ZTRChromatogramFile.createUnset();
-        SCFChromatogramFileParser.parseSCFFile(scfFile, ztr);
+        ZTRChromatogramFileBuilderVisitor visitor = ZTRChromatogramFile.createNewBuilderVisitor();
+        SCFChromatogramFileParser.parseSCFFile(scfFile, visitor);
         
-        assertValuesMatch(scf, ztr);
+        assertValuesMatch(scf, visitor.build());
     }
 
     protected void assertValuesMatch(SCFChromatogram scf,

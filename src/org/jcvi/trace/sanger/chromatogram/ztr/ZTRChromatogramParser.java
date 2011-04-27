@@ -54,7 +54,7 @@ public class ZTRChromatogramParser implements SangerTraceCodec {
     * {@inheritDoc}
      */
     @Override
-    public ZTRChromatogramImpl decode(InputStream inputStream) throws TraceDecoderException{
+    public ZTRChromatogram decode(InputStream inputStream) throws TraceDecoderException{
         parseHeader(inputStream);
         Chunk currentChunk = parseNextChunk(inputStream);
         ZTRChromatogramBuilder builder = new ZTRChromatogramBuilder();
@@ -66,7 +66,7 @@ public class ZTRChromatogramParser implements SangerTraceCodec {
         return builder.build();
     }
     @Override
-    public ZTRChromatogramImpl decode(File sangerTrace) throws TraceDecoderException,
+    public ZTRChromatogram decode(File sangerTrace) throws TraceDecoderException,
             FileNotFoundException {
         InputStream in=null;
         try{
