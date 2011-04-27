@@ -50,14 +50,14 @@ public class TestSCFChromatogramFile {
     @Test
     public void parseScfFile() throws IOException, TraceDecoderException{
         File scfFile = RESOURCES.getFile("files/GBKAK82TF.scf");
-        SCFChromatogramFile actual = new SCFChromatogramFile(scfFile);
+        SCFChromatogram actual = SCFChromatogramFile.create(scfFile);
         assertEquals(EXPECTED_SCF, actual);
     }
     
     @Test
     public void scfWithGaps() throws IOException, TraceDecoderException{
         File scfFile = RESOURCES.getFile("files/containsGaps.scf");
-        SCFChromatogramFile actual = new SCFChromatogramFile(scfFile);
+        SCFChromatogram actual = SCFChromatogramFile.create(scfFile);
         assertEquals(NucleotideGlyph.convertToString(actual.getBasecalls().decode()), "-----");
         
     }

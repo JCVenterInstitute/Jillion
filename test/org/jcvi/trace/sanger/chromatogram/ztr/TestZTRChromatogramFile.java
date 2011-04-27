@@ -47,7 +47,7 @@ public class TestZTRChromatogramFile {
     @Test
     public void parseZtrFile() throws IOException, TraceDecoderException{
         File ztrFile = RESOURCES.getFile("files/GBKAK82TF.ztr");
-        ZTRChromatogram actual = new ZTRChromatogramFile(ztrFile);
+        ZTRChromatogram actual = ZTRChromatogramFile.create(ztrFile);
         assertEquals(EXPECTED_ZTR, actual);
     }
 }

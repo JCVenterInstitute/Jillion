@@ -24,8 +24,10 @@ import java.io.IOException;
 
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.TraceDecoderException;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFile;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFileParser;
+import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramFile;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramFileParser;
 import org.junit.Test;
@@ -42,8 +44,8 @@ public class TestMixAndMatchChromatogramParsers {
     @Test
     public void parseZtrAsScfFile() throws IOException, TraceDecoderException{
         File ztrFile = RESOURCES.getFile("ztr/files/GBKAK82TF.ztr");
-        ZTRChromatogramFile ztr = new ZTRChromatogramFile(ztrFile);
-        SCFChromatogramFile scf = new SCFChromatogramFile();
+        ZTRChromatogram ztr = ZTRChromatogramFile.create(ztrFile);
+        SCFChromatogramFile scf = SCFChromatogramFile.createUnset();
         ZTRChromatogramFileParser.parseZTRFile(ztrFile, scf);
         
         assertValuesMatch(scf, ztr);
@@ -52,15 +54,15 @@ public class TestMixAndMatchChromatogramParsers {
     @Test
     public void parseScfAsZtrFile() throws IOException, TraceDecoderException{
         File scfFile = RESOURCES.getFile("scf/files/GBKAK82TF.scf");
-        SCFChromatogramFile scf = new SCFChromatogramFile(scfFile);
-        ZTRChromatogramFile ztr = new ZTRChromatogramFile();
+        SCFChromatogram scf = SCFChromatogramFile.create(scfFile);
+        ZTRChromatogramFile ztr = ZTRChromatogramFile.createUnset();
         SCFChromatogramFileParser.parseSCFFile(scfFile, ztr);
         
         assertValuesMatch(scf, ztr);
     }
 
-    protected void assertValuesMatch(SCFChromatogramFile scf,
-            ZTRChromatogramFile ztr) {
+    protected void assertValuesMatch(SCFChromatogram scf,
+            ZTRChromatogram ztr) {
         assertEquals(ztr.getBasecalls(), scf.getBasecalls());
         assertEquals(ztr.getPeaks(), scf.getPeaks());
         assertEquals(ztr.getQualities(),scf.getQualities());

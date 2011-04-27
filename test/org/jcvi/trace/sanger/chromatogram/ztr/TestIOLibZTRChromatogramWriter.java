@@ -34,12 +34,10 @@ public class TestIOLibZTRChromatogramWriter {
 
 	@Test
 	public void testEncodeAndDecode() throws FileNotFoundException, TraceDecoderException, IOException, TraceEncoderException{
-		ZTRChromatogram chromatogram = new ZTRChromatogramFile(RESOURCES.getFile("files/GBKAK82TF.ztr"));
+		ZTRChromatogram chromatogram = ZTRChromatogramFile.create(RESOURCES.getFile("files/GBKAK82TF.ztr"));
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		IOLibLikeZTRChromatogramWriter.INSTANCE.write(chromatogram, out);
-		ZTRChromatogramFile reParsed = new ZTRChromatogramFile();
-		ByteArrayInputStream ztrStream = new ByteArrayInputStream(out.toByteArray());
-		ZTRChromatogramFileParser.parseZTRFile(ztrStream, reParsed);
+		ZTRChromatogram reParsed = ZTRChromatogramFile.create(new ByteArrayInputStream(out.toByteArray()));
 		
 		assertEquals(chromatogram, reParsed);
 		
