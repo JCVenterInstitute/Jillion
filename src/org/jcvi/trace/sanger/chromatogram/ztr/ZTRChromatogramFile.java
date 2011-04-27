@@ -21,30 +21,85 @@ package org.jcvi.trace.sanger.chromatogram.ztr;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.jcvi.Range;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
 
 /**
+ * {@code ZTRChromatogramFile} is a {@link ZTRChromatogramFileVisitor} implementation
+ * that once populated can function as a {@link ZTRChromatogram}.
  * @author dkatzel
  *
  *
  */
-public class ZTRChromatogramFile implements ZTRChromatogramFileVisitor, ZTRChromatogram{
+public final class ZTRChromatogramFile implements ZTRChromatogramFileVisitor, ZTRChromatogram{
 
     private ZTRChromatogram delegate;
     private ZTRChromatogramBuilder builder;
-    public ZTRChromatogramFile(){
+    private ZTRChromatogramFile(){
         builder = new ZTRChromatogramBuilder();
     }
-    public ZTRChromatogramFile(File ztrFile) throws FileNotFoundException, TraceDecoderException{
+    /**
+     * Create a new {@link ZTRChromatogram} instance from the given
+     * ZTR encoded file.
+     * @param ztrFile the ZTR encoded file to parse
+     * @return a new {@link ZTRChromatogram} instance containing data
+     * from the given ZTR file.
+     * @throws FileNotFoundException if the file does not exist
+     * @throws TraceDecoderException if the file is not correctly encoded.
+     */
+    public static ZTRChromatogram create(File ztrFile) throws FileNotFoundException, TraceDecoderException{
+        return new ZTRChromatogramFile(ztrFile);
+    }
+    
+    /**
+     * Create a new {@link ZTRChromatogram} instance from the given
+     * ZTR encoded InputStream, This method will close the input stream regardless
+     * if this method returns or throws an exception.
+     * @param ztrInputStream the ZTR encoded input stream to parse
+     * @return a new {@link ZTRChromatogram} instance containing data
+     * from the given ZTR file.
+     * @throws FileNotFoundException if the file does not exist
+     * @throws TraceDecoderException if the file is not correctly encoded.
+     */
+    public static ZTRChromatogram create(InputStream ztrInputStream) throws FileNotFoundException, TraceDecoderException{
+        try{
+            return new ZTRChromatogramFile(ztrInputStream);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(ztrInputStream);
+        }
+    }
+    /**
+     * Create an "unset" ZTRChromatogramFile which needs to be 
+     * populated via {@link ZTRChromatogramFileVisitor}
+     * method calls.  While this is still being populated
+     * via visitor method calls, this object is not thread safe.
+     * @return a new ZTRChromatogramFile instance that needs to be populated.
+     */
+    public static ZTRChromatogramFile createUnset(){
+        return new ZTRChromatogramFile();
+    }
+    /**
+     * 
+     * @param ztrFile
+     * @throws FileNotFoundException
+     * @throws TraceDecoderException
+     */
+    private ZTRChromatogramFile(File ztrFile) throws FileNotFoundException, TraceDecoderException{
         this();
         ZTRChromatogramFileParser.parseZTRFile(ztrFile, this);
+    }
+    
+    private ZTRChromatogramFile(InputStream ztrInputStream) throws TraceDecoderException{
+        this();
+        ZTRChromatogramFileParser.parseZTRFile(ztrInputStream, this);
     }
     
     /**

@@ -23,18 +23,27 @@
  */
 package org.jcvi.io;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 
 public class CSVReader extends AbstractSpreadSheetReader{
 
-    public CSVReader(InputStream in){
+    public CSVReader(InputStream in) throws IOException{
         super(in);
     }
-    public CSVReader(InputStream in, boolean skipFirstLine) {
+    public CSVReader(InputStream in, boolean skipFirstLine) throws IOException {
         super(in,skipFirstLine);
     }
 
+    /**
+     * @param in
+     * @param hasHeaders
+     * @throws IOException
+     */
+    public CSVReader(TextLineParser in, boolean hasHeaders) throws IOException {
+        super(in, hasHeaders);
+    }
     @Override
     protected String getColumnSeparator() {
         return ",";
