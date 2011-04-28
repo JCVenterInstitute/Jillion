@@ -33,7 +33,7 @@ public class AmpliconCritiquorFileVisitor implements CritiquorFileVisitor {
     @Override
     public void visitAmplicon(String id, String region, Range designedRange,
             String forwardPrimer, String reversePrimer) {
-        CritiquorAmplicon amp = new DefaultCritiquorAmplicon(id, region, designedRange, forwardPrimer, reversePrimer);
+        CritiquorAmplicon amp = new DefaultCritiquorAmplicon(id, region.replaceAll("_.+", ""), designedRange, forwardPrimer, reversePrimer);
         amplicons.add(amp);
 
     }
