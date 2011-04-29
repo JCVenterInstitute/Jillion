@@ -21,17 +21,36 @@
  *
  * @author dkatzel
  */
-package org.jcvi.assembly.coverage;
+package org.jcvi.assembly.coverage.writer;
 
-import org.jcvi.assembly.Placed;
+import java.util.Properties;
 
+import org.jcvi.assembly.PlacedRead;
+import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.sequence.SequenceDirection;
 
-public class CloneCoverageMapXMLCoverageWriter<T extends Placed> extends XMLCoverageWriter<T>{
+public class DirectionalSequenceCoverageMapXMLCoverageWriter<T extends PlacedRead> extends XMLCoverageWriter<T> {
 
+    @Override
+    protected void addAdditionalAttributes(CoverageRegion<T> region,
+            Properties attriubtes) {
+        int numberReversedComplimented=0;
+        int numberForwardComplimented=0;
+        for(T placedRead : region){
+            if(placedRead.getSequenceDirection()== SequenceDirection.REVERSE){
+                numberReversedComplimented++;
+            }
+            else{
+                numberForwardComplimented++;
+            }
+        }
+        attriubtes.put("forward_depth", numberForwardComplimented);
+        attriubtes.put("reverse_depth", numberReversedComplimented);
+    }
 
     @Override
     protected String getCoverageMapTagName() {
-        return "clonecoveragemap";
+        return "sequencecoveragemap";
     }
 
     

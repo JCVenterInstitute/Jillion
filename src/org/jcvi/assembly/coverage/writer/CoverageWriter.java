@@ -17,19 +17,22 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Feb 17, 2009
+ * Created on Feb 20, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.assembly.analysis.issue;
+package org.jcvi.assembly.coverage.writer;
 
-import org.jcvi.assembly.analysis.DefaultAnalysisIssue;
-import org.jcvi.assembly.contig.QualityClassRegion;
+import java.io.Closeable;
+import java.io.IOException;
 
-public class QualityClassContigMapIssue extends DefaultAnalysisIssue{
+import org.jcvi.assembly.Placed;
+import org.jcvi.assembly.coverage.CoverageMap;
+import org.jcvi.assembly.coverage.CoverageRegion;
 
-    public QualityClassContigMapIssue(QualityClassRegion qualityClassRegion) {
-        super(Severity.MEDIUM, qualityClassRegion.toString());
-    }
+public interface CoverageWriter<T extends Placed> extends Closeable{
 
+    void write(CoverageMap<CoverageRegion<T>> write) throws IOException;
+    
+    
 }

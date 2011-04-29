@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.assembly.coverage;
+package org.jcvi.assembly.coverage.writer;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.jcvi.assembly.Placed;
+import org.jcvi.assembly.coverage.CoverageMap;
+import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;

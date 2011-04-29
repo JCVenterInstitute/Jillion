@@ -17,34 +17,41 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Mar 10, 2009
+ * Created on May 28, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.assembly.analysis;
+package org.jcvi.assembly.coverage.writer;
 
-import org.jcvi.assembly.Contig;
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.jcvi.assembly.Placed;
-import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
 
-public abstract class ClonedContigCheckerStruct<R extends PlacedRead, C extends Placed> extends InternalSangerContigCheckerStruct<R> {
-    private CoverageMap<CoverageRegion<C>> cloneCoverageMap;
-    public ClonedContigCheckerStruct(Contig<R> contig,
-            QualityDataStore qualityDataStore, PhredQuality qualityThreshold) {
-        super(contig, qualityDataStore,qualityThreshold);
-    }
+public class CSVCoverageWriter implements CoverageWriter<Placed> {
+    private final OutputStream out;
     
-    public synchronized CoverageMap<CoverageRegion<C>> getCloneCoverageMap(){
-        if(cloneCoverageMap ==null){
-            cloneCoverageMap = createCloneCoverageMap();
+    public CSVCoverageWriter(OutputStream out) throws IOException{
+        this.out = out;
+        out.write(String.format("offset,coverage%n").getBytes());
+    }
+    @Override
+    public void write(CoverageMap<CoverageRegion<Placed>> mapToWrite)
+            throws IOException {
+        for(CoverageRegion<Placed> region : mapToWrite){
+            for(long i = region.getStart(); i<=region.getEnd(); i++){
+                out.write(String.format("%d,%d%n", i,region.getCoverage()).getBytes());
+            }
         }
-        return cloneCoverageMap;
+        
     }
 
-    protected abstract CoverageMap<CoverageRegion<C>> createCloneCoverageMap();
+    @Override
+    public void close() throws IOException {
+        out.close();
+        
+    }
 
 }

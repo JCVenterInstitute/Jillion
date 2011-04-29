@@ -25,11 +25,11 @@ package org.jcvi.assembly.contig.trim;
 
 import java.util.List;
 
+import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.analysis.ContigCheckerStruct;
 import org.jcvi.datastore.DataStoreException;
 
-public interface ContigTrimmer<R extends PlacedRead, C extends ContigCheckerStruct<R>> {
+public interface ContigTrimmer<R extends PlacedRead, C extends Contig<R>> {
 
-    List<TrimmedPlacedRead<R>> trim(C struct) throws DataStoreException;
+    List<TrimmedPlacedRead<R>> trim(C contig) throws DataStoreException;
 }

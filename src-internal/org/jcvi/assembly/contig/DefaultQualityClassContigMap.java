@@ -28,9 +28,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.Range;
+import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.qualClass.QualityClass;
@@ -40,19 +42,26 @@ public class DefaultQualityClassContigMap implements QualityClassMap{
 
     List<QualityClassRegion> qualityClassRegions;
     
-   
+    public static <P extends PlacedRead, C extends Contig<P>> QualityClassMap create(C contig,QualityDataStore qualityDataStore, 
+            QualityClassComputer<P> qualityClassComputer){
+       return create(DefaultCoverageMap.buildCoverageMap(contig),contig,qualityDataStore,qualityClassComputer);
+    }
+    public static <P extends PlacedRead, C extends Contig<P>> QualityClassMap create(CoverageMap<CoverageRegion<P>> coverageMap,C contig,QualityDataStore qualityDataStore, 
+            QualityClassComputer<P> qualityClassComputer){
+       return new DefaultQualityClassContigMap(coverageMap,contig.getConsensus(),qualityDataStore,qualityClassComputer);
+    }
 
-    public <P extends PlacedRead> DefaultQualityClassContigMap(
+    <P extends PlacedRead> DefaultQualityClassContigMap(
                     CoverageMap<CoverageRegion<P>> coverageMap, 
                     NucleotideEncodedGlyphs consensus,
-                    QualityDataStore qualityFastaMap, 
+                    QualityDataStore qualityDataStore, 
                     QualityClassComputer<P> qualityClassComputer){
         qualityClassRegions = new ArrayList<QualityClassRegion>();
         QualityClass qualityClass =null;
         int qualityClassStart=0;
         for(int i =0; i<consensus.getLength(); i++){
             final QualityClass currentQualityClass = qualityClassComputer.computeQualityClass(coverageMap, 
-                                                                qualityFastaMap, consensus, i);
+                                                                qualityDataStore, consensus, i);
             if(isDifferentQualityClass(qualityClass, currentQualityClass)){
                 if(qualityClass!=null){
                     qualityClassRegions.add(new QualityClassRegion(qualityClass, Range.buildRange(qualityClassStart, i-1 )));

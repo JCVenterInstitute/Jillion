@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.assembly.coverage;
+package org.jcvi.assembly.coverage.writer;
 
 import java.io.Closeable;
 import java.io.File;
@@ -34,6 +34,8 @@ import java.util.Map;
 import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
+import org.jcvi.assembly.coverage.CoverageMap;
+import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.sequence.SequenceDirection;
 
