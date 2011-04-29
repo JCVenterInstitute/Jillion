@@ -24,7 +24,6 @@
 package org.jcvi.assembly;
 
 import org.jcvi.assembly.agp.AllAgpUnitTests;
-import org.jcvi.assembly.analysis.AllAnalysisUnitTests;
 import org.jcvi.assembly.cas.AllCasUnitTests;
 import org.jcvi.assembly.contig.AllContigUnitTests;
 import org.jcvi.assembly.coverage.AllCoverageUnitTests;
@@ -44,7 +43,6 @@ import org.junit.runners.Suite.SuiteClasses;
         
         AllTrimUnitTests.class,
         AllSliceUnitTests.class,
-        AllAnalysisUnitTests.class,
         AllContigUnitTests.class,
         AllCoverageUnitTests.class,
         AllAgpUnitTests.class,
