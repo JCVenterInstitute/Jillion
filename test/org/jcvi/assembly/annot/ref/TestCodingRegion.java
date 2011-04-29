@@ -37,7 +37,7 @@ import org.junit.Test;
 
 public class TestCodingRegion {
 
-    Range range = createMock(Range.class);
+    Range range = Range.buildRange(0,10);
     List<Exon> exons = Arrays.asList(createMock(Exon.class), createMock(Exon.class));
     DefaultCodingRegion sut = new DefaultCodingRegion(range, CodingRegionState.COMPLETE, CodingRegionState.INCOMPLETE, exons);
     
@@ -112,7 +112,7 @@ public class TestCodingRegion {
     
     @Test
     public void notEqualsDifferentRange(){
-        DefaultCodingRegion differentRange = new DefaultCodingRegion(createMock(Range.class), CodingRegionState.COMPLETE, CodingRegionState.INCOMPLETE, exons);
+        DefaultCodingRegion differentRange = new DefaultCodingRegion(range.shiftLeft(2), CodingRegionState.COMPLETE, CodingRegionState.INCOMPLETE, exons);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentRange);
     }
     @Test

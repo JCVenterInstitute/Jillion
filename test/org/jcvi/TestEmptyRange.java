@@ -61,7 +61,7 @@ public class TestEmptyRange{
     }
     @Test
     public void testStartsBefore(){
-        assertFalse(emptyRange.startsBefore(nonEmptyRange));
+        assertTrue(emptyRange.startsBefore(nonEmptyRange));
     }
     @Test
     public void testUnion(){
