@@ -104,6 +104,13 @@
 					<src path="${integration-test-internal}"/>
 			
 	  	</javac>
+		<emma enabled="${emma.enabled}" >
+											      <instr instrpath="${bin}"
+											             mode="overwrite"
+											      		merge="no"
+											      >
+									      		</instr>
+									  	    </emma>
 		<copy todir="${bin}">
 			<fileset dir="${test}" excludes="**/*.java"/>
 			<fileset dir="${test-internal}" excludes="**/*.java"/>
