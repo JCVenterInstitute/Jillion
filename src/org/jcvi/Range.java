@@ -161,14 +161,11 @@ public final class Range implements Placed<Range>,Iterable<Long>
             
         }
         ;
-
-       
-        
     }
     /**
-     * Enumeration of available range coordinate systems
+     * Enumeration of available range coordinate systems.
      */
-    public enum CoordinateSystem implements RangeCoordinateSystem {
+    public enum CoordinateSystem {
         /**
          * Zero-based coordinate systems are exactly like
          * array index offsets.  CoordinateSystem starts at 0
@@ -265,11 +262,11 @@ public final class Range implements Placed<Range>,Iterable<Long>
          * Get the start coordinate in this system from the 
          * equivalent zero-based start coordinate.
          */
-        public long getLocalStart(long start) {
+        private long getLocalStart(long start) {
             return start + zeroBaseToCoordinateSystemStartAdjustmentValue;
         }
 
-        public long getLocalEnd(long end) {
+        private long getLocalEnd(long end) {
             return end + zeroBaseToCoordinateSystemEndAdjustmentValue;
         }
 
@@ -277,11 +274,11 @@ public final class Range implements Placed<Range>,Iterable<Long>
          * Get zero base start and end locations
         * from range coordinate system start and end locations
          */
-        public long getStart(long localStart) {
+        private long getStart(long localStart) {
             return localStart + coordinateSystemToZeroBaseStartAdjustmentValue;
         }
 
-        public long getEnd(long localEnd) {
+        private long getEnd(long localEnd) {
             return localEnd + coordinateSystemToZeroBaseEndAdjustmentValue;
         }
 
@@ -347,7 +344,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @throws NullPointerException if the coordinateSystem is null.
      * @throws IllegalArgumentException if localEnd < localStart -1.
      */
-    public static Range buildRange(RangeCoordinateSystem coordinateSystem,long localStart, long localEnd){
+    public static Range buildRange(CoordinateSystem coordinateSystem,long localStart, long localEnd){
         if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot build null coordinate system range");
         }
@@ -373,11 +370,11 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * to the new coordinate system.
      * @throws NullPointerException if the coordinateSystem is null.
      */
-    public Range convertRange(RangeCoordinateSystem coordinateSystem) {
+    public Range convertRange(CoordinateSystem coordinateSystem) {
         if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot convert to a null range coordinate system");
         }
-        if(coordinateSystem.equals(this.rangeCoordinateSystem)){
+        if(coordinateSystem.equals(this.coordinateSystem)){
             return this;
         }
         
@@ -408,7 +405,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @return a new Empty Range.
      * @throws NullPointerException if the coordinateSystem is null.
      */
-    public static Range buildEmptyRange(RangeCoordinateSystem coordinateSystem,long coordinate){
+    public static Range buildEmptyRange(CoordinateSystem coordinateSystem,long coordinate){
         if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot build null coordinate system range");
         }
@@ -417,7 +414,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
 
         return buildEmptyRange(zeroBasedStart,zeroBasedStart-1,coordinateSystem);
     }
-    private static Range buildEmptyRange(long start,long end,RangeCoordinateSystem coordinateSystem) {
+    private static Range buildEmptyRange(long start,long end,CoordinateSystem coordinateSystem) {
         return new Range(start,end,coordinateSystem);
     }
     /**
@@ -448,7 +445,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @return a new Range.
      * @throws NullPointerException if coordinateSystem is null.
      */
-    public static Range buildRangeOfLength(RangeCoordinateSystem coordinateSystem,long localStart, long length){
+    public static Range buildRangeOfLength(CoordinateSystem coordinateSystem,long localStart, long length){
     	if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot build null coordinate system range");
         }
@@ -459,7 +456,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
     public static Range buildRangeOfLengthFromEndCoordinate(long end, long rangeSize){
         return buildRangeOfLengthFromEndCoordinate(CoordinateSystem.ZERO_BASED,end,rangeSize);
     }
-    public static Range buildRangeOfLengthFromEndCoordinate(RangeCoordinateSystem system,long end, long rangeSize){
+    public static Range buildRangeOfLengthFromEndCoordinate(CoordinateSystem system,long end, long rangeSize){
         long zeroBasedEnd = system.getEnd(end);
         Range zeroBasedRange = buildRange(CoordinateSystem.ZERO_BASED,zeroBasedEnd-rangeSize+1,zeroBasedEnd);
         return zeroBasedRange.convertRange(system);
@@ -524,7 +521,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @throws IllegalArgumentException if the given String does not
      * match the correct format.
      */
-    public static Range parseRange(String rangeAsString, RangeCoordinateSystem coordinateSystem){
+    public static Range parseRange(String rangeAsString, CoordinateSystem coordinateSystem){
         Matcher dotMatcher =DOT_PATTERN.matcher(rangeAsString);
         if(dotMatcher.find()){
             return convertIntoRange(dotMatcher,coordinateSystem);
@@ -559,7 +556,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
         return parseRange(rangeAsString, CoordinateSystem.ZERO_BASED);
     }
     
-    private static Range convertIntoRange(Matcher dashMatcher, RangeCoordinateSystem coordinateSystem) {
+    private static Range convertIntoRange(Matcher dashMatcher, CoordinateSystem coordinateSystem) {
         return Range.buildRange(coordinateSystem,Long.parseLong(dashMatcher.group(1)), 
                 Long.parseLong(dashMatcher.group(2))
                 );
@@ -582,7 +579,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * Object used to convert zero base coordinate system values to
      * the appropriate coordinate system values
      */
-    private final RangeCoordinateSystem rangeCoordinateSystem;
+    private final CoordinateSystem coordinateSystem;
 
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
@@ -619,11 +616,11 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @param start The inclusive start coordinate.
      * @param end The inclusive end coordinate.
      */
-    private Range(long start, long end, RangeCoordinateSystem rangeCoordinateSystem) {
+    private Range(long start, long end, CoordinateSystem rangeCoordinateSystem) {
         this.start = start;
         this.end = end;
         this.isEmpty = end-start==-1;
-        this.rangeCoordinateSystem = rangeCoordinateSystem;
+        this.coordinateSystem = rangeCoordinateSystem;
     }
     /**
      * Fetch the left (start) coordinate.
@@ -643,17 +640,17 @@ public final class Range implements Placed<Range>,Iterable<Long>
         return end;
     }
 
-    public RangeCoordinateSystem getRangeCoordinateSystem() {
-        return rangeCoordinateSystem;
+    public CoordinateSystem getCoordinateSystem() {
+        return coordinateSystem;
     }
 
 
     public long getLocalStart() {
-        return rangeCoordinateSystem.getLocalStart(start);
+        return coordinateSystem.getLocalStart(start);
     }
 
     public long getLocalEnd() {
-        return rangeCoordinateSystem.getLocalEnd(end);
+        return coordinateSystem.getLocalEnd(end);
     }
 
     /**
@@ -674,7 +671,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      */
     public Range shiftLeft(long units){
         return Range.buildRangeOfLength(this.start-units, this.size())
-                .convertRange(rangeCoordinateSystem);
+                .convertRange(coordinateSystem);
     }
     /**
      * Create a new Range of the same size
@@ -684,7 +681,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      */
     public Range shiftRight(long units){
         return Range.buildRangeOfLength(this.start+units, this.size())
-            .convertRange(rangeCoordinateSystem);
+            .convertRange(coordinateSystem);
     }
     /**
      * Checks if this range is empty.
@@ -783,10 +780,10 @@ public final class Range implements Placed<Range>,Iterable<Long>
 
         try{
             return Range.buildRange(Math.max(target.getStart(), this.start),
-                            Math.min(target.getEnd(), this.end)).convertRange(getRangeCoordinateSystem());
+                            Math.min(target.getEnd(), this.end)).convertRange(getCoordinateSystem());
         }
         catch(IllegalArgumentException e){
-            return buildEmptyRange().convertRange(getRangeCoordinateSystem());
+            return buildEmptyRange().convertRange(getCoordinateSystem());
         }
 
     }
@@ -907,7 +904,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      */
     public Range grow(long fromStart, long fromEnd)
     {
-        return Range.buildRange(this.getRangeCoordinateSystem(), this.getStart() - fromStart, this.getEnd() + fromEnd);
+        return Range.buildRange(this.getCoordinateSystem(), this.getStart() - fromStart, this.getEnd() + fromEnd);
     }
     
     /**
@@ -960,7 +957,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
     {
         return String.format("[ %d - %d ]/%s", 
                 this.getLocalStart() ,this.getLocalEnd() ,
-            getRangeCoordinateSystem().getAbbreviatedName());
+            getCoordinateSystem().getAbbreviatedName());
     }
   
     
@@ -980,7 +977,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
     public static List<Range> mergeRanges(List<Range> rangesToMerge){
         return mergeRanges(rangesToMerge,CoordinateSystem.ZERO_BASED);
     }
-    public static List<Range> mergeRanges(List<Range> rangesToMerge, RangeCoordinateSystem coordinateSystem){
+    public static List<Range> mergeRanges(List<Range> rangesToMerge, CoordinateSystem coordinateSystem){
         return mergeRanges(rangesToMerge,0,coordinateSystem);
     }
     /**
@@ -1008,7 +1005,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @return a new list of merged Ranges.
      * @throws IllegalArgumentException if clusterDistance <0.
      */
-    public static List<Range> mergeRanges(List<Range> rangesToMerge, int maxDistanceBetweenAdjacentRanges,RangeCoordinateSystem coordinateSystem){
+    public static List<Range> mergeRanges(List<Range> rangesToMerge, int maxDistanceBetweenAdjacentRanges,CoordinateSystem coordinateSystem){
         if(maxDistanceBetweenAdjacentRanges <0){
             throw new IllegalArgumentException("cluster distance can not be negative");
         }
@@ -1035,13 +1032,13 @@ public final class Range implements Placed<Range>,Iterable<Long>
 
     }
     public static List<Range> mergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance,
-            RangeCoordinateSystem coordinateSystem){
+            CoordinateSystem coordinateSystem){
         List<Range> tempRanges = Range.mergeRanges(rangesToMerge,coordinateSystem);
         return _mergeRangesIntoClusters(tempRanges,maxClusterDistance,coordinateSystem);
 
     }
     private static List<Range> _mergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance,
-            RangeCoordinateSystem coordinateSystem){
+            CoordinateSystem coordinateSystem){
         if(maxClusterDistance <0){
             throw new IllegalArgumentException("max cluster distance can not be negative");
         }
@@ -1054,9 +1051,9 @@ public final class Range implements Placed<Range>,Iterable<Long>
         return sortedSplitCopy;
     }
     public List<Range> split(long maxSplitLength){
-        return split(maxSplitLength, getRangeCoordinateSystem());
+        return split(maxSplitLength, getCoordinateSystem());
     }
-    public List<Range> split(long maxSplitLength, RangeCoordinateSystem coordinateSystem){
+    public List<Range> split(long maxSplitLength, CoordinateSystem coordinateSystem){
         if(size()<maxSplitLength){
             return Collections.singletonList(this.convertRange(coordinateSystem));
         }
@@ -1071,7 +1068,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
         return list;
     }
     private static void _mergeAnyRangesThatCanBeClustered(List<Range> rangesToMerge, int maxClusterDistance,
-            RangeCoordinateSystem coordinateSystem) {
+            CoordinateSystem coordinateSystem) {
         boolean merged;
         do{
             merged = false;
@@ -1089,7 +1086,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
         }while(merged);
     }
     
-    private static void mergeAnyRangesThatCanBeCombined(List<Range> rangesToMerge, int clusterDistance,RangeCoordinateSystem coordinateSystem) {
+    private static void mergeAnyRangesThatCanBeCombined(List<Range> rangesToMerge, int clusterDistance,CoordinateSystem coordinateSystem) {
         boolean merged;
         do{
             merged = false;
@@ -1105,7 +1102,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
             }
         }while(merged);
     }
-    private static void replaceWithCombined(List<Range> rangeList, Range range, Range nextRange,RangeCoordinateSystem coordinateSystem) {
+    private static void replaceWithCombined(List<Range> rangeList, Range range, Range nextRange,CoordinateSystem coordinateSystem) {
         final Range combinedRange = Range.buildInclusiveRange(range,nextRange).convertRange(coordinateSystem);
         int index =rangeList.indexOf(range);
         rangeList.remove(range);

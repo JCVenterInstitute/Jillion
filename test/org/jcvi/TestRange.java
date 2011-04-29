@@ -321,7 +321,7 @@ public class TestRange{
         long rangeStart = 5;
         long rangeEnd = 15;
         Range range = Range.buildRange(Range.CoordinateSystem.ZERO_BASED,rangeStart,rangeEnd);
-        Range convertedRange = range.convertRange(range.getRangeCoordinateSystem());
+        Range convertedRange = range.convertRange(range.getCoordinateSystem());
         assertEquals(range,convertedRange);
         assertEquals(range.getStart(),convertedRange.getStart());
         assertEquals(range.getEnd(),convertedRange.getEnd());

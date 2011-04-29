@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi;
+package org.jcvi.sequence;
 /**
  * {@code Distance} is class that represents
  * genomic library mate distances.

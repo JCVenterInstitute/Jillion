@@ -107,7 +107,7 @@ public final class AssemblyUtil {
         }
         long newStart = fullLength - validRange.getEnd()-1;
         long newEnd = fullLength - validRange.getStart()-1;
-        return Range.buildRange(newStart, newEnd).convertRange(validRange.getRangeCoordinateSystem());
+        return Range.buildRange(newStart, newEnd).convertRange(validRange.getCoordinateSystem());
     }
     /**
      * Convert the given gapped valid range index of a given read into its

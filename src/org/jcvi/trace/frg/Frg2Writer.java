@@ -42,7 +42,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
-import org.jcvi.Distance;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
@@ -50,6 +49,7 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
+import org.jcvi.sequence.Distance;
 import org.jcvi.sequence.Library;
 import org.jcvi.sequence.Mated;
 

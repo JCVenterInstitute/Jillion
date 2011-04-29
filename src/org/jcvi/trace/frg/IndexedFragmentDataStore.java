@@ -33,11 +33,11 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.List;
 
-import org.jcvi.Distance;
 import org.jcvi.Range;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.sequence.Distance;
 import org.jcvi.sequence.Library;
 import org.jcvi.sequence.MateOrientation;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
