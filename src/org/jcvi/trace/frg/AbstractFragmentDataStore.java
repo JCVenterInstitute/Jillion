@@ -27,10 +27,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.Distance;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.sequence.DefaultLibrary;
+import org.jcvi.sequence.Distance;
 import org.jcvi.sequence.Library;
 import org.jcvi.sequence.MateOrientation;
 import org.jcvi.util.CloseableIterator;

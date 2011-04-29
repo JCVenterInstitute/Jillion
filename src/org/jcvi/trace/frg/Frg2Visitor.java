@@ -25,11 +25,11 @@ package org.jcvi.trace.frg;
 
 import java.util.List;
 
-import org.jcvi.Distance;
 import org.jcvi.Range;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.io.TextFileVisitor;
+import org.jcvi.sequence.Distance;
 import org.jcvi.sequence.MateOrientation;
 
 public interface Frg2Visitor extends TextFileVisitor{

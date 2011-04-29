@@ -26,7 +26,6 @@ package org.jcvi.trace.frg;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.jcvi.Distance;
 import org.jcvi.Range;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
@@ -35,6 +34,7 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.sequence.Distance;
 import org.jcvi.sequence.MateOrientation;
 import org.junit.Test;
 

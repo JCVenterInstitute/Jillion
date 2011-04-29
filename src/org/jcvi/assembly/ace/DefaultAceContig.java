@@ -30,7 +30,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jcvi.Range;
-import org.jcvi.RangeCoordinateSystem;
+import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.contig.AbstractContig;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
@@ -52,7 +52,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         private NucleotideEncodedGlyphs fullConsensus;
         private String contigId;
         private Logger logger = Logger.getRootLogger();
-        private RangeCoordinateSystem adjustedContigIdCoordinateSystem=null;
+        private CoordinateSystem adjustedContigIdCoordinateSystem=null;
         
         private List<DefaultAcePlacedRead.Builder> aceReadBuilders = new ArrayList<DefaultAcePlacedRead.Builder>();
         private int contigLeft= -1;
@@ -69,7 +69,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         	 this.contigId = contigId;
         }
         
-        public Builder adjustContigIdToReflectCoordinates(RangeCoordinateSystem coordinateSystem){
+        public Builder adjustContigIdToReflectCoordinates(CoordinateSystem coordinateSystem){
             adjustedContigIdCoordinateSystem = coordinateSystem;
             return this;
         }

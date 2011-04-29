@@ -23,6 +23,7 @@
  */
 package org.jcvi;
 
+import org.jcvi.sequence.Distance;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;

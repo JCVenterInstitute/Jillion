@@ -30,13 +30,13 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.Distance;
 import org.jcvi.Range;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.io.IOUtil;
+import org.jcvi.sequence.Distance;
 import org.jcvi.sequence.MateOrientation;
 
 public class Frg2Parser {

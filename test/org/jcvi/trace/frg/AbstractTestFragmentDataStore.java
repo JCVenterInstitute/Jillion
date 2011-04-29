@@ -26,7 +26,6 @@ package org.jcvi.trace.frg;
 import java.io.File;
 import java.io.FileInputStream;
 
-import org.jcvi.Distance;
 import org.jcvi.Range;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
@@ -37,6 +36,7 @@ import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.sequence.DefaultLibrary;
+import org.jcvi.sequence.Distance;
 import org.jcvi.sequence.Library;
 import org.jcvi.sequence.MateOrientation;
 import org.junit.Before;

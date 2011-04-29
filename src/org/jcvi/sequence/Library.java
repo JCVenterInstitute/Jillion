@@ -23,7 +23,6 @@
  */
 package org.jcvi.sequence;
 
-import org.jcvi.Distance;
 
 public interface Library {
 
