@@ -43,11 +43,15 @@ import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedIterable;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.analysis.InternalSangerContigCheckerStruct;
+import org.jcvi.assembly.contig.DefaultContigQualityClassComputer;
 import org.jcvi.assembly.contig.DefaultQualityClassContigMap;
+import org.jcvi.assembly.contig.QualityClassComputer;
+import org.jcvi.assembly.contig.QualityClassMap;
 import org.jcvi.assembly.contig.QualityClassRegion;
+import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.CachedDataStore;
@@ -66,8 +70,7 @@ import org.jcvi.sequence.ReadTrimUtil;
 import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.sequence.TrimType;
 
-public class QualityClassContigTrimmer<R extends PlacedRead> implements
-        ContigTrimmer<R,InternalSangerContigCheckerStruct<R>> {
+public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>{
 
     private final int maxNumberOf5PrimeBasesToTrim;
     private final int maxNumberOf3PrimeBasesToTrim;
@@ -90,13 +93,15 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
         this.qualityClassesToTrim = qualityClassesToTrim;
     }
 
-    @Override
-    public List<TrimmedPlacedRead<R>> trim(InternalSangerContigCheckerStruct<R> struct) throws DataStoreException {
+
+    public List<TrimmedPlacedRead<R>> trim(C struct,QualityDataStore qualityDataStore, 
+            QualityClassComputer<R> qualityClassComputer) throws DataStoreException {
 
         Map<R, Range> trimmedReads = new HashMap<R, Range>();
-        DefaultQualityClassContigMap qualityClassContigMap = struct.getQualityClassMap();
-        CoverageMap<CoverageRegion<R>> coverageMap = struct.getSequenceCoverageMap();
-        QualityDataStore qualityDatastore = struct.getQualityDataStore();
+        CoverageMap<CoverageRegion<R>> coverageMap =DefaultCoverageMap.buildCoverageMap(struct);
+        QualityClassMap qualityClassContigMap =DefaultQualityClassContigMap.create(struct, qualityDataStore, qualityClassComputer);
+        
+       
         for (QualityClassRegion qualityClassRegion : qualityClassContigMap) {
             if (isAQualityClassToTrim(qualityClassRegion.getQualityClass())) {
                 for(Long consensusIndex : new PlacedIterable(qualityClassRegion)){
@@ -107,7 +112,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
                         if (isASnp(read, gappedValidRangeIndex)){                           
 
                             Range oldValidRange = getPreviousValidRange(trimmedReads, read);
-                            Range newValidRange = computeNewValidRange(qualityDatastore, read,oldValidRange,gappedValidRangeIndex);
+                            Range newValidRange = computeNewValidRange(qualityDataStore, read,oldValidRange,gappedValidRangeIndex);
                             if (newValidRange != null) {
                                 trimmedReads.put(read, newValidRange);
                             }
@@ -238,14 +243,13 @@ public class QualityClassContigTrimmer<R extends PlacedRead> implements
                         100);
          
             for (Contig<PlacedRead> contig : contigDataStore) {
-                InternalSangerContigCheckerStruct<PlacedRead> contigCheckerStruct = new InternalSangerContigCheckerStruct<PlacedRead>(
-                        contig, qualityFastaMap, highQualityThreshold);
 
                 QualityClassContigTrimmer trimmer = new QualityClassContigTrimmer(
                         fivePrimeMaxBasesToTrim, threePrimeMaxBasesToTrim, qualityClassesToTrim);
 
                 List<TrimmedPlacedRead<PlacedRead>> trims = trimmer
-                        .trim(contigCheckerStruct);
+                        .trim(contig,qualityFastaMap, new DefaultContigQualityClassComputer<PlacedRead>(
+                                GapQualityValueStrategies.LOWEST_FLANKING, highQualityThreshold));
               //dkatzel turn off extender for now...
                 /*
                 List<String> trimmedReadNames = new ArrayList<String>();

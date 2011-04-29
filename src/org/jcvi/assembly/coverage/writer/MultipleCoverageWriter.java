@@ -21,11 +21,13 @@
  *
  * @author dkatzel
  */
-package org.jcvi.assembly.coverage;
+package org.jcvi.assembly.coverage.writer;
 
 import java.io.Closeable;
 
 import org.jcvi.assembly.Placed;
+import org.jcvi.assembly.coverage.CoverageMap;
+import org.jcvi.assembly.coverage.CoverageRegion;
 
 public interface MultipleCoverageWriter<T extends Placed> extends Closeable {
 

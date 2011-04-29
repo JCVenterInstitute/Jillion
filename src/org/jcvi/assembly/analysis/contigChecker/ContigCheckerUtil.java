@@ -35,8 +35,8 @@ import org.jcvi.assembly.analysis.ContigChecker;
 import org.jcvi.assembly.analysis.ContigCheckerStruct;
 import org.jcvi.assembly.analysis.TextContigCheckReportWriter;
 import org.jcvi.assembly.contig.ConsensusDiffHistogramWriter;
-import org.jcvi.assembly.coverage.PngCoverageWriter;
-import org.jcvi.assembly.coverage.SequenceCoverageWriter;
+import org.jcvi.assembly.coverage.writer.PngCoverageWriter;
+import org.jcvi.assembly.coverage.writer.SequenceCoverageWriter;
 
 public class ContigCheckerUtil {
 

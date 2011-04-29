@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.assembly.coverage;
+package org.jcvi.assembly.coverage.writer;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,6 +31,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.jcvi.assembly.Placed;
+import org.jcvi.assembly.coverage.CoverageMap;
+import org.jcvi.assembly.coverage.CoverageRegion;
 
 public class ExcelCoverageWriter<T extends Placed> implements CoverageWriter<T> {
 
