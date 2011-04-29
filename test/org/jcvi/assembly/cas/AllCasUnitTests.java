@@ -35,7 +35,6 @@ import org.junit.runners.Suite.SuiteClasses;
         TestCasUtil.class,
         TestDifferentFileCasIdLookupAdapter.class,
         TestDefaultCasGappedReferenceMap.class,
-        TestDefaultCasAssembly.class,
         AllCasAlignmentUnitTests.class,
         AllVarUnitTests.class,
         TestCas2Consed3.class
