@@ -35,7 +35,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultRefGene {
 
-    Range transcriptionRange = createMock(Range.class);
+    Range transcriptionRange = Range.buildRange(0,10);
     CodingRegion codingRegion = createMock(CodingRegion.class);
     
     
@@ -203,7 +203,7 @@ public class TestDefaultRefGene {
     @Test
     public void differentTranscriptionRegionShouldNotBeEquals(){
         DefaultRefGene differentTranscription = new DefaultRefGene(name,referenceName,
-                strand, createMock(Range.class), codingRegion);
+                strand, transcriptionRange.shiftLeft(2), codingRegion);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentTranscription);
     }
     

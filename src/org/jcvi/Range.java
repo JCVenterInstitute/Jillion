@@ -54,13 +54,11 @@ import org.jcvi.assembly.Placed;
  * The implications of this are particularly important when thinking about the
  * desire to represent no range at all.  A <code>Range</code> of 0 to 0 still
  * has a size of 1.  In order to represent a <code>Range</code> with size 0,
- * you need to explicitly use an {@link EmptyRange}.
- *
- * @see EmptyRange
+ * you need to explicitly use an empty range.
  * @author jsitz
  * @author dkatzel
  */
-public class Range implements Placed<Range>,Iterable<Long>
+public final class Range implements Placed<Range>,Iterable<Long>
 {
     /**
      * {@code Comparators} is an enum of common Range
@@ -263,8 +261,10 @@ public class Range implements Placed<Range>,Iterable<Long>
             return displayName;
         }
 
-        // get range coordinate system start and end locations
-        // from range zero base start and end locations
+        /**
+         * Get the start coordinate in this system from the 
+         * equivalent zero-based start coordinate.
+         */
         public long getLocalStart(long start) {
             return start + zeroBaseToCoordinateSystemStartAdjustmentValue;
         }
@@ -273,8 +273,10 @@ public class Range implements Placed<Range>,Iterable<Long>
             return end + zeroBaseToCoordinateSystemEndAdjustmentValue;
         }
 
-        // get zero base start and end locations
-        // from range coordinate system start and end locations
+        /**
+         * Get zero base start and end locations
+        * from range coordinate system start and end locations
+         */
         public long getStart(long localStart) {
             return localStart + coordinateSystemToZeroBaseStartAdjustmentValue;
         }
@@ -379,9 +381,7 @@ public class Range implements Placed<Range>,Iterable<Long>
             return this;
         }
         
-        if ( this.isEmpty() ) {
-            return new EmptyRange(this.getStart(),this.getEnd(),coordinateSystem);
-        } 
+        
         return new Range(this.getStart(),this.getEnd(),coordinateSystem);
     }
     /**
@@ -418,7 +418,7 @@ public class Range implements Placed<Range>,Iterable<Long>
         return buildEmptyRange(zeroBasedStart,zeroBasedStart-1,coordinateSystem);
     }
     private static Range buildEmptyRange(long start,long end,RangeCoordinateSystem coordinateSystem) {
-        return new EmptyRange(start,end,coordinateSystem);
+        return new Range(start,end,coordinateSystem);
     }
     /**
      * Build a new Range object of in the Zero based coordinate
@@ -575,6 +575,8 @@ public class Range implements Placed<Range>,Iterable<Long>
      * This coordinate stored relative to the zero base coordinate system
      */
     private final  long end;
+    
+    private final boolean isEmpty;
 
     /**
      * Object used to convert zero base coordinate system values to
@@ -620,6 +622,7 @@ public class Range implements Placed<Range>,Iterable<Long>
     private Range(long start, long end, RangeCoordinateSystem rangeCoordinateSystem) {
         this.start = start;
         this.end = end;
+        this.isEmpty = end-start==-1;
         this.rangeCoordinateSystem = rangeCoordinateSystem;
     }
     /**
@@ -691,7 +694,7 @@ public class Range implements Placed<Range>,Iterable<Long>
      */
     public boolean isEmpty()
     {
-        return false;
+        return isEmpty;
     }
 
     /**
@@ -708,6 +711,7 @@ public class Range implements Placed<Range>,Iterable<Long>
         if(range==null){
             return false;
         }
+        
         /* We are always a subrange of ourselves */
         if (this.equals(range))
         {
@@ -735,7 +739,9 @@ public class Range implements Placed<Range>,Iterable<Long>
         {
             throw new IllegalArgumentException("Null Range used in intersection operation.");
         }
-
+        if(isEmpty()){
+            return false;
+        }
         if (target.isEmpty())
         {
             /*
@@ -767,14 +773,11 @@ public class Range implements Placed<Range>,Iterable<Long>
         {
             throw new IllegalArgumentException("Null Range used in intersection operation.");
         }
-
+        if(isEmpty()){
+            return this;
+        }
         if (target.isEmpty())
         {
-            /*
-             * Instead of defining empty set semantics here, we do it in the
-             * EmptyRange class
-             * -jsitz
-             */
             return target.intersection(this);
         }
 
@@ -824,12 +827,7 @@ public class Range implements Placed<Range>,Iterable<Long>
             throw new IllegalArgumentException("Null Range used in range comparison operation.");
         }
 
-        if (target.isEmpty())
-        {
-            return false;
-        }
-
-        return this.getEnd() < target.getStart();
+        return this.getStart() < target.getStart();
     }
 
     /**
@@ -846,12 +844,11 @@ public class Range implements Placed<Range>,Iterable<Long>
         {
             throw new IllegalArgumentException("Null Range used in range comparison operation.");
         }
-
-        if (target.isEmpty())
+        if (isEmpty || target.isEmpty())
         {
             return false;
         }
-
+        
         return this.getEnd() < target.getStart();
     }
 
@@ -874,6 +871,9 @@ public class Range implements Placed<Range>,Iterable<Long>
         if (target == null)
         {
             throw new IllegalArgumentException("Null Range used in union operation.");
+        }
+        if(isEmpty()){
+            return new Range[]{target};
         }
         if (target.isEmpty())
         {
@@ -964,156 +964,7 @@ public class Range implements Placed<Range>,Iterable<Long>
     }
   
     
-    /**
-     * The <code>EmptyRange</code> is a special case of the {@link Range} class.
-     * It signifies the case where the range must be empty and have a size of 0.
-     * Because the normal {@link Range} class defines an explicitly inclusive
-     * range, it is difficult to select a start/stop pair which behaves
-     * suitably and in an easy-to-understand manner.
-     * <p>
-     * Though it can be treated just like any other {@link Range} object, the
-     * <code>EmptyRange</code> class is implemented as a singleton.  All instances
-     * of the <code>EmptyRange</code> are comparably and referentially equal.
-     * <p>
-     * A number of {@link Range} comparison and modification routines will
-     * delegate to methods in this class when working with <code>EmptyRange</code>
-     * objects.  This gathers all of the special-case handling of things like
-     * intersections and unions in a single code location.
-     *
-     * @author jsitz
-     * @author dkatzel
-     */
-    private static final class EmptyRange extends Range
-    {
-
-        /**
-         * Creates a new <code>EmptyRange</code>.
-         */
-        private EmptyRange(long start,long end,RangeCoordinateSystem rangeCoordinateSystem){
-            super(start,end,rangeCoordinateSystem);
-        }
-
-        /**
-         * {@inheritDoc}
-         * <p>
-         * The <code>EmptyRange</code> never ends before any other {@link Range}.
-         *
-         * @return <code>false</code>.
-         * @see Range#endsBefore(Range)
-         */
-        @Override
-        public boolean endsBefore(Range target)
-        {
-            return false;
-        }
-
-        /**
-         * {@inheritDoc}
-         * <p>
-         * The intersection of the <code>EmptyRange</code> and any other
-         * {@link Range} is always the <code>EmptyRange</code>.
-         *
-         * @return The <code>EmptyRange</code>.
-         * @see Range#intersection(Range)
-         */
-        @Override
-        public Range intersection(Range target)
-        {
-            return this;
-        }
-
-        /**
-         * {@inheritDoc}
-         * <p>
-         * The <code>EmptyRange</code> does not intersect any other {@link Range}.
-         *
-         * @return <code>false</code>
-         * @see Range#intersects(Range)
-         */
-        @Override
-        public boolean intersects(Range target)
-        {
-            return false;
-        }
-
-        /**
-         * {@inheritDoc}
-         * <p>
-         * The <code>EmptyRange</code> is always empty.
-         *
-         * @return <code>true</code>
-         * @see Range#isEmpty()
-         */
-        @Override
-        public boolean isEmpty()
-        {
-            return true;
-        }
-
-        /**
-         * {@inheritDoc}
-         * <p>
-         * The <code>EmptyRange</code> is only a subrange of itself.
-         *
-         * @return <code>true</code> if the comparison range is also the
-         * <code>EmptyRange</code>, otherwise <code>false</code>.
-         * @see Range#isSubRangeOf(Range)
-         */
-        @Override
-        public boolean isSubRangeOf(Range range)
-        {
-            /* Only empty ranges are subranges of the empty range */
-            if (range.isEmpty())
-            {
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * {@inheritDoc}
-         * <p>
-         * The <code>EmptyRange</code> always has a size of 0.
-         *
-         * @return <code>0</code>
-         * @see Range#size()
-         */
-        @Override
-        public long size()
-        {
-            return 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         * <p>
-         * The <code>EmptyRange</code> never starts before any other {@link Range}.
-         *
-         * @return <code>false</code>
-         * @see Range#startsBefore(Range)
-         */
-        @Override
-        public boolean startsBefore(Range target)
-        {
-            return false;
-        }
-
-        /**
-         * {@inheritDoc}
-         * <p>
-         * The union of any {@link Range} and the <code>EmptyRange</code> is
-         * always equal to just the other {@link Range}.
-         *
-         * @return An array of {@link Range}s containing the other {@link Range}.
-         * @see Range#union(Range)
-         */
-        @Override
-        public Range[] union(Range target)
-        {
-            return new Range[]{ target };
-        }
-
-    }
+   
 
     @Override
     public Iterator<Long> iterator() {
