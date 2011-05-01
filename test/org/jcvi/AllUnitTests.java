@@ -66,7 +66,6 @@ import org.junit.runners.Suite.SuiteClasses;
         AllAceUnitTests.class,
         AllQualityClassUnitTests.class,
         AllSequencingTests.class,
-        org.jcvi.log.AllUnitTests.class,
         AllIOUnitTests.class,
         AllTraceUnitTests.class,
         AllAssemblyUnitTests.class,
