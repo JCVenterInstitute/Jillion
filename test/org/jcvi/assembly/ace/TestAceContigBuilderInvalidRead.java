@@ -65,8 +65,14 @@ public class TestAceContigBuilderInvalidRead {
         PhdInfo phdInfo = createMock(PhdInfo.class);
         mockLogger.error(eq("could not add read "+readId), isA(ArrayIndexOutOfBoundsException.class));
         replay(mockLogger);
-        sut.addRead(readId, validBases, offset, SequenceDirection.FORWARD, clearRange, phdInfo);
+        addReadToBuilder(readId, validBases, offset, SequenceDirection.FORWARD, clearRange, phdInfo);
         assertEquals(sut.numberOfReads(),0);
         verify(mockLogger);
+    }
+    
+    private void addReadToBuilder(String id,String validBases,int offset,SequenceDirection dir, Range validRange, PhdInfo phdInfo){
+    	sut.addRead(id, validBases, offset, SequenceDirection.FORWARD, 
+    			validRange, phdInfo,validBases.length());
+        
     }
 }
