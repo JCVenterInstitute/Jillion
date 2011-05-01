@@ -25,10 +25,7 @@ import java.net.HttpURLConnection;
 
 import org.jcvi.auth.DefaultJCVIAuthorizer;
 import org.jcvi.auth.JCVIAuthorizer;
-import org.jcvi.auth.JCVIAuthorizerUtils;
-import org.jcvi.dataDelivery.ReSequencingUtils.OUTPUT_TYPE;
 import org.jcvi.http.HttpGetRequestBuilder;
-import org.jcvi.trace.sanger.traceFileServer.TraceFileServerUtil;
 
 /**
  * @author dkatzel

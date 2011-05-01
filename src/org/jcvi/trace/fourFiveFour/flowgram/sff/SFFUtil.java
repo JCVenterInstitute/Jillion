@@ -23,10 +23,8 @@
  */
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
