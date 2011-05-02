@@ -44,7 +44,6 @@ import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.DefaultAceContig;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.cas.read.AbstractCasFileNucleotideDataStore;
-import org.jcvi.assembly.cas.read.CasDataStoreFactory;
 import org.jcvi.assembly.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.ReferenceCasFileNucleotideDataStore;
 import org.jcvi.assembly.cas.read.SffTrimDataStore;
@@ -96,10 +95,9 @@ public class Cas2Consed3 {
         long startTime = DateTimeUtils.currentTimeMillis();
         try{
              final AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup(casWorkingDirectory);
-             
-             CasDataStoreFactory referenceDataStoreFactory= new FastaCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,10);       
+   
              AbstractCasFileNucleotideDataStore referenceNucleotideDataStore = new ReferenceCasFileNucleotideDataStore(
-                     referenceDataStoreFactory);
+                     new FastaCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,10));
              DefaultCasGappedReferenceMap gappedReferenceMap = new DefaultCasGappedReferenceMap(referenceNucleotideDataStore, referenceIdLookup);
              ConsedDirTraceFolderCreator numberOfReadsVisitor = new ConsedDirTraceFolderCreator(casWorkingDirectory,trimToUntrimmedMap,consedOutputDir);
              CasParser.parseCas(casFile, 
