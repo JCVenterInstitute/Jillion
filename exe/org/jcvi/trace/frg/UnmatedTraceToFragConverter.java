@@ -23,6 +23,7 @@
  */
 package org.jcvi.trace.frg;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,7 +40,6 @@ import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;
-import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.sequence.DefaultLibrary;
 import org.jcvi.sequence.Distance;
 import org.jcvi.sequence.Library;
@@ -48,7 +48,7 @@ import org.jcvi.trace.TraceDataStore;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.SangerTrace;
 import org.jcvi.trace.sanger.SangerTraceParser;
-import org.jcvi.trace.sanger.TraceFileServerDataStore;
+import org.jcvi.trace.sanger.SingleSangerTraceFileDataStore;
 
 public class UnmatedTraceToFragConverter {
 
@@ -74,12 +74,12 @@ public class UnmatedTraceToFragConverter {
         try{
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             
-            String traceDirectory =commandLine.getOptionValue("dir");
+            File traceDirectory =new File(commandLine.getOptionValue("dir"));
             OutputStream out = new FileOutputStream(commandLine.getOptionValue("out"));
             int distance = Integer.parseInt(commandLine.getOptionValue("distance"));
             
             TraceDataStore<SangerTrace> traceDataStore = 
-                new TraceFileServerDataStore<SangerTrace>(DirectoryFileServer.createReadOnlyDirectoryFileServer(traceDirectory),SangerTraceParser.getInstance());
+                new SingleSangerTraceFileDataStore(traceDirectory,SangerTraceParser.getInstance());
             Distance libraryDistance = Distance.buildDistance(distance, distance);
             Library library = new DefaultLibrary("0", 
             							libraryDistance, 
