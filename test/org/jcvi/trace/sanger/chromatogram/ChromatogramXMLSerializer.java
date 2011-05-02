@@ -57,7 +57,7 @@ import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramImpl;
  *
  *
  */
-public class ChromatogramXMLSerializer {
+public final class ChromatogramXMLSerializer {
 
     /**
      * Helper method for converting encoded Channel data into a {@link Channel} object.

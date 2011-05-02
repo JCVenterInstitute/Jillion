@@ -40,7 +40,7 @@ import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
 public interface SectionDecoder {
     /**
      * Decode a {@link Section} of the SCF Data Stream, will set any Section specific
-     * data in the given {@link DefaultSCFHeader} and {@link SCFChromatogramImpl}.
+     * data in the given {@link DefaultSCFHeader} and {@link SCFChromatogram}.
      * @param in SCF Data Stream.
      * @param currentOffset the current offset into the SCF DataStream.
      * @param header the {@link DefaultSCFHeader} that explains where the Section data is for this
@@ -53,7 +53,7 @@ public interface SectionDecoder {
 
     /**
      * Decode a {@link Section} of the SCF Data Stream, will set any Section specific
-     * data in the given {@link DefaultSCFHeader} and {@link SCFChromatogramImpl}.
+     * data in the given {@link DefaultSCFHeader} and {@link SCFChromatogram}.
      * @param in SCF Data Stream.
      * @param currentOffset the current offset into the SCF DataStream.
      * @param header the {@link DefaultSCFHeader} that explains where the Section data is for this

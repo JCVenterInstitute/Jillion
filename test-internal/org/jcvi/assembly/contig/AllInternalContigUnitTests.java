@@ -19,7 +19,6 @@
 
 package org.jcvi.assembly.contig;
 
-import org.jcvi.assembly.contig.trim.AllTrimUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -36,7 +35,6 @@ import org.junit.runners.Suite.SuiteClasses;
             TestDefaultContigQualityClassComputer.class,
             TestDefaultContigQualityClassComputerComputeQualityFromRegion.class,
             TestQualityClassRegion.class,
-            AllTrimUnitTests.class
         }
         )
 public class AllInternalContigUnitTests {

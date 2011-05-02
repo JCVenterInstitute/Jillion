@@ -36,7 +36,7 @@ import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.Chromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramImpl;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFCodec;
-import org.jcvi.trace.sanger.chromatogram.scf.Version3SCFCodec;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFCodecs;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramParser;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -44,7 +44,7 @@ public class TestConvertZtr2Scf {
     private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestConvertZtr2Scf.class);
     
     ZTRChromatogramParser ztrParser = new ZTRChromatogramParser();
-    SCFCodec scfCodec = Version3SCFCodec.INSTANCE;
+    SCFCodec scfCodec = SCFCodecs.VERSION_3;
     
     @Test
     public void ztr2scf() throws TraceDecoderException, IOException{

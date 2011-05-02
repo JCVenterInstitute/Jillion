@@ -33,16 +33,13 @@ import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogram;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFCodec;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFDecoderException;
-import org.jcvi.trace.sanger.chromatogram.scf.Version3SCFCodec;
-import org.jcvi.trace.sanger.chromatogram.scf.header.DefaultSCFHeaderCodec;
-import org.jcvi.trace.sanger.chromatogram.scf.section.DefaultSectionCodecFactory;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestActualSCFCodec {
 
 	 private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestActualSCFCodec.class);
 	   
-    private SCFCodec sut = new Version3SCFCodec(new DefaultSCFHeaderCodec(), new DefaultSectionCodecFactory());
+    private SCFCodec sut = SCFCodecs.VERSION_3;
     @Test
     public void decodeAndEncodeMatch() throws SCFDecoderException, IOException{
         InputStream in = RESOURCES.getFileAsStream("files/GBKAK82TF.scf");
