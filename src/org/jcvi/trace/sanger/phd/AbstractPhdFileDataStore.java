@@ -126,10 +126,8 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     @Override
     public synchronized void visitBeginSequence(String id) {
         checkNotYetInitialized();
-        if(currentId !=null){
-            if(filter.accept(currentId)){
+        if(currentId !=null && filter.accept(currentId)){
                 visitPhd(currentId, currentBases, currentQualities, currentPositions, currentComments,tags);
-            }
         }
         this.currentId = id;
         resetCurrentValues();

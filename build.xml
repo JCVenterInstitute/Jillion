@@ -202,7 +202,8 @@
 	<target name ="unit.tests" depends ="bin">
 			<junit haltonfailure="no" showoutput="yes"
 				errorproperty="unit.test.failed"
-				failureproperty="unit.test.failed">		
+				failureproperty="unit.test.failed"
+				fork="true">		
 				<formatter type="xml"/>
 				
 			  <test name="org.jcvi.AllUnitTests"/>
@@ -210,7 +211,8 @@
 			</junit>
 		<junit haltonfailure="no" showoutput="yes"
 						errorproperty="internal-unit.test.failed"
-						failureproperty="internal-unit.test.failed">		
+						failureproperty="internal-unit.test.failed"
+			fork="true">		
 						<formatter type="xml"/>
 						
 					  <test name="org.jcvi.AllInternalUnitTests"/>
@@ -219,7 +221,8 @@
 				
 		<junit haltonfailure="no" showoutput="yes"
 			errorproperty="integration.test.failed"
-							failureproperty="integration.test.failed">
+							failureproperty="integration.test.failed"
+			fork="true">
 						<formatter type="xml"/>
 						
 					  <test name="org.jcvi.AllIntegrationTests"/>
@@ -228,7 +231,8 @@
 		
 		<junit haltonfailure="no" showoutput="yes"	
 			errorproperty="internal-integration.test.failed"
-							failureproperty="internal-integration.test.failed">
+				failureproperty="internal-integration.test.failed"
+			fork="true">
 								<formatter type="xml"/>
 								
 							  <test name="org.AllInternalIntegrationTests"/>
@@ -237,7 +241,8 @@
 		
 		<junit haltonfailure="no" showoutput="yes"
 			errorproperty="exe.test.failed"
-										failureproperty="exe.test.failed">		
+										failureproperty="exe.test.failed"
+			fork="true">		
 								<formatter type="xml"/>
 								
 							  <test name="org.jcvi.AllExeTests"/>
