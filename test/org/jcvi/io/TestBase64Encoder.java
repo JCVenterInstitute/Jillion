@@ -25,7 +25,6 @@ package org.jcvi.io;
 
 import org.junit.Test;
 
-import sun.misc.BASE64Encoder;
 import static org.junit.Assert.*;
 
 public class TestBase64Encoder {
@@ -41,12 +40,6 @@ public class TestBase64Encoder {
         "dGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGlu"+ String.format("%n")+
         "dWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRo"+ String.format("%n")+
         "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4=";
-    @Test
-    public void sunBase64Encode(){
-        BASE64Encoder sunEncoder = new BASE64Encoder();
-        String sun = sunEncoder.encode(sampleText.getBytes());        
-		assertEquals(expectedBase64, sun);
-    }
     
     @Test
     public void encoder(){
