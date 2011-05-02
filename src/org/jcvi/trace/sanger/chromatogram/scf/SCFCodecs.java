@@ -16,13 +16,11 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Oct 3, 2008
- *
- * @author dkatzel
- */
+
 package org.jcvi.trace.sanger.chromatogram.scf;
 
+import static org.jcvi.trace.sanger.chromatogram.scf.SCFUtils.HEADER_SIZE;
+import static org.jcvi.trace.sanger.chromatogram.scf.SCFUtils.ORDER_OF_SECTIONS;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -55,24 +53,40 @@ import org.jcvi.trace.sanger.chromatogram.scf.section.SectionCodecFactory;
 import org.jcvi.trace.sanger.chromatogram.scf.section.SectionDecoder;
 import org.jcvi.trace.sanger.chromatogram.scf.section.SectionDecoderException;
 import org.jcvi.trace.sanger.chromatogram.scf.section.SectionEncoder;
-
-import static org.jcvi.trace.sanger.chromatogram.scf.SCFUtils.*;
 /**
- * <code>AbstractSCFCodec</code> is an abstract implementation
- * of {@link SCFCodec} that contains all the common steps in the
- * encoding and decoding algorithms of different SCF versions.
+ * {@code SCFCodecs} contains singleton implementations
+ * of various {@link SCFCodec}s to parse each 
+ * file format version of SCF encoded files.
  * @author dkatzel
  *
  *
  */
-public abstract class AbstractSCFCodec implements SCFCodec{
+public enum SCFCodecs implements SCFCodec{
+    /**
+     * Handles SCF 3.00 (the current version) encoded SCF files.
+     */
+    VERSION_3{
+        @Override
+        public void encode(SangerTrace c, OutputStream out) throws IOException {
+            this.encode(out, (SCFChromatogram)c, 3);
+        }
+    },
+    /**
+     * Handles the legacy SCF 2.00 encoded SCF files.
+     */
+    VERSION_2{
+        @Override
+        public void encode(SangerTrace c, OutputStream out) throws IOException {
+            this.encode(out, (SCFChromatogram)c, 2);
+        }
+    };
     private SectionCodecFactory sectionCodecFactory;
     private SCFHeaderCodec headerCodec;
     
     /**
      * 
      */
-    public AbstractSCFCodec(){
+    SCFCodecs(){
         this(new DefaultSCFHeaderCodec(), new DefaultSectionCodecFactory());
     }
     /**
@@ -83,7 +97,7 @@ public abstract class AbstractSCFCodec implements SCFCodec{
      * which returns the version specific {@link SectionCodec}s needed
      * to encode and decode an {@link SCFChromatogram}.
      */
-    public AbstractSCFCodec(SCFHeaderCodec headerCodec,SectionCodecFactory sectionCodecFactory){
+    SCFCodecs(SCFHeaderCodec headerCodec,SectionCodecFactory sectionCodecFactory){
         this.headerCodec = headerCodec;
         this.sectionCodecFactory = sectionCodecFactory;
     }
@@ -95,14 +109,14 @@ public abstract class AbstractSCFCodec implements SCFCodec{
     public SCFChromatogram decode(InputStream in) throws SCFDecoderException{
            DataInputStream dataIn = new DataInputStream(in);
            SCFHeader header= headerCodec.decode(dataIn);
-           SCFChromatogramBuilder chromoStruct = createSCFChromatogramStruct();
+           SCFChromatogramBuilder builder = new SCFChromatogramBuilder();
            SortedMap<Integer, Section> sectionsByOffset = createSectionsByOffsetMap(header);
            long currentOffset =HEADER_SIZE;
            for(Entry<Integer, Section> entry: sectionsByOffset.entrySet()){
               SectionDecoder sp=sectionCodecFactory.getSectionParserFor(entry.getValue(), header);
-              currentOffset = sp.decode(dataIn, currentOffset, header, chromoStruct);
+              currentOffset = sp.decode(dataIn, currentOffset, header, builder);
            }
-           return chromoStruct.build();
+           return builder.build();
 
        
     }
@@ -150,14 +164,6 @@ public abstract class AbstractSCFCodec implements SCFCodec{
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
-    }
-    /**
-     * Creates a new {@link SCFChromatogramBuilder} may be overridden
-     * by subclasses to return a different implementation (or mock).
-     * @return a {@link SCFChromatogramBuilder} (not null).
-     */
-    protected SCFChromatogramBuilder createSCFChromatogramStruct() {
-        return new SCFChromatogramBuilder();
     }
     /**
      * Since each section does not depend on the other, parsing is made

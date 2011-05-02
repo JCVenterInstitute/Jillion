@@ -28,16 +28,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.sequence.Peaks;
 
-public class BasicChromatogramBuilder {
+public final class BasicChromatogramBuilder {
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
 
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[]{};
@@ -81,6 +83,14 @@ public class BasicChromatogramBuilder {
             tPositions(channelGroup.getTChannel().getPositions().array());
             properties(properties);
         }
+        public BasicChromatogramBuilder(Chromatogram copy){
+       this(NucleotideGlyph.convertToString(copy.getBasecalls().decode()),
+       ShortGlyph.toArray(copy.getPeaks().getData().decode()),
+       copy.getChannelGroup(),
+       copy.getProperties()
+       );
+        
+        }
         public final short[] peaks() {
             return Arrays.copyOf(peaks, peaks.length);
         }
@@ -94,7 +104,7 @@ public class BasicChromatogramBuilder {
             return basecalls;
         }
 
-        public final BasicChromatogramBuilder basecalls(String basecalls) {
+        public BasicChromatogramBuilder basecalls(String basecalls) {
             this.basecalls = basecalls;
             return this;
         }
@@ -176,7 +186,12 @@ public class BasicChromatogramBuilder {
         }
 
         public final BasicChromatogramBuilder properties(Map<String,String> properties) {
-            this.properties = new HashMap<String, String>(properties);
+            this.properties = new HashMap<String, String>();
+            //need to manually add properties because default implementation
+            //is to use input as "default" but will return empty map!!!
+            for(Entry<String,String> entry : properties.entrySet()){
+                this.properties.put(entry.getKey(), entry.getValue());
+            }
             return this;
         }
 

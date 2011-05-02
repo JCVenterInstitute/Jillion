@@ -46,7 +46,7 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Peaks;
-import org.jcvi.trace.sanger.chromatogram.scf.Version3SCFCodec;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFCodecs;
 import org.jcvi.trace.sanger.chromatogram.ztr.IOLibLikeZTRChromatogramWriter;
 
 /**
@@ -118,7 +118,7 @@ public class MakeChromatogram {
         String suffix = "scf";
         ChromatogramWriter writer = commandLine.hasOption("ztr")?
                         IOLibLikeZTRChromatogramWriter.INSTANCE:
-                            Version3SCFCodec.INSTANCE;
+                            SCFCodecs.VERSION_3;
         if(commandLine.hasOption("ztr")){
             suffix = "ztr";
         }

@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.TraceDecoderException;
-import org.jcvi.trace.sanger.chromatogram.scf.Version3SCFCodec;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFCodecs;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramParser;
 import org.jcvi.trace.sanger.phd.SinglePhdFile;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class TestSangerTraceParser {
     @Test
     public void parseSCF_v3() throws TraceDecoderException, IOException{
         SangerTrace actual =sut.decode(RESOURCES.getFileAsStream(SCF3_FILE));
-        SangerTrace expected = Version3SCFCodec.INSTANCE.decode(RESOURCES.getFileAsStream(SCF3_FILE));
+        SangerTrace expected = SCFCodecs.VERSION_3.decode(RESOURCES.getFileAsStream(SCF3_FILE));
         assertEquals(expected, actual);
     }
     @Test

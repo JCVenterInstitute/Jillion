@@ -36,7 +36,7 @@ import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
 /**
  * <code>PrivateDataCodec</code> is the SectionCodec implementation
- * that will encode/ decode the {@link PrivateData} of an {@link SCFChromatogramImpl}.
+ * that will encode/ decode the {@link PrivateData} of an {@link SCFChromatogram}.
  * @author dkatzel
  *
  *

@@ -24,23 +24,41 @@
 package org.jcvi.trace.sanger.chromatogram.ztr;
 
 
+import java.util.Map;
+
+import org.jcvi.Builder;
 import org.jcvi.Range;
 import org.jcvi.trace.sanger.chromatogram.BasicChromatogramBuilder;
+import org.jcvi.trace.sanger.chromatogram.Chromatogram;
 
 /**
  * <code>ZTRChromatogramBuilder</code> uses the Builder Pattern
- * to build a {@link ZTRChromatogramImpl}
+ * to build a {@link ZTRChromatogram} instance.
  * @author dkatzel
  *
  *
  */
-public class ZTRChromatogramBuilder extends BasicChromatogramBuilder{
+public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
     
     /**
      * Hints for valid range of this sequence.
      */
     private Range clip;
 
+    private final BasicChromatogramBuilder basicBuilder;
+    
+    
+    public ZTRChromatogramBuilder(){
+        basicBuilder = new BasicChromatogramBuilder();
+    }
+    
+    public ZTRChromatogramBuilder(Chromatogram copy){
+       basicBuilder = new BasicChromatogramBuilder(copy);        
+    }
+    public ZTRChromatogramBuilder(ZTRChromatogram copy){
+        this((Chromatogram)copy);
+        clip(copy.getClip());
+     }
    /**
     * Gets the ZTR's clip points..
     * @return a Clip, may be null.
@@ -63,8 +81,106 @@ public class ZTRChromatogramBuilder extends BasicChromatogramBuilder{
      */
     @Override
     public ZTRChromatogram build() {
-        return new ZTRChromatogramImpl(super.build(),
+        return new ZTRChromatogramImpl(basicBuilder.build(),
                 clip());
     }
     
+    public final short[] peaks() {
+        return basicBuilder.peaks();
+    }
+
+    public ZTRChromatogramBuilder peaks(short[] peaks) {
+        basicBuilder.peaks(peaks);
+        return this;
+    }
+
+    public final String basecalls() {
+        return basicBuilder.basecalls();
+    }
+
+    public ZTRChromatogramBuilder basecalls(String basecalls) {
+        basicBuilder.basecalls(basecalls);
+        return this;
+    }
+
+    public final byte[] aConfidence() {
+        return basicBuilder.aConfidence();
+    }
+
+    public final ZTRChromatogramBuilder aConfidence(byte[] confidence) {
+        basicBuilder.aConfidence(confidence);
+        return this;
+    }
+
+    public final byte[] cConfidence() {
+        return basicBuilder.cConfidence();
+    }
+
+    public final ZTRChromatogramBuilder cConfidence(byte[] confidence) {
+        basicBuilder.cConfidence(confidence);
+        return this;
+    }
+
+    public final byte[] gConfidence() {
+        return basicBuilder.gConfidence();
+    }
+
+    public final ZTRChromatogramBuilder gConfidence(byte[] confidence) {
+        basicBuilder.gConfidence(confidence);
+        return this;
+    }
+
+    public final byte[] tConfidence() {
+        return basicBuilder.tConfidence();
+    }
+
+    public final ZTRChromatogramBuilder tConfidence(byte[] confidence) {
+        basicBuilder.tConfidence(confidence);
+        return this;
+    }
+
+    public final short[] aPositions() {
+        return basicBuilder.aPositions();
+    }
+
+    public final ZTRChromatogramBuilder aPositions(short[] positions) {
+        basicBuilder.aPositions(positions);
+        return this;
+    }
+
+    public final short[] cPositions() {
+        return basicBuilder.cPositions();
+    }
+
+    public final ZTRChromatogramBuilder cPositions(short[] positions) {
+        basicBuilder.cPositions(positions);
+        return this;
+    }
+
+    public final short[] gPositions() {
+        return basicBuilder.gPositions();
+    }
+
+    public final ZTRChromatogramBuilder gPositions(short[] positions) {
+        basicBuilder.gPositions(positions);
+        return this;
+    }
+
+    public final short[] tPositions() {
+        return basicBuilder.tPositions();
+    }
+
+    public final ZTRChromatogramBuilder tPositions(short[] positions) {
+        basicBuilder.tPositions(positions);
+        return this;
+    }
+
+    public final Map<String,String> properties() {
+        return basicBuilder.properties();
+    }
+
+    public final ZTRChromatogramBuilder properties(Map<String,String> properties) {
+        basicBuilder.properties(properties);
+        return this;
+    }
 }

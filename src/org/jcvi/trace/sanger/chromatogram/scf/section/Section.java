@@ -29,7 +29,7 @@ import org.jcvi.trace.sanger.chromatogram.scf.SCFChromatogramImpl;
 /**
  * SCF files are broken down into different Sections.
  * Each Section contains different parts of the
- * {@link SCFChromatogramImpl} data.
+ * {@link SCFChromatogram} data.
  * @author dkatzel
  *
  *

@@ -33,9 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.TraceDecoderException;
-import org.jcvi.trace.sanger.chromatogram.scf.SCFCodec;
-import org.jcvi.trace.sanger.chromatogram.scf.Version2SCFCodec;
-import org.jcvi.trace.sanger.chromatogram.scf.Version3SCFCodec;
+import org.jcvi.trace.sanger.chromatogram.scf.SCFCodecs;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramParser;
 import org.jcvi.trace.sanger.phd.SinglePhdFile;
 
@@ -43,11 +41,10 @@ public class SangerTraceParser implements SangerTraceCodec{
     
     private static final int MARK_LIMIT = 1024;
     private static final ZTRChromatogramParser ZTR_PARSER = new ZTRChromatogramParser();
-    private static final SCFCodec SCF_VERSION_2_CODEC = Version2SCFCodec.INSTANCE;
-    private static final SCFCodec SCF_VERSION_3_CODEC = Version3SCFCodec.INSTANCE;
+
     
     private static final List<SangerTraceCodec> decoderOrder = Arrays.asList(
-            ZTR_PARSER, SCF_VERSION_3_CODEC, SCF_VERSION_2_CODEC);
+            ZTR_PARSER, SCFCodecs.VERSION_3, SCFCodecs.VERSION_2);
     
     private static final SangerTraceParser instance = new SangerTraceParser();
     

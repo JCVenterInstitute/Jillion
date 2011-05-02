@@ -34,9 +34,6 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestPrivateData.class,
         TestSCFChromatogram.class,
-        TestAbstractSCFCodecDecoder.class,
-        TestVersion2SCFCodecEncoder.class,
-        TestVersion3SCFCodecEncoder.class,
        AllHeaderUnitTests.class,
        AllPositionStrategyUnitTests.class,
        AllSectionUnitTests.class,

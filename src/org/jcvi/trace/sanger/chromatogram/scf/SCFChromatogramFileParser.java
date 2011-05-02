@@ -19,6 +19,7 @@
 
 package org.jcvi.trace.sanger.chromatogram.scf;
 
+
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,8 +43,6 @@ import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeaderCodec;
 public final class SCFChromatogramFileParser {
 
     private static final SCFHeaderCodec HEADER_CODEC =new DefaultSCFHeaderCodec();
-    private static final AbstractSCFCodec VERSION3 =Version3SCFCodec.INSTANCE;
-    private static final AbstractSCFCodec VERSION2 =Version2SCFCodec.INSTANCE;
     
     private SCFChromatogramFileParser(){}
     /**
@@ -91,9 +90,9 @@ public final class SCFChromatogramFileParser {
         DataInputStream dIn = new DataInputStream(in);
         SCFHeader header =HEADER_CODEC.decode(dIn);
         if(header.getVersion()>=3F){
-            VERSION3.parse(dIn,header, visitor);
+            SCFCodecs.VERSION_3.parse(dIn,header, visitor);
         }else{
-            VERSION2.parse(dIn, header,visitor);
+            SCFCodecs.VERSION_2.parse(dIn, header,visitor);
         }
     }
 }
