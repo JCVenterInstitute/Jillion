@@ -132,7 +132,7 @@
 			<emma enabled="${emma.enabled}" >
 								      <instr instrpath="${bin}"
 								             mode="overwrite"
-								      		merge="no"
+								      		merge="false"
 								      >
 						      		</instr>
 						  	    </emma>
@@ -156,7 +156,7 @@
 				<emma enabled="${emma.enabled}" >
 									      <instr instrpath="${bin}"
 									             mode="overwrite"
-									      		merge="no"
+									      		merge="false"
 									      >
 							      		</instr>
 							  	    </emma>
