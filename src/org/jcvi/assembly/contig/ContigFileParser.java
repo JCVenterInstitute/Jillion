@@ -38,7 +38,7 @@ import org.jcvi.io.IOUtil;
 import org.jcvi.io.TextLineParser;
 import org.jcvi.sequence.SequenceDirection;
 
-public final class DefaultContigFileParser  {
+public final class ContigFileParser  {
     private static final Pattern NEW_CONTIG_PATTERN = Pattern.compile("##(\\S+).+");
     private static final Pattern NEW_READ_PATTERN = Pattern.compile("#(\\S+)\\((-?\\d+)\\)\\s+\\[(.*)\\].+\\{(-?\\d+) (-?\\d+)\\}.+");
     /**
@@ -155,7 +155,7 @@ public final class DefaultContigFileParser  {
         return validRange;
     }
     
-    private DefaultContigFileParser(){}
+    private ContigFileParser(){}
     
 
 }

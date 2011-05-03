@@ -33,7 +33,7 @@ import java.util.TreeMap;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.AbstractContigFileDataStore;
-import org.jcvi.assembly.contig.DefaultContigFileParser;
+import org.jcvi.assembly.contig.ContigFileParser;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
 
@@ -49,7 +49,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileDataStore impl
      * @throws FileNotFoundException if the given contig file does not exist.
      */
     public DefaultContigFileDataStore(File contigFile) throws FileNotFoundException{
-        DefaultContigFileParser.parse(contigFile, this);
+        ContigFileParser.parse(contigFile, this);
     }
     /**
      * Construct a ContigFileDataStore containing the contig
@@ -57,7 +57,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileDataStore impl
      * @param inputStream an {@link InputStream} of contig file data.
      */
     public DefaultContigFileDataStore(InputStream inputStream) {
-        DefaultContigFileParser.parse(inputStream, this);
+        ContigFileParser.parse(inputStream, this);
     }
     @Override
     protected void addContig(Contig<PlacedRead> contig) {

@@ -36,7 +36,7 @@ import org.jcvi.assembly.ArtificalQualityDataStoreFromContig;
 import org.jcvi.assembly.ace.AceAssembly;
 import org.jcvi.assembly.ace.DefaultAceAdapterContigFileDataStore;
 import org.jcvi.assembly.ace.DefaultAceAssembly;
-import org.jcvi.assembly.contig.DefaultContigFileParser;
+import org.jcvi.assembly.contig.ContigFileParser;
 import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
 import org.jcvi.assembly.slice.LargeSliceMapFactory;
 import org.jcvi.command.CommandLineOptionBuilder;
@@ -127,7 +127,7 @@ public class Contig2Consed {
                 
             }
             
-            DefaultContigFileParser.parse(new FileInputStream(contigFile), aceDataStore);
+            ContigFileParser.parse(new FileInputStream(contigFile), aceDataStore);
             NucleotideDataStore seqDataStore;
             
             if(commandLine.hasOption("seq")){
