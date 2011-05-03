@@ -32,7 +32,7 @@ import org.jcvi.Range;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.AbstractContigFileDataStore;
-import org.jcvi.assembly.contig.DefaultContigFileParser;
+import org.jcvi.assembly.contig.ContigFileParser;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.DefaultIndexedFileRange;
@@ -61,7 +61,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, C
     public IndexedContigFileDataStore(File file) throws FileNotFoundException{
         this.file = file;
         this.mappedRanges = new DefaultIndexedFileRange();
-        DefaultContigFileParser.parse(file,
+        ContigFileParser.parse(file,
                                         new IndexedContigFileVisitor(mappedRanges));
         
     }
@@ -78,7 +78,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, C
         try {
             SingleContigFileVisitor visitor = new SingleContigFileVisitor();
             inputStream = IOUtil.createInputStreamFromFile(file,range);
-            DefaultContigFileParser.parse(inputStream,visitor);
+            ContigFileParser.parse(inputStream,visitor);
             return visitor.getContigToReturn();
         } catch (Exception e) {
             throw new DataStoreException("error trying to get contig "+ contigId,e);

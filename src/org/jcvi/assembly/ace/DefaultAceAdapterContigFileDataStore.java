@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.assembly.contig.DefaultContigFileParser;
+import org.jcvi.assembly.contig.ContigFileParser;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
@@ -51,7 +51,7 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     }
     public DefaultAceAdapterContigFileDataStore(DataStore<? extends FastXRecord<? extends EncodedGlyphs<? extends Glyph>>> fullLengthFastXDataStore, Date phdDate, File contigFile) throws FileNotFoundException{
         this(fullLengthFastXDataStore,phdDate);
-        DefaultContigFileParser.parse(contigFile, this);
+        ContigFileParser.parse(contigFile, this);
     }
     @Override
     protected void visitAceContig(DefaultAceContig aceContig) {
