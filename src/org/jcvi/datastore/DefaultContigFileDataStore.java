@@ -32,12 +32,12 @@ import java.util.TreeMap;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.contig.AbstractContigFileDataStore;
+import org.jcvi.assembly.contig.AbstractContigFileVisitorBuilder;
 import org.jcvi.assembly.contig.ContigFileParser;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
 
-public class DefaultContigFileDataStore extends AbstractContigFileDataStore implements ContigDataStore<PlacedRead, Contig<PlacedRead>>{
+public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder implements ContigDataStore<PlacedRead, Contig<PlacedRead>>{
     private final Map<String,Contig<PlacedRead>> contigs = new TreeMap<String, Contig<PlacedRead>>();
 
     private boolean isClosed = false;

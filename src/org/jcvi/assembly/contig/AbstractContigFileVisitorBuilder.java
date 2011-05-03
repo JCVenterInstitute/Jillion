@@ -31,7 +31,7 @@ import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 
-public abstract class AbstractContigFileDataStore extends AbstractContigFileVisitor{
+public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFileVisitor{
 
     private DefaultContig.Builder currentContigBuilder;
     

@@ -31,7 +31,7 @@ import java.io.InputStream;
 import org.jcvi.Range;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.contig.AbstractContigFileDataStore;
+import org.jcvi.assembly.contig.AbstractContigFileVisitorBuilder;
 import org.jcvi.assembly.contig.ContigFileParser;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
@@ -102,7 +102,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, C
         return mappedRanges.size();
     }
     
-    private static class SingleContigFileVisitor extends AbstractContigFileDataStore{
+    private static class SingleContigFileVisitor extends AbstractContigFileVisitorBuilder{
         private Contig<PlacedRead> contigToReturn;
 
         @Override
@@ -119,7 +119,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, C
     }
     
     
-    private static class IndexedContigFileVisitor extends AbstractContigFileDataStore{
+    private static class IndexedContigFileVisitor extends AbstractContigFileVisitorBuilder{
 
         private int sizeOfCurrentContig;
         private int currentStartOffset;
