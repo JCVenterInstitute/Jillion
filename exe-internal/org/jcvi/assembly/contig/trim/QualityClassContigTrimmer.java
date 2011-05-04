@@ -250,31 +250,9 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
                 List<TrimmedPlacedRead<PlacedRead>> trims = trimmer
                         .trim(contig,qualityFastaMap, new DefaultContigQualityClassComputer<PlacedRead>(
                                 GapQualityValueStrategies.LOWEST_FLANKING, highQualityThreshold));
-              //dkatzel turn off extender for now...
-                /*
-                List<String> trimmedReadNames = new ArrayList<String>();
-                for (TrimmedPlacedRead<PlacedRead> trim : trims) {
-                    trimmedReadNames.add(trim.getRead().getId());
-                }
-                
-                QualityClassExtender extender = new QualityClassExtender<PlacedRead>();
-                List<TrimmedPlacedRead<PlacedRead>> extendedReads = new ArrayList<TrimmedPlacedRead<PlacedRead>>();
-                for(PlacedRead read : contig.getPlacedReads()){
-                    if(!trimmedReadNames.contains(read.getId())){
-                        TrimmedPlacedRead<PlacedRead> extended = extender.extend(
-                                contig.getConsensus(), 
-                                read, 
-                                trimMap.getReadTrimFor(read.getId()), 
-                                seqFastaMap.getRecord(read.getId()).getValues());
-                        if(extended!=null){
-                            extendedReads.add(extended);
-                        }
-                    }
-                }
-                */
+              
                 List<TrimmedPlacedRead<PlacedRead>> allChangedReads = new ArrayList<TrimmedPlacedRead<PlacedRead>>();
                 allChangedReads.addAll(trims);
-               // allChangedReads.addAll(extendedReads);
                 for (TrimmedPlacedRead<PlacedRead> trim : allChangedReads) {
                     // force it to be residue based
                     Range newtrimmedRange = trim.getNewTrimRange()
