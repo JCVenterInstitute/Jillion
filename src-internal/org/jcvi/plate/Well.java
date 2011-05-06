@@ -19,6 +19,7 @@
 
 package org.jcvi.plate;
 
+import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,7 +70,7 @@ public final class Well implements Comparable<Well>{
      * @throws IllegalArgumentException if i <0.
      */
     public static Well compute384Well(int i,IndexOrder order) {
-        return order.getWell(i, WellType._384);
+        return order.getWell(i, PlateFormat._384);
        
     }
     /**
@@ -85,7 +86,7 @@ public final class Well implements Comparable<Well>{
      * @throws IllegalArgumentException if i <0.
      */
     public static Well compute96Well(int i,IndexOrder order) {
-        return order.getWell(i, WellType._96);
+        return order.getWell(i, PlateFormat._96);
        
     }
 
@@ -136,10 +137,10 @@ public final class Well implements Comparable<Well>{
     }
 
     public int get96WellIndex(IndexOrder order){
-        return order.getIndex(this,WellType._96);
+        return order.getIndex(this,PlateFormat._96);
     }
     public int get384WellIndex(IndexOrder order){
-        return order.getIndex(this,WellType._384);
+        return order.getIndex(this,PlateFormat._384);
     }
     /**
      * Returns the hash code value for this object.
@@ -223,31 +224,7 @@ public final class Well implements Comparable<Well>{
      public int compareTo(Well o) {
          return this.toZeroPaddedString().compareTo(o.toZeroPaddedString());
      }
-    /**
-     * {@code WellType} is a private enum for different kinds
-     * of plates.  Currently only 384 and 96 well
-     * plates are supported.
-     * @author dkatzel
-     */
-    private static enum WellType{
-        _384(384,24),
-        _96(96,12);
-        private final int numberOfWells;
-
-        private final int numberOfColumns;
-        private final int numberOfRows;
-
-        /**
-         * @param numberOfColumns
-         */
-        WellType(int numberOfWells,int numberOfColumns) {
-            this.numberOfWells = numberOfWells;
-            this.numberOfColumns = numberOfColumns;
-            this.numberOfRows =  numberOfWells/numberOfColumns;
-        }    
-      
-        
-    }
+    
     /**
      * {@code IndexOrder} defines the well order of indexes
      * into a plate.
@@ -255,7 +232,7 @@ public final class Well implements Comparable<Well>{
      *
      *
      */
-    public enum IndexOrder{
+    public static enum IndexOrder{
         /**
          * Each row is filled first, once the row is full,
          * then the next row starts to get populated.
@@ -264,18 +241,18 @@ public final class Well implements Comparable<Well>{
          */
         ROW_MAJOR{
             @Override
-            int getIndex(Well well, WellType type){
-                return (well.getRow() -'A') * type.numberOfColumns +well.getColumn() -1;
+            int getIndex(Well well, PlateFormat type){
+                return (well.getRow() -'A') * type.getNumberOfColumns() +well.getColumn() -1;
             }
 
             @Override
-            Well getWell(int index, WellType type) {
+            Well getWell(int index, PlateFormat type) {
                 if(index <0){
                     throw new IllegalArgumentException("index can not be <0");
                 }
-                int modIndex = index%type.numberOfWells;
-                int column =  (modIndex % type.numberOfColumns)+1;
-                char row = (char)( 'A'+(modIndex %type.numberOfWells)/ type.numberOfColumns);
+                int modIndex = index%type.getNumberOfWells();
+                int column =  (modIndex % type.getNumberOfColumns())+1;
+                char row = (char)( 'A'+(modIndex %type.getNumberOfWells())/ type.getNumberOfColumns());
                 return new Well(row,column);
             }
             
@@ -287,17 +264,17 @@ public final class Well implements Comparable<Well>{
          * Ex: A01, B01, C01...A02, B02, C02...
          */
         COLUMN_MAJOR{
-            int getIndex(Well well, WellType type){
-                 return ((well.getColumn()-1) * type.numberOfRows) + (well.getRow() -'A');
+            int getIndex(Well well, PlateFormat type){
+                 return ((well.getColumn()-1) * type.getNumberOfRows()) + (well.getRow() -'A');
             }
             @Override
-            Well getWell(int index, WellType type) { 
+            Well getWell(int index, PlateFormat type) { 
                 if(index <0){
                     throw new IllegalArgumentException("index can not be <0");
                 }
-                int modIndex = index%type.numberOfWells;
-                char row = (char)( 'A'+(modIndex %type.numberOfRows));
-                int column =  (modIndex / type.numberOfRows) +1;
+                int modIndex = index%type.getNumberOfWells();
+                char row = (char)( 'A'+(modIndex %type.getNumberOfRows()));
+                int column =  (modIndex / type.getNumberOfRows()) +1;
                 
                 return new Well(row,column);
             }
@@ -309,17 +286,17 @@ public final class Well implements Comparable<Well>{
          * Ex: A01, C01, E01...B01, D01,...A02, C02, E02...
          */
         HAMILTON_OPTIMIZED_COLUMN_MAJOR{
-            int getIndex(Well well, WellType type){
-                 return ((well.getColumn()-1) * type.numberOfRows) + (well.getRow() -'A');
+            int getIndex(Well well, PlateFormat type){
+                 return ((well.getColumn()-1) * type.getNumberOfRows()) + (well.getRow() -'A');
             }
             @Override
-            Well getWell(int index, WellType type) { 
+            Well getWell(int index, PlateFormat type) { 
                 if(index <0){
                     throw new IllegalArgumentException("index can not be <0");
                 }
-                int modIndex = index%type.numberOfWells;
-                char row = (char)( 'A'+((modIndex %type.numberOfRows)/2 + modIndex%2));
-                int column =  (modIndex / type.numberOfRows) +1;
+                int modIndex = index%type.getNumberOfWells();
+                char row = (char)( 'A'+((modIndex %type.getNumberOfRows())/2 + modIndex%2));
+                int column =  (modIndex / type.getNumberOfRows()) +1;
                 
                 return new Well(row,column);
             }
@@ -332,8 +309,8 @@ public final class Well implements Comparable<Well>{
          * Ex: A01, A02, B01, B02,...H02, A03, A04, B03, B04....
          */
         ABI_3130_16_CAPILLARIES{
-            int getIndex(Well well, WellType type){
-                if(type != WellType._96){
+            int getIndex(Well well, PlateFormat type){
+                if(type != PlateFormat._96){
                     throw new IllegalArgumentException("only 96 well plates supported");
                 }
                 int rowIndex =well.getRow() -'A';
@@ -343,14 +320,14 @@ public final class Well implements Comparable<Well>{
                 
            }
            @Override
-           Well getWell(int index, WellType type) { 
+           Well getWell(int index, PlateFormat type) { 
                if(index <0){
                    throw new IllegalArgumentException("index can not be <0");
                }
-               if(type != WellType._96){
+               if(type != PlateFormat._96){
                    throw new IllegalArgumentException("only 96 well plates supported");
                }
-               int modIndex = index%type.numberOfWells;
+               int modIndex = index%type.getNumberOfWells();
                int capilaryIndex = modIndex/16;
                int i = modIndex % 16;
                
@@ -364,10 +341,65 @@ public final class Well implements Comparable<Well>{
         
         ;
         
-        abstract  int getIndex(Well well, WellType type);
+        abstract  int getIndex(Well well, PlateFormat type);
         
-        abstract Well getWell(int index, WellType type);
+        abstract Well getWell(int index, PlateFormat type);
+        /**
+         * Create a new {@link Comparator} instance
+         * that compares wells using this IndexOrder's
+         * index for 96 well plates.
+         * @return a new Comparator instance.
+         */
+        public Comparator<Well> create96WellComparator(){
+            return createWellComparator(PlateFormat._96);
+        }
+        /**
+         * Create a new {@link Comparator} instance
+         * that compares wells using this IndexOrder's
+         * index for 384 well plates.
+         * @return a new Comparator instance.
+         */
+        public Comparator<Well> create384WellComparator(){
+            return createWellComparator(PlateFormat._384);
+        }
+        
+        public Comparator<Well> createWellComparator(PlateFormat format){
+            return new IndexOrderComparator(format, this);
+        }
+        
     }
-   
     
+    private static final class IndexOrderComparator implements Comparator<Well>{
+        private final PlateFormat type;
+        private final IndexOrder order;
+        
+
+        private IndexOrderComparator(PlateFormat type, IndexOrder order) {
+            this.type = type;
+            this.order = order;
+        }
+
+
+        @Override
+        public int compare(Well o1, Well o2) {
+            final int o1Index, o2Index;
+            switch(type){
+                case _384 : 
+                    o1Index = o1.get384WellIndex(order);
+                    o2Index = o2.get384WellIndex(order);
+                    break;
+                case _96 : 
+                    o1Index = o1.get96WellIndex(order);
+                    o2Index = o2.get96WellIndex(order);
+                    break;
+                default: 
+                    //impossible
+                    throw new IllegalStateException("invalid type");
+            }
+            return Integer.valueOf(o1Index).compareTo(o2Index);
+        }
+        
+        
+    }
+
 }
