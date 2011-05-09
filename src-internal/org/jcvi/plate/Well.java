@@ -70,7 +70,7 @@ public final class Well implements Comparable<Well>{
      * @throws IllegalArgumentException if i <0.
      */
     public static Well compute384Well(int i,IndexOrder order) {
-        return order.getWell(i, PlateFormat._384);
+        return computeWell(PlateFormat._384,i, order);
        
     }
     /**
@@ -86,10 +86,27 @@ public final class Well implements Comparable<Well>{
      * @throws IllegalArgumentException if i <0.
      */
     public static Well compute96Well(int i,IndexOrder order) {
-        return order.getWell(i, PlateFormat._96);
+        return computeWell(PlateFormat._96,i, order);
        
     }
-
+    /**
+     * Compute the Well for the given index for the given plate format.
+     * This method will "rollover" the index to make it under the max number
+     * of wells per plate.
+     * @param format the {@link PlateFormat} to use.
+     *@param i the index of the well to get
+     * @param order the {@link IndexOrder} to use for the given index.
+     * @return a {@link Well} representing the <code>i</code>th index 
+     * in the given IndexOrder.
+     * @throws NullPointerException if order or format is null.
+     * @throws IllegalArgumentException if i <0.
+     */
+    public static Well computeWell(PlateFormat format, int i, IndexOrder order){
+        if(format ==null){
+            throw new NullPointerException("format can not be null");
+        }
+        return order.getWell(i, format);
+    }
    
     /**
      * the row of this well.
@@ -137,10 +154,14 @@ public final class Well implements Comparable<Well>{
     }
 
     public int get96WellIndex(IndexOrder order){
-        return order.getIndex(this,PlateFormat._96);
+        return getWellIndex(PlateFormat._96,order);
     }
     public int get384WellIndex(IndexOrder order){
-        return order.getIndex(this,PlateFormat._384);
+        return getWellIndex(PlateFormat._384,order);
+    }
+    
+    public int getWellIndex(PlateFormat format, IndexOrder order){
+        return order.getIndex(this,format);
     }
     /**
      * Returns the hash code value for this object.
