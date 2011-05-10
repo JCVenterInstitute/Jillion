@@ -127,5 +127,47 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
     public Range asRange() {
         return placedRead.asRange();
     }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((phdInfo == null) ? 0 : phdInfo.hashCode());
+        result = prime * result
+                + ((placedRead == null) ? 0 : placedRead.hashCode());
+        result = prime * result + ungappedFullLength;
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof AcePlacedReadAdapter)) {
+            return false;
+        }
+        AcePlacedReadAdapter other = (AcePlacedReadAdapter) obj;
+        if (phdInfo == null) {
+            if (other.phdInfo != null) {
+                return false;
+            }
+        } else if (!phdInfo.equals(other.phdInfo)) {
+            return false;
+        }
+        if (placedRead == null) {
+            if (other.placedRead != null) {
+                return false;
+            }
+        } else if (!placedRead.equals(other.placedRead)) {
+            return false;
+        }
+        if (ungappedFullLength != other.ungappedFullLength) {
+            return false;
+        }
+        return true;
+    }
+    
     
 }

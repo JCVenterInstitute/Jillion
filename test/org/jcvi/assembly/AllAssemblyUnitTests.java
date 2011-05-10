@@ -36,7 +36,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {        
-        TestDefaultPlacedContigClone.class,
         TestDefaultPlacedRead.class,
         TestDefaultLocation.class,
         TestSplitReferenceEncodedNucleotideGlyphs.class,
