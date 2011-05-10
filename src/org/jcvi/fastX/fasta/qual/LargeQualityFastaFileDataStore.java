@@ -129,7 +129,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
 						return true;
 					}
 					@Override
-					public void visitEndOfFile() {
+					public synchronized void visitEndOfFile() {
 						
 						super.visitEndOfFile();
 						LargeQualityFastaFileDataStore.this.size=count;

@@ -27,7 +27,6 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,17 +51,17 @@ public class CasParser {
     private CasScoringScheme scoringScheme;
     
     private CasParser(File file, CasFileVisitor visitor, boolean parseMatches) throws IOException{
-        parseMetaData(new FileInputStream(file),visitor);
+        parseMetaData(file,visitor);
         if(parseMatches){
-            parseMatches(new FileInputStream(file),visitor);
+            parseMatches(file,visitor);
         }
         visitor.visitEndOfFile();
     }
-    private void parseMatches(InputStream in,
+    private void parseMatches(File file,
             CasFileVisitor visitor) throws IOException {
-        DataInputStream dataIn = new DataInputStream(in);
+        DataInputStream dataIn = new DataInputStream(new FileInputStream(file));
         try{
-        IOUtil.blockingSkip(in, 16);
+        IOUtil.blockingSkip(dataIn, 16);
         for(int i=0; i<numberOfReads; i++){
             byte info = dataIn.readByte();
             boolean hasMatch= (info & 0x01)!=0;
@@ -121,8 +120,8 @@ public class CasParser {
         }
         
     }
-    private void parseMetaData(InputStream in, CasFileVisitor visitor) throws IOException {
-        DataInputStream dataIn = new DataInputStream(in);
+    private void parseMetaData(File file, CasFileVisitor visitor) throws IOException {
+        DataInputStream dataIn = new DataInputStream(new FileInputStream(file));
         try{
             byte[] magicNumber = IOUtil.readByteArray(dataIn, 8);
             if(!Arrays.equals(CAS_MAGIC_NUMBER, magicNumber)){
