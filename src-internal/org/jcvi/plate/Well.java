@@ -308,7 +308,12 @@ public final class Well implements Comparable<Well>{
          */
         HAMILTON_OPTIMIZED_COLUMN_MAJOR{
             int getIndex(Well well, PlateFormat type){
-                 return ((well.getColumn()-1) * type.getNumberOfRows()) + (well.getRow() -'A');
+                int rowOffset = well.getRow() -'A';
+                int rowIndex =rowOffset/2;
+                if(rowOffset %2!=0){
+                    rowIndex += type.getNumberOfRows()/2;
+                }
+                 return ((well.getColumn()-1) * type.getNumberOfRows()) + rowIndex;
             }
             @Override
             Well getWell(int index, PlateFormat type) { 
@@ -316,8 +321,15 @@ public final class Well implements Comparable<Well>{
                     throw new IllegalArgumentException("index can not be <0");
                 }
                 int modIndex = index%type.getNumberOfWells();
-                char row = (char)( 'A'+((modIndex %type.getNumberOfRows())/2 + modIndex%2));
-                int column =  (modIndex / type.getNumberOfRows()) +1;
+                int colIndex = modIndex / type.getNumberOfRows();
+                int rowIndex = modIndex%type.getNumberOfRows();
+                if(rowIndex >= type.getNumberOfRows()/2){
+                    rowIndex = (rowIndex%(type.getNumberOfRows()/2))*2 +1;
+                }else{
+                    rowIndex = (rowIndex%(type.getNumberOfRows()/2))*2;
+                }
+                char row = (char)( 'A'+rowIndex);
+                int column =  colIndex+1;
                 
                 return new Well(row,column);
             }

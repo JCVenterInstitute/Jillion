@@ -245,10 +245,10 @@ public class TestWell {
         
         //hamilton optimized
         index =-1;
-       /* for(int row=0; row<24; row++){
+        for(int row=0; row<24; row++){
             for(int col=0; col<16; col+=2){
                 index++;
-                final String zeroPaddedName = String.format("%s%d", 
+                final String zeroPaddedName = String.format("%s%02d", 
                         (char)('A'+col), row+1);
                 System.out.println(zeroPaddedName + "  " + index + "  " +Well.compute384Well(index, Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR));
                 final Well actualWell = Well.compute384Well(index, Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR);
@@ -260,9 +260,10 @@ public class TestWell {
             }
             for(int col=1; col<16; col+=2){
                 index++;
-                final String zeroPaddedName = String.format("%s%d", 
+                final String zeroPaddedName = String.format("%s%02d", 
                         (char)('A'+col), row+1);
-                System.out.println(zeroPaddedName);
+                System.out.println(zeroPaddedName + "  " + index + "  " +Well.compute384Well(index, Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR));
+                
                 final Well actualWell = Well.compute384Well(index, Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR);
                 data.add(new Object[]{ 
                         Well.create(zeroPaddedName),
@@ -271,7 +272,7 @@ public class TestWell {
                         actualWell.get384WellIndex(Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR)});
             }
         }
-        */
+        
         return data;
     }
 
