@@ -301,8 +301,11 @@ public final class Well implements Comparable<Well>{
             }
         },
         /**
-         * Each column is filled first, once the column is full,
-         * then the next column starts to get populated.
+         * Order of a 384 well plate to get picked a quickly 
+         * as possible using the hamilton robot.  The wells are arrayed so that 
+         * all 8 spans can be used at the same time.  Each column is filled one at a time,
+         * but the odd wells are used first then the evens.
+         * Once the column is full, then the next column starts to get populated.
          * <p>
          * Ex: A01, C01, E01...B01, D01,...A02, C02, E02...
          */
