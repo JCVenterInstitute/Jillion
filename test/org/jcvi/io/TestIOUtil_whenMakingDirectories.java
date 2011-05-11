@@ -39,21 +39,37 @@ public class TestIOUtil_whenMakingDirectories {
     }
     @Test
     public void mkdir() throws IOException{
+        expect(mockFile.exists()).andReturn(false);
         expect(mockFile.mkdir()).andReturn(true);
         replay(mockFile);
         IOUtil.mkdir(mockFile);
         verify(mockFile);
     }
     @Test
+    public void mkdirAlreadyExists() throws IOException{
+        expect(mockFile.exists()).andReturn(true);
+        replay(mockFile);
+        IOUtil.mkdir(mockFile);
+        verify(mockFile);
+    }
+    @Test
     public void mkdirs() throws IOException{
+        expect(mockFile.exists()).andReturn(false);
         expect(mockFile.mkdirs()).andReturn(true);
         replay(mockFile);
         IOUtil.mkdirs(mockFile);
         verify(mockFile);
     }
-    
+    @Test
+    public void mkdirsAlreadyExists() throws IOException{
+        expect(mockFile.exists()).andReturn(true);
+        replay(mockFile);
+        IOUtil.mkdirs(mockFile);
+        verify(mockFile);
+    }
     @Test(expected = IOException.class)
     public void mkdirFailsShouldThrowIOException() throws IOException{
+        expect(mockFile.exists()).andReturn(false);
         expect(mockFile.mkdir()).andReturn(false);
         replay(mockFile);
         IOUtil.mkdir(mockFile);
@@ -61,6 +77,7 @@ public class TestIOUtil_whenMakingDirectories {
     }
     @Test(expected = IOException.class)
     public void mkdirsFailsShouldThrowIOException() throws IOException{
+        expect(mockFile.exists()).andReturn(false);
         expect(mockFile.mkdirs()).andReturn(false);
         replay(mockFile);
         IOUtil.mkdirs(mockFile);
