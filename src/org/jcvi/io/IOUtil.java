@@ -100,6 +100,9 @@ public final class IOUtil {
      * @throws IOException if there is a problem making the directories.
      */
     public static void mkdirs(File dir) throws IOException{
+        if(dir.exists()){
+            return;
+        }
         if(!dir.mkdirs()){
             throw new IOException("unable to mkdirs for "+ dir);
         }
@@ -113,6 +116,9 @@ public final class IOUtil {
      * @throws IOException if there is a problem making the directory.
      */
     public static void mkdir(File dir) throws IOException{
+        if(dir.exists()){
+            return;
+        }
         if(!dir.mkdir()){
             throw new IOException("unable to mkdir for "+ dir);
         }
