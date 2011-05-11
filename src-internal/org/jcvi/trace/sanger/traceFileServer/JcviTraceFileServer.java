@@ -340,7 +340,7 @@ public abstract class JcviTraceFileServer implements TraceFileServer{
             throws IOException {
         return getMultipleFilesAsStream(ids,requestType, fileType, ReturnFormat.JAR);
     }
-    public InputStream getMultipleFilesAsStream(Iterable<String> ids,
+    public InputStream getMultipleFilesAsStream(Iterable<?> ids,
             final RequestType requestType, final FileType fileType, ReturnFormat returnFormat)
             throws IOException {
         return getFileAsStream(new StringUtilities.JoinedStringBuilder(ids)
