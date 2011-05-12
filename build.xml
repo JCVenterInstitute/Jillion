@@ -331,16 +331,9 @@
 		    	<zipfileset src="${lib}/geronimo-stax-api_1.0_spec-1.0.jar"/>
 		    	<zipfileset src="${lib}/xmlbeans-2.3.0.jar"/>
 		    	
-		    	<zipfileset src="${lib}/jcommon-1.0.15.jar"/>
-		    	<zipfileset src="${lib}/jfreechart-1.0.12.jar"/>
+		    	
 		    	<zipfileset src="${lib}/finj-1.1.5.jar"/>
-		    	<zipfileset src="${lib}/batik-awt-util.jar"/>
-		    	<zipfileset src="${lib}/batik-dom.jar"/>
-		    	<zipfileset src="${lib}/batik-svggen.jar"/>
-		    	<zipfileset src="${lib}/batik-util.jar"/>
-		    	<zipfileset src="${lib}/batik-xml.jar"/>
-		    	<zipfileset src="${lib}/guice-2.0.jar"/>
-		    	<zipfileset src="${lib}/aopalliance.jar"/>
+		    	
 		    	<zipfileset src="${lib}/commons-cli-1.2.jar"/>
 		    	<zipfileset src="${lib}/commons-collections-3.2.1.jar"/>
 		    	<zipfileset src="${lib}/commons-io-1.4.jar"/>
