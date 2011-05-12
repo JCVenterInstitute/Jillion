@@ -19,6 +19,7 @@
 
 package org.jcvi.plate;
 
+import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -39,22 +40,24 @@ public final class NextWellIterator{
         newPlate();
     }
     
-    public boolean hasUnusedWells(){
-        return !unusedWells.isEmpty();
-    }
-    
-    public boolean unused(org.jcvi.plate.Well well){
+    public boolean isUnused(org.jcvi.plate.Well well){
         return unusedWells.contains(well);
     }
     public void use(org.jcvi.plate.Well well){
-        if(!unused(well)){
+        if(!isUnused(well)){
             throw new IllegalArgumentException("already used "+ well);
         }
         unusedWells.remove(well);
         
     }
     
+    public boolean isFull(){
+        return unusedWells.isEmpty();
+    }
     public Well nextUnusedWell(){
+        if(isFull()){
+            throw new NoSuchElementException("no more unused wells");
+        }
         return unusedWells.first();
         
     }
