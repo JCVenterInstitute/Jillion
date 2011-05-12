@@ -31,6 +31,7 @@
     <module name="IllegalImport"/>
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment"/>
+<!-- dkatzel -5/2011 ignore javadoc stuff for now 
     <module name="JavadocType">
       <property name="authorFormat" value="\S"/>
     </module>
@@ -43,7 +44,7 @@
     <module name="JavadocStyle">
       <property name="scope" value="public"/>
     </module>
-
+-->
     <module name="LineLength">
       <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
       <property name="max" value="120"/>
@@ -61,7 +62,7 @@
       <property name="tokens" value="ARRAY_INIT, BNOT, DEC, DOT, INC, LNOT, UNARY_MINUS, UNARY_PLUS" />
     </module>
 
-    <module name="NoWhitespaceBefore"/>
+
     <module name="NoWhitespaceBefore">
       <property name="tokens" value="DOT"/>
       <property name="allowLineBreaks" value="true"/>
