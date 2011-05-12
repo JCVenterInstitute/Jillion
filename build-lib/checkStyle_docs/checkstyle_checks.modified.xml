@@ -47,7 +47,7 @@
 -->
     <module name="LineLength">
       <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
-      <property name="max" value="120"/>
+      <property name="max" value="150"/>
     </module>
 
     <module name="LocalFinalVariableName"/>
