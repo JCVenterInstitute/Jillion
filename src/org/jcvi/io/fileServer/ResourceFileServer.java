@@ -80,7 +80,7 @@ public class ResourceFileServer extends AbstractFileServer {
 			if(url==null){
 				return null;
 			}
-			return new File(URLdecode(url.getFile()));
+			return new File(urlDecode(url.getFile()));
         
     }
 
@@ -107,14 +107,14 @@ public class ResourceFileServer extends AbstractFileServer {
      * @return
      * @throws UnsupportedEncodingException
      */
-    private String URLdecode(String path) throws UnsupportedEncodingException{
+    private String urlDecode(String path) throws UnsupportedEncodingException{
     	return URLDecoder.decode(path, "UTF-8");
     }
     public File getRootDir(){
         return new File(clazz.getName().replaceAll("\\.", "/")).getParentFile();
     }
     private final File getClassRootDir() throws UnsupportedEncodingException{
-    	return new File(URLdecode(clazz.getResource(".").getFile()));
+    	return new File(urlDecode(clazz.getResource(".").getFile()));
         //return new File(clazz.getName().replaceAll("\\.", "/")).getParentFile();
     }
 }

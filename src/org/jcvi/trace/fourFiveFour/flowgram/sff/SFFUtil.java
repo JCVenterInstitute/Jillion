@@ -42,7 +42,11 @@ import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 
 
 public final class SFFUtil {
-   private SFFUtil(){}
+   /**
+     * 
+     */
+    private static final float ONE_HUNDRED = 100F;
+private SFFUtil(){}
    /**
     * Mated Sff reads contain both mate data in the same
     * read with a "linker" sequence in between. 
@@ -100,7 +104,7 @@ public final class SFFUtil {
        0,
        0,
        0,
-       1
+       1,
    };
    /**
     * Currently SFF only has 1 format code which has a value of <code>1</code>.
@@ -125,7 +129,7 @@ public final class SFFUtil {
     }
 
     public static float convertFlowgramValue(short encodedValue){
-         return encodedValue / 100F;
+         return encodedValue / ONE_HUNDRED;
     }
     public static short parseSffInfoEncodedFlowgram(String sffinfoEncodedFlowgram){
         Matcher matcher = SFFINFO_ENCODED_FLOWGRAM_PATTERN.matcher(sffinfoEncodedFlowgram);

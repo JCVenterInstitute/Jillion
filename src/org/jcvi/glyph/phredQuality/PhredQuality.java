@@ -39,7 +39,7 @@ public final class PhredQuality extends ByteGlyph{
     
     public static final byte TIGR_TED_EDIT_VALUE = 99;
     public static final byte TIGR_CLOE_EDIT_VALUE = 40;
-    
+    private static final double TEN = 10D;
     private static final Map<Byte, PhredQuality> MAP;
     static{
         MAP = new HashMap<Byte, PhredQuality>();
@@ -53,10 +53,10 @@ public final class PhredQuality extends ByteGlyph{
     }
     
     public static int convertErrorProbability(double errorProbability){
-        return (int)Math.round(-10.0 * Math.log10(errorProbability));
+        return (int)Math.round(-TEN * Math.log10(errorProbability));
     }
     public double getErrorProbability(){
-        return Math.pow(10, this.getNumber()/-10D);
+        return Math.pow(TEN, this.getNumber()/-TEN);
        
     }
     

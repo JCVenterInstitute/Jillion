@@ -216,7 +216,7 @@ public class CasParser {
         (byte)0x00,
         (byte)0x00,
         (byte)0x00,
-        (byte)0x01
+        (byte)0x01,
     };
     
     public static void parseCas(File file, CasFileVisitor visitor) throws IOException{

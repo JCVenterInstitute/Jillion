@@ -30,6 +30,11 @@ package org.jcvi.sequence;
  */
 public final class Distance {
     /**
+     * 
+     */
+    private static final float SIX = 6F;
+
+    /**
      * Celera Assembly's Gatekeeper doesn't
      * like it when the 3 standard Deviations from
      * the mean falls below zero.
@@ -81,7 +86,7 @@ public final class Distance {
     
     
     private static float computeStandardDeviation(int min, int max) {
-        return (max-min)/6F;
+        return (max-min)/SIX;
     }
     private static float computeMean(int min, int max) {
         //divide by 2 first to avoid buffer overflow of large numbers

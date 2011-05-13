@@ -34,6 +34,10 @@ import java.util.Map.Entry;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 final class ProbabilityStruct{
+
+    private static final double ONE_TENTH = 0.1D;
+
+    private static final double ONE_QUARTER = 0.25D;
     private final Map<NucleotideGlyph, Double> probabilityMap;
     
     public ProbabilityStruct(Map<NucleotideGlyph, Double> probabilityMap){
@@ -43,7 +47,7 @@ final class ProbabilityStruct{
         return probabilityMap.get(base);
     }
     public ProbabilityStruct (NucleotideGlyph consensus,int cumulativeQualityValue){
-        double probability = Math.pow(0.1, cumulativeQualityValue/10D);
+        double probability = Math.pow(ONE_TENTH, cumulativeQualityValue*ONE_TENTH);
         probabilityMap = new EnumMap<NucleotideGlyph, Double>(NucleotideGlyph.class);
         for(NucleotideGlyph currentBase : BASES_TO_CONSIDER){
             if(currentBase == consensus){
@@ -52,7 +56,7 @@ final class ProbabilityStruct{
             else{
                 //evenly distribute probability around
                 //to the rest of the basecalls.
-                probabilityMap.put(currentBase, probability* 0.25D);
+                probabilityMap.put(currentBase, probability* ONE_QUARTER);
             }
         }
     }

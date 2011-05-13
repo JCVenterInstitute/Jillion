@@ -25,6 +25,8 @@ package org.jcvi.trace.sanger.chromatogram.abi.tag.rate;
  *
  */
 public class ScanRateUtils {
+    
+    private static final float ONE_THOUSAND = 1000F;
     /**
      * Get the Sampling Rate (Hz) that is displayed in the
      * Seq Analysis annotation report.
@@ -32,6 +34,6 @@ public class ScanRateUtils {
      * @return
      */
     public static float getSamplingRateFor(ScanRate scanRate){
-        return 1000F/scanRate.getScanPeriod();
+        return ONE_THOUSAND/scanRate.getScanPeriod();
     }
 }

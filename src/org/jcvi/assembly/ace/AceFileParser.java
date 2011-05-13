@@ -77,20 +77,14 @@ public final class AceFileParser {
         if(inputStream ==null){
             throw new NullPointerException("input stream can not be null");
         }
-        TextLineParser parser;
-        try {
-            parser = new TextLineParser(new BufferedInputStream(inputStream));
-        } catch (IOException e1) {
-            e1.printStackTrace();
-            throw new IllegalStateException("error reading file");
-            
-        }
+        TextLineParser parser= new TextLineParser(new BufferedInputStream(inputStream));
+        
         boolean firstContigBeingVisited=true;
         while(parser.hasNextLine()){
             String lineWithCR = parser.nextLine();           
             visitor.visitLine(lineWithCR);
             String line = lineWithCR.endsWith("\n")?
-                            line = lineWithCR.substring(0, lineWithCR.length()-1):
+                            lineWithCR.substring(0, lineWithCR.length()-1):
                                 lineWithCR;            
             
             Matcher headerMatcher = ACE_HEADER_PATTERN.matcher(line);
@@ -115,181 +109,44 @@ public final class AceFileParser {
                 else{
                     Matcher contigMatcher = CONTIG_HEADER_PATTERN.matcher(line);
                     if(contigMatcher.find()){
-                        String contigId = contigMatcher.group(1);
-                        int numberOfBases = Integer.parseInt(contigMatcher.group(2));
-                        int numberOfReads = Integer.parseInt(contigMatcher.group(3));
-                        int numberOfBaseSegments = Integer.parseInt(contigMatcher.group(4));
-                        boolean reverseComplimented = parseIsComplimented(contigMatcher.group(5));
-                        visitor.visitContigHeader(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
+                        visitContigHeader(visitor, contigMatcher);
                     }
                     else{
                         Matcher assembledFromMatcher = ASSEMBLED_FROM_PATTERN.matcher(line);
                         if(assembledFromMatcher.find()){
-                            String name = assembledFromMatcher.group(1);
-                            final String group = assembledFromMatcher.group(2);
-                            SequenceDirection dir = parseIsComplimented(group)? SequenceDirection.REVERSE : SequenceDirection.FORWARD;
-                            int fullRangeOffset = Integer.parseInt(assembledFromMatcher.group(3));
-                            visitor.visitAssembledFromLine(name, dir, fullRangeOffset);
+                            visitAssembledFrom(visitor, assembledFromMatcher);
                         }
                         else{
                             Matcher readMatcher = READ_HEADER_PATTERN.matcher(line);
                             if(readMatcher.find()){
-                                String readId = readMatcher.group(1);
-                                int fullLength = Integer.parseInt(readMatcher.group(2));
-                                visitor.visitReadHeader(readId, fullLength);
+                                visitReadHeader(visitor, readMatcher);
                             }
                             else{
                                 Matcher qualityMatcher = QUALITY_PATTERN.matcher(line);
                                 if(qualityMatcher.find()){
-                                    int clearLeft = Integer.parseInt(qualityMatcher.group(1));
-                                    int clearRight = Integer.parseInt(qualityMatcher.group(2));
-                                    
-                                    int alignLeft = Integer.parseInt(qualityMatcher.group(3));
-                                    int alignRight = Integer.parseInt(qualityMatcher.group(4));
-                                    visitor.visitQualityLine(clearLeft, clearRight, alignLeft, alignRight);
-                                    
+                                    visitQualityLine(visitor, qualityMatcher);                                    
                                 }
                                 else{
                                     Matcher traceInfoMatcher =TRACE_DESCRIPTION_PATTERN.matcher(line);
                                     if(traceInfoMatcher.find()){
-                                        Matcher chromatogramMatcher = CHROMAT_FILE_PATTERN.matcher(line);
-                                        if(!chromatogramMatcher.find()){
-                                            throw new IOException("could not parse chromatogram name from "+line);
-                                        }
-                                        String traceName =  chromatogramMatcher.group(1);
-                                        Matcher phdMatcher = PHD_FILE_PATTERN.matcher(line);
-                                        String phdName;
-                                        if(!phdMatcher.find()){
-                                            //sff's some times are in the format CHROMAT_FILE: sff:[-f:]<sff file>:<read id>
-                                            Matcher sffNameMatcher =SFF_CHROMATOGRAM_NAME_PATTERN.matcher(traceName);
-                                            if(sffNameMatcher.find()){
-                                               
-                                            String sffRootName = sffNameMatcher.group(2);
-                                            final String group = sffNameMatcher.group(1);
-                                            boolean isForward = group.startsWith("-f:");
-                                            phdName = String.format("%s_%s", sffRootName,isForward?"left":"right");
-                                            }
-                                            else{
-                                                phdName = traceName;
-                                            }
-                                        }else{
-                                            phdName = phdMatcher.group(1);
-                                        }
-                                        
-                                        Matcher timeMatcher = TIME_PATTERN.matcher(line);
-                                        if(!timeMatcher.find()){
-                                            throw new IOException("could not parse phd time stamp from "+ line);
-                                        }
-                                        Date date= AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parseDateTime(                                                
-                                                timeMatcher.group(1)).toDate();
-                                        visitor.visitTraceDescriptionLine(traceName, phdName, date);
+                                        visitTraceDescription(visitor, line);
                                     }
                                     else{
                                        
                                         //tags
                                         Matcher readTag =BEGIN_READ_TAG_PATTERN.matcher(line);
                                         if(readTag.find()){
-                                            lineWithCR = parser.nextLine();
-                                            visitor.visitLine(lineWithCR);
-                                            Matcher readTagMatcher = READ_TAG_PATTERN.matcher(lineWithCR);
-                                            if(!readTagMatcher.find()){
-                                                throw new IllegalStateException("expected read tag infomration: " + lineWithCR); 
-                                            }
-                                            String id = readTagMatcher.group(1);
-                                            String type = readTagMatcher.group(2);
-                                            String creator = readTagMatcher.group(3);
-                                            long gappedStart = Long.parseLong(readTagMatcher.group(4));
-                                            long gappedEnd = Long.parseLong(readTagMatcher.group(5));
-                                            Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
-                                                    readTagMatcher.group(6)).toDate();
-                                            visitor.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, true);
-                                            lineWithCR = parser.nextLine();
-                                            visitor.visitLine(lineWithCR);
-                                            if(!lineWithCR.startsWith("}")){
-                                                throw new IllegalStateException("expected close read tag: " + lineWithCR); 
-                                            }
+                                            handleReadTag(visitor, parser);
                                         }
                                         else{
                                             Matcher wholeAssemblyTag =BEGIN_WHOLE_ASSEMBLY_TAG_PATTERN.matcher(lineWithCR);
                                             if(wholeAssemblyTag.find()){
-                                                lineWithCR = parser.nextLine();
-                                                visitor.visitLine(lineWithCR);
-                                                Matcher tagMatcher = WHOLE_ASSEMBLY_TAG_PATTERN.matcher(lineWithCR);
-                                                if(!tagMatcher.find()){
-                                                    throw new IllegalStateException("expected whole assembly tag information: " + lineWithCR); 
-                                                }
-                                                String type = tagMatcher.group(1);
-                                                String creator = tagMatcher.group(2);
-                                                Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
-                                                        tagMatcher.group(3)).toDate();
-                                               
-                                                boolean doneTag =false;
-                                                StringBuilder data = new StringBuilder();
-                                                while(!doneTag && parser.hasNextLine()){
-                                                    lineWithCR = parser.nextLine();
-                                                    visitor.visitLine(lineWithCR);
-                                                    if(!lineWithCR.startsWith("}")){
-                                                        data.append(lineWithCR);
-                                                    }
-                                                    else{
-                                                        doneTag =true;
-                                                    }
-                                                }
-                                                if(!doneTag){
-                                                    throw new IllegalStateException("unexpected EOF, Whole Assembly Tag not closed!"); 
-                                                }
-                                                visitor.visitWholeAssemblyTag(type, creator, creationDate, data.toString());
+                                                handleWholeAssemblyTag(visitor, parser);
                                             }
                                             else{
                                                 Matcher consensusTag =BEGIN_CONSENSUS_TAG_PATTERN.matcher(lineWithCR);
                                                 if(consensusTag.find()){
-                                                    lineWithCR = parser.nextLine();
-                                                    visitor.visitLine(lineWithCR);
-                                                    Matcher tagMatcher = CONSENSUS_TAG_PATTERN.matcher(lineWithCR);
-                                                    if(!tagMatcher.find()){
-                                                        throw new IllegalStateException("expected read tag infomration: " + lineWithCR); 
-                                                    }
-                                                    String id = tagMatcher.group(1);
-                                                    String type = tagMatcher.group(2);
-                                                    String creator = tagMatcher.group(3);
-                                                    long gappedStart = Long.parseLong(tagMatcher.group(4));
-                                                    long gappedEnd = Long.parseLong(tagMatcher.group(5));
-                                                    Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
-                                                            tagMatcher.group(6)).toDate();
-                                                    boolean isTransient = tagMatcher.group(7)!=null;
-                                                    
-                                                    visitor.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-                                                    
-                                                    
-                                                    boolean doneTag =false;
-                                                    boolean inComment=false;
-                                                    StringBuilder consensusComment=null;
-                                                    while(!doneTag && parser.hasNextLine()){
-                                                        lineWithCR = parser.nextLine();
-                                                        visitor.visitLine(lineWithCR);
-                                                        if(lineWithCR.startsWith("COMMENT{")){
-                                                            inComment=true;
-                                                            consensusComment = new StringBuilder();
-                                                        }else{
-                                                            if(inComment){
-                                                                if(lineWithCR.startsWith("C}")){                                                            
-                                                                    visitor.visitConsensusTagComment(consensusComment.toString());
-                                                                    inComment=false;
-                                                                }else{
-                                                                    consensusComment.append(lineWithCR);
-                                                                }
-                                                            }else if(!lineWithCR.startsWith("}")){
-                                                                visitor.visitConsensusTagData(lineWithCR);
-                                                            }
-                                                            else{
-                                                                doneTag =true;
-                                                            }
-                                                        }
-                                                    }
-                                                    if(!doneTag){
-                                                        throw new IllegalStateException("unexpected EOF, Consensus Tag not closed!"); 
-                                                    }
-                                                    visitor.visitEndConsensusTag();
+                                                    handleConsensusTag(visitor, parser);
                                                 }
                                             }
                                         }
@@ -305,6 +162,185 @@ public final class AceFileParser {
         }
         visitor.visitEndOfContig();
         visitor.visitEndOfFile();
+    }
+
+    private static void handleConsensusTag(AceFileVisitor visitor,
+            TextLineParser parser) throws IOException {
+        String lineWithCR;
+        lineWithCR = parser.nextLine();
+        visitor.visitLine(lineWithCR);
+        Matcher tagMatcher = CONSENSUS_TAG_PATTERN.matcher(lineWithCR);
+        if(!tagMatcher.find()){
+            throw new IllegalStateException("expected read tag infomration: " + lineWithCR); 
+        }
+        String id = tagMatcher.group(1);
+        String type = tagMatcher.group(2);
+        String creator = tagMatcher.group(3);
+        long gappedStart = Long.parseLong(tagMatcher.group(4));
+        long gappedEnd = Long.parseLong(tagMatcher.group(5));
+        Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
+                tagMatcher.group(6)).toDate();
+        boolean isTransient = tagMatcher.group(7)!=null;
+        
+        visitor.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
+        
+        
+        boolean doneTag =false;
+        boolean inComment=false;
+        StringBuilder consensusComment=null;
+        while(!doneTag && parser.hasNextLine()){
+            lineWithCR = parser.nextLine();
+            visitor.visitLine(lineWithCR);
+            if(lineWithCR.startsWith("COMMENT{")){
+                inComment=true;
+                consensusComment = new StringBuilder();
+            }else{
+                if(inComment){
+                    if(lineWithCR.startsWith("C}")){                                                            
+                        visitor.visitConsensusTagComment(consensusComment.toString());
+                        inComment=false;
+                    }else{
+                        consensusComment.append(lineWithCR);
+                    }
+                }else if(!lineWithCR.startsWith("}")){
+                    visitor.visitConsensusTagData(lineWithCR);
+                }
+                else{
+                    doneTag =true;
+                }
+            }
+        }
+        if(!doneTag){
+            throw new IllegalStateException("unexpected EOF, Consensus Tag not closed!"); 
+        }
+        visitor.visitEndConsensusTag();
+    }
+
+    private static void handleWholeAssemblyTag(AceFileVisitor visitor,
+            TextLineParser parser) throws IOException {
+        String lineWithCR;
+        lineWithCR = parser.nextLine();
+        visitor.visitLine(lineWithCR);
+        Matcher tagMatcher = WHOLE_ASSEMBLY_TAG_PATTERN.matcher(lineWithCR);
+        if(!tagMatcher.find()){
+            throw new IllegalStateException("expected whole assembly tag information: " + lineWithCR); 
+        }
+        String type = tagMatcher.group(1);
+        String creator = tagMatcher.group(2);
+        Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
+                tagMatcher.group(3)).toDate();
+                                    
+        boolean doneTag =false;
+        StringBuilder data = new StringBuilder();
+        while(!doneTag && parser.hasNextLine()){
+            lineWithCR = parser.nextLine();
+            visitor.visitLine(lineWithCR);
+            if(!lineWithCR.startsWith("}")){
+                data.append(lineWithCR);
+            }
+            else{
+                doneTag =true;
+            }
+        }
+        if(!doneTag){
+            throw new IllegalStateException("unexpected EOF, Whole Assembly Tag not closed!"); 
+        }
+        visitor.visitWholeAssemblyTag(type, creator, creationDate, data.toString());
+    }
+
+    private static void handleReadTag(AceFileVisitor visitor,
+            TextLineParser parser) throws IOException {
+        String lineWithCR;
+        lineWithCR = parser.nextLine();
+        visitor.visitLine(lineWithCR);
+        Matcher readTagMatcher = READ_TAG_PATTERN.matcher(lineWithCR);
+        if(!readTagMatcher.find()){
+            throw new IllegalStateException("expected read tag infomration: " + lineWithCR); 
+        }
+        String id = readTagMatcher.group(1);
+        String type = readTagMatcher.group(2);
+        String creator = readTagMatcher.group(3);
+        long gappedStart = Long.parseLong(readTagMatcher.group(4));
+        long gappedEnd = Long.parseLong(readTagMatcher.group(5));
+        Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
+                readTagMatcher.group(6)).toDate();
+        visitor.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, true);
+        lineWithCR = parser.nextLine();
+        visitor.visitLine(lineWithCR);
+        if(!lineWithCR.startsWith("}")){
+            throw new IllegalStateException("expected close read tag: " + lineWithCR); 
+        }
+    }
+
+    private static void visitTraceDescription(AceFileVisitor visitor,
+            String line) throws IOException {
+        Matcher chromatogramMatcher = CHROMAT_FILE_PATTERN.matcher(line);
+        if(!chromatogramMatcher.find()){
+            throw new IOException("could not parse chromatogram name from "+line);
+        }
+        String traceName =  chromatogramMatcher.group(1);
+        Matcher phdMatcher = PHD_FILE_PATTERN.matcher(line);
+        String phdName;
+        if(!phdMatcher.find()){
+            //sff's some times are in the format CHROMAT_FILE: sff:[-f:]<sff file>:<read id>
+            Matcher sffNameMatcher =SFF_CHROMATOGRAM_NAME_PATTERN.matcher(traceName);
+            if(sffNameMatcher.find()){
+               
+            String sffRootName = sffNameMatcher.group(2);
+            final String group = sffNameMatcher.group(1);
+            boolean isForward = group.startsWith("-f:");
+            phdName = String.format("%s_%s", sffRootName,isForward?"left":"right");
+            }
+            else{
+                phdName = traceName;
+            }
+        }else{
+            phdName = phdMatcher.group(1);
+        }
+        
+        Matcher timeMatcher = TIME_PATTERN.matcher(line);
+        if(!timeMatcher.find()){
+            throw new IOException("could not parse phd time stamp from "+ line);
+        }
+        Date date= AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parseDateTime(                                                
+                timeMatcher.group(1)).toDate();
+        visitor.visitTraceDescriptionLine(traceName, phdName, date);
+    }
+
+    private static void visitQualityLine(AceFileVisitor visitor,
+            Matcher qualityMatcher) {
+        int clearLeft = Integer.parseInt(qualityMatcher.group(1));
+        int clearRight = Integer.parseInt(qualityMatcher.group(2));
+        
+        int alignLeft = Integer.parseInt(qualityMatcher.group(3));
+        int alignRight = Integer.parseInt(qualityMatcher.group(4));
+        visitor.visitQualityLine(clearLeft, clearRight, alignLeft, alignRight);
+    }
+
+    private static void visitReadHeader(AceFileVisitor visitor,
+            Matcher readMatcher) {
+        String readId = readMatcher.group(1);
+        int fullLength = Integer.parseInt(readMatcher.group(2));
+        visitor.visitReadHeader(readId, fullLength);
+    }
+
+    private static void visitAssembledFrom(AceFileVisitor visitor,
+            Matcher assembledFromMatcher) {
+        String name = assembledFromMatcher.group(1);
+        final String group = assembledFromMatcher.group(2);
+        SequenceDirection dir = parseIsComplimented(group)? SequenceDirection.REVERSE : SequenceDirection.FORWARD;
+        int fullRangeOffset = Integer.parseInt(assembledFromMatcher.group(3));
+        visitor.visitAssembledFromLine(name, dir, fullRangeOffset);
+    }
+
+    private static void visitContigHeader(AceFileVisitor visitor,
+            Matcher contigMatcher) {
+        String contigId = contigMatcher.group(1);
+        int numberOfBases = Integer.parseInt(contigMatcher.group(2));
+        int numberOfReads = Integer.parseInt(contigMatcher.group(3));
+        int numberOfBaseSegments = Integer.parseInt(contigMatcher.group(4));
+        boolean reverseComplimented = parseIsComplimented(contigMatcher.group(5));
+        visitor.visitContigHeader(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
     }
 
     private static boolean parseIsComplimented(final String group) {
