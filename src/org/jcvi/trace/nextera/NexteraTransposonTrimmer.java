@@ -39,9 +39,9 @@ import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
  */
 public final class NexteraTransposonTrimmer implements PrimerTrimmer{
 
-    private static final NucleotideDataStore forwardTransposonDataStore;
+    private static final NucleotideDataStore FORWARD_TRANSPOSON;
     
-    private static final NucleotideDataStore reverseTransposonDataStore ;
+    private static final NucleotideDataStore REVERSE_TRANSPOSON ;
     private final PrimerTrimmer nexteraTransposonTrimmer;
     
     
@@ -52,9 +52,9 @@ public final class NexteraTransposonTrimmer implements PrimerTrimmer{
         
         revesrseTransposon.put("3'", TransposonEndSequences.REVERSE);
         
-       forwardTransposonDataStore = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(forwardTransposon));
+       FORWARD_TRANSPOSON = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(forwardTransposon));
         
-       reverseTransposonDataStore = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(revesrseTransposon));
+       REVERSE_TRANSPOSON = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(revesrseTransposon));
         
     }
 
@@ -67,9 +67,9 @@ public final class NexteraTransposonTrimmer implements PrimerTrimmer{
     }
     
     public Range trim(NucleotideEncodedGlyphs sequence){
-        Range forwardClearRange =nexteraTransposonTrimmer.trim(sequence, forwardTransposonDataStore);
+        Range forwardClearRange =nexteraTransposonTrimmer.trim(sequence, FORWARD_TRANSPOSON);
         
-        Range reverseClearRange =nexteraTransposonTrimmer.trim(sequence, reverseTransposonDataStore);
+        Range reverseClearRange =nexteraTransposonTrimmer.trim(sequence, REVERSE_TRANSPOSON);
         
         return computeClearRange(forwardClearRange, reverseClearRange);
     }
@@ -89,7 +89,8 @@ public final class NexteraTransposonTrimmer implements PrimerTrimmer{
             return Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
                     forwardClearRange.getLocalStart(), reverseClearRange.getLocalEnd());
         }
-        return forwardClearRange.intersection(reverseClearRange);
+        return forwardClearRange.intersection(reverseClearRange)
+                            .convertRange(CoordinateSystem.RESIDUE_BASED);
     }
 
     /**

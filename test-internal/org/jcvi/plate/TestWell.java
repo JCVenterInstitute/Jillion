@@ -250,7 +250,6 @@ public class TestWell {
                 index++;
                 final String zeroPaddedName = String.format("%s%02d", 
                         (char)('A'+col), row+1);
-                System.out.println(zeroPaddedName + "  " + index + "  " +Well.compute384Well(index, Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR));
                 final Well actualWell = Well.compute384Well(index, Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR);
                 data.add(new Object[]{ 
                         Well.create(zeroPaddedName),
@@ -262,8 +261,7 @@ public class TestWell {
                 index++;
                 final String zeroPaddedName = String.format("%s%02d", 
                         (char)('A'+col), row+1);
-                System.out.println(zeroPaddedName + "  " + index + "  " +Well.compute384Well(index, Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR));
-                
+               
                 final Well actualWell = Well.compute384Well(index, Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR);
                 data.add(new Object[]{ 
                         Well.create(zeroPaddedName),
