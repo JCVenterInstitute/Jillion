@@ -20,11 +20,19 @@
 package org.jcvi.command.grid;
 
 
-import org.ggf.drmaa.*;
+
+import org.ggf.drmaa.DrmaaException;
+import org.ggf.drmaa.ExitTimeoutException;
+import org.ggf.drmaa.JobInfo;
+import org.ggf.drmaa.Session;
 import org.jcvi.command.Command;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * A <code>GridJobImpl</code> is an abstractions for a DRMAA-supported distributed execution

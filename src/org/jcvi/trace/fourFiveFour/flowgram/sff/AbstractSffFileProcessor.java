@@ -23,10 +23,6 @@
  */
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFCommonHeader;
-
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SffFileVisitor;
-
 
 public abstract class AbstractSffFileProcessor implements SffFileVisitor{
 

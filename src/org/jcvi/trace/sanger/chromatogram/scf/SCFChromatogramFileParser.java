@@ -42,6 +42,10 @@ import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeaderCodec;
  */
 public final class SCFChromatogramFileParser {
 
+    /**
+     * 
+     */
+    private static final float THREE = 3F;
     private static final SCFHeaderCodec HEADER_CODEC =new DefaultSCFHeaderCodec();
     
     private SCFChromatogramFileParser(){}
@@ -89,7 +93,7 @@ public final class SCFChromatogramFileParser {
     public static void parseSCFFile(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
         DataInputStream dIn = new DataInputStream(in);
         SCFHeader header =HEADER_CODEC.decode(dIn);
-        if(header.getVersion()>=3F){
+        if(header.getVersion()>=THREE){
             SCFCodecs.VERSION_3.parse(dIn,header, visitor);
         }else{
             SCFCodecs.VERSION_2.parse(dIn, header,visitor);

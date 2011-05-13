@@ -1034,10 +1034,10 @@ public final class Range implements Placed<Range>,Iterable<Long>
     public static List<Range> mergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance,
             CoordinateSystem coordinateSystem){
         List<Range> tempRanges = Range.mergeRanges(rangesToMerge,coordinateSystem);
-        return _mergeRangesIntoClusters(tempRanges,maxClusterDistance,coordinateSystem);
+        return privateMergeRangesIntoClusters(tempRanges,maxClusterDistance,coordinateSystem);
 
     }
-    private static List<Range> _mergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance,
+    private static List<Range> privateMergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance,
             CoordinateSystem coordinateSystem){
         if(maxClusterDistance <0){
             throw new IllegalArgumentException("max cluster distance can not be negative");
@@ -1047,7 +1047,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
             sortedSplitCopy.addAll(range.split(maxClusterDistance,coordinateSystem));
         }        
         
-        _mergeAnyRangesThatCanBeClustered(sortedSplitCopy, maxClusterDistance,coordinateSystem);
+        privateMergeAnyRangesThatCanBeClustered(sortedSplitCopy, maxClusterDistance,coordinateSystem);
         return sortedSplitCopy;
     }
     public List<Range> split(long maxSplitLength){
@@ -1067,7 +1067,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
         }
         return list;
     }
-    private static void _mergeAnyRangesThatCanBeClustered(List<Range> rangesToMerge, int maxClusterDistance,
+    private static void privateMergeAnyRangesThatCanBeClustered(List<Range> rangesToMerge, int maxClusterDistance,
             CoordinateSystem coordinateSystem) {
         boolean merged;
         do{

@@ -34,7 +34,7 @@ public class DefaultSectionCodecFactory implements SectionCodecFactory{
     private static final SectionCodec NULL_CODEC = new NullSectionCodec();
     private static final SectionCodec COMMENT_CODEC = new CommentSectionCodec();
     private static final SectionCodec PRIVATE_DATA_CODEC = new PrivateDataCodec();
-
+    private static final float THREE = 3F;
     private static final Map<Section, SectionCodec> VERSION_3_MAP;
     private static final Map<Section, SectionCodec> VERSION_2_MAP;
 
@@ -59,7 +59,7 @@ public class DefaultSectionCodecFactory implements SectionCodecFactory{
         if(header ==null){
             throw new IllegalArgumentException("header can not be null");
         }
-        if(header.getVersion()<3.0f){
+        if(header.getVersion()<THREE){
            return  getSectionCodecFrom(VERSION_2_MAP, s);
         }
         return getSectionCodecFrom(VERSION_3_MAP, s);

@@ -23,7 +23,6 @@
  */
 package org.jcvi.util;
 import java.util.Deque;
-import java.util.Queue;
 
 
 /**

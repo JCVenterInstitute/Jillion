@@ -23,7 +23,14 @@
  */
 package org.jcvi.assembly;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.jcvi.Range;
 import org.jcvi.sequence.SequenceDirection;

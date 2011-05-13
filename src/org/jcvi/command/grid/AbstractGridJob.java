@@ -29,7 +29,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.ggf.drmaa.*;
+import org.ggf.drmaa.DrmaaException;
+import org.ggf.drmaa.JobInfo;
+import org.ggf.drmaa.JobTemplate;
+import org.ggf.drmaa.Session;
 import org.jcvi.command.Command;
 
 /**

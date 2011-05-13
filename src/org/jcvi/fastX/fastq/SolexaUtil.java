@@ -34,6 +34,10 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
  */
 public final class SolexaUtil {
     /**
+     * 
+     */
+    private static final double TEN = 10.0;
+    /**
      * Cache of solexa to phred quality mappings so we
      * only have to perform the expensive calculations once.
      */
@@ -50,14 +54,14 @@ public final class SolexaUtil {
         SOLEXA_2_PHRED_MAP = new HashMap<Integer, PhredQuality>();
         PHRED_2_SOLEXA_MAP = new HashMap<PhredQuality, Integer>();
         for(int solexaValue=-5; solexaValue<=62; solexaValue++){
-            PhredQuality phred = _convertSolexaQualityToPhredQuality(solexaValue);
+            PhredQuality phred = privateConvertSolexaQualityToPhredQuality(solexaValue);
             SOLEXA_2_PHRED_MAP.put(solexaValue, phred);           
         }
         //do the phred calcuations separately because
         //there isn't a 1:1 mapping
         for(byte i=0; i<PhredQuality.MAX_VALUE; i++){
             PhredQuality phred = PhredQuality.valueOf(i);
-            int solexaValue = _convertPhredQualityToSolexaQuality(phred);
+            int solexaValue = privateConvertPhredQualityToSolexaQuality(phred);
             PHRED_2_SOLEXA_MAP.put(phred, solexaValue);
         }
     }
@@ -72,7 +76,7 @@ public final class SolexaUtil {
      * @param solexaQuality the solexa quality value to convert.
      * @return a {@link PhredQuality} equivalent.
      */
-    private static PhredQuality _convertSolexaQualityToPhredQuality(int solexaQuality){
+    private static PhredQuality privateConvertSolexaQualityToPhredQuality(int solexaQuality){
         if(solexaQuality ==-5){
             return PhredQuality.valueOf(0);
         }
@@ -85,7 +89,7 @@ public final class SolexaUtil {
         if(solexaQuality ==-1){
             return PhredQuality.valueOf(3);
         }
-        final double math = 10 * Math.log(1 + Math.pow(10, solexaQuality/10.0))/Math.log(10);
+        final double math = TEN * Math.log(1 + Math.pow(TEN, solexaQuality/TEN))/Math.log(TEN);
         return PhredQuality.valueOf((int)Math.round(math));
     }
     /**
@@ -98,7 +102,7 @@ public final class SolexaUtil {
      * @param phredQuality the {@link PhredQuality} to convert.
      * @return the Solexa quality equivalent.
      */
-    private static int _convertPhredQualityToSolexaQuality(PhredQuality phredQuality){
+    private static int privateConvertPhredQualityToSolexaQuality(PhredQuality phredQuality){
         
         final byte qualityValue = phredQuality.getNumber().byteValue();
         if(qualityValue ==0){
@@ -110,7 +114,7 @@ public final class SolexaUtil {
         if(qualityValue ==2){
             return -2;
         }
-        double math=10 * Math.log(Math.pow(10, qualityValue/10.0) -1)/Math.log(10);
+        double math=TEN * Math.log(Math.pow(TEN, qualityValue/TEN) -1)/Math.log(TEN);
         return (int)Math.round(math);
     }
     /**

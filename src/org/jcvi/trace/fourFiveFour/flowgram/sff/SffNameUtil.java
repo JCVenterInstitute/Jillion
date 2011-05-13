@@ -276,18 +276,18 @@ public final class SffNameUtil {
         
         String encode(BigInteger value){
             String base36EncodedString = value.toString(36).toUpperCase(Locale.ENGLISH);
-            StringBuilder _454EncodedBase36Builder = new StringBuilder();
+            StringBuilder x454EncodedBase36Builder = new StringBuilder();
             for(Character c : base36EncodedString.toCharArray()){
                 int offset =Integer.parseInt(c.toString(), 36);
                
                 if(offset<26){
-                    _454EncodedBase36Builder.append((char)(offset+'A'));
+                    x454EncodedBase36Builder.append((char)(offset+'A'));
                 }else{
-                    _454EncodedBase36Builder.append((char)('0'+(offset-26)));
+                    x454EncodedBase36Builder.append((char)('0'+(offset-26)));
                 }
             }
             
-            return _454EncodedBase36Builder.toString();
+            return x454EncodedBase36Builder.toString();
         }
     }
     /**

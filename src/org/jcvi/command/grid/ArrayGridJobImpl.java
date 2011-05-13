@@ -19,7 +19,11 @@
 
 package org.jcvi.command.grid;
 
-import org.ggf.drmaa.*;
+import org.ggf.drmaa.DrmaaException;
+import org.ggf.drmaa.ExitTimeoutException;
+import org.ggf.drmaa.JobInfo;
+import org.ggf.drmaa.JobTemplate;
+import org.ggf.drmaa.Session;
 import org.jcvi.command.Command;
 
 import java.io.File;
