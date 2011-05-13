@@ -1,0 +1,104 @@
+/*******************************************************************************
+ * Copyright 2010 J. Craig Venter Institute
+ * 
+ * 	This file is part of JCVI Java Common
+ * 
+ *     JCVI Java Common is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     JCVI Java Common is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
+package org.jcvi.trace.nextera;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jcvi.Range;
+import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.assembly.trim.DefaultPrimerTrimmer;
+import org.jcvi.assembly.trim.PrimerTrimmer;
+import org.jcvi.datastore.SimpleDataStore;
+import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideDataStore;
+import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
+
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public final class NexteraTransposonTrimmer implements PrimerTrimmer{
+
+    private static final NucleotideDataStore forwardTransposonDataStore;
+    
+    private static final NucleotideDataStore reverseTransposonDataStore ;
+    private final PrimerTrimmer nexteraTransposonTrimmer;
+    
+    
+    static{
+        Map<String, NucleotideEncodedGlyphs> forwardTransposon = new HashMap<String, NucleotideEncodedGlyphs>();
+        forwardTransposon.put("5'", TransposonEndSequences.FORWARD);
+        Map<String, NucleotideEncodedGlyphs> revesrseTransposon = new HashMap<String, NucleotideEncodedGlyphs>();
+        
+        revesrseTransposon.put("3'", TransposonEndSequences.REVERSE);
+        
+       forwardTransposonDataStore = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(forwardTransposon));
+        
+       reverseTransposonDataStore = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(revesrseTransposon));
+        
+    }
+
+    public NexteraTransposonTrimmer(){
+        this(13, .9f);
+    }
+    
+    public NexteraTransposonTrimmer(int minLength, double minMatch){
+        nexteraTransposonTrimmer = new DefaultPrimerTrimmer(minLength, minMatch,false);
+    }
+    
+    public Range trim(NucleotideEncodedGlyphs sequence){
+        Range forwardClearRange =nexteraTransposonTrimmer.trim(sequence, forwardTransposonDataStore);
+        
+        Range reverseClearRange =nexteraTransposonTrimmer.trim(sequence, reverseTransposonDataStore);
+        
+        return computeClearRange(forwardClearRange, reverseClearRange);
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range trim(NucleotideEncodedGlyphs sequence,
+            NucleotideDataStore primersToTrimAgainst) {
+       return trim(sequence);
+        
+    }
+
+    private Range computeClearRange(Range forwardClearRange,
+            Range reverseClearRange) {
+        if(reverseClearRange.isSubRangeOf(forwardClearRange)){
+            return Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
+                    forwardClearRange.getLocalStart(), reverseClearRange.getLocalEnd());
+        }
+        return forwardClearRange.intersection(reverseClearRange);
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range trim(String sequence, NucleotideDataStore primersToTrimAgainst) {
+        return trim(new DefaultNucleotideEncodedGlyphs(sequence));
+    }
+    
+    
+}
