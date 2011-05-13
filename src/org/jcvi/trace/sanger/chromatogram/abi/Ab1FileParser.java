@@ -71,7 +71,7 @@ public final class Ab1FileParser {
 	private Ab1FileParser() {
 	}
 	
-	
+	private static final byte ZERO_QUALITY = (byte)0;
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("EEE dd MMM HH:mm:ss YYYY");
 	/**
 	 * ABI files store both the original and current
@@ -151,39 +151,27 @@ public final class Ab1FileParser {
 	private static String parseSignalScalingFactor(
 			GroupedTaggedRecords groupedDataRecordMap,
 			List<NucleotideGlyph> channelOrder, byte[] traceData,
-			ChromatogramFileVisitor visitor) {
-		
+			ChromatogramFileVisitor visitor) {		
 		
 			ShortArrayTaggedDataRecord scalingFactors =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.SCALE_FACTOR).get(0);
-			short aScale=-1,cScale=-1,gScale=-1,tScale =-1;
-			List<Short> list = new ArrayList<Short>();
-			for(short s: scalingFactors.parseDataRecordFrom(traceData)){
-				list.add(Short.valueOf(s));
-			}
-			Iterator<Short> scaleIterator = list.iterator();
-			for(NucleotideGlyph channel : channelOrder){
-				short scale = scaleIterator.next();
-				switch(channel){
-					case Adenine:
-						aScale = scale;
-						break;
-					case Cytosine:
-						cScale = scale;
-						break;
-					case Guanine:
-						gScale = scale;
-						break;
-					default:
-						tScale = scale;
-						break;
-				}
-			}
+			List<Short> list = convertToShortList(traceData, scalingFactors);
+			SignalScalingFactor scalingFactor = SignalScalingFactor.create(channelOrder, list);
+			
 			if(visitor instanceof AbiChromatogramFileVisitor){
-			    ((AbiChromatogramFileVisitor) visitor).visitScaleFactors(aScale,cScale,gScale,tScale);
+			    ((AbiChromatogramFileVisitor) visitor).visitScaleFactors(
+			            scalingFactor.aScale,scalingFactor.cScale,scalingFactor.gScale,scalingFactor.tScale);
 			}
-			return String.format("A:%d,C:%d,G:%d,T:%d", aScale,cScale,gScale,tScale);
+			return scalingFactor.toString();
 		
 	}
+    private static List<Short> convertToShortList(byte[] traceData,
+            ShortArrayTaggedDataRecord scalingFactors) {
+        List<Short> list = new ArrayList<Short>();
+        for(short s: scalingFactors.parseDataRecordFrom(traceData)){
+        	list.add(Short.valueOf(s));
+        }
+        return list;
+    }
 
 	private static void parseQualityData(
 			GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
@@ -197,19 +185,27 @@ public final class Ab1FileParser {
 			byte[][] qualities = splitQualityDataByChannel(basecalls, qualityRecord.parseDataRecordFrom(traceData));
 			if(i == ORIGINAL_VERSION && visitor instanceof AbiChromatogramFileVisitor){
 				AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor)visitor;
-				ab1Visitor.visitOriginalAConfidence(qualities[0]);
-				ab1Visitor.visitOriginalCConfidence(qualities[1]);
-				ab1Visitor.visitOriginalGConfidence(qualities[2]);
-				ab1Visitor.visitOriginalTConfidence(qualities[3]);
+				handleOriginalConfidenceValues(qualities, ab1Visitor);
 			}
 			if(i == CURRENT_VERSION){
-				visitor.visitAConfidence(qualities[0]);
-				visitor.visitCConfidence(qualities[1]);
-				visitor.visitGConfidence(qualities[2]);
-				visitor.visitTConfidence(qualities[3]);
+				handleCurrentConfidenceValues(visitor, qualities);
 			}
 		}
 	}
+    private static void handleCurrentConfidenceValues(
+            ChromatogramFileVisitor visitor, byte[][] qualities) {
+        visitor.visitAConfidence(qualities[0]);
+        visitor.visitCConfidence(qualities[1]);
+        visitor.visitGConfidence(qualities[2]);
+        visitor.visitTConfidence(qualities[3]);
+    }
+    private static void handleOriginalConfidenceValues(byte[][] qualities,
+            AbiChromatogramFileVisitor ab1Visitor) {
+        ab1Visitor.visitOriginalAConfidence(qualities[0]);
+        ab1Visitor.visitOriginalCConfidence(qualities[1]);
+        ab1Visitor.visitOriginalGConfidence(qualities[2]);
+        ab1Visitor.visitOriginalTConfidence(qualities[3]);
+    }
 	/**
 	 * To conform with {@link ChromatogramFileVisitor},
 	 * each Channel must have its own quality data.
@@ -230,40 +226,68 @@ public final class Ab1FileParser {
 		ByteBuffer cQualities = ByteBuffer.allocate(size);
 		ByteBuffer gQualities = ByteBuffer.allocate(size);
 		ByteBuffer tQualities = ByteBuffer.allocate(size);
-		byte zero = (byte)0;
-		for(int i=0; i<qualities.length; i++){
-			byte quality = qualities[i];
-			switch(basecalls.get(i)){
-			case Adenine:
-				aQualities.put(quality);
-				cQualities.put(zero);
-				gQualities.put(zero);
-				tQualities.put(zero);
-				break;
-				
-			case Cytosine:
-				aQualities.put(zero);
-				cQualities.put(quality);
-				gQualities.put(zero);
-				tQualities.put(zero);
-				break;
-			case Guanine:
-				aQualities.put(zero);
-				cQualities.put(zero);
-				gQualities.put(quality);
-				tQualities.put(zero);
-				break;
-			//anything else is automatically a T
-			default:
-				aQualities.put(zero);
-				cQualities.put(zero);
-				gQualities.put(zero);
-				tQualities.put(quality);				
-				break;
-			}
-		}
+		
+		populateQualities(basecalls, qualities, aQualities, cQualities, gQualities, tQualities);
 		return new byte[][]{aQualities.array(),cQualities.array(),gQualities.array(),tQualities.array()};
 	}
+    private static void populateQualities(List<NucleotideGlyph> basecalls,
+            byte[] qualities, ByteBuffer aQualities, ByteBuffer cQualities,
+            ByteBuffer gQualities, ByteBuffer tQualities) {
+        for(int i=0; i<qualities.length; i++){
+			populateQualities(aQualities, cQualities, gQualities, tQualities, basecalls.get(i), qualities[i]);
+		}
+    }
+    private static void populateQualities(ByteBuffer aQualities, ByteBuffer cQualities,
+            ByteBuffer gQualities, ByteBuffer tQualities, NucleotideGlyph basecall, byte quality) {
+        switch(basecall){
+        	case Adenine:
+        		handleAQuality(aQualities, cQualities, gQualities, tQualities, quality);
+        		break;
+        		
+        	case Cytosine:
+        		handleCQuality(aQualities, cQualities, gQualities, tQualities, quality);
+        		break;
+        	case Guanine:
+        		handleGQuality(aQualities, cQualities, gQualities, tQualities, quality);
+        		break;
+        	//anything else is automatically a T
+        	default:
+        		handleTQuality(aQualities, cQualities, gQualities, tQualities, quality);				
+        		break;
+        }
+    }
+    private static void handleTQuality(ByteBuffer aQualities,
+            ByteBuffer cQualities, ByteBuffer gQualities,
+            ByteBuffer tQualities, byte quality) {
+        aQualities.put(ZERO_QUALITY);
+        cQualities.put(ZERO_QUALITY);
+        gQualities.put(ZERO_QUALITY);
+        tQualities.put(quality);
+    }
+    private static void handleGQuality(ByteBuffer aQualities,
+            ByteBuffer cQualities, ByteBuffer gQualities,
+            ByteBuffer tQualities, byte quality) {
+        aQualities.put(ZERO_QUALITY);
+        cQualities.put(ZERO_QUALITY);
+        gQualities.put(quality);
+        tQualities.put(ZERO_QUALITY);
+    }
+    private static void handleCQuality(ByteBuffer aQualities,
+            ByteBuffer cQualities, ByteBuffer gQualities,
+            ByteBuffer tQualities, byte quality) {
+        aQualities.put(ZERO_QUALITY);
+        cQualities.put(quality);
+        gQualities.put(ZERO_QUALITY);
+        tQualities.put(ZERO_QUALITY);
+    }
+    private static void handleAQuality(ByteBuffer aQualities,
+            ByteBuffer cQualities, ByteBuffer gQualities,
+            ByteBuffer tQualities, byte quality) {
+        aQualities.put(quality);
+        cQualities.put(ZERO_QUALITY);
+        gQualities.put(ZERO_QUALITY);
+        tQualities.put(ZERO_QUALITY);
+    }
 	private static void parsePeakData(
 			GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
 			ChromatogramFileVisitor visitor) {
@@ -287,40 +311,48 @@ public final class Ab1FileParser {
 		if(visitor instanceof AbiChromatogramFileVisitor){
 			AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor) visitor;
 			//parse extra ab1 data
-			for(int i=0; i< 4; i++){
-				short[] rawTraceData =dataRecords.get(i).parseDataRecordFrom(traceData);
-				ab1Visitor.visitPhotometricData(rawTraceData,i);
-			}
-			ab1Visitor.visitGelVoltageData(dataRecords.get(4).parseDataRecordFrom(traceData));
-			ab1Visitor.visitGelCurrentData(dataRecords.get(5).parseDataRecordFrom(traceData));
-			ab1Visitor.visitElectrophoreticPower(dataRecords.get(6).parseDataRecordFrom(traceData));
-			ab1Visitor.visitGelTemperatureData(dataRecords.get(7).parseDataRecordFrom(traceData));
-			
+			visitAb1ExtraChannels(traceData, dataRecords, ab1Visitor);			
 		}
 		Map<String,String> props = new HashMap<String, String>();
 		for(int i=0; i<4; i++){
 			NucleotideGlyph channel = channelOrder.get(i);
 			short[] channelData =dataRecords.get(i+8).parseDataRecordFrom(traceData);
-			switch(channel){
-				case Adenine:
-					visitor.visitAPositions(channelData);
-					props.put("NPTS", ""+channelData.length);
-					break;
-				case Thymine:
-					visitor.visitTPositions(channelData);
-					break;
-				case Guanine:
-					visitor.visitGPositions(channelData);
-					break;
-				case Cytosine:
-					visitor.visitCPositions(channelData);
-					break;
-				default:
-					throw new IllegalStateException("invalid channel "+ channel);	
-			}
+			props.put("NPTS", ""+channelData.length);
+			visitChannel(visitor, channel, channelData);
 		}
 		return props;
 	}
+    private static void visitChannel(ChromatogramFileVisitor visitor,
+            NucleotideGlyph channel, short[] channelData) {
+        switch(channel){
+        	case Adenine:
+        		visitor.visitAPositions(channelData);					
+        		break;
+        	case Thymine:
+        		visitor.visitTPositions(channelData);
+        		break;
+        	case Guanine:
+        		visitor.visitGPositions(channelData);
+        		break;
+        	case Cytosine:
+        		visitor.visitCPositions(channelData);
+        		break;
+        	default:
+        		throw new IllegalStateException("invalid channel "+ channel);	
+        }
+    }
+    private static void visitAb1ExtraChannels(byte[] traceData,
+            List<ShortArrayTaggedDataRecord> dataRecords,
+            AbiChromatogramFileVisitor ab1Visitor) {
+        for(int i=0; i< 4; i++){
+        	short[] rawTraceData =dataRecords.get(i).parseDataRecordFrom(traceData);
+        	ab1Visitor.visitPhotometricData(rawTraceData,i);
+        }
+        ab1Visitor.visitGelVoltageData(dataRecords.get(4).parseDataRecordFrom(traceData));
+        ab1Visitor.visitGelCurrentData(dataRecords.get(5).parseDataRecordFrom(traceData));
+        ab1Visitor.visitElectrophoreticPower(dataRecords.get(6).parseDataRecordFrom(traceData));
+        ab1Visitor.visitGelTemperatureData(dataRecords.get(7).parseDataRecordFrom(traceData));
+    }
 
 	private static void visitChannelOrderIfAble(
 			ChromatogramFileVisitor visitor, List<NucleotideGlyph> channelOrder) {
@@ -400,23 +432,10 @@ public final class Ab1FileParser {
             Map<String,String> props) {
         Map<TaggedDataName, List<FloatArrayTaggedDataRecord>>map= groupedDataRecordMap.floatDataRecords;
         if(map.containsKey(TaggedDataName.JTC_NOISE)){
-            float[] noise = map.get(TaggedDataName.JTC_NOISE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);
-            float aNoise=0F,cNoise=0F,gNoise=0F,tNoise=0F;
-            int i=0;
-            for(NucleotideGlyph channel:channelOrder){
-                switch(channel){
-                    case Adenine:   aNoise= noise[i];
-                                    break;
-                    case Cytosine:   cNoise= noise[i];
-                                    break;
-                    case Guanine:   gNoise= noise[i];
-                                    break;
-                    default:        tNoise= noise[i];
-                                    break;
-                }
-                i++;
-            }
-            props.put("NOIS",String.format("A:%f,C:%f,G:%f,T:%f", aNoise,cNoise,gNoise,tNoise)); 
+            float[] noiseData = map.get(TaggedDataName.JTC_NOISE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);
+            Noise noise = Noise.create(channelOrder, noiseData);
+            
+            props.put("NOIS",noise.toString()); 
         }
         return props;
     }
@@ -504,29 +523,11 @@ public final class Ab1FileParser {
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
         Map<TaggedDataName, List<ShortArrayTaggedDataRecord>> map= groupedDataRecordMap.shortArrayDataRecords;
-        if(map.containsKey(TaggedDataName.LANE)){
-            props.put("LANE", ""+map.get(TaggedDataName.LANE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+        
+        for(ShortTaggedDataRecordPropertyHandler handler : ShortTaggedDataRecordPropertyHandler.values()){
+            handler.handle(map, traceData, props);
         }
-        if(map.containsKey(TaggedDataName.LASER_POWER)){
-            props.put("LsrP", ""+map.get(TaggedDataName.LASER_POWER).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
-        }
-        if(map.containsKey(TaggedDataName.B1Pt)){
-            props.put("B1Pt", ""+map.get(TaggedDataName.B1Pt).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
-        }
-        if(map.containsKey(TaggedDataName.Scan)){
-            props.put("Scan", ""+map.get(TaggedDataName.Scan).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
-        }
-        if(map.containsKey(TaggedDataName.LENGTH_OF_DETECTOR)){
-            props.put("LNTD",""+ map.get(TaggedDataName.LENGTH_OF_DETECTOR).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
-        }
-        if(map.containsKey(TaggedDataName.JTC_START_POINT)){
-            final short value = map.get(TaggedDataName.JTC_START_POINT).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0];
-            props.put("ASPT", ""+value);
-        }
-        if(map.containsKey(TaggedDataName.JTC_END_POINT)){
-            final short value = map.get(TaggedDataName.JTC_END_POINT).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0];
-            props.put("AEPT", ""+value);
-        }
+        
         return props;
     }
 
@@ -761,4 +762,101 @@ public final class Ab1FileParser {
 			map.get(name).add((T)record);
 		}
 	}
+	
+	private static class Noise{
+	    private float aNoise=0F,cNoise=0F,gNoise=0F,tNoise=0F;
+	    
+	    static Noise create(List<NucleotideGlyph> channelOrder, float[] noise){
+	        Noise n = new Noise();
+            int i=0;
+            for(NucleotideGlyph channel:channelOrder){
+                switch(channel){
+                    case Adenine:   n.aNoise= noise[i];
+                                    break;
+                    case Cytosine:   n.cNoise= noise[i];
+                                    break;
+                    case Guanine:   n.gNoise= noise[i];
+                                    break;
+                    default:        n.tNoise= noise[i];
+                                    break;
+                }
+                i++;
+            }
+            return n;
+	    }
+	    
+	    @Override
+	    public String toString(){
+	        return String.format("A:%f,C:%f,G:%f,T:%f", aNoise,cNoise,gNoise,tNoise);
+	    }
+         
+	}
+	
+	private static class SignalScalingFactor{
+	    
+	    private short aScale=-1,cScale=-1,gScale=-1,tScale =-1;
+	    
+	    static SignalScalingFactor create(List<NucleotideGlyph> channelOrder, List<Short> scalingFactors){
+	        SignalScalingFactor sf= new SignalScalingFactor();	         
+    	    Iterator<Short> scaleIterator = scalingFactors.iterator();
+    	    for(NucleotideGlyph channel : channelOrder){
+    	        short scale = scaleIterator.next();
+    	        switch(channel){
+    	            case Adenine:
+    	                sf.aScale = scale;
+    	                break;
+    	            case Cytosine:
+    	                sf.cScale = scale;
+    	                break;
+    	            case Guanine:
+    	                sf.gScale = scale;
+    	                break;
+    	            default:
+    	                sf.tScale = scale;
+    	                break;
+    	        }
+    	    }
+    	    return sf;
+	}
+	    
+	    @Override
+	    public String toString(){
+	        return String.format("A:%d,C:%d,G:%d,T:%d", 
+                    aScale,cScale,gScale,tScale);
+	    }
+	}
+	
+	private enum ShortTaggedDataRecordPropertyHandler{
+	    
+	    LANE(TaggedDataName.LANE,"LANE"),
+	    LASER_POWER(TaggedDataName.LASER_POWER,"LsrP"),
+	    B1Pt(TaggedDataName.B1Pt,"B1Pt"),
+	    Scan(TaggedDataName.Scan,"Scan"),
+	    LENGTH_OF_DETECTOR(TaggedDataName.LENGTH_OF_DETECTOR,"LNTD"),
+	    JTC_START_POINT(TaggedDataName.JTC_START_POINT,"ASPT"),
+	    JTC_END_POINT(TaggedDataName.JTC_END_POINT,"AEPT"),
+	    ;
+	    private final TaggedDataName dataName;
+	    private final String propertyKey;
+	    
+	    
+	    
+	    ;
+
+        private ShortTaggedDataRecordPropertyHandler(TaggedDataName dataName,
+                String propertyKey) {
+            this.dataName = dataName;
+            this.propertyKey = propertyKey;
+        }
+
+
+
+        void handle(Map<TaggedDataName, List<ShortArrayTaggedDataRecord>> map,byte[] traceData, Map<String,String> props){
+	        if(map.containsKey(dataName)){
+	           props.put(propertyKey, ""+map.get(dataName).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+	        }
+	    }
+	}
+	
+	
 }

@@ -41,9 +41,6 @@ import java.util.zip.Inflater;
  */
 public abstract class AbstractZipByteGlyphCodec<G extends ByteGlyph> implements ByteGlyphCodec<G>{
 
-	
-	
-	public AbstractZipByteGlyphCodec(){}
 
 	/**
 	 * Currently not very efficient, must
