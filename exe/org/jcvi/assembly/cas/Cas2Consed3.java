@@ -156,7 +156,7 @@ public class Cas2Consed3 {
                             if(!builders.containsKey(refKey)){
                                 final UpdateConsensusAceContigBuilder builder = new UpdateConsensusAceContigBuilder(
                                         referenceIdLookup.getLookupIdFor(casReferenceId), 
-                                        this.orderedGappedReferences.get(casReferenceId));
+                                        getGappedReference(casReferenceId));
                                 builder.adjustContigIdToReflectCoordinates(CoordinateSystem.RESIDUE_BASED);
                                 builders.put(refKey, builder);
                             }
