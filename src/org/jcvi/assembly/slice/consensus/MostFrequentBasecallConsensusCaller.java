@@ -25,11 +25,13 @@ package org.jcvi.assembly.slice.consensus;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.Map.Entry;
 
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceElement;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.util.MapValueComparator;
 /**
  * {@code MostFrequentBasecallConsensusCaller} is a {@link ConsensusCaller}
  * implementation that will return the most frequent basecall in
@@ -81,15 +83,11 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
     }
 
     private NucleotideGlyph findMostOccuringBase(Map<NucleotideGlyph, Integer> histogramMap){
-        int max=-1;
-        NucleotideGlyph mostOccuringBase = NucleotideGlyph.Unknown;
-        for(Entry<NucleotideGlyph, Integer> entry : histogramMap.entrySet()){
-            int value = entry.getValue();
-            if(value > max){
-                max = value;
-                mostOccuringBase = entry.getKey();
-            }
+        if(histogramMap.isEmpty()){
+            return NucleotideGlyph.Unknown;
         }
-        return mostOccuringBase;
+        SortedMap<NucleotideGlyph, Integer> sortedMap = MapValueComparator.sortDescending(histogramMap);
+        return sortedMap.firstKey();
+       
     }
 }
