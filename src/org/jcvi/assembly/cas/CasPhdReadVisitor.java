@@ -54,7 +54,7 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	private final DateTime phdDate;
 	private final FastQQualityCodec fastqQualityCodec;
 	private CloseableIterator<PhdReadRecord> phdIterator;
-	protected final List<NucleotideEncodedGlyphs> orderedGappedReferences;
+	private final List<NucleotideEncodedGlyphs> orderedGappedReferences;
 	private final TrimDataStore validRangeDataStore;
 	private final List<CloseableIterator<PhdReadRecord>> iterators = new ArrayList<CloseableIterator<PhdReadRecord>>();
     private final File chromatDir;
@@ -77,8 +77,11 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 		this.hasFastaEdits = hasFastaEdits;
 	}
 
+	protected final NucleotideEncodedGlyphs getGappedReference(int index){
+	    return orderedGappedReferences.get(index);
+	}
 	@Override
-	public synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
+	public synchronized final void visitReadFileInfo(CasFileInfo readFileInfo) {
 		super.visitReadFileInfo(readFileInfo);
 		for(String filename :readFileInfo.getFileNames()){
 			
@@ -132,7 +135,7 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	}
 	
 	  @Override
-    public synchronized void visitScoringScheme(CasScoringScheme scheme) {
+    public final synchronized void visitScoringScheme(CasScoringScheme scheme) {
         super.visitScoringScheme(scheme);
         phdIterator = new ChainedCloseableIterator<PhdReadRecord>(iterators);
     }
@@ -144,7 +147,7 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	    }
 
 	@Override
-	protected synchronized void visitMatch(CasMatch match, long readCounter) {
+	protected final synchronized void visitMatch(CasMatch match, long readCounter) {
 		PhdReadRecord phdReadRecord =phdIterator.next();
 		
 		if(match.matchReported()){
