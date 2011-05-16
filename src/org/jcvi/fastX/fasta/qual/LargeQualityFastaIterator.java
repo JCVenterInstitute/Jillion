@@ -30,7 +30,12 @@ import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
  *
  */
 public class LargeQualityFastaIterator extends AbstractLargeFastaRecordIterator<QualityEncodedGlyphs, QualityFastaRecord>{
-
+    public static LargeQualityFastaIterator createNewIteratorFor(File fastaFile){
+        LargeQualityFastaIterator iter = new LargeQualityFastaIterator(fastaFile);
+               iter.start();           
+           
+           return iter;
+       }
     /**
      * @param fastaFile
      * @param recordFactory

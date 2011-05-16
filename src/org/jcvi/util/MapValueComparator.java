@@ -19,8 +19,11 @@
 
 package org.jcvi.util;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * {@code MapValueComparator} is a {@link Comparator}
@@ -30,18 +33,60 @@ import java.util.Map;
  *
  *
  */
-public class MapValueComparator<K extends Comparable,V extends Comparable> implements Comparator<K> {
+public final class MapValueComparator<K extends Comparable,V extends Comparable> implements Comparator<K> {
 
-    private final Map<K, V> map;
+   
     
-    public static <K extends Comparable,V extends Comparable> MapValueComparator<K,V> create(Map<K, V> map){
-        return new MapValueComparator<K, V>(map);
+   
+    /**
+     * Create an unmodifiable {@link SortedMap} that is sorted by value in ascending 
+     * order.  If there are duplicate values, then their sort order will be determined
+     * by comparing the keys to each other also in ascending order.
+     * @param <K> The Comparable type of Key contained in the map.
+     * @param <V> The Comparable type of the values contained in the map.
+     * @param unsorted the unsorted Map to be sorted.
+     * @return a sorted map sorted by the values in ascending order; never null.
+     */
+    public static <K extends Comparable,V extends Comparable> SortedMap<K,V> sortAscending(Map<K, V> unsorted){
+        TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,true));
+        sorted.putAll(unsorted);
+        return Collections.unmodifiableSortedMap(sorted);
     }
     /**
-     * @param map
+     * Create an unmodifiable {@link SortedMap} that is sorted by value in descending 
+     * order.  If there are duplicate values, then their sort order will be determined
+     * by comparing the keys to each other also in descending order.
+     * @param <K> The Comparable type of Key contained in the map.
+     * @param <V> The Comparable type of the values contained in the map.
+     * @param unsorted the unsorted Map to be sorted.
+     * @return a sorted map sorted by the values in descending order; never null.
      */
-    private MapValueComparator(Map<K, V> map) {
+    public static <K extends Comparable,V extends Comparable> SortedMap<K,V> sortDescending(Map<K, V> unsorted){
+        TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,false));
+        sorted.putAll(unsorted);
+        return Collections.unmodifiableSortedMap(sorted);
+    }
+    /**
+     * Helper static method to infer types of keys so we 
+     * don't clutter the instantiation code with generic noise.
+     * @param <K> The Comparable type of Key contained in the map.
+     * @param <V> The Comparable type of the values contained in the map.
+     * @param mao the Map to be get associations of key and values.
+     * @param ascending should the sort be ordered in ascending order.
+     * @return a new MapValueComparator instance.
+     */
+    private static <K extends Comparable,V extends Comparable> MapValueComparator<K,V> create(Map<K, V> map,boolean ascending){
+        return new MapValueComparator<K, V>(map,ascending);
+    }
+    private final Map<K, V> map;
+    private final boolean ascending;
+
+    private MapValueComparator(Map<K, V> map,boolean ascending) {
+        if(map ==null){
+            throw new NullPointerException("map can not be null");
+        }
         this.map = map;
+        this.ascending = ascending;
     }
 
 
@@ -52,6 +97,14 @@ public class MapValueComparator<K extends Comparable,V extends Comparable> imple
     @SuppressWarnings("unchecked")
     @Override
     public int compare(K o1, K o2) {
+        if(ascending){
+            return privateCompare(o1, o2);
+        }
+        //invert if descending
+        return privateCompare(o2, o1);
+    }
+
+    private int privateCompare(K o1, K o2) {
         if(!map.containsKey(o1)){
             if(!map.containsKey(o2)){
                 return 0;

@@ -71,22 +71,30 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
 
 
     @Override
-    protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord nextFasta,
+    protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord fasta,
             Properties requiredComments) {
-        final String id = nextFasta.getId();
+        final String id = fasta.getId();
         File chromatFile = new File(chromatDir,id);
         if(chromatFile.exists()){
             try {
-                SCFChromatogram chromo = SCFChromatogramFile.create(chromatFile);
-                return new DefaultPhd(id, chromo.getBasecalls(), chromo.getQualities(), chromo.getPeaks(), requiredComments);
+                SCFChromatogram chromo = SCFChromatogramFile.create(chromatFile);                
+                return createPhd(requiredComments, fasta, chromo);
             } catch (Exception e) {
                 throw new IllegalStateException("error parsing chromatogram for "+ id,e);
             } 
         }
-        return super.createPhdRecordFor(nextFasta, requiredComments);
+        return super.createPhdRecordFor(fasta, requiredComments);
 
     }
 
+    protected Phd createPhd(Properties requiredComments, NucleotideSequenceFastaRecord fasta,
+            SCFChromatogram chromo) {
+        final String id = fasta.getId();
+        return new DefaultPhd(id, chromo.getBasecalls(), chromo.getQualities(), chromo.getPeaks(), requiredComments);
+    }
+
+
+    
 
    
     
