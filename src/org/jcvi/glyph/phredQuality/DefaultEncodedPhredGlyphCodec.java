@@ -25,7 +25,7 @@ package org.jcvi.glyph.phredQuality;
 
 import org.jcvi.glyph.num.AbstractByteGlyphCodec;
 
-public class DefaultEncodedPhredGlyphCodec extends AbstractByteGlyphCodec<PhredQuality>{
+public class DefaultEncodedPhredGlyphCodec extends AbstractByteGlyphCodec<PhredQuality> implements QualityGlyphCodec{
 
     @Override
     protected PhredQuality getValueOf(byte b) {
