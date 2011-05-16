@@ -430,7 +430,7 @@ public final class Ab1FileParser {
             List<NucleotideGlyph> channelOrder,
             byte[] traceData,
             Map<String,String> props) {
-        Map<TaggedDataName, List<FloatArrayTaggedDataRecord>>map= groupedDataRecordMap.floatDataRecords;
+        Map<TaggedDataName, List<FloatArrayTaggedDataRecord>> map= groupedDataRecordMap.floatDataRecords;
         if(map.containsKey(TaggedDataName.JTC_NOISE)){
             float[] noiseData = map.get(TaggedDataName.JTC_NOISE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);
             Noise noise = Noise.create(channelOrder, noiseData);
@@ -701,7 +701,16 @@ public final class Ab1FileParser {
 		
 		
 	}
-	
+	/**
+	 * {@code GroupedTaggedRecords} groups all the different types
+	 * of {@link TaggedDataRecord}s by class and provides mappings
+	 * for each type by TaggedDataName.  This simplifies searching for data
+	 * and allows the same taggedDataName to return differnt TaggedDataRecord
+	 * types.
+	 * @author dkatzel
+	 *
+	 *
+	 */
 	private static class GroupedTaggedRecords{
 		private final Map<TaggedDataName,List<AsciiTaggedDataRecord>> asciiDataRecords = new EnumMap<TaggedDataName, List<AsciiTaggedDataRecord>>(TaggedDataName.class);
 	
@@ -762,9 +771,15 @@ public final class Ab1FileParser {
 			map.get(name).add((T)record);
 		}
 	}
-	
+	/**
+	 * {@code Noise} contains the noise factor for
+	 * each channel.
+	 * @author dkatzel
+	 * @see SignalScalingFactor.
+	 *
+	 */
 	private static class Noise{
-	    private float aNoise=0F,cNoise=0F,gNoise=0F,tNoise=0F;
+	    private float aNoise,cNoise,gNoise,tNoise;
 	    
 	    static Noise create(List<NucleotideGlyph> channelOrder, float[] noise){
 	        Noise n = new Noise();
@@ -791,7 +806,15 @@ public final class Ab1FileParser {
 	    }
          
 	}
-	
+	/**
+	 * {@code SignalScalingFactor} contains the scaling factor
+	 * for each of the 4 channels.  This metric can be useful
+	 * to determine if there is too much or too little DNA
+	 * being sequenced.
+	 * @author dkatzel
+	 *
+	 *
+	 */
 	private static class SignalScalingFactor{
 	    
 	    private short aScale=-1,cScale=-1,gScale=-1,tScale =-1;
@@ -825,7 +848,14 @@ public final class Ab1FileParser {
                     aScale,cScale,gScale,tScale);
 	    }
 	}
-	
+	/**
+	 * {@code ShortTaggedDataRecordPropertyHandler} sets
+	 * the appropriate chromatogram properites (comments)
+	 * based on the Ab1 ShortTaggedDataRecord encountered.
+	 * @author dkatzel
+	 *
+	 *
+	 */
 	private enum ShortTaggedDataRecordPropertyHandler{
 	    
 	    LANE(TaggedDataName.LANE,"LANE"),
@@ -838,10 +868,6 @@ public final class Ab1FileParser {
 	    ;
 	    private final TaggedDataName dataName;
 	    private final String propertyKey;
-	    
-	    
-	    
-	    ;
 
         private ShortTaggedDataRecordPropertyHandler(TaggedDataName dataName,
                 String propertyKey) {
@@ -850,7 +876,13 @@ public final class Ab1FileParser {
         }
 
 
-
+        /**
+         * If the given map of TaggedData contains the appropriate record,
+         * then generate a key, value comment and add it to the given property map.
+         * @param map the map of TaggedDataName to {@link ShortArrayTaggedDataRecord}s.
+         * @param traceData the ab1 trace data which may need to be parsed to generate the comment.
+         * @param props the key value pair map of comments which is to be modified.
+         */
         void handle(Map<TaggedDataName, List<ShortArrayTaggedDataRecord>> map,byte[] traceData, Map<String,String> props){
 	        if(map.containsKey(dataName)){
 	           props.put(propertyKey, ""+map.get(dataName).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
