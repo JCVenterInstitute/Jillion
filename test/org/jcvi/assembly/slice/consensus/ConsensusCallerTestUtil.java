@@ -33,12 +33,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.TreeMap;
 import org.jcvi.assembly.slice.DefaultSlice;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceElement;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.util.InverseComparator;
 import org.jcvi.util.MapValueComparator;
 
 import static org.jcvi.assembly.slice.TestSliceUtil.*;
@@ -646,9 +644,8 @@ public static Map<List<Slice>, List<ConsensusResult>> generateMostCommonBasecall
     		for(SliceElement e : s){
     			histogram.put(e.getBase(),histogram.get(e.getBase()) +1);
     		}
-    		SortedMap<NucleotideGlyph, Integer> sortedMap = new TreeMap<NucleotideGlyph, Integer>(InverseComparator.invert( MapValueComparator.create(histogram)));
-    		sortedMap.putAll(histogram);
-    		NucleotideGlyph mostCommonBase =sortedMap.keySet().iterator().next();
+    		SortedMap<NucleotideGlyph, Integer> sortedMap = MapValueComparator.sortDescending(histogram);
+    		NucleotideGlyph mostCommonBase =sortedMap.firstKey();
     		int consensusQuality=0;
     		for(SliceElement e : s){
     			if(e.getBase() == mostCommonBase){

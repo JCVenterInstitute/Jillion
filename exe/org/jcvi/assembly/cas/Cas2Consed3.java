@@ -76,11 +76,14 @@ public class Cas2Consed3 {
 	private final ReadWriteFileServer consedOutputDir;
 	private final String prefix;
 	private final boolean makePhdBall;
-	public Cas2Consed3(File casFile, ReadWriteFileServer consedOutputDir, String prefix, boolean makePhdBall){
+	private final boolean hasEdits;
+	public Cas2Consed3(File casFile, ReadWriteFileServer consedOutputDir, 
+	        String prefix, boolean makePhdBall,boolean hasEdits){
 		this.casFile=casFile;
 		this.consedOutputDir = consedOutputDir;
 		this.prefix = prefix;
 		this.makePhdBall = makePhdBall;
+		this.hasEdits = hasEdits;
 	}
 	public void convert(TrimDataStore trimDatastore,CasTrimMap trimToUntrimmedMap ,FastQQualityCodec fastqQualityCodec) throws IOException{
 	    final File casWorkingDirectory = casFile.getParentFile();
@@ -142,7 +145,8 @@ public class Cas2Consed3 {
                          fastqQualityCodec,gappedReferenceMap.asList(),
                          multiTrimDataStore,
                          new DateTime(),
-                         chromatDir
+                         chromatDir,
+                         hasEdits
                          ) {
                     
                         @Override
@@ -238,7 +242,8 @@ public class Cas2Consed3 {
 		/**
          * @param trimToUntrimmedMap
          */
-        public ConsedDirTraceFolderCreator(File workingDir,CasTrimMap trimToUntrimmedMap,ReadWriteFileServer consedOutputDir) {
+        public ConsedDirTraceFolderCreator(File workingDir,CasTrimMap trimToUntrimmedMap,
+                ReadWriteFileServer consedOutputDir) {
             this.trimToUntrimmedMap = trimToUntrimmedMap;
             this.workingDir = workingDir;
             this.consedOutputDir = consedOutputDir;
@@ -319,6 +324,10 @@ public class Cas2Consed3 {
 	        options.addOption(new CommandLineOptionBuilder("no_phdball", "do not make a phd.ball. instead, make individual phd.1 files for each read (not recommended)")                                
                             .isFlag(true)
                             .build());
+	        options.addOption(new CommandLineOptionBuilder("preserve_edits", "The sanger fasta data has been edited so that it is different than the chromatograms.  " +
+	        		"This also requires untrimmed .qual and .pos files.")                                
+            .isFlag(true)
+            .build());
 	        
 	        if(CommandLineUtils.helpRequested(args)){
 	        	printHelp(options);
@@ -374,7 +383,9 @@ public class Cas2Consed3 {
 	            	}
 	            }
 	            boolean makePhdBall = !commandLine.hasOption("no_phdball");
-	            Cas2Consed3 cas2consed = new Cas2Consed3(casFile, outputDir, prefix,makePhdBall);
+	            boolean hasEdits = commandLine.hasOption("preserve_edits");
+	            
+	            Cas2Consed3 cas2consed = new Cas2Consed3(casFile, outputDir, prefix,makePhdBall,hasEdits);
 	            
 	            cas2consed.convert(trimDatastore, trimToUntrimmedMap, qualityCodec);
 	            

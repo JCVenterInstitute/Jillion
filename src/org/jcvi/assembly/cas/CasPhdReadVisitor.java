@@ -27,6 +27,7 @@ import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.AcePlacedReadAdapter;
 import org.jcvi.assembly.ace.PhdInfo;
 import org.jcvi.assembly.ace.consed.ChromatDirFastaConsedPhdAdaptedIterator;
+import org.jcvi.assembly.ace.consed.EditedFastaChromatDirPhdAdapterIterator;
 import org.jcvi.assembly.ace.consed.FastaConsedPhdAdaptedIterator;
 import org.jcvi.assembly.ace.consed.FastqConsedPhdAdaptedIterator;
 import org.jcvi.assembly.ace.consed.FlowgramConsedPhdAdaptedIterator;
@@ -57,12 +58,14 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	private final TrimDataStore validRangeDataStore;
 	private final List<CloseableIterator<PhdReadRecord>> iterators = new ArrayList<CloseableIterator<PhdReadRecord>>();
     private final File chromatDir;
+    private final boolean hasFastaEdits;
 	public CasPhdReadVisitor(File workingDir, CasTrimMap trimMap,
 			FastQQualityCodec fastqQualityCodec,
 			List<NucleotideEncodedGlyphs> orderedGappedReferences,
 			TrimDataStore validRangeDataStore,
 			DateTime phdDate,
-			File chromatDir) {
+			File chromatDir,
+			boolean hasFastaEdits) {
 		super();
 		this.workingDir = workingDir;
 		this.trimMap = trimMap;
@@ -71,6 +74,7 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 		this.orderedGappedReferences = orderedGappedReferences;
 		this.validRangeDataStore = validRangeDataStore;
 		this.chromatDir = chromatDir;
+		this.hasFastaEdits = hasFastaEdits;
 	}
 
 	@Override
@@ -102,11 +106,20 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	                                file,
 	                                phdDate, PhredQuality.valueOf(30));
 			                }else{
-			                    iter = new ChromatDirFastaConsedPhdAdaptedIterator(
-			                            LargeNucleotideFastaIterator.createNewIteratorFor(file),
-	                                    file,
-	                                    phdDate, PhredQuality.valueOf(30),
-	                                    chromatDir);
+			                    if(hasFastaEdits){
+			                        iter = new EditedFastaChromatDirPhdAdapterIterator(
+			                                LargeNucleotideFastaIterator.createNewIteratorFor(file),
+			                                file, 
+			                                phdDate, 
+			                                PhredQuality.valueOf(30), 
+			                                chromatDir);
+			                    }else{
+    			                    iter = new ChromatDirFastaConsedPhdAdaptedIterator(
+    			                            LargeNucleotideFastaIterator.createNewIteratorFor(file),
+    	                                    file,
+    	                                    phdDate, PhredQuality.valueOf(30),
+    	                                    chromatDir);
+			                    }
 			                }
 			                
 			                iterators.add(iter);

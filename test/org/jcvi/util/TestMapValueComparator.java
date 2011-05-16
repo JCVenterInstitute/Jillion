@@ -19,11 +19,11 @@
 
 package org.jcvi.util;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -41,12 +41,20 @@ public class TestMapValueComparator {
         weights.put("Curly",300);
         weights.put("Larry",150);
         
-        Map<String, Integer> sorted = new TreeMap<String, Integer>(MapValueComparator.create(weights));
-        sorted.putAll(weights);
-        Set<String> expected = createExpectedOrder("Moe","Larry","Curly");
-        assertEquals(expected, sorted.keySet());
+        assertAscending(weights,"Moe","Larry","Curly");
+        assertDescending(weights,"Curly","Larry","Moe");
+        
     }
-    
+    private void assertAscending(Map<String, Integer> unsorted, String...expectedOrder){
+        Set<String> expected = createExpectedOrder(expectedOrder);
+        Map<String, Integer> sorted = MapValueComparator.sortAscending(unsorted);
+        assertEquals("ascending",expected, sorted.keySet());
+    }
+    private void assertDescending(Map<String, Integer> unsorted, String...expectedOrder){
+        Set<String> expected = createExpectedOrder(expectedOrder);
+        Map<String, Integer> sorted = MapValueComparator.sortDescending(unsorted);
+        assertEquals("descending",expected, sorted.keySet());
+    }
     private Set<String> createExpectedOrder(String...strings){
         Set<String> expected = new LinkedHashSet<String>();
         for(String s : strings){
@@ -62,10 +70,25 @@ public class TestMapValueComparator {
         heights.put("Dan",120);
         heights.put("Carrol",120);       
         heights.put("Ernie",110);
+
         
-        Map<String, Integer> sorted = new TreeMap<String, Integer>(MapValueComparator.create(heights));
-        sorted.putAll(heights);
-        Set<String> expected = createExpectedOrder("Bob","Ernie","Carrol","Dan","Alice");
-        assertEquals(expected, sorted.keySet());
+        assertAscending(heights,"Bob","Ernie","Carrol","Dan","Alice");
+        assertDescending(heights,"Alice","Dan","Carrol","Ernie","Bob");
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void nullAscendingMapShouldThrowNPE(){
+        MapValueComparator.sortAscending(null);
+    }
+    @Test(expected = NullPointerException.class)
+    public void nullDescendingMapShouldThrowNPE(){
+        MapValueComparator.sortDescending(null);
+    }
+    
+    @Test
+    public void emptyUnsortedMapShouldReturnEmptySortedMap(){
+        Map<String,Integer> emptyMap = Collections.emptyMap();
+        assertTrue(MapValueComparator.sortAscending(emptyMap).isEmpty());
+        assertTrue(MapValueComparator.sortDescending(emptyMap).isEmpty());
     }
 }

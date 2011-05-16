@@ -55,6 +55,13 @@ public class Peaks{
         this.data = new DefaultEncodedGlyphs<ShortGlyph>(CODEC, data);
        
     }
+    public Peaks(EncodedGlyphs<ShortGlyph> data){
+        if(data==null){
+            throw new NullPointerException("encoded data can not be null");
+        }
+        this.data = data;
+       
+    }
     /**
      * @param data
      */

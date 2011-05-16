@@ -33,6 +33,12 @@ import org.jcvi.glyph.num.ShortGlyph;
 public class LargePositionFastaRecordIterator extends AbstractLargeFastaRecordIterator
             <EncodedGlyphs<ShortGlyph>,PositionFastaRecord<EncodedGlyphs<ShortGlyph>>>{
 
+    public static LargePositionFastaRecordIterator createNewIteratorFor(File fastaFile){
+        LargePositionFastaRecordIterator iter = new LargePositionFastaRecordIterator(fastaFile);
+               iter.start();           
+           
+           return iter;
+       }
     /**
      * @param fastaFile
      * @param recordFactory

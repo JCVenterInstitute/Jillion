@@ -33,8 +33,7 @@ public class LargeNucleotideFastaIterator extends AbstractLargeFastaRecordIterat
 
 	 public static LargeNucleotideFastaIterator createNewIteratorFor(File fastaFile){
 		 LargeNucleotideFastaIterator iter = new LargeNucleotideFastaIterator(fastaFile);
-				iter.start();
-			
+				iter.start();			
 	    	
 	    	return iter;
 	    }
