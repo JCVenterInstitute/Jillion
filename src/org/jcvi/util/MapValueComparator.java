@@ -30,12 +30,11 @@ import java.util.Map;
  *
  *
  */
-public class MapValueComparator<K,V extends Comparable> implements Comparator<K> {
+public class MapValueComparator<K extends Comparable,V extends Comparable> implements Comparator<K> {
 
     private final Map<K, V> map;
     
-    
-    public static <K,V extends Comparable> MapValueComparator<K,V> create(Map<K, V> map){
+    public static <K extends Comparable,V extends Comparable> MapValueComparator<K,V> create(Map<K, V> map){
         return new MapValueComparator<K, V>(map);
     }
     /**
@@ -62,7 +61,11 @@ public class MapValueComparator<K,V extends Comparable> implements Comparator<K>
         if(!map.containsKey(o2)){
             return 1;
         }
-        return map.get(o1).compareTo(map.get(o2));
+        int comp= map.get(o1).compareTo(map.get(o2));
+        if(comp !=0){
+            return comp;
+        }
+        return o1.compareTo(o2);
     }
 
 }
