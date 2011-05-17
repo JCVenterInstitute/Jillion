@@ -53,9 +53,7 @@ public final class SequencingReports {
         }
     }
     private static final String GET_RESEQ_MANIFEST_URL ="http://reports-prod:8280/JasperServer-Pro/flow.html";
-    
-    private static final String GET_SEQ_MANIFEST_URL ="http://reports-prod:8280/JasperServer-Pro/flow.html";
-    
+     
     public static InputStream getResequencingManifestFor(String sequencingPlateBarcode, OUTPUT_TYPE outputType) throws IOException{
         return getResequencingManifestFor(sequencingPlateBarcode, DefaultJCVIAuthorizer.JOE_USER, outputType);
     }
