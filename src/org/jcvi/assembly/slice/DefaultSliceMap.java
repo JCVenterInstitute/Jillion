@@ -28,14 +28,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 
 public class DefaultSliceMap extends AbstractSliceMap{
 
+    public static SliceMap create(Contig<? extends PlacedRead> contig, QualityDataStore qualityDataStore,
+                        QualityValueStrategy qualityValueStrategy){
+        return new DefaultSliceMap(DefaultCoverageMap.buildCoverageMap(contig), qualityDataStore, qualityValueStrategy);
+    }
     private final Map<Long, Slice> sliceMap = new HashMap<Long, Slice>();
     private final long size;
     public DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
