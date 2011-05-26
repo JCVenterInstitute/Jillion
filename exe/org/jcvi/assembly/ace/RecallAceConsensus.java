@@ -25,34 +25,41 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.jcvi.assembly.AssemblyUtil;
+import org.jcvi.Range;
 import org.jcvi.assembly.ace.consed.PhdDirQualityDataStore;
 import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
 import org.jcvi.assembly.slice.DefaultSliceMap;
+import org.jcvi.assembly.slice.LargeSliceMap;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceMap;
+import org.jcvi.assembly.slice.consensus.ConicConsensusCaller;
 import org.jcvi.assembly.slice.consensus.ConsensusCaller;
 import org.jcvi.assembly.slice.consensus.ConsensusResult;
 import org.jcvi.assembly.slice.consensus.NoAmbiguityConsensusCaller;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.DefaultAceFileDataStore;
-import org.jcvi.datastore.SimpleDataStore;
+import org.jcvi.datastore.IndexedAceFileDataStore;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.io.IOUtil;
+import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.trace.TraceQualityDataStoreAdapter;
+import org.jcvi.trace.sanger.phd.PhdDataStore;
+import org.jcvi.util.DefaultIndexedFileRange;
+import org.jcvi.util.MultipleWrapper;
 
 /**
  * @author dkatzel
@@ -61,6 +68,45 @@ import org.jcvi.trace.TraceQualityDataStoreAdapter;
  */
 public class RecallAceConsensus {
 
+    private static enum RecallType{
+        CONIC("conic"),
+        NO_AMBIGUITY("no_ambiguity")
+        
+        ;
+        
+        private static Map<String, RecallType> map;
+        static{
+            RecallType[] values = values();
+            map = new HashMap<String, RecallType>(values.length);
+            for(RecallType value : values){
+                map.put(value.type, value);
+            }
+        }
+        private final String type;
+        
+        RecallType(String type){
+            this.type = type;
+        }
+        
+        public static RecallType parse(String s){
+            for(Entry<String, RecallType> entry : map.entrySet()){
+                String key = entry.getKey();
+                if(key.equalsIgnoreCase(s)){
+                    return entry.getValue();
+                }
+            }
+            throw new IllegalArgumentException("could not parse value "+s);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String toString() {
+            return type;
+        }
+        
+    }
     /**
      * @param args
      * @throws IOException 
@@ -76,7 +122,9 @@ public class RecallAceConsensus {
         .longName("out")
         .isRequired(true)        
         .build());
-        options.addOption(new CommandLineOptionBuilder("fasta","output fasta file")
+        options.addOption(new CommandLineOptionBuilder("fasta","output fasta file")       
+        .build());
+        options.addOption(new CommandLineOptionBuilder("recall_with","consensus recall method must be either : "+ RecallType.map.keySet())
         .isRequired(true)        
         .build());
         options.addOption(CommandLineUtils.createHelpOption());
@@ -92,45 +140,69 @@ public class RecallAceConsensus {
         
             File inputAceFile = new File(commandLine.getOptionValue("ace"));
             File phdDir = new File(inputAceFile.getParentFile().getParentFile(),"phd_dir");
-            PrintWriter fastaOut = new PrintWriter(new File(commandLine.getOptionValue("fasta")));
+            PrintWriter fastaOut = commandLine.hasOption("fasta") ?
+                    new PrintWriter(new File(commandLine.getOptionValue("fasta"))):
+                        null;
             
             File outputAceFile = new File(commandLine.getOptionValue("out"));
-            
-            PhdDirQualityDataStore phdDataStore = new PhdDirQualityDataStore(phdDir);
+            final OutputStream out = new FileOutputStream(outputAceFile);
+            PhdDataStore phdDataStore = new PhdDirQualityDataStore(phdDir);
             QualityDataStore qualityDataStore = TraceQualityDataStoreAdapter.adapt(phdDataStore); 
-            ConsensusCaller consensusCaller = new NoAmbiguityConsensusCaller(PhredQuality.valueOf(30));
-            AceContigDataStore aceContigDataStore = new DefaultAceFileDataStore(inputAceFile);
-            Map<String, AceContig> recalledContigs = new LinkedHashMap<String, AceContig>();
+            ConsensusCaller consensusCaller = createConsensusCaller(RecallType.parse(commandLine.getOptionValue("recall_with")), PhredQuality.valueOf(30));
+            IndexedAceFileDataStore aceContigDataStore = new IndexedAceFileDataStore(inputAceFile,new DefaultIndexedFileRange(),false);
+            AceFileVisitor headerVisitor = new AbstractAceFileVisitor() {
+                
+                /**
+                * {@inheritDoc}
+                */
+                @Override
+                public synchronized void visitHeader(int numberOfContigs,
+                        int totalNumberOfReads) {
+                    try {
+                        AceFileWriter.writeAceFileHeader(numberOfContigs, totalNumberOfReads, out);
+                    } catch (IOException e) {
+                        throw new IllegalStateException("error writing to outputfile");
+                    }
+                }
+
+                @Override
+                protected void visitNewContig(String contigId, String consensus) {
+                    // no-op
+                    
+                }
+                
+                @Override
+                protected void visitAceRead(String readId, String validBasecalls,
+                        int offset, SequenceDirection dir, Range validRange,
+                        PhdInfo phdInfo, int ungappedFullLength) {
+                    // no-op
+                    
+                }
+            };
+            AceFileVisitor aceVisitors = MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, headerVisitor,aceContigDataStore);
+            AceFileParser.parseAceFile(inputAceFile, aceVisitors);
             for(AceContig contig : aceContigDataStore){
-                SliceMap sliceMap = DefaultSliceMap.create(contig, qualityDataStore, GapQualityValueStrategies.LOWEST_FLANKING);
+                SliceMap sliceMap = DefaultSliceMap.create(contig, qualityDataStore, 
+                        GapQualityValueStrategies.LOWEST_FLANKING);
                 NucleotideEncodedGlyphs originalConsensus = contig.getConsensus();
-                List<NucleotideGlyph> consensusList = originalConsensus.decode();
-                List<NucleotideGlyph> recalledConsensus = new ArrayList<NucleotideGlyph>(consensusList.size());
-                for(int i=0; i<consensusList.size();i++){
+                List<NucleotideGlyph> recalledConsensus = new ArrayList<NucleotideGlyph>((int)originalConsensus.getLength());
+                for(int i=0; i<originalConsensus.getLength();i++){
                     Slice slice =sliceMap.getSlice(i);
                     ConsensusResult result =consensusCaller.callConsensus(slice);
-                    if(result.getConsensus() != consensusList.get(i)){
-                        int nonGapOffset =AssemblyUtil.getLeftFlankingNonGapIndex(originalConsensus, i);
-                        int ungappedResidueBased = originalConsensus.convertGappedValidRangeIndexToUngappedValidRangeIndex(nonGapOffset)+1;
-                        System.out.printf("%d\t %s -> %s%n",ungappedResidueBased,consensusList.get(i),result.getConsensus());
-                    }
+                  
                     recalledConsensus.add(result.getConsensus());
                 }
                 final DefaultNucleotideEncodedGlyphs gappedRecalledConsensus = new DefaultNucleotideEncodedGlyphs(recalledConsensus);
-                
-                fastaOut.print(new DefaultNucleotideEncodedSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.decodeUngapped()));
+                if(fastaOut !=null){
+                    fastaOut.print(new DefaultNucleotideEncodedSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.decodeUngapped()));
+                }
                 DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contig.getId(), gappedRecalledConsensus);
                 for(AcePlacedRead read : contig.getPlacedReads()){
                     builder.addRead(read);
                 }
-                recalledContigs.put(contig.getId(), builder.build());
+                AceFileWriter.writeAceContig(builder.build(), phdDataStore, out);
             }
-            AceAssembly<AceContig> assembly = new DefaultAceAssembly<AceContig>(new SimpleDataStore<AceContig>(recalledContigs), phdDataStore);
-            OutputStream out = new FileOutputStream(outputAceFile);
-            AceFileWriter.writeAceFile(assembly, out);
-            aceContigDataStore.close();
-            fastaOut.close();
-            out.close();
+            IOUtil.closeAndIgnoreErrors(aceContigDataStore,fastaOut,out);
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -140,6 +212,13 @@ public class RecallAceConsensus {
 
     }
 
+    private static ConsensusCaller createConsensusCaller(RecallType recallType, PhredQuality highQualityThreshold){
+        switch(recallType){
+            case CONIC : return new ConicConsensusCaller(highQualityThreshold);
+            case NO_AMBIGUITY : return new NoAmbiguityConsensusCaller(highQualityThreshold);
+            default : throw new IllegalArgumentException("could not create consensus caller for type "+ recallType);
+        }
+    }
     /**
      * @param options
      */

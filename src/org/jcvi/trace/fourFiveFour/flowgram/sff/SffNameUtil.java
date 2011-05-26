@@ -132,6 +132,24 @@ public final class SffNameUtil {
         return _454DateEncoder.INSTANCE.decode(timeStamp);
     }
     
+    /**
+     * Parse the region number of where on the machine this
+     * 454 read was generated.  
+     * Universal 454 Accession Numbers encode the region number in their names,
+     * this method parses that information out. 
+     * @param readId the 454 read to parse.
+     * @return a a positive 2 digit number of which region this read
+     * is from. 
+     * @throws IllegalArgumentException is {@link #is454Read(String)}
+     * returns false.
+     */
+    public static int getRegionNumber(String readId){
+        if(!is454Read(readId)){
+            throw new IllegalArgumentException(readId + " is not a 454 read");
+        }
+        final String substring = readId.substring(7,9);
+        return Integer.parseInt(substring);
+    }
     
     
     /**

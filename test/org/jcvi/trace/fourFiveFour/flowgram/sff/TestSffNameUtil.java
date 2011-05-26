@@ -51,7 +51,14 @@ public class TestSffNameUtil {
         assertEquals("sffToCA split mate",
                 "ERESL0I01EGOIM", SffNameUtil.parseUniversalAccessionNumberFrom("ERESL0I01EGOIMb"));
     }
-    
+    @Test
+    public void getRegionNumber(){
+        assertEquals(1, SffNameUtil.getRegionNumber("C3U5GWL01CBXT2"));
+        assertEquals(2, SffNameUtil.getRegionNumber("F3P0QKL02AMPVE_1-93"));
+        
+        assertEquals(12, SffNameUtil.getRegionNumber("ERESL0I12CLM9Q_left"));
+ 
+    }
     @Test
     public void parseDateFromName(){
         DateTime expectedDate = new DateTime(2004, 9, 22, 16, 59, 10, 0);

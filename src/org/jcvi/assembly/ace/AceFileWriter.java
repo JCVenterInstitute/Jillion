@@ -51,6 +51,9 @@ public class AceFileWriter {
     public static void writeAceFile(AceAssembly<AceContig> aceAssembly,OutputStream out) throws IOException, DataStoreException{
         writeAceFile(aceAssembly, null,out,false);
     }
+    public static void writeAceFileHeader(int numberOfContigs, int numberOfReads, OutputStream out) throws IOException{
+        writeString(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads), out);
+    }
     public static void writeAceFile(AceAssembly<AceContig> aceAssembly,SliceMapFactory sliceMapFactory, 
             OutputStream out, boolean calculateBestSegments) throws IOException, DataStoreException{
         int numberOfContigs =0;
@@ -61,7 +64,7 @@ public class AceFileWriter {
             numberOfReads += contig.getNumberOfReads();
         }
         try{
-            writeString(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads), out);
+            writeAceFileHeader(numberOfContigs, numberOfReads, out);
             PhdDataStore phdDataStore = aceAssembly.getPhdDataStore();
             for(AceContig contig: aceDataStore){
                 if(calculateBestSegments){
@@ -71,7 +74,7 @@ public class AceFileWriter {
                     AceFileWriter.writeAceFile(contig, sliceMap, phdDataStore, out, calculateBestSegments);
                 }
                 else{
-                    AceFileWriter.writeAceFile(contig,  phdDataStore, out);
+                    AceFileWriter.writeAceContig(contig,  phdDataStore, out);
                 }
             }
             AceTagMap aceTagMap = aceAssembly.getAceTagMap();
@@ -132,7 +135,7 @@ public class AceFileWriter {
                         AceFileUtil.TAG_DATE_TIME_FORMATTER.print(readTag.getCreationDate().getTime())), out);
         
     }
-    public static void writeAceFile(Contig<AcePlacedRead> contig,
+    public static void writeAceContig(Contig<AcePlacedRead> contig,
             PhdDataStore phdDataStore, 
             OutputStream out) throws IOException, DataStoreException{
         final NucleotideEncodedGlyphs consensus = contig.getConsensus();

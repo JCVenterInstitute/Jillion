@@ -203,7 +203,7 @@ public class Cas2Consed3 {
                                      splitContig.getId(), 
                                      splitContig.getConsensus().decodeUngapped())
                              .toFormattedString());
-                     AceFileWriter.writeAceFile(splitContig, phdDataStore, tempOut);
+                     AceFileWriter.writeAceContig(splitContig, phdDataStore, tempOut);
                  }
              }
              IOUtil.closeAndIgnoreErrors(tempOut,consensusOut);

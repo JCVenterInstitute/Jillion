@@ -27,10 +27,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.Range;
+import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -48,7 +50,16 @@ public class LargeSliceMap extends AbstractSliceMap{
     private final        QualityValueStrategy qualityValueStrategy;
     private final Range range;
     private final Map<Long, Slice> cache;
-    
+
+    public static <PR extends PlacedRead,C extends Contig<PR>> LargeSliceMap  create(C contig,  QualityDataStore qualityDataStore,
+            QualityValueStrategy qualityValueStrategy, int cacheSize){
+        CoverageMap<? extends CoverageRegion<PR>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
+        return new LargeSliceMap(coverageMap,qualityDataStore,qualityValueStrategy,cacheSize);
+    }
+    public static <PR extends PlacedRead,C extends Contig<PR>> LargeSliceMap  create(C contig,  QualityDataStore qualityDataStore,
+            QualityValueStrategy qualityValueStrategy){
+        return create(contig,qualityDataStore,qualityValueStrategy,DEFAULT_CACHE_SIZE);
+    }
     public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, Range range, int cacheSize){
