@@ -58,6 +58,7 @@ public class Ace2Fasta {
                             .build());
         options.addOption(new CommandLineOptionBuilder("g", "print gapped consensus (default is ungapped)")
                             .longName("gapped")
+                            .isFlag(true)
                             .build());
         options.addOption(CommandLineUtils.createHelpOption());
         if(CommandLineUtils.helpRequested(args)){
