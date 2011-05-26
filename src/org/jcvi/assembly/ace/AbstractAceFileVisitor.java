@@ -284,5 +284,12 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         throwExceptionIfInitialized();
         
     }
-
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public void visitEndOfContig() {
+         
+     
+     }
 }

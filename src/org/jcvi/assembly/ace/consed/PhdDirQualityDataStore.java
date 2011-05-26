@@ -26,9 +26,8 @@ import java.io.IOException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
 import org.jcvi.trace.sanger.phd.DefaultPhdFileDataStore;
+import org.jcvi.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.util.CloseableIterator;
@@ -41,7 +40,7 @@ import org.jcvi.util.CloseableIterator;
 public class PhdDirQualityDataStore implements PhdDataStore{
 
     private final File phdDir;
-    
+    private final PhdDataStore phdBallDataStore;
     private static class ReadPhdFileFilter implements FileFilter{
         private final String readId;
 
@@ -63,9 +62,16 @@ public class PhdDirQualityDataStore implements PhdDataStore{
     }
     /**
      * @param phdDir
+     * @throws FileNotFoundException 
      */
-    public PhdDirQualityDataStore(File phdDir) {
+    public PhdDirQualityDataStore(File phdDir) throws FileNotFoundException {
         this.phdDir = phdDir;
+        File phdBall = getPhdFileFor("phd.ball");
+        if(phdBall ==null){
+            phdBallDataStore = null;
+        }else{
+            phdBallDataStore = new IndexedPhdFileDataStore(phdBall, true);
+        }
     }
 
     private File getPhdFileFor(String readId){
@@ -77,9 +83,6 @@ public class PhdDirQualityDataStore implements PhdDataStore{
                 latestVersion = version;
                 latestFile=phd;
             }
-        }
-        if(latestFile==null){
-            throw new IllegalArgumentException("could not find any phd files for "+ readId);
         }
         return latestFile;
     }
@@ -97,15 +100,24 @@ public class PhdDirQualityDataStore implements PhdDataStore{
     */
     @Override
     public Phd get(String id) throws DataStoreException {
+        return getPhdFor(id);
+    }
+
+    private Phd getPhdFor(String id) throws DataStoreException{
         File phdFile = getPhdFileFor(id);
-        
+        if(phdFile ==null){
+            if(phdBallDataStore==null){
+                throw new IllegalArgumentException("could not find any phd files for "+ id);
+                
+            }
+            return phdBallDataStore.get(id);
+        }
         try {
             return new DefaultPhdFileDataStore(phdFile).get(id);
         } catch (FileNotFoundException e) {
             throw new DataStoreException("could not get phd file for "+id);
         }
     }
-
     /**
     * {@inheritDoc}
     */

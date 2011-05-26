@@ -152,7 +152,7 @@ public final class TigrAuthorizerUtils {
      * @param isDatabaseRequired forces the {@code -D} option to be required.
      */
     public static void addMultipleProjectDbLoginOptionsTo(Options options, boolean isDatabaseRequired) {
-        _addProjectDbLoginOptionsTo(options,isDatabaseRequired, "(s) to use comma separated if using more than one");
+        addProjectDbLoginOptionsTo(options,isDatabaseRequired, "(s) to use comma separated if using more than one");
     }
     
     /**
@@ -170,9 +170,27 @@ public final class TigrAuthorizerUtils {
      * @param isDatabaseRequired forces the {@code -D} option to be required.
      */
     public static void addProjectDbLoginOptionsTo(Options options, boolean isDatabaseRequired) {
-        _addProjectDbLoginOptionsTo(options,isDatabaseRequired, "");
+        addProjectDbLoginOptionsTo(options,isDatabaseRequired, "");
     }
-    
+    /**
+     * Add common Project DB login options including:
+     * <ul>
+     * <li> {@code -S} to specify the Project Server</li>
+     * <li> {@code -D} to specify which Project database to log into</li>
+     * <li> {@code -U} to specify which user name to log in as</li>
+     * <li> {@code -P} to specify username's password (not recommended to use)</li>
+     * <li> {@code -p} to specify login credentals using a Project DB password file</li>
+     * </ul>
+     * If a user uses the -U option without providing a password, the console
+     * will prompt for a password. (recommended)
+     * @param options the {@link Options} instance to add the login options to.
+     * @param isDatabaseRequired forces the {@code -D} option to be required.
+     * @param databaseUsageSuffix the text of the usage for the {@literal -D option}
+     * after which should come after the usage prefix "name of project database"
+     */
+    public static void addMultipleProjectDbLoginOptionsTo(Options options, boolean isDatabaseRequired, String databaseUsageSuffix) {
+        addProjectDbLoginOptionsTo(options,isDatabaseRequired, databaseUsageSuffix);
+    }
     /**
      * Add common Project DB login options including:
      * <ul>
@@ -187,7 +205,7 @@ public final class TigrAuthorizerUtils {
      * @param options the {@link Options} instance to add the login options to.
      * @param isDatabaseRequired forces the {@code -D} option to be required.
      */
-    private static void _addProjectDbLoginOptionsTo(Options options, boolean isDatabaseRequired, String databaseUsageSuffix) {
+    public static void addProjectDbLoginOptionsTo(Options options, boolean isDatabaseRequired, String databaseUsageSuffix) {
         options.addOption(new CommandLineOptionBuilder("S","server","name of server")
                                 .longName("Server")
                                 .build());

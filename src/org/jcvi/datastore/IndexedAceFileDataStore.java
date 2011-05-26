@@ -53,9 +53,14 @@ public class IndexedAceFileDataStore extends AbstractAceContigBuilder implements
     private int currentFileOffset;
     
     public IndexedAceFileDataStore(File file, IndexedFileRange indexFileRange ) throws IOException{
+       this(file,indexFileRange,true);
+    }
+    public IndexedAceFileDataStore(File file, IndexedFileRange indexFileRange,boolean initializeNow ) throws IOException{
         this.indexFileRange = indexFileRange;
         this.file = file;
-        AceFileParser.parseAceFile(file, this);
+        if(initializeNow){
+            AceFileParser.parseAceFile(file, this);
+        }
     }
     public IndexedAceFileDataStore(File file) throws IOException{
         this(file, new DefaultIndexedFileRange());
