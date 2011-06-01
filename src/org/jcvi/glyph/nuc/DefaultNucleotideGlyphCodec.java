@@ -67,6 +67,8 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
      * The header will contain an int value specifying how many glyphs are encoded.
      */
     private static final int BITS_PER_GLYPH = 4;
+    
+    private final int singleGlyphEncodedSize = computeEncodedSize(1);
     /**
      * populate the maps.
      * Each byte key has been specially assigned so
@@ -156,6 +158,18 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
         return encodeGlyphs(glyphs, unEncodedSize, encodedSize);
         
     }
+    /**
+     * Convenience method to encode a single basecall.
+     * @param glyph
+     * @return
+     */
+    public byte[] encode(NucleotideGlyph glyph) {
+        ByteBuffer result = ByteBuffer.allocate(singleGlyphEncodedSize);
+        result.putInt(1);
+        encodeLastValue(glyph, result);
+        return result.array();
+        
+    }
     private byte[] encodeGlyphs(Collection<NucleotideGlyph> glyphs,
             final int unEncodedSize, int encodedSize) {
         ByteBuffer result = ByteBuffer.allocate(encodedSize);
@@ -195,7 +209,7 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
                 encodeNext2Values(glyphs, result);
             }
             else{
-                encodeLastValue(glyphs, result);
+                encodeLastValue(glyphs.next(), result);
             }
         }
     }
@@ -206,8 +220,8 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
     private boolean isEven(final int size) {
         return size%2==0;
     }
-    private void encodeLastValue(Iterator<NucleotideGlyph> glyphs, ByteBuffer result) {
-        byte hi = GLYPH_TO_BYTE_MAP.get(glyphs.next());
+    private void encodeLastValue(NucleotideGlyph glyph, ByteBuffer result) {
+        byte hi = GLYPH_TO_BYTE_MAP.get(glyph);
         result.put((byte) ((hi<<BITS_PER_GLYPH) &0xFF));
     }
     private void encodeNext2Values(Iterator<NucleotideGlyph> glyphs, ByteBuffer result) {

@@ -33,6 +33,7 @@ import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceContigDataStore;
 import org.jcvi.assembly.ace.AceFileParser;
 import org.jcvi.io.IOUtil;
+import org.jcvi.util.AbstractBlockingCloseableIterator;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.DefaultIndexedFileRange;
 import org.jcvi.util.IndexedFileRange;
@@ -131,7 +132,9 @@ public class IndexedAceFileDataStore extends AbstractAceContigBuilder implements
 
     @Override
     public CloseableIterator<AceContig> iterator() {
-        return new DataStoreIterator<AceContig>(this);
+        
+        //return new DataStoreIterator<AceContig>(this);
+        return new AceFileDataStoreIterator();
     }
     /**
     * {@inheritDoc}
@@ -139,5 +142,42 @@ public class IndexedAceFileDataStore extends AbstractAceContigBuilder implements
     @Override
     public boolean isClosed() throws DataStoreException {
         return indexFileRange.isClosed();
+    }
+    
+    
+    private class AceFileDataStoreIterator extends AbstractBlockingCloseableIterator<AceContig>{
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected void backgroundThreadRunMethod() {
+            AbstractAceContigBuilder builder = new AbstractAceContigBuilder() {
+                
+                @Override
+                protected void visitContig(AceContig contig) {
+                    AceFileDataStoreIterator.this.blockingPut(contig);
+                    
+                }
+
+                /**
+                * {@inheritDoc}
+                */
+                @Override
+                public synchronized void visitEndOfFile() {
+                    AceFileDataStoreIterator.this.finishedIterating();
+                }
+                
+                
+            };
+            try {
+                AceFileParser.parseAceFile(file, builder);
+            } catch (IOException e) {
+                // should never happen
+                throw new RuntimeException("error iterating over ace file",e);
+            }
+            
+        }
+        
     }
 }

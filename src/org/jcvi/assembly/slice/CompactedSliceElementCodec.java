@@ -20,7 +20,6 @@
 package org.jcvi.assembly.slice;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 import org.jcvi.glyph.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -28,18 +27,22 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.SequenceDirection;
 
 /**
+ * {@code CompactedSliceElementCodec} is a codec that 
+ * encodes a slice's basecall, quality and direction into
+ * a total of 2 bytes.  Methods are provided for pulling that
+ * data back out.
  * @author dkatzel
  *
  *
  */
-public enum CompactedSliceElementCodec {
+enum CompactedSliceElementCodec {
     INSTANCE
     ;
     public static final int SIZE_OF_ENCODED_DATA =2;
     private static final DefaultNucleotideGlyphCodec CODEC = DefaultNucleotideGlyphCodec.getInstance();
     
     public byte[] compact(NucleotideGlyph base, PhredQuality quality, SequenceDirection direction) {
-        byte compacted=CODEC.encode(Arrays.asList(base))[4];
+        byte compacted = CODEC.encode(base)[4];
         if(direction == SequenceDirection.FORWARD){
             compacted = (byte)(compacted | 0x01);
         }
