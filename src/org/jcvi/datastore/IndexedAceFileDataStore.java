@@ -32,6 +32,7 @@ import org.jcvi.assembly.ace.AbstractAceContigBuilder;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceContigDataStore;
 import org.jcvi.assembly.ace.AceFileParser;
+import org.jcvi.fastX.fasta.seq.LargeNucleotideFastaIterator;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.AbstractBlockingCloseableIterator;
 import org.jcvi.util.CloseableIterator;
@@ -132,9 +133,18 @@ public class IndexedAceFileDataStore extends AbstractAceContigBuilder implements
 
     @Override
     public CloseableIterator<AceContig> iterator() {
-        
+        /*
+         * public static LargeNucleotideFastaIterator createNewIteratorFor(File fastaFile){
+         LargeNucleotideFastaIterator iter = new LargeNucleotideFastaIterator(fastaFile);
+                iter.start();           
+            
+            return iter;
+        }
+         */
         //return new DataStoreIterator<AceContig>(this);
-        return new AceFileDataStoreIterator();
+        AceFileDataStoreIterator iter= new AceFileDataStoreIterator();
+        iter.start();
+        return iter;
     }
     /**
     * {@inheritDoc}
