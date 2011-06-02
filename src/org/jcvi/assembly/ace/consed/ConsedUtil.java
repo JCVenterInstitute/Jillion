@@ -254,7 +254,30 @@ public class ConsedUtil {
         }
         return highestAceFile;
     }
-    
+    public static File getPhdDirFor(File consedDir){
+        if(consedDir==null){
+            throw new NullPointerException("consedDir can not be null");
+        }
+        return new File(consedDir,"phd_dir");
+    }
+    public static File getEditDirFor(File consedDir){
+        if(consedDir==null){
+            throw new NullPointerException("consedDir can not be null");
+        }
+        return new File(consedDir,"edit_dir");
+    }
+    public static File getChromatDirFor(File consedDir){
+        if(consedDir==null){
+            throw new NullPointerException("consedDir can not be null");
+        }
+        return new File(consedDir,"chromat_dir");
+    }
+    public static File getPhdBallDirFor(File consedDir){
+        if(consedDir==null){
+            throw new NullPointerException("consedDir can not be null");
+        }
+        return new File(consedDir,"phdball_dir");
+    }
     public static int getAceVersionFor(File consedAceFile){
         String name = consedAceFile.getName();
         Matcher matcher = CONSED_ACE_VERSION_PATTERN.matcher(name);

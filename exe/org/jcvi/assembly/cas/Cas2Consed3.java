@@ -56,6 +56,7 @@ import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
+import org.jcvi.io.FileUtil;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.ReadWriteFileServer;
@@ -73,11 +74,11 @@ import org.joda.time.Period;
 
 public class Cas2Consed3 {
 	private final File casFile;
-	private final ReadWriteFileServer consedOutputDir;
+	private final ReadWriteDirectoryFileServer consedOutputDir;
 	private final String prefix;
 	private final boolean makePhdBall;
 	private final boolean hasEdits;
-	public Cas2Consed3(File casFile, ReadWriteFileServer consedOutputDir, 
+	public Cas2Consed3(File casFile, ReadWriteDirectoryFileServer consedOutputDir, 
 	        String prefix, boolean makePhdBall,boolean hasEdits){
 		this.casFile=casFile;
 		this.consedOutputDir = consedOutputDir;
@@ -85,14 +86,55 @@ public class Cas2Consed3 {
 		this.makePhdBall = makePhdBall;
 		this.hasEdits = hasEdits;
 	}
+	private File getEditDir(){
+	    File rootDir = consedOutputDir.getRootDir();
+        File editDir = ConsedUtil.getEditDirFor(rootDir);
+	    try {
+            consedOutputDir.createNewDirIfNeeded(FileUtil.createRelavitePathFrom(rootDir, editDir));
+        } catch (IOException e) {
+            throw new IllegalStateException("could not create path to edit dir",e);
+        }
+        return editDir;
+	}
+	private File getPhdBallDir(){
+        File rootDir = consedOutputDir.getRootDir();
+        File phdBallDir = ConsedUtil.getPhdBallDirFor(rootDir);
+        try {
+            consedOutputDir.createNewDirIfNeeded(FileUtil.createRelavitePathFrom(rootDir, phdBallDir));
+        } catch (IOException e) {
+            throw new IllegalStateException("could not create path to phd ball dir",e);
+        }
+        return phdBallDir;
+    }
+	private File getPhdDir(){
+        File rootDir = consedOutputDir.getRootDir();
+        File phdDir = ConsedUtil.getPhdDirFor(rootDir);
+        try {
+            consedOutputDir.createNewDirIfNeeded(FileUtil.createRelavitePathFrom(rootDir, phdDir));
+        } catch (IOException e) {
+            throw new IllegalStateException("could not create path to phd ball dir",e);
+        }
+        return phdDir;
+    }
+	private File getChromatDir(){
+        File rootDir = consedOutputDir.getRootDir();
+        File chromatDir = ConsedUtil.getChromatDirFor(rootDir);
+        try {
+            consedOutputDir.createNewDirIfNeeded(FileUtil.createRelavitePathFrom(rootDir, chromatDir));
+        } catch (IOException e) {
+            throw new IllegalStateException("could not create path to chromat dir",e);
+        }
+        return chromatDir;
+    }
 	public void convert(TrimDataStore trimDatastore,CasTrimMap trimToUntrimmedMap ,FastQQualityCodec fastqQualityCodec) throws IOException{
 	    final File casWorkingDirectory = casFile.getParentFile();
-	    final File editDir =consedOutputDir.createNewDirIfNeeded("edit_dir");
+	    final File editDir =getEditDir();
 	    File chromatDir = consedOutputDir.contains("chromat_dir")?
-	                        consedOutputDir.getFile("chromat_dir"):
+	                            getChromatDir():
 	                            null;
 	                        
-        final File phdDir =consedOutputDir.createNewDirIfNeeded("phd_dir");
+        final File phdBallDir =getPhdBallDir();
+        final File phdDir = getPhdDir();
         File logFile = consedOutputDir.createNewFile("cas2consed.log");
         PrintStream logOut = new PrintStream(logFile);
         long startTime = DateTimeUtils.currentTimeMillis();
@@ -137,7 +179,7 @@ public class Cas2Consed3 {
             
              final Map<Integer, DefaultAceContig.Builder> builders = new HashMap<Integer, DefaultAceContig.Builder>();
              
-             final File phdFile = new File(phdDir, prefix+".phd.ball");
+             final File phdFile = new File(phdBallDir, "phd.ball.1");
             final OutputStream phdOut = new FileOutputStream(phdFile);
             try{
                  CasPhdReadVisitor visitor = new CasPhdReadVisitor(
@@ -215,10 +257,12 @@ public class Cas2Consed3 {
              tempAce.delete();
              if(!makePhdBall){
                  phdFile.delete();
-             }else{
-                 consedOutputDir.createNewSymLink("../phd_dir/"+phdFile.getName(), 
+             }
+             else{
+                 consedOutputDir.createNewSymLink("../phdball_dir/"+phdFile.getName(), 
                                  "edit_dir/phd.ball");
              }
+             
              long endTime = DateTimeUtils.currentTimeMillis();
              
              logOut.printf("took %s%n",new Period(endTime- startTime));
