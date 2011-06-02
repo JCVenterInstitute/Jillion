@@ -6,10 +6,20 @@ import java.io.IOException;
 import org.jcvi.util.LIFOQueue;
 
 public class FileUtil {
-
+    
 	public static String createRelavitePathFrom(File root, File otherFile) throws IOException{
 		return createRelavitePathFrom(root, otherFile, File.separatorChar);
 	}
+	/**
+	 * Creates a String of the relative path from the given root to the other given file.
+	 * @param root the File to start from.
+	 * @param otherFile the File to get to.
+	 * @param pathSeparator the path separator for this File system.
+	 * @return a String of containing the relative file path required
+	 * to traverse the file system to get from one file to the other.
+	 * @throws IOException if there is a problem finding the location of either
+	 * file on the file system.
+	 */
 	public static String createRelavitePathFrom(File root, File otherFile, char pathSeparator) throws IOException{
 		LIFOQueue<String> rootStack = getCanonicalStackFor(root);
 		LIFOQueue<String> otherStack = getCanonicalStackFor(otherFile);
