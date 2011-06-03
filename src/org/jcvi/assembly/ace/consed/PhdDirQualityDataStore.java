@@ -70,7 +70,7 @@ public class PhdDirQualityDataStore implements PhdDataStore{
         if(phdBall ==null){
             phdBallDataStore = null;
         }else{
-            phdBallDataStore = new IndexedPhdFileDataStore(phdBall, true);
+            phdBallDataStore = new DefaultPhdFileDataStore(phdBall);
         }
     }
 

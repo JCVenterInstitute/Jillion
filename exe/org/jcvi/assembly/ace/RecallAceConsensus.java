@@ -36,6 +36,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.Range;
 import org.jcvi.assembly.ace.consed.PhdDirQualityDataStore;
 import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
+import org.jcvi.assembly.slice.CompactedSliceMap;
 import org.jcvi.assembly.slice.DefaultSliceMap;
 import org.jcvi.assembly.slice.LargeSliceMap;
 import org.jcvi.assembly.slice.Slice;
@@ -180,9 +181,12 @@ public class RecallAceConsensus {
                 }
             };
             AceFileVisitor aceVisitors = MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, headerVisitor,aceContigDataStore);
+            System.out.println("begin parsing");
             AceFileParser.parseAceFile(inputAceFile, aceVisitors);
+            System.out.println("begin for loop");
             for(AceContig contig : aceContigDataStore){
-                SliceMap sliceMap = DefaultSliceMap.create(contig, qualityDataStore, 
+                System.out.println(contig.getId());
+                SliceMap sliceMap = CompactedSliceMap.create(contig, qualityDataStore, 
                         GapQualityValueStrategies.LOWEST_FLANKING);
                 NucleotideEncodedGlyphs originalConsensus = contig.getConsensus();
                 List<NucleotideGlyph> recalledConsensus = new ArrayList<NucleotideGlyph>((int)originalConsensus.getLength());

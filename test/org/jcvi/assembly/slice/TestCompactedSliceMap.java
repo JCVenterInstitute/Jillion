@@ -41,7 +41,7 @@ public class TestCompactedSliceMap extends AbstractTestSliceMap{
             QualityValueStrategy qualityValueStrategy) {
 
         try {
-            return new CompactedSliceMap(contig, qualityDatastore, qualityValueStrategy);
+            return CompactedSliceMap.create(contig, qualityDatastore, qualityValueStrategy);
         } catch (DataStoreException e) {
             throw new IllegalStateException("error creating compacted sliceMap",e);
         }
