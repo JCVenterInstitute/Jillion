@@ -39,21 +39,21 @@ import org.jcvi.util.ArrayIterator;
  * 
  * 
  */
-public class CompactedSliceMap implements SliceMap {
+public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> implements SliceMap {
     private final CompactedSlice[] slices;
 
-    public <PR extends PlacedRead> CompactedSliceMap(
-            Contig<PR> contig, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
-        CoverageMap<CoverageRegion<PR>> coverageMap = DefaultCoverageMap
-                .buildCoverageMap(contig);
-        this.slices = createSlices(coverageMap,qualityDataStore,qualityValueStrategy);
+    public static <PR extends PlacedRead, C extends Contig<PR>> CompactedSliceMap create(C contig,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+        CoverageMap<CoverageRegion<PR>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
+        return new CompactedSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
-    protected CompactedSlice[] createSlices(
-            CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap,
-                    QualityDataStore qualityDataStore,
-                    QualityValueStrategy qualityValueStrategy) throws DataStoreException {
+    public static <PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> CompactedSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+        return new CompactedSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
+    }
+    
+    private  CompactedSliceMap(
+            M coverageMap, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
         int size = (int)coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()+1;
-        CompactedSlice[] slices = new CompactedSlice[size];
+        this.slices = new CompactedSlice[size];
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
             Map<String,EncodedGlyphs<PhredQuality>> qualities = new HashMap<String,EncodedGlyphs<PhredQuality>>(region.getCoverage());
             for(PlacedRead read :region){
@@ -62,11 +62,11 @@ public class CompactedSliceMap implements SliceMap {
             }
             for(int i=(int)region.getStart(); i<=region.getEnd(); i++ ){
                 
-                slices[i] =createSlice(region, qualities,qualityValueStrategy,i);                
+                this.slices[i] =createSlice(region, qualities,qualityValueStrategy,i);                
             }
         }
-        return slices;
     }
+   
     /**
      * {@inheritDoc}
      */
