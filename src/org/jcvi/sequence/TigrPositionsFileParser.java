@@ -23,6 +23,8 @@
  */
 package org.jcvi.sequence;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,15 +34,30 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.datastore.SimpleDataStore;
+import org.jcvi.fastX.fasta.pos.PositionDataStore;
+import org.jcvi.fastX.fasta.pos.PositionDataStoreAdapter;
+import org.jcvi.glyph.EncodedGlyphs;
 import org.jcvi.glyph.num.EncodedShortGlyph;
+import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
+import org.jcvi.io.IOUtil;
 
 public class TigrPositionsFileParser {
     private static final ShortGlyphFactory FACTORY = ShortGlyphFactory.getInstance();
     private static final Pattern POS_PATTERN = Pattern.compile("^(\\w+)\\s+(\\d)\\s+(\\w+)");
-    
-    public static PeakMap getPeakMap(InputStream tigrPosFile){
-        Map<String, EncodedShortGlyph> map = new HashMap<String, EncodedShortGlyph>();
+    public static PositionDataStore getPositionDataStore(File tigrPosFile){
+        InputStream in = null;
+        try{
+            in = new FileInputStream(tigrPosFile);
+            return getPeakMap(in);
+        }catch(Exception e){
+            IOUtil.closeAndIgnoreErrors(in);
+            throw new RuntimeException(e);
+        }
+    }
+    public static PositionDataStore getPeakMap(InputStream tigrPosFile){
+        Map<String, EncodedGlyphs<ShortGlyph>> map = new HashMap<String, EncodedGlyphs<ShortGlyph>>();
         Scanner scanner = new Scanner(tigrPosFile);
         while(scanner.hasNextLine()){
             String line = scanner.nextLine();
@@ -54,7 +71,7 @@ public class TigrPositionsFileParser {
                 map.put(id, encodedPositions);
             }
         }
-        return new DefaultPeakMap(map);
+        return new PositionDataStoreAdapter(new SimpleDataStore<EncodedGlyphs<ShortGlyph>>(map));
         
     }
     private static EncodedShortGlyph convertToGlyphs(String positionsAsHex) {
