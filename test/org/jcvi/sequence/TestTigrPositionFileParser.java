@@ -24,6 +24,9 @@
 package org.jcvi.sequence;
 
 import java.io.IOException;
+
+import org.jcvi.datastore.DataStoreException;
+import org.jcvi.fastX.fasta.pos.PositionDataStore;
 import org.jcvi.glyph.num.EncodedShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
 import org.jcvi.io.fileServer.ResourceFileServer;
@@ -207,10 +210,10 @@ public class TestTigrPositionFileParser {
     private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestTigrPositionFileParser.class);
     
     @Test
-    public void parse() throws IOException{
-        PeakMap actualMap = TigrPositionsFileParser.getPeakMap(RESOURCES.getFileAsStream(pathToPosfile));
-        assertEquals(IWKNA07T07A12MP1027R.decode(), actualMap.getPeaksFor("IWKNA07T07A12MP1027R").decode());
-        assertEquals(IWKNA07T08G07MP461F.decode(), actualMap.getPeaksFor("IWKNA07T08G07MP461F").decode());
+    public void parse() throws IOException, DataStoreException{
+        PositionDataStore actualMap = TigrPositionsFileParser.getPeakMap(RESOURCES.getFileAsStream(pathToPosfile));
+        assertEquals(IWKNA07T07A12MP1027R.decode(), actualMap.get("IWKNA07T07A12MP1027R").decode());
+        assertEquals(IWKNA07T08G07MP461F.decode(), actualMap.get("IWKNA07T08G07MP461F").decode());
         
     }
 }
