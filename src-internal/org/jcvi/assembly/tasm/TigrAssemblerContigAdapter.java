@@ -232,6 +232,64 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 			return this;
 		}
 		/**
+         * Sets the {@link TigrAssemblerContigAttribute#COMMENT}
+         * attribute for this adapted contig.  Calling this method
+         * multiple times will overwrite previous entries with the current
+         * entry. Setting the value to {@code null} will remove the current
+         * entry (the type can later be re-added by calling this method 
+         * again with a non-null value).
+         * @param comment the value of the comment to set;
+         * if this value is null, then the contig should not
+         * have this attribute.
+         * @return this.
+         */
+        public Builder withComment(String comment){
+            if(comment ==null){
+                optionalAttributes.remove(TigrAssemblerContigAttribute.COMMENT);
+            }
+            optionalAttributes.put(TigrAssemblerContigAttribute.COMMENT,comment);
+            return this;
+        }
+        /**
+         * Sets the {@link TigrAssemblerContigAttribute#COM_NAME}
+         * attribute for this adapted contig.  Calling this method
+         * multiple times will overwrite previous entries with the current
+         * entry. Setting the value to {@code null} will remove the current
+         * entry (the type can later be re-added by calling this method 
+         * again with a non-null value).
+         * @param commonName the value of the com-name to set;
+         * if this value is null, then the contig should not
+         * have this attribute.
+         * @return this.
+         */
+        public Builder withCommonName(String commonName){
+            if(commonName ==null){
+                optionalAttributes.remove(TigrAssemblerContigAttribute.COM_NAME);
+            }
+            optionalAttributes.put(TigrAssemblerContigAttribute.COM_NAME,commonName);
+            return this;
+        }
+        /**
+         * Sets the {@link TigrAssemblerContigAttribute#CA_CONTIG_ID}
+         * attribute for this adapted contig.  Calling this method
+         * multiple times will overwrite previous entries with the current
+         * entry. Setting the value to {@code null} will remove the current
+         * entry (the type can later be re-added by calling this method 
+         * again with a non-null value). As of 2006, All contigs
+         * should get a CA Contig Id set to a UID.
+         * @param caId the value of the Celera Assembler Contig Id to set;
+         * if this value is null, then the contig should not
+         * have this attribute.
+         * @return this.
+         */
+        public Builder withCeleraAssemblerContigId(String caId){
+            if(caId ==null){
+                optionalAttributes.remove(TigrAssemblerContigAttribute.CA_CONTIG_ID);
+            }
+            optionalAttributes.put(TigrAssemblerContigAttribute.CA_CONTIG_ID,caId);
+            return this;
+        }
+		/**
 		 * Sets the {@link TigrAssemblerContigAttribute#METHOD}
 		 * attribute for this adapted contig.  Calling this method
 		 * multiple times will overwrite previous entries with the current

@@ -43,7 +43,7 @@ import org.jcvi.util.CloseableIteratorAdapter;
  *
  *
  */
-public class MultipleDataStoreWrapper<T, D extends DataStore<T>> implements InvocationHandler{
+public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implements InvocationHandler{
     /**
      * These are the parameters in the {@link DataStore#get(String)} method signature.
      */

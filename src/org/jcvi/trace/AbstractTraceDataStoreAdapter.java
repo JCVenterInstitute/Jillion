@@ -43,38 +43,42 @@ public abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implemen
     }
 
     @Override
-    public boolean contains(String id) throws DataStoreException {
+    public final boolean contains(String id) throws DataStoreException {
         return delegate.contains(id);
     }
 
     @Override
-    public T get(String id) throws DataStoreException {
-        return adapt(delegate.get(id));
+    public final T get(String id) throws DataStoreException {
+        D result = delegate.get(id);
+        if(result==null){
+            return null;
+        }
+        return adapt(result);
     }
 
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public final CloseableIterator<String> getIds() throws DataStoreException {
         return delegate.getIds();
     }
 
     @Override
-    public int size() throws DataStoreException {
+    public final int size() throws DataStoreException {
         return delegate.size();
     }
 
     @Override
-    public void close() throws IOException {
+    public final void close() throws IOException {
         delegate.close();
         
     }
     
 
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public final boolean isClosed() throws DataStoreException {
         return delegate.isClosed();
     }
     @Override
-    public CloseableIterator<T> iterator() {
+    public final CloseableIterator<T> iterator() {
         return new DataStoreIterator<T>(this);
     }
 }

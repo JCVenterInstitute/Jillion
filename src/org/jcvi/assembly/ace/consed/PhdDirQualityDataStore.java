@@ -27,7 +27,6 @@ import java.io.IOException;
 import org.apache.commons.io.FilenameUtils;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.trace.sanger.phd.DefaultPhdFileDataStore;
-import org.jcvi.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.util.CloseableIterator;
@@ -123,7 +122,12 @@ public class PhdDirQualityDataStore implements PhdDataStore{
     */
     @Override
     public boolean contains(String id) throws DataStoreException {
-        return getPhdFileFor(id)!=null;
+        
+        boolean hasPhd= getPhdFileFor(id)!=null;
+        if(!hasPhd && phdBallDataStore !=null){
+            return phdBallDataStore.contains(id);
+        }
+        return hasPhd;
     }
 
     /**
