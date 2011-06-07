@@ -41,9 +41,9 @@ public class PositionsFastaRecordUtil {
 
     public static DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>> buildFastaRecord(
             String identifier, String comment, CharSequence sequence) {
-        List<ShortGlyph> qualities = parsePositions(sequence);
+        List<ShortGlyph> positions = parsePositions(sequence);
         return new DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>>(identifier, comment, 
-                new DefaultEncodedGlyphs<ShortGlyph>(DefaultShortGlyphCodec.getInstance(),qualities));
+                new DefaultEncodedGlyphs<ShortGlyph>(DefaultShortGlyphCodec.getInstance(),positions));
     }
 
     public static List<ShortGlyph> parsePositions(CharSequence sequence) {
