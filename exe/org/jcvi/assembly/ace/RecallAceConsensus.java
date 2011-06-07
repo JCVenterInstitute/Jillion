@@ -34,6 +34,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.Range;
+import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.ace.consed.PhdDirQualityDataStore;
 import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
 import org.jcvi.assembly.slice.CompactedSliceMap;
@@ -49,6 +50,7 @@ import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.IndexedAceFileDataStore;
+import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
@@ -140,15 +142,19 @@ public class RecallAceConsensus {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
         
             File inputAceFile = new File(commandLine.getOptionValue("ace"));
-            File phdDir = new File(inputAceFile.getParentFile().getParentFile(),"phd_dir");
+            File consedDir = inputAceFile.getParentFile().getParentFile();
+            File phdDir = ConsedUtil.getPhdDirFor(consedDir);
+            File phdballDir = ConsedUtil.getPhdBallDirFor(consedDir);
             PrintWriter fastaOut = commandLine.hasOption("fasta") ?
                     new PrintWriter(new File(commandLine.getOptionValue("fasta"))):
                         null;
             
             File outputAceFile = new File(commandLine.getOptionValue("out"));
             final OutputStream out = new FileOutputStream(outputAceFile);
+            PhdDataStore phdballDataStore = new PhdDirQualityDataStore(phdballDir);
             PhdDataStore phdDataStore = new PhdDirQualityDataStore(phdDir);
-            QualityDataStore qualityDataStore = TraceQualityDataStoreAdapter.adapt(phdDataStore); 
+            PhdDataStore masterPhdDataStore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(PhdDataStore.class, phdDataStore,phdballDataStore);
+            QualityDataStore qualityDataStore = TraceQualityDataStoreAdapter.adapt(masterPhdDataStore); 
             ConsensusCaller consensusCaller = createConsensusCaller(RecallType.parse(commandLine.getOptionValue("recall_with")), PhredQuality.valueOf(30));
             IndexedAceFileDataStore aceContigDataStore = new IndexedAceFileDataStore(inputAceFile,new DefaultIndexedFileRange(),false);
             AceFileVisitor headerVisitor = new AbstractAceFileVisitor() {
@@ -204,9 +210,9 @@ public class RecallAceConsensus {
                 for(AcePlacedRead read : contig.getPlacedReads()){
                     builder.addRead(read);
                 }
-                AceFileWriter.writeAceContig(builder.build(), phdDataStore, out);
+                AceFileWriter.writeAceContig(builder.build(), masterPhdDataStore, out);
             }
-            IOUtil.closeAndIgnoreErrors(aceContigDataStore,fastaOut,out);
+            IOUtil.closeAndIgnoreErrors(aceContigDataStore,fastaOut,masterPhdDataStore,out);
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
