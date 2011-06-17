@@ -289,6 +289,26 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
             optionalAttributes.put(TigrAssemblerContigAttribute.CA_CONTIG_ID,caId);
             return this;
         }
+        
+        /**
+         * Sets the {@link TigrAssemblerContigAttribute#ASMBL_ID}
+         * attribute for this adapted contig.  Calling this method
+         * multiple times will overwrite previous entries with the current
+         * entry. Setting the value to {@code null} will remove the current
+         * entry (the type can later be re-added by calling this method 
+         * again with a non-null value). 
+         * @param asmblId the value of the asmbl_id to set;
+         * if this value is null, then the contig will default
+         * to the value returned by the adapted {@link Contig#getId()}
+         * @return this.
+         */
+        public Builder withAssembleId(String asmblId){
+            if(asmblId ==null){
+                optionalAttributes.remove(TigrAssemblerContigAttribute.ASMBL_ID);
+            }
+            optionalAttributes.put(TigrAssemblerContigAttribute.ASMBL_ID,asmblId);
+            return this;
+        }
 		/**
 		 * Sets the {@link TigrAssemblerContigAttribute#METHOD}
 		 * attribute for this adapted contig.  Calling this method

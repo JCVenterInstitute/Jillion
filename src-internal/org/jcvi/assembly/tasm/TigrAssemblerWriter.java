@@ -33,7 +33,7 @@ import org.jcvi.datastore.DataStoreException;
  * @author dkatzel
  *
  */
-public class TigrAssemblerWriter {
+public final class TigrAssemblerWriter {
 
 	private static final byte[] BLANK_LINE = "\n".getBytes();
 	private static final byte[] CONTIG_SEPARATOR = "|\n".getBytes();

@@ -38,8 +38,6 @@ import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.ace.consed.PhdDirQualityDataStore;
 import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
 import org.jcvi.assembly.slice.CompactedSliceMap;
-import org.jcvi.assembly.slice.DefaultSliceMap;
-import org.jcvi.assembly.slice.LargeSliceMap;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceMap;
 import org.jcvi.assembly.slice.consensus.ConicConsensusCaller;
