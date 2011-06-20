@@ -44,12 +44,12 @@
     <module name="JavadocStyle">
       <property name="scope" value="public"/>
     </module>
--->
+
     <module name="LineLength">
       <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
       <property name="max" value="150"/>
     </module>
-
+-->
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>
     <module name="MemberName"/>
@@ -78,10 +78,10 @@
     <module name="ParameterNumber">
       <property name="id" value="paramNum"/>
     </module>
-    <module name="ParenPad"/>
+   <!--  <module name="ParenPad"/> -->
     <module name="TypecastParenPad"/>
     <module name="RedundantImport"/>
-    <module name="RedundantModifier"/>
+    <!-- <module name="RedundantModifier"/> -->
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
     <module name="StaticVariableName">
@@ -90,8 +90,8 @@
     <module name="TypeName"/>
     <module name="UnusedImports"/>
     <module name="UpperEll"/>
-    <module name="VisibilityModifier"/>
-    <module name="GenericWhitespace"/>
+    <!-- <module name="VisibilityModifier"/> -->
+    <!-- <module name="GenericWhitespace"/> -->
     <module name="FinalClass"/>
     <module name="MissingSwitchDefault"/>
     <module name="MagicNumber">
@@ -107,6 +107,6 @@
       <property name="max" value="3"/>
     </module>
     <module name="NestedTryDepth"/>
-    <module name="ExplicitInitialization"/>
+    <!-- <module name="ExplicitInitialization"/> -->
   </module>
 </module>
