@@ -71,9 +71,9 @@
             </classpath>
     </taskdef>
 
-	<path id="sourcepath">
-        <fileset dir="${src}" includes="**/*.jar"/>
-    	<fileset dir="${src-internal}" includes="**/*.jar"/>
+	<path id="javadoc.sourcepath">
+        <pathelement location="${src}"/>
+    	<pathelement location="${src-internal}"/>
     </path>
     <path id="classpath">
         <fileset dir="${lib}" includes="**/*.jar"/>
@@ -288,7 +288,7 @@
 	
 	<target name="javadoc" description = "generate javadoc from source">
 			<javadoc packagenames ="org.jcvi.*"
-					sourcepathref ="sourcepath"
+					sourcepathref = "javadoc.sourcepath"
 					author ="true"
 					destdir = "javadoc"
 					windowtitle = "${project-name} API"
