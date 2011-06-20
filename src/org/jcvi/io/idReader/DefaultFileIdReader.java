@@ -72,8 +72,9 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
             int readChars = 0;
             while ((readChars = inputStream.read(c)) != -1) {
                 for (int i = 0; i < readChars; ++i) {
-                    if (c[i] == CR)
+                    if (c[i] == CR){
                         ++count;
+                    }
                 }
             }
             return count;

@@ -209,7 +209,9 @@ public class HttpMultipartFormStream
             {
                 this.out.write(buffer, 0, bytesRead);
             }
-            else done = true;
+            else{
+                done = true;
+            }
         }
         this.writeCRLF();
     }

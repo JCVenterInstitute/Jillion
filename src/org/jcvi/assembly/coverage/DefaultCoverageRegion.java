@@ -88,10 +88,12 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (!(obj instanceof DefaultCoverageRegion))
+        }
+        if (!(obj instanceof DefaultCoverageRegion)){
             return false;
+        }
         DefaultCoverageRegion other = (DefaultCoverageRegion) obj;
         return CommonUtil.similarTo(elements,other.elements) &&
                 CommonUtil.similarTo(range.size(), other.getLength()) 

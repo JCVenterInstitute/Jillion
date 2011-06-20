@@ -106,12 +106,15 @@ public class DefaultPhd implements Phd {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof Phd))
+        }
+        if (!(obj instanceof Phd)){
             return false;
+        }
         Phd other = (Phd) obj;
         if(!id.equals(other.getId())){
         	return false;

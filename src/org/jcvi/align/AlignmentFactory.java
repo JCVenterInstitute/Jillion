@@ -196,7 +196,9 @@ public class AlignmentFactory
     public void setQueryEnd(int coord)
     {
         this.queryStop = coord;
-        if (coord > this.queryLength) this.setQueryLength(coord);
+        if (coord > this.queryLength){
+            this.setQueryLength(coord);
+        }
     }
     
     /**
@@ -219,7 +221,9 @@ public class AlignmentFactory
     public void setReferenceEnd(int coord)
     {
         this.refStop = coord;
-        if (coord > this.refLength) this.setReferenceLength(coord);
+        if (coord > this.refLength){
+            this.setReferenceLength(coord);
+        }
     }
     
     /**

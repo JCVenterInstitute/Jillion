@@ -90,8 +90,9 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
+        }
         if (!(obj instanceof DefaultSFFReadHeader)){
             return false;
         }

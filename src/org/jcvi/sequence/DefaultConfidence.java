@@ -61,8 +61,9 @@ public class DefaultConfidence implements Confidence {
     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
+        }
         if (!(obj instanceof DefaultConfidence)){
             return false;
         }

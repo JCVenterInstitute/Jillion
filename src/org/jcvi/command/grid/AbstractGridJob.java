@@ -191,7 +191,9 @@ import org.jcvi.command.Command;
        
         int result = this.preExecution();
 
-        if (result != 0) return result;
+        if (result != 0){
+            return result;
+        }
 
         /*
          * Run the grid command and wait for it to complete.
@@ -203,7 +205,9 @@ import org.jcvi.command.Command;
          */
         result = this.postScheduling();
 
-        if (result != 0) return result;
+        if (result != 0){
+            return result;
+        }
         
         this.waitForCompletion();
 

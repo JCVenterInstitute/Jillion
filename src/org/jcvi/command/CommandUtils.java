@@ -45,7 +45,9 @@ public class CommandUtils {
             escaped = escaped.replace(String.valueOf(unsafeChar), "\\" + unsafeChar);
         }
 
-        if (value.indexOf(' ') == -1) return escaped;
+        if (value.indexOf(' ') == -1){
+            return escaped;
+        }
 
         final StringBuilder quoted = new StringBuilder(value.length() + 2);
         quoted.append('\'');

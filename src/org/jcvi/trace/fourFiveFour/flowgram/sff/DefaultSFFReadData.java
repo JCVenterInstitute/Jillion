@@ -125,8 +125,9 @@ public class DefaultSFFReadData implements SFFReadData {
     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
+        }
         if (!(obj instanceof DefaultSFFReadData)){
             return false;
         }

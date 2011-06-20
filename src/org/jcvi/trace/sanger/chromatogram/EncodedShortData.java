@@ -122,14 +122,16 @@ public class EncodedShortData {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
+        }
         if (!(obj instanceof EncodedShortData)){
             return false;
         }
         final EncodedShortData other = (EncodedShortData) obj;
-        if (!Arrays.equals(data, other.data))
+        if (!Arrays.equals(data, other.data)){
             return false;
+        }
         return true;
     }
 

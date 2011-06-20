@@ -390,7 +390,9 @@ public class Codon
             final NucleotideGlyph base = this.codonGlyphs[i];
             final NucleotideGlyph query = that.codonGlyphs[i];
 
-            if (!base.matches(query)) return false;
+            if (!base.matches(query)){
+                return false;
+            }
         }
 
         return true;

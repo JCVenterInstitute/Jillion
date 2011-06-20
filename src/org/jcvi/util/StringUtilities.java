@@ -190,7 +190,9 @@ public final class StringUtilities
             }
             else
             {
-                if (out.length() > 0) forceUpperNext = true;
+                if (out.length() > 0){
+                    forceUpperNext = true;
+                }
             }
         }
         
@@ -231,8 +233,12 @@ public final class StringUtilities
     public static CharSequence pluralize(int count, CharSequence singular, CharSequence plural)
     {
         StringBuilder result = new StringBuilder().append(count).append(' ');
-        if (count == 1) result.append(singular);
-        else result.append(plural);
+        if (count == 1){
+            result.append(singular);
+        }
+        else{
+            result.append(plural);
+        }
         
         return result;
     }

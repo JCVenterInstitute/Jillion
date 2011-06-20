@@ -48,12 +48,15 @@ public class DefaultSlice implements Slice{
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof Slice))
+        }
+        if (!(obj instanceof Slice)){
             return false;
+        }
         Slice other = (Slice) obj;
         for(Entry<String,SliceElement> entry : elements.entrySet()){
             if(!other.containsElement(entry.getKey())){

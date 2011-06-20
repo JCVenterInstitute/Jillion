@@ -89,28 +89,36 @@ public class DefaultPlacedContig implements PlacedContig{
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof DefaultPlacedContig))
+        }
+        if (!(obj instanceof DefaultPlacedContig)){
             return false;
+        }
         DefaultPlacedContig other = (DefaultPlacedContig) obj;
         if (contigId == null) {
-            if (other.contigId != null)
+            if (other.contigId != null){
                 return false;
-        } else if (!contigId.equals(other.contigId))
-            return false;
+            }
+        } else if (!contigId.equals(other.contigId)){
+            return false;            
+        }
         if (direction == null) {
-            if (other.direction != null)
+            if (other.direction != null){
                 return false;
-        } else if (!direction.equals(other.direction))
-            return false;
+            }
+        } else if (!direction.equals(other.direction)){
+            return false;            
+        }
         if (range == null) {
             if (other.range != null)
                 return false;
-        } else if (!range.equals(other.range))
+        } else if (!range.equals(other.range)){
             return false;
+        }
         return true;
     }
     @Override
