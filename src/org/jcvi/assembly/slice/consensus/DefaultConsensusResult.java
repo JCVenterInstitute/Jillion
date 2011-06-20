@@ -62,20 +62,26 @@ public class DefaultConsensusResult implements ConsensusResult {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof DefaultConsensusResult))
+        }
+        if (!(obj instanceof DefaultConsensusResult)){
             return false;
+        }
         DefaultConsensusResult other = (DefaultConsensusResult) obj;
         if (consensus == null) {
-            if (other.consensus != null)
+            if (other.consensus != null){
                 return false;
-        } else if (!consensus.equals(other.consensus))
+            }
+        } else if (!consensus.equals(other.consensus)){
             return false;
-        if (consensusQuality != other.consensusQuality)
+        }
+        if (consensusQuality != other.consensusQuality){
             return false;
+        }
         return true;
     }
 

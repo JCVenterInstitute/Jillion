@@ -159,13 +159,16 @@ public class RunLengthEncodedGlyphCodec implements QualityGlyphCodec{
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (!(obj instanceof RunLengthEncodedGlyphCodec))
+        }
+        if (!(obj instanceof RunLengthEncodedGlyphCodec)){
             return false;
+        }
         RunLengthEncodedGlyphCodec other = (RunLengthEncodedGlyphCodec) obj;
-        if (guard != other.guard)
+        if (guard != other.guard){
             return false;
+        }
         return true;
     }
 

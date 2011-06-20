@@ -127,20 +127,26 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof DefaultCasPlacedRead))
-            return false;
+        }
+        if (!(obj instanceof DefaultCasPlacedRead)){
+            return false;            
+        }
         DefaultCasPlacedRead other = (DefaultCasPlacedRead) obj;
         if (read == null) {
-            if (other.read != null)
+            if (other.read != null){
                 return false;
-        } else if (!read.equals(other.read))
+            }
+        } else if (!read.equals(other.read)){
             return false;
-        if (startOffset != other.startOffset)
+        }
+        if (startOffset != other.startOffset){
             return false;
+        }
         return true;
     }
     /**

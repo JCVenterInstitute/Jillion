@@ -66,8 +66,9 @@ public class DefaultLocation<T> implements Location<T> {
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof Location))
+        if (!(obj instanceof Location)){
             return false;
+        }
         Location other = (Location) obj;
         return (index == other.getIndex()) && source.equals(other.getSource());
         

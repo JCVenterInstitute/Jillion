@@ -52,12 +52,15 @@ public class RunLength<T> {
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof RunLength))
+        }
+        if (!(obj instanceof RunLength)){
             return false;
+        }
         RunLength other = (RunLength) obj;
         return length == other.length && CommonUtil.similarTo(getValue(), other.getValue());
     }

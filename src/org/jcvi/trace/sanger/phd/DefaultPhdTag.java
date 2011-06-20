@@ -60,23 +60,30 @@ public class DefaultPhdTag implements PhdTag{
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof DefaultPhdTag))
+        }
+        if (!(obj instanceof DefaultPhdTag)){
             return false;
+        }
         DefaultPhdTag other = (DefaultPhdTag) obj;
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null){
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)){
             return false;
+        }
         if (value == null) {
-            if (other.value != null)
-                return false;
-        } else if (!value.equals(other.value))
-            return false;
+            if (other.value != null){
+                return false;                
+            }
+        } else if (!value.equals(other.value)){
+            return false;            
+        }
         return true;
     }
 

@@ -61,28 +61,37 @@ public class DefaultPhdInfo implements PhdInfo {
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof DefaultPhdInfo))
+        }
+        if (!(obj instanceof DefaultPhdInfo)){
             return false;
+        }
         DefaultPhdInfo other = (DefaultPhdInfo) obj;
         if (phdDate == null) {
-            if (other.phdDate != null)
+            if (other.phdDate != null){
                 return false;
-        } else if (!phdDate.equals(other.phdDate))
+            }
+        } else if (!phdDate.equals(other.phdDate)){
             return false;
+        }
         if (phdName == null) {
-            if (other.phdName != null)
+            if (other.phdName != null){
                 return false;
-        } else if (!phdName.equals(other.phdName))
+            }
+        } else if (!phdName.equals(other.phdName)){
             return false;
+        }
         if (traceName == null) {
-            if (other.traceName != null)
+            if (other.traceName != null){
                 return false;
-        } else if (!traceName.equals(other.traceName))
+            }
+        } else if (!traceName.equals(other.traceName)){
             return false;
+        }
         return true;
     }
     @Override

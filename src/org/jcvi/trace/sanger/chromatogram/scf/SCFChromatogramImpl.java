@@ -99,10 +99,12 @@ public class SCFChromatogramImpl extends BasicChromatogram implements SCFChromat
     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)){
             return false;
+        }
         if (!(obj instanceof SCFChromatogram)){
             return false;
         }

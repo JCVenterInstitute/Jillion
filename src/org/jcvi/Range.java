@@ -86,8 +86,12 @@ public final class Range implements Placed<Range>,Iterable<Long>
                 /*
                  * We don't accept null values for comparison.
                  */
-                if (first == null) throw new InvalidParameterException("The first parameter in the comparison is null.");
-                if (second == null) throw new InvalidParameterException("The second parameter in the comparison is null.");
+                if (first == null){
+                    throw new InvalidParameterException("The first parameter in the comparison is null.");
+                }
+                if (second == null){
+                    throw new InvalidParameterException("The second parameter in the comparison is null.");
+                }
 
                 /*
                  * Compare first by the start values, then by the end values, if the ranges start
@@ -119,8 +123,12 @@ public final class Range implements Placed<Range>,Iterable<Long>
                 /*
                  * We don't accept null values for comparison.
                  */
-                if (first == null) throw new InvalidParameterException("The first parameter in the comparison is null.");
-                if (second == null) throw new InvalidParameterException("The second parameter in the comparison is null.");
+                if (first == null){
+                    throw new InvalidParameterException("The first parameter in the comparison is null.");
+                }
+                if (second == null){
+                    throw new InvalidParameterException("The second parameter in the comparison is null.");
+                }
                 
                 /*
                  * Compare first by the end values, then by the start values, if the ranges end

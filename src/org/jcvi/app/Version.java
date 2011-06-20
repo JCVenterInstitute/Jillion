@@ -199,9 +199,15 @@ public class Version implements Comparable<Version>
         final long baseSerial = this.getSerialNumber();
         final long compSerial = o.getSerialNumber();
 
-        if (baseSerial < compSerial) return -1;
-        else if (baseSerial == compSerial) return 0;
-        else return 1;
+        if (baseSerial < compSerial){
+            return -1;
+        }
+        else if (baseSerial == compSerial){
+            return 0;
+        }
+        else{
+            return 1;
+        }
     }
 
     @Override
@@ -240,9 +246,15 @@ public class Version implements Comparable<Version>
     @Override
     public boolean equals(Object obj)
     {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (this.getClass() != obj.getClass()) return false;
+        if (this == obj){
+            return true;
+        }
+        if (obj == null){
+            return false;
+        }
+        if (this.getClass() != obj.getClass()){
+            return false;
+        }
         final Version other = (Version)obj;
         return (other.getSerialNumber() == this.getSerialNumber());
     }

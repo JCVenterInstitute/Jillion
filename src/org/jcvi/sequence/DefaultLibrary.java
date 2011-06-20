@@ -71,10 +71,12 @@ public class DefaultLibrary implements Library{
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (!(obj instanceof DefaultLibrary))
+        }
+        if (!(obj instanceof DefaultLibrary)){
             return false;
+        }
         DefaultLibrary other = (DefaultLibrary) obj;
         return id.equals(other.id);
     }

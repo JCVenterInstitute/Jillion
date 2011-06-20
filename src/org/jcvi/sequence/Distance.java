@@ -163,21 +163,28 @@ public final class Distance {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof Distance))
+        }
+        if (!(obj instanceof Distance)){
             return false;
+        }
         Distance other = (Distance) obj;
-        if (max != other.max)
+        if (max != other.max){
             return false;
-        if (Float.floatToIntBits(mean) != Float.floatToIntBits(other.mean))
+        }
+        if (Float.floatToIntBits(mean) != Float.floatToIntBits(other.mean)){
             return false;
-        if (min != other.min)
+        }
+        if (min != other.min){
             return false;
-        if (Float.floatToIntBits(stdDev) != Float.floatToIntBits(other.stdDev))
+        }
+        if (Float.floatToIntBits(stdDev) != Float.floatToIntBits(other.stdDev)){
             return false;
+        }
         return true;
     }
 

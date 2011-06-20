@@ -69,12 +69,15 @@ public class AssembledFrom implements Comparable<AssembledFrom>{
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof AssembledFrom))
+        }
+        if (!(obj instanceof AssembledFrom)){
             return false;
+        }
         AssembledFrom other = (AssembledFrom) obj;
         return id.equals(other.getId());
     }

@@ -142,8 +142,9 @@ public class EncodedByteData {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
+        }
         if (!(obj instanceof EncodedByteData)){
             return false;
         }

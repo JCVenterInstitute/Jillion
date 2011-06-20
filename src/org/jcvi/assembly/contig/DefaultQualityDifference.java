@@ -89,17 +89,22 @@ public class DefaultQualityDifference implements BasecallDifference{
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (!(obj instanceof DefaultQualityDifference))
+        }
+        if (!(obj instanceof DefaultQualityDifference)){
             return false;
+        }
         DefaultQualityDifference other = (DefaultQualityDifference) obj;
-        if (quality != other.quality)
+        if (quality != other.quality){
             return false;
-        if (!read.equals(other.read))
+        }
+        if (!read.equals(other.read)){
             return false;
-        if (!reference.equals(other.reference))
+        }
+        if (!reference.equals(other.reference)){
             return false;
+        }
         return true;
     }
     

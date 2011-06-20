@@ -153,35 +153,47 @@ public class DefaultScaffold implements Scaffold {
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof DefaultScaffold))
+        }
+        if (!(obj instanceof DefaultScaffold)){
             return false;
+        }
         DefaultScaffold other = (DefaultScaffold) obj;
         if (contigbyId == null) {
-            if (other.contigbyId != null)
+            if (other.contigbyId != null){
                 return false;
-        } else if (!contigbyId.equals(other.contigbyId))
+            }
+        } else if (!contigbyId.equals(other.contigbyId)){
             return false;
+        }
         if (id == null) {
-            if (other.id != null)
+            if (other.id != null){
                 return false;
-        } else if (!id.equals(other.id))
+            }
+        } else if (!id.equals(other.id)){
             return false;
-        if (length != other.length)
+        }
+        if (length != other.length){
             return false;
+        }
         if (placedContigs == null) {
-            if (other.placedContigs != null)
+            if (other.placedContigs != null){
                 return false;
-        } else if (!placedContigs.equals(other.placedContigs))
+            }
+        } else if (!placedContigs.equals(other.placedContigs)){
             return false;
+        }
         if (contigMap == null) {
-            if (other.contigMap != null )
+            if (other.contigMap != null ){
                 return false;
-        } else if (!contigMap.equals(other.contigMap))
+            }
+        } else if (!contigMap.equals(other.contigMap)){
             return false;
+        }
         return true;
     }
 

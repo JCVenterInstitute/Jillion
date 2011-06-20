@@ -121,8 +121,9 @@ public class DefaultChannelGroup implements ChannelGroup {
     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
+        }
         if (!(obj instanceof DefaultChannelGroup)){
             return false;
         }

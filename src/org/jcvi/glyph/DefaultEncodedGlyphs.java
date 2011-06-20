@@ -85,12 +85,15 @@ public class  DefaultEncodedGlyphs<T extends Glyph> implements EncodedGlyphs<T> 
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof DefaultEncodedGlyphs))
+        }
+        if (!(obj instanceof DefaultEncodedGlyphs)){
             return false;
+        }
         DefaultEncodedGlyphs other = (DefaultEncodedGlyphs) obj;
         return CommonUtil.similarTo(codec, other.codec) &&
         Arrays.equals(data, other.data);
