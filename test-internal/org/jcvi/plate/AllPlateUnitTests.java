@@ -31,7 +31,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestWell.class
+        TestWell.class,
+        TestNextWellIterator.class
     }
     )
 public class AllPlateUnitTests {
