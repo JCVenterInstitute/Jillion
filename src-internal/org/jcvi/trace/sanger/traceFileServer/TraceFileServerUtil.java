@@ -19,6 +19,8 @@
 
 package org.jcvi.trace.sanger.traceFileServer;
 
+import org.jcvi.http.HttpUtil;
+
 /**
  * Utility class for TraceFileServer.
  * @author dkatzel
@@ -55,4 +57,10 @@ public final class TraceFileServerUtil {
      * private constructor.
      */
     private TraceFileServerUtil(){}
+    
+    public static void setTraceFileServerSSLProperties(){
+        System.setProperty(HttpUtil.SSL_TRUSTSTORE_PROPERTY_KEY,
+                TraceFileServerUtil.TRACE_FILE_SERVER_TRUSTSTORE_UNIX_PATH);
+      
+    }
 }

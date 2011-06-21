@@ -38,7 +38,7 @@ public class TestSangerTraceParser {
     private static final String SCF3_FILE = "chromatogram/scf/files/GBKAK82TF.scf";
     private static final String PHD_FILE = "phd/files/1095595674585.phd.1";
     
-    SangerTraceParser sut = SangerTraceParser.getInstance();
+    SangerTraceParser sut = SangerTraceParser.INSTANCE;
     private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestSangerTraceParser.class);
     
     @Test
