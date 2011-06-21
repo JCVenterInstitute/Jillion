@@ -124,7 +124,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
             	FastaVisitor visitor = new AbstractFastaVisitor() {
             		int count=0;
 					@Override
-					public boolean visitRecord(String id, String comment, String entireBody) {
+					public synchronized boolean visitRecord(String id, String comment, String entireBody) {
 						count++;
 						return true;
 					}
