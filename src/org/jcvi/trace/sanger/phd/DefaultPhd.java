@@ -119,14 +119,18 @@ public class DefaultPhd implements Phd {
         if(!id.equals(other.getId())){
         	return false;
         }
-       if (!basecalls.decode().equals(other.getBasecalls().decode()))
+       if (!basecalls.decode().equals(other.getBasecalls().decode())){
             return false;
-        if (!comments.equals(other.getComments()))
+       }
+        if (!comments.equals(other.getComments())){
             return false;
-        if (!peaks.getData().decode().equals(other.getPeaks().getData().decode()))
+        }
+        if (!peaks.getData().decode().equals(other.getPeaks().getData().decode())){
             return false;
-        if (!qualities.decode().equals(other.getQualities().decode()))
+        }
+        if (!qualities.decode().equals(other.getQualities().decode())){
             return false;
+        }
         return true;
     }
 
