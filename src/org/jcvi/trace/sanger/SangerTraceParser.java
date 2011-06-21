@@ -43,7 +43,7 @@ public class SangerTraceParser implements SangerTraceCodec{
     private static final ZTRChromatogramParser ZTR_PARSER = new ZTRChromatogramParser();
 
     
-    private static final List<SangerTraceCodec> decoderOrder = Arrays.asList(
+    private static final List<SangerTraceCodec> DECODER_ORDER = Arrays.asList(
             ZTR_PARSER, SCFCodecs.VERSION_3, SCFCodecs.VERSION_2);
     
     private static final SangerTraceParser instance = new SangerTraceParser();
@@ -55,7 +55,7 @@ public class SangerTraceParser implements SangerTraceCodec{
     @Override
     public SangerTrace decode(File traceFile) throws TraceDecoderException, FileNotFoundException{
 
-            for(SangerTraceCodec decoder: decoderOrder){                   
+            for(SangerTraceCodec decoder: DECODER_ORDER){                   
                 try{
                     return decoder.decode(traceFile);
                 }
@@ -75,7 +75,7 @@ public class SangerTraceParser implements SangerTraceCodec{
     public SangerTrace decode(InputStream in) throws TraceDecoderException {
         BufferedInputStream bufferedIn = new BufferedInputStream(in);
         try{
-            for(SangerTraceCodec decoder: decoderOrder){
+            for(SangerTraceCodec decoder: DECODER_ORDER){
                 bufferedIn.mark(MARK_LIMIT);
                 try{
                     return decoder.decode(bufferedIn);

@@ -33,9 +33,9 @@ import java.io.InputStream;
 import org.jcvi.io.IOUtil;
 
 public class SffParser {
-    private static final SFFCommonHeaderCodec commonHeaderCodec = new DefaultSFFCommonHeaderCodec();
-    private static final SFFReadHeaderCodec readHeaderCodec =new DefaultSFFReadHeaderCodec();
-    private static final SFFReadDataCodec readDataCodec =new DefaultSFFReadDataCodec();
+    private static final SFFCommonHeaderCodec COMMON_HEADER_CODEC = new DefaultSFFCommonHeaderCodec();
+    private static final SFFReadHeaderCodec READ_HEADER_CODEC =new DefaultSFFReadHeaderCodec();
+    private static final SFFReadDataCodec READ_DATA_CODEC =new DefaultSFFReadDataCodec();
     
     private SffParser(){}
     /**
@@ -66,16 +66,16 @@ public class SffParser {
     public static void parseSFF(InputStream in, SffFileVisitor visitor) throws SFFDecoderException{
         DataInputStream dataIn = new DataInputStream(in);
         visitor.visitFile();
-        SFFCommonHeader commonHeader =commonHeaderCodec.decodeHeader(dataIn);
+        SFFCommonHeader commonHeader =COMMON_HEADER_CODEC.decodeHeader(dataIn);
         if(visitor.visitCommonHeader(commonHeader)){
         
             final long numberOfReads = commonHeader.getNumberOfReads();
             final int numberOfFlowsPerRead = commonHeader.getNumberOfFlowsPerRead();
             for(long i=0; i<numberOfReads; i++){
-                SFFReadHeader readHeader = readHeaderCodec.decodeReadHeader(dataIn);
+                SFFReadHeader readHeader = READ_HEADER_CODEC.decodeReadHeader(dataIn);
                 if(visitor.visitReadHeader(readHeader)){            
                     final int numberOfBases = readHeader.getNumberOfBases();
-                    SFFReadData readData = readDataCodec.decode(dataIn,
+                    SFFReadData readData = READ_DATA_CODEC.decode(dataIn,
                                     numberOfFlowsPerRead,
                                     numberOfBases);
                     if(!visitor.visitReadData(readData)){
