@@ -71,7 +71,7 @@ public class Codon
     }
     private static final Codon START_CODON;
     private static final List<Codon> STOP_CODONS;
-    private final static Map<List<NucleotideGlyph>, Codon> CODON_MAP;
+    private static final Map<List<NucleotideGlyph>, Codon> CODON_MAP;
     protected static final Map<List<NucleotideGlyph>, Codon> getCodonMap() {
         return CODON_MAP;
     }

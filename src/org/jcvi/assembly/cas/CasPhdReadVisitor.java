@@ -81,7 +81,7 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	    return orderedGappedReferences.get(index);
 	}
 	@Override
-	public synchronized final void visitReadFileInfo(CasFileInfo readFileInfo) {
+	public final synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
 		super.visitReadFileInfo(readFileInfo);
 		for(String filename :readFileInfo.getFileNames()){
 			

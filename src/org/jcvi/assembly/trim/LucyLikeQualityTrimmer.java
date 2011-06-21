@@ -277,7 +277,7 @@ public class LucyLikeQualityTrimmer {
         
     }
     
-    public final static class Window implements Comparable<Window>{
+    public static final class Window implements Comparable<Window>{
         private final int size;
         private final double maxErrorRate;
         /**

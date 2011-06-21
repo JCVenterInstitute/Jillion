@@ -209,7 +209,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
      *
      *
      */
-    private static abstract class RecursiveFileIterator extends FileIterator{
+    private abstract static class RecursiveFileIterator extends FileIterator{
         /**
          * A FileFilter that only accepts files that ARE 
          * directories.
@@ -321,7 +321,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
      *
      *
      */
-    public static abstract class FileIteratorBuilder implements Builder<FileIterator>{
+    public abstract static class FileIteratorBuilder implements Builder<FileIterator>{
         
         private boolean includeDirectories=false;
         private boolean includeHiddenFiles=false;
