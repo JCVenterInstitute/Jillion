@@ -48,7 +48,6 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
     }
 
     public static class Builder{
-        static int counter=0;
         private NucleotideEncodedGlyphs fullConsensus;
         private String contigId;
         private Logger logger = Logger.getRootLogger();
