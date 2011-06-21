@@ -34,7 +34,7 @@ public enum TaggedDataName {
 	 * The order of the 3' terminal nucleotides
 	 * corresponding to these four display trace arrays
 	 */
-	FILTER_WHEEL_ORDER("FWO_"),
+	FILTER_WHEEL_ORDER("FWO_",true),
 	/**
 	 * 'GEL0' file from which 
 	 * this sample's 'ABI1' data file was extracted.
@@ -71,7 +71,7 @@ public enum TaggedDataName {
 	/**
 	 * The ABI software's basecalls.
 	 */
-	BASECALLS("PBAS"),
+	BASECALLS("PBAS",true),
 	
 	/**
 	 * external primer-dye mobility
@@ -143,9 +143,9 @@ public enum TaggedDataName {
 	
 	JTC_PROTOCOL_NAME("APFN"),
 	
-	JTC_PROTOCOL_VERSION("APXV"),
+	JTC_PROTOCOL_VERSION("APXV",true),
 	
-	APrN("APrN"),
+	APrN("APrN",true),
 	
 	APrV("APrV"),
 	APrX("APrX"),
@@ -164,11 +164,11 @@ public enum TaggedDataName {
 	
 	COMMENT("CMNT"),
 	
-	CT_ID("CTID"),
+	CT_ID("CTID",true),
 	
-	CT_NAME("CTNM"),
+	CT_NAME("CTNM",true),
 	
-	CT_OWNER("CTOw"),
+	CT_OWNER("CTOw",true),
 	
 	CTTL("CTTL"),
 	
@@ -204,7 +204,7 @@ public enum TaggedDataName {
 	 * <li>Instrument Parameters = "UnitID=7;CPUBoard=ECPU500;ArraySize=16;SerialNumber=1211-010"</li>
 	 * </ol>
 	 */
-	INSTRUMENT_INFORMATION("HCFG"),
+	INSTRUMENT_INFORMATION("HCFG",true),
 	
 	InSc("InSc"),
 	
@@ -222,7 +222,7 @@ public enum TaggedDataName {
 	/**
 	 * The ABI sequencing machine model number.
 	 */
-	MODEL("MODL"),
+	MODEL("MODL",true),
 	
 	JTC_NOISE("NOIS"),
 	
@@ -234,26 +234,26 @@ public enum TaggedDataName {
 	/**
 	 * The type of plate being sequenced.
 	 */
-	PLATE_TYPE("PTYP"),
+	PLATE_TYPE("PTYP",true),
 	
 	PXLB("PXLB"),
 	/**
 	 * The name of the "Results Group"
 	 * this data belongs to.
 	 */
-	RESULTS_GROUP_NAME("RGNm"),
+	RESULTS_GROUP_NAME("RGNm",true),
 	
 	RMXV("RMXV"),
-	RMdN("RMdN"),
+	RMdN("RMdN",true),
 	RMdV("RMdV"),
 	
-	RMdX("RMdX"),
-	RPrN("RPrN"),
+	RMdX("RMdX",true),
+	RPrN("RPrN",true),
 	RPrV("RPrV"),
 	
 	Rate("Rate"),
 	RevC("RevC"),
-	JTC_RUN_NAME("RunN"),
+	JTC_RUN_NAME("RunN",true),
 	SCAN("SCAN"),
 	SMED("SMED"),
 	SMLt("SMLt"),
@@ -300,13 +300,26 @@ public enum TaggedDataName {
 		
 	}
 	private final String name;
-
+	private final boolean isNullTerminated;
 	
+	private TaggedDataName(String name,boolean isNullTerminated){
+	    this.name = name;
+	    this.isNullTerminated=isNullTerminated;
+	}
 	private TaggedDataName(String name) {
-		this.name = name;
+		this(name,false);
 	}
 
-	/* (non-Javadoc)
+	/**
+     * Does this tag use null terminated values.
+     * Some tags are known to have data values that are null-terminated.
+     * @return {@code true} if this tag uses null terminated values,
+     * {@code false} otherwise.
+     */
+    public boolean usesNullTerminatedStringValues() {
+        return isNullTerminated;
+    }
+    /* (non-Javadoc)
 	 * @see java.lang.Enum#toString()
 	 */
 	@Override
