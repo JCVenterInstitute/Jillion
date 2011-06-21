@@ -51,7 +51,7 @@ public final class FragmentUtil {
             String line = scanner.nextLine();
             visitor.visitLine(line+CR);
             sb.append(line).append(CR);
-            if(line.equals("}")){
+            if("}".equals(line)){
                 done =true;
             }
         }
