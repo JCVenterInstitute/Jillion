@@ -51,8 +51,8 @@ public class TestIOUtil_readByteArray {
             IOUtil.readByteArray(mockInputStream, array.length+1);
             fail("if did not read exected length should throw IOException");
         } catch (IOException e) {
-            String expectedMessage = "only was able to read "
-                + array.length + "expected "+ (array.length+1);
+            String expectedMessage = "end of file after only "
+                + array.length + " bytes read (expected "+ (array.length+1) +")";
             assertEquals(expectedMessage, e.getMessage());
         }
 

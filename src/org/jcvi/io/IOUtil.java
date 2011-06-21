@@ -282,7 +282,7 @@ public final class IOUtil {
             }
         }
         if(currentBytesRead ==-1){
-            throw new IOException(String.format("end of file after only %d bytes read (expected %d) ",totalBytesRead,length));
+            throw new IOException(String.format("end of file after only %d bytes read (expected %d)",totalBytesRead,length));
         }
         return totalBytesRead;
     }
