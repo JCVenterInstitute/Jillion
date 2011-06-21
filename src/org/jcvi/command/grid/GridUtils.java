@@ -39,13 +39,13 @@ import org.ggf.drmaa.SessionFactory;
 public final class GridUtils
 {
     /** The default {@link Session} initializtion contact to use if none is supplied. */
-    private static String DEFAULT_CONTACT = "";
+    private static final String DEFAULT_CONTACT = "";
 
     /** An appropriate {@link SessionFactory} for the environment. */
-    private static SessionFactory sessionFactory = SessionFactory.getFactory();
+    private static final SessionFactory SESSION_FACTORY = SessionFactory.getFactory();
 
     /** The global DRMAA {@link Session}. */
-    private static Session globalSession;
+    private static Session GLOBAL_SESSION;
 
     /** The lock which controls access to the global {@link Session}. */
     private static final Lock sessionLock = new ReentrantLock();
@@ -61,15 +61,15 @@ public final class GridUtils
         sessionLock.lock();
         try
         {
-            if (globalSession == null)
+            if (GLOBAL_SESSION == null)
             {
-                globalSession = buildNewSession();
+                GLOBAL_SESSION = buildNewSession();
                 Runtime.getRuntime().addShutdownHook(new Thread(){
 
                     @Override
                     public void run() {
                         try {
-                            globalSession.exit();
+                            GLOBAL_SESSION.exit();
                         } catch (DrmaaException e) {
                         }
                     }
@@ -77,7 +77,7 @@ public final class GridUtils
                 });
             }
 
-            return globalSession;
+            return GLOBAL_SESSION;
         }
         finally
         {
@@ -99,7 +99,7 @@ public final class GridUtils
     {
         try
         {
-            final Session session = sessionFactory.getSession();
+            final Session session = SESSION_FACTORY.getSession();
             session.init(contact);
 
             return session;
