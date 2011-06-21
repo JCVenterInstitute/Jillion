@@ -31,20 +31,14 @@ import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
 
-public class TigrPeaksEncoderGlyphCodec implements GlyphCodec<ShortGlyph>{
+public enum TigrPeaksEncoderGlyphCodec implements GlyphCodec<ShortGlyph>{
 
+    INSTANCE;
+    
     private static final ShortGlyphFactory GLYPH_FACTORY = ShortGlyphFactory.getInstance();
     private static final Charset CHARSET = Charset.forName("US-ASCII");
     
-    public static final TigrPeaksEncoderGlyphCodec instance = new TigrPeaksEncoderGlyphCodec();
     
-    private TigrPeaksEncoderGlyphCodec(){}
-    
-    
-    public static TigrPeaksEncoderGlyphCodec getInstance() {
-        return instance;
-    }
-
 
     @Override
     public List<ShortGlyph> decode(byte[] encodedGlyphs) {
