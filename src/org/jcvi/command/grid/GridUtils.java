@@ -48,7 +48,7 @@ public final class GridUtils
     private static Session GLOBAL_SESSION;
 
     /** The lock which controls access to the global {@link Session}. */
-    private static final Lock sessionLock = new ReentrantLock();
+    private static final Lock SESSION_LOCK = new ReentrantLock();
 
     /**
      * Fetch the global {@link Session}.  This is a singleton instance, so all calls to this
@@ -58,7 +58,7 @@ public final class GridUtils
      */
     public static Session getGlobalSession()
     {
-        sessionLock.lock();
+        SESSION_LOCK.lock();
         try
         {
             if (GLOBAL_SESSION == null)
@@ -81,7 +81,7 @@ public final class GridUtils
         }
         finally
         {
-            sessionLock.unlock();
+            SESSION_LOCK.unlock();
         }
     }
 

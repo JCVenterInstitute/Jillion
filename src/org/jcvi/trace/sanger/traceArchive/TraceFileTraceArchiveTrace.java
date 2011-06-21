@@ -35,7 +35,7 @@ import org.jcvi.trace.sanger.SangerTraceParser;
 
 public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
     
-    private static final SangerTraceCodec traceCodec = SangerTraceParser.getInstance();
+    private static final SangerTraceCodec TRACE_CODEC = SangerTraceParser.getInstance();
     
     private final SangerTrace trace;
     public TraceFileTraceArchiveTrace(TraceArchiveRecord record,
@@ -44,7 +44,7 @@ public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
         InputStream inputStream =null;
         try {
             inputStream = this.getInputStreamFor(TraceInfoField.TRACE_FILE);
-            trace = traceCodec.decode(inputStream);
+            trace = TRACE_CODEC.decode(inputStream);
         } catch (Exception e) {
            throw new IllegalArgumentException("invalid trace file",e);
         }

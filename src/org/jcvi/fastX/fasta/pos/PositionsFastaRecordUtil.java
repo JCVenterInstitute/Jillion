@@ -37,7 +37,7 @@ import org.jcvi.glyph.num.ShortGlyphFactory;
 
 public class PositionsFastaRecordUtil {
     private static final Pattern ID_LINE_PATTERN = Pattern.compile("^>(\\S+).*");
-    private static final ShortGlyphFactory shortGlyphFactory  = ShortGlyphFactory.getInstance();
+    private static final ShortGlyphFactory GLYPH_FACTORY  = ShortGlyphFactory.getInstance();
 
     public static DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>> buildFastaRecord(
             String identifier, String comment, CharSequence sequence) {
@@ -50,7 +50,7 @@ public class PositionsFastaRecordUtil {
         Scanner scanner = new Scanner(sequence.toString());
         List<ShortGlyph> result = new ArrayList<ShortGlyph>();
         while(scanner.hasNextShort()){
-            result.add(shortGlyphFactory.getGlyphFor(scanner.nextShort()));
+            result.add(GLYPH_FACTORY.getGlyphFor(scanner.nextShort()));
         }
         return result;
     }
