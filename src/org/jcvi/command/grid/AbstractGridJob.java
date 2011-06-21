@@ -228,7 +228,7 @@ import org.jcvi.command.Command;
         return preExecutionHook;
     }
 
-    abstract protected int callPostExecutionHook() throws Exception;
+    protected abstract int callPostExecutionHook() throws Exception;
     
     protected void cancelGridJobs(boolean jobTimeout) throws DrmaaException {
         for ( String jobID : jobIDList ) {
@@ -320,7 +320,7 @@ import org.jcvi.command.Command;
     }
 
     @Override
-    abstract public void runGridCommand() throws DrmaaException;
+    public abstract void runGridCommand() throws DrmaaException;
 
     @Override
     public List<String> getJobIDList() {
@@ -332,7 +332,7 @@ import org.jcvi.command.Command;
         return jobInfoMap;
     }
 
-    abstract public void waitForCompletion() throws DrmaaException;
+    public abstract void waitForCompletion() throws DrmaaException;
 
     protected void releaseJobTemplate() throws DrmaaException
     {

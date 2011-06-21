@@ -135,7 +135,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
      *
      *
      */
-    private static abstract class AbstractReferencedLRUCache<K,V,R extends Reference<V>> extends AbstractMap<K,V>{
+    private abstract static class AbstractReferencedLRUCache<K,V,R extends Reference<V>> extends AbstractMap<K,V>{
         
         protected abstract R createReferenceFor(V value,final ReferenceQueue<V> referenceQueue);
         
