@@ -41,7 +41,7 @@ public class TestTigrPeaksEncoderCodec {
         EXPECTED_ENCODED_PEAKS =TigrPeaksEncoder.encode(PEAKS_AS_SHORTS).getBytes("US-ASCII");
     }
     
-    TigrPeaksEncoderGlyphCodec sut = TigrPeaksEncoderGlyphCodec.getInstance();
+    TigrPeaksEncoderGlyphCodec sut = TigrPeaksEncoderGlyphCodec.INSTANCE;
     
     List<ShortGlyph> peaks = ShortGlyphFactory.getInstance().getGlyphsFor(
                             PEAKS_AS_SHORTS);
