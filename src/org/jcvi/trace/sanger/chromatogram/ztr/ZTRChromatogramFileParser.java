@@ -154,15 +154,12 @@ public class ZTRChromatogramFileParser {
         }
     }
 
-    private static byte[] readZTRMagicNumber(InputStream inputStream) throws IOException,TraceDecoderException {
-        byte[] ztrMagic = new byte[8];
-        int bytesRead = inputStream.read(ztrMagic);
-        if (bytesRead < ztrMagic.length) {
-            // no
-            String message = "File does not have a header";
-            throw new TraceDecoderException(message);
-        }
-        return ztrMagic;
+    private static byte[] readZTRMagicNumber(InputStream inputStream) throws TraceDecoderException {
+       try{
+           return IOUtil.readByteArray(inputStream, 8);
+       }catch(IOException e){
+           throw new TraceDecoderException("invalid ZTR header",e);
+       }
     }
     
     /**
@@ -172,19 +169,27 @@ public class ZTRChromatogramFileParser {
     private static Chunk parseNextChunk(InputStream inputStream) throws TraceDecoderException{
         try{
             byte[] chunkType = new byte[4];
-            int bytesRead = inputStream.read(chunkType);
-            if(bytesRead ==-1){
+        
+            //depending on our inputStream implementation
+            //we might need to keep reading
+            int currentBytesRead=0;
+            int totalBytesRead=0;
+            while((currentBytesRead =inputStream.read(chunkType, totalBytesRead, 4-totalBytesRead))>0){
+                totalBytesRead+=currentBytesRead;
+                if(totalBytesRead == 4){
+                    break;
+                }
+            }
+            if(currentBytesRead ==-1){
                 //end of file
                 return null;
             }
-            if(bytesRead < 4){
-                throw new ChunkException("Can not parse Chunk Type");
-            }
+               
             return Chunk.getChunk(new String(chunkType));
         }
         catch(Exception e)
         {
-            throw new TraceDecoderException("error parsing next chunk",e);
+            throw new ChunkException("error parsing next chunk",e);
         }
 
     }
