@@ -63,14 +63,14 @@ public enum AminoAcid implements Glyph{
     private final String threeLetterAbbreviation;
     private final String name;
     
-    private static final Map<String, AminoAcid> nameMap;
+    private static final Map<String, AminoAcid> NAME_MAP;
     static{
-        nameMap = new HashMap<String, AminoAcid>(60,1F);
+        NAME_MAP = new HashMap<String, AminoAcid>(60,1F);
         
         for(AminoAcid aa : AminoAcid.values()){
-            nameMap.put(aa.getName().toUpperCase(), aa);
-            nameMap.put(aa.get3LetterAbbreviation().toUpperCase(), aa);
-            nameMap.put(aa.getAbbreviation().toString().toUpperCase(), aa);
+            NAME_MAP.put(aa.getName().toUpperCase(), aa);
+            NAME_MAP.put(aa.get3LetterAbbreviation().toUpperCase(), aa);
+            NAME_MAP.put(aa.getAbbreviation().toString().toUpperCase(), aa);
         }
     }
     private AminoAcid(String name, String threeLetterAbbreviation, Character abbreviation){
@@ -103,7 +103,7 @@ public enum AminoAcid implements Glyph{
      * an AminoAcid.
      */
     public static AminoAcid getGlyphFor(String aminoAcid){
-        AminoAcid result = nameMap.get(aminoAcid.toUpperCase());
+        AminoAcid result = NAME_MAP.get(aminoAcid.toUpperCase());
         if(result ==null){
             throw new IllegalArgumentException(String.format("%s is not a valid Amino Acid", aminoAcid));
         }

@@ -55,11 +55,11 @@ import org.jcvi.trace.fourFiveFour.flowgram.sff.SffWriter;
 public class TrimNexteraSff {
 
     
-    private static final PrimerTrimmer nexteraTransposonTrimmer = new DefaultPrimerTrimmer(13, .9f,false);
+    private static final PrimerTrimmer NEXTERA_TRIMMER = new DefaultPrimerTrimmer(13, .9f,false);
     
-    private static final NucleotideDataStore forwardTransposonDataStore ;
+    private static final NucleotideDataStore FORWARD_DATASTORE ;
     
-    private static final NucleotideDataStore reverseTransposonDataStore;
+    private static final NucleotideDataStore REVERSE_DATASTORE;
     static{
         Map<String, NucleotideEncodedGlyphs> forwardTransposon = new HashMap<String, NucleotideEncodedGlyphs>();
         
@@ -67,9 +67,9 @@ public class TrimNexteraSff {
        
         forwardTransposon.put("5'", TransposonEndSequences.FORWARD);
         revesrseTransposon.put("3'", TransposonEndSequences.REVERSE);     
-        forwardTransposonDataStore = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(forwardTransposon));
+        FORWARD_DATASTORE = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(forwardTransposon));
         
-       reverseTransposonDataStore = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(revesrseTransposon));
+       REVERSE_DATASTORE = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(revesrseTransposon));
         
     }
     
@@ -117,9 +117,9 @@ public class TrimNexteraSff {
 
         @Override
         public boolean visitReadData(SFFReadData readData) {
-            Range forwardClearRange =nexteraTransposonTrimmer.trim(readData.getBasecalls(), forwardTransposonDataStore);
+            Range forwardClearRange =NEXTERA_TRIMMER.trim(readData.getBasecalls(), FORWARD_DATASTORE);
             
-            Range reverseClearRange =nexteraTransposonTrimmer.trim(readData.getBasecalls(), reverseTransposonDataStore);
+            Range reverseClearRange =NEXTERA_TRIMMER.trim(readData.getBasecalls(), REVERSE_DATASTORE);
             final Range clearRange;
             if(reverseClearRange.isSubRangeOf(forwardClearRange)){
                 clearRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 

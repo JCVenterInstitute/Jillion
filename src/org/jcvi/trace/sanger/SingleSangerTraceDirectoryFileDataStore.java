@@ -64,10 +64,10 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
        this(fileServer, traceCodec, null);
     }
     public SingleSangerTraceDirectoryFileDataStore(DirectoryFileServer fileServer, String extension){
-        this(fileServer, SangerTraceParser.getInstance(),extension);
+        this(fileServer, SangerTraceParser.INSTANCE,extension);
     }
     public SingleSangerTraceDirectoryFileDataStore(DirectoryFileServer fileServer){
-        this(fileServer, SangerTraceParser.getInstance());
+        this(fileServer, SangerTraceParser.INSTANCE);
     }
     private String addExtensionIfNeeded(String id){
         if(extension!=null){

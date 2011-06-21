@@ -254,7 +254,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 
     @Override
     public void visitWholeAssemblyTag(String type, String creator,
-            Date creationDate, String Data) {
+            Date creationDate, String data) {
         throwExceptionIfInitialized();
         
     }

@@ -35,7 +35,7 @@ import org.jcvi.trace.sanger.SangerTraceParser;
 
 public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
     
-    private static final SangerTraceCodec TRACE_CODEC = SangerTraceParser.getInstance();
+    private static final SangerTraceCodec TRACE_CODEC = SangerTraceParser.INSTANCE;
     
     private final SangerTrace trace;
     public TraceFileTraceArchiveTrace(TraceArchiveRecord record,

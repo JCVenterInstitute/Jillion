@@ -36,22 +36,23 @@ import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFCodecs;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogramParser;
 import org.jcvi.trace.sanger.phd.SinglePhdFile;
-
-public class SangerTraceParser implements SangerTraceCodec{
-    
+/**
+ * {@code SangerTraceParser} is a SangerTraceCodec singleton
+ * that can decode both ZTR and SCF trace files.
+ * @author dkatzel
+ *
+ *
+ */
+public enum SangerTraceParser implements SangerTraceCodec{
+    INSTANCE
+    ;
     private static final int MARK_LIMIT = 1024;
     private static final ZTRChromatogramParser ZTR_PARSER = new ZTRChromatogramParser();
 
     
     private static final List<SangerTraceCodec> DECODER_ORDER = Arrays.asList(
             ZTR_PARSER, SCFCodecs.VERSION_3, SCFCodecs.VERSION_2);
-    
-    private static final SangerTraceParser instance = new SangerTraceParser();
-    
-    public static SangerTraceParser getInstance(){
-        return instance;
-    }
-    private SangerTraceParser(){}
+
     @Override
     public SangerTrace decode(File traceFile) throws TraceDecoderException, FileNotFoundException{
 

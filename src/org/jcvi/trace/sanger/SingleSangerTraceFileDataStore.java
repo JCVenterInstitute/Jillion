@@ -41,7 +41,7 @@ public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrac
     private final String id;
     private final SangerTrace trace;
     public SingleSangerTraceFileDataStore(File traceFile) throws FileNotFoundException, TraceDecoderException{
-        this(traceFile,SangerTraceParser.getInstance());
+        this(traceFile,SangerTraceParser.INSTANCE);
     }
     public SingleSangerTraceFileDataStore(File traceFile,SangerTraceCodec traceParser) throws FileNotFoundException, TraceDecoderException{
         this.id = FilenameUtils.getBaseName(traceFile.getName());
