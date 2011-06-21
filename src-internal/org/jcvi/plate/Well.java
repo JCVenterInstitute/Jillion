@@ -19,6 +19,7 @@
 
 package org.jcvi.plate;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -404,8 +405,17 @@ public final class Well implements Comparable<Well>{
         }
         
     }
-    
-    private static final class IndexOrderComparator implements Comparator<Well>{
+    /**
+     * {@code IndexOrderComparator} is a Comparator
+     * that will compare Wells based on PlateFormat
+     * and IndexOrder.
+     * 
+     * @author dkatzel
+     */
+    private static final class IndexOrderComparator implements Comparator<Well>, Serializable{
+        
+        private static final long serialVersionUID = 8181294609649588216L;
+        
         private final PlateFormat type;
         private final IndexOrder order;
         
@@ -418,20 +428,8 @@ public final class Well implements Comparable<Well>{
 
         @Override
         public int compare(Well o1, Well o2) {
-            final int o1Index, o2Index;
-            switch(type){
-                case _384 : 
-                    o1Index = o1.get384WellIndex(order);
-                    o2Index = o2.get384WellIndex(order);
-                    break;
-                case _96 : 
-                    o1Index = o1.get96WellIndex(order);
-                    o2Index = o2.get96WellIndex(order);
-                    break;
-                default: 
-                    //impossible
-                    throw new IllegalStateException("invalid type");
-            }
+            final int o1Index =o1.getWellIndex(type, order);
+            final int o2Index=o2.getWellIndex(type, order);           
             return Integer.valueOf(o1Index).compareTo(o2Index);
         }
         
