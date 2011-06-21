@@ -40,6 +40,10 @@ import org.jcvi.util.CloseableIterator;
  */
 public class LucyDebugFileDataStore implements LucyDebugTrimRecordDataStore{
 
+    /**
+     * 
+     */
+    private static final String LUCY_INVALID_COORDINATE = "0";
     final DataStore<LucyDebugTrimRecord> datastore;
     public LucyDebugFileDataStore ( File lucyDebugTrimFile) throws IOException{
         Map<String, LucyDebugTrimRecord> recordMap = new LinkedHashMap<String, LucyDebugTrimRecord>();
@@ -73,15 +77,19 @@ public class LucyDebugFileDataStore implements LucyDebugTrimRecordDataStore{
      * @return
      */
     private Range buildTrimRangeFrom(String left, String right) {
-        if(left.equals("0") || right.equals("0")){
+        if(LUCY_INVALID_COORDINATE.equals(left) || LUCY_INVALID_COORDINATE.equals(right)){
             return Range.buildEmptyRange(CoordinateSystem.RESIDUE_BASED, 1);
         }
-        int start = left.equals("0")? Integer.MIN_VALUE: Integer.parseInt(left);
-        int stop = right.equals("0")? Integer.MAX_VALUE: Integer.parseInt(right);
+        int start = getCoordinate(left);
+        int stop = getCoordinate(right);
         
         return Range.buildRange(CoordinateSystem.RESIDUE_BASED,
                 start,
                 stop);
+    }
+    
+    private int getCoordinate(String coordinate){
+        return LUCY_INVALID_COORDINATE.equals(coordinate)? Integer.MIN_VALUE: Integer.parseInt(coordinate);
     }
     /**
     * {@inheritDoc}

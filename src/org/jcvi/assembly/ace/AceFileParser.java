@@ -42,6 +42,12 @@ import org.jcvi.sequence.SequenceDirection;
  *
  */
 public final class AceFileParser {
+    /**
+     * 
+     */
+    private static final String COMPLIMENT_STRING = "C";
+
+
     private static final String BEGIN_CONSENSUS_QUALITIES_LINE = "BQ\\s*";
 
 
@@ -344,8 +350,7 @@ public final class AceFileParser {
     }
 
     private static boolean parseIsComplimented(final String group) {
-        boolean complimented = group.equals("C");
-        return complimented;
+        return COMPLIMENT_STRING.equals(group);
     }
     
     

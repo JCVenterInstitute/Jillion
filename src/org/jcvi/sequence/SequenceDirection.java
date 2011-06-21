@@ -57,10 +57,10 @@ public enum SequenceDirection
     UNKNOWN;
 
     public static SequenceDirection parseSequenceDirection(String dirString){
-        if(dirString.equals("-")){
+        if("-".equals(dirString)){
             return SequenceDirection.REVERSE;
         }
-        if(dirString.equals("+")){
+        if("+".equals(dirString)){
             return SequenceDirection.FORWARD;
         }
         
@@ -72,10 +72,10 @@ public enum SequenceDirection
                 return dir;
             }
         }
-        if(dirString.equalsIgnoreCase("TF")){
+        if("TF".equalsIgnoreCase(dirString)){
             return SequenceDirection.FORWARD;
         }
-        if(dirString.equalsIgnoreCase("TR")){
+        if("TR".equalsIgnoreCase(dirString)){
             return SequenceDirection.REVERSE;
         }
         return SequenceDirection.UNKNOWN;

@@ -67,11 +67,11 @@ public interface Variation extends Comparable<Variation>{
          * not correspond to a known {@link Type}. 
          */
         public static Type getType(String typeName){
-            String uppercase =typeName.toUpperCase();
-            if(uppercase.equals("NOCHANGE")){
+            String upperCase = typeName.toUpperCase();
+            if("NOCHANGE".equals(upperCase)){
                 return NO_CHANGE;
             }
-            return valueOf(uppercase);
+            return valueOf(upperCase);
         }
     }
     

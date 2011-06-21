@@ -58,6 +58,11 @@ import org.joda.time.DateTime;
  */
 public class ConsedUtil {
     /**
+     * 
+     */
+    private static final String CONTIG_RENAME_TAG_TYPE = "contigName";
+
+    /**
      * Consed rename comment header which tells us what the contig SHOULD 
      * be named instead of the given ID.
      */
@@ -197,7 +202,7 @@ public class ConsedUtil {
      * @throw {@link NullPointerException} if consensusTag is null.
      */
     public static boolean isContigRename(ConsensusAceTag consensusTag){
-        return consensusTag.getType().equals("contigName");
+        return CONTIG_RENAME_TAG_TYPE.equals(consensusTag.getType());
     }
     /**
      * Get the new name this contig should be named according to the given

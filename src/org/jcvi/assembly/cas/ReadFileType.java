@@ -40,12 +40,12 @@ public enum ReadFileType {
     }
     public static ReadFileType getTypeFromFile(String readFileName){
         String extension =FilenameUtils.getExtension(readFileName);
-        if(extension.equals("fastq")){
+        if("fastq".equals(extension)){
            return ILLUMINA;
-        }if(extension.equals("sff")){
+        }if("sff".equals(extension)){
             return SFF;
         }
-        if(extension.equals("fasta")){
+        if("fasta".equals(extension) || "fna".equals(extension) || "fa".equals(extension)){
             return FASTA;
         }
         return SANGER;
