@@ -114,8 +114,9 @@ public class DefaultPlacedContig implements PlacedContig{
             return false;            
         }
         if (range == null) {
-            if (other.range != null)
+            if (other.range != null){
                 return false;
+            }
         } else if (!range.equals(other.range)){
             return false;
         }

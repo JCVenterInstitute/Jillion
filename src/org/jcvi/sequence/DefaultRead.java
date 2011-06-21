@@ -58,12 +58,15 @@ public class DefaultRead<T extends NucleotideEncodedGlyphs> implements Read<T>{
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (!(obj instanceof Read))
+        }
+        if (!(obj instanceof Read)){
             return false;
+        }
         Read other = (Read) obj;
         return CommonUtil.similarTo(id, other.getId());
         

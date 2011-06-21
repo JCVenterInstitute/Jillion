@@ -149,8 +149,9 @@ public class EncodedByteData {
             return false;
         }
         final EncodedByteData other = (EncodedByteData) obj;
-        if (!Arrays.equals(data, other.data))
+        if (!Arrays.equals(data, other.data)){
             return false;
+        }
         return true;
     }
 
