@@ -98,26 +98,43 @@ public class TaggedDataRecordBuilder implements org.jcvi.Builder<TaggedDataRecor
 			case DATE:
 					return new DefaultDateTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
 			case INTEGER:
-				if(elementLength ==2){
-					return new DefaultShortArrayTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
-				}
-				return new DefaultIntegerArrayTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
+			    return handleNumberCase();
 				
 			case USER_DEFINED:
-			    if(name == TaggedDataName.Rate){
-			        return new DefaultScanRateTaggedDataType(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
-		        }
-			    return new DefaultUserDefinedTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
+			    return handleUserDefinedCase();
 
 			default:
-			  //special case for known null-terminated strings
-		        if(name.usesNullTerminatedStringValues()){
-		            return new DefaultAsciiTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
-		             
-		        }
-				return new DefaultTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
+			  return handleDefaultCase();
 		}
 	}
+
+
+    private TaggedDataRecord handleNumberCase() {
+        if(elementLength ==2){
+        	return new DefaultShortArrayTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
+        }
+        return new DefaultIntegerArrayTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
+    }
+
+
+    private TaggedDataRecord handleUserDefinedCase() {
+        if(name == TaggedDataName.Rate){
+            return new DefaultScanRateTaggedDataType(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
+        }
+        return new DefaultUserDefinedTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
+    }
+
+
+    private TaggedDataRecord handleDefaultCase() {
+        //special case for known null-terminated strings
+        if(name.usesNullTerminatedStringValues()){
+            return new DefaultAsciiTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
+             
+        }
+    	return new DefaultTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
+    }
+	
+	
 
 
 }
