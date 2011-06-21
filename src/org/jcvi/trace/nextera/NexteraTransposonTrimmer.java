@@ -44,7 +44,8 @@ public final class NexteraTransposonTrimmer implements PrimerTrimmer{
     private static final NucleotideDataStore REVERSE_TRANSPOSON ;
     private final PrimerTrimmer nexteraTransposonTrimmer;
     
-    
+    public static final int DEFAULT_MIN_LENGTH=13;
+    public static final double DEFAULT_MIN_MATCH = .9D;
     static{
         Map<String, NucleotideEncodedGlyphs> forwardTransposon = new HashMap<String, NucleotideEncodedGlyphs>();
         forwardTransposon.put("5'", TransposonEndSequences.FORWARD);
@@ -59,7 +60,7 @@ public final class NexteraTransposonTrimmer implements PrimerTrimmer{
     }
 
     public NexteraTransposonTrimmer(){
-        this(13, .9f);
+        this(DEFAULT_MIN_LENGTH, DEFAULT_MIN_MATCH);
     }
     
     public NexteraTransposonTrimmer(int minLength, double minMatch){
