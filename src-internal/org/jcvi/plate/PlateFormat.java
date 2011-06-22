@@ -61,5 +61,8 @@ public enum PlateFormat {
         return numberOfRows;
     } 
     
+    public int getNumberOfWellsPerQuadrant(){
+        return numberOfWells/4;
+    }
     
 }

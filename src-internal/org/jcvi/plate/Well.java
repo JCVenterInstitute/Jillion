@@ -164,6 +164,16 @@ public final class Well implements Comparable<Well>{
     public int getWellIndex(PlateFormat format, IndexOrder order){
         return order.getIndex(this,format);
     }
+    public int getQuadrantIndex(PlateFormat format, IndexOrder order){
+        return order.getQuadrantIndex(this,format);
+    }
+    public int get96WellQuadrantIndex(IndexOrder order){
+        return getQuadrantIndex(PlateFormat._96,order);
+    }
+    public int get384WellQuadrantIndex(IndexOrder order){
+        return getQuadrantIndex(PlateFormat._384,order);
+    }
+    
     /**
      * Returns the hash code value for this object.
      * @return the hash code for this object.
@@ -302,6 +312,61 @@ public final class Well implements Comparable<Well>{
             }
         },
         /**
+         * The wells are filled in a checkerboard pattern
+         * where every other well is initially skipped
+         * to be filled in later on the next pass.
+         * <p>
+         * Ex: A01, A03, A05...A02, A04, A06...B01, B03, B05...B02, B04, B06...
+         */
+        CHECKERBOARD{
+            int getIndex(Well well, PlateFormat type){
+                int column = well.getColumn()-1;
+                int row = well.getRow()-'A';
+                final int block;
+                if(row%2==0){
+                    if(column%2==0){
+                        block=0;
+                    }
+                    else{
+                        block=1;
+                    }
+                }else{
+                    if(column%2==0){
+                        block=2;
+                    }else{
+                        block=3;
+                    }
+                }
+                int fullRows = row>1 ? (row/2) * type.getNumberOfColumns()/2 : 0;
+                int partialRow = (column/2 +1)-1;
+                int quadIndex =fullRows+partialRow;
+                return type.getNumberOfWellsPerQuadrant()*block+quadIndex;
+              //   return ((well.getColumn()-1) * type.getNumberOfRows()) + (well.getRow() -'A');
+            }
+            @Override
+            Well getWell(int index, PlateFormat type) { 
+                if(index <0){
+                    throw new IllegalArgumentException("index can not be <0");
+                }
+                /*
+                 * block = i / 96 + 1
+    well  = i % 96 + 1
+    
+    column = (((well - 1) % 12) + 1) * 2 - (block % 2)
+    row = ((well - 1) / 12) * 2 + 1 + ((block - 1) / 2)
+    well384 = Report.Well(ABCs[row - 1], column)
+                 */
+                int modIndex = index%type.getNumberOfWells();
+                int block = modIndex/type.getNumberOfWellsPerQuadrant();
+                int quadIndex = modIndex % type.getNumberOfWellsPerQuadrant();
+                int rowIndex = (quadIndex /(type.getNumberOfColumns()/2)) *2 + (block /2);
+                int column =((quadIndex % (type.getNumberOfColumns()/2)) *2)+1 +(block%2);
+                char row = (char)('A'+rowIndex);
+                
+                return new Well(row,column);
+            }
+        },
+        /**
          * Order of a 384 well plate to get picked a quickly 
          * as possible using the hamilton robot.  The wells are arrayed so that 
          * all 8 spans can be used at the same time.  Each column is filled one at a time,
@@ -380,6 +445,8 @@ public final class Well implements Comparable<Well>{
         
         abstract  int getIndex(Well well, PlateFormat type);
         
+        
+        
         abstract Well getWell(int index, PlateFormat type);
         /**
          * Create a new {@link Comparator} instance
@@ -402,6 +469,11 @@ public final class Well implements Comparable<Well>{
         
         public Comparator<Well> createWellComparator(PlateFormat format){
             return new IndexOrderComparator(format, this);
+        }
+        
+        public int getQuadrantIndex(Well well, PlateFormat type){
+            int wellIndex = getIndex(well, type);
+            return wellIndex/type.getNumberOfWellsPerQuadrant();
         }
         
     }

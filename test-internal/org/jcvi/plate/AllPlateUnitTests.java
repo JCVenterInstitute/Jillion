@@ -32,6 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestWell.class,
+        TestWellQuadrant.class,
         TestNextWellIterator.class
     }
     )
