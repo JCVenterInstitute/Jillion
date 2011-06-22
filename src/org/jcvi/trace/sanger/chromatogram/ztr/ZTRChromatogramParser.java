@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.jcvi.io.IOUtil;
+import org.jcvi.io.IOUtil.ReadResults;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.SangerTrace;
 import org.jcvi.trace.sanger.SangerTraceCodec;
@@ -158,14 +159,15 @@ public class ZTRChromatogramParser implements SangerTraceCodec {
     private Chunk parseNextChunk(InputStream inputStream) throws TraceDecoderException{
         try{
             byte[] chunkType = new byte[4];
-            int bytesRead = inputStream.read(chunkType);
-            if(bytesRead ==-1){
-                //end of file
+            ReadResults results = IOUtil.safeBlockingRead(inputStream, chunkType);
+            if(results.isEndOfFileReached()){
                 return null;
             }
-            if(bytesRead < 4){
+            if(results.getNumberOfBytesRead() <4){
+                //can this ever happen?
                 throw new ChunkException("Can not parse Chunk Type");
             }
+            
             return Chunk.getChunk(new String(chunkType));
         }
         catch(Exception e)

@@ -51,7 +51,7 @@ public class TestChunk {
         int length = 20;
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.putInt(length);
-        expect(mockInputStream.read(isA(byte[].class)))
+        expect(mockInputStream.read(isA(byte[].class),eq(0),eq(4)))
                     .andAnswer(EasyMockUtil.writeArrayToInputStream(buf.array()));
         replay(mockInputStream);
         assertEquals(length, sut.readLength(mockInputStream));
@@ -61,7 +61,7 @@ public class TestChunk {
     @Test
     public void readLengthThrowsIOExceptionShouldWrapInTraceDecoderException() throws IOException{
 
-        expect(mockInputStream.read(isA(byte[].class)))
+        expect(mockInputStream.read(isA(byte[].class),eq(0),eq(4)))
         .andThrow(expectedException);
         replay(mockInputStream);
         try{
@@ -77,8 +77,10 @@ public class TestChunk {
     @Test
     public void readLengthNotEnoughBytesReadShouldWrapInTraceDecoderException() throws IOException{
         byte[] tooSmall = new byte[]{1,2,3};
-        expect(mockInputStream.read(isA(byte[].class)))
+        expect(mockInputStream.read(isA(byte[].class),eq(0),eq(4)))
         .andAnswer(EasyMockUtil.writeArrayToInputStream(tooSmall));
+        
+        expect(mockInputStream.read(isA(byte[].class),eq(3),eq(1))).andReturn(-1);
         replay(mockInputStream);
         try{
             sut.readLength(mockInputStream);
@@ -98,7 +100,7 @@ public class TestChunk {
         int lengthToSkip = 1234;
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.putInt(lengthToSkip);
-        expect(mockInputStream.read(isA(byte[].class)))
+        expect(mockInputStream.read(isA(byte[].class),eq(0),eq(4)))
                     .andAnswer(EasyMockUtil.writeArrayToInputStream(buf.array()));
         expect(mockInputStream.skip(lengthToSkip)).andReturn((long)lengthToSkip);
         replay(mockInputStream);
@@ -110,7 +112,7 @@ public class TestChunk {
         int lengthToSkip = 1234;
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.putInt(lengthToSkip);
-        expect(mockInputStream.read(isA(byte[].class)))
+        expect(mockInputStream.read(isA(byte[].class),eq(0),eq(4)))
                     .andAnswer(EasyMockUtil.writeArrayToInputStream(buf.array()));
         expect(mockInputStream.skip(lengthToSkip)).andThrow(expectedException);
         replay(mockInputStream);

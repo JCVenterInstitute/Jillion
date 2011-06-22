@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.io.IOUtil;
+import org.jcvi.io.IOUtil.ReadResults;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.sanger.chromatogram.ChromatogramFileVisitor;
 import org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk;
@@ -169,22 +170,10 @@ public class ZTRChromatogramFileParser {
     private static Chunk parseNextChunk(InputStream inputStream) throws TraceDecoderException{
         try{
             byte[] chunkType = new byte[4];
-        
-            //depending on our inputStream implementation
-            //we might need to keep reading
-            int currentBytesRead=0;
-            int totalBytesRead=0;
-            while((currentBytesRead =inputStream.read(chunkType, totalBytesRead, 4-totalBytesRead))>0){
-                totalBytesRead+=currentBytesRead;
-                if(totalBytesRead == 4){
-                    break;
-                }
-            }
-            if(currentBytesRead ==-1){
-                //end of file
+            ReadResults results = IOUtil.safeBlockingRead(inputStream, chunkType);
+            if(results.isEndOfFileReached()){
                 return null;
-            }
-               
+            }            
             return Chunk.getChunk(new String(chunkType));
         }
         catch(Exception e)

@@ -44,7 +44,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestIOUtil_unsignedByteToSignedByte.class,
         TestIOUtil_unsignedShortToSignedShort.class,
         TestIOUtil_unsignedIntToSignedInt.class,
-        
+        TestIOUtil_safeBlockingRead.class,
         TestCheckSumUtil.class,
         
         AllBase64UnitTests.class,
