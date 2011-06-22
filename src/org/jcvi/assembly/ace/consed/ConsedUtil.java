@@ -164,34 +164,44 @@ public class ConsedUtil {
             }
         }
         for(Range contigRange : contigRanges){
-            Set<String> contigReads = new HashSet<String>();
-            
-            for(CoverageRegion<AcePlacedRead> region : coverageMap.getRegionsWithin(contigRange)){
-                for(AcePlacedRead read : region){
-                    contigReads.add(read.getId());
-                }
-            }
-            String contigConsensus =NucleotideGlyph.convertToString(consensus.decode(contigRange));
-            //id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
-            String contigId = String.format("%s_%d_%d",originalContigId, 
-                    oldStart + (consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getStart())),
-                    oldStart + (consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getEnd())));
-            DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contigId, contigConsensus);
-            
-            for(String readId : contigReads){
-                final AcePlacedRead read = contig.getPlacedReadById(readId);
-                if(read ==null){
-                    throw new NullPointerException("got a null read for id " + readId);
-                }
-                builder.addRead(readId, 
-                        NucleotideGlyph.convertToString(read.getEncodedGlyphs().decode()), 
-                        (int)(read.getStart() - contigRange.getStart()), 
-                        read.getSequenceDirection(), read.getValidRange(), read.getPhdInfo(),
-                        read.getUngappedFullLength());
-            }
-            newContigs.add(builder.build());
+            DefaultAceContig splitContig = createSplitContig(contig,
+                    coverageMap, consensus, originalContigId, oldStart,
+                    contigRange);
+            newContigs.add(splitContig);
         }
         return newContigs;
+    }
+    private static DefaultAceContig createSplitContig(AceContig contig,
+            CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap,
+            NucleotideEncodedGlyphs consensus, String originalContigId,
+            int oldStart, Range contigRange) {
+        Set<String> contigReads = new HashSet<String>();
+        
+        for(CoverageRegion<AcePlacedRead> region : coverageMap.getRegionsWithin(contigRange)){
+            for(AcePlacedRead read : region){
+                contigReads.add(read.getId());
+            }
+        }
+        String contigConsensus =NucleotideGlyph.convertToString(consensus.decode(contigRange));
+        //id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
+        String contigId = String.format("%s_%d_%d",originalContigId, 
+                oldStart + (consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getStart())),
+                oldStart + (consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getEnd())));
+        DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contigId, contigConsensus);
+        
+        for(String readId : contigReads){
+            final AcePlacedRead read = contig.getPlacedReadById(readId);
+            if(read ==null){
+                throw new NullPointerException("got a null read for id " + readId);
+            }
+            builder.addRead(readId, 
+                    NucleotideGlyph.convertToString(read.getEncodedGlyphs().decode()), 
+                    (int)(read.getStart() - contigRange.getStart()), 
+                    read.getSequenceDirection(), read.getValidRange(), read.getPhdInfo(),
+                    read.getUngappedFullLength());
+        }
+        DefaultAceContig splitContig = builder.build();
+        return splitContig;
     }
     /**
      * Checks to see if the given {@link ConsensusAceTag} is denotes
