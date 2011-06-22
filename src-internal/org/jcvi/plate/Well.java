@@ -312,16 +312,35 @@ public final class Well implements Comparable<Well>{
             }
         },
         /**
-         * The wells are filled in a checkerboard pattern
-         * where every other well is initially skipped
-         * to be filled in later on the next pass.
+         * The wells are filled in a quadrant by quadrant
+         * using a checkerboard pattern
+         * where every other well in each row is initially skipped
+         * to be filled in later by a different quadrant.
          * <p>
-         * Ex: A01, A03, A05...A02, A04, A06...B01, B03, B05...B02, B04, B06...
+         * First quadrant:
+         * A01, A03, A05...A23, C01, C03...<br/>
+         * Second quadrant:
+         * A02, A04, A06...A24, C02, C04...<br/>
+         * Third quadrant:
+         * B01, B03, B05...B23, D01, D03...<br/>
+         * Fourth quadrant:
+         * B02, B04, B06...B24, D02, D04...
          */
         CHECKERBOARD{
             int getIndex(Well well, PlateFormat type){
                 int column = well.getColumn()-1;
                 int row = well.getRow()-'A';
+                final int quadrantIndex = computeQuadrantIndex(column, row);
+                int fullRows = computeNumberOfFilledRows(type, row);
+                int partialRow = (column/2 +1)-1;
+                int offsetIntoQuadrant =fullRows+partialRow;
+                return type.getNumberOfWellsPerQuadrant()*quadrantIndex+offsetIntoQuadrant;
+            }
+            private int computeNumberOfFilledRows(PlateFormat type, int row) {
+                int fullRows = row>1 ? (row/2) * type.getNumberOfColumns()/2 : 0;
+                return fullRows;
+            }
+            private int computeQuadrantIndex(int column, int row) {
                 final int block;
                 if(row%2==0){
                     if(column%2==0){
@@ -337,30 +356,18 @@ public final class Well implements Comparable<Well>{
                         block=3;
                     }
                 }
-                int fullRows = row>1 ? (row/2) * type.getNumberOfColumns()/2 : 0;
-                int partialRow = (column/2 +1)-1;
-                int quadIndex =fullRows+partialRow;
-                return type.getNumberOfWellsPerQuadrant()*block+quadIndex;
-              //   return ((well.getColumn()-1) * type.getNumberOfRows()) + (well.getRow() -'A');
+                return block;
             }
             @Override
             Well getWell(int index, PlateFormat type) { 
                 if(index <0){
                     throw new IllegalArgumentException("index can not be <0");
                 }
-                /*
-                 * block = i / 96 + 1
-    well  = i % 96 + 1
-    
-    column = (((well - 1) % 12) + 1) * 2 - (block % 2)
-    row = ((well - 1) / 12) * 2 + 1 + ((block - 1) / 2)
-    well384 = Report.Well(ABCs[row - 1], column)
-                 */
                 int modIndex = index%type.getNumberOfWells();
-                int block = modIndex/type.getNumberOfWellsPerQuadrant();
-                int quadIndex = modIndex % type.getNumberOfWellsPerQuadrant();
-                int rowIndex = (quadIndex /(type.getNumberOfColumns()/2)) *2 + (block /2);
-                int column =((quadIndex % (type.getNumberOfColumns()/2)) *2)+1 +(block%2);
+                int quadrantIndex = modIndex/type.getNumberOfWellsPerQuadrant();
+                int offsetIntoQuadrant = modIndex % type.getNumberOfWellsPerQuadrant();
+                int rowIndex = (offsetIntoQuadrant /(type.getNumberOfColumns()/2)) *2 + (quadrantIndex /2);
+                int column =((offsetIntoQuadrant % (type.getNumberOfColumns()/2)) *2)+1 +(quadrantIndex%2);
                 char row = (char)('A'+rowIndex);
                 
                 return new Well(row,column);
