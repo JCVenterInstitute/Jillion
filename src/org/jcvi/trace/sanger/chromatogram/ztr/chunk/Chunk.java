@@ -47,6 +47,7 @@ import org.jcvi.Range;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.io.IOUtil;
+import org.jcvi.io.IOUtil.ReadResults;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.ChannelGroup;
@@ -702,9 +703,9 @@ public enum Chunk {
     private byte[] readLengthFromInputStream(InputStream inputStream)
             throws IOException, TraceDecoderException {
         byte[] lengthArray = new byte[4];
-        int bytesRead = inputStream.read(lengthArray);
-        if(bytesRead <4){
-            String message ="invalid metaData length record only has " +bytesRead + " bytes";
+        ReadResults results = IOUtil.safeBlockingRead(inputStream, lengthArray);
+        if(results.getNumberOfBytesRead()<4){
+            String message ="invalid metaData length record only has " +results.getNumberOfBytesRead() + " bytes";
             throw new TraceDecoderException(message);
         }
         return lengthArray;
@@ -781,18 +782,11 @@ public enum Chunk {
     private byte[] readData(InputStream inputStream, int datalength) throws IOException,
             TraceDecoderException {
         byte[] data = new byte[datalength];
-        int indexIntoData=0;
-        int bytesRead;
-        //have to keep looping
-        //because inputStream won't block on reads
-        while((bytesRead = inputStream.read(data,indexIntoData,datalength-indexIntoData)) >0){
-            indexIntoData +=bytesRead;
-        }
-
-        if(indexIntoData < datalength){
-            String message = "invalid datalength field, length specified was " + datalength + " only " + indexIntoData;
+        ReadResults results = IOUtil.safeBlockingRead(inputStream, data);
+        if(results.getNumberOfBytesRead()< datalength){
+            String message = "invalid datalength field, length specified was " + datalength + " only " + results.getNumberOfBytesRead();
             throw new TraceDecoderException(message);
-        }
+        }      
         return data;
     }
 }
