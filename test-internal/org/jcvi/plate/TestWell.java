@@ -270,7 +270,68 @@ public class TestWell {
                         actualWell.get384WellIndex(Well.IndexOrder.HAMILTON_OPTIMIZED_COLUMN_MAJOR)});
             }
         }
-        
+        //checkerboard 384
+        index=-1;
+        //quad 1
+        for(int col =0 ; col<16; col+=2){
+            for(int row=0; row<24; row+=2){
+                index++;
+                final String zeroPaddedName = String.format("%s%02d", 
+                        (char)('A'+col), row+1);
+               
+                final Well actualWell = Well.compute384Well(index, Well.IndexOrder.CHECKERBOARD);
+                data.add(new Object[]{ 
+                        Well.create(zeroPaddedName),
+                        actualWell,
+                        index,
+                        actualWell.get384WellIndex(Well.IndexOrder.CHECKERBOARD)});
+            }
+        }
+      //quad 2
+        for(int col =0 ; col<16; col+=2){
+            for(int row=1; row<24; row+=2){
+                index++;
+                final String zeroPaddedName = String.format("%s%02d", 
+                        (char)('A'+col), row+1);
+               
+                final Well actualWell = Well.compute384Well(index, Well.IndexOrder.CHECKERBOARD);
+                data.add(new Object[]{ 
+                        Well.create(zeroPaddedName),
+                        actualWell,
+                        index,
+                        actualWell.get384WellIndex(Well.IndexOrder.CHECKERBOARD)});
+            }
+        }
+      //quad 3
+        for(int col =1 ; col<16; col+=2){
+            for(int row=0; row<24; row+=2){
+                index++;
+                final String zeroPaddedName = String.format("%s%02d", 
+                        (char)('A'+col), row+1);
+               
+                final Well actualWell = Well.compute384Well(index, Well.IndexOrder.CHECKERBOARD);
+                data.add(new Object[]{ 
+                        Well.create(zeroPaddedName),
+                        actualWell,
+                        index,
+                        actualWell.get384WellIndex(Well.IndexOrder.CHECKERBOARD)});
+             }
+        }
+      //quad 4
+        for(int col =1 ; col<16; col+=2){
+            for(int row=1; row<24; row+=2){
+                index++;
+                final String zeroPaddedName = String.format("%s%02d", 
+                        (char)('A'+col), row+1);
+               
+                final Well actualWell = Well.compute384Well(index, Well.IndexOrder.CHECKERBOARD);
+                data.add(new Object[]{ 
+                        Well.create(zeroPaddedName),
+                        actualWell,
+                        index,
+                        actualWell.get384WellIndex(Well.IndexOrder.CHECKERBOARD)});
+            }
+        }
         return data;
     }
 
