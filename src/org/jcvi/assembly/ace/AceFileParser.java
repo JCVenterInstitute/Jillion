@@ -55,9 +55,9 @@ public final class AceFileParser {
         while(parser.hasNextLine()){
             String lineWithCR = parser.nextLine();           
             visitor.visitLine(lineWithCR);
-            String line = lineWithCR.endsWith("\n")?
-                            lineWithCR.substring(0, lineWithCR.length()-1):
-                                lineWithCR; 
+            String line = lineWithCR.endsWith("\n")
+                        ? lineWithCR.substring(0, lineWithCR.length()-1)
+                        : lineWithCR; 
             parserStruct = SectionHandler.handleSection(line, parserStruct);
                        
         }
@@ -162,23 +162,36 @@ public final class AceFileParser {
         },
         TRACE_DESCRIPTION("^DS\\s+"){
             
-            private final Pattern CHROMAT_FILE_PATTERN = Pattern.compile("CHROMAT_FILE:\\s+(\\S+)\\s+");
-            private final Pattern PHD_FILE_PATTERN = Pattern.compile("PHD_FILE:\\s+(\\S+)\\s+");
-            private final Pattern TIME_PATTERN = Pattern.compile("TIME:\\s+(.+:\\d\\d\\s+\\d\\d\\d\\d)");
-            private final Pattern SFF_CHROMATOGRAM_NAME_PATTERN = Pattern.compile("sff:(\\S+)?\\.sff:(\\S+)");
+            private final Pattern chromatFilePattern = Pattern.compile("CHROMAT_FILE:\\s+(\\S+)\\s+");
+            private final Pattern phdFilePattern = Pattern.compile("PHD_FILE:\\s+(\\S+)\\s+");
+            private final Pattern timePattern = Pattern.compile("TIME:\\s+(.+:\\d\\d\\s+\\d\\d\\d\\d)");
+            private final Pattern sffFakeChromatogramPattern = Pattern.compile("sff:(\\S+)?\\.sff:(\\S+)");
              
             @Override
             ParserStruct handle(Matcher qualityMatcher, ParserStruct struct, String line) throws IOException {
-                Matcher chromatogramMatcher = CHROMAT_FILE_PATTERN.matcher(line);
+                Matcher chromatogramMatcher = chromatFilePattern.matcher(line);
                 if(!chromatogramMatcher.find()){
                     throw new IOException("could not parse chromatogram name from "+line);
                 }
                 String traceName =  chromatogramMatcher.group(1);
-                Matcher phdMatcher = PHD_FILE_PATTERN.matcher(line);
+                String phdName = parsePhdName(line, traceName);
+                
+                Matcher timeMatcher = timePattern.matcher(line);
+                if(!timeMatcher.find()){
+                    throw new IOException("could not parse phd time stamp from "+ line);
+                }
+                Date date= AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parseDateTime(                                                
+                        timeMatcher.group(1)).toDate();
+                struct.visitor.visitTraceDescriptionLine(traceName, phdName, date);
+                return struct;
+            }
+
+            private String parsePhdName(String line, String traceName) {
+                Matcher phdMatcher = phdFilePattern.matcher(line);
                 String phdName;
                 if(!phdMatcher.find()){
                     //sff's some times are in the format CHROMAT_FILE: sff:[-f:]<sff file>:<read id>
-                    Matcher sffNameMatcher =SFF_CHROMATOGRAM_NAME_PATTERN.matcher(traceName);
+                    Matcher sffNameMatcher =sffFakeChromatogramPattern.matcher(traceName);
                     if(sffNameMatcher.find()){
                        
                     String sffRootName = sffNameMatcher.group(2);
@@ -192,26 +205,18 @@ public final class AceFileParser {
                 }else{
                     phdName = phdMatcher.group(1);
                 }
-                
-                Matcher timeMatcher = TIME_PATTERN.matcher(line);
-                if(!timeMatcher.find()){
-                    throw new IOException("could not parse phd time stamp from "+ line);
-                }
-                Date date= AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parseDateTime(                                                
-                        timeMatcher.group(1)).toDate();
-                struct.visitor.visitTraceDescriptionLine(traceName, phdName, date);
-                return struct;
+                return phdName;
             } 
         },
         READ_TAG("^RT\\{"){
-            private final Pattern READ_TAG_PATTERN = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}:\\d{6})");
+            private final Pattern readTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}:\\d{6})");
             
             @Override
             ParserStruct handle(Matcher qualityMatcher, ParserStruct struct, String line) throws IOException {
                 String lineWithCR;
                 lineWithCR = struct.parser.nextLine();
                 struct.visitor.visitLine(lineWithCR);
-                Matcher readTagMatcher = READ_TAG_PATTERN.matcher(lineWithCR);
+                Matcher readTagMatcher = readTagPattern.matcher(lineWithCR);
                 if(!readTagMatcher.find()){
                     throw new IllegalStateException("expected read tag infomration: " + lineWithCR); 
                 }
@@ -232,14 +237,14 @@ public final class AceFileParser {
             } 
         },
         WHOLE_ASSEMBLY_TAG("^WA\\{"){
-            private final Pattern WHOLE_ASSEMBLY_TAG_PATTERN = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\d{6}:\\d{6})");
+            private final Pattern wholeAssemblyTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\d{6}:\\d{6})");
             
             @Override
             ParserStruct handle(Matcher qualityMatcher, ParserStruct struct, String line) throws IOException {
                 String lineWithCR;
                 lineWithCR = struct.parser.nextLine();
                 struct.visitor.visitLine(lineWithCR);
-                Matcher tagMatcher = WHOLE_ASSEMBLY_TAG_PATTERN.matcher(lineWithCR);
+                Matcher tagMatcher = wholeAssemblyTagPattern.matcher(lineWithCR);
                 if(!tagMatcher.find()){
                     throw new IllegalStateException("expected whole assembly tag information: " + lineWithCR); 
                 }
@@ -248,6 +253,14 @@ public final class AceFileParser {
                 Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
                         tagMatcher.group(3)).toDate();
                                             
+                StringBuilder data = parseWholeAssemblyTagData(struct);
+                struct.visitor.visitWholeAssemblyTag(type, creator, creationDate, data.toString());
+                return struct;
+            }
+
+            private StringBuilder parseWholeAssemblyTagData(ParserStruct struct)
+                    throws IOException {
+                String lineWithCR;
                 boolean doneTag =false;
                 StringBuilder data = new StringBuilder();
                 while(!doneTag && struct.parser.hasNextLine()){
@@ -263,19 +276,18 @@ public final class AceFileParser {
                 if(!doneTag){
                     throw new IllegalStateException("unexpected EOF, Whole Assembly Tag not closed!"); 
                 }
-                struct.visitor.visitWholeAssemblyTag(type, creator, creationDate, data.toString());
-                return struct;
+                return data;
             } 
         },
         CONSENSUS_TAG("^CT\\{"){
-            private final Pattern CONSENSUS_TAG_PATTERN = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}:\\d{6})(\\s+(noTrans))?");
+            private final Pattern consensusTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}:\\d{6})(\\s+(noTrans))?");
             
             @Override
             ParserStruct handle(Matcher qualityMatcher, ParserStruct struct, String line) throws IOException {
                 String lineWithCR;
                 lineWithCR = struct.parser.nextLine();
                 struct.visitor.visitLine(lineWithCR);
-                Matcher tagMatcher = CONSENSUS_TAG_PATTERN.matcher(lineWithCR);
+                Matcher tagMatcher = consensusTagPattern.matcher(lineWithCR);
                 if(!tagMatcher.find()){
                     throw new IllegalStateException("expected read tag infomration: " + lineWithCR); 
                 }
@@ -293,6 +305,15 @@ public final class AceFileParser {
                 
                 boolean doneTag =false;
                 boolean inComment=false;
+                
+                parseConsensusTagData(struct, doneTag, inComment);
+                struct.visitor.visitEndConsensusTag();
+                return struct;
+            }
+
+            private void parseConsensusTagData(ParserStruct struct,
+                    boolean doneTag, boolean inComment) throws IOException {
+                String lineWithCR;
                 StringBuilder consensusComment=null;
                 while(!doneTag && struct.parser.hasNextLine()){
                     lineWithCR = struct.parser.nextLine();
@@ -319,8 +340,6 @@ public final class AceFileParser {
                 if(!doneTag){
                     throw new IllegalStateException("unexpected EOF, Consensus Tag not closed!"); 
                 }
-                struct.visitor.visitEndConsensusTag();
-                return struct;
             } 
         }
         ;
