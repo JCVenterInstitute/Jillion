@@ -29,26 +29,53 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.io.IOUtil;
 import org.jcvi.io.TextLineParser;
 import org.jcvi.sequence.SequenceDirection;
 /**
  * {@code AceFileParser} contains methods for parsing
  * ACE formatted files.
  * @author dkatzel
- *
- *
+ * @see <a href = "http://www.phrap.org/consed/distributions/README.20.0.txt">Consed documentation which contains the ACE FILE FORMAT</a>
  */
 public final class AceFileParser {
-    public static void parseAceFile(File file, AceFileVisitor visitor) throws IOException{
-        parseAceFile(new FileInputStream(file), visitor);
+    /**
+     * Parse the given aceFile and call the appropriate methods on the given AceFileVisitor.
+     * @param aceFile the ace file to parse, can not be null.
+     * @param visitor the visitor to be visited, can not be null.
+     * @throws IOException if the ace file does not exist or 
+     * if there is a problem reading the ace file .
+     * @throws NullPointerException if either the aceFile or the visitor are {@code null}.
+     */
+    public static void parseAceFile(File aceFile, AceFileVisitor visitor) throws IOException{
+        InputStream in = new FileInputStream(aceFile);
+        try{
+            parseAceFile(in, visitor);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
     }
-    
+    /**
+     * Parse the given inputStream containing ace encoded data
+     * and call the appropriate methods on the given AceFileVisitor.
+     * If the entire inputStream is parsed, then it will automatically
+     * be closed, however if there is an error while reading the inputstream,
+     * then the inputstream will be left open.
+     * @param inputStream the inputStream to parse, can not be null.
+     * @param visitor the visitor to be visited, can not be null.
+     * @throws IOException if there is a problem reading the ace file.
+     * @throws NullPointerException if either the aceFile or the visitor are {@code null}.
+     */
     public static void parseAceFile(InputStream inputStream, AceFileVisitor visitor) throws IOException{
         if(inputStream ==null){
             throw new NullPointerException("input stream can not be null");
+        }
+        if(visitor ==null){
+            throw new NullPointerException("visitor can not be null");
         }
         TextLineParser parser= new TextLineParser(new BufferedInputStream(inputStream));
         ParserStruct parserStruct = new ParserStruct(visitor, parser);
@@ -61,10 +88,12 @@ public final class AceFileParser {
             parserStruct = SectionHandler.handleSection(line, parserStruct);
                        
         }
+        //TextLineParser will automatically close stream
+        //if we get this far
         visitor.visitEndOfContig();
         visitor.visitEndOfFile();
     }
-
+    //FIXME : come up with better name
     private static class ParserStruct{
         final boolean isFirstContigInFile;
         final AceFileVisitor visitor;
@@ -79,14 +108,25 @@ public final class AceFileParser {
             this.isFirstContigInFile = isFirstContigInFile;
             this.parser = parser;
         }
+        /**
+         * Returns new ParserStruct instance but which
+         * states that a different contig is being visited. 
+         * @return a new ParserStruct object with the same 
+         * values except {@link #isFirstContigInFile} is now
+         * set to {@code false}.
+         */
         ParserStruct updateContigBeingVisited(){
             return new ParserStruct(visitor, false, parser);
         }
-      
-        
     }
-    
+    /**
+     * Each Section of an ACE file needs handled 
+     * differently.  This might require firing vistor methods
+     * or reading additional lines of text from the ace file.
+     * @author dkatzel
+     */
     private enum SectionHandler{
+        
         ACE_HEADER("^AS\\s+(\\d+)\\s+(\\d+)"){
             @Override
             ParserStruct handle(Matcher headerMatcher, ParserStruct struct, String line) {
@@ -108,6 +148,10 @@ public final class AceFileParser {
                 return struct;
             }
         },
+        /**
+         * Handles both basecalls from contig consensus as well
+         * as basecalls from reads.
+         */
         BASECALLS("^([*a-zA-Z]+)\\s*$"){
             @Override
             ParserStruct handle(Matcher basecallMatcher, ParserStruct struct, String line) {
@@ -122,7 +166,7 @@ public final class AceFileParser {
                 int numberOfBases = Integer.parseInt(contigMatcher.group(2));
                 int numberOfReads = Integer.parseInt(contigMatcher.group(3));
                 int numberOfBaseSegments = Integer.parseInt(contigMatcher.group(4));
-                boolean reverseComplimented = parseIsComplimented(contigMatcher.group(5));
+                boolean reverseComplimented = isComplimented(contigMatcher.group(5));
                 struct.visitor.visitContigHeader(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
                 return struct;
             } 
@@ -133,7 +177,7 @@ public final class AceFileParser {
             ParserStruct handle(Matcher assembledFromMatcher, ParserStruct struct, String line) {
                 String name = assembledFromMatcher.group(1);
                 final String group = assembledFromMatcher.group(2);
-                SequenceDirection dir = parseIsComplimented(group)? SequenceDirection.REVERSE : SequenceDirection.FORWARD;
+                SequenceDirection dir = isComplimented(group)? SequenceDirection.REVERSE : SequenceDirection.FORWARD;
                 int fullRangeOffset = Integer.parseInt(assembledFromMatcher.group(3));
                 struct.visitor.visitAssembledFromLine(name, dir, fullRangeOffset);
                 return struct;
@@ -341,45 +385,66 @@ public final class AceFileParser {
                     throw new IllegalStateException("unexpected EOF, Consensus Tag not closed!"); 
                 }
             } 
+        },
+        IGNORE{
+            @Override
+            ParserStruct handle(Matcher matcher, ParserStruct struct,
+                    String line) throws IOException {
+                return struct;
+            }
         }
         ;
         private static final String COMPLIMENT_STRING = "C";
+        /**
+         * All handlers are considered except IGNORE.
+         */
+        private static final EnumSet<SectionHandler> HANDLERS_TO_CONSIDER = EnumSet.complementOf(EnumSet.of(IGNORE));
         private final Pattern pattern;
+        private SectionHandler() {
+            pattern = null;
+        }
         private SectionHandler(String patternStr) {
             pattern = Pattern.compile(patternStr);
         }
-        final Matcher matcher(String line) {
+        final Matcher matcher(String line) {            
             return pattern.matcher(line);
         }
-        final boolean parseIsComplimented(final String group) {
-            return COMPLIMENT_STRING.equals(group);
+        final boolean isComplimented(final String orientation) {
+            return COMPLIMENT_STRING.equals(orientation);
         }
         abstract ParserStruct handle(Matcher matcher, ParserStruct struct, String line) throws IOException;
-    
-        private static class Results{
+        /**
+         * ResultHandler stores the SectionHandler that will 
+         * be used to handle the current section and the Matcher
+         * that matched the section (we store this so we 
+         * don't have to match the string twice).
+         * @author dkatzel
+         */
+        private static class ResultHandler{
             final SectionHandler handler;
             final Matcher matcher;
             
-            Results(SectionHandler handler, Matcher matcher) {
+            ResultHandler(SectionHandler handler, Matcher matcher) {
                 this.handler = handler;
                 this.matcher = matcher;
             }
+            ParserStruct handle(String line, ParserStruct struct) throws IOException{
+                return handler.handle(matcher, struct, line);
+            }
         }
-        private static Results findCorrectHandlerFor(String line){
-            for(SectionHandler handler : values()){
+        private static ResultHandler findCorrectHandlerFor(String line){
+            for(SectionHandler handler : HANDLERS_TO_CONSIDER){
                 Matcher matcher = handler.matcher(line);
                 if(matcher.find()){
-                    return new Results(handler,matcher);
+                    return new ResultHandler(handler,matcher);
                 }
             }
-            return null;
+            //if we don't find a handler, then we ignore it
+            return new ResultHandler(IGNORE,null);
         }
-        public static ParserStruct handleSection(String line,ParserStruct struct) throws IOException{
-            Results result = findCorrectHandlerFor(line);
-            if(result !=null){
-                return result.handler.handle(result.matcher, struct, line);
-            }
-            return struct;
+        public static ParserStruct handleSection(String line, ParserStruct struct) throws IOException{
+            return findCorrectHandlerFor(line).handle(line, struct);
+
         }
         
     }
