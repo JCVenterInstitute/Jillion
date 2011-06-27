@@ -587,7 +587,7 @@ public enum Chunk {
 				throws TraceEncoderException {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			out.write(PADDING_BYTE);
-			for(Entry<String, String> entry : ztrChromatogram.getProperties().entrySet()){
+			for(Entry<String, String> entry : ztrChromatogram.getComments().entrySet()){
 				try {
 					out.write(entry.getKey().getBytes("UTF-8"));
 					out.write(PADDING_BYTE);

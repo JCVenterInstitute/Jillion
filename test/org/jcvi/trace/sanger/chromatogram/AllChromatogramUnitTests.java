@@ -32,23 +32,19 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-
         TestChannel.class,
         TestChannelGroup.class,
-
+        TestSignalStrength.class,
         TestBasicChromatogram.class,
         TestEncodedByteData.class,
-        TestEncodedShortData.class,
-        
-        AllSCFUnitTests.class,
-        
-        AllZTRUnitTests.class,
-        
+        TestEncodedShortData.class,        
+        AllSCFUnitTests.class,        
+        AllZTRUnitTests.class,        
         TestConvertZtr2Scf.class,
         TestMixAndMatchChromatogramParsers.class,
         AllAbiUnitTests.class,
         TestChromatogramFileParser.class,
-        TestChromatogram2Fasta.class
+        TestChromatogram2Fasta.class        
     }
     )
 public class AllChromatogramUnitTests {

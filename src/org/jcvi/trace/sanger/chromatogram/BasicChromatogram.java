@@ -65,7 +65,7 @@ public class BasicChromatogram implements Chromatogram {
                 c.getQualities(),
                 c.getPeaks(),
                c.getChannelGroup(),
-                c.getProperties());
+                c.getComments());
     }
     public BasicChromatogram(NucleotideEncodedGlyphs basecalls,QualityEncodedGlyphs qualities, Peaks peaks,
             ChannelGroup channelGroup){
@@ -73,18 +73,18 @@ public class BasicChromatogram implements Chromatogram {
     }
     public BasicChromatogram(String basecalls, byte[] qualities,Peaks peaks,
             ChannelGroup channelGroup,
-            Map<String,String> properties){
+            Map<String,String> comments){
         this(new DefaultNucleotideEncodedGlyphs( NucleotideGlyph.getGlyphsFor(basecalls)),
                 new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,PhredQuality.valueOf(qualities)),
                 peaks,
-                     channelGroup, properties);
+                     channelGroup, comments);
     }
     public BasicChromatogram(NucleotideEncodedGlyphs basecalls, QualityEncodedGlyphs qualities,Peaks peaks,
            ChannelGroup channelGroup,
-           Map<String,String> properties){
-        canNotBeNull(basecalls, peaks, channelGroup, properties);
+           Map<String,String> comments){
+        canNotBeNull(basecalls, peaks, channelGroup, comments);
         this.peaks = peaks;        
-        this.properties = properties;
+        this.properties = comments;
         this.channelGroup =channelGroup;
         this.basecalls = basecalls;
         this.qualities = qualities;
@@ -107,7 +107,7 @@ public class BasicChromatogram implements Chromatogram {
         return peaks;
     }
 
-    public Map<String,String> getProperties() {
+    public Map<String,String> getComments() {
         return properties;
     }
 
@@ -143,7 +143,7 @@ public class BasicChromatogram implements Chromatogram {
         return CommonUtil.similarTo(getBasecalls(), other.getBasecalls())
         && CommonUtil.similarTo(getPeaks(), other.getPeaks())
         && CommonUtil.similarTo(getChannelGroup(), other.getChannelGroup())
-        && CommonUtil.similarTo(getProperties(), other.getProperties());
+        && CommonUtil.similarTo(getComments(), other.getComments());
     }
 
 

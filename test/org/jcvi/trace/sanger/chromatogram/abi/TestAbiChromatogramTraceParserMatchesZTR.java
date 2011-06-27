@@ -54,7 +54,7 @@ public class TestAbiChromatogramTraceParserMatchesZTR {
         assertEquals(expectedZTR.getQualities(), actualAbi.getQualities());
         assertEquals(expectedZTR.getChannelGroup(), actualAbi.getChannelGroup());
         assertEquals(expectedZTR.getNumberOfTracePositions(), actualAbi.getNumberOfTracePositions());
-        assertEquals(expectedZTR.getProperties(), actualAbi.getProperties());
+        assertEquals(expectedZTR.getComments(), actualAbi.getComments());
     
         
     }

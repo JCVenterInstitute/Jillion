@@ -132,9 +132,9 @@ public class EncodedByteData {
      */
     @Override
     public int hashCode() {
-        final int PRIME = 31;
+        final int primer = 31;
         int result = 1;
-        result = PRIME * result + Arrays.hashCode(data);
+        result = primer * result + Arrays.hashCode(data);
         return result;
     }
     /* (non-Javadoc)

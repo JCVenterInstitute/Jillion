@@ -67,7 +67,7 @@ public class TestSCFChromatogram {
         assertEquals(basecalls, sut.getBasecalls());
         assertEquals(mockPeaks, sut.getPeaks());
         assertEquals(mockChannelGroup, sut.getChannelGroup());
-        assertEquals(expectedProperties, sut.getProperties());
+        assertEquals(expectedProperties, sut.getComments());
         assertEquals(mockInsertionConfidence,sut.getInsertionConfidence());
         assertEquals(mockDeletionConfidence, sut.getDeletionConfidence());
         assertEquals(mockSubstitutionConfidence, sut.getSubstitutionConfidence());
