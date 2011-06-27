@@ -76,7 +76,7 @@ public class CommentSectionCodec implements SectionCodec {
     @Override
     public EncodedSection encode(SCFChromatogram c, SCFHeader header)
             throws IOException {
-        Map<String,String> props =c.getProperties();
+        Map<String,String> props =c.getComments();
         if(props ==null){
             header.setCommentSize(0);
             return new EncodedSection(null,Section.COMMENTS);

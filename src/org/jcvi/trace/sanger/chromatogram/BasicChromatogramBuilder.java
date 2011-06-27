@@ -87,7 +87,7 @@ public final class BasicChromatogramBuilder {
        this(NucleotideGlyph.convertToString(copy.getBasecalls().decode()),
        ShortGlyph.toArray(copy.getPeaks().getData().decode()),
        copy.getChannelGroup(),
-       copy.getProperties()
+       copy.getComments()
        );
         
         }

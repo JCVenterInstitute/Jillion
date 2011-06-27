@@ -280,7 +280,7 @@ public final class ChromatogramXMLSerializer {
                    new EncodedByteData(PhredQuality.toArray(chromatogram.getQualities().decode())).encodeData(),
                    chromatogram.getPeaks(),
                    chromatogram.getChannelGroup(),
-                   chromatogram.getProperties(),
+                   chromatogram.getComments(),
                   } );
            }
        }

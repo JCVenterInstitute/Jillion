@@ -79,7 +79,7 @@ public class TestTEXTChunk {
     	@Test
         public void encode() throws TraceEncoderException, TraceDecoderException{
         	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
-        	expect(mockChromatogram.getProperties()).andReturn(expected);
+        	expect(mockChromatogram.getComments()).andReturn(expected);
         	
         	replay(mockChromatogram);
         	byte[] actual =sut.encodeChunk(mockChromatogram);

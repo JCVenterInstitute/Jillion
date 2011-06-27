@@ -34,7 +34,7 @@ public class TestCommentSectionEncoder extends AbstractTestCommentSection{
 
     @Test
     public void valid() throws IOException{
-        expect(mockChroma.getProperties()).andReturn(expectedComments);
+        expect(mockChroma.getComments()).andReturn(expectedComments);
         final String expectedCommentAsString = this.convertPropertiesToSCFComment(expectedComments);
         mockHeader.setCommentSize(expectedCommentAsString.length());
         replay(mockChroma,mockHeader);

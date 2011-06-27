@@ -137,8 +137,8 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     * {@inheritDoc}
     */
     @Override
-    public Map<String,String> getProperties() {
-        return delegate.getProperties();
+    public Map<String,String> getComments() {
+        return delegate.getComments();
     }
 
     /**

@@ -152,12 +152,12 @@ public class LargePhdDataStore implements PhdDataStore{
         
         try{
             scanner = new Scanner(phdFile);
-            final Pattern BEGIN_SEQUENCE_PATTERN = Pattern.compile("BEGIN_SEQUENCE\\s+"+id);
+            final Pattern beginSequencePattern = Pattern.compile("BEGIN_SEQUENCE\\s+"+id);
             String line = scanner.nextLine();
-            Matcher matcher = BEGIN_SEQUENCE_PATTERN.matcher(line);
+            Matcher matcher = beginSequencePattern.matcher(line);
             while(!matcher.find() && scanner.hasNextLine()){
                 line = scanner.nextLine();
-                matcher = BEGIN_SEQUENCE_PATTERN.matcher(line);
+                matcher = beginSequencePattern.matcher(line);
             }
             if(!scanner.hasNextLine()){
                 return null;

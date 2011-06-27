@@ -26,11 +26,27 @@ package org.jcvi.trace.sanger.chromatogram;
 import java.util.Map;
 
 import org.jcvi.trace.sanger.SangerTrace;
-
+/**
+ * {@code Chromatogram} is an interface
+ * for SangerTrace objects that also contains
+ * {@link ChannelGroup} data and optional
+ * comments generated from the sequencing machine.
+ * @author dkatzel
+ *
+ *
+ */
 public interface Chromatogram extends SangerTrace{
    
-    
+    /**
+     * Get the {@link ChannelGroup} of this Chroamtogram.
+     * @return a ChannelGroup, never null.
+     */
     ChannelGroup getChannelGroup();
-    Map<String,String> getProperties();
+    /**
+     * Get the key-value pair comments associated with this chromatogram.
+     * @return a Map of comments by key, may be empty but will
+     * never be null.
+     */
+    Map<String,String> getComments();
 
 }
