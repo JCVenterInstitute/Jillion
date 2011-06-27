@@ -101,9 +101,6 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
             int numberOfReads, int numberOfBaseSegments,
             boolean reverseComplimented) {
         throwExceptionIfInitialized();
-        if(!readingConsensus){
-            visitEndOfContig();           
-        }
         currentContigId = contigId;
         currentAssembledFromMap = new HashMap<String, AssembledFrom>();
         readingConsensus = true;
