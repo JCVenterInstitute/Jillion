@@ -137,21 +137,28 @@ public final class SignalStrength {
     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()){
             return false;
+        }
         SignalStrength other = (SignalStrength) obj;
-        if (aSignal != other.aSignal)
+        if (aSignal != other.aSignal){
             return false;
-        if (cSignal != other.cSignal)
+        }
+        if (cSignal != other.cSignal){
             return false;
-        if (gSignal != other.gSignal)
+        }
+        if (gSignal != other.gSignal){
             return false;
-        if (tSignal != other.tSignal)
+        }          
+        if (tSignal != other.tSignal){
             return false;
+        }
         return true;
     }
 

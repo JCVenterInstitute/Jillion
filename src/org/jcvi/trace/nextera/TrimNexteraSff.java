@@ -154,20 +154,5 @@ public class TrimNexteraSff {
         }
         
     }
-    
-    public static void main(String[] args) throws IOException{
-        File sffFile = new File(
-                "/usr/local/seq454/2010_10_19/R_2010_10_19_10_35_13_FLX02080319_Administrator_10"+
-                "1910R1BBAY62R2FIBRBAC/D_2010_10_19_22_43_31_dell-2-0-"+
-                "1_signalProcessing/sff/GPQK0ZM02.sff");
-        
-        File outputSffFile = new File("/usr/local/scratch/dkatzel/GPQK0ZM02.trimmed.sff_3");
-        System.out.println(sffFile.getAbsolutePath());
-        
-        File tempFile = File.createTempFile("nextera", "sff.reads", new File("/usr/local/scratch/dkatzel"));
-        OutputStream out = new FileOutputStream(outputSffFile);
-        TrimNexteraSff trimmer = new TrimNexteraSff(sffFile, tempFile);
-        trimmer.trimAndWriteNewSff(out);
-        IOUtil.closeAndIgnoreErrors(out);
-    }
+  
 }
