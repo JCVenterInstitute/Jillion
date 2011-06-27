@@ -254,9 +254,9 @@ public class Cas2Consed3 {
              out.write(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads).getBytes());
              IOUtils.copyLarge(new FileInputStream(tempAce), out);
              IOUtil.closeAndIgnoreErrors(out);
-             tempAce.delete();
+             IOUtil.deleteIgnoreError(tempAce);
              if(!makePhdBall){
-                 phdFile.delete();
+                 IOUtil.deleteIgnoreError(phdFile);
              }
              else{
                  consedOutputDir.createNewSymLink("../phdball_dir/"+phdFile.getName(), 
