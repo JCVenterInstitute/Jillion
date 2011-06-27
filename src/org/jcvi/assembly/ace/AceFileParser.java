@@ -77,36 +77,43 @@ public final class AceFileParser {
         if(visitor ==null){
             throw new NullPointerException("visitor can not be null");
         }
-        TextLineParser parser= new TextLineParser(new BufferedInputStream(inputStream));
-        ParserStruct parserStruct = new ParserStruct(visitor, parser);
-        while(parser.hasNextLine()){
+        ParserState parserState = new ParserState(visitor, inputStream);
+        while(!parserState.done()){
+            parserState = parserState.parseNextSection();
+        }
+        //parserState will automatically close stream
+        //if we get this far
+        visitor.visitEndOfContig();
+        visitor.visitEndOfFile();
+    }
+    private static class ParserState{
+        final boolean isFirstContigInFile;
+        final AceFileVisitor visitor;
+        final TextLineParser parser;
+        ParserState(AceFileVisitor visitor,
+                InputStream inputStream) throws IOException{
+           this(visitor, true,  new TextLineParser(new BufferedInputStream(inputStream)));
+       }
+        /**
+         * @return
+         * @throws IOException 
+         */
+        public ParserState parseNextSection() throws IOException {
             String lineWithCR = parser.nextLine();           
             visitor.visitLine(lineWithCR);
             String line = lineWithCR.endsWith("\n")
                         ? lineWithCR.substring(0, lineWithCR.length()-1)
                         : lineWithCR; 
-            parserStruct = SectionHandler.handleSection(line, parserStruct);
-                       
+            return SectionHandler.handleSection(line, this);
         }
-        //TextLineParser will automatically close stream
-        //if we get this far
-        visitor.visitEndOfContig();
-        visitor.visitEndOfFile();
-    }
-    //FIXME : come up with better name
-    private static class ParserStruct{
-        final boolean isFirstContigInFile;
-        final AceFileVisitor visitor;
-        final TextLineParser parser;
-        ParserStruct(AceFileVisitor visitor,
-                 TextLineParser parser){
-            this(visitor, true,  parser);
-        }
-        ParserStruct(AceFileVisitor visitor, boolean isFirstContigInFile,
+        ParserState(AceFileVisitor visitor, boolean isFirstContigInFile,
                TextLineParser parser) {
             this.visitor = visitor;
             this.isFirstContigInFile = isFirstContigInFile;
             this.parser = parser;
+        }
+        public boolean done(){
+            return !parser.hasNextLine();
         }
         /**
          * Returns new ParserStruct instance but which
@@ -115,8 +122,8 @@ public final class AceFileParser {
          * values except {@link #isFirstContigInFile} is now
          * set to {@code false}.
          */
-        ParserStruct updateContigBeingVisited(){
-            return new ParserStruct(visitor, false, parser);
+        ParserState updateContigBeingVisited(){
+            return new ParserState(visitor, false, parser);
         }
     }
     /**
@@ -129,7 +136,7 @@ public final class AceFileParser {
         
         ACE_HEADER("^AS\\s+(\\d+)\\s+(\\d+)"){
             @Override
-            ParserStruct handle(Matcher headerMatcher, ParserStruct struct, String line) {
+            ParserState handle(Matcher headerMatcher, ParserState struct, String line) {
                 
                 int numberOfContigs = Integer.parseInt(headerMatcher.group(1));
                 int totalNumberOfReads = Integer.parseInt(headerMatcher.group(2));
@@ -139,7 +146,7 @@ public final class AceFileParser {
         },
         CONSENSUS_QUALITIES("^BQ\\s*"){
             @Override
-            ParserStruct handle(Matcher matcher, ParserStruct struct, String line) {
+            ParserState handle(Matcher matcher, ParserState struct, String line) {
                 struct.visitor.visitConsensusQualities();
                 return struct;
             }
@@ -150,15 +157,15 @@ public final class AceFileParser {
          */
         BASECALLS("^([*a-zA-Z]+)\\s*$"){
             @Override
-            ParserStruct handle(Matcher basecallMatcher, ParserStruct struct, String line) {
+            ParserState handle(Matcher basecallMatcher, ParserState struct, String line) {
                 struct.visitor.visitBasesLine(basecallMatcher.group(1));
                 return struct;
             } 
         },
         CONTIG_HEADER("^CO\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+([UC])"){
             @Override
-            ParserStruct handle(Matcher contigMatcher, ParserStruct struct, String line) {
-                ParserStruct ret = struct;
+            ParserState handle(Matcher contigMatcher, ParserState struct, String line) {
+                ParserState ret = struct;
                 if(!struct.isFirstContigInFile){                   
                     ret.visitor.visitEndOfContig();
                 }
@@ -175,7 +182,7 @@ public final class AceFileParser {
         },
         ASSEMBLED_FROM("^AF\\s+(\\S+)\\s+([U|C])\\s+(-?\\d+)"){
             @Override
-            ParserStruct handle(Matcher assembledFromMatcher, ParserStruct struct, String line) {
+            ParserState handle(Matcher assembledFromMatcher, ParserState struct, String line) {
                 String name = assembledFromMatcher.group(1);
                 final String group = assembledFromMatcher.group(2);
                 SequenceDirection dir = isComplimented(group)? SequenceDirection.REVERSE : SequenceDirection.FORWARD;
@@ -186,7 +193,7 @@ public final class AceFileParser {
         },
         READ_HEADER("^RD\\s+(\\S+)\\s+(\\d+)"){
             @Override
-            ParserStruct handle(Matcher readMatcher, ParserStruct struct, String line) {
+            ParserState handle(Matcher readMatcher, ParserState struct, String line) {
                 String readId = readMatcher.group(1);
                 int fullLength = Integer.parseInt(readMatcher.group(2));
                 struct.visitor.visitReadHeader(readId, fullLength);
@@ -195,7 +202,7 @@ public final class AceFileParser {
         },
         READ_QUALITY("^QA\\s+(-?\\d+)\\s+(-?\\d+)\\s+(\\d+)\\s+(\\d+)"){
             @Override
-            ParserStruct handle(Matcher qualityMatcher, ParserStruct struct, String line) {
+            ParserState handle(Matcher qualityMatcher, ParserState struct, String line) {
                 int clearLeft = Integer.parseInt(qualityMatcher.group(1));
                 int clearRight = Integer.parseInt(qualityMatcher.group(2));
                 
@@ -213,7 +220,7 @@ public final class AceFileParser {
             private final Pattern sffFakeChromatogramPattern = Pattern.compile("sff:(\\S+)?\\.sff:(\\S+)");
              
             @Override
-            ParserStruct handle(Matcher qualityMatcher, ParserStruct struct, String line) throws IOException {
+            ParserState handle(Matcher qualityMatcher, ParserState struct, String line) throws IOException {
                 Matcher chromatogramMatcher = chromatFilePattern.matcher(line);
                 if(!chromatogramMatcher.find()){
                     throw new IOException("could not parse chromatogram name from "+line);
@@ -257,7 +264,7 @@ public final class AceFileParser {
             private final Pattern readTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}:\\d{6})");
             
             @Override
-            ParserStruct handle(Matcher qualityMatcher, ParserStruct struct, String line) throws IOException {
+            ParserState handle(Matcher qualityMatcher, ParserState struct, String line) throws IOException {
                 String lineWithCR;
                 lineWithCR = struct.parser.nextLine();
                 struct.visitor.visitLine(lineWithCR);
@@ -285,7 +292,7 @@ public final class AceFileParser {
             private final Pattern wholeAssemblyTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\d{6}:\\d{6})");
             
             @Override
-            ParserStruct handle(Matcher qualityMatcher, ParserStruct struct, String line) throws IOException {
+            ParserState handle(Matcher qualityMatcher, ParserState struct, String line) throws IOException {
                 String lineWithCR;
                 lineWithCR = struct.parser.nextLine();
                 struct.visitor.visitLine(lineWithCR);
@@ -303,7 +310,7 @@ public final class AceFileParser {
                 return struct;
             }
 
-            private StringBuilder parseWholeAssemblyTagData(ParserStruct struct)
+            private StringBuilder parseWholeAssemblyTagData(ParserState struct)
                     throws IOException {
                 String lineWithCR;
                 boolean doneTag =false;
@@ -328,7 +335,7 @@ public final class AceFileParser {
             private final Pattern consensusTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}:\\d{6})(\\s+(noTrans))?");
             
             @Override
-            ParserStruct handle(Matcher qualityMatcher, ParserStruct struct, String line) throws IOException {
+            ParserState handle(Matcher qualityMatcher, ParserState struct, String line) throws IOException {
                 String lineWithCR;
                 lineWithCR = struct.parser.nextLine();
                 struct.visitor.visitLine(lineWithCR);
@@ -356,7 +363,7 @@ public final class AceFileParser {
                 return struct;
             }
 
-            private void parseConsensusTagData(ParserStruct struct,
+            private void parseConsensusTagData(ParserState struct,
                     boolean doneTag, boolean inComment) throws IOException {
                 String lineWithCR;
                 StringBuilder consensusComment=null;
@@ -389,7 +396,7 @@ public final class AceFileParser {
         },
         IGNORE{
             @Override
-            ParserStruct handle(Matcher matcher, ParserStruct struct,
+            ParserState handle(Matcher matcher, ParserState struct,
                     String line) throws IOException {
                 return struct;
             }
@@ -413,7 +420,7 @@ public final class AceFileParser {
         final boolean isComplimented(final String orientation) {
             return COMPLIMENT_STRING.equals(orientation);
         }
-        abstract ParserStruct handle(Matcher matcher, ParserStruct struct, String line) throws IOException;
+        abstract ParserState handle(Matcher matcher, ParserState struct, String line) throws IOException;
         /**
          * ResultHandler stores the SectionHandler that will 
          * be used to handle the current section and the Matcher
@@ -429,7 +436,7 @@ public final class AceFileParser {
                 this.handler = handler;
                 this.matcher = matcher;
             }
-            ParserStruct handle(String line, ParserStruct struct) throws IOException{
+            ParserState handle(String line, ParserState struct) throws IOException{
                 return handler.handle(matcher, struct, line);
             }
         }
@@ -443,7 +450,7 @@ public final class AceFileParser {
             //if we don't find a handler, then we ignore it
             return new ResultHandler(IGNORE,null);
         }
-        public static ParserStruct handleSection(String line, ParserStruct struct) throws IOException{
+        public static ParserState handleSection(String line, ParserState struct) throws IOException{
             return findCorrectHandlerFor(line).handle(line, struct);
 
         }
