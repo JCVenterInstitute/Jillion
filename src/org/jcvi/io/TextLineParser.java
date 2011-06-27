@@ -24,7 +24,16 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.util.FIFOQueue;
-
+/**
+ * {@code TextLineParser} can read lines from on {@link InputStream}.  The main
+ * difference between TextLineParser and other similar JDK classes is TextLineParser
+ * will include the end of line characters in the {@link #getNextLine()}
+ * methods.  Most JDK classes chop off these characters and the few classes
+ * that could could be configured to include these characters are slow.
+ * @author dkatzel
+ *
+ *
+ */
 public class TextLineParser implements Closeable{
 
 	private int endOfLine;
