@@ -25,15 +25,15 @@ package org.jcvi.glyph.num;
 
 public class DefaultByteGlyphCodec extends AbstractByteGlyphCodec<ByteGlyph>{
 
-    private final ByteGlyphFactory<ByteGlyph> FACTORY;
+    private final ByteGlyphFactory<ByteGlyph> factory;
    
     public DefaultByteGlyphCodec(ByteGlyphFactory<ByteGlyph> factory){
-        this.FACTORY = factory;
+        this.factory = factory;
     }
 
     @Override
     protected ByteGlyph getValueOf(byte b) {
-        return FACTORY.getGlyphFor(b);
+        return factory.getGlyphFor(b);
     }
 
     
