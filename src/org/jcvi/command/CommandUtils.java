@@ -27,7 +27,7 @@ package org.jcvi.command;
 public class CommandUtils {
 
     /** An array of characters that should be escapeed in shell strings. */
-    private static final char[] UNSAFE_CHARS = { '\\', '\''};
+    private static final char[] UNSAFE_CHARS = {'\\', '\''};
 
     /**
      * Produces a quoted and escaped version of a string for .  This ensures the string will be

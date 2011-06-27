@@ -46,7 +46,7 @@ final class ProbabilityStruct{
     public Double getProbabilityFor(NucleotideGlyph base){
         return probabilityMap.get(base);
     }
-    public ProbabilityStruct (NucleotideGlyph consensus,int cumulativeQualityValue){
+    public ProbabilityStruct(NucleotideGlyph consensus,int cumulativeQualityValue){
         double probability = Math.pow(ONE_TENTH, cumulativeQualityValue*ONE_TENTH);
         probabilityMap = new EnumMap<NucleotideGlyph, Double>(NucleotideGlyph.class);
         for(NucleotideGlyph currentBase : BASES_TO_CONSIDER){

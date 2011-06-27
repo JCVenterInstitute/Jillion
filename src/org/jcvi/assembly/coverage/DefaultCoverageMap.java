@@ -83,7 +83,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
                 return false;
             }
             for( int i=0; i<getNumberOfRegions(); i++){
-                if(! getRegion(i).equals(other.getRegion(i))){
+                if(!getRegion(i).equals(other.getRegion(i))){
                     return false;
                 }
             }
