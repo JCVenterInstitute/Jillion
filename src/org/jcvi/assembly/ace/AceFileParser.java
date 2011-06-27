@@ -130,15 +130,11 @@ public final class AceFileParser {
         ACE_HEADER("^AS\\s+(\\d+)\\s+(\\d+)"){
             @Override
             ParserStruct handle(Matcher headerMatcher, ParserStruct struct, String line) {
-                ParserStruct ret = struct;
-                if(!struct.isFirstContigInFile){
-                    ret = ret.updateContigBeingVisited();
-                    ret.visitor.visitEndOfContig();
-                }
+                
                 int numberOfContigs = Integer.parseInt(headerMatcher.group(1));
                 int totalNumberOfReads = Integer.parseInt(headerMatcher.group(2));
-                ret.visitor.visitHeader(numberOfContigs, totalNumberOfReads);
-                return ret;
+                struct.visitor.visitHeader(numberOfContigs, totalNumberOfReads);
+                return struct;
             }
         },
         CONSENSUS_QUALITIES("^BQ\\s*"){
@@ -162,13 +158,18 @@ public final class AceFileParser {
         CONTIG_HEADER("^CO\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+([UC])"){
             @Override
             ParserStruct handle(Matcher contigMatcher, ParserStruct struct, String line) {
+                ParserStruct ret = struct;
+                if(!struct.isFirstContigInFile){                   
+                    ret.visitor.visitEndOfContig();
+                }
+                ret = ret.updateContigBeingVisited();
                 String contigId = contigMatcher.group(1);
                 int numberOfBases = Integer.parseInt(contigMatcher.group(2));
                 int numberOfReads = Integer.parseInt(contigMatcher.group(3));
                 int numberOfBaseSegments = Integer.parseInt(contigMatcher.group(4));
                 boolean reverseComplimented = isComplimented(contigMatcher.group(5));
-                struct.visitor.visitContigHeader(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
-                return struct;
+                ret.visitor.visitContigHeader(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
+                return ret;
             } 
             
         },
