@@ -47,11 +47,11 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
     static final String CREATE_TABLE = "CREATE TABLE DATA(id VARCHAR, data VARBINARY)";
 
     
-    private PreparedStatement INSERT_STATEMENT;
-    private PreparedStatement GET_STATEMENT;
-    private PreparedStatement CONTAINS_STATEMENT;
-    private PreparedStatement SIZE_STATEMENT;
-    private PreparedStatement IDS_STATEMENT;
+    private PreparedStatement insertStatement;
+    private PreparedStatement getStatement;
+    private PreparedStatement containsStatement;
+    private PreparedStatement sizeStatement;
+    private PreparedStatement idsStatement;
     
     private final Connection connection;
     private final String fileDatabasePath;
@@ -104,11 +104,11 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
         try {
             statement =connection.createStatement();
             statement.executeUpdate(CREATE_TABLE);
-            INSERT_STATEMENT = connection.prepareStatement("INSERT INTO DATA(id, data) VALUES(?, ?)");
-            GET_STATEMENT = connection.prepareStatement("select data from DATA where id=?");
-            CONTAINS_STATEMENT = connection.prepareStatement("select 1 from DATA where id=?");
-            SIZE_STATEMENT = connection.prepareStatement("select COUNT(id) from DATA");
-            IDS_STATEMENT = connection.prepareStatement("select id from DATA");
+            insertStatement = connection.prepareStatement("INSERT INTO DATA(id, data) VALUES(?, ?)");
+            getStatement = connection.prepareStatement("select data from DATA where id=?");
+            containsStatement = connection.prepareStatement("select 1 from DATA where id=?");
+            sizeStatement = connection.prepareStatement("select COUNT(id) from DATA");
+            idsStatement = connection.prepareStatement("select id from DATA");
         }
         catch(SQLException e){
             throw new DataStoreException("error initializing H2 datastore",e);
@@ -119,9 +119,9 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
 
     protected void insertRecord(String id, byte[] data) throws SQLException{
 
-                INSERT_STATEMENT.setString(1, id);
-                INSERT_STATEMENT.setBytes(2, data);
-                INSERT_STATEMENT.execute();
+                insertStatement.setString(1, id);
+                insertStatement.setBytes(2, data);
+                insertStatement.execute();
 
     }
     
@@ -130,8 +130,8 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
     public boolean contains(String id) throws DataStoreException {
         ResultSet resultSet=null;
         try {
-            CONTAINS_STATEMENT.setString(1, id);
-            resultSet =CONTAINS_STATEMENT.executeQuery();
+            containsStatement.setString(1, id);
+            resultSet =containsStatement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {
             throw new DataStoreException("error reading DataStore", e);
@@ -151,8 +151,8 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
     protected byte[] getData(String id) throws SQLException{
         ResultSet resultSet=null;
         try {
-            GET_STATEMENT.setString(1, id);
-            resultSet =GET_STATEMENT.executeQuery();
+            getStatement.setString(1, id);
+            resultSet =getStatement.executeQuery();
             if(resultSet.next()){
                 return resultSet.getBytes(1);
             }
@@ -177,7 +177,7 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
     public int size() throws DataStoreException {
         ResultSet resultSet=null;
         try {
-            resultSet =SIZE_STATEMENT.executeQuery();
+            resultSet =sizeStatement.executeQuery();
             resultSet.next();
             return resultSet.getInt(1);
         } catch (SQLException e) {
@@ -190,11 +190,11 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
 
     @Override
     public void close() throws IOException {
-        IOUtil.closeAndIgnoreErrors(CONTAINS_STATEMENT);
-        IOUtil.closeAndIgnoreErrors(IDS_STATEMENT);
-        IOUtil.closeAndIgnoreErrors(GET_STATEMENT);
-        IOUtil.closeAndIgnoreErrors(SIZE_STATEMENT);
-        IOUtil.closeAndIgnoreErrors(INSERT_STATEMENT);
+        IOUtil.closeAndIgnoreErrors(containsStatement);
+        IOUtil.closeAndIgnoreErrors(idsStatement);
+        IOUtil.closeAndIgnoreErrors(getStatement);
+        IOUtil.closeAndIgnoreErrors(sizeStatement);
+        IOUtil.closeAndIgnoreErrors(insertStatement);
         IOUtil.closeAndIgnoreErrors(connection);
         if(usingFiles){
             //try to delete. ignore failures...
@@ -209,7 +209,7 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
     @Override
     public boolean isClosed() throws DataStoreException {
         try {
-            return CONTAINS_STATEMENT.isClosed();
+            return containsStatement.isClosed();
         } catch (SQLException e) {
             throw new DataStoreException("error checking if datastore is closed",e);
         }
@@ -234,7 +234,7 @@ public abstract class AbstractH2BinaryDataStore<T> implements DataStore<T>{
         private final Object endOfIterator = new Object();
         private Object nextObject;
         private IdIterator() throws SQLException{
-            resultSet = IDS_STATEMENT.executeQuery();
+            resultSet = idsStatement.executeQuery();
             getNextObject();
         }
         

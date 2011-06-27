@@ -177,7 +177,7 @@ public class LargePhdDataStore implements PhdDataStore{
     } 
     
     private class PhdIdIterator extends AbstractLargeIdIterator{
-        final Pattern BEGIN_SEQUENCE_PATTERN = Pattern.compile("BEGIN_SEQUENCE\\s+(\\S+)");
+        final Pattern beginSequencePattern = Pattern.compile("BEGIN_SEQUENCE\\s+(\\S+)");
         
         private PhdIdIterator() throws FileNotFoundException{
                 super(phdFile);
@@ -196,7 +196,7 @@ public class LargePhdDataStore implements PhdDataStore{
 
         @Override
         protected String getNextId(Scanner scanner) {
-            Matcher matcher = BEGIN_SEQUENCE_PATTERN.matcher(scanner.nextLine());
+            Matcher matcher = beginSequencePattern.matcher(scanner.nextLine());
             matcher.find();
             return  matcher.group(1);
         }

@@ -32,7 +32,7 @@ import org.jcvi.glyph.GlyphFactory;
 
 public abstract class ByteGlyphFactory<G extends ByteGlyph> implements GlyphFactory<G, Byte>{
 
-    private final Map<Number, G> MAP = new HashMap<Number, G>();
+    private final Map<Number, G> map = new HashMap<Number, G>();
     
     @Override
     public List<G> getGlyphsFor(List<Byte> s) {
@@ -53,11 +53,11 @@ public abstract class ByteGlyphFactory<G extends ByteGlyph> implements GlyphFact
 
     @Override
     public synchronized G getGlyphFor(Byte b) {
-        if(MAP.containsKey(b)){
-            return MAP.get(b);
+        if(map.containsKey(b)){
+            return map.get(b);
         }
         G newGlyph = createNewGlyph(b);
-        MAP.put(b, newGlyph);
+        map.put(b, newGlyph);
         return newGlyph;
     }
 
