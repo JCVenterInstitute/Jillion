@@ -67,7 +67,7 @@ public class HttpMultipartFormStream
     private static final Charset ASCII = Charset.forName("ASCII");
 
     /** The standard line termination sequence. */
-    private static final byte[] CRLF =  { 0x0D, 0x0A };
+    private static final byte[] CRLF =  {0x0D, 0x0A };
 
     /** The {@link OutputStream} to write the data to. */
     private final OutputStream out;
@@ -195,7 +195,7 @@ public class HttpMultipartFormStream
      */
     public void writeFile(String name, String filename, InputStream data) throws IOException
     {
-        this.writePartHeader(name, new String[] { "filename", filename });
+        this.writePartHeader(name, new String[] {"filename", filename });
         this.writeString("Content-Type: application/octet-stream");
         this.writeCRLF();
         this.writeCRLF();
