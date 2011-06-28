@@ -115,6 +115,10 @@ public final class StringUtilities
             this.suffix = suffix;
             return this;
         }  
+        @Override
+        public String toString(){
+            return build();
+        }
         /**
         * {@inheritDoc}
         */
