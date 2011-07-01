@@ -26,15 +26,12 @@ package org.jcvi;
 import junit.framework.Test;
 
 import org.jcvi.align.AllAlignTests;
-import org.jcvi.app.AllAppUnitTests;
 import org.jcvi.assembly.AllAssemblyUnitTests;
 import org.jcvi.assembly.ace.AllAceUnitTests;
-import org.jcvi.command.AllCommandUnitTests;
 import org.jcvi.datastore.AllDataStoreUnitTests;
 import org.jcvi.fastX.AllFastXTests;
 import org.jcvi.glyph.AllGlyphUnitTests;
 import org.jcvi.glyph.qualClass.AllQualityClassUnitTests;
-import org.jcvi.http.AllHttpUnitTests;
 import org.jcvi.io.AllIOUnitTests;
 import org.jcvi.ncbi.AllNcbiUnitTests;
 import org.jcvi.sequence.AllSequencingTests;
@@ -59,8 +56,6 @@ import org.junit.runners.Suite.SuiteClasses;
         TestRangeIterator.class,
         TestRangeComparatorShortestToLongest.class,
         TestRangeComparatorLongestToShortest.class,
-        
-        AllHttpUnitTests.class,
         AllGlyphUnitTests.class,
         AllFastXTests.class,
         AllAceUnitTests.class,
@@ -72,8 +67,6 @@ import org.junit.runners.Suite.SuiteClasses;
         AllUtilUnitTests.class,
         AllDataStoreUnitTests.class,
         AllAlignTests.class,
-        AllAppUnitTests.class,
-        AllCommandUnitTests.class,
         AllNcbiUnitTests.class
     }
 )

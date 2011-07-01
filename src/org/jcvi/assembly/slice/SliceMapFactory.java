@@ -28,8 +28,8 @@ import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 
-public interface SliceMapFactory {
+public interface SliceMapFactory<P extends PlacedRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> {
 
-    SliceMap createNewSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
+    SliceMap createNewSliceMap(M coverageMap, 
             QualityDataStore qualityDataStore);
 }

@@ -51,14 +51,25 @@ public class LargeSliceMap extends AbstractSliceMap{
     private final Range range;
     private final Map<Long, Slice> cache;
 
-    public static <PR extends PlacedRead,C extends Contig<PR>> LargeSliceMap  create(C contig,  QualityDataStore qualityDataStore,
+    public static <PR extends PlacedRead,C extends Contig<PR>> LargeSliceMap  createFromContig(C contig,  QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, int cacheSize){
         CoverageMap<? extends CoverageRegion<PR>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
         return new LargeSliceMap(coverageMap,qualityDataStore,qualityValueStrategy,cacheSize);
     }
-    public static <PR extends PlacedRead,C extends Contig<PR>> LargeSliceMap  create(C contig,  QualityDataStore qualityDataStore,
+    public static <PR extends PlacedRead,C extends Contig<PR>> LargeSliceMap  createFromContig(C contig,  QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy){
-        return create(contig,qualityDataStore,qualityValueStrategy,DEFAULT_CACHE_SIZE);
+        return createFromContig(contig,qualityDataStore,qualityValueStrategy,DEFAULT_CACHE_SIZE);
+    }
+    
+    public static <PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> LargeSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy){
+        //compiler complained about types when I tried to delegate to fuller factory method
+        //so I need to explicitly create instance here
+        return new LargeSliceMap(coverageMap, qualityDataStore, qualityValueStrategy,DEFAULT_CACHE_SIZE);
+        
+    }
+    public static <PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> LargeSliceMap create(
+            M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy, int cacheSize){
+        return new LargeSliceMap(coverageMap, qualityDataStore, qualityValueStrategy,cacheSize);
     }
     public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
             QualityDataStore qualityDataStore,

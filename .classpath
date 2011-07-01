@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="exe"/>
-	<classpathentry excluding="bin/|bin_ant/|build-lib/|coverage/|exe-internal/|exe-test/|exe/|integration-test-internal/|integration-test/|resource/|src-internal/|src/|test-internal/|test/" kind="src" path=""/>
+	<classpathentry kind="src" path="command-src"/>
 	<classpathentry kind="src" path="exe-test"/>
 	<classpathentry kind="src" path="resource"/>
 	<classpathentry kind="src" path="src"/>
@@ -11,6 +11,9 @@
 	<classpathentry kind="src" path="test-internal"/>
 	<classpathentry kind="src" path="integration-test-internal"/>
 	<classpathentry kind="src" path="exe-internal"/>
+	<classpathentry kind="src" path="command-test"/>
+	<classpathentry kind="src" path="http-src"/>
+	<classpathentry kind="src" path="http-test"/>
 	<classpathentry exported="true" kind="lib" path="lib/hamcrest-all-1.2.jar" sourcepath="lib/hamcrest-all-1.2.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/JCVI-JavaCommon/lib/hamcrest-all-1.2.jar!/"/>

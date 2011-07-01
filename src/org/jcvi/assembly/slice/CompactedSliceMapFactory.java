@@ -16,30 +16,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 5, 2010
- *
- * @author dkatzel
- */
+
 package org.jcvi.assembly.slice;
 
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 
-public class DefaultSliceMapFactory<P extends PlacedRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> extends AbstractSliceMapFactory<P,R,M>{
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class CompactedSliceMapFactory<P extends PlacedRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> extends AbstractSliceMapFactory<P,R,M>{
 
-    public DefaultSliceMapFactory(QualityValueStrategy qualityValueStrategy) {
+    public CompactedSliceMapFactory(QualityValueStrategy qualityValueStrategy) {
         super(qualityValueStrategy);
     }
-
     @Override
-    protected SliceMap createNewSliceMap(
+    protected  SliceMap createNewSliceMap(
             M coverageMap,
                     QualityDataStore qualityDataStore, QualityValueStrategy qualityValueStrategy){
-        return DefaultSliceMap.<P,R,M>create(coverageMap, qualityDataStore, qualityValueStrategy);
+        try {
+            return CompactedSliceMap.<P,R,M>create(coverageMap, qualityDataStore, qualityValueStrategy);
+        } catch (DataStoreException e) {
+            throw new IllegalStateException("error creating slice map",e);
+        }
     }
 
 }

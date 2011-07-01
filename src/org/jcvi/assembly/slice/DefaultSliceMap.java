@@ -42,6 +42,10 @@ public class DefaultSliceMap extends AbstractSliceMap{
                         QualityValueStrategy qualityValueStrategy){
         return new DefaultSliceMap(DefaultCoverageMap.buildCoverageMap(contig), qualityDataStore, qualityValueStrategy);
     }
+    
+    public static <PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> DefaultSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy){
+        return new DefaultSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
+    }
     private final Map<Long, Slice> sliceMap = new HashMap<Long, Slice>();
     private final long size;
     public DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
