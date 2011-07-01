@@ -22,6 +22,9 @@
 	<property name ="http-src" value="http-src"/>
 	<property name ="http-test" value="http-test"/>
 	
+	<property name ="primer-design-src" value="primerDesign-src"/>
+		<property name ="primer-design-test" value="primerDesign-test"/>
+	
 	<property name ="integration-test" value="integration-test"/>
 		<property name ="integration-test-internal" value="integration-test-internal"/>
 	
@@ -83,6 +86,7 @@
     	<pathelement location="${src-internal}"/>
 		<pathelement location="${command-src}"/>
 		<pathelement location="${http-src}"/>
+		<pathelement location="${primer-design-src}"/>
     </path>
     <path id="classpath">
         <fileset dir="${lib}" includes="**/*.jar"/>
@@ -115,7 +119,8 @@
 					<src path="${integration-test}"/>
 					<src path="${integration-test-internal}"/>
 					<src path="${command-test}"/>
-					<src path="${http-test}"/>
+					<src path="${http-test}"/>					
+					<src path="${primer-design-test}"/>
 			
 	  	</javac>
 		
@@ -126,7 +131,11 @@
 			<fileset dir="${exe-internal}" excludes="**/*.java"/>
 			<fileset dir="${exe-test}" excludes="**/*.java"/>
 			<fileset dir="${integration-test}" excludes="**/*.java"/>
-						<fileset dir="${integration-test-internal}" excludes="**/*.java"/>
+			<fileset dir="${integration-test-internal}" excludes="**/*.java"/>
+			
+			<fileset dir="${command-test}" excludes="**/*.java"/>
+			<fileset dir="${http-test}" excludes="**/*.java"/>
+			<fileset dir="${primer-design-test}" excludes="**/*.java"/>
 		</copy>
 
 	 </target>
@@ -144,6 +153,7 @@
 				<src path="${exe-internal}"/>
 				<src path="${command-src}"/>
 				<src path="${http-src}"/>
+				<src path="${primer-design-src}"/>
 		  	</javac>
 			<emma enabled="${emma.enabled}" >
 								      <instr instrpath="${bin}"
@@ -155,6 +165,9 @@
 			<copy todir="${bin}">
 				<fileset dir="${src}" excludes="**/*.java"/>
 				<fileset dir="${src-internal}" excludes="**/*.java"/>
+				<fileset dir="${command-src}" excludes="**/*.java"/>
+				<fileset dir="${http-src}" excludes="**/*.java"/>
+				<fileset dir="${primer-design-src}" excludes="**/*.java"/>
 			</copy>
 
 		 </target>
@@ -393,7 +406,7 @@
 		    </jarjar>
 	</target>
 	<target name ="javancss" description ="run javancss on source">
-		<javancss srcdir="${src}" includes ="**/*.java"
+		<javancss  srcdir="${src}" includes ="**/*.java"
 		            generateReport="true"
 		            outputfile="javancss_metrics.xml"
 		            format="xml"/>

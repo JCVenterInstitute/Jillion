@@ -14,6 +14,8 @@
 	<classpathentry kind="src" path="command-test"/>
 	<classpathentry kind="src" path="http-src"/>
 	<classpathentry kind="src" path="http-test"/>
+	<classpathentry kind="src" path="primerDesign-src"/>
+	<classpathentry kind="src" path="primerDesign-test"/>
 	<classpathentry exported="true" kind="lib" path="lib/hamcrest-all-1.2.jar" sourcepath="lib/hamcrest-all-1.2.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/JCVI-JavaCommon/lib/hamcrest-all-1.2.jar!/"/>
