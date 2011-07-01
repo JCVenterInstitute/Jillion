@@ -11,7 +11,7 @@ import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 
-public class NoQualitySliceMapFactory implements SliceMapFactory{
+public class NoQualitySliceMapFactory<P extends PlacedRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> implements SliceMapFactory<P,R,M>{
     private final PhredQuality phredQuality;
     public NoQualitySliceMapFactory(){
         this(NoQualitySliceMap.DEFAULT_PHRED_QUALITY);
@@ -25,7 +25,7 @@ public class NoQualitySliceMapFactory implements SliceMapFactory{
 
     @Override
     public SliceMap createNewSliceMap(
-            CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap,
+            M coverageMap,
                     QualityDataStore qualityDataStore) {
         return new NoQualitySliceMap(coverageMap,phredQuality);
     }

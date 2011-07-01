@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JavaCommon" default="unit.tests" basedir=".">
 	
-	<property name="version" value="2.2.0" />
+	<property name="version" value="3.0" />
 	<property name="project-name" value="JCVI-JavaCommon" />
 	<property name="bin" value ="bin_ant"/>
 	<property name="reports" value ="reports"/>
@@ -14,6 +14,13 @@
 	<property name ="exe" value="exe"/>
 	<property name ="exe-internal" value="exe-internal"/>
 	<property name ="exe-test" value="exe-test"/>
+	
+	<!-- non-core packages -->
+	<property name ="command-src" value="command-src"/>
+	<property name ="command-test" value="command-test"/>
+	
+	<property name ="http-src" value="http-src"/>
+	<property name ="http-test" value="http-test"/>
 	
 	<property name ="integration-test" value="integration-test"/>
 		<property name ="integration-test-internal" value="integration-test-internal"/>
@@ -74,6 +81,8 @@
 	<path id="javadoc.sourcepath">
         <pathelement location="${src}"/>
     	<pathelement location="${src-internal}"/>
+		<pathelement location="${command-src}"/>
+		<pathelement location="${http-src}"/>
     </path>
     <path id="classpath">
         <fileset dir="${lib}" includes="**/*.jar"/>
@@ -105,6 +114,8 @@
 					<src path="${exe-test}"/>
 					<src path="${integration-test}"/>
 					<src path="${integration-test-internal}"/>
+					<src path="${command-test}"/>
+					<src path="${http-test}"/>
 			
 	  	</javac>
 		
@@ -131,6 +142,8 @@
 				<src path="${src-internal}"/>
 				<src path="${exe}"/>
 				<src path="${exe-internal}"/>
+				<src path="${command-src}"/>
+				<src path="${http-src}"/>
 		  	</javac>
 			<emma enabled="${emma.enabled}" >
 								      <instr instrpath="${bin}"
@@ -221,7 +234,27 @@
 					  <test name="org.jcvi.AllInternalUnitTests"/>
 						<classpath refid = "test.classpath" />
 					</junit>
-				
+		
+		
+		<junit haltonfailure="no" showoutput="yes"	
+					errorproperty="command.test.failed"
+						failureproperty="command.test.failed"
+					fork="true">
+										<formatter type="xml"/>
+										
+									  <test name="org.jcvi.command.AllCommandUnitTests"/>
+										<classpath refid = "test.classpath" />
+									</junit>
+		<junit haltonfailure="no" showoutput="yes"	
+							errorproperty="http.test.failed"
+								failureproperty="http.test.failed"
+							fork="true">
+												<formatter type="xml"/>
+												
+											  <test name="org.jcvi.http.AllHttpUnitTests"/>
+												<classpath refid = "test.classpath" />
+											</junit>
+		
 		<junit haltonfailure="no" showoutput="yes"
 			errorproperty="integration.test.failed"
 							failureproperty="integration.test.failed"
@@ -258,6 +291,12 @@
 		<fail if= "internal-unit.test.failed">
 					Internal Unit tests failed.
 				</fail>
+		<fail if= "command.test.failed">
+							Command Unit tests failed.
+						</fail>
+		<fail if= "http.test.failed">
+									HTTP Unit tests failed.
+								</fail>
 		<fail if= "integration.test.failed">
 					Integration tests failed.
 				</fail>

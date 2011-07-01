@@ -29,7 +29,7 @@ import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 
-public class LargeSliceMapFactory extends AbstractSliceMapFactory{
+public class LargeSliceMapFactory<P extends PlacedRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> extends AbstractSliceMapFactory<P,R,M>{
 
     private final int cacheSize;
     public LargeSliceMapFactory(QualityValueStrategy qualityValueStrategy,int cacheSize) {
@@ -42,10 +42,9 @@ public class LargeSliceMapFactory extends AbstractSliceMapFactory{
 
     @Override
     protected SliceMap createNewSliceMap(
-            CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap,
-                    QualityDataStore qualityDataStore,
-            QualityValueStrategy qualityValueStrategy) {
-        return new LargeSliceMap(coverageMap, qualityDataStore, qualityValueStrategy,cacheSize);
+            M coverageMap,
+                    QualityDataStore qualityDataStore, QualityValueStrategy qualityValueStrategy){
+        return LargeSliceMap.<P,R,M>create(coverageMap, qualityDataStore, qualityValueStrategy, cacheSize);
     }
 
 }
