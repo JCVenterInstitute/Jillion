@@ -90,7 +90,17 @@ public enum SequenceDirection
      */
     public String getCode()
     {
-        return this.name().substring(0, 1);
+        return Character.toString(getCodeCharacter());
+    }
+    
+    /**
+     * Get a 1 character representation of this direction
+     * (F, R, N or U).
+     * @return
+     */
+    public char getCodeCharacter()
+    {
+        return this.name().charAt(0);
     }
 
     public SequenceDirection oppositeOrientation(){
