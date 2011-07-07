@@ -74,7 +74,9 @@ public class Ace2Contig {
         try {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             File aceFile = new File(commandLine.getOptionValue("a"));
-            final ContigFileWriter writer = new ContigFileWriter(new FileOutputStream(commandLine.getOptionValue("c")));
+            File contigOutFile = new File(commandLine.getOptionValue("c"));
+            contigOutFile.getParentFile().mkdirs();
+            final ContigFileWriter writer = new ContigFileWriter(new FileOutputStream(contigOutFile));
             final DataStoreFilter filter = CommandLineUtils.createDataStoreFilter(commandLine);
             
             
