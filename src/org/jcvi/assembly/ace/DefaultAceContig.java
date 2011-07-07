@@ -31,6 +31,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.assembly.ace.DefaultAceContig.InvalidContigCoordinates.WhichEnd;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.contig.AbstractContig;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
@@ -147,6 +148,16 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
                 //force empty contig if no reads...
                 return new DefaultAceContig(contigId, new DefaultNucleotideEncodedGlyphs(""),placedReads);
             }
+            if(contigLeft <0){
+                throw new InvalidContigCoordinates(contigLeft,WhichEnd.START);
+            }
+            if(contigRight <0){
+                throw new InvalidContigCoordinates(contigLeft,WhichEnd.END);
+            }
+            if(contigLeft > contigRight){
+                throw new IllegalStateException(
+                        String.format("invalid contig coordinates : [%d, %d]", contigLeft,contigRight));
+            }
             List<NucleotideGlyph> updatedConsensus = updateConsensus(fullConsensus.decode());
             //here only include the gapped valid range consensus bases
             //throw away the rest
@@ -180,5 +191,28 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         }
     }
     
+    public static class InvalidContigCoordinates extends RuntimeException {
+       
+        private static final long serialVersionUID = -3320968753345378742L;
+        static enum WhichEnd{
+            START("start"),
+            END("end");
+            
+            private final String n;
+            WhichEnd(String name){
+                this.n=name;
+            }
+            
+            @Override
+            public String toString(){
+                return n;
+            }
+            
+            
+        }
+        InvalidContigCoordinates(int coordinate, WhichEnd whichEnd){
+            super(String.format("Invalid contig %s coordinate : %d", whichEnd,coordinate));
+        }
+    }
     
 }
