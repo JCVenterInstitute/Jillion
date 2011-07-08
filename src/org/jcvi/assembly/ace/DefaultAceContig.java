@@ -31,7 +31,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.assembly.ace.DefaultAceContig.InvalidContigCoordinates.WhichEnd;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.contig.AbstractContig;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
@@ -106,9 +105,18 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         }
         public Builder addRead(String readId, String validBases, int offset,
                 SequenceDirection dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
-            adjustContigLeftAndRight(validBases, offset);
+      /*      if(offset<-1){
+                throw new IllegalStateException(contigId + " read " + readId + " has offset set to " + offset);
+            }
+            */
+          //contig left (and right) might be beyond consensus depending on how
+            //trimmed the data is and what assembly/consensus caller is used.
+            //force contig left and right to be within the called consensus
+            //BCISD-211
+            int correctedOffset = Math.max(0,offset);
+            adjustContigLeftAndRight(validBases, correctedOffset);
             try{
-                DefaultAcePlacedRead.Builder aceReadBuilder = createNewAceReadBuilder(readId, validBases, offset, dir, 
+                DefaultAcePlacedRead.Builder aceReadBuilder = createNewAceReadBuilder(readId, validBases, correctedOffset, dir, 
                         clearRange,phdInfo,ungappedFullLength);
                 
                 
@@ -137,6 +145,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             }
         }
         private void adjustContigLeft(int offset) {
+            
             if(contigLeft ==-1 || offset <contigLeft){
                 contigLeft = offset;
             }
@@ -148,17 +157,14 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
                 //force empty contig if no reads...
                 return new DefaultAceContig(contigId, new DefaultNucleotideEncodedGlyphs(""),placedReads);
             }
-            if(contigLeft <0){
-                throw new InvalidContigCoordinates(contigLeft,WhichEnd.START);
-            }
-            if(contigRight <0){
-                throw new InvalidContigCoordinates(contigLeft,WhichEnd.END);
-            }
-            if(contigLeft > contigRight){
-                throw new IllegalStateException(
-                        String.format("invalid contig coordinates : [%d, %d]", contigLeft,contigRight));
-            }
+            
             List<NucleotideGlyph> updatedConsensus = updateConsensus(fullConsensus.decode());
+            //contig left (and right) might be beyond consensus depending on how
+            //trimmed the data is and what assembly/consensus caller is used.
+            //force contig left and right to be within the called consensus
+            //BCISD-211
+            contigLeft = Math.max(contigLeft, 0);
+            contigRight = Math.min(contigRight,(int)fullConsensus.getLength());
             //here only include the gapped valid range consensus bases
             //throw away the rest
             final List<NucleotideGlyph> validConsensusGlyphs = 
@@ -188,30 +194,6 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         
         protected List<NucleotideGlyph> updateConsensus(List<NucleotideGlyph> validConsensusGlyphs){
             return validConsensusGlyphs;
-        }
-    }
-    
-    public static class InvalidContigCoordinates extends RuntimeException {
-       
-        private static final long serialVersionUID = -3320968753345378742L;
-        static enum WhichEnd{
-            START("start"),
-            END("end");
-            
-            private final String n;
-            WhichEnd(String name){
-                this.n=name;
-            }
-            
-            @Override
-            public String toString(){
-                return n;
-            }
-            
-            
-        }
-        InvalidContigCoordinates(int coordinate, WhichEnd whichEnd){
-            super(String.format("Invalid contig %s coordinate : %d", whichEnd,coordinate));
         }
     }
     

@@ -19,7 +19,10 @@
 
 package org.jcvi.assembly.ace;
 
+import org.jcvi.Range;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.sequence.SequenceDirection;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -38,5 +41,17 @@ public class TestDefaultAceContig {
         assertEquals(0, consensus.getLength());
         assertEquals("id",contig.getId());
         assertEquals(0,contig.getNumberOfReads());
+    }
+    @Test
+    public void readThatHasNegativeOffsetShouldGetTrimmedToOffsetZero(){
+        DefaultAceContig.Builder sut =  new DefaultAceContig.Builder("id",
+                                            "ACGTACGTACGTACGT");
+        sut.addRead("read", "ACGTACGTACGTACGT", -2, SequenceDirection.FORWARD, Range.buildRange(2, 18), null,16);
+            DefaultAceContig contig =sut.build();
+            NucleotideEncodedGlyphs consensus =contig.getConsensus();
+            assertEquals(16, consensus.getLength());
+            assertEquals("id",contig.getId());
+            assertEquals(1,contig.getNumberOfReads());
+            assertEquals("ACGTACGTACGTACGT", NucleotideGlyph.convertToString(contig.getPlacedReadById("read").getEncodedGlyphs().decode()));
     }
 }
