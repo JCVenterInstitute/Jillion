@@ -138,13 +138,11 @@ public class AceFileUtil {
             Range complimentedValidRange = AssemblyUtil.reverseComplimentValidRange(
                     ungappedValidRange,
                     complimentedFullBases.size());
-            
-            fullGappedValidRange=new ArrayList<NucleotideGlyph>();
-            fullGappedValidRange.addAll(complimentedFullBases.subList(0, (int)complimentedValidRange.getStart()));
-            fullGappedValidRange.addAll(gappedValidBasecalls.decode());
-            fullGappedValidRange.addAll(complimentedFullBases.subList(
-                    (int)complimentedValidRange.getEnd()+1, 
-                    complimentedFullBases.size()));
+            //we break it up into outside of valid range and inside valid range
+            //so we get the gaps in the correct places
+            fullGappedValidRange = createReverseComplimentedGappedFullLengthBasecalls(
+                    gappedValidBasecalls, complimentedFullBases,
+                    complimentedValidRange);
             List<PhredQuality> uncomplimentedQualities = phdQualities.decode();
             qualities = new ArrayList<PhredQuality>(uncomplimentedQualities.size());
             for(int i=uncomplimentedQualities.size()-1; i>=0; i--){
@@ -164,5 +162,18 @@ public class AceFileUtil {
                 fullBasecalls.getUngappedLength())));
         readRecord.append(String.format("%s%n",createPhdRecord(phdInfo)));
         return readRecord.toString();
+    }
+    private static List<NucleotideGlyph> createReverseComplimentedGappedFullLengthBasecalls(
+            NucleotideEncodedGlyphs gappedValidBasecalls,
+            final List<NucleotideGlyph> complimentedFullBases,
+            Range complimentedValidRange) {
+        final List<NucleotideGlyph> fullGappedValidRange;
+        fullGappedValidRange=new ArrayList<NucleotideGlyph>();
+        fullGappedValidRange.addAll(complimentedFullBases.subList(0, (int)complimentedValidRange.getStart()));            
+        fullGappedValidRange.addAll(gappedValidBasecalls.decode());
+        fullGappedValidRange.addAll(complimentedFullBases.subList(
+                (int)complimentedValidRange.getEnd()+1, 
+                complimentedFullBases.size()));
+        return fullGappedValidRange;
     }
 }

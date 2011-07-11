@@ -105,11 +105,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         }
         public Builder addRead(String readId, String validBases, int offset,
                 SequenceDirection dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
-      /*      if(offset<-1){
-                throw new IllegalStateException(contigId + " read " + readId + " has offset set to " + offset);
-            }
-            */
-          //contig left (and right) might be beyond consensus depending on how
+            //contig left (and right) might be beyond consensus depending on how
             //trimmed the data is and what assembly/consensus caller is used.
             //force contig left and right to be within the called consensus
             //BCISD-211
