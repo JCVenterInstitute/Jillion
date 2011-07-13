@@ -82,6 +82,12 @@ public final class AceFileParser {
         while(!parserState.done()){
             parserState = parserState.parseNextSection();
         }
+        handleEndOfParsing(visitor, parserState);
+        visitor.visitEndOfFile();
+        
+    }
+    private static void handleEndOfParsing(AceFileVisitor visitor,
+            ParserState parserState) {
         if(!parserState.stopParsing){        
             visitor.visitEndOfContig();
         }else{
@@ -90,8 +96,6 @@ public final class AceFileParser {
             //this will force it if we haven't
             IOUtil.closeAndIgnoreErrors(parserState);
         }
-        visitor.visitEndOfFile();
-        
     }
     private static class ParserState implements Closeable{
         final boolean isFirstContigInFile;
@@ -189,10 +193,8 @@ public final class AceFileParser {
             @Override
             ParserState handle(Matcher contigMatcher, ParserState struct, String line) {
                 ParserState ret = struct;
-                if(!struct.isFirstContigInFile){                   
-                    if(!ret.visitor.visitEndOfContig()){
-                        ret= ret.stopParsing();
-                    }
+                if(!struct.isFirstContigInFile && !ret.visitor.visitEndOfContig()){
+                    ret= ret.stopParsing();
                 }
                 ret = ret.updateContigBeingVisited();
                 String contigId = contigMatcher.group(1);
