@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  */
 public final class Well implements Comparable<Well>{
     
-    private static final Pattern wellPattern = Pattern.compile("([A-P])(\\d+)");
+    private static final Pattern WELL_NAME_PATTERN = Pattern.compile("([A-P])(\\d+)");
     /**
      * Create a new Well instance for the given well name
      * as a string.
@@ -44,7 +44,7 @@ public final class Well implements Comparable<Well>{
         if(wellName ==null){
             throw new IllegalArgumentException("input can not be null");
         }
-        Matcher m = wellPattern.matcher(wellName);
+        Matcher m = WELL_NAME_PATTERN.matcher(wellName);
 
         if(m.find()){
             char row = m.group(1).charAt(0);

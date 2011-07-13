@@ -45,7 +45,7 @@ public class LucyDebugFileDataStore implements LucyDebugTrimRecordDataStore{
      */
     private static final String LUCY_INVALID_COORDINATE = "0";
     final DataStore<LucyDebugTrimRecord> datastore;
-    public LucyDebugFileDataStore (File lucyDebugTrimFile) throws IOException{
+    public LucyDebugFileDataStore(File lucyDebugTrimFile) throws IOException{
         Map<String, LucyDebugTrimRecord> recordMap = new LinkedHashMap<String, LucyDebugTrimRecord>();
         BufferedReader reader = new BufferedReader(new FileReader(lucyDebugTrimFile));
         try{

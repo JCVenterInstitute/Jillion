@@ -62,7 +62,7 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
     }
     private static final class NullQualityDataStore implements QualityDataStore{
         final QualityEncodedGlyphs fakeQualities;
-        public NullQualityDataStore (final PhredQuality defaultQuality){
+        public NullQualityDataStore(final PhredQuality defaultQuality){
             fakeQualities = new QualityEncodedGlyphs(){
                 @Override
                 public List<PhredQuality> decode() {
