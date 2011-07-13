@@ -146,6 +146,9 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
         return getByteForGlyph;
     }
     private int computeEncodedIndexForGlyph(int index) {
+        if(index<0){
+            throw new IllegalArgumentException("index can not be negative: "+index);
+        }
         final int encodedIndexForGlyph = HEADER_LENGTH+index/2;
         return encodedIndexForGlyph;
     }

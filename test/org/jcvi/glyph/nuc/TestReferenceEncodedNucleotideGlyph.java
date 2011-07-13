@@ -53,6 +53,10 @@ public class TestReferenceEncodedNucleotideGlyph {
         DefaultReferencedEncodedNucleotideGlyph sut = new DefaultReferencedEncodedNucleotideGlyph(encodedReference,sequenceAsString, offset, Range.buildRange(0,sequenceAsString.length()-1));
         assertEquals(sequenceAsString.length(), sut.getLength());
         assertEquals(sequenceAsString, NucleotideGlyph.convertToString(sut.decode()));
+        for(int i=0; i< sequenceAsString.length(); i++){
+            assertEquals(NucleotideGlyph.getGlyphFor(sequenceAsString.charAt(i)),
+                    sut.get(i));
+        }
     }
     @Test
     public void exactlyTheSame(){
@@ -60,7 +64,24 @@ public class TestReferenceEncodedNucleotideGlyph {
         String sequenceAsString = "CGTACGTACGT";
         assertDecodedCorrectly(offset, sequenceAsString);
     }
-    
+    @Test
+    public void negativeStartOffset(){
+        int offset=-5;
+        String sequenceAsString = "NYWHTACGT";
+        assertDecodedCorrectly(offset, sequenceAsString);
+    }
+    @Test
+    public void sequenceGoesBeyondReference(){
+        int offset=referenceAsString.length()-4;
+        String sequenceAsString = "ACGTNYWH";
+        assertDecodedCorrectly(offset, sequenceAsString);
+    }
+    @Test
+    public void sequenceHasNegativeOffsetAndGoesBeyondReference(){
+        int offset=-4;
+        String sequenceAsString = "VHDB"+referenceAsString+"NYWH";
+        assertDecodedCorrectly(offset, sequenceAsString);
+    }
     @Test
     public void fullSequence(){
         NucleotideEncodedGlyphs encodedConsensus = new DefaultNucleotideEncodedGlyphs(

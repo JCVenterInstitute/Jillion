@@ -24,6 +24,7 @@
 package org.jcvi.assembly.ace;
 
 import java.io.BufferedInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -81,19 +82,31 @@ public final class AceFileParser {
         while(!parserState.done()){
             parserState = parserState.parseNextSection();
         }
-        //parserState will automatically close stream
-        //if we get this far
-        visitor.visitEndOfContig();
+        if(!parserState.stopParsing){        
+            visitor.visitEndOfContig();
+        }else{
+            //if parserstate reached the end of the file
+            //then we have already closed our stream
+            //this will force it if we haven't
+            IOUtil.closeAndIgnoreErrors(parserState);
+        }
         visitor.visitEndOfFile();
+        
     }
-    private static class ParserState{
+    private static class ParserState implements Closeable{
         final boolean isFirstContigInFile;
         final AceFileVisitor visitor;
         final TextLineParser parser;
+        private boolean stopParsing;
+        
         ParserState(AceFileVisitor visitor,
                 InputStream inputStream) throws IOException{
-           this(visitor, true,  new TextLineParser(new BufferedInputStream(inputStream)));
+           this(visitor, true,  new TextLineParser(new BufferedInputStream(inputStream)), false);
        }
+        
+        public ParserState stopParsing(){
+            return new ParserState(visitor, isFirstContigInFile, parser,true);
+        }
         /**
          * @return
          * @throws IOException 
@@ -107,13 +120,14 @@ public final class AceFileParser {
             return SectionHandler.handleSection(line, this);
         }
         ParserState(AceFileVisitor visitor, boolean isFirstContigInFile,
-               TextLineParser parser) {
+               TextLineParser parser, boolean stopParsing) {
             this.visitor = visitor;
             this.isFirstContigInFile = isFirstContigInFile;
             this.parser = parser;
+            this.stopParsing=stopParsing;
         }
         public boolean done(){
-            return !parser.hasNextLine();
+            return stopParsing || !parser.hasNextLine();
         }
         /**
          * Returns new ParserStruct instance but which
@@ -123,7 +137,16 @@ public final class AceFileParser {
          * set to {@code false}.
          */
         ParserState updateContigBeingVisited(){
-            return new ParserState(visitor, false, parser);
+            return new ParserState(visitor, false, parser,stopParsing);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void close() throws IOException {
+            parser.close();
+            
         }
     }
     /**
@@ -167,7 +190,9 @@ public final class AceFileParser {
             ParserState handle(Matcher contigMatcher, ParserState struct, String line) {
                 ParserState ret = struct;
                 if(!struct.isFirstContigInFile){                   
-                    ret.visitor.visitEndOfContig();
+                    if(!ret.visitor.visitEndOfContig()){
+                        ret= ret.stopParsing();
+                    }
                 }
                 ret = ret.updateContigBeingVisited();
                 String contigId = contigMatcher.group(1);

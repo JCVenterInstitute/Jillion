@@ -108,7 +108,8 @@ public class Ace2Fasta {
                 }
                 
                 @Override
-                public void visitEndOfContig() {
+                public boolean visitEndOfContig() {
+                    return true;
                 }
                 
                 @Override

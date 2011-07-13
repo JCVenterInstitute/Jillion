@@ -48,11 +48,12 @@ public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
     
     
     @Override
-    public void visitEndOfContig() {
+    public boolean visitEndOfContig() {
         if(contigBuilder !=null){
             visitContig(contigBuilder.build());
             contigBuilder=null;
         }
+        return true;
     }
     
     
