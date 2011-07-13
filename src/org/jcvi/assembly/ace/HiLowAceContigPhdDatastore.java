@@ -28,13 +28,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.DefaultReferencedEncodedNucleotideGlyph;
 import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
@@ -62,116 +60,16 @@ public class HiLowAceContigPhdDatastore implements PhdDataStore{
     static final PhredQuality DEFAULT_LOW_QUALITY = PhredQuality.valueOf(15);
     static final PhredQuality DEFAULT_HIGH_QUALITY = AceFileUtil.ACE_DEFAULT_HIGH_QUALITY_THRESHOLD;
     private final PhdDataStore delegate;
-    private Map<String, Phd> phds;
+    
     public HiLowAceContigPhdDatastore(File aceContigFile, final String contigId) throws IOException{
         this(aceContigFile,contigId,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
     public HiLowAceContigPhdDatastore(File aceContigFile, final String contigId, 
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
-        AbstractAceFileVisitor visitor = new AbstractAceFileVisitor() {
-            boolean contigOfInterest=false;
-            NucleotideEncodedGlyphs consensusBasecalls;
-            List<PhredQuality> currentHiLowQualities;
-            @Override
-            protected void visitNewContig(String aceContigId, String consensus) {
-                if(contigOfInterest){
-                    consensusBasecalls = new DefaultNucleotideEncodedGlyphs(
-                        ConsedUtil.convertAceGapsToContigGaps(consensus));
-                }                
-            }
-            
-            /**
-            * {@inheritDoc}
-            */
-            @Override
-            public boolean visitEndOfContig() {
-                //keep parsing until we finish 
-                //our contig of interest
-                return !contigOfInterest;
-            }
-
-            /**
-            * {@inheritDoc}
-            */
-            @Override
-            public synchronized void visitContigHeader(String aceContigId,
-                    int numberOfBases, int numberOfReads,
-                    int numberOfBaseSegments, boolean reverseComplimented) {
-                contigOfInterest =aceContigId.equals(contigId);
-                if(contigOfInterest){
-                    phds = new HashMap<String, Phd>(numberOfReads);
-                }
-                super.visitContigHeader(aceContigId, numberOfBases, numberOfReads,
-                        numberOfBaseSegments, reverseComplimented);
-            }
-
-            /**
-            * {@inheritDoc}
-            */
-            @Override
-            public synchronized void visitReadHeader(String readId,
-                    int gappedLength) {
-                if(contigOfInterest){
-                    currentHiLowQualities = new ArrayList<PhredQuality>(gappedLength);
-                }
-                super.visitReadHeader(readId, gappedLength);
-            }
-            /**
-            * {@inheritDoc}
-            */
-            @Override
-            public synchronized void visitBasesLine(String bases) {
-                if(contigOfInterest && currentHiLowQualities !=null){
-                    currentHiLowQualities.addAll(parseQualities(bases));
-                }
-                super.visitBasesLine(bases);
-            }
-
-            private List<PhredQuality> parseQualities(String bases){
-                List<PhredQuality> qualities = new ArrayList<PhredQuality>(bases.length());
-                String gappedBases =ConsedUtil.convertAceGapsToContigGaps(bases);
-                char[] chars = gappedBases.toCharArray();
-                for(int i=0; i<chars.length; i++){
-                    if(chars[i] =='-'){
-                        continue;
-                    }
-                    if(Character.isUpperCase(chars[i])){
-                        qualities.add(highQuality);
-                    }else{
-                        qualities.add(lowQuality);
-                    }
-                }
-                return qualities;
-            }
-            @Override
-            protected void visitAceRead(String readId, String validBasecalls,
-                    int offset, SequenceDirection dir, Range validRange,
-                    PhdInfo phdInfo, int ungappedFullLength) {
-                if(contigOfInterest){
-                    NucleotideEncodedGlyphs fullLengthBasecalls = new DefaultNucleotideEncodedGlyphs(
-                                            ConsedUtil.convertAceGapsToContigGaps(getCurrentFullLengthBasecalls())
-                                                                .replaceAll("-", ""));
-                    
-                    if(dir==SequenceDirection.REVERSE){
-                        Collections.reverse(currentHiLowQualities);
-                        fullLengthBasecalls = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.reverseCompliment(fullLengthBasecalls.decode()));
-                    }
-                    QualityEncodedGlyphs qualities = new DefaultQualityEncodedGlyphs(
-                                                RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                                                currentHiLowQualities); 
-                    
-                     
-                     Phd phd = new ArtificialPhd(readId, 
-                             fullLengthBasecalls,
-                                         qualities,19);
-                     phds.put(readId,phd);
-                     currentHiLowQualities=null;
-                }
-            }
-        };
+        FullLengthPhdParser visitor = new FullLengthPhdParser(contigId, lowQuality,highQuality);
         
         AceFileParser.parseAceFile(aceContigFile, visitor);
-        delegate = new PhdDataStoreAdapter(new SimpleDataStore<Phd>(phds));
+        delegate = new PhdDataStoreAdapter(new SimpleDataStore<Phd>(visitor.getPhds()));
         
     }
 
@@ -220,9 +118,7 @@ public class HiLowAceContigPhdDatastore implements PhdDataStore{
     */
     @Override
     public void close() throws IOException {
-        delegate.close();
-        phds.clear();
-        
+        delegate.close();        
     }
 
     /**
@@ -233,17 +129,126 @@ public class HiLowAceContigPhdDatastore implements PhdDataStore{
         return delegate.iterator();
     }
     
-    public static void main(String[] args) throws IOException, DataStoreException{
-        File aceFile = new File("/usr/local/projects/GSTEC/GSTEC002/CLOSURE/CONSED/stec002_COMBINED/edit_dir/stec002_COMBINED.merged.ace.39");
-        String contigId = "1127147154511";
-        HiLowAceContigPhdDatastore phdDatastore = new HiLowAceContigPhdDatastore(aceFile, contigId,
-                PhredQuality.valueOf(15), PhredQuality.valueOf(30));
-        //should have 526 or 3779
-        System.out.println("# reads = "+phdDatastore.size());
-        Phd phd = phdDatastore.get("GON1IHO01ALDWA");
-        System.out.println(phd.getBasecalls().decode());
-        System.out.println(phd.getQualities().decode());
-        phdDatastore.close();
+    /**
+     * {@code FullLengthPhdParser} will parse full length
+     * basecalls from an ace file and infer if the basecalls
+     * are high or low quality based on upper vs lower case basecalls.
+     * @author dkatzel
+     */
+    private final class FullLengthPhdParser extends AbstractAceFileVisitor {
+        private boolean contigOfInterest=false;
+        private List<PhredQuality> currentHiLowQualities;
+        private Map<String, Phd> phds=null;
+        private final String contigId;
+        private final PhredQuality lowQuality;
+        private final PhredQuality highQuality;
+        
+        private FullLengthPhdParser(String contigId,final PhredQuality lowQuality, final PhredQuality highQuality) {
+            this.contigId = contigId;
+            this.lowQuality = lowQuality;
+            this.highQuality = highQuality;
+        }
+
+        /**
+         * @return the phds
+         */
+        public Map<String, Phd> getPhds() {
+            return phds;
+        }
+
+        @Override
+        protected void visitNewContig(String aceContigId, String consensus) {
+            //no-op
+        }
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized boolean visitEndOfContig() {
+            //keep parsing until we finish 
+            //our contig of interest
+            return !contigOfInterest;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitContigHeader(String aceContigId,
+                int numberOfBases, int numberOfReads,
+                int numberOfBaseSegments, boolean reverseComplimented) {
+            contigOfInterest =aceContigId.equals(contigId);
+            if(contigOfInterest){
+                phds = new HashMap<String, Phd>(numberOfReads);
+            }
+            super.visitContigHeader(aceContigId, numberOfBases, numberOfReads,
+                    numberOfBaseSegments, reverseComplimented);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitReadHeader(String readId,
+                int gappedLength) {
+            if(contigOfInterest){
+                currentHiLowQualities = new ArrayList<PhredQuality>(gappedLength);
+            }
+            super.visitReadHeader(readId, gappedLength);
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitBasesLine(String bases) {
+            if(contigOfInterest && currentHiLowQualities !=null){
+                currentHiLowQualities.addAll(parseQualities(bases));
+            }
+            super.visitBasesLine(bases);
+        }
+
+        private List<PhredQuality> parseQualities(String bases){
+            List<PhredQuality> qualities = new ArrayList<PhredQuality>(bases.length());
+            String gappedBases =ConsedUtil.convertAceGapsToContigGaps(bases);
+            char[] chars = gappedBases.toCharArray();
+            for(int i=0; i<chars.length; i++){
+                if(chars[i] =='-'){
+                    continue;
+                }
+                if(Character.isUpperCase(chars[i])){
+                    qualities.add(highQuality);
+                }else{
+                    qualities.add(lowQuality);
+                }
+            }
+            return qualities;
+        }
+        @Override
+        protected synchronized void visitAceRead(String readId, String validBasecalls,
+                int offset, SequenceDirection dir, Range validRange,
+                PhdInfo phdInfo, int ungappedFullLength) {
+            if(contigOfInterest){
+                NucleotideEncodedGlyphs fullLengthBasecalls = new DefaultNucleotideEncodedGlyphs(
+                                        ConsedUtil.convertAceGapsToContigGaps(getCurrentFullLengthBasecalls())
+                                                            .replaceAll("-", ""));
+                
+                if(dir==SequenceDirection.REVERSE){
+                    Collections.reverse(currentHiLowQualities);
+                    fullLengthBasecalls = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.reverseCompliment(fullLengthBasecalls.decode()));
+                }
+                QualityEncodedGlyphs qualities = new DefaultQualityEncodedGlyphs(
+                                            RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
+                                            currentHiLowQualities); 
+                
+                 
+                 Phd phd = new ArtificialPhd(readId, 
+                         fullLengthBasecalls,
+                                     qualities,19);
+                 phds.put(readId,phd);
+                 currentHiLowQualities=null;
+            }
+        }
     }
     
 }
