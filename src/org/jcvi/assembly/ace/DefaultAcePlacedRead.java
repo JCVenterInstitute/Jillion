@@ -72,10 +72,18 @@ public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlaced
             this.clearRange = clearRange;
             this.offset = offset;
             this.phdInfo = phdInfo;
+            
+            
             //NucleotideEncodedGlyphs reference,
             //String toBeEncoded, int startOffset, Range validRange
             this.referencedGlyphs = new DefaultReferencedEncodedNucleotideGlyph(
                     reference, validBases, offset, clearRange);
+            if(referencedGlyphs.getNumberOfBasesAfterReference()<0 || referencedGlyphs.getNumberOfBasesAfterReference()>0){
+                throw new IllegalArgumentException(String.format("read %s goes off the reference before %d, after %d",
+                        readId,
+                        referencedGlyphs.getNumberOfBasesBeforeReference(),
+                        referencedGlyphs.getNumberOfBasesAfterReference()));
+            }
             this.ungappedFullLength = ungappedFullLength;
         }
         

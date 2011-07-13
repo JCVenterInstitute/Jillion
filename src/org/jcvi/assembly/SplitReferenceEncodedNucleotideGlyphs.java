@@ -146,4 +146,26 @@ public class SplitReferenceEncodedNucleotideGlyphs extends AbstractEnocdedNucleo
         return Collections.unmodifiableList(snps);
     }
 
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getNumberOfBasesBeforeReference() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getNumberOfBasesAfterReference() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

@@ -270,8 +270,8 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
     * {@inheritDoc}
     */
     @Override
-    public void visitEndOfContig() {
-        // TODO Auto-generated method stub
+    public boolean visitEndOfContig() {
+        return true;
         
     }
 

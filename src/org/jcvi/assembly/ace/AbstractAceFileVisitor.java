@@ -45,13 +45,16 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private int currentOffset;
     private String currentValidBases;
     private boolean skipCurrentRead=false;
+    private String currentFullLengthBases;
     
     private boolean initialized;
     
     public synchronized boolean isInitialized() {
         return initialized;
     }
-    
+    protected final String getCurrentFullLengthBasecalls(){
+        return currentFullLengthBases;
+    }
     @Override
     public synchronized void visitFile() {
         throwExceptionIfInitialized();
@@ -155,12 +158,13 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
             clearLeft = (int)validRange.getLocalStart();
             clearRight = (int)validRange.getLocalEnd();
         }
+        currentFullLengthBases = currentBasecalls.toString();
       //this will set currentValidBasecalls to only be the valid range
-        currentValidBases = currentBasecalls.substring(
+        currentValidBases = currentFullLengthBases.substring(
                         (int)validRange.getStart(), 
                         (int)validRange.getEnd()+1); 
         final int numberOfGaps = getNumberOfGapsIn(currentValidBases);
-        final int numberOfFullLengthGaps = getNumberOfGapsIn(currentBasecalls.toString());
+        final int numberOfFullLengthGaps = getNumberOfGapsIn(currentValidBases);
         currentReadUngappedFullLength = currentReadGappedFullLength - numberOfFullLengthGaps;
         clearRight -= numberOfGaps;               
         currentClearRange = Range.buildRange(Range.CoordinateSystem.RESIDUE_BASED,clearLeft, clearRight);
@@ -285,8 +289,8 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * {@inheritDoc}
      */
      @Override
-     public void visitEndOfContig() {
-         
+     public boolean visitEndOfContig() {
+         return true;
      
      }
 }

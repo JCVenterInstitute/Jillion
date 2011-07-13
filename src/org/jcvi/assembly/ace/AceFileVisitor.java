@@ -106,8 +106,10 @@ public interface AceFileVisitor extends TextFileVisitor{
     void visitReadTag(String id, String type, String creator, long gappedStart, long gappedEnd, Date creationDate, boolean isTransient);
     /**
      * The current contig being visited contains no more data.
+     * @return {@code true} if the ace file should keep parsing;
+     * {@code false} otherwise.
      */
-    void visitEndOfContig();
+    boolean visitEndOfContig();
     
     void visitBeginConsensusTag(String id, String type, String creator, long gappedStart, long gappedEnd, Date creationDate, boolean isTransient);
     void visitConsensusTagComment(String comment);

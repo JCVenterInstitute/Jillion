@@ -36,7 +36,9 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
     private final int[] gaps;
     private final int[] snpIndexes;
     private final NucleotideEncodedGlyphs snpValues;
-    
+    private NucleotideEncodedGlyphs beforeValues;
+    private NucleotideEncodedGlyphs afterValues;
+    private int overhangOffset=0;
     private final int length;
     private final int startOffset;
     private final Range validRange;
@@ -54,6 +56,22 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
     }
 
     
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getNumberOfBasesBeforeReference() {
+        return beforeValues==null?0 : (int)beforeValues.getLength();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getNumberOfBasesAfterReference() {
+        return afterValues==null?0 : (int)afterValues.getLength();
+    }
+
     @Override
     public List<Integer> getSnps() {
         List<Integer> snps = new ArrayList<Integer>(snpIndexes.length);
@@ -103,8 +121,26 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
     }
     private TreeMap<Integer, NucleotideGlyph> populateFields(EncodedGlyphs<NucleotideGlyph> reference,
             String toBeEncoded, int startOffset, List<Integer> tempGapList,TreeMap<Integer, NucleotideGlyph> differentGlyphMap) {
+        if(startOffset<0){
+            //handle before values
+            beforeValues = new DefaultNucleotideEncodedGlyphs(toBeEncoded.substring(0, Math.abs(startOffset)));
+        }else{
+            beforeValues =null;
+        }
         
-        for(int i=0; i<toBeEncoded.length(); i++){
+        int lastOffsetOfSequence = toBeEncoded.length()+startOffset;
+        
+        if(lastOffsetOfSequence > reference.getLength()){
+            int overhang = (int)(toBeEncoded.length()+startOffset - reference.getLength());
+            overhangOffset = toBeEncoded.length()-overhang;
+            afterValues = new DefaultNucleotideEncodedGlyphs(toBeEncoded.substring(overhangOffset));
+            
+        }else{
+            afterValues=null;
+        }
+        int startReferenceEncodingOffset = beforeValues==null?0: (int)beforeValues.getLength();
+        int endReferenceEncodingOffset = afterValues==null?toBeEncoded.length(): overhangOffset;
+        for(int i=startReferenceEncodingOffset; i<endReferenceEncodingOffset; i++){
             //get the corresponding index to this reference
             int referenceIndex = i + startOffset;
             NucleotideGlyph g = NucleotideGlyph.getGlyphFor(toBeEncoded.charAt(i));
@@ -135,6 +171,12 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
     }
     @Override
     public NucleotideGlyph get(int index) {
+        if(beforeValues!=null && beforeValues.getLength()>index){
+            return beforeValues.get(index);
+        }
+        if(afterValues !=null && index >=overhangOffset){
+            return afterValues.get(index-overhangOffset);
+        }
         final Integer indexAsInteger = Integer.valueOf(index);
         if(isGap(indexAsInteger)){
             return NucleotideGlyph.Gap;
