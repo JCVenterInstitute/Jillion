@@ -43,6 +43,7 @@ import org.jcvi.assembly.ace.AceFileWriter;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.DefaultAceContig;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
+import org.jcvi.assembly.cas.CasPhdReadVisitor.TraceDetails;
 import org.jcvi.assembly.cas.read.AbstractCasFileNucleotideDataStore;
 import org.jcvi.assembly.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.assembly.cas.read.ReferenceCasFileNucleotideDataStore;
@@ -68,7 +69,6 @@ import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.trace.sanger.phd.PhdWriter;
 import org.jcvi.util.DefaultIndexedFileRange;
 import org.jcvi.util.MultipleWrapper;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Period;
 
@@ -182,13 +182,15 @@ public class Cas2Consed3 {
              final File phdFile = new File(phdBallDir, "phd.ball.1");
             final OutputStream phdOut = new FileOutputStream(phdFile);
             try{
+                TraceDetails traceDetails = new TraceDetails.Builder(fastqQualityCodec)
+                                                        .chromatDir(chromatDir)
+                                                        .hasEdits(hasEdits)
+                                                        .build();
                  CasPhdReadVisitor visitor = new CasPhdReadVisitor(
                          casWorkingDirectory,trimToUntrimmedMap,
-                         fastqQualityCodec,gappedReferenceMap.asList(),
+                         gappedReferenceMap.asList(),
                          multiTrimDataStore,
-                         new DateTime(),
-                         chromatDir,
-                         hasEdits
+                         traceDetails
                          ) {
                     
                         @Override

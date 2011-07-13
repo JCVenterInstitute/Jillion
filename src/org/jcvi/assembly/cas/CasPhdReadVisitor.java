@@ -46,35 +46,27 @@ import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.util.ChainedCloseableIterator;
 import org.jcvi.util.CloseableIterator;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 
 public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 
 	private final File workingDir;
 	private final CasTrimMap trimMap;
-	private final DateTime phdDate;
-	private final FastQQualityCodec fastqQualityCodec;
 	private CloseableIterator<PhdReadRecord> phdIterator;
 	private final List<NucleotideEncodedGlyphs> orderedGappedReferences;
 	private final TrimDataStore validRangeDataStore;
 	private final List<CloseableIterator<PhdReadRecord>> iterators = new ArrayList<CloseableIterator<PhdReadRecord>>();
-    private final File chromatDir;
-    private final boolean hasFastaEdits;
+    private final TraceDetails traceDetails;
 	public CasPhdReadVisitor(File workingDir, CasTrimMap trimMap,
-			FastQQualityCodec fastqQualityCodec,
 			List<NucleotideEncodedGlyphs> orderedGappedReferences,
 			TrimDataStore validRangeDataStore,
-			DateTime phdDate,
-			File chromatDir,
-			boolean hasFastaEdits) {
+			TraceDetails traceDetails) {
 		super();
+		this.traceDetails = traceDetails;
 		this.workingDir = workingDir;
 		this.trimMap = trimMap;
-		this.phdDate = phdDate;
-		this.fastqQualityCodec = fastqQualityCodec;
 		this.orderedGappedReferences = orderedGappedReferences;
 		this.validRangeDataStore = validRangeDataStore;
-		this.chromatDir = chromatDir;
-		this.hasFastaEdits = hasFastaEdits;
 	}
 
 	protected final NucleotideEncodedGlyphs getGappedReference(int index){
@@ -90,38 +82,38 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 			switch(readType){
 			    case ILLUMINA:
         			    iterators.add(new FastqConsedPhdAdaptedIterator(                     
-                                LargeFastQFileIterator.createNewIteratorFor(file, fastqQualityCodec),
+                                LargeFastQFileIterator.createNewIteratorFor(file, traceDetails.getFastqQualityCodec()),
                                 file, 
-                                phdDate));
+                                traceDetails.getPhdDate()));
         			    break;
 			    case SFF:
 			        iterators.add(
 	                        new FlowgramConsedPhdAdaptedIterator(
 	                        SffFileIterator.createNewIteratorFor(file),
 	                        file,
-	                        phdDate));
+	                        traceDetails.getPhdDate()));
 			        break;
 			    case FASTA:
 			        CloseableIterator<PhdReadRecord> iter;
-			                if(chromatDir==null){
+			                if(!traceDetails.hasChromatDir()){
 			                    iter= new FastaConsedPhdAdaptedIterator(
 	                                LargeNucleotideFastaIterator.createNewIteratorFor(file),
 	                                file,
-	                                phdDate, PhredQuality.valueOf(30));
+	                                traceDetails.getPhdDate(), PhredQuality.valueOf(30));
 			                }else{
-			                    if(hasFastaEdits){
+			                    if(traceDetails.hasFastaEdits()){
 			                        iter = new EditedFastaChromatDirPhdAdapterIterator(
 			                                LargeNucleotideFastaIterator.createNewIteratorFor(file),
 			                                file, 
-			                                phdDate, 
+			                                traceDetails.getPhdDate(), 
 			                                PhredQuality.valueOf(30), 
-			                                chromatDir);
+			                                traceDetails.getChromatDir());
 			                    }else{
     			                    iter = new ChromatDirFastaConsedPhdAdaptedIterator(
     			                            LargeNucleotideFastaIterator.createNewIteratorFor(file),
     	                                    file,
-    	                                    phdDate, PhredQuality.valueOf(30),
-    	                                    chromatDir);
+    	                                    traceDetails.getPhdDate(), PhredQuality.valueOf(30),
+    	                                    traceDetails.getChromatDir());
 			                    }
 			                }
 			                
@@ -175,4 +167,82 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 			int casReferenceId);
 	
 
+	public static final class TraceDetails{
+	    private final boolean hasFastaEdits;
+	    private final File chromatDir;
+	    private final DateTime phdDate;
+	    private final FastQQualityCodec fastqQualityCodec;
+	    
+	    public static class Builder implements org.jcvi.Builder<TraceDetails>{
+	        private boolean hasFastaEdits=false;
+	        private File chromatDir;
+	        private DateTime phdDate =null;
+	        private final FastQQualityCodec fastqQualityCodec;
+	        public Builder(FastQQualityCodec fastqQualityCodec){
+	            if(fastqQualityCodec==null){
+	                throw new NullPointerException("can not be null");
+	            }
+	            this.fastqQualityCodec = fastqQualityCodec;
+	        }
+            /**
+            * {@inheritDoc}
+            */
+            @Override
+            public TraceDetails build() {
+                if(phdDate ==null){
+                    phdDate = new DateTime(DateTimeUtils.currentTimeMillis());
+                }
+                return new TraceDetails(chromatDir, phdDate, fastqQualityCodec, hasFastaEdits);
+            }
+	        public Builder hasEdits(boolean hasEdits){
+	            this.hasFastaEdits = hasEdits;
+	            return this;
+	        }
+	        public Builder phdDate(DateTime phdDate){
+	            this.phdDate = phdDate;
+	            return this;
+	        }
+	        public Builder chromatDir(File chromatDir){
+	            this.chromatDir = chromatDir;
+	            return this;
+	        }
+	    }
+        private TraceDetails(File chromatDir, DateTime phdDate,
+                FastQQualityCodec fastqQualityCodec, boolean hasFastaEdits) {
+            this.chromatDir = chromatDir;
+            this.phdDate = phdDate;
+            this.fastqQualityCodec = fastqQualityCodec;
+            this.hasFastaEdits = hasFastaEdits;
+        }
+        /**
+         * @return the hasFastaEdits
+         */
+        public boolean hasFastaEdits() {
+            return hasFastaEdits;
+        }
+        /**
+         * @return the chromatDir
+         */
+        public File getChromatDir() {
+            return chromatDir;
+        }
+        /**
+         * @return the phdDate
+         */
+        public DateTime getPhdDate() {
+            return phdDate;
+        }
+        /**
+         * @return the fastqQualityCodec
+         */
+        public FastQQualityCodec getFastqQualityCodec() {
+            return fastqQualityCodec;
+        }
+	    
+        public boolean hasChromatDir(){
+            return chromatDir !=null;
+        }
+        
+	    
+	}
 }
