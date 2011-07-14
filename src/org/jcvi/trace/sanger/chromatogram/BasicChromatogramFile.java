@@ -20,8 +20,8 @@
 package org.jcvi.trace.sanger.chromatogram;
 import java.util.Map;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Peaks;
 
 /**
@@ -161,7 +161,7 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     * {@inheritDoc}
     */
     @Override
-    public NucleotideEncodedGlyphs getBasecalls() {
+    public NucleotideSequence getBasecalls() {
         return delegate.getBasecalls();
     }
 
@@ -169,7 +169,7 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     * {@inheritDoc}
     */
     @Override
-    public QualityEncodedGlyphs getQualities() {
+    public QualitySequence getQualities() {
         return delegate.getQualities();
     }
 

@@ -26,11 +26,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.DefaultEncodedPhredGlyphCodec;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.sanger.phd.ArtificialPhd;
@@ -85,7 +85,7 @@ public class TestHiLowAceContigPhdDatastore {
         
         
         Phd expected = new ArtificialPhd("K26-217c", 
-                new DefaultNucleotideEncodedGlyphs("tcccCgtgagatcatcctgaAGTGGAGGGCATGGGGCTTGGCTGGGCTTA" +
+                new DefaultNucleotideSequence("tcccCgtgagatcatcctgaAGTGGAGGGCATGGGGCTTGGCTGGGCTTA" +
                 "GAGCTAACATACACAGGATGCTGAAAAAGAACAACACAAgntGTGTGGAG" +
                 "CAAAGGAAAGGGAAATCAGCTTGAAGCTGATGTTAGTGTGCTTGGGCTGA" +
                 "GTACAGCCATGctntCAGTTGAGGCACGGTTGGCTCCCCATGGGCAAGAT" +
@@ -98,7 +98,7 @@ public class TestHiLowAceContigPhdDatastore {
                 "ccttttttgggccccgggaaccttttttaaaaaatgggggattgggcccc" +
                 "cttggcccccctc"),
                 
-                new DefaultQualityEncodedGlyphs(new DefaultEncodedPhredGlyphCodec(), expectedQualities),
+                new EncodedQualitySequence(new DefaultEncodedPhredGlyphCodec(), expectedQualities),
                 19);
         Phd actual = sut.get("K26-217c");
         assertEquals(expected.getBasecalls().decode(),actual.getBasecalls().decode());
@@ -124,7 +124,7 @@ public class TestHiLowAceContigPhdDatastore {
             "CACACACATAagaCATtctaAATTTTTACTCAAacgatcCccggaaccac" +
             "acg";
         
-        NucleotideEncodedGlyphs reverseComplimented = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.reverseCompliment(
+        NucleotideSequence reverseComplimented = new DefaultNucleotideSequence(NucleotideGlyph.reverseCompliment(
                                                         NucleotideGlyph.getGlyphsFor(basecalls)));
     
         List<PhredQuality> expectedQualities = new ArrayList<PhredQuality>();
@@ -163,7 +163,7 @@ public class TestHiLowAceContigPhdDatastore {
         Phd expected = new ArtificialPhd(id,
                 
                 reverseComplimented,
-                new DefaultQualityEncodedGlyphs(new DefaultEncodedPhredGlyphCodec(), 
+                new EncodedQualitySequence(new DefaultEncodedPhredGlyphCodec(), 
                         expectedQualities),
                 19);
         Phd actual = sut.get(id);

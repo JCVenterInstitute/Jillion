@@ -27,8 +27,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.util.CloseableIterator;
 
 public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQRecord>{
@@ -58,8 +58,8 @@ public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQR
     }
     @Override
     protected boolean visitFastQRecord( String id, 
-            NucleotideEncodedGlyphs nucleotides,
-            QualityEncodedGlyphs qualities,
+            NucleotideSequence nucleotides,
+            QualitySequence qualities,
             String optionalComment) {
         builder.put(new DefaultFastQRecord(id, nucleotides, qualities, optionalComment));
         return true;

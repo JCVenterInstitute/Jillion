@@ -60,8 +60,8 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultContigFileDataStore;
 import org.jcvi.fastX.fasta.qual.LargeQualityFastaFileDataStore;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.Sequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.qualClass.QualityClass;
@@ -142,7 +142,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
     }
 
     private Range computeNewValidRange(QualityDataStore qualityMap, R read, Range oldValidRange,int gappedValidRangeIndex) throws DataStoreException {
-        final EncodedGlyphs<PhredQuality> qualityValues = qualityMap.get(read.getId());
+        final Sequence<PhredQuality> qualityValues = qualityMap.get(read.getId());
 
         int gappedTrimIndex = computeGappedTrimIndex(read,gappedValidRangeIndex);
      
@@ -180,7 +180,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
     private int computeGappedTrimIndex(R read,
             int gappedValidRangeIndex) {
         int gappedTrimIndex;
-        final NucleotideEncodedGlyphs encodedGlyphs = read.getEncodedGlyphs();
+        final NucleotideSequence encodedGlyphs = read.getEncodedGlyphs();
         if (read.getSequenceDirection() == SequenceDirection.FORWARD) {
             gappedTrimIndex = AssemblyUtil.getRightFlankingNonGapIndex(encodedGlyphs,
                     gappedValidRangeIndex);

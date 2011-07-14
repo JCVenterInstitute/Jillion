@@ -26,14 +26,14 @@ package org.jcvi.glyph.nuc;
 import org.jcvi.Range;
 import org.junit.Test;
 import static org.junit.Assert.*;
-public class TestReferenceEncodedNucleotideGlyph_gappedtoUngapped {
+public class TestReferenceEncodedNucleotideSequence_gappedtoUngapped {
 
     String reference       = "ACGTACGTTACGTTACGT";
     String gappedBasecalls = "ACGTACGT-ACGTACG-T";
     String ungappedBasecalls = "ACGTACGTACGTACGT";
     DefaultNucleotideGlyphCodec codec = DefaultNucleotideGlyphCodec.getInstance();
-    NucleotideEncodedGlyphs encodedReference = new DefaultNucleotideEncodedGlyphs(reference);
-    DefaultReferencedEncodedNucleotideGlyph sut = new DefaultReferencedEncodedNucleotideGlyph(encodedReference, gappedBasecalls,0, Range.buildRange(0, gappedBasecalls.length()-1));
+    NucleotideSequence encodedReference = new DefaultNucleotideSequence(reference);
+    ReferenceEncodedNucleotideSequence sut = new ReferenceEncodedNucleotideSequence(encodedReference, gappedBasecalls,0, Range.buildRange(0, gappedBasecalls.length()-1));
     
     
     @Test

@@ -26,7 +26,7 @@ package org.jcvi.fastX.fastq;
 import java.util.List;
 
 import org.jcvi.fastX.fastq.FastQQualityCodec;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
+import org.jcvi.glyph.EncodedSequence;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.junit.Test;
@@ -45,6 +45,6 @@ public class TestSangerFastQQualityCodecActual {
     @Test
     public void encode(){       
         assertEquals(encodedqualities, sut.encode(
-                new DefaultEncodedGlyphs<PhredQuality>(QUALITY_CODEC, qualities)));
+                new EncodedSequence<PhredQuality>(QUALITY_CODEC, qualities)));
     }
 }

@@ -39,7 +39,7 @@ public class TestEncodedByteGlyph {
     byte[] bytes = new byte[]{-20,40,Byte.MAX_VALUE,Byte.MIN_VALUE,21,86,99,0,4};
     List<ByteGlyph> glyphs = FACTORY.getGlyphsFor(bytes);
     
-    EncodedByteGlyphs sut = new EncodedByteGlyphs(glyphs);
+    EncodedByteSquence sut = new EncodedByteSquence(glyphs);
     
     @Test
     public void decode(){

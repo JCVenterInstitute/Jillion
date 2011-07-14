@@ -20,8 +20,8 @@
 package org.jcvi.fastX.fastq;
 
 import org.jcvi.fastX.FastXFilter;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
 /**
  * {@code AbstractFilteredFastQFileVisitor} is an implementation
@@ -70,8 +70,8 @@ public abstract class AbstractFilteredFastQFileVisitor extends AbstractFastQFile
      */
      @Override
      protected boolean visitFastQRecord(String id,
-             NucleotideEncodedGlyphs nucleotides,
-             QualityEncodedGlyphs qualities, String optionalComment) {
+             NucleotideSequence nucleotides,
+             QualitySequence qualities, String optionalComment) {
          return visitFastQRecord(new DefaultFastQRecord(id, nucleotides, qualities,optionalComment));
      }
    

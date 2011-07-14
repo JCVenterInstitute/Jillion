@@ -32,7 +32,7 @@ import org.jcvi.Range;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceElement;
 import org.jcvi.assembly.slice.SliceMap;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 /**
  * {@code OntheFlyAceBestSegmentMap} is an implementation of {@link AceBestSegmentMap}
@@ -46,9 +46,9 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
  */
 public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
     private final SliceMap sliceMap;
-    private final NucleotideEncodedGlyphs consensus;
+    private final NucleotideSequence consensus;
     
-    public OnTheFlyAceBestSegmentMap(SliceMap sliceMap, NucleotideEncodedGlyphs consensus){
+    public OnTheFlyAceBestSegmentMap(SliceMap sliceMap, NucleotideSequence consensus){
         if(sliceMap==null || consensus ==null){
             throw new NullPointerException();
         }

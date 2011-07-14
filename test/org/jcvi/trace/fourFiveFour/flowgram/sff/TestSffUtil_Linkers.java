@@ -19,7 +19,7 @@
 
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -43,7 +43,7 @@ public class TestSffUtil_Linkers {
         
     }
     
-    private void assertMatches(String expected, NucleotideEncodedGlyphs actual){
+    private void assertMatches(String expected, NucleotideSequence actual){
         assertEquals(expected, NucleotideGlyph.convertToString(actual.decode()));
     }
 }

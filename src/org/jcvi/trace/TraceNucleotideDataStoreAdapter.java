@@ -25,16 +25,16 @@ package org.jcvi.trace;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
-public class TraceNucleotideDataStoreAdapter <T extends Trace> extends AbstractTraceDataStoreAdapter<T,NucleotideEncodedGlyphs> implements NucleotideDataStore {
+public class TraceNucleotideDataStoreAdapter <T extends Trace> extends AbstractTraceDataStoreAdapter<T,NucleotideSequence> implements NucleotideDataStore {
 
     public TraceNucleotideDataStoreAdapter(DataStore<T> delegate) {
         super(delegate);
     }
 
     @Override
-    protected NucleotideEncodedGlyphs adapt(T delegate) {
+    protected NucleotideSequence adapt(T delegate) {
         return delegate.getBasecalls();
     }
 

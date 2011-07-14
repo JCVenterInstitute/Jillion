@@ -27,14 +27,14 @@ import java.util.List;
 
 import org.jcvi.Range;
 /**
- * {@code EncodedGlyphs} is an interface for 
+ * {@code Sequence} is an interface for 
  * encoding or compressing a list of {@link Glyph}s
  * so that they take up less memory.
  * @author dkatzel
  *
  *
  */
-public interface EncodedGlyphs<T extends Glyph> {
+public interface Sequence<T extends Glyph> {
     /**
      * Decode the entire list of encoded glyphs into
      * a List.

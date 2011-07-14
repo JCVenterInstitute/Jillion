@@ -35,8 +35,8 @@ import java.util.TreeSet;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.Sequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -72,7 +72,7 @@ public class ContigFileWriter implements Closeable{
         writeToOutputStream(header);
     }
 
-    private void writeBases(EncodedGlyphs<NucleotideGlyph> consensus) throws UnsupportedEncodingException, IOException {
+    private void writeBases(Sequence<NucleotideGlyph> consensus) throws UnsupportedEncodingException, IOException {
         StringBuilder asString = new StringBuilder();
         for(NucleotideGlyph glyph : consensus.decode()){
             asString.append(glyph);
@@ -91,7 +91,7 @@ public class ContigFileWriter implements Closeable{
         out.flush();
     }
     
-    private void writePlacedReadHeader(PlacedRead placedRead,NucleotideEncodedGlyphs consensus) throws IOException {
+    private void writePlacedReadHeader(PlacedRead placedRead,NucleotideSequence consensus) throws IOException {
         StringBuilder header = new StringBuilder();
         header.append(String.format("#%s(%d) [", placedRead.getId(), placedRead.getStart()));
         int validLeft = (int)placedRead.getValidRange().getStart();

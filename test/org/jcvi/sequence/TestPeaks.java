@@ -27,8 +27,8 @@ import static org.junit.Assert.*;
 
 import java.nio.ShortBuffer;
 
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.EncodedSequence;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.DefaultShortGlyphCodec;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
@@ -43,7 +43,7 @@ public class TestPeaks {
     private short[] peaks = new short[]{110,120,130,140,150,160};
     private short[] differentPeaks = new short[]{30,40,50,60,70,80,90};
     private Peaks sut = new Peaks(peaks);
-    private EncodedGlyphs<ShortGlyph> encodedPeaks = new DefaultEncodedGlyphs<ShortGlyph>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(peaks));
+    private Sequence<ShortGlyph> encodedPeaks = new EncodedSequence<ShortGlyph>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(peaks));
     @Test
     public void constructor(){
         assertEquals(encodedPeaks, sut.getData());

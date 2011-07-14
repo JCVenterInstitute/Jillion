@@ -32,9 +32,9 @@ import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegion;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegionType;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.Sequence;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.DefaultRead;
 import org.jcvi.sequence.Read;
@@ -54,7 +54,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     private final long fullUngappedLength;
     
     public DefaultCasPlacedReadFromCasAlignmentBuilder(String readId,
-            NucleotideEncodedGlyphs fullRangeSequence, 
+            NucleotideSequence fullRangeSequence, 
             boolean isReversed, long startOffset,
             Range traceTrimRange){
         if(fullRangeSequence ==null){
@@ -89,7 +89,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     public long startOffset(){
         return startOffset;
     }
-    public DefaultCasPlacedReadFromCasAlignmentBuilder addAlignmentRegions(List<CasAlignmentRegion> regions,EncodedGlyphs<NucleotideGlyph> referenceBases){
+    public DefaultCasPlacedReadFromCasAlignmentBuilder addAlignmentRegions(List<CasAlignmentRegion> regions,Sequence<NucleotideGlyph> referenceBases){
         
         for(CasAlignmentRegion region : regions){
             addAlignmentRegion(region,referenceBases);
@@ -97,7 +97,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         //validBases = NucleotideGlyph.convertToUngapped(validBases);
         return this;
     }
-    private void addAlignmentRegion(CasAlignmentRegion region,EncodedGlyphs<NucleotideGlyph> referenceBases){
+    private void addAlignmentRegion(CasAlignmentRegion region,Sequence<NucleotideGlyph> referenceBases){
         CasAlignmentRegionType type =region.getType();
         
         if(outsideValidRange){
@@ -148,8 +148,8 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         if(dir==SequenceDirection.REVERSE){
             validRange = AssemblyUtil.reverseComplimentValidRange(validRange, fullUngappedLength);
         }
-        Read<NucleotideEncodedGlyphs> read = new DefaultRead(readId,
-                        new DefaultNucleotideEncodedGlyphs(validBases,validRange));
+        Read<NucleotideSequence> read = new DefaultRead(readId,
+                        new DefaultNucleotideSequence(validBases,validRange));
         return new DefaultCasPlacedRead(read, startOffset, validRange, dir,(int)fullUngappedLength);
     }
 

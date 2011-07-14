@@ -27,7 +27,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.io.IOUtil;
@@ -149,14 +149,14 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     }
 
     private void bulkPut(ByteBuffer buffer,
-            EncodedGlyphs<NucleotideGlyph> basecalls) {
+            Sequence<NucleotideGlyph> basecalls) {
        for(NucleotideGlyph glyph : basecalls.decode()){
            buffer.put((byte)glyph.getCharacter().charValue());
        }
         
     }
     private void bulkPutPeaks(ByteBuffer buffer,
-            EncodedGlyphs<ShortGlyph> peaks) {
+            Sequence<ShortGlyph> peaks) {
        for(ShortGlyph glyph : peaks.decode()){
            buffer.putInt(glyph.getNumber().intValue());
        }

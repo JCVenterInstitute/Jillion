@@ -32,9 +32,9 @@ import java.util.regex.Pattern;
 
 import org.jcvi.Range;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Distance;
 import org.jcvi.sequence.MateOrientation;
@@ -141,8 +141,8 @@ public class Frg2Parser {
             visitor.visitFragment(action, id,null,null,null,null,null,null);
         }
         else{
-            NucleotideEncodedGlyphs bases = FragmentUtil.parseBasesFrom(frg);
-            QualityEncodedGlyphs qualities = parseEncodedQualitiesFrom(frg);
+            NucleotideSequence bases = FragmentUtil.parseBasesFrom(frg);
+            QualitySequence qualities = parseEncodedQualitiesFrom(frg);
             Range validRange =  FragmentUtil.parseValidRangeFrom(frg);
             Range vectorClearRange = parseVectorClearRangeFrom(frg);
             if(vectorClearRange == null && validRange !=null){
@@ -187,9 +187,9 @@ public class Frg2Parser {
     }
     
    
-    private QualityEncodedGlyphs parseEncodedQualitiesFrom(String frg) {
+    private QualitySequence parseEncodedQualitiesFrom(String frg) {
        
-        return  new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
+        return  new EncodedQualitySequence(RUN_LENGTH_CODEC,
                 FragmentUtil.parseEncodedQualitiesFrom(frg));        
     }
     

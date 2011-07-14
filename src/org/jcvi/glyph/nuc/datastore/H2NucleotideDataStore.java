@@ -29,13 +29,13 @@ import java.sql.SQLException;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.SequenceFastaRecordUtil;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
-public class H2NucleotideDataStore extends AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> implements NucleotideDataStore{
+public class H2NucleotideDataStore extends AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideSequence> implements NucleotideDataStore{
 
     /**
      * @throws DataStoreException
@@ -64,11 +64,11 @@ public class H2NucleotideDataStore extends AbstractH2EncodedGlyphDataStore<Nucle
     }
    
     @Override
-    public NucleotideEncodedGlyphs get(String id) throws DataStoreException {
+    public NucleotideSequence get(String id) throws DataStoreException {
         try {
             byte[] data = this.getData(id);
             if(data!=null){
-                return new DefaultNucleotideEncodedGlyphs(CODEC.decode(data));
+                return new DefaultNucleotideSequence(CODEC.decode(data));
             }
             return null;
         } catch (SQLException e) {

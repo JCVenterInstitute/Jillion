@@ -29,28 +29,21 @@ import java.util.List;
 import java.util.TreeMap;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 
-public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractEnocdedNucleotideGlyphs implements ReferencedEncodedNucleotideGlyphs{
+public class ReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferencedEncodedNucleotideSequence{
 
     private final int[] gaps;
     private final int[] snpIndexes;
-    private final NucleotideEncodedGlyphs snpValues;
-    private NucleotideEncodedGlyphs beforeValues;
-    private NucleotideEncodedGlyphs afterValues;
+    private final NucleotideSequence snpValues;
+    private NucleotideSequence beforeValues;
+    private NucleotideSequence afterValues;
     private int overhangOffset=0;
     private final int length;
     private final int startOffset;
     private final Range validRange;
-    protected AbstractReferenceEncodedNucleotideGlyphs(int[] snpIndex, NucleotideEncodedGlyphs snpValues,List<Integer> gaps, int startOffset,int length,Range validRange){
-        this.gaps = convertToPrimitiveArray(gaps);
-        this.startOffset = startOffset;
-        this.length = length;
-        this.validRange = validRange;
-        this.snpIndexes = snpIndex;
-        this.snpValues = snpValues;
-    }
-    
+    private final NucleotideSequence reference;
+
     protected int[] getSnpIndexes() {
         return snpIndexes;
     }
@@ -73,7 +66,7 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
     }
 
     @Override
-    public List<Integer> getSnps() {
+    public List<Integer> getSnpOffsets() {
         List<Integer> snps = new ArrayList<Integer>(snpIndexes.length);
         for(int i =0; i< snpIndexes.length; i++){
             snps.add(Integer.valueOf(snpIndexes[i]));
@@ -81,16 +74,17 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         return snps;
     }
 
-    protected NucleotideEncodedGlyphs getSnpValues() {
+    protected NucleotideSequence getSnpValues() {
         return snpValues;
     }
 
-    public AbstractReferenceEncodedNucleotideGlyphs(EncodedGlyphs<NucleotideGlyph> reference,
+    public ReferenceEncodedNucleotideSequence(NucleotideSequence reference,
             String toBeEncoded, int startOffset,Range validRange){
         List<Integer> tempGapList = new ArrayList<Integer>();     
         this.startOffset = startOffset;
         this.length = toBeEncoded.length();
         this.validRange = validRange;
+        this.reference = reference;
         TreeMap<Integer, NucleotideGlyph> differentGlyphMap = new TreeMap<Integer, NucleotideGlyph>();
         populateFields(reference, toBeEncoded, startOffset, tempGapList,differentGlyphMap);
         gaps = convertToPrimitiveArray(tempGapList);
@@ -98,9 +92,16 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         snpValues = createSNPValues(differentGlyphMap);
     }
 
-    private NucleotideEncodedGlyphs createSNPValues(
+    public ReferenceEncodedNucleotideSequence(NucleotideSequence reference){
+        this(reference,NucleotideGlyph.convertToString(reference.decode()),0,Range.buildRangeOfLength(0, reference.getLength()));
+    }
+    public ReferenceEncodedNucleotideSequence(String reference){
+        this(new DefaultNucleotideSequence(reference));
+    }
+    
+    private NucleotideSequence createSNPValues(
             TreeMap<Integer, NucleotideGlyph> differentGlyphMap) {
-        return new DefaultNucleotideEncodedGlyphs(differentGlyphMap.values());
+        return new DefaultNucleotideSequence(differentGlyphMap.values());
 
     }
     private int[] createSNPIndexes(TreeMap<Integer, NucleotideGlyph> snpMap){
@@ -119,11 +120,11 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         }
         return array;
     }
-    private TreeMap<Integer, NucleotideGlyph> populateFields(EncodedGlyphs<NucleotideGlyph> reference,
+    private TreeMap<Integer, NucleotideGlyph> populateFields(Sequence<NucleotideGlyph> reference,
             String toBeEncoded, int startOffset, List<Integer> tempGapList,TreeMap<Integer, NucleotideGlyph> differentGlyphMap) {
         if(startOffset<0){
             //handle before values
-            beforeValues = new DefaultNucleotideEncodedGlyphs(toBeEncoded.substring(0, Math.abs(startOffset)));
+            beforeValues = new DefaultNucleotideSequence(toBeEncoded.substring(0, Math.abs(startOffset)));
         }else{
             beforeValues =null;
         }
@@ -133,7 +134,7 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         if(lastOffsetOfSequence > reference.getLength()){
             int overhang = (int)(toBeEncoded.length()+startOffset - reference.getLength());
             overhangOffset = toBeEncoded.length()-overhang;
-            afterValues = new DefaultNucleotideEncodedGlyphs(toBeEncoded.substring(overhangOffset));
+            afterValues = new DefaultNucleotideSequence(toBeEncoded.substring(overhangOffset));
             
         }else{
             afterValues=null;
@@ -186,7 +187,7 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
             return snpValues.get(snpIndex);
         }
         int referenceIndex = index+startOffset;
-        return getFromReference(referenceIndex);
+        return reference.get(referenceIndex);
     }
 
     @Override
@@ -198,7 +199,6 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         }
         return false;
     }
-    protected abstract NucleotideGlyph getFromReference(int referenceIndex);
     
     @Override
     public long getLength() {
@@ -238,10 +238,10 @@ public abstract class AbstractReferenceEncodedNucleotideGlyphs extends AbstractE
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof AbstractReferenceEncodedNucleotideGlyphs)) {
+        if (!(obj instanceof ReferenceEncodedNucleotideSequence)) {
             return false;
         }
-        AbstractReferenceEncodedNucleotideGlyphs other = (AbstractReferenceEncodedNucleotideGlyphs) obj;
+        ReferenceEncodedNucleotideSequence other = (ReferenceEncodedNucleotideSequence) obj;
         if (!Arrays.equals(snpIndexes,other.snpIndexes)) {
             return false;
         }

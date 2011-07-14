@@ -22,8 +22,8 @@ package org.jcvi.assembly.contig.qual;
 import org.easymock.EasyMockSupport;
 import org.jcvi.Range;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.Sequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.SequenceDirection;
 import org.junit.Before;
@@ -39,15 +39,15 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
 
     GapQualityValueStrategies sut;
     private PlacedRead placedRead;
-    private EncodedGlyphs<PhredQuality> fullQualities;
-    private NucleotideEncodedGlyphs encodedGlyphs;
+    private Sequence<PhredQuality> fullQualities;
+    private NucleotideSequence encodedGlyphs;
     PhredQuality expectedQuality = PhredQuality.valueOf(42);
     @Before
     public void setup(){
         sut= getGapQualityValueStrategies();
         placedRead= createMock(PlacedRead.class);
-        encodedGlyphs = createMock(NucleotideEncodedGlyphs.class);
-        fullQualities = createMock(EncodedGlyphs.class);
+        encodedGlyphs = createMock(NucleotideSequence.class);
+        fullQualities = createMock(Sequence.class);
     }
     
     protected abstract GapQualityValueStrategies getGapQualityValueStrategies();

@@ -29,8 +29,8 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -82,10 +82,10 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
             }
             long newOffset = placedRead.convertValidRangeIndexToReferenceIndex((int)newTrimRange.getStart());
             
-            final NucleotideEncodedGlyphs originalGappedValidBases = placedRead.getEncodedGlyphs();
+            final NucleotideSequence originalGappedValidBases = placedRead.getEncodedGlyphs();
             final List<NucleotideGlyph> trimedBasecalls = originalGappedValidBases.decode(newTrimRange);
             String trimmedBases = NucleotideGlyph.convertToString(trimedBasecalls);
-            long ungappedLength = new DefaultNucleotideEncodedGlyphs(trimedBasecalls).getUngappedLength();
+            long ungappedLength = new DefaultNucleotideSequence(trimedBasecalls).getUngappedLength();
             
             
             final Range ungappedNewValidRange;

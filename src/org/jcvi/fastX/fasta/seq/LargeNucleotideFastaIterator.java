@@ -22,14 +22,14 @@ package org.jcvi.fastX.fasta.seq;
 import java.io.File;
 
 import org.jcvi.fastX.fasta.AbstractLargeFastaRecordIterator;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 /**
  * @author dkatzel
  *
  *
  */
-public class LargeNucleotideFastaIterator extends AbstractLargeFastaRecordIterator<NucleotideEncodedGlyphs, NucleotideSequenceFastaRecord>{
+public class LargeNucleotideFastaIterator extends AbstractLargeFastaRecordIterator<NucleotideSequence, NucleotideSequenceFastaRecord>{
 
 	 public static LargeNucleotideFastaIterator createNewIteratorFor(File fastaFile){
 		 LargeNucleotideFastaIterator iter = new LargeNucleotideFastaIterator(fastaFile);

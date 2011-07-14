@@ -32,12 +32,12 @@ import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.assembly.coverage.DefaultCoverageRegion;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 /**
  * {@code AssemblyUtil} is a utility class for working
- * with {@link PlacedRead}s and gapped {@link NucleotideEncodedGlyphs}.
+ * with {@link PlacedRead}s and gapped {@link NucleotideSequence}.
  * @author dkatzel
  *
  *
@@ -49,7 +49,7 @@ public final class AssemblyUtil {
      * Create a List of {@link NucleotideGlyph}s that corresponds to the gapped full range
      * (untrimmed, uncomplimented, gapped) version of the given PlacedRead.
      * This method is equivalent to 
-     * {@link #buildGappedComplimentedFullRangeBases(NucleotideEncodedGlyphs, SequenceDirection, Range, List)
+     * {@link #buildGappedComplimentedFullRangeBases(NucleotideSequence, SequenceDirection, Range, List)
      * buildGappedComplimentedFullRangeBases(placedRead.getEncodedGlyphs(), placedRead.getSequenceDirection(), placedRead.getValidRange(), ungappedUncomplimentedFullRangeBases)}
      * @param <R> The PlacedRead Type.
      * @param placedRead the read to work on.
@@ -57,7 +57,7 @@ public final class AssemblyUtil {
      * full (raw) version of the basecalls as originally called from the sequencer.
      * @return a new List of {@link NucleotideGlyph}s of the gapped, untrimmed uncomplimented
      * basecalls of the given read.
-     * @see #buildGappedComplimentedFullRangeBases(NucleotideEncodedGlyphs, SequenceDirection, Range, List)
+     * @see #buildGappedComplimentedFullRangeBases(NucleotideSequence, SequenceDirection, Range, List)
      */
     public static <R extends PlacedRead> List<NucleotideGlyph> buildGappedComplimentedFullRangeBases(R placedRead, List<NucleotideGlyph> ungappedUncomplimentedFullRangeBases){
        return buildGappedComplimentedFullRangeBases(placedRead.getEncodedGlyphs(), placedRead.getSequenceDirection(), placedRead.getValidRange(), ungappedUncomplimentedFullRangeBases);
@@ -75,7 +75,7 @@ public final class AssemblyUtil {
      * basecalls of the given read.
      */
     public static List<NucleotideGlyph> buildGappedComplimentedFullRangeBases(
-            NucleotideEncodedGlyphs gappedValidRange, SequenceDirection dir, Range validRange, List<NucleotideGlyph> ungappedUncomplimentedFullRangeBases){
+            NucleotideSequence gappedValidRange, SequenceDirection dir, Range validRange, List<NucleotideGlyph> ungappedUncomplimentedFullRangeBases){
         List<NucleotideGlyph> fullRangeComplimented;
         if(dir == SequenceDirection.REVERSE){
             fullRangeComplimented = NucleotideGlyph.reverseCompliment(ungappedUncomplimentedFullRangeBases);
@@ -148,11 +148,11 @@ public final class AssemblyUtil {
     }
     
     public static boolean afterEndOfRead(int rightFlankingNonGapIndex,
-            NucleotideEncodedGlyphs placedRead) {
+            NucleotideSequence placedRead) {
         return rightFlankingNonGapIndex> placedRead.getLength()-1;
     }
 
-    public static boolean isAGap(NucleotideEncodedGlyphs glyphs, int gappedReadIndex) {
+    public static boolean isAGap(NucleotideSequence glyphs, int gappedReadIndex) {
         return glyphs.isGap(gappedReadIndex);
     }
     /**
@@ -163,7 +163,7 @@ public final class AssemblyUtil {
      * @param gappedReadIndex the gapped offset (0-based) to start the search from.
      * @return the first non-gap position on the placedRead that is {@code <= gappedReadIndex}
      */
-    public static int getLeftFlankingNonGapIndex(NucleotideEncodedGlyphs gappedNucleotides, int gappedReadIndex) {
+    public static int getLeftFlankingNonGapIndex(NucleotideSequence gappedNucleotides, int gappedReadIndex) {
         if(beforeStartOfRead(gappedReadIndex)){
             return gappedReadIndex;
         }
@@ -185,7 +185,7 @@ public final class AssemblyUtil {
      * @param gappedReadIndex the gapped offset (0-based) to start the search from.
      * @return the first non-gap position on the placedRead that is {@code >= gappedReadIndex}
      */
-    public static int getRightFlankingNonGapIndex(NucleotideEncodedGlyphs placedRead, int gappedReadIndex) {
+    public static int getRightFlankingNonGapIndex(NucleotideSequence placedRead, int gappedReadIndex) {
         if(afterEndOfRead(gappedReadIndex, placedRead)){
             return gappedReadIndex;
         }
@@ -195,7 +195,7 @@ public final class AssemblyUtil {
         return gappedReadIndex;
     }
     
-    public static Range convertGappedRangeIntoUngappedRange(final NucleotideEncodedGlyphs encodedGlyphs,
+    public static Range convertGappedRangeIntoUngappedRange(final NucleotideSequence encodedGlyphs,
             Range gappedFeatureValidRange) {
         int ungappedLeft = encodedGlyphs.convertGappedValidRangeIndexToUngappedValidRangeIndex(
                 AssemblyUtil.getRightFlankingNonGapIndex(encodedGlyphs, (int)gappedFeatureValidRange.getStart()));
@@ -216,13 +216,13 @@ public final class AssemblyUtil {
     }
     
     public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
-    buildUngappedCoverageMap(NucleotideEncodedGlyphs consensus, Collection<PR> reads){
+    buildUngappedCoverageMap(NucleotideSequence consensus, Collection<PR> reads){
         
         CoverageMap<T> gappedCoverageMap =DefaultCoverageMap.buildCoverageMap(reads);
         return createUngappedCoverageMap(consensus, gappedCoverageMap);
     }
     private static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR, T> createUngappedCoverageMap(
-            NucleotideEncodedGlyphs consensus, CoverageMap<T> gappedCoverageMap) {
+            NucleotideSequence consensus, CoverageMap<T> gappedCoverageMap) {
         List<CoverageRegion<PR>> ungappedCoverageRegions = new ArrayList<CoverageRegion<PR>>();
         for(T gappedCoverageRegion : gappedCoverageMap){
             Range gappedRange = gappedCoverageRegion.asRange();

@@ -28,15 +28,15 @@ import java.io.IOException;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.util.CloseableIterator;
 
 /**
  * A <code>QualityDataStoreAdapter</code> adapts the heavily parameterized
- * <code>{@link DataStore}&lt;{@link EncodedGlyphs}&lt;{@link PhredQuality}&gt;&gt;</code>
+ * <code>{@link DataStore}&lt;{@link Sequence}&lt;{@link PhredQuality}&gt;&gt;</code>
  * interface to its simplified equivalent {@link QualityDataStore}.
  *
  * @author jsitz@jcvi.org
@@ -44,14 +44,14 @@ import org.jcvi.util.CloseableIterator;
 public class QualityDataStoreAdapter implements QualityDataStore
 {
     /** The datastore being wrapped and adapted. */
-    private final DataStore<QualityEncodedGlyphs> datastore;
+    private final DataStore<QualitySequence> datastore;
 
     /**
      * Constructs a new <code>QualityDataStoreAdapter</code>.
      *
      * @param datastore The {@link DataStore} being wrapped and adapted.
      */
-    public QualityDataStoreAdapter(DataStore<QualityEncodedGlyphs> datastore)
+    public QualityDataStoreAdapter(DataStore<QualitySequence> datastore)
     {
         super();
 
@@ -71,7 +71,7 @@ public class QualityDataStoreAdapter implements QualityDataStore
      * @see org.jcvi.datastore.DataStore#get(java.lang.String)
      */
     @Override
-    public QualityEncodedGlyphs get(String id) throws DataStoreException
+    public QualitySequence get(String id) throws DataStoreException
     {
         return this.datastore.get(id);
     }
@@ -107,7 +107,7 @@ public class QualityDataStoreAdapter implements QualityDataStore
      * @see java.lang.Iterable#iterator()
      */
     @Override
-    public CloseableIterator<QualityEncodedGlyphs> iterator()
+    public CloseableIterator<QualitySequence> iterator()
     {
         return this.datastore.iterator();
     }

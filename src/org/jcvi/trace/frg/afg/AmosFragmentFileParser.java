@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.frg.FragmentUtil;
@@ -83,7 +83,7 @@ public final class AmosFragmentFileParser {
         int index = parseIndexFrom(block);
         String id = parseIdFrom(block);
         if(visitor.visitRead(index, id)){
-            NucleotideEncodedGlyphs bases = FragmentUtil.parseBasesFrom(block);
+            NucleotideSequence bases = FragmentUtil.parseBasesFrom(block);
             visitor.visitBasecalls(bases);
             List<PhredQuality> qualities = FragmentUtil.parseEncodedQualitiesFrom(block);
             visitor.visitQualities(qualities);

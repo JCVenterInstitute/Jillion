@@ -20,7 +20,7 @@
 package org.jcvi.assembly.ace;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class TestDefaultAceContig {
         DefaultAceContig.Builder sut =  new DefaultAceContig.Builder("id",
                 "ACGTACGTACGTACGT");
         DefaultAceContig contig =sut.build();
-        NucleotideEncodedGlyphs consensus =contig.getConsensus();
+        NucleotideSequence consensus =contig.getConsensus();
         assertEquals(0, consensus.getLength());
         assertEquals("id",contig.getId());
         assertEquals(0,contig.getNumberOfReads());
@@ -48,7 +48,7 @@ public class TestDefaultAceContig {
                                             "ACGTACGTACGTACGT");
         sut.addRead("read", "ACGTACGTACGTACGT", -2, SequenceDirection.FORWARD, Range.buildRange(2, 18), null,16);
             DefaultAceContig contig =sut.build();
-            NucleotideEncodedGlyphs consensus =contig.getConsensus();
+            NucleotideSequence consensus =contig.getConsensus();
             assertEquals(16, consensus.getLength());
             assertEquals("id",contig.getId());
             assertEquals(1,contig.getNumberOfReads());

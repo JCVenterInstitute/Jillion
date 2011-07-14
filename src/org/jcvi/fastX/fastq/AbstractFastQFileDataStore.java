@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.util.CloseableIterator;
 
 public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends AbstractFastQFileVisitor implements FastQDataStore<T>{
@@ -104,7 +104,7 @@ public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends 
     }
     
     @Override
-    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
+    public void visitNucleotides(NucleotideSequence nucleotides) {
         checkNotYetInitialized();
        super.visitNucleotides(nucleotides);
         

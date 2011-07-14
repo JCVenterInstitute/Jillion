@@ -35,15 +35,15 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.fastX.fasta.FastaParser;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
 
 public class DefaultPositionFastaFileDataStore extends AbstractPositionFastaFileDataStore{
 
-private final Map<String, PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> map = new HashMap<String, PositionFastaRecord<EncodedGlyphs<ShortGlyph>>>();
-private DataStore<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> datastore;
+private final Map<String, PositionFastaRecord<Sequence<ShortGlyph>>> map = new HashMap<String, PositionFastaRecord<Sequence<ShortGlyph>>>();
+private DataStore<PositionFastaRecord<Sequence<ShortGlyph>>> datastore;
 /**
  * @param fastaRecordFactory
  */
@@ -94,14 +94,14 @@ public void close() throws IOException {
 @Override
 public void visitEndOfFile() {
     super.visitEndOfFile();
-    datastore = new SimpleDataStore<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>>(map);
+    datastore = new SimpleDataStore<PositionFastaRecord<Sequence<ShortGlyph>>>(map);
 }
 @Override
 public boolean contains(String id) throws DataStoreException {
     return datastore.contains(id);
 }
 @Override
-public PositionFastaRecord<EncodedGlyphs<ShortGlyph>> get(String id)
+public PositionFastaRecord<Sequence<ShortGlyph>> get(String id)
         throws DataStoreException {
     return datastore.get(id);
 }
@@ -114,7 +114,7 @@ public int size() throws DataStoreException {
     return datastore.size();
 }
 @Override
-public CloseableIterator<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> iterator() {
+public CloseableIterator<PositionFastaRecord<Sequence<ShortGlyph>>> iterator() {
     return datastore.iterator();
 }
 }

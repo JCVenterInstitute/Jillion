@@ -28,9 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
-
-public class EncodedByteGlyphs implements EncodedGlyphs<ByteGlyph>{
+import org.jcvi.glyph.Sequence;
+/**
+ * {@code EncodedByteSquence} encodes a {@link Sequence}
+ * of {@link ByteGlyph}s.
+ * @author dkatzel
+ */
+public class EncodedByteSquence implements Sequence<ByteGlyph>{
 
     private static final ByteGlyphFactory<ByteGlyph> FACTORY = new ByteGlyphFactory<ByteGlyph>(){
 
@@ -41,7 +45,7 @@ public class EncodedByteGlyphs implements EncodedGlyphs<ByteGlyph>{
         
     };
     private final byte[] data;
-    public EncodedByteGlyphs(List<ByteGlyph> bytes){
+    public EncodedByteSquence(List<ByteGlyph> bytes){
         this.data = encode(bytes);
     }
     private byte[] encode(List<ByteGlyph> bytes) {

@@ -32,12 +32,12 @@ import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.trace.sanger.phd.Phd;
@@ -229,15 +229,15 @@ public class HiLowAceContigPhdDatastore implements PhdDataStore{
                 int offset, SequenceDirection dir, Range validRange,
                 PhdInfo phdInfo, int ungappedFullLength) {
             if(contigOfInterest){
-                NucleotideEncodedGlyphs fullLengthBasecalls = new DefaultNucleotideEncodedGlyphs(
+                NucleotideSequence fullLengthBasecalls = new DefaultNucleotideSequence(
                                         ConsedUtil.convertAceGapsToContigGaps(getCurrentFullLengthBasecalls())
                                                             .replaceAll("-", ""));
                 
                 if(dir==SequenceDirection.REVERSE){
                     Collections.reverse(currentHiLowQualities);
-                    fullLengthBasecalls = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.reverseCompliment(fullLengthBasecalls.decode()));
+                    fullLengthBasecalls = new DefaultNucleotideSequence(NucleotideGlyph.reverseCompliment(fullLengthBasecalls.decode()));
                 }
-                QualityEncodedGlyphs qualities = new DefaultQualityEncodedGlyphs(
+                QualitySequence qualities = new EncodedQualitySequence(
                                             RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                                             currentHiLowQualities); 
                 

@@ -27,7 +27,7 @@ import java.nio.ShortBuffer;
 import java.util.List;
 
 import org.jcvi.Builder;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -65,9 +65,9 @@ public  final class ChromatogramUtil {
 
         
         
-        private final EncodedGlyphs<NucleotideGlyph> basecalls;
+        private final Sequence<NucleotideGlyph> basecalls;
         private final Peaks peaks;
-        private final EncodedGlyphs<PhredQuality> qualities;
+        private final Sequence<PhredQuality> qualities;
         /**
          * Construct a new FakeChannelGroupBuilder which will
          * use the given parameters to fake waveform data.
@@ -79,8 +79,8 @@ public  final class ChromatogramUtil {
          * @throws IllegalArgumentException if basecalls, qualities
          * and peaks are not all the same length
          */
-        public FakeChannelGroupBuilder(EncodedGlyphs<NucleotideGlyph> basecalls,
-                EncodedGlyphs<PhredQuality> qualities, Peaks peaks) {
+        public FakeChannelGroupBuilder(Sequence<NucleotideGlyph> basecalls,
+                Sequence<PhredQuality> qualities, Peaks peaks) {
             if(basecalls.getLength() != qualities.getLength()){
                 throw new IllegalArgumentException("basecalls must be same length as qualities");
             }

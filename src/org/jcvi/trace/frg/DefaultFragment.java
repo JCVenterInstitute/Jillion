@@ -25,15 +25,15 @@ package org.jcvi.trace.frg;
 
 import org.jcvi.CommonUtil;
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Library;
 import org.jcvi.trace.Trace;
 
 public class DefaultFragment implements Fragment{
     private final String id;
-    private final NucleotideEncodedGlyphs bases;
-    private final QualityEncodedGlyphs qualities;
+    private final NucleotideSequence bases;
+    private final QualitySequence qualities;
     private final Range validRange, vectorClearRange;
     private final String comment;
     private final Library library;
@@ -49,8 +49,8 @@ public class DefaultFragment implements Fragment{
     public DefaultFragment(String id, Trace trace,Library library){
         this(id, trace,Range.buildRangeOfLength(0,trace.getBasecalls().getLength()),library);
     }
-    public DefaultFragment(String id, NucleotideEncodedGlyphs bases,
-            QualityEncodedGlyphs qualities,Range validRange,Range vectorClearRange, Library library,String comment){
+    public DefaultFragment(String id, NucleotideSequence bases,
+            QualitySequence qualities,Range validRange,Range vectorClearRange, Library library,String comment){
         if(id ==null){
             throw new IllegalArgumentException("id can not be null");
         }
@@ -65,12 +65,12 @@ public class DefaultFragment implements Fragment{
 
 
     @Override
-    public NucleotideEncodedGlyphs getBasecalls() {
+    public NucleotideSequence getBasecalls() {
         return bases;
     }
 
     @Override
-    public QualityEncodedGlyphs getQualities() {
+    public QualitySequence getQualities() {
         return qualities;
     }
     @Override
@@ -84,7 +84,7 @@ public class DefaultFragment implements Fragment{
 
 
     @Override
-    public NucleotideEncodedGlyphs getEncodedGlyphs() {
+    public NucleotideSequence getEncodedGlyphs() {
         return bases;
     }
 

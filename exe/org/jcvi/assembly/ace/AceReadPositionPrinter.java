@@ -32,8 +32,8 @@ import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.sequence.SequenceDirection;
 
 /**
@@ -45,11 +45,11 @@ public class AceReadPositionPrinter {
 
     private static class Printer extends AbstractAceFileVisitor{
         private String currentContigId=null;
-        private NucleotideEncodedGlyphs consensus;
+        private NucleotideSequence consensus;
         @Override
         protected void visitNewContig(String contigId, String consensus) {
             currentContigId = contigId;
-            this.consensus = new DefaultNucleotideEncodedGlyphs(
+            this.consensus = new DefaultNucleotideSequence(
                         ConsedUtil.convertAceGapsToContigGaps(consensus));
         }
         

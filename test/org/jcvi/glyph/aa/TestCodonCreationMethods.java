@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.jcvi.glyph.aa.Codon.Frame;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -90,18 +90,18 @@ public class TestCodonCreationMethods {
     @Test
     public void translateMultipleCodons(){
         String basecalls = tripletBases+tripletBases;
-        assertEquals(Arrays.asList(expectedCodon,expectedCodon), Codon.getCodonsFor(new DefaultNucleotideEncodedGlyphs(basecalls)));
+        assertEquals(Arrays.asList(expectedCodon,expectedCodon), Codon.getCodonsFor(new DefaultNucleotideSequence(basecalls)));
     }
     @Test
     public void translateMultipleCodonsFrame1(){
         String basecalls = "N"+tripletBases+tripletBases+"N";
         assertEquals(Arrays.asList(expectedCodon,expectedCodon), 
-                Codon.getCodonsFor(new DefaultNucleotideEncodedGlyphs(basecalls), Frame.ONE));
+                Codon.getCodonsFor(new DefaultNucleotideSequence(basecalls), Frame.ONE));
     }
     @Test
     public void translateMultipleCodonsFrame2(){
         String basecalls = "NN"+tripletBases+tripletBases+"NN";
         assertEquals(Arrays.asList(expectedCodon,expectedCodon), 
-                Codon.getCodonsFor(new DefaultNucleotideEncodedGlyphs(basecalls), Frame.TWO));
+                Codon.getCodonsFor(new DefaultNucleotideSequence(basecalls), Frame.TWO));
     }
 }

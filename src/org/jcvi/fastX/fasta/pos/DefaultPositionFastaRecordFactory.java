@@ -23,7 +23,7 @@
  */
 package org.jcvi.fastX.fasta.pos;
 
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.ShortGlyph;
 
 public class DefaultPositionFastaRecordFactory implements PositionFastaRecordFactory{
@@ -35,14 +35,14 @@ public class DefaultPositionFastaRecordFactory implements PositionFastaRecordFac
         return INSTANCE;
     }
     @Override
-    public PositionFastaRecord<EncodedGlyphs<ShortGlyph>> createFastaRecord(
+    public PositionFastaRecord<Sequence<ShortGlyph>> createFastaRecord(
             String id, String comments, String recordBody) {
         return PositionsFastaRecordUtil.buildFastaRecord(id, comments, recordBody);
         
     }
 
     @Override
-    public PositionFastaRecord<EncodedGlyphs<ShortGlyph>> createFastaRecord(
+    public PositionFastaRecord<Sequence<ShortGlyph>> createFastaRecord(
             String id, String recordBody) {
         return createFastaRecord(id, null,recordBody);
     }

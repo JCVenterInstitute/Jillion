@@ -22,7 +22,7 @@
  */
 package org.jcvi.align;
 
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.Glyph;
 
 
@@ -44,5 +44,5 @@ public interface Aligner<G extends Glyph>
      * @param querySequence The sequence to align to the reference.
      * @return The {@link Alignment} of the query against the reference.
      */
-    Alignment alignSequence(EncodedGlyphs<G> querySequence, EncodedGlyphs<G> referenceSequence);
+    Alignment alignSequence(Sequence<G> querySequence, Sequence<G> referenceSequence);
 }

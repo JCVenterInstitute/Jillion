@@ -20,14 +20,14 @@
 package org.jcvi.fastX.fasta.qual;
 
 import org.jcvi.fastX.fasta.AbstractFastaRecordVisitor;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
 /**
  * @author dkatzel
  *
  *
  */
-public abstract class AbstractQualityFastaVisitor extends AbstractFastaRecordVisitor<QualityEncodedGlyphs, QualityFastaRecord>{
+public abstract class AbstractQualityFastaVisitor extends AbstractFastaRecordVisitor<QualitySequence, QualityFastaRecord>{
 
     public AbstractQualityFastaVisitor(){
         this(DefaultQualityFastaRecordFactory.getInstance());

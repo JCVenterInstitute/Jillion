@@ -25,7 +25,7 @@ package org.jcvi.assembly.contig;
 
 import org.jcvi.assembly.Location;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
@@ -33,14 +33,14 @@ public class DefaultQualityDifference implements BasecallDifference{
 
     private final PhredQuality quality;
     private final Location<PlacedRead> read;
-    private final Location<EncodedGlyphs<NucleotideGlyph>> reference;
+    private final Location<Sequence<NucleotideGlyph>> reference;
     /**
      * @param reference
      * @param read
      * @param quality
      */
     public DefaultQualityDifference(
-            Location<EncodedGlyphs<NucleotideGlyph>> reference,
+            Location<Sequence<NucleotideGlyph>> reference,
             Location<PlacedRead> read, PhredQuality quality) {
         if(reference ==null){
             throw new IllegalArgumentException("can not have a null reference");
@@ -58,7 +58,7 @@ public class DefaultQualityDifference implements BasecallDifference{
     public final Location<PlacedRead> getReadLocation() {
         return read;
     }
-    public final Location<EncodedGlyphs<NucleotideGlyph>> getReferenceLocation() {
+    public final Location<Sequence<NucleotideGlyph>> getReferenceLocation() {
         return reference;
     }
     @Override

@@ -24,8 +24,8 @@ import org.jcvi.Range;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class TestDefaultAmosFragmentDataStore {
     
     AmosFragment JGBAA01T21H05PB2A2341BRB = new DefaultAmosFragment(
             "JGBAA01T21H05PB2A2341BRB", 48, 
-           new DefaultNucleotideEncodedGlyphs(
+           new DefaultNucleotideSequence(
                     "aacgggtcgtttttacattcgacattaattgatggccatccgaatccttttggtcgctgtctggctgtca" +
 "gaaattatgctagagtcccgtttccgtttcattaccaacaccacgtctccttgcccaattagcacattag" +
 "ccttttctccctttgcaagattgctcagttcattgatgctcaatgctgggccgtatctcttgtcttcttt" +
@@ -57,7 +57,7 @@ public class TestDefaultAmosFragmentDataStore {
 "actgaaatggctcgaattccatcttgttatacaaaattgtgggatcctgtgaccattgaattttcacagt" +
 "ttcccaatttctgatgatccactgataagtattgaccaacactgactcaggaccattgatctcccacatc" +
 "actggtt"),
-new DefaultQualityEncodedGlyphs(
+new EncodedQualitySequence(
         RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, 
         QUALITY_CODEC.decode(
         ("66667778<<<>A>>>F>@AA>>><<GFEAA@ACAAAHLCSSMSSRR\\\\\\SSSSS\\____]V]\\SKC=>7"+

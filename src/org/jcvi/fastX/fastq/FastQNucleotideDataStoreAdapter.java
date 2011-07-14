@@ -27,9 +27,9 @@ package org.jcvi.fastX.fastq;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
-public class FastQNucleotideDataStoreAdapter extends AbstractFastQDataStoreAdapter<NucleotideEncodedGlyphs> implements NucleotideDataStore{
+public class FastQNucleotideDataStoreAdapter extends AbstractFastQDataStoreAdapter<NucleotideSequence> implements NucleotideDataStore{
 
     /**
      * @param dataStore
@@ -39,7 +39,7 @@ public class FastQNucleotideDataStoreAdapter extends AbstractFastQDataStoreAdapt
     }
 
     @Override
-    public NucleotideEncodedGlyphs get(String id) throws DataStoreException {
+    public NucleotideSequence get(String id) throws DataStoreException {
         return getDataStore().get(id).getNucleotides();
     }
    

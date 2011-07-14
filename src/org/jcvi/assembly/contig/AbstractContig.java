@@ -29,15 +29,15 @@ import java.util.Map;
 import java.util.Set;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 public abstract class AbstractContig<T extends PlacedRead> implements Contig<T>{
-    private NucleotideEncodedGlyphs consensus;
+    private NucleotideSequence consensus;
     private String id;
     private Map<String, T> mapById;
     private final int numberOfReads;
     private final Set<T> placedReads;
-    protected AbstractContig(String id, NucleotideEncodedGlyphs consensus, Set<T> placedReads){
+    protected AbstractContig(String id, NucleotideSequence consensus, Set<T> placedReads){
         this.id = id;
         this.consensus = consensus;
         mapById = new LinkedHashMap<String, T>();
@@ -50,7 +50,7 @@ public abstract class AbstractContig<T extends PlacedRead> implements Contig<T>{
     }
 
     @Override
-    public NucleotideEncodedGlyphs getConsensus() {
+    public NucleotideSequence getConsensus() {
         return consensus;
     }
 

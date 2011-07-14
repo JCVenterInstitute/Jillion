@@ -28,7 +28,7 @@ import org.jcvi.fastX.fasta.pos.PositionFastaRecord;
 import org.jcvi.fastX.fasta.qual.LargeQualityFastaIterator;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecord;
 import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Peaks;
@@ -47,7 +47,7 @@ import org.joda.time.DateTime;
 public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaConsedPhdAdaptedIterator{
 
     private final CloseableIterator<QualityFastaRecord> qualityIterator;
-    private final CloseableIterator<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> positionIterator;
+    private final CloseableIterator<PositionFastaRecord<Sequence<ShortGlyph>>> positionIterator;
     
     private QualityFastaRecord currentQualityFasta;
     private Peaks currentPeaks;
@@ -71,7 +71,7 @@ public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaCons
      * @param fastaFile
      * @return
      */
-    private CloseableIterator<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> createPositionIterator(
+    private CloseableIterator<PositionFastaRecord<Sequence<ShortGlyph>>> createPositionIterator(
             File fastaFile) {
         File posFile = getFileLike(fastaFile,"pos");
         if(!posFile.exists()){

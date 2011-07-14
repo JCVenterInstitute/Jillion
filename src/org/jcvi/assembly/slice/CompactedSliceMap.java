@@ -33,12 +33,12 @@ import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.util.ArrayIterator;
 import org.jcvi.util.CloseableIterator;
 
@@ -61,9 +61,9 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
         return new CompactedSliceMap(coverageMap, new NullQualityDataStore(defaultQuality), new FakeQualityValueStrategy(defaultQuality));
     }
     private static final class NullQualityDataStore implements QualityDataStore{
-        final QualityEncodedGlyphs fakeQualities;
+        final QualitySequence fakeQualities;
         public NullQualityDataStore(final PhredQuality defaultQuality){
-            fakeQualities = new QualityEncodedGlyphs(){
+            fakeQualities = new QualitySequence(){
                 @Override
                 public List<PhredQuality> decode() {
                     // TODO Auto-generated method stub
@@ -111,7 +111,7 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
         * {@inheritDoc}
         */
         @Override
-        public QualityEncodedGlyphs get(String id) throws DataStoreException {
+        public QualitySequence get(String id) throws DataStoreException {
 
             return fakeQualities;
         }
@@ -156,7 +156,7 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
         * {@inheritDoc}
         */
         @Override
-        public CloseableIterator<QualityEncodedGlyphs> iterator() {
+        public CloseableIterator<QualitySequence> iterator() {
             // TODO Auto-generated method stub
             return null;
         }
@@ -175,7 +175,7 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
         */
         @Override
         public PhredQuality getQualityFor(PlacedRead placedRead,
-                EncodedGlyphs<PhredQuality> fullQualities, int gappedReadIndex) {
+                Sequence<PhredQuality> fullQualities, int gappedReadIndex) {
             return defaultQuality;
         }
         
@@ -185,7 +185,7 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
         int size = (int)coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()+1;
         this.slices = new CompactedSlice[size];
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
-            Map<String,EncodedGlyphs<PhredQuality>> qualities = new HashMap<String,EncodedGlyphs<PhredQuality>>(region.getCoverage());
+            Map<String,Sequence<PhredQuality>> qualities = new HashMap<String,Sequence<PhredQuality>>(region.getCoverage());
             for(PlacedRead read :region){
                 final String id = read.getId();
                 if(qualityDataStore==null){
@@ -206,7 +206,7 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
      */
     protected CompactedSlice createSlice(
             CoverageRegion<? extends PlacedRead> region, 
-            Map<String,EncodedGlyphs<PhredQuality>> qualities,
+            Map<String,Sequence<PhredQuality>> qualities,
             QualityValueStrategy qualityValueStrategy,
             int i) {
         CompactedSlice.Builder builder = new CompactedSlice.Builder();
@@ -214,7 +214,7 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
             String id=read.getId();
             int indexIntoRead = (int) (i - read.getStart());
           //  if()
-            EncodedGlyphs<PhredQuality> fullQualities = qualities.get(id);
+            Sequence<PhredQuality> fullQualities = qualities.get(id);
             final PhredQuality quality;
             if(fullQualities==null){
                 quality = PhredQuality.valueOf(30);

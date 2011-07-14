@@ -30,12 +30,12 @@ import org.jcvi.Range;
 import org.jcvi.glyph.GlyphCodec;
 import org.junit.Test;
 import static org.junit.Assert.*;
-public class TestReferenceEncodedNucleotideGlyph {
+public class TestReferenceEncodedNucleotideSequence {
     GlyphCodec codec = DefaultNucleotideGlyphCodec.getInstance();
     String referenceAsString = "ACGTACGTACGTACGTACGTACGTACGT";
 
     
-    NucleotideEncodedGlyphs encodedReference = new DefaultNucleotideEncodedGlyphs(referenceAsString);
+    NucleotideSequence encodedReference = new DefaultNucleotideSequence(referenceAsString);
     @Test
     public void oneGapNoDifferences(){
         int offset=5;
@@ -50,7 +50,7 @@ public class TestReferenceEncodedNucleotideGlyph {
         assertDecodedCorrectly(offset, sequenceAsString);
     }
     private void assertDecodedCorrectly(int offset, String sequenceAsString) {
-        DefaultReferencedEncodedNucleotideGlyph sut = new DefaultReferencedEncodedNucleotideGlyph(encodedReference,sequenceAsString, offset, Range.buildRange(0,sequenceAsString.length()-1));
+        ReferenceEncodedNucleotideSequence sut = new ReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset, Range.buildRange(0,sequenceAsString.length()-1));
         assertEquals(sequenceAsString.length(), sut.getLength());
         assertEquals(sequenceAsString, NucleotideGlyph.convertToString(sut.decode()));
         for(int i=0; i< sequenceAsString.length(); i++){
@@ -84,7 +84,7 @@ public class TestReferenceEncodedNucleotideGlyph {
     }
     @Test
     public void fullSequence(){
-        NucleotideEncodedGlyphs encodedConsensus = new DefaultNucleotideEncodedGlyphs(
+        NucleotideSequence encodedConsensus = new DefaultNucleotideSequence(
                 "GACATGGAAGTTTTATATTCATTGTCAAAAACTCTTAAAGATGCTAGGGACAAAATTGTT" +
                 "GAAGGTACACTATATTCTAATGTTAGCGATCTCATTCAACAATTCAATCAAATGATAGTA" +
                 "ACTATGAATGGAAATGACTTTCAAACTGGAGGAATTGGTAATTTGCCTATCAGAAACTGG" +
@@ -122,7 +122,7 @@ public class TestReferenceEncodedNucleotideGlyph {
                 ;
         
         int offset = 414;
-        DefaultReferencedEncodedNucleotideGlyph actual = new DefaultReferencedEncodedNucleotideGlyph(
+        ReferenceEncodedNucleotideSequence actual = new ReferenceEncodedNucleotideSequence(
                 encodedConsensus, sequence, offset, Range.buildRange(7,571));
         List<Integer> expectedGapIndexes = Arrays.asList(174, 178,180,181,182,186);
         assertEquals(expectedGapIndexes,actual.getGapIndexes());

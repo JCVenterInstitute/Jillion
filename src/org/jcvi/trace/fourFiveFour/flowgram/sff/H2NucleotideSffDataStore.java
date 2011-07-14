@@ -30,10 +30,10 @@ import org.jcvi.Range;
 import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
-public class H2NucleotideSffDataStore extends AbstractH2SffDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> implements NucleotideDataStore{
+public class H2NucleotideSffDataStore extends AbstractH2SffDataStore<NucleotideGlyph, NucleotideSequence> implements NucleotideDataStore{
     /**
      * @param sffFile
      * @param datastore
@@ -43,7 +43,7 @@ public class H2NucleotideSffDataStore extends AbstractH2SffDataStore<NucleotideG
      */
     public H2NucleotideSffDataStore(
             File sffFile,
-            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore,
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideSequence> datastore,
             boolean trim) throws SFFDecoderException, FileNotFoundException {
         super(sffFile, datastore, trim);
     }
@@ -55,7 +55,7 @@ public class H2NucleotideSffDataStore extends AbstractH2SffDataStore<NucleotideG
      */
     public H2NucleotideSffDataStore(
             File sffFile,
-            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore)
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideSequence> datastore)
             throws SFFDecoderException, FileNotFoundException {
         super(sffFile, datastore);
     }
@@ -71,7 +71,7 @@ public class H2NucleotideSffDataStore extends AbstractH2SffDataStore<NucleotideG
      */
     public H2NucleotideSffDataStore(
             File sffFile,
-            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore,
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideSequence> datastore,
             DataStoreFilter filter, boolean trim) throws SFFDecoderException,
             FileNotFoundException {
         super(sffFile, datastore, filter, trim);
@@ -86,7 +86,7 @@ public class H2NucleotideSffDataStore extends AbstractH2SffDataStore<NucleotideG
      */
     public H2NucleotideSffDataStore(
             File sffFile,
-            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore,
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideSequence> datastore,
             DataStoreFilter filter) throws SFFDecoderException,
             FileNotFoundException {
         super(sffFile, datastore, filter, false);

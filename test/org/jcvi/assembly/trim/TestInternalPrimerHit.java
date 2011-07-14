@@ -20,9 +20,9 @@
 package org.jcvi.assembly.trim;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -34,11 +34,11 @@ public class TestInternalPrimerHit {
 
     private final DefaultPrimerTrimmer sut = new DefaultPrimerTrimmer(13, .9f);
     
-    private final NucleotideEncodedGlyphs sequence = new DefaultNucleotideEncodedGlyphs(
+    private final NucleotideSequence sequence = new DefaultNucleotideSequence(
             "AGGAAAAATTTTTGATTGGATGTCATCCGACTTTACTTTTCTTGAAGTTCCAGCGCAAAATGCCATAAGCACCACATTCCCATATACTGGAGATCCTCCATACAGCCATGGAACAGGAACAGGATACACCATGGACACAGTTAACAGAACACATCAATATTCAGAAAAGGGGAAATGGACAACAAACTCAGAGACTGGAGCCCCCCAACTTAACCCAATTGATGGACCACTGCCCGAGGACAATGAGCCAAGTGGATATGCACAAACGGACTGTGTCCTTGAAGCAATGGCTTTCCTTGAAGAGTCCCACCCAGGAATCTTTGAAAACTCGTGTCTTGAAACGATGGAAGTTGTCCAACAAACAAGAGTGGACAAGTTGACCCAAGGCCGTCAGACCTATGATTGGACACTAAACAGGAACCAGCCGGCTGCAACTGCATTAGCTAATACTATAGAGGTCTTCAGATCGAACGGTCTGACAGCTAATGAATCAGGGAGACTAATAGATTTTCTCAAGGATGTGATGGAATCAATGGATAAAGAGGAAATGGAAATAACAACACACTTCCAGGTCATAGCTGTTTCCTAAACA");
 
-    private final NucleotideEncodedGlyphs forwardPrimer = new DefaultNucleotideEncodedGlyphs("TGTAAAACGACGGCCAGTCRAAAGCAGGCAAACCAT");
-    private final NucleotideEncodedGlyphs reversePrimer = new DefaultNucleotideEncodedGlyphs("CAGGAAACAGCTATGACCTGGAARTGYGTTGTKATTTCCATY");
+    private final NucleotideSequence forwardPrimer = new DefaultNucleotideSequence("TGTAAAACGACGGCCAGTCRAAAGCAGGCAAACCAT");
+    private final NucleotideSequence reversePrimer = new DefaultNucleotideSequence("CAGGAAACAGCTATGACCTGGAARTGYGTTGTKATTTCCATY");
 
 
     @Test

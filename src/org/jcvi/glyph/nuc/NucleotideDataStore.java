@@ -25,6 +25,6 @@ package org.jcvi.glyph.nuc;
 
 import org.jcvi.datastore.DataStore;
 
-public interface NucleotideDataStore extends DataStore<NucleotideEncodedGlyphs>{
+public interface NucleotideDataStore extends DataStore<NucleotideSequence>{
 
 }

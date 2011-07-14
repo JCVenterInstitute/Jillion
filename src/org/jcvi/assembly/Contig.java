@@ -26,7 +26,7 @@ package org.jcvi.assembly;
 import java.util.Set;
 
 import org.jcvi.assembly.slice.consensus.ConsensusCaller;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 /**
  * A {@code Contig} is a CONTIGuous region of genomic data.
  * Contigs are assembled by overlapping reads to form a consensus.
@@ -57,11 +57,11 @@ public interface Contig<T extends PlacedRead>{
      * is determined by the underlying reads that make up this contig.  Different
      * consensus callers can create different consensus using various criteria
      * and paramters.
-     * @return the consensus of this contig as {@link NucleotideEncodedGlyphs}; will
+     * @return the consensus of this contig as {@link NucleotideSequence}; will
      * never be null.
      * @see ConsensusCaller
      */
-    NucleotideEncodedGlyphs getConsensus();
+    NucleotideSequence getConsensus();
     /**
      * Get the {@link PlacedRead} in this contig with the given id.
      * @param id the id of the read to get.

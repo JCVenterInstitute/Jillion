@@ -24,12 +24,12 @@
 package org.jcvi.fastX.fastq;
 
 import org.jcvi.fastX.FastXRecord;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
-public interface FastQRecord extends FastXRecord<NucleotideEncodedGlyphs>{
+public interface FastQRecord extends FastXRecord<NucleotideSequence>{
     
-    NucleotideEncodedGlyphs getNucleotides();
+    NucleotideSequence getNucleotides();
     
-    QualityEncodedGlyphs getQualities();
+    QualitySequence getQualities();
 }

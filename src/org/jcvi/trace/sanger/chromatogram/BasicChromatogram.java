@@ -28,12 +28,12 @@ import java.util.HashMap;
 import java.util.Map;
 import org.jcvi.CommonUtil;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Peaks;
 
 
@@ -50,9 +50,9 @@ public class BasicChromatogram implements Chromatogram {
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
 
     private final ChannelGroup channelGroup;
-    private final NucleotideEncodedGlyphs basecalls;
+    private final NucleotideSequence basecalls;
     private final Peaks peaks;
-    private final QualityEncodedGlyphs qualities;
+    private final QualitySequence qualities;
 
     /**
      * Used to store the TEXT properties of a ZTR file.
@@ -67,19 +67,19 @@ public class BasicChromatogram implements Chromatogram {
                c.getChannelGroup(),
                 c.getComments());
     }
-    public BasicChromatogram(NucleotideEncodedGlyphs basecalls,QualityEncodedGlyphs qualities, Peaks peaks,
+    public BasicChromatogram(NucleotideSequence basecalls,QualitySequence qualities, Peaks peaks,
             ChannelGroup channelGroup){
         this(basecalls, qualities, peaks, channelGroup, new HashMap<String,String>());
     }
     public BasicChromatogram(String basecalls, byte[] qualities,Peaks peaks,
             ChannelGroup channelGroup,
             Map<String,String> comments){
-        this(new DefaultNucleotideEncodedGlyphs( NucleotideGlyph.getGlyphsFor(basecalls)),
-                new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,PhredQuality.valueOf(qualities)),
+        this(new DefaultNucleotideSequence( NucleotideGlyph.getGlyphsFor(basecalls)),
+                new EncodedQualitySequence(RUN_LENGTH_CODEC,PhredQuality.valueOf(qualities)),
                 peaks,
                      channelGroup, comments);
     }
-    public BasicChromatogram(NucleotideEncodedGlyphs basecalls, QualityEncodedGlyphs qualities,Peaks peaks,
+    public BasicChromatogram(NucleotideSequence basecalls, QualitySequence qualities,Peaks peaks,
            ChannelGroup channelGroup,
            Map<String,String> comments){
         canNotBeNull(basecalls, peaks, channelGroup, comments);
@@ -99,7 +99,7 @@ public class BasicChromatogram implements Chromatogram {
         
     }
 
-    public NucleotideEncodedGlyphs getBasecalls() {
+    public NucleotideSequence getBasecalls() {
         return basecalls;
     }
     @Override
@@ -154,7 +154,7 @@ public class BasicChromatogram implements Chromatogram {
         return channelGroup;
     }
     @Override
-    public QualityEncodedGlyphs getQualities() {
+    public QualitySequence getQualities() {
         return qualities;
     }
     @Override

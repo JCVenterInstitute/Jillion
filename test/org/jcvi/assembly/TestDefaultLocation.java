@@ -23,7 +23,7 @@
  */
 package org.jcvi.assembly;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.sequence.Read;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
@@ -32,10 +32,10 @@ import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 public class TestDefaultLocation {
 
-    Read<NucleotideEncodedGlyphs> aRead = createMock(Read.class);
+    Read<NucleotideSequence> aRead = createMock(Read.class);
     int index = 1234;
     
-    DefaultLocation<Read<NucleotideEncodedGlyphs>> sut = new DefaultLocation<Read<NucleotideEncodedGlyphs>>(aRead, index);
+    DefaultLocation<Read<NucleotideSequence>> sut = new DefaultLocation<Read<NucleotideSequence>>(aRead, index);
     
     @Test
     public void constructor(){
@@ -46,7 +46,7 @@ public class TestDefaultLocation {
     @Test
     public void nullSourceShouldThrowIllegalArgumentExcetion(){
         try{
-            new DefaultLocation<Read<NucleotideEncodedGlyphs>>(null, index);
+            new DefaultLocation<Read<NucleotideSequence>>(null, index);
             fail("should throw IllegalArgumentException");
         }
         catch(IllegalArgumentException e){
@@ -68,18 +68,18 @@ public class TestDefaultLocation {
     }
     @Test
     public void equalsSameValues(){
-        DefaultLocation<Read<NucleotideEncodedGlyphs>> sameValues = new DefaultLocation<Read<NucleotideEncodedGlyphs>>(aRead, index);
+        DefaultLocation<Read<NucleotideSequence>> sameValues = new DefaultLocation<Read<NucleotideSequence>>(aRead, index);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
     
     @Test
     public void differentIndexShouldNotBeEqual(){
-        DefaultLocation<Read<NucleotideEncodedGlyphs>> differentIndex = new DefaultLocation<Read<NucleotideEncodedGlyphs>>(aRead, index+1);
+        DefaultLocation<Read<NucleotideSequence>> differentIndex = new DefaultLocation<Read<NucleotideSequence>>(aRead, index+1);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentIndex);
     }
     @Test
     public void differentSourceShouldNotBeEqual(){
-        DefaultLocation<Read<NucleotideEncodedGlyphs>> differentSource = new DefaultLocation<Read<NucleotideEncodedGlyphs>>(
+        DefaultLocation<Read<NucleotideSequence>> differentSource = new DefaultLocation<Read<NucleotideSequence>>(
                 createMock(Read.class), index);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentSource);
     }

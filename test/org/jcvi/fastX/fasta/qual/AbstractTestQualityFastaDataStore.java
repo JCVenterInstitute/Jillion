@@ -31,7 +31,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecord;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     DefaultQualityFastaRecord JGBAA02T21A12PB1A1F = 
             new DefaultQualityFastaRecord(
                     "JGBAA02T21A12PB1A1F",null,
-                    new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
+                    new EncodedQualitySequence(RUN_LENGTH_CODEC,
                             PhredQuality.valueOf(
                                     new byte[]{
                                             7, 7, 6, 6, 6, 7, 7, 7, 8, 8, 13, 12, 14, 8, 8, 11, 12,
@@ -92,7 +92,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     DefaultQualityFastaRecord JGBAA07T21D08MP605F = 
         new DefaultQualityFastaRecord(
                 "JGBAA07T21D08MP605F",null,
-                new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
+                new EncodedQualitySequence(RUN_LENGTH_CODEC,
                         PhredQuality.valueOf(
                                 new byte[]{
                                         6,9,6,6,6,6,9,6,6,10,8,8,8,6,7,8,12,
@@ -127,7 +127,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     DefaultQualityFastaRecord JGBAA01T21H05PB2A2341BRB = 
         new DefaultQualityFastaRecord(
                 "JGBAA01T21H05PB2A2341BRB",null,
-                new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
+                new EncodedQualitySequence(RUN_LENGTH_CODEC,
                         PhredQuality.valueOf(
                                 new byte[]{
                                         6, 6, 6, 6, 7, 7, 7, 8, 12, 12, 12, 14, 17, 14, 14, 14, 22,

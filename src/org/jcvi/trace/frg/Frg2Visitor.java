@@ -26,8 +26,8 @@ package org.jcvi.trace.frg;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.io.TextFileVisitor;
 import org.jcvi.sequence.Distance;
 import org.jcvi.sequence.MateOrientation;
@@ -42,8 +42,8 @@ public interface Frg2Visitor extends TextFileVisitor{
     void visitFragment(FrgVisitorAction action,
                 String fragmentId, 
                 String libraryId,
-                NucleotideEncodedGlyphs bases,
-                QualityEncodedGlyphs qualities ,
+                NucleotideSequence bases,
+                QualitySequence qualities ,
                 Range validRange,
                 Range vectorClearRange,
                 String source);

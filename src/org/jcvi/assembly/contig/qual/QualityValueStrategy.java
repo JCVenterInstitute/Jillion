@@ -24,11 +24,11 @@
 package org.jcvi.assembly.contig.qual;
 
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
 public interface QualityValueStrategy {
 
-    PhredQuality getQualityFor(PlacedRead placedRead, EncodedGlyphs<PhredQuality> fullQualities,
+    PhredQuality getQualityFor(PlacedRead placedRead, Sequence<PhredQuality> fullQualities,
             int gappedReadIndex);
 }

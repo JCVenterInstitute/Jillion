@@ -29,9 +29,9 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 import org.jcvi.util.CloseableIterator;
@@ -61,11 +61,11 @@ public class QualitySffDataStore implements QualityDataStore{
     }
 
     @Override
-    public QualityEncodedGlyphs get(String id) throws DataStoreException {
+    public QualitySequence get(String id) throws DataStoreException {
         final Flowgram flowgram = flowgramDataStore.get(id);
-        QualityEncodedGlyphs qualities= flowgram.getQualities();
+        QualitySequence qualities= flowgram.getQualities();
         if(trim){
-         return new DefaultQualityEncodedGlyphs(QUALITY_CODEC, 
+         return new EncodedQualitySequence(QUALITY_CODEC, 
                  qualities.decode(SFFUtil.getTrimRangeFor(flowgram)));   
         }
         return qualities;
@@ -88,8 +88,8 @@ public class QualitySffDataStore implements QualityDataStore{
     }
 
     @Override
-    public CloseableIterator<QualityEncodedGlyphs> iterator() {
-        return new DataStoreIterator<QualityEncodedGlyphs>(this);
+    public CloseableIterator<QualitySequence> iterator() {
+        return new DataStoreIterator<QualitySequence>(this);
     }
     /**
     * {@inheritDoc}

@@ -29,7 +29,7 @@ import java.util.TreeSet;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
 
@@ -96,7 +96,7 @@ public class LucyLikeQualityTrimmer {
     }
     
     
-    public Range trim(EncodedGlyphs<PhredQuality> qualities){
+    public Range trim(Sequence<PhredQuality> qualities){
         List<Double> errorRates = convertToErrorRates(qualities);
         Range bracketedRegion = findBracketedRegion(errorRates);
         Range largestRange = findLargestCleanRangeFrom(bracketedRegion, errorRates);
@@ -127,7 +127,7 @@ public class LucyLikeQualityTrimmer {
     }
 
 
-    private List<Double> convertToErrorRates(EncodedGlyphs<PhredQuality> qualities){
+    private List<Double> convertToErrorRates(Sequence<PhredQuality> qualities){
         List<Double> errorRates = new ArrayList<Double>((int)qualities.getLength());
         for(PhredQuality quality : qualities.decode()){
             errorRates.add(quality.getErrorProbability());

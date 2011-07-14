@@ -29,8 +29,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.EncodedSequence;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.DefaultShortGlyphCodec;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
@@ -39,11 +39,11 @@ public class PositionsFastaRecordUtil {
     private static final Pattern ID_LINE_PATTERN = Pattern.compile("^>(\\S+).*");
     private static final ShortGlyphFactory GLYPH_FACTORY  = ShortGlyphFactory.getInstance();
 
-    public static DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>> buildFastaRecord(
+    public static DefaultPositionFastaRecord<Sequence<ShortGlyph>> buildFastaRecord(
             String identifier, String comment, CharSequence sequence) {
         List<ShortGlyph> positions = parsePositions(sequence);
-        return new DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>>(identifier, comment, 
-                new DefaultEncodedGlyphs<ShortGlyph>(DefaultShortGlyphCodec.getInstance(),positions));
+        return new DefaultPositionFastaRecord<Sequence<ShortGlyph>>(identifier, comment, 
+                new EncodedSequence<ShortGlyph>(DefaultShortGlyphCodec.getInstance(),positions));
     }
 
     public static List<ShortGlyph> parsePositions(CharSequence sequence) {

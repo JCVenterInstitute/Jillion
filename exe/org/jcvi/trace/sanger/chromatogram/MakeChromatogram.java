@@ -40,10 +40,10 @@ import org.jcvi.fastX.fasta.seq.LargeNucleotideFastaFileDataStore;
 import org.jcvi.fastX.fasta.seq.NucleotideFastaDataStore;
 import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.sanger.chromatogram.scf.SCFCodecs;
@@ -132,14 +132,14 @@ public class MakeChromatogram {
                 null;
         for(NucleotideSequenceFastaRecord fasta : seqFasta){
             String id = fasta.getId();
-            NucleotideEncodedGlyphs basecalls = fasta.getValue();
-            final QualityEncodedGlyphs qualities;
+            NucleotideSequence basecalls = fasta.getValue();
+            final QualitySequence qualities;
             if(qualDataStore !=null){
                qualities = qualDataStore.get(id).getValue();
             }else{
                 byte[] buf = new byte[(int)basecalls.getLength()];
                 Arrays.fill(buf, defaultQuality.getNumber());
-                qualities = new DefaultQualityEncodedGlyphs(
+                qualities = new EncodedQualitySequence(
                          RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, PhredQuality.valueOf(buf));
             }
             Chromatogram chromo = buildSyntheticChromatogram(id, basecalls, qualities);
@@ -158,8 +158,8 @@ public class MakeChromatogram {
     }
     
     private static Chromatogram buildSyntheticChromatogram(String sequenceName,
-            NucleotideEncodedGlyphs basecalls,
-            QualityEncodedGlyphs qualities) {
+            NucleotideSequence basecalls,
+            QualitySequence qualities) {
             Peaks fakePeaks = ChromatogramUtil.buildFakePeaks((int)basecalls.getLength());
             ChannelGroup fakeChannelGroup =
             new ChromatogramUtil.FakeChannelGroupBuilder(basecalls,qualities, fakePeaks).build();

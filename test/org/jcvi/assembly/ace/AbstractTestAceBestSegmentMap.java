@@ -36,17 +36,17 @@ import org.jcvi.assembly.slice.DefaultSliceMap;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceMap;
 import org.jcvi.assembly.slice.TestSliceUtil;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.sequence.SequenceDirection;
 import org.junit.Test;
 
 public abstract class AbstractTestAceBestSegmentMap {
-    private final NucleotideEncodedGlyphs consensus = new DefaultNucleotideEncodedGlyphs("ACGT");
+    private final NucleotideSequence consensus = new DefaultNucleotideSequence("ACGT");
     AceBestSegmentMap sut;
     SliceMap sliceMap;
 
-    protected abstract AceBestSegmentMap createSut(SliceMap sliceMap, NucleotideEncodedGlyphs consensus);
+    protected abstract AceBestSegmentMap createSut(SliceMap sliceMap, NucleotideSequence consensus);
     @Test(expected = NullPointerException.class)
     public void nullSliceMapShouldThrowNPE(){
         new DefaultAceBestSegmentMap(null, consensus);

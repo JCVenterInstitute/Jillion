@@ -25,6 +25,6 @@ package org.jcvi.glyph.phredQuality;
 
 import org.jcvi.datastore.DataStore;
 
-public interface QualityDataStore extends DataStore<QualityEncodedGlyphs> {
+public interface QualityDataStore extends DataStore<QualitySequence> {
 
 }

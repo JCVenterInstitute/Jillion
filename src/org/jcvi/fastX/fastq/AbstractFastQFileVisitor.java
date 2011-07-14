@@ -23,15 +23,15 @@
  */
 package org.jcvi.fastX.fastq;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
 
 public abstract class AbstractFastQFileVisitor implements FastQFileVisitor{
     private String currentId, currentComment;
 
-    private NucleotideEncodedGlyphs nucleotides;
-    private QualityEncodedGlyphs qualities;
+    private NucleotideSequence nucleotides;
+    private QualitySequence qualities;
     protected final FastQQualityCodec qualityCodec;
 
     
@@ -68,7 +68,7 @@ public abstract class AbstractFastQFileVisitor implements FastQFileVisitor{
     }
     
     @Override
-    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
+    public void visitNucleotides(NucleotideSequence nucleotides) {
         this.nucleotides = nucleotides;
         
     }
@@ -91,7 +91,7 @@ public abstract class AbstractFastQFileVisitor implements FastQFileVisitor{
      */
     protected abstract boolean visitFastQRecord(
             String id, 
-            NucleotideEncodedGlyphs nucleotides,
-            QualityEncodedGlyphs qualities,
+            NucleotideSequence nucleotides,
+            QualitySequence qualities,
             String optionalComment);
 }

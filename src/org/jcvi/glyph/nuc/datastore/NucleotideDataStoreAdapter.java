@@ -29,13 +29,13 @@ import java.io.IOException;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.util.CloseableIterator;
 
 
 /**
  * A <code>NucleotideDataStoreAdapter</code> adapts the heavily parameterized
- * <code>{@link DataStore}&lt;{@link NucleotideEncodedGlyphs}&gt;</code>
+ * <code>{@link DataStore}&lt;{@link NucleotideSequence}&gt;</code>
  * interface to its simplified equivalent {@link NucleotideDataStore}.
  *
  * @author jsitz@jcvi.org
@@ -43,14 +43,14 @@ import org.jcvi.util.CloseableIterator;
 public class NucleotideDataStoreAdapter implements NucleotideDataStore
 {
     /** The datastore being wrapped and adapted. */
-    private final DataStore<NucleotideEncodedGlyphs> datastore;
+    private final DataStore<NucleotideSequence> datastore;
 
     /**
      * Constructs a new <code>NucleotideDataStoreAdapter</code>.
      *
      * @param datastore The {@link DataStore} being wrapped and adapted.
      */
-    public NucleotideDataStoreAdapter(DataStore<NucleotideEncodedGlyphs> datastore)
+    public NucleotideDataStoreAdapter(DataStore<NucleotideSequence> datastore)
     {
         super();
 
@@ -70,7 +70,7 @@ public class NucleotideDataStoreAdapter implements NucleotideDataStore
      * @see org.jcvi.datastore.DataStore#get(java.lang.String)
      */
     @Override
-    public NucleotideEncodedGlyphs get(String id) throws DataStoreException
+    public NucleotideSequence get(String id) throws DataStoreException
     {
         return this.datastore.get(id);
     }
@@ -106,7 +106,7 @@ public class NucleotideDataStoreAdapter implements NucleotideDataStore
      * @see java.lang.Iterable#iterator()
      */
     @Override
-    public CloseableIterator<NucleotideEncodedGlyphs> iterator()
+    public CloseableIterator<NucleotideSequence> iterator()
     {
         return this.datastore.iterator();
     }

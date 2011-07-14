@@ -27,8 +27,8 @@ import java.nio.ShortBuffer;
 import java.util.List;
 
 import org.jcvi.CommonUtil;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.EncodedSequence;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.DefaultShortGlyphCodec;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
@@ -45,17 +45,17 @@ import org.jcvi.glyph.num.ShortGlyphFactory;
 public class Peaks{
     private static final ShortGlyphFactory FACTORY = ShortGlyphFactory.getInstance();
     private static final DefaultShortGlyphCodec CODEC = DefaultShortGlyphCodec.getInstance();
-    private EncodedGlyphs<ShortGlyph> data;
+    private Sequence<ShortGlyph> data;
 
     public Peaks(short[] data){
         this(FACTORY.getGlyphsFor(data));
        
     }
     public Peaks(List<ShortGlyph> data){
-        this.data = new DefaultEncodedGlyphs<ShortGlyph>(CODEC, data);
+        this.data = new EncodedSequence<ShortGlyph>(CODEC, data);
        
     }
-    public Peaks(EncodedGlyphs<ShortGlyph> data){
+    public Peaks(Sequence<ShortGlyph> data){
         if(data==null){
             throw new NullPointerException("encoded data can not be null");
         }
@@ -72,7 +72,7 @@ public class Peaks{
     /**
      * @return the data
      */
-    public EncodedGlyphs<ShortGlyph> getData() {
+    public Sequence<ShortGlyph> getData() {
         return data;
     }
 

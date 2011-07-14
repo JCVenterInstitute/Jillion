@@ -33,7 +33,7 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.jcvi.sequence.SequenceDirection;
@@ -53,7 +53,7 @@ public class DefaultQualityClassContigMap implements QualityClassMap{
 
     <P extends PlacedRead> DefaultQualityClassContigMap(
                     CoverageMap<CoverageRegion<P>> coverageMap, 
-                    NucleotideEncodedGlyphs consensus,
+                    NucleotideSequence consensus,
                     QualityDataStore qualityDataStore, 
                     QualityClassComputer<P> qualityClassComputer){
         qualityClassRegions = new ArrayList<QualityClassRegion>();

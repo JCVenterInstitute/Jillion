@@ -25,8 +25,8 @@ package org.jcvi.trace.sanger.chromatogram.ztr.chunk;
 
 import java.nio.ByteBuffer;
 
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram;
@@ -58,7 +58,7 @@ public class TestBASEChunk {
     @Test
     public void encode() throws TraceEncoderException, TraceDecoderException{
     	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
-    	NucleotideEncodedGlyphs basecalls = new DefaultNucleotideEncodedGlyphs(decodedBases);
+    	NucleotideSequence basecalls = new DefaultNucleotideSequence(decodedBases);
     	expect(mockChromatogram.getBasecalls()).andReturn(basecalls);
     	
     	replay(mockChromatogram);

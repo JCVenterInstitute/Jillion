@@ -35,7 +35,7 @@ import org.jcvi.assembly.trim.DefaultPrimerTrimmer;
 import org.jcvi.assembly.trim.PrimerTrimmer;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.AbstractSffFileVisitor;
@@ -61,15 +61,15 @@ public class TrimNexteraSff {
     
     private static final NucleotideDataStore REVERSE_DATASTORE;
     static{
-        Map<String, NucleotideEncodedGlyphs> forwardTransposon = new HashMap<String, NucleotideEncodedGlyphs>();
+        Map<String, NucleotideSequence> forwardTransposon = new HashMap<String, NucleotideSequence>();
         
-        Map<String, NucleotideEncodedGlyphs> revesrseTransposon = new HashMap<String, NucleotideEncodedGlyphs>();
+        Map<String, NucleotideSequence> revesrseTransposon = new HashMap<String, NucleotideSequence>();
        
         forwardTransposon.put("5'", TransposonEndSequences.FORWARD);
         revesrseTransposon.put("3'", TransposonEndSequences.REVERSE);     
-        FORWARD_DATASTORE = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(forwardTransposon));
+        FORWARD_DATASTORE = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideSequence>(forwardTransposon));
         
-       REVERSE_DATASTORE = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(revesrseTransposon));
+       REVERSE_DATASTORE = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideSequence>(revesrseTransposon));
         
     }
     

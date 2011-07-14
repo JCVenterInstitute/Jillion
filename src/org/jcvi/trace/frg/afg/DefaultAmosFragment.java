@@ -20,8 +20,8 @@
 package org.jcvi.trace.frg.afg;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
 /**
  * @author dkatzel
@@ -32,8 +32,8 @@ public class DefaultAmosFragment implements AmosFragment{
 
     private final String id;
     private final int index;
-    private final NucleotideEncodedGlyphs basecalls;
-    private final QualityEncodedGlyphs qualities;
+    private final NucleotideSequence basecalls;
+    private final QualitySequence qualities;
     
     private final Range clearRange;
     private final Range vectorRange;
@@ -50,8 +50,8 @@ public class DefaultAmosFragment implements AmosFragment{
      * @param qualityRange
      */
     public DefaultAmosFragment(String id, int index,
-            NucleotideEncodedGlyphs basecalls,
-            QualityEncodedGlyphs qualities, Range clearRange,
+            NucleotideSequence basecalls,
+            QualitySequence qualities, Range clearRange,
             Range vectorRange, Range qualityRange) {
         this.id = id;
         this.index = index;
@@ -98,7 +98,7 @@ public class DefaultAmosFragment implements AmosFragment{
     * {@inheritDoc}
     */
     @Override
-    public NucleotideEncodedGlyphs getBasecalls() {
+    public NucleotideSequence getBasecalls() {
         return basecalls;
     }
 
@@ -106,7 +106,7 @@ public class DefaultAmosFragment implements AmosFragment{
     * {@inheritDoc}
     */
     @Override
-    public QualityEncodedGlyphs getQualities() {
+    public QualitySequence getQualities() {
         return qualities;
     }
 
@@ -114,7 +114,7 @@ public class DefaultAmosFragment implements AmosFragment{
     * {@inheritDoc}
     */
     @Override
-    public NucleotideEncodedGlyphs getEncodedGlyphs() {
+    public NucleotideSequence getEncodedGlyphs() {
         return basecalls;
     }
 

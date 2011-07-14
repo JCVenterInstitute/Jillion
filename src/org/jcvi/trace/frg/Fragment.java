@@ -24,12 +24,12 @@
 package org.jcvi.trace.frg;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.sequence.Library;
 import org.jcvi.sequence.Read;
 import org.jcvi.trace.Trace;
 
-public interface Fragment extends Trace, Read<NucleotideEncodedGlyphs>{
+public interface Fragment extends Trace, Read<NucleotideSequence>{
 
     String getId();
     Range getValidRange();

@@ -23,7 +23,7 @@ import java.io.IOException;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.util.CloseableIterator;
 
@@ -34,11 +34,11 @@ import org.jcvi.util.CloseableIterator;
  */
 public final class PositionDataStoreAdapter implements PositionDataStore{
 
-    private final DataStore<EncodedGlyphs<ShortGlyph>> datastore;
+    private final DataStore<Sequence<ShortGlyph>> datastore;
     
     
     public PositionDataStoreAdapter(
-            DataStore<EncodedGlyphs<ShortGlyph>> datastore) {
+            DataStore<Sequence<ShortGlyph>> datastore) {
         this.datastore = datastore;
     }
 
@@ -54,7 +54,7 @@ public final class PositionDataStoreAdapter implements PositionDataStore{
     * {@inheritDoc}
     */
     @Override
-    public EncodedGlyphs<ShortGlyph> get(String id) throws DataStoreException {
+    public Sequence<ShortGlyph> get(String id) throws DataStoreException {
         return datastore.get(id);
     }
 
@@ -95,7 +95,7 @@ public final class PositionDataStoreAdapter implements PositionDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<EncodedGlyphs<ShortGlyph>> iterator() {
+    public CloseableIterator<Sequence<ShortGlyph>> iterator() {
         return datastore.iterator();
     }
 

@@ -37,7 +37,7 @@ import org.jcvi.assembly.DefaultLocation;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
@@ -74,7 +74,7 @@ public class DefaultHighQualityDifferencesContigMap implements HighQualityDiffer
 
     private List<DefaultQualityDifference> buildHighQualityDifferenceList(PlacedRead placedRead) throws DataStoreException {
         List<DefaultQualityDifference> qualityDifferences =new ArrayList<DefaultQualityDifference>();  
-        EncodedGlyphs<PhredQuality> fullQualities =qualityDataStore.get(placedRead.getId());
+        Sequence<PhredQuality> fullQualities =qualityDataStore.get(placedRead.getId());
             if(fullQualities !=null){
             for(Entry<Integer, NucleotideGlyph> snp : placedRead.getSnps().entrySet()){            
                 Integer gappedIndex =snp.getKey();
@@ -100,7 +100,7 @@ public class DefaultHighQualityDifferencesContigMap implements HighQualityDiffer
             int gappedIndex, PhredQuality qual) {
         int consensusOffset = (int)(placedRead.getStart()+gappedIndex);
         DefaultQualityDifference diff= new DefaultQualityDifference(
-                            new DefaultLocation<EncodedGlyphs<NucleotideGlyph>>(contig.getConsensus(), consensusOffset),
+                            new DefaultLocation<Sequence<NucleotideGlyph>>(contig.getConsensus(), consensusOffset),
                             new DefaultLocation<PlacedRead>(placedRead, gappedIndex),
                             qual);
         return diff;

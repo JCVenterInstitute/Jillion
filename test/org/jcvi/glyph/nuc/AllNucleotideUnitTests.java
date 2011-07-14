@@ -32,8 +32,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultNucleotideGlyphCodec.class,
         TestNucleotideGlyph.class,
         TestNucleotideGlyphGetAmbiguity.class,
-        TestReferenceEncodedNucleotideGlyph.class,
-        TestReferenceEncodedNucleotideGlyph_gappedtoUngapped.class,
+        TestReferenceEncodedNucleotideSequence.class,
+        TestReferenceEncodedNucleotideSequence_gappedtoUngapped.class,
         TestNucleotideGlyph_GetGlyphsFor.class
     }
 )

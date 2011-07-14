@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.fastX.fasta.pos.PositionDataStore;
 import org.jcvi.fastX.fasta.pos.PositionDataStoreAdapter;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.EncodedShortGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
@@ -57,7 +57,7 @@ public class TigrPositionsFileParser {
         }
     }
     public static PositionDataStore getPeakMap(InputStream tigrPosFile){
-        Map<String, EncodedGlyphs<ShortGlyph>> map = new HashMap<String, EncodedGlyphs<ShortGlyph>>();
+        Map<String, Sequence<ShortGlyph>> map = new HashMap<String, Sequence<ShortGlyph>>();
         Scanner scanner = new Scanner(tigrPosFile);
         while(scanner.hasNextLine()){
             String line = scanner.nextLine();
@@ -71,7 +71,7 @@ public class TigrPositionsFileParser {
                 map.put(id, encodedPositions);
             }
         }
-        return new PositionDataStoreAdapter(new SimpleDataStore<EncodedGlyphs<ShortGlyph>>(map));
+        return new PositionDataStoreAdapter(new SimpleDataStore<Sequence<ShortGlyph>>(map));
         
     }
     private static EncodedShortGlyph convertToGlyphs(String positionsAsHex) {

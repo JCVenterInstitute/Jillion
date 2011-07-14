@@ -29,7 +29,7 @@ import java.util.Iterator;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
@@ -69,13 +69,13 @@ public class TestFlowgramQualityFastaDataStore {
         Iterator<String> iter = expected.getIds();
         while(iter.hasNext()){
             String id = iter.next();
-            EncodedGlyphs<PhredQuality> expectedRecord = expected.get(id);
+            Sequence<PhredQuality> expectedRecord = expected.get(id);
             assertRecordsEqual(expectedRecord, actual.get(id));
         }
     }
     private void assertRecordsEqual(
-            EncodedGlyphs<PhredQuality> expectedRecord,
-            EncodedGlyphs<PhredQuality> actualRecord) {
+            Sequence<PhredQuality> expectedRecord,
+            Sequence<PhredQuality> actualRecord) {
         assertEquals(expectedRecord.decode(), actualRecord.decode());
         
     }

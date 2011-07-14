@@ -24,10 +24,10 @@
 package org.jcvi.fastX.fasta.pos;
 
 import org.jcvi.fastX.fasta.FastaRecord;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.ShortGlyph;
 
 
-public interface PositionFastaRecord<T extends EncodedGlyphs<ShortGlyph>> extends FastaRecord<T> {
+public interface PositionFastaRecord<T extends Sequence<ShortGlyph>> extends FastaRecord<T> {
 
 }

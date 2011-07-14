@@ -26,9 +26,9 @@ package org.jcvi.glyph.nuc;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 /**
- * {@code NucleotideEncodedGlyphs} an interface to abstract
+ * {@code NucleotideSequence} an interface to abstract
  * how {@link NucleotideGlyph}s are encoded in memory.  Nucleotide data
  * can be stored in many different ways depending
  * on the use case and particular circumstances of how this data is to be used.
@@ -39,7 +39,7 @@ import org.jcvi.glyph.EncodedGlyphs;
  *
  *
  */
-public interface NucleotideEncodedGlyphs extends EncodedGlyphs<NucleotideGlyph>{
+public interface NucleotideSequence extends Sequence<NucleotideGlyph>{
     /**
      * Get a List of all the gap indexes into the gapped basecalls
      * which are Gaps.  The size of the returned list should be
@@ -54,7 +54,7 @@ public interface NucleotideEncodedGlyphs extends EncodedGlyphs<NucleotideGlyph>{
     int getNumberOfGaps();
     /**
      * Get the valid {@link Range} which is ungapped "good" part of the basecalls.  Depending
-     * on what this {@link NucleotideEncodedGlyphs} represents can change the 
+     * on what this {@link NucleotideSequence} represents can change the 
      * meaning of valid range some possible meanings include:
      * <ul>
      * <li>the high quality region<li>
@@ -96,7 +96,7 @@ public interface NucleotideEncodedGlyphs extends EncodedGlyphs<NucleotideGlyph>{
      */
     boolean isGap(int gappedIndex);
     /**
-     * Get the number of {@link NucleotideGlyph}s in this {@link NucleotideEncodedGlyphs} 
+     * Get the number of {@link NucleotideGlyph}s in this {@link NucleotideSequence} 
      * that are not gaps.
      * @return the number of non gaps as a long.
      */

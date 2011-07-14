@@ -34,10 +34,10 @@ import java.util.Properties;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 import org.jcvi.sequence.Peaks;
@@ -55,8 +55,8 @@ public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
             List<PhredQuality> qualities, List<ShortGlyph> positions,
             Properties comments, List<PhdTag> tags) {
         map.put(id, new DefaultPhd(id,
-                new DefaultNucleotideEncodedGlyphs(bases),
-                new DefaultQualityEncodedGlyphs(QUALITY_CODEC, qualities),
+                new DefaultNucleotideSequence(bases),
+                new EncodedQualitySequence(QUALITY_CODEC, qualities),
                 new Peaks(positions),
                 comments,
                 tags));

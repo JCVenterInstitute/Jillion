@@ -22,8 +22,8 @@ package org.jcvi.ncbi;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Before;
@@ -38,10 +38,10 @@ import static org.hamcrest.MatcherAssert.*;
  */
 public class TestDefaultNcbiGappedFastaRecord {
 
-    List<NucleotideEncodedGlyphs> expectedSequences = Arrays.<NucleotideEncodedGlyphs>asList(
-            new DefaultNucleotideEncodedGlyphs("AAATGCATGGGTAAAAGTAGTAGAAGAGAAGGCTTTTAGCCCAGAAGTAATACCCATGTTTTCAGCATTAGGAAAAAGGGCTGTTG"),
-            new DefaultNucleotideEncodedGlyphs("TGGATGACAGAAACCTTGTTGGTCCAAAATGCAAACCCAGATKGTAAGACCATTTTAAAAGCATTGGGTCTTAGAAATAGGGCAACACAGAACAAAAAT"),
-            new DefaultNucleotideEncodedGlyphs("AAAAATAAAAGCATTAGTAGAAATTTGTACAGAACTGGAAAAGGAAGGAAAAATTTCAAAAATTGGGCCTGAAAACCCATACAATACTCCGGG")
+    List<NucleotideSequence> expectedSequences = Arrays.<NucleotideSequence>asList(
+            new DefaultNucleotideSequence("AAATGCATGGGTAAAAGTAGTAGAAGAGAAGGCTTTTAGCCCAGAAGTAATACCCATGTTTTCAGCATTAGGAAAAAGGGCTGTTG"),
+            new DefaultNucleotideSequence("TGGATGACAGAAACCTTGTTGGTCCAAAATGCAAACCCAGATKGTAAGACCATTTTAAAAGCATTGGGTCTTAGAAATAGGGCAACACAGAACAAAAAT"),
+            new DefaultNucleotideSequence("AAAAATAAAAGCATTAGTAGAAATTTGTACAGAACTGGAAAAGGAAGGAAAAATTTCAAAAATTGGGCCTGAAAACCCATACAATACTCCGGG")
         );
     String id = "Dobi";
     String comments = "[organism=Canis familiaris] [breed=Doberman pinscher]";
@@ -59,7 +59,7 @@ public class TestDefaultNcbiGappedFastaRecord {
 
     protected DefaultNcbiGappedFastaRecord createSut() {
         DefaultNcbiGappedFastaRecord.Builder builder = new DefaultNcbiGappedFastaRecord.Builder(id, comments);
-        for(NucleotideEncodedGlyphs sequence : expectedSequences){
+        for(NucleotideSequence sequence : expectedSequences){
             builder.addSequence(sequence);
         }
         builder.addGap();
@@ -93,7 +93,7 @@ public class TestDefaultNcbiGappedFastaRecord {
             concatenatedSequenceBuilder.append("-");
         }
         concatenatedSequenceBuilder.append("AAAAATAAAAGCATTAGTAGAAATTTGTACAGAACTGGAAAAGGAAGGAAAAATTTCAAAAATTGGGCCTGAAAACCCATACAATACTCCGGG");
-        NucleotideEncodedGlyphs concatenatedSequence = new DefaultNucleotideEncodedGlyphs(concatenatedSequenceBuilder.toString());
+        NucleotideSequence concatenatedSequence = new DefaultNucleotideSequence(concatenatedSequenceBuilder.toString());
         
         assertThat(sut.getValue(), is(equalTo(concatenatedSequence)));
     }
@@ -101,7 +101,7 @@ public class TestDefaultNcbiGappedFastaRecord {
     public void nullComments(){
         
         DefaultNcbiGappedFastaRecord.Builder builder = new DefaultNcbiGappedFastaRecord.Builder(id);
-        for(NucleotideEncodedGlyphs sequence : expectedSequences){
+        for(NucleotideSequence sequence : expectedSequences){
             builder.addSequence(sequence);
         }
         builder.addGap();
@@ -131,7 +131,7 @@ public class TestDefaultNcbiGappedFastaRecord {
             concatenatedSequenceBuilder.append("-");
         }
         concatenatedSequenceBuilder.append("AAAAATAAAAGCATTAGTAGAAATTTGTACAGAACTGGAAAAGGAAGGAAAAATTTCAAAAATTGGGCCTGAAAACCCATACAATACTCCGGG");
-        NucleotideEncodedGlyphs concatenatedSequence = new DefaultNucleotideEncodedGlyphs(concatenatedSequenceBuilder.toString());
+        NucleotideSequence concatenatedSequence = new DefaultNucleotideSequence(concatenatedSequenceBuilder.toString());
         
         assertThat(noComments.getValue(), is(equalTo(concatenatedSequence)));
     }
@@ -139,7 +139,7 @@ public class TestDefaultNcbiGappedFastaRecord {
     public void sequencesBuiltWithStrings(){
         
         DefaultNcbiGappedFastaRecord.Builder builder = new DefaultNcbiGappedFastaRecord.Builder(id);
-        for(NucleotideEncodedGlyphs sequence : expectedSequences){
+        for(NucleotideSequence sequence : expectedSequences){
             builder.addSequence(NucleotideGlyph.convertToString(sequence.decode()));
         }
         builder.addGap();
@@ -169,7 +169,7 @@ public class TestDefaultNcbiGappedFastaRecord {
             concatenatedSequenceBuilder.append("-");
         }
         concatenatedSequenceBuilder.append("AAAAATAAAAGCATTAGTAGAAATTTGTACAGAACTGGAAAAGGAAGGAAAAATTTCAAAAATTGGGCCTGAAAACCCATACAATACTCCGGG");
-        NucleotideEncodedGlyphs concatenatedSequence = new DefaultNucleotideEncodedGlyphs(concatenatedSequenceBuilder.toString());
+        NucleotideSequence concatenatedSequence = new DefaultNucleotideSequence(concatenatedSequenceBuilder.toString());
         
         assertThat(noComments.getValue(), is(equalTo(concatenatedSequence)));
     }
@@ -188,7 +188,7 @@ public class TestDefaultNcbiGappedFastaRecord {
     @Test(expected = NullPointerException.class)
     public void nullNucleotideGlyphSequenceShouldThrowNullPointerException(){
         new DefaultNcbiGappedFastaRecord.Builder(id)
-            .addSequence((NucleotideEncodedGlyphs)null);
+            .addSequence((NucleotideSequence)null);
     }
     @Test(expected = NullPointerException.class)
     public void nullStringSequenceShouldThrowNullPointerException(){

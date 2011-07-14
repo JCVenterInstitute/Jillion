@@ -29,10 +29,10 @@ import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 import org.jcvi.glyph.phredQuality.datastore.QualityDataStoreAdapter;
 import org.junit.Before;
@@ -50,15 +50,15 @@ public abstract class AbstractTestSliceMap {
     private static final QualityGlyphCodec CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
     @Before
     public void setup(){
-        Map<String, QualityEncodedGlyphs> qualities = new HashMap<String, QualityEncodedGlyphs>();
-        qualities.put("read_0", new DefaultQualityEncodedGlyphs(CODEC, 
+        Map<String, QualitySequence> qualities = new HashMap<String, QualitySequence>();
+        qualities.put("read_0", new EncodedQualitySequence(CODEC, 
                         PhredQuality.valueOf(new byte[]{10,12,14,16,18,20,22,24})));
-        qualities.put("read_1", new DefaultQualityEncodedGlyphs(CODEC, 
+        qualities.put("read_1", new EncodedQualitySequence(CODEC, 
                 PhredQuality.valueOf(new byte[]{1,2,3,4,5,6,7,8})));
-        qualities.put("read_2", new DefaultQualityEncodedGlyphs(CODEC, 
+        qualities.put("read_2", new EncodedQualitySequence(CODEC, 
                 PhredQuality.valueOf(new byte[]{15,16,17,18})));
         qualityDataStore = new QualityDataStoreAdapter(
-                            new SimpleDataStore<QualityEncodedGlyphs>(qualities));
+                            new SimpleDataStore<QualitySequence>(qualities));
     }
     @Test
     public void allSlicesSameDepth(){

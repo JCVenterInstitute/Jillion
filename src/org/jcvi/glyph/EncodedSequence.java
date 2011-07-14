@@ -23,7 +23,6 @@
  */
 package org.jcvi.glyph;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,14 +31,14 @@ import java.util.List;
 import org.jcvi.CommonUtil;
 import org.jcvi.Range;
 /**
- * <code>AlphabetData</code> is a composite object
- * containing a {@link ByteBuffer} of data and an {@link Alphabet}
- * to decode it.
+ * {@code EncodedSequence} is a composite object
+ * containing a byte representation of data and an {@link GlyphCodec}
+ * to decode it.  This allows {@link Sequence} data to be encoded
+ * in different forms to take up the minimal amount of memory
+ * possible for a given situation.
  * @author dkatzel
- *
- *
  */
-public class  DefaultEncodedGlyphs<T extends Glyph> implements EncodedGlyphs<T> {
+public class  EncodedSequence<T extends Glyph> implements Sequence<T> {
     /**
      * codec used to decode the data.
      */
@@ -55,14 +54,14 @@ public class  DefaultEncodedGlyphs<T extends Glyph> implements EncodedGlyphs<T> 
      * @param codec
      * @param glyphsToEncode
      */
-    public DefaultEncodedGlyphs(GlyphCodec<T> codec, Collection<T> glyphsToEncode) {
+    public EncodedSequence(GlyphCodec<T> codec, Collection<T> glyphsToEncode) {
         this(codec, codec.encode(glyphsToEncode));
     }
     /**
      * @param codec
      * @param data
      */
-    public DefaultEncodedGlyphs(GlyphCodec<T> codec, byte[] data) {
+    public EncodedSequence(GlyphCodec<T> codec, byte[] data) {
         this.codec = codec;
         //defensive copy
         this.data = Arrays.copyOf(data, data.length);
@@ -91,10 +90,10 @@ public class  DefaultEncodedGlyphs<T extends Glyph> implements EncodedGlyphs<T> 
         if (obj == null){
             return false;
         }
-        if (!(obj instanceof DefaultEncodedGlyphs)){
+        if (!(obj instanceof EncodedSequence)){
             return false;
         }
-        DefaultEncodedGlyphs other = (DefaultEncodedGlyphs) obj;
+        EncodedSequence other = (EncodedSequence) obj;
         return CommonUtil.similarTo(codec, other.codec) &&
         Arrays.equals(data, other.data);
        

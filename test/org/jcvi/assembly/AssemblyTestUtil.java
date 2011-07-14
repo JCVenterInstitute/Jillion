@@ -25,7 +25,7 @@ package org.jcvi.assembly;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 public class AssemblyTestUtil {
 
@@ -35,8 +35,8 @@ public class AssemblyTestUtil {
         assertEquals(expected.getStart(), actual.getStart());
         assertEquals(expected.getLength(), actual.getLength());
         assertEquals(expected.getSequenceDirection(), actual.getSequenceDirection());
-        final NucleotideEncodedGlyphs expectedEncodedGlyphs = expected.getEncodedGlyphs();
-        final NucleotideEncodedGlyphs actualEncodedGlyphs = actual.getEncodedGlyphs();
+        final NucleotideSequence expectedEncodedGlyphs = expected.getEncodedGlyphs();
+        final NucleotideSequence actualEncodedGlyphs = actual.getEncodedGlyphs();
         assertEquals(expectedEncodedGlyphs.decode(), actualEncodedGlyphs.decode());
         assertEquals(expectedEncodedGlyphs.getValidRange(), actualEncodedGlyphs.getValidRange());
         

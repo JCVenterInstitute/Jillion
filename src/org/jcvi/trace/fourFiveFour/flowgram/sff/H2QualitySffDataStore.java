@@ -31,9 +31,9 @@ import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
-public class H2QualitySffDataStore extends AbstractH2SffDataStore<PhredQuality, QualityEncodedGlyphs> implements QualityDataStore{
+public class H2QualitySffDataStore extends AbstractH2SffDataStore<PhredQuality, QualitySequence> implements QualityDataStore{
 
 
     /**
@@ -45,7 +45,7 @@ public class H2QualitySffDataStore extends AbstractH2SffDataStore<PhredQuality, 
      */
     public H2QualitySffDataStore(
             File sffFile,
-            AbstractH2EncodedGlyphDataStore<PhredQuality, QualityEncodedGlyphs> datastore,
+            AbstractH2EncodedGlyphDataStore<PhredQuality, QualitySequence> datastore,
             boolean trim) throws SFFDecoderException, FileNotFoundException {
         super(sffFile, datastore, trim);
     }
@@ -58,7 +58,7 @@ public class H2QualitySffDataStore extends AbstractH2SffDataStore<PhredQuality, 
      */
     public H2QualitySffDataStore(
             File sffFile,
-            AbstractH2EncodedGlyphDataStore<PhredQuality, QualityEncodedGlyphs> datastore)
+            AbstractH2EncodedGlyphDataStore<PhredQuality, QualitySequence> datastore)
             throws SFFDecoderException, FileNotFoundException {
         super(sffFile, datastore);
     }
@@ -74,7 +74,7 @@ public class H2QualitySffDataStore extends AbstractH2SffDataStore<PhredQuality, 
      */
     public H2QualitySffDataStore(
             File sffFile,
-            AbstractH2EncodedGlyphDataStore<PhredQuality, QualityEncodedGlyphs> datastore,
+            AbstractH2EncodedGlyphDataStore<PhredQuality, QualitySequence> datastore,
             DataStoreFilter filter, boolean trim) throws SFFDecoderException,
             FileNotFoundException {
         super(sffFile, datastore, filter, trim);
@@ -82,7 +82,7 @@ public class H2QualitySffDataStore extends AbstractH2SffDataStore<PhredQuality, 
     
     public H2QualitySffDataStore(
             File sffFile,
-            AbstractH2EncodedGlyphDataStore<PhredQuality, QualityEncodedGlyphs> datastore,
+            AbstractH2EncodedGlyphDataStore<PhredQuality, QualitySequence> datastore,
             DataStoreFilter filter) throws SFFDecoderException,
             FileNotFoundException {
         super(sffFile, datastore, filter, false);

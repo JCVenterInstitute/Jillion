@@ -26,7 +26,7 @@ import java.io.InputStream;
 
 import org.jcvi.Range;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.DefaultIndexedFileRange;
@@ -89,7 +89,7 @@ public class IndexedFastaQFileDataStore implements FastQDataStore<FastQRecord>, 
         return true;
     }
     @Override
-    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
+    public void visitNucleotides(NucleotideSequence nucleotides) {
         //no-op
     }
     @Override

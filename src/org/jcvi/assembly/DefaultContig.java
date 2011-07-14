@@ -28,9 +28,9 @@ import java.util.Set;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.contig.AbstractContig;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideSequence;
 import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -38,7 +38,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
 
     
 
-    public DefaultContig(String id, NucleotideEncodedGlyphs consensus,
+    public DefaultContig(String id, NucleotideSequence consensus,
             Set<P> reads) {
         super(id, consensus, reads);
     }
@@ -61,9 +61,9 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
 
 	public static class Builder extends AbstractContigBuilder<PlacedRead, DefaultContig<PlacedRead>>{
         public Builder(String id, String consensus){
-           this(id, new DefaultNucleotideEncodedGlyphs(consensus));
+           this(id, new DefaultNucleotideSequence(consensus));
         }
-        public Builder(String id, NucleotideEncodedGlyphs consensus){
+        public Builder(String id, NucleotideSequence consensus){
             super(id,consensus);
         }
         public Builder addRead(String id, int offset,String basecalls){
@@ -97,7 +97,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             
         }
         @Override
-        protected PlacedRead createPlacedRead(Read<ReferencedEncodedNucleotideGlyphs> read, long offset, SequenceDirection dir){
+        protected PlacedRead createPlacedRead(Read<ReferencedEncodedNucleotideSequence> read, long offset, SequenceDirection dir){
             return new DefaultPlacedRead(read,offset,dir);
         }
        

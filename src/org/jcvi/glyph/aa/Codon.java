@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 /**
@@ -317,10 +317,10 @@ public class Codon
         }
         return codons;
     }
-    public static List<Codon> getCodonsFor(NucleotideEncodedGlyphs basecalls){
+    public static List<Codon> getCodonsFor(NucleotideSequence basecalls){
        return getCodonsFor(basecalls,Frame.ZERO);
     }
-    public static List<Codon> getCodonsFor(NucleotideEncodedGlyphs basecalls, Frame frame){
+    public static List<Codon> getCodonsFor(NucleotideSequence basecalls, Frame frame){
         return getCodonsFor(NucleotideGlyph.convertToString(
                 NucleotideGlyph.convertToUngapped(basecalls.decode())),frame);
      }
@@ -337,7 +337,7 @@ public class Codon
     public static Codon getCodonFor(List<NucleotideGlyph> triplet){
         return getCodonByOffset(triplet,0);
     }
-    public static Codon getCodonFor(NucleotideEncodedGlyphs triplet){
+    public static Codon getCodonFor(NucleotideSequence triplet){
         return getCodonByOffset(triplet.decode(Range.buildRangeOfLength(0, 3)), 0);
     }
     
@@ -347,7 +347,7 @@ public class Codon
                 NucleotideGlyph.getGlyphsFor(triplet),
                 0);
     }
-    public static Codon getCodonByOffset(NucleotideEncodedGlyphs basecalls, int offset){
+    public static Codon getCodonByOffset(NucleotideSequence basecalls, int offset){
         if(offset<0){
             throw new IllegalArgumentException("offset must be >=0 "+ offset);
         }

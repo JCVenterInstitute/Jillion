@@ -24,10 +24,10 @@
 package org.jcvi.fastX.fasta.seq;
 
 import org.jcvi.fastX.fasta.AbstractFastaRecordVisitor;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 
-public abstract class AbstractNucleotideFastaVisitor extends AbstractFastaRecordVisitor<NucleotideEncodedGlyphs, NucleotideSequenceFastaRecord>{
+public abstract class AbstractNucleotideFastaVisitor extends AbstractFastaRecordVisitor<NucleotideSequence, NucleotideSequenceFastaRecord>{
 
     public AbstractNucleotideFastaVisitor(){
         this(DefaultNucleotideFastaRecordFactory.getInstance());

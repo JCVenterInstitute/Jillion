@@ -1,7 +1,7 @@
 package org.jcvi.fastX.fasta.aa;
 
 import org.jcvi.fastX.fasta.FastaRecord;
-import org.jcvi.glyph.aa.AminoAcidEncodedGlyphs;
+import org.jcvi.glyph.aa.AminoAcidSequence;
 
 /**
  * {@code PeptideSequenceFastaRecord} is an interface for {@link FastaRecord} objects
@@ -10,8 +10,8 @@ import org.jcvi.glyph.aa.AminoAcidEncodedGlyphs;
  * @author naxelrod
  *
  */
-public interface AminoAcidSequenceFastaRecord extends FastaRecord<AminoAcidEncodedGlyphs> {
+public interface AminoAcidSequenceFastaRecord extends FastaRecord<AminoAcidSequence> {
 
-	AminoAcidEncodedGlyphs getValue();
+	AminoAcidSequence getValue();
 	
 }

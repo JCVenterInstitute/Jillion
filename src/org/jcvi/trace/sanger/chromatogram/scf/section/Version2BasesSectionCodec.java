@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.sequence.Confidence;
@@ -89,14 +89,14 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
 
     protected void writeBasesDataToBuffer(ByteBuffer buffer, SCFChromatogram c, int numberOfBases) {
         
-        EncodedGlyphs<ShortGlyph> peaks = c.getPeaks().getData();
+        Sequence<ShortGlyph> peaks = c.getPeaks().getData();
         final ChannelGroup channelGroup = c.getChannelGroup();
         final ByteBuffer aConfidence = ByteBuffer.wrap(channelGroup.getAChannel().getConfidence().getData());
         final ByteBuffer cConfidence = ByteBuffer.wrap(channelGroup.getCChannel().getConfidence().getData());
         final ByteBuffer gConfidence = ByteBuffer.wrap(channelGroup.getGChannel().getConfidence().getData());
         final ByteBuffer tConfidence = ByteBuffer.wrap(channelGroup.getTChannel().getConfidence().getData());
 
-        final EncodedGlyphs<NucleotideGlyph> basecalls = c.getBasecalls();
+        final Sequence<NucleotideGlyph> basecalls = c.getBasecalls();
         final ByteBuffer substitutionConfidence = getOptionalField(c.getSubstitutionConfidence());
         final ByteBuffer insertionConfidence = getOptionalField(c.getInsertionConfidence());
         final ByteBuffer deletionConfidence = getOptionalField(c.getDeletionConfidence());

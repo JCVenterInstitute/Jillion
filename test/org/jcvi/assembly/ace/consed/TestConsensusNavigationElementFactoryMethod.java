@@ -23,8 +23,8 @@ import org.jcvi.Range;
 import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  */
 public class TestConsensusNavigationElementFactoryMethod {
     Range gappedFeatureRange = Range.buildRange(5,10);
-    NucleotideEncodedGlyphs consensus = new DefaultNucleotideEncodedGlyphs("ACGT-ACGTACGTACGT-ACGT");
+    NucleotideSequence consensus = new DefaultNucleotideSequence("ACGT-ACGTACGTACGT-ACGT");
     Range ungappedFeatureRange= AssemblyUtil.convertGappedRangeIntoUngappedRange(consensus, gappedFeatureRange);
     
     Contig<PlacedRead> mockContig;

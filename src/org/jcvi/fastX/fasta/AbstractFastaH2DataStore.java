@@ -29,7 +29,7 @@ import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.fastX.FastXFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.Glyph;
 import org.jcvi.util.CloseableIterator;
 
@@ -40,7 +40,7 @@ import org.jcvi.util.CloseableIterator;
  *
  *
  */
-public abstract class AbstractFastaH2DataStore <G extends Glyph, E extends EncodedGlyphs<G>> implements FastaVisitor, DataStore<E>{
+public abstract class AbstractFastaH2DataStore <G extends Glyph, E extends Sequence<G>> implements FastaVisitor, DataStore<E>{
 
     private final AbstractH2EncodedGlyphDataStore<G, E> h2Datastore;
     private final DataStoreFilter filter;

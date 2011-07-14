@@ -31,14 +31,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.DefaultConfidence;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.sanger.chromatogram.BasicChromatogram;
@@ -54,11 +54,11 @@ public abstract class AbstractTestBasesSection {
     protected static final String DECODED_BASES = "ACGTACGT";
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
 
-    protected NucleotideEncodedGlyphs encodedBases = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.getGlyphsFor(DECODED_BASES));
+    protected NucleotideSequence encodedBases = new DefaultNucleotideSequence(NucleotideGlyph.getGlyphsFor(DECODED_BASES));
     protected SCFHeader mockHeader;
     protected SCFChromatogramImpl chromatogram;
     protected byte[] calledConfidence = new byte[]{40,40,40,40,63,38,38,38};
-    protected QualityEncodedGlyphs encodedQualities = new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC, 
+    protected QualitySequence encodedQualities = new EncodedQualitySequence(RUN_LENGTH_CODEC, 
             PhredQuality.valueOf(calledConfidence));
     protected byte[] aConfidence = new byte[]{40,3,4,2,38,0,2,1};
     protected byte[] cConfidence = new byte[]{0,40,3,4,2,38,0,2};
@@ -96,7 +96,7 @@ public abstract class AbstractTestBasesSection {
     /**
      * @return the bases
      */
-    public EncodedGlyphs<NucleotideGlyph> getEncodedBases() {
+    public Sequence<NucleotideGlyph> getEncodedBases() {
         return encodedBases;
     }
 

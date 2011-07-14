@@ -29,10 +29,10 @@ import org.jcvi.Range;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
 
@@ -47,8 +47,8 @@ public class DefaultAmosFragmentFileDataStore extends AbstractDataStore<AmosFrag
 
     private String currentId;
     private int currentIndex;
-    private NucleotideEncodedGlyphs currentBasecalls;
-    private QualityEncodedGlyphs currentQualities;
+    private NucleotideSequence currentBasecalls;
+    private QualitySequence currentQualities;
     private Range validRange, vectorRange, qualityRange;
     
     public DefaultAmosFragmentFileDataStore(File afgFile) throws FileNotFoundException{
@@ -84,7 +84,7 @@ public class DefaultAmosFragmentFileDataStore extends AbstractDataStore<AmosFrag
     * {@inheritDoc}
     */
     @Override
-    public void visitBasecalls(NucleotideEncodedGlyphs basecalls) {
+    public void visitBasecalls(NucleotideSequence basecalls) {
         this.currentBasecalls = basecalls;
         
     }
@@ -103,7 +103,7 @@ public class DefaultAmosFragmentFileDataStore extends AbstractDataStore<AmosFrag
     */
     @Override
     public void visitQualities(List<PhredQuality> qualities) {
-        this.currentQualities = new DefaultQualityEncodedGlyphs(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,qualities);
+        this.currentQualities = new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,qualities);
         
     }
 

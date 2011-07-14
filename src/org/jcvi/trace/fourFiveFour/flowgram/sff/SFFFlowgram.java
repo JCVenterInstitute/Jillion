@@ -28,16 +28,16 @@ import java.util.List;
 
 import org.jcvi.CommonUtil;
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.Sequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 
 public class SFFFlowgram implements Flowgram {
     private final String id;
-    private final NucleotideEncodedGlyphs basecalls;
-    private final QualityEncodedGlyphs qualities;
+    private final NucleotideSequence basecalls;
+    private final QualitySequence qualities;
     private final Range qualitiesClip;
     private final Range adapterClip;
     private final short[] values;
@@ -49,7 +49,7 @@ public class SFFFlowgram implements Flowgram {
      * @param qualitiesClip
      * @param adapterClip
      */
-    public SFFFlowgram(String id,NucleotideEncodedGlyphs basecalls, QualityEncodedGlyphs qualities,
+    public SFFFlowgram(String id,NucleotideSequence basecalls, QualitySequence qualities,
             List<Short> values, Range qualitiesClip, Range adapterClip) {
         canNotBeNull(id,basecalls, qualities, values, qualitiesClip, adapterClip);
         this.id = id;
@@ -63,7 +63,7 @@ public class SFFFlowgram implements Flowgram {
         this.adapterClip = adapterClip;
     }
 
-    private void canNotBeNull(String id,NucleotideEncodedGlyphs basecalls, EncodedGlyphs<PhredQuality> qualities,
+    private void canNotBeNull(String id,NucleotideSequence basecalls, Sequence<PhredQuality> qualities,
             List<Short> values, Range qualitiesClip, Range adapterClip) {
         CommonUtil.cannotBeNull(id, "id can not be null");
         CommonUtil.cannotBeNull(basecalls, "basecalls can not be null");
@@ -83,12 +83,12 @@ public class SFFFlowgram implements Flowgram {
      }
 
     @Override
-    public NucleotideEncodedGlyphs getBasecalls() {
+    public NucleotideSequence getBasecalls() {
         return basecalls;
     }
 
     @Override
-    public QualityEncodedGlyphs getQualities() {
+    public QualitySequence getQualities() {
         return qualities;
     }
 

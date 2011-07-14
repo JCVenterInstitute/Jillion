@@ -26,10 +26,10 @@ package org.jcvi.fastX.fasta.pos;
 import java.util.List;
 
 import org.jcvi.fastX.fasta.AbstractFastaRecord;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.ShortGlyph;
 
-public class DefaultPositionFastaRecord <T extends EncodedGlyphs<ShortGlyph>> extends AbstractFastaRecord<T> implements PositionFastaRecord<T>{
+public class DefaultPositionFastaRecord <T extends Sequence<ShortGlyph>> extends AbstractFastaRecord<T> implements PositionFastaRecord<T>{
 
     private final T positions;
     public DefaultPositionFastaRecord(String id, T positions){

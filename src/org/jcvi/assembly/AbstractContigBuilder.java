@@ -24,9 +24,9 @@ import java.util.Set;
 
 import org.jcvi.Builder;
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.DefaultReferencedEncodedNucleotideGlyph;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
+import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideSequence;
 import org.jcvi.sequence.DefaultRead;
 import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
@@ -37,17 +37,17 @@ import org.jcvi.sequence.SequenceDirection;
  *
  */
 public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Contig<P>> implements Builder<C>{
-        private NucleotideEncodedGlyphs consensus;
+        private NucleotideSequence consensus;
         private String id;
         private final Set<P> reads;
-        public AbstractContigBuilder(String id, NucleotideEncodedGlyphs consensus){
+        public AbstractContigBuilder(String id, NucleotideSequence consensus){
             this.id = id;
             this.consensus = consensus;
             reads = new LinkedHashSet<P>();
         }
         public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
             
-            NucleotideEncodedGlyphs referenceEncoded = new DefaultReferencedEncodedNucleotideGlyph(consensus,basecalls, offset,validRange);
+            NucleotideSequence referenceEncoded = new ReferenceEncodedNucleotideSequence(consensus,basecalls, offset,validRange);
             final P actualPlacedRead = createPlacedRead(new DefaultRead(id, referenceEncoded), offset,dir );
             
             return addRead(actualPlacedRead);
@@ -56,15 +56,15 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
             reads.add(read);
             return this;
         }
-        protected abstract P createPlacedRead(Read<ReferencedEncodedNucleotideGlyphs> read, long offset, SequenceDirection dir);
+        protected abstract P createPlacedRead(Read<ReferencedEncodedNucleotideSequence> read, long offset, SequenceDirection dir);
         
-        public NucleotideEncodedGlyphs getConsensus() {
+        public NucleotideSequence getConsensus() {
             return consensus;
         }
         public String getId() {
             return id;
         }
-        public AbstractContigBuilder<P,C> changeConsensus(NucleotideEncodedGlyphs newConsensus){
+        public AbstractContigBuilder<P,C> changeConsensus(NucleotideSequence newConsensus){
             this.consensus = newConsensus;
             return this;
         }

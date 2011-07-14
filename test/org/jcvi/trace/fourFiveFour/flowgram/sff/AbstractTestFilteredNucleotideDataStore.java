@@ -28,7 +28,7 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.datastore.DefaultIncludeDataStoreFilter;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.Glyph;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 import org.junit.After;
@@ -54,9 +54,9 @@ private final DefaultSffFileDataStore dataStore;
     }
     private DataStoreFilter filter = new DefaultIncludeDataStoreFilter(
             Arrays.asList("FF585OX02HCMO2", "FF585OX02FHO5X"));
-    private DataStore<? extends EncodedGlyphs<G>> sut;
+    private DataStore<? extends Sequence<G>> sut;
     
-    protected abstract DataStore<? extends EncodedGlyphs<G>> createSut(File sffFile, DataStoreFilter filter) throws Exception;
+    protected abstract DataStore<? extends Sequence<G>> createSut(File sffFile, DataStoreFilter filter) throws Exception;
     
     protected abstract List<G> getRelaventDataFrom(Flowgram flowgram);
     @Before

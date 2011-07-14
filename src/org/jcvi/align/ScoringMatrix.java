@@ -28,7 +28,7 @@ package org.jcvi.align;
 import java.io.PrintStream;
 import java.nio.IntBuffer;
 
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.Glyph;
 
 /**
@@ -70,9 +70,9 @@ public class ScoringMatrix<G extends Glyph>
     private final byte gapPenalty;
     
     /** The query sequence. */
-    private final EncodedGlyphs<G> querySeq;
+    private final Sequence<G> querySeq;
     /** The reference sequence. */
-    private final EncodedGlyphs<G> refSeq;
+    private final Sequence<G> refSeq;
     
     /** The linear index of the best score encountered in the matrix. */
     private int bestScoreIndex;
@@ -86,7 +86,7 @@ public class ScoringMatrix<G extends Glyph>
      * Note, this value should be no greater than 0 (positive values will <em>encourage</em>
      * gap transitions).
      */
-    public ScoringMatrix(EncodedGlyphs<G> refSequence, EncodedGlyphs<G> querySequence, int gapPenalty)
+    public ScoringMatrix(Sequence<G> refSequence, Sequence<G> querySequence, int gapPenalty)
     {
         super();
         

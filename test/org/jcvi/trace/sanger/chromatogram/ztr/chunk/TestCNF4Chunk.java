@@ -25,7 +25,7 @@ package org.jcvi.trace.sanger.chromatogram.ztr.chunk;
 
 import java.nio.ByteBuffer;
 
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.trace.TraceDecoderException;
 import org.jcvi.trace.TraceEncoderException;
 import org.jcvi.trace.sanger.chromatogram.Channel;
@@ -100,7 +100,7 @@ public class TestCNF4Chunk {
     			new Channel(gconf,new short[0]), 
     			new Channel(tconf,new short[0]));
 
-    	expect(chromatogram.getBasecalls()).andReturn(new DefaultNucleotideEncodedGlyphs(bases));
+    	expect(chromatogram.getBasecalls()).andReturn(new DefaultNucleotideSequence(bases));
     	expect(chromatogram.getChannelGroup()).andReturn(channelGroup);
     
     	replay(chromatogram);

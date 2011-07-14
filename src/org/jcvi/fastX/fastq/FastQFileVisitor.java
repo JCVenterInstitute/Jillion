@@ -23,7 +23,7 @@
  */
 package org.jcvi.fastX.fastq;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.io.TextFileVisitor;
 /**
  * {@code FastQFileVisitor} is a {@link TextFileVisitor}
@@ -50,7 +50,7 @@ public interface FastQFileVisitor extends TextFileVisitor{
      */
     boolean visitEndBlock();
     
-    void visitNucleotides(NucleotideEncodedGlyphs nucleotides);
+    void visitNucleotides(NucleotideSequence nucleotides);
     
     void visitEncodedQualities(String encodedQualities);
 }

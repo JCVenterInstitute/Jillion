@@ -27,13 +27,13 @@ import java.util.Arrays;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
 
-public class ArtificalQualityDataStoreFromContig extends AbstractArtificialDataStoreFromContig<QualityEncodedGlyphs> implements QualityDataStore{
+public class ArtificalQualityDataStoreFromContig extends AbstractArtificialDataStoreFromContig<QualitySequence> implements QualityDataStore{
     private final byte qualitytoUse;
     
     public ArtificalQualityDataStoreFromContig(
@@ -45,11 +45,11 @@ public class ArtificalQualityDataStoreFromContig extends AbstractArtificialDataS
    
     
     @Override
-    protected QualityEncodedGlyphs createArtificalTypefor(PlacedRead read) {
+    protected QualitySequence createArtificalTypefor(PlacedRead read) {
         long length =read.getValidRange().getEnd()+1;
        byte[] buf = new byte[(int)length];
        Arrays.fill(buf, qualitytoUse);
-        return new DefaultQualityEncodedGlyphs(
+        return new EncodedQualitySequence(
                 RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, PhredQuality.valueOf(buf));
 
     }

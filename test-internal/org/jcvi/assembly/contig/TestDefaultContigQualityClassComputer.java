@@ -28,7 +28,7 @@ import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
@@ -52,7 +52,7 @@ public class TestDefaultContigQualityClassComputer {
     DefaultContigQualityClassComputer  sut;
     CoverageMap<CoverageRegion<Placed>> coverageMap;
     QualityDataStore qualityFastaMap;
-    NucleotideEncodedGlyphs consensus;
+    NucleotideSequence consensus;
     @Before
     public void setup() throws SecurityException{
         qualityValueStrategy = createMock(QualityValueStrategy.class);
@@ -64,7 +64,7 @@ public class TestDefaultContigQualityClassComputer {
                 
         coverageMap = createMock(CoverageMap.class);
         qualityFastaMap = createMock(QualityDataStore.class);
-        consensus = createMock(NucleotideEncodedGlyphs.class);
+        consensus = createMock(NucleotideSequence.class);
     }
     
     @Test

@@ -32,10 +32,10 @@ import org.jcvi.assembly.AssemblyTestUtil;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultPlacedRead;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.DefaultReferencedEncodedNucleotideGlyph;
+import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.sequence.DefaultRead;
 import org.jcvi.sequence.SequenceDirection;
@@ -49,7 +49,7 @@ public abstract class TestContigFileParser {
     int numberOfReads= 210;
     ResourceFileServer RESOURCES = new ResourceFileServer(TestContigFileParser.class);
 
-                        NucleotideEncodedGlyphs contigConsensus = new DefaultNucleotideEncodedGlyphs(
+                        NucleotideSequence contigConsensus = new DefaultNucleotideSequence(
         "TAAAGTGGCCACTAAATATGTTAAGAAGGTTACTGGCAAACTAGCCGTGCGCTTTAAGGC" +
         "GTTAGGTGTAGTCGTTGTCAGGAAAATTACTGAATGGTTTGATTTAGCCGTGGACATTGC" +
         "TGCTAGTGCCGCTGGATGGCTTTGCTACCAGCTGGTAAATGGCTTATTCGCAGTGGCCAA" +
@@ -408,7 +408,7 @@ public abstract class TestContigFileParser {
     
     DefaultPlacedRead CVGWB15T06B037761RM = new DefaultPlacedRead(
             new DefaultRead("CVGWB15T06B037761RM",
-                 new DefaultReferencedEncodedNucleotideGlyph(contigConsensus,
+                 new ReferenceEncodedNucleotideSequence(contigConsensus,
                          "AAGTTTAATACTGATAATAAGGTTATATACACCACAGAAGTGGCTTCAAAGCTTAATTTT" +
                          "AAGTTGTGTTGTTTGGCCTTTAAGAATGCTTTACAGACGTTTAATTGGAGTGTTGTGTAC" +
                          "AGGGGCTTCTTTCTAGTGGCAACAGTCTTTTTATTATGG-TTTAACTTTTTGTATGCCAA" +
@@ -430,7 +430,7 @@ public abstract class TestContigFileParser {
     
     PlacedRead CVGWB47T06D1122735FMB = new DefaultPlacedRead(
             new DefaultRead("CVGWB47T06D1122735FMB",
-                 new DefaultReferencedEncodedNucleotideGlyph(contigConsensus,
+                 new ReferenceEncodedNucleotideSequence(contigConsensus,
                          "GTACCTATGTAGAAAATAACGGTCACCCGAAATTAGATTGGCTAGACCTTGACCCGCAAT" +
                          "TGTGTAATTCAGGAA-GGATTTCCGCAAAGAGTGGTAACTCTCTCTTTAGGAGTTTCCAT" +
                          "TTTACTGATTTTTACAACTACACAGGAGAAGGCGACCAAATTATATTTTATGAAGGAGTT" +

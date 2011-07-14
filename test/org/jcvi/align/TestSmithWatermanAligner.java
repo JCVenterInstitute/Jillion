@@ -25,7 +25,7 @@
  */
 package org.jcvi.align;
 
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -152,8 +152,8 @@ public class TestSmithWatermanAligner
         
         
         final Alignment alignment = sut.alignSequence(
-                new DefaultNucleotideEncodedGlyphs(reference),
-                new DefaultNucleotideEncodedGlyphs(query));
+                new DefaultNucleotideSequence(reference),
+                new DefaultNucleotideSequence(query));
         
         Assert.assertEquals(queryAlign[0], alignment.getQueryAlignment().getStart());
         Assert.assertEquals(queryAlign[1], alignment.getQueryAlignment().getStop());

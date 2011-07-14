@@ -25,8 +25,8 @@ import java.io.IOException;
 
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.sequence.Peaks;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -41,8 +41,8 @@ public class TestPhdWriter extends AbstractTestPhd{
     public void write() throws IOException, DataStoreException{
         Phd phd = new DefaultPhd(
         		id,
-                new DefaultNucleotideEncodedGlyphs(expectedBasecalls), 
-                new DefaultQualityEncodedGlyphs(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, expectedQualities), 
+                new DefaultNucleotideSequence(expectedBasecalls), 
+                new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, expectedQualities), 
                 new Peaks(expectedPositions),
                 expectedProperties);
         ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -32,7 +32,7 @@ import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
@@ -40,12 +40,12 @@ public abstract class  AbstractSliceMap implements SliceMap{
 
     protected List<SliceElement> createSliceElementsFor(
             CoverageRegion<? extends PlacedRead> region,
-            long offset, DataStore<? extends EncodedGlyphs<PhredQuality>> qualityDataStore,
+            long offset, DataStore<? extends Sequence<PhredQuality>> qualityDataStore,
             QualityValueStrategy qualityValueStrategy) {
         List<SliceElement> sliceElements = new ArrayList<SliceElement>(region.getCoverage());
         for(PlacedRead read : region){
             
-            EncodedGlyphs<PhredQuality> qualities;
+            Sequence<PhredQuality> qualities;
             try {
                 final String id = read.getId();
                 
@@ -66,7 +66,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
     protected SliceElement createSliceElementFor(
             QualityValueStrategy qualityValueStrategy, int gappedIndex,
             PlacedRead realRead,
-            final EncodedGlyphs<PhredQuality> qualities) {
+            final Sequence<PhredQuality> qualities) {
 
         final NucleotideGlyph calledBase = realRead.getEncodedGlyphs().get(gappedIndex);
         try{

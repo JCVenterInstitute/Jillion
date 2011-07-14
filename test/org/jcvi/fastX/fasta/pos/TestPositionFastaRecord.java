@@ -30,8 +30,8 @@ import java.util.List;
 
 import org.jcvi.fastX.fasta.pos.DefaultPositionFastaRecord;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.EncodedSequence;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.GlyphCodec;
 import org.jcvi.glyph.num.DefaultShortGlyphCodec;
 import org.jcvi.glyph.num.ShortGlyph;
@@ -47,13 +47,13 @@ public class TestPositionFastaRecord {
     private short[] positions = new short[]{1, 10,21,31,42,50,62,84,90,101,110,121,130,140,152};
     private static final GlyphCodec<ShortGlyph> CODEC = DefaultShortGlyphCodec.getInstance();
     
-    EncodedGlyphs<ShortGlyph> encodedPositions = 
-        new DefaultEncodedGlyphs<ShortGlyph>(CODEC,
+    Sequence<ShortGlyph> encodedPositions = 
+        new EncodedSequence<ShortGlyph>(CODEC,
                 ShortGlyphFactory.getInstance().getGlyphsFor(positions));
     
-    DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>> sut = new DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>>(id,comment, encodedPositions);
+    DefaultPositionFastaRecord<Sequence<ShortGlyph>> sut = new DefaultPositionFastaRecord<Sequence<ShortGlyph>>(id,comment, encodedPositions);
     
-    private String buildExpectedRecord(DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>> fasta){
+    private String buildExpectedRecord(DefaultPositionFastaRecord<Sequence<ShortGlyph>> fasta){
         StringBuilder builder= new StringBuilder();
         builder.append(">")
                     .append(fasta.getId());
@@ -88,7 +88,7 @@ public class TestPositionFastaRecord {
         assertConstructedFieldsCorrect(sut);
     }
 
-    private void assertConstructedFieldsCorrect(DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>> fasta) {
+    private void assertConstructedFieldsCorrect(DefaultPositionFastaRecord<Sequence<ShortGlyph>> fasta) {
         assertEquals(id, fasta.getId());        
         assertEquals(0L, fasta.getChecksum());
         final String expectedRecord = buildExpectedRecord(fasta);
@@ -97,7 +97,7 @@ public class TestPositionFastaRecord {
     }
     @Test
     public void constructorWithoutComment(){
-        DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>> noComment = new DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>>(id,encodedPositions);
+        DefaultPositionFastaRecord<Sequence<ShortGlyph>> noComment = new DefaultPositionFastaRecord<Sequence<ShortGlyph>>(id,encodedPositions);
         
         assertNull(noComment.getComment());
         assertConstructedFieldsCorrect(noComment);
@@ -109,8 +109,8 @@ public class TestPositionFastaRecord {
     }
     @Test
     public void equalsSameId(){
-        DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>> sameIdAndComment = new DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>>(
-                id,comment,createMock(EncodedGlyphs.class));
+        DefaultPositionFastaRecord<Sequence<ShortGlyph>> sameIdAndComment = new DefaultPositionFastaRecord<Sequence<ShortGlyph>>(
+                id,comment,createMock(Sequence.class));
         TestUtil.assertEqualAndHashcodeSame(sut, sameIdAndComment);
     }
     @Test
@@ -123,14 +123,14 @@ public class TestPositionFastaRecord {
     }
     @Test
     public void equalsDifferentComment(){
-        DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>> differentComment = new DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>>(
-                id,null,createMock(EncodedGlyphs.class));
+        DefaultPositionFastaRecord<Sequence<ShortGlyph>> differentComment = new DefaultPositionFastaRecord<Sequence<ShortGlyph>>(
+                id,null,createMock(Sequence.class));
         TestUtil.assertEqualAndHashcodeSame(sut, differentComment);
     }
     @Test
     public void notEqualsDifferentId(){
-        DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>> differentId = new DefaultPositionFastaRecord<EncodedGlyphs<ShortGlyph>>(
-                "different"+id,comment,createMock(EncodedGlyphs.class));
+        DefaultPositionFastaRecord<Sequence<ShortGlyph>> differentId = new DefaultPositionFastaRecord<Sequence<ShortGlyph>>(
+                "different"+id,comment,createMock(Sequence.class));
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentId);
     }
 }

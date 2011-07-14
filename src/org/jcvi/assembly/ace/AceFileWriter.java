@@ -39,7 +39,7 @@ import org.jcvi.assembly.slice.SliceMap;
 import org.jcvi.assembly.slice.SliceMapFactory;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.sanger.phd.Phd;
@@ -138,7 +138,7 @@ public class AceFileWriter {
     public static void writeAceContig(Contig<AcePlacedRead> contig,
             PhdDataStore phdDataStore, 
             OutputStream out) throws IOException, DataStoreException{
-        final NucleotideEncodedGlyphs consensus = contig.getConsensus();
+        final NucleotideSequence consensus = contig.getConsensus();
         
         writeString(String.format(CONTIG_HEADER, 
                 contig.getId(), 
@@ -187,7 +187,7 @@ public class AceFileWriter {
             SliceMap sliceMap,
             DataStore<Phd> phdDataStore, 
             OutputStream out, boolean calculateBestSegments) throws IOException, DataStoreException{
-        final NucleotideEncodedGlyphs consensus = contig.getConsensus();
+        final NucleotideSequence consensus = contig.getConsensus();
         StringBuilder bestSegmentBuilder = new StringBuilder();
         if(calculateBestSegments){
             System.out.println("calculating best segments...");
@@ -245,7 +245,7 @@ public class AceFileWriter {
         out.flush();
         
     }
-    private static void writeFakeUngappedConsensusQualities(NucleotideEncodedGlyphs consensus,
+    private static void writeFakeUngappedConsensusQualities(NucleotideSequence consensus,
             OutputStream out) throws IOException {
         StringBuilder result = new StringBuilder();
         int numberOfQualitiesSoFar=0;
@@ -262,7 +262,7 @@ public class AceFileWriter {
         }
         writeString(String.format("BQ%n%s%n", result.toString()), out);
     }
-    private static void writeUngappedConsensusQualities(NucleotideEncodedGlyphs consensus,SliceMap sliceMap,
+    private static void writeUngappedConsensusQualities(NucleotideSequence consensus,SliceMap sliceMap,
             OutputStream out) throws IOException {
         StringBuilder result = new StringBuilder();
         int numberOfQualitiesSoFar=0;

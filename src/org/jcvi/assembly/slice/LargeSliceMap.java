@@ -34,7 +34,7 @@ import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.util.LRUCache;
@@ -46,7 +46,7 @@ public class LargeSliceMap extends AbstractSliceMap{
     public static final int DEFAULT_CACHE_SIZE = 1000;
     
     private final CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap;
-    private final        DataStore<? extends EncodedGlyphs<PhredQuality>> qualityDataStore;
+    private final        DataStore<? extends Sequence<PhredQuality>> qualityDataStore;
     private final        QualityValueStrategy qualityValueStrategy;
     private final Range range;
     private final Map<Long, Slice> cache;

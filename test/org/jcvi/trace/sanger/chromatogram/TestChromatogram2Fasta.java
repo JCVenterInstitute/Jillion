@@ -23,8 +23,8 @@ import java.io.IOException;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.sequence.Peaks;
@@ -44,8 +44,8 @@ public class TestChromatogram2Fasta {
 	@Before
 	public void setup(){
 		chromo = createMock(Chromatogram.class);
-		expect(chromo.getBasecalls()).andStubReturn(new DefaultNucleotideEncodedGlyphs(basecalls));
-		expect(chromo.getQualities()).andStubReturn(new DefaultQualityEncodedGlyphs(
+		expect(chromo.getBasecalls()).andStubReturn(new DefaultNucleotideSequence(basecalls));
+		expect(chromo.getQualities()).andStubReturn(new EncodedQualitySequence(
 				RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, PhredQuality.valueOf(quals)));
 		expect(chromo.getPeaks()).andStubReturn(new Peaks(peaks));
 		replay(chromo);

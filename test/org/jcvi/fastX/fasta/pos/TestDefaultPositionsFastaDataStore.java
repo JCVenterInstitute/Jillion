@@ -29,7 +29,7 @@ import java.io.IOException;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.fastX.fasta.pos.DefaultPositionFastaFileDataStore;
 import org.jcvi.fastX.fasta.pos.PositionFastaRecord;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.ShortGlyph;
 
 
@@ -37,7 +37,7 @@ public class TestDefaultPositionsFastaDataStore extends AbstractTestPositionsFas
 
 
     @Override
-    protected DataStore<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>> createPositionFastaMap(File fastaFile) throws IOException {
+    protected DataStore<PositionFastaRecord<Sequence<ShortGlyph>>> createPositionFastaMap(File fastaFile) throws IOException {
         return new DefaultPositionFastaFileDataStore(fastaFile);
     }
 }
