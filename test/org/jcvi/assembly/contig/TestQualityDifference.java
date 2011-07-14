@@ -29,7 +29,7 @@ import org.jcvi.assembly.Location;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideSequence;
+import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Read;
 import org.jcvi.testUtil.TestUtil;
@@ -136,8 +136,8 @@ public class TestQualityDifference {
     private void setupRead(String readId, int readIndex,
             NucleotideGlyph readGlyph) {
         PlacedRead mockPlacedRead = createMock(PlacedRead.class);
-        Read<ReferencedEncodedNucleotideSequence> mockRead = createMock(Read.class);
-        ReferencedEncodedNucleotideSequence mockEncodedGlyphs = createMock(ReferencedEncodedNucleotideSequence.class);
+        Read<ReferenceEncodedNucleotideSequence> mockRead = createMock(Read.class);
+        ReferenceEncodedNucleotideSequence mockEncodedGlyphs = createMock(ReferenceEncodedNucleotideSequence.class);
         expect(read.getIndex()).andReturn(readIndex).anyTimes();
         
         expect(mockPlacedRead.getId()).andReturn(readId);

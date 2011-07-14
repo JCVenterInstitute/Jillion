@@ -17,273 +17,49 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Feb 9, 2009
+ * Created on Jan 23, 2009
  *
  * @author dkatzel
  */
 package org.jcvi.glyph.nuc;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.TreeMap;
-
-import org.jcvi.Range;
-import org.jcvi.glyph.Sequence;
-
-public class ReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferencedEncodedNucleotideSequence{
-
-    private final int[] gaps;
-    private final int[] snpIndexes;
-    private final NucleotideSequence snpValues;
-    private NucleotideSequence beforeValues;
-    private NucleotideSequence afterValues;
-    private int overhangOffset=0;
-    private final int length;
-    private final int startOffset;
-    private final Range validRange;
-    private final NucleotideSequence reference;
-
-    protected int[] getSnpIndexes() {
-        return snpIndexes;
-    }
-
-    
+/**
+ * {@code ReferenceEncodedNucleotideSequence} encodes
+ * a NucleotideSequence by refering to a reference sequence
+ * and only storing the differences (SNPs) between
+ * this NucleotideSequence and its reference. Any {@link #get(int)}
+ * that refers to a non-SNP
+ * gets delegated to the reference.
+ * <p>
+ * This should keep the memory footprint
+ * quite low since an underlying sequence should map to a reference 
+ * with a high identity.  If the reference is the consensus,
+ * the underlying sequence should map more than 90%.
+ * @author dkatzel
+ *
+ *
+ */
+public interface ReferenceEncodedNucleotideSequence extends NucleotideSequence{
     /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getNumberOfBasesBeforeReference() {
-        return beforeValues==null?0 : (int)beforeValues.getLength();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getNumberOfBasesAfterReference() {
-        return afterValues==null?0 : (int)afterValues.getLength();
-    }
-
-    @Override
-    public List<Integer> getSnpOffsets() {
-        List<Integer> snps = new ArrayList<Integer>(snpIndexes.length);
-        for(int i =0; i< snpIndexes.length; i++){
-            snps.add(Integer.valueOf(snpIndexes[i]));
-        }
-        return snps;
-    }
-
-    protected NucleotideSequence getSnpValues() {
-        return snpValues;
-    }
-
-    public ReferenceEncodedNucleotideSequence(NucleotideSequence reference,
-            String toBeEncoded, int startOffset,Range validRange){
-        List<Integer> tempGapList = new ArrayList<Integer>();     
-        this.startOffset = startOffset;
-        this.length = toBeEncoded.length();
-        this.validRange = validRange;
-        this.reference = reference;
-        TreeMap<Integer, NucleotideGlyph> differentGlyphMap = new TreeMap<Integer, NucleotideGlyph>();
-        populateFields(reference, toBeEncoded, startOffset, tempGapList,differentGlyphMap);
-        gaps = convertToPrimitiveArray(tempGapList);
-        snpIndexes = createSNPIndexes(differentGlyphMap);
-        snpValues = createSNPValues(differentGlyphMap);
-    }
-
-    public ReferenceEncodedNucleotideSequence(NucleotideSequence reference){
-        this(reference,NucleotideGlyph.convertToString(reference.decode()),0,Range.buildRangeOfLength(0, reference.getLength()));
-    }
-    public ReferenceEncodedNucleotideSequence(String reference){
-        this(new DefaultNucleotideSequence(reference));
-    }
-    
-    private NucleotideSequence createSNPValues(
-            TreeMap<Integer, NucleotideGlyph> differentGlyphMap) {
-        return new DefaultNucleotideSequence(differentGlyphMap.values());
-
-    }
-    private int[] createSNPIndexes(TreeMap<Integer, NucleotideGlyph> snpMap){
-        int[]snps = new int[snpMap.size()];
-        int i=0;
-        for(Integer index : snpMap.keySet()){
-            snps[i]=index.intValue();
-            i++;
-        }
-        return snps;
-    }
-    private int[] convertToPrimitiveArray(List<Integer> list){
-        int[] array = new int[list.size()];
-        for(int i=0; i<list.size(); i++){
-            array[i] = list.get(i).intValue();
-        }
-        return array;
-    }
-    private TreeMap<Integer, NucleotideGlyph> populateFields(Sequence<NucleotideGlyph> reference,
-            String toBeEncoded, int startOffset, List<Integer> tempGapList,TreeMap<Integer, NucleotideGlyph> differentGlyphMap) {
-        if(startOffset<0){
-            //handle before values
-            beforeValues = new DefaultNucleotideSequence(toBeEncoded.substring(0, Math.abs(startOffset)));
-        }else{
-            beforeValues =null;
-        }
-        
-        int lastOffsetOfSequence = toBeEncoded.length()+startOffset;
-        
-        if(lastOffsetOfSequence > reference.getLength()){
-            int overhang = (int)(toBeEncoded.length()+startOffset - reference.getLength());
-            overhangOffset = toBeEncoded.length()-overhang;
-            afterValues = new DefaultNucleotideSequence(toBeEncoded.substring(overhangOffset));
-            
-        }else{
-            afterValues=null;
-        }
-        int startReferenceEncodingOffset = beforeValues==null?0: (int)beforeValues.getLength();
-        int endReferenceEncodingOffset = afterValues==null?toBeEncoded.length(): overhangOffset;
-        for(int i=startReferenceEncodingOffset; i<endReferenceEncodingOffset; i++){
-            //get the corresponding index to this reference
-            int referenceIndex = i + startOffset;
-            NucleotideGlyph g = NucleotideGlyph.getGlyphFor(toBeEncoded.charAt(i));
-            final NucleotideGlyph referenceGlyph = reference.get(referenceIndex);            
-            
-            final Integer indexAsInteger = Integer.valueOf(i);
-            if(g.isGap()){
-                tempGapList.add(indexAsInteger);
-            }
-            if(isDifferent(g, referenceGlyph)){
-                    differentGlyphMap.put(indexAsInteger, g);
-            }
-        }
-        return differentGlyphMap;
-    }
-
-    private boolean isDifferent(NucleotideGlyph g, final NucleotideGlyph referenceGlyph) {
-        return g!=referenceGlyph;
-    }
-
-    @Override
-    public List<NucleotideGlyph> decode() {
-        List<NucleotideGlyph> result = new ArrayList<NucleotideGlyph>(length);
-        for(int i=0; i< length; i++){
-            result.add(get(i));
-        }
-        return result;
-    }
-    @Override
-    public NucleotideGlyph get(int index) {
-        if(beforeValues!=null && beforeValues.getLength()>index){
-            return beforeValues.get(index);
-        }
-        if(afterValues !=null && index >=overhangOffset){
-            return afterValues.get(index-overhangOffset);
-        }
-        final Integer indexAsInteger = Integer.valueOf(index);
-        if(isGap(indexAsInteger)){
-            return NucleotideGlyph.Gap;
-        }
-        int snpIndex =Arrays.binarySearch(snpIndexes, index);
-        if(snpIndex>=0){
-            return snpValues.get(snpIndex);
-        }
-        int referenceIndex = index+startOffset;
-        return reference.get(referenceIndex);
-    }
-
-    @Override
-    public boolean isGap(int index) {
-        for(int i=0; i<this.gaps.length; i++){
-            if(gaps[i] == index){
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    @Override
-    public long getLength() {
-        return length;
-    }
-
-    @Override
-    public List<Integer> getGapIndexes() {
-        List<Integer> result = new ArrayList<Integer>();
-        for(int i=0; i<this.gaps.length; i++){
-            result.add(this.gaps[i]);
-        }
-        return result;
-    }
-    @Override
-    public Range getValidRange() {
-        return validRange;
-    }
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(snpIndexes);
-        result = prime * result + snpValues.hashCode();
-        result = prime * result + Arrays.hashCode(gaps);
-        result = prime * result + length;
-        result = prime * result + startOffset;
-        result = prime * result
-                + ((validRange == null) ? 0 : validRange.hashCode());
-        return result;
-    }
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof ReferenceEncodedNucleotideSequence)) {
-            return false;
-        }
-        ReferenceEncodedNucleotideSequence other = (ReferenceEncodedNucleotideSequence) obj;
-        if (!Arrays.equals(snpIndexes,other.snpIndexes)) {
-            return false;
-        }
-        if (snpValues == null) {
-            if (other.snpValues != null) {
-                return false;
-            }
-        } else if (!snpValues.equals(other.snpValues)) {
-            return false;
-        }
-        if (gaps == null) {
-            if (other.gaps != null) {
-                return false;
-            }
-        } else if (!Arrays.equals(gaps,other.gaps)) {
-            return false;
-        }
-        if (length != other.length) {
-            return false;
-        }
-        if (startOffset != other.startOffset) {
-            return false;
-        }
-        if (validRange == null) {
-            if (other.validRange != null) {
-                return false;
-            }
-        } else if (!validRange.equals(other.validRange)) {
-            return false;
-        }
-        return true;
-    }
-    
-    /**
-     * {@inheritDoc}
+     * Get a list of offsets to all the SNPs
+     * (Single Nucleotide Polymorphism).
+     * @return a List of Integer offsets; may be empty
+     * if there are no SNPs, but will never be null.
      */
-     @Override
-     public int getNumberOfGaps() {
-         return gaps.length;
-     }
-    
-    
-
-    
+    List<Integer> getSnpOffsets();
+    /**
+     * Get the number of bases of this sequence that align
+     * upstream of the reference start.
+     * @return the number of bases before the reference,
+     * will never be negative.
+     */
+    int getNumberOfBasesBeforeReference();
+    /**
+     * Get the number of bases of this sequence that align
+     * downstream of the reference start.
+     * @return the number of bases after the reference,
+     * will never be negative.
+     */
+    int getNumberOfBasesAfterReference();
 }

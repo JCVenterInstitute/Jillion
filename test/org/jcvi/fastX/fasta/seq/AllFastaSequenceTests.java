@@ -34,11 +34,9 @@ import org.junit.runners.Suite.SuiteClasses;
      TestDefaultEncodedNuclotideFastaRecord.class,
      TestDefaultSequenceFastaDataStore.class,
      TestDefaultSequenceFastaDataStoreWithNoComment.class,
-     TestFilteredNucleotideFastaH2DataStore.class,
      TestLargeNucleotideFastaFileDataStore.class,
      TestLargeSequenceFastaMapWithNoComment.class,
      TestNucleotideDataStoreFastaAdatper.class,
-     TestNucleotideFastaH2DataStore.class,
      TestStreamingDefaultSequenceDataStore.class
     }
     )

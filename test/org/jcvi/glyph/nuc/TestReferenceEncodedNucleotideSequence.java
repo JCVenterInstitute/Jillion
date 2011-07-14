@@ -50,7 +50,7 @@ public class TestReferenceEncodedNucleotideSequence {
         assertDecodedCorrectly(offset, sequenceAsString);
     }
     private void assertDecodedCorrectly(int offset, String sequenceAsString) {
-        ReferenceEncodedNucleotideSequence sut = new ReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset, Range.buildRange(0,sequenceAsString.length()-1));
+        DefaultReferenceEncodedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset, Range.buildRange(0,sequenceAsString.length()-1));
         assertEquals(sequenceAsString.length(), sut.getLength());
         assertEquals(sequenceAsString, NucleotideGlyph.convertToString(sut.decode()));
         for(int i=0; i< sequenceAsString.length(); i++){
@@ -122,7 +122,7 @@ public class TestReferenceEncodedNucleotideSequence {
                 ;
         
         int offset = 414;
-        ReferenceEncodedNucleotideSequence actual = new ReferenceEncodedNucleotideSequence(
+        DefaultReferenceEncodedNucleotideSequence actual = new DefaultReferenceEncodedNucleotideSequence(
                 encodedConsensus, sequence, offset, Range.buildRange(7,571));
         List<Integer> expectedGapIndexes = Arrays.asList(174, 178,180,181,182,186);
         assertEquals(expectedGapIndexes,actual.getGapIndexes());

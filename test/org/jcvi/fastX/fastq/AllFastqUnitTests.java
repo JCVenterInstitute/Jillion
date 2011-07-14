@@ -37,18 +37,11 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultFastQFileDataStore.class,
         TestLargeFastQFileDataStore.class,
         TestIndexedFastQFileDataStore.class,
-        TestH2IndexedFastQFileDataStore.class,
         TestParseSangerEncodedFastQFile.class,
         AllIlluminaUnitTests.class,
         AllSolexaUnitTests.class,
         TestFastQUtil.class,
-        AllFastQUtilUnitTests.class,
-        
-        TestH2NucleotideFastQDataStore.class,
-        TestFilteredH2NucleotideFastQDataStore.class,
-        TestH2QualityFastQDataStore.class,
-        TestFilteredH2QualityFastQDataStore.class
-        
+        AllFastQUtilUnitTests.class        
     }
     )
 public class AllFastqUnitTests {

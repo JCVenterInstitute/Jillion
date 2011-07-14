@@ -33,10 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestQualityFastaRecord.class,
         TestDefaultQualityFastaDataStore.class,
-        TestFilteredQualityFastaH2DataStore.class,
         TestFlowgramQualityFastaDataStore.class,
-        TestLargeQualityFastaDataStore.class,
-        TestQualityFastaH2DataStore.class
+        TestLargeQualityFastaDataStore.class
         
     }
     )

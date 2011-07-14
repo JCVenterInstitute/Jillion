@@ -30,19 +30,19 @@ import java.util.TreeMap;
 import org.jcvi.Range;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideSequence;
+import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
 
 
 public class DefaultPlacedRead implements PlacedRead {
 
-    private final Read<ReferencedEncodedNucleotideSequence> read;
+    private final Read<ReferenceEncodedNucleotideSequence> read;
     private final long start;
     private final SequenceDirection sequenceDirection;
     
     
-    public DefaultPlacedRead(Read<ReferencedEncodedNucleotideSequence> read, long start, SequenceDirection sequenceDirection){
+    public DefaultPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long start, SequenceDirection sequenceDirection){
         if(read==null){
             throw new IllegalArgumentException("read can not be null");
         }
@@ -60,7 +60,7 @@ public class DefaultPlacedRead implements PlacedRead {
         return start;
     }
 
-    public Read<ReferencedEncodedNucleotideSequence> getRead(){
+    public Read<ReferenceEncodedNucleotideSequence> getRead(){
         return read;
     }
     @Override
@@ -129,7 +129,7 @@ public class DefaultPlacedRead implements PlacedRead {
 
     public Map<Integer, NucleotideGlyph> getSnps(){
         Map<Integer, NucleotideGlyph> map = new TreeMap<Integer, NucleotideGlyph>();
-        final ReferencedEncodedNucleotideSequence encodedGlyphs = read.getEncodedGlyphs();
+        final ReferenceEncodedNucleotideSequence encodedGlyphs = read.getEncodedGlyphs();
         for(Integer offset : encodedGlyphs.getSnpOffsets()){
             map.put(offset, encodedGlyphs.get(offset));
         }
