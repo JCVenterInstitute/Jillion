@@ -28,20 +28,20 @@ import java.util.List;
 
 import org.jcvi.Range;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 
-public class ArtificalNucleotideDataStoreFromContig extends AbstractArtificialDataStoreFromContig<NucleotideEncodedGlyphs> implements NucleotideDataStore{
+public class ArtificalNucleotideDataStoreFromContig extends AbstractArtificialDataStoreFromContig<NucleotideSequence> implements NucleotideDataStore{
 
     public ArtificalNucleotideDataStoreFromContig(
             DataStore<? extends Contig> contigDataStore) {
         super(contigDataStore);
     }
     @Override
-    protected NucleotideEncodedGlyphs createArtificalTypefor(PlacedRead read){
+    protected NucleotideSequence createArtificalTypefor(PlacedRead read){
         boolean isReverseComplimented = read.getSequenceDirection()==SequenceDirection.REVERSE;
         Range validRange = read.getValidRange();
         List<NucleotideGlyph> basecalls=NucleotideGlyph.convertToUngapped(read.getEncodedGlyphs().decode());
@@ -53,7 +53,7 @@ public class ArtificalNucleotideDataStoreFromContig extends AbstractArtificialDa
             fullRange.add(NucleotideGlyph.Unknown);
         }
         fullRange.addAll(basecalls);
-        return new DefaultNucleotideEncodedGlyphs(fullRange);
+        return new DefaultNucleotideSequence(fullRange);
         
     }
 }

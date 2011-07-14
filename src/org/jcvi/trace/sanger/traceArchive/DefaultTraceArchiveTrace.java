@@ -30,8 +30,8 @@ import org.jcvi.fastX.fasta.FastaParser;
 import org.jcvi.fastX.fasta.pos.DefaultPositionFastaFileDataStore;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Peaks;
 
@@ -59,7 +59,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     }
 
     @Override
-    public NucleotideEncodedGlyphs getBasecalls() {
+    public NucleotideSequence getBasecalls() {
         InputStream in=null;
         DefaultNucleotideFastaFileDataStore datastore = new DefaultNucleotideFastaFileDataStore();
         try{
@@ -76,7 +76,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     }
 
     @Override
-    public QualityEncodedGlyphs getQualities() {
+    public QualitySequence getQualities() {
         InputStream in=null;
         DefaultQualityFastaFileDataStore datastore = new DefaultQualityFastaFileDataStore();
         try{

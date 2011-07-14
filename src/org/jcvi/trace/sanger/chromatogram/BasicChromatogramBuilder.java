@@ -31,12 +31,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Peaks;
 
 public final class BasicChromatogramBuilder {
@@ -195,7 +195,7 @@ public final class BasicChromatogramBuilder {
             return this;
         }
 
-        private QualityEncodedGlyphs generateQualities(ChannelGroup channelGroup) {
+        private QualitySequence generateQualities(ChannelGroup channelGroup) {
             List<PhredQuality> qualities = new ArrayList<PhredQuality>(basecalls.length());
             
             
@@ -208,7 +208,7 @@ public final class BasicChromatogramBuilder {
                 }
                 qualities.add(PhredQuality.valueOf(data[i]));
             }
-            return new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,qualities);
+            return new EncodedQualitySequence(RUN_LENGTH_CODEC,qualities);
         }
         
         public Chromatogram build() {
@@ -219,7 +219,7 @@ public final class BasicChromatogramBuilder {
                     new Channel(tConfidence(),tPositions()));
             
             return new BasicChromatogram(
-                    new DefaultNucleotideEncodedGlyphs(basecalls()),
+                    new DefaultNucleotideSequence(basecalls()),
                     generateQualities(channelGroup),                        
                         new Peaks(peaks()),
                                                 channelGroup,

@@ -26,7 +26,7 @@ package org.jcvi.assembly.contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.qualClass.QualityClass;
 
@@ -34,5 +34,5 @@ public interface QualityClassComputer<P extends PlacedRead> {
 
     QualityClass computeQualityClass(CoverageMap<CoverageRegion<P>> coverageMap,
             QualityDataStore qualityDataStore,
-            NucleotideEncodedGlyphs consensus,int index);
+            NucleotideSequence consensus,int index);
 }

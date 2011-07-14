@@ -19,7 +19,7 @@
 
 package org.jcvi.fastX.fastq;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 /**
  * @author dkatzel
@@ -60,7 +60,7 @@ public abstract class AbstractFastQReadIdVisitor implements FastQFileVisitor{
     }
 
     @Override
-    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
+    public void visitNucleotides(NucleotideSequence nucleotides) {
         // TODO Auto-generated method stub
         
     }

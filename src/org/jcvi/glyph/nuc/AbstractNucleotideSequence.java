@@ -29,7 +29,7 @@ import java.util.List;
 import org.jcvi.Range;
 import org.jcvi.assembly.AssemblyUtil;
 
-public abstract class AbstractEnocdedNucleotideGlyphs implements NucleotideEncodedGlyphs{
+public abstract class AbstractNucleotideSequence implements NucleotideSequence{
 
     @Override
     public int convertGappedValidRangeIndexToUngappedValidRangeIndex(

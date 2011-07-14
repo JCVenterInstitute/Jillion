@@ -28,7 +28,7 @@ import static org.easymock.EasyMock.replay;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.trace.sanger.chromatogram.scf.header.SCFHeader;
 import org.jcvi.trace.sanger.chromatogram.scf.section.EncodedSection;
@@ -41,7 +41,7 @@ public abstract class AbstractTestBasesSectionEncoder {
 
 
     protected AbstractTestBasesSection sut;
-    protected EncodedGlyphs<NucleotideGlyph> bases;
+    protected Sequence<NucleotideGlyph> bases;
     protected SCFHeader mockHeader;
     @Before
     public void setupHeader(){

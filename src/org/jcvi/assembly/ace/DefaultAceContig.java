@@ -33,8 +33,8 @@ import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.assembly.contig.AbstractContig;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -42,13 +42,13 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
 
     
 
-    private DefaultAceContig(String id, NucleotideEncodedGlyphs consensus,
+    private DefaultAceContig(String id, NucleotideSequence consensus,
             Set<AcePlacedRead> reads) {
         super(id, consensus, reads);
     }
 
     public static class Builder{
-        private NucleotideEncodedGlyphs fullConsensus;
+        private NucleotideSequence fullConsensus;
         private String contigId;
         private Logger logger = Logger.getRootLogger();
         private CoordinateSystem adjustedContigIdCoordinateSystem=null;
@@ -59,11 +59,11 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         
         public Builder(String contigId, String fullConsensus){
            this(contigId,
-        		   new DefaultNucleotideEncodedGlyphs(
+        		   new DefaultNucleotideSequence(
                     NucleotideGlyph.getGlyphsFor(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)))
             );
         }
-        public Builder(String contigId, NucleotideEncodedGlyphs fullConsensus){
+        public Builder(String contigId, NucleotideSequence fullConsensus){
         	this.fullConsensus = fullConsensus;
         	 this.contigId = contigId;
         }
@@ -151,7 +151,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             
             if(numberOfReads()==0){
                 //force empty contig if no reads...
-                return new DefaultAceContig(contigId, new DefaultNucleotideEncodedGlyphs(""),placedReads);
+                return new DefaultAceContig(contigId, new DefaultNucleotideSequence(""),placedReads);
             }
             
             List<NucleotideGlyph> updatedConsensus = updateConsensus(fullConsensus.decode());
@@ -167,7 +167,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
                     new ArrayList<NucleotideGlyph>(
                             updatedConsensus.subList(contigLeft, contigRight));
             
-            NucleotideEncodedGlyphs validConsensus = new DefaultNucleotideEncodedGlyphs(validConsensusGlyphs);
+            NucleotideSequence validConsensus = new DefaultNucleotideSequence(validConsensusGlyphs);
             for(DefaultAcePlacedRead.Builder aceReadBuilder : aceReadBuilders){
                 int newOffset = aceReadBuilder.offset() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);

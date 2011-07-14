@@ -40,12 +40,12 @@ import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
 /**
  * {@code AbstractH2EncodedGlyphDataStore} is an {@link DataStore} of
- * {@link EncodedGlyphs}.
+ * {@link Sequence}.
  * @author dkatzel
  *
  *
  */
-public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends EncodedGlyphs<G>> implements DataStore<E>{
+public abstract class AbstractH2EncodedGlyphDataStore<G extends Glyph, E extends Sequence<G>> implements DataStore<E>{
     static final String DRIVER_STRING = "org.h2.Driver";
     static final String CONNECTION_SUBSTRING = "jdbc:h2:";
     static final String CREATE_TABLE = "CREATE TABLE DATA(id VARCHAR, data VARBINARY)";

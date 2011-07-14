@@ -21,8 +21,8 @@ package org.jcvi.fastX.fastq;
 
 import java.io.File;
 import java.io.IOException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.util.AbstractBlockingCloseableIterator;
 import org.jcvi.util.CloseableIterator;
 
@@ -57,8 +57,8 @@ public class LargeFastQFileIterator extends AbstractBlockingCloseableIterator<Fa
 				
         		 @Override
         	     protected boolean visitFastQRecord(String id,
-        	             NucleotideEncodedGlyphs nucleotides,
-        	             QualityEncodedGlyphs qualities, String optionalComment) {
+        	             NucleotideSequence nucleotides,
+        	             QualitySequence qualities, String optionalComment) {
         	         FastQRecord record = new DefaultFastQRecord(id,nucleotides, qualities,optionalComment);
         	         blockingPut(record);
         	         return !LargeFastQFileIterator.this.isClosed();

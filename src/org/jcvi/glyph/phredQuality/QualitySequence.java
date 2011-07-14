@@ -16,18 +16,19 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 23, 2009
- *
+
+package org.jcvi.glyph.phredQuality;
+
+import org.jcvi.glyph.Sequence;
+
+/**
+ * {@code QualitySequence} is a marker interface
+ * for {@link Sequence} implementations
+ * that encode {@link PhredQuality} values.
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.glyph.nuc;
+public interface QualitySequence extends Sequence<PhredQuality>{
 
-import java.util.List;
-
-public interface ReferencedEncodedNucleotideGlyphs extends NucleotideEncodedGlyphs{
-
-    List<Integer> getSnps();
-    int getNumberOfBasesBeforeReference();
-    int getNumberOfBasesAfterReference();
 }

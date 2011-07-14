@@ -50,8 +50,8 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.IndexedAceFileDataStore;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
@@ -192,7 +192,7 @@ public class RecallAceConsensus {
                 System.out.println(contig.getId());
                 SliceMap sliceMap = CompactedSliceMap.create(contig, qualityDataStore, 
                         GapQualityValueStrategies.LOWEST_FLANKING);
-                NucleotideEncodedGlyphs originalConsensus = contig.getConsensus();
+                NucleotideSequence originalConsensus = contig.getConsensus();
                 List<NucleotideGlyph> recalledConsensus = new ArrayList<NucleotideGlyph>((int)originalConsensus.getLength());
                 for(int i=0; i<originalConsensus.getLength();i++){
                     Slice slice =sliceMap.getSlice(i);
@@ -200,7 +200,7 @@ public class RecallAceConsensus {
                   
                     recalledConsensus.add(result.getConsensus());
                 }
-                final DefaultNucleotideEncodedGlyphs gappedRecalledConsensus = new DefaultNucleotideEncodedGlyphs(recalledConsensus);
+                final DefaultNucleotideSequence gappedRecalledConsensus = new DefaultNucleotideSequence(recalledConsensus);
                 if(fastaOut !=null){
                     fastaOut.print(new DefaultNucleotideEncodedSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.decodeUngapped()));
                 }

@@ -25,11 +25,11 @@ package org.jcvi.assembly.contig;
 
 import org.jcvi.assembly.Location;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 public interface BasecallDifference {
 
     Location<PlacedRead> getReadLocation();
-    Location<EncodedGlyphs<NucleotideGlyph>> getReferenceLocation();
+    Location<Sequence<NucleotideGlyph>> getReferenceLocation();
 }

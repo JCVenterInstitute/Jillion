@@ -36,8 +36,8 @@ import org.jcvi.assembly.cas.alignment.CasAlignmentRegion;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegionType;
 import org.jcvi.assembly.cas.read.CasNucleotideDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.util.MathUtil;
 
 /**
@@ -68,7 +68,7 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
     private final Map<Long, TreeMap<Long,Insertion>> gapsByReferenceId = new TreeMap<Long, TreeMap<Long,Insertion>>();
    private final CasIdLookup contigNameLookup;
     private final CasNucleotideDataStore referenceNucleotideDataStore;
-    private final Map<Long, NucleotideEncodedGlyphs> gappedReferences = new TreeMap<Long, NucleotideEncodedGlyphs>();
+    private final Map<Long, NucleotideSequence> gappedReferences = new TreeMap<Long, NucleotideSequence>();
     /**
      * @param casDataStoreFactory
      */
@@ -128,7 +128,7 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
                 try {
     
                     String gappedBasecalls = buildGappedReferenceAsString(contigName, gapsByReferenceId.get(i));
-                    gappedReferences.put(i, new DefaultNucleotideEncodedGlyphs(gappedBasecalls));
+                    gappedReferences.put(i, new DefaultNucleotideSequence(gappedBasecalls));
                     
                 } catch (DataStoreException e) {
                     throw new IllegalStateException("could not generate gapped reference for reference " + i,e);
@@ -142,7 +142,7 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
        if(insertions ==null){
            return "";
        }
-        NucleotideEncodedGlyphs contigBasecalls = referenceNucleotideDataStore.get(contigName);
+        NucleotideSequence contigBasecalls = referenceNucleotideDataStore.get(contigName);
         Iterator<Entry<Long, Insertion>> gapIterator = insertions.entrySet().iterator();
         Entry<Long, Insertion> nextGap;
         if(gapIterator.hasNext()){
@@ -173,13 +173,13 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
     
     
     @Override
-    public NucleotideEncodedGlyphs getGappedReferenceFor(long referenceId){
+    public NucleotideSequence getGappedReferenceFor(long referenceId){
         return gappedReferences.get(referenceId);
     }
     
-    public List<NucleotideEncodedGlyphs> asList(){
+    public List<NucleotideSequence> asList(){
     	int size = gappedReferences.size();
-    	List<NucleotideEncodedGlyphs> list = new ArrayList<NucleotideEncodedGlyphs>(size);
+    	List<NucleotideSequence> list = new ArrayList<NucleotideSequence>(size);
     	for(long i = 0; i<size; i++){
     		list.add(gappedReferences.get(Long.valueOf(i)));
     	}

@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 import org.jcvi.Range;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Library;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
@@ -74,8 +74,8 @@ public class DefaultFragmentDataStore extends AbstractFragmentDataStore{
     }
     @Override
     public void visitFragment(FrgVisitorAction action, String fragmentId,
-            String libraryId, NucleotideEncodedGlyphs bases,
-            QualityEncodedGlyphs qualities, Range validRange,
+            String libraryId, NucleotideSequence bases,
+            QualitySequence qualities, Range validRange,
             Range vectorClearRange, String source) {
         throwErrorIfAlreadyInitialized();
         if(isAddOrModify(action)){

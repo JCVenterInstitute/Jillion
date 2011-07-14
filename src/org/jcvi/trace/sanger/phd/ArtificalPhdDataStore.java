@@ -30,8 +30,8 @@ import java.util.Properties;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.util.CloseableIterator;
 import org.joda.time.DateTime;
 /**
@@ -43,8 +43,8 @@ import org.joda.time.DateTime;
  *
  */
 public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements PhdDataStore{
-    private final DataStore<NucleotideEncodedGlyphs> seqDataStore;
-    private final DataStore<QualityEncodedGlyphs> qualDataStore;
+    private final DataStore<NucleotideSequence> seqDataStore;
+    private final DataStore<QualitySequence> qualDataStore;
     private final Properties comments = new Properties();
     
    
@@ -54,8 +54,8 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
      * @param qualDataStore
      * @param phdDate
      */
-    public ArtificalPhdDataStore(DataStore<NucleotideEncodedGlyphs> seqDataStore,
-            DataStore<QualityEncodedGlyphs> qualDataStore, DateTime phdDate) {
+    public ArtificalPhdDataStore(DataStore<NucleotideSequence> seqDataStore,
+            DataStore<QualitySequence> qualDataStore, DateTime phdDate) {
         this.seqDataStore = seqDataStore;
         this.qualDataStore = qualDataStore;
         comments.putAll(PhdUtil.createPhdTimeStampCommentFor(phdDate));
@@ -70,11 +70,11 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
     @Override
     public synchronized Phd get(String id) throws DataStoreException {
         super.get(id);
-       final NucleotideEncodedGlyphs basecalls = seqDataStore.get(id);
+       final NucleotideSequence basecalls = seqDataStore.get(id);
        if(basecalls ==null){
            throw new NullPointerException("could not find basecalls for "+id);
        }
-    final QualityEncodedGlyphs qualities = qualDataStore.get(id);
+    final QualitySequence qualities = qualDataStore.get(id);
     if(qualities ==null){
         throw new NullPointerException("could not find qualities for "+id);
     }

@@ -38,7 +38,6 @@ import org.junit.runners.Suite.SuiteClasses;
     {        
         TestDefaultPlacedRead.class,
         TestDefaultLocation.class,
-        TestSplitReferenceEncodedNucleotideGlyphs.class,
         
         AllTrimUnitTests.class,
         AllSliceUnitTests.class,

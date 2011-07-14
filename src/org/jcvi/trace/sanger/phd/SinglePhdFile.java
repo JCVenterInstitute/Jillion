@@ -31,14 +31,14 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Peaks;
 
 public class SinglePhdFile implements  Phd{
@@ -59,8 +59,8 @@ public class SinglePhdFile implements  Phd{
     	PhdParser.parsePhd(singlePhdFile, new SinglePhdFileVisitor());
     	
 		this.delegatePhd = new DefaultPhd(id, 
-				new DefaultNucleotideEncodedGlyphs(bases),
-			new DefaultQualityEncodedGlyphs( 
+				new DefaultNucleotideSequence(bases),
+			new EncodedQualitySequence( 
 					RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
 					qualities),
 					
@@ -71,8 +71,8 @@ public class SinglePhdFile implements  Phd{
     	PhdParser.parsePhd(singlePhdStream, new SinglePhdFileVisitor());
     	
 		this.delegatePhd = new DefaultPhd(id, 
-				new DefaultNucleotideEncodedGlyphs(bases),
-			new DefaultQualityEncodedGlyphs( 
+				new DefaultNucleotideSequence(bases),
+			new EncodedQualitySequence( 
 					RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
 					qualities),
 					
@@ -121,11 +121,11 @@ public class SinglePhdFile implements  Phd{
 		return delegatePhd.getNumberOfTracePositions();
 	}
 	@Override
-	public NucleotideEncodedGlyphs getBasecalls() {
+	public NucleotideSequence getBasecalls() {
 		return delegatePhd.getBasecalls();
 	}
 	@Override
-	public QualityEncodedGlyphs getQualities() {
+	public QualitySequence getQualities() {
 		return delegatePhd.getQualities();
 	}
 	@Override

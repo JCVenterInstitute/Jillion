@@ -35,7 +35,7 @@ import java.nio.ShortBuffer;
 import java.util.Map;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -144,7 +144,7 @@ public final class ChromatogramXMLSerializer {
                 (peaks==null)? "":convertToEncodedShortData(peaks.getData()).encodeData(),
                } );
         }
-        private EncodedShortData convertToEncodedShortData(EncodedGlyphs<ShortGlyph> shortGlyphs){
+        private EncodedShortData convertToEncodedShortData(Sequence<ShortGlyph> shortGlyphs){
             ShortBuffer buf = ShortBuffer.allocate((int)shortGlyphs.getLength());
             for(ShortGlyph g : shortGlyphs.decode()){
                 buf.put(g.getNumber().shortValue());

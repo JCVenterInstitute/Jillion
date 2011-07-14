@@ -27,7 +27,7 @@ import org.jcvi.Range;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultContig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -56,7 +56,7 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
         currentContigBuilder = new DefaultContig.Builder(contigId,
                 encodeBasecalls(consensus));
     }
-    private DefaultNucleotideEncodedGlyphs encodeBasecalls(String basecalls) {
-        return new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.getGlyphsFor(basecalls), Range.buildRange(0, basecalls.length()));
+    private DefaultNucleotideSequence encodeBasecalls(String basecalls) {
+        return new DefaultNucleotideSequence(NucleotideGlyph.getGlyphsFor(basecalls), Range.buildRange(0, basecalls.length()));
     }
 }

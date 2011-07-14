@@ -26,7 +26,7 @@ import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.fastX.fasta.AbstractFastaH2DataStore;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.nuc.datastore.H2NucleotideDataStore;
 
@@ -37,7 +37,7 @@ import org.jcvi.glyph.nuc.datastore.H2NucleotideDataStore;
  *
  *
  */
-public class NucleotideFastaH2DataStore extends AbstractFastaH2DataStore<NucleotideGlyph,NucleotideEncodedGlyphs> implements NucleotideDataStore{
+public class NucleotideFastaH2DataStore extends AbstractFastaH2DataStore<NucleotideGlyph,NucleotideSequence> implements NucleotideDataStore{
 
     /**
      * @param fastaFile
@@ -59,7 +59,7 @@ public class NucleotideFastaH2DataStore extends AbstractFastaH2DataStore<Nucleot
      */
     public NucleotideFastaH2DataStore(
             File fastaFile,
-            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> h2Datastore,
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideSequence> h2Datastore,
             DataStoreFilter filter) throws FileNotFoundException {
         super(fastaFile, h2Datastore, filter);
     }
@@ -71,7 +71,7 @@ public class NucleotideFastaH2DataStore extends AbstractFastaH2DataStore<Nucleot
      */
     public NucleotideFastaH2DataStore(
             File fastaFile,
-            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> h2Datastore)
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideSequence> h2Datastore)
             throws FileNotFoundException {
         super(fastaFile, h2Datastore);
     }

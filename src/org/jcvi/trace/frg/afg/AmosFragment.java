@@ -20,7 +20,7 @@
 package org.jcvi.trace.frg.afg;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.sequence.Read;
 import org.jcvi.trace.Trace;
 
@@ -29,7 +29,7 @@ import org.jcvi.trace.Trace;
  *
  *
  */
-public interface AmosFragment extends Trace, Read<NucleotideEncodedGlyphs>{
+public interface AmosFragment extends Trace, Read<NucleotideSequence>{
 
     String getId();
     int getIndex();

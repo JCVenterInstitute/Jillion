@@ -40,7 +40,7 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.IndexedAceFileDataStore;
 import org.jcvi.datastore.IndexedContigFileDataStore;
 import org.jcvi.fastX.fasta.seq.LargeNucleotideFastaFileDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.util.DefaultIndexedFileRange;
 
 public class ConvertPositions {
@@ -111,7 +111,7 @@ public class ConvertPositions {
                 
             }
             String id = commandLine.getOptionValue("id");
-            final NucleotideEncodedGlyphs values;
+            final NucleotideSequence values;
             if(commandLine.hasOption("f")){
                 File fastaFile = new File(commandLine.getOptionValue("f"));
                 LargeNucleotideFastaFileDataStore datastore = new LargeNucleotideFastaFileDataStore(fastaFile);

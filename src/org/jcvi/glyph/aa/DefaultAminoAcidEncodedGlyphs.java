@@ -5,22 +5,22 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.EncodedSequence;
+import org.jcvi.glyph.Sequence;
 
 /**
  * {@code DefaultAminoAcidEncodedGlyphs} is the default implementation
- * of the {@link AminoAcidEncodedGlyphs} interface.
+ * of the {@link AminoAcidSequence} interface.
  *
  * @author naxelrod
  */
 
-public class DefaultAminoAcidEncodedGlyphs implements AminoAcidEncodedGlyphs {
+public class DefaultAminoAcidEncodedGlyphs implements AminoAcidSequence {
 
-	private final EncodedGlyphs<AminoAcid> encodedAminoAcids;
+	private final Sequence<AminoAcid> encodedAminoAcids;
 	
 	public DefaultAminoAcidEncodedGlyphs(Collection<AminoAcid> glyphs) {
-		this.encodedAminoAcids = new DefaultEncodedGlyphs<AminoAcid>(DefaultAminoAcidGlyphCodec.getInstance(),glyphs);
+		this.encodedAminoAcids = new EncodedSequence<AminoAcid>(DefaultAminoAcidGlyphCodec.getInstance(),glyphs);
 	}
 	public DefaultAminoAcidEncodedGlyphs(char[] aminoAcids) {
 		this(new String(aminoAcids));

@@ -26,10 +26,10 @@ package org.jcvi.trace.sanger.phd;
 import java.util.List;
 import java.util.Properties;
 
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.Sequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,8 +38,8 @@ import static org.easymock.EasyMock.*;
 
 public class TestBuildArtificialPhd {
 
-    NucleotideEncodedGlyphs mockBasecalls;
-    QualityEncodedGlyphs mockQualities;
+    NucleotideSequence mockBasecalls;
+    QualitySequence mockQualities;
     Properties mockProperties;
     List<PhdTag> mockTags;
     String id = "phdId";
@@ -48,8 +48,8 @@ public class TestBuildArtificialPhd {
     
     @Before
     public void setup(){
-        mockBasecalls = createMock(NucleotideEncodedGlyphs.class);
-        mockQualities = createMock(QualityEncodedGlyphs.class); 
+        mockBasecalls = createMock(NucleotideSequence.class);
+        mockQualities = createMock(QualitySequence.class); 
         mockProperties = createMock(Properties.class); 
         mockTags = createMock(List.class); 
     }
@@ -62,7 +62,7 @@ public class TestBuildArtificialPhd {
         assertEquals(id, phd.getId());
         assertEquals(mockBasecalls, phd.getBasecalls());
         assertEquals(mockQualities, phd.getQualities());
-        EncodedGlyphs<ShortGlyph> actualPeaks = phd.getPeaks().getData();
+        Sequence<ShortGlyph> actualPeaks = phd.getPeaks().getData();
         for(int i=0; i< lengthOfBases; i++){
             assertEquals(Short.valueOf((short)(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak)), actualPeaks.get(i).getNumber());
         }
@@ -82,7 +82,7 @@ public class TestBuildArtificialPhd {
         assertEquals(id, phd.getId());
         assertEquals(mockBasecalls, phd.getBasecalls());
         assertEquals(mockQualities, phd.getQualities());
-        EncodedGlyphs<ShortGlyph> actualPeaks = phd.getPeaks().getData();
+        Sequence<ShortGlyph> actualPeaks = phd.getPeaks().getData();
         for(int i=0; i< lengthOfBases; i++){
             assertEquals(Short.valueOf((short)(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak)), actualPeaks.get(i).getNumber());
         }

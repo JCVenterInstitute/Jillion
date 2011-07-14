@@ -24,10 +24,10 @@
 package org.jcvi.fastX.fasta.pos;
 
 import org.jcvi.fastX.fasta.AbstractFastaFileDataStore;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.ShortGlyph;
 
-public abstract class AbstractPositionFastaFileDataStore extends AbstractFastaFileDataStore<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>>{
+public abstract class AbstractPositionFastaFileDataStore extends AbstractFastaFileDataStore<PositionFastaRecord<Sequence<ShortGlyph>>>{
 
     private final PositionFastaRecordFactory fastaRecordFactory;
 

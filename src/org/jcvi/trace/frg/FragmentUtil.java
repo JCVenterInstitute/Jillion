@@ -26,8 +26,8 @@ import java.util.regex.Pattern;
 
 import org.jcvi.Range;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.TextFileVisitor;
 
@@ -89,7 +89,7 @@ public final class FragmentUtil {
         return null;
     }
     
-    public static  NucleotideEncodedGlyphs parseBasesFrom(String frg) {
+    public static  NucleotideSequence parseBasesFrom(String frg) {
         Scanner scanner = new Scanner(frg);
         scanner.findWithinHorizon(FRG_BASES_PATTERN, 0);
         StringBuilder bases = new StringBuilder();
@@ -100,7 +100,7 @@ public final class FragmentUtil {
             }
             bases.append(line);
         }
-       return new DefaultNucleotideEncodedGlyphs(bases.toString());
+       return new DefaultNucleotideSequence(bases.toString());
     }
     
     

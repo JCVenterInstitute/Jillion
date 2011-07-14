@@ -29,9 +29,9 @@ import java.util.Arrays;
 import org.jcvi.Range;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.sequence.Distance;
@@ -64,7 +64,7 @@ public class TestFrg2Parser {
         final Range clearRangeFor061 = Range.buildRange(0,650);
         mockVisitor.visitFragment(FrgVisitorAction.ADD, 
                 "334369678", ".", 
-                new DefaultNucleotideEncodedGlyphs(
+                new DefaultNucleotideSequence(
                         NucleotideGlyph.getGlyphsFor(
                                 "ATGATCGGCAGTGAATTGTATACGACTCACTATAGGGCGAATTGGAGCTCCACGCGGTGGCGGCCGCTCTAGAACTAGTGGATCCCCCGGGCTGCAGGAA" +
 "TTCGATTAGGTGGAGGCCACGCTGCGCGACCCCAGCGCCCAGTCCGTAACGCACGTGCTGCAGGCAGGTGCCGGTCAGTGTGTGTGTGGTGGGGGCGGCG" +
@@ -77,7 +77,7 @@ public class TestFrg2Parser {
 "GGACCTGAGGAGAGCACCAACAAGATCAGACGANNA" 
 )), 
 
-new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
+new EncodedQualitySequence(RUN_LENGTH_CODEC,
         QUALITY_CODEC.decode(
                 (
                         "555566;;;666;;<<<;;<<?CDDDB?<??<<<AADDHHHPVSUUKKG;98:<<>>=???B=;;=>@CDDB?BEDDDIKDVVVKKDDDDDKKKSNNQXP"+
@@ -95,7 +95,7 @@ new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
         
         mockVisitor.visitFragment(FrgVisitorAction.ADD, 
                 "334370061", ".", 
-                new DefaultNucleotideEncodedGlyphs(
+                new DefaultNucleotideSequence(
                         NucleotideGlyph.getGlyphsFor(
 					"ACTCAGCCTAAATACCTCACTAAGGGAACAAAGCTGGTACGGGCCCCCCCTCGAGGTCGACGGTATCGATAAGCTTGATCGGCTGGTCCCATTCGCCTTC" +
 					"CCATTCCAATTCCCGTATTCCCATCCCCACTCCGATCCCCATTCGCAGATTCCCATTCCCATATTCACCATTCCCAGCCCCAGGCCACGCACCAGCGAGC" +
@@ -104,7 +104,7 @@ new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
 					"GCGAGATGCTCCTCCAGCTGCGCCACCAGCTGTGCCCGGTGCGCCAGGTCCGACTCCAGCGCCCGGATCTTGGAGCCCAGCTCGCCGATCTGCGGCGTGG" +
 					"AGCCGTGGGTTGGTTGCGCGGTCCTCAGGGTCCCGTGGGGGTGATCAGTTGCATACCCGTGGGGATGCCATGGGGGATGGCGCAGGGTTCGACCGTGTGG" +
 					"AGGGCGGGCGCAGAACCAGGGCGCAGGCACTAAGGCGCGCGCATCATGGGN")),
-		new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
+		new EncodedQualitySequence(RUN_LENGTH_CODEC,
 		        QUALITY_CODEC.decode((
 		                "6689;;6687;>BG>?<??;:9??>NL?;::?9><??<??<::???G@C>888;;AGGGHKKKKKKHHKKKKPCCCCCASK=C=??COM[[bQS]bbbUU"+
 		                "UbbbbbGGCCCCCCFLCFKKFFMSSSbbVVVVKGGGGGOOOOOMUUVVIIIIGGMMMKIKLULIKLbGGLLKKMMMUUUVSVSKKMVVNNNNNNNNSKKG"+

@@ -29,8 +29,8 @@ import java.util.Set;
 import org.jcvi.assembly.AbstractContigBuilder;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultContig;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideSequence;
 import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -50,7 +50,7 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
      * @param circular
      */
     protected DefaultTigrAssemblerContig(String id,
-            NucleotideEncodedGlyphs consensus,
+            NucleotideSequence consensus,
             Set<TigrAssemblerPlacedRead> placedReads, 
             EnumMap<TigrAssemblerContigAttribute, String> attributes) {
         super(id, consensus, placedReads);
@@ -127,10 +127,10 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
          * @param id
          * @param consensus
          */
-        public Builder(String id, NucleotideEncodedGlyphs consensus) {
+        public Builder(String id, NucleotideSequence consensus) {
             super(id, consensus);
         }
-        public Builder(String id, NucleotideEncodedGlyphs consensus,Map<TigrAssemblerContigAttribute,String> attributes) {
+        public Builder(String id, NucleotideSequence consensus,Map<TigrAssemblerContigAttribute,String> attributes) {
             super(id, consensus);
             this.contigAttributes.putAll(attributes);
         }
@@ -157,7 +157,7 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
         */
         @Override
         protected TigrAssemblerPlacedRead createPlacedRead(
-                Read<ReferencedEncodedNucleotideGlyphs> read, long offset,
+                Read<ReferencedEncodedNucleotideSequence> read, long offset,
                 SequenceDirection dir) {
             return new DefaultTigrAssemblerPlacedRead(read, offset, dir,readAttributeMaps.get(read.getId()));
         }

@@ -22,7 +22,7 @@ package org.jcvi.trace.frg.afg;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.TextFileVisitor;
 
@@ -35,7 +35,7 @@ public interface AmosFragmentVisitor extends TextFileVisitor{
 
     boolean visitRead(int index, String id);
     
-    void visitBasecalls(NucleotideEncodedGlyphs basecalls);
+    void visitBasecalls(NucleotideSequence basecalls);
     
     void visitQualities(List<PhredQuality> qualities);
     

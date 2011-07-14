@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 import org.junit.Before;
@@ -99,7 +99,7 @@ public class TestAcePlacedReadAdapter {
     }
     @Test
     public void getEncodedGlyphs() {
-        NucleotideEncodedGlyphs encodedGlyphs = createMock(NucleotideEncodedGlyphs.class);
+        NucleotideSequence encodedGlyphs = createMock(NucleotideSequence.class);
         expect(mockPlacedRead.getEncodedGlyphs()).andReturn(encodedGlyphs);
         replay(mockPlacedRead);
         assertEquals(encodedGlyphs, sut.getEncodedGlyphs());

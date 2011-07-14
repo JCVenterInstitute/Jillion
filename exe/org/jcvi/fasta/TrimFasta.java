@@ -40,7 +40,7 @@ import org.jcvi.fastX.fasta.FastaVisitor;
 import org.jcvi.fastX.fasta.seq.AbstractNucleotideFastaVisitor;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
 import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.io.IOUtil;
 
 /**
@@ -96,7 +96,7 @@ public class TrimFasta {
                 protected boolean visitFastaRecord(
                         NucleotideSequenceFastaRecord fastaRecord) {
                     String id = fastaRecord.getId();
-                    final NucleotideEncodedGlyphs basecalls = fastaRecord.getValue();
+                    final NucleotideSequence basecalls = fastaRecord.getValue();
                     long untrimmedLength = basecalls.getLength();
                     Integer l = leftTrimPoints.get(id);
                     Integer r = rightTrimPoints.get(id);

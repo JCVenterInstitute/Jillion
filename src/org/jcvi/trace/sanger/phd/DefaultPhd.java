@@ -27,24 +27,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.Sequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Peaks;
 
 public class DefaultPhd implements Phd {
 
     private final String id;
-    private final NucleotideEncodedGlyphs basecalls;
-    private final QualityEncodedGlyphs qualities;
+    private final NucleotideSequence basecalls;
+    private final QualitySequence qualities;
     private final Peaks peaks;
     private final Properties comments;
     private final List<PhdTag> tags;
     
-    public DefaultPhd(String id, NucleotideEncodedGlyphs basecalls,
-            QualityEncodedGlyphs qualities,
+    public DefaultPhd(String id, NucleotideSequence basecalls,
+            QualitySequence qualities,
             Peaks peaks, Properties comments,
             List<PhdTag> tags){
     	this.id = id;
@@ -54,13 +54,13 @@ public class DefaultPhd implements Phd {
         this.comments = comments;
         this.tags = tags;
     }
-    public DefaultPhd(String id, NucleotideEncodedGlyphs basecalls,
-            QualityEncodedGlyphs qualities,
+    public DefaultPhd(String id, NucleotideSequence basecalls,
+            QualitySequence qualities,
             Peaks peaks,Properties comments){
         this(id,basecalls, qualities, peaks, comments,Collections.<PhdTag>emptyList());
     }
-    public DefaultPhd(String id, NucleotideEncodedGlyphs basecalls,
-            QualityEncodedGlyphs qualities,
+    public DefaultPhd(String id, NucleotideSequence basecalls,
+            QualitySequence qualities,
             Peaks peaks){
         this(id,basecalls, qualities, peaks, new Properties());
     }
@@ -76,12 +76,12 @@ public class DefaultPhd implements Phd {
     }
 
     @Override
-    public NucleotideEncodedGlyphs getBasecalls() {
+    public NucleotideSequence getBasecalls() {
         return basecalls;
     }
 
     @Override
-    public QualityEncodedGlyphs getQualities() {
+    public QualitySequence getQualities() {
         return qualities;
     }
 
@@ -141,7 +141,7 @@ public class DefaultPhd implements Phd {
 
     @Override
     public int getNumberOfTracePositions() {
-        EncodedGlyphs<ShortGlyph> encodedPeaks= peaks.getData();        
+        Sequence<ShortGlyph> encodedPeaks= peaks.getData();        
         int lastIndex= (int)encodedPeaks.getLength() -1;
         return encodedPeaks.get(lastIndex).getNumber();
     }

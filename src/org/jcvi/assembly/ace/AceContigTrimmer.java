@@ -26,7 +26,7 @@ import org.jcvi.Range;
 import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.trim.AbstractContigTrimmer;
 import org.jcvi.assembly.trim.PlacedReadTrimmer;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 /**
@@ -40,7 +40,7 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceContig> {
 
     private DefaultAceContig.Builder builder;
-    private NucleotideEncodedGlyphs oldConsensus;
+    private NucleotideSequence oldConsensus;
     private List<Range> currentRanges;
     /**
      * @param trimmers
@@ -79,7 +79,7 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
         return builder.build();
     }
 
-    protected String createNewContigId(String oldContigId, NucleotideEncodedGlyphs oldConsensus, Range newContigRange){
+    protected String createNewContigId(String oldContigId, NucleotideSequence oldConsensus, Range newContigRange){
         if(oldConsensus.getLength() == newContigRange.getLength()){
             return oldContigId;
         }

@@ -32,8 +32,8 @@ import java.util.regex.Pattern;
 
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.util.AbstractLargeIdIterator;
 import org.jcvi.util.CloseableIterator;
 /**
@@ -62,8 +62,8 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
 
     @Override
     protected boolean visitFastQRecord(String id,
-            NucleotideEncodedGlyphs nucleotides,
-            QualityEncodedGlyphs qualities, String optionalComment) {
+            NucleotideSequence nucleotides,
+            QualitySequence qualities, String optionalComment) {
         return true;
     }
 

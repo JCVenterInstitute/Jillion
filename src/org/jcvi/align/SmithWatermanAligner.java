@@ -22,7 +22,7 @@
  */
 package org.jcvi.align;
 
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 
@@ -75,7 +75,7 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
     /* (non-Javadoc)
      * @see org.jcvi.align.Aligner#alignSequence(java.lang.CharSequence)
      */
-    public Alignment alignSequence(EncodedGlyphs<NucleotideGlyph> querySequence, EncodedGlyphs<NucleotideGlyph> referenceSequence)
+    public Alignment alignSequence(Sequence<NucleotideGlyph> querySequence, Sequence<NucleotideGlyph> referenceSequence)
     {
         final AlignmentFactory alignment = new AlignmentFactory();
         final ScoringMatrix<NucleotideGlyph> score = new ScoringMatrix<NucleotideGlyph>(referenceSequence, querySequence, this.gapScore);

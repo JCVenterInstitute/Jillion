@@ -28,29 +28,29 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.EncodedSequence;
+import org.jcvi.glyph.Sequence;
 
-public class DefaultNucleotideEncodedGlyphs extends AbstractEnocdedNucleotideGlyphs{
+public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     private final int[] gaps;
     private final Range validRange;
-    private final EncodedGlyphs<NucleotideGlyph> encodedBasecalls;
-    public DefaultNucleotideEncodedGlyphs(Collection<NucleotideGlyph> glyphs, Range validRange){
+    private final Sequence<NucleotideGlyph> encodedBasecalls;
+    public DefaultNucleotideSequence(Collection<NucleotideGlyph> glyphs, Range validRange){
         this.validRange = validRange;
         this.gaps = computeGapIndexes(glyphs);
-        this.encodedBasecalls = new DefaultEncodedGlyphs<NucleotideGlyph>(DefaultNucleotideGlyphCodec.getInstance(),glyphs);
+        this.encodedBasecalls = new EncodedSequence<NucleotideGlyph>(DefaultNucleotideGlyphCodec.getInstance(),glyphs);
    
     }
-    public DefaultNucleotideEncodedGlyphs(Collection<NucleotideGlyph> glyphs){
+    public DefaultNucleotideSequence(Collection<NucleotideGlyph> glyphs){
         this(glyphs, Range.buildRange(0, glyphs.size()-1));
     }
-    public DefaultNucleotideEncodedGlyphs(String basecalls, Range validRange){
+    public DefaultNucleotideSequence(String basecalls, Range validRange){
         this(NucleotideGlyph.getGlyphsFor(basecalls), validRange);
     }
-    public DefaultNucleotideEncodedGlyphs(char[] basecalls){
+    public DefaultNucleotideSequence(char[] basecalls){
         this(NucleotideGlyph.getGlyphsFor(basecalls));
     }
-    public DefaultNucleotideEncodedGlyphs(String basecalls){
+    public DefaultNucleotideSequence(String basecalls){
         this(NucleotideGlyph.getGlyphsFor(basecalls));
     }
     private int[] computeGapIndexes(Collection<NucleotideGlyph> glyphs) {
@@ -120,10 +120,10 @@ public class DefaultNucleotideEncodedGlyphs extends AbstractEnocdedNucleotideGly
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof DefaultNucleotideEncodedGlyphs)){
+        if (!(obj instanceof DefaultNucleotideSequence)){
             return false;
         }
-        DefaultNucleotideEncodedGlyphs other = (DefaultNucleotideEncodedGlyphs) obj;
+        DefaultNucleotideSequence other = (DefaultNucleotideSequence) obj;
        return encodedBasecalls.decode().equals(other.encodedBasecalls.decode());
     }
     @Override

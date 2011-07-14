@@ -20,7 +20,7 @@
 package org.jcvi.fastX.fasta.seq;
 
 import org.jcvi.fastX.fasta.FastaDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 /**
@@ -30,6 +30,6 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
  *
  *
  */
-public interface NucleotideFastaDataStore extends FastaDataStore<NucleotideGlyph, NucleotideEncodedGlyphs, NucleotideSequenceFastaRecord>{
+public interface NucleotideFastaDataStore extends FastaDataStore<NucleotideGlyph, NucleotideSequence, NucleotideSequenceFastaRecord>{
 
 }

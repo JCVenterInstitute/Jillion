@@ -21,8 +21,8 @@ package org.jcvi.assembly.contig.qual;
 
 import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.Sequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
 /**
@@ -88,12 +88,12 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
     
     @Override
     public PhredQuality getQualityFor(PlacedRead placedRead,
-            EncodedGlyphs<PhredQuality> fullQualities,
+            Sequence<PhredQuality> fullQualities,
             int gappedReadIndex) {
         if(fullQualities ==null){
             throw new NullPointerException("null qualities for "+placedRead);
         }
-        final NucleotideEncodedGlyphs encodedGlyphs = placedRead.getEncodedGlyphs();
+        final NucleotideSequence encodedGlyphs = placedRead.getEncodedGlyphs();
         if(!AssemblyUtil.isAGap(encodedGlyphs, gappedReadIndex)){
             return getQualityForNonGapBase(placedRead, fullQualities, gappedReadIndex);
         }
@@ -112,7 +112,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
     
     private PhredQuality getQualityValueForGap(int leftFlankingNonGapIndex,
             int rightFlankingNonGapIndex, PlacedRead placedRead,
-            EncodedGlyphs<PhredQuality> fullQualities,int indexOfGap) {
+            Sequence<PhredQuality> fullQualities,int indexOfGap) {
         if(AssemblyUtil.beforeStartOfRead(leftFlankingNonGapIndex)){
             return getQualityValueIfReadStartsWithGap();
         }
@@ -127,7 +127,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
     }
     
 
-    protected PhredQuality getQualityForNonGapBase(PlacedRead placedRead, EncodedGlyphs<PhredQuality> fullQualities,
+    protected PhredQuality getQualityForNonGapBase(PlacedRead placedRead, Sequence<PhredQuality> fullQualities,
             int gappedReadIndexForNonGapBase) {
         try{
         int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeIndex(placedRead, (int)fullQualities.getLength(),gappedReadIndexForNonGapBase);

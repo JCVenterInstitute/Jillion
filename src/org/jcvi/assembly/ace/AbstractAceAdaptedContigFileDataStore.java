@@ -30,7 +30,7 @@ import org.jcvi.assembly.contig.AbstractContigFileVisitor;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.FastXRecord;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.Glyph;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -38,12 +38,12 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
 
     private DefaultAceContig.Builder contigBuilder;
     private final Date phdDate;
-    private final DataStore<? extends FastXRecord<? extends EncodedGlyphs<? extends Glyph>>> fullLengthFastXDataStore;
+    private final DataStore<? extends FastXRecord<? extends Sequence<? extends Glyph>>> fullLengthFastXDataStore;
     /**
      * Create a new AceAdapted Contig File DataStore using the given phdDate.
      * @param phdDate the date all faked phd files should be timestamped with.
      */
-    public AbstractAceAdaptedContigFileDataStore(DataStore<? extends FastXRecord<? extends EncodedGlyphs<? extends Glyph>>> fullLengthFastXDataStore,Date phdDate) {
+    public AbstractAceAdaptedContigFileDataStore(DataStore<? extends FastXRecord<? extends Sequence<? extends Glyph>>> fullLengthFastXDataStore,Date phdDate) {
         this.phdDate = new Date(phdDate.getTime());
         this.fullLengthFastXDataStore = fullLengthFastXDataStore;
     }

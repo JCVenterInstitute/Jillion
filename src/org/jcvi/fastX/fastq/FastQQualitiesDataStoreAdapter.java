@@ -26,9 +26,9 @@ package org.jcvi.fastX.fastq;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
-public class FastQQualitiesDataStoreAdapter extends AbstractFastQDataStoreAdapter<QualityEncodedGlyphs> implements QualityDataStore{
+public class FastQQualitiesDataStoreAdapter extends AbstractFastQDataStoreAdapter<QualitySequence> implements QualityDataStore{
     /**
      * @param dataStore
      */
@@ -37,7 +37,7 @@ public class FastQQualitiesDataStoreAdapter extends AbstractFastQDataStoreAdapte
     }
 
     @Override
-    public QualityEncodedGlyphs get(String id) throws DataStoreException {
+    public QualitySequence get(String id) throws DataStoreException {
         return getDataStore().get(id).getQualities();
     }
    

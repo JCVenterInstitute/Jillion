@@ -28,8 +28,8 @@ import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.Sequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
@@ -47,7 +47,7 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
     @Override
     public QualityClass computeQualityClass( CoverageMap<CoverageRegion<P>> coverageMap,
             QualityDataStore qualityDataStore,
-    NucleotideEncodedGlyphs consensus,int index) {
+    NucleotideSequence consensus,int index) {
         CoverageRegion<P> region = coverageMap.getRegionWhichCovers(index);
         if(region ==null){
             return QualityClass.ZERO_COVERAGE;
@@ -81,7 +81,7 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
             CoverageRegion<P> region, final NucleotideGlyph consensusBase,
             QualityClass.Builder builder) throws DataStoreException {
         for(P placedRead : region){
-            final EncodedGlyphs<PhredQuality> qualityRecord = qualityDataStore.get(placedRead.getId());
+            final Sequence<PhredQuality> qualityRecord = qualityDataStore.get(placedRead.getId());
             if(qualityRecord !=null){
                 int indexIntoRead = (int) (index - placedRead.getStart());
                 final NucleotideGlyph calledBase = placedRead.getEncodedGlyphs().get(indexIntoRead);

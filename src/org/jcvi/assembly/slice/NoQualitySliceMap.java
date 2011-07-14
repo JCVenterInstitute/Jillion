@@ -9,7 +9,7 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 
@@ -29,7 +29,7 @@ public class NoQualitySliceMap extends DefaultSliceMap{
     @Override
     protected DefaultSliceElement createSliceElementFor(
             QualityValueStrategy qualityValueStrategy, int gappedIndex,
-            PlacedRead realRead, EncodedGlyphs<PhredQuality> qualities) {
+            PlacedRead realRead, Sequence<PhredQuality> qualities) {
         final NucleotideGlyph calledBase = realRead.getEncodedGlyphs().get(gappedIndex);
         return new DefaultSliceElement(realRead.getId(), calledBase, 
                 phredQuality, 

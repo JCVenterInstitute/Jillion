@@ -30,11 +30,11 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.util.EmptyIterator;
@@ -206,8 +206,8 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     private List<Object> createAgreeingRead(String id, SequenceDirection dir,
             List<PlacedRead> reads, final PhredQuality returnedQuality) throws DataStoreException {
         PlacedRead realRead = createMock(PlacedRead.class);
-        NucleotideEncodedGlyphs encodedBases = createMock(NucleotideEncodedGlyphs.class);
-        QualityEncodedGlyphs encodedQualities = createMock(QualityEncodedGlyphs.class);
+        NucleotideSequence encodedBases = createMock(NucleotideSequence.class);
+        QualitySequence encodedQualities = createMock(QualitySequence.class);
         expect(realRead.getId()).andReturn(id);
         expect(qualityFastaMap.get(id)).andReturn(encodedQualities);
         expect(realRead.getStart()).andReturn(0L);
@@ -228,8 +228,8 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     private List<Object> createConflictingRead(String id, SequenceDirection dir,
             List<PlacedRead> reads, final PhredQuality returnedQuality) throws DataStoreException {
         PlacedRead realRead = createMock(PlacedRead.class);
-        NucleotideEncodedGlyphs encodedBases = createMock(NucleotideEncodedGlyphs.class);
-        QualityEncodedGlyphs encodedQualities = createMock(QualityEncodedGlyphs.class);
+        NucleotideSequence encodedBases = createMock(NucleotideSequence.class);
+        QualitySequence encodedQualities = createMock(QualitySequence.class);
         expect(realRead.getId()).andReturn(id);
         expect(qualityFastaMap.get(id)).andReturn(encodedQualities);
         expect(realRead.getStart()).andReturn(0L);

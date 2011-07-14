@@ -35,8 +35,8 @@ import java.util.List;
 
 import org.jcvi.Range;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Distance;
 import org.jcvi.sequence.Library;
 import org.jcvi.sequence.MateOrientation;
@@ -73,8 +73,8 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     }
     @Override
     public void visitFragment(FrgVisitorAction action, String fragmentId,
-            String libraryId, NucleotideEncodedGlyphs bases,
-            QualityEncodedGlyphs qualities, Range validRange,
+            String libraryId, NucleotideSequence bases,
+            QualitySequence qualities, Range validRange,
             Range vectorClearRange, String source) {
         throwErrorIfAlreadyInitialized();
         if(this.isAddOrModify(action)){
@@ -201,8 +201,8 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         @Override
         public void visitFragment(FrgVisitorAction action,
                 String fragmentId, String libraryId,
-                NucleotideEncodedGlyphs bases,
-                QualityEncodedGlyphs qualities, Range validRange,
+                NucleotideSequence bases,
+                QualitySequence qualities, Range validRange,
                 Range vectorClearRange, String source) {
             Library library;
             try {
@@ -247,8 +247,8 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         @Override
         public void visitFragment(FrgVisitorAction action,
                 String fragmentId, String libraryId,
-                NucleotideEncodedGlyphs bases,
-                QualityEncodedGlyphs qualities, Range validRange,
+                NucleotideSequence bases,
+                QualitySequence qualities, Range validRange,
                 Range vectorClearRange, String source) {}
 
         @Override

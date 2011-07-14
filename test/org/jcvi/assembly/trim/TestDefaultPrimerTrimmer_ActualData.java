@@ -28,7 +28,7 @@ import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaRecordFactory;
 import org.jcvi.fastX.fasta.seq.NucleotideFastaRecordDataStoreAdatper;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class TestDefaultPrimerTrimmer_ActualData {
     private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultPrimerTrimmer_ActualData.class);
     
     private NucleotideDataStore primerDataStore;
-    private NucleotideEncodedGlyphs sequence;
+    private NucleotideSequence sequence;
     
     private final DefaultPrimerTrimmer sut = new DefaultPrimerTrimmer(13, .9f);
     

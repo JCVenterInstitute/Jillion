@@ -2,7 +2,7 @@ package org.jcvi.primerDesign.results;
 
 import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 import java.io.File;
 
@@ -32,13 +32,13 @@ public class PrimerDesignResult {
     private SequenceDirection orientation;
 
     // primer sequence
-    private NucleotideEncodedGlyphs primerSequence;
+    private NucleotideSequence primerSequence;
 
     private PrimerDesignResult(DesignGroupKey designGroupKey,
                                String parentID,
                                Range range,
                                SequenceDirection orientation,
-                               NucleotideEncodedGlyphs primerSequence) {
+                               NucleotideSequence primerSequence) {
         this.designGroupKey = designGroupKey;
         this.parentID = parentID;
         this.range = range;
@@ -77,7 +77,7 @@ public class PrimerDesignResult {
         return orientation;
     }
 
-    public NucleotideEncodedGlyphs getPrimerSequence() {
+    public NucleotideSequence getPrimerSequence() {
         return primerSequence;
     }
 
@@ -145,7 +145,7 @@ public class PrimerDesignResult {
         private String parentID;
         private Range range;
         private SequenceDirection orientation;
-        private NucleotideEncodedGlyphs primerSequence;
+        private NucleotideSequence primerSequence;
 
         public Builder() {
         }
@@ -183,7 +183,7 @@ public class PrimerDesignResult {
             return this;
         }
 
-        public Builder setPrimerSequence(NucleotideEncodedGlyphs primerSequence) {
+        public Builder setPrimerSequence(NucleotideSequence primerSequence) {
             this.primerSequence = primerSequence;
             return this;
         }

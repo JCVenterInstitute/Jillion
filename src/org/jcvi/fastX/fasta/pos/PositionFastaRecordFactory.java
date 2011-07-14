@@ -24,9 +24,9 @@
 package org.jcvi.fastX.fasta.pos;
 
 import org.jcvi.fastX.fasta.FastaRecordFactory;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.ShortGlyph;
 
-public interface PositionFastaRecordFactory extends FastaRecordFactory<PositionFastaRecord<EncodedGlyphs<ShortGlyph>>>{
+public interface PositionFastaRecordFactory extends FastaRecordFactory<PositionFastaRecord<Sequence<ShortGlyph>>>{
 
 }

@@ -25,9 +25,9 @@ package org.jcvi.trace;
 
 import org.jcvi.datastore.DataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
-public class TraceQualityDataStoreAdapter<T extends Trace> extends AbstractTraceDataStoreAdapter<T,QualityEncodedGlyphs> implements QualityDataStore{
+public class TraceQualityDataStoreAdapter<T extends Trace> extends AbstractTraceDataStoreAdapter<T,QualitySequence> implements QualityDataStore{
 
     public static <T extends Trace, E extends T> TraceQualityDataStoreAdapter<T> adapt(DataStore<E> delegate){
         return (TraceQualityDataStoreAdapter<T>) new TraceQualityDataStoreAdapter<E>(delegate);
@@ -40,7 +40,7 @@ public class TraceQualityDataStoreAdapter<T extends Trace> extends AbstractTrace
     }
 
     @Override
-    protected QualityEncodedGlyphs adapt(T delegate) {
+    protected QualitySequence adapt(T delegate) {
         return delegate.getQualities();
     }
 

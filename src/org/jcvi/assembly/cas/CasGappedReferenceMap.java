@@ -23,9 +23,9 @@
  */
 package org.jcvi.assembly.cas;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 public interface CasGappedReferenceMap {
 
-    NucleotideEncodedGlyphs getGappedReferenceFor(long referenceId);
+    NucleotideSequence getGappedReferenceFor(long referenceId);
 }

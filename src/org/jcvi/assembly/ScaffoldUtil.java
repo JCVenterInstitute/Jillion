@@ -20,7 +20,7 @@
 package org.jcvi.assembly;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 /**
  * @author dkatzel
@@ -30,7 +30,7 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
 public class ScaffoldUtil {
 
     public static Range convertGappedContigRangeToUngappedScaffoldRange(Contig<? extends PlacedRead> contig, Range gappedContigRange, Scaffold scaffold){
-        NucleotideEncodedGlyphs consensus =contig.getConsensus();
+        NucleotideSequence consensus =contig.getConsensus();
         int flankingGappedStart = AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)gappedContigRange.getStart());
         int flankingGappedEnd = AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)gappedContigRange.getEnd());
         Range ungappedRange = Range.buildRange(consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex(flankingGappedStart),

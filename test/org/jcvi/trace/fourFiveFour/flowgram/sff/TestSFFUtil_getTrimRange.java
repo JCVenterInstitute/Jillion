@@ -25,7 +25,7 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,11 +38,11 @@ public class TestSFFUtil_getTrimRange {
 
     Flowgram flowgram;
     long numberOfBases = 100L;
-    NucleotideEncodedGlyphs mockBasecalls;
+    NucleotideSequence mockBasecalls;
     @Before
     public void setup(){
         flowgram = createMock(Flowgram.class);
-        mockBasecalls = createMock(NucleotideEncodedGlyphs.class);
+        mockBasecalls = createMock(NucleotideSequence.class);
         expect(mockBasecalls.getLength()).andStubReturn(numberOfBases);
         expect(flowgram.getBasecalls()).andReturn(mockBasecalls);
         replay(mockBasecalls);

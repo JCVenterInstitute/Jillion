@@ -24,11 +24,11 @@
 package org.jcvi.fastX.fastq;
 
 import java.nio.ByteBuffer;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 /**
  * {@code FastQQualityCodec} is a can encode and decode
@@ -97,12 +97,12 @@ public enum FastQQualityCodec {
 	 * @return a new EncodedGlyphs representing
 	 * the decoded FASTQ quality values.
 	 */
-    public QualityEncodedGlyphs decode(String fastqQualities) {
+    public QualitySequence decode(String fastqQualities) {
         ByteBuffer buffer = ByteBuffer.allocate(fastqQualities.length());
         for(int i=0; i<fastqQualities.length(); i++){
             buffer.put(decode(fastqQualities.charAt(i)).getNumber());
         }
-        return new DefaultQualityEncodedGlyphs(
+        return new EncodedQualitySequence(
                                     qualityCodec,
                                     PhredQuality.valueOf(buffer.array()));
     }
@@ -114,7 +114,7 @@ public enum FastQQualityCodec {
      * @return a String representing these
      * quality values in the desired String encoding.
      */
-    public String encode(EncodedGlyphs<PhredQuality> qualities) {
+    public String encode(Sequence<PhredQuality> qualities) {
         StringBuilder builder= new StringBuilder();
         for(PhredQuality quality : qualities.decode()){
             builder.append(encode(quality));

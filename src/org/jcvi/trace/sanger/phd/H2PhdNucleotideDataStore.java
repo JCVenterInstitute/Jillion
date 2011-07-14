@@ -22,7 +22,7 @@ package org.jcvi.trace.sanger.phd;
 import java.io.File;
 import java.io.FileNotFoundException;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.nuc.datastore.H2NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -35,7 +35,7 @@ import org.jcvi.glyph.phredQuality.PhredQuality;
  *
  *
  */
-public class H2PhdNucleotideDataStore extends AbstractH2PhdDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> implements NucleotideDataStore{
+public class H2PhdNucleotideDataStore extends AbstractH2PhdDataStore<NucleotideGlyph, NucleotideSequence> implements NucleotideDataStore{
 
     /**
      * @param phdFile

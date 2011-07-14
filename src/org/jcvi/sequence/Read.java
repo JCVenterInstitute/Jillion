@@ -23,24 +23,24 @@
  */
 package org.jcvi.sequence;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 /**
  * {@code Read} is the abstraction of an raw (usually ungapped)
  * nucleotide sequence.
  * @author dkatzel
- * @param <T> the type of {@link NucleotideEncodedGlyphs}.
+ * @param <T> the type of {@link NucleotideSequence}.
  *
  */
-public interface Read<T extends NucleotideEncodedGlyphs> {
+public interface Read<T extends NucleotideSequence> {
     /**
      * Get the id of this read.
      * @return the id as a String; will never be null.
      */
     String getId();
     /**
-     * Get the ungapped {@link NucleotideEncodedGlyphs} of this read.
-     * @return the {@link NucleotideEncodedGlyphs} of this read; will
+     * Get the ungapped {@link NucleotideSequence} of this read.
+     * @return the {@link NucleotideSequence} of this read; will
      * never be null.
      */
     T getEncodedGlyphs();

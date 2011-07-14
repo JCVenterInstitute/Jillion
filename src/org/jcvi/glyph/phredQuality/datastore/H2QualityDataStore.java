@@ -30,12 +30,12 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecordUtil;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
-public class H2QualityDataStore extends AbstractH2EncodedGlyphDataStore<PhredQuality, QualityEncodedGlyphs> implements QualityDataStore{
+public class H2QualityDataStore extends AbstractH2EncodedGlyphDataStore<PhredQuality, QualitySequence> implements QualityDataStore{
 
     protected static final RunLengthEncodedGlyphCodec CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
     /**
@@ -54,13 +54,13 @@ public class H2QualityDataStore extends AbstractH2EncodedGlyphDataStore<PhredQua
     }
 
     @Override
-    public QualityEncodedGlyphs get(String id) throws DataStoreException {
+    public QualitySequence get(String id) throws DataStoreException {
         try {
             byte[] ret = this.getData(id);
             if(ret==null){
                 return null;
             }
-            return new DefaultQualityEncodedGlyphs(CODEC, ret);
+            return new EncodedQualitySequence(CODEC, ret);
         } catch (SQLException e) {
             throw new DataStoreException("could not get data for "+id, e);
         }

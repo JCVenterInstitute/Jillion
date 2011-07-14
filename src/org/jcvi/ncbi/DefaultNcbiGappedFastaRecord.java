@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 /**
@@ -38,7 +38,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
 
     private final String id;
     private final String comments;
-    private final List<NucleotideEncodedGlyphs> sequences;
+    private final List<NucleotideSequence> sequences;
     private final List<Gap> gaps;
     
     
@@ -49,7 +49,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
      * @param gaps
      */
     private DefaultNcbiGappedFastaRecord(String id, String comments,
-            List<NucleotideEncodedGlyphs> sequences, List<Gap> gaps) {
+            List<NucleotideSequence> sequences, List<Gap> gaps) {
         this.id = id;
         this.comments = comments;
         this.sequences = sequences;
@@ -85,7 +85,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
         }
         result.append("\n");
         Iterator<Gap> gapIterator = gaps.iterator();
-        for(NucleotideEncodedGlyphs sequence : sequences){
+        for(NucleotideSequence sequence : sequences){
             result.append(formatSequence(sequence));
             if(gapIterator.hasNext()){
                 result.append("\n>?");
@@ -99,7 +99,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
         }
         return result.toString();
     }
-    protected String formatSequence(NucleotideEncodedGlyphs basecalls){
+    protected String formatSequence(NucleotideSequence basecalls){
         String result= NucleotideGlyph.convertToString(basecalls.decode()).replaceAll("(.{60})", "$1\n");
         if(basecalls.getLength() >0 && basecalls.getLength() %60 ==0){
             return result.substring(0, result.length()-1);
@@ -120,14 +120,14 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
     }
 
     /**
-     * Generate a single {@link NucleotideEncodedGlyphs}
+     * Generate a single {@link NucleotideSequence}
      * with {@link NucleotideGlyph#Gap}s filling
      * in the gaps between sequences.
      */
     @Override
-    public NucleotideEncodedGlyphs getValue() {
+    public NucleotideSequence getValue() {
         StringBuilder result = new StringBuilder();
-        Iterator<NucleotideEncodedGlyphs> sequenceIterator = sequences.iterator();
+        Iterator<NucleotideSequence> sequenceIterator = sequences.iterator();
         Iterator<Gap> gapIterator = gaps.iterator();
         while(sequenceIterator.hasNext()){
             result.append(
@@ -140,7 +140,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
                 }
             }
         }
-        return new DefaultNucleotideEncodedGlyphs(result.toString());
+        return new DefaultNucleotideSequence(result.toString());
     }
     
     
@@ -254,7 +254,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
      */
     public static class Builder implements org.jcvi.Builder<DefaultNcbiGappedFastaRecord>{
 
-        private final List<NucleotideEncodedGlyphs> sequences = new ArrayList<NucleotideEncodedGlyphs>();
+        private final List<NucleotideSequence> sequences = new ArrayList<NucleotideSequence>();
         private final List<Gap> gaps = new ArrayList<Gap>();
         
         private final String id;
@@ -306,7 +306,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
          * @throws NullPointerException if sequence is null.
          */
         public Builder addSequence(String sequence){
-            return addSequence(new DefaultNucleotideEncodedGlyphs(sequence));
+            return addSequence(new DefaultNucleotideSequence(sequence));
         }
         /**
          * Add a sequence which will be separated by other sequences
@@ -317,7 +317,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
          * @throws NullPointerException if sequence is null.
          */
         public Builder addSequence(List<NucleotideGlyph> sequence){
-            return addSequence(new DefaultNucleotideEncodedGlyphs(sequence));
+            return addSequence(new DefaultNucleotideSequence(sequence));
         }
         /**
          * Add a sequence which will be separated by other sequences
@@ -327,7 +327,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
          * @return this.
          * @throws NullPointerException if sequence is null.
          */
-        public Builder addSequence(NucleotideEncodedGlyphs sequence){
+        public Builder addSequence(NucleotideSequence sequence){
             if(sequence ==null){
                 throw new NullPointerException("sequence can not be null");
             }

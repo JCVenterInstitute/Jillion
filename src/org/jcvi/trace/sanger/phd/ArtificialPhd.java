@@ -28,11 +28,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.Sequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.num.ShortGlyph;
 import org.jcvi.glyph.num.ShortGlyphFactory;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Peaks;
 
 public class ArtificialPhd implements Phd{
@@ -49,8 +49,8 @@ public class ArtificialPhd implements Phd{
      */
     private static final int NEWBLER_454_PEAK_SPACING = 19;
     
-    private final NucleotideEncodedGlyphs basecalls;
-    private final QualityEncodedGlyphs qualities;
+    private final NucleotideSequence basecalls;
+    private final QualitySequence qualities;
    private final Properties comments;
    private final List<PhdTag> tags;
    private Peaks fakePositions=null;
@@ -74,8 +74,8 @@ public class ArtificialPhd implements Phd{
     */
    public static ArtificialPhd createNewbler454Phd(
 		   String id,
-		   NucleotideEncodedGlyphs basecalls,
-           QualityEncodedGlyphs qualities,
+		   NucleotideSequence basecalls,
+           QualitySequence qualities,
            Properties comments, List<PhdTag> tags){
        return new ArtificialPhd(id,basecalls, qualities, comments, tags, NEWBLER_454_START_POSITION,NEWBLER_454_PEAK_SPACING);
    }
@@ -94,8 +94,8 @@ public class ArtificialPhd implements Phd{
     */
    public static ArtificialPhd createNewbler454Phd(
 		   String id,
-		   NucleotideEncodedGlyphs basecalls,
-           QualityEncodedGlyphs qualities,
+		   NucleotideSequence basecalls,
+           QualitySequence qualities,
            Properties comments){
 	   return ArtificialPhd.createNewbler454Phd(id,basecalls, qualities, 
                comments,Collections.<PhdTag>emptyList());
@@ -113,8 +113,8 @@ public class ArtificialPhd implements Phd{
     * what would have been created by Newbler.
     */
    public static ArtificialPhd createNewbler454Phd(String id,
-		   NucleotideEncodedGlyphs basecalls,
-           QualityEncodedGlyphs qualities){
+		   NucleotideSequence basecalls,
+           QualitySequence qualities){
        return ArtificialPhd.createNewbler454Phd(id,basecalls, qualities, 
                new Properties(),Collections.<PhdTag>emptyList());
    }
@@ -125,7 +125,7 @@ public class ArtificialPhd implements Phd{
     * peak {@code numberOfPositionsForEachPeak} apart.
     * This Phd will have no comments and no {@link PhdTag}s.
     * This method is the same as calling
-    * {@link #buildArtificalPhd(NucleotideEncodedGlyphs, EncodedGlyphs, Properties, List, int)
+    * {@link #buildArtificalPhd(NucleotideSequence, Sequence, Properties, List, int)
     * buildArtificalPhd(basecalls, qualities, new Properties(),Collections.<PhdTag>emptyList(),numberOfPositionsForEachPeak)}
     * @param id the id for this Phd.
     * @param basecalls the basecalls for this Phd.
@@ -133,11 +133,11 @@ public class ArtificialPhd implements Phd{
     * @param numberOfPositionsForEachPeak number of positions each
     * peak should be separated as.
     * @return a new DefaultPhd using the given values.
-    * @see #buildArtificalPhd(NucleotideEncodedGlyphs, EncodedGlyphs, Properties, List, int)
+    * @see #buildArtificalPhd(NucleotideSequence, Sequence, Properties, List, int)
     */
    public ArtificialPhd(String id,
-		   NucleotideEncodedGlyphs basecalls,
-           QualityEncodedGlyphs qualities,
+		   NucleotideSequence basecalls,
+           QualitySequence qualities,
            int numberOfPositionsForEachPeak){
        this(id,basecalls, qualities, new Properties(),Collections.<PhdTag>emptyList(),numberOfPositionsForEachPeak);
    }
@@ -155,8 +155,8 @@ public class ArtificialPhd implements Phd{
     * peak should be separated as.
     * @return a new DefaultPhd using the given values.
     */
-    public ArtificialPhd(String id, NucleotideEncodedGlyphs basecalls,
-            QualityEncodedGlyphs qualities,
+    public ArtificialPhd(String id, NucleotideSequence basecalls,
+            QualitySequence qualities,
            Properties comments, List<PhdTag> tags,int numberOfPositionsForEachPeak){
        this(id,basecalls, qualities,comments, tags,numberOfPositionsForEachPeak,numberOfPositionsForEachPeak);
         
@@ -176,8 +176,8 @@ public class ArtificialPhd implements Phd{
      * peak should be separated as.
      * @return a new DefaultPhd using the given values.
      */
-     public ArtificialPhd(String id, NucleotideEncodedGlyphs basecalls,
-             QualityEncodedGlyphs qualities,
+     public ArtificialPhd(String id, NucleotideSequence basecalls,
+             QualitySequence qualities,
             Properties comments, List<PhdTag> tags,int positionOfFirstPeak,int numberOfPositionsForEachPeak){
          this.id = id;
     	 this.basecalls = basecalls;
@@ -225,12 +225,12 @@ public class ArtificialPhd implements Phd{
     }
 
     @Override
-    public NucleotideEncodedGlyphs getBasecalls() {
+    public NucleotideSequence getBasecalls() {
         return basecalls;
     }
 
     @Override
-    public QualityEncodedGlyphs getQualities() {
+    public QualitySequence getQualities() {
         return qualities;
     }
 }

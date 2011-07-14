@@ -21,7 +21,7 @@ package org.jcvi.assembly.trim;
 
 import org.jcvi.Range;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 /**
  * @author dkatzel
@@ -30,6 +30,6 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
  */
 public interface PrimerTrimmer {
 
-    Range trim(NucleotideEncodedGlyphs sequence,NucleotideDataStore primersToTrimAgainst);
+    Range trim(NucleotideSequence sequence,NucleotideDataStore primersToTrimAgainst);
     Range trim(String sequence,NucleotideDataStore primersToTrimAgainst);
 }

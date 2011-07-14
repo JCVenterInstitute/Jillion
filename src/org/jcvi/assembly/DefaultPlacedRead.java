@@ -28,21 +28,21 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
+import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideSequence;
 import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
 
 
 public class DefaultPlacedRead implements PlacedRead {
 
-    private final Read<ReferencedEncodedNucleotideGlyphs> read;
+    private final Read<ReferencedEncodedNucleotideSequence> read;
     private final long start;
     private final SequenceDirection sequenceDirection;
     
     
-    public DefaultPlacedRead(Read<ReferencedEncodedNucleotideGlyphs> read, long start, SequenceDirection sequenceDirection){
+    public DefaultPlacedRead(Read<ReferencedEncodedNucleotideSequence> read, long start, SequenceDirection sequenceDirection){
         if(read==null){
             throw new IllegalArgumentException("read can not be null");
         }
@@ -60,7 +60,7 @@ public class DefaultPlacedRead implements PlacedRead {
         return start;
     }
 
-    public Read<ReferencedEncodedNucleotideGlyphs> getRead(){
+    public Read<ReferencedEncodedNucleotideSequence> getRead(){
         return read;
     }
     @Override
@@ -129,15 +129,15 @@ public class DefaultPlacedRead implements PlacedRead {
 
     public Map<Integer, NucleotideGlyph> getSnps(){
         Map<Integer, NucleotideGlyph> map = new TreeMap<Integer, NucleotideGlyph>();
-        final ReferencedEncodedNucleotideGlyphs encodedGlyphs = read.getEncodedGlyphs();
-        for(Integer offset : encodedGlyphs.getSnps()){
+        final ReferencedEncodedNucleotideSequence encodedGlyphs = read.getEncodedGlyphs();
+        for(Integer offset : encodedGlyphs.getSnpOffsets()){
             map.put(offset, encodedGlyphs.get(offset));
         }
         return Collections.unmodifiableMap(map);
         
     }
     @Override
-    public NucleotideEncodedGlyphs getEncodedGlyphs() {
+    public NucleotideSequence getEncodedGlyphs() {
         return read.getEncodedGlyphs();
     }
     @Override

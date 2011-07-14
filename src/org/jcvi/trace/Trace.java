@@ -23,12 +23,12 @@
  */
 package org.jcvi.trace;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
 public interface Trace {
 
-    NucleotideEncodedGlyphs getBasecalls();
+    NucleotideSequence getBasecalls();
     
-    QualityEncodedGlyphs getQualities();
+    QualitySequence getQualities();
 }

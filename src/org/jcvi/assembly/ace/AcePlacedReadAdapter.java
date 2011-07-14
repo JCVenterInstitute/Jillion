@@ -30,7 +30,7 @@ import java.util.Map;
 import org.jcvi.Range;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -79,7 +79,7 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.getValidRange();
     }
     @Override
-    public NucleotideEncodedGlyphs getEncodedGlyphs() {
+    public NucleotideSequence getEncodedGlyphs() {
         return placedRead.getEncodedGlyphs();
     }
     @Override

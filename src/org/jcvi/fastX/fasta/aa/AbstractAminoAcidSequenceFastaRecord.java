@@ -5,7 +5,7 @@ import java.util.zip.Checksum;
 
 import org.jcvi.fastX.fasta.AbstractFastaRecord;
 import org.jcvi.fastX.fasta.FastaUtil;
-import org.jcvi.glyph.aa.AminoAcidEncodedGlyphs;
+import org.jcvi.glyph.aa.AminoAcidSequence;
 
 /*
  * Implementing an {@code AbstractPeptideSequenceFastaRecord} requires writing
@@ -14,10 +14,10 @@ import org.jcvi.glyph.aa.AminoAcidEncodedGlyphs;
  * @author naxelrod
  */
 
-public abstract class AbstractAminoAcidSequenceFastaRecord extends AbstractFastaRecord<AminoAcidEncodedGlyphs> implements
+public abstract class AbstractAminoAcidSequenceFastaRecord extends AbstractFastaRecord<AminoAcidSequence> implements
 		AminoAcidSequenceFastaRecord {
 
-    private final AminoAcidEncodedGlyphs sequence;
+    private final AminoAcidSequence sequence;
     private final int length;
     private final long checksum;
     
@@ -44,7 +44,7 @@ public abstract class AbstractAminoAcidSequenceFastaRecord extends AbstractFasta
     	this(Integer.toString(identifier), null, sequence);
     }
     	
-	protected abstract AminoAcidEncodedGlyphs encodeAminoAcids(String nonWhiteSpaceSequence);
+	protected abstract AminoAcidSequence encodeAminoAcids(String nonWhiteSpaceSequence);
 
 	protected abstract CharSequence decodeAminoAcids();
 	
@@ -53,7 +53,7 @@ public abstract class AbstractAminoAcidSequenceFastaRecord extends AbstractFasta
 	}
 	
 	@Override
-	public AminoAcidEncodedGlyphs getValue() {
+	public AminoAcidSequence getValue() {
 		return this.sequence;
 	}
 	

@@ -30,9 +30,9 @@ import org.jcvi.Range;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.sequence.DefaultLibrary;
@@ -54,7 +54,7 @@ public abstract class  AbstractTestFragmentDataStore {
     
     Fragment fragEndingIn78 = new DefaultFragment(
             "334369678",
-            new DefaultNucleotideEncodedGlyphs(
+            new DefaultNucleotideSequence(
                     NucleotideGlyph.getGlyphsFor(
                             "ATGATCGGCAGTGAATTGTATACGACTCACTATAGGGCGAATTGGAGCTCCACGCGGTGGCGGCCGCTCTAGAACTAGTGGATCCCCCGGGCTGCAGGAA" +
                             "TTCGATTAGGTGGAGGCCACGCTGCGCGACCCCAGCGCCCAGTCCGTAACGCACGTGCTGCAGGCAGGTGCCGGTCAGTGTGTGTGTGGTGGGGGCGGCG" +
@@ -65,7 +65,7 @@ public abstract class  AbstractTestFragmentDataStore {
                             "GTGTGCGTGCGTGTGTGTGCGTGTGCGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGCGTGAGACGGAAAGAGCCAAG" +
                             "AAGAGCGCGAACTAAAGGAACAACATGGAAATAGGCGCGGCACCAAAGGTGAACCCTGGGCAACCCCATGGAATCCACAGGGAATCCCGTGTAAACCAAG" +
                             "GGACCTGAGGAGAGCACCAACAAGATCAGACGANNA")), 
-            new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
+            new EncodedQualitySequence(RUN_LENGTH_CODEC,
                     QUALITY_CODEC.decode(
                             (
                                     "555566;;;666;;<<<;;<<?CDDDB?<??<<<AADDHHHPVSUUKKG;98:<<>>=???B=;;=>@CDDB?BEDDDIKDVVVKKDDDDDKKKSNNQXP"+
@@ -83,7 +83,7 @@ public abstract class  AbstractTestFragmentDataStore {
         );
     Fragment fragEndingIn61 = new DefaultFragment(
             "334370061",
-            new DefaultNucleotideEncodedGlyphs(
+            new DefaultNucleotideSequence(
                     NucleotideGlyph.getGlyphsFor(
                             "ACTCAGCCTAAATACCTCACTAAGGGAACAAAGCTGGTACGGGCCCCCCCTCGAGGTCGACGGTATCGATAAGCTTGATCGGCTGGTCCCATTCGCCTTC" +
                             "CCATTCCAATTCCCGTATTCCCATCCCCACTCCGATCCCCATTCGCAGATTCCCATTCCCATATTCACCATTCCCAGCCCCAGGCCACGCACCAGCGAGC" +
@@ -92,7 +92,7 @@ public abstract class  AbstractTestFragmentDataStore {
                             "GCGAGATGCTCCTCCAGCTGCGCCACCAGCTGTGCCCGGTGCGCCAGGTCCGACTCCAGCGCCCGGATCTTGGAGCCCAGCTCGCCGATCTGCGGCGTGG" +
                             "AGCCGTGGGTTGGTTGCGCGGTCCTCAGGGTCCCGTGGGGGTGATCAGTTGCATACCCGTGGGGATGCCATGGGGGATGGCGCAGGGTTCGACCGTGTGG" +
                             "AGGGCGGGCGCAGAACCAGGGCGCAGGCACTAAGGCGCGCGCATCATGGGN")), 
-            new DefaultQualityEncodedGlyphs(RUN_LENGTH_CODEC,
+            new EncodedQualitySequence(RUN_LENGTH_CODEC,
                     QUALITY_CODEC.decode(
                             (
                                     "6689;;6687;>BG>?<??;:9??>NL?;::?9><??<??<::???G@C>888;;AGGGHKKKKKKHHKKKKPCCCCCASK=C=??COM[[bQS]bbbUU"+

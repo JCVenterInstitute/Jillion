@@ -27,7 +27,7 @@ package org.jcvi.fastX.fasta.seq;
 
 import org.jcvi.fastX.fasta.AbstractFastaRecord;
 import org.jcvi.fastX.fasta.FastaUtil;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 
 /**
@@ -39,9 +39,9 @@ import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
  * @author jsitz@jcvi.org
  * @author dkatzel
  */
-public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFastaRecord<NucleotideEncodedGlyphs> implements NucleotideSequenceFastaRecord
+public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFastaRecord<NucleotideSequence> implements NucleotideSequenceFastaRecord
 {
-    private final NucleotideEncodedGlyphs sequence;
+    private final NucleotideSequence sequence;
     private final long checksum;
     
     /**
@@ -56,7 +56,7 @@ public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFast
         
     }
 
-    protected abstract NucleotideEncodedGlyphs encodeNucleotides(CharSequence sequence2);
+    protected abstract NucleotideSequence encodeNucleotides(CharSequence sequence2);
 
     protected abstract CharSequence decodeNucleotides();
     /**
@@ -89,7 +89,7 @@ public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFast
     }
 
     @Override
-    public NucleotideEncodedGlyphs getValue() 
+    public NucleotideSequence getValue() 
     {
         return this.sequence;
     }

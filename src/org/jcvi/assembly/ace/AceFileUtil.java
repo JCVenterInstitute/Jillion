@@ -25,8 +25,8 @@ import java.util.List;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.AssemblyUtil;
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.Sequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.SequenceDirection;
@@ -44,7 +44,7 @@ public class AceFileUtil {
     public static final DateTimeFormatter CHROMAT_DATE_TIME_FORMATTER = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy");
     public static final DateTimeFormatter TAG_DATE_TIME_FORMATTER = DateTimeFormat.forPattern("YYMMdd:HHmmss");
     
-    public static String convertToAcePaddedBasecalls(NucleotideEncodedGlyphs basecalls){
+    public static String convertToAcePaddedBasecalls(NucleotideSequence basecalls){
         return convertToAcePaddedBasecalls(basecalls.decode(),null);
      }
      public static String convertToAcePaddedBasecalls(List<NucleotideGlyph> basecalls,List<PhredQuality> qualities){
@@ -98,7 +98,7 @@ public class AceFileUtil {
         
     }
     
-    public static String createQualityRangeRecord(NucleotideEncodedGlyphs gappedValidBases, 
+    public static String createQualityRangeRecord(NucleotideSequence gappedValidBases, 
             Range ungappedValidRange, SequenceDirection dir, long ungappedFullLength){
         int numberOfGaps = gappedValidBases.getNumberOfGaps();
         Range gappedValidRange =buildGappedValidRangeFor(
@@ -121,14 +121,14 @@ public class AceFileUtil {
         }
         return gappedValidRange.convertRange(CoordinateSystem.RESIDUE_BASED);
     }
-    public static String createAcePlacedReadRecord(String readId, NucleotideEncodedGlyphs gappedValidBasecalls, 
+    public static String createAcePlacedReadRecord(String readId, NucleotideSequence gappedValidBasecalls, 
             Range ungappedValidRange, SequenceDirection dir, Phd phd, PhdInfo phdInfo){
-        final NucleotideEncodedGlyphs fullBasecalls = phd.getBasecalls();
+        final NucleotideSequence fullBasecalls = phd.getBasecalls();
         final List<NucleotideGlyph> phdFullBases = fullBasecalls.decode();
         
         final List<NucleotideGlyph> fullGappedValidRange;
         final List<PhredQuality> qualities;
-        final EncodedGlyphs<PhredQuality> phdQualities = phd.getQualities();
+        final Sequence<PhredQuality> phdQualities = phd.getQualities();
         if(dir == SequenceDirection.FORWARD){
             fullGappedValidRange = AssemblyUtil.buildGappedComplimentedFullRangeBases(gappedValidBasecalls,dir,ungappedValidRange, 
                     phdFullBases);
@@ -164,7 +164,7 @@ public class AceFileUtil {
         return readRecord.toString();
     }
     private static List<NucleotideGlyph> createReverseComplimentedGappedFullLengthBasecalls(
-            NucleotideEncodedGlyphs gappedValidBasecalls,
+            NucleotideSequence gappedValidBasecalls,
             final List<NucleotideGlyph> complimentedFullBases,
             Range complimentedValidRange) {
         final List<NucleotideGlyph> fullGappedValidRange;

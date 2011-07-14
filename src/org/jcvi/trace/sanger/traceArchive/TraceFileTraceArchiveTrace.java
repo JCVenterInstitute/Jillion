@@ -25,8 +25,8 @@ package org.jcvi.trace.sanger.traceArchive;
 
 import java.io.InputStream;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.io.IOUtil;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.trace.sanger.SangerTrace;
@@ -59,12 +59,12 @@ public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
     }
 
     @Override
-    public NucleotideEncodedGlyphs getBasecalls() {
+    public NucleotideSequence getBasecalls() {
         return trace.getBasecalls();
     }
 
     @Override
-    public QualityEncodedGlyphs getQualities() {
+    public QualitySequence getQualities() {
         return trace.getQualities();
     }
 

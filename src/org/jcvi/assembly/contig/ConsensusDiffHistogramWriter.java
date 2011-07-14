@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceMap;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 public class ConsensusDiffHistogramWriter implements
@@ -50,7 +50,7 @@ public class ConsensusDiffHistogramWriter implements
     }
     
     @Override
-    public void write(SliceMap sliceMap, NucleotideEncodedGlyphs reference) throws IOException {
+    public void write(SliceMap sliceMap, NucleotideSequence reference) throws IOException {
         int index =0;
         for(Slice slice : sliceMap){
             if(slice ==null){

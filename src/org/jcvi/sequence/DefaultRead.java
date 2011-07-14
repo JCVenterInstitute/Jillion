@@ -24,9 +24,9 @@
 package org.jcvi.sequence;
 
 import org.jcvi.CommonUtil;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
-public class DefaultRead<T extends NucleotideEncodedGlyphs> implements Read<T>{
+public class DefaultRead<T extends NucleotideSequence> implements Read<T>{
     private final String id;
     private final T glyphs;
     public DefaultRead(String id, T glyphs){

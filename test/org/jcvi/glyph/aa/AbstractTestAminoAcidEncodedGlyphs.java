@@ -24,18 +24,18 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractTestAminoAcidEncodedGlyphs {
 	private final List<AminoAcid> aminoAcids = AminoAcid.getGlyphsFor("ILKMFTWVVFTWILK");
-	EncodedGlyphs<AminoAcid> sut;
+	Sequence<AminoAcid> sut;
 	@Before
 	public void setup(){
 		sut = encode(aminoAcids);
 	}
-	protected abstract EncodedGlyphs<AminoAcid> encode(List<AminoAcid> aminoAcids);
+	protected abstract Sequence<AminoAcid> encode(List<AminoAcid> aminoAcids);
 	@Test
 	public void decode(){
 		assertEquals(aminoAcids,sut.decode());

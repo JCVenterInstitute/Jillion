@@ -19,8 +19,8 @@
 
 package org.jcvi.trace.nextera;
 
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 /**
@@ -30,8 +30,8 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
  */
 public final class TransposonEndSequences {
 
-    public static final NucleotideEncodedGlyphs FORWARD = new DefaultNucleotideEncodedGlyphs("AGATGTGTATAAGAGACAG");
+    public static final NucleotideSequence FORWARD = new DefaultNucleotideSequence("AGATGTGTATAAGAGACAG");
     
-    public static final NucleotideEncodedGlyphs REVERSE = new DefaultNucleotideEncodedGlyphs(
+    public static final NucleotideSequence REVERSE = new DefaultNucleotideSequence(
                                                 NucleotideGlyph.reverseCompliment(FORWARD.decode()));
 }

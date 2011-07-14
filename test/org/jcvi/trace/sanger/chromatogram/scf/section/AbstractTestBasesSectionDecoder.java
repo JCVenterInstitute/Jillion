@@ -33,8 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.jcvi.glyph.DefaultEncodedGlyphs;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.EncodedSequence;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.num.DefaultShortGlyphCodec;
 import org.jcvi.glyph.num.ShortGlyph;
@@ -53,7 +53,7 @@ public abstract class AbstractTestBasesSectionDecoder {
     private static DefaultShortGlyphCodec PEAK_CODEC = DefaultShortGlyphCodec.getInstance();
    
     protected AbstractTestBasesSection sut;
-    protected EncodedGlyphs<NucleotideGlyph> bases;
+    protected Sequence<NucleotideGlyph> bases;
     protected SCFHeader mockHeader;
     @Before
     public void setupHeader(){
@@ -197,7 +197,7 @@ public abstract class AbstractTestBasesSectionDecoder {
         assertEquals(newOffset-currentOffset-skipDistance, (int)bases.getLength()*12);
         assertEquals(chromatogram.getBasecalls().decode(), 
                  NucleotideGlyph.getGlyphsFor(c.basecalls()));
-        EncodedGlyphs<ShortGlyph> encodedPeaks = new DefaultEncodedGlyphs<ShortGlyph>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(c.peaks()));
+        Sequence<ShortGlyph> encodedPeaks = new EncodedSequence<ShortGlyph>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(c.peaks()));
         assertEquals(chromatogram.getPeaks().getData(),
                 encodedPeaks);
         

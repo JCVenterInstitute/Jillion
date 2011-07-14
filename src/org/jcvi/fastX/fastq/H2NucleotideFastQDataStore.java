@@ -31,10 +31,10 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
-public class H2NucleotideFastQDataStore extends AbstractH2FastQDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> implements NucleotideDataStore{
+public class H2NucleotideFastQDataStore extends AbstractH2FastQDataStore<NucleotideGlyph, NucleotideSequence> implements NucleotideDataStore{
     
     /**
      * @param fastQFile
@@ -44,7 +44,7 @@ public class H2NucleotideFastQDataStore extends AbstractH2FastQDataStore<Nucleot
      */
     public H2NucleotideFastQDataStore(
             File fastQFile,
-            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore)
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideSequence> datastore)
             throws IOException {
         super(fastQFile, null, datastore);
 
@@ -61,7 +61,7 @@ public class H2NucleotideFastQDataStore extends AbstractH2FastQDataStore<Nucleot
      */
     public H2NucleotideFastQDataStore(
             File fastQFile,
-            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore,
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideSequence> datastore,
             DataStoreFilter filter) throws IOException {
         super(fastQFile,null, datastore, filter);
     }
@@ -77,7 +77,7 @@ public class H2NucleotideFastQDataStore extends AbstractH2FastQDataStore<Nucleot
     public H2NucleotideFastQDataStore(
             File fastQFile,
             FastQQualityCodec qualityCodec,
-            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideEncodedGlyphs> datastore)
+            AbstractH2EncodedGlyphDataStore<NucleotideGlyph, NucleotideSequence> datastore)
             throws IOException {
         super(fastQFile, qualityCodec, datastore);
     }
@@ -85,7 +85,7 @@ public class H2NucleotideFastQDataStore extends AbstractH2FastQDataStore<Nucleot
 
 
     @Override
-    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
+    public void visitNucleotides(NucleotideSequence nucleotides) {
         try {
             this.getDatastore().insertRecord(this.getCurrentId(), 
                     NucleotideGlyph.convertToString(nucleotides.decode()));

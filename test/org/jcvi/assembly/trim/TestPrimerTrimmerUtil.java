@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 
 /**
@@ -34,11 +34,11 @@ import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
  */
 public final class TestPrimerTrimmerUtil {
 
-    public static NucleotideDataStore createDataStoreFor(NucleotideEncodedGlyphs...primers){
-        Map<String, NucleotideEncodedGlyphs> map = new HashMap<String, NucleotideEncodedGlyphs>();
+    public static NucleotideDataStore createDataStoreFor(NucleotideSequence...primers){
+        Map<String, NucleotideSequence> map = new HashMap<String, NucleotideSequence>();
         for(int i=0; i<primers.length; i++){
             map.put("primer_"+i, primers[i]);
         }
-        return new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(map));
+        return new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideSequence>(map));
     }
 }

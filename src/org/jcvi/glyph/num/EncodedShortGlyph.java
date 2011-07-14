@@ -28,9 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.EncodedGlyphs;
-
-public class EncodedShortGlyph implements EncodedGlyphs<ShortGlyph>{
+import org.jcvi.glyph.Sequence;
+/**
+ * {@code EncodedShortGlyph} encodes a {@link Sequence}
+ * of {@link ShortGlyph}s.
+ * @author dkatzel
+ */
+public class EncodedShortGlyph implements Sequence<ShortGlyph>{
 
     private static final ShortGlyphFactory FACTORY = ShortGlyphFactory.getInstance();
     private final short[] data;

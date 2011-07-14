@@ -29,7 +29,7 @@ import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
@@ -57,14 +57,14 @@ public class TestLucyQualityTrimmer {
     
     @Test
     public void SAJJA07T27G07MP1F() throws DataStoreException{
-        final EncodedGlyphs<PhredQuality> fullQualities = qualities.get("SAJJA07T27G07MP1F");
+        final Sequence<PhredQuality> fullQualities = qualities.get("SAJJA07T27G07MP1F");
         Range actualTrimRange = sut.trim(fullQualities);
         Range expectedRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 12,679);
         assertEquals(expectedRange, actualTrimRange);
     }
     @Test
     public void SAJJA07T27G07MP675R() throws DataStoreException{
-        final EncodedGlyphs<PhredQuality> fullQualities = qualities.get("SAJJA07T27G07MP675R");
+        final Sequence<PhredQuality> fullQualities = qualities.get("SAJJA07T27G07MP675R");
         Range actualTrimRange = sut.trim(fullQualities);
         Range expectedRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 16,680);
         assertEquals(expectedRange, actualTrimRange);
@@ -74,7 +74,7 @@ public class TestLucyQualityTrimmer {
     public void noGoodQualityDataShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
         QualityDataStore badQualDataStore =QualityFastaRecordDataStoreAdapter.adapt(
                 new DefaultQualityFastaFileDataStore(RESOURCES.getFile("files/bad.qual")));
-        final EncodedGlyphs<PhredQuality> badQualities = badQualDataStore.get("SCJIA01T48H08PB26F");
+        final Sequence<PhredQuality> badQualities = badQualDataStore.get("SCJIA01T48H08PB26F");
         assertEquals(Range.buildEmptyRange(), sut.trim(badQualities));
     }
     
@@ -82,7 +82,7 @@ public class TestLucyQualityTrimmer {
     public void bTrashShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
         QualityDataStore trashQualDataStore =QualityFastaRecordDataStoreAdapter.adapt(
                 new DefaultQualityFastaFileDataStore(RESOURCES.getFile("files/trash.qual")));
-        final EncodedGlyphs<PhredQuality> trashQualities = trashQualDataStore.get("JBYHA01T19A06PB2A628FB");
+        final Sequence<PhredQuality> trashQualities = trashQualDataStore.get("JBYHA01T19A06PB2A628FB");
         assertEquals(Range.buildEmptyRange(), sut.trim(trashQualities));
     }
     
@@ -90,7 +90,7 @@ public class TestLucyQualityTrimmer {
     public void wTrashShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
         QualityDataStore trashQualDataStore =QualityFastaRecordDataStoreAdapter.adapt(
                 new DefaultQualityFastaFileDataStore(RESOURCES.getFile("files/trash.qual")));
-        final EncodedGlyphs<PhredQuality> trashQualities = trashQualDataStore.get("JBZTB06T19E09NA1F");
+        final Sequence<PhredQuality> trashQualities = trashQualDataStore.get("JBZTB06T19E09NA1F");
         assertEquals(Range.buildEmptyRange(), sut.trim(trashQualities));
     }
 }

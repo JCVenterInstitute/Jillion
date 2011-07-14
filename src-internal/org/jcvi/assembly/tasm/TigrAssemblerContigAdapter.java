@@ -28,7 +28,7 @@ import java.util.Set;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -153,7 +153,7 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	}
 
 	@Override
-	public NucleotideEncodedGlyphs getConsensus() {
+	public NucleotideSequence getConsensus() {
 		return delegate.getConsensus();
 	}
 

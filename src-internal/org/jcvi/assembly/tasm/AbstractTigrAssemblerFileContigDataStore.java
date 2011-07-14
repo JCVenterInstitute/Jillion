@@ -27,8 +27,8 @@ import java.util.Map;
 import org.jcvi.Range;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.sequence.SequenceDirection;
 
 /**
@@ -45,7 +45,7 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         private DefaultTigrAssemblerContig.Builder currentBuilder;
 
         private String currentContigId;
-        private NucleotideEncodedGlyphs currentContigConsensus;
+        private NucleotideSequence currentContigConsensus;
         private Map<TigrAssemblerContigAttribute, String> currentContigAttributes;
         
         private EnumMap<TigrAssemblerReadAttribute, String> currentReadAttributes;
@@ -90,7 +90,7 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         */
         @Override
         public void visitConsensusBasecallsLine(String lineOfBasecalls) {
-            currentContigConsensus = new DefaultNucleotideEncodedGlyphs(lineOfBasecalls);
+            currentContigConsensus = new DefaultNucleotideSequence(lineOfBasecalls);
             
         }
 

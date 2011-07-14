@@ -25,18 +25,18 @@ package org.jcvi.fastX.fasta.seq;
 
 import java.util.List;
 
-import org.jcvi.glyph.EncodedGlyphs;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.Sequence;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 public class DefaultNucleotideEncodedSequenceFastaRecord extends AbstractNucleotideSequenceFastaRecord{
 
    
-    public DefaultNucleotideEncodedSequenceFastaRecord(String identifier, EncodedGlyphs<NucleotideGlyph> sequence){
+    public DefaultNucleotideEncodedSequenceFastaRecord(String identifier, Sequence<NucleotideGlyph> sequence){
         super(identifier, NucleotideGlyph.convertToString(sequence.decode()));
     }
-    public DefaultNucleotideEncodedSequenceFastaRecord(String identifier, String comments, EncodedGlyphs<NucleotideGlyph> sequence){
+    public DefaultNucleotideEncodedSequenceFastaRecord(String identifier, String comments, Sequence<NucleotideGlyph> sequence){
         super(identifier, comments,NucleotideGlyph.convertToString(sequence.decode()));
     }
     public DefaultNucleotideEncodedSequenceFastaRecord(String identifier, String comments, List<NucleotideGlyph> sequence){
@@ -92,9 +92,9 @@ public class DefaultNucleotideEncodedSequenceFastaRecord extends AbstractNucleot
     }
 
     @Override
-    protected NucleotideEncodedGlyphs encodeNucleotides(
+    protected NucleotideSequence encodeNucleotides(
             CharSequence sequence) {
-        return new DefaultNucleotideEncodedGlyphs( NucleotideGlyph.getGlyphsFor(sequence));
+        return new DefaultNucleotideSequence( NucleotideGlyph.getGlyphsFor(sequence));
     }
 
 

@@ -32,8 +32,8 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 
 
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.TextLineParser;
@@ -84,7 +84,7 @@ public class FastQFileParser {
 	            visitCurrentBlock = visitor.visitBeginBlock(id, optionalComment);
 	            if(visitCurrentBlock){
 	                visitor.visitLine(basecalls);
-	                NucleotideEncodedGlyphs encodedNucleotides = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.getGlyphsFor(basecalls.subSequence(0, basecalls.length()-1)));
+	                NucleotideSequence encodedNucleotides = new DefaultNucleotideSequence(NucleotideGlyph.getGlyphsFor(basecalls.subSequence(0, basecalls.length()-1)));
 	                visitor.visitNucleotides(encodedNucleotides);
 	                visitor.visitLine(qualLine);
 	                Matcher beginQualityMatcher =FastQUtil.QUAL_DEFLINE_PATTERN.matcher(qualLine);

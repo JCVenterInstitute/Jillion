@@ -27,7 +27,7 @@ import java.util.Properties;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.Glyph;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -41,7 +41,7 @@ import org.jcvi.util.CloseableIterator;
  *
  *
  */
-public abstract class AbstractH2PhdDataStore<G extends Glyph, E extends EncodedGlyphs<G>> implements PhdFileVisitor, DataStore<E>{
+public abstract class AbstractH2PhdDataStore<G extends Glyph, E extends Sequence<G>> implements PhdFileVisitor, DataStore<E>{
     private final AbstractH2EncodedGlyphDataStore<G, E> h2Datastore;
     private StringBuilder currentBuilder;
     private String currentId;

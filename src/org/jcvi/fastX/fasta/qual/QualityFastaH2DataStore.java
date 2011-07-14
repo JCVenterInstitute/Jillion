@@ -27,7 +27,7 @@ import org.jcvi.fastX.fasta.AbstractFastaH2DataStore;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
 /**
  * {@code QualityFastaH2DataStore} is an {@link AbstractFastaH2DataStore}
@@ -37,7 +37,7 @@ import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
  *
  *
  */
-public class QualityFastaH2DataStore extends AbstractFastaH2DataStore<PhredQuality,QualityEncodedGlyphs> implements QualityDataStore{
+public class QualityFastaH2DataStore extends AbstractFastaH2DataStore<PhredQuality,QualitySequence> implements QualityDataStore{
 
     /**
      * @param fastaFile
@@ -47,7 +47,7 @@ public class QualityFastaH2DataStore extends AbstractFastaH2DataStore<PhredQuali
      */
     public QualityFastaH2DataStore(
             File fastaFile,
-            AbstractH2EncodedGlyphDataStore<PhredQuality, QualityEncodedGlyphs> h2Datastore,
+            AbstractH2EncodedGlyphDataStore<PhredQuality, QualitySequence> h2Datastore,
             DataStoreFilter filter) throws FileNotFoundException {
         super(fastaFile, h2Datastore, filter);
     }
@@ -59,7 +59,7 @@ public class QualityFastaH2DataStore extends AbstractFastaH2DataStore<PhredQuali
      */
     public QualityFastaH2DataStore(
             File fastaFile,
-            AbstractH2EncodedGlyphDataStore<PhredQuality, QualityEncodedGlyphs> h2Datastore)
+            AbstractH2EncodedGlyphDataStore<PhredQuality, QualitySequence> h2Datastore)
             throws FileNotFoundException {
         super(fastaFile, h2Datastore);
     }

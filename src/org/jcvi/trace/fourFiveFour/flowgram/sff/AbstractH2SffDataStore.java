@@ -31,18 +31,18 @@ import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.datastore.EmptyDataStoreFilter;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.Glyph;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
 import org.jcvi.util.CloseableIterator;
 /**
  * {@code AbstractH2SffDataStore} is an abstract implementation
- * of a {@link DataStore} of {@link EncodedGlyphs} from an {@link SffDataStore}.
+ * of a {@link DataStore} of {@link Sequence} from an {@link SffDataStore}.
  * @author dkatzel
  *
  *
  */
-public abstract class AbstractH2SffDataStore<G extends Glyph, E extends EncodedGlyphs<G>> implements DataStore<E>, SffFileVisitor{
+public abstract class AbstractH2SffDataStore<G extends Glyph, E extends Sequence<G>> implements DataStore<E>, SffFileVisitor{
 
     private final AbstractH2EncodedGlyphDataStore<G, E> datastore;
     private final boolean trim;

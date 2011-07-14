@@ -46,8 +46,8 @@ import org.jcvi.fastX.fastq.DefaultFastQRecord;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.fastX.fastq.FastQRecord;
 import org.jcvi.fastX.fastq.FastQUtil;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
@@ -152,12 +152,12 @@ public class Fasta2Fastq {
                 public boolean visitRecord(String id, String comment, String entireBody) {
                     try {
                         if(filter.accept(id, comment)){
-                            QualityEncodedGlyphs qualities =qualityDataStore.get(id);
+                            QualitySequence qualities =qualityDataStore.get(id);
                             if(qualities ==null){
                                 throw new IllegalStateException("no quality values for "+ id);
                             }
                             FastQRecord fastq = new DefaultFastQRecord(id, 
-                                    new DefaultNucleotideEncodedGlyphs(entireBody.replaceAll("\\s+", "")), qualities,comment);
+                                    new DefaultNucleotideSequence(entireBody.replaceAll("\\s+", "")), qualities,comment);
     
                             writer.print(FastQUtil.encode(fastq, fastqQualityCodec));
                         }

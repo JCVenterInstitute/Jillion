@@ -32,8 +32,8 @@ import org.jcvi.assembly.cas.alignment.DefaultCasAlignment;
 import org.jcvi.assembly.cas.alignment.DefaultCasMatch;
 import org.jcvi.assembly.cas.read.CasNucleotideDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class TestDefaultCasGappedReferenceMap {
     DefaultCasGappedReferenceMap sut;
     long referenceId= 0;
     String referenceName = "refName";
-    NucleotideEncodedGlyphs referenceCalls = new DefaultNucleotideEncodedGlyphs(REFERENCE_CALLS_AS_STRING);
+    NucleotideSequence referenceCalls = new DefaultNucleotideSequence(REFERENCE_CALLS_AS_STRING);
     @Before
     public void setup() throws DataStoreException{
         referenceNucleotideDataStore = createMock(CasNucleotideDataStore.class);

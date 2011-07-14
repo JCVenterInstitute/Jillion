@@ -27,9 +27,9 @@ import java.util.Properties;
 import org.jcvi.assembly.ace.PhdInfo;
 import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.trace.sanger.phd.PhdUtil;
@@ -81,7 +81,7 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
     }
     protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord nextFasta, Properties requiredComments ){
 	    String id = nextFasta.getId();
-        QualityEncodedGlyphs qualities = getQualitiesFor(nextFasta);
+        QualitySequence qualities = getQualitiesFor(nextFasta);
         return ArtificialPhd.createNewbler454Phd(
                 id, 
                 nextFasta.getValue(), 
@@ -89,13 +89,13 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
                 requiredComments);
 	}
 	
-    protected QualityEncodedGlyphs getQualitiesFor(
+    protected QualitySequence getQualitiesFor(
             NucleotideSequenceFastaRecord nextFasta) {
         int numberOfQualities =(int) nextFasta.getValue().getLength();
 		PhredQuality[] qualities = new PhredQuality[numberOfQualities];
 		Arrays.fill(qualities, defaultQualityValue);
 		
-		DefaultQualityEncodedGlyphs qualities2 = new DefaultQualityEncodedGlyphs(
+		EncodedQualitySequence qualities2 = new EncodedQualitySequence(
 				RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, 
 				Arrays.asList(qualities));
         return qualities2;

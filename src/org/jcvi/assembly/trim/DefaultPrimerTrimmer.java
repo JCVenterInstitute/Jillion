@@ -33,9 +33,9 @@ import org.jcvi.align.NucleotideSubstitutionMatrix;
 import org.jcvi.align.SequenceAlignment;
 import org.jcvi.align.SmithWatermanAligner;
 import org.jcvi.assembly.AssemblyUtil;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 /**
@@ -101,16 +101,16 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
     * {@inheritDoc}
     */
     @Override
-    public Range trim(NucleotideEncodedGlyphs sequence,
+    public Range trim(NucleotideSequence sequence,
             NucleotideDataStore primersToTrimAgainst) {
         List<Range> ranges = new ArrayList<Range>();
-        for(NucleotideEncodedGlyphs primer : primersToTrimAgainst){
+        for(NucleotideSequence primer : primersToTrimAgainst){
             if(primer.getLength()>=minLength){
                 Alignment forwardAlignment = aligner.alignSequence(sequence, primer);
                 final Alignment reverseAlignment;
                 if(alsoCheckReverseCompliment){
                     reverseAlignment = aligner.alignSequence(
-                            new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.reverseCompliment(sequence.decode())),
+                            new DefaultNucleotideSequence(NucleotideGlyph.reverseCompliment(sequence.decode())),
                             primer);
                 }else{
                     reverseAlignment = NULL_ALIGNMENT_OBJECT;
@@ -151,7 +151,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
     */
     @Override
     public Range trim(String sequence, NucleotideDataStore primersToTrimAgainst) {
-        return trim(new DefaultNucleotideEncodedGlyphs(sequence), primersToTrimAgainst);
+        return trim(new DefaultNucleotideSequence(sequence), primersToTrimAgainst);
     }
 
 }

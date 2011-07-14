@@ -22,14 +22,14 @@ package org.jcvi.fastX.fasta.qual;
 import java.io.File;
 
 import org.jcvi.fastX.fasta.AbstractLargeFastaRecordIterator;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
 /**
  * @author dkatzel
  *
  *
  */
-public class LargeQualityFastaIterator extends AbstractLargeFastaRecordIterator<QualityEncodedGlyphs, QualityFastaRecord>{
+public class LargeQualityFastaIterator extends AbstractLargeFastaRecordIterator<QualitySequence, QualityFastaRecord>{
     public static LargeQualityFastaIterator createNewIteratorFor(File fastaFile){
         LargeQualityFastaIterator iter = new LargeQualityFastaIterator(fastaFile);
                iter.start();           

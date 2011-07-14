@@ -32,10 +32,10 @@ import java.util.regex.Pattern;
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
@@ -67,23 +67,23 @@ private SFFUtil(){}
        TITANIUM("TCGTATAACTTCGTATAATGTATGCTATACGAAGTTATTACG")
        ;
        
-       private final NucleotideEncodedGlyphs forwardSequence;
-       private final NucleotideEncodedGlyphs reverseSequence;
+       private final NucleotideSequence forwardSequence;
+       private final NucleotideSequence reverseSequence;
 
     /**
      * @param sequence
      */
     private Linkers(String sequence) {
-        this.forwardSequence = new DefaultNucleotideEncodedGlyphs(sequence);
-        this.reverseSequence = new DefaultNucleotideEncodedGlyphs(NucleotideGlyph.reverseCompliment(
+        this.forwardSequence = new DefaultNucleotideSequence(sequence);
+        this.reverseSequence = new DefaultNucleotideSequence(NucleotideGlyph.reverseCompliment(
                 forwardSequence.decode()));
     }
 
-    public NucleotideEncodedGlyphs getForwardSequence() {
+    public NucleotideSequence getForwardSequence() {
         return forwardSequence;
     }
 
-    public NucleotideEncodedGlyphs getReverseSequence() {
+    public NucleotideSequence getReverseSequence() {
         return reverseSequence;
     }
 
@@ -238,9 +238,9 @@ private SFFUtil(){}
             SFFReadData readData) {
         return new SFFFlowgram(
                 readHeader.getName(),
-                new DefaultNucleotideEncodedGlyphs(
+                new DefaultNucleotideSequence(
                         NucleotideGlyph.getGlyphsFor(readData.getBasecalls())),
-                        new DefaultQualityEncodedGlyphs(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
+                        new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                                 PhredQuality.valueOf(readData.getQualities())),
                 SFFUtil.computeValues(readData),
                 readHeader.getQualityClip(),

@@ -2,7 +2,7 @@ package org.jcvi.fastX.fasta.aa;
 
 import org.jcvi.fastX.fasta.FastaRecord;
 import org.jcvi.glyph.aa.AminoAcid;
-import org.jcvi.glyph.aa.AminoAcidEncodedGlyphs;
+import org.jcvi.glyph.aa.AminoAcidSequence;
 import org.jcvi.glyph.aa.DefaultAminoAcidEncodedGlyphs;
 
 public class DefaultAminoAcidEncodedSequenceFastaRecord extends AbstractAminoAcidSequenceFastaRecord {
@@ -13,7 +13,7 @@ public class DefaultAminoAcidEncodedSequenceFastaRecord extends AbstractAminoAci
  *
  */
 
-    public DefaultAminoAcidEncodedSequenceFastaRecord(String identifier, AminoAcidEncodedGlyphs glyphs){
+    public DefaultAminoAcidEncodedSequenceFastaRecord(String identifier, AminoAcidSequence glyphs){
     	super(identifier, AminoAcid.convertToString(glyphs.decode()));
     }
     
@@ -64,7 +64,7 @@ public class DefaultAminoAcidEncodedSequenceFastaRecord extends AbstractAminoAci
 	}
 
 	@Override
-	protected AminoAcidEncodedGlyphs encodeAminoAcids(String sequence) {
+	protected AminoAcidSequence encodeAminoAcids(String sequence) {
 		return new DefaultAminoAcidEncodedGlyphs( AminoAcid.getGlyphsFor(sequence) );
 	}
 

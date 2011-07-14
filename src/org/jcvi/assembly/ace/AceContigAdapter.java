@@ -32,7 +32,7 @@ import java.util.Set;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.cas.CasIdLookup;
 import org.jcvi.assembly.cas.read.CasPlacedRead;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 public class AceContigAdapter implements AceContig{
 
@@ -59,7 +59,7 @@ public class AceContigAdapter implements AceContig{
     }
 
     @Override
-    public NucleotideEncodedGlyphs getConsensus() {
+    public NucleotideSequence getConsensus() {
         return delegate.getConsensus();
     }
 

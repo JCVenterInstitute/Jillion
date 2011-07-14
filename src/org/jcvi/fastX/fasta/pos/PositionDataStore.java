@@ -24,9 +24,9 @@
 package org.jcvi.fastX.fasta.pos;
 
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.ShortGlyph;
 
-public interface PositionDataStore extends DataStore<EncodedGlyphs<ShortGlyph>>{
+public interface PositionDataStore extends DataStore<Sequence<ShortGlyph>>{
 
 }

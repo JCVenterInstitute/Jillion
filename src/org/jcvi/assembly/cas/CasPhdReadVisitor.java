@@ -38,7 +38,7 @@ import org.jcvi.assembly.util.TrimDataStore;
 import org.jcvi.fastX.fasta.seq.LargeNucleotideFastaIterator;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.fastX.fastq.LargeFastQFileIterator;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
 import org.jcvi.trace.fourFiveFour.flowgram.sff.SffFileIterator;
@@ -53,12 +53,12 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	private final File workingDir;
 	private final CasTrimMap trimMap;
 	private CloseableIterator<PhdReadRecord> phdIterator;
-	private final List<NucleotideEncodedGlyphs> orderedGappedReferences;
+	private final List<NucleotideSequence> orderedGappedReferences;
 	private final TrimDataStore validRangeDataStore;
 	private final List<CloseableIterator<PhdReadRecord>> iterators = new ArrayList<CloseableIterator<PhdReadRecord>>();
     private final TraceDetails traceDetails;
 	public CasPhdReadVisitor(File workingDir, CasTrimMap trimMap,
-			List<NucleotideEncodedGlyphs> orderedGappedReferences,
+			List<NucleotideSequence> orderedGappedReferences,
 			TrimDataStore validRangeDataStore,
 			TraceDetails traceDetails) {
 		super();
@@ -69,7 +69,7 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 		this.validRangeDataStore = validRangeDataStore;
 	}
 
-	protected final NucleotideEncodedGlyphs getGappedReference(int index){
+	protected final NucleotideSequence getGappedReference(int index){
 	    return orderedGappedReferences.get(index);
 	}
 	@Override
@@ -146,7 +146,7 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 			Phd phd = phdReadRecord.getPhd();
 			PhdInfo info = phdReadRecord.getPhdInfo();
 			int casReferenceId = (int)match.getChosenAlignment().contigSequenceId();
-			NucleotideEncodedGlyphs gappedReference =orderedGappedReferences.get(casReferenceId);
+			NucleotideSequence gappedReference =orderedGappedReferences.get(casReferenceId);
 			String id = phd.getId();
 			try {
 				CasPlacedRead placedRead = CasUtil.createCasPlacedRead(match, id, 

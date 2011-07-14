@@ -33,13 +33,13 @@ import org.jcvi.Range;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceElement;
 import org.jcvi.assembly.slice.SliceMap;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
 
     private final Map<Range,AceBestSegment> bestSegments = new LinkedHashMap<Range, AceBestSegment>();
-    public DefaultAceBestSegmentMap(SliceMap sliceMap, NucleotideEncodedGlyphs consensus){
+    public DefaultAceBestSegmentMap(SliceMap sliceMap, NucleotideSequence consensus){
         if(sliceMap ==null){
             throw new NullPointerException("slice map can not be null");            
         }

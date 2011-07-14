@@ -24,8 +24,8 @@
 package org.jcvi.trace.frg;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Library;
 import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.Trace;
@@ -40,8 +40,8 @@ public class TestDefaultFragment {
     String comment = "a comment";
     String libraryId = "libraryId";
     
-    NucleotideEncodedGlyphs bases = createMock(NucleotideEncodedGlyphs.class);
-    QualityEncodedGlyphs qualities = createMock(QualityEncodedGlyphs.class);
+    NucleotideSequence bases = createMock(NucleotideSequence.class);
+    QualitySequence qualities = createMock(QualitySequence.class);
     
     Library library = createMock(Library.class);
     Range validRange = Range.buildRange(10, 20);
@@ -120,14 +120,14 @@ public class TestDefaultFragment {
     
     @Test
     public void differentBasesShouldStillBeEqual(){
-        NucleotideEncodedGlyphs differentBases = createMock(NucleotideEncodedGlyphs.class);
+        NucleotideSequence differentBases = createMock(NucleotideSequence.class);
         DefaultFragment hasDifferentBases = new DefaultFragment(id,differentBases,qualities, validRange, clearRange,library,comment);
         TestUtil.assertEqualAndHashcodeSame(sut, hasDifferentBases);
     }
     
     @Test
     public void differentQualitiesShouldStillBeEqual(){
-        QualityEncodedGlyphs differentQualities = createMock(QualityEncodedGlyphs.class);
+        QualitySequence differentQualities = createMock(QualitySequence.class);
         DefaultFragment hasDifferentQualities = new DefaultFragment(id,bases,differentQualities, validRange, clearRange,library,comment);
         TestUtil.assertEqualAndHashcodeSame(sut, hasDifferentQualities);
     }

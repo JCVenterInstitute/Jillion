@@ -34,7 +34,7 @@ import org.jcvi.Range;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.trace.sanger.SangerTraceCodec;
@@ -202,7 +202,7 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
 
             map.put(currentReadId, new DefaultPhd(
             		currentReadId,
-                    new DefaultNucleotideEncodedGlyphs(glyphs),
+                    new DefaultNucleotideSequence(glyphs),
                     originalPhd.getQualities(),
                     originalPhd.getPeaks(),
                     originalPhd.getComments(),

@@ -27,9 +27,9 @@ import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.trim.DefaultPrimerTrimmer;
 import org.jcvi.assembly.trim.PrimerTrimmer;
 import org.jcvi.datastore.SimpleDataStore;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 
 /**
@@ -47,15 +47,15 @@ public final class NexteraTransposonTrimmer implements PrimerTrimmer{
     public static final int DEFAULT_MIN_LENGTH=13;
     public static final double DEFAULT_MIN_MATCH = .9D;
     static{
-        Map<String, NucleotideEncodedGlyphs> forwardTransposon = new HashMap<String, NucleotideEncodedGlyphs>();
+        Map<String, NucleotideSequence> forwardTransposon = new HashMap<String, NucleotideSequence>();
         forwardTransposon.put("5'", TransposonEndSequences.FORWARD);
-        Map<String, NucleotideEncodedGlyphs> revesrseTransposon = new HashMap<String, NucleotideEncodedGlyphs>();
+        Map<String, NucleotideSequence> revesrseTransposon = new HashMap<String, NucleotideSequence>();
         
         revesrseTransposon.put("3'", TransposonEndSequences.REVERSE);
         
-       FORWARD_TRANSPOSON = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(forwardTransposon));
+       FORWARD_TRANSPOSON = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideSequence>(forwardTransposon));
         
-       REVERSE_TRANSPOSON = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideEncodedGlyphs>(revesrseTransposon));
+       REVERSE_TRANSPOSON = new NucleotideDataStoreAdapter(new SimpleDataStore<NucleotideSequence>(revesrseTransposon));
         
     }
 
@@ -67,7 +67,7 @@ public final class NexteraTransposonTrimmer implements PrimerTrimmer{
         nexteraTransposonTrimmer = new DefaultPrimerTrimmer(minLength, minMatch,false);
     }
     
-    public Range trim(NucleotideEncodedGlyphs sequence){
+    public Range trim(NucleotideSequence sequence){
         Range forwardClearRange =nexteraTransposonTrimmer.trim(sequence, FORWARD_TRANSPOSON);
         
         Range reverseClearRange =nexteraTransposonTrimmer.trim(sequence, REVERSE_TRANSPOSON);
@@ -78,7 +78,7 @@ public final class NexteraTransposonTrimmer implements PrimerTrimmer{
     * {@inheritDoc}
     */
     @Override
-    public Range trim(NucleotideEncodedGlyphs sequence,
+    public Range trim(NucleotideSequence sequence,
             NucleotideDataStore primersToTrimAgainst) {
        return trim(sequence);
         
@@ -99,7 +99,7 @@ public final class NexteraTransposonTrimmer implements PrimerTrimmer{
     */
     @Override
     public Range trim(String sequence, NucleotideDataStore primersToTrimAgainst) {
-        return trim(new DefaultNucleotideEncodedGlyphs(sequence));
+        return trim(new DefaultNucleotideSequence(sequence));
     }
     
     

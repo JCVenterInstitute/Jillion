@@ -21,7 +21,7 @@ package org.jcvi.fastX.fasta.qual;
 
 import org.jcvi.fastX.fasta.FastaDataStore;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 
 /**
  * {@code QualityFastaDataStore}is a FastaDataStore
@@ -30,6 +30,6 @@ import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
  *
  *
  */
-public interface QualityFastaDataStore extends FastaDataStore<PhredQuality, QualityEncodedGlyphs, QualityFastaRecord>{
+public interface QualityFastaDataStore extends FastaDataStore<PhredQuality, QualitySequence, QualityFastaRecord>{
 
 }

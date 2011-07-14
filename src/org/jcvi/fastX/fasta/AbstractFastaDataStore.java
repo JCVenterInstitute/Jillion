@@ -23,9 +23,9 @@
  */
 package org.jcvi.fastX.fasta;
 
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.Glyph;
 
-public abstract class AbstractFastaDataStore <G extends Glyph, T extends EncodedGlyphs<G>,F extends FastaRecord<T>> implements FastaDataStore<G,T,F>{
+public abstract class AbstractFastaDataStore <G extends Glyph, T extends Sequence<G>,F extends FastaRecord<T>> implements FastaDataStore<G,T,F>{
 
 }

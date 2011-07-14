@@ -27,9 +27,9 @@ import static org.junit.Assert.*;
 
 import org.jcvi.assembly.Location;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
+import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideSequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.sequence.Read;
 import org.jcvi.testUtil.TestUtil;
@@ -37,7 +37,7 @@ import org.junit.Test;
 public class TestQualityDifference {
 
     PhredQuality quality = PhredQuality.valueOf((byte) 20);
-    Location<EncodedGlyphs<NucleotideGlyph>> reference = createMock(Location.class);
+    Location<Sequence<NucleotideGlyph>> reference = createMock(Location.class);
     Location<PlacedRead> read = createMock(Location.class);
     
     DefaultQualityDifference sut = new DefaultQualityDifference(reference, read, quality);
@@ -126,7 +126,7 @@ public class TestQualityDifference {
     private void setupReference(int referenceIndex,
             NucleotideGlyph referenceGlyph) {
         expect(reference.getIndex()).andReturn(referenceIndex).anyTimes();
-        EncodedGlyphs<NucleotideGlyph> mockReferenceGlyphs = createMock(EncodedGlyphs.class);
+        Sequence<NucleotideGlyph> mockReferenceGlyphs = createMock(Sequence.class);
         expect(reference.getSource()).andReturn(mockReferenceGlyphs);
         expect(mockReferenceGlyphs.get(referenceIndex)).andReturn(referenceGlyph);
         replay(mockReferenceGlyphs);
@@ -136,8 +136,8 @@ public class TestQualityDifference {
     private void setupRead(String readId, int readIndex,
             NucleotideGlyph readGlyph) {
         PlacedRead mockPlacedRead = createMock(PlacedRead.class);
-        Read<ReferencedEncodedNucleotideGlyphs> mockRead = createMock(Read.class);
-        ReferencedEncodedNucleotideGlyphs mockEncodedGlyphs = createMock(ReferencedEncodedNucleotideGlyphs.class);
+        Read<ReferencedEncodedNucleotideSequence> mockRead = createMock(Read.class);
+        ReferencedEncodedNucleotideSequence mockEncodedGlyphs = createMock(ReferencedEncodedNucleotideSequence.class);
         expect(read.getIndex()).andReturn(readIndex).anyTimes();
         
         expect(mockPlacedRead.getId()).andReturn(readId);

@@ -24,14 +24,14 @@
 package org.jcvi.assembly.ace;
 
 import org.jcvi.assembly.slice.SliceMap;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 
 
 public class TestOntheFlyAceBestSegmentMap extends AbstractTestAceBestSegmentMap{
 
     @Override
     protected AceBestSegmentMap createSut(SliceMap sliceMap,
-            NucleotideEncodedGlyphs consensus) {
+            NucleotideSequence consensus) {
         return new OnTheFlyAceBestSegmentMap(sliceMap, consensus);
     }
    

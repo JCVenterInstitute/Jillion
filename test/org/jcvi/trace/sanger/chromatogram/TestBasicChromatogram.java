@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Peaks;
 import org.jcvi.testUtil.TestUtil;
 import org.jcvi.trace.sanger.chromatogram.BasicChromatogram;
@@ -42,8 +42,8 @@ public class TestBasicChromatogram {
     
     ChannelGroup mockChannelGroup = createMock(ChannelGroup.class);
     Peaks mockPeaks= createMock(Peaks.class);
-    NucleotideEncodedGlyphs basecalls = createMock(NucleotideEncodedGlyphs.class);
-    QualityEncodedGlyphs qualities = createMock(QualityEncodedGlyphs.class);
+    NucleotideSequence basecalls = createMock(NucleotideSequence.class);
+    QualitySequence qualities = createMock(QualitySequence.class);
     Map<String,String> expectedProperties;
     private static final String PROP_1_KEY = "a key";
     private static final String PROP_2_KEY = "a different key";
@@ -87,7 +87,7 @@ public class TestBasicChromatogram {
     public void nullBaseCallsShouldThrowIllegalArugmentException(){
         try{
             new BasicChromatogram(
-                    (NucleotideEncodedGlyphs)null,
+                    (NucleotideSequence)null,
                     qualities,
                     mockPeaks,
                     mockChannelGroup,
@@ -172,7 +172,7 @@ public class TestBasicChromatogram {
    
     @Test
     public void notEqualsDifferentBasecalls(){
-        NucleotideEncodedGlyphs differentBases = createMock(NucleotideEncodedGlyphs.class);
+        NucleotideSequence differentBases = createMock(NucleotideSequence.class);
         BasicChromatogram nullBases = new BasicChromatogram(differentBases, qualities,mockPeaks, mockChannelGroup,
                                     expectedProperties);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, nullBases);

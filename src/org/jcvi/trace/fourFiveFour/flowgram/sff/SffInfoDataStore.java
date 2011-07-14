@@ -36,11 +36,11 @@ import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideEncodedGlyphs;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.DefaultQualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
 
@@ -143,8 +143,8 @@ public class SffInfoDataStore implements SffDataStore {
         Range adapterRange = parseAdapterClip(scanner);
         short[] flows = parseAllFlows(scanner,sffHeader.getNumberOfFlowsPerRead());            
         List<Short> usedFlowValues= parseUsedFlows(scanner.nextLine(), flows);             
-        NucleotideEncodedGlyphs basecalls=parseBasecalls(scanner.nextLine());
-        QualityEncodedGlyphs qualities=parseQualities(scanner.nextLine(),(int)basecalls.getLength());
+        NucleotideSequence basecalls=parseBasecalls(scanner.nextLine());
+        QualitySequence qualities=parseQualities(scanner.nextLine(),(int)basecalls.getLength());
         return new SFFFlowgram(id,basecalls, qualities,
                 usedFlowValues, qualityRange, adapterRange);
     }
@@ -164,7 +164,7 @@ public class SffInfoDataStore implements SffDataStore {
      * @param nextLine
      * @return
      */
-    private QualityEncodedGlyphs parseQualities(String nextLine, int numOfQualities) {
+    private QualitySequence parseQualities(String nextLine, int numOfQualities) {
         if(nextLine.startsWith("Quality Scores:")){
             Scanner scanner2 = new Scanner(nextLine);
             scanner2.next(); //Quality
@@ -174,7 +174,7 @@ public class SffInfoDataStore implements SffDataStore {
                 qualitiesList.add(PhredQuality.valueOf(scanner2.nextByte()));
             }
             scanner2.close();
-            return new DefaultQualityEncodedGlyphs(
+            return new EncodedQualitySequence(
                     RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, qualitiesList);
         }
         throw new IllegalStateException("could not parse qualities from "+ nextLine);
@@ -183,10 +183,10 @@ public class SffInfoDataStore implements SffDataStore {
      * @param nextLine
      * @return
      */
-    private NucleotideEncodedGlyphs parseBasecalls(String line) {
+    private NucleotideSequence parseBasecalls(String line) {
         Matcher basesMatcher = BASECALLS_PATTERN.matcher(line);
         if(basesMatcher.find()){
-           return new DefaultNucleotideEncodedGlyphs(basesMatcher.group(1).trim());
+           return new DefaultNucleotideSequence(basesMatcher.group(1).trim());
         }
         throw new IllegalStateException("could not parse basecalls from line: "+ line   );
     }

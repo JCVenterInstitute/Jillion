@@ -22,7 +22,7 @@ package org.jcvi.fastX.fasta.pos;
 import java.io.File;
 
 import org.jcvi.fastX.fasta.AbstractLargeFastaRecordIterator;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.num.ShortGlyph;
 
 /**
@@ -31,7 +31,7 @@ import org.jcvi.glyph.num.ShortGlyph;
  *
  */
 public class LargePositionFastaRecordIterator extends AbstractLargeFastaRecordIterator
-            <EncodedGlyphs<ShortGlyph>,PositionFastaRecord<EncodedGlyphs<ShortGlyph>>>{
+            <Sequence<ShortGlyph>,PositionFastaRecord<Sequence<ShortGlyph>>>{
 
     public static LargePositionFastaRecordIterator createNewIteratorFor(File fastaFile){
         LargePositionFastaRecordIterator iter = new LargePositionFastaRecordIterator(fastaFile);

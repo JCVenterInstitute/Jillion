@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 
 import org.jcvi.Range;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideGlyphs;
+import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideSequence;
 import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.testUtil.TestUtil;
@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 public class TestDefaultPlacedRead {
 
-    Read<ReferencedEncodedNucleotideGlyphs> read;
+    Read<ReferencedEncodedNucleotideSequence> read;
     SequenceDirection dir = SequenceDirection.FORWARD;
     long start = 100;
     
@@ -56,7 +56,7 @@ public class TestDefaultPlacedRead {
         String id = "id";
         long length = 200L;
         Range validRange = Range.buildRange(start, length);
-        ReferencedEncodedNucleotideGlyphs glyphs = createMock(ReferencedEncodedNucleotideGlyphs.class);
+        ReferencedEncodedNucleotideSequence glyphs = createMock(ReferencedEncodedNucleotideSequence.class);
    
         Map<Integer,NucleotideGlyph> snpMap = new HashMap<Integer, NucleotideGlyph>();
         snpMap.put(Integer.valueOf(1), NucleotideGlyph.Adenine);
@@ -71,7 +71,7 @@ public class TestDefaultPlacedRead {
         expect(read.getEncodedGlyphs()).andReturn(glyphs).times(3);
         expect(read.getLength()).andReturn(length).times(2);
         expect(glyphs.getValidRange()).andReturn(validRange);
-        expect(glyphs.getSnps()).andReturn(snps);
+        expect(glyphs.getSnpOffsets()).andReturn(snps);
         replay(read, glyphs);
         assertEquals(dir,sut.getSequenceDirection());
         assertEquals(start, sut.getStart());

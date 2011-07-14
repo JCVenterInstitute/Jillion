@@ -22,7 +22,7 @@ package org.jcvi.assembly.ace.consed;
 import org.jcvi.Range;
 import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.sequence.SequenceDirection;
 
 /**
@@ -95,7 +95,7 @@ public class ReadNavigationElement extends AbstractNavigationElement{
             Range gappedFeatureValidRange, 
             int fullLength,
             String comment){
-        final NucleotideEncodedGlyphs encodedGlyphs = read.getEncodedGlyphs();
+        final NucleotideSequence encodedGlyphs = read.getEncodedGlyphs();
         Range ungappedRange = AssemblyUtil.convertGappedRangeIntoUngappedRange(encodedGlyphs, gappedFeatureValidRange);
         if(read.getSequenceDirection() == SequenceDirection.REVERSE){
             ungappedRange =AssemblyUtil.reverseComplimentValidRange(ungappedRange, fullLength);

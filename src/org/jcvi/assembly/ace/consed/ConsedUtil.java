@@ -45,7 +45,7 @@ import org.jcvi.assembly.ace.DefaultPhdInfo;
 import org.jcvi.assembly.ace.PhdInfo;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.joda.time.DateTime;
 /**
@@ -138,7 +138,7 @@ public class ConsedUtil {
      */
     public static List<AceContig> split0xContig(AceContig contig, CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap, boolean adjustIdCoordinates){
         List<Range> coveredRegions = new ArrayList<Range>();
-        NucleotideEncodedGlyphs consensus = contig.getConsensus();
+        NucleotideSequence consensus = contig.getConsensus();
         for(CoverageRegion region : coverageMap){
             if(region.getCoverage()>0){
                 
@@ -173,7 +173,7 @@ public class ConsedUtil {
     }
     private static DefaultAceContig createSplitContig(AceContig contig,
             CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap,
-            NucleotideEncodedGlyphs consensus, String originalContigId,
+            NucleotideSequence consensus, String originalContigId,
             int oldStart, Range contigRange) {
         Set<String> contigReads = new HashSet<String>();
         

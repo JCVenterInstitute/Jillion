@@ -25,8 +25,8 @@ package org.jcvi.trace.sanger.chromatogram.scf;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Confidence;
 import org.jcvi.sequence.DefaultConfidence;
 import org.jcvi.sequence.Peaks;
@@ -44,8 +44,8 @@ public class TestSCFChromatogram {
 
     ChannelGroup mockChannelGroup = createMock(ChannelGroup.class);
     Peaks mockPeaks= createMock(Peaks.class);
-    NucleotideEncodedGlyphs basecalls = createMock(NucleotideEncodedGlyphs.class);
-    QualityEncodedGlyphs qualities = createMock(QualityEncodedGlyphs.class);
+    NucleotideSequence basecalls = createMock(NucleotideSequence.class);
+    QualitySequence qualities = createMock(QualitySequence.class);
     Map<String,String> expectedProperties = new HashMap<String, String>();
     Confidence mockInsertionConfidence= createMock(DefaultConfidence.class);
     Confidence mockDeletionConfidence= createMock(DefaultConfidence.class);

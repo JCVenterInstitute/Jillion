@@ -25,8 +25,8 @@ package org.jcvi.trace.sanger;
 
 import java.io.File;
 import java.io.IOException;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
-import org.jcvi.glyph.phredQuality.QualityEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.sequence.Peaks;
 
 public class DefaultFileSangerTrace implements FileSangerTrace {
@@ -59,12 +59,12 @@ public class DefaultFileSangerTrace implements FileSangerTrace {
     }
 
     @Override
-    public NucleotideEncodedGlyphs getBasecalls() {
+    public NucleotideSequence getBasecalls() {
         return trace.getBasecalls();
     }
 
     @Override
-    public QualityEncodedGlyphs getQualities() {
+    public QualitySequence getQualities() {
         return trace.getQualities();
     }
 

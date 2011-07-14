@@ -31,12 +31,12 @@ import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.datastore.EmptyDataStoreFilter;
 import org.jcvi.glyph.AbstractH2EncodedGlyphDataStore;
-import org.jcvi.glyph.EncodedGlyphs;
+import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.Glyph;
-import org.jcvi.glyph.nuc.NucleotideEncodedGlyphs;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.util.CloseableIterator;
 
-public abstract class AbstractH2FastQDataStore<G extends Glyph, E extends EncodedGlyphs<G>> implements DataStore<E>, FastQFileVisitor{
+public abstract class AbstractH2FastQDataStore<G extends Glyph, E extends Sequence<G>> implements DataStore<E>, FastQFileVisitor{
     private final AbstractH2EncodedGlyphDataStore<G, E> datastore;
     private final FastQQualityCodec qualityCodec;
     private final DataStoreFilter filter;
@@ -126,7 +126,7 @@ public abstract class AbstractH2FastQDataStore<G extends Glyph, E extends Encode
     }
 
     @Override
-    public void visitNucleotides(NucleotideEncodedGlyphs nucleotides) {
+    public void visitNucleotides(NucleotideSequence nucleotides) {
     }
     
 }
