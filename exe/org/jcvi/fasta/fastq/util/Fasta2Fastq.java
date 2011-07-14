@@ -41,17 +41,15 @@ import org.jcvi.fastX.NullFastXFilter;
 import org.jcvi.fastX.fasta.AbstractFastaVisitor;
 import org.jcvi.fastX.fasta.FastaParser;
 import org.jcvi.fastX.fasta.FastaVisitor;
-import org.jcvi.fastX.fasta.qual.QualityFastaH2DataStore;
+import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
+import org.jcvi.fastX.fasta.qual.QualityFastaDataStore;
 import org.jcvi.fastX.fastq.DefaultFastQRecord;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.fastX.fastq.FastQRecord;
 import org.jcvi.fastX.fastq.FastQUtil;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.phredQuality.QualitySequence;
-import org.jcvi.glyph.phredQuality.datastore.H2QualityDataStore;
 import org.jcvi.io.IOUtil;
-import org.jcvi.io.fileServer.DirectoryFileServer;
-import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.jcvi.io.idReader.DefaultFileIdReader;
 import org.jcvi.io.idReader.IdReader;
 import org.jcvi.io.idReader.IdReaderException;
@@ -126,22 +124,10 @@ public class Fasta2Fastq {
                 filter = NullFastXFilter.INSTANCE;
             }
             final FastQQualityCodec fastqQualityCodec = useSanger? FastQQualityCodec.SANGER: FastQQualityCodec.ILLUMINA;
-        
-            //parse nucleotide data to temp file
-            final ReadWriteDirectoryFileServer tempDir;
-            H2QualityDataStore h2DataStore;
-            if(!commandLine.hasOption("tempDir")){
-                tempDir=null;
-                h2DataStore = new H2QualityDataStore();
-            }else{
-                File t =new File(commandLine.getOptionValue("tempDir"));
-                IOUtil.mkdirs(t);
-                tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer(t);
-                h2DataStore = new H2QualityDataStore(tempDir.createNewFile("h2Qualities"));
-            }
           
             File qualFile = new File(commandLine.getOptionValue("q"));
-            final QualityFastaH2DataStore qualityDataStore = new QualityFastaH2DataStore(qualFile, h2DataStore,filter);
+            
+            final QualityFastaDataStore qualityDataStore = new DefaultQualityFastaFileDataStore(qualFile,filter);
             
             File seqFile = new File(commandLine.getOptionValue("s"));
             final PrintWriter writer = new PrintWriter(commandLine.getOptionValue("o"));
@@ -152,7 +138,7 @@ public class Fasta2Fastq {
                 public boolean visitRecord(String id, String comment, String entireBody) {
                     try {
                         if(filter.accept(id, comment)){
-                            QualitySequence qualities =qualityDataStore.get(id);
+                            QualitySequence qualities =qualityDataStore.get(id).getValue();
                             if(qualities ==null){
                                 throw new IllegalStateException("no quality values for "+ id);
                             }

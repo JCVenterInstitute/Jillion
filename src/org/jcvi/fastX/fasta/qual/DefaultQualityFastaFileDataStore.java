@@ -34,6 +34,7 @@ import java.util.Map;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
+import org.jcvi.fastX.FastXFilter;
 import org.jcvi.fastX.fasta.FastaParser;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.CloseableIterator;
@@ -50,12 +51,14 @@ public class DefaultQualityFastaFileDataStore extends AbstractQualityFastaFileDa
 
     private final Map<String, QualityFastaRecord> map = new HashMap<String, QualityFastaRecord>();
     private DataStore<QualityFastaRecord> datastore;
+    private final FastXFilter filter;
     /**
      * @param fastaRecordFactory
      */
     public DefaultQualityFastaFileDataStore(
             QualityFastaRecordFactory fastaRecordFactory) {
         super(fastaRecordFactory);
+        this.filter=null;
     }
     /**
      * Convenience constructor using the {@link DefaultQualityFastaRecordFactory}.
@@ -64,13 +67,24 @@ public class DefaultQualityFastaFileDataStore extends AbstractQualityFastaFileDa
      */
     public DefaultQualityFastaFileDataStore() {
         super();
+        filter=null;
     }
     public DefaultQualityFastaFileDataStore(File fastaFile,QualityFastaRecordFactory fastaRecordFactory) throws FileNotFoundException {
-        super(fastaRecordFactory);
-        parseFastaFile(fastaFile);
+        this(fastaFile,fastaRecordFactory,null);
     }
     public DefaultQualityFastaFileDataStore(File fastaFile) throws FileNotFoundException {
-        super();
+        this();        
+        parseFastaFile(fastaFile);
+    }
+    public DefaultQualityFastaFileDataStore(File fastaFile,FastXFilter filter) throws FileNotFoundException {
+        super();  
+        this.filter=filter;
+        parseFastaFile(fastaFile);
+    }
+    
+    public DefaultQualityFastaFileDataStore(File fastaFile,QualityFastaRecordFactory fastaRecordFactory, FastXFilter filter) throws FileNotFoundException {
+        super(fastaRecordFactory);
+        this.filter = filter;
         parseFastaFile(fastaFile);
     }
     private void parseFastaFile(File fastaFile) throws FileNotFoundException {
@@ -84,7 +98,9 @@ public class DefaultQualityFastaFileDataStore extends AbstractQualityFastaFileDa
     }
     @Override
     public boolean visitRecord(String id, String comment, String recordBody) {
-        map.put(id  , this.getFastaRecordFactory().createFastaRecord(id, comment,recordBody));
+        if(filter==null || filter.accept(id)){
+            map.put(id, this.getFastaRecordFactory().createFastaRecord(id, comment,recordBody));
+        }
         return true;
     }
     @Override

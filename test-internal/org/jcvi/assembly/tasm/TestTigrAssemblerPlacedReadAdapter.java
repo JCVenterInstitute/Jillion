@@ -26,9 +26,9 @@ import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.DefaultPlacedRead;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
-import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
+import org.jcvi.glyph.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideSequence;
+import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.sequence.DefaultRead;
 import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
@@ -42,9 +42,9 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	String id = "readId";
 	int offset = 1234;
 	String readSequence = "ACGT-ACGT";
-	ReferencedEncodedNucleotideSequence gappedBasecalls = new ReferenceEncodedNucleotideSequence(
+	ReferenceEncodedNucleotideSequence gappedBasecalls = new DefaultReferenceEncodedNucleotideSequence(
 			new DefaultNucleotideSequence("NNNNNACGT-ACGT"),readSequence,5,validRange);
-	Read<ReferencedEncodedNucleotideSequence> read = new DefaultRead<ReferencedEncodedNucleotideSequence>(id, gappedBasecalls);
+	Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead<ReferenceEncodedNucleotideSequence>(id, gappedBasecalls);
 	
 	
 	@Test(expected = NullPointerException.class)

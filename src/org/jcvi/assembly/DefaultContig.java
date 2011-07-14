@@ -30,7 +30,7 @@ import org.jcvi.Range;
 import org.jcvi.assembly.contig.AbstractContig;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideSequence;
+import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
 
@@ -97,7 +97,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             
         }
         @Override
-        protected PlacedRead createPlacedRead(Read<ReferencedEncodedNucleotideSequence> read, long offset, SequenceDirection dir){
+        protected PlacedRead createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, SequenceDirection dir){
             return new DefaultPlacedRead(read,offset,dir);
         }
        

@@ -35,7 +35,7 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
+import org.jcvi.glyph.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.sequence.DefaultRead;
 import org.jcvi.sequence.SequenceDirection;
@@ -408,7 +408,7 @@ public abstract class TestContigFileParser {
     
     DefaultPlacedRead CVGWB15T06B037761RM = new DefaultPlacedRead(
             new DefaultRead("CVGWB15T06B037761RM",
-                 new ReferenceEncodedNucleotideSequence(contigConsensus,
+                 new DefaultReferenceEncodedNucleotideSequence(contigConsensus,
                          "AAGTTTAATACTGATAATAAGGTTATATACACCACAGAAGTGGCTTCAAAGCTTAATTTT" +
                          "AAGTTGTGTTGTTTGGCCTTTAAGAATGCTTTACAGACGTTTAATTGGAGTGTTGTGTAC" +
                          "AGGGGCTTCTTTCTAGTGGCAACAGTCTTTTTATTATGG-TTTAACTTTTTGTATGCCAA" +
@@ -430,7 +430,7 @@ public abstract class TestContigFileParser {
     
     PlacedRead CVGWB47T06D1122735FMB = new DefaultPlacedRead(
             new DefaultRead("CVGWB47T06D1122735FMB",
-                 new ReferenceEncodedNucleotideSequence(contigConsensus,
+                 new DefaultReferenceEncodedNucleotideSequence(contigConsensus,
                          "GTACCTATGTAGAAAATAACGGTCACCCGAAATTAGATTGGCTAGACCTTGACCCGCAAT" +
                          "TGTGTAATTCAGGAA-GGATTTCCGCAAAGAGTGGTAACTCTCTCTTTAGGAGTTTCCAT" +
                          "TTTACTGATTTTTACAACTACACAGGAGAAGGCGACCAAATTATATTTTATGAAGGAGTT" +

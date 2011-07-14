@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 
 import org.jcvi.Range;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.ReferencedEncodedNucleotideSequence;
+import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.sequence.Read;
 import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.testUtil.TestUtil;
@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 public class TestDefaultPlacedRead {
 
-    Read<ReferencedEncodedNucleotideSequence> read;
+    Read<ReferenceEncodedNucleotideSequence> read;
     SequenceDirection dir = SequenceDirection.FORWARD;
     long start = 100;
     
@@ -56,7 +56,7 @@ public class TestDefaultPlacedRead {
         String id = "id";
         long length = 200L;
         Range validRange = Range.buildRange(start, length);
-        ReferencedEncodedNucleotideSequence glyphs = createMock(ReferencedEncodedNucleotideSequence.class);
+        ReferenceEncodedNucleotideSequence glyphs = createMock(ReferenceEncodedNucleotideSequence.class);
    
         Map<Integer,NucleotideGlyph> snpMap = new HashMap<Integer, NucleotideGlyph>();
         snpMap.put(Integer.valueOf(1), NucleotideGlyph.Adenine);
