@@ -5,7 +5,7 @@ import org.jcvi.glyph.aa.AminoAcid;
 import org.jcvi.glyph.aa.AminoAcidSequence;
 import org.jcvi.glyph.aa.DefaultAminoAcidEncodedGlyphs;
 
-public class DefaultAminoAcidEncodedSequenceFastaRecord extends AbstractAminoAcidSequenceFastaRecord {
+public class DefaultAminoAcidSequenceFastaRecord extends AbstractAminoAcidSequenceFastaRecord {
 
 /**
  * Default implementation of Amino Acid encoding for {@link FastaRecord} objects
@@ -13,7 +13,7 @@ public class DefaultAminoAcidEncodedSequenceFastaRecord extends AbstractAminoAci
  *
  */
 
-    public DefaultAminoAcidEncodedSequenceFastaRecord(String identifier, AminoAcidSequence glyphs){
+    public DefaultAminoAcidSequenceFastaRecord(String identifier, AminoAcidSequence glyphs){
     	super(identifier, AminoAcid.convertToString(glyphs.decode()));
     }
     
@@ -21,7 +21,7 @@ public class DefaultAminoAcidEncodedSequenceFastaRecord extends AbstractAminoAci
      * @param identifier
      * @param sequence
      */
-    public DefaultAminoAcidEncodedSequenceFastaRecord(int identifier, CharSequence sequence) {
+    public DefaultAminoAcidSequenceFastaRecord(int identifier, CharSequence sequence) {
         super(identifier, sequence);
     }
 
@@ -30,7 +30,7 @@ public class DefaultAminoAcidEncodedSequenceFastaRecord extends AbstractAminoAci
      * @param comments
      * @param sequence
      */
-    public DefaultAminoAcidEncodedSequenceFastaRecord(int identifier, String comments,
+    public DefaultAminoAcidSequenceFastaRecord(int identifier, String comments,
             CharSequence sequence) {
         super(identifier, comments, sequence);
     }
@@ -39,7 +39,7 @@ public class DefaultAminoAcidEncodedSequenceFastaRecord extends AbstractAminoAci
      * @param identifier
      * @param sequence
      */
-    public DefaultAminoAcidEncodedSequenceFastaRecord(String identifier, CharSequence sequence) {
+    public DefaultAminoAcidSequenceFastaRecord(String identifier, CharSequence sequence) {
         super(identifier, sequence);
     }
 
@@ -48,7 +48,7 @@ public class DefaultAminoAcidEncodedSequenceFastaRecord extends AbstractAminoAci
      * @param comments
      * @param sequence
      */
-    public DefaultAminoAcidEncodedSequenceFastaRecord(String identifier, String comments,
+    public DefaultAminoAcidSequenceFastaRecord(String identifier, String comments,
             CharSequence sequence) {
         super(identifier, comments, sequence);
     }

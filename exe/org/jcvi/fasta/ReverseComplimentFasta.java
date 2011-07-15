@@ -35,7 +35,7 @@ import org.jcvi.command.CommandLineUtils;
 import org.jcvi.fastX.fasta.FastaParser;
 import org.jcvi.fastX.fasta.FastaVisitor;
 import org.jcvi.fastX.fasta.seq.AbstractNucleotideFastaVisitor;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
@@ -80,7 +80,7 @@ public class ReverseComplimentFasta {
                     List<NucleotideGlyph> revcompliment =NucleotideGlyph.reverseCompliment(
                             fastaRecord.getValue().decode());
                     try {
-                        out.write(new DefaultNucleotideEncodedSequenceFastaRecord(
+                        out.write(new DefaultNucleotideSequenceFastaRecord(
                                 fastaRecord.getId(),
                                 fastaRecord.getComment(),
                                 revcompliment).toString().getBytes());

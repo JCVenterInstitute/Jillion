@@ -1,8 +1,5 @@
 package org.jcvi.fastX.fasta.aa;
 
-import java.util.zip.CRC32;
-import java.util.zip.Checksum;
-
 import org.jcvi.fastX.fasta.AbstractFastaRecord;
 import org.jcvi.fastX.fasta.FastaUtil;
 import org.jcvi.glyph.aa.AminoAcidSequence;
@@ -19,7 +16,6 @@ public abstract class AbstractAminoAcidSequenceFastaRecord extends AbstractFasta
 
     private final AminoAcidSequence sequence;
     private final int length;
-    private final long checksum;
     
     /**
      * Creates a new <code>PeptideSequenceFastaRecord</code>.
@@ -28,7 +24,6 @@ public abstract class AbstractAminoAcidSequenceFastaRecord extends AbstractFasta
     {
         super(identifier, comments);
         String nonWhiteSpaceSequence = sequence.toString().replaceAll("\\s+", "");
-        this.checksum = this.calculateCheckSum(nonWhiteSpaceSequence);
         this.sequence = encodeAminoAcids(nonWhiteSpaceSequence);
         this.length = nonWhiteSpaceSequence.length();
         
@@ -69,16 +64,4 @@ public abstract class AbstractAminoAcidSequenceFastaRecord extends AbstractFasta
         }
         return result;
 	}
-	
-    protected long calculateCheckSum(CharSequence data)
-    {
-        final Checksum checksummer = new CRC32();
-        for (int i = 0; i < data.length(); i++)
-        {
-            checksummer.update(data.charAt(i));
-        }
-        return checksummer.getValue();
-    }
-
-
 }

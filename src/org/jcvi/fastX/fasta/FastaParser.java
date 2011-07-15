@@ -24,6 +24,7 @@
 package org.jcvi.fastX.fasta;
 
 import java.io.BufferedInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -96,62 +97,131 @@ public final class FastaParser {
      * @throws NullPointerException if inputstream or visitor are null.
      */    
     public static void parseFasta(InputStream in, FastaVisitor visitor){
-       // Scanner scanner = new Scanner(in).useDelimiter("\n");
-    	if(in ==null){
-    		throw new NullPointerException("input stream can not be null");
-    	}
-    	TextLineParser parser;
-		try {
-			parser = new TextLineParser(new BufferedInputStream(in));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			throw new IllegalStateException("error reading file");
-			
-		}
-        visitor.visitFile();
-        String currentId=null;
-        String currentComment=null;
-        StringBuilder currentBody=null;
-        boolean keepParsing=true;
-        try{
-            while(keepParsing && parser.hasNextLine()){
-            	final String lineWithCR;
-				try {
-					lineWithCR = parser.nextLine();
-				} catch (IOException e) {
-					throw new IllegalStateException("error reading file");
-				}
-                visitor.visitLine(lineWithCR);
-                String lineWithoutCR = lineWithCR.substring(0, lineWithCR.length()-1);
-                if(lineWithCR.startsWith(">")){
-                    if(currentBody!=null){                        
-                        keepParsing = visitor.visitRecord(currentId, currentComment, currentBody.toString());
-                        currentBody = null;
-                    }                    
-                    keepParsing = visitor.visitDefline(lineWithoutCR);
-                    currentId = SequenceFastaRecordUtil.parseIdentifierFromIdLine(lineWithCR);
-                    currentComment = SequenceFastaRecordUtil.parseCommentFromIdLine(lineWithCR);
-                    
+    	
+    	
+    	try {
+    	    ParserState parserState = new ParserState(in);           
+            visitor.visitFile();
+            try{
+                while(!parserState.done()){
+                   parserState = SectionHandler.handleNextSection(parserState, visitor);
                 }
-                else{
-                    keepParsing = visitor.visitBodyLine(lineWithoutCR);
-                    if(currentBody ==null){
-                        currentBody= new StringBuilder();
-                    }
-                    currentBody.append(lineWithCR);
-                }
+                parserState.visitFinalRecord(visitor);
+            }finally{
+                IOUtil.closeAndIgnoreErrors(parserState);
             }
+            visitor.visitEndOfFile();
+        } catch (IOException e) {
+            throw new IllegalStateException("error reading file",e);
+        }
+    }
+    
+    private static class ParserState implements Closeable{
+        private boolean keepParsing;
+        private String currentId;
+        private String currentComment;
+        private StringBuilder currentBody;
+        private final TextLineParser parser;
+        private boolean done;
+        
+        ParserState(InputStream in) throws IOException{
+            if(in ==null){
+                throw new NullPointerException("input stream can not be null");
+            }
+            parser = new TextLineParser(new BufferedInputStream(in));
+        }
+        
+        public boolean done(){
+            return done;
+        }
+        
+        public String getNextLine() throws IOException{
+            String nextLine= parser.nextLine();
+            if(!parser.hasNextLine()){
+                done = true;
+            }
+            return nextLine;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void close() throws IOException {
+            parser.close();            
+        }
+        
+        public void visitFinalRecord(FastaVisitor visitor){
             if(keepParsing && currentBody!=null){
                 visitor.visitRecord(currentId, currentComment, currentBody.toString());
                 currentBody = null;
             }
         }
-        finally{
-            IOUtil.closeAndIgnoreErrors(parser);
-        }
-        visitor.visitEndOfFile();
+        
     }
     
-
+    private enum SectionHandler{
+        DEFLINE{
+            @Override
+            boolean canHandle(String line) {
+                return line.startsWith(">");
+            }
+            @Override
+            ParserState sectionSpecificHandle(String lineWithCR, ParserState parserState,FastaVisitor visitor){
+                
+                visitor.visitLine(lineWithCR);
+                String lineWithoutCR = lineWithCR.substring(0, lineWithCR.length()-1);
+                if(parserState.currentBody!=null){                        
+                    parserState.keepParsing = visitor.visitRecord(parserState.currentId, parserState.currentComment, parserState.currentBody.toString());
+                    parserState.currentBody = null;
+                }                    
+                parserState.keepParsing = visitor.visitDefline(lineWithoutCR);
+                parserState.currentId = SequenceFastaRecordUtil.parseIdentifierFromIdLine(lineWithCR);
+                parserState.currentComment = SequenceFastaRecordUtil.parseCommentFromIdLine(lineWithCR);
+            
+                return parserState;
+            }
+            
+        },
+        BODY{
+            @Override
+            boolean canHandle(String line) {
+                return true;
+            }
+            
+            @Override
+            ParserState sectionSpecificHandle(String lineWithCR, ParserState parserState,FastaVisitor visitor){
+                
+                visitor.visitLine(lineWithCR);
+                String lineWithoutCR = lineWithCR.substring(0, lineWithCR.length()-1);
+                
+                parserState.keepParsing = visitor.visitBodyLine(lineWithoutCR);
+                if(parserState.currentBody ==null){
+                    parserState.currentBody= new StringBuilder();
+                }
+                parserState.currentBody.append(lineWithCR);
+                
+                return parserState;
+            }
+            
+        };
+        
+        static ParserState handleNextSection(ParserState parserState,FastaVisitor visitor) throws IOException{
+            String line =parserState.getNextLine();
+            for(SectionHandler handler : values()){
+                if(handler.canHandle(line)){
+                    return handler.sectionSpecificHandle(line, parserState, visitor);
+                    
+                }
+            }
+            //should never happen since body will accept anything
+            throw new IllegalStateException("could not find handler for line " + line);
+        }
+        
+        abstract boolean canHandle(String line);
+        abstract ParserState sectionSpecificHandle(String lineWithCR, ParserState parserState,FastaVisitor visitor);
+        
+        
+    }
     
 }

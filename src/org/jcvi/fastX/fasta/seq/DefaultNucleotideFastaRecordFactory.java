@@ -36,7 +36,7 @@ public class DefaultNucleotideFastaRecordFactory implements NucleotideFastaRecor
     @Override
     public NucleotideSequenceFastaRecord createFastaRecord(
             String id, String comments, String recordBody) {
-        return new DefaultNucleotideEncodedSequenceFastaRecord(id,comments, recordBody.replace("\\s+", ""));
+        return new DefaultNucleotideSequenceFastaRecord(id,comments, recordBody.replace("\\s+", ""));
     }
 
     @Override

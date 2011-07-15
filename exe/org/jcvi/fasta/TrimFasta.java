@@ -38,7 +38,7 @@ import org.jcvi.command.CommandLineUtils;
 import org.jcvi.fastX.fasta.FastaParser;
 import org.jcvi.fastX.fasta.FastaVisitor;
 import org.jcvi.fastX.fasta.seq.AbstractNucleotideFastaVisitor;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.io.IOUtil;
@@ -104,7 +104,7 @@ public class TrimFasta {
                                                     untrimmedLength -1 -(r==null?0:r));
                     
                     try {
-                        out.write(new DefaultNucleotideEncodedSequenceFastaRecord(
+                        out.write(new DefaultNucleotideSequenceFastaRecord(
                                 fastaRecord.getId(),
                                 fastaRecord.getComment(),
                                 basecalls.decode(trimRange))

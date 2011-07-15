@@ -55,7 +55,7 @@ import org.jcvi.assembly.util.TrimDataStoreUtil;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
 import org.jcvi.io.FileUtil;
 import org.jcvi.io.IOUtil;
@@ -243,7 +243,7 @@ public class Cas2Consed3 {
                      numberOfContigs++;
                      numberOfReads+= splitContig.getNumberOfReads();
                      consensusOut.print(
-                             new DefaultNucleotideEncodedSequenceFastaRecord(
+                             new DefaultNucleotideSequenceFastaRecord(
                                      splitContig.getId(), 
                                      splitContig.getConsensus().decodeUngapped())
                              .toFormattedString());
