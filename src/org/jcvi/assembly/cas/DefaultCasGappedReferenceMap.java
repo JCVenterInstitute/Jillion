@@ -125,6 +125,10 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
             for(long i=0; i<=maxNumberOfReferences; i++){
                 
                 String contigName = contigNameLookup.getLookupIdFor(i);
+                if(contigName ==null){
+                    throw new IllegalStateException(
+                            String.format("could not find reference name for reference #%s (max is %d)",i, maxNumberOfReferences));
+                }
                 try {
     
                     String gappedBasecalls = buildGappedReferenceAsString(contigName, gapsByReferenceId.get(i));
@@ -143,6 +147,10 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
            return "";
        }
         NucleotideSequence contigBasecalls = referenceNucleotideDataStore.get(contigName);
+        if(contigBasecalls==null){
+            //invalid contig name?
+            throw new IllegalStateException("could not find reference for "+ contigName);
+        }
         Iterator<Entry<Long, Insertion>> gapIterator = insertions.entrySet().iterator();
         Entry<Long, Insertion> nextGap;
         if(gapIterator.hasNext()){
