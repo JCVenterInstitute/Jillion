@@ -49,7 +49,7 @@ import org.jcvi.command.CommandLineUtils;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.IndexedAceFileDataStore;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
@@ -202,7 +202,7 @@ public class RecallAceConsensus {
                 }
                 final DefaultNucleotideSequence gappedRecalledConsensus = new DefaultNucleotideSequence(recalledConsensus);
                 if(fastaOut !=null){
-                    fastaOut.print(new DefaultNucleotideEncodedSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.decodeUngapped()));
+                    fastaOut.print(new DefaultNucleotideSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.decodeUngapped()));
                 }
                 DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contig.getId(), gappedRecalledConsensus);
                 for(AcePlacedRead read : contig.getPlacedReads()){

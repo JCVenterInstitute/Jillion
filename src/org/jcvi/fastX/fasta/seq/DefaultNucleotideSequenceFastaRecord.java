@@ -30,26 +30,26 @@ import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 
-public class DefaultNucleotideEncodedSequenceFastaRecord extends AbstractNucleotideSequenceFastaRecord{
+public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequenceFastaRecord{
 
    
-    public DefaultNucleotideEncodedSequenceFastaRecord(String identifier, Sequence<NucleotideGlyph> sequence){
+    public DefaultNucleotideSequenceFastaRecord(String identifier, Sequence<NucleotideGlyph> sequence){
         super(identifier, NucleotideGlyph.convertToString(sequence.decode()));
     }
-    public DefaultNucleotideEncodedSequenceFastaRecord(String identifier, String comments, Sequence<NucleotideGlyph> sequence){
+    public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, Sequence<NucleotideGlyph> sequence){
         super(identifier, comments,NucleotideGlyph.convertToString(sequence.decode()));
     }
-    public DefaultNucleotideEncodedSequenceFastaRecord(String identifier, String comments, List<NucleotideGlyph> sequence){
+    public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, List<NucleotideGlyph> sequence){
         super(identifier, comments,NucleotideGlyph.convertToString(sequence));
     }
-    public DefaultNucleotideEncodedSequenceFastaRecord(String identifier,  List<NucleotideGlyph> sequence){
+    public DefaultNucleotideSequenceFastaRecord(String identifier,  List<NucleotideGlyph> sequence){
         this(identifier, null,sequence);
     }
     /**
      * @param identifier
      * @param sequence
      */
-    public DefaultNucleotideEncodedSequenceFastaRecord(int identifier, CharSequence sequence) {
+    public DefaultNucleotideSequenceFastaRecord(int identifier, CharSequence sequence) {
         super(identifier, sequence);
     }
 
@@ -58,7 +58,7 @@ public class DefaultNucleotideEncodedSequenceFastaRecord extends AbstractNucleot
      * @param comments
      * @param sequence
      */
-    public DefaultNucleotideEncodedSequenceFastaRecord(int identifier, String comments,
+    public DefaultNucleotideSequenceFastaRecord(int identifier, String comments,
             CharSequence sequence) {
         super(identifier, comments, sequence);
     }
@@ -67,7 +67,7 @@ public class DefaultNucleotideEncodedSequenceFastaRecord extends AbstractNucleot
      * @param identifier
      * @param sequence
      */
-    public DefaultNucleotideEncodedSequenceFastaRecord(String identifier, CharSequence sequence) {
+    public DefaultNucleotideSequenceFastaRecord(String identifier, CharSequence sequence) {
         super(identifier, sequence);
     }
 
@@ -76,7 +76,7 @@ public class DefaultNucleotideEncodedSequenceFastaRecord extends AbstractNucleot
      * @param comments
      * @param sequence
      */
-    public DefaultNucleotideEncodedSequenceFastaRecord(String identifier, String comments,
+    public DefaultNucleotideSequenceFastaRecord(String identifier, String comments,
             CharSequence sequence) {
         super(identifier, comments, sequence);
     }

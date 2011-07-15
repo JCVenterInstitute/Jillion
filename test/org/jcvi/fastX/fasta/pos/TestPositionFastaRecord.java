@@ -29,7 +29,7 @@ import static org.easymock.EasyMock.createMock;
 import java.util.List;
 
 import org.jcvi.fastX.fasta.pos.DefaultPositionFastaRecord;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.glyph.EncodedSequence;
 import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.GlyphCodec;
@@ -119,7 +119,7 @@ public class TestPositionFastaRecord {
     }
     @Test
     public void notEqualsNotAQualityFasta(){
-        assertFalse(sut.equals(createMock(DefaultNucleotideEncodedSequenceFastaRecord.class)));
+        assertFalse(sut.equals(createMock(DefaultNucleotideSequenceFastaRecord.class)));
     }
     @Test
     public void equalsDifferentComment(){

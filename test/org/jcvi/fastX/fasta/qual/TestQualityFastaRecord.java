@@ -24,7 +24,7 @@
 package org.jcvi.fastX.fasta.qual;
 
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaRecord;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
@@ -93,7 +93,7 @@ public class TestQualityFastaRecord {
     }
     @Test
     public void notEqualsNotAQualityFasta(){
-        assertFalse(sut.equals(createMock(DefaultNucleotideEncodedSequenceFastaRecord.class)));
+        assertFalse(sut.equals(createMock(DefaultNucleotideSequenceFastaRecord.class)));
     }
     @Test
     public void equalsDifferentComment(){

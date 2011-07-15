@@ -45,7 +45,7 @@ import org.jcvi.fastX.fasta.FastaRecord;
 import org.jcvi.fastX.fasta.FastaVisitor;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecord;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecordUtil;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.fastX.fastq.DefaultFastQRecord;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
@@ -83,7 +83,7 @@ public class SortedFasta2Fastq {
      * This is our end of file token which tell us we are
      * done parsing by the time we get to this object in our seq queue.
      */
-    private static final DefaultNucleotideEncodedSequenceFastaRecord SEQ_END_OF_FILE = new DefaultNucleotideEncodedSequenceFastaRecord("NULL", null, "A");
+    private static final DefaultNucleotideSequenceFastaRecord SEQ_END_OF_FILE = new DefaultNucleotideSequenceFastaRecord("NULL", null, "A");
     
     private static final int DEFAULT_QUEUE_SIZE = 1000;
     
@@ -181,7 +181,7 @@ public class SortedFasta2Fastq {
                 public boolean visitRecord(String id, String comment, String entireBody) {
                     if(getFilter().accept(id)){
                         try {
-                            getQueue().put(new DefaultNucleotideEncodedSequenceFastaRecord(id, comment, entireBody));
+                            getQueue().put(new DefaultNucleotideSequenceFastaRecord(id, comment, entireBody));
                         } catch (InterruptedException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();

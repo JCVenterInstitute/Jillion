@@ -41,7 +41,7 @@ import org.jcvi.fastX.FastXFilter;
 import org.jcvi.fastX.IncludeFastXIdFilter;
 import org.jcvi.fastX.NullFastXFilter;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaRecord;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.fastX.fastq.AbstractFilteredFastQFileVisitor;
 import org.jcvi.fastX.fastq.FastQFileParser;
 import org.jcvi.fastX.fastq.FastQQualityCodec;
@@ -93,7 +93,7 @@ public class Fastq2Fasta extends AbstractFilteredFastQFileVisitor {
          }
          if(seqOut!=null){
              try {
-                 seqOut.write(new DefaultNucleotideEncodedSequenceFastaRecord(
+                 seqOut.write(new DefaultNucleotideSequenceFastaRecord(
                          id,fastQ.getComment(),fastQ.getNucleotides()) 
                          .toString().getBytes());
              } catch (IOException e) {
