@@ -26,9 +26,9 @@ package org.jcvi.assembly;
 import java.util.Map;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.read.Read;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.sequence.Read;
-import org.jcvi.sequence.SequenceDirection;
 
 public interface PlacedRead extends Read, Placed<PlacedRead>{
 

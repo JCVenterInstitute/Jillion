@@ -25,6 +25,9 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import java.io.File;
 
+import org.jcvi.common.core.seq.read.trace.pyro.sff.LargeSffFileDataStore;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDataStore;
+
 
 public class TestLargeSffFileDataStore extends AbstractTestSffFileDataStore{
 

@@ -33,19 +33,19 @@ import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.trim.DefaultPrimerTrimmer;
 import org.jcvi.assembly.trim.PrimerTrimmer;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileVisitor;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadData;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffWriter;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 import org.jcvi.io.IOUtil;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.AbstractSffFileVisitor;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFCommonHeader;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFReadHeader;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFCommonHeader;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadData;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadHeader;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SffParser;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SffWriter;
 
 /**
  * @author dkatzel

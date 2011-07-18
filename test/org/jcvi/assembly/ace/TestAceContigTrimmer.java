@@ -26,7 +26,7 @@ import org.jcvi.assembly.AssemblyTestUtil;
 import org.jcvi.assembly.trim.MinimumEndCoverageTrimmer;
 import org.jcvi.assembly.trim.PlacedReadTrimmer;
 import org.jcvi.assembly.trim.TrimmerException;
-import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.junit.Before;
 import org.junit.Test;
 

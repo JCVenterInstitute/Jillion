@@ -24,10 +24,10 @@ import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jcvi.assembly.ace.PhdInfo;
-import org.jcvi.trace.sanger.FileSangerTrace;
-import org.jcvi.trace.sanger.phd.DefaultPhd;
-import org.jcvi.trace.sanger.phd.Phd;
-import org.jcvi.trace.sanger.phd.PhdUtil;
+import org.jcvi.common.core.seq.read.trace.sanger.FileSangerTrace;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdUtil;
 import org.jcvi.util.CloseableIterator;
 import org.joda.time.DateTime;
 

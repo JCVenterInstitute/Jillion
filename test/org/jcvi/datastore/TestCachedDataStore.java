@@ -25,8 +25,8 @@ package org.jcvi.datastore;
 
 import java.io.IOException;
 
-import org.jcvi.trace.TraceDataStore;
-import org.jcvi.trace.sanger.SangerTrace;
+import org.jcvi.common.core.seq.read.trace.TraceDataStore;
+import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
 import org.junit.Before;
 import org.junit.Test;
 

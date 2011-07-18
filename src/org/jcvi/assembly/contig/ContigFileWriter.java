@@ -35,10 +35,10 @@ import java.util.TreeSet;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.sequence.SequenceDirection;
 
 public class ContigFileWriter implements Closeable{
     private static final ContigFormatReadSorter READ_SORTER = new ContigFormatReadSorter();

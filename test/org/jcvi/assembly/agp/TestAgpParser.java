@@ -26,11 +26,11 @@ package org.jcvi.assembly.agp;
 import java.io.IOException;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.datastore.DefaultAgpScaffoldDataStore;
 import org.jcvi.assembly.DefaultScaffold;
 import org.jcvi.assembly.Scaffold;
 import org.jcvi.io.fileServer.ResourceFileServer;
-import org.jcvi.sequence.SequenceDirection;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAgpParser {

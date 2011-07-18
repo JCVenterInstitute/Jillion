@@ -26,7 +26,7 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

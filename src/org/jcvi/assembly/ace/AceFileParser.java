@@ -34,9 +34,9 @@ import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.TextLineParser;
-import org.jcvi.sequence.SequenceDirection;
 /**
  * {@code AceFileParser} contains methods for parsing
  * ACE formatted files.

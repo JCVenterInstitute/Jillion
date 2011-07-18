@@ -25,6 +25,9 @@ package org.jcvi.trace.frg;
 
 import java.io.File;
 
+import org.jcvi.common.core.seq.read.trace.frg.AbstractFragmentDataStore;
+import org.jcvi.common.core.seq.read.trace.frg.DefaultFragmentDataStore;
+
 public class TestDefaultFragmentDataStore extends AbstractTestFragmentDataStore{
 
     @Override

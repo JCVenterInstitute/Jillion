@@ -2,8 +2,8 @@ package org.jcvi.primerDesign.results;
 
 import org.junit.Test;
 import org.jcvi.Range;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideEncodedSequenceFastaRecord;
-import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
 
 import org.jcvi.primerDesign.CollectionComparison;
 
@@ -58,7 +58,7 @@ public class TestPrimerDesignerResultParser {
                 .setDesignGroupID(designGroupID)
                 .setRange(range)
                 .setOrientation(orientation)
-                .setPrimerSequence(new DefaultNucleotideEncodedSequenceFastaRecord("temp",primerSequence).getValue())
+                .setPrimerSequence(new DefaultNucleotideSequenceFastaRecord("temp",primerSequence).getValue())
                 .build();
     }
 }

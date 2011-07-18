@@ -27,11 +27,11 @@ import static org.junit.Assert.*;
 
 import org.jcvi.assembly.Location;
 import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.sequence.Read;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 public class TestQualityDifference {

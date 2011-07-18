@@ -25,12 +25,12 @@ import java.util.Map;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.util.TrimDataStore;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadData;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFCommonHeader;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadData;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadHeader;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SffFileVisitor;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
 

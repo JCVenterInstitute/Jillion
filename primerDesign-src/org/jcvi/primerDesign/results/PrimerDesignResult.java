@@ -1,7 +1,7 @@
 package org.jcvi.primerDesign.results;
 
-import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 
 import java.io.File;

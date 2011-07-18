@@ -25,6 +25,8 @@ package org.jcvi.trace;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jcvi.common.core.seq.read.trace.MatedTraceIdGenerator;
 /**
  * 
  * @author dkatzel

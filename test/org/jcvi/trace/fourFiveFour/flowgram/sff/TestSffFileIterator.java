@@ -22,6 +22,7 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileIterator;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;

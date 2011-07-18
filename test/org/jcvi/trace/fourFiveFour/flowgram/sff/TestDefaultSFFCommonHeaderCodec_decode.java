@@ -27,10 +27,10 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
 import org.jcvi.testUtil.EasyMockUtil;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFCommonHeader;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFDecoderException;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;

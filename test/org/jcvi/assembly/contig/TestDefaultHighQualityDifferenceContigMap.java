@@ -37,6 +37,7 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultLocation;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.nuc.NucleotideSequence;
@@ -44,7 +45,6 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.phredQuality.QualitySequence;
-import org.jcvi.sequence.SequenceDirection;
 import org.junit.Before;
 import org.junit.Test;
 

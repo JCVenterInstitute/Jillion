@@ -24,9 +24,9 @@
 package org.jcvi.assembly.slice;
 
 import org.jcvi.CommonUtil;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.sequence.SequenceDirection;
 
 public class DefaultSliceElement implements SliceElement {
     private final NucleotideGlyph base;

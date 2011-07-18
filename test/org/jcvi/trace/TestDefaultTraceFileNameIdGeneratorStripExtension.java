@@ -23,6 +23,7 @@
  */
 package org.jcvi.trace;
 
+import org.jcvi.common.core.seq.read.trace.DefaultTraceFileNameIdGenerator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultTraceFileNameIdGeneratorStripExtension {

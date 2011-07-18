@@ -24,6 +24,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+
+import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificalPhdDataStore;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultAceFileDataStore;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
@@ -33,8 +36,6 @@ import org.jcvi.fastX.fasta.seq.NucleotideFastaRecordDataStoreAdatper;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
-import org.jcvi.trace.sanger.phd.ArtificalPhdDataStore;
-import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import static org.junit.Assert.*;

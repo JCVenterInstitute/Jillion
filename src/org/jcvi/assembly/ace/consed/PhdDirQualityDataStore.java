@@ -25,10 +25,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.commons.io.FilenameUtils;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhdFileDataStore;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.trace.sanger.phd.DefaultPhdFileDataStore;
-import org.jcvi.trace.sanger.phd.Phd;
-import org.jcvi.trace.sanger.phd.PhdDataStore;
 import org.jcvi.util.CloseableIterator;
 
 /**

@@ -19,6 +19,7 @@
 
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffNameUtil;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import static org.junit.Assert.*;

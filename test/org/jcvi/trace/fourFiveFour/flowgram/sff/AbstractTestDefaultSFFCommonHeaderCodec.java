@@ -25,8 +25,9 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import java.math.BigInteger;
 
-import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFCommonHeader;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFCommonHeaderCodec;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFCommonHeaderCodec;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
 
 public class AbstractTestDefaultSFFCommonHeaderCodec {
 

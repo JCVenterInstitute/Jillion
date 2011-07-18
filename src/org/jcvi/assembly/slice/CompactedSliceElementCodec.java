@@ -21,10 +21,10 @@ package org.jcvi.assembly.slice;
 
 import java.nio.ByteBuffer;
 
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.sequence.SequenceDirection;
 
 /**
  * {@code CompactedSliceElementCodec} is a codec that 

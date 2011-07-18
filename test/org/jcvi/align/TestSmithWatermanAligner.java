@@ -25,6 +25,10 @@
  */
 package org.jcvi.align;
 
+import org.jcvi.common.experimental.align.Aligner;
+import org.jcvi.common.experimental.align.Alignment;
+import org.jcvi.common.experimental.align.NucleotideSubstitutionMatrix;
+import org.jcvi.common.experimental.align.SmithWatermanAligner;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.junit.Assert;
 import org.junit.Before;
@@ -58,7 +62,7 @@ public class TestSmithWatermanAligner
         return new SmithWatermanAligner(matrix);
     }
     /**
-     * Test method for {@link org.jcvi.align.SmithWatermanAligner#alignSequence(java.lang.CharSequence, java.lang.CharSequence)}.
+     * Test method for {@link org.jcvi.common.experimental.align.SmithWatermanAligner#alignSequence(java.lang.CharSequence, java.lang.CharSequence)}.
      */
     @Test
     public void testAlignSequences_simple()
@@ -71,7 +75,7 @@ public class TestSmithWatermanAligner
     }
 
     /**
-     * Test method for {@link org.jcvi.align.SmithWatermanAligner#alignSequence(java.lang.CharSequence, java.lang.CharSequence)}.
+     * Test method for {@link org.jcvi.common.experimental.align.SmithWatermanAligner#alignSequence(java.lang.CharSequence, java.lang.CharSequence)}.
      */
     @Test
     public void testAlignSequences_self()
@@ -84,7 +88,7 @@ public class TestSmithWatermanAligner
     }
 
     /**
-     * Test method for {@link org.jcvi.align.SmithWatermanAligner#alignSequence(java.lang.CharSequence, java.lang.CharSequence)}.
+     * Test method for {@link org.jcvi.common.experimental.align.SmithWatermanAligner#alignSequence(java.lang.CharSequence, java.lang.CharSequence)}.
      */
     @Test
     public void testAlignSequences_queryExtendsAfter()
@@ -98,7 +102,7 @@ public class TestSmithWatermanAligner
     }
     
     /**
-     * Test method for {@link org.jcvi.align.SmithWatermanAligner#alignSequence(java.lang.CharSequence, java.lang.CharSequence)}.
+     * Test method for {@link org.jcvi.common.experimental.align.SmithWatermanAligner#alignSequence(java.lang.CharSequence, java.lang.CharSequence)}.
      */
     @Test
     public void testAlignSequences_real()

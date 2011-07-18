@@ -23,14 +23,14 @@
  */
 package org.jcvi.assembly.slice;
 
-import static org.jcvi.sequence.SequenceDirection.FORWARD;
+import static org.jcvi.common.core.seq.read.SequenceDirection.FORWARD;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.sequence.SequenceDirection;
 
 public final class TestSliceUtil {
     private TestSliceUtil(){}

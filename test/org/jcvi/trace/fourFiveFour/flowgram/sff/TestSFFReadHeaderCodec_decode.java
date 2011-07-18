@@ -28,9 +28,11 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
 import org.jcvi.testUtil.EasyMockUtil;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFDecoderException;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadHeader;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.jcvi.testUtil.EasyMockUtil.*;

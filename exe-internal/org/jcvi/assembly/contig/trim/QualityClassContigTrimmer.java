@@ -54,6 +54,10 @@ import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.seq.read.ReadTrimMap;
+import org.jcvi.common.core.seq.read.ReadTrimUtil;
+import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.seq.read.TrimType;
 import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.ContigDataStore;
 import org.jcvi.datastore.DataStoreException;
@@ -65,10 +69,6 @@ import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.qualClass.QualityClass;
-import org.jcvi.sequence.ReadTrimMap;
-import org.jcvi.sequence.ReadTrimUtil;
-import org.jcvi.sequence.SequenceDirection;
-import org.jcvi.sequence.TrimType;
 
 public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>{
 

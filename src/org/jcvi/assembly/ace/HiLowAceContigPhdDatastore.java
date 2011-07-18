@@ -29,6 +29,11 @@ import java.util.Map;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
+import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStoreAdapter;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
@@ -38,11 +43,6 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualitySequence;
-import org.jcvi.sequence.SequenceDirection;
-import org.jcvi.trace.sanger.phd.ArtificialPhd;
-import org.jcvi.trace.sanger.phd.Phd;
-import org.jcvi.trace.sanger.phd.PhdDataStore;
-import org.jcvi.trace.sanger.phd.PhdDataStoreAdapter;
 import org.jcvi.util.CloseableIterator;
 
 /**

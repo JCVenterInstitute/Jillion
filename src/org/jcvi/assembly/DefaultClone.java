@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jcvi.sequence.Read;
+import org.jcvi.common.core.seq.read.Read;
 
 public class DefaultClone<T extends Read> implements Clone {
 

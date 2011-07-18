@@ -25,8 +25,8 @@ package org.jcvi.assembly.contig;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.Contig;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.io.TextFileVisitor;
-import org.jcvi.sequence.SequenceDirection;
 /**
  * {@code ContigFileVisitor} is a {@link TextFileVisitor}
  * that visits files that contain {@link Contig} data.

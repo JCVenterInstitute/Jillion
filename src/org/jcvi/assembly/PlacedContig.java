@@ -24,7 +24,7 @@
 package org.jcvi.assembly;
 
 import org.jcvi.Range;
-import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 
 public interface PlacedContig extends Placed<PlacedContig> {
 

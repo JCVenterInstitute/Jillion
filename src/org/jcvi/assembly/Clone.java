@@ -25,7 +25,7 @@ package org.jcvi.assembly;
 
 import java.util.Set;
 
-import org.jcvi.sequence.Read;
+import org.jcvi.common.core.seq.read.Read;
 
 public interface Clone<T extends Read> {
 
