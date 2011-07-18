@@ -31,15 +31,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.seq.read.trace.sanger.SangerTraceCodec;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.sequence.SequenceDirection;
-import org.jcvi.trace.sanger.SangerTraceCodec;
-import org.jcvi.trace.sanger.phd.DefaultPhd;
-import org.jcvi.trace.sanger.phd.Phd;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
 

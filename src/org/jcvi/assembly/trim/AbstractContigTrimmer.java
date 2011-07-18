@@ -29,10 +29,10 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.sequence.SequenceDirection;
 
 /**
  * {@code AbstractContigTrimmer} is an abstract implementation

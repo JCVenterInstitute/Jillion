@@ -26,6 +26,8 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 import java.io.File;
 import java.util.Iterator;
 
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.Before;
 import org.junit.Assert;
 import org.jcvi.Range;
-import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 
 import static org.junit.Assert.assertEquals;
 

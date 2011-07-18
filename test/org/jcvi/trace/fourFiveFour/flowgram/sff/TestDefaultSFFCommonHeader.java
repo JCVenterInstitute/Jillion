@@ -25,8 +25,8 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import java.math.BigInteger;
 
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFCommonHeader;
 import org.jcvi.testUtil.TestUtil;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFCommonHeader;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultSFFCommonHeader {

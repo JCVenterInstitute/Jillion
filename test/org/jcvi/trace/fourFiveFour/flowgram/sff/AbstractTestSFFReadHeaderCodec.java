@@ -25,9 +25,9 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFReadHeader;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSFFReadHeaderCodec;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadHeaderCodec;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
 
 public class AbstractTestSFFReadHeaderCodec {
     protected int numberOfBases=100;

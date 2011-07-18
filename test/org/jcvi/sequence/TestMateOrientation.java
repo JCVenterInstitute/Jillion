@@ -23,6 +23,7 @@
  */
 package org.jcvi.sequence;
 
+import org.jcvi.common.core.seq.read.MateOrientation;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestMateOrientation {

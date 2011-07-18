@@ -38,17 +38,20 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.seq.read.DefaultLibrary;
+import org.jcvi.common.core.seq.read.Distance;
+import org.jcvi.common.core.seq.read.Library;
+import org.jcvi.common.core.seq.read.MateOrientation;
+import org.jcvi.common.core.seq.read.trace.TraceDataStore;
+import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
+import org.jcvi.common.core.seq.read.trace.frg.DefaultFragment;
+import org.jcvi.common.core.seq.read.trace.frg.Fragment;
+import org.jcvi.common.core.seq.read.trace.frg.Frg2Writer;
+import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
+import org.jcvi.common.core.seq.read.trace.sanger.SangerTraceParser;
+import org.jcvi.common.core.seq.read.trace.sanger.SingleSangerTraceFileDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;
-import org.jcvi.sequence.DefaultLibrary;
-import org.jcvi.sequence.Distance;
-import org.jcvi.sequence.Library;
-import org.jcvi.sequence.MateOrientation;
-import org.jcvi.trace.TraceDataStore;
-import org.jcvi.trace.TraceDecoderException;
-import org.jcvi.trace.sanger.SangerTrace;
-import org.jcvi.trace.sanger.SangerTraceParser;
-import org.jcvi.trace.sanger.SingleSangerTraceFileDataStore;
 
 public class UnmatedTraceToFragConverter {
 

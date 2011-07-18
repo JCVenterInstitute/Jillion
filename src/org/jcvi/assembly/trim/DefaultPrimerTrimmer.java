@@ -27,12 +27,12 @@ import java.util.List;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.align.Aligner;
-import org.jcvi.align.Alignment;
-import org.jcvi.align.NucleotideSubstitutionMatrix;
-import org.jcvi.align.SequenceAlignment;
-import org.jcvi.align.SmithWatermanAligner;
 import org.jcvi.assembly.AssemblyUtil;
+import org.jcvi.common.experimental.align.Aligner;
+import org.jcvi.common.experimental.align.Alignment;
+import org.jcvi.common.experimental.align.NucleotideSubstitutionMatrix;
+import org.jcvi.common.experimental.align.SequenceAlignment;
+import org.jcvi.common.experimental.align.SmithWatermanAligner;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideDataStore;
 import org.jcvi.glyph.nuc.NucleotideSequence;

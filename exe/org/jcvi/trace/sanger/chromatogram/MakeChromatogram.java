@@ -33,6 +33,14 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.seq.read.Peaks;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramUtil;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramWriter;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFCodecs;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.IOLibLikeZTRChromatogramWriter;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.fastX.fasta.qual.QualityFastaDataStore;
@@ -45,9 +53,6 @@ import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.io.IOUtil;
-import org.jcvi.sequence.Peaks;
-import org.jcvi.trace.sanger.chromatogram.scf.SCFCodecs;
-import org.jcvi.trace.sanger.chromatogram.ztr.IOLibLikeZTRChromatogramWriter;
 
 /**
  * @author dkatzel

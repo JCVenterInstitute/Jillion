@@ -24,7 +24,7 @@
 package org.jcvi.assembly.ace;
 
 import org.jcvi.Range;
-import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 /**
  * {@code AbstractAceContigBuilder} is an abstract
  * implementation of {@link AceFileVisitor}

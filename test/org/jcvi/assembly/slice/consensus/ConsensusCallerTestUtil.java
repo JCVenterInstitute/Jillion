@@ -23,8 +23,6 @@
  */
 package org.jcvi.assembly.slice.consensus;
 
-import static org.jcvi.sequence.SequenceDirection.FORWARD;
-import static org.jcvi.sequence.SequenceDirection.REVERSE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +38,8 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.util.MapValueComparator;
 
 import static org.jcvi.assembly.slice.TestSliceUtil.*;
+import static org.jcvi.common.core.seq.read.SequenceDirection.FORWARD;
+import static org.jcvi.common.core.seq.read.SequenceDirection.REVERSE;
 public final class ConsensusCallerTestUtil {
 
     

@@ -28,13 +28,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFFlowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.testUtil.TestUtil;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFFlowgram;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
 import org.junit.Before;
 import org.junit.Test;
 

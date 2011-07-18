@@ -27,12 +27,12 @@ import java.util.Date;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.contig.AbstractContigFileVisitor;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.FastXRecord;
 import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.Glyph;
-import org.jcvi.sequence.SequenceDirection;
 
 public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractContigFileVisitor{
 

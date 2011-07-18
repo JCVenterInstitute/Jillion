@@ -21,7 +21,10 @@ package org.jcvi.plate;
 
 import java.util.NoSuchElementException;
 
-import org.jcvi.plate.Well.IndexOrder;
+import org.jcvi.common.core.seq.plate.NextWellIterator;
+import org.jcvi.common.core.seq.plate.PlateFormat;
+import org.jcvi.common.core.seq.plate.Well;
+import org.jcvi.common.core.seq.plate.Well.IndexOrder;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

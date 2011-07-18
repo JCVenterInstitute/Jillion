@@ -31,6 +31,10 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramFile;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramParser;
 import org.jcvi.fastX.fasta.pos.DefaultPositionFastaRecord;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
@@ -40,7 +44,6 @@ import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.jcvi.io.idReader.DefaultFileIdReader;
 import org.jcvi.io.idReader.IdReader;
 import org.jcvi.io.idReader.StringIdParser;
-import org.jcvi.trace.TraceDecoderException;
 
 /**
  * {@code Chromatogram2fasta} is a program that will convert a list 

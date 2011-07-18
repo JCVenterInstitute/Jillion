@@ -26,6 +26,10 @@ package org.jcvi.fastX.fasta.qual;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.QualitySffDataStore;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
@@ -33,10 +37,6 @@ import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
-import org.jcvi.trace.TraceDecoderException;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.DefaultSffFileDataStore;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.QualitySffDataStore;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SffParser;
 import org.junit.Before;
 import org.junit.Test;
 

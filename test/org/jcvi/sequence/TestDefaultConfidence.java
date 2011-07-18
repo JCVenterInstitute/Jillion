@@ -26,8 +26,8 @@ import static org.junit.Assert.*;
 
 import java.nio.ByteBuffer;
 
-import org.jcvi.sequence.Confidence;
-import org.jcvi.sequence.DefaultConfidence;
+import org.jcvi.common.core.seq.read.Confidence;
+import org.jcvi.common.core.seq.read.DefaultConfidence;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 public class TestDefaultConfidence {

@@ -27,6 +27,11 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.read.Distance;
+import org.jcvi.common.core.seq.read.MateOrientation;
+import org.jcvi.common.core.seq.read.trace.frg.Frg2Parser;
+import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor;
+import org.jcvi.common.core.seq.read.trace.frg.FrgVisitorAction;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.encoder.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
@@ -34,8 +39,6 @@ import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
 import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
-import org.jcvi.sequence.Distance;
-import org.jcvi.sequence.MateOrientation;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.*;

@@ -26,7 +26,7 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultContig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.junit.Before;
 import org.junit.Test;
 

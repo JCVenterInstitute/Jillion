@@ -29,9 +29,9 @@ import java.util.Map;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.sequence.SequenceDirection;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -23,6 +23,7 @@
  */
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
+import org.jcvi.common.core.seq.read.trace.pyro.sff.TestSffWriter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

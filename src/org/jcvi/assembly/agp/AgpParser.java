@@ -33,8 +33,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.io.IOUtil;
-import org.jcvi.sequence.SequenceDirection;
 /**
  * 
  * @author dkatzel

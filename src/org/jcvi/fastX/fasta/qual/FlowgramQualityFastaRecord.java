@@ -23,7 +23,7 @@
  */
 package org.jcvi.fastX.fasta.qual;
 
-import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 
 public class FlowgramQualityFastaRecord extends DefaultQualityFastaRecord{
 

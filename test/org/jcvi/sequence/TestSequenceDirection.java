@@ -21,12 +21,13 @@ package org.jcvi.sequence;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import static org.junit.Assert.*;
-import static org.jcvi.sequence.SequenceDirection.*;
+import static org.jcvi.common.core.seq.read.SequenceDirection.*;
 @RunWith(Parameterized.class)
 public class TestSequenceDirection {
 

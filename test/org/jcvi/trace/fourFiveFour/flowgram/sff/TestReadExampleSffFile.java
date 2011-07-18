@@ -27,7 +27,7 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 
 import static org.junit.Assert.*;
 

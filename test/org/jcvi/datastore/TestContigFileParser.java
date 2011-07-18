@@ -32,13 +32,13 @@ import org.jcvi.assembly.AssemblyTestUtil;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultPlacedRead;
 import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.seq.read.DefaultRead;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.glyph.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.io.fileServer.ResourceFileServer;
-import org.jcvi.sequence.DefaultRead;
-import org.jcvi.sequence.SequenceDirection;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

@@ -20,7 +20,7 @@
 package org.jcvi.assembly.ace.consed;
 
 import org.jcvi.assembly.ace.PhdInfo;
-import org.jcvi.trace.sanger.phd.Phd;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 
 public interface PhdReadRecord {
 

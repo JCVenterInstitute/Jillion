@@ -25,8 +25,9 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
 import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.trace.fourFiveFour.flowgram.Flowgram;
 import org.junit.Before;
 import org.junit.Test;
 

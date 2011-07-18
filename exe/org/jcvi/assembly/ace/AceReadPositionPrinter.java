@@ -32,9 +32,9 @@ import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.sequence.SequenceDirection;
 
 /**
  * @author dkatzel

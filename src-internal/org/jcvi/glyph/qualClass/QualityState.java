@@ -27,7 +27,7 @@ import java.util.Map;
 
 import static org.jcvi.glyph.qualClass.QualityClass.*;
 
-import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 final class QualityState{
     
    

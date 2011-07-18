@@ -35,11 +35,11 @@ import org.jcvi.Range;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.DefaultAceContig;
+import org.jcvi.common.core.seq.read.trace.TraceDataStore;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.trace.TraceDataStore;
-import org.jcvi.trace.sanger.phd.Phd;
 
 public class NewblerMappedAceContigUtil {
 

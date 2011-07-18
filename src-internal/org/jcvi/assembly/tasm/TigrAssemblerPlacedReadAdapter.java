@@ -24,9 +24,9 @@ import java.util.Map;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.sequence.SequenceDirection;
 /**
  * {@code TigrAssemblerPlacedReadAdapter} is a Adapter which allows
  * a PlacedRead to conform to the TigrAssemblerPlacedRead interface.

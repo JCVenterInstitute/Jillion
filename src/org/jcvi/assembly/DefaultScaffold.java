@@ -33,10 +33,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.jcvi.Range;
-import org.jcvi.sequence.SequenceDirection;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 
 public class DefaultScaffold implements Scaffold {
     private final String id;

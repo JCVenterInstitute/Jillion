@@ -33,7 +33,7 @@ import org.jcvi.assembly.ace.PhdInfo;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.junit.Test;
 /**
  * @author dkatzel

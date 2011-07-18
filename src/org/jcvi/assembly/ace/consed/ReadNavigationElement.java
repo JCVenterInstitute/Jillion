@@ -22,8 +22,8 @@ package org.jcvi.assembly.ace.consed;
 import org.jcvi.Range;
 import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.sequence.SequenceDirection;
 
 /**
  * {@code ReadNavigationElement} is a {@link NavigationElement}

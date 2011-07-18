@@ -23,7 +23,7 @@
  */
 package org.jcvi.trace.sanger.traceArchive;
 
-import org.jcvi.trace.sanger.FileSangerTrace;
+import org.jcvi.common.core.seq.read.trace.sanger.FileSangerTrace;
 
 public interface TraceArchiveTrace extends FileSangerTrace {
 

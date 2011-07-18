@@ -25,6 +25,10 @@ package org.jcvi.sequence;
 
 import static org.junit.Assert.*;
 
+import org.jcvi.common.core.seq.read.DefaultLibrary;
+import org.jcvi.common.core.seq.read.Distance;
+import org.jcvi.common.core.seq.read.Library;
+import org.jcvi.common.core.seq.read.MateOrientation;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 

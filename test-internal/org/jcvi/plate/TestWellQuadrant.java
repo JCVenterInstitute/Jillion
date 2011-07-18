@@ -24,7 +24,9 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.jcvi.plate.Well.IndexOrder;
+import org.jcvi.common.core.seq.plate.PlateFormat;
+import org.jcvi.common.core.seq.plate.Well;
+import org.jcvi.common.core.seq.plate.Well.IndexOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

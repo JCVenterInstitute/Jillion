@@ -25,13 +25,13 @@ package org.jcvi.trace.sanger.traceArchive;
 
 import java.io.InputStream;
 
+import org.jcvi.common.core.seq.read.Peaks;
+import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
+import org.jcvi.common.core.seq.read.trace.sanger.SangerTraceCodec;
+import org.jcvi.common.core.seq.read.trace.sanger.SangerTraceParser;
 import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.io.IOUtil;
-import org.jcvi.sequence.Peaks;
-import org.jcvi.trace.sanger.SangerTrace;
-import org.jcvi.trace.sanger.SangerTraceCodec;
-import org.jcvi.trace.sanger.SangerTraceParser;
 
 public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
     

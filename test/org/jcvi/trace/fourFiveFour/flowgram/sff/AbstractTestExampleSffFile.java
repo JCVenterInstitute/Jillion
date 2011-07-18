@@ -29,6 +29,7 @@ import java.util.Arrays;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFFlowgram;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;

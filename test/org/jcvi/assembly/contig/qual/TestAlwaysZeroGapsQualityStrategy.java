@@ -24,11 +24,11 @@ import static org.junit.Assert.assertEquals;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultContig;
 import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.glyph.EncodedSequence;
 import org.jcvi.glyph.Sequence;
 import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.sequence.SequenceDirection;
 import org.junit.Test;
 
 /**

@@ -26,8 +26,8 @@ package org.jcvi.trace.fourFiveFour.flowgram.sff;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFReadData;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadData;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;

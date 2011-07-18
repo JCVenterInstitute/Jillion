@@ -41,13 +41,13 @@ import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceFileWriter;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.slice.SliceMapFactory;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdWriter;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.ReadWriteFileServer;
-import org.jcvi.trace.sanger.phd.Phd;
-import org.jcvi.trace.sanger.phd.PhdWriter;
 public class ConsedWriter {
    
     public static void writeConsedPackage(final AceAssembly aceAssembly,final SliceMapFactory sliceMapFactory,

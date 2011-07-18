@@ -23,9 +23,9 @@
  */
 package org.jcvi.trace;
 
+import org.jcvi.common.core.seq.read.trace.sanger.AllSangerTraceUnitTests;
 import org.jcvi.trace.fourFiveFour.All454UnitTests;
 import org.jcvi.trace.frg.AllFrgUnitTests;
-import org.jcvi.trace.sanger.AllSangerTraceUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
