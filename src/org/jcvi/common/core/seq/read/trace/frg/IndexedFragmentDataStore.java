@@ -34,13 +34,13 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.common.core.seq.read.Distance;
 import org.jcvi.common.core.seq.read.Library;
 import org.jcvi.common.core.seq.read.MateOrientation;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.DefaultIndexedFileRange;
 import org.jcvi.util.IndexedFileRange;

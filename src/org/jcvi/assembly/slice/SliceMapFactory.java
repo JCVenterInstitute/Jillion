@@ -26,7 +26,7 @@ package org.jcvi.assembly.slice;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.common.core.seq.qual.QualityDataStore;
 
 public interface SliceMapFactory<P extends PlacedRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> {
 

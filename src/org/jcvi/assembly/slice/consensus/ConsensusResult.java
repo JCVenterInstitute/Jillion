@@ -24,7 +24,7 @@
 package org.jcvi.assembly.slice.consensus;
 
 import org.jcvi.assembly.slice.Slice;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 /**
  * {@code ConsensusResult} is the base call
  * and quality value that best represents

@@ -20,7 +20,7 @@
 package org.jcvi.assembly;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 
 /**
  * @author dkatzel

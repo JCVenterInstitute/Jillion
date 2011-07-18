@@ -32,13 +32,13 @@ import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegion;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegionType;
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<DefaultCasPlacedRead>{
     private final String readId;

@@ -33,10 +33,10 @@ import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.util.LRUCache;
 
 public class LargeSliceMap extends AbstractSliceMap{

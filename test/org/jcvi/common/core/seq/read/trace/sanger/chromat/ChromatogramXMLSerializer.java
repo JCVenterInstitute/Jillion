@@ -35,6 +35,10 @@ import java.nio.ShortBuffer;
 import java.util.Map;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.ShortGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.Confidence;
 import org.jcvi.common.core.seq.read.DefaultConfidence;
 import org.jcvi.common.core.seq.read.Peaks;
@@ -49,10 +53,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.EncodedShortData;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 
 
 

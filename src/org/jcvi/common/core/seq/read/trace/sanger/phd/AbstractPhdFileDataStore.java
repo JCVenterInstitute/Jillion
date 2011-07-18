@@ -28,14 +28,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.jcvi.common.core.seq.ShortGlyph;
+import org.jcvi.common.core.seq.ShortGlyphFactory;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreFilter;
 import org.jcvi.datastore.DataStoreIterator;
 import org.jcvi.datastore.EmptyDataStoreFilter;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.num.ShortGlyphFactory;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.util.CloseableIterator;
 
 public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileVisitor{

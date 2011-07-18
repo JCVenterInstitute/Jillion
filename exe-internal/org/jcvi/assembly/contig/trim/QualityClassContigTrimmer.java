@@ -54,6 +54,12 @@ import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.seq.qual.QualityDataStore;
+import org.jcvi.common.core.seq.qual.fasta.LargeQualityFastaFileDataStore;
+import org.jcvi.common.core.seq.qual.fasta.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.read.ReadTrimMap;
 import org.jcvi.common.core.seq.read.ReadTrimUtil;
 import org.jcvi.common.core.seq.read.SequenceDirection;
@@ -62,12 +68,6 @@ import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.ContigDataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultContigFileDataStore;
-import org.jcvi.fastX.fasta.qual.LargeQualityFastaFileDataStore;
-import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.qualClass.QualityClass;
 
 public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>{

@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.jcvi.assembly.DefaultPlacedRead;
+import org.jcvi.common.core.seq.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
 
 /**
  * @author dkatzel

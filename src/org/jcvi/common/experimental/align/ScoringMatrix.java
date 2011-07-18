@@ -28,8 +28,8 @@ package org.jcvi.common.experimental.align;
 import java.io.PrintStream;
 import java.nio.IntBuffer;
 
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.Glyph;
+import org.jcvi.common.core.seq.Glyph;
+import org.jcvi.common.core.seq.Sequence;
 
 /**
  * A <code>ScoringMatrix</code> is a matrix of Smith-Waterman alignment scores with built-in

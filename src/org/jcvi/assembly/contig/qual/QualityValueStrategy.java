@@ -24,8 +24,8 @@
 package org.jcvi.assembly.contig.qual;
 
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.qual.PhredQuality;
 
 public interface QualityValueStrategy {
 

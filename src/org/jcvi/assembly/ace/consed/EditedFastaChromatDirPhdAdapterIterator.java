@@ -23,18 +23,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.ShortGlyph;
+import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.pos.fasta.LargePositionFastaRecordIterator;
+import org.jcvi.common.core.seq.pos.fasta.PositionFastaRecord;
+import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.seq.qual.fasta.LargeQualityFastaIterator;
+import org.jcvi.common.core.seq.qual.fasta.QualityFastaRecord;
 import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
-import org.jcvi.fastX.fasta.pos.LargePositionFastaRecordIterator;
-import org.jcvi.fastX.fasta.pos.PositionFastaRecord;
-import org.jcvi.fastX.fasta.qual.LargeQualityFastaIterator;
-import org.jcvi.fastX.fasta.qual.QualityFastaRecord;
-import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.util.CloseableIterator;
 import org.joda.time.DateTime;
 

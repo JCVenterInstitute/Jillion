@@ -23,7 +23,7 @@
  */
 package org.jcvi.assembly.slice.consensus;
 
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 
 public class DefaultConsensusResult implements ConsensusResult {
 

@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceMap;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 
 public class ConsensusDiffHistogramWriter implements
         BasecallCountHistogramWriter {

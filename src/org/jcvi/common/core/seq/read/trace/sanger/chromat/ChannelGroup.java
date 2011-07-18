@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 /**
  * {@code ChannelGroup} is a composite of all 4 {@link Channel}s
  * of a Sanger sequenced trace.

@@ -30,9 +30,9 @@ import java.util.List;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
+import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
 
 public class DefaultContigAssembly implements ContigAssembly{
 

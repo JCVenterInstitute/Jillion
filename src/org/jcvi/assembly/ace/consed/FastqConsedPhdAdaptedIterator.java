@@ -24,10 +24,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.jcvi.assembly.ace.PhdInfo;
+import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdUtil;
-import org.jcvi.fastX.fastq.FastQRecord;
 import org.jcvi.util.CloseableIterator;
 import org.joda.time.DateTime;
 

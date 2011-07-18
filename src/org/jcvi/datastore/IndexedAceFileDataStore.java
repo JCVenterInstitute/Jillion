@@ -32,7 +32,7 @@ import org.jcvi.assembly.ace.AbstractAceContigBuilder;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceContigDataStore;
 import org.jcvi.assembly.ace.AceFileParser;
-import org.jcvi.fastX.fasta.seq.LargeNucleotideFastaIterator;
+import org.jcvi.common.core.seq.nuc.fasta.LargeNucleotideFastaIterator;
 import org.jcvi.io.IOUtil;
 import org.jcvi.util.AbstractBlockingCloseableIterator;
 import org.jcvi.util.CloseableIterator;

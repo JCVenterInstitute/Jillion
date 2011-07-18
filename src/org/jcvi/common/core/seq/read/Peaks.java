@@ -27,11 +27,11 @@ import java.nio.ShortBuffer;
 import java.util.List;
 
 import org.jcvi.CommonUtil;
-import org.jcvi.glyph.EncodedSequence;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.num.DefaultShortGlyphCodec;
-import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.num.ShortGlyphFactory;
+import org.jcvi.common.core.seq.DefaultShortGlyphCodec;
+import org.jcvi.common.core.seq.EncodedSequence;
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.ShortGlyph;
+import org.jcvi.common.core.seq.ShortGlyphFactory;
 
 
 /**

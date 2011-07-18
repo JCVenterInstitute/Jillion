@@ -27,12 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
 
 public class ArtificalNucleotideDataStoreFromContig extends AbstractArtificialDataStoreFromContig<NucleotideSequence> implements NucleotideDataStore{
 

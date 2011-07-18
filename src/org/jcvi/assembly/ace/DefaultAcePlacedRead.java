@@ -25,13 +25,13 @@ package org.jcvi.assembly.ace;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.DefaultPlacedRead;
+import org.jcvi.common.core.seq.nuc.DefaultReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.glyph.nuc.DefaultReferenceEncodedNucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
 
 public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlacedRead {
     private final PhdInfo phdInfo;

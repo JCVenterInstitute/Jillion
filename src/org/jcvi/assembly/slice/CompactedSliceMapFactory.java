@@ -23,8 +23,8 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
 
 /**
  * @author dkatzel

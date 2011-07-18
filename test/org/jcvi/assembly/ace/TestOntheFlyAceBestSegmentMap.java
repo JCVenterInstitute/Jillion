@@ -24,7 +24,7 @@
 package org.jcvi.assembly.ace;
 
 import org.jcvi.assembly.slice.SliceMap;
-import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 
 
 public class TestOntheFlyAceBestSegmentMap extends AbstractTestAceBestSegmentMap{

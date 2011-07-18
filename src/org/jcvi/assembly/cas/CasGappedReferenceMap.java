@@ -23,7 +23,7 @@
  */
 package org.jcvi.assembly.cas;
 
-import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 
 public interface CasGappedReferenceMap {
 

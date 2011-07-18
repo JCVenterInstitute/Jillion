@@ -26,9 +26,9 @@ package org.jcvi.assembly;
 import java.io.File;
 import java.util.List;
 
+import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
+import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
 /**
  * {@code Assembly} is an object which contains all 
  * the input and output data from an assembler invocation.

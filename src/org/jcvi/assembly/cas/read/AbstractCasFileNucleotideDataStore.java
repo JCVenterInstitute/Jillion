@@ -30,11 +30,11 @@ import java.util.List;
 import org.jcvi.assembly.cas.AbstractOnePassCasFileVisitor;
 import org.jcvi.assembly.cas.CasFileInfo;
 import org.jcvi.assembly.cas.CasMatch;
+import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.MultipleDataStoreWrapper;
-import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.util.CloseableIterator;
 
 public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePassCasFileVisitor implements CasNucleotideDataStore {

@@ -20,9 +20,9 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 import java.util.Map;
 
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.common.core.seq.read.Peaks;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.phredQuality.QualitySequence;
 
 /**
  * {@code BasicChromatogramFile} is a Chromatogram implementation

@@ -45,8 +45,8 @@ import org.jcvi.assembly.ace.DefaultPhdInfo;
 import org.jcvi.assembly.ace.PhdInfo;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.joda.time.DateTime;
 /**
  * This class contains utility scripts for

@@ -36,9 +36,9 @@ import org.jcvi.assembly.slice.DefaultSliceMap;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceMap;
 import org.jcvi.assembly.slice.TestSliceUtil;
+import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.junit.Test;
 
 public abstract class AbstractTestAceBestSegmentMap {

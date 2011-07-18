@@ -22,9 +22,9 @@ package org.jcvi.ncbi;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Before;
 import org.junit.Test;

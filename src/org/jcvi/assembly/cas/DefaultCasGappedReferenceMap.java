@@ -35,9 +35,9 @@ import org.jcvi.assembly.cas.alignment.CasAlignment;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegion;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegionType;
 import org.jcvi.assembly.cas.read.CasNucleotideDataStore;
+import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.util.MathUtil;
 
 /**

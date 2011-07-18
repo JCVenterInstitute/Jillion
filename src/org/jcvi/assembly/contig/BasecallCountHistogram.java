@@ -25,7 +25,7 @@ package org.jcvi.assembly.contig;
 
 import java.util.Map;
 import org.jcvi.assembly.slice.Slice;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 
 public interface BasecallCountHistogram {
 

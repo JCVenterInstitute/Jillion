@@ -9,8 +9,8 @@ import org.jcvi.io.*;
 
 import org.jcvi.Range;
 import org.jcvi.command.Command;
+import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.primerDesign.domain.PrimerDesignTarget;
 
 

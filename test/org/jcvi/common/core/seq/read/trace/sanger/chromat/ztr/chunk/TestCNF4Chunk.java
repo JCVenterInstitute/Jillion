@@ -25,6 +25,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk;
 
 import java.nio.ByteBuffer;
 
+import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Channel;
@@ -33,7 +34,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.Chunk;
-import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;

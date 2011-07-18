@@ -25,9 +25,9 @@ package org.jcvi.assembly.contig;
 
 import org.jcvi.assembly.Location;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.qual.PhredQuality;
 
 public class DefaultQualityDifference implements BasecallDifference{
 
