@@ -16,44 +16,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jun 3, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.assembly.slice;
 
-import org.jcvi.common.core.seq.read.SequenceDirection;
+package org.jcvi.common.core.seq.read.trace.pyro.sff;
+
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.junit.Test;
+import static org.junit.Assert.*;
 /**
- * {@code SliceElement} is 
  * @author dkatzel
  *
  *
  */
-public interface SliceElement {
-    /**
-     * Get the ID of this element.  Each element in a Slice must
-     * have a different ID, although there SliceElements from 
-     * different Slices can have the same ID.  This ID is usually the 
-     * read ID.
-     * @return the ID of this slice element.
-     */
-    String getId();
-    /**
-     * Get the {@link NucleotideGlyph} of this SliceElement.
-     * @return
-     */
-    NucleotideGlyph getBase();
-    /**
-     * Get the {@link PhredQuality} of this SliceElement.
-     * @return
-     */
-    PhredQuality getQuality();
-    /**
-     * Get the {@link SequenceDirection} of this SliceElement.
-     * @return
-     */
-    SequenceDirection getSequenceDirection();
+public class TestSffUtil_Linkers {
+
+    @Test
+    public void flx(){
+        String seq = "GTTGGAACCGAAAGGGTTTGAATTCAAACCCTTTCGGTTCCAAC";
+        assertMatches(seq, SFFUtil.Linkers.FLX.getForwardSequence());
+        assertMatches(seq, SFFUtil.Linkers.FLX.getReverseSequence());
+    }
+    @Test
+    public void titanium(){
+        assertMatches("TCGTATAACTTCGTATAATGTATGCTATACGAAGTTATTACG", SFFUtil.Linkers.TITANIUM.getForwardSequence());
+        assertMatches("CGTAATAACTTCGTATAGCATACATTATACGAAGTTATACGA", SFFUtil.Linkers.TITANIUM.getReverseSequence());
+        
+    }
+    
+    private void assertMatches(String expected, NucleotideSequence actual){
+        assertEquals(expected, NucleotideGlyph.convertToString(actual.decode()));
+    }
 }

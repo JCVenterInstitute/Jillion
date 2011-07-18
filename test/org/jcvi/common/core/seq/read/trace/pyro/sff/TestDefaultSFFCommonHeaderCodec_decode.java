@@ -1,0 +1,240 @@
+/*******************************************************************************
+ * Copyright 2010 J. Craig Venter Institute
+ * 
+ * 	This file is part of JCVI Java Common
+ * 
+ *     JCVI Java Common is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     JCVI Java Common is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+/*
+ * Created on Oct 10, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.common.core.seq.read.trace.pyro.sff;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.testUtil.EasyMockUtil;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import static org.easymock.EasyMock.*;
+public class TestDefaultSFFCommonHeaderCodec_decode extends AbstractTestDefaultSFFCommonHeaderCodec{
+
+    @Test
+    public void valid() throws SFFDecoderException, IOException{
+        InputStream mockInputStream = createMock(InputStream.class);
+        encode(mockInputStream, expectedHeader);
+        replay(mockInputStream);
+        SFFCommonHeader actualHeader =sut.decodeHeader(new DataInputStream(mockInputStream));
+        assertEquals(expectedHeader, actualHeader);
+        verify(mockInputStream);
+    }
+
+    @Test
+    public void invalidReadThrowsIOExceptionShouldWrapInSFFDecoderException() throws IOException{
+        InputStream mockInputStream = createMock(InputStream.class);
+        IOException ioException = new IOException("expected");
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(4))).andThrow(ioException);
+        replay(mockInputStream);
+        try{
+            sut.decodeHeader(new DataInputStream(mockInputStream));
+            fail("should wrap IOException in SFFDecoderException");
+        }catch(SFFDecoderException e){
+            assertEquals("error decoding sff file", e.getMessage());
+            assertEquals(e.getCause(), ioException);
+        }
+        verify(mockInputStream);
+    }
+    @Test
+    public void invalidReadFailsMagicNumberShouldThrowSFFDecoderException() throws IOException{
+        InputStream mockInputStream = createMock(InputStream.class);
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(4))).andAnswer(EasyMockUtil.writeArrayToInputStream(".ZTR".getBytes()));
+        replay(mockInputStream);
+        try{
+            sut.decodeHeader(new DataInputStream(mockInputStream));
+            fail("should wrap IOException in SFFDecoderException");
+        }catch(IOException e){
+            SFFDecoderException decoderException = (SFFDecoderException)e.getCause();
+            assertEquals("magic number does not match expected", decoderException.getMessage());
+            assertNull(decoderException.getCause());
+        }
+        verify(mockInputStream);
+    }
+    @Test
+    public void invalidReadFailsInvalidVersionShouldThrowSFFDecoderException() throws IOException{
+        InputStream mockInputStream = createMock(InputStream.class);
+        encodeNotValidVersion(mockInputStream);
+        replay(mockInputStream);
+        try{
+            sut.decodeHeader(new DataInputStream(mockInputStream));
+            fail("should wrap IOException in SFFDecoderException");
+        }catch(IOException e){
+            SFFDecoderException decoderException = (SFFDecoderException)e.getCause();
+            assertEquals("version not compatible with decoder", decoderException.getMessage());
+            assertNull(decoderException.getCause());
+        }
+        verify(mockInputStream);
+    }
+
+    @Test
+    public void invalidReadFailsInvalidFormatCodeShouldThrowSFFDecoderException() throws IOException{
+        InputStream mockInputStream = createMock(InputStream.class);
+        invailidFormatCode(mockInputStream, expectedHeader);
+        replay(mockInputStream);
+        try{
+            sut.decodeHeader(new DataInputStream(mockInputStream));
+            fail("should wrap IOException in SFFDecoderException");
+        }catch(IOException e){
+            SFFDecoderException decoderException = (SFFDecoderException)e.getCause();
+            assertEquals("unknown flowgram format code", decoderException.getMessage());
+            assertNull(decoderException.getCause());
+        }
+        verify(mockInputStream);
+    }
+
+    @Test
+    public void invalidReadFailsFlowNotLongEnoughShouldThrowSFFDecoderException() throws IOException{
+        InputStream mockInputStream = createMock(InputStream.class);
+        invailidFlow(mockInputStream, expectedHeader);
+        replay(mockInputStream);
+        try{
+            sut.decodeHeader(new DataInputStream(mockInputStream));
+            fail("should wrap IOException in SFFDecoderException");
+        }catch(IOException e){
+            SFFDecoderException decoderException = (SFFDecoderException)e.getCause();
+            assertEquals("error decoding flow", decoderException.getMessage());
+            assertNull(decoderException.getCause());
+        }
+        verify(mockInputStream);
+    }
+
+    @Test
+    public void invalidReadFailsKeySequenceNotLongEnoughShouldThrowSFFDecoderException() throws IOException{
+        InputStream mockInputStream = createMock(InputStream.class);
+        invailidKeySequence(mockInputStream, expectedHeader);
+        replay(mockInputStream);
+        try{
+            sut.decodeHeader(new DataInputStream(mockInputStream));
+            fail("should wrap IOException in SFFDecoderException");
+        }catch(IOException e){
+            SFFDecoderException decoderException = (SFFDecoderException)e.getCause();
+            assertEquals("error decoding keySequence", decoderException.getMessage());
+            assertNull(decoderException.getCause());
+        }
+        verify(mockInputStream);
+    }
+
+
+    void encodeNotValidVersion(InputStream mockInputStream) throws IOException{
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(4)))
+                .andAnswer(EasyMockUtil.writeArrayToInputStream(".sff".getBytes()));
+        final byte[] invalidVersion = new byte[]{0,0,0,2};
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(4)))
+        .andAnswer(EasyMockUtil.writeArrayToInputStream(invalidVersion));
+    }
+
+    void encode(InputStream mockInputStream, SFFCommonHeader header) throws IOException{
+        final short keyLength =(short) (header.getKeySequence().length());
+        int size = 31+header.getNumberOfFlowsPerRead()+ keyLength;
+        long padding =SFFUtil.caclulatePaddedBytes(size);
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(4)))
+                .andAnswer(EasyMockUtil.writeArrayToInputStream(".sff".getBytes()));
+
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(4)))
+        .andAnswer(EasyMockUtil.writeArrayToInputStream(new byte[]{0,0,0,1}));
+        EasyMockUtil.putUnSignedLong(mockInputStream, header.getIndexOffset());
+        EasyMockUtil.putUnSignedInt(mockInputStream, header.getIndexLength());
+        EasyMockUtil.putUnSignedInt(mockInputStream, header.getNumberOfReads());
+        EasyMockUtil.putUnSignedShort(mockInputStream, (short)(size+padding));
+        EasyMockUtil.putUnSignedShort(mockInputStream, keyLength);
+        EasyMockUtil.putUnSignedShort(mockInputStream, header.getNumberOfFlowsPerRead());
+        EasyMockUtil.putByte(mockInputStream, (byte)1);
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(header.getNumberOfFlowsPerRead())))
+        .andAnswer(EasyMockUtil.writeArrayToInputStream(header.getFlow().getBytes()));
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq((int)keyLength)))
+        .andAnswer(EasyMockUtil.writeArrayToInputStream(header.getKeySequence().getBytes()));
+
+        expect(mockInputStream.skip(padding)).andReturn(padding);
+
+    }
+
+    void invailidFormatCode(InputStream mockInputStream, SFFCommonHeader header) throws IOException{
+        final short keyLength =(short) (header.getKeySequence().length());
+        int size = 31+header.getNumberOfFlowsPerRead()+ keyLength;
+        long padding =SFFUtil.caclulatePaddedBytes(size);
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(4)))
+                .andAnswer(EasyMockUtil.writeArrayToInputStream(".sff".getBytes()));
+
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(4)))
+        .andAnswer(EasyMockUtil.writeArrayToInputStream(new byte[]{0,0,0,1}));
+        EasyMockUtil.putUnSignedLong(mockInputStream, header.getIndexOffset());
+        EasyMockUtil.putUnSignedInt(mockInputStream, header.getIndexLength());
+        EasyMockUtil.putUnSignedInt(mockInputStream, header.getNumberOfReads());
+        EasyMockUtil.putUnSignedShort(mockInputStream, (short)(size+padding));
+        EasyMockUtil.putUnSignedShort(mockInputStream, keyLength);
+        EasyMockUtil.putUnSignedShort(mockInputStream, header.getNumberOfFlowsPerRead());
+        //invalid format code is here:
+        EasyMockUtil.putByte(mockInputStream, (byte)2);
+
+    }
+
+    void invailidFlow(InputStream mockInputStream, SFFCommonHeader header) throws IOException{
+        final short keyLength =(short) (header.getKeySequence().length());
+        int size = 31+header.getNumberOfFlowsPerRead()+ keyLength;
+        long padding =SFFUtil.caclulatePaddedBytes(size);
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(4)))
+                .andAnswer(EasyMockUtil.writeArrayToInputStream(".sff".getBytes()));
+
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(4)))
+        .andAnswer(EasyMockUtil.writeArrayToInputStream(new byte[]{0,0,0,1}));
+        EasyMockUtil.putUnSignedLong(mockInputStream, header.getIndexOffset());
+        EasyMockUtil.putUnSignedInt(mockInputStream, header.getIndexLength());
+        EasyMockUtil.putUnSignedInt(mockInputStream, header.getNumberOfReads());
+        EasyMockUtil.putUnSignedShort(mockInputStream, (short)(size+padding));
+        EasyMockUtil.putUnSignedShort(mockInputStream, keyLength);
+        EasyMockUtil.putUnSignedShort(mockInputStream, header.getNumberOfFlowsPerRead());
+        EasyMockUtil.putByte(mockInputStream, (byte)1);
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(header.getNumberOfFlowsPerRead())))
+        .andAnswer(EasyMockUtil.writeArrayToInputStream(header.getFlow().substring(1).getBytes()));
+
+    }
+
+    void invailidKeySequence(InputStream mockInputStream, SFFCommonHeader header) throws IOException{
+        final short keyLength =(short) (header.getKeySequence().length());
+        int size = 31+header.getNumberOfFlowsPerRead()+ keyLength;
+        long padding =SFFUtil.caclulatePaddedBytes(size);
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(4)))
+                .andAnswer(EasyMockUtil.writeArrayToInputStream(".sff".getBytes()));
+
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(4)))
+        .andAnswer(EasyMockUtil.writeArrayToInputStream(new byte[]{0,0,0,1}));
+        EasyMockUtil.putUnSignedLong(mockInputStream, header.getIndexOffset());
+        EasyMockUtil.putUnSignedInt(mockInputStream, header.getIndexLength());
+        EasyMockUtil.putUnSignedInt(mockInputStream, header.getNumberOfReads());
+        EasyMockUtil.putUnSignedShort(mockInputStream, (short)(size+padding));
+        EasyMockUtil.putUnSignedShort(mockInputStream, keyLength);
+        EasyMockUtil.putUnSignedShort(mockInputStream, header.getNumberOfFlowsPerRead());
+        EasyMockUtil.putByte(mockInputStream, (byte)1);
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(header.getNumberOfFlowsPerRead())))
+        .andAnswer(EasyMockUtil.writeArrayToInputStream(header.getFlow().getBytes()));
+        expect(mockInputStream.read(isA(byte[].class), eq(0), eq((int)keyLength)))
+        .andAnswer(EasyMockUtil.writeArrayToInputStream(header.getKeySequence().substring(1).getBytes()));
+
+    }
+}

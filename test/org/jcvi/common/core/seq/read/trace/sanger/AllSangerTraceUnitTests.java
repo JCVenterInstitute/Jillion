@@ -23,9 +23,9 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger;
 
+import org.jcvi.common.core.seq.read.trace.archive.AllTraceArchiveUnitTests;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.AllChromatogramUnitTests;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.AllPhdUnitTests;
-import org.jcvi.trace.sanger.traceArchive.AllTraceArchiveUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

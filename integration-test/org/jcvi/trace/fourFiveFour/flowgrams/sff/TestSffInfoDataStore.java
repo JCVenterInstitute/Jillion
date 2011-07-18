@@ -21,9 +21,9 @@ package org.jcvi.trace.fourFiveFour.flowgrams.sff;
 
 import java.io.File;
 
+import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractTestSffFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffInfoDataStore;
-import org.jcvi.trace.fourFiveFour.flowgram.sff.AbstractTestSffFileDataStore;
 
 /**
  * @author dkatzel

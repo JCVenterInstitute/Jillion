@@ -17,27 +17,38 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Sep 18, 2008
+ * Created on Oct 7, 2008
  *
  * @author dkatzel
  */
-package org.jcvi.trace;
+package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import org.jcvi.common.core.seq.read.trace.frg.AllFrgUnitTests;
-import org.jcvi.common.core.seq.read.trace.pyro.All454UnitTests;
-import org.jcvi.common.core.seq.read.trace.sanger.AllSangerTraceUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
-    {    
-        All454UnitTests.class,
-        AllSangerTraceUnitTests.class,
-        AllFrgUnitTests.class,
-        TestDefaultTraceFileNameIdGeneratorStripExtension.class
+    {
+        AllSFFUtilUnitTests.class,
+        TestSffFileIterator.class,
+        TestDefaultReadData.class,
+        TestDefaultSFFReadHeader.class,
+        TestDefaultSFFCommonHeader.class,
+        TestSFFReadHeaderCodec_decode.class,
+        TestDefaultSFFReadDataCodec_decode.class,
+        TestDefaultSFFCommonHeaderCodec_decode.class,
+        TestDefaultSFFCommonHeaderCodec_encode.class,
+        TestSFFFlowgram.class,
+        TestSFFCodecParseActualSFFFile.class,
+        TestLargeSffFileDataStore.class,
+        TestFlowIndexOverflow.class,
+        TestNewblerSuffixNameConverter.class,
+        TestDefaultSffFlowgramDataStore.class,
+        TestSFFUtil_getTrimRange.class,
+        TestSffVisitorWriter.class,
+        TestSffWriter.class
     }
     )
-public class AllTraceUnitTests {
+public class AllSFFUnitTests {
 
 }
