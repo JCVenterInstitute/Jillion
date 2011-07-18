@@ -24,8 +24,14 @@
 package org.jcvi.io;
 /**
  * {@code FileVisitor} is an base interface
- * which conforms to the Visitor Pattern
- * for visiting a text file.
+ * which uses the "push approach" to walk
+ * over complicated File structures. 
+ * This is similar to the Visitor Design 
+ * Pattern where each method follows
+ * the format visitXXX.  It is up
+ * to the implementor of this interface
+ * to determine what to do during
+ * each visitXXX call.
  * 
  * @author dkatzel
  *

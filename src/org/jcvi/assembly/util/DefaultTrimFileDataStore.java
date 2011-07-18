@@ -145,5 +145,13 @@ public class DefaultTrimFileDataStore implements TrimDataStore, TrimFileVisitor{
     public boolean isClosed() throws DataStoreException {
         return delegate.isClosed();
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitLine(String line) {
+        //no-op
+        
+    }
 
 }

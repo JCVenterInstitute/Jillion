@@ -20,14 +20,14 @@
 package org.jcvi.assembly.util;
 
 import org.jcvi.Range;
-import org.jcvi.io.FileVisitor;
+import org.jcvi.io.TextFileVisitor;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface TrimFileVisitor extends FileVisitor{
+public interface TrimFileVisitor extends TextFileVisitor{
     /**
      * Visit a Trim record.
      * @param id the ID of the record being trimmed.

@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +34,7 @@ import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;
+import org.jcvi.io.TextLineParser;
 
 /**
  * {@code TrimFileUtil} is a utility class for parsing and writing
@@ -75,26 +75,30 @@ public final class TrimFileUtil {
      * @param visitor the visitor to visit with the parsed trim data.
      */
     public static void parseTrimFile(InputStream trimData, TrimFileVisitor visitor){
-        Scanner scanner = null;
+        TextLineParser scanner = null;
         try{
-            scanner = new Scanner(trimData);
-            visitor.visitFile();
-            boolean keepParsing=true;
-            while(keepParsing && scanner.hasNextLine()){
-                String line = scanner.nextLine();
-                Matcher matcher = TRIM_PATTERN.matcher(line);
-                if(matcher.matches()){
-                    String id = matcher.group(1);
-                    Range validRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
-                                Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)));
-                    keepParsing =visitor.visitTrim(id, validRange);
+            try {
+                scanner = new TextLineParser(trimData);           
+                visitor.visitFile();
+                boolean keepParsing=true;
+                while(keepParsing && scanner.hasNextLine()){
+                    String line = scanner.nextLine();
+                    visitor.visitLine(line);
+                    Matcher matcher = TRIM_PATTERN.matcher(line);
+                    if(matcher.matches()){
+                        String id = matcher.group(1);
+                        Range validRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
+                                    Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)));
+                        keepParsing =visitor.visitTrim(id, validRange);
+                    }
                 }
-                
-            }
+            } catch (IOException e) {
+                throw new IllegalStateException("error reading file",e);
+             }
         }
         finally{
             visitor.visitEndOfFile();
-            scanner.close();
+            IOUtil.closeAndIgnoreErrors(scanner);
         }
         
     }
