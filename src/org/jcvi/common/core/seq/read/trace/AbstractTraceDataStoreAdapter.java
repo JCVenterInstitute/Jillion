@@ -25,10 +25,10 @@ package org.jcvi.common.core.seq.read.trace;
 
 import java.io.IOException;
 
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.DataStoreIterator;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 
 public abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implements DataStore<T> {
 

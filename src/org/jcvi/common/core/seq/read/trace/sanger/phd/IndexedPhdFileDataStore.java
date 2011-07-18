@@ -33,15 +33,15 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Properties;
 import org.jcvi.Range;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.ShortGlyph;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.qual.PhredQuality;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.util.ByteBufferInputStream;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.DefaultIndexedFileRange;
+import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.ByteBufferInputStream;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.DefaultIndexedFileRange;
-import org.jcvi.util.IndexedFileRange;
 /**
  * {@code IndexedPhdFileDataStore} is an implementation of 
  * {@link PhdDataStore} that only stores an index containing

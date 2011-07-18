@@ -25,6 +25,7 @@ package org.jcvi.common.core.seq.read.trace.archive;
 
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.archive.DefaultFolderTraceArchiveDataStore;
 import org.jcvi.common.core.seq.read.trace.archive.DefaultTraceArchiveInfo;
 import org.jcvi.common.core.seq.read.trace.archive.DefaultTraceArchiveTrace;
@@ -34,7 +35,6 @@ import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecord;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecordIdGenerator;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveTrace;
 import org.jcvi.common.core.seq.read.trace.archive.TraceInfoXMLTraceArchiveInfoBuilder;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;

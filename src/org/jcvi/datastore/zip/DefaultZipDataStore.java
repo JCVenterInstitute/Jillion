@@ -29,9 +29,9 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.DataStoreIterator;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 
 /**
  * {@code DefaultZipDataStore} is a default implementation

@@ -26,11 +26,11 @@ import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.trim.DefaultPrimerTrimmer;
 import org.jcvi.assembly.trim.PrimerTrimmer;
+import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
 import org.jcvi.common.core.seq.nuc.NucleotideDataStoreAdapter;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.datastore.SimpleDataStore;
 
 /**
  * @author dkatzel

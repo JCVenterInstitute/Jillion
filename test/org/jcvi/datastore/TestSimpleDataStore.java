@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

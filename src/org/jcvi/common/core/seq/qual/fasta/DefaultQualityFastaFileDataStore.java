@@ -31,13 +31,13 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.SimpleDataStore;
+import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.CloseableIterator;
 /**
  * {@code DefaultQualityFastaFileDataStore} is the default implementation
  * of {@link AbstractQualityFastaFileDataStore} which stores

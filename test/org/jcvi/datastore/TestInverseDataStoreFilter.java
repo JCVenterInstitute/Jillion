@@ -19,6 +19,8 @@
 
 package org.jcvi.datastore;
 
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.InverseDataStoreFilter;
 import org.junit.Before;
 import org.junit.Test;
 

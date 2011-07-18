@@ -20,6 +20,7 @@ package org.jcvi.util;
 
 import static org.junit.Assert.*;
 
+import org.jcvi.common.core.util.StringUtilities;
 import org.junit.Test;
 
 public class TestStringUtilities {

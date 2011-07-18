@@ -28,7 +28,7 @@ import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdUtil;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 import org.joda.time.DateTime;
 
 public class FastqConsedPhdAdaptedIterator implements PhdReadRecordIterator{

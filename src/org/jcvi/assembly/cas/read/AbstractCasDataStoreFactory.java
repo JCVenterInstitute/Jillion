@@ -22,10 +22,10 @@ package org.jcvi.assembly.cas.read;
 import java.io.File;
 
 import org.jcvi.assembly.cas.CasTrimMap;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
 import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
 import org.jcvi.common.core.seq.qual.QualityDataStore;
-import org.jcvi.datastore.DataStoreFilter;
-import org.jcvi.datastore.EmptyDataStoreFilter;
 
 /**
  * {@code AbstractCasDataStoreFactory} is an abstract

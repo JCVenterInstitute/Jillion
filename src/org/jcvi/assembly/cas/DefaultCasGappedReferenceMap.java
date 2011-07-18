@@ -35,10 +35,10 @@ import org.jcvi.assembly.cas.alignment.CasAlignment;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegion;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegionType;
 import org.jcvi.assembly.cas.read.CasNucleotideDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.MathUtil;
+import org.jcvi.common.core.util.MathUtil;
 
 /**
  * {@code CasGappedReference} scans a cas file and puts gaps

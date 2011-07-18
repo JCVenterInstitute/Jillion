@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.archive;
 
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreException;
 
 public class DefaultFolderTraceArchiveDataStore extends AbstractFolderTraceArchiveDataStore{
 

@@ -23,12 +23,12 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQFileDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastQFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastQUtil;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.After;
 import org.junit.Before;

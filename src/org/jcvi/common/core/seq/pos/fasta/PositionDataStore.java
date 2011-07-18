@@ -23,9 +23,9 @@
  */
 package org.jcvi.common.core.seq.pos.fasta;
 
+import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.Sequence;
 import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.datastore.DataStore;
 
 public interface PositionDataStore extends DataStore<Sequence<ShortGlyph>>{
 

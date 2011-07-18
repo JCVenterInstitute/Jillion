@@ -32,12 +32,12 @@ import org.jcvi.assembly.ace.AbstractAceContigBuilder;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceContigDataStore;
 import org.jcvi.assembly.ace.AceFileParser;
-import org.jcvi.common.core.seq.nuc.fasta.LargeNucleotideFastaIterator;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.util.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.DefaultIndexedFileRange;
+import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.AbstractBlockingCloseableIterator;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.DefaultIndexedFileRange;
-import org.jcvi.util.IndexedFileRange;
 /**
  * {@code IndexedAceFileDataStore} is an implementation of 
  * {@link AceContigDataStore} that only stores an index containing

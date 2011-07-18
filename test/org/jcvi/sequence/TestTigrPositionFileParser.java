@@ -25,11 +25,11 @@ package org.jcvi.sequence;
 
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.EncodedShortGlyph;
 import org.jcvi.common.core.seq.ShortGlyphFactory;
 import org.jcvi.common.core.seq.pos.fasta.PositionDataStore;
 import org.jcvi.common.core.seq.read.TigrPositionsFileParser;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;

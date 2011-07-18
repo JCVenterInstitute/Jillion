@@ -22,11 +22,12 @@ package org.jcvi.common.core.seq.read.trace.sanger;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import org.jcvi.datastore.AbstractDataStore;
-import org.jcvi.datastore.DataStoreException;
+
+import org.jcvi.common.core.datastore.AbstractDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.FileIterator;
 import org.jcvi.io.fileServer.DirectoryFileServer;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.FileIterator;
 
 /**
  * {@code SingleSangerTraceDirectoryFileDataStore} is a {@link SangerFileDataStore}

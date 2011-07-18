@@ -32,8 +32,9 @@ import org.jcvi.assembly.ace.AbstractAceContigBuilder;
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.AceContigDataStore;
 import org.jcvi.assembly.ace.AceFileParser;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.CloseableIteratorAdapter;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIteratorAdapter;
 
 public class DefaultAceFileDataStore extends AbstractAceContigBuilder implements AceContigDataStore{
 

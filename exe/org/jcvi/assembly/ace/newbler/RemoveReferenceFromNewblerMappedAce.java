@@ -46,18 +46,18 @@ import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
 import org.jcvi.assembly.slice.LargeSliceMapFactory;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.datastore.CachedDataStore;
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.read.trace.TraceDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdParser;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.newbler.IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore;
-import org.jcvi.datastore.CachedDataStore;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.util.DefaultIndexedFileRange;
+import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.datastore.DefaultAceFileDataStore;
-import org.jcvi.datastore.SimpleDataStore;
-import org.jcvi.util.DefaultIndexedFileRange;
-import org.jcvi.util.MultipleWrapper;
 
 public class RemoveReferenceFromNewblerMappedAce {
     private static final String DEFAULT_ACE_OUTPUT = "dereferenced.ace";

@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.fastx.fastq;
 
-import org.jcvi.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStore;
 
 public interface FastQDataStore<T extends FastQRecord> extends DataStore<T>{
 

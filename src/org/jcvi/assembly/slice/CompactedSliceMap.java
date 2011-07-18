@@ -32,15 +32,15 @@ import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.Sequence;
 import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
 import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.common.core.seq.qual.QualitySequence;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.ArrayIterator;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.ArrayIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 
 /**
  * @author dkatzel

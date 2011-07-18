@@ -30,13 +30,13 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.archive.DefaultTraceNameConverter;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveInfo;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecord;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecordIdGenerator;
 import org.jcvi.common.core.seq.read.trace.archive.TraceInfoField;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.CloseableIteratorAdapter;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -46,6 +46,8 @@ import org.jcvi.assembly.slice.consensus.ConsensusResult;
 import org.jcvi.assembly.slice.consensus.NoAmbiguityConsensusCaller;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
@@ -55,12 +57,10 @@ import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.seq.read.trace.TraceQualityDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.util.DefaultIndexedFileRange;
+import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.datastore.IndexedAceFileDataStore;
-import org.jcvi.datastore.MultipleDataStoreWrapper;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.DefaultIndexedFileRange;
-import org.jcvi.util.MultipleWrapper;
 
 /**
  * @author dkatzel

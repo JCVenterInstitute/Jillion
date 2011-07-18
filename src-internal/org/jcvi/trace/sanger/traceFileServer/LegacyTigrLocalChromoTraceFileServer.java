@@ -32,8 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipInputStream;
 
-import org.jcvi.util.FileIterator;
-import org.jcvi.util.StringUtilities;
+import org.jcvi.common.core.util.FileIterator;
+import org.jcvi.common.core.util.StringUtilities;
 /**
  * {@code LegacyTigrLocalChromoTraceFileServer} is a {@link TraceFileServer}
  * implementation that can read a legacy TIGR "local chromo" directory.

@@ -26,10 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.Range;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.SimpleDataStore;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.util.CloseableIterator;
 
 /**
  * {@code DefaultTrimFileDataStore} is a implementation

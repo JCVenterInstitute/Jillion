@@ -30,11 +30,11 @@ import java.util.List;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.Sequence;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.qual.PhredQuality;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
 
 public abstract class  AbstractSliceMap implements SliceMap{
 

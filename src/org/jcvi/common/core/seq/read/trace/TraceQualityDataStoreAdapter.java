@@ -23,9 +23,9 @@
  */
 package org.jcvi.common.core.seq.read.trace;
 
+import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.common.core.seq.qual.QualitySequence;
-import org.jcvi.datastore.DataStore;
 
 public class TraceQualityDataStoreAdapter<T extends Trace> extends AbstractTraceDataStoreAdapter<T,QualitySequence> implements QualityDataStore{
 

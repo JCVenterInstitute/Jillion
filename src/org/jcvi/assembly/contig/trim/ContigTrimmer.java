@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreException;
 
 public interface ContigTrimmer<R extends PlacedRead, C extends Contig<R>> {
 

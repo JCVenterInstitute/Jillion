@@ -27,12 +27,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.io.fileServer.ResourceFileServer;
-import org.jcvi.util.CloseableIterator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestSequenceFastaDataStore {

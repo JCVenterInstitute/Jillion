@@ -22,8 +22,8 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.util.AbstractBlockingCloseableIterator;
-import org.jcvi.util.CloseableIterable;
+import org.jcvi.common.core.util.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.CloseableIterable;
 
 /**
  * {@code SffFileIterator} is a {@link CloseableIterable}

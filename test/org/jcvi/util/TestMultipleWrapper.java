@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.jcvi.util.MultipleWrapper.ReturnPolicy;
+import org.jcvi.common.core.util.MultipleWrapper;
+import org.jcvi.common.core.util.MultipleWrapper.ReturnPolicy;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestMultipleWrapper {

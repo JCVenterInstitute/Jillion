@@ -26,12 +26,12 @@ package org.jcvi.common.core.seq.read.trace.archive;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.archive.CachedTraceArchiveDataStore;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveDataStore;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveTrace;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIteratorAdapter;
 import org.junit.Before;
 import org.junit.Test;
 

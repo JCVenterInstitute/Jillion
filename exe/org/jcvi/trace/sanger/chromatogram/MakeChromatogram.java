@@ -33,6 +33,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.nuc.fasta.LargeNucleotideFastaFileDataStore;
@@ -51,7 +52,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramWriter;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.IOLibLikeZTRChromatogramWriter;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;
 
 /**

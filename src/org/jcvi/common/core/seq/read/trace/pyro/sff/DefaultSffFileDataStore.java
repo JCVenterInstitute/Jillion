@@ -29,12 +29,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.DataStoreFilter;
-import org.jcvi.datastore.DataStoreIterator;
-import org.jcvi.datastore.EmptyDataStoreFilter;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.CloseableIteratorAdapter;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIteratorAdapter;
 
 public class DefaultSffFileDataStore implements SffDataStore, SffFileVisitor{
 

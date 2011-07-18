@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.jcvi.common.core.seq.fastx;
 
-import org.jcvi.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 
 /**
  * {@code FastXFilter} filters a FastX (Fasta or Fastq) file.

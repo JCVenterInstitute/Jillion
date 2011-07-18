@@ -24,10 +24,11 @@
 package org.jcvi.common.core.seq.fastx.fasta;
 
 import java.io.IOException;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.DataStoreIterator;
-import org.jcvi.util.CloseableIterator;
+
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 /**
  * {@code FastaRecordDataStoreAdapter} adapts a {@link DataStore} of {@link FastaRecord}s
  * into a {@link DataStore} of the value returned by {@link FastaRecord#getValue()}.

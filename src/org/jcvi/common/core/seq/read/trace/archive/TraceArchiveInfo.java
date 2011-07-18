@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.archive;
 
 
-import org.jcvi.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStore;
 
 public interface TraceArchiveInfo extends DataStore<TraceArchiveRecord>{
 

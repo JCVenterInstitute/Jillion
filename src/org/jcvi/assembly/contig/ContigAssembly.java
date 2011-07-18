@@ -26,7 +26,7 @@ package org.jcvi.assembly.contig;
 import org.jcvi.assembly.Assembly;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStore;
 
 public interface ContigAssembly extends Assembly<Contig<PlacedRead>, DataStore<Contig<PlacedRead>>>{
 

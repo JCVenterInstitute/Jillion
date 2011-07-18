@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultContigFileDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;

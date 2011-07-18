@@ -36,12 +36,12 @@ import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.nuc.fasta.LargeNucleotideFastaFileDataStore;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.datastore.IndexedAceFileDataStore;
 import org.jcvi.datastore.IndexedContigFileDataStore;
-import org.jcvi.util.DefaultIndexedFileRange;
 
 public class ConvertPositions {
 

@@ -17,7 +17,7 @@ import java.util.zip.ZipFile;
 
 import org.jcvi.auth.BasicEncodedJCVIAuthorizer;
 import org.jcvi.auth.JCVIAuthorizer;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.datastore.zip.DefaultZipDataStore;
 import org.jcvi.datastore.zip.InMemoryZipDataStore;
 import org.jcvi.datastore.zip.ZipDataStore;

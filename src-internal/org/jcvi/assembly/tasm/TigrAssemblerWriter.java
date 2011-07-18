@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreException;
 /**
  * {@code TigrAssemblerWriter} writes out TIGR Assembler
  * formated files (.tasm).  This assembly format 

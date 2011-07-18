@@ -25,6 +25,9 @@ package org.jcvi.datastore;
 
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.Cacheable;
+import org.jcvi.common.core.datastore.CachedDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.TraceDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
 import org.junit.Before;

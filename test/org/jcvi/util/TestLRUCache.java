@@ -25,6 +25,7 @@ package org.jcvi.util;
 
 import java.util.Map;
 
+import org.jcvi.common.core.util.LRUCache;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

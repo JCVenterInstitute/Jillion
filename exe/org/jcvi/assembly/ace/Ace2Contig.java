@@ -30,7 +30,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.assembly.contig.ContigFileWriter;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
-import org.jcvi.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.idReader.IdReaderException;
 

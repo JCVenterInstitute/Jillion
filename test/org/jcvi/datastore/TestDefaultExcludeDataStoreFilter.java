@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
 import org.junit.Test;
 
 /**

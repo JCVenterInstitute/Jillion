@@ -32,12 +32,12 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.datastore.CachedDataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.DataStoreIterator;
+import org.jcvi.common.core.datastore.CachedDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.util.AbstractLargeIdIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.AbstractLargeIdIterator;
-import org.jcvi.util.CloseableIterator;
 /**
  * {@code LargePhdDataStore} is a {@link PhdDataStore} implementation
  * to be used a very large phd files or phdballs.  No data contained in this

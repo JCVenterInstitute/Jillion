@@ -42,9 +42,9 @@ import org.jcvi.common.core.seq.nuc.fasta.LargeNucleotideFastaIterator;
 import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileIterator;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
+import org.jcvi.common.core.util.ChainedCloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.ChainedCloseableIterator;
-import org.jcvi.util.CloseableIterator;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 
