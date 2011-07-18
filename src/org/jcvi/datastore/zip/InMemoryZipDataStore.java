@@ -33,10 +33,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
-import org.jcvi.datastore.DataStoreException;
+
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIteratorAdapter;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.CloseableIteratorAdapter;
 /**
  * An {@code InMemoryZipDataStore} is a {@link ZipDataStore} implementation
  * that unzips the given

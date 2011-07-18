@@ -26,10 +26,10 @@ package org.jcvi.common.core.seq.fastx.fastq;
 import java.io.IOException;
 
 
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.DataStoreIterator;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 
 public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends AbstractFastQFileVisitor implements FastQDataStore<T>{
 

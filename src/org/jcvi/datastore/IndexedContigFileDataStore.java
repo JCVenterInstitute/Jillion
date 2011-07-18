@@ -33,10 +33,12 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.AbstractContigFileVisitorBuilder;
 import org.jcvi.assembly.contig.ContigFileParser;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.DefaultIndexedFileRange;
+import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.DefaultIndexedFileRange;
-import org.jcvi.util.IndexedFileRange;
 /**
  * {@code IndexedContigFileDataStore} is an implementation of 
  * {@link ContigDataStore} that only stores an index containing

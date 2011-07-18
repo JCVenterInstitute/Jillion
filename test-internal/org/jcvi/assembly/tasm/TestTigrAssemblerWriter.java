@@ -22,7 +22,7 @@ package org.jcvi.assembly.tasm;
 import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.io.fileServer.FileServer;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;

@@ -33,8 +33,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.CloseableIterator;
 /**
  * {@code DefaultFileIdReader}
  * is an {@link IdReader}

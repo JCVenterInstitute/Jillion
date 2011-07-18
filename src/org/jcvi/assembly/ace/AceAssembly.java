@@ -27,8 +27,8 @@ import java.io.File;
 import java.util.List;
 
 import org.jcvi.assembly.Assembly;
+import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
-import org.jcvi.datastore.DataStore;
 
 public interface AceAssembly<A extends AceContig> extends Assembly<A, DataStore<A>>{
 

@@ -23,7 +23,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.util.FIFOQueue;
+import org.jcvi.common.core.util.FIFOQueue;
 /**
  * {@code TextLineParser} can read lines from on {@link InputStream}.  The main
  * difference between TextLineParser and other similar JDK classes is TextLineParser

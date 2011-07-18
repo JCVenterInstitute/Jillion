@@ -3,7 +3,7 @@ package org.jcvi.io;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.util.LIFOQueue;
+import org.jcvi.common.core.util.LIFOQueue;
 
 public class FileUtil {
     

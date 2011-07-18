@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdTag;
-import org.jcvi.util.IndexedFileRange;
+import org.jcvi.common.core.util.IndexedFileRange;
 
 public class IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore extends IndexedPhdFileDataStore{
 

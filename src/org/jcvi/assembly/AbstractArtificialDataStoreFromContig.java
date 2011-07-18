@@ -28,11 +28,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.collections.IteratorUtils;
-import org.jcvi.datastore.AbstractDataStore;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.CloseableIteratorAdapter;
+import org.jcvi.common.core.datastore.AbstractDataStore;
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIteratorAdapter;
 
 public abstract class AbstractArtificialDataStoreFromContig<T> extends AbstractDataStore<T>{
 

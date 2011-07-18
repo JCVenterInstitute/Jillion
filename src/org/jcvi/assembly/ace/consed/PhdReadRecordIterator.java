@@ -19,7 +19,7 @@
 
 package org.jcvi.assembly.ace.consed;
 
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 
 public interface PhdReadRecordIterator extends CloseableIterator<PhdReadRecord>{
 

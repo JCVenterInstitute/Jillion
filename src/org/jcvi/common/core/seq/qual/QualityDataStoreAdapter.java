@@ -26,10 +26,10 @@ package org.jcvi.common.core.seq.qual;
 
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 
 /**
  * A <code>QualityDataStoreAdapter</code> adapts the heavily parameterized

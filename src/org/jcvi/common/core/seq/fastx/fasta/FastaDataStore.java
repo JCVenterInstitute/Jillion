@@ -23,9 +23,9 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta;
 
+import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.Glyph;
 import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.datastore.DataStore;
 
 public interface FastaDataStore<G extends Glyph, T extends Sequence<G>,F extends FastaRecord<T>> extends DataStore<F>{
 

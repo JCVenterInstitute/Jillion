@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.nuc;
 
-import org.jcvi.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStore;
 
 public interface NucleotideDataStore extends DataStore<NucleotideSequence>{
 

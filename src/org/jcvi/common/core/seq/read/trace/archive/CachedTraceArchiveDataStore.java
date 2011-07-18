@@ -26,9 +26,9 @@ package org.jcvi.common.core.seq.read.trace.archive;
 import java.io.IOException;
 import java.util.Map;
 
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.LRUCache;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.LRUCache;
 /**
  * {@code CachedTraceArchiveDataStore} is a {@link TraceArchiveDataStore}
  * implementation which cache's {@link TraceArchiveTrace} records

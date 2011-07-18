@@ -41,12 +41,12 @@ import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.fastq.FastQUtil;
+import org.jcvi.common.core.util.StringUtilities;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.idReader.DefaultFileIdReader;
 import org.jcvi.io.idReader.FirstWordStringIdParser;
 import org.jcvi.io.idReader.IdReader;
 import org.jcvi.io.idReader.IdReaderException;
-import org.jcvi.util.StringUtilities;
 /**
  * {@code FastQFile} is meant to be a FastQ version of 454's fnafile
  * which takes in a file of reads and filter options

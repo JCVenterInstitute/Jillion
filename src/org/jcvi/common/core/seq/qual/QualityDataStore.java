@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.qual;
 
-import org.jcvi.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStore;
 
 public interface QualityDataStore extends DataStore<QualitySequence> {
 

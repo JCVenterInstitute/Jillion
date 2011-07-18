@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.jcvi.datastore.AbstractDataStore;
+import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.io.IOUtil;
 
 /**

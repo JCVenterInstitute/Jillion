@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.jcvi.Range;
-import org.jcvi.util.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.AbstractBlockingCloseableIterator;
 
 public class TrimFileIterator extends AbstractBlockingCloseableIterator<Range>{
 

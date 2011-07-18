@@ -33,7 +33,8 @@ import java.util.List;
 
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.TestAbstractAceParserMatchesAce2ContigMultipleContigs;
-import org.jcvi.util.DefaultIndexedFileRange;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.util.DefaultIndexedFileRange;
 
 public class TestIndexedAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
 

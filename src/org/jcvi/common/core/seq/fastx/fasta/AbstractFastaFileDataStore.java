@@ -25,8 +25,8 @@ package org.jcvi.common.core.seq.fastx.fasta;
 
 import java.io.IOException;
 
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 /**
  * {@code AbstractFastaFileDataStore} is a {@link DataStore} implementation
  * of FastaRecords parsed from a Fasta file.

@@ -35,7 +35,7 @@ import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 import org.joda.time.DateTime;
 
 /**

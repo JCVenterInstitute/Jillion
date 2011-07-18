@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.seq.read.trace.TraceDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.FileSangerTrace;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.DataStoreIterator;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 import org.joda.time.DateTime;
 
 /**

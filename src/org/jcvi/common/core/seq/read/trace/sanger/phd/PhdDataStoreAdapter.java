@@ -21,9 +21,9 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
 import java.io.IOException;
 
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.util.CloseableIterator;
 /**
  * {@code PhdDataStoreAdapter} wraps a {@link DataStore}
  * of {@link Phd}s to match the interface of a

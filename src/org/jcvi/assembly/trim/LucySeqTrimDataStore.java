@@ -29,12 +29,12 @@ import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.util.TrimDataStore;
 import org.jcvi.assembly.util.TrimDataStoreAdatper;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.SimpleDataStore;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 
 /**
  * {@code LucyTrimDataStore} is a TrimDataStore

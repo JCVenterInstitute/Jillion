@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.jcvi.IdConverter;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreException;
 /**
  * {@code DefaultTraceNameConverter} maps 
  * a TraceArchiveInfo's trace_name to id

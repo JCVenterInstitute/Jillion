@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.Range;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.jcvi.assembly.Contig;
+import org.jcvi.common.core.datastore.DataStoreException;
 
 public class TestIndexedContigFileDataStore extends AbstractTestContigFileDataStore{
    

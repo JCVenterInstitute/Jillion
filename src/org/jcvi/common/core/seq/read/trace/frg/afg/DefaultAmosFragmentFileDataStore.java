@@ -26,15 +26,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.datastore.AbstractDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
 import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.qual.QualitySequence;
-import org.jcvi.datastore.AbstractDataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIteratorAdapter;
 
 /**
  * @author dkatzel

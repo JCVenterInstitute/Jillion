@@ -27,6 +27,8 @@ import java.io.File;
 
 import org.jcvi.assembly.cas.CasTrimMap;
 import org.jcvi.assembly.cas.EmptyCasTrimMap;
+import org.jcvi.common.core.datastore.CachedDataStore;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
 import org.jcvi.common.core.seq.nuc.NucleotideDataStoreAdapter;
@@ -34,8 +36,6 @@ import org.jcvi.common.core.seq.nuc.fasta.LargeNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.common.core.seq.qual.fasta.LargeQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.qual.fasta.QualityFastaRecordDataStoreAdapter;
-import org.jcvi.datastore.CachedDataStore;
-import org.jcvi.datastore.DataStoreFilter;
 /**
  * {@code FastaCasDataStoreFactory} is a {@link CasDataStoreFactory}
  * implementation for .fasta files.

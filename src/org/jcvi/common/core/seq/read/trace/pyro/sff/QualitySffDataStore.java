@@ -25,16 +25,16 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
 import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.common.core.seq.qual.QualityGlyphCodec;
 import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.DataStoreIterator;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 
 public class QualitySffDataStore implements QualityDataStore{
 

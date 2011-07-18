@@ -42,7 +42,7 @@ import org.jcvi.auth.JCVIAuthorizerUtils;
 import org.jcvi.auth.TigrAuthorizerUtils;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.datastore.zip.DefaultZipDataStore;
 import org.jcvi.datastore.zip.ZipDataStore;
 import org.jcvi.http.HttpUtil;

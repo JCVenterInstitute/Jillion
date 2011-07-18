@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.TextLineParser;
 

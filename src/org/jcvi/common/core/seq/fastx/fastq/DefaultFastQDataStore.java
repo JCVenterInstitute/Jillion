@@ -27,9 +27,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.CloseableIteratorAdapter;
+
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIteratorAdapter;
 
 public class DefaultFastQDataStore<T extends FastQRecord> implements FastQDataStore<T> {
 

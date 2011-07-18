@@ -34,8 +34,10 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.AbstractContigFileVisitorBuilder;
 import org.jcvi.assembly.contig.ContigFileParser;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.CloseableIteratorAdapter;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIteratorAdapter;
 
 public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder implements ContigDataStore<PlacedRead, Contig<PlacedRead>>{
     private final Map<String,Contig<PlacedRead>> contigs = new TreeMap<String, Contig<PlacedRead>>();

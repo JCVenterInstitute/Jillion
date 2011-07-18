@@ -35,7 +35,7 @@ import org.jcvi.assembly.slice.DefaultSlice;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceElement;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.util.MapValueComparator;
+import org.jcvi.common.core.util.MapValueComparator;
 
 import static org.jcvi.assembly.slice.TestSliceUtil.*;
 import static org.jcvi.common.core.seq.read.SequenceDirection.FORWARD;

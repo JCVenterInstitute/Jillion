@@ -24,8 +24,8 @@ import java.io.IOException;
 
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.qual.QualitySequence;
-import org.jcvi.util.AbstractBlockingCloseableIterator;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 
 /**
  * {@code LargeFastQFileIterator} is an Iterator of FastQRecords meant for large

@@ -54,6 +54,8 @@ import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.datastore.CachedDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.Sequence;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.qual.PhredQuality;
@@ -64,9 +66,7 @@ import org.jcvi.common.core.seq.read.ReadTrimMap;
 import org.jcvi.common.core.seq.read.ReadTrimUtil;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.seq.read.TrimType;
-import org.jcvi.datastore.CachedDataStore;
 import org.jcvi.datastore.ContigDataStore;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultContigFileDataStore;
 import org.jcvi.glyph.qualClass.QualityClass;
 

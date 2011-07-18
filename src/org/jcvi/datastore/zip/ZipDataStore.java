@@ -26,7 +26,7 @@ package org.jcvi.datastore.zip;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 
-import org.jcvi.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStore;
 /**
  * A {@code ZipDataStore} is a {@link DataStore} implementation
  * of a ZIP file.  The ids in this DataStore are the {@link ZipEntry}s

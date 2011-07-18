@@ -30,12 +30,12 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.common.core.datastore.CachedDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.qual.QualitySequence;
-import org.jcvi.datastore.CachedDataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.AbstractLargeIdIterator;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.AbstractLargeIdIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 /**
  * {@code LargeFastQFileDataStore} is a {@link FastQDataStore} implementation
  * to be used a very large FastQ Files.  No data contained in this

@@ -20,7 +20,7 @@
 package org.jcvi.assembly.util;
 
 import org.jcvi.Range;
-import org.jcvi.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStore;
 
 /**
  * {@code TrimDataStore} is a marker interface

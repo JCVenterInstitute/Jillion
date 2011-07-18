@@ -21,11 +21,11 @@ package org.jcvi.common.core.seq.pos.fasta;
 
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.Sequence;
 import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.datastore.DataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 
 /**
  * @author dkatzel

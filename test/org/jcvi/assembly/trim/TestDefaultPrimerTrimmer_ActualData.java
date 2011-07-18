@@ -23,12 +23,12 @@ import java.io.IOException;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideFastaRecordFactory;
 import org.jcvi.common.core.seq.nuc.fasta.NucleotideFastaRecordDataStoreAdatper;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;

@@ -31,10 +31,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.auth.JCVIEncodedAuthorizer;
+import org.jcvi.common.core.util.StringUtilities;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.FileType;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.RequestType;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.ReturnFormat;
-import org.jcvi.util.StringUtilities;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

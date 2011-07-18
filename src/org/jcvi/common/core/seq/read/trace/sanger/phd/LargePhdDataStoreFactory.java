@@ -25,8 +25,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
 import java.io.File;
 
-import org.jcvi.datastore.CachedDataStore;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.CachedDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 
 public class LargePhdDataStoreFactory implements PhdDataStoreFactory{
     public static final int DEFAULT_CACHE_SIZE =2000;

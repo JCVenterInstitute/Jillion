@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;
 /**
  * {@code DefaultPhdDataStoreFactory} is an implementation

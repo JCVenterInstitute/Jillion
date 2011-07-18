@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
 import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.nuc.fasta.NucleotideFastaRecordDataStoreAdatper;
@@ -33,7 +34,6 @@ import org.jcvi.common.core.seq.qual.fasta.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.qual.fasta.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificalPhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultAceFileDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.joda.time.DateTime;

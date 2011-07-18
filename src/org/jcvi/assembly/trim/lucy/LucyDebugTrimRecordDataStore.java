@@ -19,7 +19,7 @@
 
 package org.jcvi.assembly.trim.lucy;
 
-import org.jcvi.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStore;
 
 /**
  * @author dkatzel

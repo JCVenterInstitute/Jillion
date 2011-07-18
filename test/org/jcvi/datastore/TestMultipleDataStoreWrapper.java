@@ -28,8 +28,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.CloseableIteratorAdapter;
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIteratorAdapter;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -169,7 +172,7 @@ public class TestMultipleDataStoreWrapper {
         MultipleDataStoreWrapper.createMultipleDataStoreWrapper(DataStore.class,datastore1,null,datastore2);
     }
     
-    private static interface ExtendedDataStore extends DataStore{
+    public static interface ExtendedDataStore extends DataStore{
         Object someOtherMethod() throws DataStoreException;
     }
     

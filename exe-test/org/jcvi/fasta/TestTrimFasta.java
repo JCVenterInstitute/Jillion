@@ -23,10 +23,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.nuc.fasta.NucleotideFastaDataStore;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Rule;

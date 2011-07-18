@@ -30,9 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import org.jcvi.common.core.util.FileIterator;
 import org.jcvi.io.IOMode;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.FileIterator;
 /**
  * {@code DirectoryFileServer} is a {@link FileServer}
  * to work off of a directory on the file system.

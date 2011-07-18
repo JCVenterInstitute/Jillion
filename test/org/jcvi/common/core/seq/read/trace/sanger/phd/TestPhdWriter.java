@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
@@ -32,7 +33,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdParser;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdWriter;
-import org.jcvi.datastore.DataStoreException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

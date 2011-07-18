@@ -21,6 +21,7 @@ package org.jcvi.datastore;
 
 import java.util.Arrays;
 
+import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

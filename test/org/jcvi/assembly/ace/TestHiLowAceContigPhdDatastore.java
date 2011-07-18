@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
@@ -33,7 +34,6 @@ import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
 import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.After;
 import org.junit.Before;

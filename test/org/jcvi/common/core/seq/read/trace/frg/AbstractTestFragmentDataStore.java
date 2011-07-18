@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.seq.encoder.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
@@ -41,7 +42,6 @@ import org.jcvi.common.core.seq.read.trace.frg.AbstractFragmentDataStore;
 import org.jcvi.common.core.seq.read.trace.frg.DefaultFragment;
 import org.jcvi.common.core.seq.read.trace.frg.Fragment;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Parser;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;

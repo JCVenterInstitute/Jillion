@@ -26,9 +26,9 @@ package org.jcvi.common.core.seq.qual.fasta;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.qual.fasta.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.qual.fasta.QualityFastaRecord;
-import org.jcvi.datastore.DataStore;
 
 public class TestDefaultQualityFastaDataStore extends AbstractTestQualityFastaDataStore{
     

@@ -29,6 +29,8 @@ import java.util.Map;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
@@ -41,9 +43,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStoreAdapter;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.datastore.SimpleDataStore;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 
 /**
  * {@code HiLowAceContigPhdDatastore} is a PhdDataStore

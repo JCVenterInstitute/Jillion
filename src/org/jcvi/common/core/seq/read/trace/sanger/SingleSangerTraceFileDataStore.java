@@ -25,12 +25,12 @@ import java.io.IOException;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.jcvi.common.core.datastore.AbstractDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.TraceDataStore;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
-import org.jcvi.datastore.AbstractDataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.CloseableIterator;
-import org.jcvi.util.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIteratorAdapter;
 
 /**
  * @author dkatzel

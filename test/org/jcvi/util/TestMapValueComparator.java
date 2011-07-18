@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.jcvi.common.core.util.MapValueComparator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

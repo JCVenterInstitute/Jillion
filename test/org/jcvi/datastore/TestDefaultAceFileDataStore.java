@@ -31,6 +31,8 @@ import java.util.List;
 
 import org.jcvi.assembly.ace.AceContig;
 import org.jcvi.assembly.ace.TestAbstractAceParserMatchesAce2ContigMultipleContigs;
+import org.jcvi.common.core.datastore.DataStoreException;
+
 import static org.junit.Assert.fail;
 public class TestDefaultAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
 

@@ -23,8 +23,8 @@ import java.io.IOException;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.util.TrimDataStore;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.util.CloseableIterator;
 
 /**
  * @author dkatzel

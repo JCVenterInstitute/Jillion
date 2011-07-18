@@ -34,13 +34,13 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.EncodedShortGlyph;
 import org.jcvi.common.core.seq.Sequence;
 import org.jcvi.common.core.seq.ShortGlyph;
 import org.jcvi.common.core.seq.ShortGlyphFactory;
 import org.jcvi.common.core.seq.pos.fasta.PositionDataStore;
 import org.jcvi.common.core.seq.pos.fasta.PositionDataStoreAdapter;
-import org.jcvi.datastore.SimpleDataStore;
 import org.jcvi.io.IOUtil;
 
 public class TigrPositionsFileParser {

@@ -25,12 +25,12 @@ package org.jcvi.assembly;
 
 import java.util.Arrays;
 
+import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
 import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.common.core.seq.qual.QualitySequence;
-import org.jcvi.datastore.DataStore;
 
 
 public class ArtificalQualityDataStoreFromContig extends AbstractArtificialDataStoreFromContig<QualitySequence> implements QualityDataStore{

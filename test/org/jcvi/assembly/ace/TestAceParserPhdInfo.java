@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.assembly.Contig;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultAceFileDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.joda.time.format.DateTimeFormat;

@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.NullFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQFileDataStore;
@@ -35,7 +36,6 @@ import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideFastaRecordFactory;
 import org.jcvi.common.core.seq.qual.fasta.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.qual.fasta.DefaultQualityFastaRecordFactory;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.fasta.fastq.util.Fastq2Fasta;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;

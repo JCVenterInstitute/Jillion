@@ -31,13 +31,13 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.common.core.datastore.CachedDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
 import org.jcvi.common.core.seq.fastx.fasta.SequenceFastaRecordUtil;
-import org.jcvi.datastore.CachedDataStore;
-import org.jcvi.datastore.DataStoreException;
+import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.io.IOUtil;
-import org.jcvi.util.CloseableIterator;
 /**
  * {@code LargeNucleotideFastaFileDataStore} is an implementation
  * of {@link AbstractNucleotideFastaFileDataStore} which does not

@@ -23,10 +23,10 @@
  */
 package org.jcvi.common.core.seq.nuc.fasta;
 
+import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.datastore.DataStore;
 /**
  * {@code NucleotideFastaRecordDataStoreAdatper} is an adapter
  * that adapts a {@link DataStore} of {@link NucleotideSequenceFastaRecord}s

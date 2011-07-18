@@ -19,6 +19,8 @@
 
 package org.jcvi.datastore;
 
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

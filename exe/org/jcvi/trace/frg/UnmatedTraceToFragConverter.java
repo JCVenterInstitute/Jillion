@@ -38,6 +38,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.DefaultLibrary;
 import org.jcvi.common.core.seq.read.Distance;
 import org.jcvi.common.core.seq.read.Library;
@@ -50,7 +51,6 @@ import org.jcvi.common.core.seq.read.trace.frg.Frg2Writer;
 import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
 import org.jcvi.common.core.seq.read.trace.sanger.SangerTraceParser;
 import org.jcvi.common.core.seq.read.trace.sanger.SingleSangerTraceFileDataStore;
-import org.jcvi.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;
 
 public class UnmatedTraceToFragConverter {

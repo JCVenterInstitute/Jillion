@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestContigFileDataStore extends TestContigFileParser{

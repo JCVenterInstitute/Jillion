@@ -26,10 +26,10 @@ package org.jcvi.common.core.seq.fastx.fastq;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.qual.QualitySequence;
-import org.jcvi.datastore.DataStoreException;
-import org.jcvi.util.CloseableIterator;
+import org.jcvi.common.core.util.CloseableIterator;
 
 public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQRecord>{
 
@@ -93,7 +93,7 @@ public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQR
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         dataStore.close();        
     }
 
