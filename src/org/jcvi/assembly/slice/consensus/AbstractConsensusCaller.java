@@ -31,8 +31,8 @@ import java.util.Map.Entry;
 
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceElement;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.qual.PhredQuality;
 
 public abstract class AbstractConsensusCaller implements ConsensusCaller{
  private final PhredQuality highQualityThreshold;

@@ -23,8 +23,8 @@
  */
 package org.jcvi.assembly;
 
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.glyph.nuc.NucleotideSequence;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 

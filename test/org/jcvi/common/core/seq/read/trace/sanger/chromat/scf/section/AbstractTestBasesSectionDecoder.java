@@ -33,18 +33,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import org.jcvi.common.core.seq.DefaultShortGlyphCodec;
+import org.jcvi.common.core.seq.EncodedSequence;
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.ShortGlyph;
+import org.jcvi.common.core.seq.ShortGlyphFactory;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.read.Confidence;
 import org.jcvi.common.core.seq.read.DefaultConfidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionDecoderException;
-import org.jcvi.glyph.EncodedSequence;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.num.DefaultShortGlyphCodec;
-import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.num.ShortGlyphFactory;
 import org.junit.Before;
 import org.junit.Test;
 

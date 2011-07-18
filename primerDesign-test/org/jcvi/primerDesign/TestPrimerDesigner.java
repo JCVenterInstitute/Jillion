@@ -1,11 +1,11 @@
 package org.jcvi.primerDesign;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
-import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.jcvi.primerDesign.PrimerDesigner;
 import org.jcvi.primerDesign.domain.PrimerDesignTarget;
 import org.jcvi.primerDesign.domain.DefaultPrimerDesignTarget;

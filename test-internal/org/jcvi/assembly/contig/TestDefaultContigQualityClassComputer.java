@@ -27,11 +27,11 @@ import org.jcvi.assembly.Placed;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.glyph.qualClass.QualityClass;
 
 import org.junit.Before;

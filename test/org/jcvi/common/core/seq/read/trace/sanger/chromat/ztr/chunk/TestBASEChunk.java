@@ -25,13 +25,13 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk;
 
 import java.nio.ByteBuffer;
 
+import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.Chunk;
-import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideSequence;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

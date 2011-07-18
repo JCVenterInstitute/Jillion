@@ -24,7 +24,7 @@
 package org.jcvi.assembly.slice.consensus;
 
 import org.jcvi.assembly.slice.Slice;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 /**
  * <code>ConsensusCaller</code> compute the
  * {@link ConsensusResult} for the given Slice.

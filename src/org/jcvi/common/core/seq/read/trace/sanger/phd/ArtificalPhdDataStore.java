@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.util.CloseableIterator;
 import org.joda.time.DateTime;
 /**

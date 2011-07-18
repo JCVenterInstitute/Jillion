@@ -28,11 +28,11 @@ import java.util.Set;
 
 import org.jcvi.Range;
 import org.jcvi.assembly.contig.AbstractContig;
+import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.nuc.ReferenceEncodedNucleotideSequence;
 
 public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
 

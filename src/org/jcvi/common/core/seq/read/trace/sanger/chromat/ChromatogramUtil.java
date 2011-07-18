@@ -27,6 +27,10 @@ import java.nio.ShortBuffer;
 import java.util.List;
 
 import org.jcvi.Builder;
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.ShortGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.Ab1FileParser;
@@ -34,10 +38,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.AbiUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFileParser;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFileParser;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRUtil;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.MagicNumberInputStream;
 

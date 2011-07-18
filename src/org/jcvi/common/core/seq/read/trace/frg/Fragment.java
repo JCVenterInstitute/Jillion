@@ -24,10 +24,10 @@
 package org.jcvi.common.core.seq.read.trace.frg;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.read.Library;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.trace.Trace;
-import org.jcvi.glyph.nuc.NucleotideSequence;
 
 public interface Fragment extends Trace, Read<NucleotideSequence>{
 

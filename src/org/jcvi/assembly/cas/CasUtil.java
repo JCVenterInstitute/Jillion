@@ -35,7 +35,7 @@ import org.jcvi.assembly.cas.alignment.CasAlignmentRegion;
 import org.jcvi.assembly.cas.alignment.CasAlignmentRegionType;
 import org.jcvi.assembly.cas.read.CasPlacedRead;
 import org.jcvi.assembly.cas.read.DefaultCasPlacedReadFromCasAlignmentBuilder;
-import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.IOUtil.ENDIAN;
 /**

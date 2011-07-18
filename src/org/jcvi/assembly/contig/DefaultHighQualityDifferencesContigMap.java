@@ -36,11 +36,11 @@ import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.DefaultLocation;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.contig.qual.QualityValueStrategy;
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
 
 
 public class DefaultHighQualityDifferencesContigMap implements HighQualityDifferencesContigMap{

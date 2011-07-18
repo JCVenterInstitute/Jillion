@@ -31,16 +31,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jcvi.common.core.seq.ShortGlyph;
+import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
+import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.seq.qual.QualityGlyphCodec;
 import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.datastore.DataStoreException;
 import org.jcvi.datastore.DataStoreFilter;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityGlyphCodec;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
 

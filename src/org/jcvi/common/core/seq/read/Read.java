@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.read;
 
-import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 
 /**
  * {@code Read} is the abstraction of an raw (usually ungapped)

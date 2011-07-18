@@ -1,9 +1,9 @@
 package org.jcvi.primerDesign.results;
 
+import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.fastX.fasta.FastaParser;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
 import org.jcvi.Range;
 
 import java.util.*;

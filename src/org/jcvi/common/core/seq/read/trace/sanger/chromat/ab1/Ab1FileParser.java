@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.AsciiTaggedDataRecord;
@@ -53,7 +54,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.TimeTaggedData
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.UserDefinedTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateUtils;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;

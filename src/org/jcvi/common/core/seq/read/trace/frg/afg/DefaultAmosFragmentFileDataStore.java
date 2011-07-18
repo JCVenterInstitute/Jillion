@@ -26,13 +26,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
+import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.datastore.AbstractDataStore;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.util.CloseableIterator;
 import org.jcvi.util.CloseableIteratorAdapter;
 

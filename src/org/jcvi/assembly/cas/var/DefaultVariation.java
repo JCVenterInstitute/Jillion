@@ -23,7 +23,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 
 /**
  * {@code DefaultVariation} is a default implementation 

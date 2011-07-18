@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.jcvi.assembly.slice.Slice;
-import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.junit.runners.Parameterized.Parameters;
 
 public class TestBasicChurchillWatermanConsensusCaller extends

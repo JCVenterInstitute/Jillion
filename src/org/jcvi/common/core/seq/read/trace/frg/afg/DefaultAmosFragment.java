@@ -20,8 +20,8 @@
 package org.jcvi.common.core.seq.read.trace.frg.afg;
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.phredQuality.QualitySequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.qual.QualitySequence;
 
 /**
  * @author dkatzel

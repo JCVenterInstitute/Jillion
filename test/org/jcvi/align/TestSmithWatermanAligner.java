@@ -25,11 +25,11 @@
  */
 package org.jcvi.align;
 
+import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.experimental.align.Aligner;
 import org.jcvi.common.experimental.align.Alignment;
 import org.jcvi.common.experimental.align.NucleotideSubstitutionMatrix;
 import org.jcvi.common.experimental.align.SmithWatermanAligner;
-import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

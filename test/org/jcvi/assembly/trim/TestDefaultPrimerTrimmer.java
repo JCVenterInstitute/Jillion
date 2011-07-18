@@ -21,9 +21,9 @@ package org.jcvi.assembly.trim;
 
 
 import org.jcvi.Range;
-import org.jcvi.glyph.nuc.DefaultNucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

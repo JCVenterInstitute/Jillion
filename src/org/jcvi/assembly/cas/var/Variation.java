@@ -22,7 +22,7 @@ package org.jcvi.assembly.cas.var;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 
 /**
  * {@code Variation} represents a single row in 

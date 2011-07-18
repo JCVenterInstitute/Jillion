@@ -27,12 +27,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.ShortGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.common.core.seq.read.Peaks;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.num.ShortGlyph;
-import org.jcvi.glyph.phredQuality.QualitySequence;
 
 public class DefaultPhd implements Phd {
 

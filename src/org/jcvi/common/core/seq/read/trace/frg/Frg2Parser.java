@@ -31,12 +31,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
+import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.common.core.seq.read.Distance;
 import org.jcvi.common.core.seq.read.MateOrientation;
-import org.jcvi.glyph.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.phredQuality.EncodedQualitySequence;
-import org.jcvi.glyph.phredQuality.QualitySequence;
 import org.jcvi.io.IOUtil;
 
 public class Frg2Parser {

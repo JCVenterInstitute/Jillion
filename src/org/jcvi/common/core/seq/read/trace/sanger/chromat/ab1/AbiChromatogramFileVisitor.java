@@ -20,6 +20,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1;
 
 import java.util.List;
 
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.ByteArrayTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.DateTaggedDataRecord;
@@ -31,7 +32,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.TimeTaggedData
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.UserDefinedTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRate;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 /**

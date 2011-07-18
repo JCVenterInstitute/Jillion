@@ -28,8 +28,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jcvi.assembly.slice.Slice;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.qual.PhredQuality;
+
 import static org.jcvi.assembly.slice.consensus.ConsensusUtil.*;
 /**
  * <code>ConicConsensusCaller</code> calls consensus using

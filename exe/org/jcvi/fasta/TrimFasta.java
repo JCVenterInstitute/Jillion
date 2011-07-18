@@ -35,12 +35,12 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.Range;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
-import org.jcvi.fastX.fasta.FastaParser;
-import org.jcvi.fastX.fasta.FastaVisitor;
-import org.jcvi.fastX.fasta.seq.AbstractNucleotideFastaVisitor;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
-import org.jcvi.fastX.fasta.seq.NucleotideSequenceFastaRecord;
-import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.nuc.fasta.AbstractNucleotideFastaVisitor;
+import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
 import org.jcvi.io.IOUtil;
 
 /**

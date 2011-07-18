@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.read;
 
 import org.jcvi.CommonUtil;
-import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 
 public class DefaultRead<T extends NucleotideSequence> implements Read<T>{
     private final String id;

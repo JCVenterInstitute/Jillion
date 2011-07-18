@@ -39,9 +39,9 @@ import org.jcvi.Range;
 import org.jcvi.assembly.ace.consed.ConsedUtil;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
 
 public class Ace2Fasta {

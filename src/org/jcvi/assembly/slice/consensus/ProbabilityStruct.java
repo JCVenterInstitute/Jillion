@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 
 final class ProbabilityStruct{
 

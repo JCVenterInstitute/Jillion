@@ -26,12 +26,12 @@ import java.io.IOException;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.seq.qual.QualityDataStore;
+import org.jcvi.common.core.seq.qual.fasta.DefaultQualityFastaFileDataStore;
+import org.jcvi.common.core.seq.qual.fasta.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.datastore.DataStoreException;
-import org.jcvi.fastX.fasta.qual.DefaultQualityFastaFileDataStore;
-import org.jcvi.fastX.fasta.qual.QualityFastaRecordDataStoreAdapter;
-import org.jcvi.glyph.Sequence;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;

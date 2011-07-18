@@ -24,9 +24,10 @@
 package org.jcvi.assembly.slice.consensus;
 
 import org.jcvi.assembly.slice.Slice;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-import static org.jcvi.glyph.nuc.NucleotideGlyph.*;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.qual.PhredQuality;
+
+import static org.jcvi.common.core.seq.nuc.NucleotideGlyph.*;
 /**
  * <code>NoAmbiguityConsensusCaller</code>
  * will always return the non-ambiguous base

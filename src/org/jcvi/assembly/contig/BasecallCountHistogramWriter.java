@@ -27,7 +27,7 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import org.jcvi.assembly.slice.SliceMap;
-import org.jcvi.glyph.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 
 public interface BasecallCountHistogramWriter extends Closeable {
 

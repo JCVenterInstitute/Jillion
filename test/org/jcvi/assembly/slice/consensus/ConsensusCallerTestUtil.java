@@ -34,7 +34,7 @@ import java.util.SortedMap;
 import org.jcvi.assembly.slice.DefaultSlice;
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceElement;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.util.MapValueComparator;
 
 import static org.jcvi.assembly.slice.TestSliceUtil.*;

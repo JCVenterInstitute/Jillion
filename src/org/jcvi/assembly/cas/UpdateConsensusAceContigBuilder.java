@@ -30,8 +30,8 @@ import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.ace.AcePlacedRead;
 import org.jcvi.assembly.ace.DefaultAceContig;
 import org.jcvi.assembly.ace.DefaultAceContig.Builder;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 
 /**
  * @author dkatzel

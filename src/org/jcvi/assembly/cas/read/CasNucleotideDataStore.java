@@ -24,7 +24,7 @@
 package org.jcvi.assembly.cas.read;
 
 
-import org.jcvi.glyph.nuc.NucleotideDataStore;
+import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
 
 public interface CasNucleotideDataStore extends NucleotideDataStore{
 

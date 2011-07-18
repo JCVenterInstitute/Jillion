@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.read.trace;
 
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.phredQuality.QualitySequence;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.seq.qual.QualitySequence;
 
 public interface Trace {
 

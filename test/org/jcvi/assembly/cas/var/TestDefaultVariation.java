@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.assembly.cas.var.Variation.Type;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;

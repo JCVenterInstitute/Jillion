@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.jcvi.assembly.PlacedRead;
-import org.jcvi.glyph.phredQuality.PhredQuality;
+import org.jcvi.common.core.seq.qual.PhredQuality;
 
 public interface HighQualityDifferencesContigMap extends Iterable<List<DefaultQualityDifference>>{
 

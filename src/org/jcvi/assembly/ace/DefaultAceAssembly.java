@@ -27,13 +27,13 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
+import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
+import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.common.core.seq.read.trace.TraceNucleotideDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.TraceQualityDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.datastore.DataStore;
-import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
 
 public class DefaultAceAssembly<A extends AceContig> implements AceAssembly<A>{
 

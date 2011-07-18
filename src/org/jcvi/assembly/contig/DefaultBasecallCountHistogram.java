@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.jcvi.assembly.slice.Slice;
 import org.jcvi.assembly.slice.SliceElement;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
+import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 
 public class DefaultBasecallCountHistogram implements BasecallCountHistogram {
     private final Slice contigSlice;

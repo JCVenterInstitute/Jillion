@@ -33,6 +33,9 @@ import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.assembly.trim.DefaultPrimerTrimmer;
 import org.jcvi.assembly.trim.PrimerTrimmer;
+import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
+import org.jcvi.common.core.seq.nuc.NucleotideDataStoreAdapter;
+import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFCommonHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadHeader;
@@ -42,9 +45,6 @@ import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffWriter;
 import org.jcvi.datastore.SimpleDataStore;
-import org.jcvi.glyph.nuc.NucleotideDataStore;
-import org.jcvi.glyph.nuc.NucleotideSequence;
-import org.jcvi.glyph.nuc.datastore.NucleotideDataStoreAdapter;
 import org.jcvi.io.IOUtil;
 
 /**

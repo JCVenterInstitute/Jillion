@@ -2,8 +2,8 @@ package org.jcvi.primerDesign.results;
 
 import org.junit.Test;
 import org.jcvi.Range;
+import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.fastX.fasta.seq.DefaultNucleotideSequenceFastaRecord;
 
 import org.jcvi.primerDesign.CollectionComparison;
 

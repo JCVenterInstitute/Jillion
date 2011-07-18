@@ -34,7 +34,7 @@ import org.jcvi.assembly.contig.qual.QualityValueStrategy;
 import org.jcvi.assembly.coverage.CoverageMap;
 import org.jcvi.assembly.coverage.CoverageRegion;
 import org.jcvi.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.glyph.phredQuality.QualityDataStore;
+import org.jcvi.common.core.seq.qual.QualityDataStore;
 
 public class DefaultSliceMap extends AbstractSliceMap{
 
