@@ -61,6 +61,11 @@ public class TrimFileIterator extends AbstractBlockingCloseableIterator<Range>{
 				TrimFileIterator.this.blockingPut(trimRange);
 				return !TrimFileIterator.this.isClosed();
 			}
+
+            @Override
+            public void visitLine(String line) {
+                
+            }
 			
 		};
 		

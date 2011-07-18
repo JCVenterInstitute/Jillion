@@ -38,8 +38,6 @@ import org.jcvi.io.TextLineParser;
  * {@code FastaParser} is a utility class
  * to parse Fasta formated files.
  * @author dkatzel
- *
- *
  */
 public final class FastaParser {
     /**
@@ -159,7 +157,14 @@ public final class FastaParser {
         }
         
     }
-    
+    /**
+     * {@code SectionHandler} has implementations
+     * which "handle" each section of a Fasta
+     * Record differently.
+     * @author dkatzel
+     *
+     *
+     */
     private enum SectionHandler{
         DEFLINE{
             @Override
