@@ -17,43 +17,29 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Jun 3, 2009
+ * Created on Jun 26, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.assembly.slice;
+package org.jcvi.common.core.seq.read.trace.archive;
 
-import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-/**
- * {@code SliceElement} is 
- * @author dkatzel
- *
- *
- */
-public interface SliceElement {
-    /**
-     * Get the ID of this element.  Each element in a Slice must
-     * have a different ID, although there SliceElements from 
-     * different Slices can have the same ID.  This ID is usually the 
-     * read ID.
-     * @return the ID of this slice element.
-     */
-    String getId();
-    /**
-     * Get the {@link NucleotideGlyph} of this SliceElement.
-     * @return
-     */
-    NucleotideGlyph getBase();
-    /**
-     * Get the {@link PhredQuality} of this SliceElement.
-     * @return
-     */
-    PhredQuality getQuality();
-    /**
-     * Get the {@link SequenceDirection} of this SliceElement.
-     * @return
-     */
-    SequenceDirection getSequenceDirection();
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+@RunWith(Suite.class)
+@SuiteClasses(
+    {
+        TestDefaultTraceArchiveRecord.class,
+        TestDefaultTraceArchiveRecordBuilder.class,
+        TestCachedTraceArchiveMultiTrace.class,
+        TestAbstractFolderTraceArchiveMultiTrace.class,
+        TestDefaultFolderTraceArchiveDataStore.class,
+        TestActualTraceArchiveXML.class,
+        TestDefaultTraceNameConverter.class,
+        TestTraceTypeCode.class
+    }
+    )
+public class AllTraceArchiveUnitTests {
+
 }

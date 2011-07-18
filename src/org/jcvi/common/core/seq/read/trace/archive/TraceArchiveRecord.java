@@ -17,43 +17,40 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Jun 3, 2009
+ * Created on Jun 23, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.assembly.slice;
+package org.jcvi.common.core.seq.read.trace.archive;
 
-import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.glyph.nuc.NucleotideGlyph;
-import org.jcvi.glyph.phredQuality.PhredQuality;
-/**
- * {@code SliceElement} is 
- * @author dkatzel
- *
- *
- */
-public interface SliceElement {
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+public interface TraceArchiveRecord {
     /**
-     * Get the ID of this element.  Each element in a Slice must
-     * have a different ID, although there SliceElements from 
-     * different Slices can have the same ID.  This ID is usually the 
-     * read ID.
-     * @return the ID of this slice element.
+     * Returns the Attribute Value of the given {@link TraceInfoField}.
+     * @param traceInfoField the id of the property to get.
+     * @return the attribute value of that property; 
+     * or {@code null} if the {@code TraceArchiveRecord} does
+     * not have that property.
      */
-    String getId();
+    String getAttribute(TraceInfoField traceInfoField);
     /**
-     * Get the {@link NucleotideGlyph} of this SliceElement.
+     * Does this {@code TraceArchiveRecord} contain this TraceInfoField.
+     * @param traceInfoField the TraceInfoField to check.
+     * @return {@code true} if this {@code TraceArchiveRecord} 
+     * contains this TraceInfoField; {@code false} otherwise.
+     */
+    boolean contains(TraceInfoField traceInfoField);
+    /**
+     * Get the Set of key value pairs
      * @return
      */
-    NucleotideGlyph getBase();
+    Set<Entry<TraceInfoField, String>> entrySet();
     /**
-     * Get the {@link PhredQuality} of this SliceElement.
+     * Extra ancillary information not specified by the TraceInfo Fields.
      * @return
      */
-    PhredQuality getQuality();
-    /**
-     * Get the {@link SequenceDirection} of this SliceElement.
-     * @return
-     */
-    SequenceDirection getSequenceDirection();
+    Map<String, String> getExtendedData();
 }

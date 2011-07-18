@@ -22,7 +22,7 @@ package org.jcvi.assembly.trim;
 import org.jcvi.assembly.Contig;
 import org.jcvi.assembly.PlacedRead;
 import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.sequence.SequenceDirection;
+import org.jcvi.common.core.seq.read.SequenceDirection;
 
 /**
  * @author dkatzel
