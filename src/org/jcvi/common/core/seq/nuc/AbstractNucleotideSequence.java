@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.AssemblyUtil;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 
 public abstract class AbstractNucleotideSequence implements NucleotideSequence{
 

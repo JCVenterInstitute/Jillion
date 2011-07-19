@@ -21,12 +21,13 @@
  *
  * @author dkatzel
  */
-package org.jcvi.assembly;
+package org.jcvi.common.core.assembly;
 
 
 import java.util.List;
 
 import org.jcvi.Range;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;

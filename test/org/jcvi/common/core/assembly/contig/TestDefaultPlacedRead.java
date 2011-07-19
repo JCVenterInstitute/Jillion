@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.assembly;
+package org.jcvi.common.core.assembly.contig;
 
 import java.util.ArrayList;
 import java.util.HashMap;

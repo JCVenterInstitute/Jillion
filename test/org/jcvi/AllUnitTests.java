@@ -26,7 +26,7 @@ package org.jcvi;
 import junit.framework.Test;
 
 import org.jcvi.align.AllAlignTests;
-import org.jcvi.assembly.AllAssemblyUnitTests;
+import org.jcvi.common.core.assembly.AllAssemblyUnitTests;
 import org.jcvi.common.core.assembly.contig.ace.AllAceUnitTests;
 import org.jcvi.common.core.seq.AllGlyphUnitTests;
 import org.jcvi.common.core.seq.fastx.AllFastXTests;

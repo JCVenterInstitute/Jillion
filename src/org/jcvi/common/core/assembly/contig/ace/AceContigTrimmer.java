@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.AssemblyUtil;
 import org.jcvi.assembly.trim.AbstractContigTrimmer;
 import org.jcvi.assembly.trim.PlacedReadTrimmer;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 
