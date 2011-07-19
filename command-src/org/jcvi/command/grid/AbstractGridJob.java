@@ -351,7 +351,7 @@ import org.jcvi.command.Command;
         }
     }
 
-    public abstract static  class Builder<J extends GridJob> implements org.jcvi.Builder<J>{
+    public abstract static  class Builder<J extends GridJob> implements org.jcvi.common.core.util.Builder<J>{
         private static final int SECONDS_PER_MINUTE = 60;
 
         protected Session gridSession;

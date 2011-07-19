@@ -24,7 +24,7 @@
 package org.jcvi.command;
 
 import org.apache.commons.cli.Option;
-import org.jcvi.Builder;
+import org.jcvi.common.core.util.Builder;
 /**
  * {@code CommandLineOptionBuilder} is an {@link Option}
  * builder which uses a fluent interface to build Apache
