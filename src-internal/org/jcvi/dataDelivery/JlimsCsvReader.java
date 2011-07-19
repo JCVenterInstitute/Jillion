@@ -44,7 +44,13 @@ public class JlimsCsvReader implements SpreadSheetReader{
         TextLineParser r = new TextLineParser(in);
         //skip useless first line
         String skipped =r.nextLine();
-        reader = new CSVReader(r, true);
+        try{
+            reader = new CSVReader(r, true);
+        }catch(NullPointerException e){
+            //if the barcode doesn't exist, then reading the header
+            //will throw a NPE
+            throw new IOException("error trying to read barcode manifest, barocde probably doesn't exist",e);
+        }
     }
 
     /**
