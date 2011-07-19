@@ -26,7 +26,8 @@ package org.jcvi.common.core.seq.read.trace.frg;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jcvi.Range;
+
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.Library;
 import org.jcvi.common.core.symbol.qual.QualitySequence;

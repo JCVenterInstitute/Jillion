@@ -21,18 +21,17 @@
  *
  * @author dkatzel
  */
-package org.jcvi.datastore;
+package org.jcvi.common.core.assembly.contig.ctg;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.ContigDataStore;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.assembly.contig.ctg.AbstractContigFileVisitorBuilder;
-import org.jcvi.common.core.assembly.contig.ctg.ContigFileParser;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.util.CloseableIterator;

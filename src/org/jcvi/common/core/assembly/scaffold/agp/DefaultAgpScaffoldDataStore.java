@@ -16,11 +16,11 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi.datastore;
+package org.jcvi.common.core.assembly.scaffold.agp;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.scaffold.DefaultScaffold;
-import org.jcvi.common.core.assembly.scaffold.agp.AgpFileVisitor;
+import org.jcvi.common.core.assembly.scaffold.ScaffoldDataStore;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 
 import java.util.LinkedHashMap;

@@ -241,7 +241,7 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
         return (byte)(Math.max(Byte.MIN_VALUE, Math.min(Byte.MAX_VALUE, intScore)));
     }
     
-    public static class Builder implements org.jcvi.Builder<NucleotideSubstitutionMatrix>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<NucleotideSubstitutionMatrix>{
 
         private final String name;
         private Integer defaultScore,identityScore,

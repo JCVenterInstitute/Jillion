@@ -26,8 +26,8 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.io.IOUtil;
 
 public class DefaultSFFReadHeaderCodec implements SFFReadHeaderCodec {

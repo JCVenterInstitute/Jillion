@@ -26,7 +26,7 @@ package org.jcvi.common.core.symbol.residue.nuc;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.GlyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;

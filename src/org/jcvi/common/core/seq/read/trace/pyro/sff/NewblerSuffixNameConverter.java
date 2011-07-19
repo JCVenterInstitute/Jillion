@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 
 public final class NewblerSuffixNameConverter {
     private static final Pattern RANGE_PATTERN = Pattern.compile("\\.(\\d+)-(\\d+)");

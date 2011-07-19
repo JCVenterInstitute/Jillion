@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.contig.ace;
 import java.io.IOException;
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceFileTagMap;
 import org.jcvi.common.core.assembly.contig.ace.DefaultConsensusAceTag;

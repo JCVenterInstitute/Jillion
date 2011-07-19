@@ -44,6 +44,7 @@ import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
 import org.jcvi.common.core.assembly.contig.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceAssembly;
+import org.jcvi.common.core.assembly.contig.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceFileTagMap;
 import org.jcvi.common.core.assembly.contig.ace.newbler.NewblerMappedAceContigUtil;
 import org.jcvi.common.core.assembly.contig.slice.LargeSliceMapFactory;
@@ -58,7 +59,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdParser;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.newbler.IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.MultipleWrapper;
-import org.jcvi.datastore.DefaultAceFileDataStore;
 
 public class RemoveReferenceFromNewblerMappedAce {
     private static final String DEFAULT_ACE_OUTPUT = "dereferenced.ace";

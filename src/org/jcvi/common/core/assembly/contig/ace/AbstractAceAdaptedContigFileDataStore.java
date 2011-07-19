@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.contig.ace;
 
 import java.util.Date;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ctg.AbstractContigFileVisitor;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;

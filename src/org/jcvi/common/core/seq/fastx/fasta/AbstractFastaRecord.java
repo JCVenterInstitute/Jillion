@@ -21,7 +21,7 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta;
 
-import org.jcvi.CommonUtil;
+import org.jcvi.common.core.util.CommonUtil;
 
 
 /**

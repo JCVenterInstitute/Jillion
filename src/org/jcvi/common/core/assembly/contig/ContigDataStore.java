@@ -16,27 +16,15 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi.datastore;
-
-import org.jcvi.common.core.assembly.scaffold.Scaffold;
-
-import java.util.Iterator;
-import java.util.Set;
-
-/**
- * User: aresnick
- * Date: Sep 9, 2009
- * Time: 2:55:11 PM
- * <p/>
- * $HeadURL$
- * $LastChangedRevision$
- * $LastChangedBy$
- * $LastChangedDate$
- * <p/>
- * Description:
+/*
+ * Created on Apr 22, 2009
+ *
+ * @author dkatzel
  */
-public interface ScaffoldDataStore<T extends Scaffold> {
-    Set<String> getScaffoldIds();
-    Iterator<T> getScaffolds();
-    Scaffold getScaffold(String id);
+package org.jcvi.common.core.assembly.contig;
+
+import org.jcvi.common.core.datastore.DataStore;
+
+public interface ContigDataStore<PR extends PlacedRead,C extends Contig<PR>> extends DataStore<C> {
+    
 }

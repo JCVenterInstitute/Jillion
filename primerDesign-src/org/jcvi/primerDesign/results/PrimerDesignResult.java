@@ -1,6 +1,6 @@
 package org.jcvi.primerDesign.results;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 

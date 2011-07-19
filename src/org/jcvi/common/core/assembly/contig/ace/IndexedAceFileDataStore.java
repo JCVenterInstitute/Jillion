@@ -21,17 +21,13 @@
  *
  * @author dkatzel
  */
-package org.jcvi.datastore;
+package org.jcvi.common.core.assembly.contig.ace;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.Range;
-import org.jcvi.common.core.assembly.contig.ace.AbstractAceContigBuilder;
-import org.jcvi.common.core.assembly.contig.ace.AceContig;
-import org.jcvi.common.core.assembly.contig.ace.AceContigDataStore;
-import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.CloseableIterator;

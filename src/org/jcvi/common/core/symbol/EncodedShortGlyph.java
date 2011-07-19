@@ -27,7 +27,7 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 /**
  * {@code EncodedShortGlyph} encodes a {@link Sequence}
  * of {@link ShortGlyph}s.

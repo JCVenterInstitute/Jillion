@@ -42,7 +42,7 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.Scanner;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 
 public final class IOUtil {
 

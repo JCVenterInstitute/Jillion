@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.AbstractContig;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.seq.read.SequenceDirection;

@@ -26,7 +26,7 @@ package org.jcvi.common.core.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 
 public class DefaultIndexedFileRange implements IndexedFileRange{
 

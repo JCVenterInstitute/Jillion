@@ -21,7 +21,7 @@ package org.jcvi.common.core.seq.read.trace.frg.afg;
 
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.io.TextFileVisitor;

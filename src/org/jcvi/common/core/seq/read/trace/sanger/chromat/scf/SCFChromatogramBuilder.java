@@ -26,11 +26,11 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.jcvi.Builder;
 import org.jcvi.common.core.seq.read.Confidence;
 import org.jcvi.common.core.seq.read.DefaultConfidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.util.Builder;
 
 /**
  * {@code SCFChromatogramBuilder} uses the Builder pattern

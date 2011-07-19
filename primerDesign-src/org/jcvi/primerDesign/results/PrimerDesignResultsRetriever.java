@@ -3,7 +3,7 @@ package org.jcvi.primerDesign.results;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.io.IOUtil;
 import org.jcvi.primerDesign.domain.DefaultPrimerDesignTarget;
 import org.jcvi.primerDesign.domain.PrimerDesignTarget;

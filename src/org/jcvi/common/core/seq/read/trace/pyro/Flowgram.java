@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.pyro;
 
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.Trace;
 
 public interface Flowgram extends Trace {

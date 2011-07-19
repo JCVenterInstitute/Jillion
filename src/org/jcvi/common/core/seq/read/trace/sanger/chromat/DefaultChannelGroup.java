@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
-import org.jcvi.CommonUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.util.CommonUtil;
 
 public class DefaultChannelGroup implements ChannelGroup {
 

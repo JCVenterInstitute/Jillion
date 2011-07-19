@@ -89,7 +89,7 @@ public class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag implemen
 
 
 
-    public static class Builder implements org.jcvi.Builder<DefaultConsensusAceTag>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultConsensusAceTag>{
         private final Set<String> comments = new LinkedHashSet<String>();
         private final String id;
         

@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header;
 
-import org.jcvi.CommonUtil;
+import org.jcvi.common.core.util.CommonUtil;
 
 /**
  * <code>DefaultSCFHeader</code> is an object representation of

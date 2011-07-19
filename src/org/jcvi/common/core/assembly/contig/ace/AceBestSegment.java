@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 /**
  * {@code AceBestSegment} is an object representation of 
  * an Ace "BS" record.  Best Segments represent which read

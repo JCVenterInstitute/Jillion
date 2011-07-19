@@ -31,8 +31,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.io.IOUtil;
 
 public class ReadTrimUtil {

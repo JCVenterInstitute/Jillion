@@ -26,9 +26,9 @@ package org.jcvi.common.core.assembly.scaffold;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
-import org.jcvi.Range;
 
 public interface Scaffold {
 

@@ -30,8 +30,8 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.trim.TrimDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.io.IOUtil;

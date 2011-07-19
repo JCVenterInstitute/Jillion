@@ -29,9 +29,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.CommonUtil;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.util.CommonUtil;
 
 public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
 

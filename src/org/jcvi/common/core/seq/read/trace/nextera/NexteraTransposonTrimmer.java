@@ -22,8 +22,8 @@ package org.jcvi.common.core.seq.read.trace.nextera;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.trim.DefaultPrimerTrimmer;
 import org.jcvi.common.core.seq.trim.PrimerTrimmer;

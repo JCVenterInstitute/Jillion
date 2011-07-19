@@ -28,7 +28,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import org.jcvi.Range;
+
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Placed;
 import org.jcvi.common.core.assembly.PlacedEndComparator;
 import org.jcvi.common.core.assembly.PlacedStartComparator;

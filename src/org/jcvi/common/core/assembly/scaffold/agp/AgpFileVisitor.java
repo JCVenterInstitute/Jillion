@@ -18,9 +18,9 @@
  ******************************************************************************/
 package org.jcvi.common.core.assembly.scaffold.agp;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.io.TextFileVisitor;
-import org.jcvi.Range;
 
 /**
  * User: aresnick

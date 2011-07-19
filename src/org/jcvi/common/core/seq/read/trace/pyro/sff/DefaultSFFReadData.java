@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import org.jcvi.CommonUtil;
+import org.jcvi.common.core.util.CommonUtil;
 import org.jcvi.common.core.util.MathUtil;
 
 public class DefaultSFFReadData implements SFFReadData {

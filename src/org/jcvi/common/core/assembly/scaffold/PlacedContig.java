@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.scaffold;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Placed;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 

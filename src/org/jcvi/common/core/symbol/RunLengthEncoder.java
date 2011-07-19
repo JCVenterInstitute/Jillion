@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 
 public class RunLengthEncoder {
 

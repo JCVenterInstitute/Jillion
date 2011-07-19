@@ -28,7 +28,7 @@ package org.jcvi.common.experimental.align;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 
 /**
  * An <code>AlignmentFactory</code> is a factory object capable of collecting information needed

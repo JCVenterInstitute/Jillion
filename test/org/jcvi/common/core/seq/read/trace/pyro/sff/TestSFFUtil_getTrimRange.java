@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;

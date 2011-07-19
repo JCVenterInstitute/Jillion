@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.scaffold;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.Assert;
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.scaffold.DefaultPlacedContig;
 import org.jcvi.common.core.assembly.scaffold.DefaultScaffold;
 import org.jcvi.common.core.assembly.scaffold.PlacedContig;

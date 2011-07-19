@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;

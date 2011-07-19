@@ -92,7 +92,7 @@ public class DefaultAceTagMap implements AceTagMap{
 
 
 
-    public static class Builder implements org.jcvi.Builder<DefaultAceTagMap>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultAceTagMap>{
         private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
         private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
         private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();

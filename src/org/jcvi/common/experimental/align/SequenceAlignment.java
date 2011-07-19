@@ -28,7 +28,7 @@ package org.jcvi.common.experimental.align;
 import java.nio.CharBuffer;
 import java.util.Arrays;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 
 /**
  * A <code>SequenceAlignment</code> records the specific alignment of one sequence against 

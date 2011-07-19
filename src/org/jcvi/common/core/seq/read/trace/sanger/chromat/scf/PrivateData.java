@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.jcvi.CommonUtil;
+import org.jcvi.common.core.util.CommonUtil;
 
 public class PrivateData {
 

@@ -27,9 +27,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.Builder;
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Placed;
+import org.jcvi.common.core.util.Builder;
 
 
 public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends CoverageRegion<P>> implements Builder<CoverageMap<R>> {

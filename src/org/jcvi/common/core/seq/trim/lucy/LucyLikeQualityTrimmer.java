@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 
@@ -355,7 +355,7 @@ public class LucyLikeQualityTrimmer {
      *
      *
      */
-    public static class Builder implements org.jcvi.Builder<LucyLikeQualityTrimmer>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<LucyLikeQualityTrimmer>{
 
         public static final Window DEFAULT_BRACKET_WINDOW = new Window(10, 0.02D);
         public static final int DEFAULT_MIN_GOOD_LENGTH = 100;

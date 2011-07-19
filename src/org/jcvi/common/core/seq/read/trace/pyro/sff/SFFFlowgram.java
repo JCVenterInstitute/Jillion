@@ -26,13 +26,13 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.CommonUtil;
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.util.CommonUtil;
 
 public class SFFFlowgram implements Flowgram {
     private final String id;

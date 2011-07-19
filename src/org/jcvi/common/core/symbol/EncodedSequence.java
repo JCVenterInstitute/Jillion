@@ -28,8 +28,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.CommonUtil;
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.util.CommonUtil;
 /**
  * {@code EncodedSequence} is a composite object
  * containing a byte representation of data and an {@link GlyphCodec}

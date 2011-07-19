@@ -32,7 +32,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.jcvi.CommonUtil;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQRecord;
@@ -41,6 +40,7 @@ import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.CommonUtil;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;

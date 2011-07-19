@@ -25,12 +25,11 @@ package org.jcvi.common.core.assembly.scaffold.agp;
 
 import java.io.IOException;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.scaffold.DefaultScaffold;
 import org.jcvi.common.core.assembly.scaffold.Scaffold;
 import org.jcvi.common.core.assembly.scaffold.agp.AgpParser;
 import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.datastore.DefaultAgpScaffoldDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;

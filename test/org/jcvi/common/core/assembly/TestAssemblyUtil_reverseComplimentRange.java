@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.assembly;
 
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;

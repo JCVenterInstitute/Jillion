@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.contig.cas.read;
 import java.util.Collections;
 import java.util.Map;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.SequenceDirection;

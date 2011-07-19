@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.assembly.contig.slice.SliceMap;

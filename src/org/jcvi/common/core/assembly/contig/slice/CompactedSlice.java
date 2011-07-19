@@ -109,7 +109,7 @@ public class CompactedSlice implements Slice{
         return new CompactedSliceElement(ids.get(index),tmp);
     }
     
-    public static class Builder implements org.jcvi.Builder<CompactedSlice>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<CompactedSlice>{
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         List<String> ids = new ArrayList<String>();

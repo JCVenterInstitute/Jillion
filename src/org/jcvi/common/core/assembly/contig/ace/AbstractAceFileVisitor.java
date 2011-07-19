@@ -27,8 +27,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 

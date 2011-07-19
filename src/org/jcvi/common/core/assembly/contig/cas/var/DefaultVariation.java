@@ -159,7 +159,7 @@ public class DefaultVariation implements Variation{
         }
         return String.format("%d %s %s -> %s%s",coordinate,type,reference,consensus, variationList.toString());
     }
-    public static class Builder implements org.jcvi.Builder<DefaultVariation>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultVariation>{
         private final long coordinate;
         private final List<NucleotideGlyph> consensus;
         private final NucleotideGlyph reference;

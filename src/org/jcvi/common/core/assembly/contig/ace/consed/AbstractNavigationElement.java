@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.contig.ace.consed;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 
 /**
  * {@code AbstractNavigationElement} is an abstract

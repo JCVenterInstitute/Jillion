@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.junit.Before;

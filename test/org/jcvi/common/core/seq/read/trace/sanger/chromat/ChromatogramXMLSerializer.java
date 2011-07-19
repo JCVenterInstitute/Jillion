@@ -34,7 +34,7 @@ import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Map;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Confidence;
 import org.jcvi.common.core.seq.read.DefaultConfidence;
 import org.jcvi.common.core.seq.read.Peaks;

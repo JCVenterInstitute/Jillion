@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.frg;
 import java.io.File;
 import java.io.FileInputStream;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.DefaultLibrary;
 import org.jcvi.common.core.seq.read.Distance;

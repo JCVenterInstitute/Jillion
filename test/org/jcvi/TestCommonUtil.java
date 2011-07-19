@@ -23,6 +23,7 @@
  */
 package org.jcvi;
 
+import org.jcvi.common.core.util.CommonUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestCommonUtil {

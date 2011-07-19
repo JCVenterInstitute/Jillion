@@ -173,7 +173,7 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	    private final DateTime phdDate;
 	    private final FastQQualityCodec fastqQualityCodec;
 	    
-	    public static class Builder implements org.jcvi.Builder<TraceDetails>{
+	    public static class Builder implements org.jcvi.common.core.util.Builder<TraceDetails>{
 	        private boolean hasFastaEdits=false;
 	        private File chromatDir;
 	        private DateTime phdDate =null;

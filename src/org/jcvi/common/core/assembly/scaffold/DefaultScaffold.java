@@ -32,7 +32,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
@@ -198,7 +198,7 @@ public class DefaultScaffold implements Scaffold {
     }
 
 
-    public static class Builder implements org.jcvi.Builder<DefaultScaffold>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultScaffold>{
         private final String id;
         private Set<PlacedContig> contigs;
         private boolean shiftContigs=false;

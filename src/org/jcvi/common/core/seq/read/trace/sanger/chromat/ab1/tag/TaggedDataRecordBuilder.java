@@ -21,7 +21,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.DefaultScanRateTaggedDataType;
 
 
-public class TaggedDataRecordBuilder implements org.jcvi.Builder<TaggedDataRecord>{
+public class TaggedDataRecordBuilder implements org.jcvi.common.core.util.Builder<TaggedDataRecord>{
 	private final TaggedDataName name;
 	private final long number;
 	private TaggedDataType dataType;

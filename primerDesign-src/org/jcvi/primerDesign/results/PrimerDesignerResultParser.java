@@ -1,10 +1,10 @@
 package org.jcvi.primerDesign.results;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.Range;
 
 import java.util.*;
 import java.util.regex.Matcher;

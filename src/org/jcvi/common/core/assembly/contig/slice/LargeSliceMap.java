@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.contig.slice;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.QualityValueStrategy;

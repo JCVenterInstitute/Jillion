@@ -22,7 +22,7 @@ package org.jcvi.assembly.tasm;
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;

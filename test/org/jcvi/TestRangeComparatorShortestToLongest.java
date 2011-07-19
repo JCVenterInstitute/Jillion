@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.jcvi.common.core.Range;
 import org.junit.Test;
 
 /**

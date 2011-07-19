@@ -72,7 +72,7 @@ public class DefaultTigrAuthorizer implements TigrAuthorizer {
         return authorizer.getUsername();
     }
     
-    public static final  class Builder implements org.jcvi.Builder<DefaultTigrAuthorizer>{
+    public static final  class Builder implements org.jcvi.common.core.util.Builder<DefaultTigrAuthorizer>{
         private JCVIAuthorizer authorizer = DefaultJCVIAuthorizer.DEFAULT_TIGR_USER ;
         private String project=null;
         private String server = DEFAULT_TIGR_SERVER;

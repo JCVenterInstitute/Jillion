@@ -1,7 +1,7 @@
 package org.jcvi.primerDesign.results;
 
 import org.junit.Test;
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 

@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.contig.ace;
 
-import org.jcvi.datastore.ContigDataStore;
+import org.jcvi.common.core.assembly.contig.ContigDataStore;
 
 /**
  * @author dkatzel

@@ -16,26 +16,26 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+package org.jcvi.common.core.assembly.scaffold;
 
-package org.jcvi.plate;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
- * @author dkatzel
- *
- *
+ * User: aresnick
+ * Date: Sep 9, 2009
+ * Time: 2:55:11 PM
+ * <p/>
+ * $HeadURL$
+ * $LastChangedRevision$
+ * $LastChangedBy$
+ * $LastChangedDate$
+ * <p/>
+ * Description:
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestWell.class,
-        TestWellQuadrant.class,
-        TestNextWellIterator.class
-    }
-    )
-public class AllPlateUnitTests {
-
+public interface ScaffoldDataStore<T extends Scaffold> {
+    Set<String> getScaffoldIds();
+    Iterator<T> getScaffolds();
+    Scaffold getScaffold(String id);
 }

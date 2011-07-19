@@ -42,8 +42,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.seq.read.Distance;
 import org.jcvi.common.core.seq.read.Library;
 import org.jcvi.common.core.seq.read.Mated;

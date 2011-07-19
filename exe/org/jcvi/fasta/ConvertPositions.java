@@ -31,17 +31,17 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
+import org.jcvi.common.core.assembly.contig.ace.IndexedAceFileDataStore;
+import org.jcvi.common.core.assembly.contig.ctg.IndexedContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaFileDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
-import org.jcvi.datastore.IndexedAceFileDataStore;
-import org.jcvi.datastore.IndexedContigFileDataStore;
 
 public class ConvertPositions {
 

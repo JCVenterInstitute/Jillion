@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.trim;
 
 import java.io.IOException;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.CloseableIterator;

@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 
 /**

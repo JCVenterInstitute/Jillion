@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.frg;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Library;
 import org.jcvi.common.core.seq.read.trace.Trace;
 import org.jcvi.common.core.seq.read.trace.frg.DefaultFragment;

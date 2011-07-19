@@ -26,6 +26,8 @@ package org.jcvi.datastore;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import org.jcvi.common.core.assembly.contig.ctg.DefaultContigFileDataStore;
+
 public class TestDefaultContigFileDataStore extends AbstractTestContigFileDataStore{
    
     @Override

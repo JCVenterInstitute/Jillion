@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.plate;
+package org.jcvi.common.core.seq.plate;
 
 import java.util.NoSuchElementException;
 

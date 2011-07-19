@@ -25,7 +25,7 @@ package org.jcvi.common.core.symbol.residue.nuc;
 
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
 /**
  * {@code NucleotideSequence} an interface to abstract
