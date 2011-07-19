@@ -36,9 +36,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {        
-        TestDefaultPlacedRead.class,
-        TestDefaultLocation.class,
-        
+        TestDefaultPlacedRead.class,        
         AllTrimUnitTests.class,
         AllSliceUnitTests.class,
         AllContigUnitTests.class,
