@@ -27,14 +27,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQFileDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastQDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
-import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.common.core.seq.nuc.fasta.NucleotideFastaDataStore;
-import org.jcvi.common.core.seq.qual.fasta.DefaultQualityFastaFileDataStore;
-import org.jcvi.common.core.seq.qual.fasta.QualityFastaDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.jcvi.io.idReader.IdReaderException;
 import org.junit.Before;

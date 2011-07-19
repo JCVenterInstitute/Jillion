@@ -37,7 +37,7 @@ import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.nuc.fasta.LargeNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaFileDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.datastore.IndexedAceFileDataStore;

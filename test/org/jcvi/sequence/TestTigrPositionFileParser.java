@@ -26,7 +26,7 @@ package org.jcvi.sequence;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.pos.fasta.PositionDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.pos.PositionDataStore;
 import org.jcvi.common.core.seq.read.TigrPositionsFileParser;
 import org.jcvi.common.core.symbol.EncodedShortGlyph;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;

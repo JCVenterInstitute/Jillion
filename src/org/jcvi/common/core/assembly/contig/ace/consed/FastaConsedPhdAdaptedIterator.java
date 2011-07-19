@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Properties;
 
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
-import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdUtil;

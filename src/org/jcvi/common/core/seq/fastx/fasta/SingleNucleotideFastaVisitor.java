@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta;
 
-import org.jcvi.common.core.seq.nuc.fasta.AbstractNucleotideFastaVisitor;
-import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.AbstractNucleotideFastaVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 
 /**
  * {@code SingleNucleotideFastaVisitor} is a {@link FastaVisitor}
