@@ -26,9 +26,9 @@ package org.jcvi.common.core.assembly.contig.ace;
 import java.util.Date;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.io.FileVisitor;
+import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.io.FileVisitor;
-import org.jcvi.io.TextFileVisitor;
 /**
  * {@code AceFileVisitor} is a {@link FileVisitor}
  * implementation for Ace Files.

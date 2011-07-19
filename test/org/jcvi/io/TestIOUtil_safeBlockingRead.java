@@ -27,7 +27,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import org.jcvi.io.IOUtil.ReadResults;
+
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil.ReadResults;
 import org.jcvi.testUtil.EasyMockUtil;
 import org.junit.Test;
 

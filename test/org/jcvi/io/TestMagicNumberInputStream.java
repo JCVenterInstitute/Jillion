@@ -23,6 +23,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.MagicNumberInputStream;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

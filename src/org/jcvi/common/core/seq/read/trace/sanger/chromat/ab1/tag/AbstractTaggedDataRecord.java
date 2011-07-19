@@ -19,8 +19,8 @@
 
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.AbiUtil;
-import org.jcvi.io.IOUtil;
 
 
 public abstract class AbstractTaggedDataRecord<T,D> implements TaggedDataRecord<T,D>{

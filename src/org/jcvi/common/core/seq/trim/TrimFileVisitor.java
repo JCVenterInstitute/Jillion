@@ -20,7 +20,7 @@
 package org.jcvi.common.core.seq.trim;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.io.TextFileVisitor;
+import org.jcvi.common.core.io.TextFileVisitor;
 
 /**
  * @author dkatzel

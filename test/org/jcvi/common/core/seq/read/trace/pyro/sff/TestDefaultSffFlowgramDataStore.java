@@ -26,10 +26,10 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.io.File;
 import java.io.FileInputStream;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
-import org.jcvi.io.IOUtil;
 
 public class TestDefaultSffFlowgramDataStore extends TestReadExampleSffFile{
 

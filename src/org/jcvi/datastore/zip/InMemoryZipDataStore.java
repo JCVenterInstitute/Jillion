@@ -35,9 +35,9 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.common.core.util.CloseableIteratorAdapter;
-import org.jcvi.io.IOUtil;
 /**
  * An {@code InMemoryZipDataStore} is a {@link ZipDataStore} implementation
  * that unzips the given

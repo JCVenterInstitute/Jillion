@@ -34,10 +34,10 @@ import org.jcvi.common.core.assembly.contig.ContigDataStore;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.io.IOUtil;
 /**
  * {@code IndexedContigFileDataStore} is an implementation of 
  * {@link ContigDataStore} that only stores an index containing

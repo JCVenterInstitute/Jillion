@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.io;
+package org.jcvi.common.core.io;
 /**
  * {@code FileVisitor} is an base interface
  * which uses the "push approach" to walk

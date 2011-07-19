@@ -35,7 +35,7 @@ import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
 import org.jcvi.common.core.assembly.contig.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ctg.ContigFileWriter;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.io.idReader.IdReaderException;
 
 /**

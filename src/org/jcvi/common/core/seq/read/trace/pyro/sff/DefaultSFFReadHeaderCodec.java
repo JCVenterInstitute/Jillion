@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 
 public class DefaultSFFReadHeaderCodec implements SFFReadHeaderCodec {
     @Override

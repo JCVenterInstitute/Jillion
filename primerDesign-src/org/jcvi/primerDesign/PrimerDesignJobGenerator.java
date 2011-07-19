@@ -10,6 +10,7 @@ import org.jcvi.io.*;
 import org.jcvi.command.Command;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 import org.jcvi.primerDesign.domain.PrimerDesignTarget;
 

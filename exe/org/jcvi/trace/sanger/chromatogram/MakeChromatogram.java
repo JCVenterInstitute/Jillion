@@ -34,6 +34,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
@@ -52,7 +53,6 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.io.IOUtil;
 
 /**
  * @author dkatzel

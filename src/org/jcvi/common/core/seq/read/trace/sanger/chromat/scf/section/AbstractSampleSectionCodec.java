@@ -30,6 +30,7 @@ import java.nio.ShortBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
@@ -37,7 +38,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBui
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.pos.PositionStrategy;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.pos.PositionStrategyFactory;
-import org.jcvi.io.IOUtil;
 
 public abstract class AbstractSampleSectionCodec implements SectionCodec{
 

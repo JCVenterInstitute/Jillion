@@ -42,7 +42,7 @@ import org.jcvi.common.core.assembly.contig.cas.align.score.CasAlignmentScoreBui
 import org.jcvi.common.core.assembly.contig.cas.align.score.CasScoreType;
 import org.jcvi.common.core.assembly.contig.cas.align.score.CasScoringScheme;
 import org.jcvi.common.core.assembly.contig.cas.align.score.DefaultCasScoringScheme;
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 
 public class CasParser {
     private BigInteger offset;

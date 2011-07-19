@@ -32,6 +32,7 @@ import org.apache.commons.io.IOUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFCommonHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadHeader;
@@ -45,7 +46,6 @@ import org.jcvi.common.core.seq.trim.PrimerTrimmer;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.io.IOUtil;
 
 /**
  * @author dkatzel

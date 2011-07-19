@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.jcvi.common.core.io.TextLineParser;
+
 public abstract class AbstractSpreadSheetReader implements SpreadSheetReader {
 
     private final TextLineParser scanner;

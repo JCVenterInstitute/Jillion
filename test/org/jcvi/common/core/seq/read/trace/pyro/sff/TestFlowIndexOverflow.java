@@ -31,6 +31,7 @@ import java.util.Arrays;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
@@ -41,7 +42,6 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
-import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 /**

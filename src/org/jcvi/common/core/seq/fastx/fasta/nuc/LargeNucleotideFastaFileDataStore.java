@@ -33,11 +33,11 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
 import org.jcvi.common.core.seq.fastx.fasta.SequenceFastaRecordUtil;
 import org.jcvi.common.core.util.CloseableIterator;
-import org.jcvi.io.IOUtil;
 /**
  * {@code LargeNucleotideFastaFileDataStore} is an implementation
  * of {@link AbstractNucleotideFastaFileDataStore} which does not

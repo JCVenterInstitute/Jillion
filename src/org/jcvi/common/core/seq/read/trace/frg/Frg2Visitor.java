@@ -26,11 +26,11 @@ package org.jcvi.common.core.seq.read.trace.frg;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.common.core.seq.read.Distance;
 import org.jcvi.common.core.seq.read.MateOrientation;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.io.TextFileVisitor;
 
 public interface Frg2Visitor extends TextFileVisitor{
     

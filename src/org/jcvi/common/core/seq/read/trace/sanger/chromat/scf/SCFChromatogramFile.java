@@ -25,9 +25,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.util.Builder;
-import org.jcvi.io.IOUtil;
 /**
  * {@code SCFChromatogramFile} is a {@link SCFChromatogramFileVisitor} implementation
  * that once populated can function as a {@link SCFChromatogram}.

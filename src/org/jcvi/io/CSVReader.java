@@ -26,6 +26,8 @@ package org.jcvi.io;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jcvi.common.core.io.TextLineParser;
+
 
 public class CSVReader extends AbstractSpreadSheetReader{
 

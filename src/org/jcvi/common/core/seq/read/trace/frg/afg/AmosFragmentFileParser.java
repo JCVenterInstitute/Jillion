@@ -29,10 +29,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.frg.FragmentUtil;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.io.IOUtil;
 
 /**
  * @author dkatzel

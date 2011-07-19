@@ -26,11 +26,11 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.io.IOUtil;
 
 /**
  * @author dkatzel

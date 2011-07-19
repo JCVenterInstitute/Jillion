@@ -25,6 +25,8 @@ package org.jcvi.io;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.jcvi.common.core.io.IOUtil;
 /**
  * {@code AbstractStreamReader} handles the boiler
  * plate code for reading data from an {@link InputStream}.

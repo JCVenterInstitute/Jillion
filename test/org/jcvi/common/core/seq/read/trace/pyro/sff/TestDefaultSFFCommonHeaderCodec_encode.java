@@ -25,9 +25,9 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.nio.ByteBuffer;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFCommonHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
-import org.jcvi.io.IOUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultSFFCommonHeaderCodec_encode extends AbstractTestDefaultSFFCommonHeaderCodec {

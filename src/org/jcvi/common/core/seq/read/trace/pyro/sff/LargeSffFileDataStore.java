@@ -34,8 +34,8 @@ import java.util.List;
 
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.CloseableIterator;
-import org.jcvi.io.IOUtil;
 
 public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implements SffDataStore{
 

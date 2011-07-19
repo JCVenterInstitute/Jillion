@@ -26,6 +26,7 @@ package org.jcvi.common.core.seq.fastx.fasta.pos;
 import java.io.File;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaRecordFactory;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaFileDataStore;
@@ -34,7 +35,6 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.util.CloseableIterator;
 
-import org.jcvi.io.IOUtil;
 
 public class LargePositionFastaFileDataStore extends AbstractPositionFastaFileDataStore{
 

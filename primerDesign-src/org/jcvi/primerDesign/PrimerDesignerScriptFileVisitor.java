@@ -1,6 +1,6 @@
 package org.jcvi.primerDesign;
 
-import org.jcvi.io.TextFileVisitor;
+import org.jcvi.common.core.io.TextFileVisitor;
 
 import java.io.File;
 

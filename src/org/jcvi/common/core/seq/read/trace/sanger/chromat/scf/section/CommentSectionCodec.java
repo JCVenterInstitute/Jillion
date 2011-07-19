@@ -33,11 +33,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.io.IOUtil;
 
 
 public class CommentSectionCodec implements SectionCodec {

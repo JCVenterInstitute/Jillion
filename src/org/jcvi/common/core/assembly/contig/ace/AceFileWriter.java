@@ -39,11 +39,11 @@ import org.jcvi.common.core.assembly.contig.slice.SliceMapFactory;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.io.IOUtil;
 public class AceFileWriter {
 
     private static final String CONTIG_HEADER = "CO %s %d %d %d %s%n";

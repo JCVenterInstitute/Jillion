@@ -32,13 +32,13 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil.ReadResults;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
 import org.jcvi.common.core.seq.read.trace.sanger.SangerTraceCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.Chunk;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.ChunkException;
-import org.jcvi.io.IOUtil;
-import org.jcvi.io.IOUtil.ReadResults;
 
 
 /**

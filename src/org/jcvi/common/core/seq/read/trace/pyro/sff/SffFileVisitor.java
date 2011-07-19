@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import org.jcvi.io.FileVisitor;
+import org.jcvi.common.core.io.FileVisitor;
 /**
  * {@code SffFileVisitor} is a {@link FileVisitor}
  * implementation for 454 .sff binary encoded files.

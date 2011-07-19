@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.contig.cas.var;
 
-import org.jcvi.io.TextFileVisitor;
+import org.jcvi.common.core.io.TextFileVisitor;
 
 /**
  * @author dkatzel

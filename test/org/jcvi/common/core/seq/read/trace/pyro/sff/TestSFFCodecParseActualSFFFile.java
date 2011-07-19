@@ -28,11 +28,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
-import org.jcvi.io.IOUtil;
 import static org.junit.Assert.*;
 public class TestSFFCodecParseActualSFFFile extends AbstractTestSffFileDataStore{
 

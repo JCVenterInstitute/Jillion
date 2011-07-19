@@ -3,7 +3,7 @@ package org.jcvi.primerDesign;
 import com.martiansoftware.jsap.*;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
 
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 
 import java.io.File;
 import java.io.FileInputStream;

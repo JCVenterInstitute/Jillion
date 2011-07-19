@@ -44,12 +44,12 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.Distance;
 import org.jcvi.common.core.seq.read.Library;
 import org.jcvi.common.core.seq.read.Mated;
 import org.jcvi.common.core.symbol.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
-import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 

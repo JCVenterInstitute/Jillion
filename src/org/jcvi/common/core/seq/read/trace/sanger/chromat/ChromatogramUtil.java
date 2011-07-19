@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.nio.ShortBuffer;
 import java.util.List;
 
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.MagicNumberInputStream;
 import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.Ab1FileParser;
@@ -38,8 +40,6 @@ import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.util.Builder;
-import org.jcvi.io.IOUtil;
-import org.jcvi.io.MagicNumberInputStream;
 
 /**
  * {@code ChromatogramUtil} is a utility class for working with {@link Chromatogram}s.

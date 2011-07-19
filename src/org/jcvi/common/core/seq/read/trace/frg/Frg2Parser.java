@@ -31,13 +31,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.Distance;
 import org.jcvi.common.core.seq.read.MateOrientation;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.io.IOUtil;
 
 public class Frg2Parser {
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;

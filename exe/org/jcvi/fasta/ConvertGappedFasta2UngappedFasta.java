@@ -29,12 +29,12 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.AbstractNucleotideFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
-import org.jcvi.io.IOUtil;
 
 /**
  * {@code ConvertGappedFasta2UngappedFasta} converts a gapped

@@ -32,11 +32,11 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramParser;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.SinglePhdFile;
-import org.jcvi.io.IOUtil;
 /**
  * {@code SangerTraceParser} is a SangerTraceCodec singleton
  * that can decode both ZTR and SCF trace files.

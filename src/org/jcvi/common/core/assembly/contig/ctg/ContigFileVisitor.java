@@ -25,8 +25,8 @@ package org.jcvi.common.core.assembly.contig.ctg;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.io.TextFileVisitor;
 /**
  * {@code ContigFileVisitor} is a {@link TextFileVisitor}
  * that visits files that contain {@link Contig} data.

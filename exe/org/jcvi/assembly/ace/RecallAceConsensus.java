@@ -57,6 +57,7 @@ import org.jcvi.common.core.assembly.contig.slice.consensus.ConsensusResult;
 import org.jcvi.common.core.assembly.contig.slice.consensus.NoAmbiguityConsensusCaller;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.seq.read.trace.TraceQualityDataStoreAdapter;
@@ -68,7 +69,6 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.MultipleWrapper;
-import org.jcvi.io.IOUtil;
 
 /**
  * @author dkatzel

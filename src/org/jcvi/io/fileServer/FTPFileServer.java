@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 import org.finj.FTPClient;
 import org.finj.FTPException;
 import org.finj.RemoteFile;
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 
 public class FTPFileServer implements ReadWriteFileServer{
     private static final Pattern DIR_PATTERN = Pattern.compile("(.+)/(.+?)$");

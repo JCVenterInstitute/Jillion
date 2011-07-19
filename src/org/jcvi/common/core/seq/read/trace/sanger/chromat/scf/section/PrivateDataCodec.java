@@ -27,13 +27,13 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.PrivateData;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.io.IOUtil;
 /**
  * <code>PrivateDataCodec</code> is the SectionCodec implementation
  * that will encode/ decode the {@link PrivateData} of an {@link SCFChromatogram}.
