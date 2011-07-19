@@ -28,10 +28,10 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.assembly.ace.AbstractAceContigBuilder;
-import org.jcvi.assembly.ace.AceContig;
-import org.jcvi.assembly.ace.AceContigDataStore;
-import org.jcvi.assembly.ace.AceFileParser;
+import org.jcvi.common.core.assembly.contig.ace.AbstractAceContigBuilder;
+import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.common.core.util.CloseableIteratorAdapter;

@@ -25,6 +25,7 @@ package org.jcvi.assembly;
 
 import static org.junit.Assert.assertEquals;
 
+import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 
 public class AssemblyTestUtil {

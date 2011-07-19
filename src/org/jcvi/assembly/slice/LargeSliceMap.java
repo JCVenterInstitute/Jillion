@@ -27,12 +27,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.Contig;
-import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.contig.qual.QualityValueStrategy;
-import org.jcvi.assembly.coverage.CoverageMap;
-import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.contig.QualityValueStrategy;
+import org.jcvi.common.core.assembly.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.coverage.CoverageRegion;
+import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.Sequence;
 import org.jcvi.common.core.seq.qual.PhredQuality;

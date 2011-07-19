@@ -30,10 +30,10 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.jcvi.assembly.Contig;
-import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.contig.AbstractContigFileVisitorBuilder;
-import org.jcvi.assembly.contig.ContigFileParser;
+import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.contig.ctg.AbstractContigFileVisitorBuilder;
+import org.jcvi.common.core.assembly.contig.ctg.ContigFileParser;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.util.CloseableIterator;

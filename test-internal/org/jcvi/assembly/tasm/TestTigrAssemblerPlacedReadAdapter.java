@@ -23,8 +23,8 @@ import java.util.Map.Entry;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.assembly.DefaultPlacedRead;
-import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.seq.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;

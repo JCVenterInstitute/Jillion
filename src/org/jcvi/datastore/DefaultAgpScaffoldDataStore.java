@@ -19,8 +19,8 @@
 package org.jcvi.datastore;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.DefaultScaffold;
-import org.jcvi.assembly.agp.AgpFileVisitor;
+import org.jcvi.common.core.assembly.scaffold.DefaultScaffold;
+import org.jcvi.common.core.assembly.scaffold.agp.AgpFileVisitor;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 
 import java.util.LinkedHashMap;

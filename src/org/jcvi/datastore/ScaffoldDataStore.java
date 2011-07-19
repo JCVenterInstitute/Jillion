@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.jcvi.datastore;
 
-import org.jcvi.assembly.Scaffold;
+import org.jcvi.common.core.assembly.scaffold.Scaffold;
 
 import java.util.Iterator;
 import java.util.Set;

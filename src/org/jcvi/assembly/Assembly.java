@@ -26,6 +26,7 @@ package org.jcvi.assembly;
 import java.io.File;
 import java.util.List;
 
+import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
 import org.jcvi.common.core.seq.qual.QualityDataStore;

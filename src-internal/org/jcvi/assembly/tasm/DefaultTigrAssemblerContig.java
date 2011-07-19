@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.jcvi.assembly.AbstractContigBuilder;
-import org.jcvi.assembly.Contig;
-import org.jcvi.assembly.DefaultContig;
+import org.jcvi.common.core.assembly.contig.AbstractContigBuilder;
+import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.DefaultContig;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.seq.read.Read;

@@ -21,11 +21,11 @@ package org.jcvi.assembly.slice;
 
 import java.util.Iterator;
 
-import org.jcvi.assembly.Contig;
-import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.coverage.CoverageMap;
-import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.coverage.CoverageRegion;
+import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.util.ArrayIterator;
 

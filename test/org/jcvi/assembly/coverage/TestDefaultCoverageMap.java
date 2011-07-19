@@ -30,7 +30,11 @@ import java.util.List;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.assembly.Placed;
+import org.jcvi.common.core.assembly.Placed;
+import org.jcvi.common.core.assembly.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.coverage.CoverageRegion;
+import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.coverage.DefaultCoverageRegion;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;

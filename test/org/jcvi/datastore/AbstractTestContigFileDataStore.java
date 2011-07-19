@@ -27,8 +27,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.assembly.Contig;
-import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.junit.Test;
 import static org.junit.Assert.*;

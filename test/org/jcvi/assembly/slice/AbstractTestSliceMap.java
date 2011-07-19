@@ -22,11 +22,11 @@ package org.jcvi.assembly.slice;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.assembly.Contig;
-import org.jcvi.assembly.DefaultContig;
-import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.contig.qual.GapQualityValueStrategies;
-import org.jcvi.assembly.contig.qual.QualityValueStrategy;
+import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.DefaultContig;
+import org.jcvi.common.core.assembly.contig.GapQualityValueStrategies;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.contig.QualityValueStrategy;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.seq.qual.EncodedQualitySequence;

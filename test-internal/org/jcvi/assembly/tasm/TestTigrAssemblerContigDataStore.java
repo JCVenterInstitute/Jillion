@@ -19,8 +19,8 @@
 
 package org.jcvi.assembly.tasm;
 
-import org.jcvi.assembly.Contig;
-import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.datastore.DefaultContigFileDataStore;
 import org.jcvi.io.fileServer.FileServer;
