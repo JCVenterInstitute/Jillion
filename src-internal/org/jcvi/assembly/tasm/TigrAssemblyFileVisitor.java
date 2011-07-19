@@ -19,7 +19,7 @@
 
 package org.jcvi.assembly.tasm;
 
-import org.jcvi.assembly.contig.ContigFileVisitor;
+import org.jcvi.common.core.assembly.contig.ctg.ContigFileVisitor;
 
 /**
  * @author dkatzel

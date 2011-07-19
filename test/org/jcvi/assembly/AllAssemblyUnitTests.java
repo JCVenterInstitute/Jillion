@@ -23,12 +23,12 @@
  */
 package org.jcvi.assembly;
 
-import org.jcvi.assembly.agp.AllAgpUnitTests;
-import org.jcvi.assembly.cas.AllCasUnitTests;
-import org.jcvi.assembly.contig.AllContigUnitTests;
 import org.jcvi.assembly.coverage.AllCoverageUnitTests;
 import org.jcvi.assembly.slice.AllSliceUnitTests;
 import org.jcvi.assembly.trim.AllTrimUnitTests;
+import org.jcvi.common.core.assembly.contig.cas.AllCasUnitTests;
+import org.jcvi.common.core.assembly.contig.ctg.AllContigUnitTests;
+import org.jcvi.common.core.assembly.scaffold.agp.AllAgpUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

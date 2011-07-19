@@ -19,8 +19,8 @@
 
 package org.jcvi.assembly.trim;
 
-import org.jcvi.assembly.Contig;
-import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
 
 
 /**

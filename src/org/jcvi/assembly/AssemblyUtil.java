@@ -28,10 +28,12 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.coverage.CoverageMap;
-import org.jcvi.assembly.coverage.CoverageRegion;
-import org.jcvi.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.assembly.coverage.DefaultCoverageRegion;
+import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.coverage.CoverageRegion;
+import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.coverage.DefaultCoverageRegion;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.read.SequenceDirection;

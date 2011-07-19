@@ -21,7 +21,7 @@ package org.jcvi.assembly.tasm;
 
 import java.util.Map;
 
-import org.jcvi.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
 
 /**
  * @author dkatzel

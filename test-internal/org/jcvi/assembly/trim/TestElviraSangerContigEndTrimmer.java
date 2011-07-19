@@ -22,10 +22,10 @@ package org.jcvi.assembly.trim;
 import static org.junit.Assert.assertEquals;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.Contig;
-import org.jcvi.assembly.DefaultContig;
-import org.jcvi.assembly.PlacedRead;
-import org.jcvi.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.DefaultContig;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.junit.Test;
 

@@ -24,7 +24,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.jcvi.assembly.DefaultPlacedRead;
+import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.seq.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.SequenceDirection;
