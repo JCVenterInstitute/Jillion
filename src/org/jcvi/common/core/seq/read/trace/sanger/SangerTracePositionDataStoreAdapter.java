@@ -20,7 +20,7 @@
 package org.jcvi.common.core.seq.read.trace.sanger;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.seq.pos.fasta.PositionDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.pos.PositionDataStore;
 import org.jcvi.common.core.seq.read.trace.AbstractTraceDataStoreAdapter;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;

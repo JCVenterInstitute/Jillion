@@ -23,11 +23,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.pos.fasta.LargePositionFastaRecordIterator;
-import org.jcvi.common.core.seq.pos.fasta.PositionFastaRecord;
-import org.jcvi.common.core.seq.qual.fasta.LargeQualityFastaIterator;
-import org.jcvi.common.core.seq.qual.fasta.QualityFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.pos.LargePositionFastaRecordIterator;
+import org.jcvi.common.core.seq.fastx.fasta.pos.PositionFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaIterator;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecord;
 import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;

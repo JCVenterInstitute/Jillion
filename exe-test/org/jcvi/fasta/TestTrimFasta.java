@@ -24,8 +24,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.common.core.seq.nuc.fasta.NucleotideFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;

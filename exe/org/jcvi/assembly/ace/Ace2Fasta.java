@@ -45,7 +45,7 @@ import org.jcvi.common.core.assembly.contig.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceFileTagMap;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
-import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;

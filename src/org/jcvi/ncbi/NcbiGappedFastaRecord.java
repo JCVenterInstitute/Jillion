@@ -19,7 +19,7 @@
 
 package org.jcvi.ncbi;
 
-import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 
 /**
  * @author dkatzel

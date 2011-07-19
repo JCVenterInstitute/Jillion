@@ -35,8 +35,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.datastore.SimpleDataStore;
-import org.jcvi.common.core.seq.pos.fasta.PositionDataStore;
-import org.jcvi.common.core.seq.pos.fasta.PositionDataStoreAdapter;
+import org.jcvi.common.core.seq.fastx.fasta.pos.PositionDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.pos.PositionDataStoreAdapter;
 import org.jcvi.common.core.symbol.EncodedShortGlyph;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;

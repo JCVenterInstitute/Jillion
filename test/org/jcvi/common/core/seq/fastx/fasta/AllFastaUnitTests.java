@@ -23,9 +23,9 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta;
 
-import org.jcvi.common.core.seq.nuc.fasta.AllFastaSequenceTests;
-import org.jcvi.common.core.seq.pos.fasta.AllFastaPositionTests;
-import org.jcvi.common.core.seq.qual.fasta.AllFastaQualityTests;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.AllFastaSequenceTests;
+import org.jcvi.common.core.seq.fastx.fasta.pos.AllFastaPositionTests;
+import org.jcvi.common.core.seq.fastx.fasta.qual.AllFastaQualityTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
