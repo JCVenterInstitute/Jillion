@@ -101,26 +101,26 @@ public class InMemoryZipDataStore extends AbstractInMemoryZipDataStore{
     }
     
     @Override
-    public boolean contains(String id) throws DataStoreException {
+    public synchronized boolean contains(String id) throws DataStoreException {
         super.contains(id);
         return contents.containsKey(id);
     }
 
     @Override
-    public InputStream get(String id) throws DataStoreException {
+    public synchronized InputStream get(String id) throws DataStoreException {
         super.get(id);
         ByteBuffer buffer = contents.get(id);
         return new ByteArrayInputStream(buffer.array());
     }
 
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
         return CloseableIteratorAdapter.adapt(contents.keySet().iterator());
     }
 
     @Override
-    public int size() throws DataStoreException {
+    public synchronized int size() throws DataStoreException {
         super.size();
         return contents.size();
     }
