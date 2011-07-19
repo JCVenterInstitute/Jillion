@@ -29,11 +29,11 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.seq.DefaultShortGlyphCodec;
-import org.jcvi.common.core.seq.EncodedSequence;
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.common.core.seq.ShortGlyphFactory;
+import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
+import org.jcvi.common.core.symbol.EncodedSequence;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortGlyphFactory;
 
 public class PositionsFastaRecordUtil {
     private static final Pattern ID_LINE_PATTERN = Pattern.compile("^>(\\S+).*");

@@ -29,10 +29,10 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
-import org.jcvi.common.core.seq.nuc.NucleotideDataStoreAdapter;
 import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStoreAdapter;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFastaDataStoreWithNoComment{

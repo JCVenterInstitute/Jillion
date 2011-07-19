@@ -29,9 +29,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 
 public final class QualityFastaRecordUtil {
     private static final Pattern ID_LINE_PATTERN = Pattern.compile("^>(\\S+).*");

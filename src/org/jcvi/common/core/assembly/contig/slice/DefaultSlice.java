@@ -28,9 +28,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
 public class DefaultSlice implements Slice{
     private final Map<String,SliceElement> elements;

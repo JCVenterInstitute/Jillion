@@ -31,14 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
-import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.common.core.seq.read.DefaultConfidence;
 import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
@@ -48,6 +40,14 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.AbstractBasesSectionCodec;
+import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 
 public abstract class AbstractTestBasesSection {

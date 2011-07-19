@@ -29,12 +29,12 @@ import java.util.Arrays;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFFlowgram;
+import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.io.fileServer.FileServer;
 import org.jcvi.io.fileServer.ResourceFileServer;
 

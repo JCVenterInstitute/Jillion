@@ -24,13 +24,13 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.read.trace.Trace;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramXMLSerializer;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 

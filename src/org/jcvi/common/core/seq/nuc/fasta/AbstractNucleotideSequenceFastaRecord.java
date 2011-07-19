@@ -27,7 +27,7 @@ package org.jcvi.common.core.seq.nuc.fasta;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 
 /**

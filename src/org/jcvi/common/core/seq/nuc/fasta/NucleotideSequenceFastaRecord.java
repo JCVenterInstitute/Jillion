@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.nuc.fasta;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public interface NucleotideSequenceFastaRecord extends FastaRecord<NucleotideSequence> {
 

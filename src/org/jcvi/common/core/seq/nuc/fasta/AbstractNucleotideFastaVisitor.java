@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.nuc.fasta;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecordVisitor;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 
 public abstract class AbstractNucleotideFastaVisitor extends AbstractFastaRecordVisitor<NucleotideSequence, NucleotideSequenceFastaRecord>{

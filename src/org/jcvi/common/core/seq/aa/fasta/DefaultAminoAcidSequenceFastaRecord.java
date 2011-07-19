@@ -1,9 +1,9 @@
 package org.jcvi.common.core.seq.aa.fasta;
 
-import org.jcvi.common.core.seq.aa.AminoAcid;
-import org.jcvi.common.core.seq.aa.AminoAcidSequence;
-import org.jcvi.common.core.seq.aa.DefaultAminoAcidEncodedGlyphs;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
+import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
+import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
+import org.jcvi.common.core.symbol.residue.aa.DefaultAminoAcidEncodedGlyphs;
 
 public class DefaultAminoAcidSequenceFastaRecord extends AbstractAminoAcidSequenceFastaRecord {
 

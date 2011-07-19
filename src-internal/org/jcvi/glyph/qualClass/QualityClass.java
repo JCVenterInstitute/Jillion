@@ -29,10 +29,10 @@ import java.util.Map;
 
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
-import org.jcvi.common.core.seq.Glyph;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
 public enum QualityClass implements Glyph, Comparable<QualityClass>{
 

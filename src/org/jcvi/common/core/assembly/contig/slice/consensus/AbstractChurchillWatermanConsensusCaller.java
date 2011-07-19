@@ -37,8 +37,8 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 /**
  * Calculate Consensus for a slice using Bayes formula and the procedure from
  * <pre>

@@ -26,13 +26,13 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 import java.util.List;
 import java.util.Properties;
 
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdTag;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.junit.Before;
 import org.junit.Test;
 

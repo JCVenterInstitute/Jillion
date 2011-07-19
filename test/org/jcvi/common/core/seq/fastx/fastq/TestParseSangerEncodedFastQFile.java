@@ -26,7 +26,7 @@ import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQFileDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastQFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;

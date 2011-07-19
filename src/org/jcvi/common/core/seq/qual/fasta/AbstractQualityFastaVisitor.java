@@ -20,7 +20,7 @@
 package org.jcvi.common.core.seq.qual.fasta;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecordVisitor;
-import org.jcvi.common.core.seq.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 /**
  * @author dkatzel

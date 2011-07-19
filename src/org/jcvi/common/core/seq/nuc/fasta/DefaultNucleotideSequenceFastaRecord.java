@@ -25,10 +25,10 @@ package org.jcvi.common.core.seq.nuc.fasta;
 
 import java.util.List;
 
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequenceFastaRecord{
 

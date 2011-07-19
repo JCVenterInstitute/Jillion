@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
 /**
  * {@code DefaultVariation} is a default implementation 

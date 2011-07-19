@@ -33,14 +33,14 @@ import java.util.Properties;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
-import org.jcvi.common.core.seq.qual.QualityGlyphCodec;
 import org.jcvi.common.core.seq.read.Peaks;
+import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualityGlyphCodec;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.common.core.util.CloseableIteratorAdapter;
 

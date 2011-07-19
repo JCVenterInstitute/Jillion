@@ -31,13 +31,13 @@ import java.util.regex.Pattern;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.io.IOUtil;
 
 

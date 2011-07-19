@@ -28,12 +28,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.common.core.seq.ShortGlyphFactory;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.common.core.seq.read.Peaks;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortGlyphFactory;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class ArtificialPhd implements Phd{
 

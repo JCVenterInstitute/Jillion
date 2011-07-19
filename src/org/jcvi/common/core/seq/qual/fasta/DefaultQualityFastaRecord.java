@@ -26,8 +26,8 @@ package org.jcvi.common.core.seq.qual.fasta;
 import java.util.List;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
-import org.jcvi.common.core.seq.qual.PhredQuality;
-import org.jcvi.common.core.seq.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 public class DefaultQualityFastaRecord extends AbstractFastaRecord<QualitySequence> implements QualityFastaRecord{
     private final QualitySequence qualities;

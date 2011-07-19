@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.fastx.fastq;
 
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.common.core.seq.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 
 public abstract class AbstractFastQFileVisitor implements FastQFileVisitor{

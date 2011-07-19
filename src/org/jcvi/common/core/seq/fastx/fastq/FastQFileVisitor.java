@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.fastx.fastq;
 
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.io.TextFileVisitor;
 /**
  * {@code FastQFileVisitor} is a {@link TextFileVisitor}

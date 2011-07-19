@@ -29,10 +29,10 @@ import org.jcvi.Range;
 import org.jcvi.common.core.assembly.contig.ctg.AbstractContigFileVisitor;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.Glyph;
-import org.jcvi.common.core.seq.Sequence;
 import org.jcvi.common.core.seq.fastx.FastXRecord;
 import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.Sequence;
 
 public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractContigFileVisitor{
 

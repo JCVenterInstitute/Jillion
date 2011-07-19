@@ -22,8 +22,8 @@
  */
 package org.jcvi.common.experimental.align;
 
-import org.jcvi.common.core.seq.Glyph;
-import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.Sequence;
 
 
 /**

@@ -27,11 +27,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
-import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.qual.fasta.DefaultQualityFastaRecord;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;

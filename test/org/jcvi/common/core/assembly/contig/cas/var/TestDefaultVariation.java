@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.assembly.contig.cas.var.DefaultVariation;
 import org.jcvi.common.core.assembly.contig.cas.var.Variation.Type;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;

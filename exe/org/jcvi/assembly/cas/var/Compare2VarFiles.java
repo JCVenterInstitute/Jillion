@@ -50,7 +50,7 @@ import org.jcvi.common.core.assembly.contig.cas.var.DefaultVariationLogFile;
 import org.jcvi.common.core.assembly.contig.cas.var.Variation;
 import org.jcvi.common.core.assembly.contig.cas.var.VariationLog;
 import org.jcvi.common.core.assembly.contig.cas.var.Variation.Type;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 /**
  * @author dkatzel
  *

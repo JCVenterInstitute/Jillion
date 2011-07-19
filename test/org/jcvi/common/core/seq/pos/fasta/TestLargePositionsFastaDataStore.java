@@ -26,10 +26,10 @@ package org.jcvi.common.core.seq.pos.fasta;
 import java.io.File;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.ShortGlyph;
 import org.jcvi.common.core.seq.pos.fasta.LargePositionFastaFileDataStore;
 import org.jcvi.common.core.seq.pos.fasta.PositionFastaRecord;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.ShortGlyph;
 
 public class TestLargePositionsFastaDataStore extends AbstractTestPositionsFastaDataStore{
 

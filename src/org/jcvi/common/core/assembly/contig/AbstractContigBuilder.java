@@ -24,12 +24,12 @@ import java.util.Set;
 
 import org.jcvi.Builder;
 import org.jcvi.Range;
-import org.jcvi.common.core.seq.nuc.DefaultReferenceEncodedNucleotideSequence;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.common.core.seq.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
 /**
  * @author dkatzel

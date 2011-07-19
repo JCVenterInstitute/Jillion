@@ -28,10 +28,10 @@ import java.util.Map;
 
 import org.jcvi.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class DefaultCasPlacedRead implements CasPlacedRead{
 

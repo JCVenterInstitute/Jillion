@@ -30,16 +30,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.common.core.seq.ShortGlyphFactory;
-import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
-import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.common.core.seq.read.Peaks;
+import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortGlyphFactory;
+import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class SinglePhdFile implements  Phd{
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();

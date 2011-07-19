@@ -27,15 +27,15 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.read.Confidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFileVisitor;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
 
 public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{

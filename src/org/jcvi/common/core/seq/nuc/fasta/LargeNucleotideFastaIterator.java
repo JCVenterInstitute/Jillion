@@ -22,7 +22,7 @@ package org.jcvi.common.core.seq.nuc.fasta;
 import java.io.File;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaRecordIterator;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * @author dkatzel

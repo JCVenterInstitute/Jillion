@@ -33,10 +33,10 @@ import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.AbstractContig;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
-import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
 

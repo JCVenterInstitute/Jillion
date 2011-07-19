@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta;
 
-import org.jcvi.common.core.seq.Glyph;
-import org.jcvi.common.core.seq.Sequence;
+import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.Sequence;
 
 public abstract class AbstractFastaDataStore <G extends Glyph, T extends Sequence<G>,F extends FastaRecord<T>> implements FastaDataStore<G,T,F>{
 

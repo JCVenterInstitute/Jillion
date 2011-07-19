@@ -25,7 +25,7 @@ import org.jcvi.common.core.assembly.contig.QualityValueStrategy;
 import org.jcvi.common.core.assembly.contig.slice.CompactedSliceMap;
 import org.jcvi.common.core.assembly.contig.slice.SliceMap;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualityDataStore;
 
 /**
  * @author dkatzel

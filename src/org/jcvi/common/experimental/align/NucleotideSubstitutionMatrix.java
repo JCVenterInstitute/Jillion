@@ -28,7 +28,7 @@ package org.jcvi.common.experimental.align;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
 /**
  * A <code>NucleotideSubstitutionMatrix</code> is a simple implementation of a 

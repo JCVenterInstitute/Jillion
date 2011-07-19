@@ -26,9 +26,9 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 import java.util.List;
 import java.util.Properties;
 
-import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.common.core.seq.ShortGlyphFactory;
-import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortGlyphFactory;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 

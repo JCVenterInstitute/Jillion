@@ -28,9 +28,9 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 

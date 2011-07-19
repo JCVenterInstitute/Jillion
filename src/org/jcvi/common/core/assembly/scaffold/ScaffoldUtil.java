@@ -23,7 +23,7 @@ import org.jcvi.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * @author dkatzel

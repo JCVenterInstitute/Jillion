@@ -27,7 +27,7 @@ import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.QualityValueStrategy;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
-import org.jcvi.common.core.seq.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualityDataStore;
 
 public class LargeSliceMapFactory<P extends PlacedRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> extends AbstractSliceMapFactory<P,R,M>{
 

@@ -22,7 +22,7 @@ package org.jcvi.common.core.seq.fastx.fastq;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 
 /**
  * {@code SolexaUtil} is a utility class for working with 

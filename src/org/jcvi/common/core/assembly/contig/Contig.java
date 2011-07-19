@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.contig;
 import java.util.Set;
 
 import org.jcvi.common.core.assembly.contig.slice.consensus.ConsensusCaller;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
  * A {@code Contig} is a CONTIGuous region of genomic data.
  * Contigs are assembled by overlapping reads to form a consensus.

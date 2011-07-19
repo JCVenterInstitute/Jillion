@@ -44,8 +44,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jcvi.Range;
-import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
@@ -58,6 +56,8 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.Data;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.DataFactory;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.RawData;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.io.IOUtil;
 import org.jcvi.io.IOUtil.ReadResults;
 

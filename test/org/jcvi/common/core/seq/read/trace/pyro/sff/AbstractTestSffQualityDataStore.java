@@ -28,9 +28,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.util.Iterator;
 
-import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
+import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.junit.Test;
 
 public abstract class AbstractTestSffQualityDataStore extends AbstractTestExampleSffFile{

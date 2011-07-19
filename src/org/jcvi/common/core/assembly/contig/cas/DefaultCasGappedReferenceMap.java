@@ -36,8 +36,8 @@ import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegion;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegionType;
 import org.jcvi.common.core.assembly.contig.cas.read.CasNucleotideDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.MathUtil;
 
 /**

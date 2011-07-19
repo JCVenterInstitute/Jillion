@@ -22,7 +22,7 @@ package org.jcvi.common.core.seq.qual.fasta;
 import java.io.File;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaRecordIterator;
-import org.jcvi.common.core.seq.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 /**
  * @author dkatzel
