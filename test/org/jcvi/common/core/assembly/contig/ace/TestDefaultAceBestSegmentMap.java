@@ -25,9 +25,9 @@ package org.jcvi.common.core.assembly.contig.ace;
 
 
 
-import org.jcvi.assembly.slice.SliceMap;
 import org.jcvi.common.core.assembly.contig.ace.AceBestSegmentMap;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceBestSegmentMap;
+import org.jcvi.common.core.assembly.contig.slice.SliceMap;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 
 

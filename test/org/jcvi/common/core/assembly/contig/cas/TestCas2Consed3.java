@@ -23,13 +23,13 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.assembly.cas.Cas2Consed3;
-import org.jcvi.assembly.util.TrimDataStoreUtil;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
 import org.jcvi.common.core.assembly.contig.ace.AceContigDataStore;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.cas.UnTrimmedExtensionTrimMap;
+import org.jcvi.common.core.assembly.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.datastore.ContigDataStore;

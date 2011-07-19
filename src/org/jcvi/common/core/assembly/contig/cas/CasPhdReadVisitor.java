@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.assembly.util.TrimDataStore;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadAdapter;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
@@ -35,6 +34,7 @@ import org.jcvi.common.core.assembly.contig.ace.consed.FlowgramConsedPhdAdaptedI
 import org.jcvi.common.core.assembly.contig.ace.consed.PhdReadRecord;
 import org.jcvi.common.core.assembly.contig.cas.align.score.CasScoringScheme;
 import org.jcvi.common.core.assembly.contig.cas.read.CasPlacedRead;
+import org.jcvi.common.core.assembly.trim.TrimDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastQFileIterator;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;

@@ -27,8 +27,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.assembly.slice.Slice;
-import org.jcvi.assembly.slice.SliceElement;
+import org.jcvi.common.core.assembly.contig.slice.Slice;
+import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.seq.Glyph;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.qual.PhredQuality;

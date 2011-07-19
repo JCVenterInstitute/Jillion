@@ -31,11 +31,11 @@ import java.util.List;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.assembly.slice.Slice;
-import org.jcvi.assembly.slice.SliceElement;
-import org.jcvi.assembly.slice.SliceMap;
-import org.jcvi.assembly.slice.SliceMapFactory;
 import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.slice.Slice;
+import org.jcvi.common.core.assembly.contig.slice.SliceElement;
+import org.jcvi.common.core.assembly.contig.slice.SliceMap;
+import org.jcvi.common.core.assembly.contig.slice.SliceMapFactory;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;

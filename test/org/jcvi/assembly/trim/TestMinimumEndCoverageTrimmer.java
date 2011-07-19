@@ -23,6 +23,7 @@ import org.jcvi.Range;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.contig.trim.MinimumEndCoverageTrimmer;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.junit.Before;

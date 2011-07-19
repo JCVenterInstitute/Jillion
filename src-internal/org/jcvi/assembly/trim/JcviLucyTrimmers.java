@@ -19,6 +19,8 @@
 
 package org.jcvi.assembly.trim;
 
+import org.jcvi.common.core.seq.trim.lucy.LucyLikeQualityTrimmer;
+
 
 /**
  * {@code JcviLucyTrimmers} contains all the specially

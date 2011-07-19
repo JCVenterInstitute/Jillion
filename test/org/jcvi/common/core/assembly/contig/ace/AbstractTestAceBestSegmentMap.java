@@ -32,14 +32,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.slice.DefaultSliceMap;
-import org.jcvi.assembly.slice.Slice;
-import org.jcvi.assembly.slice.SliceMap;
-import org.jcvi.assembly.slice.TestSliceUtil;
 import org.jcvi.common.core.assembly.contig.ace.AceBestSegment;
 import org.jcvi.common.core.assembly.contig.ace.AceBestSegmentMap;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceBestSegment;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceBestSegmentMap;
+import org.jcvi.common.core.assembly.contig.slice.DefaultSliceMap;
+import org.jcvi.common.core.assembly.contig.slice.Slice;
+import org.jcvi.common.core.assembly.contig.slice.SliceMap;
+import org.jcvi.common.core.assembly.coverage.slice.TestSliceUtil;
 import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.read.SequenceDirection;
