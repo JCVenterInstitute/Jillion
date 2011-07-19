@@ -16,15 +16,14 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi;
-
-import java.util.Comparator;
+package org.jcvi.common.core;
 
 import org.jcvi.common.core.Range;
 import org.junit.Assert;
+
 import org.junit.Test;
 
-public class TestRangeArrivalComparator 
+public class TestRangeDepartureComparator 
 {
     private Range a;
     private Range b;
@@ -34,9 +33,9 @@ public class TestRangeArrivalComparator
     private Range f;
     private Range g;
     
-    private final Comparator<Range> comp = Range.Comparators.ARRIVAL;
+    private Range.Comparators comp = Range.Comparators.DEPARTURE;
     
-    public TestRangeArrivalComparator() 
+    public TestRangeDepartureComparator() 
     {
         super();
         
@@ -49,7 +48,7 @@ public class TestRangeArrivalComparator
         this.g = Range.buildEmptyRange(30);
     }
     
-    
+   
     
     @Test
     public void testCompare_inverseCommutativity() 
@@ -69,7 +68,7 @@ public class TestRangeArrivalComparator
     @Test
     public void testCompare_simple() 
     {
-        Assert.assertEquals(-1, this.comp.compare(a, d));
+        Assert.assertEquals(1, this.comp.compare(a, d));
     }
 
     @Test

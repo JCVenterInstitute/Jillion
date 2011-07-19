@@ -16,32 +16,23 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
-package org.jcvi;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jcvi.common.core.Range;
-import org.junit.Before;
-
-/**
+/*
+ * Created on Aug 3, 2009
+ *
  * @author dkatzel
- *
- *
  */
-public abstract class AbstractTestSizeRangeComparator {
+package org.jcvi.io;
 
-    Range small = Range.buildRangeOfLength(0, 10);
-    Range medium = Range.buildRangeOfLength(-10, 30);
-    Range large = Range.buildRangeOfLength(-50, 100);
-    
-    List<Range> ranges;
-    @Before
-    public void setup(){
-        ranges = new ArrayList<Range>(3);
-        ranges.add(small);
-        ranges.add(medium);
-        ranges.add(large);
+import org.junit.Test;
+import static org.junit.Assert.*;
+public class Base64_ConvertTriplet {
+
+    @Test
+    public void convert(){
+        //010011010110000101101110
+        int triplet = 5071214;
+        byte[] actual =Base64.convertTriplet(triplet);
+        byte[] expected = new byte[]{19,22,5,46};
+        assertArrayEquals(expected, actual);
     }
 }

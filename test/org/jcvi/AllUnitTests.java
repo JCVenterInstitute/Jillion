@@ -26,6 +26,13 @@ package org.jcvi;
 import junit.framework.Test;
 
 import org.jcvi.align.AllAlignTests;
+import org.jcvi.common.core.TestEmptyRange;
+import org.jcvi.common.core.TestRange;
+import org.jcvi.common.core.TestRangeArrivalComparator;
+import org.jcvi.common.core.TestRangeComparatorLongestToShortest;
+import org.jcvi.common.core.TestRangeComparatorShortestToLongest;
+import org.jcvi.common.core.TestRangeDepartureComparator;
+import org.jcvi.common.core.TestRangeIterator;
 import org.jcvi.common.core.assembly.AllAssemblyUnitTests;
 import org.jcvi.common.core.assembly.contig.ace.AllAceUnitTests;
 import org.jcvi.common.core.seq.fastx.AllFastXTests;

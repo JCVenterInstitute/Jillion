@@ -32,7 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestBase64ToChar.class,
         TestReadTriplet.class,
-        TestConvertTriplet.class,
+        Base64_ConvertTriplet.class,
         TestBase64Encoder.class
     }
     )
