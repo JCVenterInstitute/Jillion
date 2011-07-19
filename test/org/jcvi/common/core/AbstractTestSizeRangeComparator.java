@@ -17,26 +17,31 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi;
-import java.util.Arrays;
-import java.util.Collections;
+package org.jcvi.common.core;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.Before;
+
 /**
  * @author dkatzel
  *
  *
  */
-public class TestRangeComparatorLongestToShortest extends AbstractTestSizeRangeComparator{
+public abstract class AbstractTestSizeRangeComparator {
 
-    @Test
-    public void sort(){
-        Collections.sort(ranges, Range.Comparators.LONGEST_TO_SHORTEST);
-        List<Range> expectedOrder = Arrays.asList(large,medium,small);
-        
-        assertEquals(expectedOrder, ranges);
+    Range small = Range.buildRangeOfLength(0, 10);
+    Range medium = Range.buildRangeOfLength(-10, 30);
+    Range large = Range.buildRangeOfLength(-50, 100);
+    
+    List<Range> ranges;
+    @Before
+    public void setup(){
+        ranges = new ArrayList<Range>(3);
+        ranges.add(small);
+        ranges.add(medium);
+        ranges.add(large);
     }
 }

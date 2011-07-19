@@ -16,23 +16,31 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Aug 3, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.io;
 
+package org.jcvi.common.core;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.jcvi.common.core.Range;
 import org.junit.Test;
-import static org.junit.Assert.*;
-public class TestConvertTriplet {
+
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestRangeComparatorShortestToLongest extends AbstractTestSizeRangeComparator{
 
     @Test
-    public void convert(){
-        //010011010110000101101110
-        int triplet = 5071214;
-        byte[] actual =Base64.convertTriplet(triplet);
-        byte[] expected = new byte[]{19,22,5,46};
-        assertArrayEquals(expected, actual);
+    public void sort(){
+        Collections.sort(ranges, Range.Comparators.SHORTEST_TO_LONGEST);
+        List<Range> expectedOrder = Arrays.asList(small,medium,large);
+        
+        assertEquals(expectedOrder, ranges);
     }
+
 }
