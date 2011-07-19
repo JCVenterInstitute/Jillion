@@ -36,7 +36,6 @@ import org.junit.runners.Suite.SuiteClasses;
         TestAbstractFolderTraceArchiveMultiTrace.class,
         TestDefaultFolderTraceArchiveDataStore.class,
         TestActualTraceArchiveXML.class,
-        TestDefaultTraceNameConverter.class,
         TestTraceTypeCode.class
     }
     )
