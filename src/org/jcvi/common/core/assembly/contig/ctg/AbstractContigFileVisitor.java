@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.contig.ctg;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 
 public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{

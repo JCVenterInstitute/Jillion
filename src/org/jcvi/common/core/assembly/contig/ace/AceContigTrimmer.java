@@ -22,7 +22,7 @@ package org.jcvi.common.core.assembly.contig.ace;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.trim.AbstractContigTrimmer;
 import org.jcvi.common.core.assembly.contig.trim.PlacedReadTrimmer;

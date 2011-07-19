@@ -27,8 +27,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.ctg.ContigFileVisitor;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.io.IOUtil;

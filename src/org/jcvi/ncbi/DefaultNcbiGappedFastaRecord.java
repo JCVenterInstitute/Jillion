@@ -252,7 +252,7 @@ public class DefaultNcbiGappedFastaRecord implements NcbiGappedFastaRecord {
      *
      *
      */
-    public static class Builder implements org.jcvi.Builder<DefaultNcbiGappedFastaRecord>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultNcbiGappedFastaRecord>{
 
         private final List<NucleotideSequence> sequences = new ArrayList<NucleotideSequence>();
         private final List<Gap> gaps = new ArrayList<Gap>();

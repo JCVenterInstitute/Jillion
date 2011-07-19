@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.coverage;
 
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 
 
 public interface CoverageMap <T extends CoverageRegion<?>> extends Iterable<T>{

@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 import java.util.Date;
 import java.util.Map;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadAdapter;
 import org.jcvi.common.core.assembly.contig.ace.DefaultPhdInfo;

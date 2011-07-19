@@ -22,8 +22,8 @@ package org.jcvi.common.core.assembly.contig.ace.consed;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.jcvi.Range;
-import org.jcvi.Range.CoordinateSystem;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedNavigationWriter;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.assembly.contig.ace.consed.ReadNavigationElement;

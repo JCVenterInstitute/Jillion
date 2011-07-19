@@ -26,9 +26,9 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
 
-import org.jcvi.CommonUtil;
 import org.jcvi.common.core.seq.read.Confidence;
 import org.jcvi.common.core.seq.read.DefaultConfidence;
+import org.jcvi.common.core.util.CommonUtil;
 
 
 /**

@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi;
+package org.jcvi.common.core;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -35,6 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.assembly.Placed;
+import org.jcvi.common.core.util.CommonUtil;
 
 
 /**

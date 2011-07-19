@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.contig.ace;
 
 import java.util.Date;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.io.FileVisitor;
 import org.jcvi.io.TextFileVisitor;

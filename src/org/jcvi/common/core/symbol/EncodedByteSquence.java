@@ -27,7 +27,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 /**
  * {@code EncodedByteSquence} encodes a {@link Sequence}
  * of {@link ByteGlyph}s.

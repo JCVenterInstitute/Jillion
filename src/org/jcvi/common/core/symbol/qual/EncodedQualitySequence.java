@@ -22,7 +22,7 @@ package org.jcvi.common.core.symbol.qual;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.EncodedSequence;
 
 /**

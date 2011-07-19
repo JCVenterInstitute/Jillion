@@ -16,17 +16,26 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 22, 2009
- *
+
+package org.jcvi.common.core.seq.plate;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.datastore;
+@RunWith(Suite.class)
+@SuiteClasses(
+    {
+        TestWell.class,
+        TestWellQuadrant.class,
+        TestNextWellIterator.class
+    }
+    )
+public class AllPlateUnitTests {
 
-import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.datastore.DataStore;
-
-public interface ContigDataStore<PR extends PlacedRead,C extends Contig<PR>> extends DataStore<C> {
-    
 }

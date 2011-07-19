@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.contig.ace.consed;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.assembly.contig.ace.consed.ReadNavigationElement;
 import org.jcvi.common.core.assembly.contig.ace.consed.NavigationElement.Type;

@@ -87,7 +87,7 @@ public class DefaultContigAssembly implements ContigAssembly{
         return qualityFiles;
     }
     
-    public static class Builder implements org.jcvi.Builder<DefaultContigAssembly>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultContigAssembly>{
         private final DataStore<Contig<PlacedRead>> contigDataStore;
         private final NucleotideDataStore nucleotideDataStore;
         private final QualityDataStore qualityDataStore;

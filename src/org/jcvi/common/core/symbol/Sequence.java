@@ -25,7 +25,7 @@ package org.jcvi.common.core.symbol;
 
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 /**
  * {@code Sequence} is an interface for 
  * encoding or compressing a list of {@link Glyph}s

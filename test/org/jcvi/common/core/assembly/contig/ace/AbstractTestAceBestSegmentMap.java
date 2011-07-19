@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.AceBestSegment;
 import org.jcvi.common.core.assembly.contig.ace.AceBestSegmentMap;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceBestSegment;

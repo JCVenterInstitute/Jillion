@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.math.BigInteger;
 
-import org.jcvi.CommonUtil;
+import org.jcvi.common.core.util.CommonUtil;
 
 public class DefaultSFFCommonHeader implements SFFCommonHeader {
 
@@ -149,7 +149,7 @@ public class DefaultSFFCommonHeader implements SFFCommonHeader {
                 + "]";
     }
     
-    public static class Builder implements org.jcvi.Builder<DefaultSFFCommonHeader>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultSFFCommonHeader>{
 
         private BigInteger indexOffset;
         private long indexLength;

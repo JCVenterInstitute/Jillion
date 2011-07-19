@@ -90,7 +90,7 @@ public class DefaultSlice implements Slice{
         return elements.get(elementId);
     }
     
-    public static class Builder implements org.jcvi.Builder<DefaultSlice>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultSlice>{
         private final Map<String,SliceElement> elements = new LinkedHashMap<String, SliceElement>();
         
         public Builder add(String id, NucleotideGlyph base, PhredQuality quality, SequenceDirection dir){

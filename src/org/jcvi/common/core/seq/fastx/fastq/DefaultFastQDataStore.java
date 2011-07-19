@@ -90,7 +90,7 @@ public class DefaultFastQDataStore<T extends FastQRecord> implements FastQDataSt
         return CloseableIteratorAdapter.adapt(map.values().iterator());
     }
     
-    public static class Builder<T extends FastQRecord> implements org.jcvi.Builder<DefaultFastQDataStore<T>>{
+    public static class Builder<T extends FastQRecord> implements org.jcvi.common.core.util.Builder<DefaultFastQDataStore<T>>{
         private final Map<String, T> map;
         
         public Builder(){

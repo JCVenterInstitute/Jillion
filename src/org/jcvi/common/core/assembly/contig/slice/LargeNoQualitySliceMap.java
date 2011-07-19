@@ -5,7 +5,7 @@
  */
 package org.jcvi.common.core.assembly.contig.slice;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.QualityValueStrategy;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;

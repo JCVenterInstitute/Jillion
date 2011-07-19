@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.symbol;
 
-import org.jcvi.CommonUtil;
+import org.jcvi.common.core.util.CommonUtil;
 
 public class RunLength<T> {
     private final int length;

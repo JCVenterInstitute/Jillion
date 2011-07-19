@@ -21,7 +21,7 @@ package org.jcvi.assembly.trim;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;

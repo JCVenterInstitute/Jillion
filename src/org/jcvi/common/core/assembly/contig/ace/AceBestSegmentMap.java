@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.contig.ace;
 
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 /**
  * {@code AceBestSegmentMap} is a mapping of all
  * the {@link AceBestSegment}s for a contig.

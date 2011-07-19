@@ -44,7 +44,7 @@ public class DefaultReadTrimMap implements ReadTrimMap{
         return map.get(id);
     }
     
-    public static class Builder implements org.jcvi.Builder<DefaultReadTrimMap>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultReadTrimMap>{
         private final Map<String, ReadTrim> map = new HashMap<String, ReadTrim>();
         
         public Builder addReadTrim(String id, ReadTrim trim){

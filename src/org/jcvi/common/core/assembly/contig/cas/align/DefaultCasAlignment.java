@@ -132,7 +132,7 @@ public class DefaultCasAlignment implements CasAlignment {
 
 
 
-    public static class Builder implements org.jcvi.Builder<DefaultCasAlignment>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultCasAlignment>{
         private final long contigSequenceId;
         private final long startOfMatch;
         private final boolean readIsReversed;

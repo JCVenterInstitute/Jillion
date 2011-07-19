@@ -104,7 +104,7 @@ public class DefaultScanRate implements ScanRate{
                 + ", line=" + line + "]";
     }
 
-    public static final class Builder implements org.jcvi.Builder<DefaultScanRate>{
+    public static final class Builder implements org.jcvi.common.core.util.Builder<DefaultScanRate>{
         private int time,line,period;
         
         public Builder time(int time){

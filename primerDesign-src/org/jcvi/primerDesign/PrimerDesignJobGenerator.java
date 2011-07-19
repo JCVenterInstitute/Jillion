@@ -7,8 +7,8 @@ import org.apache.log4j.Logger;
 
 import org.jcvi.io.*;
 
-import org.jcvi.Range;
 import org.jcvi.command.Command;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 import org.jcvi.primerDesign.domain.PrimerDesignTarget;

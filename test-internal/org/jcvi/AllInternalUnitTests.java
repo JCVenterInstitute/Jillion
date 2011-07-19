@@ -22,7 +22,7 @@ package org.jcvi;
 import org.jcvi.assembly.AllInternalAssemblyUnitTests;
 import org.jcvi.assembly.contig.AllInternalContigUnitTests;
 import org.jcvi.auth.AllAuthUnitTests;
-import org.jcvi.plate.AllPlateUnitTests;
+import org.jcvi.common.core.seq.plate.AllPlateUnitTests;
 import org.jcvi.trace.AllInternalTraceUnitTests;
 import org.jcvi.uid.AllUidUnitTests;
 import org.junit.runner.RunWith;

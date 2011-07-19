@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import org.jcvi.CommonUtil;
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.util.CommonUtil;
 
 public class DefaultSFFReadHeader implements SFFReadHeader {
     private final int numberOfBases;
@@ -105,7 +105,7 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
     }
 
 
-    public static class Builder implements org.jcvi.Builder<DefaultSFFReadHeader>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultSFFReadHeader>{
         private  int numberOfBases;
         private  Range qualityClip;
         private  Range adapterClip;

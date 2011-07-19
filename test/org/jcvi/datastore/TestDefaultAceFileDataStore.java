@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.assembly.contig.ace.TestAbstractAceParserMatchesAce2ContigMultipleContigs;
 import org.jcvi.common.core.datastore.DataStoreException;
 

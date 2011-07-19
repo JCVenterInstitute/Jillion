@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceBestSegment;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;

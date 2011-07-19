@@ -27,7 +27,6 @@ package org.jcvi.common.core.util;
 
 import java.util.Iterator;
 
-import org.jcvi.Builder;
 
 
 /**

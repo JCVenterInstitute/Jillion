@@ -26,10 +26,10 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr;
 
 import java.util.Map;
 
-import org.jcvi.Builder;
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.util.Builder;
 
 /**
  * <code>ZTRChromatogramBuilder</code> uses the Builder Pattern

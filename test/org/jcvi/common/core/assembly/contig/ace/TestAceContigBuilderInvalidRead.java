@@ -24,7 +24,7 @@
 package org.jcvi.common.core.assembly.contig.ace;
 
 import org.apache.log4j.Logger;
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.seq.read.SequenceDirection;

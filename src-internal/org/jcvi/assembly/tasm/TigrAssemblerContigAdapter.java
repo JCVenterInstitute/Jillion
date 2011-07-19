@@ -194,7 +194,7 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	 * @author dkatzel
 	 *
 	 */
-	public static class Builder implements org.jcvi.Builder<TigrAssemblerContigAdapter>{
+	public static class Builder implements org.jcvi.common.core.util.Builder<TigrAssemblerContigAdapter>{
 
 		//03/05/10 01:52:31 PM
 		/**

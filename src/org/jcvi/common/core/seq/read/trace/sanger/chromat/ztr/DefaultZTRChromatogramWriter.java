@@ -26,7 +26,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.Builder;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.Chunk;
@@ -38,6 +37,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.RunLengthEnco
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.ShrinkToEightBitData;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.ZLibData;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
+import org.jcvi.common.core.util.Builder;
 
 /**
  * {@code DefaultZTRChromatogramWriter} is an implementation

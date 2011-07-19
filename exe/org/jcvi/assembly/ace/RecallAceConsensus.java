@@ -33,9 +33,9 @@ import java.util.Map.Entry;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.jcvi.Range;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.GapQualityValueStrategies;
 import org.jcvi.common.core.assembly.contig.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
@@ -44,6 +44,7 @@ import org.jcvi.common.core.assembly.contig.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
+import org.jcvi.common.core.assembly.contig.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.contig.ace.consed.PhdDirQualityDataStore;
@@ -67,7 +68,6 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.MultipleWrapper;
-import org.jcvi.datastore.IndexedAceFileDataStore;
 import org.jcvi.io.IOUtil;
 
 /**

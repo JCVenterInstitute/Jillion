@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.seq.trim.lucy;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 
 /**
  * @author dkatzel

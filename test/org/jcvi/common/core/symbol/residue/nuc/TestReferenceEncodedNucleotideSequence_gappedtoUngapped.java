@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.symbol.residue.nuc;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;

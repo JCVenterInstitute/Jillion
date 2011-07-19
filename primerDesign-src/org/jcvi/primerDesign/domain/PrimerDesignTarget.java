@@ -1,6 +1,6 @@
 package org.jcvi.primerDesign.domain;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 
 /**
  * Created by IntelliJ IDEA.

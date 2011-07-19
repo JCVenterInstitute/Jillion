@@ -21,7 +21,8 @@ package org.jcvi.common.core.assembly.contig.ace;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jcvi.Range;
+
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyTestUtil;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
 import org.jcvi.common.core.assembly.contig.ace.AceContigTrimmer;

@@ -25,9 +25,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.jcvi.Builder;
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
+import org.jcvi.common.core.util.Builder;
 import org.jcvi.io.IOUtil;
 
 /**

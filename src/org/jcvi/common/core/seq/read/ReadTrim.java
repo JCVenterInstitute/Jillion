@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.read;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 
 public interface ReadTrim {
 

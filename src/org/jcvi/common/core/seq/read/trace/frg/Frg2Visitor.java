@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.read.trace.frg;
 
 import java.util.List;
 
-import org.jcvi.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Distance;
 import org.jcvi.common.core.seq.read.MateOrientation;
 import org.jcvi.common.core.symbol.qual.QualitySequence;

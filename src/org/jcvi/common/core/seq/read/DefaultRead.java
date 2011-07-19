@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.read;
 
-import org.jcvi.CommonUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.util.CommonUtil;
 
 public class DefaultRead<T extends NucleotideSequence> implements Read<T>{
     private final String id;

@@ -26,6 +26,7 @@ package org.jcvi;
 
 import static org.junit.Assert.*;
 
+import org.jcvi.common.core.Range;
 import org.junit.Test;
 public class TestEmptyRange{
 

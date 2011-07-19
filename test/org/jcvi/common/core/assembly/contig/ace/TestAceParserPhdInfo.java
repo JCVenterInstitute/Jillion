@@ -34,7 +34,6 @@ import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.datastore.DefaultAceFileDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
