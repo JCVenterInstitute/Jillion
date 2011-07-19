@@ -19,6 +19,11 @@
 
 package org.jcvi.assembly.trim;
 
+import org.jcvi.common.core.seq.trim.TestDefaultPrimerTrimmer;
+import org.jcvi.common.core.seq.trim.TestDefaultPrimerTrimmer_ActualData;
+import org.jcvi.common.core.seq.trim.TestInternalPrimerHit;
+import org.jcvi.common.core.seq.trim.lucy.TestLucyQualityTrimmer;
+import org.jcvi.common.core.seq.trim.lucy.TestLucyTrimDataStore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

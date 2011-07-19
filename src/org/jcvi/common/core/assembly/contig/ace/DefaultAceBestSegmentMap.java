@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.slice.Slice;
-import org.jcvi.assembly.slice.SliceElement;
-import org.jcvi.assembly.slice.SliceMap;
+import org.jcvi.common.core.assembly.contig.slice.Slice;
+import org.jcvi.common.core.assembly.contig.slice.SliceElement;
+import org.jcvi.common.core.assembly.contig.slice.SliceMap;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 

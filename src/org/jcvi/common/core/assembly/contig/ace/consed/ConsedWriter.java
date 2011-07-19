@@ -36,11 +36,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.jcvi.assembly.slice.SliceMapFactory;
 import org.jcvi.common.core.assembly.contig.ace.AceAssembly;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.contig.slice.SliceMapFactory;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;

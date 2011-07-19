@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.contig.trim.MinimumBidirectionalEndCoverageTrimmer;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 
 /**
