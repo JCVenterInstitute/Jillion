@@ -22,7 +22,7 @@ package org.jcvi.assembly.trim;
 import java.util.List;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.AssemblyUtil;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;

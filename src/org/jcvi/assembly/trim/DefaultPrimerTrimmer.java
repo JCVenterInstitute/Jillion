@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.assembly.AssemblyUtil;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
 import org.jcvi.common.core.seq.nuc.NucleotideGlyph;

@@ -17,37 +17,24 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Dec 16, 2008
+ * Created on Jan 20, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.assembly;
+package org.jcvi.common.core.assembly.coverage;
 
-import org.jcvi.assembly.coverage.AllCoverageUnitTests;
-import org.jcvi.assembly.slice.AllSliceUnitTests;
-import org.jcvi.assembly.trim.AllTrimUnitTests;
-import org.jcvi.common.core.assembly.contig.cas.AllCasUnitTests;
-import org.jcvi.common.core.assembly.contig.ctg.AllContigUnitTests;
-import org.jcvi.common.core.assembly.scaffold.agp.AllAgpUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-    {        
-        TestDefaultPlacedRead.class,        
-        AllTrimUnitTests.class,
-        AllSliceUnitTests.class,
-        AllContigUnitTests.class,
-        AllCoverageUnitTests.class,
-        AllAgpUnitTests.class,
-        AllCasUnitTests.class,
-        
-        TestAssemblyUtil_gappedfullRange.class,
-        TestAssemblyUtil_reverseComplimentRange.class
+    { 
+        TestDefaultCoverageRegion.class,
+        TestDefaultCoverageMap.class,
+        TestDefaultCoverageMapAvgCoverage.class
     }
     )
-public class AllAssemblyUnitTests {
+public class AllCoverageUnitTests {
 
 }

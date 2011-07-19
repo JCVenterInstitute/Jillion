@@ -20,7 +20,7 @@
 package org.jcvi.common.core.assembly.contig.ace.consed;
 
 import org.jcvi.Range;
-import org.jcvi.assembly.AssemblyUtil;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.Contig;
 
 /**

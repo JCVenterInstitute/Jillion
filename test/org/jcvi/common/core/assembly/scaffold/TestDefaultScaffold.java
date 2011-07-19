@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.assembly;
+package org.jcvi.common.core.assembly.scaffold;
 
 import org.junit.Test;
 import org.junit.Before;

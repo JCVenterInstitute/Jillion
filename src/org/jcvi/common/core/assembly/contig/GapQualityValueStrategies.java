@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.contig;
 
-import org.jcvi.assembly.AssemblyUtil;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.seq.Sequence;
 import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.qual.PhredQuality;
