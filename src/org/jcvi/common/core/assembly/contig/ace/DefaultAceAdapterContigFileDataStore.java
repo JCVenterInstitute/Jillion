@@ -34,9 +34,9 @@ import org.jcvi.common.core.assembly.contig.ctg.ContigFileParser;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
-import org.jcvi.common.core.seq.Glyph;
-import org.jcvi.common.core.seq.Sequence;
 import org.jcvi.common.core.seq.fastx.FastXRecord;
+import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.util.CloseableIterator;
 
 public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileDataStore implements AceContigDataStore{

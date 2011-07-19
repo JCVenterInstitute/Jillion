@@ -23,9 +23,9 @@
  */
 package org.jcvi.common.core.seq.pos.fasta;
 
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.ShortGlyph;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.ShortGlyph;
 
 
 public interface PositionFastaRecord<T extends Sequence<ShortGlyph>> extends FastaRecord<T> {

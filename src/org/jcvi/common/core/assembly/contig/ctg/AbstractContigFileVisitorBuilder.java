@@ -27,9 +27,9 @@ import org.jcvi.Range;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
 public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFileVisitor{
 

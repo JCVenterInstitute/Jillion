@@ -27,17 +27,17 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.jcvi.Range;
-import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.seq.encoder.TigrQualitiesEncodedGyphCodec;
-import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.Distance;
 import org.jcvi.common.core.seq.read.MateOrientation;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Parser;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor;
 import org.jcvi.common.core.seq.read.trace.frg.FrgVisitorAction;
+import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.TigrQualitiesEncodedGyphCodec;
+import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 

@@ -33,8 +33,8 @@ import org.jcvi.Range;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.assembly.contig.slice.SliceMap;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
 

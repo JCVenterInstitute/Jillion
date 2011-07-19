@@ -25,10 +25,10 @@ package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.util.List;
 
-import org.jcvi.common.core.seq.EncodedSequence;
-import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
-import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.symbol.EncodedSequence;
+import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestSangerFastQQualityCodecActual {

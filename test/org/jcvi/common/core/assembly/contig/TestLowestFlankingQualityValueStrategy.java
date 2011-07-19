@@ -27,11 +27,11 @@ import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
 import org.jcvi.common.core.assembly.contig.GapQualityValueStrategies;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.EncodedSequence;
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.symbol.EncodedSequence;
+import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityValueStrategies{

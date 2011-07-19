@@ -24,11 +24,11 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.joda.time.DateTime;
 

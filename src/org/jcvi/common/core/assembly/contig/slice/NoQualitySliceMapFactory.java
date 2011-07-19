@@ -8,8 +8,8 @@ package org.jcvi.common.core.assembly.contig.slice;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
-import org.jcvi.common.core.seq.qual.PhredQuality;
-import org.jcvi.common.core.seq.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualityDataStore;
 
 public class NoQualitySliceMapFactory<P extends PlacedRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> implements SliceMapFactory<P,R,M>{
     private final PhredQuality phredQuality;

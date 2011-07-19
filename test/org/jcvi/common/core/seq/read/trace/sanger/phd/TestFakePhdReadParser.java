@@ -26,11 +26,11 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdParser;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdTag;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.io.fileServer.FileServer;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;

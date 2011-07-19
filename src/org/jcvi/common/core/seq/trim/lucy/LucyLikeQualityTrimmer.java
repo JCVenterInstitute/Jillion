@@ -29,8 +29,8 @@ import java.util.TreeSet;
 
 import org.jcvi.Range;
 import org.jcvi.Range.CoordinateSystem;
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 
 
 

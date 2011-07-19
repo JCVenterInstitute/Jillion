@@ -28,10 +28,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.common.core.seq.RunLength;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRUtil;
+import org.jcvi.common.core.symbol.RunLength;
 import org.jcvi.io.IOUtil;
 
 

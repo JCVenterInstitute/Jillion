@@ -25,8 +25,8 @@ package org.jcvi.common.core.seq.fastx.fastq;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.qual.QualityDataStore;
-import org.jcvi.common.core.seq.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 public class FastQQualitiesDataStoreAdapter extends AbstractFastQDataStoreAdapter<QualitySequence> implements QualityDataStore{
     /**

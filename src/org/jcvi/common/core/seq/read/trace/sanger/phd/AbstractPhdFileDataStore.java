@@ -32,10 +32,10 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
-import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.common.core.seq.ShortGlyphFactory;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortGlyphFactory;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.util.CloseableIterator;
 
 public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileVisitor{

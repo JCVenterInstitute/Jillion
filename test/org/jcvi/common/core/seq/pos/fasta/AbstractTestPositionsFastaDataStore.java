@@ -28,14 +28,14 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.seq.DefaultShortGlyphCodec;
-import org.jcvi.common.core.seq.EncodedSequence;
-import org.jcvi.common.core.seq.GlyphCodec;
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.common.core.seq.ShortGlyphFactory;
 import org.jcvi.common.core.seq.pos.fasta.DefaultPositionFastaRecord;
 import org.jcvi.common.core.seq.pos.fasta.PositionFastaRecord;
+import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
+import org.jcvi.common.core.symbol.EncodedSequence;
+import org.jcvi.common.core.symbol.GlyphCodec;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 

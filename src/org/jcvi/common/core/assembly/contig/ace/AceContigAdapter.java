@@ -32,7 +32,7 @@ import java.util.Set;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.cas.CasIdLookup;
 import org.jcvi.common.core.assembly.contig.cas.read.CasPlacedRead;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class AceContigAdapter implements AceContig{
 

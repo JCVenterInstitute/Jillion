@@ -21,7 +21,7 @@ package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
 /**
  * {@code FastQUtil} is a utility class for working with 

@@ -30,8 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.CommonUtil;
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.ShortGlyph;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.ShortGlyph;
 
 public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
 

@@ -28,11 +28,11 @@ import java.util.List;
 
 import org.jcvi.CommonUtil;
 import org.jcvi.Range;
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
-import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class SFFFlowgram implements Flowgram {
     private final String id;

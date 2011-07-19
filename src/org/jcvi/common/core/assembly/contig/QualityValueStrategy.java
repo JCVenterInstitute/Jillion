@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.assembly.contig;
 
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 
 public interface QualityValueStrategy {
 

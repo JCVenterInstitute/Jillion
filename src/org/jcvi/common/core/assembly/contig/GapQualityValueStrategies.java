@@ -20,9 +20,9 @@
 package org.jcvi.common.core.assembly.contig;
 
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * {@code GapQualityValueStrategies} are {@link QualityValueStrategy}

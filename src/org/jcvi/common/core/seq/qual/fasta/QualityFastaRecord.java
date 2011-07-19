@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.qual.fasta;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
-import org.jcvi.common.core.seq.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 public interface QualityFastaRecord extends FastaRecord<QualitySequence> {
 

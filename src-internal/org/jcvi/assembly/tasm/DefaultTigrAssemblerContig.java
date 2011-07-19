@@ -29,10 +29,10 @@ import java.util.Set;
 import org.jcvi.common.core.assembly.contig.AbstractContigBuilder;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
-import org.jcvi.common.core.seq.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
 /**
  * {@code DefaultTigrAssemblerContig} is a {@link Contig}

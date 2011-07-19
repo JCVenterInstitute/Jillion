@@ -25,7 +25,7 @@
  */
 package org.jcvi.align;
 
-import org.jcvi.common.core.seq.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.experimental.align.Aligner;
 import org.jcvi.common.experimental.align.Alignment;
 import org.jcvi.common.experimental.align.NucleotideSubstitutionMatrix;

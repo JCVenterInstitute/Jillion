@@ -27,15 +27,15 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
-import org.jcvi.common.core.seq.qual.QualityDataStore;
 import org.jcvi.common.core.seq.qual.fasta.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.qual.fasta.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.QualitySffDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;

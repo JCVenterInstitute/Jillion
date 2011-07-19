@@ -30,7 +30,7 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.util.MapValueComparator;
 /**
  * {@code MostFrequentBasecallConsensusCaller} is a {@link ConsensusCaller}

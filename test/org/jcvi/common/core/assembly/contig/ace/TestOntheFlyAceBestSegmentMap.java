@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.contig.ace;
 import org.jcvi.common.core.assembly.contig.ace.AceBestSegmentMap;
 import org.jcvi.common.core.assembly.contig.ace.OnTheFlyAceBestSegmentMap;
 import org.jcvi.common.core.assembly.contig.slice.SliceMap;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 
 public class TestOntheFlyAceBestSegmentMap extends AbstractTestAceBestSegmentMap{

@@ -28,8 +28,8 @@ import java.util.Set;
 
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 /**
  * <code>AnnotationConsensusCaller</code> is the Consensus
  * caller used by the TIGR Annotation Group.  It is much

@@ -23,9 +23,9 @@
  */
 package org.jcvi.glyph.qualClass;
 
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.qual.PhredQuality;
 import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.junit.Before;
 import org.junit.Test;

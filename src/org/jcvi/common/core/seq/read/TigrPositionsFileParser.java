@@ -35,12 +35,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.datastore.SimpleDataStore;
-import org.jcvi.common.core.seq.EncodedShortGlyph;
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.ShortGlyph;
-import org.jcvi.common.core.seq.ShortGlyphFactory;
 import org.jcvi.common.core.seq.pos.fasta.PositionDataStore;
 import org.jcvi.common.core.seq.pos.fasta.PositionDataStoreAdapter;
+import org.jcvi.common.core.symbol.EncodedShortGlyph;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.io.IOUtil;
 
 public class TigrPositionsFileParser {

@@ -25,12 +25,12 @@ package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.seq.Sequence;
-import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
-import org.jcvi.common.core.seq.qual.QualityGlyphCodec;
-import org.jcvi.common.core.seq.qual.QualitySequence;
+import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualityGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 /**
  * {@code FastQQualityCodec} is a can encode and decode
  * The different ways a FASTQ file can be encode

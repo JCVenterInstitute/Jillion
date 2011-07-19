@@ -32,8 +32,8 @@ import org.jcvi.Range;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.assembly.contig.slice.SliceMap;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
  * {@code OntheFlyAceBestSegmentMap} is an implementation of {@link AceBestSegmentMap}
  * that does not precompute AceBestSegments which saves memory but at the price of 

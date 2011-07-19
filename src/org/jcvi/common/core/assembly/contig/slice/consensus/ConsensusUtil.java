@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.contig.slice.consensus;
 
 import java.util.List;
 
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
 public final class ConsensusUtil {
     

@@ -25,7 +25,7 @@ import org.jcvi.common.core.assembly.contig.QualityValueStrategy;
 import org.jcvi.common.core.assembly.contig.slice.DefaultSliceMap;
 import org.jcvi.common.core.assembly.contig.slice.SliceMap;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.common.core.seq.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualityDataStore;
 
 /**
  * @author dkatzel

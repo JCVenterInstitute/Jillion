@@ -23,9 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.datastore.SimpleDataStore;
-import org.jcvi.common.core.seq.nuc.NucleotideDataStore;
-import org.jcvi.common.core.seq.nuc.NucleotideDataStoreAdapter;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStoreAdapter;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * @author dkatzel

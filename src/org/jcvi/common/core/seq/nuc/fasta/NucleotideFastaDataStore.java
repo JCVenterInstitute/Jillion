@@ -20,8 +20,8 @@
 package org.jcvi.common.core.seq.nuc.fasta;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStore;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * {@code NucleotideFastaDataStore} is a FastaDataStore

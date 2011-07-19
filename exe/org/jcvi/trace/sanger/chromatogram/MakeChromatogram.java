@@ -34,14 +34,9 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.encoder.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.nuc.fasta.LargeNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.nuc.fasta.NucleotideFastaDataStore;
 import org.jcvi.common.core.seq.nuc.fasta.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.qual.EncodedQualitySequence;
-import org.jcvi.common.core.seq.qual.PhredQuality;
-import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.common.core.seq.qual.fasta.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.qual.fasta.QualityFastaDataStore;
 import org.jcvi.common.core.seq.read.Peaks;
@@ -52,6 +47,11 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramWriter;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.IOLibLikeZTRChromatogramWriter;
+import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.io.IOUtil;
 
 /**

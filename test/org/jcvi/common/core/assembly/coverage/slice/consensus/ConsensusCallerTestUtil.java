@@ -37,7 +37,7 @@ import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.assembly.contig.slice.consensus.ConsensusResult;
 import org.jcvi.common.core.assembly.contig.slice.consensus.DefaultConsensusResult;
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.util.MapValueComparator;
 
 import static org.jcvi.common.core.assembly.coverage.slice.TestSliceUtil.*;

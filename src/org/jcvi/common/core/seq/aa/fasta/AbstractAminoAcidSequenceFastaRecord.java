@@ -1,8 +1,8 @@
 package org.jcvi.common.core.seq.aa.fasta;
 
-import org.jcvi.common.core.seq.aa.AminoAcidSequence;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
+import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 
 /*
  * Implementing an {@code AbstractPeptideSequenceFastaRecord} requires writing

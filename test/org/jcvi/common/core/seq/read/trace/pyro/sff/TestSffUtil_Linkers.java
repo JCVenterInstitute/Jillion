@@ -19,9 +19,9 @@
 
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import org.jcvi.common.core.seq.nuc.NucleotideGlyph;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

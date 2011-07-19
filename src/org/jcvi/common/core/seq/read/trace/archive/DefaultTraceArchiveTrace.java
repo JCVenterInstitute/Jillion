@@ -27,12 +27,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
-import org.jcvi.common.core.seq.nuc.NucleotideSequence;
 import org.jcvi.common.core.seq.nuc.fasta.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.pos.fasta.DefaultPositionFastaFileDataStore;
-import org.jcvi.common.core.seq.qual.QualitySequence;
 import org.jcvi.common.core.seq.qual.fasta.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.read.Peaks;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.io.IOUtil;
 
 public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
