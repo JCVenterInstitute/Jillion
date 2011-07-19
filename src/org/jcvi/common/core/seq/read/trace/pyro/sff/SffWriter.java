@@ -25,7 +25,7 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 
 /**
  * {@code SffWriter} writes Sff formated data to an OutputStream.

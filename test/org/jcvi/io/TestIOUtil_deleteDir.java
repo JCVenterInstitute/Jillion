@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;

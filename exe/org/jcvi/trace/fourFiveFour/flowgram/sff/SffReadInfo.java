@@ -37,12 +37,12 @@ import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileProcessor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
-import org.jcvi.io.IOUtil;
 
 public class SffReadInfo extends AbstractSffFileProcessor {
 

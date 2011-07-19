@@ -25,9 +25,9 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
 import java.util.Properties;
 
+import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
-import org.jcvi.io.TextFileVisitor;
 
 public interface PhdFileVisitor extends TextFileVisitor{
 

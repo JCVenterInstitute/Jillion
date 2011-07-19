@@ -21,7 +21,7 @@ package org.jcvi.common.core.seq.read.trace.sanger;
 
 import java.util.Map;
 
-import org.jcvi.io.FileVisitor;
+import org.jcvi.common.core.io.FileVisitor;
 
 /**
  * @author dkatzel

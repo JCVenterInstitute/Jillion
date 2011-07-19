@@ -34,6 +34,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.IOUtils;
 import org.easymock.IAnswer;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;

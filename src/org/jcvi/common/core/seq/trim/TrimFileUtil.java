@@ -34,8 +34,8 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.trim.TrimDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.io.IOUtil;
-import org.jcvi.io.TextLineParser;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.TextLineParser;
 
 /**
  * {@code TrimFileUtil} is a utility class for parsing and writing

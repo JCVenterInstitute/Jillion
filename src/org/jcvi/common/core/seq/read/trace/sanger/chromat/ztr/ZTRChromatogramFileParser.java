@@ -25,12 +25,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil.ReadResults;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.Chunk;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.ChunkException;
-import org.jcvi.io.IOUtil;
-import org.jcvi.io.IOUtil.ReadResults;
 
 /**
  * {@code ZTRChromatogramFileParser} is a utility class 

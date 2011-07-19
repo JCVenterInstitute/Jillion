@@ -34,9 +34,9 @@ import java.util.Map;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.util.CloseableIterator;
-import org.jcvi.io.IOUtil;
 /**
  * {@code DefaultNucleotideFastaFileDataStore} is the default implementation
  * of {@link AbstractNucleotideFastaFileDataStore} which stores

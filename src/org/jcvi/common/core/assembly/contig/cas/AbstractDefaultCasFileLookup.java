@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.assembly.contig.cas.align.score.CasScoringScheme;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fastq.AbstractFastQReadIdVisitor;
@@ -41,7 +42,6 @@ import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
-import org.jcvi.io.IOUtil;
 
 public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasFileVisitor{
 

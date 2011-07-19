@@ -32,11 +32,11 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 
 
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.io.IOUtil;
-import org.jcvi.io.TextLineParser;
 /**
  * {@code FastQFileParser} parses FASTQ encoded files
  * regardless of how the qualities are encoded.

@@ -30,9 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.FileIterator;
-import org.jcvi.io.IOMode;
-import org.jcvi.io.IOUtil;
 /**
  * {@code DirectoryFileServer} is a {@link FileServer}
  * to work off of a directory on the file system.
@@ -51,8 +50,8 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
      * Factory method to create a Directory File Server.
      * @param rootDir the root directory of this file server (can not be null). 
      * If the rootDir does not exist, it will be created.
-     * @return an DirectoryFileServer implementation that is {@link IOMode#READ_WRITE}.
-     * @throws IOException if rootDir can not be created if it doesn't exist.
+     * @return an DirectoryFileServer implementation that is writable.
+     * @throws IOException if rootDir does not exist AND can not be created.
      * @throws NullPointerException if rootDir is null.
      */
     public static ReadWriteDirectoryFileServer createReadWriteDirectoryFileServer(File rootDir) throws IOException{       
@@ -62,8 +61,8 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
      * Factory method to create a Directory File Server.
      * @param rootDirPath the root directory of this file server (can not be null). 
      * If the rootDirPath does not exist, it will be created.
-     * @return an DirectoryFileServer implementation that is {@link IOMode#READ_WRITE}.
-     * @throws IOException if rootDirPath can not be created if it doesn't exist.
+     * @return an DirectoryFileServer implementation that is writable.
+     * @throws IOException if rootDirPath does not exist AND can not be created.
      * @throws NullPointerException if rootDirPath is null.
      */
     public static ReadWriteDirectoryFileServer createReadWriteDirectoryFileServer(String rootDirPath) throws IOException{       
@@ -73,8 +72,8 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
      * Factory method to create a Directory File Server.
      * @param rootDir the root directory of this file server (can not be null). 
      * If the rootDir does not exist 
-     * @return an DirectoryFileServer implementation that is {@link IOMode#READ_ONLY}.
-     * @throws IOException if rootDir does not exist (Read Only mode only).
+     * @return an DirectoryFileServer implementation that is read-only.
+     * @throws IOException if rootDir does not exist.
      * @throws NullPointerException if rootDir is null.
      */
     public static ReadOnlyDirectoryFileServer createReadOnlyDirectoryFileServer(File rootDir) throws IOException{       
@@ -83,8 +82,8 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
     /**
      * Factory method to create a Directory File Server.
      * @param rootDirPath the root directory of this file server (can not be null). 
-     * @return an DirectoryFileServer implementation that is {@link IOMode#READ_ONLY}.
-     * @throws IOException if rootDir does not exist (Read Only mode only).
+     * @return an DirectoryFileServer implementation that is read-only.
+     * @throws IOException if rootDir does not exist.
      * @throws NullPointerException if rootDirPath is null.
      */
     public static ReadOnlyDirectoryFileServer createReadOnlyDirectoryFileServer(String rootDirPath) throws IOException{       

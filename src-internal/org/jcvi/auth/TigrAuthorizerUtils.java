@@ -18,7 +18,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.jcvi.command.CommandLineOptionBuilder;
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 
 public final class TigrAuthorizerUtils {
     public static TigrAuthorizer readTigrPasswordFile(File passFile) throws FileNotFoundException{

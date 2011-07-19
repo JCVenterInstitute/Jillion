@@ -1,7 +1,7 @@
 package org.jcvi.command.grid;
 
 import org.jcvi.command.Command;
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 
 import org.junit.*;
 

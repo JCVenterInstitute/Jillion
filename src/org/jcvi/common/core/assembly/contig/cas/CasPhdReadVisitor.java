@@ -35,6 +35,7 @@ import org.jcvi.common.core.assembly.contig.ace.consed.PhdReadRecord;
 import org.jcvi.common.core.assembly.contig.cas.align.score.CasScoringScheme;
 import org.jcvi.common.core.assembly.contig.cas.read.CasPlacedRead;
 import org.jcvi.common.core.assembly.trim.TrimDataStore;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaIterator;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastQFileIterator;
@@ -44,7 +45,6 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.ChainedCloseableIterator;
 import org.jcvi.common.core.util.CloseableIterator;
-import org.jcvi.io.IOUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 

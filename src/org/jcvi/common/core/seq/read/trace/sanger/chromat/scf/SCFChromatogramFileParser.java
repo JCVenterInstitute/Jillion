@@ -26,12 +26,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.DefaultSCFHeaderCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeaderCodec;
-import org.jcvi.io.IOUtil;
 
 /**
  * {@code SCFChromatogramFileParser} is a utility class 

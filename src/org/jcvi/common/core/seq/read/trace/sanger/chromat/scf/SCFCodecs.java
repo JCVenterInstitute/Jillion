@@ -36,6 +36,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
@@ -52,7 +53,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionCod
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionDecoder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionEncoder;
-import org.jcvi.io.IOUtil;
 /**
  * {@code SCFCodecs} contains singleton implementations
  * of various {@link SCFCodec}s to parse each 

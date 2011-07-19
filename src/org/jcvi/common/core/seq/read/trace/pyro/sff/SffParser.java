@@ -30,7 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 
 public class SffParser {
     private static final SFFCommonHeaderCodec COMMON_HEADER_CODEC = new DefaultSFFCommonHeaderCodec();

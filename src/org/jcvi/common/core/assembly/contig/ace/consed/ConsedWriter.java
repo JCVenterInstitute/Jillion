@@ -43,9 +43,9 @@ import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.slice.SliceMapFactory;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdWriter;
-import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.DirectoryFileServer;
 import org.jcvi.io.fileServer.ReadWriteFileServer;
 public class ConsedWriter {

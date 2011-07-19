@@ -36,7 +36,7 @@ import org.easymock.IAnswer;
 import org.finj.FTPClient;
 import org.finj.FTPException;
 import org.finj.RemoteFile;
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 import org.junit.Before;
 import org.junit.Test;
 

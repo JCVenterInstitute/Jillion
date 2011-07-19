@@ -28,12 +28,12 @@ import java.io.FileNotFoundException;
 
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
 import org.jcvi.common.core.util.CloseableIterator;
-import org.jcvi.io.IOUtil;
 /**
  * {@code LargeQualityFastaFileDataStore} is an implementation
  * of {@link AbstractQualityFastaFileDataStore} which does not

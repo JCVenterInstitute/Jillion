@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 
 public abstract class AbstractLargeIdIterator implements CloseableIterator<String>{
 

@@ -25,7 +25,8 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import org.jcvi.io.IOUtil;
+
+import org.jcvi.common.core.io.IOUtil;
 
 public class DefaultSFFReadDataCodec implements SFFReadDataCodec {
 

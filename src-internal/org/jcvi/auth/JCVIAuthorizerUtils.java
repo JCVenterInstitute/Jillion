@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 /**
  * {@code JCVIAuthorizerUtils} is utility class for creating
  * {@link JCVIAuthorizer} objects via the command line.

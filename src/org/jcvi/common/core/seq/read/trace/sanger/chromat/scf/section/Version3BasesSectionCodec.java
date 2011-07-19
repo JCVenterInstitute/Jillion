@@ -27,6 +27,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.Confidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
@@ -36,7 +37,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFil
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
-import org.jcvi.io.IOUtil;
 
 public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
 

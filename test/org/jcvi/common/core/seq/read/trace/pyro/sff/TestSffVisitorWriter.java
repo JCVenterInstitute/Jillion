@@ -29,11 +29,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffVisitorWriter;
-import org.jcvi.io.IOUtil;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;

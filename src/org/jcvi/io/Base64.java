@@ -26,6 +26,8 @@ package org.jcvi.io;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import org.jcvi.common.core.io.IOUtil;
+
 /**
  * Java Implementation of "base64" as defined in the MIME Spec (RFC 2045).
  * There is currently no standard Base 64 encoder/decoder

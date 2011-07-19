@@ -26,10 +26,10 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.RunLengthEncodedData;
-import org.jcvi.io.IOUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRunLengthEncodedData {

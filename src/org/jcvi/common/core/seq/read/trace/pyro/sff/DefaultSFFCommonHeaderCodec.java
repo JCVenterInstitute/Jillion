@@ -29,7 +29,7 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 
 public class DefaultSFFCommonHeaderCodec implements SFFCommonHeaderCodec {
 

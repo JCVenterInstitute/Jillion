@@ -1,6 +1,6 @@
 package org.jcvi.primerDesign;
 
-import org.jcvi.io.IOUtil;
+import org.jcvi.common.core.io.IOUtil;
 
 import java.io.File;
 import java.io.FileInputStream;

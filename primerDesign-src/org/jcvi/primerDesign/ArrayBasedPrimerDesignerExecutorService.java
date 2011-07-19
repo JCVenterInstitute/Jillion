@@ -7,13 +7,13 @@ import org.jcvi.command.grid.GridUtils;
 import org.jcvi.command.grid.ArrayGridJobImpl;
 import org.jcvi.command.grid.GridJobExecutorService;
 import org.jcvi.command.grid.GridJobFuture;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.primerDesign.gridJob.PrimerDesignerArrayGridJob;
 
 import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
 
-import org.jcvi.io.IOUtil;
 
 /**
 * Created by IntelliJ IDEA.
