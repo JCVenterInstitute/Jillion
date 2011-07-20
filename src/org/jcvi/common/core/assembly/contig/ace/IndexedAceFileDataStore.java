@@ -129,15 +129,6 @@ public class IndexedAceFileDataStore extends AbstractAceContigBuilder implements
 
     @Override
     public CloseableIterator<AceContig> iterator() {
-        /*
-         * public static LargeNucleotideFastaIterator createNewIteratorFor(File fastaFile){
-         LargeNucleotideFastaIterator iter = new LargeNucleotideFastaIterator(fastaFile);
-                iter.start();           
-            
-            return iter;
-        }
-         */
-        //return new DataStoreIterator<AceContig>(this);
         AceFileDataStoreIterator iter= new AceFileDataStoreIterator();
         iter.start();
         return iter;
