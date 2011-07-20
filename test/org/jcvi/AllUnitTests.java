@@ -36,6 +36,7 @@ import org.jcvi.common.core.TestRangeIterator;
 import org.jcvi.common.core.assembly.AllAssemblyUnitTests;
 import org.jcvi.common.core.assembly.contig.ace.AllAceUnitTests;
 import org.jcvi.common.core.seq.fastx.AllFastXTests;
+import org.jcvi.common.core.seq.plate.AllPlateUnitTests;
 import org.jcvi.common.core.seq.read.trace.frg.TestDistance;
 import org.jcvi.common.core.symbol.AllGlyphUnitTests;
 import org.jcvi.datastore.AllDataStoreUnitTests;
@@ -75,7 +76,8 @@ import org.junit.runners.Suite.SuiteClasses;
         AllUtilUnitTests.class,
         AllDataStoreUnitTests.class,
         AllAlignTests.class,
-        AllNcbiUnitTests.class
+        AllNcbiUnitTests.class,
+        AllPlateUnitTests.class
     }
 )
 public class AllUnitTests {
