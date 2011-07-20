@@ -24,6 +24,8 @@ import java.util.Properties;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
+import org.jcvi.common.net.EmailBuilder;
+
 /**
  * {@code JCVIEmailBuilder} is an implementation of 
  * {@link EmailBuilder} which sets the email

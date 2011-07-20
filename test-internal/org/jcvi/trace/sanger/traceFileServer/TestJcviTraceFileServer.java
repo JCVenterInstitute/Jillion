@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 
 import org.jcvi.auth.JCVIEncodedAuthorizer;
-import org.jcvi.http.HttpGetRequestBuilder;
+import org.jcvi.common.net.http.HttpGetRequestBuilder;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.FileType;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.RequestType;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.ReturnFormat;

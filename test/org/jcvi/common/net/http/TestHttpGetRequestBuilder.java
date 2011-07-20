@@ -21,11 +21,12 @@
  *
  * @author dkatzel
  */
-package org.jcvi.http;
+package org.jcvi.common.net.http;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import org.jcvi.common.net.http.HttpGetRequestBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

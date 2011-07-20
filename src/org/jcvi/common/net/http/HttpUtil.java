@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.http;
+package org.jcvi.common.net.http;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

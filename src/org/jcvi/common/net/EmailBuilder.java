@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.io;
+package org.jcvi.common.net;
 
 import java.io.File;
 import java.util.ArrayList;
