@@ -44,6 +44,7 @@ import org.jcvi.assembly.contig.QualityClassMap;
 import org.jcvi.assembly.contig.QualityClassRegion;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
@@ -60,10 +61,6 @@ import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecordDataStoreAdapter;
-import org.jcvi.common.core.seq.read.ReadTrimMap;
-import org.jcvi.common.core.seq.read.ReadTrimUtil;
-import org.jcvi.common.core.seq.read.SequenceDirection;
-import org.jcvi.common.core.seq.read.TrimType;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
@@ -181,7 +178,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
             int gappedValidRangeIndex) {
         int gappedTrimIndex;
         final NucleotideSequence encodedGlyphs = read.getEncodedGlyphs();
-        if (read.getSequenceDirection() == SequenceDirection.FORWARD) {
+        if (read.getSequenceDirection() == Direction.FORWARD) {
             gappedTrimIndex = AssemblyUtil.getRightFlankingNonGapIndex(encodedGlyphs,
                     gappedValidRangeIndex);
         } else {

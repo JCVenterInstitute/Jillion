@@ -27,10 +27,10 @@ import java.io.File;
 import java.util.Date;
 import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
@@ -67,7 +67,7 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.convertValidRangeIndexToReferenceIndex(validRangeIndex);
     }
     @Override
-    public SequenceDirection getSequenceDirection() {
+    public Direction getSequenceDirection() {
         return placedRead.getSequenceDirection();
     }
     @Override

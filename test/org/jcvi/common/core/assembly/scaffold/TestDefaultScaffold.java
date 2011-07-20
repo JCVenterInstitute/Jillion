@@ -26,11 +26,11 @@ package org.jcvi.common.core.assembly.scaffold;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.Assert;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.scaffold.DefaultPlacedContig;
 import org.jcvi.common.core.assembly.scaffold.DefaultScaffold;
 import org.jcvi.common.core.assembly.scaffold.PlacedContig;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 import static org.junit.Assert.assertEquals;
 
@@ -48,11 +48,11 @@ public class TestDefaultScaffold {
     @Before
     public void setUp() {
         placedContigs = new HashSet<PlacedContig>(5);
-        placedContigs.add(new DefaultPlacedContig("contig1", Range.buildRange(28,100), SequenceDirection.FORWARD));
-        placedContigs.add(new DefaultPlacedContig("contig2", Range.buildRange(250,375), SequenceDirection.REVERSE));
-        placedContigs.add(new DefaultPlacedContig("contig3", Range.buildRange(320,383), SequenceDirection.REVERSE));
-        placedContigs.add(new DefaultPlacedContig("contig4", Range.buildRange(390,500), SequenceDirection.REVERSE));
-        placedContigs.add(new DefaultPlacedContig("contig5", Range.buildRange(628,707), SequenceDirection.FORWARD));
+        placedContigs.add(new DefaultPlacedContig("contig1", Range.buildRange(28,100), Direction.FORWARD));
+        placedContigs.add(new DefaultPlacedContig("contig2", Range.buildRange(250,375), Direction.REVERSE));
+        placedContigs.add(new DefaultPlacedContig("contig3", Range.buildRange(320,383), Direction.REVERSE));
+        placedContigs.add(new DefaultPlacedContig("contig4", Range.buildRange(390,500), Direction.REVERSE));
+        placedContigs.add(new DefaultPlacedContig("contig5", Range.buildRange(628,707), Direction.FORWARD));
         scaffoldLength = 707-28+1;
 
 
@@ -101,7 +101,7 @@ public class TestDefaultScaffold {
     @Test(expected= IllegalArgumentException.class)
     public void testInvalidContigRangeCoordinateConversionTest() {
         DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
-        builder.add("contig1", Range.buildRange(0,100), SequenceDirection.FORWARD);
+        builder.add("contig1", Range.buildRange(0,100), Direction.FORWARD);
         DefaultScaffold scaffold = builder.build();
 
         scaffold.convertContigRangeToScaffoldRange("contig1",Range.buildRange(50,150));
@@ -110,7 +110,7 @@ public class TestDefaultScaffold {
     @Test(expected= IllegalArgumentException.class)
     public void testInvalidContigDirectionCoordinateConversionTest() {
         DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
-        builder.add("contig1", Range.buildRange(0,100), SequenceDirection.UNKNOWN);
+        builder.add("contig1", Range.buildRange(0,100), Direction.UNKNOWN);
         DefaultScaffold scaffold = builder.build();
 
         scaffold.convertContigRangeToScaffoldRange("contig1",Range.buildRange(20,50));
@@ -119,7 +119,7 @@ public class TestDefaultScaffold {
     @Test(expected= IllegalArgumentException.class)
     public void testInvalidContigDirectionCoordinateConversionTest2() {
         DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
-        builder.add("contig1", Range.buildRange(0,100), SequenceDirection.NONE);
+        builder.add("contig1", Range.buildRange(0,100), Direction.NONE);
         DefaultScaffold scaffold = builder.build();
 
         scaffold.convertContigRangeToScaffoldRange("contig1",Range.buildRange(20,50));
@@ -128,7 +128,7 @@ public class TestDefaultScaffold {
     @Test
     public void testSingleForwardContigCoordinateConversionTest() {
         DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
-        builder.add("contig1", Range.buildRange(37,164), SequenceDirection.FORWARD);
+        builder.add("contig1", Range.buildRange(37,164), Direction.FORWARD);
         DefaultScaffold scaffold = builder.build();
 
         Range contigRange = Range.buildRange(10,48);
@@ -141,7 +141,7 @@ public class TestDefaultScaffold {
     @Test
     public void testSingleReverseContigCoordinateConversionTest() {
         DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
-        builder.add("contig1", Range.buildRange(37,164), SequenceDirection.REVERSE);
+        builder.add("contig1", Range.buildRange(37,164), Direction.REVERSE);
         DefaultScaffold scaffold = builder.build();
 
         Range contigRange = Range.buildRange(10,48);
@@ -154,8 +154,8 @@ public class TestDefaultScaffold {
     @Test
     public void testMultipleForwardContigCoordinateConversionTest() {
         DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
-        builder.add("contig1", Range.buildRange(37,164), SequenceDirection.FORWARD);
-        builder.add("contig2", Range.buildRange(293,568), SequenceDirection.FORWARD);
+        builder.add("contig1", Range.buildRange(37,164), Direction.FORWARD);
+        builder.add("contig2", Range.buildRange(293,568), Direction.FORWARD);
         DefaultScaffold scaffold = builder.build();
 
         Range contigRange = Range.buildRange(31,56);
@@ -168,8 +168,8 @@ public class TestDefaultScaffold {
     @Test
     public void testMultipleReverseContigCoordinateConversionTest() {
         DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
-        builder.add("contig1", Range.buildRange(37,164), SequenceDirection.FORWARD);
-        builder.add("contig2", Range.buildRange(293,568), SequenceDirection.REVERSE);
+        builder.add("contig1", Range.buildRange(37,164), Direction.FORWARD);
+        builder.add("contig2", Range.buildRange(293,568), Direction.REVERSE);
         DefaultScaffold scaffold = builder.build();
 
         Range contigRange = Range.buildRange(20,35);

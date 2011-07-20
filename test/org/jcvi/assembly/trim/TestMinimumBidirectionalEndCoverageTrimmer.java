@@ -21,6 +21,7 @@ package org.jcvi.assembly.trim;
 
 import static org.junit.Assert.assertEquals;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
@@ -28,7 +29,6 @@ import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.trim.MinimumBidirectionalEndCoverageTrimmer;
 import org.jcvi.common.core.assembly.contig.trim.PlacedReadTrimmer;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,7 +52,7 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
     @Test
     public void allBelowMinCoverageReturnEmptyRange(){
         Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
-                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
+                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
                         .build();
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
         PlacedRead read = _1xContig.getPlacedReadById("read1");
@@ -63,9 +63,9 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
     @Test
     public void leftEndBelowMinShouldTrimOff(){
         Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
-                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", SequenceDirection.REVERSE)
-                        .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", SequenceDirection.REVERSE)
+                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
+                        .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
                         .build();
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
         PlacedRead readToTrim = _1xContig.getPlacedReadById("read1");
@@ -80,9 +80,9 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
     @Test
     public void biDirectionalMinCoverageShouldIgnore(){
         Contig<PlacedRead> _3xBiDirectionalContig = new DefaultContig.Builder("id","ACGTACGT")
-                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read2", 0,  Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.REVERSE)
-                        .addRead("read3", 0,  Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.REVERSE)
+                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read2", 0,  Range.buildRange(0, 7), "ACGTACGT", Direction.REVERSE)
+                        .addRead("read3", 0,  Range.buildRange(0, 7), "ACGTACGT", Direction.REVERSE)
                         .build();
         sut.initializeContig(_3xBiDirectionalContig, DefaultCoverageMap.buildCoverageMap(_3xBiDirectionalContig));
         for(PlacedRead readThatDoesntGetTrimmed : _3xBiDirectionalContig.getPlacedReads()){
@@ -94,9 +94,9 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
     @Test
     public void uniDirectionalLeftShouldTrimLeftEnd(){
         Contig<PlacedRead> _3xBiDirectionalContig = new DefaultContig.Builder("id","ACGTACGT")
-                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read2", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read3", 2,  Range.buildRange(0, 5), "GTACGT", SequenceDirection.REVERSE)
+                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read2", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read3", 2,  Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
                         .build();
         sut.initializeContig(_3xBiDirectionalContig, DefaultCoverageMap.buildCoverageMap(_3xBiDirectionalContig));
         
@@ -119,9 +119,9 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
     @Test
     public void uniDirectionalRightShouldTrimLeftEnd(){
         Contig<PlacedRead> _3xBiDirectionalContig = new DefaultContig.Builder("id","ACGTACGT")
-                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read2", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read3", 0,  Range.buildRange(0, 5), "ACGTAC", SequenceDirection.REVERSE)
+                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read2", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read3", 0,  Range.buildRange(0, 5), "ACGTAC", Direction.REVERSE)
                         .build();
         sut.initializeContig(_3xBiDirectionalContig, DefaultCoverageMap.buildCoverageMap(_3xBiDirectionalContig));
         
@@ -144,11 +144,11 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
     @Test
     public void uniDirectionalOverMaxCoverageShouldIgnore(){
         Contig<PlacedRead> _2xBiDirectionalContig = new DefaultContig.Builder("id","ACGTACGT")
-                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read2", 0,  Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read3", 0,  Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read4", 0,  Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read5", 0,  Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
+                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read2", 0,  Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read3", 0,  Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read4", 0,  Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read5", 0,  Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
                         .build();
         sut.initializeContig(_2xBiDirectionalContig, DefaultCoverageMap.buildCoverageMap(_2xBiDirectionalContig));
         for(PlacedRead readThatDoesntGetTrimmed : _2xBiDirectionalContig.getPlacedReads()){

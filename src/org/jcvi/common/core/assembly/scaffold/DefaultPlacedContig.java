@@ -23,20 +23,20 @@
  */
 package org.jcvi.common.core.assembly.scaffold;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 public class DefaultPlacedContig implements PlacedContig{
     private final String contigId;
     private final Range range;
-    private final SequenceDirection direction;
+    private final Direction direction;
     /**
-     * Convenience constructor, defaults direction to {@link SequenceDirection#FORWARD}
+     * Convenience constructor, defaults direction to {@link Direction#FORWARD}
      * @param id the id of the contig to be placed.
      * @param range the range this contig should be placed on the scaffold.
      */
     public DefaultPlacedContig(String id, Range range){
-        this(id,range,SequenceDirection.FORWARD);
+        this(id,range,Direction.FORWARD);
     }
     /**
      * Constructs a new DefaultPlacedContig.
@@ -44,7 +44,7 @@ public class DefaultPlacedContig implements PlacedContig{
      * @param range the range this contig should be placed on the scaffold.
      * @param direction the direction this contig faces.
      */
-    public DefaultPlacedContig(String id, Range range,SequenceDirection direction){
+    public DefaultPlacedContig(String id, Range range,Direction direction){
         contigId = id;
         this.range = range;
         this.direction = direction;
@@ -73,7 +73,7 @@ public class DefaultPlacedContig implements PlacedContig{
         return range;
     }
     @Override
-    public SequenceDirection getSequenceDirection() {
+    public Direction getSequenceDirection() {
         return direction;
     }
     @Override

@@ -30,8 +30,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceTagMap {
 
@@ -129,7 +129,7 @@ public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceT
     */
     @Override
     protected void visitAceRead(String readId, String validBasecalls,
-            int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo,int ungappedFullLength) {
+            int offset, Direction dir, Range validRange, PhdInfo phdInfo,int ungappedFullLength) {
         
     }
 

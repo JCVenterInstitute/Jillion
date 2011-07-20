@@ -21,20 +21,20 @@ package org.jcvi.sequence;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.Direction;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import static org.junit.Assert.*;
-import static org.jcvi.common.core.seq.read.SequenceDirection.*;
+import static org.jcvi.common.core.Direction.*;
 @RunWith(Parameterized.class)
 public class TestSequenceDirection {
 
-    SequenceDirection direction;
+    Direction direction;
     String fullString;
     String abbreviationCode;
-    SequenceDirection oppositeDirection;
+    Direction oppositeDirection;
     
     @Parameters
     public static Collection<?> data(){
@@ -47,10 +47,10 @@ public class TestSequenceDirection {
         });
     }
     
-    public TestSequenceDirection(SequenceDirection direction,
+    public TestSequenceDirection(Direction direction,
                                     String fullString,
                                     String abbreviationCode,
-                                    SequenceDirection oppositeDirection){       
+                                    Direction oppositeDirection){       
         
         this.direction = direction;
         this.fullString = fullString;
@@ -69,44 +69,44 @@ public class TestSequenceDirection {
     
     @Test
     public void parseStringUppercase(){
-        assertEquals(direction, SequenceDirection.parseSequenceDirection(fullString.toUpperCase()));
+        assertEquals(direction, Direction.parseSequenceDirection(fullString.toUpperCase()));
     }
     @Test
     public void parseStringLowercase(){
-        assertEquals(direction, SequenceDirection.parseSequenceDirection(fullString.toLowerCase()));
+        assertEquals(direction, Direction.parseSequenceDirection(fullString.toLowerCase()));
     }
     
   
     @Test
     public void parseStringAbbreviationCodeUppercase(){
-        assertEquals(direction, SequenceDirection.parseSequenceDirection(abbreviationCode.toUpperCase()));
+        assertEquals(direction, Direction.parseSequenceDirection(abbreviationCode.toUpperCase()));
     }
     
     @Test
     public void parseStringAbbreviationCodeLowercase(){
-        assertEquals(direction, SequenceDirection.parseSequenceDirection(abbreviationCode.toLowerCase()));
+        assertEquals(direction, Direction.parseSequenceDirection(abbreviationCode.toLowerCase()));
     }
     @Test
     public void parseTFStringAbbreviation(){
-        assertEquals(SequenceDirection.FORWARD, SequenceDirection.parseSequenceDirection("TF"));
-        assertEquals(SequenceDirection.FORWARD, SequenceDirection.parseSequenceDirection("tf"));
-        assertEquals(SequenceDirection.FORWARD, SequenceDirection.parseSequenceDirection("tF"));
-        assertEquals(SequenceDirection.FORWARD, SequenceDirection.parseSequenceDirection("Tf"));
+        assertEquals(Direction.FORWARD, Direction.parseSequenceDirection("TF"));
+        assertEquals(Direction.FORWARD, Direction.parseSequenceDirection("tf"));
+        assertEquals(Direction.FORWARD, Direction.parseSequenceDirection("tF"));
+        assertEquals(Direction.FORWARD, Direction.parseSequenceDirection("Tf"));
     }
     @Test
     public void parseTRStringAbbreviation(){
-        assertEquals(SequenceDirection.REVERSE, SequenceDirection.parseSequenceDirection("TR"));
-        assertEquals(SequenceDirection.REVERSE, SequenceDirection.parseSequenceDirection("tr"));
-        assertEquals(SequenceDirection.REVERSE, SequenceDirection.parseSequenceDirection("tR"));
-        assertEquals(SequenceDirection.REVERSE, SequenceDirection.parseSequenceDirection("Tr"));
+        assertEquals(Direction.REVERSE, Direction.parseSequenceDirection("TR"));
+        assertEquals(Direction.REVERSE, Direction.parseSequenceDirection("tr"));
+        assertEquals(Direction.REVERSE, Direction.parseSequenceDirection("tR"));
+        assertEquals(Direction.REVERSE, Direction.parseSequenceDirection("Tr"));
     }
     
     @Test
     public void parseStringPositiveShouldBeForward(){
-        assertEquals(SequenceDirection.FORWARD, SequenceDirection.parseSequenceDirection("+"));
+        assertEquals(Direction.FORWARD, Direction.parseSequenceDirection("+"));
     }
     @Test
     public void parseStringNegativeShouldBeReverse(){
-        assertEquals(SequenceDirection.REVERSE, SequenceDirection.parseSequenceDirection("-"));
+        assertEquals(Direction.REVERSE, Direction.parseSequenceDirection("-"));
     }
 }

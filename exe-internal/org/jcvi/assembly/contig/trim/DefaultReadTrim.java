@@ -17,30 +17,37 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Mar 26, 2009
+ * Created on Oct 2, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read;
+package org.jcvi.assembly.contig.trim;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
-public class DefaultMated<T> implements Mated<T> {
+import org.jcvi.common.core.Range;
 
-    private final List<T> mates; 
+public class DefaultReadTrim implements ReadTrim {
+
+    private final String id;
+    private final Map<TrimType, Range> trimRanges = new EnumMap<TrimType, Range>(TrimType.class);
     
-    public DefaultMated(T...mates){
-        this(Arrays.asList(mates));
+    public DefaultReadTrim(String id, Map<TrimType, Range> trimRanges){
+        this.id = id;
+        for(Entry<TrimType, Range> entry : trimRanges.entrySet()){
+            this.trimRanges.put(entry.getKey(), entry.getValue());
+        }
     }
-    public DefaultMated( List<T> mates){
-        this.mates = mates;
-    }
-    
     @Override
-    public List<T> getMates() {
-        return mates;
+    public String getReadId() {
+        return id;
     }
 
+    @Override
+    public Range getTrimRange(TrimType trimType) {
+        return trimRanges.get(trimType);
+    }
 
 }

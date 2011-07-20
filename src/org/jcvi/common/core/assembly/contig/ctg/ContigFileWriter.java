@@ -33,9 +33,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -96,7 +96,7 @@ public class ContigFileWriter implements Closeable{
         header.append(String.format("#%s(%d) [", placedRead.getId(), placedRead.getStart()));
         int validLeft = (int)placedRead.getValidRange().getStart();
         int validRight = (int)placedRead.getValidRange().getEnd();
-        if(placedRead.getSequenceDirection() == SequenceDirection.REVERSE){
+        if(placedRead.getSequenceDirection() == Direction.REVERSE){
             header.append("RC");
             int temp = validLeft;
             validLeft = validRight;

@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi.common.core.seq.read;
+package org.jcvi.common.core;
 
 /**
  * The <code>SequenceDirection</code> is a declaration of expected
@@ -32,7 +32,7 @@ package org.jcvi.common.core.seq.read;
  * @author jsitz
  * @author dkatzel
  */
-public enum SequenceDirection
+public enum Direction
 {
     /**
      * The sequence has an orientation which matches the directionality of
@@ -56,15 +56,15 @@ public enum SequenceDirection
      */
     UNKNOWN;
 
-    public static SequenceDirection parseSequenceDirection(String dirString){
+    public static Direction parseSequenceDirection(String dirString){
         if("-".equals(dirString)){
-            return SequenceDirection.REVERSE;
+            return Direction.REVERSE;
         }
         if("+".equals(dirString)){
-            return SequenceDirection.FORWARD;
+            return Direction.FORWARD;
         }
         
-        for (SequenceDirection dir : SequenceDirection.values())
+        for (Direction dir : Direction.values())
         {
             if (dir.name().equalsIgnoreCase(dirString) ||
                 dir.name().substring(0, 1).equalsIgnoreCase(dirString))
@@ -73,12 +73,12 @@ public enum SequenceDirection
             }
         }
         if("TF".equalsIgnoreCase(dirString)){
-            return SequenceDirection.FORWARD;
+            return Direction.FORWARD;
         }
         if("TR".equalsIgnoreCase(dirString)){
-            return SequenceDirection.REVERSE;
+            return Direction.REVERSE;
         }
-        return SequenceDirection.UNKNOWN;
+        return Direction.UNKNOWN;
         
         
     }
@@ -103,7 +103,7 @@ public enum SequenceDirection
         return this.name().charAt(0);
     }
 
-    public SequenceDirection oppositeOrientation(){
+    public Direction oppositeOrientation(){
         if(this == FORWARD ){
             return REVERSE;
         }

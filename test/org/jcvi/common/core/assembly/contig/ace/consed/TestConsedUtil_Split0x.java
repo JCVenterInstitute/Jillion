@@ -24,6 +24,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
@@ -34,7 +35,6 @@ import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.junit.Test;
 /**
  * @author dkatzel
@@ -53,7 +53,7 @@ public class TestConsedUtil_Split0x {
     		builder = new DefaultAceContig.Builder(id,consensus);
     	}
     	
-    	TestAceBuilder addRead(String readId, String gappedBasecalls,int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo){
+    	TestAceBuilder addRead(String readId, String gappedBasecalls,int offset, Direction dir, Range validRange, PhdInfo phdInfo){
     		builder.addRead(readId, gappedBasecalls,offset,dir,validRange,phdInfo,offset+gappedBasecalls.length());
     		return this;
     	}
@@ -66,11 +66,11 @@ public class TestConsedUtil_Split0x {
         AceContig contig =
         	new TestAceBuilder(originalId,referenceConsensus)
         .addRead("read1", referenceConsensus.substring(0, 11), 0, 
-                SequenceDirection.FORWARD, 
+                Direction.FORWARD, 
                 Range.buildRange(0, 10).convertRange(CoordinateSystem.RESIDUE_BASED), 
                 createMock(PhdInfo.class))
         .addRead("read2", referenceConsensus.substring(10), 10, 
-                SequenceDirection.FORWARD, 
+                Direction.FORWARD, 
                 Range.buildRange(0, 11).convertRange(CoordinateSystem.RESIDUE_BASED), 
                 createMock(PhdInfo.class))        	
         	
@@ -89,11 +89,11 @@ public class TestConsedUtil_Split0x {
 
         AceContig contig = new TestAceBuilder(originalId,referenceConsensus)
 		        .addRead("read1", referenceConsensus.substring(0, 11), 0, 
-		                SequenceDirection.FORWARD, 
+		                Direction.FORWARD, 
 		                Range.buildRange(0, 10).convertRange(CoordinateSystem.RESIDUE_BASED), 
 		                read1Phd)
 		        .addRead("read2", referenceConsensus.substring(12), 12, 
-		                SequenceDirection.FORWARD, 
+		                Direction.FORWARD, 
 		                Range.buildRange(0, 9).convertRange(CoordinateSystem.RESIDUE_BASED), 
 		                read2Phd)
 		        	
@@ -106,14 +106,14 @@ public class TestConsedUtil_Split0x {
         AceContig expectedFirstContig = new TestAceBuilder(
                 String.format("%s_%d_%d",originalId,1,11),referenceConsensus.substring(0, 11))
                             .addRead("read1", referenceConsensus.substring(0, 11), 0, 
-                                    SequenceDirection.FORWARD, 
+                                    Direction.FORWARD, 
                                     Range.buildRange(0, 10).convertRange(CoordinateSystem.RESIDUE_BASED), 
                                     read1Phd)
                                     .build();
         AceContig expectedSecondContig = new TestAceBuilder(
                 String.format("%s_%d_%d",originalId,13,21),referenceConsensus.substring(12))
                         .addRead("read2", referenceConsensus.substring(12), 0, 
-                                SequenceDirection.FORWARD, 
+                                Direction.FORWARD, 
                                 Range.buildRange(0, 9).convertRange(CoordinateSystem.RESIDUE_BASED), 
                                 read2Phd)
                                     .build();
@@ -129,11 +129,11 @@ public class TestConsedUtil_Split0x {
         AceContig contig = new TestAceBuilder("id_1_12",referenceConsensus)
         
 		        .addRead("read1", referenceConsensus.substring(0, 11), 0, 
-		                SequenceDirection.FORWARD, 
+		                Direction.FORWARD, 
 		                Range.buildRange(0, 10).convertRange(CoordinateSystem.RESIDUE_BASED), 
 		                read1Phd)
 		        .addRead("read2", referenceConsensus.substring(12), 12, 
-		                SequenceDirection.FORWARD, 
+		                Direction.FORWARD, 
 		                Range.buildRange(0, 9).convertRange(CoordinateSystem.RESIDUE_BASED), 
 		                read2Phd)
 	                .build();
@@ -145,14 +145,14 @@ public class TestConsedUtil_Split0x {
         AceContig expectedFirstContig = new TestAceBuilder(
                 String.format("id_%d_%d",1,11),referenceConsensus.substring(0, 11))
                             .addRead("read1", referenceConsensus.substring(0, 11), 0, 
-                                    SequenceDirection.FORWARD, 
+                                    Direction.FORWARD, 
                                     Range.buildRange(0, 10).convertRange(CoordinateSystem.RESIDUE_BASED), 
                                     read1Phd)
                                     .build();
         AceContig expectedSecondContig = new TestAceBuilder(
                 String.format("id_%d_%d",13,21),referenceConsensus.substring(12))
                         .addRead("read2", referenceConsensus.substring(12), 0, 
-                                SequenceDirection.FORWARD, 
+                                Direction.FORWARD, 
                                 Range.buildRange(0, 9).convertRange(CoordinateSystem.RESIDUE_BASED), 
                                 read2Phd)
                                     .build();

@@ -23,6 +23,7 @@ import org.jcvi.assembly.AllInternalAssemblyUnitTests;
 import org.jcvi.assembly.contig.AllInternalContigUnitTests;
 import org.jcvi.auth.AllAuthUnitTests;
 import org.jcvi.common.core.seq.plate.AllPlateUnitTests;
+import org.jcvi.common.internal.TestTigrPositionFileParser;
 import org.jcvi.trace.AllInternalTraceUnitTests;
 import org.jcvi.uid.AllUidUnitTests;
 import org.junit.runner.RunWith;
@@ -37,6 +38,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+        TestTigrPositionFileParser.class,
+        
         AllInternalContigUnitTests.class,
         AllInternalAssemblyUnitTests.class,
         AllInternalTraceUnitTests.class,

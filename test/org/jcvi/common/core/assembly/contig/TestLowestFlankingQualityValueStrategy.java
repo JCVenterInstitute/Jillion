@@ -23,11 +23,11 @@
  */
 package org.jcvi.common.core.assembly.contig;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
 import org.jcvi.common.core.assembly.contig.GapQualityValueStrategies;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.Sequence;
@@ -97,7 +97,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
     @Test
     public void reverseLeftFlankingGapIsLowerShouldReturnLeftFlankingQuality(){
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
-                                    .addRead("readId", 0, "ACGT-CGT",SequenceDirection.REVERSE)
+                                    .addRead("readId", 0, "ACGT-CGT",Direction.REVERSE)
                                     .build();
         PlacedRead read = contig.getPlacedReadById("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
@@ -119,7 +119,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
     @Test
     public void rightReverseFlankingGapIsLowerShouldReturnRightFlankingQuality(){
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
-                                    .addRead("readId", 0, "ACGT-CGT",SequenceDirection.REVERSE)
+                                    .addRead("readId", 0, "ACGT-CGT",Direction.REVERSE)
                                     .build();
         PlacedRead read = contig.getPlacedReadById("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
@@ -156,7 +156,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
     @Test
     public void multiGapReverseRightFlankingGapIsLowerShouldReturnRightFlankingQuality(){
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
-                                    .addRead("readId", 0, "ACGT--CGT", SequenceDirection.REVERSE)
+                                    .addRead("readId", 0, "ACGT--CGT", Direction.REVERSE)
                                     .build();
         PlacedRead read = contig.getPlacedReadById("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
@@ -168,7 +168,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
     @Test
     public void multiGapReverseLeftFlankingGapIsLowerShouldReturnLeftFlankingQuality(){
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
-                                    .addRead("readId", 0, "ACGT--CGT",SequenceDirection.REVERSE)
+                                    .addRead("readId", 0, "ACGT--CGT",Direction.REVERSE)
                                     .build();
         PlacedRead read = contig.getPlacedReadById("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,

@@ -21,8 +21,8 @@ package org.jcvi.assembly.tasm;
 
 import java.io.PrintWriter;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 /**
  * @author dkatzel
@@ -69,7 +69,7 @@ public class TigrAssemblyFilePrinter implements TigrAssemblyFileVisitor{
 
     @Override
     public void visitNewRead(String readId, int offset, Range validRange,
-            SequenceDirection dir) {
+            Direction dir) {
         writer.printf("\tRead %s start = %d validRange = %s dir = %s%n", readId, offset,validRange,dir);
         
     }

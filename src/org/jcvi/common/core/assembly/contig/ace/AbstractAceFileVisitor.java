@@ -27,10 +27,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private String currentContigId;
@@ -67,7 +67,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     }
     @Override
     public synchronized void visitAssembledFromLine(String readId,
-            SequenceDirection dir, int gappedStartOffset) {
+            Direction dir, int gappedStartOffset) {
         throwExceptionIfInitialized();
         if(readingConsensus){
             readingConsensus=false;
@@ -147,7 +147,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         currentOffset = computeReadOffset(assembledFrom, validRange.getLocalStart());            
         int clearLeft;
         int clearRight;
-        if(assembledFrom.getSequenceDirection() == SequenceDirection.REVERSE){
+        if(assembledFrom.getSequenceDirection() == Direction.REVERSE){
             clearLeft = reverseCompliment(currentReadGappedFullLength, validRange.getLocalStart());
             clearRight = reverseCompliment(currentReadGappedFullLength, validRange.getLocalEnd());
             int temp = clearLeft;
@@ -227,7 +227,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * of the basecalls.
      */
     protected abstract void visitAceRead(String readId, String validBasecalls, 
-            int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo,
+            int offset, Direction dir, Range validRange, PhdInfo phdInfo,
             int ungappedFullLength);
     
     

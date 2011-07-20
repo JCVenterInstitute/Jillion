@@ -28,7 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
@@ -93,7 +93,7 @@ public class DefaultSlice implements Slice{
     public static class Builder implements org.jcvi.common.core.util.Builder<DefaultSlice>{
         private final Map<String,SliceElement> elements = new LinkedHashMap<String, SliceElement>();
         
-        public Builder add(String id, NucleotideGlyph base, PhredQuality quality, SequenceDirection dir){
+        public Builder add(String id, NucleotideGlyph base, PhredQuality quality, Direction dir){
             return add(new DefaultSliceElement(id, base, quality, dir));
         }
         public Builder addAll(Iterable<? extends SliceElement> elements){

@@ -20,10 +20,10 @@
 package org.jcvi.common.core.assembly.contig;
 
 import org.easymock.EasyMockSupport;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.GapQualityValueStrategies;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -65,7 +65,7 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
     public void getUngappedQualityFromForwardRead(){
         int gappedReadIndex = 12;
         expect(placedRead.getEncodedGlyphs()).andReturn(encodedGlyphs).times(2);
-        expect(placedRead.getSequenceDirection()).andReturn(SequenceDirection.FORWARD);
+        expect(placedRead.getSequenceDirection()).andReturn(Direction.FORWARD);
         expect(encodedGlyphs.isGap(gappedReadIndex)).andReturn(false);
         Range validRange = Range.buildRange(10,100);
         expect(placedRead.getValidRange()).andReturn(validRange);
@@ -84,7 +84,7 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         Range validRange = Range.buildRange(10,100);
         int fullLength=110;
         expect(placedRead.getEncodedGlyphs()).andReturn(encodedGlyphs).times(2);
-        expect(placedRead.getSequenceDirection()).andReturn(SequenceDirection.REVERSE);
+        expect(placedRead.getSequenceDirection()).andReturn(Direction.REVERSE);
         expect(encodedGlyphs.isGap(gappedReadIndex)).andReturn(false);
         
         expect(placedRead.getValidRange()).andReturn(validRange).times(3);

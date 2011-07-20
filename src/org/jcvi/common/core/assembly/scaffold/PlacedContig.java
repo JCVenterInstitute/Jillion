@@ -23,14 +23,14 @@
  */
 package org.jcvi.common.core.assembly.scaffold;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Placed;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 public interface PlacedContig extends Placed<PlacedContig> {
 
     String getContigId();
-    SequenceDirection getSequenceDirection();
+    Direction getSequenceDirection();
     
     Range getValidRange();
     

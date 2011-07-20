@@ -30,11 +30,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.seq.read.trace.sanger.SangerTraceCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -51,7 +51,7 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
     private String currentReadId;
     private boolean initialized = false;
     private boolean closed = false;
-    private Map<String, SequenceDirection> directionMap;
+    private Map<String, Direction> directionMap;
     private final File phdDir;
     private final SangerTraceCodec<Phd> codec;
     
@@ -131,7 +131,7 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
     }
 
     @Override
-    public void visitAssembledFromLine(String readId, SequenceDirection dir,
+    public void visitAssembledFromLine(String readId, Direction dir,
             int gappedStartOffset) {
         throwExceptionIfAlreadyInitialized();
         directionMap.put(readId, dir);
@@ -160,7 +160,7 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
             int numberOfReads, int numberOfBaseSegments,
             boolean reverseComplimented) { 
         throwExceptionIfAlreadyInitialized();
-        directionMap = new HashMap<String, SequenceDirection>(numberOfReads, 1F);
+        directionMap = new HashMap<String, Direction>(numberOfReads, 1F);
     }
 
     @Override
@@ -190,7 +190,7 @@ public class AcePhdFolderDataStore implements AceFileVisitor,DataStore<Phd>{
         
         List<NucleotideGlyph> glyphs = NucleotideGlyph.getGlyphsFor(
                 currentBasecalls.toString().replaceAll("\\*", ""));
-        if(directionMap.get(currentReadId) == SequenceDirection.REVERSE){
+        if(directionMap.get(currentReadId) == Direction.REVERSE){
 
             glyphs = NucleotideGlyph.reverseCompliment(glyphs);
         }

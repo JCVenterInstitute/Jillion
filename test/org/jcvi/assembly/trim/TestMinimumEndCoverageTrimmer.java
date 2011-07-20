@@ -19,13 +19,13 @@
 
 package org.jcvi.assembly.trim;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.trim.MinimumEndCoverageTrimmer;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -46,7 +46,7 @@ public class TestMinimumEndCoverageTrimmer {
     @Test
     public void allBelowMinCoverageReturnEmptyRange(){
         Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
-                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
+                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
                         .build();
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
         PlacedRead read = _1xContig.getPlacedReadById("read1");
@@ -56,8 +56,8 @@ public class TestMinimumEndCoverageTrimmer {
     @Test
     public void leftEndBelowMinShouldTrimOff(){
         Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
-                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", SequenceDirection.FORWARD)
+                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", Direction.FORWARD)
                         .build();
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
         PlacedRead readToTrim = _1xContig.getPlacedReadById("read1");
@@ -72,8 +72,8 @@ public class TestMinimumEndCoverageTrimmer {
     @Test
     public void rightEndBelowMinShouldTrimOff(){
         Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
-                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read2", 0, Range.buildRange(0, 5), "ACGTAC", SequenceDirection.FORWARD)
+                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read2", 0, Range.buildRange(0, 5), "ACGTAC", Direction.FORWARD)
                         .build();
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
         PlacedRead readToTrim = _1xContig.getPlacedReadById("read1");
@@ -88,8 +88,8 @@ public class TestMinimumEndCoverageTrimmer {
     @Test
     public void noneBelowMinShouldIgnore(){
         Contig<PlacedRead> _2xContig = new DefaultContig.Builder("id","ACGTACGT")
-                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
-                        .addRead("read2", 0,  Range.buildRange(0, 7), "ACGTACGT", SequenceDirection.FORWARD)
+                        .addRead("read1", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
+                        .addRead("read2", 0,  Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
                         .build();
         sut.initializeContig(_2xContig, DefaultCoverageMap.buildCoverageMap(_2xContig));
         for(PlacedRead readThatDoesntGetTrimmed : _2xContig.getPlacedReads()){

@@ -24,10 +24,10 @@
 package org.jcvi.common.core.assembly.contig.ace;
 
 import org.apache.log4j.Logger;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,12 +67,12 @@ public class TestAceContigBuilderInvalidRead {
         PhdInfo phdInfo = createMock(PhdInfo.class);
         mockLogger.error(eq("could not add read "+readId), isA(IllegalArgumentException.class));
         replay(mockLogger);
-        addReadToBuilder(readId, validBases, offset, SequenceDirection.FORWARD, clearRange, phdInfo);
+        addReadToBuilder(readId, validBases, offset, Direction.FORWARD, clearRange, phdInfo);
         assertEquals(sut.numberOfReads(),0);
         verify(mockLogger);
     }
     
-    private void addReadToBuilder(String id,String validBases,int offset,SequenceDirection dir, Range validRange, PhdInfo phdInfo){
+    private void addReadToBuilder(String id,String validBases,int offset,Direction dir, Range validRange, PhdInfo phdInfo){
     	sut.addRead(id, validBases, offset, dir, 
     			validRange, phdInfo,validBases.length());
         

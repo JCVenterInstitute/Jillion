@@ -34,9 +34,9 @@ import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 /**
  * {@code AceFileParser} contains methods for parsing
  * ACE formatted files.
@@ -212,7 +212,7 @@ public final class AceFileParser {
             ParserState handle(Matcher assembledFromMatcher, ParserState struct, String line) {
                 String name = assembledFromMatcher.group(1);
                 final String group = assembledFromMatcher.group(2);
-                SequenceDirection dir = isComplimented(group)? SequenceDirection.REVERSE : SequenceDirection.FORWARD;
+                Direction dir = isComplimented(group)? Direction.REVERSE : Direction.FORWARD;
                 int fullRangeOffset = Integer.parseInt(assembledFromMatcher.group(3));
                 struct.visitor.visitAssembledFromLine(name, dir, fullRangeOffset);
                 return struct;

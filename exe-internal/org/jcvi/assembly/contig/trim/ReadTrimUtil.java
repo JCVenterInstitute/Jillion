@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read;
+package org.jcvi.assembly.contig.trim;
 
 import java.io.File;
 import java.io.FileInputStream;

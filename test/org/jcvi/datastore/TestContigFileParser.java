@@ -27,13 +27,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jcvi.assembly.contig.trim.DefaultRead;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyTestUtil;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.read.DefaultRead;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
@@ -424,7 +424,7 @@ public abstract class TestContigFileParser {
                          "GTTGCTTGTTTTGTTATAAGAGAAACCGTAGTGTCCGTGTTAAGTGTAGCACCGTAGTTT" +
                          "G"       
                          , 4870,Range.buildRange(10,788)))
-            , 4870, SequenceDirection.REVERSE);
+            , 4870, Direction.REVERSE);
     
     
     
@@ -441,7 +441,7 @@ public abstract class TestContigFileParser {
                          "TTATTACTATGAGAGTGAGGCTAATTTCACACTACAAGGTTGTGATGAATTTATAGTACC" +
                          "GCTCTGCGTTTTTAATGGCCGTTCCAAGGGCAGCTC"
                          , 20675,Range.buildRange(40,553)))
-            , 20675, SequenceDirection.FORWARD);
+            , 20675, Direction.FORWARD);
     
     
     

@@ -21,9 +21,9 @@
  *
  * @author dkatzel
  */
-package org.jcvi;
+package org.jcvi.common.core.seq.read.trace.frg;
 
-import org.jcvi.common.core.seq.read.Distance;
+import org.jcvi.common.core.seq.read.trace.frg.Distance;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;

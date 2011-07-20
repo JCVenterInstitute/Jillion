@@ -29,11 +29,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.testUtil.TestUtil;
@@ -44,7 +44,7 @@ import static org.easymock.EasyMock.*;
 public class TestDefaultPlacedRead {
 
     Read<ReferenceEncodedNucleotideSequence> read;
-    SequenceDirection dir = SequenceDirection.FORWARD;
+    Direction dir = Direction.FORWARD;
     long start = 100;
     
     DefaultPlacedRead sut ;

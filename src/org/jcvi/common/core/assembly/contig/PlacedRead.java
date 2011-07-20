@@ -25,10 +25,10 @@ package org.jcvi.common.core.assembly.contig;
 
 import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Placed;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
 public interface PlacedRead extends Read, Placed<PlacedRead>{
@@ -36,7 +36,7 @@ public interface PlacedRead extends Read, Placed<PlacedRead>{
 
     Map<Integer, NucleotideGlyph> getSnps();
     Range getValidRange();
-    SequenceDirection getSequenceDirection();
+    Direction getSequenceDirection();
     long convertReferenceIndexToValidRangeIndex(long referenceIndex);
     long convertValidRangeIndexToReferenceIndex(long validRangeIndex);
 }

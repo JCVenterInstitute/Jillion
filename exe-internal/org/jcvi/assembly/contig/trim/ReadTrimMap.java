@@ -17,16 +17,13 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Mar 26, 2009
+ * Created on Oct 2, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read;
+package org.jcvi.assembly.contig.trim;
 
+public interface ReadTrimMap {
 
-public interface Library {
-
-    String getId();
-    Distance getDistance();
-    MateOrientation getMateOrientation();
+    ReadTrim getReadTrimFor(String id);
 }

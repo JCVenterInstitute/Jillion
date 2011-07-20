@@ -36,6 +36,7 @@ import org.jcvi.common.core.TestRangeIterator;
 import org.jcvi.common.core.assembly.AllAssemblyUnitTests;
 import org.jcvi.common.core.assembly.contig.ace.AllAceUnitTests;
 import org.jcvi.common.core.seq.fastx.AllFastXTests;
+import org.jcvi.common.core.seq.read.trace.frg.TestDistance;
 import org.jcvi.common.core.symbol.AllGlyphUnitTests;
 import org.jcvi.datastore.AllDataStoreUnitTests;
 import org.jcvi.glyph.qualClass.AllQualityClassUnitTests;

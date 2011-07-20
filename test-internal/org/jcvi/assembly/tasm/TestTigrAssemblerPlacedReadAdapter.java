@@ -21,13 +21,13 @@ package org.jcvi.assembly.tasm;
 
 import java.util.Map.Entry;
 
+import org.jcvi.assembly.contig.trim.DefaultRead;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
@@ -54,22 +54,22 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	
 	@Test
 	public void adaptedReadShouldDelegateAllPlacedReadMethods(){
-		PlacedRead delegate = new DefaultPlacedRead(read, offset, SequenceDirection.FORWARD);
+		PlacedRead delegate = new DefaultPlacedRead(read, offset, Direction.FORWARD);
 		TigrAssemblerPlacedReadAdapter sut = new TigrAssemblerPlacedReadAdapter(delegate);
 		assertCommonGettersCorrect(sut);		
 		assertCommonAttributesCorrect(delegate, sut);
-		assertEquals(SequenceDirection.FORWARD, sut.getSequenceDirection());
+		assertEquals(Direction.FORWARD, sut.getSequenceDirection());
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_LEFT),""+(delegate.getValidRange().getStart()+1));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_RIGHT),""+(delegate.getValidRange().getEnd()+1));
 		
 	}
 	@Test
 	public void reverseReadShouldHaveSwappedSeqLeftandSeqRightAttributes(){
-		PlacedRead delegate = new DefaultPlacedRead(read, offset, SequenceDirection.REVERSE);
+		PlacedRead delegate = new DefaultPlacedRead(read, offset, Direction.REVERSE);
 		TigrAssemblerPlacedReadAdapter sut = new TigrAssemblerPlacedReadAdapter(delegate);
 		assertCommonGettersCorrect(sut);		
 		assertCommonAttributesCorrect(delegate, sut);
-		assertEquals(SequenceDirection.REVERSE, sut.getSequenceDirection());
+		assertEquals(Direction.REVERSE, sut.getSequenceDirection());
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_RIGHT),""+(delegate.getValidRange().getStart()+1));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_LEFT),""+(delegate.getValidRange().getEnd()+1));
 		

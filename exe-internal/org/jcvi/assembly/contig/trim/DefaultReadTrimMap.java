@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read;
+package org.jcvi.assembly.contig.trim;
 
 import java.util.HashMap;
 import java.util.Map;

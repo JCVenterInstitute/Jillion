@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.contig.slice;
 
 import java.util.Arrays;
 
-import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
@@ -45,7 +45,7 @@ public class CompactedSliceElement implements SliceElement{
         System.arraycopy(encodedData, 0, this.encodedData, 0, 2);
     }
     public CompactedSliceElement(String id, NucleotideGlyph base, PhredQuality quality,
-            SequenceDirection direction) {
+            Direction direction) {
         if(id ==null ||base ==null || quality ==null || direction == null){
             throw new NullPointerException("fields can not be null");
         }
@@ -81,7 +81,7 @@ public class CompactedSliceElement implements SliceElement{
     * {@inheritDoc}
     */
     @Override
-    public SequenceDirection getSequenceDirection() {
+    public Direction getSequenceDirection() {
         return CompactedSliceElementCodec.INSTANCE.getSequenceDirection(encodedData);
     }
     @Override

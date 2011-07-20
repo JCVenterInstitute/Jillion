@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 
-import org.jcvi.common.core.seq.read.Confidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
 /**
  * <code>SCFChromatogram</code> is a SCF specific implementation
  * of {@link Chromatogram}.  SCF Chromatograms have additional

@@ -26,10 +26,10 @@ package org.jcvi.common.core.assembly;
 
 import java.util.List;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.junit.Before;
@@ -52,7 +52,7 @@ public class TestAssemblyUtil_gappedfullRange {
         Range validRange = Range.buildRange(0, ungappedUnComplimentedFullRange.size());
         
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
-        expect(mockPlacedRead.getSequenceDirection()).andReturn(SequenceDirection.FORWARD);
+        expect(mockPlacedRead.getSequenceDirection()).andReturn(Direction.FORWARD);
         expect(mockPlacedRead.getEncodedGlyphs()).andReturn(new DefaultNucleotideSequence(gappedValidRange));
         replay(mockPlacedRead);
         List<NucleotideGlyph> actualGappedComplimentedFullRange =
@@ -69,7 +69,7 @@ public class TestAssemblyUtil_gappedfullRange {
         Range validRange = Range.buildRange(0, ungappedUnComplimentedFullRange.size());
         
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
-        expect(mockPlacedRead.getSequenceDirection()).andReturn(SequenceDirection.REVERSE);
+        expect(mockPlacedRead.getSequenceDirection()).andReturn(Direction.REVERSE);
         expect(mockPlacedRead.getEncodedGlyphs()).andReturn(new DefaultNucleotideSequence(gappedValidRange));
         replay(mockPlacedRead);
         List<NucleotideGlyph> actualGappedComplimentedFullRange =
@@ -84,7 +84,7 @@ public class TestAssemblyUtil_gappedfullRange {
         Range validRange = Range.buildRange(2, 9);
         
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
-        expect(mockPlacedRead.getSequenceDirection()).andReturn(SequenceDirection.FORWARD);
+        expect(mockPlacedRead.getSequenceDirection()).andReturn(Direction.FORWARD);
         expect(mockPlacedRead.getEncodedGlyphs()).andReturn(new DefaultNucleotideSequence(gappedValidRange));
         replay(mockPlacedRead);
         List<NucleotideGlyph> actualGappedComplimentedFullRange =
@@ -99,7 +99,7 @@ public class TestAssemblyUtil_gappedfullRange {
         Range validRange = Range.buildRange(3, 10);
         
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
-        expect(mockPlacedRead.getSequenceDirection()).andReturn(SequenceDirection.REVERSE);
+        expect(mockPlacedRead.getSequenceDirection()).andReturn(Direction.REVERSE);
         expect(mockPlacedRead.getEncodedGlyphs()).andReturn(new DefaultNucleotideSequence(gappedValidRange));
         replay(mockPlacedRead);
         List<NucleotideGlyph> actualGappedComplimentedFullRange =

@@ -26,9 +26,9 @@ package org.jcvi.common.core.assembly.contig;
 import java.util.Set;
 
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
@@ -66,9 +66,9 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             super(id,consensus);
         }
         public Builder addRead(String id, int offset,String basecalls){
-            return addRead(id, offset, basecalls, SequenceDirection.FORWARD);
+            return addRead(id, offset, basecalls, Direction.FORWARD);
         }
-        public Builder addRead(String id, int offset,String basecalls, SequenceDirection dir){
+        public Builder addRead(String id, int offset,String basecalls, Direction dir){
             int numberOfGaps = computeNumberOfGapsIn(basecalls);
             return addRead(id, offset, Range.buildRangeOfLength(0,basecalls.length()-numberOfGaps),basecalls, dir);
         }
@@ -85,7 +85,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             }
             return count;
         }
-        public Builder addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
+        public Builder addRead(String id, int offset,Range validRange, String basecalls, Direction dir){
             
             if(offset <0){
                 throw new IllegalArgumentException("circular reads not supported");
@@ -96,7 +96,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             
         }
         @Override
-        protected PlacedRead createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, SequenceDirection dir){
+        protected PlacedRead createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, Direction dir){
             return new DefaultPlacedRead(read,offset,dir);
         }
        

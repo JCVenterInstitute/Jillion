@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.contig.slice;
 
-import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.util.CommonUtil;
@@ -31,7 +31,7 @@ import org.jcvi.common.core.util.CommonUtil;
 public class DefaultSliceElement implements SliceElement {
     private final NucleotideGlyph base;
     private final PhredQuality quality;
-    private final SequenceDirection direction;
+    private final Direction direction;
     private final String name;
     /**
      * @param name
@@ -41,7 +41,7 @@ public class DefaultSliceElement implements SliceElement {
      * @throws IllegalArgumentException if any parameter is null.
      */
     public DefaultSliceElement(String name, NucleotideGlyph base, PhredQuality quality,
-            SequenceDirection direction) {
+            Direction direction) {
         if(name ==null ||base ==null || quality ==null || direction == null){
             throw new IllegalArgumentException("fields can not be null");
         }
@@ -91,7 +91,7 @@ public class DefaultSliceElement implements SliceElement {
     }
 
     @Override
-    public SequenceDirection getSequenceDirection() {
+    public Direction getSequenceDirection() {
         return direction;
     }
 

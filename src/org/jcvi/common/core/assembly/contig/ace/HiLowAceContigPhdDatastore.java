@@ -27,11 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
@@ -226,14 +226,14 @@ public class HiLowAceContigPhdDatastore implements PhdDataStore{
         }
         @Override
         protected synchronized void visitAceRead(String readId, String validBasecalls,
-                int offset, SequenceDirection dir, Range validRange,
+                int offset, Direction dir, Range validRange,
                 PhdInfo phdInfo, int ungappedFullLength) {
             if(contigOfInterest){
                 NucleotideSequence fullLengthBasecalls = new DefaultNucleotideSequence(
                                         ConsedUtil.convertAceGapsToContigGaps(getCurrentFullLengthBasecalls())
                                                             .replaceAll("-", ""));
                 
-                if(dir==SequenceDirection.REVERSE){
+                if(dir==Direction.REVERSE){
                     Collections.reverse(currentHiLowQualities);
                     fullLengthBasecalls = new DefaultNucleotideSequence(NucleotideGlyph.reverseCompliment(fullLengthBasecalls.decode()));
                 }

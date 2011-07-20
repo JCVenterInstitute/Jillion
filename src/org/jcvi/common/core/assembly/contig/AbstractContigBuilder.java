@@ -22,10 +22,10 @@ package org.jcvi.common.core.assembly.contig;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.jcvi.assembly.contig.trim.DefaultRead;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
@@ -45,7 +45,7 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
             this.consensus = consensus;
             reads = new LinkedHashSet<P>();
         }
-        public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, SequenceDirection dir){
+        public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, Direction dir){
             
             NucleotideSequence referenceEncoded = new DefaultReferenceEncodedNucleotideSequence(consensus,basecalls, offset,validRange);
             final P actualPlacedRead = createPlacedRead(new DefaultRead(id, referenceEncoded), offset,dir );
@@ -56,7 +56,7 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
             reads.add(read);
             return this;
         }
-        protected abstract P createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, SequenceDirection dir);
+        protected abstract P createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, Direction dir);
         
         public NucleotideSequence getConsensus() {
             return consensus;

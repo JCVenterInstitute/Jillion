@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.contig.slice;
 
-import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 /**
@@ -52,8 +52,8 @@ public interface SliceElement {
      */
     PhredQuality getQuality();
     /**
-     * Get the {@link SequenceDirection} of this SliceElement.
+     * Get the {@link Direction} of this SliceElement.
      * @return
      */
-    SequenceDirection getSequenceDirection();
+    Direction getSequenceDirection();
 }

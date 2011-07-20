@@ -26,8 +26,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;

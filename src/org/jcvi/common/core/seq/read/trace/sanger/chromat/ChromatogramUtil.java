@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.MagicNumberInputStream;
-import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.Ab1FileParser;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.AbiUtil;
@@ -37,6 +36,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFil
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.util.Builder;

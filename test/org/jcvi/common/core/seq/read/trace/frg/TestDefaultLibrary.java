@@ -21,14 +21,14 @@
  *
  * @author dkatzel
  */
-package org.jcvi.sequence;
+package org.jcvi.common.core.seq.read.trace.frg;
 
 import static org.junit.Assert.*;
 
-import org.jcvi.common.core.seq.read.DefaultLibrary;
-import org.jcvi.common.core.seq.read.Distance;
-import org.jcvi.common.core.seq.read.Library;
-import org.jcvi.common.core.seq.read.MateOrientation;
+import org.jcvi.common.core.seq.read.trace.frg.DefaultLibrary;
+import org.jcvi.common.core.seq.read.trace.frg.Distance;
+import org.jcvi.common.core.seq.read.trace.frg.Library;
+import org.jcvi.common.core.seq.read.trace.frg.MateOrientation;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 

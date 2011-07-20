@@ -21,23 +21,12 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read;
+package org.jcvi.assembly.contig.trim;
 
-public enum TrimType {
+import org.jcvi.common.core.Range;
 
-    CLR("clear range"),
-    CLV("clear of vector"),
-    CLB("quality Trim Range")
-    ;
-    private final String description;
-    
-    private TrimType(String description){
-        this.description = description;
-    }
+public interface ReadTrim {
 
-    @Override
-    public String toString() {
-        return description;
-    }
-    
+    String getReadId();
+    Range getTrimRange(TrimType trimType);
 }

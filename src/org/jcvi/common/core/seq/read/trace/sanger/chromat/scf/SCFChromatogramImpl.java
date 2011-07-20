@@ -23,9 +23,9 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 
-import org.jcvi.common.core.seq.read.Confidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
 import org.jcvi.common.core.util.CommonUtil;
 
 public class SCFChromatogramImpl extends BasicChromatogram implements SCFChromatogram {

@@ -19,9 +19,9 @@
 
 package org.jcvi.common.core.assembly.coverage.slice;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.slice.DefaultSliceElement;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
@@ -37,7 +37,7 @@ public class TestDefaultSliceElement extends AbstractTestSliceElement{
     */
     @Override
     protected SliceElement create(String id, NucleotideGlyph base,
-            PhredQuality qual, SequenceDirection direction) {
+            PhredQuality qual, Direction direction) {
         return new DefaultSliceElement(id, base, qual, direction);
     }
 

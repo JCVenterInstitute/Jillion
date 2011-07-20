@@ -24,10 +24,10 @@ import java.io.FileNotFoundException;
 import java.util.EnumMap;
 import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
@@ -52,7 +52,7 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         private String currentReadId;
         private int currentOffset;
         private Range currentValidRange;
-        private SequenceDirection currentDirection;
+        private Direction currentDirection;
         
         private String currentReadBasecalls;
         
@@ -107,7 +107,7 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         */
         @Override
         public void visitNewRead(String readId, int offset, Range validRange,
-                SequenceDirection dir) {
+                Direction dir) {
             currentReadId = readId;
             currentOffset=offset;
             currentValidRange = validRange;

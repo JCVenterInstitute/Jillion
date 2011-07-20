@@ -22,10 +22,10 @@ package org.jcvi.common.core.assembly.contig.ace;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -84,7 +84,7 @@ public class AceFileUtil {
     public static String createAssembledFromRecord(AssembledFrom assembledFrom){
         return String.format("AF %s %s %d%n",
                 assembledFrom.getId(),
-                assembledFrom.getSequenceDirection()==SequenceDirection.FORWARD? "U":"C",
+                assembledFrom.getSequenceDirection()==Direction.FORWARD? "U":"C",
                         assembledFrom.getStartOffset());
     }
     public static String createPhdRecord(PhdInfo phdInfo){
@@ -99,7 +99,7 @@ public class AceFileUtil {
     }
     
     public static String createQualityRangeRecord(NucleotideSequence gappedValidBases, 
-            Range ungappedValidRange, SequenceDirection dir, long ungappedFullLength){
+            Range ungappedValidRange, Direction dir, long ungappedFullLength){
         int numberOfGaps = gappedValidBases.getNumberOfGaps();
         Range gappedValidRange =buildGappedValidRangeFor(
                 ungappedValidRange,numberOfGaps,dir,ungappedFullLength);
@@ -110,26 +110,26 @@ public class AceFileUtil {
                 gappedValidRange.getLocalStart(), gappedValidRange.getLocalEnd()
                 );
     }
-    private static Range buildGappedValidRangeFor(Range ungappedValidRange, int numberOfGaps,SequenceDirection dir, long ungappedFullLength){
+    private static Range buildGappedValidRangeFor(Range ungappedValidRange, int numberOfGaps,Direction dir, long ungappedFullLength){
        Range gappedValidRange=  Range.buildRange( 
                ungappedValidRange.getStart(),
                ungappedValidRange.getEnd()+numberOfGaps);
         
-        if(dir==SequenceDirection.REVERSE){
+        if(dir==Direction.REVERSE){
             gappedValidRange = AssemblyUtil.reverseComplimentValidRange(gappedValidRange, ungappedFullLength+numberOfGaps);
            
         }
         return gappedValidRange.convertRange(CoordinateSystem.RESIDUE_BASED);
     }
     public static String createAcePlacedReadRecord(String readId, NucleotideSequence gappedValidBasecalls, 
-            Range ungappedValidRange, SequenceDirection dir, Phd phd, PhdInfo phdInfo){
+            Range ungappedValidRange, Direction dir, Phd phd, PhdInfo phdInfo){
         final NucleotideSequence fullBasecalls = phd.getBasecalls();
         final List<NucleotideGlyph> phdFullBases = fullBasecalls.decode();
         
         final List<NucleotideGlyph> fullGappedValidRange;
         final List<PhredQuality> qualities;
         final Sequence<PhredQuality> phdQualities = phd.getQualities();
-        if(dir == SequenceDirection.FORWARD){
+        if(dir == Direction.FORWARD){
             fullGappedValidRange = AssemblyUtil.buildGappedComplimentedFullRangeBases(gappedValidBasecalls,dir,ungappedValidRange, 
                     phdFullBases);
             qualities = phdQualities.decode();

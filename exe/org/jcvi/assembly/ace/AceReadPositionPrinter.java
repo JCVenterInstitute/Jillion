@@ -28,6 +28,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
@@ -36,7 +37,6 @@ import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
 import org.jcvi.common.core.assembly.contig.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
@@ -65,7 +65,7 @@ public class AceReadPositionPrinter {
         
         @Override
         protected void visitAceRead(String readId, String validBasecalls,
-                int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo,
+                int offset, Direction dir, Range validRange, PhdInfo phdInfo,
                 int ungappedFullLength) {
             Range gappedOneBasedRange = Range.buildRangeOfLength(offset, validBasecalls.length()).convertRange(CoordinateSystem.RESIDUE_BASED);
             int nonGapStartPosition = AssemblyUtil.getRightFlankingNonGapIndex(consensus, (int)gappedOneBasedRange.getStart());

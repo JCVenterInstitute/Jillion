@@ -19,9 +19,9 @@
 
 package org.jcvi.common.core.assembly.contig.ace;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class TestDefaultAceContig {
     public void readThatHasNegativeOffsetShouldGetTrimmedToOffsetZero(){
         DefaultAceContig.Builder sut =  new DefaultAceContig.Builder("id",
                                             "ACGTACGTACGTACGT");
-        sut.addRead("read", "ACGTACGTACGTACGT", -2, SequenceDirection.FORWARD, Range.buildRange(2, 18), null,16);
+        sut.addRead("read", "ACGTACGTACGTACGT", -2, Direction.FORWARD, Range.buildRange(2, 18), null,16);
             DefaultAceContig contig =sut.build();
             NucleotideSequence consensus =contig.getConsensus();
             assertEquals(16, consensus.getLength());

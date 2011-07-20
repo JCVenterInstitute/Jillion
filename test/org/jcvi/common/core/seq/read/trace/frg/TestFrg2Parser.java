@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.Distance;
-import org.jcvi.common.core.seq.read.MateOrientation;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Parser;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor;
 import org.jcvi.common.core.seq.read.trace.frg.FrgVisitorAction;

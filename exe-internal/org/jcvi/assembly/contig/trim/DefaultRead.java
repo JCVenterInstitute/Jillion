@@ -17,64 +17,66 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Sep 15, 2008
+ * Created on Jan 15, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read;
+package org.jcvi.assembly.contig.trim;
 
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-
+import org.jcvi.common.core.seq.read.Read;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.CommonUtil;
 
-public class DefaultConfidence implements Confidence {
-
-    private byte[] data;
-
-    public DefaultConfidence(ByteBuffer data){
-        this(data.array());
+public class DefaultRead<T extends NucleotideSequence> implements Read<T>{
+    private final String id;
+    private final T glyphs;
+    public DefaultRead(String id, T glyphs){
+        this.id= id;
+        this.glyphs = glyphs;
     }
-    public DefaultConfidence(byte[] data){
-        this.data = Arrays.copyOf(data,data.length);
-    }
-
-    /**
-     * @return the data
-     */
-    public byte[] getData() {
-        return Arrays.copyOf(data,data.length);
+    @Override
+    public T getEncodedGlyphs() {
+        return glyphs;
     }
 
-    /**
-    * {@inheritDoc}
-    */
+    @Override
+    public String getId() {
+        return id;
+    }
+    @Override
+    public long getLength() {
+        return glyphs.getLength();
+    }
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((data == null) ? 0 : Arrays.hashCode(data));
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
     /**
-    * {@inheritDoc}
-    */
+     * Two Reads are equal if they have the same id.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof DefaultConfidence)){
+        if (obj == null){
             return false;
         }
-        final Confidence other = (Confidence) obj;
-        return CommonUtil.bothNull(getData(), other.getData())  
-                            ||        
-            (!CommonUtil.onlyOneIsNull(getData(), other.getData()) 
-                            && 
-            Arrays.equals(getData(), other.getData()));
-
+        if (!(obj instanceof Read)){
+            return false;
+        }
+        Read other = (Read) obj;
+        return CommonUtil.similarTo(id, other.getId());
+        
+    }
+    @Override
+    public String toString() {
+        return "read : " + getId() + "  validRange" + getEncodedGlyphs().getValidRange()+"  " + getEncodedGlyphs().decode().toString();
     }
 
+    
 
 }

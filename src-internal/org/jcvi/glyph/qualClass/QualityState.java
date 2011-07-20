@@ -27,7 +27,7 @@ import java.util.Map;
 
 import static org.jcvi.glyph.qualClass.QualityClass.*;
 
-import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.Direction;
 final class QualityState{
     
    
@@ -184,70 +184,70 @@ final class QualityState{
         hasConflict = hasAConflict(builder.getHighQualityConflictMap()) || hasAConflict(builder.getLowQualityConflictMap()); 
     }
 
-    private boolean hasAConflict(Map<SequenceDirection, Integer> conflictMap) {
-      return  hasAnyReads(conflictMap,SequenceDirection.FORWARD ) || hasAnyReads(conflictMap,SequenceDirection.REVERSE );
+    private boolean hasAConflict(Map<Direction, Integer> conflictMap) {
+      return  hasAnyReads(conflictMap,Direction.FORWARD ) || hasAnyReads(conflictMap,Direction.REVERSE );
     }
-    private boolean hasNoReads(Map<SequenceDirection, Integer> map, SequenceDirection direction){
+    private boolean hasNoReads(Map<Direction, Integer> map, Direction direction){
         return map.get(direction).intValue() == 0;
     }
-    private boolean hasAnyReads(Map<SequenceDirection, Integer> map, SequenceDirection direction){
+    private boolean hasAnyReads(Map<Direction, Integer> map, Direction direction){
         return !hasNoReads(map, direction);
     }
-    private boolean hasMoreThanOneRead(Map<SequenceDirection, Integer> map, SequenceDirection direction){
+    private boolean hasMoreThanOneRead(Map<Direction, Integer> map, Direction direction){
         return map.get(direction).intValue()>1;
     }
     private void computeHasHighQualityAgreement(QualityClass.Builder builder){
-        final Map<SequenceDirection, Integer> highQualityAgreementMap = builder.getHighQualityAgreementMap();
-        hasHighQualityAgreement = hasAnyReads(highQualityAgreementMap,SequenceDirection.FORWARD ) ||
-                                    hasAnyReads(highQualityAgreementMap,SequenceDirection.REVERSE );
+        final Map<Direction, Integer> highQualityAgreementMap = builder.getHighQualityAgreementMap();
+        hasHighQualityAgreement = hasAnyReads(highQualityAgreementMap,Direction.FORWARD ) ||
+                                    hasAnyReads(highQualityAgreementMap,Direction.REVERSE );
     }
 
     private void computeHasAnotherHighQualityAgreementInOtherDirection(QualityClass.Builder builder){
-        final Map<SequenceDirection, Integer> highQualityAgreementMap = builder.getHighQualityAgreementMap();
-        hasAnotherHighQualityAgreementOtherDirection = hasAnyReads(highQualityAgreementMap,SequenceDirection.FORWARD ) &&
-                                    hasAnyReads(highQualityAgreementMap,SequenceDirection.REVERSE );
+        final Map<Direction, Integer> highQualityAgreementMap = builder.getHighQualityAgreementMap();
+        hasAnotherHighQualityAgreementOtherDirection = hasAnyReads(highQualityAgreementMap,Direction.FORWARD ) &&
+                                    hasAnyReads(highQualityAgreementMap,Direction.REVERSE );
     }
     
     private void computeHasLowQualityAgreementInBothDirections(QualityClass.Builder builder){
-        hasLowQualityAgreementBothDirections = hasAnyReads(builder.getLowQualityAgreementMap(),SequenceDirection.FORWARD ) &&
-        hasAnyReads(builder.getLowQualityAgreementMap(),SequenceDirection.REVERSE );
+        hasLowQualityAgreementBothDirections = hasAnyReads(builder.getLowQualityAgreementMap(),Direction.FORWARD ) &&
+        hasAnyReads(builder.getLowQualityAgreementMap(),Direction.REVERSE );
     }
     private void computeHasHighQualityConflict(QualityClass.Builder builder){
-        hasHighQualityConflict = hasAnyReads(builder.getHighQualityConflictMap(),SequenceDirection.FORWARD ) ||
-                                    hasAnyReads(builder.getHighQualityConflictMap(),SequenceDirection.REVERSE );
+        hasHighQualityConflict = hasAnyReads(builder.getHighQualityConflictMap(),Direction.FORWARD ) ||
+                                    hasAnyReads(builder.getHighQualityConflictMap(),Direction.REVERSE );
     }
     private void computeHasLowQualityConflict(QualityClass.Builder builder){
-        hasLowQualityConflict = hasAnyReads(builder.getLowQualityConflictMap(),SequenceDirection.FORWARD ) ||
-                                    hasAnyReads(builder.getLowQualityConflictMap(),SequenceDirection.REVERSE );
+        hasLowQualityConflict = hasAnyReads(builder.getLowQualityConflictMap(),Direction.FORWARD ) ||
+                                    hasAnyReads(builder.getLowQualityConflictMap(),Direction.REVERSE );
     }
     private void computeHasLowQualityAgreement(QualityClass.Builder builder){
-        hasLowQualityAgreement = hasAnyReads(builder.getLowQualityAgreementMap(),SequenceDirection.FORWARD ) ||
-                                    hasAnyReads(builder.getLowQualityAgreementMap(),SequenceDirection.REVERSE );
+        hasLowQualityAgreement = hasAnyReads(builder.getLowQualityAgreementMap(),Direction.FORWARD ) ||
+                                    hasAnyReads(builder.getLowQualityAgreementMap(),Direction.REVERSE );
     }
     private void computeOnlySingleCoverageAgreesWithConsensus(QualityClass.Builder builder){
         onlySingleCoverageAgreesWithConsensus = builder.getNumberOfAgreeingReads()==1;
     }
     private void computeHasAnotherLowQualityAgreementInOtherDirection(QualityClass.Builder builder){
         hasLowQualityAgreementOtherDirection =
-            (hasAnyReads(builder.getHighQualityAgreementMap(),SequenceDirection.FORWARD ) && hasAnyReads(builder.getLowQualityAgreementMap(),SequenceDirection.REVERSE )) ||
-        (hasAnyReads(builder.getHighQualityAgreementMap(),SequenceDirection.REVERSE ) && hasAnyReads(builder.getLowQualityAgreementMap(),SequenceDirection.FORWARD )) ||
-        hasAnyReads(builder.getLowQualityAgreementMap(),SequenceDirection.FORWARD ) && hasAnyReads(builder.getLowQualityAgreementMap(),SequenceDirection.REVERSE );
+            (hasAnyReads(builder.getHighQualityAgreementMap(),Direction.FORWARD ) && hasAnyReads(builder.getLowQualityAgreementMap(),Direction.REVERSE )) ||
+        (hasAnyReads(builder.getHighQualityAgreementMap(),Direction.REVERSE ) && hasAnyReads(builder.getLowQualityAgreementMap(),Direction.FORWARD )) ||
+        hasAnyReads(builder.getLowQualityAgreementMap(),Direction.FORWARD ) && hasAnyReads(builder.getLowQualityAgreementMap(),Direction.REVERSE );
     }
 
     private void computeHasAnotherLowQualityAgreementInSameDirection(QualityClass.Builder builder){
-        hasAnotherLowQualityAgreementSameDirection = hasMoreThanOneRead(builder.getLowQualityAgreementMap(),SequenceDirection.FORWARD ) ||
-                                            hasMoreThanOneRead(builder.getLowQualityAgreementMap(),SequenceDirection.REVERSE );
+        hasAnotherLowQualityAgreementSameDirection = hasMoreThanOneRead(builder.getLowQualityAgreementMap(),Direction.FORWARD ) ||
+                                            hasMoreThanOneRead(builder.getLowQualityAgreementMap(),Direction.REVERSE );
     }
     
     private void computeHasAnotherAgreementInSameDirection(QualityClass.Builder builder) {
-        hasAnotherAgreementInSameDirection = (hasAnyReads(builder.getHighQualityAgreementMap(),SequenceDirection.FORWARD ) &&
-                            hasAnyReads(builder.getLowQualityAgreementMap(),SequenceDirection.FORWARD )) ||
-                            (hasAnyReads(builder.getHighQualityAgreementMap(),SequenceDirection.REVERSE ) &&
-                                    hasAnyReads(builder.getLowQualityAgreementMap(),SequenceDirection.REVERSE )) ||
-                                    hasMoreThanOneRead(builder.getHighQualityAgreementMap(), SequenceDirection.FORWARD) ||
-                                    hasMoreThanOneRead(builder.getHighQualityAgreementMap(), SequenceDirection.REVERSE) ||
-                                    hasMoreThanOneRead(builder.getLowQualityAgreementMap(), SequenceDirection.FORWARD) ||
-                                    hasMoreThanOneRead(builder.getLowQualityAgreementMap(), SequenceDirection.REVERSE)
+        hasAnotherAgreementInSameDirection = (hasAnyReads(builder.getHighQualityAgreementMap(),Direction.FORWARD ) &&
+                            hasAnyReads(builder.getLowQualityAgreementMap(),Direction.FORWARD )) ||
+                            (hasAnyReads(builder.getHighQualityAgreementMap(),Direction.REVERSE ) &&
+                                    hasAnyReads(builder.getLowQualityAgreementMap(),Direction.REVERSE )) ||
+                                    hasMoreThanOneRead(builder.getHighQualityAgreementMap(), Direction.FORWARD) ||
+                                    hasMoreThanOneRead(builder.getHighQualityAgreementMap(), Direction.REVERSE) ||
+                                    hasMoreThanOneRead(builder.getLowQualityAgreementMap(), Direction.FORWARD) ||
+                                    hasMoreThanOneRead(builder.getLowQualityAgreementMap(), Direction.REVERSE)
                             ;
     }
 

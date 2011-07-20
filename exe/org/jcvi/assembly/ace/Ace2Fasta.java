@@ -37,6 +37,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.command.CommandLineOptionBuilder;
 import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
@@ -47,7 +48,6 @@ import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
 public class Ace2Fasta {
@@ -120,7 +120,7 @@ public class Ace2Fasta {
                 
                 @Override
                 protected void visitAceRead(String readId, String validBasecalls,
-                        int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo,int ungappedFullLength) {
+                        int offset, Direction dir, Range validRange, PhdInfo phdInfo,int ungappedFullLength) {
                 }
             };
             AceFileParser.parseAceFile(aceIn, fastaVisitor);

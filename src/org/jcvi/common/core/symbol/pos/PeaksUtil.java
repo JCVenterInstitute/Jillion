@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read;
+package org.jcvi.common.core.symbol.pos;
 
 import java.nio.ShortBuffer;
 

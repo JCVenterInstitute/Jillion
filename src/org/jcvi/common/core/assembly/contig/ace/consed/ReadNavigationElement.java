@@ -19,10 +19,10 @@
 
 package org.jcvi.common.core.assembly.contig.ace.consed;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
@@ -97,7 +97,7 @@ public class ReadNavigationElement extends AbstractNavigationElement{
             String comment){
         final NucleotideSequence encodedGlyphs = read.getEncodedGlyphs();
         Range ungappedRange = AssemblyUtil.convertGappedRangeIntoUngappedRange(encodedGlyphs, gappedFeatureValidRange);
-        if(read.getSequenceDirection() == SequenceDirection.REVERSE){
+        if(read.getSequenceDirection() == Direction.REVERSE){
             ungappedRange =AssemblyUtil.reverseComplimentValidRange(ungappedRange, fullLength);
         }
         return new ReadNavigationElement(read.getId(), ungappedRange, comment);

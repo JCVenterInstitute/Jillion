@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger;
 
-import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.seq.read.trace.Trace;
+import org.jcvi.common.core.symbol.pos.Peaks;
 
 public interface SangerTrace extends Trace {
 

@@ -23,11 +23,11 @@
  */
 package org.jcvi.common.core.assembly.contig.ctg;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 
@@ -39,7 +39,7 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
 
     @Override
     protected void visitRead(String readId, int offset, Range validRange,
-            String basecalls, SequenceDirection dir) {
+            String basecalls, Direction dir) {
        
         currentContigBuilder.addRead(readId, offset, validRange,basecalls,dir); 
         

@@ -23,8 +23,8 @@
  */
 package org.jcvi.sequence;
 
-import org.jcvi.common.core.seq.read.Peaks;
-import org.jcvi.common.core.seq.read.PeaksUtil;
+import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.PeaksUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestPeaksUtil {

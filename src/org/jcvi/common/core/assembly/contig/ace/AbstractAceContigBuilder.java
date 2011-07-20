@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 /**
  * {@code AbstractAceContigBuilder} is an abstract
  * implementation of {@link AceFileVisitor}
@@ -63,7 +63,7 @@ public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
         
     }
     
-    protected void visitAceRead(String readId, String validBasecalls, int offset, SequenceDirection dir, Range validRange, PhdInfo phdInfo,
+    protected void visitAceRead(String readId, String validBasecalls, int offset, Direction dir, Range validRange, PhdInfo phdInfo,
             int ungappedFullLength){
         contigBuilder.addRead(readId, validBasecalls ,offset, dir, 
                 validRange ,phdInfo,ungappedFullLength);
