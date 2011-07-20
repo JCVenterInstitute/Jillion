@@ -27,7 +27,7 @@ import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.common.core.util.FileIterator;
-import org.jcvi.io.fileServer.DirectoryFileServer;
+import org.jcvi.common.io.fileServer.DirectoryFileServer;
 
 /**
  * {@code SingleSangerTraceDirectoryFileDataStore} is a {@link SangerFileDataStore}

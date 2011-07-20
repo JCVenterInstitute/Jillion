@@ -80,9 +80,9 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdWriter;
 import org.jcvi.common.core.seq.trim.DefaultTrimFileDataStore;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.MultipleWrapper;
-import org.jcvi.io.fileServer.DirectoryFileServer;
-import org.jcvi.io.fileServer.ReadWriteFileServer;
-import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
+import org.jcvi.common.io.fileServer.DirectoryFileServer;
+import org.jcvi.common.io.fileServer.ReadWriteFileServer;
+import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Period;
 

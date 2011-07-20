@@ -34,7 +34,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFil
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFile.ZTRChromatogramFileBuilderVisitor;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 
 public class TestChromatogramFileParser {

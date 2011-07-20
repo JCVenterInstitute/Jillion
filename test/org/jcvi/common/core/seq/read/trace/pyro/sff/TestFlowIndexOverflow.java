@@ -42,7 +42,7 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 /**
  * In rare cases the index of a flow is more than 127, 

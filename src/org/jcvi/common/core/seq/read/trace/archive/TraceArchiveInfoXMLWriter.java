@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.io.XMLUtil;
+import org.jcvi.common.core.io.XMLUtil;
 
 
 public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {

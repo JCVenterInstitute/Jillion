@@ -34,7 +34,7 @@ import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffVisitorWriter;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestSffVisitorWriter {

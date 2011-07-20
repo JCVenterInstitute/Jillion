@@ -28,7 +28,7 @@ import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.trace.sanger.chromatogram.Chromatogram2fasta;
 import org.junit.Before;
 import org.junit.Test;

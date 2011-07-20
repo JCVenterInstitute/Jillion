@@ -25,7 +25,7 @@ import java.io.IOException;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.trim.lucy.LucySeqTrimDataStore;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

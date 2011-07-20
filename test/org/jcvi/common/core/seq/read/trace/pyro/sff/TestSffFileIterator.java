@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileIterator;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestSffFileIterator {

@@ -26,7 +26,7 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
 

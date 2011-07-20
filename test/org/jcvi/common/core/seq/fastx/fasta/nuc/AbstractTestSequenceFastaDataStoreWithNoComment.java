@@ -29,7 +29,7 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 
 public  abstract class AbstractTestSequenceFastaDataStoreWithNoComment {
     static final String FASTA_FILE_PATH = "files/noComment.fasta";

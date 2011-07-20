@@ -31,7 +31,7 @@ import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.ctg.ContigFileWriter;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

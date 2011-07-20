@@ -42,7 +42,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificalPhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import static org.junit.Assert.*;

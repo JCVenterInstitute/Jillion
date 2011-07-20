@@ -25,8 +25,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jcvi.common.core.io.TextLineParser;
-import org.jcvi.io.CSVReader;
-import org.jcvi.io.SpreadSheetReader;
+import org.jcvi.common.io.ss.CSVReader;
+import org.jcvi.common.io.ss.SpreadSheetReader;
 
 /**
  * @author dkatzel

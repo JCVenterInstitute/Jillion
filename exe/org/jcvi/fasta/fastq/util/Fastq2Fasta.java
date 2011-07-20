@@ -47,10 +47,10 @@ import org.jcvi.common.core.seq.fastx.fastq.AbstractFilteredFastQFileVisitor;
 import org.jcvi.common.core.seq.fastx.fastq.FastQFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
-import org.jcvi.io.idReader.DefaultFileIdReader;
-import org.jcvi.io.idReader.IdReader;
-import org.jcvi.io.idReader.IdReaderException;
-import org.jcvi.io.idReader.StringIdParser;
+import org.jcvi.common.io.idReader.DefaultFileIdReader;
+import org.jcvi.common.io.idReader.IdReader;
+import org.jcvi.common.io.idReader.IdReaderException;
+import org.jcvi.common.io.idReader.StringIdParser;
 
 /**
  * {@code Fastq2Fasta} is a program that parses a Fastq file and

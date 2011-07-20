@@ -38,7 +38,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.internal.TigrQualitiesEncodedGyphCodec;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -30,7 +30,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaRecordDataStoreAd
 import org.jcvi.common.core.seq.trim.DefaultPrimerTrimmer;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
