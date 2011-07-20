@@ -36,7 +36,7 @@ import org.jcvi.common.core.symbol.GlyphCodec;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 
 public abstract class AbstractTestPositionsFastaDataStore {

@@ -30,7 +30,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.scaffold.DefaultScaffold;
 import org.jcvi.common.core.assembly.scaffold.Scaffold;
 import org.jcvi.common.core.assembly.scaffold.agp.AgpParser;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAgpParser {

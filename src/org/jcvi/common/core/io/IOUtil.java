@@ -43,7 +43,6 @@ import java.util.Properties;
 import java.util.Scanner;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.io.OutputStreamReader;
 
 public final class IOUtil {
 

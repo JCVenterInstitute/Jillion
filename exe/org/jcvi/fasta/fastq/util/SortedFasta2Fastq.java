@@ -57,10 +57,10 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.io.idReader.DefaultFileIdReader;
-import org.jcvi.io.idReader.IdReader;
-import org.jcvi.io.idReader.IdReaderException;
-import org.jcvi.io.idReader.StringIdParser;
+import org.jcvi.common.io.idReader.DefaultFileIdReader;
+import org.jcvi.common.io.idReader.IdReader;
+import org.jcvi.common.io.idReader.IdReaderException;
+import org.jcvi.common.io.idReader.StringIdParser;
 import org.joda.time.Period;
 
 /**

@@ -34,7 +34,7 @@ import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
 import org.jcvi.common.core.assembly.contig.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 
 public abstract class  AbstractTestAceParserMatchesAce2Contig {

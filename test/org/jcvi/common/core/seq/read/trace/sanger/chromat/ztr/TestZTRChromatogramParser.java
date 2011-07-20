@@ -31,7 +31,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramXMLSeriali
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramParser;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

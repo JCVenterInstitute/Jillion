@@ -39,11 +39,11 @@ import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramParser;
-import org.jcvi.io.fileServer.DirectoryFileServer;
-import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
-import org.jcvi.io.idReader.DefaultFileIdReader;
-import org.jcvi.io.idReader.IdReader;
-import org.jcvi.io.idReader.StringIdParser;
+import org.jcvi.common.io.fileServer.DirectoryFileServer;
+import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
+import org.jcvi.common.io.idReader.DefaultFileIdReader;
+import org.jcvi.common.io.idReader.IdReader;
+import org.jcvi.common.io.idReader.StringIdParser;
 
 /**
  * {@code Chromatogram2fasta} is a program that will convert a list 

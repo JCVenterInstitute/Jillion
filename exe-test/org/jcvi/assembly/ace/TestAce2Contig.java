@@ -34,7 +34,7 @@ import org.jcvi.common.core.assembly.contig.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.assembly.contig.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

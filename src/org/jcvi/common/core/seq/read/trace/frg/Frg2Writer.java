@@ -47,8 +47,8 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.internal.TigrQualitiesEncodedGyphCodec;
-import org.jcvi.io.fileServer.DirectoryFileServer;
-import org.jcvi.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
+import org.jcvi.common.io.fileServer.DirectoryFileServer;
+import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 
 public class Frg2Writer {
     private static final TigrQualitiesEncodedGyphCodec QUALITY_CODEC = TigrQualitiesEncodedGyphCodec.getINSTANCE();

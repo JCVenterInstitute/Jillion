@@ -29,7 +29,7 @@ import java.util.Properties;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 
 public abstract class AbstractTestPhd {

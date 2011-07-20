@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFDecoderException;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestActualSCFCodec {

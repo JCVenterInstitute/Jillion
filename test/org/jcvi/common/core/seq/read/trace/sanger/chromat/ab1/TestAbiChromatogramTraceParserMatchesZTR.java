@@ -26,7 +26,7 @@ import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.Ab1FileParser;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFileParser;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -38,10 +38,10 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
-import org.jcvi.io.idReader.DefaultFileIdReader;
-import org.jcvi.io.idReader.IdReader;
-import org.jcvi.io.idReader.IdReaderException;
-import org.jcvi.io.idReader.StringIdParser;
+import org.jcvi.common.io.idReader.DefaultFileIdReader;
+import org.jcvi.common.io.idReader.IdReader;
+import org.jcvi.common.io.idReader.IdReaderException;
+import org.jcvi.common.io.idReader.StringIdParser;
 /**
  * Utility class for commandline parsing.
  * @author dkatzel

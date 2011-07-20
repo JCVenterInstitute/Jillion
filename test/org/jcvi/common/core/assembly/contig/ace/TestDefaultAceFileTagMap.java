@@ -32,7 +32,7 @@ import org.jcvi.common.core.assembly.contig.ace.DefaultAceFileTagMap;
 import org.jcvi.common.core.assembly.contig.ace.DefaultConsensusAceTag;
 import org.jcvi.common.core.assembly.contig.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.contig.ace.WholeAssemblyAceTag;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;

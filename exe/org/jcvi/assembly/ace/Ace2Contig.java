@@ -36,7 +36,7 @@ import org.jcvi.common.core.assembly.contig.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ctg.ContigFileWriter;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.io.idReader.IdReaderException;
+import org.jcvi.common.io.idReader.IdReaderException;
 
 /**
  * {@code Ace2Contig} parses a .ace file

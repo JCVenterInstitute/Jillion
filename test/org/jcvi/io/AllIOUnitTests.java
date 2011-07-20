@@ -23,9 +23,9 @@
  */
 package org.jcvi.io;
 
+import org.jcvi.common.io.idReader.AllIdReaderUnitTests;
+import org.jcvi.common.io.fileServer.AllFileServerUnitTests;
 import org.jcvi.common.net.TestEmailBuilder;
-import org.jcvi.io.fileServer.AllFileServerUnitTests;
-import org.jcvi.io.idReader.AllIdReaderUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

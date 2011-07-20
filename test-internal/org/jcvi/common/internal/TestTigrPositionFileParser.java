@@ -30,7 +30,7 @@ import org.jcvi.common.core.seq.fastx.fasta.pos.PositionDataStore;
 import org.jcvi.common.core.symbol.EncodedShortGlyph;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.internal.TigrPositionsFileParser;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

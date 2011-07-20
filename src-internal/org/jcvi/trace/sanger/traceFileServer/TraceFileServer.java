@@ -23,7 +23,7 @@
  */
 package org.jcvi.trace.sanger.traceFileServer;
 
-import org.jcvi.io.fileServer.FileServer;
+import org.jcvi.common.io.fileServer.FileServer;
 
 public interface TraceFileServer extends FileServer {
 

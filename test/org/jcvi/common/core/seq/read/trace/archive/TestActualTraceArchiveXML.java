@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecord;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecordIdGenerator;
 import org.jcvi.common.core.seq.read.trace.archive.TraceInfoField;
 import org.jcvi.common.core.seq.read.trace.archive.TraceInfoXMLTraceArchiveInfoBuilder;
-import org.jcvi.io.fileServer.ResourceFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestActualTraceArchiveXML {
