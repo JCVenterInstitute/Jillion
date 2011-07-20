@@ -21,10 +21,12 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.symbol;
+package org.jcvi.common.internal;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+
+import org.jcvi.common.core.symbol.IllegalEncodedValueException;
 
 /**
  * The <code>DefaultQualitiesEncoder</code> provides a default implementation

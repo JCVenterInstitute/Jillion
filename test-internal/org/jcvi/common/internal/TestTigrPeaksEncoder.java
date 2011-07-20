@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi.common.core.symbol;
+package org.jcvi.common.internal;
 
 /*
  * Created on Jul 30, 2007
@@ -28,7 +28,7 @@ package org.jcvi.common.core.symbol;
 import java.util.Arrays;
 
 import org.jcvi.common.core.symbol.IllegalEncodedValueException;
-import org.jcvi.common.core.symbol.TigrPeaksEncoder;
+import org.jcvi.common.internal.TigrPeaksEncoder;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

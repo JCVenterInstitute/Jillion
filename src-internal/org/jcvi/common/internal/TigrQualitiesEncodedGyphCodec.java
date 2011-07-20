@@ -21,40 +21,42 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.symbol;
+package org.jcvi.common.internal;
 
+import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.common.core.symbol.TigrQualitiesEncodedGyphCodec;
+import org.jcvi.common.core.symbol.GlyphCodec;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.junit.Test;
-import static org.junit.Assert.*;
-public class TestTigrQualitiesEncoderCodec {
 
-    byte[] qualitiesAsBytes = new byte[]{10,20,30,40,50,60,23,55};
-    List<PhredQuality> qualities = PhredQuality.valueOf(qualitiesAsBytes);
-    String encodedQualities = ":DNXblGg";
+public final class TigrQualitiesEncodedGyphCodec implements GlyphCodec<PhredQuality>{
+
+    private static TigrQualitiesEncodedGyphCodec INSTANCE = new TigrQualitiesEncodedGyphCodec();
     
-    TigrQualitiesEncodedGyphCodec sut = TigrQualitiesEncodedGyphCodec.getINSTANCE();
+    private TigrQualitiesEncodedGyphCodec(){}
     
-    @Test
-    public void encode(){
-        assertEquals(encodedQualities, new String(sut.encode(qualities)));
+    public static TigrQualitiesEncodedGyphCodec getINSTANCE(){
+        return INSTANCE;
     }
     
-    @Test
-    public void decode(){
-        assertEquals(qualities, sut.decode(encodedQualities.getBytes()));
+    @Override
+    public List<PhredQuality> decode(byte[] encodedGlyphs) {       
+        return PhredQuality.valueOf(TigrQualitiesEncoder.decode(new String(encodedGlyphs)));       
     }
-    @Test
-    public void length(){
-        assertEquals(qualitiesAsBytes.length, sut.decodedLengthOf(encodedQualities.getBytes()));
+
+    @Override
+    public PhredQuality decode(byte[] encodedGlyphs, int index) {
+        return PhredQuality.valueOf(TigrQualitiesEncoder.decode((char)encodedGlyphs[index]));
     }
-    @Test
-    public void indexedDecode(){
-        byte[] encodedBytes = encodedQualities.getBytes();
-        for(int i=0; i<encodedQualities.length(); i++){
-            assertEquals(qualities.get(i), sut.decode(encodedBytes, i));
-        }
+
+    @Override
+    public int decodedLengthOf(byte[] encodedGlyphs) {
+        return encodedGlyphs.length;
     }
+
+    @Override
+    public byte[] encode(Collection<PhredQuality> glyphs) {
+        return TigrQualitiesEncoder.encode(PhredQuality.toArray(glyphs)).getBytes();
+    }
+
 }
