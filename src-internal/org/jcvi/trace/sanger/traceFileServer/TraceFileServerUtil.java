@@ -19,7 +19,7 @@
 
 package org.jcvi.trace.sanger.traceFileServer;
 
-import org.jcvi.http.HttpUtil;
+import org.jcvi.common.net.http.HttpUtil;
 
 /**
  * Utility class for TraceFileServer.

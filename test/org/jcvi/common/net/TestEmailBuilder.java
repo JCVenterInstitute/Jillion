@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.io;
+package org.jcvi.common.net;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +35,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.commons.io.IOUtils;
 import org.easymock.IAnswer;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.net.EmailBuilder;
 import org.jcvi.io.fileServer.ResourceFileServer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;

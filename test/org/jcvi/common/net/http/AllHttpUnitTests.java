@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.http;
+package org.jcvi.common.net.http;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

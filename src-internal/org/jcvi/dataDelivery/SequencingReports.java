@@ -25,7 +25,7 @@ import java.net.HttpURLConnection;
 
 import org.jcvi.auth.DefaultJCVIAuthorizer;
 import org.jcvi.auth.JCVIAuthorizer;
-import org.jcvi.http.HttpGetRequestBuilder;
+import org.jcvi.common.net.http.HttpGetRequestBuilder;
 
 /**
  * @author dkatzel

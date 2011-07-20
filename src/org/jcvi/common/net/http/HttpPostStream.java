@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.http;
+package org.jcvi.common.net.http;
 
 import java.io.IOException;
 import java.io.OutputStream;

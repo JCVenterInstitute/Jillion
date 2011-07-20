@@ -19,4 +19,4 @@
 /**
  * Set of Classes used to simplify working with HTTP.
  */
-package org.jcvi.http;
+package org.jcvi.common.net.http;

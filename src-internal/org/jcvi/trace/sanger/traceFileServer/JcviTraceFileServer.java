@@ -30,7 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import org.jcvi.auth.JCVIEncodedAuthorizer;
 import org.jcvi.common.core.util.StringUtilities;
-import org.jcvi.http.HttpGetRequestBuilder;
+import org.jcvi.common.net.http.HttpGetRequestBuilder;
 import org.jcvi.io.fileServer.ReadWriteFileServer;
 import org.jtc.chromatogram_archiver.api.archiver.client.JTCChromatogramArchiver;
 import org.jtc.chromatogram_archiver.api.archiver.exception.ChromatogramArchiveException;
