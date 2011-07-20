@@ -32,11 +32,11 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 public class DefaultScaffold implements Scaffold {
     private final String id;
@@ -122,12 +122,12 @@ public class DefaultScaffold implements Scaffold {
                 + "(normalized range " + normalizedPlacedContigRange + ")");
         }
 
-        if ( placedContig.getSequenceDirection() == SequenceDirection.FORWARD ) {
+        if ( placedContig.getSequenceDirection() == Direction.FORWARD ) {
             long rightShift = placedContig.getStart();
             return Range.buildRange(
                     rightShift+placedContigRange.getStart(),
                     rightShift+placedContigRange.getEnd());
-        } else if ( placedContig.getSequenceDirection() == SequenceDirection.REVERSE ) {
+        } else if ( placedContig.getSequenceDirection() == Direction.REVERSE ) {
             long leftShift = placedContig.getEnd()-placedContigRange.getStart();
             return Range.buildRange(
                     leftShift-(placedContigRange.size()-1),
@@ -206,12 +206,12 @@ public class DefaultScaffold implements Scaffold {
             this.id =id;
             contigs = new TreeSet<PlacedContig>();
         }
-        public Builder add(String contigId, Range contigRange, SequenceDirection contigDirection){
+        public Builder add(String contigId, Range contigRange, Direction contigDirection){
             contigs.add(new DefaultPlacedContig(contigId, contigRange,contigDirection));
             return this;
         }
         public Builder add(String contigId, Range contigRange){
-            return add(contigId, contigRange, SequenceDirection.FORWARD);
+            return add(contigId, contigRange, Direction.FORWARD);
         }
         /**
          * Shift all contigs in the scaffold so that the first

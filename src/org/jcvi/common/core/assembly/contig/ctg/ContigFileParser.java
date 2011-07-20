@@ -32,11 +32,11 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 public final class ContigFileParser  {
     private static final Pattern NEW_CONTIG_PATTERN = Pattern.compile("##(\\S+).+");
@@ -131,7 +131,7 @@ public final class ContigFileParser  {
     private static void fireVisitNewRead(Matcher newSequenceMatcher,  ContigFileVisitor visitor) {
            String seqId = newSequenceMatcher.group(1);
            int offset = Integer.parseInt(newSequenceMatcher.group(2));
-           SequenceDirection dir= parseComplimentedFlag(newSequenceMatcher)?SequenceDirection.REVERSE: SequenceDirection.FORWARD;
+           Direction dir= parseComplimentedFlag(newSequenceMatcher)?Direction.REVERSE: Direction.FORWARD;
            Range validRange = parseValidRange(newSequenceMatcher, dir);
            
            visitor.visitNewRead(seqId, offset, validRange, dir);
@@ -142,11 +142,11 @@ public final class ContigFileParser  {
     }
 
     private static Range parseValidRange(Matcher newSequenceMatcher,
-            SequenceDirection dir) {
+            Direction dir) {
             int left = Integer.parseInt(newSequenceMatcher.group(4));
            int right = Integer.parseInt(newSequenceMatcher.group(5));
            Range validRange;
-           if(dir == SequenceDirection.REVERSE){
+           if(dir == Direction.REVERSE){
                validRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED,right, left);
            }
            else{

@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.AceBestSegment;
 import org.jcvi.common.core.assembly.contig.ace.AceBestSegmentMap;
@@ -40,7 +41,6 @@ import org.jcvi.common.core.assembly.contig.slice.DefaultSliceMap;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceMap;
 import org.jcvi.common.core.assembly.coverage.slice.TestSliceUtil;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.junit.Test;
@@ -65,7 +65,7 @@ public abstract class AbstractTestAceBestSegmentMap {
         List<Slice> slices =TestSliceUtil.createSlicesFrom(
                 Arrays.asList("ACGT"), 
                 new byte[][]{new byte[]{30,30,30,30}},            
-                Arrays.asList(SequenceDirection.FORWARD));
+                Arrays.asList(Direction.FORWARD));
      
         SliceMap sliceMap = new DefaultSliceMap(slices);
         sut = createSut(sliceMap, consensus);
@@ -85,7 +85,7 @@ public abstract class AbstractTestAceBestSegmentMap {
         List<Slice> slices =TestSliceUtil.createSlicesFrom(
                 Arrays.asList("ACGN", "NNNT"), 
                 new byte[][]{new byte[]{30,30,30,30},new byte[]{30,30,30,30}},            
-                Arrays.asList(SequenceDirection.FORWARD,SequenceDirection.FORWARD));
+                Arrays.asList(Direction.FORWARD,Direction.FORWARD));
      
         SliceMap sliceMap = new DefaultSliceMap(slices);
         sut = createSut(sliceMap, consensus);
@@ -109,7 +109,7 @@ public abstract class AbstractTestAceBestSegmentMap {
         List<Slice> slices =TestSliceUtil.createSlicesFrom(
                 Arrays.asList("ACNT", "NNGN"), 
                 new byte[][]{new byte[]{30,30,30,30},new byte[]{30,30,30,30}},            
-                Arrays.asList(SequenceDirection.FORWARD,SequenceDirection.FORWARD));
+                Arrays.asList(Direction.FORWARD,Direction.FORWARD));
      
         SliceMap sliceMap = new DefaultSliceMap(slices);
         sut = createSut(sliceMap, consensus);
@@ -137,7 +137,7 @@ public abstract class AbstractTestAceBestSegmentMap {
         List<Slice> slices =TestSliceUtil.createSlicesFrom(
                 Arrays.asList("ACNT", "NNGT"), 
                 new byte[][]{new byte[]{30,30,30,30},new byte[]{30,30,30,30}},            
-                Arrays.asList(SequenceDirection.FORWARD,SequenceDirection.FORWARD));
+                Arrays.asList(Direction.FORWARD,Direction.FORWARD));
      
         SliceMap sliceMap = new DefaultSliceMap(slices);
         sut = createSut(sliceMap, consensus);

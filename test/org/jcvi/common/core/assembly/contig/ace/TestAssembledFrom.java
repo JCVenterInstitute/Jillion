@@ -23,14 +23,14 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.ace.AssembledFrom;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAssembledFrom {
 
-    SequenceDirection dir = SequenceDirection.FORWARD;
+    Direction dir = Direction.FORWARD;
     String id = "assembled from id";
     int offset = 12345;
     
@@ -88,13 +88,13 @@ public class TestAssembledFrom {
      */
     @Test
     public void differentComlimentShouldStillBeEqual(){
-        AssembledFrom differentCompliment = new AssembledFrom(id, offset, SequenceDirection.REVERSE);
+        AssembledFrom differentCompliment = new AssembledFrom(id, offset, Direction.REVERSE);
         TestUtil.assertEqualAndHashcodeSame(sut, differentCompliment);
     }
     
     @Test
     public void testToString(){
-        String expected = id + " " + offset + "is complimented? "+(dir ==SequenceDirection.REVERSE);
+        String expected = id + " " + offset + "is complimented? "+(dir ==Direction.REVERSE);
         assertEquals(expected, sut.toString());
     }
 }

@@ -23,22 +23,22 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 public class AssembledFrom implements Comparable<AssembledFrom>{
 
     private final String id;
-    private final SequenceDirection dir;
+    private final Direction dir;
     private final int startOffset;
     
     public static AssembledFrom createFrom(PlacedRead read, long ungappedFullLength){
         final Range validRange;
-        SequenceDirection dir = read.getSequenceDirection();
+        Direction dir = read.getSequenceDirection();
         Range readValidRange = read.getValidRange();
-        if(dir==SequenceDirection.REVERSE){
+        if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplimentValidRange(readValidRange, ungappedFullLength);
         }
         else{
@@ -52,7 +52,7 @@ public class AssembledFrom implements Comparable<AssembledFrom>{
      * @param startOffset
      * @param complimented
      */
-    public AssembledFrom(String id, int startOffset, SequenceDirection dir) {
+    public AssembledFrom(String id, int startOffset, Direction dir) {
         if(id ==null){
             throw new IllegalArgumentException("id can not be null");
         }
@@ -89,13 +89,13 @@ public class AssembledFrom implements Comparable<AssembledFrom>{
         return startOffset;
     }
     
-    public SequenceDirection getSequenceDirection(){
+    public Direction getSequenceDirection(){
         return dir;
     }
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(id).append(" ").append(startOffset).append("is complimented? ").append(dir ==SequenceDirection.REVERSE);
+        builder.append(id).append(" ").append(startOffset).append("is complimented? ").append(dir ==Direction.REVERSE);
         return builder.toString();
     }
     /**

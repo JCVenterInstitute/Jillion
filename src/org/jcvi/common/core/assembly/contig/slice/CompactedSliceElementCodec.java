@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.contig.slice;
 
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.seq.read.SequenceDirection;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
@@ -41,9 +41,9 @@ enum CompactedSliceElementCodec {
     public static final int SIZE_OF_ENCODED_DATA =2;
     private static final DefaultNucleotideGlyphCodec CODEC = DefaultNucleotideGlyphCodec.getInstance();
     
-    public byte[] compact(NucleotideGlyph base, PhredQuality quality, SequenceDirection direction) {
+    public byte[] compact(NucleotideGlyph base, PhredQuality quality, Direction direction) {
         byte compacted = CODEC.encode(base)[4];
-        if(direction == SequenceDirection.FORWARD){
+        if(direction == Direction.FORWARD){
             compacted = (byte)(compacted | 0x01);
         }
         byte[] ret = new byte[SIZE_OF_ENCODED_DATA];
@@ -69,10 +69,10 @@ enum CompactedSliceElementCodec {
     /**
     * {@inheritDoc}
     */
-    public SequenceDirection getSequenceDirection(byte[] encodedData) {
+    public Direction getSequenceDirection(byte[] encodedData) {
         if((byte)(encodedData[1] & 0x01) ==1){
-            return SequenceDirection.FORWARD;
+            return Direction.FORWARD;
         }
-        return SequenceDirection.REVERSE;
+        return Direction.REVERSE;
     }
 }

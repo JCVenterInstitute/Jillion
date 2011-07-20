@@ -26,13 +26,13 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.seq.read.Confidence;
-import org.jcvi.common.core.seq.read.DefaultConfidence;
-import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultConfidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.PrivateData;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.testUtil.TestUtil;

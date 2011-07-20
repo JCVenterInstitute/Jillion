@@ -1,10 +1,10 @@
 package org.jcvi.primerDesign;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.primerDesign.PrimerDesigner;
 import org.jcvi.primerDesign.domain.PrimerDesignTarget;
@@ -89,7 +89,7 @@ public class TestPrimerDesigner {
                 .setDesignGroupLocationHash(0)
                 .setParentID("contig00070")
                 .setRange(Range.parseRange("17988 - 18013"))
-                .setOrientation(SequenceDirection.REVERSE)
+                .setOrientation(Direction.REVERSE)
                 .setPrimerSequence(new DefaultNucleotideSequence("GAACTTCAGGGTTAGCCTCGTTATC"))
                 .build()
         );
@@ -99,7 +99,7 @@ public class TestPrimerDesigner {
                 .setDesignGroupLocationHash(0)
                 .setParentID("contig00070")
                 .setRange(Range.parseRange("17182 - 17205"))
-                .setOrientation(SequenceDirection.FORWARD)
+                .setOrientation(Direction.FORWARD)
                 .setPrimerSequence(new DefaultNucleotideSequence("CAGGCGTGGTTTATTTCATCTTG"))
                 .build()
         );
@@ -109,7 +109,7 @@ public class TestPrimerDesigner {
                 .setDesignGroupLocationHash(0)
                 .setParentID("contig00070")
                 .setRange(Range.parseRange("17960 - 17983"))
-                .setOrientation(SequenceDirection.REVERSE)
+                .setOrientation(Direction.REVERSE)
                 .setPrimerSequence(new DefaultNucleotideSequence("GGCGCGGCATAAAGTAAGTATCT"))
                 .build()
         );
@@ -119,7 +119,7 @@ public class TestPrimerDesigner {
                 .setDesignGroupLocationHash(0)
                 .setParentID("contig00070")
                 .setRange(Range.parseRange("17242 - 17266"))
-                .setOrientation(SequenceDirection.FORWARD)
+                .setOrientation(Direction.FORWARD)
                 .setPrimerSequence(new DefaultNucleotideSequence("TGAAAATTTATGCCTTGAAACCGA"))
                 .build()
         );
@@ -132,7 +132,7 @@ public class TestPrimerDesigner {
                 .setDesignGroupID("5_10000_0001")
                 .setParentID("contig00070")
                 .setRange(Range.parseRange("54340 - 54363"))
-                .setOrientation(SequenceDirection.REVERSE)
+                .setOrientation(Direction.REVERSE)
                 .setPrimerSequence(new DefaultNucleotideSequence("CAGATATTGTCCTGTCGCAGTCA"))
                 .build()
         );
@@ -142,7 +142,7 @@ public class TestPrimerDesigner {
                 .setDesignGroupID("5_00000_0000")
                 .setParentID("contig00070")
                 .setRange(Range.parseRange("54300 - 54325"))
-                .setOrientation(SequenceDirection.REVERSE)
+                .setOrientation(Direction.REVERSE)
                 .setPrimerSequence(new DefaultNucleotideSequence("AAGCAAATTTATTGACACCCATCAC"))
                 .build()
         );
@@ -152,7 +152,7 @@ public class TestPrimerDesigner {
                 .setDesignGroupLocationHash(1)
                 .setParentID("contig00070")
                 .setRange(Range.parseRange("53628 - 53651"))
-                .setOrientation(SequenceDirection.FORWARD)
+                .setOrientation(Direction.FORWARD)
                 .setPrimerSequence(new DefaultNucleotideSequence("CGCCAATATCTTGCTGCATAAAA"))
                 .build()
         );
@@ -162,7 +162,7 @@ public class TestPrimerDesigner {
                 .setDesignGroupLocationHash(1)
                 .setParentID("contig00070")
                 .setRange(Range.parseRange("53579 - 53605"))
-                .setOrientation(SequenceDirection.FORWARD)
+                .setOrientation(Direction.FORWARD)
                 .setPrimerSequence(new DefaultNucleotideSequence("TCAAGTTTATGTTGCTTGTTACCCTG"))
                 .build()
         );

@@ -1,9 +1,9 @@
 package org.jcvi.primerDesign.results;
 
 import org.junit.Test;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 import org.jcvi.primerDesign.CollectionComparison;
 
@@ -33,10 +33,10 @@ public class TestPrimerDesignerResultParser {
             new File(TestPrimerDesignerResultParser.class.getResource("files/primers.fasta").getFile());
         String parentID = "contig00070";
         List<PrimerDesignResult> expectedResult = new ArrayList<PrimerDesignResult>();
-        expectedResult.add(buildResult(testFile,parentID,"05_00000_0000",Range.parseRange("17038,17064"),SequenceDirection.FORWARD,"ATCTGACAATCGCCAGTATTTTCTTC"));
-        expectedResult.add(buildResult(testFile,parentID,"05_00000_0000",Range.parseRange("18270,18296"),SequenceDirection.REVERSE,"GCTGCTTCGTTAGGTACTTTGACAAT"));
-        expectedResult.add(buildResult(testFile,parentID,"05_10000_0001",Range.parseRange("16882,16908"),SequenceDirection.FORWARD,"CTGTGGTATCGTTGGCATTTATTTTT"));
-        expectedResult.add(buildResult(testFile,parentID,"05_10000_0001",Range.parseRange("18043,18069"),SequenceDirection.REVERSE,"AATATCAACTTGGCCGTCTGTATCAC"));
+        expectedResult.add(buildResult(testFile,parentID,"05_00000_0000",Range.parseRange("17038,17064"),Direction.FORWARD,"ATCTGACAATCGCCAGTATTTTCTTC"));
+        expectedResult.add(buildResult(testFile,parentID,"05_00000_0000",Range.parseRange("18270,18296"),Direction.REVERSE,"GCTGCTTCGTTAGGTACTTTGACAAT"));
+        expectedResult.add(buildResult(testFile,parentID,"05_10000_0001",Range.parseRange("16882,16908"),Direction.FORWARD,"CTGTGGTATCGTTGGCATTTATTTTT"));
+        expectedResult.add(buildResult(testFile,parentID,"05_10000_0001",Range.parseRange("18043,18069"),Direction.REVERSE,"AATATCAACTTGGCCGTCTGTATCAC"));
         
 
 
@@ -50,7 +50,7 @@ public class TestPrimerDesignerResultParser {
                                            String parentID,
                                            String designGroupID,
                                            Range range,
-                                           SequenceDirection orientation,
+                                           Direction orientation,
                                            String primerSequence) {
         return
             new PrimerDesignResult.Builder(testFile)

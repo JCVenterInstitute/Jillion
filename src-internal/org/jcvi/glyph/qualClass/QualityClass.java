@@ -27,9 +27,9 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.Glyph;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
@@ -183,10 +183,10 @@ public enum QualityClass implements Glyph, Comparable<QualityClass>{
         private final boolean hasAmbiguiousConsensus;
         private static final Integer ZERO = Integer.valueOf(0);
         private boolean built;
-        private Map<SequenceDirection, Integer> highQualityAgreementMap;
-        private Map<SequenceDirection, Integer> highQualityConflictMap;        
-        private Map<SequenceDirection, Integer> lowQualityAgreementMap;
-        private Map<SequenceDirection, Integer> lowQualityConflictMap;
+        private Map<Direction, Integer> highQualityAgreementMap;
+        private Map<Direction, Integer> highQualityConflictMap;        
+        private Map<Direction, Integer> lowQualityAgreementMap;
+        private Map<Direction, Integer> lowQualityConflictMap;
         private int numberOfAgreeingReads;
         private int numberOfReads;
         private final PhredQuality highQualitythreshold;
@@ -233,10 +233,10 @@ public enum QualityClass implements Glyph, Comparable<QualityClass>{
             return highQualitythreshold.compareTo(quality)<=0;
         }
         private void createAndInitializeMaps() {
-            highQualityAgreementMap = new EnumMap<SequenceDirection, Integer>(SequenceDirection.class);
-            highQualityConflictMap = new EnumMap<SequenceDirection, Integer>(SequenceDirection.class);
-            lowQualityAgreementMap = new EnumMap<SequenceDirection, Integer>(SequenceDirection.class);
-            lowQualityConflictMap = new EnumMap<SequenceDirection, Integer>(SequenceDirection.class);
+            highQualityAgreementMap = new EnumMap<Direction, Integer>(Direction.class);
+            highQualityConflictMap = new EnumMap<Direction, Integer>(Direction.class);
+            lowQualityAgreementMap = new EnumMap<Direction, Integer>(Direction.class);
+            lowQualityConflictMap = new EnumMap<Direction, Integer>(Direction.class);
             
             initializeMap(highQualityAgreementMap);
             initializeMap(highQualityConflictMap);
@@ -244,9 +244,9 @@ public enum QualityClass implements Glyph, Comparable<QualityClass>{
             initializeMap(lowQualityConflictMap);
         }
 
-        private void initializeMap(Map<SequenceDirection, Integer> map) {
-            map.put(SequenceDirection.FORWARD, ZERO);
-            map.put(SequenceDirection.REVERSE, ZERO);
+        private void initializeMap(Map<Direction, Integer> map) {
+            map.put(Direction.FORWARD, ZERO);
+            map.put(Direction.REVERSE, ZERO);
         }
         public final boolean isGapConsensus() {
             return gapConsensus;
@@ -257,20 +257,20 @@ public enum QualityClass implements Glyph, Comparable<QualityClass>{
         }
 
 
-        public final Map<SequenceDirection, Integer> getHighQualityAgreementMap() {
+        public final Map<Direction, Integer> getHighQualityAgreementMap() {
             return highQualityAgreementMap;
         }
 
-        public final Map<SequenceDirection, Integer> getHighQualityConflictMap() {
+        public final Map<Direction, Integer> getHighQualityConflictMap() {
             return highQualityConflictMap;
         }
 
-        public final Map<SequenceDirection, Integer> getLowQualityAgreementMap() {
+        public final Map<Direction, Integer> getLowQualityAgreementMap() {
             return lowQualityAgreementMap;
         }
 
 
-        public final Map<SequenceDirection, Integer> getLowQualityConflictMap() {
+        public final Map<Direction, Integer> getLowQualityConflictMap() {
             return lowQualityConflictMap;
         }
 
@@ -283,26 +283,26 @@ public enum QualityClass implements Glyph, Comparable<QualityClass>{
             return numberOfReads;
         }
         
-        public synchronized Builder addHighQualityAgreement(SequenceDirection direction){
+        public synchronized Builder addHighQualityAgreement(Direction direction){
             increment(highQualityAgreementMap, direction);
             numberOfAgreeingReads++;            
             return this;
         }
-        public synchronized Builder addHighQualityConflict(SequenceDirection direction){
+        public synchronized Builder addHighQualityConflict(Direction direction){
             increment(highQualityConflictMap, direction);
             return this;
         }
-        public synchronized Builder addLowQualityAgreement(SequenceDirection direction){
+        public synchronized Builder addLowQualityAgreement(Direction direction){
             increment(lowQualityAgreementMap, direction);
             numberOfAgreeingReads++;
             return this;
         }
-        public synchronized Builder addLowQualityConflict(SequenceDirection direction){
+        public synchronized Builder addLowQualityConflict(Direction direction){
             increment(lowQualityConflictMap, direction);
             return this;
         }
         
-        private void increment(Map<SequenceDirection, Integer> map, SequenceDirection direction) {
+        private void increment(Map<Direction, Integer> map, Direction direction) {
             map.put(direction, Integer.valueOf(map.get(direction).intValue()+1));  
             numberOfReads++;
         }

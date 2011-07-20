@@ -25,12 +25,12 @@ package org.jcvi.common.core.assembly.contig.ace;
 
 import java.util.Date;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ctg.AbstractContigFileVisitor;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.FastXRecord;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.Glyph;
 import org.jcvi.common.core.symbol.Sequence;
 
@@ -61,7 +61,7 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
 
     @Override
     protected void visitRead(String readId, int offset, Range validRange,
-            String basecalls, SequenceDirection dir) {
+            String basecalls, Direction dir) {
         
         PhdInfo info =new DefaultPhdInfo(readId, readId+".phd.1", phdDate);
         try {

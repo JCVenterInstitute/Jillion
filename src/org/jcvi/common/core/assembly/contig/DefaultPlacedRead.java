@@ -27,9 +27,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
@@ -39,10 +39,10 @@ public class DefaultPlacedRead implements PlacedRead {
 
     private final Read<ReferenceEncodedNucleotideSequence> read;
     private final long start;
-    private final SequenceDirection sequenceDirection;
+    private final Direction sequenceDirection;
     
     
-    public DefaultPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long start, SequenceDirection sequenceDirection){
+    public DefaultPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long start, Direction sequenceDirection){
         if(read==null){
             throw new IllegalArgumentException("read can not be null");
         }
@@ -115,7 +115,7 @@ public class DefaultPlacedRead implements PlacedRead {
     }
     
     @Override
-    public SequenceDirection getSequenceDirection() {
+    public Direction getSequenceDirection() {
         return sequenceDirection;
     }
     @Override

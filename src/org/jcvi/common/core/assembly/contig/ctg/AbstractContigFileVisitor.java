@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.assembly.contig.ctg;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{
     private boolean initialized;
@@ -34,7 +34,7 @@ public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{
     
     private int currentReadOffset;
     private String currentReadId ;
-    private SequenceDirection currentReadSequenceDirection;
+    private Direction currentReadSequenceDirection;
     private Range currentReadValidRange;
 
 
@@ -80,13 +80,13 @@ public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{
         readingConsensus=true;
     }
 
-    protected abstract void visitRead(String readId, int offset, Range validRange, String basecalls, SequenceDirection dir);
+    protected abstract void visitRead(String readId, int offset, Range validRange, String basecalls, Direction dir);
     protected abstract void visitEndOfContig();
     protected abstract void visitBeginContig(String contigId, String consensus);
     
     @Override
     public void visitNewRead(String seqId, int offset, Range validRange,
-            SequenceDirection dir) {
+            Direction dir) {
         throwExceptionIfInitialized();
         if(readingConsensus){  
             visitBeginContig(currentContigId, currentBasecalls.toString());

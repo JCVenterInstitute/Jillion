@@ -17,15 +17,18 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Mar 27, 2009
+ * Created on Dec 2, 2008
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read;
+package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
-import java.util.List;
 
-public interface Mated<T> {
+public interface Confidence {
 
-    List<T> getMates();
+    /**
+     * @return the data
+     */
+    byte[] getData();
+
 }

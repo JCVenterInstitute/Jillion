@@ -23,12 +23,12 @@
  */
 package org.jcvi.assembly.contig;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.QualityValueStrategy;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
@@ -89,7 +89,7 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
                 PhredQuality qualityValue =qualityValueStrategy.getQualityFor(placedRead, qualityRecord, indexIntoRead);
                 boolean agreesWithConsensus = isSame(consensusBase, calledBase);
                 boolean isHighQuality = isHighQuality(qualityValue);
-                SequenceDirection direction =placedRead.getSequenceDirection();
+                Direction direction =placedRead.getSequenceDirection();
                 addRead(builder, agreesWithConsensus, isHighQuality,
                         direction);
             }
@@ -107,7 +107,7 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
 
     protected void addRead(QualityClass.Builder builder,
             boolean agreesWithConsensus, boolean isHighQuality,
-            SequenceDirection direction) {
+            Direction direction) {
         if(agreesWithConsensus){
             if(isHighQuality){
                 builder.addHighQualityAgreement(direction);

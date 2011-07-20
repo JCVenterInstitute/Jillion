@@ -28,12 +28,12 @@ import org.jcvi.common.core.seq.fastx.fasta.pos.LargePositionFastaRecordIterator
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaIterator;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecord;
-import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.joda.time.DateTime;

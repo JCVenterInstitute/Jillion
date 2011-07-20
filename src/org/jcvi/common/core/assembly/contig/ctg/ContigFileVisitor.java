@@ -23,10 +23,10 @@
  */
 package org.jcvi.common.core.assembly.contig.ctg;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.io.TextFileVisitor;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 /**
  * {@code ContigFileVisitor} is a {@link TextFileVisitor}
  * that visits files that contain {@link Contig} data.
@@ -56,7 +56,7 @@ public interface ContigFileVisitor extends TextFileVisitor{
      * @param readId the id of the read.
      * @param offset the start offset of the read (0-based).
      * @param validRange the Range of the read that contains valid basecall data.
-     * @param dir the {@link SequenceDirection} of this read.
+     * @param dir the {@link Direction} of this read.
      */
-    void visitNewRead(String readId, int offset, Range validRange, SequenceDirection dir);
+    void visitNewRead(String readId, int offset, Range validRange, Direction dir);
 }

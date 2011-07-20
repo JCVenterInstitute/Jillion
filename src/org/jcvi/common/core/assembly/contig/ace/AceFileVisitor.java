@@ -25,10 +25,10 @@ package org.jcvi.common.core.assembly.contig.ace;
 
 import java.util.Date;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.FileVisitor;
 import org.jcvi.common.core.io.TextFileVisitor;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 /**
  * {@code AceFileVisitor} is a {@link FileVisitor}
  * implementation for Ace Files.
@@ -63,10 +63,10 @@ public interface AceFileVisitor extends TextFileVisitor{
      * AssembledFroms define the location of the 
      * read within a contig.
      * @param readId id of read.
-     * @param dir {@link SequenceDirection} of read inside contig.
+     * @param dir {@link Direction} of read inside contig.
      * @param gappedStartOffset gapped start offset of read inside contig.
      */
-    void visitAssembledFromLine(String readId, SequenceDirection dir, int gappedStartOffset);
+    void visitAssembledFromLine(String readId, Direction dir, int gappedStartOffset);
     /**
      * Base Segments indicate reads phrap has chosen to be the consensus
      * at a particular position.

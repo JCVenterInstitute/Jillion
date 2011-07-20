@@ -22,9 +22,9 @@ package org.jcvi.assembly.tasm;
 import java.util.EnumMap;
 import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
@@ -63,7 +63,7 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, NucleotideGlyph.convertToString(this.getEncodedGlyphs().decode()));
 		
 		Range validRange = this.getValidRange();
-		if(this.getSequenceDirection()== SequenceDirection.FORWARD){
+		if(this.getSequenceDirection()== Direction.FORWARD){
 			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_LEFT, ""+(validRange.getStart()+1));
 			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_RIGHT, ""+(validRange.getEnd()+1));
 		}else{
@@ -106,7 +106,7 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	}
 
 	@Override
-	public SequenceDirection getSequenceDirection() {
+	public Direction getSequenceDirection() {
 		return delegatePlacedRead.getSequenceDirection();
 	}
 

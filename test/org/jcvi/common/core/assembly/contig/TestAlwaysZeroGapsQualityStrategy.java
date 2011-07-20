@@ -21,11 +21,11 @@ package org.jcvi.common.core.assembly.contig;
 
 import static org.junit.Assert.assertEquals;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
 import org.jcvi.common.core.assembly.contig.GapQualityValueStrategies;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.Sequence;
@@ -86,7 +86,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
     @Test
     public void oneGapShouldReverseReturnQualityValue0(){
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
-                                    .addRead("readId", 0, "ACGT-CGT", SequenceDirection.REVERSE)
+                                    .addRead("readId", 0, "ACGT-CGT", Direction.REVERSE)
                                     .build();
         PlacedRead read = contig.getPlacedReadById("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
@@ -109,7 +109,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
     @Test
     public void multiGapGapShouldReverseReturnQualityValue0(){
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
-                                    .addRead("readId", 0, "ACGT--CGT", SequenceDirection.REVERSE)
+                                    .addRead("readId", 0, "ACGT--CGT", Direction.REVERSE)
                                     .build();
         PlacedRead read = contig.getPlacedReadById("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,

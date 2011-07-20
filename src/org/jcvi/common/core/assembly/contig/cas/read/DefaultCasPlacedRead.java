@@ -26,10 +26,10 @@ package org.jcvi.common.core.assembly.contig.cas.read;
 import java.util.Collections;
 import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
@@ -38,10 +38,10 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
     private final Read read;
     private final Range validRange;
     private final long startOffset;
-    private final SequenceDirection dir;
+    private final Direction dir;
     private final int ungappedFullLength;
     public DefaultCasPlacedRead(Read read, long startOffset,Range validRange, 
-            SequenceDirection dir, int ungappedFullLength){
+            Direction dir, int ungappedFullLength){
         this.read= read;
         this.validRange = validRange;
         this.startOffset = startOffset;
@@ -76,7 +76,7 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
     public String getId() {
         return read.getId();
     }
-    public SequenceDirection getDirection() {
+    public Direction getDirection() {
         return dir;
     }
     @Override
@@ -106,7 +106,7 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
         }
     }
     @Override
-    public SequenceDirection getSequenceDirection() {
+    public Direction getSequenceDirection() {
         return dir;
     }
     @Override

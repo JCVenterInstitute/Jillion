@@ -23,11 +23,11 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
+import org.jcvi.assembly.contig.trim.DefaultRead;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
-import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -37,7 +37,7 @@ public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlaced
     private final PhdInfo phdInfo;
     private final int ungappedFullLength;
     public DefaultAcePlacedRead(Read<ReferenceEncodedNucleotideSequence> read,
-            long start, SequenceDirection dir,PhdInfo phdInfo, int ungappedFullLength) {
+            long start, Direction dir,PhdInfo phdInfo, int ungappedFullLength) {
         super(read, start, dir);
         this.phdInfo =phdInfo;
         this.ungappedFullLength =ungappedFullLength;
@@ -61,11 +61,11 @@ public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlaced
         private Range clearRange;
         private PhdInfo phdInfo;
         private NucleotideSequence reference;
-        private final SequenceDirection dir;
+        private final Direction dir;
         private final int ungappedFullLength;
         
         public Builder(NucleotideSequence reference, String readId,String validBases,
-                            int offset, SequenceDirection dir, Range clearRange,PhdInfo phdInfo,
+                            int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
                             int ungappedFullLength){
             this.readId = readId;
             this.dir =dir;

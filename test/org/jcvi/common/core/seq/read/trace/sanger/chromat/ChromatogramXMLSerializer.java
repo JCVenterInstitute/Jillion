@@ -35,9 +35,6 @@ import java.nio.ShortBuffer;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.Confidence;
-import org.jcvi.common.core.seq.read.DefaultConfidence;
-import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.seq.read.trace.Trace;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Channel;
@@ -51,6 +48,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImp
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 

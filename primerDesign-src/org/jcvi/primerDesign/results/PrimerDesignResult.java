@@ -1,7 +1,7 @@
 package org.jcvi.primerDesign.results;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 import java.io.File;
@@ -29,7 +29,7 @@ public class PrimerDesignResult {
     private Range range;
 
     // primer sequencing direction relative to its parent sequence target
-    private SequenceDirection orientation;
+    private Direction orientation;
 
     // primer sequence
     private NucleotideSequence primerSequence;
@@ -37,7 +37,7 @@ public class PrimerDesignResult {
     private PrimerDesignResult(DesignGroupKey designGroupKey,
                                String parentID,
                                Range range,
-                               SequenceDirection orientation,
+                               Direction orientation,
                                NucleotideSequence primerSequence) {
         this.designGroupKey = designGroupKey;
         this.parentID = parentID;
@@ -73,7 +73,7 @@ public class PrimerDesignResult {
         return range;
     }
 
-    public SequenceDirection getOrientation() {
+    public Direction getOrientation() {
         return orientation;
     }
 
@@ -144,7 +144,7 @@ public class PrimerDesignResult {
 
         private String parentID;
         private Range range;
-        private SequenceDirection orientation;
+        private Direction orientation;
         private NucleotideSequence primerSequence;
 
         public Builder() {
@@ -178,7 +178,7 @@ public class PrimerDesignResult {
             return this;
         }
 
-        public Builder setOrientation(SequenceDirection orientation) {
+        public Builder setOrientation(Direction orientation) {
             this.orientation = orientation;
             return this;
         }

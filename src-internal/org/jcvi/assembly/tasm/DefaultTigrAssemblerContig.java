@@ -26,11 +26,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.AbstractContigBuilder;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
@@ -158,7 +158,7 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
         @Override
         protected TigrAssemblerPlacedRead createPlacedRead(
                 Read<ReferenceEncodedNucleotideSequence> read, long offset,
-                SequenceDirection dir) {
+                Direction dir) {
             return new DefaultTigrAssemblerPlacedRead(read, offset, dir,readAttributeMaps.get(read.getId()));
         }
         

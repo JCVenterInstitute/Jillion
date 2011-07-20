@@ -27,12 +27,12 @@ import static org.junit.Assert.*;
 import java.util.Date;
 import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadAdapter;
 import org.jcvi.common.core.assembly.contig.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.junit.Before;
@@ -78,7 +78,7 @@ public class TestAcePlacedReadAdapter {
     }
     @Test
     public void getSequenceDirection() {
-        SequenceDirection direction = SequenceDirection.REVERSE;
+        Direction direction = Direction.REVERSE;
         expect(mockPlacedRead.getSequenceDirection()).andReturn(direction);
         replay(mockPlacedRead);
         assertEquals(direction, sut.getSequenceDirection());

@@ -17,16 +17,16 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Oct 2, 2009
+ * Created on Mar 26, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read;
+package org.jcvi.common.core.seq.read.trace.frg;
 
-import org.jcvi.common.core.Range;
 
-public interface ReadTrim {
+public interface Library {
 
-    String getReadId();
-    Range getTrimRange(TrimType trimType);
+    String getId();
+    Distance getDistance();
+    MateOrientation getMateOrientation();
 }

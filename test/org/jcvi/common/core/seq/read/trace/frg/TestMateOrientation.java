@@ -21,9 +21,9 @@
  *
  * @author dkatzel
  */
-package org.jcvi.sequence;
+package org.jcvi.common.core.seq.read.trace.frg;
 
-import org.jcvi.common.core.seq.read.MateOrientation;
+import org.jcvi.common.core.seq.read.trace.frg.MateOrientation;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestMateOrientation {

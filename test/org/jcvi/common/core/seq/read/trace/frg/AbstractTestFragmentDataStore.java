@@ -28,10 +28,6 @@ import java.io.FileInputStream;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.read.DefaultLibrary;
-import org.jcvi.common.core.seq.read.Distance;
-import org.jcvi.common.core.seq.read.Library;
-import org.jcvi.common.core.seq.read.MateOrientation;
 import org.jcvi.common.core.seq.read.trace.frg.AbstractFragmentDataStore;
 import org.jcvi.common.core.seq.read.trace.frg.DefaultFragment;
 import org.jcvi.common.core.seq.read.trace.frg.Fragment;

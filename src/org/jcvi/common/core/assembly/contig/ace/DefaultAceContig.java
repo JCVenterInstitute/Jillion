@@ -29,11 +29,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.AbstractContig;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -99,12 +99,12 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         }
     	@Deprecated
         public Builder addRead(String readId, String validBases, int offset,
-                SequenceDirection dir, Range clearRange,PhdInfo phdInfo){
+                Direction dir, Range clearRange,PhdInfo phdInfo){
             return addRead(readId, validBases, offset, dir, clearRange, phdInfo,
                     validBases.replaceAll("-", "").length());
         }
         public Builder addRead(String readId, String validBases, int offset,
-                SequenceDirection dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
+                Direction dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
             //contig left (and right) might be beyond consensus depending on how
             //trimmed the data is and what assembly/consensus caller is used.
             //force contig left and right to be within the called consensus
@@ -124,7 +124,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         }
         private DefaultAcePlacedRead.Builder createNewAceReadBuilder(
                 String readId, String validBases, int offset,
-                SequenceDirection dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength) {
+                Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength) {
             return new DefaultAcePlacedRead.Builder(
                     fullConsensus,readId,
                     ConsedUtil.convertAceGapsToContigGaps(validBases),

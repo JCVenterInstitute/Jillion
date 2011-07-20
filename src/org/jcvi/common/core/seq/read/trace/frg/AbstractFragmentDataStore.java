@@ -29,10 +29,6 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.seq.read.DefaultLibrary;
-import org.jcvi.common.core.seq.read.Distance;
-import org.jcvi.common.core.seq.read.Library;
-import org.jcvi.common.core.seq.read.MateOrientation;
 import org.jcvi.common.core.util.CloseableIterator;
 
 public abstract class AbstractFragmentDataStore implements Frg2Visitor, FragmentDataStore{

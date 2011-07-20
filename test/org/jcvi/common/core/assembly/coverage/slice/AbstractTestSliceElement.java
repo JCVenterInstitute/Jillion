@@ -19,8 +19,8 @@
 
 package org.jcvi.common.core.assembly.coverage.slice;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.testUtil.TestUtil;
@@ -37,9 +37,9 @@ public abstract class AbstractTestSliceElement {
     String id = "id";
     NucleotideGlyph base = NucleotideGlyph.Adenine;
     PhredQuality quality = PhredQuality.valueOf(50);
-    SequenceDirection dir = SequenceDirection.FORWARD;
+    Direction dir = Direction.FORWARD;
     SliceElement sut;
-    protected abstract SliceElement create(String id, NucleotideGlyph base, PhredQuality qual,SequenceDirection dir);
+    protected abstract SliceElement create(String id, NucleotideGlyph base, PhredQuality qual,Direction dir);
     
     @Before
     public void setup(){
@@ -81,7 +81,7 @@ public abstract class AbstractTestSliceElement {
     }
     @Test
     public void differentDirectionShouldNotBeEqual(){
-        SliceElement differentValues = create(id,base, quality,SequenceDirection.REVERSE);
+        SliceElement differentValues = create(id,base, quality,Direction.REVERSE);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
     

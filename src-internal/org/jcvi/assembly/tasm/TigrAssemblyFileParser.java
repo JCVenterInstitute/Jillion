@@ -27,11 +27,11 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.ctg.ContigFileVisitor;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 /**
  * {@code TigrAssemblyFileParser} parses TIGR Assembler contig files.
@@ -195,11 +195,11 @@ public class TigrAssemblyFileParser {
     private static void visitRead(ContigFileVisitor visitor,
             String currentSequenceName, int currentSequenceLeftEnd,
             int currentSequenceRightEnd, int currentOffset, String currentBases) {
-        SequenceDirection dir = currentSequenceLeftEnd > currentSequenceRightEnd?
-                                SequenceDirection.REVERSE:
-                                SequenceDirection.FORWARD;
+        Direction dir = currentSequenceLeftEnd > currentSequenceRightEnd?
+                                Direction.REVERSE:
+                                Direction.FORWARD;
         final Range validRange;
-        if(dir == SequenceDirection.REVERSE){
+        if(dir == Direction.REVERSE){
             validRange= Range.buildRange(CoordinateSystem.RESIDUE_BASED, currentSequenceRightEnd, currentSequenceLeftEnd);
         }else{
             validRange= Range.buildRange(CoordinateSystem.RESIDUE_BASED, currentSequenceLeftEnd, currentSequenceRightEnd);

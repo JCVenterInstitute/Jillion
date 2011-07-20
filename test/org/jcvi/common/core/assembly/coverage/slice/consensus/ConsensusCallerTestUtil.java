@@ -40,9 +40,9 @@ import org.jcvi.common.core.assembly.contig.slice.consensus.DefaultConsensusResu
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.util.MapValueComparator;
 
+import static org.jcvi.common.core.Direction.FORWARD;
+import static org.jcvi.common.core.Direction.REVERSE;
 import static org.jcvi.common.core.assembly.coverage.slice.TestSliceUtil.*;
-import static org.jcvi.common.core.seq.read.SequenceDirection.FORWARD;
-import static org.jcvi.common.core.seq.read.SequenceDirection.REVERSE;
 public final class ConsensusCallerTestUtil {
 
     

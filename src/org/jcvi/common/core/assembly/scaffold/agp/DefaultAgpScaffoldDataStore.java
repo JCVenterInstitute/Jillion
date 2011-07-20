@@ -18,10 +18,10 @@
  ******************************************************************************/
 package org.jcvi.common.core.assembly.scaffold.agp;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.scaffold.DefaultScaffold;
 import org.jcvi.common.core.assembly.scaffold.ScaffoldDataStore;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -48,7 +48,7 @@ public class DefaultAgpScaffoldDataStore implements ScaffoldDataStore, AgpFileVi
         builderMap = new LinkedHashMap<String, DefaultScaffold.Builder>();
     }
 
-    public void visitContigEntry(String scaffoldId, Range contigRange, String contigId, SequenceDirection dir) {
+    public void visitContigEntry(String scaffoldId, Range contigRange, String contigId, Direction dir) {
         if(!builderMap.containsKey(scaffoldId)){
             builderMap.put(scaffoldId, new DefaultScaffold.Builder(scaffoldId));
         }

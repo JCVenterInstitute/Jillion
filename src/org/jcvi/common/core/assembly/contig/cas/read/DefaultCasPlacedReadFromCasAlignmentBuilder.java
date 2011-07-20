@@ -26,14 +26,14 @@ package org.jcvi.common.core.assembly.contig.cas.read;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jcvi.assembly.contig.trim.DefaultRead;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegion;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegionType;
-import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
@@ -48,7 +48,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     private boolean outsideValidRange=true;
     private final List<NucleotideGlyph> allBases;
     private List<NucleotideGlyph> validBases = new ArrayList<NucleotideGlyph>();
-    private final SequenceDirection dir;
+    private final Direction dir;
     private int numberOfGaps=0;
     private long referenceOffset;
     private final long fullUngappedLength;
@@ -74,7 +74,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
             allBases = fullRangeSequence.decode(traceTrimRange);
             validRangeStart = traceTrimRange ==null?0:traceTrimRange.getStart();
         }
-        dir = isReversed? SequenceDirection.REVERSE: SequenceDirection.FORWARD;
+        dir = isReversed? Direction.REVERSE: Direction.FORWARD;
     }catch(Exception e){
         throw new IllegalStateException("error building alignment for read "+ readId,e);
     }
@@ -145,7 +145,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     @Override
     public DefaultCasPlacedRead build() {
         Range validRange = Range.buildRangeOfLength(0, validBases.size()-numberOfGaps).shiftRight(validRangeStart).convertRange(CoordinateSystem.RESIDUE_BASED);
-        if(dir==SequenceDirection.REVERSE){
+        if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplimentValidRange(validRange, fullUngappedLength);
         }
         Read<NucleotideSequence> read = new DefaultRead(readId,

@@ -1,10 +1,10 @@
 package org.jcvi.primerDesign.results;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -66,8 +66,8 @@ public class PrimerDesignerResultParser {
 
                 Map<String,String> elements = parseComments(primerFasta.getComment());
 
-                SequenceDirection orientation =
-                    "-1".equals(elements.get("orientation")) ? SequenceDirection.REVERSE : SequenceDirection.FORWARD;
+                Direction orientation =
+                    "-1".equals(elements.get("orientation")) ? Direction.REVERSE : Direction.FORWARD;
                 builder.setOrientation(orientation);
 
                 builder.setRange(Range.parseRange(elements.get("begin")+","+elements.get("end")));

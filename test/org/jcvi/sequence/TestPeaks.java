@@ -27,12 +27,12 @@ import static org.junit.Assert.*;
 
 import java.nio.ShortBuffer;
 
-import org.jcvi.common.core.seq.read.Peaks;
 import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
+import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 

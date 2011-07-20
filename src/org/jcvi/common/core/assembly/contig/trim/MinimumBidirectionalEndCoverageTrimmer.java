@@ -19,10 +19,10 @@
 
 package org.jcvi.common.core.assembly.contig.trim;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 /**
  * @author dkatzel
@@ -46,7 +46,7 @@ public class MinimumBidirectionalEndCoverageTrimmer<P extends PlacedRead, C exte
                 int forwardCount=0;
                 int reverseCount=0;
                 for(P read : region){
-                    if(read.getSequenceDirection()==SequenceDirection.FORWARD){
+                    if(read.getSequenceDirection()==Direction.FORWARD){
                         forwardCount++;
                     }else{
                         reverseCount++;

@@ -32,9 +32,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 /**
  * 
  * @author dkatzel
@@ -75,7 +75,7 @@ public class AgpParser {
                                                      Long.parseLong(matcher.group(2)),
                                                      Long.parseLong(matcher.group(3)));
                 String contigId = matcher.group(5);
-                SequenceDirection dir = SequenceDirection.parseSequenceDirection(matcher.group(8));
+                Direction dir = Direction.parseSequenceDirection(matcher.group(8));
                 visitor.visitContigEntry(scaffoldId,contigRange,contigId,dir);
             }
         }

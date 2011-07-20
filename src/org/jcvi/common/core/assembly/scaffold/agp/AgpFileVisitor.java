@@ -18,9 +18,9 @@
  ******************************************************************************/
 package org.jcvi.common.core.assembly.scaffold.agp;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.TextFileVisitor;
-import org.jcvi.common.core.seq.read.SequenceDirection;
 
 /**
  * User: aresnick
@@ -42,5 +42,5 @@ public interface AgpFileVisitor extends TextFileVisitor {
      * @param contigId
      * @param dir
      */
-    void visitContigEntry(String scaffoldId, Range contigRange, String contigId, SequenceDirection dir);
+    void visitContigEntry(String scaffoldId, Range contigRange, String contigId, Direction dir);
 }
