@@ -31,11 +31,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestRunLengthEncodedGlyphCodec.class,
-        TestIllegalEncodedValueException.class,
-        TestTigrQualitiesEncoder.class,
-        TestTigrQualitiesEncoderCodec.class,
-        TestTigrPeaksEncoder.class,
-        TestTigrPeaksEncoderCodec.class,
+        TestIllegalEncodedValueException.class,        
         TestShortGlyphDeltaEncoderWhenEncoding.class,
         TestShortGlyphDeltaEncoderWhenDecoding.class
     }

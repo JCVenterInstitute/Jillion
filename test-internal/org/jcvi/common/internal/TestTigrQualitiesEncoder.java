@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi.common.core.symbol;
+package org.jcvi.common.internal;
 
 
 import java.util.Arrays;
@@ -24,7 +24,7 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 import org.jcvi.common.core.symbol.IllegalEncodedValueException;
-import org.jcvi.common.core.symbol.TigrQualitiesEncoder;
+import org.jcvi.common.internal.TigrQualitiesEncoder;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 

@@ -21,15 +21,15 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.symbol;
+package org.jcvi.common.internal;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
-import org.jcvi.common.core.symbol.TigrPeaksEncoder;
-import org.jcvi.common.core.symbol.TigrPeaksEncoderGlyphCodec;
+import org.jcvi.common.internal.TigrPeaksEncoder;
+import org.jcvi.common.internal.TigrPeaksEncoderGlyphCodec;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;

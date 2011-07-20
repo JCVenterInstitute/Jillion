@@ -19,11 +19,13 @@
 /**
  * 
  */
-package org.jcvi.common.core.symbol;
+package org.jcvi.common.internal;
 
 import java.nio.CharBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
+
+import org.jcvi.common.core.symbol.IllegalEncodedValueException;
 
 /**
  * The <code>DefaultPositionsEncoder</code> provides a default implementation of

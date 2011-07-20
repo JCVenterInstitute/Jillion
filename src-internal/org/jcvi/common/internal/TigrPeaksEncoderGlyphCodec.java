@@ -21,11 +21,15 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.symbol;
+package org.jcvi.common.internal;
 
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
+
+import org.jcvi.common.core.symbol.GlyphCodec;
+import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortGlyphFactory;
 
 
 public enum TigrPeaksEncoderGlyphCodec implements GlyphCodec<ShortGlyph>{
