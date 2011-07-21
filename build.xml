@@ -149,7 +149,7 @@
 								      <instr instrpath="${bin}"
 								             mode="overwrite"
 								      		merge="false"
-								      	filter = "-*.experimental*"
+								      	filter = "-*.experimental.*"
 								      >
 						      		</instr>
 						  	    </emma>
