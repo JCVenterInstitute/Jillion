@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadHeader;
-import org.jcvi.testUtil.TestUtil;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

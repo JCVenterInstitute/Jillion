@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.DefaultSCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.testUtil.TestUtil;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 public class TestDefaultSCFHeader {

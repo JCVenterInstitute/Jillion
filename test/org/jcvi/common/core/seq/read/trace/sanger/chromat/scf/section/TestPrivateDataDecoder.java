@@ -34,7 +34,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.PrivateDataCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionDecoder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionDecoderException;
-import org.jcvi.testUtil.EasyMockUtil;
+import org.jcvi.common.core.testUtil.EasyMockUtil;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

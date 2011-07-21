@@ -25,8 +25,8 @@ package org.jcvi.assembly.contig;
 import static org.junit.Assert.*;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.glyph.qualClass.QualityClass;
-import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 public class TestQualityClassRegion {
 

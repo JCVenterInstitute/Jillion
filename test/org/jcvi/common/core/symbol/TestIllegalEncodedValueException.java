@@ -19,7 +19,7 @@
 package org.jcvi.common.core.symbol;
 
 import org.jcvi.common.core.symbol.IllegalEncodedValueException;
-import org.jcvi.testUtil.AbstractThrowableTest;
+import org.jcvi.common.core.testUtil.AbstractThrowableTest;
 
 
 public class TestIllegalEncodedValueException extends AbstractThrowableTest<IllegalEncodedValueException> {

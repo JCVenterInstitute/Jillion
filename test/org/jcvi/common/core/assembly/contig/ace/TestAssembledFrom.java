@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.contig.ace;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.ace.AssembledFrom;
-import org.jcvi.testUtil.TestUtil;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAssembledFrom {

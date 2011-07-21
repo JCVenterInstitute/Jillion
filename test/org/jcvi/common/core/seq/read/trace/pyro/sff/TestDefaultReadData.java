@@ -26,8 +26,8 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.util.Arrays;
 
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadData;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.common.core.util.MathUtil;
-import org.jcvi.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

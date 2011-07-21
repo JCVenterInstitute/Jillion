@@ -27,7 +27,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Channel;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultChannelGroup;
-import org.jcvi.testUtil.TestUtil;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestChannelGroup {

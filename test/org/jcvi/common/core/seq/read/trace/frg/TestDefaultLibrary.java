@@ -29,7 +29,7 @@ import org.jcvi.common.core.seq.read.trace.frg.DefaultLibrary;
 import org.jcvi.common.core.seq.read.trace.frg.Distance;
 import org.jcvi.common.core.seq.read.trace.frg.Library;
 import org.jcvi.common.core.seq.read.trace.frg.MateOrientation;
-import org.jcvi.testUtil.TestUtil;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 
 public class TestDefaultLibrary {

@@ -32,10 +32,10 @@ import java.io.InputStream;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
-import org.jcvi.testUtil.EasyMockUtil;
+import org.jcvi.common.core.testUtil.EasyMockUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.jcvi.testUtil.EasyMockUtil.*;
+import static org.jcvi.common.core.testUtil.EasyMockUtil.*;
 import static org.easymock.EasyMock.*;
 public class TestSFFReadHeaderCodec_decode extends AbstractTestSFFReadHeaderCodec{
 

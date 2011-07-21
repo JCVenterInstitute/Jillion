@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.testUtil;
+package org.jcvi.common.core.testUtil;
 
 /**
  * {@code SlowTests} is a marker interface that can be used to

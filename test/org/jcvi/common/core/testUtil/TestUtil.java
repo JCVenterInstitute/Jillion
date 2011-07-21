@@ -16,16 +16,31 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
-package org.jcvi.testUtil;
-
-/**
- * {@code FastTests} is a marker interface that can be used to
- * categorize unit tests.  FastTests should run very fast.
+/*
+ * Created on Jul 29, 2008
+ *
  * @author dkatzel
- *
- *
  */
-public interface FastTests {
+package org.jcvi.common.core.testUtil;
+
+import static org.junit.Assert.*;
+
+
+public final class TestUtil {
+    public static void assertEqualAndHashcodeSame(Object obj1, Object obj2) {
+        assertEquals(obj1, obj2);
+        assertTrue(obj1.hashCode()== obj2.hashCode());
+
+        assertEquals(obj2,obj1);
+        assertTrue(obj2.hashCode()== obj1.hashCode());
+    }
+
+    public static void assertNotEqualAndHashcodeDifferent(Object obj1,Object obj2) {
+        assertFalse(obj1.equals(obj2));
+        assertFalse(obj1.hashCode()== obj2.hashCode());
+
+        assertFalse(obj2.equals(obj1));
+        assertFalse(obj2.hashCode()== obj1.hashCode());
+    }
 
 }

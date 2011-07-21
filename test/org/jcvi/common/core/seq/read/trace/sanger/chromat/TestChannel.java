@@ -28,7 +28,7 @@ import static org.easymock.EasyMock.*;
 import java.nio.ShortBuffer;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Channel;
-import org.jcvi.testUtil.TestUtil;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 
 public class TestChannel {

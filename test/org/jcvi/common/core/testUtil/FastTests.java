@@ -17,17 +17,15 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.testUtil;
+package org.jcvi.common.core.testUtil;
 
 /**
- * {@code IntegrationTests} is a marker interface that can be used to
- * categorize unit tests.  IntegrationTests interact with other systems
- * outside of this project.  An IntegrationTest failure might be due to network 
- * outages or problems with the external system(s) being interacted with.
+ * {@code FastTests} is a marker interface that can be used to
+ * categorize unit tests.  FastTests should run very fast.
  * @author dkatzel
  *
  *
  */
-public interface IntegrationTests {
+public interface FastTests {
 
 }

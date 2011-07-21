@@ -30,7 +30,7 @@ import java.util.Arrays;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.IOUtil.ReadResults;
-import org.jcvi.testUtil.EasyMockUtil;
+import org.jcvi.common.core.testUtil.EasyMockUtil;
 import org.junit.Test;
 
 /**
