@@ -42,7 +42,6 @@ import org.jcvi.common.core.symbol.AllGlyphUnitTests;
 import org.jcvi.datastore.AllDataStoreUnitTests;
 import org.jcvi.glyph.qualClass.AllQualityClassUnitTests;
 import org.jcvi.io.AllIOUnitTests;
-import org.jcvi.ncbi.AllNcbiUnitTests;
 import org.jcvi.sequence.AllSequencingTests;
 import org.jcvi.trace.AllTraceUnitTests;
 import org.jcvi.util.AllUtilUnitTests;
@@ -76,7 +75,6 @@ import org.junit.runners.Suite.SuiteClasses;
         AllUtilUnitTests.class,
         AllDataStoreUnitTests.class,
         AllAlignTests.class,
-        AllNcbiUnitTests.class,
         AllPlateUnitTests.class
     }
 )

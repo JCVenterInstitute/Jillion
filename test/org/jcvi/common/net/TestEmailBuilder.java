@@ -165,7 +165,7 @@ public class TestEmailBuilder {
     }
     @Test
     public void attachment() throws AddressException, MessagingException, IOException{
-        final File readMe = RESOURCES.getFile("fileServer/files/README.txt");
+        final File readMe = RESOURCES.getFile("files/README");
         mockMessage.setFrom(larry);
         mockMessage.addRecipients(eq(RecipientType.TO), aryEq(new InternetAddress[]{moe}));
         mockMessage.setSubject(subject);
