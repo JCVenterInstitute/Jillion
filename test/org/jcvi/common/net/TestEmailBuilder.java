@@ -22,6 +22,7 @@ package org.jcvi.common.net;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Properties;
 
@@ -181,7 +182,7 @@ public class TestEmailBuilder {
                 try{
                 assertEquals(
                         IOUtils.toString(fileInputStream), 
-                        multiPart.getBodyPart(1).getContent());
+                        IOUtils.toString((InputStream)multiPart.getBodyPart(1).getContent()));
                 return null;
                 }finally{
                     IOUtil.closeAndIgnoreErrors(fileInputStream);
