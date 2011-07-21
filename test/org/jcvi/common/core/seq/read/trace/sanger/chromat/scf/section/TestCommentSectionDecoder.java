@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionDecoderException;
-import org.jcvi.testUtil.EasyMockUtil;
+import org.jcvi.common.core.testUtil.EasyMockUtil;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;

@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.testUtil;
+package org.jcvi.common.core.testUtil;
 
 import static org.easymock.EasyMock.*;
 

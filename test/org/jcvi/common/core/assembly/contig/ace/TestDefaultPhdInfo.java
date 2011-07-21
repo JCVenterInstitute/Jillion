@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.contig.ace;
 import java.util.Date;
 
 import org.jcvi.common.core.assembly.contig.ace.DefaultPhdInfo;
-import org.jcvi.testUtil.TestUtil;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultPhdInfo {

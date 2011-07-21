@@ -23,7 +23,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
-import org.jcvi.testUtil.TestUtil;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

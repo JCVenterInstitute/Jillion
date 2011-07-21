@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.testUtil.TestUtil;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 

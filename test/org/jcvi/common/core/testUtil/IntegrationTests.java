@@ -16,31 +16,18 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jul 29, 2008
- *
+
+package org.jcvi.common.core.testUtil;
+
+/**
+ * {@code IntegrationTests} is a marker interface that can be used to
+ * categorize unit tests.  IntegrationTests interact with other systems
+ * outside of this project.  An IntegrationTest failure might be due to network 
+ * outages or problems with the external system(s) being interacted with.
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.testUtil;
-
-import static org.junit.Assert.*;
-
-
-public final class TestUtil {
-    public static void assertEqualAndHashcodeSame(Object obj1, Object obj2) {
-        assertEquals(obj1, obj2);
-        assertTrue(obj1.hashCode()== obj2.hashCode());
-
-        assertEquals(obj2,obj1);
-        assertTrue(obj2.hashCode()== obj1.hashCode());
-    }
-
-    public static void assertNotEqualAndHashcodeDifferent(Object obj1,Object obj2) {
-        assertFalse(obj1.equals(obj2));
-        assertFalse(obj1.hashCode()== obj2.hashCode());
-
-        assertFalse(obj2.equals(obj1));
-        assertFalse(obj2.hashCode()== obj1.hashCode());
-    }
+public interface IntegrationTests {
 
 }

@@ -30,7 +30,7 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.Chunk;
-import org.jcvi.testUtil.EasyMockUtil;
+import org.jcvi.common.core.testUtil.EasyMockUtil;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -23,7 +23,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.assembly.contig.ace.consed.ReadNavigationElement;
 import org.jcvi.common.core.assembly.contig.ace.consed.NavigationElement.Type;
-import org.jcvi.testUtil.TestUtil;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

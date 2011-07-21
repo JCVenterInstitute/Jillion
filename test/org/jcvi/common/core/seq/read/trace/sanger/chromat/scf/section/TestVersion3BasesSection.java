@@ -31,7 +31,7 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.AbstractBasesSectionCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.Version3BasesSectionCodec;
-import org.jcvi.testUtil.EasyMockUtil;
+import org.jcvi.common.core.testUtil.EasyMockUtil;
 
 
 public class TestVersion3BasesSection extends AbstractTestBasesSection{
