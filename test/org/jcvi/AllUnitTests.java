@@ -39,6 +39,8 @@ import org.jcvi.common.core.seq.fastx.AllFastXTests;
 import org.jcvi.common.core.seq.plate.AllPlateUnitTests;
 import org.jcvi.common.core.seq.read.trace.frg.TestDistance;
 import org.jcvi.common.core.symbol.AllGlyphUnitTests;
+import org.jcvi.common.core.util.MathUtilSuite;
+import org.jcvi.common.core.util.TestCommonUtil;
 import org.jcvi.datastore.AllDataStoreUnitTests;
 import org.jcvi.glyph.qualClass.AllQualityClassUnitTests;
 import org.jcvi.io.AllIOUnitTests;

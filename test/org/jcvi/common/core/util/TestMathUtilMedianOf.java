@@ -21,26 +21,25 @@
  *
  * @author dkatzel
  */
-package org.jcvi;
+package org.jcvi.common.core.util;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.Collections;
 
 import org.jcvi.common.core.util.MathUtil;
 import org.junit.Test;
 
-public class MathUtilAvgOf {
+public class TestMathUtilMedianOf {
     private static final String FAIL_MESSAGE = "empty list should throw illegalArgumentException";
     private static final String MUST_PASS_IN_AT_LEAST_ONE_VALUE =
                                         "must pass in at least one value";
-    private static final Integer ONE = Integer.valueOf(1);
-    private static final Integer TWO = Integer.valueOf(2);
+    private static final Long ONE = Long.valueOf(1);
+    private static final Long TWO = Long.valueOf(2);
     @Test
     public void emptyListShouldThrowIllegalArgumentException(){
         try{
-            MathUtil.averageOf(Collections.<Integer>emptyList());
+            MathUtil.medianOf(Collections.<Integer>emptyList());
             fail(FAIL_MESSAGE);
         }
         catch(IllegalArgumentException e){
@@ -51,7 +50,7 @@ public class MathUtilAvgOf {
     @Test
     public void emptyVarArgsShouldThrowIllegalArgumentException(){
         try{
-            MathUtil.averageOf();
+            MathUtil.<Integer>medianOf();
             fail(FAIL_MESSAGE);
         }
         catch(IllegalArgumentException e){
@@ -61,33 +60,29 @@ public class MathUtilAvgOf {
 
     @Test
     public void oneValue(){
-       assertEquals("one value",ONE.doubleValue(), MathUtil.averageOf(ONE));
+        assertEquals("one value",ONE,  MathUtil.<Long>medianOf(ONE));
     }
     @Test
-    public void sameValueManyTimes(){
-       assertEquals("same value many times",ONE.doubleValue(),
-               MathUtil.averageOf(ONE,ONE,ONE,ONE));
+    public void threeValues(){
+        assertEquals("three value",TWO,  MathUtil.<Integer>medianOf(1,2,30));
+    }
+    @Test
+    public void sameValues(){
+        assertEquals("same value",TWO,  MathUtil.<Integer>medianOf(1,2,2));
+    }
+    @Test
+    public void twoValues(){
+        assertEquals("same value",ONE,  MathUtil.<Integer>medianOf(1,2));
     }
 
     @Test
-    public void actualAverage(){
-        assertEquals("avg",1.5D,
-                MathUtil.averageOf(ONE,TWO));
+    public void oddValues(){
+        assertEquals("same value",Long.valueOf(5),  MathUtil.<Integer>medianOf(1, 5, 2, 8, 7));
     }
 
     @Test
-    public void minValue(){
-        assertEquals("avg",(Integer.MIN_VALUE+1)/2D,
-                MathUtil.averageOf(ONE,Integer.MIN_VALUE));
-    }
-    /**
-     * Checks to make sure the summation calculation can
-     * handle values over max int.
-     */
-    @Test
-    public void intOverflow(){
-        assertEquals("int overflow",1073741824D,
-                MathUtil.averageOf(ONE,Integer.MAX_VALUE));
+    public void evenValues(){
+        assertEquals("same value",Long.valueOf(6),  MathUtil.<Integer>medianOf(1, 5, 2, 10, 8, 7));
     }
 
 }

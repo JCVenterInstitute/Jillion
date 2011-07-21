@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi;
+package org.jcvi.common.core.util;
 
 import java.util.Collections;
 
