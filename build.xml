@@ -104,7 +104,7 @@
 		</target>
 	
 	<target name="bin"
-	         description="Compile Java source and test files" depends="source.only.bin">
+	         description="Compile Java source and test files" depends="internal.source.only.bin">
 		<!-- source already compiled so only compile tests -->
 		<javac debug="true" destdir="${bin}"  classpathref="classpath">
 					<src path="${test}"/>
@@ -142,24 +142,19 @@
 			<!-- debug = true required for emma reports to see line coverage and link to source-->
 			<javac debug="true" destdir="${bin}"  classpathref="classpath">
 				<src path="${src}"/>
-				<src path="${src-internal}"/>
-				<src path="${exe}"/>
-				<src path="${exe-internal}"/>
-				<src path="${command-src}"/>
-				<src path="${primer-design-src}"/>
+				
 		  	</javac>
 			<emma enabled="${emma.enabled}" >
+				
 								      <instr instrpath="${bin}"
 								             mode="overwrite"
 								      		merge="false"
+								      	filter = "-*.experimental*"
 								      >
 						      		</instr>
 						  	    </emma>
 			<copy todir="${bin}">
 				<fileset dir="${src}" excludes="**/*.java"/>
-				<fileset dir="${src-internal}" excludes="**/*.java"/>
-				<fileset dir="${command-src}" excludes="**/*.java"/>
-				<fileset dir="${primer-design-src}" excludes="**/*.java"/>
 			</copy>
 
 		 </target>
@@ -172,21 +167,19 @@
 				<!-- debug = true required for emma reports to see line coverage and link to source-->
 				<javac debug="true" destdir="${bin}"  classpathref="classpath">
 					<src path="${src-internal}"/>
+					<src path="${exe}"/>
 					<src path="${exe-internal}"/>
 			  	</javac>
 				<emma enabled="${emma.enabled}" >
 									      <instr instrpath="${bin}"
 									             mode="overwrite"
 									      		merge="false"
+									      	filter = "-*.experimental.*"
 									      >
+									      	
 							      		</instr>
 							  	    </emma>
-				<copy todir="${bin}">
-					<fileset dir="${src-internal}" excludes="**/*.java"/>
-					<fileset dir="${exe-internal}" excludes="**/*.java"/>
-				</copy>
-
-			 </target>
+		 </target>
 	
 	<target name="emma" description="turns on EMMA's on-the-fly instrumentation mode" >
 	    <property name="emma.enabled" value="true" />

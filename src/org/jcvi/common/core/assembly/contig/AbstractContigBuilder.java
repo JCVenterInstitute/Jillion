@@ -22,9 +22,9 @@ package org.jcvi.common.core.assembly.contig;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.jcvi.assembly.contig.trim.DefaultRead;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;

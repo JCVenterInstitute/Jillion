@@ -27,8 +27,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.jcvi.command.CommandLineOptionBuilder;
-import org.jcvi.command.CommandLineUtils;
+import org.jcvi.common.command.CommandLineOptionBuilder;
+import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.assembly.contig.ace.AbstractAceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
 import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
@@ -79,7 +79,7 @@ public class Ace2Contig {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             File aceFile = new File(commandLine.getOptionValue("a"));
             File contigOutFile = new File(commandLine.getOptionValue("c"));
-            contigOutFile.getParentFile().mkdirs();
+            IOUtil.mkdirs(contigOutFile.getParentFile());
             final ContigFileWriter writer = new ContigFileWriter(new FileOutputStream(contigOutFile));
             final DataStoreFilter filter = CommandLineUtils.createDataStoreFilter(commandLine);
             

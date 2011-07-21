@@ -17,7 +17,7 @@ import java.util.Scanner;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
-import org.jcvi.command.CommandLineOptionBuilder;
+import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.core.io.IOUtil;
 
 public final class TigrAuthorizerUtils {

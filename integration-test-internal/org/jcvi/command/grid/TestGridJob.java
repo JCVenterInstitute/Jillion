@@ -1,5 +1,10 @@
 package org.jcvi.command.grid;
 
+import org.jcvi.common.command.grid.GridJob;
+import org.jcvi.common.command.grid.GridJobExecutorService;
+import org.jcvi.common.command.grid.GridJobFuture;
+import org.jcvi.common.command.grid.GridUtils;
+
 abstract class TestGridJob {
     protected static final String TEST_PROJECT_CODE = "8010AM";
     protected GridJobExecutorService gridExecutor;

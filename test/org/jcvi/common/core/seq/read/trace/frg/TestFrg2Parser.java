@@ -33,9 +33,9 @@ import org.jcvi.common.core.seq.read.trace.frg.FrgVisitorAction;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
-import org.jcvi.common.internal.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 

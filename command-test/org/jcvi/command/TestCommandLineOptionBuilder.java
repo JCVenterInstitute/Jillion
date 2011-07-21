@@ -24,7 +24,7 @@
 package org.jcvi.command;
 
 import org.apache.commons.cli.Option;
-import org.jcvi.command.CommandLineOptionBuilder;
+import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
