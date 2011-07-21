@@ -2,7 +2,10 @@ package org.jcvi.command.grid;
 
 import org.junit.Test;
 
-import org.jcvi.command.Command;
+import org.jcvi.common.command.Command;
+import org.jcvi.common.command.grid.BatchGridJobImpl;
+import org.jcvi.common.command.grid.GridJob;
+import org.jcvi.common.command.grid.GridJobFuture;
 
 
 /**

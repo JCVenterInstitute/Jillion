@@ -1,6 +1,9 @@
 package org.jcvi.command.grid;
 
-import org.jcvi.command.Command;
+import org.jcvi.common.command.Command;
+import org.jcvi.common.command.grid.ArrayGridJobImpl;
+import org.jcvi.common.command.grid.GridJob;
+import org.jcvi.common.command.grid.GridJobFuture;
 import org.jcvi.common.core.io.IOUtil;
 
 import org.junit.*;

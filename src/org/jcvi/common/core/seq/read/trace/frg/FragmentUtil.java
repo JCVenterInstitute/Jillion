@@ -27,9 +27,9 @@ import java.util.regex.Pattern;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.internal.TigrQualitiesEncodedGyphCodec;
 
 /**
  * @author dkatzel

@@ -22,11 +22,12 @@ package org.jcvi;
 import org.jcvi.assembly.AllInternalAssemblyUnitTests;
 import org.jcvi.assembly.contig.AllInternalContigUnitTests;
 import org.jcvi.auth.AllAuthUnitTests;
-import org.jcvi.common.internal.TestTigrPeaksEncoder;
-import org.jcvi.common.internal.TestTigrPeaksEncoderCodec;
+import org.jcvi.common.core.symbol.pos.TestTigrPeaksEncoder;
+import org.jcvi.common.core.symbol.pos.TestTigrPeaksEncoderCodec;
+import org.jcvi.common.core.symbol.qual.TestTigrQualitiesEncoder;
+import org.jcvi.common.core.symbol.qual.TestTigrQualitiesEncoderCodec;
 import org.jcvi.common.internal.TestTigrPositionFileParser;
-import org.jcvi.common.internal.TestTigrQualitiesEncoder;
-import org.jcvi.common.internal.TestTigrQualitiesEncoderCodec;
+import org.jcvi.glyph.qualClass.AllQualityClassUnitTests;
 import org.jcvi.trace.AllInternalTraceUnitTests;
 import org.jcvi.uid.AllUidUnitTests;
 import org.junit.runner.RunWith;
@@ -41,6 +42,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+        AllQualityClassUnitTests.class,
         TestTigrQualitiesEncoder.class,
         TestTigrQualitiesEncoderCodec.class,
         TestTigrPeaksEncoder.class,

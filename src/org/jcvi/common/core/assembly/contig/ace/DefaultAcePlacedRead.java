@@ -23,10 +23,10 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
-import org.jcvi.assembly.contig.trim.DefaultRead;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
+import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;

@@ -19,6 +19,7 @@
 
 package org.jcvi.command;
 
+import org.jcvi.common.command.CommandUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;

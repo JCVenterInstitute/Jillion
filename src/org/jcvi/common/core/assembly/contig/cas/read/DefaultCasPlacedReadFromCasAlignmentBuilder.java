@@ -26,13 +26,13 @@ package org.jcvi.common.core.assembly.contig.cas.read;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.assembly.contig.trim.DefaultRead;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegion;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegionType;
+import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;

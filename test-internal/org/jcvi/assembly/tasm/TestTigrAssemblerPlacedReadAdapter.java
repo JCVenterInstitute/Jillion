@@ -21,12 +21,12 @@ package org.jcvi.assembly.tasm;
 
 import java.util.Map.Entry;
 
-import org.jcvi.assembly.contig.trim.DefaultRead;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
