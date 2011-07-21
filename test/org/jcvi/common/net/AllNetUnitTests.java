@@ -16,15 +16,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Sep 11, 2008
- *
- * @author dkatzel
- */
-package org.jcvi.io;
 
-import org.jcvi.common.io.idReader.AllIdReaderUnitTests;
-import org.jcvi.common.io.fileServer.AllFileServerUnitTests;
+package org.jcvi.common.net;
+
+import org.jcvi.common.net.http.AllHttpUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -32,28 +27,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestIOUtil_closeAndIgnore.class,
-        TestIOUtil_blockingSkip.class,
-        TestIOUtil_readByteArray.class,
-        TestIOUtil_readShortArray.class,
-        TestIOUtil_convertSignedToUnsigned.class,
-        TestIOUtil_UnsignedByteArray.class,
-        TestIOUtil_deleteDir.class,
-        TestIOUtil_convertToUnsignedByteArray.class,
-        TestIOUtil_whenMakingDirectories.class,
-        TestIOUtil_unsignedByteToSignedByte.class,
-        TestIOUtil_unsignedShortToSignedShort.class,
-        TestIOUtil_unsignedIntToSignedInt.class,
-        TestIOUtil_safeBlockingRead.class,
-        
-        AllBase64UnitTests.class,
-        AllIdReaderUnitTests.class,
-        
-        AllFileServerUnitTests.class,
-        TestFileUtil.class,
-        TestMagicNumberInputStream.class
+      TestEmailBuilder.class,
+      AllHttpUnitTests.class
     }
-)
-public class AllIOUnitTests {
+    )
+public class AllNetUnitTests {
 
 }

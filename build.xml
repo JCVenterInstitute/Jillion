@@ -19,9 +19,6 @@
 	<property name ="command-src" value="command-src"/>
 	<property name ="command-test" value="command-test"/>
 	
-	<property name ="http-src" value="http-src"/>
-	<property name ="http-test" value="http-test"/>
-	
 	<property name ="primer-design-src" value="primerDesign-src"/>
 		<property name ="primer-design-test" value="primerDesign-test"/>
 	
@@ -85,7 +82,6 @@
         <pathelement location="${src}"/>
     	<pathelement location="${src-internal}"/>
 		<pathelement location="${command-src}"/>
-		<pathelement location="${http-src}"/>
 		<pathelement location="${primer-design-src}"/>
     </path>
     <path id="classpath">
@@ -118,8 +114,7 @@
 					<src path="${exe-test}"/>
 					<src path="${integration-test}"/>
 					<src path="${integration-test-internal}"/>
-					<src path="${command-test}"/>
-					<src path="${http-test}"/>					
+					<src path="${command-test}"/>			
 					<src path="${primer-design-test}"/>
 			
 	  	</javac>
@@ -134,7 +129,6 @@
 			<fileset dir="${integration-test-internal}" excludes="**/*.java"/>
 			
 			<fileset dir="${command-test}" excludes="**/*.java"/>
-			<fileset dir="${http-test}" excludes="**/*.java"/>
 			<fileset dir="${primer-design-test}" excludes="**/*.java"/>
 		</copy>
 
@@ -152,7 +146,6 @@
 				<src path="${exe}"/>
 				<src path="${exe-internal}"/>
 				<src path="${command-src}"/>
-				<src path="${http-src}"/>
 				<src path="${primer-design-src}"/>
 		  	</javac>
 			<emma enabled="${emma.enabled}" >
@@ -166,7 +159,6 @@
 				<fileset dir="${src}" excludes="**/*.java"/>
 				<fileset dir="${src-internal}" excludes="**/*.java"/>
 				<fileset dir="${command-src}" excludes="**/*.java"/>
-				<fileset dir="${http-src}" excludes="**/*.java"/>
 				<fileset dir="${primer-design-src}" excludes="**/*.java"/>
 			</copy>
 
@@ -259,12 +251,12 @@
 										<classpath refid = "test.classpath" />
 									</junit>
 		<junit haltonfailure="no" showoutput="yes"	
-							errorproperty="http.test.failed"
-								failureproperty="http.test.failed"
+							errorproperty="net.test.failed"
+								failureproperty="net.test.failed"
 							fork="true">
 												<formatter type="xml"/>
 												
-											  <test name="org.jcvi.http.AllHttpUnitTests"/>
+											  <test name="org.jcvi.common.net.AllNetUnitTests"/>
 												<classpath refid = "test.classpath" />
 											</junit>
 		
@@ -307,8 +299,8 @@
 		<fail if= "command.test.failed">
 							Command Unit tests failed.
 						</fail>
-		<fail if= "http.test.failed">
-									HTTP Unit tests failed.
+		<fail if= "net.test.failed">
+									Net Unit tests failed.
 								</fail>
 		<fail if= "integration.test.failed">
 					Integration tests failed.
