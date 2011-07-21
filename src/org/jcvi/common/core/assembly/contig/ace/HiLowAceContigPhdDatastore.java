@@ -135,7 +135,7 @@ public class HiLowAceContigPhdDatastore implements PhdDataStore{
      * are high or low quality based on upper vs lower case basecalls.
      * @author dkatzel
      */
-    private final class FullLengthPhdParser extends AbstractAceFileVisitor {
+    private static final class FullLengthPhdParser extends AbstractAceFileVisitor {
         private boolean contigOfInterest=false;
         private List<PhredQuality> currentHiLowQualities;
         private Map<String, Phd> phds=null;
