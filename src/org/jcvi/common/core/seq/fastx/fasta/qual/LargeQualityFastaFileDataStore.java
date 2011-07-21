@@ -121,23 +121,11 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
         checkNotYetClosed();
             if(size ==null){
             	
-            	FastaVisitor visitor = new AbstractFastaVisitor() {
-            		int count=0;
-					@Override
-					public synchronized boolean visitRecord(String id, String comment, String entireBody) {
-						count++;
-						return true;
-					}
-					@Override
-					public synchronized void visitEndOfFile() {
-						
-						super.visitEndOfFile();
-						LargeQualityFastaFileDataStore.this.size=count;
-					}
-				};
+                RecordCounter recordCounter = new RecordCounter();
 				
 				try {
-					FastaParser.parseFasta(fastaFile, visitor);
+					FastaParser.parseFasta(fastaFile, recordCounter);
+					LargeQualityFastaFileDataStore.this.size=recordCounter.count;
 				} catch (FileNotFoundException e) {
 					throw new DataStoreException("error parsing fasta file",e);
 				}
@@ -146,6 +134,21 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
 
         return size;
 
+    }
+    /**
+     * visits a fasta file and counts how many records there are.
+     * @author dkatzel
+     *
+     *
+     */
+    private static class RecordCounter extends AbstractFastaVisitor{
+        int count=0;
+        @Override
+        public synchronized boolean visitRecord(String id, String comment, String entireBody) {
+            count++;
+            return true;
+        }
+        
     }
 
     @Override
