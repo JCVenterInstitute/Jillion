@@ -149,7 +149,7 @@
 								      <instr instrpath="${bin}"
 								             mode="overwrite"
 								      		merge="false"
-								      	filter ="+org.jcvi.common.*, -*experimental*"
+								      	filter ="-*experimental*"
 								      >
 						      		</instr>
 						  	    </emma>
@@ -173,8 +173,8 @@
 				<emma enabled="${emma.enabled}" >
 									      <instr instrpath="${bin}"
 									             mode="overwrite"
-									      		merge="false"
-									      	filter ="+org.jcvi.common.*, -*experimental*"
+									      		merge="true"
+									      	filter ="-*experimental*"
 									      >
 									      	
 							      		</instr>
