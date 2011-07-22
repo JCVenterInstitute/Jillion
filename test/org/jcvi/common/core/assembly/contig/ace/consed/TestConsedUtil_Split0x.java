@@ -179,7 +179,7 @@ public class TestConsedUtil_Split0x {
             AcePlacedRead actual) {
         assertEquals("id",expected.getId(),actual.getId());
         assertEquals("offset",expected.getStart(),actual.getStart());
-        assertEquals("direction",expected.getSequenceDirection(),actual.getSequenceDirection());
+        assertEquals("direction",expected.getDirection(),actual.getDirection());
         
         assertEquals("phdInfo",expected.getPhdInfo(),actual.getPhdInfo());
         assertEquals("basecalls",expected.getEncodedGlyphs().decode(),actual.getEncodedGlyphs().decode());

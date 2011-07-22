@@ -75,7 +75,7 @@ public class TestDefaultPlacedRead {
         expect(glyphs.getValidRange()).andReturn(validRange);
         expect(glyphs.getSnpOffsets()).andReturn(snps);
         replay(read, glyphs);
-        assertEquals(dir,sut.getSequenceDirection());
+        assertEquals(dir,sut.getDirection());
         assertEquals(start, sut.getStart());
         assertEquals(read, sut.getRead());
         assertEquals(id, sut.getId());

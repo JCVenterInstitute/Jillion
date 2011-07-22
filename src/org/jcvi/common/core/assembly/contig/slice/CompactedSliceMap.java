@@ -223,7 +223,7 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
             }
             builder.addSliceElement(id,
                     read.getEncodedGlyphs().get(indexIntoRead),
-                    quality, read.getSequenceDirection());
+                    quality, read.getDirection());
         }
         return builder.build();
     }

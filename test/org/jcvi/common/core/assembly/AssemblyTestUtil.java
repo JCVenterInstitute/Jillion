@@ -35,7 +35,7 @@ public class AssemblyTestUtil {
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getStart(), actual.getStart());
         assertEquals(expected.getLength(), actual.getLength());
-        assertEquals(expected.getSequenceDirection(), actual.getSequenceDirection());
+        assertEquals(expected.getDirection(), actual.getDirection());
         final NucleotideSequence expectedEncodedGlyphs = expected.getEncodedGlyphs();
         final NucleotideSequence actualEncodedGlyphs = actual.getEncodedGlyphs();
         assertEquals(expectedEncodedGlyphs.decode(), actualEncodedGlyphs.decode());

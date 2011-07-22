@@ -23,9 +23,12 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
+import java.util.Map;
+
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
@@ -33,12 +36,14 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
-public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlacedRead {
+public class DefaultAcePlacedRead implements AcePlacedRead {
     private final PhdInfo phdInfo;
     private final int ungappedFullLength;
+    private final PlacedRead placedRead;
+    
     public DefaultAcePlacedRead(Read<ReferenceEncodedNucleotideSequence> read,
             long start, Direction dir,PhdInfo phdInfo, int ungappedFullLength) {
-        super(read, start, dir);
+        this.placedRead = new DefaultPlacedRead(read, start, dir);
         this.phdInfo =phdInfo;
         this.ungappedFullLength =ungappedFullLength;
     }
@@ -51,6 +56,144 @@ public class DefaultAcePlacedRead extends DefaultPlacedRead implements AcePlaced
     @Override
     public int getUngappedFullLength() {
         return ungappedFullLength;
+    }
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public String getId() {
+        return placedRead.getId();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public NucleotideSequence getEncodedGlyphs() {
+        return placedRead.getEncodedGlyphs();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getLength() {
+        return placedRead.getLength();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getStart() {
+        return placedRead.getStart();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getEnd() {
+        return placedRead.getEnd();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range asRange() {
+        return placedRead.asRange();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compareTo(PlacedRead o) {
+        return placedRead.compareTo(o);
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Map<Integer, NucleotideGlyph> getSnps() {
+        return placedRead.getSnps();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range getValidRange() {
+        return placedRead.getValidRange();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Direction getDirection() {
+        return placedRead.getDirection();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long convertReferenceIndexToValidRangeIndex(long referenceIndex) {
+        return placedRead.convertReferenceIndexToValidRangeIndex(referenceIndex);
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long convertValidRangeIndexToReferenceIndex(long validRangeIndex) {
+        return placedRead.convertValidRangeIndexToReferenceIndex(validRangeIndex);
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((phdInfo == null) ? 0 : phdInfo.hashCode());
+        result = prime * result
+                + ((placedRead == null) ? 0 : placedRead.hashCode());
+        result = prime * result + ungappedFullLength;
+        return result;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DefaultAcePlacedRead other = (DefaultAcePlacedRead) obj;
+        if (phdInfo == null) {
+            if (other.phdInfo != null)
+                return false;
+        } else if (!phdInfo.equals(other.phdInfo))
+            return false;
+        if (placedRead == null) {
+            if (other.placedRead != null)
+                return false;
+        } else if (!placedRead.equals(other.placedRead))
+            return false;
+        if (ungappedFullLength != other.ungappedFullLength)
+            return false;
+        return true;
     }
 
 

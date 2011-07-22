@@ -60,7 +60,7 @@ public class DefaultQualityCompactedSliceMap extends AbstractCompactedSliceMap{
             builder.addSliceElement(read.getId(),
                     read.getEncodedGlyphs().get(indexIntoRead),
                     defaultPhredQuality,
-                    read.getSequenceDirection());
+                    read.getDirection());
         }
         return builder.build();
     }

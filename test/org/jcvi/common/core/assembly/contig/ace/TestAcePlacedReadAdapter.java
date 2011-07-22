@@ -79,9 +79,9 @@ public class TestAcePlacedReadAdapter {
     @Test
     public void getSequenceDirection() {
         Direction direction = Direction.REVERSE;
-        expect(mockPlacedRead.getSequenceDirection()).andReturn(direction);
+        expect(mockPlacedRead.getDirection()).andReturn(direction);
         replay(mockPlacedRead);
-        assertEquals(direction, sut.getSequenceDirection());
+        assertEquals(direction, sut.getDirection());
         verify(mockPlacedRead);
     }
     @Test

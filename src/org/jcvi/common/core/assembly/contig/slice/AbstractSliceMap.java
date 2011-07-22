@@ -72,7 +72,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
         try{
             PhredQuality qualityValue =qualityValueStrategy.getQualityFor(realRead, qualities, gappedIndex);
         
-        return new DefaultSliceElement(realRead.getId(), calledBase, qualityValue, realRead.getSequenceDirection());
+        return new DefaultSliceElement(realRead.getId(), calledBase, qualityValue, realRead.getDirection());
         }
         catch(NullPointerException e){
             throw e;
