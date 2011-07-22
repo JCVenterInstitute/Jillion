@@ -89,7 +89,7 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
                 PhredQuality qualityValue =qualityValueStrategy.getQualityFor(placedRead, qualityRecord, indexIntoRead);
                 boolean agreesWithConsensus = isSame(consensusBase, calledBase);
                 boolean isHighQuality = isHighQuality(qualityValue);
-                Direction direction =placedRead.getSequenceDirection();
+                Direction direction =placedRead.getDirection();
                 addRead(builder, agreesWithConsensus, isHighQuality,
                         direction);
             }

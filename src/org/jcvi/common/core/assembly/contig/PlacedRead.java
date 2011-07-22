@@ -36,7 +36,7 @@ public interface PlacedRead extends Read, Placed<PlacedRead>{
 
     Map<Integer, NucleotideGlyph> getSnps();
     Range getValidRange();
-    Direction getSequenceDirection();
+    Direction getDirection();
     long convertReferenceIndexToValidRangeIndex(long referenceIndex);
     long convertValidRangeIndexToReferenceIndex(long validRangeIndex);
 }

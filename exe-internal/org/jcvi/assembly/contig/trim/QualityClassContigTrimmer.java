@@ -178,7 +178,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
             int gappedValidRangeIndex) {
         int gappedTrimIndex;
         final NucleotideSequence encodedGlyphs = read.getEncodedGlyphs();
-        if (read.getSequenceDirection() == Direction.FORWARD) {
+        if (read.getDirection() == Direction.FORWARD) {
             gappedTrimIndex = AssemblyUtil.getRightFlankingNonGapIndex(encodedGlyphs,
                     gappedValidRangeIndex);
         } else {

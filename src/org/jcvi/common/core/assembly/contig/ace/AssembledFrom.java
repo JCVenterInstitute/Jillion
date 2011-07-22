@@ -36,7 +36,7 @@ public class AssembledFrom implements Comparable<AssembledFrom>{
     
     public static AssembledFrom createFrom(PlacedRead read, long ungappedFullLength){
         final Range validRange;
-        Direction dir = read.getSequenceDirection();
+        Direction dir = read.getDirection();
         Range readValidRange = read.getValidRange();
         if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplimentValidRange(readValidRange, ungappedFullLength);

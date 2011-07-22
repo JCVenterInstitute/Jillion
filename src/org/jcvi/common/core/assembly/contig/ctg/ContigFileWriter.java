@@ -96,7 +96,7 @@ public class ContigFileWriter implements Closeable{
         header.append(String.format("#%s(%d) [", placedRead.getId(), placedRead.getStart()));
         int validLeft = (int)placedRead.getValidRange().getStart();
         int validRight = (int)placedRead.getValidRange().getEnd();
-        if(placedRead.getSequenceDirection() == Direction.REVERSE){
+        if(placedRead.getDirection() == Direction.REVERSE){
             header.append("RC");
             int temp = validLeft;
             validLeft = validRight;

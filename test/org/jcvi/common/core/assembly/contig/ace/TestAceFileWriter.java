@@ -88,7 +88,7 @@ public class TestAceFileWriter {
                 assertEquals("basecalls", expectedRead.getEncodedGlyphs(), actualRead.getEncodedGlyphs());
                 assertEquals("offset", expectedRead.getStart(), actualRead.getStart());
                 assertEquals("validRange", expectedRead.getValidRange(), actualRead.getValidRange());
-                assertEquals("dir", expectedRead.getSequenceDirection(), actualRead.getSequenceDirection());
+                assertEquals("dir", expectedRead.getDirection(), actualRead.getDirection());
             }
         }
     }

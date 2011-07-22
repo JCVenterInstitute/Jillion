@@ -62,7 +62,7 @@ public class LargeNoQualitySliceMap extends LargeSliceMap{
         final NucleotideGlyph calledBase = realRead.getEncodedGlyphs().get(gappedIndex);
         return new DefaultSliceElement(realRead.getId(), calledBase, 
                 phredQuality, 
-                realRead.getSequenceDirection());
+                realRead.getDirection());
     }
 
    

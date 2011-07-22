@@ -33,7 +33,7 @@ public class NoQualitySliceMap extends DefaultSliceMap{
         final NucleotideGlyph calledBase = realRead.getEncodedGlyphs().get(gappedIndex);
         return new DefaultSliceElement(realRead.getId(), calledBase, 
                 phredQuality, 
-                realRead.getSequenceDirection());
+                realRead.getDirection());
     }
     
 

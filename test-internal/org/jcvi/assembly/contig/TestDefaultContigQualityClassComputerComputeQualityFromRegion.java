@@ -215,7 +215,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
         expect(realRead.getEncodedGlyphs()).andReturn(encodedBases);
         expect(encodedBases.get(index)).andReturn(consensusBase);  
         expect(qualityValueStrategy.getQualityFor(realRead, encodedQualities, index)).andReturn(returnedQuality);
-        expect(realRead.getSequenceDirection()).andReturn(dir);
+        expect(realRead.getDirection()).andReturn(dir);
         if(returnedQuality == lowQuality){
             expect(builder.addLowQualityAgreement(dir)).andReturn(builder);
         }
@@ -237,7 +237,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
         expect(realRead.getEncodedGlyphs()).andReturn(encodedBases);
         expect(encodedBases.get(index)).andReturn(notConsensusBase);      
         expect(qualityValueStrategy.getQualityFor(realRead, encodedQualities, index)).andReturn(returnedQuality);
-        expect(realRead.getSequenceDirection()).andReturn(dir);
+        expect(realRead.getDirection()).andReturn(dir);
         if(returnedQuality == lowQuality){
             expect(builder.addLowQualityConflict(dir)).andReturn(builder);
         }

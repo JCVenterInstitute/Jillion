@@ -76,9 +76,6 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
     public String getId() {
         return read.getId();
     }
-    public Direction getDirection() {
-        return dir;
-    }
     @Override
     public String toString() {
         return "DefaultCasPlacedRead [startOffset=" + startOffset
@@ -106,7 +103,7 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
         }
     }
     @Override
-    public Direction getSequenceDirection() {
+    public Direction getDirection() {
         return dir;
     }
     @Override

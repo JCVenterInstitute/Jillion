@@ -124,7 +124,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
 				
 				try {
 					FastaParser.parseFasta(fastaFile, recordCounter);
-					LargeQualityFastaFileDataStore.this.size=recordCounter.count;
+					LargeQualityFastaFileDataStore.this.size=recordCounter.getCount();
 				} catch (FileNotFoundException e) {
 					throw new DataStoreException("error parsing fasta file",e);
 				}
@@ -147,6 +147,13 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
             count++;
             return true;
         }
+        /**
+         * @return the count
+         */
+        public synchronized int getCount() {
+            return count;
+        }
+        
         
     }
 

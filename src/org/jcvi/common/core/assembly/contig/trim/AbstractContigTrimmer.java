@@ -89,7 +89,7 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
             
             
             final Range ungappedNewValidRange;
-            if(placedRead.getSequenceDirection()==Direction.FORWARD){
+            if(placedRead.getDirection()==Direction.FORWARD){
                 int numberOfGapsTrimmedOff= originalGappedValidBases.computeNumberOfInclusiveGapsInGappedValidRangeUntil((int)newTrimRange.getStart());
                 ungappedNewValidRange = Range.buildRangeOfLength(oldValidRange.getStart()+ newTrimRange.getStart()-numberOfGapsTrimmedOff, ungappedLength).convertRange(CoordinateSystem.RESIDUE_BASED);
                 

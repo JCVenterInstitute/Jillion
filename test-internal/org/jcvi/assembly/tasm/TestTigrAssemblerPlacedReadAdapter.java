@@ -58,7 +58,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 		TigrAssemblerPlacedReadAdapter sut = new TigrAssemblerPlacedReadAdapter(delegate);
 		assertCommonGettersCorrect(sut);		
 		assertCommonAttributesCorrect(delegate, sut);
-		assertEquals(Direction.FORWARD, sut.getSequenceDirection());
+		assertEquals(Direction.FORWARD, sut.getDirection());
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_LEFT),""+(delegate.getValidRange().getStart()+1));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_RIGHT),""+(delegate.getValidRange().getEnd()+1));
 		
@@ -69,7 +69,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 		TigrAssemblerPlacedReadAdapter sut = new TigrAssemblerPlacedReadAdapter(delegate);
 		assertCommonGettersCorrect(sut);		
 		assertCommonAttributesCorrect(delegate, sut);
-		assertEquals(Direction.REVERSE, sut.getSequenceDirection());
+		assertEquals(Direction.REVERSE, sut.getDirection());
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_RIGHT),""+(delegate.getValidRange().getStart()+1));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_LEFT),""+(delegate.getValidRange().getEnd()+1));
 		

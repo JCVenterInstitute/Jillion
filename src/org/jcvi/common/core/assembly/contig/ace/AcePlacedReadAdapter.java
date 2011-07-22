@@ -67,8 +67,8 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.convertValidRangeIndexToReferenceIndex(validRangeIndex);
     }
     @Override
-    public Direction getSequenceDirection() {
-        return placedRead.getSequenceDirection();
+    public Direction getDirection() {
+        return placedRead.getDirection();
     }
     @Override
     public Map<Integer, NucleotideGlyph> getSnps() {

@@ -92,7 +92,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
          return addRead(acePlacedRead.getId(),
         		 NucleotideGlyph.convertToString(acePlacedRead.getEncodedGlyphs().decode()),
         		 (int)acePlacedRead.getStart(),
-        		 acePlacedRead.getSequenceDirection(),
+        		 acePlacedRead.getDirection(),
         		 acePlacedRead.getValidRange(),
         		 acePlacedRead.getPhdInfo(),
         		 acePlacedRead.getUngappedFullLength());

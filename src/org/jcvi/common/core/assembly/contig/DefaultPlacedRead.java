@@ -84,7 +84,7 @@ public class DefaultPlacedRead implements PlacedRead {
         if (obj instanceof DefaultPlacedRead){           
             DefaultPlacedRead other = (DefaultPlacedRead) obj;
             return read.equals(other.getRead()) && start== other.getStart() 
-            && getSequenceDirection() == other.getSequenceDirection();
+            && getDirection() == other.getDirection();
         }
         else if (obj instanceof PlacedRead){           
         	PlacedRead other = (PlacedRead) obj;
@@ -108,19 +108,19 @@ public class DefaultPlacedRead implements PlacedRead {
         	}
         	
             return start== other.getStart() 
-            && getSequenceDirection() == other.getSequenceDirection();
+            && getDirection() == other.getDirection();
         }
         return false;
         
     }
     
     @Override
-    public Direction getSequenceDirection() {
+    public Direction getDirection() {
         return sequenceDirection;
     }
     @Override
     public String toString() {
-        return "offset = "+ getStart() + " complimented? "+ getSequenceDirection()+"  " + read.toString();
+        return "offset = "+ getStart() + " complimented? "+ getDirection()+"  " + read.toString();
     }
     @Override
     public long getEnd() {
