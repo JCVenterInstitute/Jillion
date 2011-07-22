@@ -149,7 +149,7 @@
 								      <instr instrpath="${bin}"
 								             mode="overwrite"
 								      		merge="false"
-								      	filter = "-org.jcvi.common.experimental.*"
+								      	filter ="-*experimental*"
 								      >
 						      		</instr>
 						  	    </emma>
@@ -174,7 +174,7 @@
 									      <instr instrpath="${bin}"
 									             mode="overwrite"
 									      		merge="false"
-									      	filter = "-org.jcvi.experimental.*"
+									      	filter ="-*experimental*"
 									      >
 									      	
 							      		</instr>
