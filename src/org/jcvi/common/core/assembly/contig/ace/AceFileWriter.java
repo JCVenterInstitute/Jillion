@@ -28,14 +28,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.slice.Slice;
-import org.jcvi.common.core.assembly.contig.slice.SliceElement;
-import org.jcvi.common.core.assembly.contig.slice.SliceMap;
-import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
@@ -140,68 +133,7 @@ public class AceFileWriter {
         Collections.sort(assembledFroms);
         return assembledFroms;
     }
-    public static void writeAceFile(Contig<AcePlacedRead> contig,
-            SliceMap sliceMap,
-            DataStore<Phd> phdDataStore, 
-            OutputStream out, boolean calculateBestSegments) throws IOException, DataStoreException{
-        final NucleotideSequence consensus = contig.getConsensus();
-        StringBuilder bestSegmentBuilder = new StringBuilder();
-        if(calculateBestSegments){
-            System.out.println("calculating best segments...");
-            AceBestSegmentMap bestSegments = new OnTheFlyAceBestSegmentMap(
-                    sliceMap, consensus);
-            int numberOfBestSegments=0;
-            for(AceBestSegment bestSegment : bestSegments){
-                numberOfBestSegments++;
-                final Range gappedConsensusRange = bestSegment.getGappedConsensusRange().convertRange(CoordinateSystem.RESIDUE_BASED);
-                bestSegmentBuilder.append(String.format("BS %d %d %s%n", 
-                        gappedConsensusRange.getLocalStart(),
-                        gappedConsensusRange.getLocalEnd(),
-                        bestSegment.getReadName()));
-            }
-            writeString(String.format(CONTIG_HEADER, 
-                    contig.getId(), 
-                    consensus.getLength(),
-                    contig.getNumberOfReads(),
-                    numberOfBestSegments,
-                    "U"), //always uncomplemented for now...
-                    
-                    out);
-        }else{
-        writeString(String.format(CONTIG_HEADER, 
-                contig.getId(), 
-                consensus.getLength(),
-                contig.getNumberOfReads(),
-                0,
-                "U"), //always uncomplemented for now...
-                
-                out);
-        }
-        writeString(String.format("%s%n%n",AceFileUtil.convertToAcePaddedBasecalls(consensus)), out);
-        writeUngappedConsensusQualities(consensus,sliceMap, out);
-        
-        writeString(String.format("%n"), out);
-        List<AssembledFrom> assembledFroms = getSortedAssembledFromsFor(contig);
-        
-        for(AssembledFrom assembledFrom : assembledFroms){
-            String id = assembledFrom.getId();
-            long fullLength = phdDataStore.get(id).getBasecalls().getLength();
-            writeAssembledFromRecords(contig.getPlacedReadById(id),fullLength,out);
-        }
-        out.flush();
-        if(calculateBestSegments){
-            writeString(bestSegmentBuilder.toString(),out);
-            writeString(String.format("%n"), out);
-        }
-        out.flush();
-        for(AssembledFrom assembledFrom : assembledFroms){
-            String id = assembledFrom.getId();          
-            AcePlacedRead read = contig.getPlacedReadById(id);
-            writePlacedRead(read, phdDataStore.get(id),out);
-        }
-        out.flush();
-        
-    }
+    
     private static void writeFakeUngappedConsensusQualities(NucleotideSequence consensus,
             OutputStream out) throws IOException {
         StringBuilder result = new StringBuilder();
@@ -219,43 +151,13 @@ public class AceFileWriter {
         }
         writeString(String.format("BQ%n%s%n", result.toString()), out);
     }
-    private static void writeUngappedConsensusQualities(NucleotideSequence consensus,SliceMap sliceMap,
-            OutputStream out) throws IOException {
-        StringBuilder result = new StringBuilder();
-        int numberOfQualitiesSoFar=0;
-        for(int i=0; i< consensus.getLength(); i++){
-            NucleotideGlyph base = consensus.get(i);
-            if(base.isGap()){
-                continue;
-            }
-            Slice slice = sliceMap.getSlice(i);
-            int sumOfQualities=0;
-            for(SliceElement element : slice){
-                sumOfQualities+=element.getQuality().getNumber().intValue();
-                if(sumOfQualities >=99){
-                    sumOfQualities =99;
-                    //no point in continuing...
-                    break;
-                }
-            }
-            result.append(String.format(" %d", sumOfQualities));
-            numberOfQualitiesSoFar++;
-            if(numberOfQualitiesSoFar%50==0){
-                result.append(String.format("%n"));
-            }
-        }
-        writeString(String.format("BQ%n%s%n", result.toString()), out);
-        
-    }
+   
 
     private static String createAssembledFromRecord(AcePlacedRead read, long fullLength){
         AssembledFrom assembledFrom = AssembledFrom.createFrom(read, fullLength);
         return AceFileUtil.createAssembledFromRecord(assembledFrom);
     }
-    private static void writeAssembledFromRecords(AcePlacedRead read, long fullLength,OutputStream out) throws IOException{
-        AssembledFrom assembledFrom = AssembledFrom.createFrom(read, fullLength);
-        writeString(AceFileUtil.createAssembledFromRecord(assembledFrom), out);
-    } 
+    
     
     private static String createPlacedReadRecord(AcePlacedRead read, Phd phd){
         return AceFileUtil.createAcePlacedReadRecord(
@@ -266,12 +168,7 @@ public class AceFileWriter {
                 read.getPhdInfo());
         
     }
-    
-    private static void writePlacedRead(AcePlacedRead read, Phd phd,OutputStream out ) throws IOException{
-        writeString(AceFileUtil.createAcePlacedReadRecord(
-                read.getId(),read.getEncodedGlyphs(),  read.getValidRange(), read.getDirection(),phd, read.getPhdInfo()),out);
-        
-    }
+  
     
     private static void writeString(String s, OutputStream out) throws IOException{
         out.write(s.getBytes());
