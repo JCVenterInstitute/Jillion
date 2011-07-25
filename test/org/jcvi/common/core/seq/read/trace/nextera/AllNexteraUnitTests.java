@@ -16,18 +16,19 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 7, 2010
- *
- * @author dkatzel
- */
-package org.jcvi.common.core.assembly.contig.ctg;
 
-import org.jcvi.assembly.Assembly;
-import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.datastore.DataStore;
+package org.jcvi.common.core.seq.read.trace.nextera;
 
-public interface ContigAssembly extends Assembly<Contig<PlacedRead>, DataStore<Contig<PlacedRead>>>{
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+@RunWith(Suite.class)
+@SuiteClasses(
+    {
+        TestNexteraTransposonTrimmer.class
+    }
+    )
+public class AllNexteraUnitTests {
 
 }

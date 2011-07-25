@@ -133,7 +133,13 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
         Range sequenceRange = Range.buildRangeOfLength(0, sequence.getLength()).convertRange(CoordinateSystem.RESIDUE_BASED);
         
         if(mergedRanges.size() ==1){
-           Range intersection = mergedRanges.get(0).intersection(sequenceRange);
+           Range primerRange = mergedRanges.get(0);
+           if(primerRange.equals(sequenceRange)){
+               //the entire primer range is the same as the original sequence
+               return Range.buildEmptyRange();
+           }
+           Range intersection = primerRange.intersection(sequenceRange);
+           
            Range left = Range.buildRange(sequenceRange.getStart(), intersection.getStart()-1).convertRange(CoordinateSystem.RESIDUE_BASED);
            Range right = Range.buildRange(intersection.getEnd()+1, sequenceRange.getEnd()).convertRange(CoordinateSystem.RESIDUE_BASED);
            

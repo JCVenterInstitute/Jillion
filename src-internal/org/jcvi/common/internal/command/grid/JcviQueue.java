@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.command.grid;
+package org.jcvi.common.internal.command.grid;
 /**
  * JCVI Grid has several different "queues" which allow
  * jobs to run for limited periods of time.  Queues for faster

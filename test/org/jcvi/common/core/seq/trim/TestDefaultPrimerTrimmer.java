@@ -35,7 +35,15 @@ import static org.junit.Assert.*;
 public class TestDefaultPrimerTrimmer {
 
     private final DefaultPrimerTrimmer sut = new DefaultPrimerTrimmer(5,.9f);
-    
+    @Test
+    public void onlyPrimerShouldGetCompletelyTrimmedOff(){
+        NucleotideSequence sequence = new DefaultNucleotideSequence("AAACGACGTACGTACGT");
+        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(sequence);
+        
+        Range expectedRange= Range.buildEmptyRange();
+        Range actualRange= sut.trim(sequence, datastore);
+        assertEquals(expectedRange, actualRange);
+    }
     @Test
     public void trimLeft(){
         NucleotideSequence sequence = new DefaultNucleotideSequence("AAACGACGTACGTACGT");
