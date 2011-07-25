@@ -1,9 +1,3 @@
-import org.jcvi.AllInternalUnitTests;
-import org.jcvi.common.AllCommonUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
@@ -23,20 +17,19 @@ import org.junit.runners.Suite.SuiteClasses;
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-/**
- * Runs all external and internal unit tests.
- * @author dkatzel
- *
- *
- */
+package org.jcvi.common.core.seq;
+
+import org.jcvi.common.core.seq.read.trace.AllTraceUnitTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        org.jcvi.AllUnitTests.class,
-        AllCommonUnitTests.class,
-        AllInternalUnitTests.class
+        AllTraceUnitTests.class
     }
     )
-public class AllUnitTests {
+public class AllSeqUnitTests {
 
 }
