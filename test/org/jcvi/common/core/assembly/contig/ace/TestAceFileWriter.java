@@ -25,14 +25,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import org.jcvi.common.core.assembly.contig.ace.AceAssembly;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
 import org.jcvi.common.core.assembly.contig.ace.AceContigDataStore;
 import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceAdapterContigFileDataStore;
-import org.jcvi.common.core.assembly.contig.ace.DefaultAceAssembly;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaRecordDataStoreAdatper;
@@ -72,8 +70,15 @@ public class TestAceFileWriter {
         
         
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        AceAssembly aceAssembly = new DefaultAceAssembly<AceContig>(aceDataStore, phdDataStore);
-        AceFileWriter.writeAceFile(aceAssembly, out);
+        int numberOfContigs = aceDataStore.size();
+        int numberOfReads =0;
+        for(AceContig contig : aceDataStore){
+            numberOfReads +=contig.getNumberOfReads();
+        }
+        AceFileWriter.writeAceFileHeader(numberOfContigs, numberOfReads, out);
+        for(AceContig contig : aceDataStore){
+            AceFileWriter.writeAceContig(contig, phdDataStore, out);
+        }
         
         DefaultAceFileDataStore reparsedAceDataStore = new DefaultAceFileDataStore();
         AceFileParser.parseAceFile(new ByteArrayInputStream(out.toByteArray()), reparsedAceDataStore);

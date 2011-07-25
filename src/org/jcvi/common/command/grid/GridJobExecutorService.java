@@ -44,7 +44,7 @@ public class GridJobExecutorService extends ThreadPoolExecutor
 
     private final Session gridSession;
     private final String name;
-    Map<GridJob,GridJobFuture> futures = new HashMap<GridJob,GridJobFuture>();
+    private final Map<GridJob,GridJobFuture> futures = new HashMap<GridJob,GridJobFuture>();
 
     /**
      * Creates a new <code>GridPoolExecutor</code>.

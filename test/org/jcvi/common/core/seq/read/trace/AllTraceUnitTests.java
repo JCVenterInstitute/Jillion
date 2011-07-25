@@ -16,23 +16,20 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 7, 2010
- *
- * @author dkatzel
- */
-package org.jcvi.common.core.assembly.contig.ace;
 
-import java.io.File;
-import java.util.List;
+package org.jcvi.common.core.seq.read.trace;
 
-import org.jcvi.assembly.Assembly;
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
+import org.jcvi.common.core.seq.read.trace.nextera.AllNexteraUnitTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-public interface AceAssembly<A extends AceContig> extends Assembly<A, DataStore<A>>{
+@RunWith(Suite.class)
+@SuiteClasses(
+    {
+        AllNexteraUnitTests.class
+    }
+    )
+public class AllTraceUnitTests {
 
-    AceTagMap getAceTagMap();
-    PhdDataStore getPhdDataStore();
-    List<File> getPhdFiles();
 }

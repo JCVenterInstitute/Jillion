@@ -16,41 +16,19 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Dec 16, 2008
- *
- * @author dkatzel
- */
-package org.jcvi.common.core.assembly;
 
-import org.jcvi.assembly.trim.AllTrimUnitTests;
-import org.jcvi.common.core.assembly.contig.TestDefaultPlacedRead;
-import org.jcvi.common.core.assembly.contig.cas.AllCasUnitTests;
-import org.jcvi.common.core.assembly.contig.celera.AllCeleraUnitTests;
-import org.jcvi.common.core.assembly.contig.ctg.AllContigUnitTests;
-import org.jcvi.common.core.assembly.coverage.AllCoverageUnitTests;
-import org.jcvi.common.core.assembly.coverage.slice.AllSliceUnitTests;
-import org.jcvi.common.core.assembly.scaffold.agp.AllAgpUnitTests;
+package org.jcvi.common.core.assembly.contig.celera;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-    {        
-        TestDefaultPlacedRead.class,        
-        AllTrimUnitTests.class,
-        AllSliceUnitTests.class,
-        AllContigUnitTests.class,
-        AllCoverageUnitTests.class,
-        AllAgpUnitTests.class,
-        AllCasUnitTests.class,
-        AllCeleraUnitTests.class,
-        
-        TestAssemblyUtil_gappedfullRange.class,
-        TestAssemblyUtil_reverseComplimentRange.class
+    {  
+       TestCeleraAssemblerUtils.class 
     }
     )
-public class AllAssemblyUnitTests {
+public class AllCeleraUnitTests {
 
 }

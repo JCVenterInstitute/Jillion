@@ -796,7 +796,13 @@ public final class Range implements Placed<Range>,Iterable<Long>
         }
 
     }
-    
+    /**
+     * Get the List of Ranges that represents the 
+     * {@code this - other}.  This is similar to the 
+     * Set of all coordinates that don't intersect.
+     * @param other the range to compliment with.
+     * @return
+     */
     public List<Range> compliment(Range other){
         //this - other
         //anything in this that doesn't intersect with other

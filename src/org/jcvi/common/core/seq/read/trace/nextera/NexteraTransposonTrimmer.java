@@ -20,6 +20,7 @@
 package org.jcvi.common.core.seq.read.trace.nextera;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
@@ -68,11 +69,23 @@ public final class NexteraTransposonTrimmer implements PrimerTrimmer{
     }
     
     public Range trim(NucleotideSequence sequence){
+        Range fullRange= Range.buildRangeOfLength(sequence.getLength());
         Range forwardClearRange =nexteraTransposonTrimmer.trim(sequence, FORWARD_TRANSPOSON);
         
         Range reverseClearRange =nexteraTransposonTrimmer.trim(sequence, REVERSE_TRANSPOSON);
-        
-        return computeClearRange(forwardClearRange, reverseClearRange);
+        Range transposonLocation;
+        if(forwardClearRange.isEmpty() && !reverseClearRange.isEmpty()){
+            transposonLocation = reverseClearRange;
+        }else if(reverseClearRange.isEmpty() && !forwardClearRange.isEmpty()){
+            transposonLocation = forwardClearRange;
+        }else{
+            transposonLocation = computeClearRange(forwardClearRange,reverseClearRange);
+         }
+        List<Range> compliment = fullRange.compliment(transposonLocation);
+        if(compliment.isEmpty()){
+            return Range.buildEmptyRange();
+        }
+        return compliment.get(0);
     }
     /**
     * {@inheritDoc}
@@ -86,7 +99,7 @@ public final class NexteraTransposonTrimmer implements PrimerTrimmer{
 
     private Range computeClearRange(Range forwardClearRange,
             Range reverseClearRange) {
-        if(reverseClearRange.isSubRangeOf(forwardClearRange)){
+        if(!reverseClearRange.isEmpty() && reverseClearRange.isSubRangeOf(forwardClearRange)){
             return Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
                     forwardClearRange.getLocalStart(), reverseClearRange.getLocalEnd());
         }

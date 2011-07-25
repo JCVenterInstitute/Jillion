@@ -35,11 +35,8 @@ import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.assembly.contig.slice.SliceMap;
-import org.jcvi.common.core.assembly.contig.slice.SliceMapFactory;
-import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
@@ -48,52 +45,12 @@ public class AceFileWriter {
 
     private static final String CONTIG_HEADER = "CO %s %d %d %d %s%n";
    
-    public static void writeAceFile(AceAssembly<AceContig> aceAssembly,OutputStream out) throws IOException, DataStoreException{
-        writeAceFile(aceAssembly, null,out,false);
-    }
+
     public static void writeAceFileHeader(int numberOfContigs, int numberOfReads, OutputStream out) throws IOException{
         writeString(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads), out);
     }
-    public static void writeAceFile(AceAssembly<AceContig> aceAssembly,SliceMapFactory sliceMapFactory, 
-            OutputStream out, boolean calculateBestSegments) throws IOException, DataStoreException{
-        int numberOfContigs =0;
-        int numberOfReads =0;
-        DataStore<AceContig> aceDataStore =aceAssembly.getContigDataStore();
-        for(Contig<AcePlacedRead> contig: aceDataStore){
-            numberOfContigs++;
-            numberOfReads += contig.getNumberOfReads();
-        }
-        try{
-            writeAceFileHeader(numberOfContigs, numberOfReads, out);
-            PhdDataStore phdDataStore = aceAssembly.getPhdDataStore();
-            for(AceContig contig: aceDataStore){
-                if(calculateBestSegments){
-                    SliceMap sliceMap = sliceMapFactory.createNewSliceMap(
-                            new DefaultCoverageMap.Builder(contig.getPlacedReads()).build(), 
-                            aceAssembly.getQualityDataStore());                
-                    AceFileWriter.writeAceFile(contig, sliceMap, phdDataStore, out, calculateBestSegments);
-                }
-                else{
-                    AceFileWriter.writeAceContig(contig,  phdDataStore, out);
-                }
-            }
-            AceTagMap aceTagMap = aceAssembly.getAceTagMap();
-            if(aceTagMap !=null){
-                for(ReadAceTag readTag : aceTagMap.getReadTags()){
-                    writeReadTag(readTag, out);
-                }
-                for(ConsensusAceTag consensusTag : aceTagMap.getConsensusTags()){
-                    writeConsensusTag(consensusTag, out);
-                }
-                for(WholeAssemblyAceTag wholeAssemblyTag : aceTagMap.getWholeAssemblyTags()){
-                    writeWholeAssemblyTag(wholeAssemblyTag, out);
-                }
-            }
-        }finally{
-            IOUtil.closeAndIgnoreErrors(out);
-        }
-    }
-    private static void writeWholeAssemblyTag(
+   
+    public static void writeWholeAssemblyTag(
             WholeAssemblyAceTag wholeAssemblyTag, OutputStream out) throws IOException {
         writeString(String.format("WA{%n%s %s %s%n%s%n}%n", 
                 wholeAssemblyTag.getType(),
@@ -103,7 +60,7 @@ public class AceFileWriter {
 
         
     }
-    private static void writeConsensusTag(ConsensusAceTag consensusTag,
+    public static void writeConsensusTag(ConsensusAceTag consensusTag,
             OutputStream out) throws IOException {
         StringBuilder tagBodyBuilder = new StringBuilder();
         if(consensusTag.getData() !=null){
@@ -125,7 +82,7 @@ public class AceFileWriter {
                         tagBodyBuilder.toString()), out);
         
     }
-    private static void writeReadTag(ReadAceTag readTag, OutputStream out) throws IOException {
+    public static void writeReadTag(ReadAceTag readTag, OutputStream out) throws IOException {
         writeString(String.format("RT{%n%s %s %s %d %d %s%n}%n", 
                         readTag.getId(),
                         readTag.getType(),

@@ -27,37 +27,27 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.InputStream;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.IOUtils;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
-import org.jcvi.common.core.assembly.contig.GapQualityValueStrategies;
-import org.jcvi.common.core.assembly.contig.ace.AceAssembly;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
 import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
 import org.jcvi.common.core.assembly.contig.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
-import org.jcvi.common.core.assembly.contig.ace.DefaultAceAssembly;
-import org.jcvi.common.core.assembly.contig.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceFileTagMap;
+import org.jcvi.common.core.assembly.contig.ace.HiLowAceContigPhdDatastore;
+import org.jcvi.common.core.assembly.contig.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.assembly.contig.ace.newbler.NewblerMappedAceContigUtil;
-import org.jcvi.common.core.assembly.contig.slice.LargeSliceMapFactory;
-import org.jcvi.common.core.datastore.CachedDataStore;
-import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
-import org.jcvi.common.core.seq.read.trace.TraceDataStore;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.IndexedPhdFileDataStore;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdParser;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.newbler.IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
+
 import org.jcvi.common.core.util.MultipleWrapper;
 
 public class RemoveReferenceFromNewblerMappedAce {
@@ -66,10 +56,6 @@ public class RemoveReferenceFromNewblerMappedAce {
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder(
                 "ace", "path to ace file to convert")
-                .isRequired(true)
-                .build());
-        options.addOption(new CommandLineOptionBuilder(
-                "phd", "path to phd ball file to convert")
                 .isRequired(true)
                 .build());
         options.addOption(new CommandLineOptionBuilder(
@@ -86,39 +72,41 @@ public class RemoveReferenceFromNewblerMappedAce {
                 System.exit(0);
             }
             File aceFile = new File(commandLine.getOptionValue("ace"));
-            File phdFile = new File(commandLine.getOptionValue("phd"));
             final File aceOut;
             if(commandLine.hasOption("out")){
                 aceOut= new File(commandLine.getOptionValue("out"));
             }else{
                 aceOut = new File(DEFAULT_ACE_OUTPUT);
             }
-            DefaultAceFileDataStore dataStore = new DefaultAceFileDataStore();
-            IndexedPhdFileDataStore phdDataStore = new IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore(phdFile, new DefaultIndexedFileRange());
+            File tempAce = new File(aceOut.getParentFile(),aceOut.getName()+".temp");
+            FileOutputStream tempOut = new FileOutputStream(tempAce);
+            FileOutputStream aceOutStream = new FileOutputStream(aceOut);
+            
+            IndexedAceFileDataStore dataStore = new IndexedAceFileDataStore(aceFile);
             DefaultAceFileTagMap aceTagMap = new DefaultAceFileTagMap();
             AceFileParser.parseAceFile(aceFile, MultipleWrapper.createMultipleWrapper(AceFileVisitor.class,
                     dataStore,aceTagMap));
+            int numberOfReads =0;
+            int numberOfContigs=0;
             
-            PhdParser.parsePhd(new FileInputStream(phdFile), phdDataStore);
-            
-            Map<String, AceContig> contigsWithActualConsensus = new LinkedHashMap<String, AceContig>();
-            for(AceContig contig : dataStore){            
-                for(AceContig actualContig :NewblerMappedAceContigUtil.removeReferenceFrom(contig, phdDataStore)){
-                    contigsWithActualConsensus.put(actualContig.getId(), actualContig);
-                }
+            for(AceContig contig : dataStore){
+                String contigId = contig.getId();
+                PhdDataStore phdDataStore = new HiLowAceContigPhdDatastore(aceFile, contigId);
                 
+                for(AceContig actualContig :NewblerMappedAceContigUtil.removeReferenceFrom(contig, phdDataStore)){
+                    numberOfContigs++;
+                    numberOfReads += actualContig.getNumberOfReads();
+                    AceFileWriter.writeAceContig(actualContig, phdDataStore, tempOut);
+                    
+                }
             }
-            DataStore<AceContig> contigsWithActualConsensusDataStore = new SimpleDataStore<AceContig>(contigsWithActualConsensus);
+            IOUtil.closeAndIgnoreErrors(tempOut);
+            AceFileWriter.writeAceFileHeader(numberOfContigs, numberOfReads, aceOutStream);
+            InputStream in = new FileInputStream(tempAce);
+            IOUtils.copy(in, aceOutStream);
             
-            PhdDataStore cachedPhdDataStore = CachedDataStore.createCachedDataStore(TraceDataStore.class,phdDataStore,1000);
-           
-            AceAssembly<AceContig> aceAssembly = new DefaultAceAssembly<AceContig>(
-                    contigsWithActualConsensusDataStore, cachedPhdDataStore,
-                    Arrays.asList(phdFile),aceTagMap);
+            IOUtil.closeAndIgnoreErrors(in,aceOutStream);
             
-            AceFileWriter.writeAceFile(aceAssembly, 
-                    new LargeSliceMapFactory(GapQualityValueStrategies.LOWEST_FLANKING),
-                    new FileOutputStream(aceOut), true);
             
         }
         catch(ParseException e){
