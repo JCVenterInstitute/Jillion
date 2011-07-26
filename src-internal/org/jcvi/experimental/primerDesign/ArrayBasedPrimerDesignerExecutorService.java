@@ -3,7 +3,8 @@ package org.jcvi.experimental.primerDesign;
 import org.apache.log4j.Logger;
 import org.ggf.drmaa.DrmaaException;
 import org.jcvi.common.command.Command;
-import org.jcvi.common.command.grid.ArrayGridJobImpl;
+import org.jcvi.common.command.grid.ArrayGridJobBuilder;
+import org.jcvi.common.command.grid.GridJobBuilders;
 import org.jcvi.common.command.grid.GridJobExecutorService;
 import org.jcvi.common.command.grid.GridJobFuture;
 import org.jcvi.common.command.grid.GridUtils;
@@ -97,8 +98,8 @@ public class ArrayBasedPrimerDesignerExecutorService implements PrimerDesignerEx
             }
 
             // create an array grid job for this set of items and kick it off
-            ArrayGridJobImpl.Builder builder =
-                new ArrayGridJobImpl.Builder(gridExecutor.getSession(),
+            ArrayGridJobBuilder builder = GridJobBuilders.createArrayGridJobBuilder(
+                                            gridExecutor.getSession(),
                                              new Command(arrayGridJobTemplate.getAbsolutePath()),
                                              key.getProjectCode());
             builder.setArchitecture(key.getArchitecture()); // unsure if this is necessary/useful!

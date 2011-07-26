@@ -1,8 +1,9 @@
 package org.jcvi.command.grid;
 
 import org.jcvi.common.command.Command;
-import org.jcvi.common.command.grid.ArrayGridJobImpl;
+import org.jcvi.common.command.grid.ArrayGridJobBuilder;
 import org.jcvi.common.command.grid.GridJob;
+import org.jcvi.common.command.grid.GridJobBuilders;
 import org.jcvi.common.command.grid.GridJobFuture;
 import org.jcvi.common.core.io.IOUtil;
 
@@ -123,8 +124,7 @@ public class TestArrayGridJob extends TestGridJob {
 
         writeInputFiles(inputFile,jobInputMap);
 
-        ArrayGridJobImpl.Builder builder =
-            new ArrayGridJobImpl.Builder(gridExecutor.getSession(),
+        ArrayGridJobBuilder builder = GridJobBuilders.createArrayGridJobBuilder(gridExecutor.getSession(),
                                          new Command(command),
                                          TestGridJob.TEST_PROJECT_CODE);
         builder.setBulkJobStartLoopIndex(1);
@@ -157,8 +157,8 @@ public class TestArrayGridJob extends TestGridJob {
 
         writeInputFiles(inputFile,jobInputMap);
 
-        ArrayGridJobImpl.Builder builder =
-            new ArrayGridJobImpl.Builder(gridExecutor.getSession(),
+        ArrayGridJobBuilder builder = GridJobBuilders.createArrayGridJobBuilder(
+                gridExecutor.getSession(),
                                          new Command(command),
                                          TestGridJob.TEST_PROJECT_CODE);
         builder.setBulkJobStartLoopIndex(1);
@@ -192,8 +192,7 @@ public class TestArrayGridJob extends TestGridJob {
 
         writeInputFiles(inputFile,jobInputMap);
 
-        ArrayGridJobImpl.Builder builder =
-            new ArrayGridJobImpl.Builder(gridExecutor.getSession(),
+        ArrayGridJobBuilder builder = GridJobBuilders.createArrayGridJobBuilder(gridExecutor.getSession(),
                                          new Command(command),
                                          TestGridJob.TEST_PROJECT_CODE);
         builder.setBulkJobStartLoopIndex(1);
@@ -227,8 +226,8 @@ public class TestArrayGridJob extends TestGridJob {
 
         writeInputFiles(inputFile,jobInputMap);
 
-        ArrayGridJobImpl.Builder builder =
-            new ArrayGridJobImpl.Builder(gridExecutor.getSession(),
+        ArrayGridJobBuilder builder = GridJobBuilders.createArrayGridJobBuilder(
+                gridExecutor.getSession(),
                                          new Command(command),
                                          TestGridJob.TEST_PROJECT_CODE);
         builder.setBulkJobStartLoopIndex(1);
@@ -262,8 +261,8 @@ public class TestArrayGridJob extends TestGridJob {
 
         writeInputFiles(inputFile,jobInputMap);
 
-        ArrayGridJobImpl.Builder builder =
-            new ArrayGridJobImpl.Builder(gridExecutor.getSession(),
+        ArrayGridJobBuilder builder = GridJobBuilders.createArrayGridJobBuilder(
+                gridExecutor.getSession(),
                                          new Command(command),
                                          TestGridJob.TEST_PROJECT_CODE);
         builder.setBulkJobStartLoopIndex(1);

@@ -17,21 +17,22 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common;
+package org.jcvi.common.command.grid;
 
-import org.jcvi.command.AllCommandUnitTests;
-import org.jcvi.common.core.AllCoreUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        AllCoreUnitTests.class,
-        AllCommandUnitTests.class
-    }
-    )
-public class AllCommonUnitTests {
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public interface ArrayGridJobBuilder extends GridJobBuilder<GridJob>{
 
+    void setBulkJobStartLoopIndex(int bulkJobStartLoopIndex);
+
+    void setBulkJobEndLoopIndex(int bulkJobEndLoopIndex);
+
+    void setBulkJobLoopIncrement(int bulkJobLoopIncrement);
+    
+    ArrayGridJobBuilder setMaxRunningTasks(Integer maxRunningTasks);
+        
 }

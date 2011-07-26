@@ -3,9 +3,11 @@ package org.jcvi.command.grid;
 import org.junit.Test;
 
 import org.jcvi.common.command.Command;
-import org.jcvi.common.command.grid.BatchGridJobImpl;
 import org.jcvi.common.command.grid.GridJob;
+import org.jcvi.common.command.grid.GridJobBuilder;
+import org.jcvi.common.command.grid.GridJobBuilders;
 import org.jcvi.common.command.grid.GridJobFuture;
+import org.jcvi.common.command.grid.SimpleGridJob;
 
 
 /**
@@ -22,8 +24,7 @@ public class TestBatchGridJob extends TestGridJob {
         Command testCommand = new Command("/bin/sleep");
         testCommand.addFlag("5");
 
-        BatchGridJobImpl.Builder builder =
-            new BatchGridJobImpl.Builder(gridExecutor.getSession(),
+        GridJobBuilder<SimpleGridJob> builder = GridJobBuilders.createSimpleGridJobBuilder(gridExecutor.getSession(),
                                          testCommand,
                                          TestGridJob.TEST_PROJECT_CODE);
         GridJobFuture future = gridExecutor.submit(builder.build());
@@ -37,8 +38,7 @@ public class TestBatchGridJob extends TestGridJob {
         Command testCommand = new Command("/bin/sleep");
         testCommand.addFlag("15");
 
-        BatchGridJobImpl.Builder builder =
-            new BatchGridJobImpl.Builder(gridExecutor.getSession(),
+        GridJobBuilder<SimpleGridJob> builder = GridJobBuilders.createSimpleGridJobBuilder(gridExecutor.getSession(),
                                          testCommand,
                                          TestGridJob.TEST_PROJECT_CODE);
         builder.setTimeout(Long.valueOf(5));
@@ -53,8 +53,7 @@ public class TestBatchGridJob extends TestGridJob {
         Command testCommand = new Command("/bin/sleep");
         testCommand.addFlag("15");
 
-        BatchGridJobImpl.Builder builder =
-            new BatchGridJobImpl.Builder(gridExecutor.getSession(),
+        GridJobBuilder<SimpleGridJob> builder = GridJobBuilders.createSimpleGridJobBuilder(gridExecutor.getSession(),
                                          testCommand,
                                          TestGridJob.TEST_PROJECT_CODE);
         GridJobFuture future = gridExecutor.submit(builder.build());
@@ -69,8 +68,7 @@ public class TestBatchGridJob extends TestGridJob {
         Command testCommand = new Command("/bin/sleep");
         testCommand.addFlag("15");
 
-        BatchGridJobImpl.Builder builder =
-            new BatchGridJobImpl.Builder(gridExecutor.getSession(),
+        GridJobBuilder<SimpleGridJob> builder = GridJobBuilders.createSimpleGridJobBuilder(gridExecutor.getSession(),
                                          testCommand,
                                          TestGridJob.TEST_PROJECT_CODE);
         GridJob gridJob = builder.build();
