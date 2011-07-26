@@ -19,7 +19,8 @@
 
 package org.jcvi.common;
 
-import org.jcvi.command.AllCommandUnitTests;
+
+import org.jcvi.common.command.AllCommandUnitTests;
 import org.jcvi.common.core.AllCoreUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

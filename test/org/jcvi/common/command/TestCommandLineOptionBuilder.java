@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.command;
+package org.jcvi.common.command;
 
 import org.apache.commons.cli.Option;
 import org.jcvi.common.command.CommandLineOptionBuilder;

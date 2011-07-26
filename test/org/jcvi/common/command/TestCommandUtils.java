@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.command;
+package org.jcvi.common.command;
 
 import org.jcvi.common.command.CommandUtils;
 import org.junit.Test;
