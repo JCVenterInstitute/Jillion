@@ -76,17 +76,11 @@ public class CommandUtils {
         {
             final int result = proc.waitFor();
             return result;
-        }
-        catch (final InterruptedException e)
-        {
-            /*
-             * We've been interrupted by another local thread.  This is handled
-             * as a cancel request.
-             */
-            if (proc != null)
-            {
-                proc.destroy();
-            }
+        }catch (final InterruptedException e){
+
+            //We've been interrupted by another local thread.  This is handled
+            //as a cancel request.
+            proc.destroy();
             return -1;
         }
     }

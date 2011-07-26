@@ -20,12 +20,14 @@
 package org.jcvi.common.command;
 import static org.easymock.EasyMock.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.easymock.EasyMock;
 import org.easymock.EasyMockSupport;
+import org.jcvi.common.command.Command.ProcessBuilderWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -36,10 +38,26 @@ import static org.junit.Assert.*;
  */
 public class TestCommand extends EasyMockSupport{
 
+    private static class CommandTestDouble extends Command{
+        private final ProcessBuilderWrapper mockBuilder;
+        public CommandTestDouble(File executable,ProcessBuilderWrapper mockBuilder) {
+            super(executable);
+            this.mockBuilder = mockBuilder;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected ProcessBuilderWrapper createNewProcessBuilderWrapper() {
+            return mockBuilder;
+        }
+        
+    }
     private File exeFile;
     String path = "path/to/file";
     private Command sut;
-    
+    private ProcessBuilderWrapper mockBuilderWrapper;
     @Before
     public void setup(){
         exeFile = EasyMock.createMock(File.class);
@@ -47,7 +65,9 @@ public class TestCommand extends EasyMockSupport{
         
         expect(exeFile.getAbsolutePath()).andStubReturn(path);
         EasyMock.replay(exeFile);
-        sut = new Command(exeFile);
+        mockBuilderWrapper = createMock(ProcessBuilderWrapper.class);
+        
+        sut = new CommandTestDouble(exeFile,mockBuilderWrapper);
     }
     @Test(expected = NullPointerException.class)
     public void nullFileShouldThrowNPE(){
@@ -114,6 +134,10 @@ public class TestCommand extends EasyMockSupport{
     public void setOption(){
         sut.setOption("-key", "value");
         assertCommandLineIsCorrect("-key","value");
+    }
+    @Test(expected = NullPointerException.class)
+    public void setOptionWithNullValueShouldThrowNPE(){
+        sut.setOption("-key", null);
     }
     @Test
     public void overrideOption(){
@@ -185,9 +209,70 @@ public class TestCommand extends EasyMockSupport{
     
     private void assertCommandLineIsCorrect(String... expectedArgs){
         List<String> actualArgs= sut.getCommandLine();
+        List<String> expectedCommandLine = createExpectedArguments(expectedArgs);
+        assertEquals(expectedCommandLine, actualArgs);
+    }
+    private List<String> createExpectedArguments(String... expectedArgs) {
         List<String> expectedCommandLine = new ArrayList<String>(1+ expectedArgs.length);
         expectedCommandLine.add(path);
         expectedCommandLine.addAll(Arrays.asList(expectedArgs));
-        assertEquals(expectedCommandLine, actualArgs);
+        return expectedCommandLine;
+    }
+    
+    @Test
+    public void execute() throws IOException{
+        sut.addFlag("-f");
+        sut.setOption("-key","value");
+        sut.addTarget("target");
+        
+        expect(mockBuilderWrapper.command(
+                    createExpectedArguments("-key","value","-f","target")))
+                .andReturn(mockBuilderWrapper);
+        
+        expect(mockBuilderWrapper.directory(null)).andReturn(mockBuilderWrapper);
+        Process mockProcess = createMock(Process.class);
+        expect(mockBuilderWrapper.start()).andReturn(mockProcess);
+        replayAll();
+        assertEquals(mockProcess, sut.execute());
+        verifyAll();
+    }
+    @Test
+    public void executeFromDifferentWorkingDir() throws IOException{
+        sut.addFlag("-f");
+        sut.setOption("-key","value");
+        sut.addTarget("target");
+        File workingDir = new File("working/dir");
+        sut.setWorkingDir(workingDir);
+        
+        expect(mockBuilderWrapper.command(
+                    createExpectedArguments("-key","value","-f","target")))
+                .andReturn(mockBuilderWrapper);
+        
+        expect(mockBuilderWrapper.directory(workingDir)).andReturn(mockBuilderWrapper);
+        Process mockProcess = createMock(Process.class);
+        expect(mockBuilderWrapper.start()).andReturn(mockProcess);
+        replayAll();
+        assertEquals(mockProcess, sut.execute());
+        verifyAll();
+    }
+    
+    @Test
+    public void executeAndWait() throws IOException, InterruptedException{
+        sut.addFlag("-f");
+        sut.setOption("-key","value");
+        sut.addTarget("target");
+        
+        expect(mockBuilderWrapper.command(
+                    createExpectedArguments("-key","value","-f","target")))
+                .andReturn(mockBuilderWrapper);
+        
+        expect(mockBuilderWrapper.directory(null)).andReturn(mockBuilderWrapper);
+        Process mockProcess = createMock(Process.class);
+        expect(mockBuilderWrapper.start()).andReturn(mockProcess);
+        int returnValue = 1234;
+        expect(mockProcess.waitFor()).andReturn(returnValue);
+        replayAll();
+        assertEquals(returnValue, sut.executeAndWait());
+        verifyAll();
     }
 }
