@@ -29,7 +29,6 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -39,18 +38,19 @@ import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-
-public class ContigFileWriter implements Closeable{
-    private static final ContigFormatReadSorter READ_SORTER = new ContigFormatReadSorter();
+/**
+ * {@code CtgFileWriter} will write out {@link Contig}
+ * objects in ctg format.
+ * @author dkatzel
+ *
+ *
+ */
+public class CtgFileWriter implements Closeable{
+    private static final CtgFormatReadSorter READ_SORTER = CtgFormatReadSorter.INSTANCE;
     private final OutputStream out;
-    public ContigFileWriter(OutputStream out) {
+    
+    public CtgFileWriter(OutputStream out) {
         this.out = out;
-    }
-    public <PR extends PlacedRead, C extends Contig<PR>> void write(List<C> contigs) throws IOException {
-        for(C contig : contigs){
-            write(contig);
-        }
-        
     }
     public <PR extends PlacedRead, C extends Contig<PR>> void write(C contig) throws IOException,
             UnsupportedEncodingException {
@@ -110,12 +110,21 @@ public class ContigFileWriter implements Closeable{
         writeToOutputStream(header.toString());
         
     }
- 
-    private static final class ContigFormatReadSorter implements Comparator<PlacedRead>, Serializable{
+    /**
+     * {@code CtgFormatReadSorter} will sort the {@link PlacedRead}s
+     * by start coordinate.  If multiple reads have the same start coordinate
+     * in the contig, then those reads will be sorted by length (smallest first).  If there are still
+     * multiple reads that have the same start AND the same length, then those reads
+     * are sorted by their ids.
+     * @author dkatzel
+     *
+     *
+     */
+    private static enum CtgFormatReadSorter implements Comparator<PlacedRead>, Serializable{
         /**
-         * 
+         * Singleton instance.
          */
-        private static final long serialVersionUID = 1326950053628001679L;
+        INSTANCE;
 
         /**
          * Sorts PlacedRead by offset then by read length, then by id.

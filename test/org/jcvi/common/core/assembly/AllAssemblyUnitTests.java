@@ -23,11 +23,11 @@
  */
 package org.jcvi.common.core.assembly;
 
-import org.jcvi.assembly.trim.AllTrimUnitTests;
 import org.jcvi.common.core.assembly.contig.TestDefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.cas.AllCasUnitTests;
 import org.jcvi.common.core.assembly.contig.celera.AllCeleraUnitTests;
 import org.jcvi.common.core.assembly.contig.ctg.AllContigUnitTests;
+import org.jcvi.common.core.assembly.contig.trim.AllTrimUnitTests;
 import org.jcvi.common.core.assembly.coverage.AllCoverageUnitTests;
 import org.jcvi.common.core.assembly.coverage.slice.AllSliceUnitTests;
 import org.jcvi.common.core.assembly.scaffold.agp.AllAgpUnitTests;

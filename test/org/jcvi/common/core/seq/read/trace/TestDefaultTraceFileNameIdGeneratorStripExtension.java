@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.trace;
+package org.jcvi.common.core.seq.read.trace;
 
 import org.jcvi.common.core.seq.read.trace.DefaultTraceFileNameIdGenerator;
 import org.junit.Test;

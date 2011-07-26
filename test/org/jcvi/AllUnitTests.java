@@ -27,25 +27,19 @@ import junit.framework.Test;
 
 import org.jcvi.align.AllAlignTests;
 import org.jcvi.common.AllCommonUnitTests;
-import org.jcvi.common.core.TestEmptyRange;
-import org.jcvi.common.core.TestRange;
-import org.jcvi.common.core.TestRangeArrivalComparator;
-import org.jcvi.common.core.TestRangeComparatorLongestToShortest;
-import org.jcvi.common.core.TestRangeComparatorShortestToLongest;
-import org.jcvi.common.core.TestRangeDepartureComparator;
-import org.jcvi.common.core.TestRangeIterator;
 import org.jcvi.common.core.assembly.AllAssemblyUnitTests;
 import org.jcvi.common.core.assembly.contig.ace.AllAceUnitTests;
 import org.jcvi.common.core.seq.fastx.AllFastXTests;
 import org.jcvi.common.core.seq.plate.AllPlateUnitTests;
+import org.jcvi.common.core.seq.read.trace.AllTraceUnitTests;
 import org.jcvi.common.core.seq.read.trace.frg.TestDistance;
 import org.jcvi.common.core.symbol.AllGlyphUnitTests;
+import org.jcvi.common.core.testUtil.TestTestUtilSuite;
 import org.jcvi.common.core.util.MathUtilSuite;
 import org.jcvi.common.core.util.TestCommonUtil;
 import org.jcvi.datastore.AllDataStoreUnitTests;
 import org.jcvi.io.AllIOUnitTests;
 import org.jcvi.sequence.AllSequencingTests;
-import org.jcvi.trace.AllTraceUnitTests;
 import org.jcvi.util.AllUtilUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -56,16 +50,9 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         
         TestCommonUtil.class,
-        MathUtilSuite.class,
-        TestTestUtilSuite.class,
+        MathUtilSuite.class,        
         TestDistance.class,
-        TestRange.class,
-        TestRangeArrivalComparator.class,
-        TestRangeDepartureComparator.class,
-        TestEmptyRange.class,
-        TestRangeIterator.class,
-        TestRangeComparatorShortestToLongest.class,
-        TestRangeComparatorLongestToShortest.class,
+        
         AllGlyphUnitTests.class,
         AllFastXTests.class,
         AllAceUnitTests.class,        

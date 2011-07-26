@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi;
+package org.jcvi.common.core.testUtil;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

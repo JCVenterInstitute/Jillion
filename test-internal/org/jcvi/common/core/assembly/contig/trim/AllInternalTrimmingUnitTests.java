@@ -17,13 +17,8 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly.trim;
+package org.jcvi.common.core.assembly.contig.trim;
 
-import org.jcvi.common.core.seq.trim.TestDefaultPrimerTrimmer;
-import org.jcvi.common.core.seq.trim.TestDefaultPrimerTrimmer_ActualData;
-import org.jcvi.common.core.seq.trim.TestInternalPrimerHit;
-import org.jcvi.common.core.seq.trim.lucy.TestLucyQualityTrimmer;
-import org.jcvi.common.core.seq.trim.lucy.TestLucyTrimDataStore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -34,17 +29,11 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({
-    TestDefaultPrimerTrimmer.class,
-    TestDefaultPrimerTrimmer_ActualData.class,
-    TestInternalPrimerHit.class,
-    TestLucyTrimDataStore.class,
-    
-    TestLucyQualityTrimmer.class,
-    TestMinimumEndCoverageTrimmer.class,
-    TestMinimumBidirectionalEndCoverageTrimmer.class
-}
-)
-public class AllTrimUnitTests {
+@SuiteClasses(
+    {
+        TestElviraSangerContigEndTrimmer.class
+    }
+    )
+public class AllInternalTrimmingUnitTests {
 
 }

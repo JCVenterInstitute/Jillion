@@ -24,9 +24,9 @@
 package org.jcvi.common.core.symbol;
 
 
+import org.jcvi.common.core.symbol.pos.AllPeaksUnitTests;
 import org.jcvi.common.core.symbol.qual.AllPhredQualityTests;
-import org.jcvi.common.core.symbol.residue.aa.AllAminoAcidUnitTests;
-import org.jcvi.common.core.symbol.residue.nuc.AllNucleotideUnitTests;
+import org.jcvi.common.core.symbol.residue.AllResidueUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -35,10 +35,11 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
 
-       AllNucleotideUnitTests.class,
+        AllResidueUnitTests.class,
        AllPhredQualityTests.class,
        AllNumericGlyphUnitTests.class,
-       AllAminoAcidUnitTests.class,
+       AllPeaksUnitTests.class,       
+       
        TestRunLength.class,
        TestRunLengthEncoder.class,
        AllEnocderUnitTests.class

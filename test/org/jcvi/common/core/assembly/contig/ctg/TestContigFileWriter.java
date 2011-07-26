@@ -29,7 +29,7 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.assembly.contig.ctg.ContigFileWriter;
+import org.jcvi.common.core.assembly.contig.ctg.CtgFileWriter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
@@ -38,7 +38,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestContigFileWriter {
     ByteArrayOutputStream out;
-    ContigFileWriter sut;
+    CtgFileWriter sut;
     static DefaultContigFileDataStore dataStore;
     private static String pathToFile = "files/gcv_23918.contig";
     private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestContigFileWriter.class);
@@ -50,7 +50,7 @@ public class TestContigFileWriter {
     @Before
     public void setup(){
         out = new ByteArrayOutputStream();
-        sut = new ContigFileWriter(out);
+        sut = new CtgFileWriter(out);
     }
     
     @Test

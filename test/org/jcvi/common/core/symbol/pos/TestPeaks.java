@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.sequence;
+package org.jcvi.common.core.symbol.pos;
 
 import static org.junit.Assert.*;
 

@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly.trim;
+package org.jcvi.common.core.assembly.contig.trim;
 
 import static org.junit.Assert.assertEquals;
 

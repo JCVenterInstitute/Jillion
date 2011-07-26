@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi.sequence;
+package org.jcvi.common.core;
 
 import java.util.Arrays;
 import java.util.Collection;

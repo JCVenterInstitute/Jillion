@@ -17,27 +17,32 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Sep 18, 2008
+ * Created on Jul 17, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.trace;
+package org.jcvi.common.core.symbol.pos;
 
-import org.jcvi.common.core.seq.read.trace.frg.AllFrgUnitTests;
-import org.jcvi.common.core.seq.read.trace.pyro.All454UnitTests;
-import org.jcvi.common.core.seq.read.trace.sanger.AllSangerTraceUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-@RunWith(Suite.class)
-@SuiteClasses(
-    {    
-        All454UnitTests.class,
-        AllSangerTraceUnitTests.class,
-        AllFrgUnitTests.class,
-        TestDefaultTraceFileNameIdGeneratorStripExtension.class
+import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.PeaksUtil;
+import org.junit.Test;
+import static org.junit.Assert.*;
+public class TestPeaksUtil {
+
+    @Test
+    public void generateEmptyPeaks(){
+        Peaks emptyPeaks = PeaksUtil.generateFakePeaks(0);
+        assertEquals(emptyPeaks.getData().getLength(),0L);
     }
-    )
-public class AllTraceUnitTests {
-
+    @Test(expected = IllegalArgumentException.class)
+    public void geneateFakePeaksNegativeShouldThrowIllegalArgumentException(){
+        PeaksUtil.generateFakePeaks(-1);
+    }
+    @Test
+    public void generateFakePeaks(){
+        short[] expected = new short[]{5,15,25,35,45};
+        Peaks actualpeaks = PeaksUtil.generateFakePeaks(expected.length);
+        
+        assertEquals(new Peaks(expected), actualpeaks);
+    }
 }
