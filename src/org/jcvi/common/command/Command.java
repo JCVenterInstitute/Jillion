@@ -80,17 +80,6 @@ public class Command
         this.workingDir = new File(System.getProperty("user.dir"));
     }
 
-
-    /**
-     * Constructs a new <code>Command</code>.
-     *
-     * @param executable The path to an executable, as a <code>String</code>.
-     */
-    public Command(String executable)
-    {
-        this(new File(executable));
-    }
-
     /**
      * Fetches the executable used by this <code>Command</code>.  Though this is represented by
      * a {@link File}, there is no requirement that this file exist on the local host.  This
@@ -136,21 +125,6 @@ public class Command
             this.addFlag(flag);
         }
     }
-
-    public Map<String, String> getOpt() {
-        return opt;
-    }
-
-
-    public List<String> getFlags() {
-        return flags;
-    }
-
-
-    public List<String> getTargets() {
-        return targets;
-    }
-
 
     public void removeFlag(String flag)
     {

@@ -100,7 +100,7 @@ public class ArrayBasedPrimerDesignerExecutorService implements PrimerDesignerEx
             // create an array grid job for this set of items and kick it off
             ArrayGridJobBuilder builder = GridJobBuilders.createArrayGridJobBuilder(
                                             gridExecutor.getSession(),
-                                             new Command(arrayGridJobTemplate.getAbsolutePath()),
+                                             new Command(new File(arrayGridJobTemplate.getAbsolutePath())),
                                              key.getProjectCode());
             builder.setArchitecture(key.getArchitecture()); // unsure if this is necessary/useful!
             builder.setInputFile(new File(arrayJobRoot,ARRAY_JOB_CONFIG_FILENAME_ROOT));

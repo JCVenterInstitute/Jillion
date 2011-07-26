@@ -89,7 +89,7 @@ public class PrimerDesignJobGenerator {
         File referenceFastaFile = writeReferenceFastaFile(referenceFastaRecords);
 
         // generate the primer design command and run it
-        Command primerDesignerCommand = new Command(PRIMER_DESIGNER_JOB_BUILDER_SCRIPT.getAbsolutePath());
+        Command primerDesignerCommand = new Command(new File(PRIMER_DESIGNER_JOB_BUILDER_SCRIPT.getAbsolutePath()));
         primerDesignerCommand.setWorkingDir(primerDesignRootDirectory);
         // Matt feature option is f
         // primerDesignerCommand.setOption("-f",featuresFile.getAbsolutePath());

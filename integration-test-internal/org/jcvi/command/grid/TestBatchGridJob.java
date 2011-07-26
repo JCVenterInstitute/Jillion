@@ -1,5 +1,7 @@
 package org.jcvi.command.grid;
 
+import java.io.File;
+
 import org.junit.Test;
 
 import org.jcvi.common.command.Command;
@@ -21,7 +23,7 @@ public class TestBatchGridJob extends TestGridJob {
 
     @Test
     public void testBatchGridJob() throws Exception {
-        Command testCommand = new Command("/bin/sleep");
+        Command testCommand = new Command(new File("/bin/sleep"));
         testCommand.addFlag("5");
 
         GridJobBuilder<SimpleGridJob> builder = GridJobBuilders.createSimpleGridJobBuilder(gridExecutor.getSession(),
@@ -35,7 +37,7 @@ public class TestBatchGridJob extends TestGridJob {
 
     @Test
     public void testBatchGridJobGridExecutorTimeout() throws Exception {
-        Command testCommand = new Command("/bin/sleep");
+        Command testCommand = new Command(new File("/bin/sleep"));
         testCommand.addFlag("15");
 
         GridJobBuilder<SimpleGridJob> builder = GridJobBuilders.createSimpleGridJobBuilder(gridExecutor.getSession(),
@@ -50,7 +52,7 @@ public class TestBatchGridJob extends TestGridJob {
 
     @Test
     public void testBatchGridJobGridExecutorTermination() throws Exception {
-        Command testCommand = new Command("/bin/sleep");
+        Command testCommand = new Command(new File("/bin/sleep"));
         testCommand.addFlag("15");
 
         GridJobBuilder<SimpleGridJob> builder = GridJobBuilders.createSimpleGridJobBuilder(gridExecutor.getSession(),
@@ -65,7 +67,7 @@ public class TestBatchGridJob extends TestGridJob {
 
     @Test
     public void testBatchGridJobDirectTermination() throws Exception {
-        Command testCommand = new Command("/bin/sleep");
+        Command testCommand = new Command(new File("/bin/sleep"));
         testCommand.addFlag("15");
 
         GridJobBuilder<SimpleGridJob> builder = GridJobBuilders.createSimpleGridJobBuilder(gridExecutor.getSession(),
