@@ -33,6 +33,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.common.core.util.StringUtilities;
+
 /**
  * A <code>Command</code> is a utility object which encapsulates all of the data necessary to
  * invoke an executable.  This does not require or assume that the executable will be run by
@@ -44,11 +46,6 @@ import java.util.Map;
 public class Command
 {
   
-    
-    
-
-    /** The {@link ProcessBuilder} to use when invoking the command locally. */
-    private final ProcessBuilder procBuilder;
     /** The {@link File} representing the executable. */
     private final File executable;
     /** The base directory to use. */
@@ -71,13 +68,10 @@ public class Command
             throw new IllegalArgumentException(
                     String.format("%s can not be executed",executable.getAbsolutePath()));
         }
-        this.procBuilder = new ProcessBuilder();
         this.executable = executable;
         this.opt = new LinkedHashMap<String, String>();
         this.flags = new ArrayList<String>();
         this.targets = new ArrayList<String>();
-
-        this.workingDir = new File(System.getProperty("user.dir"));
     }
 
     /**
@@ -97,7 +91,7 @@ public class Command
      *
      * @param dir The directory to use, as a {@link File}.
      */
-    public void setWorkingDir(File dir)
+    public final void setWorkingDir(File dir)
     {
         this.workingDir = dir;
     }
@@ -113,12 +107,12 @@ public class Command
         return this.workingDir;
     }
 
-    public void addFlag(String flag)
+    public final void addFlag(String flag)
     {
         this.flags.add(flag);
     }
 
-    public void addFlag(String ... newFlags)
+    public final void addFlag(String ... newFlags)
     {
         for (final String flag : newFlags)
         {
@@ -126,59 +120,56 @@ public class Command
         }
     }
 
-    public void removeFlag(String flag)
+    public final void removeFlag(String flag)
     {
         this.flags.remove(flag);
     }
 
-    public void removeAllArguments()
+    public final void removeAllArguments()
     {
         this.flags.clear();
     }
 
-    public void setOption(String flag, String value)
+    public final void setOption(String flag, String value)
     {
         if (value == null)
         {
-            this.clearOption(flag);
+            throw new NullPointerException("value can not be null");
         }
-        else
-        {
-            this.opt.put(flag, value);
-        }
+        this.opt.put(flag, value);
     }
 
-    public void clearOption(String flag)
+    public final void clearOption(String flag)
     {
         this.opt.remove(flag);
     }
 
-    public void clearAllOptions()
+    public final void clearAllOptions()
     {
         this.opt.clear();
     }
 
-    public void addTarget(String target)
+    public final void addTarget(String target)
     {
         this.targets.add(target);
     }
 
-    public void removeTarget(String target)
+    public final void removeTarget(String target)
     {
         this.targets.remove(target);
     }
 
-    public void removeAllTargets()
+    public final void removeAllTargets()
     {
         this.targets.clear();
     }
     
-    public void removeAllFlags()
+    public final void removeAllFlags()
     {
         this.flags.clear();
     }
 
-    public void addTargets(String ... targetList)
+    public final void addTargets(String ... targetList)
     {
         for (final String target : targetList)
         {
@@ -186,12 +177,12 @@ public class Command
         }
     }
 
-    public String getExecutablePath()
+    public final String getExecutablePath()
     {
         return this.executable.getAbsolutePath();
     }
 
-    public List<String> getArguments()
+    public final List<String> getArguments()
     {
         final int argSize = this.opt.size() + this.flags.size() + this.targets.size();
         final List<String> command = new ArrayList<String>(argSize);
@@ -219,7 +210,7 @@ public class Command
         return command;
     }
 
-    public List<String> getCommandLine()
+    public final List<String> getCommandLine()
     {
         final List<String> args = this.getArguments();
         final List<String> command = new ArrayList<String>(args.size() + 1);
@@ -229,16 +220,27 @@ public class Command
         return command;
     }
 
-    public Process execute() throws IOException
+    public final Process execute() throws IOException
     {
-        this.procBuilder.command(this.getCommandLine());
-        this.procBuilder.directory(workingDir);
-        return this.procBuilder.start();
-
-        
+        ProcessBuilderWrapper procBuilder = createNewProcessBuilderWrapper();
+        procBuilder.command(this.getCommandLine());
+        procBuilder.directory(workingDir);
+        return procBuilder.start();
+    }
+    
+    /**
+     * Create a new {@link ProcessBuilderWrapper}
+     * instance which will be populated with the parameters 
+     * specified by this Command and then started.
+     * This method maybe overridden if a custom
+     * implementation is required.
+     * @return a new ProcessBuilderWrapper should never be null.
+     */
+    protected ProcessBuilderWrapper createNewProcessBuilderWrapper(){
+        return new DefaultProcessBuilderWrapper();
     }
 
-    public int executeAndWait() throws IOException
+    public final int executeAndWait() throws IOException
     {
         final Process proc = this.execute();
         return CommandUtils.waitFor(proc);
@@ -248,33 +250,49 @@ public class Command
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString()
+    public final String toString()
     {
-        final StringBuilder cmd = new StringBuilder();
+        return new StringUtilities.JoinedStringBuilder(this.getCommandLine())
+                    .glue(" ")
+                    .build();
+    }
+    /**
+     * Wraps a ProcessBuilder so we can mock it/ replace
+     * it with our own implementations.
+     * @author dkatzel
+     */
+    public static interface ProcessBuilderWrapper {
+        ProcessBuilderWrapper command(List<String> command);
+        ProcessBuilderWrapper directory(File workDir);
+        Process start() throws IOException;
+    }
+    /**
+     * Default implementation of ProcessBuilderWrapper that just
+     * delegates all calls to a {@link ProcessBuilder}.
+     */
+    private static final class DefaultProcessBuilderWrapper implements ProcessBuilderWrapper{
+        private final ProcessBuilder builder = new ProcessBuilder();
 
-        for (final String arg : this.getCommandLine())
-        {
-            if (cmd.length() > 0)
-            {
-                cmd.append(' ');
-            }
-            if (arg.indexOf(' ') > -1)
-            {
-                if (arg.indexOf('"') > -1)
-                {
-                    cmd.append('\'').append(arg).append('\'');
-                }
-                else
-                {
-                    cmd.append('"').append(arg).append('"');
-                }
-            }
-            else
-            {
-                cmd.append(arg);
-            }
+        @Override
+        public ProcessBuilderWrapper command(List<String> command) {
+            builder.command(command);
+            return this;
         }
 
-        return cmd.toString();
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ProcessBuilderWrapper directory(File workDir) {
+            builder.directory(workDir);
+            return this;
+        }
+        
+        @Override
+        public Process start() throws IOException{
+            return builder.start();
+        }
+        
+        
     }
 }
