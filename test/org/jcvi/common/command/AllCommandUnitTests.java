@@ -26,7 +26,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestCommand.class
+        TestCommand.class,
+        TestCommandUtils.class,
+        TestCommandLineOptionBuilder.class
     }
     )
 public class AllCommandUnitTests {
