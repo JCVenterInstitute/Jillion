@@ -27,7 +27,7 @@ import junit.framework.Test;
 
 import org.jcvi.align.AllAlignTests;
 import org.jcvi.common.AllCommonUnitTests;
-import org.jcvi.datastore.AllDataStoreUnitTests;
+import org.jcvi.common.core.io.datastore.AllDataStoreUnitTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -37,7 +37,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
 
-        AllDataStoreUnitTests.class,
+        
         AllAlignTests.class,
         
         
