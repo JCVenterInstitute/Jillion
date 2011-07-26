@@ -58,7 +58,6 @@ import org.junit.runners.Suite.SuiteClasses;
         AllAceUnitTests.class,        
         AllSequencingTests.class,
         AllIOUnitTests.class,
-        AllTraceUnitTests.class,
         AllAssemblyUnitTests.class,
         AllUtilUnitTests.class,
         AllDataStoreUnitTests.class,
