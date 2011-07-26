@@ -21,6 +21,7 @@ package org.jcvi.common.core;
 
 import org.jcvi.common.core.assembly.AllAssemblyUnitTests;
 import org.jcvi.common.core.io.AllCoreIOUnitTests;
+import org.jcvi.common.core.io.datastore.AllDataStoreUnitTests;
 import org.jcvi.common.core.seq.AllSeqUnitTests;
 import org.jcvi.common.core.symbol.AllGlyphUnitTests;
 import org.jcvi.common.core.testUtil.TestTestUtilSuite;
@@ -44,7 +45,9 @@ import org.junit.runners.Suite.SuiteClasses;
         AllCoreIOUnitTests.class,
         AllGlyphUnitTests.class,
         AllSeqUnitTests.class,
+        AllDataStoreUnitTests.class,
         AllAssemblyUnitTests.class
+        
     }
     )
 public class AllCoreUnitTests {

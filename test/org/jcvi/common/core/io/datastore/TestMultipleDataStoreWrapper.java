@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.datastore;
+package org.jcvi.common.core.io.datastore;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

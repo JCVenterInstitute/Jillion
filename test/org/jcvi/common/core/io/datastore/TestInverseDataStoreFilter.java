@@ -17,33 +17,43 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.datastore;
+package org.jcvi.common.core.io.datastore;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-
-import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.InverseDataStoreFilter;
+import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+import static org.easymock.EasyMock.*;
 /**
  * @author dkatzel
  *
  *
  */
-public class TestDefaultExcludeDataStoreFilter {
-    DefaultExcludeDataStoreFilter sut = new DefaultExcludeDataStoreFilter(Arrays.asList("include_1", "include_2"));
-    
-    @Test
-    public void idIsInIncludeListShouldNotAccept(){
-        assertFalse(sut.accept("include_1"));
-        assertFalse(sut.accept("include_2"));
+public class TestInverseDataStoreFilter {
+
+    private DataStoreFilter mock;
+    private final String id = "id";
+    private InverseDataStoreFilter sut;
+    @Before
+    public void setup(){
+        mock = createMock(DataStoreFilter.class);  
+        sut = new InverseDataStoreFilter(mock);
     }
     
     @Test
-    public void idIsNotInIncludeListShouldAccept(){
-        assertTrue(sut.accept("include_3"));
-        assertTrue(sut.accept("something completely different"));
+    public void wrappedFilterSaysTrueShouldReturnFalse(){
+        expect(mock.accept(id)).andReturn(true);
+        replay(mock);
+        assertFalse(sut.accept(id));
+        verify(mock);
+    }
+    @Test
+    public void wrappedFilterSaysFalseShouldReturnTrue(){
+        expect(mock.accept(id)).andReturn(false);
+        replay(mock);
+        assertTrue(sut.accept(id));
+        verify(mock);
     }
 }
