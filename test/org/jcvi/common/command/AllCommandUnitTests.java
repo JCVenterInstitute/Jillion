@@ -17,10 +17,8 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common;
+package org.jcvi.common.command;
 
-import org.jcvi.command.AllCommandUnitTests;
-import org.jcvi.common.core.AllCoreUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -28,10 +26,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        AllCoreUnitTests.class,
-        AllCommandUnitTests.class
+        TestCommand.class
     }
     )
-public class AllCommonUnitTests {
+public class AllCommandUnitTests {
 
 }

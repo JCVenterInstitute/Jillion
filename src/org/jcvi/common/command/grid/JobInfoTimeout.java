@@ -25,16 +25,18 @@ import org.ggf.drmaa.JobInfo;
 import java.util.Collections;
 import java.util.Map;
 
-/**
-* Created by IntelliJ IDEA.
-* User: aresnick
-* Date: Aug 6, 2010
-* Time: 4:35:35 PM
-* To change this template use File | Settings | File Templates.
-*/
-public class JobInfoTimeout implements JobInfo {
 
-    private String jobId;
+/**
+ * {@code JobInfoTimeout} is a specific implementation
+ * of a {@link JobInfo} when a Job gets timed out.
+ * This makes it easier to see that a job has timed out
+ * opposed to stoped or errored out for another reason.
+ * @author dkatzel
+ * @author aresnick
+ */
+public final class JobInfoTimeout implements JobInfo {
+
+    private final String jobId;
 
     public JobInfoTimeout(String jobId) {
         this.jobId = jobId;

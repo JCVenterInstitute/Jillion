@@ -67,8 +67,10 @@ public class Command
      */
     public Command(File executable)
     {
-        super();
-
+        if(!executable.canExecute()){
+            throw new IllegalArgumentException(
+                    String.format("%s can not be executed",executable.getAbsolutePath()));
+        }
         this.procBuilder = new ProcessBuilder();
         this.executable = executable;
         this.opt = new LinkedHashMap<String, String>();
@@ -195,6 +197,11 @@ public class Command
     public void removeAllTargets()
     {
         this.targets.clear();
+    }
+    
+    public void removeAllFlags()
+    {
+        this.flags.clear();
     }
 
     public void addTargets(String ... targetList)
