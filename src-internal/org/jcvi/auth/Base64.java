@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.io;
+package org.jcvi.auth;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;

@@ -30,6 +30,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+        AllBase64UnitTests.class,
         TestDefaultJCVIAuthorizer.class,
         TestDefaultTigrAuthorizer.class,
         TestDefaultTigrAuthorizerBuilder.class,

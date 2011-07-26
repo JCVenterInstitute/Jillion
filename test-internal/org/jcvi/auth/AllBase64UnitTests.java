@@ -21,18 +21,21 @@
  *
  * @author dkatzel
  */
-package org.jcvi.io;
+package org.jcvi.auth;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-public class Base64_ConvertTriplet {
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-    @Test
-    public void convert(){
-        //010011010110000101101110
-        int triplet = 5071214;
-        byte[] actual =Base64.convertTriplet(triplet);
-        byte[] expected = new byte[]{19,22,5,46};
-        assertArrayEquals(expected, actual);
+@RunWith(Suite.class)
+@SuiteClasses(
+    {
+        TestBase64ToChar.class,
+        TestReadTriplet.class,
+        Base64_ConvertTriplet.class,
+        TestBase64Encoder.class
     }
+    )
+public class AllBase64UnitTests {
+
 }

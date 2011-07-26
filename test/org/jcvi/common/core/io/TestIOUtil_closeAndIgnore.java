@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.io;
+package org.jcvi.common.core.io;
 
 import java.io.Closeable;
 import java.io.IOException;
