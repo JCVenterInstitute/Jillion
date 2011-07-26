@@ -31,6 +31,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+        TestDistance.class,
+        TestMateOrientation.class,
+        TestDefaultLibrary.class,
         TestDefaultFragment.class,
         TestFrg2Parser.class,
         TestDefaultFragmentDataStore.class,

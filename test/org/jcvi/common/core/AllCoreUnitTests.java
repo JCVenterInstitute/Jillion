@@ -20,6 +20,7 @@
 package org.jcvi.common.core;
 
 import org.jcvi.common.core.seq.AllSeqUnitTests;
+import org.jcvi.common.core.symbol.AllGlyphUnitTests;
 import org.jcvi.common.core.testUtil.TestTestUtilSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -38,7 +39,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestRangeComparatorLongestToShortest.class,
         
         TestTestUtilSuite.class,
-        
+        AllGlyphUnitTests.class,
         AllSeqUnitTests.class
     }
     )
