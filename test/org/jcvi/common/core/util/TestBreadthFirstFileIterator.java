@@ -17,16 +17,11 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Aug 7, 2009
+ * Created on Aug 6, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.util;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+package org.jcvi.common.core.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,15 +31,16 @@ import java.util.NoSuchElementException;
 import org.jcvi.common.core.util.FileIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
+import static org.junit.Assert.*;
+public class TestBreadthFirstFileIterator {
 
-public class TestDepthFirstFileIterator {
-    ResourceFileServer fileServer = new ResourceFileServer(TestDepthFirstFileIterator.class);
+   ResourceFileServer fileServer = new ResourceFileServer(TestBreadthFirstFileIterator.class);
     
   
     
     @Test
     public void shouldthrowNoSuchElementExceptionWhenEmpty() throws IOException{
-        Iterator<File> sut = FileIterator.createDepthFirstFileIteratorBuilder(fileServer.getFile("files")).build();
+        Iterator<File> sut = FileIterator.createBreadthFirstFileIteratorBuilder(fileServer.getFile("files")).build();
         while(sut.hasNext()){
             sut.next();
         }
@@ -58,83 +54,76 @@ public class TestDepthFirstFileIterator {
     
     @Test
     public void iterateFilesOnly() throws IOException{
-        Iterator<File> sut = FileIterator.createDepthFirstFileIteratorBuilder(fileServer.getFile("files")).build();
+        Iterator<File> sut = FileIterator.createBreadthFirstFileIteratorBuilder(fileServer.getFile("files")).build();
         assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/file1"),sut.next());
         assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/file2"),sut.next());
+        assertEquals(fileServer.getFile("files/file2"),sut.next()); 
+        assertTrue(sut.hasNext());
+        
+        assertEquals(fileServer.getFile("files/siblingSubDir/file6"),sut.next());
         assertTrue(sut.hasNext());
         
         assertEquals(fileServer.getFile("files/subDir/file3"),sut.next());
         assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/subDir/subSubDir2/file5"),sut.next());
         
-        
-        assertTrue(sut.hasNext());
+        assertTrue(sut.hasNext());                
         assertEquals(fileServer.getFile("files/subDir/subSubDir/file4"),sut.next());
-        
-        
-        assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/siblingSubDir/file6"),sut.next());
-        
+      
+        assertEquals(fileServer.getFile("files/subDir/subSubDir2/file5"),sut.next());
+       
+       
         assertFalse(sut.hasNext());
+        
     }
     @Test
     public void iterateIncludeDirs() throws IOException{
-        Iterator<File> sut = FileIterator.createDepthFirstFileIteratorBuilder(fileServer.getFile("files"))
-                                .includeDirectories(true)
-                                .build();
+        Iterator<File> sut = FileIterator.createBreadthFirstFileIteratorBuilder(fileServer.getFile("files"))
+                            .includeDirectories(true)
+                            .build();
         assertTrue(sut.hasNext());
-        
         assertEquals(fileServer.getFile("files/file1"),sut.next());
         assertTrue(sut.hasNext());
         assertEquals(fileServer.getFile("files/file2"),sut.next());
         assertTrue(sut.hasNext());
-            
-        assertEquals(fileServer.getFile("files/siblingSubDir/"), sut.next());
+        assertEquals(fileServer.getFile("files/siblingSubDir/"),sut.next());
         assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/subDir"),sut.next());
-        assertTrue(sut.hasNext());   
+        assertEquals(fileServer.getFile("files/subDir/"),sut.next());
+        assertTrue(sut.hasNext());  
         
-        assertEquals(fileServer.getFile("files/subDir/file3"),sut.next());
-        assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/subDir/subSubDir"),sut.next());
-        assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/subDir/subSubDir2"),sut.next());
-        assertTrue(sut.hasNext());
-        
-        
-        
-        
-        
-        assertEquals(fileServer.getFile("files/subDir/subSubDir2/file5"),sut.next());        
-        assertTrue(sut.hasNext());
-        
-       
-        assertEquals(fileServer.getFile("files/subDir/subSubDir/file4"),sut.next());
-        assertTrue(sut.hasNext());
-        
+        assertTrue(sut.hasNext()); 
         assertEquals(fileServer.getFile("files/siblingSubDir/file6"),sut.next());
         
+        
+        assertEquals(fileServer.getFile("files/subDir/file3"),sut.next());
+        assertTrue(sut.hasNext());        
+        assertEquals(fileServer.getFile("files/subDir/subSubDir/"),sut.next());
+        assertTrue(sut.hasNext()); 
+        assertEquals(fileServer.getFile("files/subDir/subSubDir2/"),sut.next());
+        assertTrue(sut.hasNext());
+        assertEquals(fileServer.getFile("files/subDir/subSubDir/file4"),sut.next());
+        
+       assertTrue(sut.hasNext());
+        assertEquals(fileServer.getFile("files/subDir/subSubDir2/file5"),sut.next());
+        
+       assertFalse(sut.hasNext());
+    }
+    
+    @Test
+    public void additionalFilter() throws IOException{
+        Iterator<File> sut = FileIterator.createBreadthFirstFileIteratorBuilder(fileServer.getFile("files"))
+                            .includeDirectories(true)
+                            .fileFilter(FileIteratorTestUtil.FILE_FILTER_ANYTHING_THAT_DOESNT_END_WITH_2)
+                            .build();
+        assertTrue(sut.hasNext());
+        assertEquals(fileServer.getFile("files/file2"),sut.next());
+        assertEquals(fileServer.getFile("files/subDir/subSubDir2/"),sut.next());
         assertFalse(sut.hasNext());
     }
     
     @Test
-    public void additionalFileFilter() throws IOException{
-        Iterator<File> sut = FileIterator.createDepthFirstFileIteratorBuilder(fileServer.getFile("files"))
-                                .includeDirectories(true)
-                                .fileFilter(FileIteratorTestUtil.FILE_FILTER_ANYTHING_THAT_DOESNT_END_WITH_2)
-                                .build();
-        assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/file2"),sut.next());
-        
-        assertTrue(sut.hasNext());
-        assertEquals(fileServer.getFile("files/subDir/subSubDir2"),sut.next());
-        assertFalse(sut.hasNext());
-    }
-    @Test
     public void removeShouldThrowUnsupportedOperationException() throws IOException{
-        Iterator<File> sut = FileIterator.createDepthFirstFileIteratorBuilder(fileServer.getFile("files")).build();
+        Iterator<File> sut = FileIterator.createBreadthFirstFileIteratorBuilder(fileServer.getFile("files")).build();
         try{
             sut.remove();
             fail("should throw UnsupportedOperationException");

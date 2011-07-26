@@ -16,12 +16,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 7, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.util;
+
+package org.jcvi.common.core.util;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -30,6 +26,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+        TestCommonUtil.class,
+        MathUtilSuite.class,
         TestLRUCache.class,
         TestEmptyIterator.class,
         TestArrayIterable.class,
