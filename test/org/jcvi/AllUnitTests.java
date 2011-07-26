@@ -55,7 +55,7 @@ import org.junit.runners.Suite.SuiteClasses;
         
         AllGlyphUnitTests.class,
         AllFastXTests.class,
-        AllAceUnitTests.class,        
+              
         AllSequencingTests.class,
         AllIOUnitTests.class,
         AllAssemblyUnitTests.class,

@@ -17,31 +17,28 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Apr 24, 2009
+ * Created on Apr 23, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.datastore;
+package org.jcvi.common.core.assembly.contig.ctg;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.File;
+import java.io.FileNotFoundException;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-        TestEmptyDataStoreFilter.class,
-        TestInverseDataStoreFilter.class,
-        TestDefaultIncludeDataStoreFilter.class,
-        TestDefaultExcludeDataStoreFilter.class,
-        TestDataStoreIterator.class,
-    
-     TestCachedDataStore.class,
-     TestSimpleDataStore.class,
-     TestMultipleDataStoreWrapper.class
-     
+import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.ctg.IndexedContigFileDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+
+public class TestIndexedContigFileDataStore extends AbstractTestContigFileDataStore{
+   
+    @Override
+    protected IndexedContigFileDataStore buildContigFileDataStore(
+            File file) throws FileNotFoundException {
+        return new IndexedContigFileDataStore(file);
     }
-    )
-public class AllDataStoreUnitTests {
-
+    @Override
+    protected Contig getContig928From(File file) throws FileNotFoundException, DataStoreException{
+        return buildContigFileDataStore(file).get("928");
+    }
 }

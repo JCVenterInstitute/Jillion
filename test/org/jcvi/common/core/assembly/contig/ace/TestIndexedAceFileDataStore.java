@@ -17,11 +17,13 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on May 1, 2009
+ * Created on May 4, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.datastore;
+package org.jcvi.common.core.assembly.contig.ace;
+
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,27 +32,27 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
-import org.jcvi.common.core.assembly.contig.ace.DefaultAceFileDataStore;
-import org.jcvi.common.core.assembly.contig.ace.TestAbstractAceParserMatchesAce2ContigMultipleContigs;
+import org.jcvi.common.core.assembly.contig.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.util.DefaultIndexedFileRange;
 
-import static org.junit.Assert.fail;
-public class TestDefaultAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
+public class TestIndexedAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
 
-    public TestDefaultAceFileDataStore() throws IOException {
+    public TestIndexedAceFileDataStore() throws IOException {
         super();        
     }
 
     @Override
     protected List<AceContig> getContigList(File aceFile)
             throws IOException {
-        DefaultAceFileDataStore dataStore= new DefaultAceFileDataStore(aceFile);
+        IndexedAceFileDataStore dataStore= new IndexedAceFileDataStore(aceFile, new DefaultIndexedFileRange());
         List<AceContig> contigs = new ArrayList<AceContig>(dataStore.size());
         for(Iterator<String> iter = dataStore.getIds(); iter.hasNext();){
             String id = iter.next();
             try {
                 contigs.add(dataStore.get(id));
             } catch (DataStoreException e) {
+                e.printStackTrace();
                 fail("error getting contig " + id);
             }
         }

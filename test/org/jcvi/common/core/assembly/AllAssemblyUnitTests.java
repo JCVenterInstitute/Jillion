@@ -23,14 +23,9 @@
  */
 package org.jcvi.common.core.assembly;
 
-import org.jcvi.common.core.assembly.contig.TestDefaultPlacedRead;
-import org.jcvi.common.core.assembly.contig.cas.AllCasUnitTests;
-import org.jcvi.common.core.assembly.contig.celera.AllCeleraUnitTests;
-import org.jcvi.common.core.assembly.contig.ctg.AllContigUnitTests;
-import org.jcvi.common.core.assembly.contig.trim.AllTrimUnitTests;
+import org.jcvi.common.core.assembly.contig.AllContigUnitTests;
 import org.jcvi.common.core.assembly.coverage.AllCoverageUnitTests;
-import org.jcvi.common.core.assembly.coverage.slice.AllSliceUnitTests;
-import org.jcvi.common.core.assembly.scaffold.agp.AllAgpUnitTests;
+import org.jcvi.common.core.assembly.scaffold.AllScaffoldUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -38,17 +33,17 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {        
-        TestDefaultPlacedRead.class,        
-        AllTrimUnitTests.class,
-        AllSliceUnitTests.class,
-        AllContigUnitTests.class,
+                
+        
         AllCoverageUnitTests.class,
-        AllAgpUnitTests.class,
-        AllCasUnitTests.class,
-        AllCeleraUnitTests.class,
+        AllScaffoldUnitTests.class,
+        
+        
         
         TestAssemblyUtil_gappedfullRange.class,
-        TestAssemblyUtil_reverseComplimentRange.class
+        TestAssemblyUtil_reverseComplimentRange.class,
+        
+        AllContigUnitTests.class
     }
     )
 public class AllAssemblyUnitTests {

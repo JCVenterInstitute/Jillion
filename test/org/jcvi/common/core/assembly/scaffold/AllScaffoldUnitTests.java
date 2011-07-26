@@ -16,42 +16,22 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Sep 3, 2008
- *
- * @author dkatzel
- */
-package org.jcvi.common.core.assembly.contig.ace;
 
+package org.jcvi.common.core.assembly.scaffold;
 
-import org.jcvi.common.core.assembly.contig.ace.consed.AllConsedUnitTests;
+import org.jcvi.common.core.assembly.scaffold.agp.AllAgpUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-    {
-        TestAceFileUtil.class,
-       TestDefaultPhdInfo.class,
-       TestAssembledFrom.class,
-       TestAceParserPhdInfo.class,
-       TestDefaultAceContig.class,
-       TestAceContigBuilderInvalidRead.class,
-       TestDefaultAceBestSegment.class,
-       TestDefaultAceBestSegmentMap.class,
-       TestOntheFlyAceBestSegmentMap.class,
-       TestAcePlacedReadAdapter.class,
-       TestDefaultAceFileTagMap.class,
-       TestDefaultAceFileDataStore.class,
-       TestIndexedAceFileDataStore.class,
-       TestAceFileWriter.class,
-       TestHiLowAceContigPhdDatastore.class,
-       TestAceContigTrimmer.class,
-       
-       AllConsedUnitTests.class
+    {  
+     TestDefaultScaffold.class,
+     
+     AllAgpUnitTests.class
     }
-)
-public class AllAceUnitTests {
+    )
+public class AllScaffoldUnitTests {
 
 }
