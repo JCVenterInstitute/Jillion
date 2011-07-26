@@ -235,15 +235,7 @@
 					</junit>
 		
 		
-		<junit haltonfailure="no" showoutput="yes"	
-					errorproperty="command.test.failed"
-						failureproperty="command.test.failed"
-					fork="true">
-										<formatter type="xml"/>
-										
-									  <test name="org.jcvi.command.AllCommandUnitTests"/>
-										<classpath refid = "test.classpath" />
-									</junit>
+		
 		<junit haltonfailure="no" showoutput="yes"	
 							errorproperty="net.test.failed"
 								failureproperty="net.test.failed"
@@ -290,9 +282,6 @@
 		<fail if= "internal-unit.test.failed">
 					Internal Unit tests failed.
 				</fail>
-		<fail if= "command.test.failed">
-							Command Unit tests failed.
-						</fail>
 		<fail if= "net.test.failed">
 									Net Unit tests failed.
 								</fail>
