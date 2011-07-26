@@ -21,7 +21,7 @@
  *
  * @author "dkatzel" +
  */
-package org.jcvi.datastore;
+package org.jcvi.common.core.assembly.contig.ctg;
 
 import java.io.File;
 import java.io.FileNotFoundException;

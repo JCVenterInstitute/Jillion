@@ -16,25 +16,28 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 16, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.common.core.assembly.contig.ctg;
 
-import org.jcvi.common.core.assembly.contig.AllQualityValueStrategyUnitTests;
+package org.jcvi.common.core.assembly.contig;
+
+import org.jcvi.common.core.assembly.contig.ace.AllAceUnitTests;
+import org.jcvi.common.core.assembly.contig.cas.AllCasUnitTests;
+import org.jcvi.common.core.assembly.contig.celera.AllCeleraUnitTests;
+import org.jcvi.common.core.assembly.contig.ctg.AllCtgUnitTests;
+import org.jcvi.common.core.assembly.contig.trim.AllTrimUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-    {  
-        TestContigFileWriter.class,
-        
-        AllQualityValueStrategyUnitTests.class
-       
+    { 
+    TestDefaultPlacedRead.class,
+    AllQualityValueStrategyUnitTests.class,
+    AllCtgUnitTests.class,
+    AllAceUnitTests.class, 
+    AllTrimUnitTests.class,    
+    AllCasUnitTests.class,
+    AllCeleraUnitTests.class
     }
     )
 public class AllContigUnitTests {

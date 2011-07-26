@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.assembly.coverage;
 
+import org.jcvi.common.core.assembly.coverage.slice.AllSliceUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -32,7 +33,10 @@ import org.junit.runners.Suite.SuiteClasses;
     { 
         TestDefaultCoverageRegion.class,
         TestDefaultCoverageMap.class,
-        TestDefaultCoverageMapAvgCoverage.class
+        TestDefaultCoverageMapAvgCoverage.class,
+        
+        AllSliceUnitTests.class
+        
     }
     )
 public class AllCoverageUnitTests {
