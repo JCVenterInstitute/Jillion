@@ -34,7 +34,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestPhredQuality.class,
         TestZipPhredQualityCodec.class,
         TestTigrQualitiesEncoder.class,
-        TestTigrQualitiesEncoderCodec.class,
+        TestTigrQualitiesEncoderCodec.class
     }
     )
 public class AllPhredQualityTests {
