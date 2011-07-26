@@ -25,6 +25,7 @@ package org.jcvi.sequence;
 
 import org.jcvi.common.core.seq.read.trace.frg.TestDefaultLibrary;
 import org.jcvi.common.core.seq.read.trace.frg.TestMateOrientation;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.TestDefaultConfidence;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -32,9 +33,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     { 
-        TestSequenceDirection.class,
-        TestPeaks.class,
-        TestPeaksUtil.class,
         TestDefaultConfidence.class,        
         TestMateOrientation.class,
         TestDefaultLibrary.class

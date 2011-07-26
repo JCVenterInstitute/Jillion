@@ -17,16 +17,18 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly.trim;
+package org.jcvi.common.core.assembly.contig.trim;
 
 import static org.junit.Assert.assertEquals;
 
+import org.jcvi.assembly.trim.ElviraSangerContigEndTrimmer;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.trim.PlacedReadTrimmer;
+import org.jcvi.common.core.assembly.contig.trim.TestMinimumBidirectionalEndCoverageTrimmer;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.junit.Test;
 

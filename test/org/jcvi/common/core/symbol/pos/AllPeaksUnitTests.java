@@ -16,15 +16,22 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jul 29, 2008
- *
- * @author dkatzel
- */
-package org.jcvi;
 
-public class AbstractTestTestUtil {
-    protected static final Integer ZERO = Integer.valueOf(0);
-    protected static final String STRING ="a string";
-    protected static final String DIFF_STRING = "a different String";
+package org.jcvi.common.core.symbol.pos;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+@RunWith(Suite.class)
+@SuiteClasses(
+    {
+      TestPeaks.class,
+      TestPeaksUtil.class,
+      TestTigrPeaksEncoder.class,
+      TestTigrPeaksEncoderCodec.class
+    }
+    )
+public class AllPeaksUnitTests {
+
 }

@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.sequence;
+package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 import static org.junit.Assert.*;
 
 import java.nio.ByteBuffer;

@@ -33,7 +33,7 @@ import org.jcvi.common.core.assembly.contig.ace.AbstractAceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
 import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
 import org.jcvi.common.core.assembly.contig.ace.AceFileVisitor;
-import org.jcvi.common.core.assembly.contig.ctg.ContigFileWriter;
+import org.jcvi.common.core.assembly.contig.ctg.CtgFileWriter;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.io.idReader.IdReaderException;
@@ -80,7 +80,7 @@ public class Ace2Contig {
             File aceFile = new File(commandLine.getOptionValue("a"));
             File contigOutFile = new File(commandLine.getOptionValue("c"));
             IOUtil.mkdirs(contigOutFile.getParentFile());
-            final ContigFileWriter writer = new ContigFileWriter(new FileOutputStream(contigOutFile));
+            final CtgFileWriter writer = new CtgFileWriter(new FileOutputStream(contigOutFile));
             final DataStoreFilter filter = CommandLineUtils.createDataStoreFilter(commandLine);
             
             

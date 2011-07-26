@@ -16,32 +16,15 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Jul 29, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.common.core.testUtil;
 
-package org.jcvi.common.core;
-
-import org.jcvi.common.core.seq.AllSeqUnitTests;
-import org.jcvi.common.core.testUtil.TestTestUtilSuite;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestSequenceDirection.class,
-        TestRange.class,
-        TestRangeArrivalComparator.class,
-        TestRangeDepartureComparator.class,
-        TestEmptyRange.class,
-        TestRangeIterator.class,
-        TestRangeComparatorShortestToLongest.class,
-        TestRangeComparatorLongestToShortest.class,
-        
-        TestTestUtilSuite.class,
-        
-        AllSeqUnitTests.class
-    }
-    )
-public class AllCoreUnitTests {
-
+public class AbstractTestTestUtil {
+    protected static final Integer ZERO = Integer.valueOf(0);
+    protected static final String STRING ="a string";
+    protected static final String DIFF_STRING = "a different String";
 }
