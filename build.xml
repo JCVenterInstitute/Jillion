@@ -16,8 +16,6 @@
 	<property name ="exe-test" value="exe-test"/>
 	
 	<!-- non-core packages -->
-	<property name ="command-src" value="command-src"/>
-	<property name ="command-test" value="command-test"/>
 	
 	<property name ="primer-design-src" value="primerDesign-src"/>
 		<property name ="primer-design-test" value="primerDesign-test"/>
