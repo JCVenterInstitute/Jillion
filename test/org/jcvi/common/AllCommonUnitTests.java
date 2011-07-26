@@ -22,6 +22,8 @@ package org.jcvi.common;
 
 import org.jcvi.common.command.AllCommandUnitTests;
 import org.jcvi.common.core.AllCoreUnitTests;
+import org.jcvi.common.io.AllIOUnitTests;
+import org.jcvi.common.net.AllNetUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -30,7 +32,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         AllCoreUnitTests.class,
-        AllCommandUnitTests.class
+        AllIOUnitTests.class,
+        AllCommandUnitTests.class,
+        AllNetUnitTests.class
     }
     )
 public class AllCommonUnitTests {

@@ -23,7 +23,6 @@
  */
 package org.jcvi.auth;
 
-import org.jcvi.io.Base64;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

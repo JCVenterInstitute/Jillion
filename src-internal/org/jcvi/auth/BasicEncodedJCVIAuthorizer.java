@@ -24,7 +24,6 @@
 package org.jcvi.auth;
 
 
-import org.jcvi.io.Base64;
 /**
  * {@code BasicEncodedJCVIAuthorizer} is a Base 64 Encoded
  * version of JCVIEncodedAuthorizer that is commonly used

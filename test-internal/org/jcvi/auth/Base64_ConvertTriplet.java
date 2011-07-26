@@ -17,39 +17,22 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Apr 4, 2008
+ * Created on Aug 3, 2009
  *
  * @author dkatzel
  */
-package org.jcvi;
+package org.jcvi.auth;
 
-import junit.framework.Test;
+import org.junit.Test;
+import static org.junit.Assert.*;
+public class Base64_ConvertTriplet {
 
-import org.jcvi.align.AllAlignTests;
-import org.jcvi.common.AllCommonUnitTests;
-import org.jcvi.datastore.AllDataStoreUnitTests;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-
-        AllDataStoreUnitTests.class,
-        AllAlignTests.class,
-        
-        
-        AllCommonUnitTests.class
-    }
-)
-public class AllUnitTests {
-  //required for ant?
-    public static Test suite() {
-        return new junit.framework.JUnit4TestAdapter(AllUnitTests.class);
-     }
-    public static void main(String[] args)  {
-        junit.textui.TestRunner.run(AllUnitTests.suite());
+    @Test
+    public void convert(){
+        //010011010110000101101110
+        int triplet = 5071214;
+        byte[] actual =Base64.convertTriplet(triplet);
+        byte[] expected = new byte[]{19,22,5,46};
+        assertArrayEquals(expected, actual);
     }
 }

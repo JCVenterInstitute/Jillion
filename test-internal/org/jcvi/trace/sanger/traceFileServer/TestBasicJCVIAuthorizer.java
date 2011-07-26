@@ -23,9 +23,9 @@
  */
 package org.jcvi.trace.sanger.traceFileServer;
 
+import org.jcvi.auth.Base64;
 import org.jcvi.auth.BasicEncodedJCVIAuthorizer;
 import org.jcvi.auth.DefaultJCVIAuthorizer;
-import org.jcvi.io.Base64;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestBasicJCVIAuthorizer {

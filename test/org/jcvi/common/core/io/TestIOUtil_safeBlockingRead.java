@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.io;
+package org.jcvi.common.core.io;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;

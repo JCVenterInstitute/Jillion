@@ -16,56 +16,56 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Aug 3, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.io;
+
+package org.jcvi.common.core.io;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import static org.junit.Assert.*;
-
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.*;
+/**
+ * @author dkatzel
+ *
+ *
+ */
 @RunWith(Parameterized.class)
-public class TestBase64ToChar {
+public class TestIOUtil_unsignedByteToSignedByte {
 
     @Parameters
     public static Collection<?> data(){
-
         List<Object[]> data = new ArrayList<Object[]>();
-        for(int i=0; i<26; i++){
-            data.add(new Object[]{(byte)i, (char)('A'+i)});
-            data.add(new Object[]{(byte)(i+26), (char)('a'+i)});
-        }
-        for(byte i=0; i<10; i++){
-            data.add(new Object[]{(byte)(i+52), (""+i).charAt(0)});
-        }
-        data.add(new Object[]{(byte)(62), '+'});
-        data.add(new Object[]{(byte)(63), '/'});
+        data.add(new Object[]{0, (byte)0});
+        data.add(new Object[]{50, (byte)50});
+        data.add(new Object[]{100, (byte)100});
+        data.add(new Object[]{255, (byte)-1});
+        data.add(new Object[]{252, (byte)-4});
+        data.add(new Object[]{156, (byte)-100});
+        data.add(new Object[]{Byte.MAX_VALUE, Byte.MAX_VALUE});
+        data.add(new Object[]{128, Byte.MIN_VALUE});
         return data;
     }
     
-    private byte value;
-    private char expectedChar;
+    private final int unsigned;
+    private final byte signed;
     /**
-     * @param value
-     * @param expectedChar
+     * @param unsigned
+     * @param signed
      */
-    public TestBase64ToChar(byte value, char expectedChar) {
-        this.value = value;
-        this.expectedChar = expectedChar;
+    public TestIOUtil_unsignedByteToSignedByte(int unsigned, byte signed) {
+        this.unsigned = unsigned;
+        this.signed = signed;
     }
     
     @Test
-    public void toChar(){
-        assertEquals(expectedChar, Base64.base64ToChar(value));
+    public void convertUnsignedToSigned(){
+        assertThat(IOUtil.convertUnsignedByteToSignedByte(unsigned),is(equalTo(signed)));
     }
     
 }

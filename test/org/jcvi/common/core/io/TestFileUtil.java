@@ -1,4 +1,4 @@
-package org.jcvi.io;
+package org.jcvi.common.core.io;
 
 import java.io.File;
 import java.io.IOException;
