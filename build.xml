@@ -79,7 +79,6 @@
 	<path id="javadoc.sourcepath">
         <pathelement location="${src}"/>
     	<pathelement location="${src-internal}"/>
-		<pathelement location="${command-src}"/>
 		<pathelement location="${primer-design-src}"/>
     </path>
     <path id="classpath">
@@ -110,8 +109,7 @@
 					<src path="${exe}"/>
 					<src path="${exe-test}"/>
 					<src path="${integration-test}"/>
-					<src path="${integration-test-internal}"/>
-					<src path="${command-test}"/>			
+					<src path="${integration-test-internal}"/>		
 					<src path="${primer-design-test}"/>
 			
 	  	</javac>
@@ -125,7 +123,6 @@
 			<fileset dir="${integration-test}" excludes="**/*.java"/>
 			<fileset dir="${integration-test-internal}" excludes="**/*.java"/>
 			
-			<fileset dir="${command-test}" excludes="**/*.java"/>
 			<fileset dir="${primer-design-test}" excludes="**/*.java"/>
 		</copy>
 
