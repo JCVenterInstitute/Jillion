@@ -30,7 +30,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         AllIdReaderUnitTests.class,
         
-        AllFileServerUnitTests.class,
+        AllFileServerUnitTests.class
        
     }
     )
