@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.util;
+package org.jcvi.common.core.util;
 
 import java.io.File;
 import java.io.FileFilter;

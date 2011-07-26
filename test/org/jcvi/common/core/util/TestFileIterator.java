@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.util;
+package org.jcvi.common.core.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

@@ -27,13 +27,9 @@ import junit.framework.Test;
 
 import org.jcvi.align.AllAlignTests;
 import org.jcvi.common.AllCommonUnitTests;
-import org.jcvi.common.core.assembly.AllAssemblyUnitTests;
-import org.jcvi.common.core.seq.fastx.AllFastXTests;
-import org.jcvi.common.core.util.MathUtilSuite;
-import org.jcvi.common.core.util.TestCommonUtil;
 import org.jcvi.datastore.AllDataStoreUnitTests;
 import org.jcvi.io.AllIOUnitTests;
-import org.jcvi.util.AllUtilUnitTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -42,15 +38,13 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         
-        TestCommonUtil.class,
-        MathUtilSuite.class, 
         
         
-        AllFastXTests.class,
+        
+        
 
         AllIOUnitTests.class,
-        AllAssemblyUnitTests.class,
-        AllUtilUnitTests.class,
+
         AllDataStoreUnitTests.class,
         AllAlignTests.class,
         

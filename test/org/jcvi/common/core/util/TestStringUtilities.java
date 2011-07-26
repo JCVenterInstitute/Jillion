@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package org.jcvi.util;
+package org.jcvi.common.core.util;
 
 import static org.junit.Assert.*;
 
