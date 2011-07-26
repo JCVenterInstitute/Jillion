@@ -26,6 +26,7 @@ package org.jcvi;
 import junit.framework.Test;
 
 import org.jcvi.align.AllAlignTests;
+import org.jcvi.common.AllCommonUnitTests;
 import org.jcvi.common.core.TestEmptyRange;
 import org.jcvi.common.core.TestRange;
 import org.jcvi.common.core.TestRangeArrivalComparator;
@@ -42,7 +43,6 @@ import org.jcvi.common.core.symbol.AllGlyphUnitTests;
 import org.jcvi.common.core.util.MathUtilSuite;
 import org.jcvi.common.core.util.TestCommonUtil;
 import org.jcvi.datastore.AllDataStoreUnitTests;
-import org.jcvi.glyph.qualClass.AllQualityClassUnitTests;
 import org.jcvi.io.AllIOUnitTests;
 import org.jcvi.sequence.AllSequencingTests;
 import org.jcvi.trace.AllTraceUnitTests;
@@ -76,7 +76,9 @@ import org.junit.runners.Suite.SuiteClasses;
         AllUtilUnitTests.class,
         AllDataStoreUnitTests.class,
         AllAlignTests.class,
-        AllPlateUnitTests.class
+        AllPlateUnitTests.class,
+        
+        AllCommonUnitTests.class
     }
 )
 public class AllUnitTests {
