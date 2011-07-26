@@ -20,6 +20,7 @@
 package org.jcvi.common.command;
 import static org.easymock.EasyMock.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class TestCommand extends EasyMockSupport{
     @Test
     public void addOneFlag(){
         sut.addFlag("-f");
-        assertArguments("-f");
+        assertCommandLineIsCorrect("-f");
         
     }
     
@@ -79,60 +80,60 @@ public class TestCommand extends EasyMockSupport{
     public void addMultipleFlagsInDifferentCalls(){
         sut.addFlag("-f");
         sut.addFlag("-v");
-        assertArguments("-f","-v");
+        assertCommandLineIsCorrect("-f","-v");
         
     }
     @Test
     public void addMultipleFlagsInSameCall(){
         sut.addFlag("-f", "-v");
-        assertArguments("-f","-v");
+        assertCommandLineIsCorrect("-f","-v");
     }
     
     @Test
     public void removeOnlyFlag(){
         sut.addFlag("-f");
         sut.removeFlag("-f");
-        assertArguments();
+        assertCommandLineIsCorrect();
     }
     
     @Test
     public void removeFlag(){
         sut.addFlag("-f", "-v");
         sut.removeFlag("-f");
-        assertArguments("-v");
+        assertCommandLineIsCorrect("-v");
     }
     
     @Test
     public void removeAllFlags(){
         sut.addFlag("-f", "-v");
         sut.removeAllFlags();
-        assertArguments();
+        assertCommandLineIsCorrect();
     }
     
     @Test
     public void setOption(){
         sut.setOption("-key", "value");
-        assertArguments("-key","value");
+        assertCommandLineIsCorrect("-key","value");
     }
     @Test
     public void overrideOption(){
         sut.setOption("-key", "value");
         sut.setOption("-key", "new_value");
-        assertArguments("-key","new_value");
+        assertCommandLineIsCorrect("-key","new_value");
     }
     
     @Test
     public void clearOption(){
         sut.setOption("-key", "value");
         sut.clearOption("-key");
-        assertArguments();
+        assertCommandLineIsCorrect();
     }
     
     @Test
     public void multipleOptions(){
         sut.setOption("-key", "value");
         sut.setOption("-diff_key", "diff_value");
-        assertArguments("-key","value",
+        assertCommandLineIsCorrect("-key","value",
                         "-diff_key", "diff_value");
     }
     
@@ -141,37 +142,37 @@ public class TestCommand extends EasyMockSupport{
         sut.setOption("-key", "value");
         sut.setOption("-diff_key", "diff_value");
         sut.clearAllOptions();
-        assertArguments();
+        assertCommandLineIsCorrect();
     }
     
     @Test
     public void addTarget(){
         sut.addTarget("target");
-        assertArguments("target");
+        assertCommandLineIsCorrect("target");
     }
     @Test
     public void addMultipleTargetsInDifferentCalls(){
         sut.addTarget("target");
         sut.addTarget("target2");
-        assertArguments("target", "target2");
+        assertCommandLineIsCorrect("target", "target2");
     }
     @Test
     public void addMultipleTargets(){
         sut.addTargets("target","target2");
-        assertArguments("target", "target2");
+        assertCommandLineIsCorrect("target", "target2");
     }
     
     @Test
     public void removeTargets(){
         sut.addTargets("target","target2");
         sut.removeTarget("target");
-        assertArguments("target2");
+        assertCommandLineIsCorrect("target2");
     }
     @Test
     public void removeAllTargets(){
         sut.addTargets("target","target2");
         sut.removeAllTargets();
-        assertArguments();
+        assertCommandLineIsCorrect();
     }
     
     @Test
@@ -179,11 +180,14 @@ public class TestCommand extends EasyMockSupport{
         sut.addFlag("-f");
         sut.setOption("-key","value");
         sut.addTarget("target");
-        assertArguments("-key","value","-f","target");
+        assertCommandLineIsCorrect("-key","value","-f","target");
     }
     
-    private void assertArguments(String... expectedArgs){
-        List<String> actualArgs= sut.getArguments();
-        assertEquals(Arrays.asList(expectedArgs), actualArgs);
+    private void assertCommandLineIsCorrect(String... expectedArgs){
+        List<String> actualArgs= sut.getCommandLine();
+        List<String> expectedCommandLine = new ArrayList<String>(1+ expectedArgs.length);
+        expectedCommandLine.add(path);
+        expectedCommandLine.addAll(Arrays.asList(expectedArgs));
+        assertEquals(expectedCommandLine, actualArgs);
     }
 }
