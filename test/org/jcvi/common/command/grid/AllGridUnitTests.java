@@ -17,9 +17,8 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.command;
+package org.jcvi.common.command.grid;
 
-import org.jcvi.common.command.grid.AllGridUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -27,13 +26,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestCommand.class,
-        TestCommandUtils.class,
-        TestCommandLineOptionBuilder.class,
-        
-        AllGridUnitTests.class
+        TestGridUtils.class
     }
     )
-public class AllCommandUnitTests {
+public class AllGridUnitTests {
 
 }

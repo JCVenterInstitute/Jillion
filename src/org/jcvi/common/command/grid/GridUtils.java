@@ -123,8 +123,8 @@ public final class GridUtils
     }
 
     public static GridJob.Status getJobStatus(GridJob job) throws DrmaaException {
-        for ( String jobID : job.getJobIDList() ) {
-            GridJob.Status status = GridUtils.getJobStatus(job.getJobInfoMap().get(jobID));
+        for ( JobInfo jobInfo : job.getJobInfoMap().values() ) {
+            GridJob.Status status = GridUtils.getJobStatus(jobInfo);
             if ( status != GridJob.Status.COMPLETED ) {
                 return status;
             }
@@ -137,16 +137,17 @@ public final class GridUtils
     {
         if ( jobInfo == null ) {
             return GridJob.Status.UNKNOWN;
-        } else if ( jobInfo.wasAborted() ) {
+        } 
+        if ( jobInfo.wasAborted() ) {
             if ( jobInfo instanceof JobInfoTimeout ) {
                 return GridJob.Status.TIMED_OUT;
             }
             return GridJob.Status.ABORTED;
-        } else if ( jobInfo.hasSignaled() ) {
+        } 
+        if ( jobInfo.hasSignaled() ) {
             return GridJob.Status.SIGNALLED;
-        } else {
-            return GridJob.Status.COMPLETED;
         }
+        return GridJob.Status.COMPLETED;
     }
 
     public static String printJobInfo(JobInfo info) throws DrmaaException {

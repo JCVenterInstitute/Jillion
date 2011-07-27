@@ -36,12 +36,12 @@ import java.util.concurrent.Callable;
  */
 public interface GridJob extends Callable<Integer> {
 
-    public enum Status {
-        UNKNOWN,
-        COMPLETED,
+    public enum Status{
+        UNKNOWN,        
+        SIGNALLED,
         TIMED_OUT,
         ABORTED,
-        SIGNALLED,
+        COMPLETED,
     }
 
     public enum MemoryUnit{
@@ -62,7 +62,10 @@ public interface GridJob extends Callable<Integer> {
     Command getCommand();
 
     List<String> getJobIDList();
-
+    /**
+     * Map is sorted by JobInfo status.
+     * @return
+     */
     Map<String,JobInfo> getJobInfoMap();
 
     void waitForCompletion() throws DrmaaException;
