@@ -19,6 +19,7 @@
 
 package org.jcvi.common.core.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 
@@ -28,7 +29,10 @@ import java.util.Comparator;
  * ordering of the given Comparable.
  * @author dkatzel
  */
-public final class ComparableComparator<T extends Comparable> implements Comparator<T>{
+public final class ComparableComparator<T extends Comparable> implements Comparator<T>, Serializable{
+
+    private static final long serialVersionUID = 8748840566214201421L;
+
     /**
      * Static helper factory method to infer generic types for us.
      * @param <T> the Comparable to make a comparator for.
