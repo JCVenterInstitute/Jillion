@@ -17,23 +17,30 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.command;
+package org.jcvi.common.core.util;
 
-import org.jcvi.common.command.grid.AllGridUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Comparator;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestCommand.class,
-        TestCommandUtils.class,
-        TestCommandLineOptionBuilder.class,
-        
-        AllGridUnitTests.class
+
+/**
+ * {@code ComparableComparator} creates a
+ * {@link Comparator} instance using the natural
+ * ordering of the given Comparable.
+ * @author dkatzel
+ */
+public final class ComparableComparator<T extends Comparable> implements Comparator<T>{
+    /**
+     * Static helper factory method to infer generic types for us.
+     * @param <T> the Comparable to make a comparator for.
+     * @return a new instance of a Comparator of type T.
+     */
+    public static <T extends Comparable> ComparableComparator<T> create(){
+        return new ComparableComparator<T>();
     }
-    )
-public class AllCommandUnitTests {
-
+    
+    @Override
+    public int compare(T o1, T o2) {
+        return o1.compareTo(o2);
+    }
+    
 }

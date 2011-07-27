@@ -17,23 +17,25 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.command;
+package org.jcvi.common.command.grid;
 
-import org.jcvi.common.command.grid.AllGridUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Comparator;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestCommand.class,
-        TestCommandUtils.class,
-        TestCommandLineOptionBuilder.class,
-        
-        AllGridUnitTests.class
+import org.ggf.drmaa.DrmaaException;
+import org.ggf.drmaa.JobInfo;
+
+public final class JobInfoStatusComparator implements Comparator<JobInfo>{
+    public static final JobInfoStatusComparator INSTANCE = new JobInfoStatusComparator();
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compare(JobInfo o1, JobInfo o2) {
+        try {
+            return GridUtils.getJobStatus(o1).compareTo(GridUtils.getJobStatus(o2));
+        } catch (DrmaaException e) {
+            throw new IllegalStateException("error querying job status",e);
+        }
     }
-    )
-public class AllCommandUnitTests {
-
+    
 }

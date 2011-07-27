@@ -287,13 +287,13 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
         }
     
         @Override
-        public synchronized void putFile(String fileId, File fileToPut) throws IOException {
+        public synchronized final void putFile(String fileId, File fileToPut) throws IOException {
             InputStream in = new FileInputStream(fileToPut);
             putStream(fileId, in);
         }
     
         @Override
-        public synchronized void putStream(String fileId, InputStream inputStream)
+        public synchronized final void putStream(String fileId, InputStream inputStream)
                 throws IOException {
             FileOutputStream out=null;
             try{
@@ -329,7 +329,7 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
         }
 
         @Override
-        public File createNewDir(String dirPath) throws IOException {
+        public final File createNewDir(String dirPath) throws IOException {
             File dir =createNewFile(dirPath);
             if(!dir.mkdirs()){
                 throw new IOException("could not create dir "+ dirPath);
@@ -338,7 +338,7 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
         }
         
         @Override
-        public File createNewDirIfNeeded(String dirPath) throws IOException {
+        public final File createNewDirIfNeeded(String dirPath) throws IOException {
             if(!contains(dirPath)){
                 return createNewDir(dirPath);
             }
@@ -346,7 +346,7 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
         }
 
         @Override
-        public void createNewSymLink(String pathtoFileToLink,
+        public final void createNewSymLink(String pathtoFileToLink,
                 String symbolicPath) throws IOException {
             if(contains(symbolicPath)){
                throw new IOException("file already exists");
@@ -366,7 +366,7 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
         }
 
         @Override
-        public boolean supportsSymlinks() {
+        public final boolean supportsSymlinks() {
             return true;
         }
     }
@@ -378,7 +378,7 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
      *
      *
      */
-    public static class TemporaryDirectoryFileServer extends ReadWriteDirectoryFileServer{
+    public static final class TemporaryDirectoryFileServer extends ReadWriteDirectoryFileServer{
 
         private TemporaryDirectoryFileServer(File rootDir) throws IOException {
             super(rootDir);

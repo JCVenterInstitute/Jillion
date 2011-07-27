@@ -22,12 +22,12 @@ package org.jcvi.common.command.grid;
 import java.io.File;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.ggf.drmaa.DrmaaException;
 import org.ggf.drmaa.ExitTimeoutException;
@@ -35,6 +35,7 @@ import org.ggf.drmaa.JobInfo;
 import org.ggf.drmaa.JobTemplate;
 import org.ggf.drmaa.Session;
 import org.jcvi.common.command.Command;
+import org.jcvi.common.core.util.MapValueComparator;
 
 /**
  * @author dkatzel
@@ -50,6 +51,7 @@ public final class GridJobBuilders {
     public static ArrayGridJobBuilder createArrayGridJobBuilder(Session gridSession, Command command, String projectCode){
         return new ArrayGridJobImpl.ArrayGridJobImplBuilder(gridSession, command, projectCode);
     }
+    
     /**
      * A <code>GridJobImpl</code> is an abstractions for a DRMAA-supported distributed execution
      * process.
@@ -88,7 +90,7 @@ public final class GridJobBuilders {
         protected JobTemplate jobTemplate;
 
         protected List<String> jobIDList=Collections.emptyList();
-        protected Map<String,JobInfo> jobInfoMap = Collections.emptyMap();
+        protected Map<String,JobInfo> jobInfoMap = new ConcurrentHashMap<String, JobInfo>();
 
         private final PostExecutionHook postExecutionHook;
         private final PreExecutionHook preExecutionHook;
@@ -344,7 +346,7 @@ public final class GridJobBuilders {
 
         @Override
         public Map<String, JobInfo> getJobInfoMap() {
-            return jobInfoMap;
+            return MapValueComparator.sortAscending(jobInfoMap,JobInfoStatusComparator.INSTANCE );
         }
 
         public abstract void waitForCompletion() throws DrmaaException;
@@ -743,7 +745,6 @@ public final class GridJobBuilders {
              {
                  this.buildJobTemplate();
                  this.jobIDList = Collections.singletonList(this.gridSession.runJob(this.jobTemplate));
-                 this.jobInfoMap = Collections.synchronizedMap(new HashMap<String,JobInfo>());
              }
              finally
              {
@@ -869,7 +870,6 @@ public final class GridJobBuilders {
                                                                this.bulkJobStartLoopIndex,
                                                                this.bulkJobEndLoopIndex,
                                                                this.bulkJobLoopIncrement);
-                 this.jobInfoMap = Collections.synchronizedMap(new HashMap<String,JobInfo>());
              }
              finally
              {

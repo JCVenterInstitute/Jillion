@@ -252,6 +252,7 @@ public class TestCommand extends EasyMockSupport{
         Process mockProcess = createMock(Process.class);
         expect(mockBuilderWrapper.start()).andReturn(mockProcess);
         replayAll();
+        assertEquals(workingDir,sut.getWorkingDir());
         assertEquals(mockProcess, sut.execute());
         verifyAll();
     }
