@@ -139,7 +139,7 @@ public final class GridUtils
             return GridJob.Status.UNKNOWN;
         } 
         if ( jobInfo.wasAborted() ) {
-            if ( jobInfo instanceof JobInfoTimeout ) {
+            if ( jobInfo instanceof TimeoutJobInfo ) {
                 return GridJob.Status.TIMED_OUT;
             }
             return GridJob.Status.ABORTED;

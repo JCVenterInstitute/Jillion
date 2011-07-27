@@ -119,10 +119,10 @@ public class ArrayBasedPrimerDesignerExecutorService implements PrimerDesignerEx
         for ( GridJobFuture future : primerDesignJobs ) {
             try {
                 future.get();
-                logger.trace("Array grid job cumulative status is " + GridUtils.getJobStatus(future.getJob()));
-                for ( String jobID : future.getJob().getJobIDList() ) {
+                logger.trace("Array grid job cumulative status is " + GridUtils.getJobStatus(future.getGridJob()));
+                for ( String jobID : future.getGridJob().getJobIDList() ) {
                     logger.trace("Job id is " + jobID);
-                    logger.trace(GridUtils.printJobInfo(future.getJob().getJobInfoMap().get(jobID)));
+                    logger.trace(GridUtils.printJobInfo(future.getGridJob().getJobInfoMap().get(jobID)));
                 }
             } catch (Exception e) {
                 throw new RuntimeException("Unexpected error waiting for array grid job result", e);

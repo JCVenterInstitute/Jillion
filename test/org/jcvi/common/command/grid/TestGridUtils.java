@@ -52,7 +52,7 @@ public class TestGridUtils extends EasyMockSupport{
     }
     @Test
     public void timedOutJobInfoShouldHaveTimedOutStatus() throws DrmaaException{
-        JobInfo timedOut = new JobInfoTimeout("1234");
+        JobInfo timedOut = new TimeoutJobInfo("1234");
         assertEquals(GridJob.Status.TIMED_OUT, GridUtils.getJobStatus(timedOut));
     }
     
@@ -99,7 +99,7 @@ public class TestGridUtils extends EasyMockSupport{
         GridJob gridJob = createMock(GridJob.class);
         Map<String, JobInfo> map = new HashMap<String, JobInfo>();
         map.put("1234", createCompleteJobInfo());
-        map.put("333",new JobInfoTimeout("333"));
+        map.put("333",new TimeoutJobInfo("333"));
         expect(gridJob.getJobInfoMap()).andReturn(map);
         replayAll();
         assertEquals(GridJob.Status.TIMED_OUT, GridUtils.getJobStatus(gridJob));
@@ -112,7 +112,7 @@ public class TestGridUtils extends EasyMockSupport{
         Map<String, JobInfo> map = new HashMap<String, JobInfo>();
         map.put("1234", createCompleteJobInfo());
         map.put("999", createSignaledJobInfo());
-        map.put("333",new JobInfoTimeout("333"));
+        map.put("333",new TimeoutJobInfo("333"));
         
         expect(gridJob.getJobInfoMap()).andReturn(MapValueComparator.sortAscending(map, JobInfoStatusComparator.INSTANCE));
         replayAll();

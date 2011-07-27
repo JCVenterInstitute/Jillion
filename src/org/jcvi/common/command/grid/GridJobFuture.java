@@ -25,7 +25,7 @@ import java.util.concurrent.FutureTask;
 import org.ggf.drmaa.DrmaaException;
 /**
  * {@code GridJobFuture} is a {@link Future}
- * implementation specifically for {@link AbstractGridJob}s
+ * implementation specifically for {@link GridJob}s
  * so you can access GridJob specific fields
  * @author dkatzel
  *
@@ -38,19 +38,17 @@ public class GridJobFuture extends FutureTask<Integer>{
         super(gridJob);
         this.job = gridJob;
     }
-    public GridJob getJob() {
+    public GridJob getGridJob() {
         return job;
     }
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
-       
+        super.cancel(mayInterruptIfRunning);
         try {
             job.terminate();
             return true;
         } catch (DrmaaException e) {
             return false;
-        }finally{
-            super.cancel(mayInterruptIfRunning);
         }
     }
     
