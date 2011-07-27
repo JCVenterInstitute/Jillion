@@ -27,18 +27,21 @@ import java.util.Map;
 
 
 /**
- * {@code JobInfoTimeout} is a specific implementation
+ * {@code TimeoutJobInfo} is a specific implementation
  * of a {@link JobInfo} when a Job gets timed out.
  * This makes it easier to see that a job has timed out
  * opposed to stoped or errored out for another reason.
  * @author dkatzel
  * @author aresnick
  */
-public final class JobInfoTimeout implements JobInfo {
+public final class TimeoutJobInfo implements JobInfo {
 
     private final String jobId;
 
-    public JobInfoTimeout(String jobId) {
+    public TimeoutJobInfo(String jobId) {
+        if(jobId==null){
+            throw new NullPointerException("job id can not be null");
+        }
         this.jobId = jobId;
     }
 
@@ -74,11 +77,38 @@ public final class JobInfoTimeout implements JobInfo {
 
     @Override
     public boolean hasCoreDump() throws DrmaaException {
-        throw new IllegalStateException("job not terminated due to termination signal");
+       return false;
     }
 
     @Override
     public boolean wasAborted() throws DrmaaException {
         return true;
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + jobId.hashCode();
+        return result;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof TimeoutJobInfo)){
+            return false;
+        }
+        TimeoutJobInfo other = (TimeoutJobInfo) obj;
+        return jobId.equals(other.jobId);
+    }
+    
+    
 }

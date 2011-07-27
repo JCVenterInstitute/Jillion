@@ -247,13 +247,13 @@ public final class GridJobBuilders {
 
         protected abstract int callPostExecutionHook() throws Exception;
         
-        protected void cancelGridJobs(boolean jobTimeout) throws DrmaaException {
+        protected synchronized void cancelGridJobs(boolean jobTimeout) throws DrmaaException {
             for ( String jobID : jobIDList ) {
                 int jobProgramStatus = this.gridSession.getJobProgramStatus(jobID);
                 if ( jobProgramStatus != Session.DONE && jobProgramStatus != Session.FAILED ) {
                     this.gridSession.control(jobID, Session.TERMINATE);
                     if ( jobTimeout ) {
-                        jobInfoMap.put(jobID,new JobInfoTimeout(jobID));
+                        jobInfoMap.put(jobID,new TimeoutJobInfo(jobID));
                     }
                 }
             }

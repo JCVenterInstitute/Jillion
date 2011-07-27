@@ -32,7 +32,7 @@ public class TestBatchGridJob extends TestGridJob {
         GridJobFuture future = gridExecutor.submit(builder.build());
         int exitStatus = future.get();
         System.out.println("grid job future exit status was " + exitStatus);
-        printJobResults(future.getJob());
+        printJobResults(future.getGridJob());
     }
 
     @Test
@@ -47,7 +47,7 @@ public class TestBatchGridJob extends TestGridJob {
         GridJobFuture future = gridExecutor.submit(builder.build());
         int exitStatus = future.get();
         System.out.println("grid job future exit status was " + exitStatus);
-        printJobResults(future.getJob());
+        printJobResults(future.getGridJob());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class TestBatchGridJob extends TestGridJob {
         new Thread(new JobCancellation(future,5)).start();
         int exitStatus = future.get();
         System.out.println("grid job future exit status was " + exitStatus);
-        printJobResults(future.getJob());
+        printJobResults(future.getGridJob());
     }
 
     @Test

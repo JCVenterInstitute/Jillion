@@ -136,7 +136,7 @@ public class TestArrayGridJob extends TestGridJob {
         int exitStatus = future.get();
 
         System.out.println("grid job future exit status was " + exitStatus);
-        printJobResults(future.getJob());
+        printJobResults(future.getGridJob());
 
         for (Map.Entry<Integer,String> entry : jobInputMap.entrySet() ) {
             File result = new File(outputFile.getAbsolutePath()+"."+entry.getKey());
@@ -171,7 +171,7 @@ public class TestArrayGridJob extends TestGridJob {
         int exitStatus = future.get();
 
         System.out.println("grid job future exit status was " + exitStatus);
-        printJobResults(future.getJob());
+        printJobResults(future.getGridJob());
 
         for (Map.Entry<Integer,String> entry : jobInputMap.entrySet() ) {
             File result = new File(outputFile.getAbsolutePath()+"."+entry.getKey());
@@ -205,7 +205,7 @@ public class TestArrayGridJob extends TestGridJob {
         int exitStatus = future.get();
 
         System.out.println("grid job future exit status was " + exitStatus);
-        printJobResults(future.getJob());
+        printJobResults(future.getGridJob());
 
         for (Map.Entry<Integer,String> entry : jobInputMap.entrySet() ) {
             File result = new File(outputFile.getAbsolutePath()+"."+entry.getKey());
@@ -240,7 +240,7 @@ public class TestArrayGridJob extends TestGridJob {
         int exitStatus = future.get();
 
         System.out.println("grid job future exit status was " + exitStatus);
-        printJobResults(future.getJob());
+        printJobResults(future.getGridJob());
 
         for (Map.Entry<Integer,String> entry : jobInputMap.entrySet() ) {
             File result = new File(outputFile.getAbsolutePath()+"."+entry.getKey());

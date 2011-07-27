@@ -26,7 +26,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestGridUtils.class
+        TestTimeOutJobInfo.class,
+        TestGridUtils.class,
+        TestGridJobFuture.class
     }
     )
 public class AllGridUnitTests {
