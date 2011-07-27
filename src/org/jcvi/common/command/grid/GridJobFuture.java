@@ -34,6 +34,8 @@ import org.ggf.drmaa.DrmaaException;
 public class GridJobFuture extends FutureTask<Integer>{
 
     private final GridJob job;
+    private volatile boolean wasCancelled=false;
+    private Exception cancellationException = null;
     public GridJobFuture(GridJob gridJob) {
         super(gridJob);
         this.job = gridJob;
@@ -41,15 +43,34 @@ public class GridJobFuture extends FutureTask<Integer>{
     public GridJob getGridJob() {
         return job;
     }
+    /**
+     * If while attempting to cancel the grid 
+     * job on the grid, there is an exception thrown,
+     * this method will return false and the exception
+     * can be retrieved by calling {@link #getCancellationException()}.
+     * @return {@code true} if the grid job was canceled; {@code false} otherwise.
+     */
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
         super.cancel(mayInterruptIfRunning);
         try {
-            job.terminate();
-            return true;
+            job.terminate();       
+            wasCancelled= true;
         } catch (DrmaaException e) {
-            return false;
+            wasCancelled= false;
+            cancellationException=e;
         }
+        return wasCancelled;
+    }
+    @Override
+    public boolean isCancelled() {
+        return wasCancelled;
+    }
+    /**
+     * @return the cancellationException
+     */
+    public Exception getCancellationException() {
+        return cancellationException;
     }
     
     

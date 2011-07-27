@@ -78,6 +78,8 @@ public final class GridUtils
             }
 
             return GLOBAL_SESSION;
+        } catch (DrmaaException e) {
+            throw new IllegalStateException("error building new Session",e);
         }
         finally
         {
@@ -92,32 +94,26 @@ public final class GridUtils
      * intended to be used.  This may be set to <code>null</code> or the empty string to use the
      * default implementation.
      * @return A new {@link Session}.
-     * @throws GridInitializationException If the <code>Session</code> could not be initialized.
+     * @throws DrmaaException If the <code>Session</code> could not be initialized.
      * @see Session#init(String)
      */
-    public static Session buildNewSession(String contact) throws GridInitializationException
+    public static Session buildNewSession(String contact) throws DrmaaException
     {
-        try
-        {
             final Session session = SESSION_FACTORY.getSession();
             session.init(contact);
 
             return session;
-        }
-        catch (final DrmaaException e)
-        {
-            throw new GridInitializationException("Error while initializing session.", e);
-        }
+        
     }
 
     /**
      * Builds a new DRMAA {@link Session} with the default contact ({@value #DEFAULT_CONTACT}).
      *
      * @return A new {@link Session}.
-     * @throws GridInitializationException If the <code>Session</code> could not be initialized.
+     * @throws DrmaaException If the <code>Session</code> could not be initialized.
      * @see #buildNewSession(String)
      */
-    public static Session buildNewSession() throws GridInitializationException
+    public static Session buildNewSession() throws DrmaaException
     {
         return buildNewSession(DEFAULT_CONTACT);
     }

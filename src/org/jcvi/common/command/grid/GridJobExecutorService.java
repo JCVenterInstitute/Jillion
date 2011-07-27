@@ -28,9 +28,6 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import org.ggf.drmaa.DrmaaException;
-import org.ggf.drmaa.JobTemplate;
 import org.ggf.drmaa.Session;
 
 /**
@@ -59,11 +56,6 @@ public class GridJobExecutorService extends ThreadPoolExecutor
 
         this.name = name;
         this.gridSession = session;
-    }
-
-    public JobTemplate createJobTemplate() throws DrmaaException
-    {
-        return this.gridSession.createJobTemplate();
     }
 
     public Session getSession()
