@@ -29,7 +29,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestTimeOutJobInfo.class,
         TestGridUtils.class,
         TestGridJobFuture.class,
-        TestGridJobExecutorService.class
+        TestGridJobExecutorService.class,
+        TestSimpleGridJobBuilder.class
     }
     )
 public class AllGridUnitTests {

@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -394,13 +395,12 @@ public final class GridJobBuilders {
                 this.command = command;
 
                 this.nativeSpecs = new EnumMap<NativeSpec, String>(NativeSpec.class);
-                this.otherNativeSpecs = new HashSet<String>();
+                this.otherNativeSpecs = new LinkedHashSet<String>();
                 this.env = new Properties();
-                this.emailRecipients = new HashSet<String>();
+                this.emailRecipients = new LinkedHashSet<String>();
 
                 this.setProjectCode(projectCode);
                 this.setBinaryMode(true);
-                this.setWorkingDirectory(new File(System.getProperty("user.dir")));
             }
 
             /**
