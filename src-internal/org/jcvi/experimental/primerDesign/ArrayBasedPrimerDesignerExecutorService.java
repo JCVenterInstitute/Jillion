@@ -106,9 +106,7 @@ public class ArrayBasedPrimerDesignerExecutorService implements PrimerDesignerEx
             builder.setInputFile(new File(arrayJobRoot,ARRAY_JOB_CONFIG_FILENAME_ROOT));
             builder.setOutputFile(new File(arrayJobRoot,ARRAY_JOB_OUTPUT_FILENAME_ROOT));
             builder.setErrorFile(new File(arrayJobRoot,ARRAY_JOB_ERROR_FILENAME_ROOT));
-            builder.setBulkJobStartLoopIndex(1);
-            builder.setBulkJobEndLoopIndex(jobs.size());
-            builder.setBulkJobLoopIncrement(1);
+            builder.setBulkJobLoop(1, jobs.size(), 1);
             builder.setTimeout(GRID_JOB_MAX_DURATION);
             this.primerDesignJobs.add(gridExecutor.submit(builder.build()));
         }        

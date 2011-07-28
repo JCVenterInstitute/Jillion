@@ -22,7 +22,6 @@ package org.jcvi.common.command.grid;
 import java.io.File;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +72,7 @@ public final class GridJobBuilders {
             MAX_RUNNING_TASKS
         }
 
-        protected Session gridSession;
+        private final Session gridSession;
         protected Command command;
 
         protected Map<NativeSpec, String> nativeSpecs;
@@ -90,8 +89,8 @@ public final class GridJobBuilders {
 
         protected JobTemplate jobTemplate;
 
-        protected List<String> jobIDList=Collections.emptyList();
-        protected Map<String,JobInfo> jobInfoMap = new ConcurrentHashMap<String, JobInfo>();
+        private List<String> jobIDList=Collections.emptyList();
+        private Map<String,JobInfo> jobInfoMap = new ConcurrentHashMap<String, JobInfo>();
 
         private final PostExecutionHook postExecutionHook;
         private final PreExecutionHook preExecutionHook;
@@ -130,12 +129,12 @@ public final class GridJobBuilders {
             this.postExecutionHook = postExecutionHook;
         }
 
-        public AbstractGridJob(AbstractGridJob copy) throws DrmaaException
+        public AbstractGridJob(AbstractGridJob copy)
         {
             super();
 
             this.gridSession = copy.gridSession;
-            this.jobTemplate = this.gridSession.createJobTemplate();
+            this.jobTemplate = copy.jobTemplate;
             this.command = copy.command;
             this.nativeSpecs = copy.nativeSpecs;
             this.otherNativeSpecs = copy.otherNativeSpecs;
@@ -161,15 +160,22 @@ public final class GridJobBuilders {
             //incase it hasn't already
             //this is to try to avoid a memory leak of the underlying
             //C drmma library and properly cleanup itself.
-            this.releaseJobTemplate();
+            this.releaseJobTemplate(this.jobTemplate);
             super.finalize();
+        }
+
+        /**
+         * @return the gridSession
+         */
+        public final Session getGridSession() {
+            return gridSession;
         }
 
         /**
          * @return A <code>Command</code>.
          */
         @Override
-        public Command getCommand()
+        public final Command getCommand()
         {
             return this.command;
         }
@@ -187,21 +193,8 @@ public final class GridJobBuilders {
             return 0;
         }
 
-        protected Status postExecution() throws DrmaaException {
-            for ( String jobID : jobIDList ) {
-                Status status = GridUtils.getJobStatus(jobInfoMap.get(jobID));
-                if ( status != Status.COMPLETED ) {
-                    return status;
-                }
-            }
-
-            return Status.COMPLETED;
-        }
-        /* (non-Javadoc)
-         * @see java.util.concurrent.Callable#call()
-         */
         @Override
-        public Integer call() throws Exception
+        public final Integer call() throws Exception
         {
             /*
              * Call the pre-execution hook
@@ -217,38 +210,24 @@ public final class GridJobBuilders {
              * Run the grid command and wait for it to complete.
              */
             this.runGridCommand();
-
-            /*
-             * Call the postScheduling hook
-             */
-            result = this.postScheduling();
-
-            if (result != 0){
-                return result;
-            }
             
             this.waitForCompletion();
 
-            /*
-             * Call the post-execution hook
-             */
             if(postExecutionHook ==null){
                 return 0;
             }
-            return callPostExecutionHook();
+            return callPostExecutionHook(postExecutionHook);
         }
+        /**
+         * Call the given {@link PostExecutionHook} after a Job has 
+         * completed successfully.
+         * @param postExecutionHook the hook to call, will never be null.
+         * @return the exit code from the postExecution hook.
+         * @throws Exception if there is any Exception thrown by the callback.
+         */
+        protected abstract int callPostExecutionHook(PostExecutionHook postExecutionHook) throws Exception;
         
-        protected PostExecutionHook getPostExecutionHook() {
-            return postExecutionHook;
-        }
-
-        protected PreExecutionHook getPreExecutionHook() {
-            return preExecutionHook;
-        }
-
-        protected abstract int callPostExecutionHook() throws Exception;
-        
-        protected synchronized void cancelGridJobs(boolean jobTimeout) throws DrmaaException {
+        private final synchronized void cancelGridJobs(boolean jobTimeout) throws DrmaaException {
             for ( String jobID : jobIDList ) {
                 int jobProgramStatus = this.gridSession.getJobProgramStatus(jobID);
                 if ( jobProgramStatus != Session.DONE && jobProgramStatus != Session.FAILED ) {
@@ -259,32 +238,49 @@ public final class GridJobBuilders {
                 }
             }
         }
+        /**
+         * Terminate all jobs currently submitted
+         * to the grid that haven't yet completed or failed.
+         * @throws DrmaaException
+         */
+        protected final void terminateAllGridJobs() throws DrmaaException{
+            cancelGridJobs(false);
+        }
+        /**
+         * Terminate all jobs currently submitted
+         * to the grid that haven't yet completed or failed
+         * and mark them as timed out.
+         * @throws DrmaaException
+         */
+        protected final void timeOutAllGridJobs() throws DrmaaException{
+            cancelGridJobs(true);
+        }
 
-        protected void updateGridJobStatusMap() throws DrmaaException {
+        protected final void updateGridJobStatusMap() throws DrmaaException {
             for ( String jobID : jobIDList ) {
                 if ( !jobInfoMap.containsKey(jobID) ) {
                     jobInfoMap.put(jobID,this.gridSession.wait(jobID,1));
                 }
             }
         }
-
-
         /**
          * builds the grid job template based on various fields and
          * user-selected options.  This includes building the native spec and setting
-         * the job mode.
+         * the job mode.  Before returning, this method will delegate
+         * to {@link #includeImplementationSpecificSettings(JobTemplate)}
+         * to any implementation specific settings (if any)
          *
          * @throws DrmaaException If there is an error while setting up the {@link JobTemplate}.
          */
-        protected void buildJobTemplate() throws DrmaaException {
-            this.jobTemplate = this.gridSession.createJobTemplate();
-            this.jobTemplate.setRemoteCommand(this.command.getExecutablePath());
-            this.jobTemplate.setArgs(this.command.getArguments());
-            this.jobTemplate.setNativeSpecification(this.getNativeSpec());
-            this.jobTemplate.setJobEnvironment(this.env);
+        private final JobTemplate createJobTemplate() throws DrmaaException{
+            JobTemplate jobTemplate = this.gridSession.createJobTemplate();
+            jobTemplate.setRemoteCommand(this.command.getExecutablePath());
+            jobTemplate.setArgs(this.command.getArguments());
+            jobTemplate.setNativeSpecification(this.getNativeSpec());
+            jobTemplate.setJobEnvironment(this.env);
 
             if (!this.emailRecipients.isEmpty()) {
-                this.jobTemplate.setEmail(this.emailRecipients);
+                jobTemplate.setEmail(this.emailRecipients);
             }
 
             if ( jobName != null ) {
@@ -306,10 +302,30 @@ public final class GridJobBuilders {
             if ( errorFile != null ) {
                 jobTemplate.setErrorPath(getFileLocation(errorFile));
             }
+            
+            return includeImplementationSpecificSettings(jobTemplate);
         }
-
-        protected String getNativeSpec()
-        {
+        /**
+         * Some implementations might require
+         * additional settings made to the JobTemplate.  Add those
+         * additional settings to the given template then return it back.
+         * @param template the current JobTemplate which may 
+         * need implementation specific settings set.
+         * @return a JobTemplate (possibly the same as the instance
+         * passed in) never null.
+         * @throws DrmaaException if there are any problems.
+         */
+        protected JobTemplate includeImplementationSpecificSettings(JobTemplate template) throws DrmaaException{
+            return template;
+        }
+        
+        /**
+         * Convert map of NativeSpec objects
+         * into a String of arguments.
+         * @return a String representation of the native spec
+         * into extra command parameters which the grid can interpret.
+         */
+        private String getNativeSpec(){
             final StringBuilder nativeSpec = new StringBuilder();
 
             for (final String spec : this.nativeSpecs.values())
@@ -338,10 +354,19 @@ public final class GridJobBuilders {
         }
 
         @Override
-        public abstract void runGridCommand() throws DrmaaException;
+        public final void runGridCommand() throws DrmaaException{            
+            try{
+                this.jobTemplate =createJobTemplate();
+                this.jobIDList = runTemplate(this.jobTemplate);
+            }finally{
+                this.releaseJobTemplate(this.jobTemplate);
+            }
+        }
+        
+        public abstract List<String> runTemplate(JobTemplate template) throws DrmaaException;
 
         @Override
-        public List<String> getJobIDList() {
+        public final List<String> getJobIDList() {
             return jobIDList;
         }
 
@@ -352,18 +377,15 @@ public final class GridJobBuilders {
 
         public abstract void waitForCompletion() throws DrmaaException;
 
-        protected void releaseJobTemplate() throws DrmaaException
-        {
-            if (this.jobTemplate != null)
-            {
-                this.gridSession.deleteJobTemplate(this.jobTemplate);
-                this.jobTemplate = null;
+        private void releaseJobTemplate(JobTemplate template) throws DrmaaException{
+            if (template != null){
+                this.gridSession.deleteJobTemplate(template);                
             }
         }
 
         @Override
-        public void terminate() throws DrmaaException{
-            cancelGridJobs(false);
+        public final void terminate() throws DrmaaException{
+            terminateAllGridJobs();
             if ( !waiting ) {
                 updateGridJobStatusMap();
             }
@@ -696,71 +718,62 @@ public final class GridJobBuilders {
          /**
           * Creates a new <code>GridJobImpl</code>.
           */
-         public SimpleGridJobImpl(SimpleGridJobImpl copy) throws DrmaaException
+         public SimpleGridJobImpl(SimpleGridJobImpl copy)
          {
              super(copy);
          }
 
-         /*
-             BatchGridJob interface methods
-          */
+   
          @Override
-         public String getJobID()
-         {
-             String jobID = null;
-             if (jobIDList!=null && !jobIDList.isEmpty() ) {
-                 jobID = this.jobIDList.get(0);
+         public String getJobID(){
+             List<String> list = getJobIDList();
+             if (list!=null && !list.isEmpty() ) {
+                 return list.get(0);
              }
-             return jobID;
+             return null;
          }
 
          @Override
          public String toString() {
-             return "BatchGridJobImpl [getJobID()=" + getJobID() + "]";
+             return "SimpleGridJob [getJobID()=" + getJobID() + "]";
          }
 
          @Override
          public JobInfo getJobInfo()
          {
-             JobInfo jobInfo = null;
-             if ( jobInfoMap != null && !jobInfoMap.isEmpty()) {
-                 jobInfo = jobInfoMap.get(getJobID());
+             String jobId = getJobID();
+             if(jobId ==null){
+                 return null;
              }
-             return jobInfo;
+             Map<String,JobInfo> map =getJobInfoMap();
+             if ( map != null && !map.containsKey(jobId)) {
+                 return map.get(jobId);
+             }
+             return null;
          }
 
          @Override
-         protected int callPostExecutionHook() throws Exception {
-             JobInfo jobInfo = getJobInfo();
-             if(this.getPostExecutionHook()==null){
-                 return jobInfo.getExitStatus();
-             }
-             return this.getPostExecutionHook().execute(getJobInfoMap());
+         protected int callPostExecutionHook(PostExecutionHook postExecutionHook) throws Exception {
+             return postExecutionHook.execute(getJobInfoMap());
          }
+         /**
+        * {@inheritDoc}
+        */
+        @Override
+        public List<String> runTemplate(JobTemplate template)
+                throws DrmaaException {
+            return Collections.singletonList(getGridSession().runJob(template));
+        }
 
-         @Override
-         public void runGridCommand() throws DrmaaException
-         {
-             try
-             {
-                 this.buildJobTemplate();
-                 this.jobIDList = Collections.singletonList(this.gridSession.runJob(this.jobTemplate));
-             }
-             finally
-             {
-                 this.releaseJobTemplate();
-             }
-         }
-
-         @Override
+        @Override
          public void waitForCompletion() throws DrmaaException
          {
              waiting = true;
              try {
-                 JobInfo jobInfo = this.gridSession.wait(getJobID(), this.timeout);
-                 jobInfoMap.put(getJobID(),jobInfo);
+                 JobInfo jobInfo = getGridSession().wait(getJobID(), this.timeout);
+                 getJobInfoMap().put(getJobID(),jobInfo);
              } catch (ExitTimeoutException e) {
-                 cancelGridJobs(true);
+                 timeOutAllGridJobs();
              } finally {
                  updateGridJobStatusMap();
                  waiting = false;
@@ -795,9 +808,9 @@ public final class GridJobBuilders {
      
      static class ArrayGridJobImpl extends AbstractGridJob {
 
-         protected int bulkJobStartLoopIndex;
-         protected int bulkJobEndLoopIndex;
-         protected int bulkJobLoopIncrement;
+         private final int bulkJobStartLoopIndex;
+         private final int bulkJobEndLoopIndex;
+         private final int bulkJobLoopIncrement;
 
          public ArrayGridJobImpl(Session gridSession,
                                  Command command,
@@ -835,7 +848,7 @@ public final class GridJobBuilders {
              this.bulkJobLoopIncrement = bulkJobLoopIncrement;
          }
 
-         public ArrayGridJobImpl(ArrayGridJobImpl copy) throws DrmaaException {
+         public ArrayGridJobImpl(ArrayGridJobImpl copy){
              super(copy);
              this.bulkJobStartLoopIndex = copy.bulkJobStartLoopIndex;
              this.bulkJobEndLoopIndex = copy.bulkJobEndLoopIndex;
@@ -847,44 +860,52 @@ public final class GridJobBuilders {
           */
          
          @Override
-         protected int callPostExecutionHook() throws Exception {
-             if(this.getPostExecutionHook()==null){
-                 return 0;
-             }
-             return this.getPostExecutionHook().execute(getJobInfoMap());
-         }
-         @Override
-         protected void buildJobTemplate() throws DrmaaException {
-             super.buildJobTemplate();
-             this.jobTemplate.setInputPath(this.jobTemplate.getInputPath()+"."+ JobTemplate.PARAMETRIC_INDEX);
-             this.jobTemplate.setOutputPath(this.jobTemplate.getOutputPath()+"."+ JobTemplate.PARAMETRIC_INDEX);
-             this.jobTemplate.setErrorPath(this.jobTemplate.getErrorPath()+"."+ JobTemplate.PARAMETRIC_INDEX);
+         protected int callPostExecutionHook(PostExecutionHook postExecutionHook) throws Exception {
+             
+             return postExecutionHook.execute(getJobInfoMap());
          }
 
-         @Override
-         public void runGridCommand() throws DrmaaException {
-             try
-             {
-                 this.buildJobTemplate();
-                 this.jobIDList = this.gridSession.runBulkJobs(this.jobTemplate,
-                                                               this.bulkJobStartLoopIndex,
-                                                               this.bulkJobEndLoopIndex,
-                                                               this.bulkJobLoopIncrement);
-             }
-             finally
-             {
-                 this.releaseJobTemplate();
-             }
+         /**
+        * Adds Array parameter index to any file paths that have been set.
+         * @throws DrmaaException 
+        */
+        @Override
+        protected JobTemplate includeImplementationSpecificSettings(
+                JobTemplate template) throws DrmaaException {
+            if(template.getInputPath() !=null){
+                template.setInputPath(template.getInputPath()+"."+ JobTemplate.PARAMETRIC_INDEX);                
+            }
+            if(template.getOutputPath() !=null){
+                template.setOutputPath(template.getOutputPath()+"."+ JobTemplate.PARAMETRIC_INDEX);                
+            }
+            if(template.getOutputPath() !=null){
+                template.setErrorPath(template.getErrorPath()+"."+ JobTemplate.PARAMETRIC_INDEX);                
+            }
+           
+            return template;
+        }  
 
-         }
+         /**
+        * {@inheritDoc}
+        */
+        @Override
+        public List<String> runTemplate(JobTemplate template) throws DrmaaException {
+            return getGridSession().runBulkJobs(template,
+                    this.bulkJobStartLoopIndex,
+                    this.bulkJobEndLoopIndex,
+                    this.bulkJobLoopIncrement);
+            
+        }
 
-         @Override
+        @Override
          public void waitForCompletion() throws DrmaaException {
              waiting = true;
              try {
-                 this.gridSession.synchronize(jobIDList, this.timeout, false);
+                 //dispose flag set to false so we can get
+                 //jobinfo in updateGridJobStatusMap()
+                 getGridSession().synchronize(getJobIDList(), this.timeout, false);
              } catch (ExitTimeoutException e) {
-                 cancelGridJobs(true);
+                 timeOutAllGridJobs();
              } finally {
                  updateGridJobStatusMap();
                  waiting = false;
@@ -901,17 +922,16 @@ public final class GridJobBuilders {
                  super(gridSession, command, projectCode);
              }
              @Override
-             public void setBulkJobStartLoopIndex(int bulkJobStartLoopIndex) {
-                 this.bulkJobStartLoopIndex = bulkJobStartLoopIndex;
+             public void setBulkJobLoop(int start, int end){
+                 setBulkJobLoop(start, end, 1);
              }
              @Override
-             public void setBulkJobEndLoopIndex(int bulkJobEndLoopIndex) {
-                 this.bulkJobEndLoopIndex = bulkJobEndLoopIndex;
+             public void setBulkJobLoop(int start, int end, int increment){
+                 this.bulkJobStartLoopIndex = start;
+                 this.bulkJobEndLoopIndex = end;
+                 this.bulkJobLoopIncrement = increment;
              }
-             @Override
-             public void setBulkJobLoopIncrement(int bulkJobLoopIncrement) {
-                 this.bulkJobLoopIncrement = bulkJobLoopIncrement;
-             }
+            
              @Override
              public ArrayGridJobImplBuilder setMaxRunningTasks(Integer maxRunningTasks) {
                  if (maxRunningTasks == null) {

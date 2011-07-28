@@ -127,8 +127,7 @@ public class TestArrayGridJob extends TestGridJob {
         ArrayGridJobBuilder builder = GridJobBuilders.createArrayGridJobBuilder(gridExecutor.getSession(),
                                          new Command(command),
                                          TestGridJob.TEST_PROJECT_CODE);
-        builder.setBulkJobStartLoopIndex(1);
-        builder.setBulkJobEndLoopIndex(5);
+        builder.setBulkJobLoop(1, 5);
         builder.setInputFile(inputFile);
         builder.setOutputFile(outputFile);
         builder.setErrorFile(errorFile);
@@ -161,8 +160,7 @@ public class TestArrayGridJob extends TestGridJob {
                 gridExecutor.getSession(),
                                          new Command(command),
                                          TestGridJob.TEST_PROJECT_CODE);
-        builder.setBulkJobStartLoopIndex(1);
-        builder.setBulkJobEndLoopIndex(5);
+        builder.setBulkJobLoop(1, 5);
         builder.setMaxRunningTasks(2);
         builder.setInputFile(inputFile);
         builder.setOutputFile(outputFile);
@@ -195,8 +193,7 @@ public class TestArrayGridJob extends TestGridJob {
         ArrayGridJobBuilder builder = GridJobBuilders.createArrayGridJobBuilder(gridExecutor.getSession(),
                                          new Command(command),
                                          TestGridJob.TEST_PROJECT_CODE);
-        builder.setBulkJobStartLoopIndex(1);
-        builder.setBulkJobEndLoopIndex(5);
+        builder.setBulkJobLoop(1, 5);
         builder.setTimeout(Long.valueOf(5));
         builder.setInputFile(inputFile);
         builder.setOutputFile(outputFile);
@@ -230,8 +227,7 @@ public class TestArrayGridJob extends TestGridJob {
                 gridExecutor.getSession(),
                                          new Command(command),
                                          TestGridJob.TEST_PROJECT_CODE);
-        builder.setBulkJobStartLoopIndex(1);
-        builder.setBulkJobEndLoopIndex(5);
+        builder.setBulkJobLoop(1, 5);
         builder.setInputFile(inputFile);
         builder.setOutputFile(outputFile);
         builder.setErrorFile(errorFile);
@@ -265,8 +261,7 @@ public class TestArrayGridJob extends TestGridJob {
                 gridExecutor.getSession(),
                                          new Command(command),
                                          TestGridJob.TEST_PROJECT_CODE);
-        builder.setBulkJobStartLoopIndex(1);
-        builder.setBulkJobEndLoopIndex(5);
+        builder.setBulkJobLoop(1, 5);
         builder.setTimeout(Long.valueOf(5));
         builder.setInputFile(inputFile);
         builder.setOutputFile(outputFile);
