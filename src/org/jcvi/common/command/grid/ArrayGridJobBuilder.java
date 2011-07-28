@@ -27,12 +27,9 @@ package org.jcvi.common.command.grid;
  */
 public interface ArrayGridJobBuilder extends GridJobBuilder<GridJob>{
 
-    void setBulkJobStartLoopIndex(int bulkJobStartLoopIndex);
-
-    void setBulkJobEndLoopIndex(int bulkJobEndLoopIndex);
-
-    void setBulkJobLoopIncrement(int bulkJobLoopIncrement);
-    
+     
     ArrayGridJobBuilder setMaxRunningTasks(Integer maxRunningTasks);
+    void setBulkJobLoop(int start, int end);
+    void setBulkJobLoop(int start, int end, int increment);
         
 }

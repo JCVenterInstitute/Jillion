@@ -36,6 +36,7 @@ import org.jcvi.common.command.grid.GridJob.MemoryUnit;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -86,7 +87,10 @@ public class TestSimpleGridJobBuilder extends EasyMockSupport{
         gridSession.deleteJobTemplate(jobTemplate);
         replayAll();
         SimpleGridJob actual =sut.build();
+        assertEquals(command,actual.getCommand());
         actual.runGridCommand();
+        assertEquals(gridJobId, actual.getJobID());
+        assertEquals(Arrays.asList(gridJobId), actual.getJobIDList());
         verifyAll();        
     }
     
