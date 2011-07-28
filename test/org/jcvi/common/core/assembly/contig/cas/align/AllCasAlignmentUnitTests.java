@@ -31,6 +31,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+        TestDefaultCasAlignmentRegion.class,
+        TestDefaultCasAlignment.class,
        AllCasScoreUnitTests.class 
     }
     )

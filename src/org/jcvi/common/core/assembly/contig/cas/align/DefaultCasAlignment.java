@@ -83,7 +83,7 @@ public class DefaultCasAlignment implements CasAlignment {
         int result = 1;
         result = prime
                 * result
-                + ((alignmentRegions == null) ? 0 : alignmentRegions.hashCode());
+                + alignmentRegions.hashCode();
         result = prime * result
                 + (int) (contigSequenceId ^ (contigSequenceId >>> 32));
         result = prime * result + (readIsReversed ? 1231 : 1237);
@@ -103,11 +103,7 @@ public class DefaultCasAlignment implements CasAlignment {
             return false;
         }
         DefaultCasAlignment other = (DefaultCasAlignment) obj;
-        if (alignmentRegions == null) {
-            if (other.alignmentRegions != null) {
-                return false;
-            }
-        } else if (!alignmentRegions.equals(other.alignmentRegions)) {
+        if (!alignmentRegions.equals(other.alignmentRegions)) {
             return false;
         }
         if (contigSequenceId != other.contigSequenceId) {
@@ -151,6 +147,18 @@ public class DefaultCasAlignment implements CasAlignment {
             this.startOfMatch = startOfMatch;
             this.readIsReversed = readIsReversed;
             resetCurrentRegion();
+        }
+        public Builder(CasAlignment copy) {
+            this.contigSequenceId = copy.contigSequenceId();
+            this.startOfMatch = copy.getStartOfMatch();
+            this.readIsReversed = copy.readIsReversed();
+            for(CasAlignmentRegion region : copy.getAlignmentRegions()){
+                if(region instanceof PhaseChangeCasAlignmentRegion){
+                    addPhaseChange(((PhaseChangeCasAlignmentRegion)region).getPhaseChange());
+                }else{
+                    addRegion(region.getType(), region.getLength());
+                }
+            }
         }
 
         private synchronized void resetCurrentRegion(){
