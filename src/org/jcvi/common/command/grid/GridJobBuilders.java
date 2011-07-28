@@ -38,29 +38,51 @@ import org.jcvi.common.command.Command;
 import org.jcvi.common.core.util.MapValueComparator;
 
 /**
+ * {@code GridJobBuilders} is a factory class
+ * that create {@link GridJobBuilder} instances for various
+ * types of {@link GridJob}s.
  * @author dkatzel
- *
- *
  */
 public final class GridJobBuilders {
-
+    /**
+     * Create a new GridJobBuilder instance that will make a {@link SimpleGridJob}.
+     * @param gridSession the Session to run this job with.
+     * @param command the Command to be run on the grid
+     * @param projectCode the project code that this job will be charged to.
+     * @return a new GridJobBuilder instance, never null.
+     */
     public static GridJobBuilder<SimpleGridJob> createSimpleGridJobBuilder(Session gridSession, Command command, String projectCode){
         return new SimpleGridJobImpl.SimpleGridJobBuilder(gridSession, command, projectCode);
     }
-    
+    /**
+     * Create a new ArrayGridJobBuilder instance that will make a {@link SimpleGridJob}.
+     * @param gridSession the Session to run this job with.
+     * @param command the Command to be run on the grid
+     * @param projectCode the project code that this job will be charged to.
+     * @return a new GridJobBuilder instance, never null.
+     */
     public static ArrayGridJobBuilder createArrayGridJobBuilder(Session gridSession, Command command, String projectCode){
         return new ArrayGridJobImpl.ArrayGridJobImplBuilder(gridSession, command, projectCode);
     }
     
     /**
-     * A <code>GridJobImpl</code> is an abstractions for a DRMAA-supported distributed execution
-     * process.
+     * {@code AbstractGridJob} is an abstract implementation of GridJob
+     * that handles all the common functionality of setting up 
+     * a Job to run on the grid.
      *
-     * @author jsitz@jcvi.org
+     * 
      * @author dkatzel
+     * @author jsitz@jcvi.org
      */
      private static abstract class AbstractGridJob implements GridJob {
-
+         /**
+          * Native Spec options to potentially
+          * alter which machines on the grid
+          * can run this job.
+          * @author dkatzel
+          *
+          *
+          */
         protected enum NativeSpec
         {
             BINARY_MODE,
@@ -805,8 +827,15 @@ public final class GridJobBuilders {
              }
          }
      }
-     
-     static class ArrayGridJobImpl extends AbstractGridJob {
+     /**
+      * {@code ArrayGridJobImpl} is a GridJob that
+      * runs multiple times with slightly different parameters 
+      * as if it were in a loop.
+      * @author dkatzel
+      *
+      *
+      */
+     private static class ArrayGridJobImpl extends AbstractGridJob {
 
          private final int bulkJobStartLoopIndex;
          private final int bulkJobEndLoopIndex;
@@ -912,7 +941,7 @@ public final class GridJobBuilders {
              }
          }
 
-         static class ArrayGridJobImplBuilder extends AbstractBuilder<GridJob> implements ArrayGridJobBuilder{
+         private static class ArrayGridJobImplBuilder extends AbstractBuilder<GridJob> implements ArrayGridJobBuilder{
 
              private int bulkJobStartLoopIndex = 1;
              private int bulkJobEndLoopIndex = 1;
