@@ -22,8 +22,6 @@ package org.jcvi.common.command.grid;
 import java.util.concurrent.CancellationException;
 
 import org.easymock.EasyMockSupport;
-import org.easymock.IAnswer;
-import org.ggf.drmaa.DrmaaException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
@@ -34,78 +32,8 @@ import static org.junit.Assert.*;
  *
  */
 public class TestGridJobFuture extends EasyMockSupport{
-    private static final DrmaaException EXPECTED_CANCELLATION_EXCEPTION = new DrmaaException("expected") {};
     
-    /**
-     * @author dkatzel
-     *
-     *
-     */
-    private final class GridJobBackgroundThread extends Thread {
-        /**
-         * 
-         */
-        volatile boolean isterminated=false;
-        private final boolean throwExceptionOnTerminate;
-        GridJobBackgroundThread(){
-            this(false);
-        }
-        GridJobBackgroundThread(boolean throwExceptionOnTerminate){
-            super();
-            this.throwExceptionOnTerminate=throwExceptionOnTerminate;
-        }
-        @Override
-        public void run() {
-            try {
-                mockGridJob.terminate();
-                
-                expectLastCall().andAnswer(new IAnswer<Void>(){
-                    @Override
-                    public Void answer() throws Throwable {
-                        isterminated=true;
-                        System.out.println("terminated");
-                        if(throwExceptionOnTerminate){
-                            throw EXPECTED_CANCELLATION_EXCEPTION;
-                        }
-                        return null;
-                    }
-                    
-                });
-                
-                expect(mockGridJob.call()).andAnswer(new IAnswer<Integer>() {
-   
-                    @Override
-                    public Integer answer() throws Throwable {                         
-                        //this will infinite loop
-                        //if we don't cancel
-                        for(;;){
-                            if(isterminated){                                    
-                                break;
-                            }
-                        }
-                        return Integer.MAX_VALUE;
-                    }
-                    
-                });
-                replayAll();
-                sut.run();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        /**
-         * This interrupt will be called when
-         * we get the future gets canceled
-         */
-        @Override
-        public void interrupt() {
-            System.out.println("interrupted");
-            isterminated=true;
-            super.interrupt();
-        }
-    }
+    
     GridJob mockGridJob;
     GridJobFuture sut;
     
@@ -140,13 +68,13 @@ public class TestGridJobFuture extends EasyMockSupport{
         }
         assertTrue(sut.isDone());
         assertTrue(sut.isCancelled());
-        verifyAll();
+       
     }
     
     @Test
     public void cancelGridJobAndCanNotTerminateShouldReturnFalse() throws Exception{
         
-        setupAndRunUnTerminatableMockGridJobInBackgroundThread();        
+        GridJobFuture sut =setupAndRunUnTerminatableMockGridJobInBackgroundThread();        
         assertFalse(sut.cancel(true));
         try{
             sut.get();
@@ -156,8 +84,7 @@ public class TestGridJobFuture extends EasyMockSupport{
         }
         assertTrue(sut.isDone());
         assertFalse(sut.isCancelled());
-        assertEquals(EXPECTED_CANCELLATION_EXCEPTION, sut.getCancellationException());
-        verifyAll();
+        assertEquals(TestGridHelper.EXPECTED_CANCELLATION_EXCEPTION, sut.getCancellationException());
     }
     /**
      * Since we need a job that will run until
@@ -165,10 +92,13 @@ public class TestGridJobFuture extends EasyMockSupport{
      * thread that infinite loops until interrupted.
      * @throws InterruptedException 
      */
-    private void setupAndRunMockGridJobInBackgroundThread() throws InterruptedException {
-        new GridJobBackgroundThread().start();
+    private GridJobFuture setupAndRunMockGridJobInBackgroundThread() throws InterruptedException {
+        TestGridHelper.CancellableGridJobHelper helper=new TestGridHelper.CancellableGridJobHelper();
+        GridJobFuture future =helper.getSut();
+        helper.start();
         //wait for other thread to start  
         Thread.sleep(500);
+        return future;
     }
     
     /**
@@ -177,9 +107,12 @@ public class TestGridJobFuture extends EasyMockSupport{
      * thread that infinite loops until interrupted.
      * @throws InterruptedException 
      */
-    private void setupAndRunUnTerminatableMockGridJobInBackgroundThread() throws InterruptedException {
-        new GridJobBackgroundThread(true).start();
+    private GridJobFuture setupAndRunUnTerminatableMockGridJobInBackgroundThread() throws InterruptedException {
+        TestGridHelper.CancellableGridJobHelper helper=new TestGridHelper.CancellableGridJobHelper(true);
+        GridJobFuture future =helper.getSut();
+        helper.start();
         //wait for other thread to start  
         Thread.sleep(500);
+        return future;
     }
 }

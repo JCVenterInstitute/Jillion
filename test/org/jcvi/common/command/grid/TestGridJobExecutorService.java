@@ -18,11 +18,14 @@
  ******************************************************************************/
 
 package org.jcvi.common.command.grid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.easymock.EasyMockSupport;
-import org.easymock.IAnswer;
 import org.ggf.drmaa.Session;
+import org.jcvi.common.command.grid.TestGridHelper.CancellableGridJobHelper;
+import org.jcvi.common.command.grid.TestGridHelper.LongRunningGridJobHelper;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -47,7 +50,10 @@ public class TestGridJobExecutorService extends EasyMockSupport{
     public void getName(){
         assertEquals(name, sut.getName());
     }
-    
+    @Test
+    public void testToString(){
+        assertEquals("GridJobExecutorService:"+name, sut.toString());
+    }
     @Test
     public void getSession(){
         assertEquals(mockSession, sut.getSession());
@@ -65,54 +71,71 @@ public class TestGridJobExecutorService extends EasyMockSupport{
     
     @Test
     public void submitLongRunningJobs() throws InterruptedException, ExecutionException{
-        final GridJob mockGridJob = createMock(GridJob.class);
-        final GridJob mockGridJob2 = createMock(GridJob.class);
-        new Thread(){
-
-            @Override
-            public void run() {
-                
-                 try {
-                     
-                    expect(mockGridJob.call()).andAnswer(new IAnswer<Integer>() {
-                         @Override
-                         public Integer answer(){
-                             try {
-                                Thread.sleep(3000);
-                            } catch (InterruptedException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-                         return Integer.valueOf(3000);
-                         }
-                    });
-                    
-                    
-                    expect(mockGridJob2.call()).andAnswer(new IAnswer<Integer>() {
-                         @Override
-                         public Integer answer(){
-                             try {
-                                Thread.sleep(5000);
-                            } catch (InterruptedException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-                         return Integer.valueOf(5000);
-                         }
-                    });
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                replayAll();
-            }
-        }.start();
-        Thread.sleep(1000);
-        GridJobFuture future1 =sut.submit(mockGridJob);
-        GridJobFuture future2 =sut.submit(mockGridJob2);
+       
+        LongRunningGridJobHelper helper1 = new TestGridHelper.LongRunningGridJobHelper(1234,3000);
+        GridJob job1 = helper1.getMockGridJob();
+        helper1.start();
+        LongRunningGridJobHelper helper2 = new TestGridHelper.LongRunningGridJobHelper(999,5000);
+        GridJob job2 = helper2.getMockGridJob();
+        helper2.start();
+       
+        Thread.sleep(500);
+        GridJobFuture future1 =sut.submit(job1);
+        GridJobFuture future2 =sut.submit(job2);
         assertEquals(2, sut.countActiveTasks());
-        assertEquals(Integer.valueOf(3000), future1.get());
-        assertEquals(Integer.valueOf(5000), future2.get());
+        assertEquals(Integer.valueOf(1234), future1.get());
+        assertEquals(Integer.valueOf(999), future2.get());
     }
+    private class MySubmitThread extends Thread{
+        
+        private final GridJobExecutorService sut;
+        private final GridJob [] jobs;
+        private final List<GridJobFuture> futures = new ArrayList<GridJobFuture>();;
+        MySubmitThread(GridJobExecutorService sut,GridJob... jobs) {
+            this.sut = sut;
+            this.jobs = jobs;
+        }
+
+
+        @Override
+        public void run() {
+            for(GridJob job : jobs){
+                futures.add(sut.submit(job));
+            }
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void interrupt() {
+            System.out.println("mySubmit interrupted");
+            super.interrupt();
+        }
+
+        
+    }
+    @Test
+    public void shutdownNow() throws InterruptedException, ExecutionException{
+        CancellableGridJobHelper helper1 = new TestGridHelper.CancellableGridJobHelper(false,false);
+        final GridJob job1 = helper1.getMockGridJob();
+        helper1.start();
+        CancellableGridJobHelper helper2 = new TestGridHelper.CancellableGridJobHelper(false,false);
+        final GridJob job2 = helper2.getMockGridJob();
+        helper2.start();
+        MySubmitThread submitThread =new MySubmitThread(sut, job1,job2);
+        submitThread.start();
+        Thread.sleep(1000);
+        assertEquals(2, sut.countActiveTasks());
+        sut.shutdownNow();
+      
+        for(GridJobFuture future : submitThread.futures){
+            TestGridHelper.assertIsCancelled(future);
+        }
+        assertEquals(0, sut.countActiveTasks());
+    }
+    
+    
     
 }
