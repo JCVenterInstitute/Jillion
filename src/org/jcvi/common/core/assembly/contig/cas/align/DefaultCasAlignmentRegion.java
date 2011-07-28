@@ -34,6 +34,12 @@ public class DefaultCasAlignmentRegion implements CasAlignmentRegion{
      * @param length
      */
     public DefaultCasAlignmentRegion(CasAlignmentRegionType type, long length) {
+        if(type ==null){
+            throw new NullPointerException("type can not be null");
+        }
+        if(length <0){
+            throw new IllegalArgumentException("length can not < 0 : "+ length);
+        }
         this.type = type;
         this.length = length;
     }
@@ -59,7 +65,7 @@ public class DefaultCasAlignmentRegion implements CasAlignmentRegion{
         final int prime = 31;
         int result = 1;
         result = prime * result + (int) (length ^ (length >>> 32));
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + type.hashCode();
         return result;
     }
 
@@ -78,14 +84,7 @@ public class DefaultCasAlignmentRegion implements CasAlignmentRegion{
         if (length != other.length) {
             return false;
         }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
-            return false;
-        }
-        return true;
+       return type.equals(other.type);
     }
 
 }
