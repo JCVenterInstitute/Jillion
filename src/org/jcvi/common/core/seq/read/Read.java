@@ -43,7 +43,7 @@ public interface Read<T extends NucleotideSequence> {
      * @return the {@link NucleotideSequence} of this read; will
      * never be null.
      */
-    T getEncodedGlyphs();
+    T getSequence();
     /**
      * Get the (ungapped) length of this read.
      * @return the length of this read as a long.

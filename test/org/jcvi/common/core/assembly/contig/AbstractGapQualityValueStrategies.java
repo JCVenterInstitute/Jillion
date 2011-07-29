@@ -64,7 +64,7 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
     @Test
     public void getUngappedQualityFromForwardRead(){
         int gappedReadIndex = 12;
-        expect(placedRead.getEncodedGlyphs()).andReturn(encodedGlyphs).times(2);
+        expect(placedRead.getSequence()).andReturn(encodedGlyphs).times(2);
         expect(placedRead.getDirection()).andReturn(Direction.FORWARD);
         expect(encodedGlyphs.isGap(gappedReadIndex)).andReturn(false);
         Range validRange = Range.buildRange(10,100);
@@ -83,7 +83,7 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         int gappedReadIndex = 12;
         Range validRange = Range.buildRange(10,100);
         int fullLength=110;
-        expect(placedRead.getEncodedGlyphs()).andReturn(encodedGlyphs).times(2);
+        expect(placedRead.getSequence()).andReturn(encodedGlyphs).times(2);
         expect(placedRead.getDirection()).andReturn(Direction.REVERSE);
         expect(encodedGlyphs.isGap(gappedReadIndex)).andReturn(false);
         

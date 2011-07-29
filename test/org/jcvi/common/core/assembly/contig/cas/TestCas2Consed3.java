@@ -73,7 +73,7 @@ public class TestCas2Consed3 {
 	    	  for(AcePlacedRead actualRead : contig.getPlacedReads()){
 	    		  String readId =actualRead.getId();
 	    		  PlacedRead expectedRead = expectedContig.getPlacedReadById(readId);
-	    		  assertEquals("read basecalls", expectedRead.getEncodedGlyphs().decode(), actualRead.getEncodedGlyphs().decode());
+	    		  assertEquals("read basecalls", expectedRead.getSequence().decode(), actualRead.getSequence().decode());
 	    		  assertEquals("read offset", expectedRead.getStart(), actualRead.getStart());
 	    	  }
 	      }

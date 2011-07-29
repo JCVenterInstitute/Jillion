@@ -60,7 +60,7 @@ public class CtgFileWriter implements Closeable{
         readsInContig.addAll(contig.getPlacedReads());
         for(PlacedRead placedRead : readsInContig){
             writePlacedReadHeader(placedRead, contig.getConsensus());
-            writeBases(placedRead.getEncodedGlyphs());
+            writeBases(placedRead.getSequence());
         }
     }
     
@@ -104,7 +104,7 @@ public class CtgFileWriter implements Closeable{
         }
 
         header.append(String.format("] %d bases, 00000000 checksum. {%d %d} <%d %d>\n",
-                placedRead.getEncodedGlyphs().getLength(), validLeft+1, validRight+1, 
+                placedRead.getSequence().getLength(), validLeft+1, validRight+1, 
                 placedRead.getStart()+1-consensus.computeNumberOfInclusiveGapsInGappedValidRangeUntil((int) placedRead.getStart()), 
                 placedRead.getEnd()+1-consensus.computeNumberOfInclusiveGapsInGappedValidRangeUntil((int)placedRead.getEnd())));
         writeToOutputStream(header.toString());

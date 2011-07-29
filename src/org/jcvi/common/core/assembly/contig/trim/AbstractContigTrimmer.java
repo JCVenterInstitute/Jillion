@@ -82,7 +82,7 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
             }
             long newOffset = placedRead.convertValidRangeIndexToReferenceIndex((int)newTrimRange.getStart());
             
-            final NucleotideSequence originalGappedValidBases = placedRead.getEncodedGlyphs();
+            final NucleotideSequence originalGappedValidBases = placedRead.getSequence();
             final List<NucleotideGlyph> trimedBasecalls = originalGappedValidBases.decode(newTrimRange);
             String trimmedBases = NucleotideGlyph.convertToString(trimedBasecalls);
             long ungappedLength = new DefaultNucleotideSequence(trimedBasecalls).getUngappedLength();

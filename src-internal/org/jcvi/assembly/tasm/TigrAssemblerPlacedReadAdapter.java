@@ -60,7 +60,7 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_LEFT, ""+(this.getStart()+1));
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_RIGHT, ""+(this.getEnd()+1));
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_START_OFFSET, ""+(this.getStart()));
-		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, NucleotideGlyph.convertToString(this.getEncodedGlyphs().decode()));
+		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, NucleotideGlyph.convertToString(this.getSequence().decode()));
 		
 		Range validRange = this.getValidRange();
 		if(this.getDirection()== Direction.FORWARD){
@@ -121,8 +121,8 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	}
 
 	@Override
-	public NucleotideSequence getEncodedGlyphs() {
-		return delegatePlacedRead.getEncodedGlyphs();
+	public NucleotideSequence getSequence() {
+		return delegatePlacedRead.getSequence();
 	}
 
 	@Override

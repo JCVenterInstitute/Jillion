@@ -70,7 +70,7 @@ public class TestDefaultPlacedRead {
             expect(glyphs.get(entry.getKey().intValue())).andReturn(entry.getValue());
         }
         expect(read.getId()).andReturn(id);
-        expect(read.getEncodedGlyphs()).andReturn(glyphs).times(3);
+        expect(read.getSequence()).andReturn(glyphs).times(3);
         expect(read.getLength()).andReturn(length).times(2);
         expect(glyphs.getValidRange()).andReturn(validRange);
         expect(glyphs.getSnpOffsets()).andReturn(snps);
@@ -79,7 +79,7 @@ public class TestDefaultPlacedRead {
         assertEquals(start, sut.getStart());
         assertEquals(read, sut.getRead());
         assertEquals(id, sut.getId());
-        assertEquals(glyphs, sut.getEncodedGlyphs());
+        assertEquals(glyphs, sut.getSequence());
         assertEquals(length, sut.getLength());
         assertEquals(start+ length-1 , sut.getEnd());
         assertEquals(validRange, sut.getValidRange());

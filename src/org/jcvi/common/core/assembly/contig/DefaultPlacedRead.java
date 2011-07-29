@@ -94,15 +94,15 @@ public class DefaultPlacedRead implements PlacedRead {
         	if(!read.getId().equals(other.getId())){
         		return false;
         	}
-        	if(read.getEncodedGlyphs()==null && other.getEncodedGlyphs() !=null){
+        	if(read.getSequence()==null && other.getSequence() !=null){
         		return false;
         	}
-        	if(other.getEncodedGlyphs() ==null){
+        	if(other.getSequence() ==null){
         		return false;
         	}
-        	if(!read.getEncodedGlyphs().decode().equals(other.getEncodedGlyphs().decode())){
-        		System.out.println(NucleotideGlyph.convertToString(read.getEncodedGlyphs().decode()));
-        		System.out.println(NucleotideGlyph.convertToString(other.getEncodedGlyphs().decode()));
+        	if(!read.getSequence().decode().equals(other.getSequence().decode())){
+        		System.out.println(NucleotideGlyph.convertToString(read.getSequence().decode()));
+        		System.out.println(NucleotideGlyph.convertToString(other.getSequence().decode()));
         		System.out.println();
         		return false;
         	}
@@ -129,7 +129,7 @@ public class DefaultPlacedRead implements PlacedRead {
 
     public Map<Integer, NucleotideGlyph> getSnps(){
         Map<Integer, NucleotideGlyph> map = new TreeMap<Integer, NucleotideGlyph>();
-        final ReferenceEncodedNucleotideSequence encodedGlyphs = read.getEncodedGlyphs();
+        final ReferenceEncodedNucleotideSequence encodedGlyphs = read.getSequence();
         for(Integer offset : encodedGlyphs.getSnpOffsets()){
             map.put(offset, encodedGlyphs.get(offset));
         }
@@ -137,8 +137,8 @@ public class DefaultPlacedRead implements PlacedRead {
         
     }
     @Override
-    public NucleotideSequence getEncodedGlyphs() {
-        return read.getEncodedGlyphs();
+    public NucleotideSequence getSequence() {
+        return read.getSequence();
     }
     @Override
     public String getId() {
@@ -146,7 +146,7 @@ public class DefaultPlacedRead implements PlacedRead {
     }
     @Override
     public Range getValidRange(){
-        return read.getEncodedGlyphs().getValidRange();
+        return read.getSequence().getValidRange();
     }
     @Override
     public long convertReferenceIndexToValidRangeIndex(long referenceIndex) {

@@ -83,7 +83,7 @@ public class DefaultFragment implements Fragment{
 
 
     @Override
-    public NucleotideSequence getEncodedGlyphs() {
+    public NucleotideSequence getSequence() {
         return bases;
     }
 

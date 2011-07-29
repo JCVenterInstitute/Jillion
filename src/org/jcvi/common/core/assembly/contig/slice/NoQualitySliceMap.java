@@ -30,7 +30,7 @@ public class NoQualitySliceMap extends DefaultSliceMap{
     protected DefaultSliceElement createSliceElementFor(
             QualityValueStrategy qualityValueStrategy, int gappedIndex,
             PlacedRead realRead, Sequence<PhredQuality> qualities) {
-        final NucleotideGlyph calledBase = realRead.getEncodedGlyphs().get(gappedIndex);
+        final NucleotideGlyph calledBase = realRead.getSequence().get(gappedIndex);
         return new DefaultSliceElement(realRead.getId(), calledBase, 
                 phredQuality, 
                 realRead.getDirection());

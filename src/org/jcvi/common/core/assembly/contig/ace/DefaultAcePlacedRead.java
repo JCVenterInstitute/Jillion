@@ -71,8 +71,8 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
     * {@inheritDoc}
     */
     @Override
-    public NucleotideSequence getEncodedGlyphs() {
-        return placedRead.getEncodedGlyphs();
+    public NucleotideSequence getSequence() {
+        return placedRead.getSequence();
     }
 
     /**
