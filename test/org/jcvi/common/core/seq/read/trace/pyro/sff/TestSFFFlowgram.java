@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFFlowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Before;
@@ -51,7 +51,7 @@ public class TestSFFFlowgram {
     SFFFlowgram sut;
     @Before
     public void setup(){
-        expect(basecalls.decode()).andStubReturn(NucleotideGlyph.getGlyphsFor("ACGT"));
+        expect(basecalls.decode()).andStubReturn(Nucleotide.getGlyphsFor("ACGT"));
         expect(confidence.decode()).andStubReturn(PhredQuality.valueOf(new byte[]{20,15,30,15}));
         
         replay(basecalls,confidence);

@@ -24,7 +24,7 @@
 package org.jcvi.common.core.assembly.contig.slice.consensus;
 
 import org.jcvi.common.core.assembly.contig.slice.Slice;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 /**
  * {@code ConsensusResult} is the base call
  * and quality value that best represents
@@ -36,11 +36,11 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
  */
 public interface ConsensusResult {
     /**
-     * The best {@link NucleotideGlyph}
+     * The best {@link Nucleotide}
      * represented by the Slice.
-     * @return a {@link NucleotideGlyph} will never be null.
+     * @return a {@link Nucleotide} will never be null.
      */
-    NucleotideGlyph getConsensus();
+    Nucleotide getConsensus();
     /**
      * Return the quality of the consensus.  This number may be
      * in the hundreds or thousands depending on the depth of

@@ -24,7 +24,7 @@
 package org.jcvi.common.core.assembly.contig.slice.consensus;
 
 import org.jcvi.common.core.assembly.contig.slice.Slice;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 /**
  * <code>ConsensusCaller</code> compute the
  * {@link ConsensusResult} for the given Slice.
@@ -35,7 +35,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 public interface ConsensusCaller {
     /**
      * compute the consensus
-     * {@link NucleotideGlyph} for the given Slice.
+     * {@link Nucleotide} for the given Slice.
      * @param slice the Slice to compute the consensus for.
      * @return a {@link ConsensusResult} will never be <code>null</code>
      * @throws NullPointerException if slice is null.

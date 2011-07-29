@@ -32,7 +32,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.assembly.contig.slice.SliceMap;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
  * {@code OntheFlyAceBestSegmentMap} is an implementation of {@link AceBestSegmentMap}
@@ -137,7 +137,7 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
             Range previouslyEnteredRange=null;
             while(i<maxStart){
                 Slice slice = sliceMap.getSlice(i);
-                NucleotideGlyph consensusCall = consensus.get(i);
+                Nucleotide consensusCall = consensus.get(i);
                 
                 //slice is null there is no real best segment...
                 

@@ -37,7 +37,7 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public final class BasicChromatogramBuilder {
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
@@ -84,7 +84,7 @@ public final class BasicChromatogramBuilder {
             properties(properties);
         }
         public BasicChromatogramBuilder(Chromatogram copy){
-       this(NucleotideGlyph.convertToString(copy.getBasecalls().decode()),
+       this(Nucleotide.convertToString(copy.getBasecalls().decode()),
        ShortGlyph.toArray(copy.getPeaks().getData().decode()),
        copy.getChannelGroup(),
        copy.getComments()
@@ -200,7 +200,7 @@ public final class BasicChromatogramBuilder {
             
             
             for(int i=0; i< basecalls.length(); i++){
-                NucleotideGlyph base = NucleotideGlyph.getGlyphFor(basecalls.charAt(i));
+                Nucleotide base = Nucleotide.getGlyphFor(basecalls.charAt(i));
                 final byte[] data = channelGroup.getChannel(base).getConfidence().getData();
                 //only read as many qualities as we have...
                 if(i == data.length){

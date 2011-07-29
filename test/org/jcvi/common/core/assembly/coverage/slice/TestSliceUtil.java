@@ -32,7 +32,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.slice.DefaultSlice;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public final class TestSliceUtil {
     private TestSliceUtil(){}
@@ -40,11 +40,11 @@ public final class TestSliceUtil {
     public static Slice createIsolatedSliceFrom(String bases, int... qualities){
         DefaultSlice.Builder builder = new DefaultSlice.Builder();
         for(int i =0; i< qualities.length; i++){
-            builder.add("read_"+i,NucleotideGlyph.getGlyphFor(bases.charAt(i)), PhredQuality.valueOf(qualities[i]), FORWARD);
+            builder.add("read_"+i,Nucleotide.getGlyphFor(bases.charAt(i)), PhredQuality.valueOf(qualities[i]), FORWARD);
         }
         return builder.build();
     }
-    public static Slice createSliceFrom(List<NucleotideGlyph> nucleotides, List<PhredQuality> qualities, List<Direction> directions){
+    public static Slice createSliceFrom(List<Nucleotide> nucleotides, List<PhredQuality> qualities, List<Direction> directions){
         DefaultSlice.Builder builder = new DefaultSlice.Builder();
         for(int i=0; i<nucleotides.size(); i++){
             builder.add("read_"+i,nucleotides.get(i), qualities.get(i), directions.get(i));
@@ -53,7 +53,7 @@ public final class TestSliceUtil {
     }
     public static Slice createSliceFrom(String nucleotides, byte[] qualities, List<Direction> directions){
         
-        return createSliceFrom(NucleotideGlyph.getGlyphsFor(nucleotides),
+        return createSliceFrom(Nucleotide.getGlyphsFor(nucleotides),
                 PhredQuality.valueOf(qualities), directions);
     }
     

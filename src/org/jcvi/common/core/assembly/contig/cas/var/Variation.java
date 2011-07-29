@@ -22,7 +22,7 @@ package org.jcvi.common.core.assembly.contig.cas.var;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
  * {@code Variation} represents a single row in 
@@ -86,21 +86,21 @@ public interface Variation extends Comparable<Variation>{
      */
     Type getType();
     /**
-     * Get the {@link NucleotideGlyph} of the reference at this coordinate.
-     * @return the reference {@link NucleotideGlyph} (never null).
+     * Get the {@link Nucleotide} of the reference at this coordinate.
+     * @return the reference {@link Nucleotide} (never null).
      */
-    NucleotideGlyph getReferenceBase();
+    Nucleotide getReferenceBase();
     /**
-     * Get the list of {@link NucleotideGlyph}s for the consensus at this coordinate.
-     * The returned list may have more than one {@link NucleotideGlyph} for
+     * Get the list of {@link Nucleotide}s for the consensus at this coordinate.
+     * The returned list may have more than one {@link Nucleotide} for
      * multiple base insertions.
-     * @return a list (not null) containing possibly multiple {@link NucleotideGlyph}s.
+     * @return a list (not null) containing possibly multiple {@link Nucleotide}s.
      */
-    List<NucleotideGlyph> getConsensusBase();
+    List<Nucleotide> getConsensusBase();
     /**
      * Get the histogram counts of variations at this coordinate.  Again, Lists
-     * of {@link NucleotideGlyph}s in the case of multibase insertions.
+     * of {@link Nucleotide}s in the case of multibase insertions.
      * @return a Map (not null) of the variation counts.
      */
-    Map<List<NucleotideGlyph>, Integer> getHistogram();
+    Map<List<Nucleotide>, Integer> getHistogram();
 }

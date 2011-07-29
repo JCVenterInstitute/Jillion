@@ -36,7 +36,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBui
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFileVisitor;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
 
@@ -149,8 +149,8 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     }
 
     private void bulkPut(ByteBuffer buffer,
-            Sequence<NucleotideGlyph> basecalls) {
-       for(NucleotideGlyph glyph : basecalls.decode()){
+            Sequence<Nucleotide> basecalls) {
+       for(Nucleotide glyph : basecalls.decode()){
            buffer.put((byte)glyph.getCharacter().charValue());
        }
         

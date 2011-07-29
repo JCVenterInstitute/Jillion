@@ -24,7 +24,7 @@
 package org.jcvi.common.core.symbol;
 
 
-public interface NumericGlyph extends Glyph {
+public interface NumericSymbol extends Symbol {
 
   
     Number getNumber();

@@ -33,7 +33,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.assembly.contig.slice.SliceMap;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
@@ -52,7 +52,7 @@ public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
         Range previouslyEnteredRange=null;
         for(int i=0; i<consensus.getLength(); i++){
             Slice slice = sliceMap.getSlice(i);
-            NucleotideGlyph consensusCall = consensus.get(i);
+            Nucleotide consensusCall = consensus.get(i);
             
             //short circuit to try our currentElement first
             //to see if we can extend the current best segment

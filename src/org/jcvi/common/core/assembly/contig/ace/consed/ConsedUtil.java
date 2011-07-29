@@ -45,7 +45,7 @@ import org.jcvi.common.core.assembly.contig.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.joda.time.DateTime;
 /**
@@ -182,7 +182,7 @@ public class ConsedUtil {
                 contigReads.add(read.getId());
             }
         }
-        String contigConsensus =NucleotideGlyph.convertToString(consensus.decode(contigRange));
+        String contigConsensus =Nucleotide.convertToString(consensus.decode(contigRange));
         //id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
         String contigId = String.format("%s_%d_%d",originalContigId, 
                 oldStart + (consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getStart())),
@@ -195,7 +195,7 @@ public class ConsedUtil {
                 throw new NullPointerException("got a null read for id " + readId);
             }
             builder.addRead(readId, 
-                    NucleotideGlyph.convertToString(read.getSequence().decode()), 
+                    Nucleotide.convertToString(read.getSequence().decode()), 
                     (int)(read.getStart() - contigRange.getStart()), 
                     read.getDirection(), read.getValidRange(), read.getPhdInfo(),
                     read.getUngappedFullLength());

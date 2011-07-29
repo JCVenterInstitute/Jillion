@@ -30,7 +30,7 @@ import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;
 
@@ -59,7 +59,7 @@ public class TestDefaultContigQualityClassComputer {
 
         sut = createMockBuilder(DefaultContigQualityClassComputer.class)
             .withConstructor(qualityValueStrategy,threshold)
-            .addMockedMethod("computeQualityClassFor",QualityDataStore.class,Integer.TYPE, CoverageRegion.class, NucleotideGlyph.class)
+            .addMockedMethod("computeQualityClassFor",QualityDataStore.class,Integer.TYPE, CoverageRegion.class, Nucleotide.class)
         .createMock();
                 
         coverageMap = createMock(CoverageMap.class);
@@ -79,7 +79,7 @@ public class TestDefaultContigQualityClassComputer {
     
     @Test
     public void computeQualityClass() throws DataStoreException{
-        final NucleotideGlyph consensusBase = NucleotideGlyph.Adenine;
+        final Nucleotide consensusBase = Nucleotide.Adenine;
         CoverageRegion<Placed> region = createMock(CoverageRegion.class);
         expect(coverageMap.getRegionWhichCovers(index)).andReturn(region);
         

@@ -28,7 +28,7 @@ package org.jcvi.common.experimental.align;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
  * A <code>NucleotideSubstitutionMatrix</code> is a simple implementation of a 
@@ -37,11 +37,11 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
  *
  * @author jsitz@jcvi.org
  */
-public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<NucleotideGlyph>
+public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleotide>
 {
     
     /** The single-dimensional size of the matrix. */
-    private static final int MATRIX_SIZE = NucleotideGlyph.values().length;
+    private static final int MATRIX_SIZE = Nucleotide.values().length;
     
     /** The name of this substitution matrix. */
     private final String name;
@@ -90,7 +90,7 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
      */
     private void setIdentityScore(int score)
     {
-        for (NucleotideGlyph glyph : NucleotideGlyph.values())
+        for (Nucleotide glyph : Nucleotide.values())
         {
             this.setScore(glyph, glyph, score);
         }
@@ -101,7 +101,7 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
      */
     private void setGapScore(int score)
     {
-        this.setAllScores(NucleotideGlyph.Gap, score);
+        this.setAllScores(Nucleotide.Gap, score);
     }
     
     /* (non-Javadoc)
@@ -109,7 +109,7 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
      */
     private void setUnspecifiedMatchScore(int score)
     {
-        this.setAllScores(NucleotideGlyph.Unknown, score);
+        this.setAllScores(Nucleotide.Unknown, score);
     }
     
     /**
@@ -119,7 +119,7 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
      */
     private void setAmbiguityScore(int score)
     {
-        for(NucleotideGlyph g : NucleotideGlyph.getGlyphsFor("ACGT")){
+        for(Nucleotide g : Nucleotide.getGlyphsFor("ACGT")){
             this.setScores(g, score, g.getNucleotides());
         }
        
@@ -128,12 +128,12 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
     /* (non-Javadoc)
      * @see org.jcvi.align.SubstitutionMatrix#setScores(char, int, char)
      */
-    private void setScores(NucleotideGlyph a, int value, Collection<NucleotideGlyph> bs)
+    private void setScores(Nucleotide a, int value, Collection<Nucleotide> bs)
     {
         final byte boundedValue = this.normalizeScore(value);
         final int aIndex = a.ordinal();
         
-        for (NucleotideGlyph b : bs)
+        for (Nucleotide b : bs)
         {
             final int bIndex = b.ordinal();
             this.setScore(aIndex, bIndex, boundedValue);
@@ -143,7 +143,7 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
     /* (non-Javadoc)
      * @see org.jcvi.align.SubstitutionMatrix#setAllScores(char, int)
      */
-    private void setAllScores(NucleotideGlyph a, int value)
+    private void setAllScores(Nucleotide a, int value)
     {
         final byte boundedValue = this.normalizeScore(value);
         final int aIndex = a.ordinal();
@@ -156,7 +156,7 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
     /* (non-Javadoc)
      * @see org.jcvi.align.SubstitutionMatrix#setScore(char, char, int)
      */
-    private void setScore(NucleotideGlyph a, NucleotideGlyph b, int value)
+    private void setScore(Nucleotide a, Nucleotide b, int value)
     {
         this.setScore(a.ordinal(), b.ordinal(), this.normalizeScore(value));
     }
@@ -185,7 +185,7 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
         return this.getScore(this.indexOf(a), this.indexOf(b));
     }
     @Override
-    public byte getScore(NucleotideGlyph a, NucleotideGlyph b)
+    public byte getScore(Nucleotide a, Nucleotide b)
     {
         return this.getScore(a.ordinal(), b.ordinal());
     }
@@ -200,9 +200,9 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
      */
     private int indexOf(char a)
     {
-        final NucleotideGlyph glyph = NucleotideGlyph.getGlyphFor(a);
+        final Nucleotide glyph = Nucleotide.getGlyphFor(a);
         if(glyph ==null){
-            return NucleotideGlyph.Unknown.ordinal();
+            return Nucleotide.Unknown.ordinal();
         }
         return glyph.ordinal();
        
@@ -212,9 +212,9 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
      * @see org.jcvi.align.SubstitutionMatrix#getDefaultCharacter()
      */
     @Override
-    public NucleotideGlyph getDefaultCharacter()
+    public Nucleotide getDefaultCharacter()
     {
-        return NucleotideGlyph.Unknown;
+        return Nucleotide.Unknown;
     }
     
     /**

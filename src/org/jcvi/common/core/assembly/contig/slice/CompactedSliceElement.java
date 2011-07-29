@@ -23,7 +23,7 @@ import java.util.Arrays;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
  * @author dkatzel
@@ -44,7 +44,7 @@ public class CompactedSliceElement implements SliceElement{
         this.id = id;
         System.arraycopy(encodedData, 0, this.encodedData, 0, 2);
     }
-    public CompactedSliceElement(String id, NucleotideGlyph base, PhredQuality quality,
+    public CompactedSliceElement(String id, Nucleotide base, PhredQuality quality,
             Direction direction) {
         if(id ==null ||base ==null || quality ==null || direction == null){
             throw new NullPointerException("fields can not be null");
@@ -65,7 +65,7 @@ public class CompactedSliceElement implements SliceElement{
     * {@inheritDoc}
     */
     @Override
-    public NucleotideGlyph getBase() {
+    public Nucleotide getBase() {
         return CompactedSliceElementCodec.INSTANCE.getBase(encodedData);
     }
 

@@ -59,7 +59,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.Data;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.DataFactory;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.RawData;
 import org.jcvi.common.core.symbol.ShortGlyph;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
  * The Chunk is the basic unit of the ZTR Structure.
@@ -108,7 +108,7 @@ public enum Chunk {
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
-			String basecalls = NucleotideGlyph.convertToString(ztrChromatogram.getBasecalls().decode());
+			String basecalls = Nucleotide.convertToString(ztrChromatogram.getBasecalls().decode());
 			
 			ByteBuffer buffer = ByteBuffer.allocate(basecalls.length()+1);
 			buffer.put(PADDING_BYTE);
@@ -252,22 +252,22 @@ public enum Chunk {
      */
     CONFIDENCES{
     	
-    	EnumSet<NucleotideGlyph> notA = EnumSet.of(
-				NucleotideGlyph.Cytosine, NucleotideGlyph.Guanine, NucleotideGlyph.Thymine);
-		EnumSet<NucleotideGlyph> notC = EnumSet.of(
-				NucleotideGlyph.Adenine, NucleotideGlyph.Guanine, NucleotideGlyph.Thymine);
-		EnumSet<NucleotideGlyph> notG = EnumSet.of(
-				NucleotideGlyph.Adenine, NucleotideGlyph.Cytosine, NucleotideGlyph.Thymine);
-		EnumSet<NucleotideGlyph> notACorG = EnumSet.of(
-				NucleotideGlyph.Adenine, NucleotideGlyph.Cytosine, NucleotideGlyph.Guanine);
-		Map<NucleotideGlyph, Set<NucleotideGlyph>> otherChannelMap = new EnumMap<NucleotideGlyph, Set<NucleotideGlyph>>(NucleotideGlyph.class);
+    	EnumSet<Nucleotide> notA = EnumSet.of(
+				Nucleotide.Cytosine, Nucleotide.Guanine, Nucleotide.Thymine);
+		EnumSet<Nucleotide> notC = EnumSet.of(
+				Nucleotide.Adenine, Nucleotide.Guanine, Nucleotide.Thymine);
+		EnumSet<Nucleotide> notG = EnumSet.of(
+				Nucleotide.Adenine, Nucleotide.Cytosine, Nucleotide.Thymine);
+		EnumSet<Nucleotide> notACorG = EnumSet.of(
+				Nucleotide.Adenine, Nucleotide.Cytosine, Nucleotide.Guanine);
+		Map<Nucleotide, Set<Nucleotide>> otherChannelMap = new EnumMap<Nucleotide, Set<Nucleotide>>(Nucleotide.class);
 		{
-			otherChannelMap.put(NucleotideGlyph.Adenine, notA);
-			otherChannelMap.put(NucleotideGlyph.Cytosine, notC);
-			otherChannelMap.put(NucleotideGlyph.Guanine, notG);
+			otherChannelMap.put(Nucleotide.Adenine, notA);
+			otherChannelMap.put(Nucleotide.Cytosine, notC);
+			otherChannelMap.put(Nucleotide.Guanine, notG);
 		}
 		
-		private Set<NucleotideGlyph> getOtherChannelsThan(NucleotideGlyph channel){
+		private Set<Nucleotide> getOtherChannelsThan(Nucleotide channel){
 			
 			if(otherChannelMap.containsKey(channel)){
 				return otherChannelMap.get(channel);
@@ -390,14 +390,14 @@ public enum Chunk {
 			
 			
 			ChannelGroup channelGroup =ztrChromatogram.getChannelGroup();
-			List<NucleotideGlyph> basecalls =ztrChromatogram.getBasecalls().decode();
+			List<Nucleotide> basecalls =ztrChromatogram.getBasecalls().decode();
 			ByteBuffer calledBaseConfidences = ByteBuffer.allocate(basecalls.size());
 			ByteBuffer otherConfidences = ByteBuffer.allocate(calledBaseConfidences.capacity()*3);
 			for(int i=0; i< basecalls.size();i++){
-				NucleotideGlyph base = basecalls.get(i);
+				Nucleotide base = basecalls.get(i);
 				calledBaseConfidences.put(channelGroup.getChannel(base).getConfidence().getData()[i]);
 				
-				for(NucleotideGlyph other: getOtherChannelsThan(base)){
+				for(Nucleotide other: getOtherChannelsThan(base)){
 					otherConfidences.put(channelGroup.getChannel(other).getConfidence().getData()[i]);
 				}
 			}

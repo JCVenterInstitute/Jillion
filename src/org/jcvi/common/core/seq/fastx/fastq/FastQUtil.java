@@ -21,7 +21,7 @@ package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
  * {@code FastQUtil} is a utility class for working with 
@@ -81,7 +81,7 @@ public final class FastQUtil {
             builder.append(" ").append(fastQRecord.getComment());
         }
         builder.append("\n")
-        .append(NucleotideGlyph.convertToString(fastQRecord.getNucleotides().decode())).append("\n")
+        .append(Nucleotide.convertToString(fastQRecord.getNucleotides().decode())).append("\n")
         .append("+");
         if(writeIdOnQualityLine){
             builder.append(id);

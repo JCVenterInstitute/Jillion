@@ -25,9 +25,9 @@ package org.jcvi.common.core.assembly.contig.slice.consensus;
 
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
-import static org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph.*;
+import static org.jcvi.common.core.symbol.residue.nuc.Nucleotide.*;
 /**
  * <code>NoAmbiguityConsensusCaller</code>
  * will always return the non-ambiguous base
@@ -43,10 +43,10 @@ public class NoAmbiguityConsensusCaller extends AbstractChurchillWatermanConsens
     }
 
     @Override
-    protected NucleotideGlyph getConsensus(
+    protected Nucleotide getConsensus(
             ProbabilityStruct normalizedErrorProbabilityStruct, Slice slice) {
       //assume A is the answer initially
-        NucleotideGlyph result = Adenine;
+        Nucleotide result = Adenine;
         double lowestErrorProbability = normalizedErrorProbabilityStruct.getProbabilityFor(Adenine);
         
         if(normalizedErrorProbabilityStruct.getProbabilityFor(Cytosine).compareTo(lowestErrorProbability) <0){

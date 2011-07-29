@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.Codon;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -46,19 +46,19 @@ public class TestCodon {
     private static final String base2       = "AAAAAACCCCCCCCCCCCCCCGGGGGGTTTTTTTTAAAAAACCCCCCCCCCCCCCCGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTAAAAAACCCCCCCCCCCCCCCGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTGGGAAAAAACCCCCCCCCCCCCCCGGGGGTTTTTTTTT";
     private static final String base3       = "ACGRTYABCDGHKMNRSTVWYACGRTYACGHMTWYACGRTYABCDGHKMNRSTVWYABCDGHKMNRSTVWYABCDGHKMNRSTVWYACGRTYABCDGHKMNRSTVWYABCDGHKMNRSTVWYABCDGHKMNRSTVWYAGRACGRTYABCDGHKMNRSTVWYACGTYACGRTYAGR";
 
-    private static final List<NucleotideGlyph> EXPECTED_START_CODON = NucleotideGlyph.getGlyphsFor("ATG");
+    private static final List<Nucleotide> EXPECTED_START_CODON = Nucleotide.getGlyphsFor("ATG");
     private final AminoAcid expectedAminoAcid;
     private final boolean isStartCodon;
     private final boolean isStopCodon;
     private final Codon sut;
-    private final List<NucleotideGlyph> actualBases;
+    private final List<Nucleotide> actualBases;
     @Parameters
     public static Collection<?> data(){
         List<Object[]> data = new ArrayList<Object[]>();
         for(int i=0; i<aminoAcids.length(); i++){
             final char aminoAbbreviation = aminoAcids.charAt(i);
             AminoAcid aa = aminoAbbreviation !='*'? AminoAcid.getGlyphFor(aminoAbbreviation): null;
-            List<NucleotideGlyph> codon = NucleotideGlyph.getGlyphsFor(
+            List<Nucleotide> codon = Nucleotide.getGlyphsFor(
                                             Arrays.asList(base1.charAt(i),
                                                             base2.charAt(i),
                                                             base3.charAt(i)));
@@ -79,7 +79,7 @@ public class TestCodon {
      * @param isStartCodon
      * @param isStopCodon
      */
-    public TestCodon(Codon sut,List<NucleotideGlyph> actualBases,
+    public TestCodon(Codon sut,List<Nucleotide> actualBases,
             AminoAcid expectedAminoAcid, boolean isStartCodon,
             boolean isStopCodon) {
         this.sut = sut;

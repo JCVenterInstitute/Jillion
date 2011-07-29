@@ -35,7 +35,7 @@ import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageRegion;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
  * {@code AssemblyUtil} is a utility class for working
@@ -48,7 +48,7 @@ public final class AssemblyUtil {
 
     private AssemblyUtil(){}
     /**
-     * Create a List of {@link NucleotideGlyph}s that corresponds to the gapped full range
+     * Create a List of {@link Nucleotide}s that corresponds to the gapped full range
      * (untrimmed, uncomplimented, gapped) version of the given PlacedRead.
      * This method is equivalent to 
      * {@link #buildGappedComplimentedFullRangeBases(NucleotideSequence, Direction, Range, List)
@@ -57,15 +57,15 @@ public final class AssemblyUtil {
      * @param placedRead the read to work on.
      * @param ungappedUncomplimentedFullRangeBases the ungapped uncomplimented
      * full (raw) version of the basecalls as originally called from the sequencer.
-     * @return a new List of {@link NucleotideGlyph}s of the gapped, untrimmed uncomplimented
+     * @return a new List of {@link Nucleotide}s of the gapped, untrimmed uncomplimented
      * basecalls of the given read.
      * @see #buildGappedComplimentedFullRangeBases(NucleotideSequence, Direction, Range, List)
      */
-    public static <R extends PlacedRead> List<NucleotideGlyph> buildGappedComplimentedFullRangeBases(R placedRead, List<NucleotideGlyph> ungappedUncomplimentedFullRangeBases){
+    public static <R extends PlacedRead> List<Nucleotide> buildGappedComplimentedFullRangeBases(R placedRead, List<Nucleotide> ungappedUncomplimentedFullRangeBases){
        return buildGappedComplimentedFullRangeBases(placedRead.getSequence(), placedRead.getDirection(), placedRead.getValidRange(), ungappedUncomplimentedFullRangeBases);
     }
     /**
-     * Create a List of {@link NucleotideGlyph}s that corresponds to the gapped full range
+     * Create a List of {@link Nucleotide}s that corresponds to the gapped full range
      * (untrimmed, uncomplimented, gapped) version of the given sequence.
      * @param gappedValidRange the {@link Range} that corresponds to the gapped
      * valid range of the read currently in an Assembly.
@@ -73,19 +73,19 @@ public final class AssemblyUtil {
      * @param validRange the ungapped version of the valid range.
      * @param ungappedUncomplimentedFullRangeBases the ungapped uncomplimented
      * full (raw) version of the basecalls as originally called from the sequencer.
-     * @return a new List of {@link NucleotideGlyph}s of the gapped, untrimmed uncomplimented
+     * @return a new List of {@link Nucleotide}s of the gapped, untrimmed uncomplimented
      * basecalls of the given read.
      */
-    public static List<NucleotideGlyph> buildGappedComplimentedFullRangeBases(
-            NucleotideSequence gappedValidRange, Direction dir, Range validRange, List<NucleotideGlyph> ungappedUncomplimentedFullRangeBases){
-        List<NucleotideGlyph> fullRangeComplimented;
+    public static List<Nucleotide> buildGappedComplimentedFullRangeBases(
+            NucleotideSequence gappedValidRange, Direction dir, Range validRange, List<Nucleotide> ungappedUncomplimentedFullRangeBases){
+        List<Nucleotide> fullRangeComplimented;
         if(dir == Direction.REVERSE){
-            fullRangeComplimented = NucleotideGlyph.reverseCompliment(ungappedUncomplimentedFullRangeBases);
+            fullRangeComplimented = Nucleotide.reverseCompliment(ungappedUncomplimentedFullRangeBases);
         }
         else{
             fullRangeComplimented = ungappedUncomplimentedFullRangeBases;
         }
-        List<NucleotideGlyph> gappedComplimentedFullRange = new ArrayList<NucleotideGlyph>();
+        List<Nucleotide> gappedComplimentedFullRange = new ArrayList<Nucleotide>();
         for(int i=0; i< validRange.getStart(); i++ ){
             gappedComplimentedFullRange.add(fullRangeComplimented.get(i));
         }
@@ -158,7 +158,7 @@ public final class AssemblyUtil {
         return glyphs.isGap(gappedReadIndex);
     }
     /**
-     * Get the first non-gap {@link NucleotideGlyph} from the left side of the given
+     * Get the first non-gap {@link Nucleotide} from the left side of the given
      * gappedReadIndex on the given encoded glyphs.  If the given base is not a gap, 
      * then that is the value returned.
      * @param gappedNucleotides the gapped nucleotides to search 
@@ -180,7 +180,7 @@ public final class AssemblyUtil {
     }
     
     /**
-     * Get the first non-gap {@link NucleotideGlyph} from the right side of the given
+     * Get the first non-gap {@link Nucleotide} from the right side of the given
      * gappedReadIndex on the given encoded glyphs.  If the given base is not a gap, 
      * then that is the value returned.
      * @param gappedNucleotides the gapped nucleotides to search 

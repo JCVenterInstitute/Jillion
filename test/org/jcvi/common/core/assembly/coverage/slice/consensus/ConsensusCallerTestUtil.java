@@ -37,7 +37,7 @@ import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.assembly.contig.slice.consensus.ConsensusResult;
 import org.jcvi.common.core.assembly.contig.slice.consensus.DefaultConsensusResult;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.MapValueComparator;
 
 import static org.jcvi.common.core.Direction.FORWARD;
@@ -624,7 +624,7 @@ public final class ConsensusCallerTestUtil {
 private static List<ConsensusResult> createConsensusResults(String basecalls, int... consensusQualities){
     List<ConsensusResult> result = new ArrayList<ConsensusResult>();
     for(int i=0; i< basecalls.length(); i++){
-        result.add(new DefaultConsensusResult(NucleotideGlyph.getGlyphFor(basecalls.charAt(i)), consensusQualities[i]));
+        result.add(new DefaultConsensusResult(Nucleotide.getGlyphFor(basecalls.charAt(i)), consensusQualities[i]));
     }
     return result;
 }
@@ -637,18 +637,18 @@ public static Map<List<Slice>, List<ConsensusResult>> generateMostCommonBasecall
     	
     	for(Slice s : key){
     		if(s.getCoverageDepth()==0){
-    			consensusResults.add(new DefaultConsensusResult(NucleotideGlyph.Unknown, 0));
+    			consensusResults.add(new DefaultConsensusResult(Nucleotide.Unknown, 0));
     			continue;
     		}
-    		Map<NucleotideGlyph, Integer> histogram = new EnumMap<NucleotideGlyph, Integer>(NucleotideGlyph.class);
-    		for(NucleotideGlyph bases : NucleotideGlyph.getGlyphsFor("ACGT-")){
+    		Map<Nucleotide, Integer> histogram = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
+    		for(Nucleotide bases : Nucleotide.getGlyphsFor("ACGT-")){
     			histogram.put(bases, Integer.valueOf(0));
     		}
     		for(SliceElement e : s){
     			histogram.put(e.getBase(),histogram.get(e.getBase()) +1);
     		}
-    		SortedMap<NucleotideGlyph, Integer> sortedMap = MapValueComparator.sortDescending(histogram);
-    		NucleotideGlyph mostCommonBase =sortedMap.firstKey();
+    		SortedMap<Nucleotide, Integer> sortedMap = MapValueComparator.sortDescending(histogram);
+    		Nucleotide mostCommonBase =sortedMap.firstKey();
     		int consensusQuality=0;
     		for(SliceElement e : s){
     			if(e.getBase() == mostCommonBase){

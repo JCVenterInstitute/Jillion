@@ -22,7 +22,7 @@
  */
 package org.jcvi.common.experimental.align;
 
-import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
 
 
@@ -35,7 +35,7 @@ import org.jcvi.common.core.symbol.Sequence;
  *
  * @author jsitz@jcvi.org
  */
-public interface Aligner<G extends Glyph>
+public interface Aligner<G extends Symbol>
 {
     /**
      * Align a query sequence against this 

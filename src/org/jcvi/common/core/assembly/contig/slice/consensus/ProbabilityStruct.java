@@ -31,25 +31,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 final class ProbabilityStruct{
 
     private static final double ONE_TENTH = 0.1D;
 
     private static final double ONE_QUARTER = 0.25D;
-    private final Map<NucleotideGlyph, Double> probabilityMap;
+    private final Map<Nucleotide, Double> probabilityMap;
     
-    public ProbabilityStruct(Map<NucleotideGlyph, Double> probabilityMap){
-        this.probabilityMap = Collections.unmodifiableMap(new EnumMap<NucleotideGlyph, Double>(probabilityMap));
+    public ProbabilityStruct(Map<Nucleotide, Double> probabilityMap){
+        this.probabilityMap = Collections.unmodifiableMap(new EnumMap<Nucleotide, Double>(probabilityMap));
     }
-    public Double getProbabilityFor(NucleotideGlyph base){
+    public Double getProbabilityFor(Nucleotide base){
         return probabilityMap.get(base);
     }
-    public ProbabilityStruct(NucleotideGlyph consensus,int cumulativeQualityValue){
+    public ProbabilityStruct(Nucleotide consensus,int cumulativeQualityValue){
         double probability = Math.pow(ONE_TENTH, cumulativeQualityValue*ONE_TENTH);
-        probabilityMap = new EnumMap<NucleotideGlyph, Double>(NucleotideGlyph.class);
-        for(NucleotideGlyph currentBase : BASES_TO_CONSIDER){
+        probabilityMap = new EnumMap<Nucleotide, Double>(Nucleotide.class);
+        for(Nucleotide currentBase : BASES_TO_CONSIDER){
             if(currentBase == consensus){
                 probabilityMap.put(currentBase, Double.valueOf(1 - probability));
             }
@@ -62,22 +62,22 @@ final class ProbabilityStruct{
     }
     public ProbabilityStruct normalize(){
         double sumOfRawProbabilities= 0D;
-        for(NucleotideGlyph currentBase : ConsensusUtil.BASES_TO_CONSIDER){
+        for(Nucleotide currentBase : ConsensusUtil.BASES_TO_CONSIDER){
             sumOfRawProbabilities+= probabilityMap.get(currentBase);
         }
-        Map<NucleotideGlyph, Double> newMap = new EnumMap<NucleotideGlyph, Double>(NucleotideGlyph.class);
-        newMap.put(NucleotideGlyph.Adenine, computeNormalizedProbabilityFor(NucleotideGlyph.Adenine, sumOfRawProbabilities));
-        newMap.put(NucleotideGlyph.Cytosine, computeNormalizedProbabilityFor(NucleotideGlyph.Cytosine, sumOfRawProbabilities));
-        newMap.put(NucleotideGlyph.Guanine, computeNormalizedProbabilityFor(NucleotideGlyph.Guanine, sumOfRawProbabilities));
-        newMap.put(NucleotideGlyph.Thymine, computeNormalizedProbabilityFor(NucleotideGlyph.Thymine, sumOfRawProbabilities));
-        newMap.put(NucleotideGlyph.Gap, computeNormalizedProbabilityFor(NucleotideGlyph.Gap, sumOfRawProbabilities));
+        Map<Nucleotide, Double> newMap = new EnumMap<Nucleotide, Double>(Nucleotide.class);
+        newMap.put(Nucleotide.Adenine, computeNormalizedProbabilityFor(Nucleotide.Adenine, sumOfRawProbabilities));
+        newMap.put(Nucleotide.Cytosine, computeNormalizedProbabilityFor(Nucleotide.Cytosine, sumOfRawProbabilities));
+        newMap.put(Nucleotide.Guanine, computeNormalizedProbabilityFor(Nucleotide.Guanine, sumOfRawProbabilities));
+        newMap.put(Nucleotide.Thymine, computeNormalizedProbabilityFor(Nucleotide.Thymine, sumOfRawProbabilities));
+        newMap.put(Nucleotide.Gap, computeNormalizedProbabilityFor(Nucleotide.Gap, sumOfRawProbabilities));
         
         return new ProbabilityStruct(newMap);
     }
     
-    private Double computeNormalizedProbabilityFor(NucleotideGlyph base, double sumOfRawProbabilities){
+    private Double computeNormalizedProbabilityFor(Nucleotide base, double sumOfRawProbabilities){
         double result= 0D;
-        for(NucleotideGlyph currentBase : BASES_TO_CONSIDER){
+        for(Nucleotide currentBase : BASES_TO_CONSIDER){
             if(currentBase != base){
                 result+= probabilityMap.get(currentBase);
             }
@@ -85,7 +85,7 @@ final class ProbabilityStruct{
         return result/sumOfRawProbabilities;
     }
     
-    public Set<Entry<NucleotideGlyph, Double>> entrySet(){
+    public Set<Entry<Nucleotide, Double>> entrySet(){
         return probabilityMap.entrySet();
     }
     

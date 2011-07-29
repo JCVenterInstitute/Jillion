@@ -25,7 +25,7 @@ package org.jcvi.common.core.symbol;
 
 import java.util.List;
 
-public interface GlyphFactory<T extends Glyph, V> {
+public interface GlyphFactory<T extends Symbol, V> {
 
     T getGlyphFor(V s);
     List<T> getGlyphsFor(List<V> s);

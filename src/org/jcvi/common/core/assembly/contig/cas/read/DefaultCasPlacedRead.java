@@ -30,7 +30,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class DefaultCasPlacedRead implements CasPlacedRead{
@@ -107,7 +107,7 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
         return dir;
     }
     @Override
-    public Map<Integer, NucleotideGlyph> getSnps() {
+    public Map<Integer, Nucleotide> getSnps() {
         return Collections.emptyMap();
     }
     @Override

@@ -30,7 +30,7 @@ import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -95,7 +95,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_LEFT),""+(delegate.getStart()+1));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_RIGHT),""+(delegate.getEnd()+1));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.GAPPED_SEQUENCE),
-				NucleotideGlyph.convertToString(gappedBasecalls.decode()));
+				Nucleotide.convertToString(gappedBasecalls.decode()));
 		
 		for(Entry<TigrAssemblerReadAttribute, String> entry : sut.getAttributes().entrySet()){
 			assertEquals(entry.getValue(), sut.getAttributeValue(entry.getKey()));

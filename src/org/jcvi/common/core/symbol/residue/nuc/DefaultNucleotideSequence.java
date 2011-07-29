@@ -34,29 +34,29 @@ import org.jcvi.common.core.symbol.Sequence;
 public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     private final int[] gaps;
     private final Range validRange;
-    private final Sequence<NucleotideGlyph> encodedBasecalls;
-    public DefaultNucleotideSequence(Collection<NucleotideGlyph> glyphs, Range validRange){
+    private final Sequence<Nucleotide> encodedBasecalls;
+    public DefaultNucleotideSequence(Collection<Nucleotide> glyphs, Range validRange){
         this.validRange = validRange;
         this.gaps = computeGapIndexes(glyphs);
-        this.encodedBasecalls = new EncodedSequence<NucleotideGlyph>(DefaultNucleotideGlyphCodec.getInstance(),glyphs);
+        this.encodedBasecalls = new EncodedSequence<Nucleotide>(DefaultNucleotideGlyphCodec.getInstance(),glyphs);
    
     }
-    public DefaultNucleotideSequence(Collection<NucleotideGlyph> glyphs){
+    public DefaultNucleotideSequence(Collection<Nucleotide> glyphs){
         this(glyphs, Range.buildRange(0, glyphs.size()-1));
     }
     public DefaultNucleotideSequence(String basecalls, Range validRange){
-        this(NucleotideGlyph.getGlyphsFor(basecalls), validRange);
+        this(Nucleotide.getGlyphsFor(basecalls), validRange);
     }
     public DefaultNucleotideSequence(char[] basecalls){
-        this(NucleotideGlyph.getGlyphsFor(basecalls));
+        this(Nucleotide.getGlyphsFor(basecalls));
     }
     public DefaultNucleotideSequence(String basecalls){
-        this(NucleotideGlyph.getGlyphsFor(basecalls));
+        this(Nucleotide.getGlyphsFor(basecalls));
     }
-    private int[] computeGapIndexes(Collection<NucleotideGlyph> glyphs) {
+    private int[] computeGapIndexes(Collection<Nucleotide> glyphs) {
        List<Integer> gaps = new ArrayList<Integer>();
        int i=0;
-        for(NucleotideGlyph glyph :glyphs){
+        for(Nucleotide glyph :glyphs){
             if(glyph.isGap()){
                 gaps.add(Integer.valueOf(i));
             }
@@ -84,12 +84,12 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     }
 
     @Override
-    public List<NucleotideGlyph> decode() {
+    public List<Nucleotide> decode() {
         return encodedBasecalls.decode();
     }
 
     @Override
-    public NucleotideGlyph get(int index) {
+    public Nucleotide get(int index) {
         return encodedBasecalls.get(index);
     }
 

@@ -26,11 +26,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
- * A <code>Codon</code> represents a triplet of {@link NucleotideGlyph}s which specify an 
+ * A <code>Codon</code> represents a triplet of {@link Nucleotide}s which specify an 
  * amino acid.  
  *
  * @author dkatzel
@@ -71,8 +71,8 @@ public class Codon
     }
     private static final Codon START_CODON;
     private static final List<Codon> STOP_CODONS;
-    private static final Map<List<NucleotideGlyph>, Codon> CODON_MAP;
-    protected static final Map<List<NucleotideGlyph>, Codon> getCodonMap() {
+    private static final Map<List<Nucleotide>, Codon> CODON_MAP;
+    protected static final Map<List<Nucleotide>, Codon> getCodonMap() {
         return CODON_MAP;
     }
     private static final Map<String, AminoAcid> AMINO_ACID_MAP;
@@ -283,9 +283,9 @@ public class Codon
         AMINO_ACID_MAP.put("GGB", AminoAcid.Glycine);
         AMINO_ACID_MAP.put("GGN", AminoAcid.Glycine);
         
-        CODON_MAP = new HashMap<List<NucleotideGlyph>, Codon>(AMINO_ACID_MAP.size(), 1F);
+        CODON_MAP = new HashMap<List<Nucleotide>, Codon>(AMINO_ACID_MAP.size(), 1F);
         for(Entry<String, AminoAcid> entry : AMINO_ACID_MAP.entrySet()){
-            List<NucleotideGlyph> codon = NucleotideGlyph.getGlyphsFor(entry.getKey());
+            List<Nucleotide> codon = Nucleotide.getGlyphsFor(entry.getKey());
             CODON_MAP.put(codon, new Codon(codon.get(0),codon.get(1),codon.get(2), 
                     entry.getValue()));
         }
@@ -298,7 +298,7 @@ public class Codon
                 Codon.getCodonFor("TGA"));
     }
     /** An array of three glyphs representing the codon. */
-    private final NucleotideGlyph[] codonGlyphs;
+    private final Nucleotide[] codonGlyphs;
     /**
      * The AminoAcid this Codon translates into.
      */
@@ -321,10 +321,10 @@ public class Codon
        return getCodonsFor(basecalls,Frame.ZERO);
     }
     public static List<Codon> getCodonsFor(NucleotideSequence basecalls, Frame frame){
-        return getCodonsFor(NucleotideGlyph.convertToString(
-                NucleotideGlyph.convertToUngapped(basecalls.decode())),frame);
+        return getCodonsFor(Nucleotide.convertToString(
+                Nucleotide.convertToUngapped(basecalls.decode())),frame);
      }
-    public static Codon getCodonFor(NucleotideGlyph base1, NucleotideGlyph base2, NucleotideGlyph base3){
+    public static Codon getCodonFor(Nucleotide base1, Nucleotide base2, Nucleotide base3){
         return getCodonFor(Arrays.asList(base1,base2,base3));
         
     }
@@ -332,9 +332,9 @@ public class Codon
         if(triplet.length() !=3){
             throw new IllegalArgumentException("triplet must have 3 bases");
         }
-        return getCodonFor(NucleotideGlyph.getGlyphsFor(triplet.substring(0, 3)));
+        return getCodonFor(Nucleotide.getGlyphsFor(triplet.substring(0, 3)));
     }
-    public static Codon getCodonFor(List<NucleotideGlyph> triplet){
+    public static Codon getCodonFor(List<Nucleotide> triplet){
         return getCodonByOffset(triplet,0);
     }
     public static Codon getCodonFor(NucleotideSequence triplet){
@@ -344,7 +344,7 @@ public class Codon
     public static Codon getCodonByOffset(String basecalls, int offset){
         final String triplet = basecalls.substring(offset,offset+3);
         return getCodonByOffset(
-                NucleotideGlyph.getGlyphsFor(triplet),
+                Nucleotide.getGlyphsFor(triplet),
                 0);
     }
     public static Codon getCodonByOffset(NucleotideSequence basecalls, int offset){
@@ -356,7 +356,7 @@ public class Codon
         }
         return CODON_MAP.get(basecalls.decode(Range.buildRangeOfLength(offset, 3)));
     }
-    public static Codon getCodonByOffset(List<NucleotideGlyph> triplet, int offset){
+    public static Codon getCodonByOffset(List<Nucleotide> triplet, int offset){
         if(offset<0){
             throw new IllegalArgumentException("offset must be >=0 "+ offset);
         }
@@ -368,9 +368,9 @@ public class Codon
     /**
      * Creates a new <code>Codon</code>.
      */
-    private Codon(NucleotideGlyph base1, NucleotideGlyph base2, NucleotideGlyph base3, AminoAcid aminoAcid)
+    private Codon(Nucleotide base1, Nucleotide base2, Nucleotide base3, AminoAcid aminoAcid)
     {
-        this.codonGlyphs = new NucleotideGlyph[]{base1,base2,base3};
+        this.codonGlyphs = new Nucleotide[]{base1,base2,base3};
         this.aminoAcid = aminoAcid;
     }
     
@@ -387,8 +387,8 @@ public class Codon
     {
         for (int i = 0; i < 3; i++)
         {
-            final NucleotideGlyph base = this.codonGlyphs[i];
-            final NucleotideGlyph query = that.codonGlyphs[i];
+            final Nucleotide base = this.codonGlyphs[i];
+            final Nucleotide query = that.codonGlyphs[i];
 
             if (!base.matches(query)){
                 return false;
@@ -424,7 +424,7 @@ public class Codon
     {
         final StringBuilder str = new StringBuilder("[");
 
-        for (final NucleotideGlyph nucleotide : this.codonGlyphs)
+        for (final Nucleotide nucleotide : this.codonGlyphs)
         {
             str.append(nucleotide.getCharacter());
         }

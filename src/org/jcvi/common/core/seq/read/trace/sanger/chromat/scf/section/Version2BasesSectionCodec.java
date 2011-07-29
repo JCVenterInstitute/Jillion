@@ -37,7 +37,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFil
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
 
@@ -96,7 +96,7 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
         final ByteBuffer gConfidence = ByteBuffer.wrap(channelGroup.getGChannel().getConfidence().getData());
         final ByteBuffer tConfidence = ByteBuffer.wrap(channelGroup.getTChannel().getConfidence().getData());
 
-        final Sequence<NucleotideGlyph> basecalls = c.getBasecalls();
+        final Sequence<Nucleotide> basecalls = c.getBasecalls();
         final ByteBuffer substitutionConfidence = getOptionalField(c.getSubstitutionConfidence());
         final ByteBuffer insertionConfidence = getOptionalField(c.getInsertionConfidence());
         final ByteBuffer deletionConfidence = getOptionalField(c.getDeletionConfidence());

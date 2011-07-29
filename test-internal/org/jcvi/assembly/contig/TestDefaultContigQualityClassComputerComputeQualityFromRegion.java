@@ -35,7 +35,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.EmptyIterator;
 import org.jcvi.glyph.qualClass.QualityClass;
@@ -58,8 +58,8 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     DefaultContigQualityClassComputer  sut;
     CoverageRegion<PlacedRead> coverageRegion;
     QualityDataStore qualityFastaMap;
-    NucleotideGlyph consensusBase = NucleotideGlyph.Adenine;
-    NucleotideGlyph notConsensusBase = NucleotideGlyph.Thymine;
+    Nucleotide consensusBase = Nucleotide.Adenine;
+    Nucleotide notConsensusBase = Nucleotide.Thymine;
     
     QualityClass.Builder builder;
     QualityClass expectedQuality = QualityClass.NO_CONFLICT_HIGH_QUAL_BOTH_DIRS;

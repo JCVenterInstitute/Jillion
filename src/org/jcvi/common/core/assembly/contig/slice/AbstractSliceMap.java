@@ -34,7 +34,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public abstract class  AbstractSliceMap implements SliceMap{
 
@@ -68,7 +68,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
             PlacedRead realRead,
             final Sequence<PhredQuality> qualities) {
 
-        final NucleotideGlyph calledBase = realRead.getSequence().get(gappedIndex);
+        final Nucleotide calledBase = realRead.getSequence().get(gappedIndex);
         try{
             PhredQuality qualityValue =qualityValueStrategy.getQualityFor(realRead, qualities, gappedIndex);
         

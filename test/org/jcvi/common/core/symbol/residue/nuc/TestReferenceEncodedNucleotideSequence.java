@@ -31,7 +31,7 @@ import org.jcvi.common.core.symbol.GlyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -57,9 +57,9 @@ public class TestReferenceEncodedNucleotideSequence {
     private void assertDecodedCorrectly(int offset, String sequenceAsString) {
         DefaultReferenceEncodedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset, Range.buildRange(0,sequenceAsString.length()-1));
         assertEquals(sequenceAsString.length(), sut.getLength());
-        assertEquals(sequenceAsString, NucleotideGlyph.convertToString(sut.decode()));
+        assertEquals(sequenceAsString, Nucleotide.convertToString(sut.decode()));
         for(int i=0; i< sequenceAsString.length(); i++){
-            assertEquals(NucleotideGlyph.getGlyphFor(sequenceAsString.charAt(i)),
+            assertEquals(Nucleotide.getGlyphFor(sequenceAsString.charAt(i)),
                     sut.get(i));
         }
     }
@@ -134,7 +134,7 @@ public class TestReferenceEncodedNucleotideSequence {
         assertEquals(expectedGapIndexes.size(), actual.getNumberOfGaps());
        
         assertEquals(sequence.length(), actual.getLength());
-        assertEquals(sequence,NucleotideGlyph.convertToString(actual.decode()));
+        assertEquals(sequence,Nucleotide.convertToString(actual.decode()));
     }
     
     

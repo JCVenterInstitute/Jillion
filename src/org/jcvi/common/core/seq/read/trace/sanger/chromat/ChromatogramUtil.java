@@ -38,7 +38,7 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.Builder;
 
 /**
@@ -65,7 +65,7 @@ public  final class ChromatogramUtil {
 
         
         
-        private final Sequence<NucleotideGlyph> basecalls;
+        private final Sequence<Nucleotide> basecalls;
         private final Peaks peaks;
         private final Sequence<PhredQuality> qualities;
         /**
@@ -79,7 +79,7 @@ public  final class ChromatogramUtil {
          * @throws IllegalArgumentException if basecalls, qualities
          * and peaks are not all the same length
          */
-        public FakeChannelGroupBuilder(Sequence<NucleotideGlyph> basecalls,
+        public FakeChannelGroupBuilder(Sequence<Nucleotide> basecalls,
                 Sequence<PhredQuality> qualities, Peaks peaks) {
             if(basecalls.getLength() != qualities.getLength()){
                 throw new IllegalArgumentException("basecalls must be same length as qualities");
@@ -97,7 +97,7 @@ public  final class ChromatogramUtil {
         
         @Override
         public ChannelGroup build() {
-            List<NucleotideGlyph> bases = basecalls.decode();
+            List<Nucleotide> bases = basecalls.decode();
             // build bogus confidence arrays
             //automatically filled with 0s
             byte[] aConfidence = new byte[bases.size()];
@@ -115,7 +115,7 @@ public  final class ChromatogramUtil {
             short[] peakLocations = ShortGlyph.toArray(peaks.getData().decode());
             byte[] qualityValues =PhredQuality.toArray(this.qualities.decode());
             for(int i=0; i<peakLocations.length; i++){
-                NucleotideGlyph basecall = bases.get(i);
+                Nucleotide basecall = bases.get(i);
                 short peakLocation = peakLocations[i];
                 byte qualityValue = qualityValues[i];
                 switch (basecall) {

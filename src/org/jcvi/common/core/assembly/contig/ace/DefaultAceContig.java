@@ -35,7 +35,7 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.AbstractContig;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
@@ -60,7 +60,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         public Builder(String contigId, String fullConsensus){
            this(contigId,
         		   new DefaultNucleotideSequence(
-                    NucleotideGlyph.getGlyphsFor(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)))
+                    Nucleotide.getGlyphsFor(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)))
             );
         }
         public Builder(String contigId, NucleotideSequence fullConsensus){
@@ -90,7 +90,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         
         public Builder addRead(AcePlacedRead acePlacedRead) {
          return addRead(acePlacedRead.getId(),
-        		 NucleotideGlyph.convertToString(acePlacedRead.getSequence().decode()),
+        		 Nucleotide.convertToString(acePlacedRead.getSequence().decode()),
         		 (int)acePlacedRead.getStart(),
         		 acePlacedRead.getDirection(),
         		 acePlacedRead.getValidRange(),
@@ -154,7 +154,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
                 return new DefaultAceContig(contigId, new DefaultNucleotideSequence(""),placedReads);
             }
             
-            List<NucleotideGlyph> updatedConsensus = updateConsensus(fullConsensus.decode());
+            List<Nucleotide> updatedConsensus = updateConsensus(fullConsensus.decode());
             //contig left (and right) might be beyond consensus depending on how
             //trimmed the data is and what assembly/consensus caller is used.
             //force contig left and right to be within the called consensus
@@ -163,8 +163,8 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             contigRight = Math.min(contigRight,(int)fullConsensus.getLength());
             //here only include the gapped valid range consensus bases
             //throw away the rest
-            final List<NucleotideGlyph> validConsensusGlyphs = 
-                    new ArrayList<NucleotideGlyph>(
+            final List<Nucleotide> validConsensusGlyphs = 
+                    new ArrayList<Nucleotide>(
                             updatedConsensus.subList(contigLeft, contigRight));
             
             NucleotideSequence validConsensus = new DefaultNucleotideSequence(validConsensusGlyphs);
@@ -188,7 +188,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             return new DefaultAceContig(newContigId, validConsensus,placedReads);
         }
         
-        protected List<NucleotideGlyph> updateConsensus(List<NucleotideGlyph> validConsensusGlyphs){
+        protected List<Nucleotide> updateConsensus(List<Nucleotide> validConsensusGlyphs){
             return validConsensusGlyphs;
         }
     }

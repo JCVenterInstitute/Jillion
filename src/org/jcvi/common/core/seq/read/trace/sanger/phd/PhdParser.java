@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 /**
  * {@code PhdParser} parses .phd files (or phd.ball files).
  * @author dkatzel
@@ -140,7 +140,7 @@ public class PhdParser {
             
                 if(infoPattern.find()){
                     visitor.visitBasecall(
-                            NucleotideGlyph.getGlyphFor(infoPattern.group(1).charAt(0)),
+                            Nucleotide.getGlyphFor(infoPattern.group(1).charAt(0)),
                             PhredQuality.valueOf(Byte.parseByte(infoPattern.group(2))),
                             Integer.parseInt(infoPattern.group(3)));
                 }

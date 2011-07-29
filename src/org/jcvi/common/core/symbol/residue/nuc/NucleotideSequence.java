@@ -29,7 +29,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
 /**
  * {@code NucleotideSequence} an interface to abstract
- * how {@link NucleotideGlyph}s are encoded in memory.  Nucleotide data
+ * how {@link Nucleotide}s are encoded in memory.  Nucleotide data
  * can be stored in many different ways depending
  * on the use case and particular circumstances of how this data is to be used.
  * Different encoding implementations can take up more or less memory or require
@@ -39,7 +39,7 @@ import org.jcvi.common.core.symbol.Sequence;
  *
  *
  */
-public interface NucleotideSequence extends Sequence<NucleotideGlyph>{
+public interface NucleotideSequence extends Sequence<Nucleotide>{
     /**
      * Get a List of all the gap indexes into the gapped basecalls
      * which are Gaps.  The size of the returned list should be
@@ -90,24 +90,24 @@ public interface NucleotideSequence extends Sequence<NucleotideGlyph>{
     Range convertUngappedValidRangeToGappedValidRange(Range ungappedValidRange);
     
     /**
-     * Is the {@link NucleotideGlyph} at the given gapped index a gap?
+     * Is the {@link Nucleotide} at the given gapped index a gap?
      * @param gappedIndex the gappedIndex to check.
      * @return {@code true} is it is a gap; {@code false} otherwise.
      */
     boolean isGap(int gappedIndex);
     /**
-     * Get the number of {@link NucleotideGlyph}s in this {@link NucleotideSequence} 
+     * Get the number of {@link Nucleotide}s in this {@link NucleotideSequence} 
      * that are not gaps.
      * @return the number of non gaps as a long.
      */
     long getUngappedLength();
     /**
      * Decode only the ungapped bases and return them as a List of
-     * {@link NucleotideGlyph}s.
-     * @return a List of {@link NucleotideGlyph}s containing only the 
+     * {@link Nucleotide}s.
+     * @return a List of {@link Nucleotide}s containing only the 
      * ungapped bases.
      */
-    List<NucleotideGlyph> decodeUngapped();
+    List<Nucleotide> decodeUngapped();
     /**
      * Compute the number of gaps in the valid range until AND INCLUDING the given
      * gapped index.

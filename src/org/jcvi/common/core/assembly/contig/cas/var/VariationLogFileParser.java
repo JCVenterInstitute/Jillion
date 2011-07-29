@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.assembly.contig.cas.var.Variation.Type;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
  * @author dkatzel
@@ -58,13 +58,13 @@ public class VariationLogFileParser {
                     if(varMatcher.find()){
                         long coordinate = Long.parseLong(varMatcher.group(1));
                         Type type = Type.getType(varMatcher.group(2));
-                        NucleotideGlyph ref = NucleotideGlyph.getGlyphFor(varMatcher.group(3));
-                        List<NucleotideGlyph> consensus = NucleotideGlyph.getGlyphsFor(varMatcher.group(4));
+                        Nucleotide ref = Nucleotide.getGlyphFor(varMatcher.group(3));
+                        List<Nucleotide> consensus = Nucleotide.getGlyphsFor(varMatcher.group(4));
                         DefaultVariation.Builder variationBuilder = new DefaultVariation.Builder(coordinate, type,ref,consensus);
                         final String group = varMatcher.group(5);
                         Scanner histogramScanner = new Scanner(group);
                         while(histogramScanner.hasNext()){
-                            List<NucleotideGlyph> bases = NucleotideGlyph.getGlyphsFor(histogramScanner.next().replaceAll(":",""));
+                            List<Nucleotide> bases = Nucleotide.getGlyphsFor(histogramScanner.next().replaceAll(":",""));
                             int count = histogramScanner.nextInt();
                             variationBuilder.addHistogramRecord(bases,count);
                         }

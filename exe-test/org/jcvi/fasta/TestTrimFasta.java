@@ -26,7 +26,7 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Rule;
@@ -67,10 +67,10 @@ public class TestTrimFasta {
         });
         
         NucleotideFastaDataStore actualDataStore = new DefaultNucleotideFastaFileDataStore(outputFile);
-        assertEquals(NucleotideGlyph.convertToString(
+        assertEquals(Nucleotide.convertToString(
                     actualDataStore.get("read1").getValue().decode()),
                     "CCCTTT");
-        assertEquals(NucleotideGlyph.convertToString(
+        assertEquals(Nucleotide.convertToString(
                 actualDataStore.get("read2").getValue().decode()),
                 "AAACCCTTTGGGG");
     }

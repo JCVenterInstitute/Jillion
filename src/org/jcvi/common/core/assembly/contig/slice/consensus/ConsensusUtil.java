@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.contig.slice.consensus;
 
 import java.util.List;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public final class ConsensusUtil {
     
@@ -36,6 +36,6 @@ public final class ConsensusUtil {
      * These are the only bases that should be used
      * to consider consensus.
      */
-    public static final List<NucleotideGlyph> BASES_TO_CONSIDER = NucleotideGlyph.getGlyphsFor("ACGT-");
+    public static final List<Nucleotide> BASES_TO_CONSIDER = Nucleotide.getGlyphsFor("ACGT-");
     
 }

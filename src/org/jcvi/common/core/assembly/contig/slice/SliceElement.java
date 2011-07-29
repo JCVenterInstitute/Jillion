@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.contig.slice;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 /**
  * {@code SliceElement} is 
  * @author dkatzel
@@ -42,10 +42,10 @@ public interface SliceElement {
      */
     String getId();
     /**
-     * Get the {@link NucleotideGlyph} of this SliceElement.
+     * Get the {@link Nucleotide} of this SliceElement.
      * @return
      */
-    NucleotideGlyph getBase();
+    Nucleotide getBase();
     /**
      * Get the {@link PhredQuality} of this SliceElement.
      * @return

@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityGlyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.common.core.util.CloseableIteratorAdapter;
 
@@ -51,7 +51,7 @@ public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
    
     
     @Override
-    protected void visitPhd(String id, List<NucleotideGlyph> bases,
+    protected void visitPhd(String id, List<Nucleotide> bases,
             List<PhredQuality> qualities, List<ShortGlyph> positions,
             Properties comments, List<PhdTag> tags) {
         map.put(id, new DefaultPhd(id,

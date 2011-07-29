@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.TimeTaggedData
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.UserDefinedTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRate;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
@@ -51,7 +51,7 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
 	}
 
 	@Override
-	public void visitChannelOrder(List<NucleotideGlyph> order) {
+	public void visitChannelOrder(List<Nucleotide> order) {
 		out.printf("channel order = %s%n",order);
 		
 	}

@@ -23,17 +23,16 @@
  */
 package org.jcvi.common.core.symbol;
 /**
- * Glyphs are symbols that represent data
- * or information.  Groups of Glyphs of which 
- * are used to represent similar ideas can
- * are grouped into alphabets. 
+ * A {@code Symbol} is some kind of 
+ * representation of data
+ * or information.
  * @author dkatzel
  */
-public interface Glyph {
+public interface Symbol {
 
     /**
-     * Get the name of this glyph.
-     * @return a string( never null)
+     * Get the name of this symbol.
+     * @return a string (never null)
      */
     String getName();
     

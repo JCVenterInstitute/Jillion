@@ -31,7 +31,7 @@ import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
-import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
 import org.junit.After;
 import org.junit.Before;
@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  *
  *
  */
-public abstract class AbstractTestFilteredNucleotideDataStore<G extends Glyph> extends AbstractTestExampleSffFile{
+public abstract class AbstractTestFilteredNucleotideDataStore<G extends Symbol> extends AbstractTestExampleSffFile{
 
 private final DefaultSffFileDataStore dataStore;
     

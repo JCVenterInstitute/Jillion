@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 import java.util.Properties;
 
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public class AbstractPhdFileVisitor implements PhdFileVisitor{
 
@@ -38,7 +38,7 @@ public class AbstractPhdFileVisitor implements PhdFileVisitor{
         }
     }
     @Override
-    public synchronized void visitBasecall(NucleotideGlyph base, PhredQuality quality,
+    public synchronized void visitBasecall(Nucleotide base, PhredQuality quality,
             int tracePosition) {
         throwExceptionIfAlreadyInitialized();        
     }

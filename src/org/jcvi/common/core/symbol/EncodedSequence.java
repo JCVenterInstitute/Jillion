@@ -38,7 +38,7 @@ import org.jcvi.common.core.util.CommonUtil;
  * possible for a given situation.
  * @author dkatzel
  */
-public class  EncodedSequence<T extends Glyph> implements Sequence<T> {
+public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
     /**
      * codec used to decode the data.
      */

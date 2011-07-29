@@ -30,7 +30,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramXMLSeriali
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 
@@ -63,7 +63,7 @@ public class TestSCFChromatogramFile {
     public void scfWithGaps() throws IOException, TraceDecoderException{
         File scfFile = RESOURCES.getFile("files/containsGaps.scf");
         SCFChromatogram actual = SCFChromatogramFile.create(scfFile);
-        assertEquals(NucleotideGlyph.convertToString(actual.getBasecalls().decode()), "-----");
+        assertEquals(Nucleotide.convertToString(actual.getBasecalls().decode()), "-----");
         
     }
 }

@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.assembly.contig.cas.var.DefaultVariation;
 import org.jcvi.common.core.assembly.contig.cas.var.Variation.Type;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -39,16 +39,16 @@ import static org.junit.Assert.*;
 public class TestDefaultVariation {
     long coordinate = 1234;
     DefaultVariation variation =  new DefaultVariation.Builder(coordinate, 
-                                    Type.DIFFERENCE, NucleotideGlyph.Adenine, 
-                                    Arrays.asList(NucleotideGlyph.Guanine))
-                            .addHistogramRecord(Arrays.asList(NucleotideGlyph.Guanine), 100)
-                            .addHistogramRecord(Arrays.asList(NucleotideGlyph.Adenine), 20)
+                                    Type.DIFFERENCE, Nucleotide.Adenine, 
+                                    Arrays.asList(Nucleotide.Guanine))
+                            .addHistogramRecord(Arrays.asList(Nucleotide.Guanine), 100)
+                            .addHistogramRecord(Arrays.asList(Nucleotide.Adenine), 20)
                             .build();
     @Test
     public void nullConsensusInBuilderShouldThrowNPE(){
         try{
             new DefaultVariation.Builder(coordinate, 
-                    Type.DIFFERENCE, NucleotideGlyph.Adenine, 
+                    Type.DIFFERENCE, Nucleotide.Adenine, 
                     null);
             fail("should throw NPE if constructor has a null");
         }catch(NullPointerException e){
@@ -59,8 +59,8 @@ public class TestDefaultVariation {
     public void negativeCoordinateInBuilderShouldThrowIllegalArgumentException(){
         try{
             new DefaultVariation.Builder(-1, 
-                    Type.DIFFERENCE, NucleotideGlyph.Adenine, 
-                    Arrays.asList(NucleotideGlyph.Guanine));
+                    Type.DIFFERENCE, Nucleotide.Adenine, 
+                    Arrays.asList(Nucleotide.Guanine));
             fail("should throw NPE if constructor has a null");
         }catch(IllegalArgumentException e){
             assertEquals("coordinate can not be <0", e.getMessage());
@@ -71,8 +71,8 @@ public class TestDefaultVariation {
     public void nullTypeInBuilderShouldThrowNPE(){
         try{
             new DefaultVariation.Builder(coordinate, 
-                    null, NucleotideGlyph.Adenine, 
-                    Arrays.asList(NucleotideGlyph.Guanine));
+                    null, Nucleotide.Adenine, 
+                    Arrays.asList(Nucleotide.Guanine));
             fail("should throw NPE if constructor has a null");
         }catch(NullPointerException e){
             assertEquals("type can not be null", e.getMessage());
@@ -82,8 +82,8 @@ public class TestDefaultVariation {
     public void emptyConsensusInBuilderShouldThrowNPE(){
         try{
             new DefaultVariation.Builder(coordinate, 
-                    Type.DIFFERENCE, NucleotideGlyph.Adenine, 
-                    Collections.<NucleotideGlyph>emptyList());
+                    Type.DIFFERENCE, Nucleotide.Adenine, 
+                    Collections.<Nucleotide>emptyList());
             fail("should throw NPE if constructor has a null");
         }catch(NullPointerException e){
             assertEquals("consensus can not be empty", e.getMessage());
@@ -94,7 +94,7 @@ public class TestDefaultVariation {
         try{
             new DefaultVariation.Builder(coordinate, 
                     Type.DIFFERENCE, null, 
-                    Arrays.asList(NucleotideGlyph.Guanine));
+                    Arrays.asList(Nucleotide.Guanine));
             fail("should throw NPE if constructor has a null");
         }catch(NullPointerException e){
             assertEquals("reference can not be null", e.getMessage());
@@ -105,14 +105,14 @@ public class TestDefaultVariation {
     public void builder(){
         
         
-        assertEquals(Arrays.asList(NucleotideGlyph.Guanine),variation.getConsensusBase());
-        assertEquals(NucleotideGlyph.Adenine,variation.getReferenceBase());
+        assertEquals(Arrays.asList(Nucleotide.Guanine),variation.getConsensusBase());
+        assertEquals(Nucleotide.Adenine,variation.getReferenceBase());
         assertEquals(coordinate,variation.getCoordinate());
         assertEquals(Type.DIFFERENCE,variation.getType());
-        Map<List<NucleotideGlyph>, Integer> actualHistogram =variation.getHistogram();
-        Map<List<NucleotideGlyph>, Integer> expectedHistorgram = new HashMap<List<NucleotideGlyph>, Integer>();
-        expectedHistorgram.put(Arrays.asList(NucleotideGlyph.Guanine), 100);
-        expectedHistorgram.put(Arrays.asList(NucleotideGlyph.Adenine), 20);
+        Map<List<Nucleotide>, Integer> actualHistogram =variation.getHistogram();
+        Map<List<Nucleotide>, Integer> expectedHistorgram = new HashMap<List<Nucleotide>, Integer>();
+        expectedHistorgram.put(Arrays.asList(Nucleotide.Guanine), 100);
+        expectedHistorgram.put(Arrays.asList(Nucleotide.Adenine), 20);
         assertEquals(expectedHistorgram, actualHistogram);
         
         String expectedToString = coordinate+" "+Type.DIFFERENCE.toString() + " A -> [G]\tA: 20\tG: 100";
@@ -134,10 +134,10 @@ public class TestDefaultVariation {
     @Test
     public void sameValuesAreEqual(){
         DefaultVariation sameValues =  new DefaultVariation.Builder(coordinate, 
-                Type.DIFFERENCE, NucleotideGlyph.Adenine, 
-                Arrays.asList(NucleotideGlyph.Guanine))
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Guanine), 100)
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Adenine), 20)
+                Type.DIFFERENCE, Nucleotide.Adenine, 
+                Arrays.asList(Nucleotide.Guanine))
+        .addHistogramRecord(Arrays.asList(Nucleotide.Guanine), 100)
+        .addHistogramRecord(Arrays.asList(Nucleotide.Adenine), 20)
         .build();
         TestUtil.assertEqualAndHashcodeSame(variation, sameValues);
         assertEquals(0, variation.compareTo(sameValues));
@@ -145,30 +145,30 @@ public class TestDefaultVariation {
     @Test
     public void greaterCoordinateShouldNotBeEqual(){
         DefaultVariation differentCoordinate =  new DefaultVariation.Builder(coordinate+1, 
-                Type.DIFFERENCE, NucleotideGlyph.Adenine, 
-                Arrays.asList(NucleotideGlyph.Guanine))
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Guanine), 100)
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Adenine), 20)
+                Type.DIFFERENCE, Nucleotide.Adenine, 
+                Arrays.asList(Nucleotide.Guanine))
+        .addHistogramRecord(Arrays.asList(Nucleotide.Guanine), 100)
+        .addHistogramRecord(Arrays.asList(Nucleotide.Adenine), 20)
         .build();
         TestUtil.assertNotEqualAndHashcodeDifferent(variation, differentCoordinate);
     }
     @Test
     public void differentReferenceShouldNotBeEqual(){
         DefaultVariation differentReference =  new DefaultVariation.Builder(coordinate, 
-                Type.DIFFERENCE, NucleotideGlyph.Guanine, 
-                Arrays.asList(NucleotideGlyph.Guanine))
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Guanine), 100)
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Adenine), 20)
+                Type.DIFFERENCE, Nucleotide.Guanine, 
+                Arrays.asList(Nucleotide.Guanine))
+        .addHistogramRecord(Arrays.asList(Nucleotide.Guanine), 100)
+        .addHistogramRecord(Arrays.asList(Nucleotide.Adenine), 20)
         .build();
         TestUtil.assertNotEqualAndHashcodeDifferent(variation, differentReference);
     }
     @Test
     public void differentTypeShouldNotBeEqual(){
         DefaultVariation differentType =  new DefaultVariation.Builder(coordinate, 
-                Type.INSERT, NucleotideGlyph.Adenine, 
-                Arrays.asList(NucleotideGlyph.Guanine))
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Guanine), 100)
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Adenine), 20)
+                Type.INSERT, Nucleotide.Adenine, 
+                Arrays.asList(Nucleotide.Guanine))
+        .addHistogramRecord(Arrays.asList(Nucleotide.Guanine), 100)
+        .addHistogramRecord(Arrays.asList(Nucleotide.Adenine), 20)
         .build();
         TestUtil.assertNotEqualAndHashcodeDifferent(variation, differentType);
     }
@@ -176,30 +176,30 @@ public class TestDefaultVariation {
     @Test
     public void differentConsensusShouldNotBeEqual(){
         DefaultVariation differentConsensus =  new DefaultVariation.Builder(coordinate, 
-                Type.INSERT, NucleotideGlyph.Adenine, 
-                Arrays.asList(NucleotideGlyph.Thymine))
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Guanine), 100)
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Adenine), 20)
+                Type.INSERT, Nucleotide.Adenine, 
+                Arrays.asList(Nucleotide.Thymine))
+        .addHistogramRecord(Arrays.asList(Nucleotide.Guanine), 100)
+        .addHistogramRecord(Arrays.asList(Nucleotide.Adenine), 20)
         .build();
         TestUtil.assertNotEqualAndHashcodeDifferent(variation, differentConsensus);
     }
     @Test
     public void differentHistogramShouldNotBeEqual(){
         DefaultVariation differentHistogram =  new DefaultVariation.Builder(coordinate, 
-                Type.INSERT, NucleotideGlyph.Adenine, 
-                Arrays.asList(NucleotideGlyph.Guanine))
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Guanine), 120)
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Adenine), 20)
+                Type.INSERT, Nucleotide.Adenine, 
+                Arrays.asList(Nucleotide.Guanine))
+        .addHistogramRecord(Arrays.asList(Nucleotide.Guanine), 120)
+        .addHistogramRecord(Arrays.asList(Nucleotide.Adenine), 20)
         .build();
         TestUtil.assertNotEqualAndHashcodeDifferent(variation, differentHistogram);
     }
     @Test
     public void greaterCoordinateShouldNotBeGreater(){
         DefaultVariation differentCoordinate =  new DefaultVariation.Builder(coordinate+1, 
-                Type.DIFFERENCE, NucleotideGlyph.Adenine, 
-                Arrays.asList(NucleotideGlyph.Guanine))
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Guanine), 100)
-        .addHistogramRecord(Arrays.asList(NucleotideGlyph.Adenine), 20)
+                Type.DIFFERENCE, Nucleotide.Adenine, 
+                Arrays.asList(Nucleotide.Guanine))
+        .addHistogramRecord(Arrays.asList(Nucleotide.Guanine), 100)
+        .addHistogramRecord(Arrays.asList(Nucleotide.Adenine), 20)
         .build();
 
         assertTrue( variation.compareTo(differentCoordinate) <0);

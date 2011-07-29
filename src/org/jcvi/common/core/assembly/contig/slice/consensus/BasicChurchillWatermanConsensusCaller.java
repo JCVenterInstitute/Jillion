@@ -27,7 +27,7 @@ import java.util.Set;
 
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 public class BasicChurchillWatermanConsensusCaller extends AbstractChurchillWatermanConsensusCaller{
 
     private static final int MAX_NUMBER_OF_BASES_TOWARDS_AMBIGUITY = 5;
@@ -41,12 +41,12 @@ public class BasicChurchillWatermanConsensusCaller extends AbstractChurchillWate
     
 
     @Override
-    protected NucleotideGlyph getConsensus(
+    protected Nucleotide getConsensus(
             ProbabilityStruct normalizedErrorProbabilityStruct,
             Slice slice) {
-        final Set<NucleotideGlyph> basesUsedTowardsAmbiguity = getBasesUsedTowardsAmbiguity(normalizedErrorProbabilityStruct,
+        final Set<Nucleotide> basesUsedTowardsAmbiguity = getBasesUsedTowardsAmbiguity(normalizedErrorProbabilityStruct,
                         MAX_NUMBER_OF_BASES_TOWARDS_AMBIGUITY);
-        return NucleotideGlyph.getAmbiguityFor(basesUsedTowardsAmbiguity);
+        return Nucleotide.getAmbiguityFor(basesUsedTowardsAmbiguity);
         
     }
     

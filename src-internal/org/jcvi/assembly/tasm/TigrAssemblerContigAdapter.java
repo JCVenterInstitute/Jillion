@@ -28,7 +28,7 @@ import java.util.Set;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -89,8 +89,8 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	
 	private Map<TigrAssemblerContigAttribute,String> generateConsensusAttributes(){
 		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
-		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, NucleotideGlyph.convertToString(delegate.getConsensus().decodeUngapped()));
-		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, NucleotideGlyph.convertToString(delegate.getConsensus().decode()));
+		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, Nucleotide.convertToString(delegate.getConsensus().decodeUngapped()));
+		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, Nucleotide.convertToString(delegate.getConsensus().decode()));
 	
 		return map;
 	}
@@ -99,8 +99,8 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		// TODO is this supposed to be %N in reads or %N in consensus or both?
 		//going with consensus for now since its the assembly table
 		int numberOfNs =0;
-		for(NucleotideGlyph g: delegate.getConsensus().decode()){
-			if(g == NucleotideGlyph.Unknown){
+		for(Nucleotide g: delegate.getConsensus().decode()){
+			if(g == Nucleotide.Unknown){
 				numberOfNs++;
 			}
 		}

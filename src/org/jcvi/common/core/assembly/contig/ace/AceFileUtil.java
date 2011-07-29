@@ -29,7 +29,7 @@ import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -47,13 +47,13 @@ public class AceFileUtil {
     public static String convertToAcePaddedBasecalls(NucleotideSequence basecalls){
         return convertToAcePaddedBasecalls(basecalls.decode(),null);
      }
-     public static String convertToAcePaddedBasecalls(List<NucleotideGlyph> basecalls,List<PhredQuality> qualities){
+     public static String convertToAcePaddedBasecalls(List<Nucleotide> basecalls,List<PhredQuality> qualities){
          StringBuilder result = new StringBuilder();
          int numberOfGapsSoFar=0;
          
          for(int i=0; i< basecalls.size(); i++){
-             NucleotideGlyph base = basecalls.get(i);
-             if(base == NucleotideGlyph.Gap){
+             Nucleotide base = basecalls.get(i);
+             if(base == Nucleotide.Gap){
                  result.append("*");
                  numberOfGapsSoFar++;
              }
@@ -124,9 +124,9 @@ public class AceFileUtil {
     public static String createAcePlacedReadRecord(String readId, NucleotideSequence gappedValidBasecalls, 
             Range ungappedValidRange, Direction dir, Phd phd, PhdInfo phdInfo){
         final NucleotideSequence fullBasecalls = phd.getBasecalls();
-        final List<NucleotideGlyph> phdFullBases = fullBasecalls.decode();
+        final List<Nucleotide> phdFullBases = fullBasecalls.decode();
         
-        final List<NucleotideGlyph> fullGappedValidRange;
+        final List<Nucleotide> fullGappedValidRange;
         final List<PhredQuality> qualities;
         final Sequence<PhredQuality> phdQualities = phd.getQualities();
         if(dir == Direction.FORWARD){
@@ -134,7 +134,7 @@ public class AceFileUtil {
                     phdFullBases);
             qualities = phdQualities.decode();
         }else{
-            final List<NucleotideGlyph> complimentedFullBases = NucleotideGlyph.reverseCompliment(phdFullBases);
+            final List<Nucleotide> complimentedFullBases = Nucleotide.reverseCompliment(phdFullBases);
             Range complimentedValidRange = AssemblyUtil.reverseComplimentValidRange(
                     ungappedValidRange,
                     complimentedFullBases.size());
@@ -163,12 +163,12 @@ public class AceFileUtil {
         readRecord.append(String.format("%s%n",createPhdRecord(phdInfo)));
         return readRecord.toString();
     }
-    private static List<NucleotideGlyph> createReverseComplimentedGappedFullLengthBasecalls(
+    private static List<Nucleotide> createReverseComplimentedGappedFullLengthBasecalls(
             NucleotideSequence gappedValidBasecalls,
-            final List<NucleotideGlyph> complimentedFullBases,
+            final List<Nucleotide> complimentedFullBases,
             Range complimentedValidRange) {
-        final List<NucleotideGlyph> fullGappedValidRange;
-        fullGappedValidRange=new ArrayList<NucleotideGlyph>();
+        final List<Nucleotide> fullGappedValidRange;
+        fullGappedValidRange=new ArrayList<Nucleotide>();
         fullGappedValidRange.addAll(complimentedFullBases.subList(0, (int)complimentedValidRange.getStart()));            
         fullGappedValidRange.addAll(gappedValidBasecalls.decode());
         fullGappedValidRange.addAll(complimentedFullBases.subList(

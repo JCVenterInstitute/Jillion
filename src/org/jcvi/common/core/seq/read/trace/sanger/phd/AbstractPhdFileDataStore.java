@@ -35,13 +35,13 @@ import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.CloseableIterator;
 
 public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileVisitor{
 
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
-    private List<NucleotideGlyph> currentBases = new ArrayList<NucleotideGlyph>();
+    private List<Nucleotide> currentBases = new ArrayList<Nucleotide>();
     private List<PhredQuality> currentQualities = new ArrayList<PhredQuality>();
     private List<ShortGlyph> currentPositions = new ArrayList<ShortGlyph>();
     private List<PhdTag> tags = new ArrayList<PhdTag>();
@@ -82,14 +82,14 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     }
     
     protected abstract void visitPhd(String id,
-            List<NucleotideGlyph> bases,
+            List<Nucleotide> bases,
             List<PhredQuality> qualities,
             List<ShortGlyph> positions, 
             Properties comments,
             List<PhdTag> tags);
     
     @Override
-    public synchronized void visitBasecall(NucleotideGlyph base, PhredQuality quality,
+    public synchronized void visitBasecall(Nucleotide base, PhredQuality quality,
             int tracePosition) {
         checkNotYetInitialized();
         currentBases.add(base);
@@ -98,7 +98,7 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     }
 
     protected void resetCurrentValues(){
-        currentBases= new ArrayList<NucleotideGlyph>();
+        currentBases= new ArrayList<Nucleotide>();
         currentQualities= new ArrayList<PhredQuality>();
         currentPositions= new ArrayList<ShortGlyph>();
         tags = new ArrayList<PhdTag>();

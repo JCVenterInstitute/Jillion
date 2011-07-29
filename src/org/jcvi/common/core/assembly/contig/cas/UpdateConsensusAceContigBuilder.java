@@ -30,7 +30,7 @@ import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig.Builder;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  */
 public class UpdateConsensusAceContigBuilder extends DefaultAceContig.Builder{
 
-    private final Map<Long, Map<NucleotideGlyph, Integer>> consensusMap;
+    private final Map<Long, Map<Nucleotide, Integer>> consensusMap;
     /**
      * @param contigId
      * @param fullConsensus
@@ -48,16 +48,16 @@ public class UpdateConsensusAceContigBuilder extends DefaultAceContig.Builder{
     public UpdateConsensusAceContigBuilder(String contigId,
             NucleotideSequence fullConsensus) {
         super(contigId, fullConsensus);
-        consensusMap = new HashMap<Long,Map<NucleotideGlyph,Integer>>((int)fullConsensus.getLength());
+        consensusMap = new HashMap<Long,Map<Nucleotide,Integer>>((int)fullConsensus.getLength());
         
     }
 
     @Override
-    protected List<NucleotideGlyph> updateConsensus(
-            List<NucleotideGlyph> originalFullConsensus) {
-        List<NucleotideGlyph> updatedConsensus = new ArrayList<NucleotideGlyph>(originalFullConsensus.size());
+    protected List<Nucleotide> updateConsensus(
+            List<Nucleotide> originalFullConsensus) {
+        List<Nucleotide> updatedConsensus = new ArrayList<Nucleotide>(originalFullConsensus.size());
         for(int i=0; i<originalFullConsensus.size(); i++ )   {
-            final Map<NucleotideGlyph, Integer> histogramMap = consensusMap.get(Long.valueOf(i));
+            final Map<Nucleotide, Integer> histogramMap = consensusMap.get(Long.valueOf(i));
             updatedConsensus.add(findMostOccuringBase(histogramMap));
         }
         
@@ -73,12 +73,12 @@ public class UpdateConsensusAceContigBuilder extends DefaultAceContig.Builder{
     private void addReadToConsensusMap(PlacedRead casPlacedRead) {
         long startOffset = casPlacedRead.getStart();
         int i=0;
-        for(NucleotideGlyph base : casPlacedRead.getSequence().decode()){
+        for(Nucleotide base : casPlacedRead.getSequence().decode()){
             long index = startOffset+i;
             if(!consensusMap.containsKey(index)){
-                consensusMap.put(index, new EnumMap<NucleotideGlyph, Integer>(NucleotideGlyph.class));
+                consensusMap.put(index, new EnumMap<Nucleotide, Integer>(Nucleotide.class));
             }
-            Map<NucleotideGlyph, Integer> histogram =consensusMap.get(index);
+            Map<Nucleotide, Integer> histogram =consensusMap.get(index);
             if(!histogram.containsKey(base)){
                 histogram.put(base, Integer.valueOf(1));
             }else{
@@ -87,11 +87,11 @@ public class UpdateConsensusAceContigBuilder extends DefaultAceContig.Builder{
             i++;
         }
     }
-    private NucleotideGlyph findMostOccuringBase(Map<NucleotideGlyph, Integer> histogramMap){
+    private Nucleotide findMostOccuringBase(Map<Nucleotide, Integer> histogramMap){
         int max=-1;
-        NucleotideGlyph mostOccuringBase = NucleotideGlyph.Unknown;
+        Nucleotide mostOccuringBase = Nucleotide.Unknown;
         if(histogramMap !=null){
-            for(Entry<NucleotideGlyph, Integer> entry : histogramMap.entrySet()){
+            for(Entry<Nucleotide, Integer> entry : histogramMap.entrySet()){
                 int value = entry.getValue();
                 if(value > max){
                     max = value;

@@ -12,7 +12,7 @@ import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public class LargeNoQualitySliceMap extends LargeSliceMap{
     public static final PhredQuality DEFAULT_PHRED_QUALITY = PhredQuality.valueOf(0);
@@ -59,7 +59,7 @@ public class LargeNoQualitySliceMap extends LargeSliceMap{
     protected DefaultSliceElement createSliceElementFor(
             QualityValueStrategy qualityValueStrategy, int gappedIndex,
             PlacedRead realRead, Sequence<PhredQuality> qualities) {
-        final NucleotideGlyph calledBase = realRead.getSequence().get(gappedIndex);
+        final Nucleotide calledBase = realRead.getSequence().get(gappedIndex);
         return new DefaultSliceElement(realRead.getId(), calledBase, 
                 phredQuality, 
                 realRead.getDirection());

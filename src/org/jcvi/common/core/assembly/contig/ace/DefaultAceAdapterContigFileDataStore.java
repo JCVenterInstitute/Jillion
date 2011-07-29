@@ -35,7 +35,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.fastx.FastXRecord;
-import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.util.CloseableIterator;
 
@@ -46,10 +46,10 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     /**
      * @param phdDate
      */
-    public DefaultAceAdapterContigFileDataStore(DataStore<? extends FastXRecord<? extends Sequence<? extends Glyph>>> fullLengthFastXDataStore,Date phdDate) {
+    public DefaultAceAdapterContigFileDataStore(DataStore<? extends FastXRecord<? extends Sequence<? extends Symbol>>> fullLengthFastXDataStore,Date phdDate) {
         super(fullLengthFastXDataStore,phdDate);
     }
-    public DefaultAceAdapterContigFileDataStore(DataStore<? extends FastXRecord<? extends Sequence<? extends Glyph>>> fullLengthFastXDataStore, Date phdDate, File contigFile) throws FileNotFoundException{
+    public DefaultAceAdapterContigFileDataStore(DataStore<? extends FastXRecord<? extends Sequence<? extends Symbol>>> fullLengthFastXDataStore, Date phdDate, File contigFile) throws FileNotFoundException{
         this(fullLengthFastXDataStore,phdDate);
         ContigFileParser.parse(contigFile, this);
     }

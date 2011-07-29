@@ -29,12 +29,12 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public interface PlacedRead extends Read, Placed<PlacedRead>{
 
 
-    Map<Integer, NucleotideGlyph> getSnps();
+    Map<Integer, Nucleotide> getSnps();
     Range getValidRange();
     Direction getDirection();
     long convertReferenceIndexToValidRangeIndex(long referenceIndex);
