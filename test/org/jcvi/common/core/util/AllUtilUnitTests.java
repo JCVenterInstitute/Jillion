@@ -29,6 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestCommonUtil.class,
         MathUtilSuite.class,
         TestLRUCache.class,
+        TestWeakReferenceLRUCache.class,
         TestEmptyIterator.class,
         TestArrayIterable.class,
         TestFileIterator.class,
