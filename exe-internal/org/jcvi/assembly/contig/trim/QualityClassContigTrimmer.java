@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,10 +46,10 @@ import org.jcvi.assembly.contig.QualityClassRegion;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Direction;
+import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.assembly.PlacedIterable;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.ContigDataStore;
 import org.jcvi.common.core.assembly.contig.GapQualityValueStrategies;
@@ -73,6 +74,20 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
     private final int maxNumberOf3PrimeBasesToTrim;
     private final Set<QualityClass> qualityClassesToTrim;
 
+    private class PlacedIterable implements Iterable<Long>{
+
+        private final Placed placed;
+        public PlacedIterable(Placed placed){
+           this.placed = placed;
+        }
+        
+        @Override
+        public Iterator<Long> iterator() {
+            return  placed.asRange().iterator();
+        }
+
+    }
+    
     /**
      * 
      * @param maxNumberOf5PrimeBasesToTrim max number of bases to trim off

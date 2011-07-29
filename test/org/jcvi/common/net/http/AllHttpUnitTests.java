@@ -30,7 +30,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-     TestHttpGetRequestBuilder.class   
+     TestHttpGetRequestBuilder.class,
+     TestHttpPostStream.class
     }
     )
 public class AllHttpUnitTests {

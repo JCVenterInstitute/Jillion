@@ -19,24 +19,43 @@
 
 package org.jcvi.common.core.seq.plate;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
+import org.jcvi.common.core.testUtil.TestUtil;
+import org.junit.Test;
+import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
  *
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestWellFactories.class,
-        TestWell.class,
-        TestWellQuadrant.class,
-        TestNextWellIterator.class
-    }
-    )
-public class AllPlateUnitTests {
+public class TestWellFactories {
 
+    Well sut = Well.create("A01");
+    
+    @Test(expected = NullPointerException.class)
+    public void nullNameShouldThrowNPE(){
+        Well.create(null);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void outOfIndexColumnShouldThrowIllegalArgumentException(){
+        Well.create("A25");
+    }
+    @Test(expected = IllegalArgumentException.class)
+    public void outOfIndexRowShouldThrowIllegalArgumentException(){
+        Well.create("Z01");
+    }
+    
+    @Test
+    public void notEqualToNull(){
+        assertFalse(sut.equals(null));
+    }
+    @Test
+    public void sameReferenceShouldBeEqual(){
+        TestUtil.assertEqualAndHashcodeSame(sut, sut);
+    }
+    @Test
+    public void sameValueShouldBeEqual(){
+        Well same = Well.create("A01");
+        TestUtil.assertEqualAndHashcodeSame(sut, same);
+    }
 }

@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
-import org.jcvi.common.core.assembly.Placed;
+import org.jcvi.common.core.Placed;
 
 public interface PlacedAceTag extends AceTag, Placed<PlacedAceTag> {
 

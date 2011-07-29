@@ -24,8 +24,8 @@
 package org.jcvi.common.core.assembly.scaffold;
 
 import org.jcvi.common.core.Direction;
+import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.Placed;
 
 public interface PlacedContig extends Placed<PlacedContig> {
 

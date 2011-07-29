@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.contig.ace;
 
 import java.util.Date;
 
-import org.jcvi.common.core.assembly.Placed;
+import org.jcvi.common.core.Placed;
 
 public class DefaultReadAceTag extends AbstractDefaultPlacedAceTag implements ReadAceTag{
 

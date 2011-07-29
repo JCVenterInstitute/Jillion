@@ -28,8 +28,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.Placed;
 import org.jcvi.common.core.util.CommonUtil;
 
 public final class  DefaultCoverageRegion<T extends Placed> implements CoverageRegion<T> {
