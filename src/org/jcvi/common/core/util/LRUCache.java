@@ -82,15 +82,10 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
     }
     public static <K,V> Map<K,V> createLRUCache(int maxSize){
        
-        return createLRUCache(computeCapacity(maxSize));
+        return new LRUCache<K,V>(maxSize);
     }
     
-    private static int computeCapacity(int maxSize){
-        //default load factor of map is .75
-        //since we don't ever want to have to re-index everthing
-        //make capacity big enough
-        return (int)Math.ceil(maxSize/DEFAULT_LOAD_FACTOR);
-    }
+    
     /**
      * Creates an LRUCache of default capacity where the VALUES in the map
      * are each wrapped with a {@link SoftReference}.  Entries can
@@ -203,9 +198,8 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
          * @param loadFactor
          */
         public AbstractReferencedLRUCache(int maxSize) {
-            int capacity = computeCapacity(maxSize);
-            cache = new LRUCache(capacity, DEFAULT_LOAD_FACTOR);
-            referenceKeyMap = new HashMap<Reference<? extends V>, K>(capacity, DEFAULT_LOAD_FACTOR);
+            cache = new LRUCache(maxSize+1, DEFAULT_LOAD_FACTOR);
+            referenceKeyMap = new HashMap<Reference<? extends V>, K>(maxSize+1, DEFAULT_LOAD_FACTOR);
         }
         /**
          * Remove any entries in the 
