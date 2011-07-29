@@ -25,14 +25,14 @@ package org.jcvi.glyph.qualClass;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestQualityClassBuilder {
 
-    NucleotideGlyph consensusGlyph = NucleotideGlyph.Adenine;
+    Nucleotide consensusGlyph = Nucleotide.Adenine;
     QualityClass.Builder sut;
     PhredQuality highQuality = PhredQuality.valueOf(30);
     @Before
@@ -304,21 +304,21 @@ public class TestQualityClassBuilder {
     
     @Test
     public void QualityClass_21_highQualityAgreement(){
-        QualityClass.Builder sutWithAmbigiousConsensus = new QualityClass.Builder(NucleotideGlyph.NotAdenine,highQuality);
+        QualityClass.Builder sutWithAmbigiousConsensus = new QualityClass.Builder(Nucleotide.NotAdenine,highQuality);
         sutWithAmbigiousConsensus.addHighQualityAgreement(Direction.FORWARD);
         
         assertCorrectQualityClassBuilt(QualityClass.AMBIGUIOUS_CONSENSUS_ONLY_1_AGREEMENT, sutWithAmbigiousConsensus.build());
     }
     @Test
     public void QualityClass_21_gappedConsensus(){
-        QualityClass.Builder sutWithGapConsensus = new QualityClass.Builder(NucleotideGlyph.Gap,highQuality);
+        QualityClass.Builder sutWithGapConsensus = new QualityClass.Builder(Nucleotide.Gap,highQuality);
         sutWithGapConsensus.addHighQualityAgreement(Direction.FORWARD);
         
         assertCorrectQualityClassBuilt(QualityClass.AMBIGUIOUS_CONSENSUS_ONLY_1_AGREEMENT, sutWithGapConsensus.build());
     }
     @Test
     public void QualityClass_21_lowQualityAgreement(){
-        QualityClass.Builder sutWithAmbigiousConsensus = new QualityClass.Builder(NucleotideGlyph.NotAdenine,highQuality);
+        QualityClass.Builder sutWithAmbigiousConsensus = new QualityClass.Builder(Nucleotide.NotAdenine,highQuality);
         sutWithAmbigiousConsensus.addLowQualityAgreement(Direction.FORWARD);
         
         assertCorrectQualityClassBuilt(QualityClass.AMBIGUIOUS_CONSENSUS_ONLY_1_AGREEMENT, sutWithAmbigiousConsensus.build());
@@ -326,7 +326,7 @@ public class TestQualityClassBuilder {
     
     @Test
     public void QualityClass_22_highConflicts(){
-        QualityClass.Builder sutWithAmbigiousConsensus = new QualityClass.Builder(NucleotideGlyph.NotAdenine,highQuality);
+        QualityClass.Builder sutWithAmbigiousConsensus = new QualityClass.Builder(Nucleotide.NotAdenine,highQuality);
         sutWithAmbigiousConsensus.addHighQualityConflict(Direction.FORWARD)
         .addHighQualityConflict(Direction.FORWARD);
         assertCorrectQualityClassBuilt(QualityClass.AMBIGUIOUS_CONSENSUS, sutWithAmbigiousConsensus.build());
@@ -334,7 +334,7 @@ public class TestQualityClassBuilder {
     
     @Test
     public void QualityClass_22_lowConflicts(){
-        QualityClass.Builder sutWithAmbigiousConsensus = new QualityClass.Builder(NucleotideGlyph.NotAdenine,highQuality);
+        QualityClass.Builder sutWithAmbigiousConsensus = new QualityClass.Builder(Nucleotide.NotAdenine,highQuality);
         sutWithAmbigiousConsensus.addLowQualityConflict(Direction.FORWARD)
         .addLowQualityConflict(Direction.FORWARD);
         assertCorrectQualityClassBuilt(QualityClass.AMBIGUIOUS_CONSENSUS, sutWithAmbigiousConsensus.build());
@@ -342,7 +342,7 @@ public class TestQualityClassBuilder {
     
     @Test
     public void QualityClass_22_highAndLowConflicts(){
-        QualityClass.Builder sutWithAmbigiousConsensus = new QualityClass.Builder(NucleotideGlyph.NotAdenine,highQuality);
+        QualityClass.Builder sutWithAmbigiousConsensus = new QualityClass.Builder(Nucleotide.NotAdenine,highQuality);
         sutWithAmbigiousConsensus.addLowQualityConflict(Direction.FORWARD)
         .addLowQualityConflict(Direction.REVERSE)
         .addHighQualityConflict(Direction.FORWARD)

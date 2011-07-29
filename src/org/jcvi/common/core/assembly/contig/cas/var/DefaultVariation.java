@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
  * {@code DefaultVariation} is a default implementation 
@@ -36,10 +36,10 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 public class DefaultVariation implements Variation{
 
     private final long coordinate;
-    private final List<NucleotideGlyph> consensus;
-    private final NucleotideGlyph reference;
+    private final List<Nucleotide> consensus;
+    private final Nucleotide reference;
     private final Type type;
-    private final Map<List<NucleotideGlyph>, Integer> histogram;
+    private final Map<List<Nucleotide>, Integer> histogram;
     
     
     /**
@@ -50,8 +50,8 @@ public class DefaultVariation implements Variation{
      * @param histogram
      */
     protected DefaultVariation(long coordinate, Type type,
-            NucleotideGlyph reference, List<NucleotideGlyph> consensus,
-            Map<List<NucleotideGlyph>, Integer> histogram) {
+            Nucleotide reference, List<Nucleotide> consensus,
+            Map<List<Nucleotide>, Integer> histogram) {
         this.coordinate = coordinate;
         this.type = type;
         this.consensus = consensus;
@@ -63,7 +63,7 @@ public class DefaultVariation implements Variation{
     * {@inheritDoc}
     */
     @Override
-    public List<NucleotideGlyph> getConsensusBase() {
+    public List<Nucleotide> getConsensusBase() {
         return consensus;
     }
 
@@ -79,7 +79,7 @@ public class DefaultVariation implements Variation{
     * {@inheritDoc}
     */
     @Override
-    public Map<List<NucleotideGlyph>, Integer> getHistogram() {
+    public Map<List<Nucleotide>, Integer> getHistogram() {
         return histogram;
     }
 
@@ -87,7 +87,7 @@ public class DefaultVariation implements Variation{
     * {@inheritDoc}
     */
     @Override
-    public NucleotideGlyph getReferenceBase() {
+    public Nucleotide getReferenceBase() {
         return reference;
     }
 
@@ -151,8 +151,8 @@ public class DefaultVariation implements Variation{
     @Override
     public String toString(){
         StringBuilder variationList = new StringBuilder();
-        for(NucleotideGlyph base : NucleotideGlyph.getGlyphsFor("ACGTN-")){
-            final List<NucleotideGlyph> asList = Arrays.asList(base);
+        for(Nucleotide base : Nucleotide.getGlyphsFor("ACGTN-")){
+            final List<Nucleotide> asList = Arrays.asList(base);
             if(histogram.containsKey(asList)){
                 variationList.append(String.format("\t%s: %d", base, histogram.get(asList)));
             }
@@ -161,14 +161,14 @@ public class DefaultVariation implements Variation{
     }
     public static class Builder implements org.jcvi.common.core.util.Builder<DefaultVariation>{
         private final long coordinate;
-        private final List<NucleotideGlyph> consensus;
-        private final NucleotideGlyph reference;
+        private final List<Nucleotide> consensus;
+        private final Nucleotide reference;
         private final Type type;
-        private final Map<List<NucleotideGlyph>, Integer> histogram = new HashMap<List<NucleotideGlyph>, Integer>();
+        private final Map<List<Nucleotide>, Integer> histogram = new HashMap<List<Nucleotide>, Integer>();
         
         public Builder(long coordinate, Type type,
-                NucleotideGlyph reference,
-                List<NucleotideGlyph> consensus ){
+                Nucleotide reference,
+                List<Nucleotide> consensus ){
             if(consensus ==null){
                 throw new NullPointerException("consensus can not be null");
             }
@@ -190,7 +190,7 @@ public class DefaultVariation implements Variation{
             this.type = type;
         }
         
-        public Builder addHistogramRecord(List<NucleotideGlyph> base, int count){
+        public Builder addHistogramRecord(List<Nucleotide> base, int count){
             histogram.put(base, count);
             return this;
         }

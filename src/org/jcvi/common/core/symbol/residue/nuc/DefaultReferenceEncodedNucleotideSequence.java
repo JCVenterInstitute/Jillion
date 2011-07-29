@@ -77,7 +77,7 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
         this.length = toBeEncoded.length();
         this.validRange = validRange;
         this.reference = reference;
-        TreeMap<Integer, NucleotideGlyph> differentGlyphMap = new TreeMap<Integer, NucleotideGlyph>();
+        TreeMap<Integer, Nucleotide> differentGlyphMap = new TreeMap<Integer, Nucleotide>();
         populateFields(reference, toBeEncoded, startOffset, tempGapList,differentGlyphMap);
         gaps = convertToPrimitiveArray(tempGapList);
         snpIndexes = createSNPIndexes(differentGlyphMap);
@@ -85,11 +85,11 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
     }
     
     private NucleotideSequence createSNPValues(
-            TreeMap<Integer, NucleotideGlyph> differentGlyphMap) {
+            TreeMap<Integer, Nucleotide> differentGlyphMap) {
         return new DefaultNucleotideSequence(differentGlyphMap.values());
 
     }
-    private int[] createSNPIndexes(TreeMap<Integer, NucleotideGlyph> snpMap){
+    private int[] createSNPIndexes(TreeMap<Integer, Nucleotide> snpMap){
         int[]snps = new int[snpMap.size()];
         int i=0;
         for(Integer index : snpMap.keySet()){
@@ -105,8 +105,8 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
         }
         return array;
     }
-    private TreeMap<Integer, NucleotideGlyph> populateFields(Sequence<NucleotideGlyph> reference,
-            String toBeEncoded, int startOffset, List<Integer> tempGapList,TreeMap<Integer, NucleotideGlyph> differentGlyphMap) {
+    private TreeMap<Integer, Nucleotide> populateFields(Sequence<Nucleotide> reference,
+            String toBeEncoded, int startOffset, List<Integer> tempGapList,TreeMap<Integer, Nucleotide> differentGlyphMap) {
         handleBeforeReference(toBeEncoded, startOffset);
         handleAfterReference(reference, toBeEncoded, startOffset);
         
@@ -116,8 +116,8 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
         for(int i=startReferenceEncodingOffset; i<endReferenceEncodingOffset; i++){
             //get the corresponding index to this reference
             int referenceIndex = i + startOffset;
-            NucleotideGlyph g = NucleotideGlyph.getGlyphFor(toBeEncoded.charAt(i));
-            final NucleotideGlyph referenceGlyph = reference.get(referenceIndex);            
+            Nucleotide g = Nucleotide.getGlyphFor(toBeEncoded.charAt(i));
+            final Nucleotide referenceGlyph = reference.get(referenceIndex);            
             
             final Integer indexAsInteger = Integer.valueOf(i);
             if(g.isGap()){
@@ -137,7 +137,7 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
     private int computeEndReferenceEncodingOffset(String toBeEncoded){
         return afterValues==null?toBeEncoded.length(): overhangOffset;
     }
-    private void handleAfterReference(Sequence<NucleotideGlyph> reference,
+    private void handleAfterReference(Sequence<Nucleotide> reference,
             String toBeEncoded, int startOffset) {
         int lastOffsetOfSequence = toBeEncoded.length()+startOffset;
         if(lastOffsetOfSequence > reference.getLength()){
@@ -155,20 +155,20 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
         }
     }
 
-    private boolean isDifferent(NucleotideGlyph g, final NucleotideGlyph referenceGlyph) {
+    private boolean isDifferent(Nucleotide g, final Nucleotide referenceGlyph) {
         return g!=referenceGlyph;
     }
 
     @Override
-    public List<NucleotideGlyph> decode() {
-        List<NucleotideGlyph> result = new ArrayList<NucleotideGlyph>(length);
+    public List<Nucleotide> decode() {
+        List<Nucleotide> result = new ArrayList<Nucleotide>(length);
         for(int i=0; i< length; i++){
             result.add(get(i));
         }
         return result;
     }
     @Override
-    public NucleotideGlyph get(int index) {
+    public Nucleotide get(int index) {
         if(isBeforeReference(index)){
             return beforeValues.get(index);
         }
@@ -176,7 +176,7 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
             return afterValues.get(index-overhangOffset);
         }
         if(isGap(index)){
-            return NucleotideGlyph.Gap;
+            return Nucleotide.Gap;
         }
         int snpIndex =Arrays.binarySearch(snpIndexes, index);
         if(snpIndex>=0){

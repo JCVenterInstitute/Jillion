@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
  * @author dkatzel
@@ -122,7 +122,7 @@ public class CompactedSlice implements Slice{
             }
             return this;
         }
-        public Builder addSliceElement(String id, NucleotideGlyph base, PhredQuality quality, Direction dir){
+        public Builder addSliceElement(String id, Nucleotide base, PhredQuality quality, Direction dir){
             try {
                 bytes.write(CompactedSliceElementCodec.INSTANCE.compact(base, quality, dir));
             } catch (IOException e) {

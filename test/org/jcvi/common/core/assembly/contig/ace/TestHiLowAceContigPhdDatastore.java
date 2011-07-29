@@ -33,7 +33,7 @@ import org.jcvi.common.core.symbol.qual.DefaultEncodedPhredGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.After;
@@ -125,8 +125,8 @@ public class TestHiLowAceContigPhdDatastore {
             "CACACACATAagaCATtctaAATTTTTACTCAAacgatcCccggaaccac" +
             "acg";
         
-        NucleotideSequence reverseComplimented = new DefaultNucleotideSequence(NucleotideGlyph.reverseCompliment(
-                                                        NucleotideGlyph.getGlyphsFor(basecalls)));
+        NucleotideSequence reverseComplimented = new DefaultNucleotideSequence(Nucleotide.reverseCompliment(
+                                                        Nucleotide.getGlyphsFor(basecalls)));
     
         List<PhredQuality> expectedQualities = new ArrayList<PhredQuality>();
         addLowQualities(expectedQualities, "gaataattggaatcacggcaaaaatttggggacaaatattatttccaaaattcccccagcaatcacacaggccctcaagcccatcaactcggtcattcaccgattttcctaaatcaagggtattagcttgctgggcttacacctaacatacacagcatgctcaatgaga".length());

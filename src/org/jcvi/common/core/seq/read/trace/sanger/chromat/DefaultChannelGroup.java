@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.CommonUtil;
 
 public class DefaultChannelGroup implements ChannelGroup {
@@ -135,14 +135,14 @@ public class DefaultChannelGroup implements ChannelGroup {
 
     }
     @Override
-    public Channel getChannel(NucleotideGlyph nucleotide) {
-        if(nucleotide == NucleotideGlyph.Adenine){
+    public Channel getChannel(Nucleotide nucleotide) {
+        if(nucleotide == Nucleotide.Adenine){
            return getAChannel();
         }
-        if(nucleotide == NucleotideGlyph.Cytosine){
+        if(nucleotide == Nucleotide.Cytosine){
             return getCChannel();
          }
-        if(nucleotide == NucleotideGlyph.Guanine){
+        if(nucleotide == Nucleotide.Guanine){
             return getGChannel();
          }
         //anything else is considered a T

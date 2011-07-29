@@ -65,7 +65,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.MultipleWrapper;
@@ -201,7 +201,7 @@ public class RecallAceConsensus {
                 SliceMap sliceMap = CompactedSliceMap.create(contig, qualityDataStore, 
                         GapQualityValueStrategies.LOWEST_FLANKING);
                 NucleotideSequence originalConsensus = contig.getConsensus();
-                List<NucleotideGlyph> recalledConsensus = new ArrayList<NucleotideGlyph>((int)originalConsensus.getLength());
+                List<Nucleotide> recalledConsensus = new ArrayList<Nucleotide>((int)originalConsensus.getLength());
                 for(int i=0; i<originalConsensus.getLength();i++){
                     Slice slice =sliceMap.getSlice(i);
                     ConsensusResult result =consensusCaller.callConsensus(slice);

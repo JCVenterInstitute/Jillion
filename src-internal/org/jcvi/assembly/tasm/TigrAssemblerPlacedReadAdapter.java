@@ -25,7 +25,7 @@ import java.util.Map;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
  * {@code TigrAssemblerPlacedReadAdapter} is a Adapter which allows
@@ -60,7 +60,7 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_LEFT, ""+(this.getStart()+1));
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_RIGHT, ""+(this.getEnd()+1));
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_START_OFFSET, ""+(this.getStart()));
-		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, NucleotideGlyph.convertToString(this.getSequence().decode()));
+		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, Nucleotide.convertToString(this.getSequence().decode()));
 		
 		Range validRange = this.getValidRange();
 		if(this.getDirection()== Direction.FORWARD){
@@ -111,7 +111,7 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	}
 
 	@Override
-	public Map<Integer, NucleotideGlyph> getSnps() {
+	public Map<Integer, Nucleotide> getSnps() {
 		return delegatePlacedRead.getSnps();
 	}
 

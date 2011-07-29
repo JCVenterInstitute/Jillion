@@ -38,7 +38,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.ByteBufferInputStream;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
@@ -97,7 +97,7 @@ public class IndexedPhdFileDataStore extends AbstractPhdFileDataStore{
     
     
     @Override
-    protected synchronized void visitPhd(String id, List<NucleotideGlyph> bases,
+    protected synchronized void visitPhd(String id, List<Nucleotide> bases,
             List<PhredQuality> qualities, List<ShortGlyph> positions,
             Properties comments, List<PhdTag> tags) {
         long endOfOldRecord = currentOffset-currentLineLength-1;

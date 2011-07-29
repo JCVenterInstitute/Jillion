@@ -37,27 +37,27 @@ import java.util.Map.Entry;
 import org.jcvi.common.core.symbol.GlyphCodec;
 /**
  * <code>DefaultNucleotideGlyphCodec</code> is the implementation
- * of {@link GlyphCodec} that can converts {@link NucleotideGlyph}s
- * into a 4 bit representation.  This allows 2 {@link NucleotideGlyph}s
+ * of {@link GlyphCodec} that can converts {@link Nucleotide}s
+ * into a 4 bit representation.  This allows 2 {@link Nucleotide}s
  * to be packed into a single byte.
  * @author dkatzel
  *
  *
  */
-public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideGlyph>{
+public final class DefaultNucleotideGlyphCodec implements GlyphCodec<Nucleotide>{
 
     /**
      * Maintains the mapping of each glyph singleton with
      * its assigned glyphcode value.  The glyphcodes have been specially
      * set to simplify reverse complimenting.
      */
-    private static final Map<Byte, NucleotideGlyph> BYTE_TO_GLYPH_MAP = new HashMap<Byte, NucleotideGlyph>();
+    private static final Map<Byte, Nucleotide> BYTE_TO_GLYPH_MAP = new HashMap<Byte, Nucleotide>();
     /**
      * Maintains the mapping of each glyph singleton with
      * its assigned glyphcode value.  The glyphcodes have been specially
      * set to simplify reverse complimenting.
      */
-    private static final Map<NucleotideGlyph, Byte> GLYPH_TO_BYTE_MAP = new EnumMap<NucleotideGlyph, Byte>(NucleotideGlyph.class);
+    private static final Map<Nucleotide, Byte> GLYPH_TO_BYTE_MAP = new EnumMap<Nucleotide, Byte>(Nucleotide.class);
     /**
      * The header will contain an int value specifying how many glyphs are encoded.
      */
@@ -79,26 +79,26 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
     static{
         //special case for
         //Gap and Unknown since they compliment to themselves
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x00), NucleotideGlyph.Gap);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0F), NucleotideGlyph.Unknown);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x00), Nucleotide.Gap);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0F), Nucleotide.Unknown);
         //everything else has a compliment
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x01), NucleotideGlyph.Adenine);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0E), NucleotideGlyph.Thymine);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x02), NucleotideGlyph.Guanine);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0D), NucleotideGlyph.Cytosine);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x01), Nucleotide.Adenine);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0E), Nucleotide.Thymine);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x02), Nucleotide.Guanine);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0D), Nucleotide.Cytosine);
 
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x03), NucleotideGlyph.Pyrimidine);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0C), NucleotideGlyph.Purine);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x04), NucleotideGlyph.Weak);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0B), NucleotideGlyph.Strong);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x05), NucleotideGlyph.Keto);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0A), NucleotideGlyph.Amino);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x06), NucleotideGlyph.NotCytosine);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x09), NucleotideGlyph.NotGuanine);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x07), NucleotideGlyph.NotThymine);
-        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x08), NucleotideGlyph.NotAdenine);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x03), Nucleotide.Pyrimidine);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0C), Nucleotide.Purine);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x04), Nucleotide.Weak);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0B), Nucleotide.Strong);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x05), Nucleotide.Keto);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0A), Nucleotide.Amino);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x06), Nucleotide.NotCytosine);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x09), Nucleotide.NotGuanine);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x07), Nucleotide.NotThymine);
+        BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x08), Nucleotide.NotAdenine);
         //populate the reverse mapping
-        for(Entry<Byte, NucleotideGlyph> entry : BYTE_TO_GLYPH_MAP.entrySet()){
+        for(Entry<Byte, Nucleotide> entry : BYTE_TO_GLYPH_MAP.entrySet()){
             GLYPH_TO_BYTE_MAP.put(entry.getValue(), entry.getKey());           
         }
     }
@@ -108,9 +108,9 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
         return INSTANCE;
     }
     @Override
-    public List<NucleotideGlyph> decode(byte[] encodedGlyphs) {
+    public List<Nucleotide> decode(byte[] encodedGlyphs) {
         int length = decodedLengthOf(encodedGlyphs);
-        List<NucleotideGlyph> result = new ArrayList<NucleotideGlyph>(length);
+        List<Nucleotide> result = new ArrayList<Nucleotide>(length);
         
         for(int i=HEADER_LENGTH; i<encodedGlyphs.length-1; i++){
             result.addAll(decodeNext2Values(encodedGlyphs[i]));
@@ -126,12 +126,12 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
         return result;
     }
     @Override
-    public NucleotideGlyph decode(byte[] encodedGlyphs, int index){
+    public Nucleotide decode(byte[] encodedGlyphs, int index){
         final byte getByteForGlyph = getEncodedByteForGlyph(encodedGlyphs,index);
         return decode(getByteForGlyph, isEven(index));
     }
-    private NucleotideGlyph decode(final byte getByteForGlyph, boolean isFirstNibble) {
-        List<NucleotideGlyph> values = decodeNext2Values(getByteForGlyph);
+    private Nucleotide decode(final byte getByteForGlyph, boolean isFirstNibble) {
+        List<Nucleotide> values = decodeNext2Values(getByteForGlyph);
         if(isFirstNibble){
             return values.get(0);
         }
@@ -154,7 +154,7 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
     }
 
     @Override
-    public byte[] encode(Collection<NucleotideGlyph> glyphs) {
+    public byte[] encode(Collection<Nucleotide> glyphs) {
         final int unEncodedSize = glyphs.size();
         
         int encodedSize = computeEncodedSize(unEncodedSize);
@@ -166,18 +166,18 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
      * @param glyph
      * @return
      */
-    public byte[] encode(NucleotideGlyph glyph) {
+    public byte[] encode(Nucleotide glyph) {
         ByteBuffer result = ByteBuffer.allocate(singleGlyphEncodedSize);
         result.putInt(1);
         encodeLastValue(glyph, result);
         return result.array();
         
     }
-    private byte[] encodeGlyphs(Collection<NucleotideGlyph> glyphs,
+    private byte[] encodeGlyphs(Collection<Nucleotide> glyphs,
             final int unEncodedSize, int encodedSize) {
         ByteBuffer result = ByteBuffer.allocate(encodedSize);
         result.putInt(unEncodedSize);
-        Iterator<NucleotideGlyph> iterator = glyphs.iterator();
+        Iterator<Nucleotide> iterator = glyphs.iterator();
         encodeAllButTheLastByte(iterator, unEncodedSize, result);
         encodeFinalByte(iterator, unEncodedSize, result);
         return result.array();
@@ -190,7 +190,7 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
      * @param unEncodedSize
      * @param result
      */
-    private void encodeAllButTheLastByte(Iterator<NucleotideGlyph> glyphs,
+    private void encodeAllButTheLastByte(Iterator<Nucleotide> glyphs,
             final int unEncodedSize, ByteBuffer result) {
         for(int i=0; i<unEncodedSize-2; i+=2){
             encodeNext2Values(glyphs, result);
@@ -204,7 +204,7 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
      * @param unEncodedSize
      * @param result
      */
-    private void encodeFinalByte(Iterator<NucleotideGlyph> glyphs,
+    private void encodeFinalByte(Iterator<Nucleotide> glyphs,
             final int unEncodedSize, ByteBuffer result) {
         if(unEncodedSize>0){
             final boolean even = isEven(unEncodedSize);
@@ -223,21 +223,21 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<NucleotideG
     private boolean isEven(final int size) {
         return size%2==0;
     }
-    private void encodeLastValue(NucleotideGlyph glyph, ByteBuffer result) {
+    private void encodeLastValue(Nucleotide glyph, ByteBuffer result) {
         byte hi = GLYPH_TO_BYTE_MAP.get(glyph);
         result.put((byte) ((hi<<BITS_PER_GLYPH) &0xFF));
     }
-    private void encodeNext2Values(Iterator<NucleotideGlyph> glyphs, ByteBuffer result) {
+    private void encodeNext2Values(Iterator<Nucleotide> glyphs, ByteBuffer result) {
         byte hi = GLYPH_TO_BYTE_MAP.get(glyphs.next());
         byte low = GLYPH_TO_BYTE_MAP.get(glyphs.next());
         result.put((byte) ((hi<<BITS_PER_GLYPH | low) &0xFF));
     }
-    private List<NucleotideGlyph> decodeNext2Values(byte b) {
+    private List<Nucleotide> decodeNext2Values(byte b) {
         byte hi = (byte)(b>>>BITS_PER_GLYPH &0x0F);
         byte low = (byte)(b & 0x0F);
        return Arrays.asList(BYTE_TO_GLYPH_MAP.get(hi),BYTE_TO_GLYPH_MAP.get(low));
     }
-    private NucleotideGlyph decodeLastValues(byte b) {
+    private Nucleotide decodeLastValues(byte b) {
         byte hi = (byte)(b>>>BITS_PER_GLYPH &0x0F);
        return BYTE_TO_GLYPH_MAP.get(hi);
     }

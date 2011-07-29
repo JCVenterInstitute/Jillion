@@ -24,17 +24,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.Symbol;
 
 /**
- * {@code AminoAcid} is a {@link Glyph} representation 
+ * {@code AminoAcid} is a {@link Symbol} representation 
  * of the 20 Amino Acids that are encoded by genetic code.
  * 
  * @author dkatzel, naxelrod
  *
  *
  */
-public enum AminoAcid implements Glyph{
+public enum AminoAcid implements Symbol{
     
     Isoleucine("Isolucine","Ile",'I'),
     Leucine("Leucine","Leu",'L'),

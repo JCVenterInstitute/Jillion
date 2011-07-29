@@ -32,7 +32,7 @@ import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
@@ -119,7 +119,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
     * {@inheritDoc}
     */
     @Override
-    public Map<Integer, NucleotideGlyph> getSnps() {
+    public Map<Integer, Nucleotide> getSnps() {
         return placedRead.getSnps();
     }
 
@@ -250,7 +250,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         public DefaultAcePlacedRead build(){
             ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = 
                 new DefaultReferenceEncodedNucleotideSequence(reference,
-                        NucleotideGlyph.convertToString(referencedGlyphs.decode()),offset,clearRange);
+                        Nucleotide.convertToString(referencedGlyphs.decode()),offset,clearRange);
             Read read = new DefaultRead(readId, 
                     updatedEncodedBasecalls);
             return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength);

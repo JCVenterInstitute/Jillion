@@ -51,11 +51,11 @@ import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastQUtil;
-import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
@@ -87,7 +87,7 @@ public class SortedFasta2Fastq {
     
     private static final int DEFAULT_QUEUE_SIZE = 1000;
     
-    private abstract static class BlockedFastaVisitor<T extends Glyph,E extends Sequence<T>, F extends FastaRecord<E>> extends Thread{
+    private abstract static class BlockedFastaVisitor<T extends Symbol,E extends Sequence<T>, F extends FastaRecord<E>> extends Thread{
         final BlockingQueue<F> queue;
         final File file;
        
@@ -164,7 +164,7 @@ public class SortedFasta2Fastq {
         }
     }
     
-    private static class SequenceBlockedFastaVisitor extends BlockedFastaVisitor<NucleotideGlyph, NucleotideSequence, NucleotideSequenceFastaRecord>{
+    private static class SequenceBlockedFastaVisitor extends BlockedFastaVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord>{
         
     /**
          * @param file

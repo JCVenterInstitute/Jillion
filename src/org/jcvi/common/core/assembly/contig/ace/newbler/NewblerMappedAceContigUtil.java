@@ -39,7 +39,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.TraceDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public class NewblerMappedAceContigUtil {
 
@@ -90,7 +90,7 @@ public class NewblerMappedAceContigUtil {
     private static AceContig buildAceContigFor(AceContig originalAceContig, TraceDataStore<Phd> phdDataStore,String id,String consensusId,Range contigRange) throws DataStoreException{
         
         final AcePlacedRead consensusRead = originalAceContig.getPlacedReadById(consensusId);
-        final String consensus = NucleotideGlyph.convertToString(consensusRead.getSequence().decode());
+        final String consensus = Nucleotide.convertToString(consensusRead.getSequence().decode());
         DefaultAceContig.Builder builder = new DefaultAceContig.Builder(id,consensus);
         for(AcePlacedRead read : originalAceContig.getPlacedReads()){
             
@@ -100,7 +100,7 @@ public class NewblerMappedAceContigUtil {
               //  System.out.println(read.getId());
                 final int newOffset = (int)(read.getStart() -consensusRead.getStart());
                 builder.addRead(read.getId(), 
-                        NucleotideGlyph.convertToString(read.getSequence().decode()),
+                        Nucleotide.convertToString(read.getSequence().decode()),
                         newOffset,
                         read.getDirection(),
                         read.getValidRange(), read.getPhdInfo(),

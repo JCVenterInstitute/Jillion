@@ -22,7 +22,7 @@ package org.jcvi.common.core.assembly.coverage.slice;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,11 +35,11 @@ import static org.junit.Assert.*;
 public abstract class AbstractTestSliceElement {
 
     String id = "id";
-    NucleotideGlyph base = NucleotideGlyph.Adenine;
+    Nucleotide base = Nucleotide.Adenine;
     PhredQuality quality = PhredQuality.valueOf(50);
     Direction dir = Direction.FORWARD;
     SliceElement sut;
-    protected abstract SliceElement create(String id, NucleotideGlyph base, PhredQuality qual,Direction dir);
+    protected abstract SliceElement create(String id, Nucleotide base, PhredQuality qual,Direction dir);
     
     @Before
     public void setup(){
@@ -71,7 +71,7 @@ public abstract class AbstractTestSliceElement {
     
     @Test
     public void differentBaseShouldNotBeEqual(){
-        SliceElement differentValues = create(id,NucleotideGlyph.Cytosine, quality,dir);
+        SliceElement differentValues = create(id,Nucleotide.Cytosine, quality,dir);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
     @Test

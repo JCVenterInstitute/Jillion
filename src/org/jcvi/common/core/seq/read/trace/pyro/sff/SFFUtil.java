@@ -37,7 +37,7 @@ import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 
@@ -75,7 +75,7 @@ private SFFUtil(){}
      */
     private Linkers(String sequence) {
         this.forwardSequence = new DefaultNucleotideSequence(sequence);
-        this.reverseSequence = new DefaultNucleotideSequence(NucleotideGlyph.reverseCompliment(
+        this.reverseSequence = new DefaultNucleotideSequence(Nucleotide.reverseCompliment(
                 forwardSequence.decode()));
     }
 
@@ -194,10 +194,10 @@ private SFFUtil(){}
         return lengthWithoutPadding+padding;
     }
     
-    public static int numberOfIntensities(List<NucleotideGlyph> glyphs){
+    public static int numberOfIntensities(List<Nucleotide> glyphs){
         int count=0;
-        NucleotideGlyph currentBase= null;
-        for(NucleotideGlyph glyph : glyphs){
+        Nucleotide currentBase= null;
+        for(Nucleotide glyph : glyphs){
             if(currentBase != glyph){
                 currentBase =glyph;
                 count++;
@@ -239,7 +239,7 @@ private SFFUtil(){}
         return new SFFFlowgram(
                 readHeader.getName(),
                 new DefaultNucleotideSequence(
-                        NucleotideGlyph.getGlyphsFor(readData.getBasecalls())),
+                        Nucleotide.getGlyphsFor(readData.getBasecalls())),
                         new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                                 PhredQuality.valueOf(readData.getQualities())),
                 SFFUtil.computeValues(readData),

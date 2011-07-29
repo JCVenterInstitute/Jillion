@@ -31,14 +31,14 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 public class TestAssemblyUtil_gappedfullRange {
 
-    List<NucleotideGlyph> gappedValidRange = NucleotideGlyph.getGlyphsFor("ACGT-ACGT");
+    List<Nucleotide> gappedValidRange = Nucleotide.getGlyphsFor("ACGT-ACGT");
     PlacedRead mockPlacedRead;
     
     @Before
@@ -48,14 +48,14 @@ public class TestAssemblyUtil_gappedfullRange {
     @Test
     public void entireSequenceIsValid(){
         
-        List<NucleotideGlyph> ungappedUnComplimentedFullRange = NucleotideGlyph.convertToUngapped(gappedValidRange);
+        List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotide.convertToUngapped(gappedValidRange);
         Range validRange = Range.buildRange(0, ungappedUnComplimentedFullRange.size());
         
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
         expect(mockPlacedRead.getDirection()).andReturn(Direction.FORWARD);
         expect(mockPlacedRead.getSequence()).andReturn(new DefaultNucleotideSequence(gappedValidRange));
         replay(mockPlacedRead);
-        List<NucleotideGlyph> actualGappedComplimentedFullRange =
+        List<Nucleotide> actualGappedComplimentedFullRange =
             AssemblyUtil.buildGappedComplimentedFullRangeBases(mockPlacedRead, ungappedUnComplimentedFullRange);
         
         assertEquals(gappedValidRange, actualGappedComplimentedFullRange);        
@@ -64,15 +64,15 @@ public class TestAssemblyUtil_gappedfullRange {
     @Test
     public void entireSequenceIsValidButComplimented(){
         
-        List<NucleotideGlyph> ungappedUnComplimentedFullRange = NucleotideGlyph.reverseCompliment(
-                                            NucleotideGlyph.convertToUngapped(gappedValidRange));
+        List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotide.reverseCompliment(
+                                            Nucleotide.convertToUngapped(gappedValidRange));
         Range validRange = Range.buildRange(0, ungappedUnComplimentedFullRange.size());
         
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
         expect(mockPlacedRead.getDirection()).andReturn(Direction.REVERSE);
         expect(mockPlacedRead.getSequence()).andReturn(new DefaultNucleotideSequence(gappedValidRange));
         replay(mockPlacedRead);
-        List<NucleotideGlyph> actualGappedComplimentedFullRange =
+        List<Nucleotide> actualGappedComplimentedFullRange =
             AssemblyUtil.buildGappedComplimentedFullRangeBases(mockPlacedRead, ungappedUnComplimentedFullRange);
         
         assertEquals(gappedValidRange, actualGappedComplimentedFullRange);        
@@ -80,33 +80,33 @@ public class TestAssemblyUtil_gappedfullRange {
     
     @Test
     public void hasInvalidRange(){
-        List<NucleotideGlyph> ungappedUnComplimentedFullRange = NucleotideGlyph.getGlyphsFor("RRACGTACGTKKK");
+        List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotide.getGlyphsFor("RRACGTACGTKKK");
         Range validRange = Range.buildRange(2, 9);
         
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
         expect(mockPlacedRead.getDirection()).andReturn(Direction.FORWARD);
         expect(mockPlacedRead.getSequence()).andReturn(new DefaultNucleotideSequence(gappedValidRange));
         replay(mockPlacedRead);
-        List<NucleotideGlyph> actualGappedComplimentedFullRange =
+        List<Nucleotide> actualGappedComplimentedFullRange =
             AssemblyUtil.buildGappedComplimentedFullRangeBases(mockPlacedRead, ungappedUnComplimentedFullRange);
         
-        List<NucleotideGlyph> expectedGappedComplimentedFullRange = NucleotideGlyph.getGlyphsFor("RRACGT-ACGTKKK");
+        List<Nucleotide> expectedGappedComplimentedFullRange = Nucleotide.getGlyphsFor("RRACGT-ACGTKKK");
         assertEquals(expectedGappedComplimentedFullRange, actualGappedComplimentedFullRange);      
     }
     @Test
     public void hasInvalidRangeAndUngapped(){
-        List<NucleotideGlyph> ungappedUnComplimentedFullRange = NucleotideGlyph.getGlyphsFor("RRACGTACGTKKK");
+        List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotide.getGlyphsFor("RRACGTACGTKKK");
         Range validRange = Range.buildRange(3, 10);
         
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
         expect(mockPlacedRead.getDirection()).andReturn(Direction.REVERSE);
         expect(mockPlacedRead.getSequence()).andReturn(new DefaultNucleotideSequence(gappedValidRange));
         replay(mockPlacedRead);
-        List<NucleotideGlyph> actualGappedComplimentedFullRange =
+        List<Nucleotide> actualGappedComplimentedFullRange =
             AssemblyUtil.buildGappedComplimentedFullRangeBases(mockPlacedRead, ungappedUnComplimentedFullRange);
         
-        List<NucleotideGlyph> expectedGappedComplimentedFullRange = NucleotideGlyph.reverseCompliment(
-                                                        NucleotideGlyph.getGlyphsFor("RRACGT-ACGTKKK"));
+        List<Nucleotide> expectedGappedComplimentedFullRange = Nucleotide.reverseCompliment(
+                                                        Nucleotide.getGlyphsFor("RRACGT-ACGTKKK"));
         assertEquals(expectedGappedComplimentedFullRange, actualGappedComplimentedFullRange);      
     }
 }

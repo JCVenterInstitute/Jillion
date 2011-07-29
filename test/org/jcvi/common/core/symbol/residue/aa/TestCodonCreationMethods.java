@@ -28,7 +28,7 @@ import java.util.Map.Entry;
 import org.jcvi.common.core.symbol.residue.aa.Codon;
 import org.jcvi.common.core.symbol.residue.aa.Codon.Frame;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -45,24 +45,24 @@ public class TestCodonCreationMethods {
     @Parameters
     public static Collection<?> data(){
         List<Object[]> data = new ArrayList<Object[]>();
-        for(Entry<List<NucleotideGlyph>, Codon> entry : Codon.getCodonMap().entrySet()){
+        for(Entry<List<Nucleotide>, Codon> entry : Codon.getCodonMap().entrySet()){
             data.add(new Object[]{entry.getKey(), entry.getValue()});
         }
         return data;
     }
     
-    private final List<NucleotideGlyph> triplet;
+    private final List<Nucleotide> triplet;
     private final Codon expectedCodon;
     private final  String tripletBases;
     /**
      * @param triplet
      * @param expectedCodon
      */
-    public TestCodonCreationMethods(List<NucleotideGlyph> triplet,
+    public TestCodonCreationMethods(List<Nucleotide> triplet,
             Codon expectedCodon) {
         this.triplet = triplet;
         this.expectedCodon = expectedCodon;
-        this.tripletBases = NucleotideGlyph.convertToString(triplet);
+        this.tripletBases = Nucleotide.convertToString(triplet);
     }
     
     @Test

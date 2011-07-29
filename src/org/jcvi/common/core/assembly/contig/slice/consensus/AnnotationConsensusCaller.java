@@ -29,7 +29,7 @@ import java.util.Set;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 /**
  * <code>AnnotationConsensusCaller</code> is the Consensus
  * caller used by the TIGR Annotation Group.  It is much
@@ -52,23 +52,23 @@ public class AnnotationConsensusCaller extends AbstractChurchillWatermanConsensu
      * to consider towards the ambiguity consensus.
      */
     @Override
-    protected NucleotideGlyph getConsensus(
+    protected Nucleotide getConsensus(
             ProbabilityStruct normalizedErrorProbabilityStruct, Slice slice) {
-        Set<NucleotideGlyph> basesTowardsAmbiguity = getCWBasesTowardsAmbiguity(normalizedErrorProbabilityStruct, slice);
+        Set<Nucleotide> basesTowardsAmbiguity = getCWBasesTowardsAmbiguity(normalizedErrorProbabilityStruct, slice);
         basesTowardsAmbiguity.addAll(findAllHighQualityBases(slice));
-        return NucleotideGlyph.getAmbiguityFor(basesTowardsAmbiguity);
+        return Nucleotide.getAmbiguityFor(basesTowardsAmbiguity);
         
     }
 
-    private Set<NucleotideGlyph> getCWBasesTowardsAmbiguity(
+    private Set<Nucleotide> getCWBasesTowardsAmbiguity(
             ProbabilityStruct normalizedErrorProbabilityStruct,
             Slice slice) {
         int numberOfDifferentBasesInSlice = generateBasecallHistogramMap(slice).size();        
         return getBasesUsedTowardsAmbiguity(normalizedErrorProbabilityStruct, numberOfDifferentBasesInSlice);
     }
 
-    private Set<NucleotideGlyph> findAllHighQualityBases(Slice slice) {
-        Set<NucleotideGlyph> highQualityDiffs = EnumSet.noneOf(NucleotideGlyph.class);
+    private Set<Nucleotide> findAllHighQualityBases(Slice slice) {
+        Set<Nucleotide> highQualityDiffs = EnumSet.noneOf(Nucleotide.class);
         for(SliceElement sliceElement : slice){
             if(sliceElement.getQuality().compareTo(getHighQualityThreshold()) >=0){
                 highQualityDiffs.add(sliceElement.getBase());

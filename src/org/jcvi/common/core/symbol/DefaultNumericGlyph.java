@@ -24,7 +24,7 @@
 package org.jcvi.common.core.symbol;
 
 
-public class DefaultNumericGlyph implements NumericGlyph{
+public class DefaultNumericGlyph implements NumericSymbol{
     private final Number number;
     DefaultNumericGlyph(Number number){
         if(number ==null){

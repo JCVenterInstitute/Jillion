@@ -23,7 +23,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.slice.CompactedSliceElement;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
  * @author dkatzel
@@ -36,7 +36,7 @@ public class TestCompactedSliceElement extends AbstractTestSliceElement{
     * {@inheritDoc}
     */
     @Override
-    protected SliceElement create(String id, NucleotideGlyph base,
+    protected SliceElement create(String id, Nucleotide base,
             PhredQuality qual, Direction dir) {
         return new CompactedSliceElement(id, base, qual, dir);
     }

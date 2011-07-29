@@ -23,22 +23,22 @@
  */
 package org.jcvi.common.core.symbol.residue.nuc;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestNucleotideGlyph_GetGlyphsFor {
 
     @Test
     public void convertGlyph(){
-        for(NucleotideGlyph g: NucleotideGlyph.values()){
+        for(Nucleotide g: Nucleotide.values()){
             final Character uppercase = g.getCharacter();
-            assertEquals(g, NucleotideGlyph.getGlyphFor(uppercase));
-            assertEquals(g, NucleotideGlyph.getGlyphFor(Character.toLowerCase(uppercase)));
+            assertEquals(g, Nucleotide.getGlyphFor(uppercase));
+            assertEquals(g, Nucleotide.getGlyphFor(Character.toLowerCase(uppercase)));
         }
     }
     @Test
     public void convertXToN(){
-        assertEquals(NucleotideGlyph.Unknown, NucleotideGlyph.getGlyphFor('X'));
-        assertEquals(NucleotideGlyph.Unknown, NucleotideGlyph.getGlyphFor('x'));
+        assertEquals(Nucleotide.Unknown, Nucleotide.getGlyphFor('X'));
+        assertEquals(Nucleotide.Unknown, Nucleotide.getGlyphFor('x'));
     }
 }

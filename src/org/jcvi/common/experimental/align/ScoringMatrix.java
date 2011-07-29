@@ -28,7 +28,7 @@ package org.jcvi.common.experimental.align;
 import java.io.PrintStream;
 import java.nio.IntBuffer;
 
-import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
 
 /**
@@ -37,7 +37,7 @@ import org.jcvi.common.core.symbol.Sequence;
  *
  * @author jsitz@jcvi.org
  */
-public class ScoringMatrix<G extends Glyph>
+public class ScoringMatrix<G extends Symbol>
 {
     /** The score to record on the terminating edges (far edges) of the matrix. */
     private static final int SCORE_TERMINATOR = 0;

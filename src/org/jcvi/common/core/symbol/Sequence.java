@@ -27,34 +27,37 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 /**
- * {@code Sequence} is an interface for 
- * encoding or compressing a list of {@link Glyph}s
+ * {@code Sequence} is an interface for an
+ * ordered list of {@link Symbol}s.  How
+ * this sequence is stored is abstracted
+ * away so that different implementations
+ * may encode or compress the symbols
  * so that they take up less memory.
  * @author dkatzel
  *
  *
  */
-public interface Sequence<T extends Glyph> {
+public interface Sequence<T extends Symbol> {
     /**
-     * Decode the entire list of encoded glyphs into
+     * Decode the entire list of encoded {@link Symbol}s into
      * a List.
-     * @return a List of Glyphs.
+     * @return a List of {@link Symbol}s.
      */
     List<T> decode();
     /**
-     * Gets the specific glyph at the specified index.
-     * this should return the same Glyph as
+     * Gets the specific {@link Symbol} at the specified index.
+     * this should return the same {@link Symbol} as
      * {@code decode().get(index)} but hopefully
      * in a more efficient manner.
-     * @param index the index of the Glyph to get.
-     * @return the Glyph at the specified index.
+     * @param index the index of the {@link Symbol} to get.
+     * @return the {@link Symbol} at the specified index.
      */
     T get(int index);
     /**
-     * Get the number of glyphs that are encoded.
+     * Get the number of {@link Symbol}s that are encoded.
      * This should return the same value as
      * {@code decode().size()}.
-     * @return the length of the encoded glyphs will never
+     * @return the length, will never
      * be less than {@code 0}.
      */
     long getLength();
@@ -64,9 +67,9 @@ public interface Sequence<T extends Glyph> {
     @Override
     boolean equals(Object obj);
     /**
-     * Decodes the Glyphs for the given range
+     * Decodes the {@link Symbol}s for the given range
      * @param range the range to trim against, if null, then decode
-     * all glyphs (the same as {@link #decode()}).
+     * all {@link Symbol}s (the same as {@link #decode()}).
      * @return
      */
     List<T> decode(Range range);

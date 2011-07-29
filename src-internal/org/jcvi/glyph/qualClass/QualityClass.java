@@ -30,11 +30,11 @@ import java.util.Map;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
-import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
-public enum QualityClass implements Glyph, Comparable<QualityClass>{
+public enum QualityClass implements Symbol, Comparable<QualityClass>{
 
     
     ZERO_COVERAGE(0),
@@ -191,13 +191,13 @@ public enum QualityClass implements Glyph, Comparable<QualityClass>{
         private int numberOfReads;
         private final PhredQuality highQualitythreshold;
         
-        public Builder(NucleotideGlyph consensusGlyph,PhredQuality highQualitythreshold){
+        public Builder(Nucleotide consensusGlyph,PhredQuality highQualitythreshold){
             gapConsensus = consensusGlyph.isGap();
             hasAmbiguiousConsensus = consensusGlyph.isAmbiguity();
             this.highQualitythreshold = highQualitythreshold;
             createAndInitializeMaps();            
         }
-        public Builder(NucleotideGlyph consensus, PhredQuality highQualitythreshold, Slice slice){
+        public Builder(Nucleotide consensus, PhredQuality highQualitythreshold, Slice slice){
             this(consensus,highQualitythreshold);
             for(SliceElement sliceElement : slice){
                 if(isHighQuality(sliceElement.getQuality())){
@@ -211,7 +211,7 @@ public enum QualityClass implements Glyph, Comparable<QualityClass>{
             
         }
         private void handleLowQualitySliceElement(SliceElement sliceElement,
-                NucleotideGlyph consensus) {
+                Nucleotide consensus) {
             if(sliceElement.getBase() == consensus ){
                 addLowQualityAgreement(sliceElement.getSequenceDirection());
             }
@@ -220,7 +220,7 @@ public enum QualityClass implements Glyph, Comparable<QualityClass>{
             }
             
         }
-        private void handleHighQualitySliceElement(SliceElement sliceElement,NucleotideGlyph consensus) {
+        private void handleHighQualitySliceElement(SliceElement sliceElement,Nucleotide consensus) {
             if(sliceElement.getBase() == consensus ){
                 addHighQualityAgreement(sliceElement.getSequenceDirection());
             }

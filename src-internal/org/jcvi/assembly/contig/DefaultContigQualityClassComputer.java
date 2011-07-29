@@ -32,7 +32,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;
 
@@ -52,7 +52,7 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
         if(region ==null){
             return QualityClass.ZERO_COVERAGE;
         }
-        final NucleotideGlyph consensusBase = consensus.get(index);
+        final Nucleotide consensusBase = consensus.get(index);
         
         try {
             return computeQualityClassFor(qualityDataStore, index,
@@ -71,20 +71,20 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
     }
     protected QualityClass computeQualityClassFor(
             QualityDataStore qualityDataStore, int index,
-            CoverageRegion<P> region, final NucleotideGlyph consensusBase) throws DataStoreException {
+            CoverageRegion<P> region, final Nucleotide consensusBase) throws DataStoreException {
         QualityClass.Builder builder = new QualityClass.Builder(consensusBase,qualityThreshold);
         return computeQualityClassFor(qualityDataStore, index, region,
                 consensusBase, builder);
     }
     protected QualityClass computeQualityClassFor(
             QualityDataStore qualityDataStore, int index,
-            CoverageRegion<P> region, final NucleotideGlyph consensusBase,
+            CoverageRegion<P> region, final Nucleotide consensusBase,
             QualityClass.Builder builder) throws DataStoreException {
         for(P placedRead : region){
             final Sequence<PhredQuality> qualityRecord = qualityDataStore.get(placedRead.getId());
             if(qualityRecord !=null){
                 int indexIntoRead = (int) (index - placedRead.getStart());
-                final NucleotideGlyph calledBase = placedRead.getSequence().get(indexIntoRead);
+                final Nucleotide calledBase = placedRead.getSequence().get(indexIntoRead);
                 
                 PhredQuality qualityValue =qualityValueStrategy.getQualityFor(placedRead, qualityRecord, indexIntoRead);
                 boolean agreesWithConsensus = isSame(consensusBase, calledBase);
@@ -100,8 +100,8 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
         return qualityValue.compareTo(qualityThreshold)>=0;
     }
 
-    private boolean isSame(final NucleotideGlyph base1,
-            final NucleotideGlyph base2) {
+    private boolean isSame(final Nucleotide base1,
+            final Nucleotide base2) {
         return base1 == base2;
     }
 

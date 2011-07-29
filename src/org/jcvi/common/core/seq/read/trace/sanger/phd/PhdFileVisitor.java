@@ -27,7 +27,7 @@ import java.util.Properties;
 
 import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public interface PhdFileVisitor extends TextFileVisitor{
 
@@ -41,7 +41,7 @@ public interface PhdFileVisitor extends TextFileVisitor{
     
     void visitEndDna();
     
-    void visitBasecall(NucleotideGlyph base, PhredQuality quality, int tracePosition);
+    void visitBasecall(Nucleotide base, PhredQuality quality, int tracePosition);
 
     void visitBeginTag(String tagName);
     

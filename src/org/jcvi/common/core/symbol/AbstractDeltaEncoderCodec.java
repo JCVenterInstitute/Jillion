@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public abstract class AbstractDeltaEncoderCodec<G extends NumericGlyph, N extends Number> implements GlyphCodec<G>{
+public abstract class AbstractDeltaEncoderCodec<G extends NumericSymbol, N extends Number> implements GlyphCodec<G>{
 
     private final DeltaEncoder deltaEncoder;
     private final ValueSizeStrategy<N> valueSizeStrategy;

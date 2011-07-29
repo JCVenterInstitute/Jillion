@@ -31,37 +31,37 @@ import java.util.List;
 
 import org.jcvi.common.core.symbol.RunLength;
 import org.jcvi.common.core.symbol.RunLengthEncoder;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRunLengthEncoder {
 
    String BasesAsString = "AAAAAAAAAAAATAAAAAAAAAAAATTTAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAA";
-    List<NucleotideGlyph> list = NucleotideGlyph.getGlyphsFor(BasesAsString);
-    List<RunLength<NucleotideGlyph>> expectedEncoding = Arrays.asList(
-            new RunLength<NucleotideGlyph>(NucleotideGlyph.Adenine,12),
-            new RunLength<NucleotideGlyph>(NucleotideGlyph.Thymine,1),
-            new RunLength<NucleotideGlyph>(NucleotideGlyph.Adenine,12),
-            new RunLength<NucleotideGlyph>(NucleotideGlyph.Thymine,3),
-            new RunLength<NucleotideGlyph>(NucleotideGlyph.Adenine,24),
-            new RunLength<NucleotideGlyph>(NucleotideGlyph.Thymine,1),
-            new RunLength<NucleotideGlyph>(NucleotideGlyph.Adenine,14)
+    List<Nucleotide> list = Nucleotide.getGlyphsFor(BasesAsString);
+    List<RunLength<Nucleotide>> expectedEncoding = Arrays.asList(
+            new RunLength<Nucleotide>(Nucleotide.Adenine,12),
+            new RunLength<Nucleotide>(Nucleotide.Thymine,1),
+            new RunLength<Nucleotide>(Nucleotide.Adenine,12),
+            new RunLength<Nucleotide>(Nucleotide.Thymine,3),
+            new RunLength<Nucleotide>(Nucleotide.Adenine,24),
+            new RunLength<Nucleotide>(Nucleotide.Thymine,1),
+            new RunLength<Nucleotide>(Nucleotide.Adenine,14)
     );
     @Test
     public void encode(){        
-        List<RunLength<NucleotideGlyph>> actual =RunLengthEncoder.encode(list);
+        List<RunLength<Nucleotide>> actual =RunLengthEncoder.encode(list);
         assertEquals(expectedEncoding, actual);
     }
     
     @Test
     public void decode(){
-        List<NucleotideGlyph> actual = RunLengthEncoder.decode(expectedEncoding);
+        List<Nucleotide> actual = RunLengthEncoder.decode(expectedEncoding);
         assertEquals(list, actual);
     }
     
     @Test
     public void enocdeEmptyList(){
-        assertEquals(new ArrayList<RunLength<NucleotideGlyph>>(), 
-                RunLengthEncoder.encode(Collections.<NucleotideGlyph>emptyList()));
+        assertEquals(new ArrayList<RunLength<Nucleotide>>(), 
+                RunLengthEncoder.encode(Collections.<Nucleotide>emptyList()));
     }
 }

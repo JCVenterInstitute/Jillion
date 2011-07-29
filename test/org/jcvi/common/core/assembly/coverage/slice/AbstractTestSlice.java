@@ -30,7 +30,7 @@ import org.jcvi.common.core.assembly.contig.slice.DefaultSliceElement;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -54,7 +54,7 @@ public abstract class AbstractTestSlice {
     @Test
     public void oneElement(){
         List<SliceElement> elements = new ArrayList<SliceElement>();
-        elements.add(new DefaultSliceElement("name1", NucleotideGlyph.Adenine, PhredQuality.valueOf(42), Direction.FORWARD));
+        elements.add(new DefaultSliceElement("name1", Nucleotide.Adenine, PhredQuality.valueOf(42), Direction.FORWARD));
     
         sut = createNew(elements);
         assertEquals(elements.size(),sut.getCoverageDepth());
@@ -66,10 +66,10 @@ public abstract class AbstractTestSlice {
     public void manyElements(){
         List<SliceElement> elements = new ArrayList<SliceElement>();
         elements.add(
-                new DefaultSliceElement("name1", NucleotideGlyph.Adenine, PhredQuality.valueOf(42), Direction.FORWARD));
+                new DefaultSliceElement("name1", Nucleotide.Adenine, PhredQuality.valueOf(42), Direction.FORWARD));
     
         elements.add(
-                new DefaultSliceElement("name2", NucleotideGlyph.Cytosine, PhredQuality.valueOf(2), Direction.REVERSE));
+                new DefaultSliceElement("name2", Nucleotide.Cytosine, PhredQuality.valueOf(2), Direction.REVERSE));
     
         sut = createNew(elements);
         assertEquals(elements.size(),sut.getCoverageDepth());
@@ -81,10 +81,10 @@ public abstract class AbstractTestSlice {
     public void iterator(){
         List<SliceElement> elements = new ArrayList<SliceElement>();
         elements.add(
-                new DefaultSliceElement("name1", NucleotideGlyph.Adenine, PhredQuality.valueOf(42), Direction.FORWARD));
+                new DefaultSliceElement("name1", Nucleotide.Adenine, PhredQuality.valueOf(42), Direction.FORWARD));
     
         elements.add(
-                new DefaultSliceElement("name2", NucleotideGlyph.Cytosine, PhredQuality.valueOf(2), Direction.REVERSE));
+                new DefaultSliceElement("name2", Nucleotide.Cytosine, PhredQuality.valueOf(2), Direction.REVERSE));
     
         sut = createNew(elements);
         Iterator<SliceElement> expected = elements.iterator();

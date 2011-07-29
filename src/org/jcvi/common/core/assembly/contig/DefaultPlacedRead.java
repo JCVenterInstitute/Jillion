@@ -30,7 +30,7 @@ import java.util.TreeMap;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
@@ -101,8 +101,8 @@ public class DefaultPlacedRead implements PlacedRead {
         		return false;
         	}
         	if(!read.getSequence().decode().equals(other.getSequence().decode())){
-        		System.out.println(NucleotideGlyph.convertToString(read.getSequence().decode()));
-        		System.out.println(NucleotideGlyph.convertToString(other.getSequence().decode()));
+        		System.out.println(Nucleotide.convertToString(read.getSequence().decode()));
+        		System.out.println(Nucleotide.convertToString(other.getSequence().decode()));
         		System.out.println();
         		return false;
         	}
@@ -127,8 +127,8 @@ public class DefaultPlacedRead implements PlacedRead {
         return getStart()+getLength()-1;
     }
 
-    public Map<Integer, NucleotideGlyph> getSnps(){
-        Map<Integer, NucleotideGlyph> map = new TreeMap<Integer, NucleotideGlyph>();
+    public Map<Integer, Nucleotide> getSnps(){
+        Map<Integer, Nucleotide> map = new TreeMap<Integer, Nucleotide>();
         final ReferenceEncodedNucleotideSequence encodedGlyphs = read.getSequence();
         for(Integer offset : encodedGlyphs.getSnpOffsets()){
             map.put(offset, encodedGlyphs.get(offset));

@@ -34,7 +34,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Before;
@@ -60,13 +60,13 @@ public class TestDefaultPlacedRead {
         Range validRange = Range.buildRange(start, length);
         ReferenceEncodedNucleotideSequence glyphs = createMock(ReferenceEncodedNucleotideSequence.class);
    
-        Map<Integer,NucleotideGlyph> snpMap = new HashMap<Integer, NucleotideGlyph>();
-        snpMap.put(Integer.valueOf(1), NucleotideGlyph.Adenine);
-        snpMap.put(Integer.valueOf(3), NucleotideGlyph.Cytosine);
-        snpMap.put(Integer.valueOf(5), NucleotideGlyph.Guanine);
+        Map<Integer,Nucleotide> snpMap = new HashMap<Integer, Nucleotide>();
+        snpMap.put(Integer.valueOf(1), Nucleotide.Adenine);
+        snpMap.put(Integer.valueOf(3), Nucleotide.Cytosine);
+        snpMap.put(Integer.valueOf(5), Nucleotide.Guanine);
         
         List<Integer> snps = new ArrayList<Integer>(snpMap.keySet());
-        for(Entry<Integer,NucleotideGlyph> entry : snpMap.entrySet()){
+        for(Entry<Integer,Nucleotide> entry : snpMap.entrySet()){
             expect(glyphs.get(entry.getKey().intValue())).andReturn(entry.getValue());
         }
         expect(read.getId()).andReturn(id);

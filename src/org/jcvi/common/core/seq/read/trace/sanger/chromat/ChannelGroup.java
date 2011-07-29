@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 /**
  * {@code ChannelGroup} is a composite of all 4 {@link Channel}s
  * of a Sanger sequenced trace.
@@ -53,12 +53,12 @@ public interface ChannelGroup {
      */
     Channel getTChannel();
     /**
-     * Get the {@link Channel} for a particular {@link NucleotideGlyph}.
-     * For example {@link #getChannel(NucleotideGlyph) getChannel(NucleotideGlyph.Adenine)}
+     * Get the {@link Channel} for a particular {@link Nucleotide}.
+     * For example {@link #getChannel(Nucleotide) getChannel(NucleotideGlyph.Adenine)}
      * is the same as {@link #getAChannel()}.
      * @param nucleotide the nucleotide channel to get.
-     * @return the {@link Channel} for that {@link NucleotideGlyph}.
+     * @return the {@link Channel} for that {@link Nucleotide}.
      */
-    Channel getChannel(NucleotideGlyph nucleotide);
+    Channel getChannel(Nucleotide nucleotide);
 
 }

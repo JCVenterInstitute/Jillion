@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdTag;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.IndexedFileRange;
 
 public class IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore extends IndexedPhdFileDataStore{
@@ -45,7 +45,7 @@ public class IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore extends IndexedP
     }
 
     @Override
-    protected synchronized void visitPhd(String id, List<NucleotideGlyph> bases,
+    protected synchronized void visitPhd(String id, List<Nucleotide> bases,
             List<PhredQuality> qualities, List<ShortGlyph> positions,
             Properties comments, List<PhdTag> tags) {
         for(PhdTag tag: tags){

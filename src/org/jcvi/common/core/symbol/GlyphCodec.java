@@ -35,7 +35,7 @@ import java.util.List;
  * @param <T> the Type of Glyph to be
  * encoded and or decoded.
  */
-public interface GlyphCodec<T extends Glyph> {
+public interface GlyphCodec<T extends Symbol> {
 	/**
 	 * Encode the given collection of glyphs
 	 * into a byte array.

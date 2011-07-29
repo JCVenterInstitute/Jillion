@@ -30,7 +30,7 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.MapValueComparator;
 /**
  * {@code MostFrequentBasecallConsensusCaller} is a {@link ConsensusCaller}
@@ -49,21 +49,21 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
     @Override
     public ConsensusResult callConsensus(Slice slice) {
         if(slice==null){
-            return new DefaultConsensusResult(NucleotideGlyph.Unknown, 0);
+            return new DefaultConsensusResult(Nucleotide.Unknown, 0);
         }
-        Map<NucleotideGlyph, Integer> histogramMap = new EnumMap<NucleotideGlyph, Integer>(NucleotideGlyph.class);
-        Map<NucleotideGlyph, Integer> qualitySums = new EnumMap<NucleotideGlyph, Integer>(NucleotideGlyph.class);
+        Map<Nucleotide, Integer> histogramMap = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
+        Map<Nucleotide, Integer> qualitySums = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
         for(SliceElement sliceElement : slice){
-            NucleotideGlyph base =sliceElement.getBase();
+            Nucleotide base =sliceElement.getBase();
             if(!qualitySums.containsKey(base)){
                 qualitySums.put(base, Integer.valueOf(0));
             }
             qualitySums.put(base, qualitySums.get(base) + sliceElement.getQuality().getNumber().intValue());
             incrementHistogram(histogramMap, base);
         }
-        NucleotideGlyph consensus= findMostOccuringBase(histogramMap);
+        Nucleotide consensus= findMostOccuringBase(histogramMap);
         int sum=0;
-        for(Entry<NucleotideGlyph, Integer> entry : qualitySums.entrySet()){
+        for(Entry<Nucleotide, Integer> entry : qualitySums.entrySet()){
             if(entry.getKey() == consensus){
                 sum+= entry.getValue();
             }
@@ -74,19 +74,19 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
         return new DefaultConsensusResult(consensus, sum);
     }
 
-    private void incrementHistogram(Map<NucleotideGlyph, Integer> histogramMap,
-            NucleotideGlyph base) {
+    private void incrementHistogram(Map<Nucleotide, Integer> histogramMap,
+            Nucleotide base) {
         if(!histogramMap.containsKey(base)){
             histogramMap.put(base, Integer.valueOf(0));
         }
         histogramMap.put(base, Integer.valueOf(histogramMap.get(base).intValue()+1));
     }
 
-    private NucleotideGlyph findMostOccuringBase(Map<NucleotideGlyph, Integer> histogramMap){
+    private Nucleotide findMostOccuringBase(Map<Nucleotide, Integer> histogramMap){
         if(histogramMap.isEmpty()){
-            return NucleotideGlyph.Unknown;
+            return Nucleotide.Unknown;
         }
-        SortedMap<NucleotideGlyph, Integer> sortedMap = MapValueComparator.sortDescending(histogramMap);
+        SortedMap<Nucleotide, Integer> sortedMap = MapValueComparator.sortDescending(histogramMap);
         return sortedMap.firstKey();
        
     }

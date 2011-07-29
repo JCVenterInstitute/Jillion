@@ -27,22 +27,22 @@ import java.util.List;
 
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequenceFastaRecord{
 
    
-    public DefaultNucleotideSequenceFastaRecord(String identifier, Sequence<NucleotideGlyph> sequence){
-        super(identifier, NucleotideGlyph.convertToString(sequence.decode()));
+    public DefaultNucleotideSequenceFastaRecord(String identifier, Sequence<Nucleotide> sequence){
+        super(identifier, Nucleotide.convertToString(sequence.decode()));
     }
-    public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, Sequence<NucleotideGlyph> sequence){
-        super(identifier, comments,NucleotideGlyph.convertToString(sequence.decode()));
+    public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, Sequence<Nucleotide> sequence){
+        super(identifier, comments,Nucleotide.convertToString(sequence.decode()));
     }
-    public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, List<NucleotideGlyph> sequence){
-        super(identifier, comments,NucleotideGlyph.convertToString(sequence));
+    public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, List<Nucleotide> sequence){
+        super(identifier, comments,Nucleotide.convertToString(sequence));
     }
-    public DefaultNucleotideSequenceFastaRecord(String identifier,  List<NucleotideGlyph> sequence){
+    public DefaultNucleotideSequenceFastaRecord(String identifier,  List<Nucleotide> sequence){
         this(identifier, null,sequence);
     }
     /**
@@ -85,7 +85,7 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
     protected CharSequence decodeNucleotides() {
 
         StringBuilder result = new StringBuilder();
-        for(NucleotideGlyph glyph : getValue().decode()){
+        for(Nucleotide glyph : getValue().decode()){
             result.append(glyph.getCharacter());
         }
         return result;
@@ -94,7 +94,7 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
     @Override
     protected NucleotideSequence encodeNucleotides(
             CharSequence sequence) {
-        return new DefaultNucleotideSequence( NucleotideGlyph.getGlyphsFor(sequence));
+        return new DefaultNucleotideSequence( Nucleotide.getGlyphsFor(sequence));
     }
 
 

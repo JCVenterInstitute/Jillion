@@ -31,7 +31,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class AcePlacedReadAdapter implements AcePlacedRead{
@@ -71,7 +71,7 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.getDirection();
     }
     @Override
-    public Map<Integer, NucleotideGlyph> getSnps() {
+    public Map<Integer, Nucleotide> getSnps() {
         return placedRead.getSnps();
     }
     @Override

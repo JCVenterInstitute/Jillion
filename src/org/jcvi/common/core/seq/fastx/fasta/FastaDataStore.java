@@ -24,10 +24,10 @@
 package org.jcvi.common.core.seq.fastx.fasta;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.symbol.Glyph;
+import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
 
-public interface FastaDataStore<G extends Glyph, T extends Sequence<G>,F extends FastaRecord<T>> extends DataStore<F>{
+public interface FastaDataStore<G extends Symbol, T extends Sequence<G>,F extends FastaRecord<T>> extends DataStore<F>{
 
     
 

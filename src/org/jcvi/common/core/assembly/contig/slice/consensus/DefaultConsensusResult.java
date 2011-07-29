@@ -23,25 +23,25 @@
  */
 package org.jcvi.common.core.assembly.contig.slice.consensus;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public class DefaultConsensusResult implements ConsensusResult {
 
-    private final NucleotideGlyph consensus;
+    private final Nucleotide consensus;
     private final int consensusQuality;
     
     /**
      * @param consensus
      * @param consensusQuality
      */
-    public DefaultConsensusResult(NucleotideGlyph consensus,
+    public DefaultConsensusResult(Nucleotide consensus,
             int consensusQuality) {
         this.consensus = consensus;
         this.consensusQuality = consensusQuality;
     }
 
     @Override
-    public NucleotideGlyph getConsensus() {
+    public Nucleotide getConsensus() {
         return consensus;
     }
 

@@ -23,7 +23,7 @@
 package org.jcvi.common.experimental.align;
 
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 
 /**
@@ -33,7 +33,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
  * 
  * @author jsitz@jcvi.org
  */
-public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
+public class SmithWatermanAligner implements Aligner<Nucleotide>
 {
     /** The default gap score. */
     private static final int DEFAULT_GAP_SCORE = -3;
@@ -45,7 +45,7 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
     private final int gapScore;
     
     /** The substitution matrix to use when scoring matches. */
-    private final SubstitutionMatrix<NucleotideGlyph> matrix;
+    private final SubstitutionMatrix<Nucleotide> matrix;
 
     /**
      * Creates a new <code>SmithWatermanAligner</code>.
@@ -53,7 +53,7 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
      * @param matrix The {@link SubstitutionMatrix} to use for scoring.
      * @param gapScore The gapping score (penalty) to use.
      */
-    public SmithWatermanAligner(SubstitutionMatrix<NucleotideGlyph> matrix, int gapScore)
+    public SmithWatermanAligner(SubstitutionMatrix<Nucleotide> matrix, int gapScore)
     {
         super();
         
@@ -67,7 +67,7 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
      * 
      * @param matrix The {@link SubstitutionMatrix} to use for scoring.
      */
-    public SmithWatermanAligner(SubstitutionMatrix<NucleotideGlyph> matrix)
+    public SmithWatermanAligner(SubstitutionMatrix<Nucleotide> matrix)
     {
         this(matrix, SmithWatermanAligner.DEFAULT_GAP_SCORE);
     }
@@ -75,10 +75,10 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
     /* (non-Javadoc)
      * @see org.jcvi.align.Aligner#alignSequence(java.lang.CharSequence)
      */
-    public Alignment alignSequence(Sequence<NucleotideGlyph> querySequence, Sequence<NucleotideGlyph> referenceSequence)
+    public Alignment alignSequence(Sequence<Nucleotide> querySequence, Sequence<Nucleotide> referenceSequence)
     {
         final AlignmentFactory alignment = new AlignmentFactory();
-        final ScoringMatrix<NucleotideGlyph> score = new ScoringMatrix<NucleotideGlyph>(referenceSequence, querySequence, this.gapScore);
+        final ScoringMatrix<Nucleotide> score = new ScoringMatrix<Nucleotide>(referenceSequence, querySequence, this.gapScore);
 
         /*
          * Set the sequence lengths
@@ -128,8 +128,8 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
                     /*
                      * Check for identity.
                      */
-                    final NucleotideGlyph refBase = referenceSequence.get(cursor.y);
-                    final NucleotideGlyph queryBase = querySequence.get(cursor.x);
+                    final Nucleotide refBase = referenceSequence.get(cursor.y);
+                    final Nucleotide queryBase = querySequence.get(cursor.x);
                     if (refBase == queryBase)
                     {
                         identity++;
@@ -197,7 +197,7 @@ public class SmithWatermanAligner implements Aligner<NucleotideGlyph>
      * @param score The scoring matrix.
      * @return The {@link Coordinate} of the best start location.
      */
-    protected Coordinate getAlignmentStartCoordinate(final ScoringMatrix<NucleotideGlyph> score) 
+    protected Coordinate getAlignmentStartCoordinate(final ScoringMatrix<Nucleotide> score) 
     {
         return score.getBestStart();
     }

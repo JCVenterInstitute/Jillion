@@ -30,7 +30,7 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.experimental.align.Aligner;
 import org.jcvi.common.experimental.align.Alignment;
@@ -80,7 +80,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
                                                         .unspecifiedMatchScore(0)
                                                         .ambiguityScore(2)
                                                         .build();
-    private final Aligner<NucleotideGlyph> aligner = new SmithWatermanAligner(matrix);
+    private final Aligner<Nucleotide> aligner = new SmithWatermanAligner(matrix);
     
     private final int minLength;
     private final double minMatch;
@@ -110,7 +110,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
                 final Alignment reverseAlignment;
                 if(alsoCheckReverseCompliment){
                     reverseAlignment = aligner.alignSequence(
-                            new DefaultNucleotideSequence(NucleotideGlyph.reverseCompliment(sequence.decode())),
+                            new DefaultNucleotideSequence(Nucleotide.reverseCompliment(sequence.decode())),
                             primer);
                 }else{
                     reverseAlignment = NULL_ALIGNMENT_OBJECT;

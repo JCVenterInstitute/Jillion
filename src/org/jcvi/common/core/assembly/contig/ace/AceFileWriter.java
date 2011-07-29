@@ -32,7 +32,7 @@ import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 public class AceFileWriter {
 
@@ -139,7 +139,7 @@ public class AceFileWriter {
         StringBuilder result = new StringBuilder();
         int numberOfQualitiesSoFar=0;
         for(int i=0; i< consensus.getLength(); i++){
-            NucleotideGlyph base = consensus.get(i);
+            Nucleotide base = consensus.get(i);
             if(base.isGap()){
                 continue;
             }

@@ -33,7 +33,7 @@ import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadAdapter;
 import org.jcvi.common.core.assembly.contig.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,7 +86,7 @@ public class TestAcePlacedReadAdapter {
     }
     @Test
     public void getSnps() {
-        Map<Integer,NucleotideGlyph> snpMap = createMock(Map.class);
+        Map<Integer,Nucleotide> snpMap = createMock(Map.class);
         expect(mockPlacedRead.getSnps()).andReturn(snpMap);
         replay(mockPlacedRead);
         assertEquals(snpMap, sut.getSnps());

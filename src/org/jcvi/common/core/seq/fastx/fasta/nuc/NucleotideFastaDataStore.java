@@ -20,16 +20,16 @@
 package org.jcvi.common.core.seq.fastx.fasta.nuc;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * {@code NucleotideFastaDataStore} is a FastaDataStore
- * for storing {@link NucleotideGlyph}s.
+ * for storing {@link Nucleotide}s.
  * @author dkatzel
  *
  *
  */
-public interface NucleotideFastaDataStore extends FastaDataStore<NucleotideGlyph, NucleotideSequence, NucleotideSequenceFastaRecord>{
+public interface NucleotideFastaDataStore extends FastaDataStore<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord>{
 
 }

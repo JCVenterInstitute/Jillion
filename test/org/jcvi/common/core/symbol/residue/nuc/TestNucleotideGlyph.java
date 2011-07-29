@@ -28,16 +28,16 @@ import java.util.Collection;
 import java.util.List;
 
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import static org.junit.Assert.*;
-import static org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph.*;
+import static org.jcvi.common.core.symbol.residue.nuc.Nucleotide.*;
 @RunWith(Parameterized.class)
 public class TestNucleotideGlyph {
-    private NucleotideGlyph glyph,reverseGlyph;
+    private Nucleotide glyph,reverseGlyph;
     @Parameters
     public static Collection<?> data(){
 
@@ -58,7 +58,7 @@ public class TestNucleotideGlyph {
 
     }
 
-    public TestNucleotideGlyph(NucleotideGlyph glyph,NucleotideGlyph reverseGlyph){
+    public TestNucleotideGlyph(Nucleotide glyph,Nucleotide reverseGlyph){
         this.glyph = glyph;
         this.reverseGlyph = reverseGlyph;
     }
@@ -81,7 +81,7 @@ public class TestNucleotideGlyph {
         assertEquals(computeExpectedIsAmbiguity(reverseGlyph), reverseGlyph.isAmbiguity());
     }
 
-    private boolean computeExpectedIsAmbiguity(NucleotideGlyph glyph) {
+    private boolean computeExpectedIsAmbiguity(Nucleotide glyph) {
         boolean expectedIsAmbiguity = glyph != Gap && glyph!=Adenine 
         && glyph!=Thymine && glyph !=Cytosine && glyph != Guanine;
         return expectedIsAmbiguity;
@@ -89,10 +89,10 @@ public class TestNucleotideGlyph {
     
     @Test
     public void reverseComplimentList(){
-        List<NucleotideGlyph> forward = Arrays.asList(Adenine,Cytosine,Guanine, Thymine, Gap,Cytosine);
-        List<NucleotideGlyph> expectedReversed = Arrays.asList(Guanine, Gap, Adenine,Cytosine,Guanine, Thymine);
+        List<Nucleotide> forward = Arrays.asList(Adenine,Cytosine,Guanine, Thymine, Gap,Cytosine);
+        List<Nucleotide> expectedReversed = Arrays.asList(Guanine, Gap, Adenine,Cytosine,Guanine, Thymine);
         
-        assertEquals(expectedReversed, NucleotideGlyph.reverseCompliment(forward));
+        assertEquals(expectedReversed, Nucleotide.reverseCompliment(forward));
     }
 
 

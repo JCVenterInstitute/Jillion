@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestSFFUtil_numberOfIntensities {
@@ -36,32 +36,32 @@ public class TestSFFUtil_numberOfIntensities {
     
     @Test
     public void noHomoPolymerRunsshouldReturnNumberOfBases(){
-        final List<NucleotideGlyph> oneOfEachBasecall = Arrays.asList(NucleotideGlyph.values());
+        final List<Nucleotide> oneOfEachBasecall = Arrays.asList(Nucleotide.values());
         assertEquals(oneOfEachBasecall.size(),SFFUtil.numberOfIntensities(oneOfEachBasecall));
     }
     
     @Test
     public void emptyListShouldReturnZero(){
-        assertEquals(0, SFFUtil.numberOfIntensities(Collections.<NucleotideGlyph>emptyList()));
+        assertEquals(0, SFFUtil.numberOfIntensities(Collections.<Nucleotide>emptyList()));
     }
     
     @Test
     public void onlyOneHomopolymerRunShouldReturn1(){
-        List<NucleotideGlyph> oneHomopolymer = Arrays.asList(NucleotideGlyph.Adenine,NucleotideGlyph.Adenine,NucleotideGlyph.Adenine);
+        List<Nucleotide> oneHomopolymer = Arrays.asList(Nucleotide.Adenine,Nucleotide.Adenine,Nucleotide.Adenine);
         assertEquals(1,SFFUtil.numberOfIntensities(oneHomopolymer));
     }
     @Test
     public void twoHomopolymerRunsShouldReturn2(){
-        List<NucleotideGlyph> twoDifferentBases = Arrays.asList(NucleotideGlyph.Adenine,NucleotideGlyph.Adenine,
-                NucleotideGlyph.Cytosine);
+        List<Nucleotide> twoDifferentBases = Arrays.asList(Nucleotide.Adenine,Nucleotide.Adenine,
+                Nucleotide.Cytosine);
         assertEquals(2,SFFUtil.numberOfIntensities(twoDifferentBases));
     }
     
     @Test
     public void threeRunsShouldReturn3(){
-        List<NucleotideGlyph> threeRuns = Arrays.asList(NucleotideGlyph.Adenine,NucleotideGlyph.Adenine,
-                NucleotideGlyph.Cytosine,
-                NucleotideGlyph.Adenine,NucleotideGlyph.Adenine);
+        List<Nucleotide> threeRuns = Arrays.asList(Nucleotide.Adenine,Nucleotide.Adenine,
+                Nucleotide.Cytosine,
+                Nucleotide.Adenine,Nucleotide.Adenine);
         assertEquals(3,SFFUtil.numberOfIntensities(threeRuns));
     }
 }

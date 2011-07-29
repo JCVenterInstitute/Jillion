@@ -38,7 +38,7 @@ import java.util.Map.Entry;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 /**
  * Calculate Consensus for a slice using Bayes formula and the procedure from
  * <pre>
@@ -62,14 +62,14 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
     }
     
 
-    protected abstract NucleotideGlyph getConsensus(ProbabilityStruct normalizedErrorProbabilityStruct,Slice slice) ;
+    protected abstract Nucleotide getConsensus(ProbabilityStruct normalizedErrorProbabilityStruct,Slice slice) ;
  
     
     @Override
     public ConsensusResult callConsensusWithCoverage(Slice slice) {
-        Map<NucleotideGlyph, Integer> qualityValueSumMap = generateQualityValueSumMap(slice);
+        Map<Nucleotide, Integer> qualityValueSumMap = generateQualityValueSumMap(slice);
         ProbabilityStruct normalizedErrorProbabilityStruct = generateNormalizedProbabilityStruct(qualityValueSumMap);
-        NucleotideGlyph consensus=  getConsensus(normalizedErrorProbabilityStruct,slice);
+        Nucleotide consensus=  getConsensus(normalizedErrorProbabilityStruct,slice);
         return new DefaultConsensusResult(consensus,
                 
                 getErrorProbability(normalizedErrorProbabilityStruct,
@@ -97,7 +97,7 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
     protected double getProbabilityFor(ProbabilityStruct normalizedErrorProbabilityStruct){
         //find lowest
         Double lowest = Double.MAX_VALUE;
-        for(Entry<NucleotideGlyph, Double> entry: normalizedErrorProbabilityStruct.entrySet()){
+        for(Entry<Nucleotide, Double> entry: normalizedErrorProbabilityStruct.entrySet()){
             Double currentValue = entry.getValue();
             if(currentValue.compareTo(lowest) <0){
                 lowest = currentValue;
@@ -106,31 +106,31 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
         return lowest;
     }
     private ProbabilityStruct generateNormalizedProbabilityStruct(
-            Map<NucleotideGlyph, Integer> qualityValueSumMap) {
+            Map<Nucleotide, Integer> qualityValueSumMap) {
         List<ProbabilityStruct> probabilityStructs = createProbabilityStructsForEachBase(qualityValueSumMap);
         ProbabilityStruct rawErrorProbabilityStruct = createRawErrorProbabilityStruct(probabilityStructs);
         return rawErrorProbabilityStruct.normalize();
     }
     private ProbabilityStruct createRawErrorProbabilityStruct(
             List<ProbabilityStruct> probabilityStructs) {
-        Map<NucleotideGlyph, Double> rawErrorProbabilityMap = new EnumMap<NucleotideGlyph, Double>(NucleotideGlyph.class);
-        for(NucleotideGlyph base : ConsensusUtil.BASES_TO_CONSIDER){
+        Map<Nucleotide, Double> rawErrorProbabilityMap = new EnumMap<Nucleotide, Double>(Nucleotide.class);
+        for(Nucleotide base : ConsensusUtil.BASES_TO_CONSIDER){
             rawErrorProbabilityMap.put(base, calculateRawErrorProbabilityFor(base, probabilityStructs));
         }        
         return new ProbabilityStruct(rawErrorProbabilityMap);
     }
 
     private List<ProbabilityStruct> createProbabilityStructsForEachBase(
-            Map<NucleotideGlyph, Integer> qualityValueSumMap) {
+            Map<Nucleotide, Integer> qualityValueSumMap) {
         List<ProbabilityStruct> probabilityStructs= new ArrayList<ProbabilityStruct>();
-        for(NucleotideGlyph base : ConsensusUtil.BASES_TO_CONSIDER){
+        for(Nucleotide base : ConsensusUtil.BASES_TO_CONSIDER){
             probabilityStructs.add(new ProbabilityStruct(base, qualityValueSumMap.get(base)));
         }
                
         return probabilityStructs;
     }
 
-    private double calculateRawErrorProbabilityFor(NucleotideGlyph base,
+    private double calculateRawErrorProbabilityFor(Nucleotide base,
             List<ProbabilityStruct> probabilityStructs) {
         double result = 1D;
         for(ProbabilityStruct struct : probabilityStructs){
@@ -139,16 +139,16 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
         return result;
     }
    
-    protected Set<NucleotideGlyph> getBasesUsedTowardsAmbiguity(
+    protected Set<Nucleotide> getBasesUsedTowardsAmbiguity(
             ProbabilityStruct normalizedErrorProbabilityStruct, int baseCount) {
         double errorProbabilityOfAmbiguity;
         double sumOfProbabilitySuccess=0D;
-        Set<NucleotideGlyph> basesUsed = EnumSet.noneOf(NucleotideGlyph.class);
-        List<NucleotideGlyph> basesToConsider = new ArrayList<NucleotideGlyph>(BASES_TO_CONSIDER);
+        Set<Nucleotide> basesUsed = EnumSet.noneOf(Nucleotide.class);
+        List<Nucleotide> basesToConsider = new ArrayList<Nucleotide>(BASES_TO_CONSIDER);
         Collections.sort(basesToConsider, new LowestProbabilityComparator(normalizedErrorProbabilityStruct));
         do
         {
-            NucleotideGlyph baseWithLowestErrorProbability = basesToConsider.remove(0);
+            Nucleotide baseWithLowestErrorProbability = basesToConsider.remove(0);
             sumOfProbabilitySuccess += (1 - normalizedErrorProbabilityStruct.getProbabilityFor(
                     baseWithLowestErrorProbability));
             basesUsed.add(baseWithLowestErrorProbability);
@@ -160,18 +160,18 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
     }
     /**
      * Sorts {@link ProbabilityStruct} by comparing the 
-     * probability of the given {@link NucleotideGlyph}.
+     * probability of the given {@link Nucleotide}.
      * @author dkatzel
      *
      *
      */
-    private static class LowestProbabilityComparator implements Comparator<NucleotideGlyph>{
+    private static class LowestProbabilityComparator implements Comparator<Nucleotide>{
         private final ProbabilityStruct probabilityStruct;
         LowestProbabilityComparator(ProbabilityStruct probabilityStruct){
             this.probabilityStruct = probabilityStruct;
         }
         @Override
-        public int compare(NucleotideGlyph o1, NucleotideGlyph o2) {
+        public int compare(Nucleotide o1, Nucleotide o2) {
             return probabilityStruct.getProbabilityFor(o1).compareTo(probabilityStruct.getProbabilityFor(o2));
         }
         

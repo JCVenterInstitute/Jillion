@@ -50,7 +50,7 @@ import org.jcvi.common.core.assembly.contig.cas.var.DefaultVariationLogFile;
 import org.jcvi.common.core.assembly.contig.cas.var.Variation;
 import org.jcvi.common.core.assembly.contig.cas.var.VariationLog;
 import org.jcvi.common.core.assembly.contig.cas.var.Variation.Type;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 /**
  * @author dkatzel
  *
@@ -188,22 +188,22 @@ public class Compare2VarFiles {
         }
     }
 
-    private static String createHistogramCountsFor(Map<List<NucleotideGlyph>, Integer> histogram){
+    private static String createHistogramCountsFor(Map<List<Nucleotide>, Integer> histogram){
         StringBuilder variationList = new StringBuilder();
-        SortedSet<List<NucleotideGlyph>> keys = new TreeSet<List<NucleotideGlyph>>(
-                new Comparator<List<NucleotideGlyph>>() {
+        SortedSet<List<Nucleotide>> keys = new TreeSet<List<Nucleotide>>(
+                new Comparator<List<Nucleotide>>() {
 
                     @Override
-                    public int compare(List<NucleotideGlyph> o1,
-                            List<NucleotideGlyph> o2) {
-                        return NucleotideGlyph.convertToString(o1).compareTo(NucleotideGlyph.convertToString(o2));
+                    public int compare(List<Nucleotide> o1,
+                            List<Nucleotide> o2) {
+                        return Nucleotide.convertToString(o1).compareTo(Nucleotide.convertToString(o2));
                     }
                     
                 }
                 );
         keys.addAll(histogram.keySet());
-        for(Entry<List<NucleotideGlyph>, Integer> entry : histogram.entrySet()){
-            variationList.append(String.format(" %s: %d", NucleotideGlyph.convertToString(entry.getKey()), entry.getValue()));
+        for(Entry<List<Nucleotide>, Integer> entry : histogram.entrySet()){
+            variationList.append(String.format(" %s: %d", Nucleotide.convertToString(entry.getKey()), entry.getValue()));
         }
         
         return variationList.toString();

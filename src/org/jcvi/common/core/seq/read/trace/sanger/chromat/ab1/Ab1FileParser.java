@@ -54,7 +54,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.TimeTaggedData
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.UserDefinedTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateUtils;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -137,7 +137,7 @@ public final class Ab1FileParser {
 			byte[] traceData = parseTraceDataBlock(in, datablockOffset-AbiUtil.HEADER_SIZE);
 			GroupedTaggedRecords groupedDataRecordMap = parseTaggedDataRecords(in,numberOfTaggedRecords,traceData,visitor);
 	
-			List<NucleotideGlyph> channelOrder =parseChannelOrder(groupedDataRecordMap);
+			List<Nucleotide> channelOrder =parseChannelOrder(groupedDataRecordMap);
 			visitChannelOrderIfAble(visitor, channelOrder);			
 			List<String> basecalls =parseBasecallsFrom(groupedDataRecordMap,traceData,visitor);	
 			String signalScale =parseSignalScalingFactor(groupedDataRecordMap, channelOrder, traceData,visitor);
@@ -151,7 +151,7 @@ public final class Ab1FileParser {
 
 	private static String parseSignalScalingFactor(
 			GroupedTaggedRecords groupedDataRecordMap,
-			List<NucleotideGlyph> channelOrder, byte[] traceData,
+			List<Nucleotide> channelOrder, byte[] traceData,
 			ChromatogramFileVisitor visitor) {		
 		
 			ShortArrayTaggedDataRecord scalingFactors =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.SCALE_FACTOR).get(0);
@@ -182,7 +182,7 @@ public final class Ab1FileParser {
 		List<ByteArrayTaggedDataRecord> qualityRecords =groupedDataRecordMap.byteArrayRecords.get(TaggedDataName.JTC_QUALITY_VALUES);
 		for(int i=0; i<qualityRecords.size(); i++){
 		    ByteArrayTaggedDataRecord qualityRecord = qualityRecords.get(i);
-			List<NucleotideGlyph> basecalls = NucleotideGlyph.getGlyphsFor(basecallsList.get(i));
+			List<Nucleotide> basecalls = Nucleotide.getGlyphsFor(basecallsList.get(i));
 			byte[][] qualities = splitQualityDataByChannel(basecalls, qualityRecord.parseDataRecordFrom(traceData));
 			if(i == ORIGINAL_VERSION && visitor instanceof AbiChromatogramFileVisitor){
 				AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor)visitor;
@@ -219,7 +219,7 @@ public final class Ab1FileParser {
 	 * @return a byte matrix containing the quality channel
 	 * data for A,C,G,T in that order.
 	 */
-	private static byte[][] splitQualityDataByChannel(List<NucleotideGlyph> basecalls,byte[] qualities ){
+	private static byte[][] splitQualityDataByChannel(List<Nucleotide> basecalls,byte[] qualities ){
 		//The channel of the given basecall gets that
 		// quality value, the other channels get zero
 		int size = basecalls.size();
@@ -231,7 +231,7 @@ public final class Ab1FileParser {
 		populateQualities(basecalls, qualities, aQualities, cQualities, gQualities, tQualities);
 		return new byte[][]{aQualities.array(),cQualities.array(),gQualities.array(),tQualities.array()};
 	}
-    private static void populateQualities(List<NucleotideGlyph> basecalls,
+    private static void populateQualities(List<Nucleotide> basecalls,
             byte[] qualities, ByteBuffer aQualities, ByteBuffer cQualities,
             ByteBuffer gQualities, ByteBuffer tQualities) {
         for(int i=0; i<qualities.length; i++){
@@ -239,7 +239,7 @@ public final class Ab1FileParser {
 		}
     }
     private static void populateQualities(ByteBuffer aQualities, ByteBuffer cQualities,
-            ByteBuffer gQualities, ByteBuffer tQualities, NucleotideGlyph basecall, byte quality) {
+            ByteBuffer gQualities, ByteBuffer tQualities, Nucleotide basecall, byte quality) {
         switch(basecall){
         	case Adenine:
         		handleAQuality(aQualities, cQualities, gQualities, tQualities, quality);
@@ -305,7 +305,7 @@ public final class Ab1FileParser {
 
 	private static Map<String,String> parseDataChannels(
 			GroupedTaggedRecords groupedDataRecordMap,
-			List<NucleotideGlyph> channelOrder,
+			List<Nucleotide> channelOrder,
 			byte[] traceData,
 			ChromatogramFileVisitor visitor) {
 		List<ShortArrayTaggedDataRecord> dataRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.DATA);
@@ -316,7 +316,7 @@ public final class Ab1FileParser {
 		}
 		Map<String,String> props = new HashMap<String, String>();
 		for(int i=0; i<4; i++){
-			NucleotideGlyph channel = channelOrder.get(i);
+			Nucleotide channel = channelOrder.get(i);
 			short[] channelData =dataRecords.get(i+8).parseDataRecordFrom(traceData);
 			props.put("NPTS", ""+channelData.length);
 			visitChannel(visitor, channel, channelData);
@@ -324,7 +324,7 @@ public final class Ab1FileParser {
 		return props;
 	}
     private static void visitChannel(ChromatogramFileVisitor visitor,
-            NucleotideGlyph channel, short[] channelData) {
+            Nucleotide channel, short[] channelData) {
         switch(channel){
         	case Adenine:
         		visitor.visitAPositions(channelData);					
@@ -356,7 +356,7 @@ public final class Ab1FileParser {
     }
 
 	private static void visitChannelOrderIfAble(
-			ChromatogramFileVisitor visitor, List<NucleotideGlyph> channelOrder) {
+			ChromatogramFileVisitor visitor, List<Nucleotide> channelOrder) {
 		if(visitor instanceof AbiChromatogramFileVisitor){
 			((AbiChromatogramFileVisitor) visitor).visitChannelOrder(channelOrder);
 		}
@@ -371,7 +371,7 @@ public final class Ab1FileParser {
 	private static void parseCommentsFrom(
 	        Map<String,String> props,
 			GroupedTaggedRecords groupedDataRecordMap, 
-			List<NucleotideGlyph> channelOrder,byte[] traceData,
+			List<Nucleotide> channelOrder,byte[] traceData,
 			String signalScale, List<String> basecalls,
 			ChromatogramFileVisitor visitor) {
 		props.put("SIGN", signalScale);
@@ -428,7 +428,7 @@ public final class Ab1FileParser {
      */
     private static Map<String,String> addNoiseComment(
             GroupedTaggedRecords groupedDataRecordMap,
-            List<NucleotideGlyph> channelOrder,
+            List<Nucleotide> channelOrder,
             byte[] traceData,
             Map<String,String> props) {
         Map<TaggedDataName, List<FloatArrayTaggedDataRecord>> map= groupedDataRecordMap.floatDataRecords;
@@ -499,9 +499,9 @@ public final class Ab1FileParser {
      * @return
      */
     private static Map<String,String> addChannelOrderComment(
-            List<NucleotideGlyph> channelOrder, Map<String,String> props) {
+            List<Nucleotide> channelOrder, Map<String,String> props) {
         StringBuilder order = new StringBuilder();
-        for(NucleotideGlyph channel: channelOrder){
+        for(Nucleotide channel: channelOrder){
             order.append(channel.getCharacter());
         }
         props.put("FWO_", order.toString() );
@@ -613,10 +613,10 @@ public final class Ab1FileParser {
 		
 	}
 
-	private static List<NucleotideGlyph> parseChannelOrder(GroupedTaggedRecords dataRecordMap ){
+	private static List<Nucleotide> parseChannelOrder(GroupedTaggedRecords dataRecordMap ){
 		AsciiTaggedDataRecord order = dataRecordMap.asciiDataRecords.get(TaggedDataName.FILTER_WHEEL_ORDER).get(0);
 		
-		return NucleotideGlyph.getGlyphsFor(order.parseDataRecordFrom(null));
+		return Nucleotide.getGlyphsFor(order.parseDataRecordFrom(null));
 
 	}
 
@@ -782,10 +782,10 @@ public final class Ab1FileParser {
 	private static class Noise{
 	    private float aNoise,cNoise,gNoise,tNoise;
 	    
-	    static Noise create(List<NucleotideGlyph> channelOrder, float[] noise){
+	    static Noise create(List<Nucleotide> channelOrder, float[] noise){
 	        Noise n = new Noise();
             int i=0;
-            for(NucleotideGlyph channel:channelOrder){
+            for(Nucleotide channel:channelOrder){
                 switch(channel){
                     case Adenine:   n.aNoise= noise[i];
                                     break;
@@ -820,10 +820,10 @@ public final class Ab1FileParser {
 	    
 	    private short aScale=-1,cScale=-1,gScale=-1,tScale =-1;
 	    
-	    static SignalScalingFactor create(List<NucleotideGlyph> channelOrder, List<Short> scalingFactors){
+	    static SignalScalingFactor create(List<Nucleotide> channelOrder, List<Short> scalingFactors){
 	        SignalScalingFactor sf= new SignalScalingFactor();	         
     	    Iterator<Short> scaleIterator = scalingFactors.iterator();
-    	    for(NucleotideGlyph channel : channelOrder){
+    	    for(Nucleotide channel : channelOrder){
     	        short scale = scaleIterator.next();
     	        switch(channel){
     	            case Adenine:

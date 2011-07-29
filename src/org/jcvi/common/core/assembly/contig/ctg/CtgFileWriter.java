@@ -36,7 +36,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
  * {@code CtgFileWriter} will write out {@link Contig}
@@ -72,9 +72,9 @@ public class CtgFileWriter implements Closeable{
         writeToOutputStream(header);
     }
 
-    private void writeBases(Sequence<NucleotideGlyph> consensus) throws UnsupportedEncodingException, IOException {
+    private void writeBases(Sequence<Nucleotide> consensus) throws UnsupportedEncodingException, IOException {
         StringBuilder asString = new StringBuilder();
-        for(NucleotideGlyph glyph : consensus.decode()){
+        for(Nucleotide glyph : consensus.decode()){
             asString.append(glyph);
         }
         

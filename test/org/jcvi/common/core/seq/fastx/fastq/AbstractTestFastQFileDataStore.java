@@ -38,7 +38,7 @@ import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.common.core.util.CommonUtil;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -54,7 +54,7 @@ public abstract class AbstractTestFastQFileDataStore {
     DefaultFastQRecord solexa_1489 = new DefaultFastQRecord(
             "SOLEXA1:4:1:12:1489#0/1",
             new DefaultNucleotideSequence(
-                    NucleotideGlyph
+                    Nucleotide
                             .getGlyphsFor("TATTTAAAATCTAATANGTCTTGATTTGAAATTGAAAGAGCAAAAATCTGATTGATTTTATTGAAGAATAATTTGATTTAATATATTCTTAAGTCTGTTT")),
             QUALITY_CODEC
                     .decode("abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S"));
@@ -62,7 +62,7 @@ public abstract class AbstractTestFastQFileDataStore {
     DefaultFastQRecord solexa_1692 = new DefaultFastQRecord(
             "SOLEXA1:4:1:12:1692#0/1",
             new DefaultNucleotideSequence(
-                    NucleotideGlyph
+                    Nucleotide
                             .getGlyphsFor("ACGCCTGCGTTATGGTNTAACAGGCATTCCGCCCCAGACAAACTCCCCCCCTAACCATGTCTTTCGCAAAAATCAGTCAATAAATGACCTTAACTTTAGA")),
             QUALITY_CODEC
                     .decode("`a\\a`^\\a^ZZa[]^WB_aaaa^^a`]^a`^`aaa`]``aXaaS^a^YaZaTW]a_aPY\\_UVY[P_ZHQY_NLZUR[^UZ\\TZWT_[_VWMWaRFW]BB"),
