@@ -63,6 +63,10 @@ public class TestLRUCache {
         assertTrue(sut.containsKey(second));
         assertTrue(sut.containsKey(third));
         assertTrue(sut.containsKey(fourth));
+        
+        assertEquals(second,sut.get(second));
+        assertEquals(third,sut.get(third));
+        assertEquals(fourth,sut.get(fourth));
     }
     @Test
     public void remove(){
@@ -71,5 +75,9 @@ public class TestLRUCache {
         assertTrue(sut.containsKey(first));
         assertTrue(sut.containsKey(second));
         assertTrue(sut.containsKey(fourth));
+        
+        assertEquals(first,sut.get(first));
+        assertEquals(second,sut.get(second));
+        assertEquals(fourth,sut.get(fourth));
     }
 }
