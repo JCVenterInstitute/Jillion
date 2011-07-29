@@ -222,7 +222,7 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
                 quality = qualityValueStrategy.getQualityFor(read, fullQualities, indexIntoRead);
             }
             builder.addSliceElement(id,
-                    read.getEncodedGlyphs().get(indexIntoRead),
+                    read.getSequence().get(indexIntoRead),
                     quality, read.getDirection());
         }
         return builder.build();

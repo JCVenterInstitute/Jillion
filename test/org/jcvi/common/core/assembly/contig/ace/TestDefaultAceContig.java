@@ -53,6 +53,6 @@ public class TestDefaultAceContig {
             assertEquals(16, consensus.getLength());
             assertEquals("id",contig.getId());
             assertEquals(1,contig.getNumberOfReads());
-            assertEquals("ACGTACGTACGTACGT", NucleotideGlyph.convertToString(contig.getPlacedReadById("read").getEncodedGlyphs().decode()));
+            assertEquals("ACGTACGTACGTACGT", NucleotideGlyph.convertToString(contig.getPlacedReadById("read").getSequence().decode()));
     }
 }

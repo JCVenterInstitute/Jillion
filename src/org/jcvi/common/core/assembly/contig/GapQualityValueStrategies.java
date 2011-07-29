@@ -92,7 +92,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
         if(fullQualities ==null){
             throw new NullPointerException("null qualities for "+placedRead);
         }
-        final NucleotideSequence encodedGlyphs = placedRead.getEncodedGlyphs();
+        final NucleotideSequence encodedGlyphs = placedRead.getSequence();
         if(!AssemblyUtil.isAGap(encodedGlyphs, gappedReadIndex)){
             return getQualityForNonGapBase(placedRead, fullQualities, gappedReadIndex);
         }
@@ -115,7 +115,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
         if(AssemblyUtil.beforeStartOfRead(leftFlankingNonGapIndex)){
             return getQualityValueIfReadStartsWithGap();
         }
-        if(AssemblyUtil.afterEndOfRead(rightFlankingNonGapIndex, placedRead.getEncodedGlyphs())){
+        if(AssemblyUtil.afterEndOfRead(rightFlankingNonGapIndex, placedRead.getSequence())){
             return getQualityValueIfReadEndsWithGap();
         }
         PhredQuality leftFlankingQuality = getQualityForNonGapBase(placedRead, fullQualities, leftFlankingNonGapIndex);

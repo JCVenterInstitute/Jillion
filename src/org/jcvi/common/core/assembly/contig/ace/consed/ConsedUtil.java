@@ -195,7 +195,7 @@ public class ConsedUtil {
                 throw new NullPointerException("got a null read for id " + readId);
             }
             builder.addRead(readId, 
-                    NucleotideGlyph.convertToString(read.getEncodedGlyphs().decode()), 
+                    NucleotideGlyph.convertToString(read.getSequence().decode()), 
                     (int)(read.getStart() - contigRange.getStart()), 
                     read.getDirection(), read.getValidRange(), read.getPhdInfo(),
                     read.getUngappedFullLength());

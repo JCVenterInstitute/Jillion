@@ -103,9 +103,9 @@ public class TestAcePlacedReadAdapter {
     @Test
     public void getEncodedGlyphs() {
         NucleotideSequence encodedGlyphs = createMock(NucleotideSequence.class);
-        expect(mockPlacedRead.getEncodedGlyphs()).andReturn(encodedGlyphs);
+        expect(mockPlacedRead.getSequence()).andReturn(encodedGlyphs);
         replay(mockPlacedRead);
-        assertEquals(encodedGlyphs, sut.getEncodedGlyphs());
+        assertEquals(encodedGlyphs, sut.getSequence());
         verify(mockPlacedRead);
         
     }

@@ -67,8 +67,8 @@ public class MinimumEndCoverageTrimmer<P extends PlacedRead, C extends Contig<P>
         }
         int gappedLeftIndex = (int)placedRead.convertReferenceIndexToValidRangeIndex(placedReadTrimRange.getStart());
         int gappedRightIndex =(int)placedRead.convertReferenceIndexToValidRangeIndex(placedReadTrimRange.getEnd());
-        int newLeftStart =AssemblyUtil.getRightFlankingNonGapIndex(placedRead.getEncodedGlyphs(), gappedLeftIndex);
-        int newRightStart =AssemblyUtil.getLeftFlankingNonGapIndex(placedRead.getEncodedGlyphs(), gappedRightIndex);
+        int newLeftStart =AssemblyUtil.getRightFlankingNonGapIndex(placedRead.getSequence(), gappedLeftIndex);
+        int newRightStart =AssemblyUtil.getLeftFlankingNonGapIndex(placedRead.getSequence(), gappedRightIndex);
         
         return Range.buildRange(newLeftStart,newRightStart);
     }

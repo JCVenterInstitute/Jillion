@@ -79,8 +79,8 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.getValidRange();
     }
     @Override
-    public NucleotideSequence getEncodedGlyphs() {
-        return placedRead.getEncodedGlyphs();
+    public NucleotideSequence getSequence() {
+        return placedRead.getSequence();
     }
     @Override
     public String getId() {

@@ -84,7 +84,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
         assertEquals(expected.getEnd(), actual.getEnd());
         assertEquals(expected.getLength(), actual.getLength());
         assertEquals(expected.getId(),expected.getValidRange(), actual.getValidRange());
-        assertEquals(expected.getEncodedGlyphs().decode(), actual.getEncodedGlyphs().decode());
+        assertEquals(expected.getSequence().decode(), actual.getSequence().decode());
         
     }
 }

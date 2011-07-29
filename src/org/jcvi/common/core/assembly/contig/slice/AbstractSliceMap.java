@@ -68,7 +68,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
             PlacedRead realRead,
             final Sequence<PhredQuality> qualities) {
 
-        final NucleotideGlyph calledBase = realRead.getEncodedGlyphs().get(gappedIndex);
+        final NucleotideGlyph calledBase = realRead.getSequence().get(gappedIndex);
         try{
             PhredQuality qualityValue =qualityValueStrategy.getQualityFor(realRead, qualities, gappedIndex);
         

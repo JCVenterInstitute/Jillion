@@ -29,12 +29,12 @@ import org.jcvi.common.core.util.CommonUtil;
 public class DefaultRead<T extends NucleotideSequence> implements Read<T>{
     private final String id;
     private final T glyphs;
-    public DefaultRead(String id, T glyphs){
+    public DefaultRead(String id, T sequence){
         this.id= id;
-        this.glyphs = glyphs;
+        this.glyphs = sequence;
     }
     @Override
-    public T getEncodedGlyphs() {
+    public T getSequence() {
         return glyphs;
     }
 
@@ -73,7 +73,7 @@ public class DefaultRead<T extends NucleotideSequence> implements Read<T>{
     }
     @Override
     public String toString() {
-        return "read : " + getId() + "  validRange" + getEncodedGlyphs().getValidRange()+"  " + getEncodedGlyphs().decode().toString();
+        return "read : " + getId() + "  validRange" + getSequence().getValidRange()+"  " + getSequence().decode().toString();
     }
 
     

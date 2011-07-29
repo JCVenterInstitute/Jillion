@@ -78,7 +78,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	private void assertCommonGettersCorrect(TigrAssemblerPlacedReadAdapter sut) {
 		assertEquals(id, sut.getId());
 		
-		assertEquals(gappedBasecalls, sut.getEncodedGlyphs());
+		assertEquals(gappedBasecalls, sut.getSequence());
 		assertEquals(offset, sut.getStart());
 		assertEquals(offset+gappedBasecalls.getLength()-1, sut.getEnd());
 		assertEquals(gappedBasecalls.getLength(),sut.getLength());

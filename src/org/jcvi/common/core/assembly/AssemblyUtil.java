@@ -62,7 +62,7 @@ public final class AssemblyUtil {
      * @see #buildGappedComplimentedFullRangeBases(NucleotideSequence, Direction, Range, List)
      */
     public static <R extends PlacedRead> List<NucleotideGlyph> buildGappedComplimentedFullRangeBases(R placedRead, List<NucleotideGlyph> ungappedUncomplimentedFullRangeBases){
-       return buildGappedComplimentedFullRangeBases(placedRead.getEncodedGlyphs(), placedRead.getDirection(), placedRead.getValidRange(), ungappedUncomplimentedFullRangeBases);
+       return buildGappedComplimentedFullRangeBases(placedRead.getSequence(), placedRead.getDirection(), placedRead.getValidRange(), ungappedUncomplimentedFullRangeBases);
     }
     /**
      * Create a List of {@link NucleotideGlyph}s that corresponds to the gapped full range
@@ -146,7 +146,7 @@ public final class AssemblyUtil {
 
 
     public static int convertToUngappedValidRangeIndex(PlacedRead placedRead, int gappedIndex) {
-       return placedRead.getEncodedGlyphs().convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedIndex);
+       return placedRead.getSequence().convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedIndex);
     }
     
     public static boolean afterEndOfRead(int rightFlankingNonGapIndex,

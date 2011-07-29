@@ -69,8 +69,8 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
         return startOffset;
     }
     @Override
-    public NucleotideSequence getEncodedGlyphs() {
-        return read.getEncodedGlyphs();
+    public NucleotideSequence getSequence() {
+        return read.getSequence();
     }
     @Override
     public String getId() {

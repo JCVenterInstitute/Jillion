@@ -75,7 +75,7 @@ public class TestDefaultFragment {
        
         assertEquals(id, fragment.getId());
         assertEquals(bases, fragment.getBasecalls());
-        assertEquals(bases, fragment.getEncodedGlyphs());
+        assertEquals(bases, fragment.getSequence());
         assertEquals(qualities, fragment.getQualities());
         assertEquals(validRange, fragment.getValidRange());
         assertEquals(clearRange, fragment.getVectorClearRange());
