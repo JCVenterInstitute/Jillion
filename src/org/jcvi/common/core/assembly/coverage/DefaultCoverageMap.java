@@ -23,16 +23,16 @@
  */
 package org.jcvi.common.core.assembly.coverage;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.Placed;
-import org.jcvi.common.core.assembly.PlacedEndComparator;
-import org.jcvi.common.core.assembly.PlacedStartComparator;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 
@@ -47,9 +47,36 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
     }
 
     public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
-    buildCoverageMap(C contig){
-        return (DefaultCoverageMap<PR,T>)new Builder(contig.getPlacedReads()).build();
-}
+        buildCoverageMap(C contig){
+            return (DefaultCoverageMap<PR,T>)new Builder(contig.getPlacedReads()).build();
+    }
+    
+    private static class PlacedStartComparator <T extends Placed> implements Comparator<T>,Serializable {       
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -8517894363563047881L;
+
+        @Override
+        public int compare(T o1, T o2) {           
+            return Long.valueOf(o1.getStart()).compareTo(o2.getStart());
+        }
+
+    }
+    
+    private static class PlacedEndComparator<T extends Placed> implements Comparator<T>, Serializable {       
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 5135449151100427846L;
+
+        @Override
+        public int compare(T o1, T o2) {           
+            return Long.valueOf(o1.getEnd()).compareTo(o2.getEnd());
+        }
+            
+    }
+    
     private List<T> regions;
     private double avgCoverage;
     private boolean avgCoverageSet;
@@ -234,6 +261,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
             Collections.sort(endCoordinateSortedList, new PlacedEndComparator<P>());
             
         }
+        
         
         /**
          * If there are no coordinates (start or end are null) then we remove them

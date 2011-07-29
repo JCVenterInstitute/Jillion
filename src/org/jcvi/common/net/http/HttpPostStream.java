@@ -38,14 +38,14 @@ public class HttpPostStream
     /** The stream to write data to. */
     private final OutputStream out;
     /** The number of variables written to the stream. */
-    private final int varCount;
+    private int varCount;
 
     /** The name of the character encoding used. */
     private final String encodingName;
 
     /**
      * Creates a new <code>HttpPostStream</code> attached to an existing 
-     * {@link URLConnection}.  This will initialize the connection and use the
+     * {@link URLConnection}.  This will use the
      * connection's {@link OutputStream} as the destination for all data.
      * 
      * @param connection The {@link URLConnection} to attach to.
@@ -76,42 +76,43 @@ public class HttpPostStream
      * Writes a single variable with its optional value to the output stream.
      * The variable will be encoded as necessary.
      * 
-     * @param var The name of the variable to write.
+     * @param key The name of the variable to write.
      * @param value The value of the variable or <code>null</code> if no 
      * value exists for this variable.
      * @return this.
      * @throws IOException If there is an error writing to the stream.
      */
-    public HttpPostStream writeVariable(String var, Object value) throws IOException
+    public HttpPostStream addVariable(String key, Object value) throws IOException
     {
         if (this.varCount > 0)
         {
             this.out.write(HttpUtil.VAR_SEPARATOR_BYTES);
         }
 
-        this.writeURLEncoded(var);
+        this.writeURLEncoded(key);
         if (value != null)
         {
             this.out.write(HttpUtil.VALUE_SEPARATOR_BYTES);
             this.writeURLEncoded(value.toString());
         }
+        varCount++;
         return this;
     }
     
     /**
      * Writes a single unvalued variable to the output stream.
      * The variable will be encoded as necessary.  This is actually a simple
-     * delegation to {@link #writeVariable(String, String)} with a 
+     * delegation to {@link #addVariable(String, String)} with a 
      * <code>null</code> value.
      * 
      * @param var The name of the variable to write.
      * @return this.
      * @throws IOException If there is an error writing to the stream.
-     * @see #writeVariable(String, String)
+     * @see #addVariable(String, String)
      */
-    public HttpPostStream writeVariable(String var) throws IOException
+    public HttpPostStream addFlag(String var) throws IOException
     {
-        return this.writeVariable(var, null);
+        return this.addVariable(var, null);
     }
 
     /**

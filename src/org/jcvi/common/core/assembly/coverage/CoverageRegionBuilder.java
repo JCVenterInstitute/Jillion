@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.coverage;
 
 import java.util.Collection;
 
-import org.jcvi.common.core.assembly.Placed;
+import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.util.Builder;
 
 public interface CoverageRegionBuilder<P extends Placed> extends Builder<CoverageRegion<P>> {

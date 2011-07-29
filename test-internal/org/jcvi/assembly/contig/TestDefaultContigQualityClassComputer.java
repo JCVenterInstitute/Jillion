@@ -23,7 +23,7 @@
  */
 package org.jcvi.assembly.contig;
 
-import org.jcvi.common.core.assembly.Placed;
+import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.assembly.contig.QualityValueStrategy;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;

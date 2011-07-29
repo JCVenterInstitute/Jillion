@@ -23,8 +23,8 @@
  */
 package org.jcvi.assembly.contig;
 
+import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.Placed;
 import org.jcvi.glyph.qualClass.QualityClass;
 
 public class QualityClassRegion implements Placed<QualityClassRegion>{

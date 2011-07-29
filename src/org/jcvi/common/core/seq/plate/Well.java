@@ -35,14 +35,14 @@ public final class Well implements Comparable<Well>{
     
     private static final Pattern WELL_NAME_PATTERN = Pattern.compile("([A-P])(\\d+)");
     /**
-     * Create a new Well instance for the given well name
+     * Create a Well.getWell instance for the given well name
      * as a string.
      * @param wellName a well name for 96 or 384 well plates.
      * @return
      */
     public static Well create(String wellName){
         if(wellName ==null){
-            throw new IllegalArgumentException("input can not be null");
+            throw new NullPointerException("input can not be null");
         }
         Matcher m = WELL_NAME_PATTERN.matcher(wellName);
 
@@ -52,10 +52,28 @@ public final class Well implements Comparable<Well>{
             if(col >24){
                 throw new IllegalArgumentException("invalid column " + col);
             }
-            return new Well(row, col);
+            return getWell(row, col);
         }
         throw new IllegalArgumentException(
                 "string does not contain a parseable Well : "+ wellName);
+    }
+    /**
+     * Gets a well from our Cache.  If the
+     * well hasn't been created yet, then create a new 
+     * instance and put it in the cache before returning.
+     * @param row the row of the well
+     * @param column the column of the well.
+     * @return the cached Well instance (never null).
+     */
+    private static synchronized Well getWell(char row, int column){
+        int rowIndex = (row -'A');
+        int columIndex = column-1;
+        if(CACHE[rowIndex][columIndex]!=null){
+            return CACHE[rowIndex][columIndex];
+        }
+        Well newWell = new Well(row,column);
+        CACHE[rowIndex][columIndex] = newWell;
+        return newWell;
     }
     
     /**
@@ -108,7 +126,15 @@ public final class Well implements Comparable<Well>{
         }
         return order.getWell(i, format);
     }
-   
+    /**
+     * A cache of all possible wells we could ever
+     * try to create.  This will keep us from
+     * needlessly making more instances
+     * than we need.
+     * The Well is queried and populated by 
+     * {@link #getWell(char, int)}.
+     */
+    private static final Well[][] CACHE = new Well[16][24];
     /**
      * the row of this well.
      */
@@ -285,7 +311,7 @@ public final class Well implements Comparable<Well>{
                 int modIndex = index%type.getNumberOfWells();
                 int column =  (modIndex % type.getNumberOfColumns())+1;
                 char row = (char)( 'A'+(modIndex %type.getNumberOfWells())/ type.getNumberOfColumns());
-                return new Well(row,column);
+                return Well.getWell(row,column);
             }
             
         },
@@ -308,7 +334,7 @@ public final class Well implements Comparable<Well>{
                 char row = (char)( 'A'+(modIndex %type.getNumberOfRows()));
                 int column =  (modIndex / type.getNumberOfRows()) +1;
                 
-                return new Well(row,column);
+                return Well.getWell(row,column);
             }
         },
         /**
@@ -370,7 +396,7 @@ public final class Well implements Comparable<Well>{
                 int column =((offsetIntoQuadrant % (type.getNumberOfColumns()/2)) *2)+1 +(quadrantIndex%2);
                 char row = (char)('A'+rowIndex);
                 
-                return new Well(row,column);
+                return Well.getWell(row,column);
             }
         },
         /**
@@ -407,7 +433,7 @@ public final class Well implements Comparable<Well>{
                 char row = (char)( 'A'+rowIndex);
                 int column =  colIndex+1;
                 
-                return new Well(row,column);
+                return Well.getWell(row,column);
             }
         },
         /**
@@ -443,8 +469,7 @@ public final class Well implements Comparable<Well>{
                char row = (char)( 'A'+(i /2));
               
                int column =   (modIndex%2) +capilaryIndex*2+1;
-               
-               return new Well(row,column);
+               return Well.getWell(row, column);
            }
         }
         

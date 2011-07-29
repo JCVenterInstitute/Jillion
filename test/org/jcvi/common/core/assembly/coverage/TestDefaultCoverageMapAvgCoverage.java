@@ -26,8 +26,8 @@ package org.jcvi.common.core.assembly.coverage;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.Placed;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.junit.Test;

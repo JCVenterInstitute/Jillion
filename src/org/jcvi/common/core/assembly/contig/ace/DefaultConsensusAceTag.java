@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.jcvi.common.core.assembly.Placed;
+import org.jcvi.common.core.Placed;
 
 public class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag implements ConsensusAceTag{
     private final Set<String> comments;

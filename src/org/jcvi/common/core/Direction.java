@@ -19,7 +19,7 @@
 package org.jcvi.common.core;
 
 /**
- * The <code>SequenceDirection</code> is a declaration of expected
+ * The <code>Direction</code> is a declaration of expected
  * directionality for some sequence of bases.  Theoretically, the idea of
  * "forward" and "reverse" can often get rather confused.  In practice, these
  * ideas are used to standardize a set of sequences which share the same

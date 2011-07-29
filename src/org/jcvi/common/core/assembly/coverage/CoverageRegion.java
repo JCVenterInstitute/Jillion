@@ -24,7 +24,7 @@
 package org.jcvi.common.core.assembly.coverage;
 
 
-import org.jcvi.common.core.assembly.Placed;
+import org.jcvi.common.core.Placed;
 
 public interface CoverageRegion<T extends Placed> extends Placed<T>, Iterable<T> {
         /**

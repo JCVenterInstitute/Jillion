@@ -25,7 +25,15 @@ package org.jcvi.common.core.seq.read.trace.sanger;
 
 import org.jcvi.common.core.seq.read.trace.Trace;
 import org.jcvi.common.core.symbol.pos.Peaks;
-
+/**
+ * A {@code SangerTrace} is a Trace
+ * that was created via Sanger
+ * sequencing and therefore has 
+ * accompanying {@link Peaks}.
+ * @author dkatzel
+ *
+ *
+ */
 public interface SangerTrace extends Trace {
 
     Peaks getPeaks();

@@ -26,8 +26,8 @@ package org.jcvi.common.core.assembly.contig;
 import java.util.Map;
 
 import org.jcvi.common.core.Direction;
+import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.Placed;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideGlyph;
 

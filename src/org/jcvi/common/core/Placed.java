@@ -21,9 +21,8 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.assembly;
+package org.jcvi.common.core;
 
-import org.jcvi.common.core.Range;
 
 /**
  * {@code Placed} is an interface to be used by any object
