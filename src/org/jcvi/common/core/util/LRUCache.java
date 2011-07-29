@@ -198,7 +198,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
          * @param loadFactor
          */
         public AbstractReferencedLRUCache(int maxSize) {
-            cache = new LRUCache(maxSize+1, DEFAULT_LOAD_FACTOR);
+            cache = new LRUCache(maxSize, DEFAULT_LOAD_FACTOR);
             referenceKeyMap = new HashMap<Reference<? extends V>, K>(maxSize+1, DEFAULT_LOAD_FACTOR);
         }
         /**
