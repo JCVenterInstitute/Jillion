@@ -23,12 +23,10 @@
  */
 package org.jcvi.common.core.symbol.residue.nuc;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -60,13 +58,6 @@ public enum Nucleotide implements Symbol {
     Thymine(Character.valueOf('T')),
     Gap(Character.valueOf('-')),
     ;
-    /**
-     * A predefined matrix of nucleotide matching results.  This is a simple 2-index matrix
-     * where each index represents one of the nucleotides to attempt to match.  The order of the
-     * indexes does not matter.
-     */
-    private static final boolean[][] MATCH = new boolean[Nucleotide.values().length][Nucleotide.values().length];
-
     
     private static final Map<Nucleotide,Nucleotide> COMPLIMENT_MAP;
     private static final Map<Nucleotide,Set<Nucleotide>> AMBIGUITY_TO_CONSTIUENT;
@@ -92,8 +83,8 @@ public enum Nucleotide implements Symbol {
         COMPLIMENT_MAP.put(Unknown, Unknown);  
         
         CHARACTER_MAP = new HashMap<Character, Nucleotide>();
-        for(Nucleotide g: Nucleotide.values()){
-            CHARACTER_MAP.put(g.getCharacter(), g);
+        for(Nucleotide n: Nucleotide.values()){
+            CHARACTER_MAP.put(n.getCharacter(), n);
         }
         //add support for X which some systems use instead of N
         CHARACTER_MAP.put(Character.valueOf('X'), Unknown);
@@ -120,37 +111,14 @@ public enum Nucleotide implements Symbol {
         AMBIGUITY_TO_CONSTIUENT.put(Thymine, EnumSet.of(Thymine));
         
         CONSTIUENT_TO_AMBIGUITY = new EnumMap<Nucleotide, Set<Nucleotide>>(Nucleotide.class);
-        for(Nucleotide glyph : EnumSet.of(Adenine,Cytosine,Guanine,Thymine)){
-            CONSTIUENT_TO_AMBIGUITY.put(glyph, EnumSet.noneOf(Nucleotide.class));
+        for(Nucleotide n : EnumSet.of(Adenine,Cytosine,Guanine,Thymine)){
+            CONSTIUENT_TO_AMBIGUITY.put(n, EnumSet.noneOf(Nucleotide.class));
         }
         for(Entry<Nucleotide, Set<Nucleotide>> entry : AMBIGUITY_TO_CONSTIUENT.entrySet()){
-            for(Nucleotide glyph : entry.getValue()){
-                final Nucleotide glyphToAdd = entry.getKey();
-                if(glyphToAdd != glyph){
-                    CONSTIUENT_TO_AMBIGUITY.get(glyph).add(glyphToAdd);
-                }
-            }
-        }
-        /*
-         * This pre-populates the match table.
-         * 
-         * Note: Some simplistic optimization happens here.  The match value is only calculated when 
-         * the second nucleotide in the pair is not less than the first.  After the calculation is
-         * done, the result is loaded into the matrix locations of [a,b] and [b,a].  This cuts the
-         * number of calculations roughly in half.  There isn't much savings here, really, but the
-         * optimization was so simple to do, there wasn't much of a reason not to do it.
-         */
-        for (final Nucleotide glyphA : Nucleotide.values())
-        {
-            int glyphAindex = glyphA.ordinal();
-            for (final Nucleotide glyphB : Nucleotide.values())
-            {
-                int glyphBindex = glyphB.ordinal();
-                if (glyphAindex <= glyphBindex)
-                {
-                    boolean val = Nucleotide.calculateMatch(glyphA, glyphB);
-                    Nucleotide.MATCH[glyphAindex][glyphBindex] = val;
-                    Nucleotide.MATCH[glyphBindex][glyphAindex] = val;
+            for(Nucleotide n : entry.getValue()){
+                final Nucleotide toAdd = entry.getKey();
+                if(toAdd != n){
+                    CONSTIUENT_TO_AMBIGUITY.get(n).add(toAdd);
                 }
             }
         }
@@ -190,7 +158,7 @@ public enum Nucleotide implements Symbol {
      * String  representation.  If the given String is more than
      * one character long, only the first character will be considered.
      * For example,
-     * {@link #parse(String) getGlyphFor("A")} will return
+     * {@link #parse(String) parse("A")} will return
      * {@link #Adenine}.
      * @param base the nucleotide as a String of length 1.
      * @return a {@link Nucleotide} equivalent.
@@ -203,7 +171,7 @@ public enum Nucleotide implements Symbol {
     /**
      * Get the {@link Nucleotide} for the given
      * character representation.  For example,
-     * {@link #parse(char) getGlyphFor('A')} will return
+     * {@link #parse(char) parse('A')} will return
      * {@link #Adenine}.
      * @param base the nucleotide as a character.
      * @return a {@link Nucleotide} equivalent.
@@ -219,7 +187,7 @@ public enum Nucleotide implements Symbol {
         throw new IllegalArgumentException("invalid character " + base + " ascii value " + (int)base);
     }
     /**
-     * Returns this glyph as a single character String.  For example {@link #Adenine} 
+     * Returns this Nucleotide as a single character String.  For example {@link #Adenine} 
      * will return "A".
      */
     @Override
@@ -227,7 +195,7 @@ public enum Nucleotide implements Symbol {
         return getCharacter().toString();
     }
     /**
-     * Is This glyph a gap?
+     * Is This Nucleotide a gap?
      * @return {@code true} if it is a gap;
      * {@code false} otherwise.
      */
@@ -235,7 +203,7 @@ public enum Nucleotide implements Symbol {
         return this == Gap;
     }
     /**
-     * Is This glyph an ambiguity?
+     * Is This Nucleotide an ambiguity?
      * @return {@code true} if it is am ambiguity;
      * {@code false} otherwise.
      */
@@ -245,64 +213,19 @@ public enum Nucleotide implements Symbol {
     }
     
     
-    /**
-     * Checks to see if the given nucleotide matches this nucleotide.  A "match" is defined as
-     * any relationship where a nucleotide or one of its ambiguous constituents is equivalent to 
-     * the other nucleotide or its constituents.
-     * 
-     * @param that The <code>NucleotideGlyph</code> to compare.
-     * @return <code>true</code> if the nucleotides may represent matching bases, false if they
-     * cannot represent matching bases.
-     */
-    public boolean matches(Nucleotide that)
-    {
-        return Nucleotide.MATCH[this.ordinal()][that.ordinal()];
-    }
+   
+    
     
     /**
-     * Pre-calculates the result of ambiguity {@link #matches(Nucleotide) matching} for a
-     * given pair of nucleotides.
-     * 
-     * @param a The first nucleotide.
-     * @param b The second nucleotide.
-     * @return <code>true</code> if the two nucleotides represent a potential match, 
-     * <code>false</code> if they do not.
+     * Get the Set containing all ambiguous {@link Nucleotide}s that
+     * could be created from this
+     * {@link Nucleotide} (plus others).
+     * @return the Set of ambiguous {@link Nucleotide}s that
+     * could be created from this or an empty set if
+     * the given {@link Nucleotide} is already
+     * an ambiguity. 
      */
-    private static boolean calculateMatch(Nucleotide a, Nucleotide b)
-    {
-        if (a.equals(b)){
-            return true;
-        }
-        
-        if (a.isAmbiguity())
-        {
-            if (b.isAmbiguity())
-            {
-                for (Nucleotide constituent : Nucleotide.AMBIGUITY_TO_CONSTIUENT.get(a))
-                {
-                    if (Nucleotide.AMBIGUITY_TO_CONSTIUENT.get(b).contains(constituent)){
-                        return true;
-                    }
-                }
-            }
-            else if (Nucleotide.AMBIGUITY_TO_CONSTIUENT.get(a).contains(b)){
-                return true;
-            }
-        }
-        else if (b.isAmbiguity() && Nucleotide.AMBIGUITY_TO_CONSTIUENT.get(b).contains(a)){
-            return true;
-        }
-        
-        return false;
-    }
-    /**
-     * Get the Set of unambiguous {@link Nucleotide}s that
-     * make up this {@link Nucleotide}.
-     * @return the Set of unambiguous {@link Nucleotide}s that
-     * make up this ambiguity or {@code this} if this is not
-     * an ambiguity or an empty set if the given {@link Nucleotide} is a gap. 
-     */
-    public Set<Nucleotide> getUnAmbiguousNucleotidesFor(){
+    public Set<Nucleotide> getAllPossibleAmbiguities(){
         
         if(CONSTIUENT_TO_AMBIGUITY.containsKey(this)){
             return EnumSet.copyOf(CONSTIUENT_TO_AMBIGUITY.get(this));
@@ -311,15 +234,18 @@ public enum Nucleotide implements Symbol {
     }
     /**
      * Give the ambiguity {@link Nucleotide} for
-     * the corresponding collection of unambigious {@link Nucleotide}s
+     * the corresponding collection of unambiguous {@link Nucleotide}s
      * 
-     * @param unambiguiousBases collection of unambigious {@link Nucleotide}s
+     * @param unambiguiousBases collection of unambiguous {@link Nucleotide}s
      * to be turned into a single ambiguity.
      * @return the ambiguity {@link Nucleotide} or {@link #Gap}
-     * if no ambiguity exists for all the given unambigiuous bases.
+     * if no ambiguity exists for all the given unambiguous bases.
+     * @throws NullPointerException if unambiguiousBases is null.
      */
     public static Nucleotide getAmbiguityFor(Collection<Nucleotide> unambiguiousBases){
-        
+        if(unambiguiousBases ==null){
+            throw new NullPointerException("unambiguousBases can not be null");
+        }
         for(Entry<Nucleotide, Set<Nucleotide>> entry : AMBIGUITY_TO_CONSTIUENT.entrySet()){
             if(unambiguiousBases.containsAll(entry.getValue())){
                 return entry.getKey();

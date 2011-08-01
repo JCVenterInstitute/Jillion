@@ -120,8 +120,8 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
      */
     private void setAmbiguityScore(int score)
     {
-        for(Nucleotide g : Nucleotides.getNucleotidesFor("ACGT")){
-            this.setScores(g, score, g.getUnAmbiguousNucleotidesFor());
+        for(Nucleotide g : Nucleotides.parse("ACGT")){
+            this.setScores(g, score, g.getAllPossibleAmbiguities());
         }
        
     }

@@ -147,7 +147,7 @@ public final class AssemblyUtil {
 
 
     public static int convertToUngappedValidRangeIndex(PlacedRead placedRead, int gappedIndex) {
-       return placedRead.getSequence().convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedIndex);
+       return placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedIndex);
     }
     
     public static boolean afterEndOfRead(int rightFlankingNonGapIndex,
@@ -200,17 +200,14 @@ public final class AssemblyUtil {
     
     public static Range convertGappedRangeIntoUngappedRange(final NucleotideSequence encodedGlyphs,
             Range gappedFeatureValidRange) {
-        int ungappedLeft = encodedGlyphs.convertGappedValidRangeIndexToUngappedValidRangeIndex(
-                AssemblyUtil.getRightFlankingNonGapIndex(encodedGlyphs, (int)gappedFeatureValidRange.getStart()));
-        int ungappedRight = encodedGlyphs.convertGappedValidRangeIndexToUngappedValidRangeIndex(
-                AssemblyUtil.getLeftFlankingNonGapIndex(encodedGlyphs, (int)gappedFeatureValidRange.getEnd()));
+        int numberOfGapsTilStart=encodedGlyphs.computeNumberOfInclusiveGapsInGappedValidRangeUntil((int)gappedFeatureValidRange.getStart());
+        int ungappedLeft = (int)gappedFeatureValidRange.getStart() - numberOfGapsTilStart;
+        
+        int numberOfGapsTilEnd=encodedGlyphs.computeNumberOfInclusiveGapsInGappedValidRangeUntil((int)gappedFeatureValidRange.getEnd());
+        
+        int ungappedRight = (int)gappedFeatureValidRange.getEnd() - numberOfGapsTilEnd;
         Range ungappedRange = Range.buildRange(ungappedLeft, ungappedRight);
         return ungappedRange;
-    }
-    
-    public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
-        buildCoverageMap(C contig){
-        return DefaultCoverageMap.buildCoverageMap(contig.getPlacedReads());
     }
     
     public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
@@ -229,7 +226,7 @@ public final class AssemblyUtil {
         List<CoverageRegion<PR>> ungappedCoverageRegions = new ArrayList<CoverageRegion<PR>>();
         for(T gappedCoverageRegion : gappedCoverageMap){
             Range gappedRange = gappedCoverageRegion.asRange();
-            Range ungappedRange = consensus.convertGappedValidRangeToUngappedValidRange(gappedRange);
+            Range ungappedRange = AssemblyUtil.convertGappedRangeIntoUngappedRange(consensus,gappedRange);
             List<PR> reads = new ArrayList<PR>();
             for(PR read : gappedCoverageRegion){
                 reads.add(read);

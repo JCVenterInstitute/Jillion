@@ -42,7 +42,7 @@ public class TestDefaultEncodedNuclotideFastaRecord {
     private String id = "1234";
     private String comment = "comment";
     String bases = "ACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGT-N";
-    List<Nucleotide> glyphs = Nucleotides.getNucleotidesFor(bases);
+    List<Nucleotide> glyphs = Nucleotides.parse(bases);
     NucleotideSequence encodedGlyphs = new DefaultNucleotideSequence(glyphs);
 
     DefaultNucleotideSequenceFastaRecord sut = new DefaultNucleotideSequenceFastaRecord(id, comment, bases);

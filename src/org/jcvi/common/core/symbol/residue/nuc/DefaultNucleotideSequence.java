@@ -45,13 +45,13 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
         this(glyphs, Range.buildRange(0, glyphs.size()-1));
     }
     public DefaultNucleotideSequence(String basecalls, Range validRange){
-        this(Nucleotides.getNucleotidesFor(basecalls), validRange);
+        this(Nucleotides.parse(basecalls), validRange);
     }
     public DefaultNucleotideSequence(char[] basecalls){
-        this(Nucleotides.getNucleotidesFor(basecalls));
+        this(Nucleotides.parse(basecalls));
     }
     public DefaultNucleotideSequence(String basecalls){
-        this(Nucleotides.getNucleotidesFor(basecalls));
+        this(Nucleotides.parse(basecalls));
     }
     private int[] computeGapIndexes(Collection<Nucleotide> glyphs) {
        List<Integer> gaps = new ArrayList<Integer>();

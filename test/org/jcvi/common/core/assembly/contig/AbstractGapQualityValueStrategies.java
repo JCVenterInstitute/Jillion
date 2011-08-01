@@ -64,14 +64,16 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
     @Test
     public void getUngappedQualityFromForwardRead(){
         int gappedReadIndex = 12;
-        expect(placedRead.getSequence()).andReturn(encodedGlyphs).times(2);
-        expect(placedRead.getDirection()).andReturn(Direction.FORWARD);
+        int fullIndex = 22;
+        expect(placedRead.getSequence()).andReturn(encodedGlyphs).anyTimes();
         expect(encodedGlyphs.isGap(gappedReadIndex)).andReturn(false);
+        expect(placedRead.getDirection()).andReturn(Direction.FORWARD);
         Range validRange = Range.buildRange(10,100);
         expect(placedRead.getValidRange()).andReturn(validRange);
+        expect(placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedReadIndex)).andReturn(gappedReadIndex);
         expect(fullQualities.getLength()).andReturn(validRange.getEnd()+validRange.getStart());
-        int fullIndex = 22;
-        expect(encodedGlyphs.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedReadIndex)).andReturn(gappedReadIndex);
+        
+       // expect(encodedGlyphs.toUngappedIndex(gappedReadIndex)).andReturn(gappedReadIndex);
         expect(fullQualities.get(fullIndex)).andReturn(expectedQuality);
         replayAll();
         assertEquals(expectedQuality,
@@ -83,14 +85,16 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         int gappedReadIndex = 12;
         Range validRange = Range.buildRange(10,100);
         int fullLength=110;
-        expect(placedRead.getSequence()).andReturn(encodedGlyphs).times(2);
+        expect(placedRead.getSequence()).andReturn(encodedGlyphs).anyTimes();
         expect(placedRead.getDirection()).andReturn(Direction.REVERSE);
         expect(encodedGlyphs.isGap(gappedReadIndex)).andReturn(false);
         
         expect(placedRead.getValidRange()).andReturn(validRange).times(3);
         expect(fullQualities.getLength()).andReturn((long)fullLength);
         int fullIndex = 22;
-        expect(encodedGlyphs.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedReadIndex)).andReturn(gappedReadIndex);
+        expect(placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedReadIndex)).andReturn(gappedReadIndex);
+        
+     //   expect(encodedGlyphs.toUngappedIndex(gappedReadIndex)).andReturn(gappedReadIndex);
         expect(fullQualities.get(fullLength-fullIndex)).andReturn(expectedQuality);
         replayAll();
         assertEquals(expectedQuality,

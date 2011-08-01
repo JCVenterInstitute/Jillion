@@ -92,9 +92,9 @@ public class Ace2Fasta {
                 
                 @Override
                 protected void visitNewContig(String contigId, String consensusString) {
-                    List<Nucleotide>consensus = Nucleotides.getNucleotidesFor(consensusString);
+                    List<Nucleotide>consensus = Nucleotides.parse(consensusString);
                     if(!gapped){
-                        consensus = Nucleotides.convertToUngapped(consensus);
+                        consensus = Nucleotides.ungap(consensus);
                     }
                     String id = contigIdMap.containsKey(contigId)?
                                         contigIdMap.get(contigId)

@@ -51,7 +51,7 @@ public class TestNexteraTransposonTrimmer {
     public void forward(){
         List<Nucleotide> bases = new ArrayList<Nucleotide>();
         bases.addAll(TransposonEndSequences.FORWARD.decode());
-        bases.addAll(Nucleotides.getNucleotidesFor("ACGTACGTACGT"));
+        bases.addAll(Nucleotides.parse("ACGTACGTACGT"));
         
         Range expectedRange = Range.buildRangeOfLength(
                 TransposonEndSequences.FORWARD.getLength(),
@@ -65,7 +65,7 @@ public class TestNexteraTransposonTrimmer {
         List<Nucleotide> bases = new ArrayList<Nucleotide>();
         
         bases.addAll(TransposonEndSequences.REVERSE.decode());
-        bases.addAll(Nucleotides.getNucleotidesFor("ACGTACGTACGT"));
+        bases.addAll(Nucleotides.parse("ACGTACGTACGT"));
         
         Range expectedRange = Range.buildRangeOfLength(
                 TransposonEndSequences.REVERSE.getLength(),

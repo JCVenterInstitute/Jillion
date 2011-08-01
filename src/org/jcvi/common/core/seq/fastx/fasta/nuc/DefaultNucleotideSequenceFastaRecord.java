@@ -95,7 +95,7 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
     @Override
     protected NucleotideSequence encodeNucleotides(
             CharSequence sequence) {
-        return new DefaultNucleotideSequence( Nucleotides.getNucleotidesFor(sequence));
+        return new DefaultNucleotideSequence( Nucleotides.parse(sequence));
     }
 
 

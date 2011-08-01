@@ -37,6 +37,6 @@ public final class ConsensusUtil {
      * These are the only bases that should be used
      * to consider consensus.
      */
-    public static final List<Nucleotide> BASES_TO_CONSIDER = Nucleotides.getNucleotidesFor("ACGT-");
+    public static final List<Nucleotide> BASES_TO_CONSIDER = Nucleotides.parse("ACGT-");
     
 }

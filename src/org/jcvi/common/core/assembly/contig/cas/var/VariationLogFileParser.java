@@ -60,12 +60,12 @@ public class VariationLogFileParser {
                         long coordinate = Long.parseLong(varMatcher.group(1));
                         Type type = Type.getType(varMatcher.group(2));
                         Nucleotide ref = Nucleotide.parse(varMatcher.group(3));
-                        List<Nucleotide> consensus = Nucleotides.getNucleotidesFor(varMatcher.group(4));
+                        List<Nucleotide> consensus = Nucleotides.parse(varMatcher.group(4));
                         DefaultVariation.Builder variationBuilder = new DefaultVariation.Builder(coordinate, type,ref,consensus);
                         final String group = varMatcher.group(5);
                         Scanner histogramScanner = new Scanner(group);
                         while(histogramScanner.hasNext()){
-                            List<Nucleotide> bases = Nucleotides.getNucleotidesFor(histogramScanner.next().replaceAll(":",""));
+                            List<Nucleotide> bases = Nucleotides.parse(histogramScanner.next().replaceAll(":",""));
                             int count = histogramScanner.nextInt();
                             variationBuilder.addHistogramRecord(bases,count);
                         }

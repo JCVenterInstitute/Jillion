@@ -47,7 +47,7 @@ public class TestCodon {
     private static final String base2       = "AAAAAACCCCCCCCCCCCCCCGGGGGGTTTTTTTTAAAAAACCCCCCCCCCCCCCCGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTAAAAAACCCCCCCCCCCCCCCGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTGGGAAAAAACCCCCCCCCCCCCCCGGGGGTTTTTTTTT";
     private static final String base3       = "ACGRTYABCDGHKMNRSTVWYACGRTYACGHMTWYACGRTYABCDGHKMNRSTVWYABCDGHKMNRSTVWYABCDGHKMNRSTVWYACGRTYABCDGHKMNRSTVWYABCDGHKMNRSTVWYABCDGHKMNRSTVWYAGRACGRTYABCDGHKMNRSTVWYACGTYACGRTYAGR";
 
-    private static final List<Nucleotide> EXPECTED_START_CODON = Nucleotides.getNucleotidesFor("ATG");
+    private static final List<Nucleotide> EXPECTED_START_CODON = Nucleotides.parse("ATG");
     private final AminoAcid expectedAminoAcid;
     private final boolean isStartCodon;
     private final boolean isStopCodon;
@@ -59,7 +59,7 @@ public class TestCodon {
         for(int i=0; i<aminoAcids.length(); i++){
             final char aminoAbbreviation = aminoAcids.charAt(i);
             AminoAcid aa = aminoAbbreviation !='*'? AminoAcid.getGlyphFor(aminoAbbreviation): null;
-            List<Nucleotide> codon = Nucleotides.getNucleotidesFor(
+            List<Nucleotide> codon = Nucleotides.parse(
                                             Arrays.asList(base1.charAt(i),
                                                             base2.charAt(i),
                                                             base3.charAt(i)));

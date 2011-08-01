@@ -55,7 +55,7 @@ public abstract class AbstractTestFastQFileDataStore {
             "SOLEXA1:4:1:12:1489#0/1",
             new DefaultNucleotideSequence(
                     Nucleotides
-                            .getNucleotidesFor("TATTTAAAATCTAATANGTCTTGATTTGAAATTGAAAGAGCAAAAATCTGATTGATTTTATTGAAGAATAATTTGATTTAATATATTCTTAAGTCTGTTT")),
+                            .parse("TATTTAAAATCTAATANGTCTTGATTTGAAATTGAAAGAGCAAAAATCTGATTGATTTTATTGAAGAATAATTTGATTTAATATATTCTTAAGTCTGTTT")),
             QUALITY_CODEC
                     .decode("abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S"));
 
@@ -63,7 +63,7 @@ public abstract class AbstractTestFastQFileDataStore {
             "SOLEXA1:4:1:12:1692#0/1",
             new DefaultNucleotideSequence(
                     Nucleotides
-                            .getNucleotidesFor("ACGCCTGCGTTATGGTNTAACAGGCATTCCGCCCCAGACAAACTCCCCCCCTAACCATGTCTTTCGCAAAAATCAGTCAATAAATGACCTTAACTTTAGA")),
+                            .parse("ACGCCTGCGTTATGGTNTAACAGGCATTCCGCCCCAGACAAACTCCCCCCCTAACCATGTCTTTCGCAAAAATCAGTCAATAAATGACCTTAACTTTAGA")),
             QUALITY_CODEC
                     .decode("`a\\a`^\\a^ZZa[]^WB_aaaa^^a`]^a`^`aaa`]``aXaaS^a^YaZaTW]a_aPY\\_UVY[P_ZHQY_NLZUR[^UZ\\TZWT_[_VWMWaRFW]BB"),
             "example comment");

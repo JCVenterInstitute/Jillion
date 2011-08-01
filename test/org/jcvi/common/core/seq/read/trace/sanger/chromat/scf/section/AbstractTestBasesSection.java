@@ -55,7 +55,7 @@ public abstract class AbstractTestBasesSection {
     protected static final String DECODED_BASES = "ACGTACGT";
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
 
-    protected NucleotideSequence encodedBases = new DefaultNucleotideSequence(Nucleotides.getNucleotidesFor(DECODED_BASES));
+    protected NucleotideSequence encodedBases = new DefaultNucleotideSequence(Nucleotides.parse(DECODED_BASES));
     protected SCFHeader mockHeader;
     protected SCFChromatogramImpl chromatogram;
     protected byte[] calledConfidence = new byte[]{40,40,40,40,63,38,38,38};

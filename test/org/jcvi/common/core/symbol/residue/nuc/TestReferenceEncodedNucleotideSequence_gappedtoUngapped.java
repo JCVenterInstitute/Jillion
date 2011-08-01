@@ -42,31 +42,25 @@ public class TestReferenceEncodedNucleotideSequence_gappedtoUngapped {
     
     @Test
     public void convertGappedToUngapped_beforeGapsShouldReturnSameNumber(){
-        assertEquals(0,sut.convertGappedValidRangeIndexToUngappedValidRangeIndex(0));
-        assertEquals(7,sut.convertGappedValidRangeIndexToUngappedValidRangeIndex(7));
+        assertEquals(0,sut.toUngappedIndex(0));
+        assertEquals(7,sut.toUngappedIndex(7));
         
-        assertEquals(0, sut.convertUngappedValidRangeIndexToGappedValidRangeIndex(0));
-        assertEquals(7,sut.convertUngappedValidRangeIndexToGappedValidRangeIndex(7));
+        assertEquals(0, sut.toGappedIndex(0));
+        assertEquals(7,sut.toGappedIndex(7));
     }
     
     @Test
-    public void convertGappedToUngappedGappedIndexShouldThrowIllegalArgumentException(){
+    public void indexOfGapToUngappedIndexShouldReturnIndexMinusNumGaps(){
         final int indexOfFirstGap = gappedBasecalls.indexOf('-');
-        try{
-            sut.convertGappedValidRangeIndexToUngappedValidRangeIndex(indexOfFirstGap);
-            fail("should throw illegal argumentexception when passed in an index that is a gap");
-        }
-        catch(IllegalArgumentException e){
-            assertEquals(indexOfFirstGap+" is a gap", e.getMessage());
-        }
+        assertEquals(indexOfFirstGap -1, sut.toUngappedIndex(indexOfFirstGap));
     }
     
     @Test
     public void convertGappedToUngappedOneGapShouldReturnIndexMinusOne(){
         final int indexOfFirstGap = gappedBasecalls.indexOf('-');
         assertEquals(2, sut.getNumberOfGaps());
-        assertEquals(indexOfFirstGap,sut.convertGappedValidRangeIndexToUngappedValidRangeIndex(indexOfFirstGap+1));
-        assertEquals(indexOfFirstGap+1,sut.convertUngappedValidRangeIndexToGappedValidRangeIndex(indexOfFirstGap));
+        assertEquals(indexOfFirstGap,sut.toUngappedIndex(indexOfFirstGap+1));
+        assertEquals(indexOfFirstGap-1,sut.toUngappedIndex(indexOfFirstGap));
     }
     @Test
     public void convertGappedToUngappedLastIndexShouldReturnLengthMinusNumberOfGaps(){
@@ -74,8 +68,8 @@ public class TestReferenceEncodedNucleotideSequence_gappedtoUngapped {
         int gappedLength = gappedBasecalls.length();
         int lastGappedIndex = gappedLength-1;
         final int lastUngappedIndex = lastGappedIndex-numberOfGaps;
-        assertEquals(lastUngappedIndex, sut.convertGappedValidRangeIndexToUngappedValidRangeIndex(lastGappedIndex));
-        assertEquals(lastGappedIndex, sut.convertUngappedValidRangeIndexToGappedValidRangeIndex(lastUngappedIndex));
+        assertEquals(lastUngappedIndex, sut.toUngappedIndex(lastGappedIndex));
+        assertEquals(lastGappedIndex, sut.toGappedIndex(lastUngappedIndex));
         assertEquals(numberOfGaps, sut.getNumberOfGaps());
     }
     

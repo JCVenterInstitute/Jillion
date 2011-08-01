@@ -51,7 +51,7 @@ public class TestSFFFlowgram {
     SFFFlowgram sut;
     @Before
     public void setup(){
-        expect(basecalls.decode()).andStubReturn(Nucleotides.getNucleotidesFor("ACGT"));
+        expect(basecalls.decode()).andStubReturn(Nucleotides.parse("ACGT"));
         expect(confidence.decode()).andStubReturn(PhredQuality.valueOf(new byte[]{20,15,30,15}));
         
         replay(basecalls,confidence);

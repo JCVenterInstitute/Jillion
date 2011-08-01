@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
@@ -162,5 +163,47 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
     public Range asRange() {
         return Range.buildRange(getStart(), getEnd());
     }
-   
+    private boolean isAGap(int gappedValidRangeIndex) {
+        return getSequence().getGapIndexes().contains(Integer.valueOf(gappedValidRangeIndex));
+    }
+    @Override
+    public int convertGappedValidRangeIndexToUngappedValidRangeIndex(
+            int gappedValidRangeIndex) {
+        
+        if(isAGap(gappedValidRangeIndex)){
+            //we are given a gap
+            //which we can't convert into an ungapped index
+            throw new IllegalArgumentException(gappedValidRangeIndex + " is a gap");
+        }
+        int numberOfGaps = getSequence().computeNumberOfInclusiveGapsInGappedValidRangeUntil(gappedValidRangeIndex);
+        return gappedValidRangeIndex-numberOfGaps;
+    }
+
+    @Override
+    public Range convertGappedValidRangeToUngappedValidRange(
+            Range gappedValidRange) {
+       return Range.buildRange(
+               convertGappedValidRangeIndexToUngappedValidRangeIndex(
+                       AssemblyUtil.getLeftFlankingNonGapIndex(getSequence(),(int)gappedValidRange.getStart())),
+               convertGappedValidRangeIndexToUngappedValidRangeIndex(
+                       AssemblyUtil.getLeftFlankingNonGapIndex(getSequence(), (int)gappedValidRange.getEnd()))
+                
+        );
+    }
+
+    @Override
+    public Range convertUngappedValidRangeToGappedValidRange(
+            Range ungappedValidRange) {
+        return  Range.buildRange(
+                convertUngappedValidRangeIndexToGappedValidRangeIndex((int)ungappedValidRange.getStart()),
+                convertUngappedValidRangeIndexToGappedValidRangeIndex((int)ungappedValidRange.getEnd()));
+                
+    }
+    
+    @Override
+    public int convertUngappedValidRangeIndexToGappedValidRangeIndex(
+            int ungappedValidRangeIndex) {
+        int numberOfGaps = getSequence().computeNumberOfInclusiveGapsInUngappedValidRangeUntil(ungappedValidRangeIndex);
+        return ungappedValidRangeIndex+numberOfGaps;
+    }
 }

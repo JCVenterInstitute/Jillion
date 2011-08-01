@@ -55,7 +55,7 @@ public abstract class  AbstractTestFragmentDataStore {
     Fragment fragEndingIn78 = new DefaultFragment(
             "334369678",
             new DefaultNucleotideSequence(
-                    Nucleotides.getNucleotidesFor(
+                    Nucleotides.parse(
                             "ATGATCGGCAGTGAATTGTATACGACTCACTATAGGGCGAATTGGAGCTCCACGCGGTGGCGGCCGCTCTAGAACTAGTGGATCCCCCGGGCTGCAGGAA" +
                             "TTCGATTAGGTGGAGGCCACGCTGCGCGACCCCAGCGCCCAGTCCGTAACGCACGTGCTGCAGGCAGGTGCCGGTCAGTGTGTGTGTGGTGGGGGCGGCG" +
                             "GCAGGGGGGTTGCGTACAGCATGGTGCTTGAAATTGGAAAGGAAGGAAGTCAGCCGTCAATGGAAGACACGAGTTAGTGCGGGCTTGCCCACATCATTGG" +
@@ -84,7 +84,7 @@ public abstract class  AbstractTestFragmentDataStore {
     Fragment fragEndingIn61 = new DefaultFragment(
             "334370061",
             new DefaultNucleotideSequence(
-                    Nucleotides.getNucleotidesFor(
+                    Nucleotides.parse(
                             "ACTCAGCCTAAATACCTCACTAAGGGAACAAAGCTGGTACGGGCCCCCCCTCGAGGTCGACGGTATCGATAAGCTTGATCGGCTGGTCCCATTCGCCTTC" +
                             "CCATTCCAATTCCCGTATTCCCATCCCCACTCCGATCCCCATTCGCAGATTCCCATTCCCATATTCACCATTCCCAGCCCCAGGCCACGCACCAGCGAGC" +
                             "CCGAGAGCTCCGGCAGCAGCAGCGCAGCGGAGCCGCTCGGCGACATCCCCGCCGCCGCCCCGCCCAGCAGCTGCGACTGCGACGGCTGCGAGCCCGAGCT" +

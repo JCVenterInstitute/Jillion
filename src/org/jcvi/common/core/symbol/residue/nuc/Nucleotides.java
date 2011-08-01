@@ -23,21 +23,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * {@code Nucleotides} is a helper class
+ * that works with Collections of {@link Nucleotide}
+ * objects.
  * @author dkatzel
- *
  *
  */
 public final class Nucleotides {
 
     /**
-     * Convert a list of {@link Nucleotide}s which may
-     * contain {@link Nucleotide#Gap}s.
+     * Creates a new list of {@link Nucleotide}s which is the
+     * same as the input list except all the {@link Nucleotide#Gap}
+     * objects have been removed.
      * @param gapped a List of nucleotides which may contain gaps.
      * @return a new list of {@link Nucleotide}s which may be empty
      * but will never be null.
      * @throws NullPointerException if gapped is null.
      */
-    public static List<Nucleotide> convertToUngapped(List<Nucleotide> gapped){
+    public static List<Nucleotide> ungap(List<Nucleotide> gapped){
         List<Nucleotide> ungapped = new ArrayList<Nucleotide>(gapped.size());
         for(Nucleotide possibleGap : gapped){
             if(!possibleGap.isGap()){
@@ -46,32 +49,78 @@ public final class Nucleotides {
         }
         return ungapped;
     }
-    public static List<Nucleotide> getNucleotidesFor(char[] array){
-       return getNucleotidesFor(new String(array));
+    /**
+     * Parse the given char array containing
+     * nucleotides and return an equivalent List
+     * of {@link Nucleotide}s.
+     * @param array the char array to parse, may have
+     * leading and/or trailing whitespace.
+     * @return a new List will never be null.
+     * @throws NullPointerException if nucleotides is null.
+     * @throws IllegalArgumentException if there is a
+     * character in the nucleotides aside from leading or trailing 
+     * whitespace that can not be parsed into a Nucleotide.     *
+     */
+    public static List<Nucleotide> parse(char[] array){
+       return parse(new String(array));
     }
-    public static List<Nucleotide> getNucleotidesFor(List<Character> list) {
-        StringBuilder builder = new StringBuilder();
+    /**
+     * Parse the given List of Characters containing
+     * nucleotides and return an equivalent List
+     * of {@link Nucleotide}s.
+     * @param list the List to parse, may have
+     * leading and/or trailing whitespace.
+     * @return a new List will never be null.
+     * @throws NullPointerException if nucleotides is null.
+     * @throws IllegalArgumentException if there is a
+     * character in the nucleotides aside from leading or trailing 
+     * whitespace that can not be parsed into a Nucleotide.
+     *
+     */
+    public static List<Nucleotide> parse(List<Character> list) {
+        StringBuilder builder = new StringBuilder(list.size());
         for(Character c: list){
             builder.append(c);
         }
-        return  getNucleotidesFor(builder);
+        return  parse(builder);
     }
-    public static List<Nucleotide> getNucleotidesFor(CharSequence s){
-        List<Nucleotide> result = new ArrayList<Nucleotide>(s.length());
+    /**
+     * Parse the given {@link CharSequence} containing
+     * nucleotides and return an equivalent List
+     * of {@link Nucleotide}s.
+     * @param nucleotides the charSequence to parse, may have
+     * leading and/or trailing whitespace.
+     * @return a new List will never be null.
+     * @throws NullPointerException if nucleotides is null.
+     * @throws IllegalArgumentException if there is a
+     * character in the nucleotides aside from leading or trailing 
+     * whitespace that can not be parsed into a Nucleotide.
+     *
+     */
+    public static List<Nucleotide> parse(CharSequence nucleotides){
+        String trimmed = nucleotides.toString().trim();
+        List<Nucleotide> result = new ArrayList<Nucleotide>(trimmed.length());
         try{
-            for(int i=0; i<s.length(); i++){            
-                result.add(Nucleotide.parse(s.charAt(i)));
+            for(int i=0; i<trimmed.length(); i++){            
+                result.add(Nucleotide.parse(trimmed.charAt(i)));
             }
             return result;
         }catch(IllegalArgumentException e){
-            throw new IllegalArgumentException("could not getGlyphs for "+ s,e);
+            throw new IllegalArgumentException("could not parse "+ nucleotides,e);
         }
         
     }
-
-    public static String convertToString(List<Nucleotide> glyphs){
+    /**
+     * Convert the given {@link Iterable} of nucleotides
+     * into a String which represents the same
+     * nucleotide sequence.
+     * @param nucleotides the nucleotides to convert to a string
+     * @return a new String, will never be null.
+     * @throws NullPointerException if nucleotides is null.
+     */
+    public static String convertToString(Iterable<Nucleotide> nucleotides){
         StringBuilder result = new StringBuilder();
-        for(Nucleotide g: glyphs){
+        for(Nucleotide g: nucleotides){
             result.append(g.toString());
         }
         return result.toString();
@@ -80,13 +129,13 @@ public final class Nucleotides {
     /**
      * Given the input List of {@link Nucleotide}s
      * return the reverse compliment as a new List.
-     * @param glyphs the {@link Nucleotide}s to reverse compliment.
+     * @param nucleotides the {@link Nucleotide}s to reverse compliment.
      * @return the reverse compliment of the given List as a new List.
      */
-    public static List<Nucleotide> reverseCompliment(List<Nucleotide> glyphs) {
-        List<Nucleotide> reversed = new ArrayList<Nucleotide>(glyphs.size());
-        for(int i=glyphs.size()-1; i>=0; i--){
-            reversed.add(glyphs.get(i).compliment());
+    public static List<Nucleotide> reverseCompliment(List<Nucleotide> nucleotides) {
+        List<Nucleotide> reversed = new ArrayList<Nucleotide>(nucleotides.size());
+        for(int i=nucleotides.size()-1; i>=0; i--){
+            reversed.add(nucleotides.get(i).compliment());
         }
         return reversed;
      }

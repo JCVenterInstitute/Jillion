@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 public class TestRunLengthEncoder {
 
    String BasesAsString = "AAAAAAAAAAAATAAAAAAAAAAAATTTAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAA";
-    List<Nucleotide> list = Nucleotides.getNucleotidesFor(BasesAsString);
+    List<Nucleotide> list = Nucleotides.parse(BasesAsString);
     List<RunLength<Nucleotide>> expectedEncoding = Arrays.asList(
             new RunLength<Nucleotide>(Nucleotide.Adenine,12),
             new RunLength<Nucleotide>(Nucleotide.Thymine,1),

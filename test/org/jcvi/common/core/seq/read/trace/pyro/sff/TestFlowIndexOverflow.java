@@ -65,7 +65,7 @@ public class TestFlowIndexOverflow{
     
     private final SFFFlowgram FCPRO0N01A48YO = new SFFFlowgram("FCPRO0N01A48YO",
             new DefaultNucleotideSequence(
-                    Nucleotides.getNucleotidesFor(
+                    Nucleotides.parse(
                       "TCAGCGATACACATAGCGCGTACATCCACATCGTGGCGTCTCAAGGCACACAGGGGGATAGGN")),
                       new EncodedQualitySequence(runLengthQualityCodec,
                               PhredQuality.valueOf(new byte[]{36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,38,36,38,38,38,37,36,36,34,33,33,31,36,36,31,31,31,31,31,31,23,23,23,23,31,36,37,35,31,26,20,20,35,35,35,36,36,36,36,36,0})),

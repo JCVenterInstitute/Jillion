@@ -258,6 +258,39 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         }
         
     }
-    
+
+
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public int convertGappedValidRangeIndexToUngappedValidRangeIndex(
+             int gappedValidRangeIndex) {
+         return placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedValidRangeIndex);
+     }
+     /**
+     * {@inheritDoc}
+     */
+     @Override
+     public int convertUngappedValidRangeIndexToGappedValidRangeIndex(
+             int ungappedValidRangeIndex) {
+         return placedRead.convertUngappedValidRangeIndexToGappedValidRangeIndex(ungappedValidRangeIndex);
+     }
+     /**
+     * {@inheritDoc}
+     */
+     @Override
+     public Range convertGappedValidRangeToUngappedValidRange(
+             Range gappedValidRange) {
+         return placedRead.convertGappedValidRangeToUngappedValidRange(gappedValidRange);
+     }
+     /**
+     * {@inheritDoc}
+     */
+     @Override
+     public Range convertUngappedValidRangeToGappedValidRange(
+             Range ungappedValidRange) {
+         return placedRead.convertUngappedValidRangeToGappedValidRange(ungappedValidRange);
+     }
    
 }
