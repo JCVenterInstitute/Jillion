@@ -174,7 +174,7 @@ public final class CasUtil {
         DefaultCasPlacedReadFromCasAlignmentBuilder builder;
         
         long ungappedStartOffset = alignment.getStartOfMatch();
-        long gappedStartOffset = gappedReference.convertUngappedValidRangeIndexToGappedValidRangeIndex((int)ungappedStartOffset);
+        long gappedStartOffset = gappedReference.toGappedIndex((int)ungappedStartOffset);
         builder = new DefaultCasPlacedReadFromCasAlignmentBuilder(readId,
         		fullLengthReadBasecalls,
                 alignment.readIsReversed(),

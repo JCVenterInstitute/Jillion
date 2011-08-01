@@ -61,7 +61,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         public Builder(String contigId, String fullConsensus){
            this(contigId,
         		   new DefaultNucleotideSequence(
-                    Nucleotides.getNucleotidesFor(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)))
+                    Nucleotides.parse(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)))
             );
         }
         public Builder(String contigId, NucleotideSequence fullConsensus){
@@ -176,10 +176,11 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             }
             final String newContigId;
             if(adjustedContigIdCoordinateSystem !=null){
-                Range gappedContigRange = Range.buildRange(contigLeft, contigRight);
-                Range ungappedContigRange = validConsensus.convertGappedValidRangeToUngappedValidRange(gappedContigRange)
-                                    .convertRange(adjustedContigIdCoordinateSystem);
-                //contig left and right are in 0 based use
+                Range ungappedContigRange = Range.buildRange(
+                                    validConsensus.toUngappedIndex(contigLeft),
+                                    validConsensus.toUngappedIndex(contigRight))
+                        .convertRange(adjustedContigIdCoordinateSystem);
+                 //contig left and right are in 0 based use
                 newContigId = String.format("%s_%d_%d",contigId,
                         ungappedContigRange.getLocalStart(),
                         ungappedContigRange.getLocalEnd());

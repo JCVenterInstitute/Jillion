@@ -114,7 +114,7 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
 
     private Map<Nucleotide, Integer> initalizeNucleotideMap() {
         Map<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
-        for(Nucleotide glyph : Nucleotides.getNucleotidesFor("ACGT-")){
+        for(Nucleotide glyph : Nucleotides.parse("ACGT-")){
             map.put(glyph, Integer.valueOf(0));
         }
         return map;

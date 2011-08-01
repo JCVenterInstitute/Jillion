@@ -75,7 +75,7 @@ public class BasicChromatogram implements Chromatogram {
     public BasicChromatogram(String basecalls, byte[] qualities,Peaks peaks,
             ChannelGroup channelGroup,
             Map<String,String> comments){
-        this(new DefaultNucleotideSequence( Nucleotides.getNucleotidesFor(basecalls)),
+        this(new DefaultNucleotideSequence( Nucleotides.parse(basecalls)),
                 new EncodedQualitySequence(RUN_LENGTH_CODEC,PhredQuality.valueOf(qualities)),
                 peaks,
                      channelGroup, comments);

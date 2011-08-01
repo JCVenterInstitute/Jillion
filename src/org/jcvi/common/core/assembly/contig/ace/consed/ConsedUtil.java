@@ -45,7 +45,6 @@ import org.jcvi.common.core.assembly.contig.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.joda.time.DateTime;
@@ -186,8 +185,8 @@ public class ConsedUtil {
         String contigConsensus =Nucleotides.convertToString(consensus.decode(contigRange));
         //id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
         String contigId = String.format("%s_%d_%d",originalContigId, 
-                oldStart + (consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getStart())),
-                oldStart + (consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex((int) contigRange.getEnd())));
+                oldStart + consensus.toUngappedIndex((int) contigRange.getStart()),
+                oldStart + consensus.toUngappedIndex((int) contigRange.getEnd()));
         DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contigId, contigConsensus);
         
         for(String readId : contigReads){

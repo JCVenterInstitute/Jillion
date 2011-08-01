@@ -27,46 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.AssemblyUtil;
 
 public abstract class AbstractNucleotideSequence implements NucleotideSequence{
 
-    @Override
-    public int convertGappedValidRangeIndexToUngappedValidRangeIndex(
-            int gappedValidRangeIndex) {
-        if(isAGap(gappedValidRangeIndex)){
-            //we are given a gap
-            //which we can't convert into an ungapped index
-            throw new IllegalArgumentException(gappedValidRangeIndex + " is a gap");
-        }
-        int numberOfGaps = computeNumberOfInclusiveGapsInGappedValidRangeUntil(gappedValidRangeIndex);
-        return gappedValidRangeIndex-numberOfGaps;
-    }
+    
 
-    @Override
-    public Range convertGappedValidRangeToUngappedValidRange(
-            Range gappedValidRange) {
-       return Range.buildRange(
-               convertGappedValidRangeIndexToUngappedValidRangeIndex(
-                       AssemblyUtil.getLeftFlankingNonGapIndex(this,(int)gappedValidRange.getStart())),
-               convertGappedValidRangeIndexToUngappedValidRangeIndex(
-                       AssemblyUtil.getLeftFlankingNonGapIndex(this, (int)gappedValidRange.getEnd()))
-                
-        );
-    }
-
-    @Override
-    public Range convertUngappedValidRangeToGappedValidRange(
-            Range ungappedValidRange) {
-        return  Range.buildRange(
-                convertUngappedValidRangeIndexToGappedValidRangeIndex((int)ungappedValidRange.getStart()),
-                convertUngappedValidRangeIndexToGappedValidRangeIndex((int)ungappedValidRange.getEnd()));
-                
-    }
-
-    private boolean isAGap(int gappedValidRangeIndex) {
-        return getGapIndexes().contains(Integer.valueOf(gappedValidRangeIndex));
-    }
 
     @Override
     public long getUngappedLength(){
@@ -94,12 +59,7 @@ public abstract class AbstractNucleotideSequence implements NucleotideSequence{
         return numberOfGaps;
     }
 
-    @Override
-    public int convertUngappedValidRangeIndexToGappedValidRangeIndex(
-            int ungappedValidRangeIndex) {
-        int numberOfGaps = computeNumberOfInclusiveGapsInUngappedValidRangeUntil(ungappedValidRangeIndex);
-        return ungappedValidRangeIndex+numberOfGaps;
-    }
+   
     
     @Override
     public List<Nucleotide> decode(Range range) {
@@ -121,6 +81,20 @@ public abstract class AbstractNucleotideSequence implements NucleotideSequence{
             withoutGaps.remove(gapIndexes.get(i).intValue());
         }
         return withoutGaps;
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int toUngappedIndex(int gappedIndex) {
+        return gappedIndex - computeNumberOfInclusiveGapsInGappedValidRangeUntil(gappedIndex);
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int toGappedIndex(int ungappedIndex) {
+        return ungappedIndex +computeNumberOfInclusiveGapsInUngappedValidRangeUntil(ungappedIndex);
     }
     
     

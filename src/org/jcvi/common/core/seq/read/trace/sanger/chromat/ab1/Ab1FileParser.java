@@ -183,7 +183,7 @@ public final class Ab1FileParser {
 		List<ByteArrayTaggedDataRecord> qualityRecords =groupedDataRecordMap.byteArrayRecords.get(TaggedDataName.JTC_QUALITY_VALUES);
 		for(int i=0; i<qualityRecords.size(); i++){
 		    ByteArrayTaggedDataRecord qualityRecord = qualityRecords.get(i);
-			List<Nucleotide> basecalls = Nucleotides.getNucleotidesFor(basecallsList.get(i));
+			List<Nucleotide> basecalls = Nucleotides.parse(basecallsList.get(i));
 			byte[][] qualities = splitQualityDataByChannel(basecalls, qualityRecord.parseDataRecordFrom(traceData));
 			if(i == ORIGINAL_VERSION && visitor instanceof AbiChromatogramFileVisitor){
 				AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor)visitor;
@@ -617,7 +617,7 @@ public final class Ab1FileParser {
 	private static List<Nucleotide> parseChannelOrder(GroupedTaggedRecords dataRecordMap ){
 		AsciiTaggedDataRecord order = dataRecordMap.asciiDataRecords.get(TaggedDataName.FILTER_WHEEL_ORDER).get(0);
 		
-		return Nucleotides.getNucleotidesFor(order.parseDataRecordFrom(null));
+		return Nucleotides.parse(order.parseDataRecordFrom(null));
 
 	}
 

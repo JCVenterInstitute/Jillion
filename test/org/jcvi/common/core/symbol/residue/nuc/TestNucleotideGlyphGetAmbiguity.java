@@ -38,77 +38,77 @@ public class TestNucleotideGlyphGetAmbiguity {
         final Nucleotide n = Nucleotide.parse('N');
         assertEquals(n, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Adenine,Cytosine,Guanine,Thymine)));
-        assertEquals(EMPTY_SET, n.getUnAmbiguousNucleotidesFor());
+        assertEquals(EMPTY_SET, n.getAllPossibleAmbiguities());
     }
     @Test
     public void V(){
         final Nucleotide v = Nucleotide.parse('V');
         assertEquals(v, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Adenine,Cytosine,Guanine)));
-        assertEquals(EMPTY_SET, v.getUnAmbiguousNucleotidesFor());
+        assertEquals(EMPTY_SET, v.getAllPossibleAmbiguities());
     }
     @Test
     public void H(){
         final Nucleotide h = Nucleotide.parse('H');
         assertEquals(h, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Adenine,Cytosine,Thymine)));
-        assertEquals(EMPTY_SET, h.getUnAmbiguousNucleotidesFor());
+        assertEquals(EMPTY_SET, h.getAllPossibleAmbiguities());
     }
     @Test
     public void D(){
         final Nucleotide d = Nucleotide.parse('D');
         assertEquals(d, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Adenine,Guanine,Thymine)));
-        assertEquals(EMPTY_SET, d.getUnAmbiguousNucleotidesFor());
+        assertEquals(EMPTY_SET, d.getAllPossibleAmbiguities());
     }
     @Test
     public void B(){
         final Nucleotide b = Nucleotide.parse('B');
         assertEquals(b, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Cytosine,Guanine,Thymine)));
-        assertEquals(EMPTY_SET, b.getUnAmbiguousNucleotidesFor());
+        assertEquals(EMPTY_SET, b.getAllPossibleAmbiguities());
     }
     @Test
     public void W(){
         final Nucleotide w = Nucleotide.parse('W');
         assertEquals(w, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Adenine,Thymine)));
-        assertEquals(EMPTY_SET, w.getUnAmbiguousNucleotidesFor());
+        assertEquals(EMPTY_SET, w.getAllPossibleAmbiguities());
     }
     @Test
     public void M(){
         final Nucleotide m = Nucleotide.parse('M');
         assertEquals(m, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Adenine,Cytosine)));
-        assertEquals(EMPTY_SET, m.getUnAmbiguousNucleotidesFor());
+        assertEquals(EMPTY_SET, m.getAllPossibleAmbiguities());
     }
     @Test
     public void R(){
         final Nucleotide r = Nucleotide.parse('R');
         assertEquals(r, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Adenine,Guanine)));
-        assertEquals(EMPTY_SET, r.getUnAmbiguousNucleotidesFor());
+        assertEquals(EMPTY_SET, r.getAllPossibleAmbiguities());
     }
     @Test
     public void S(){
         final Nucleotide s = Nucleotide.parse('S');
         assertEquals(s, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Cytosine,Guanine)));
-        assertEquals(EMPTY_SET, s.getUnAmbiguousNucleotidesFor());
+        assertEquals(EMPTY_SET, s.getAllPossibleAmbiguities());
     }
     @Test
     public void Y(){
         final Nucleotide y = Nucleotide.parse('Y');
         assertEquals(y, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Cytosine,Thymine)));
-        assertEquals(EMPTY_SET, y.getUnAmbiguousNucleotidesFor());
+        assertEquals(EMPTY_SET, y.getAllPossibleAmbiguities());
     }
     @Test
     public void K(){
         final Nucleotide k = Nucleotide.parse('K');
         assertEquals(k, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Guanine,Thymine)));
-        assertEquals(EMPTY_SET, k.getUnAmbiguousNucleotidesFor());
+        assertEquals(EMPTY_SET, k.getAllPossibleAmbiguities());
     }
     @Test
     public void A(){
@@ -116,7 +116,7 @@ public class TestNucleotideGlyphGetAmbiguity {
         assertEquals(a, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Adenine)));
         assertEquals(EnumSet.of(Unknown,NotThymine,NotGuanine,NotCytosine,Weak, Amino,Purine), 
-                a.getUnAmbiguousNucleotidesFor());
+                a.getAllPossibleAmbiguities());
     }
     @Test
     public void G(){
@@ -124,7 +124,7 @@ public class TestNucleotideGlyphGetAmbiguity {
         assertEquals(g, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Guanine)));
         assertEquals(EnumSet.of(Unknown,NotThymine,NotCytosine,NotAdenine,Strong, Keto,Purine), 
-                g.getUnAmbiguousNucleotidesFor());
+                g.getAllPossibleAmbiguities());
     }
     @Test
     public void C(){
@@ -132,7 +132,7 @@ public class TestNucleotideGlyphGetAmbiguity {
         assertEquals(c, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Cytosine)));
         assertEquals(EnumSet.of(Unknown,NotThymine,NotGuanine,NotAdenine,Amino, Pyrimidine,Strong), 
-                c.getUnAmbiguousNucleotidesFor());
+                c.getAllPossibleAmbiguities());
     }
     @Test
     public void T(){
@@ -140,7 +140,7 @@ public class TestNucleotideGlyphGetAmbiguity {
         assertEquals(t, 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Thymine)));
         assertEquals(EnumSet.of(Unknown,NotCytosine,NotGuanine,NotAdenine,Keto, Pyrimidine,Weak), 
-                t.getUnAmbiguousNucleotidesFor());
+                t.getAllPossibleAmbiguities());
     }
     @Test
     public void gap(){

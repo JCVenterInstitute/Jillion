@@ -126,7 +126,7 @@ public class TestHiLowAceContigPhdDatastore {
             "acg";
         
         NucleotideSequence reverseComplimented = new DefaultNucleotideSequence(Nucleotides.reverseCompliment(
-                                                        Nucleotides.getNucleotidesFor(basecalls)));
+                                                        Nucleotides.parse(basecalls)));
     
         List<PhredQuality> expectedQualities = new ArrayList<PhredQuality>();
         addLowQualities(expectedQualities, "gaataattggaatcacggcaaaaatttggggacaaatattatttccaaaattcccccagcaatcacacaggccctcaagcccatcaactcggtcattcaccgattttcctaaatcaagggtattagcttgctgggcttacacctaacatacacagcatgctcaatgaga".length());

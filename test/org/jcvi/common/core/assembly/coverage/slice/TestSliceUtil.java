@@ -54,7 +54,7 @@ public final class TestSliceUtil {
     }
     public static Slice createSliceFrom(String nucleotides, byte[] qualities, List<Direction> directions){
         
-        return createSliceFrom(Nucleotides.getNucleotidesFor(nucleotides),
+        return createSliceFrom(Nucleotides.parse(nucleotides),
                 PhredQuality.valueOf(qualities), directions);
     }
     

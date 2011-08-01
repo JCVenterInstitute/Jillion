@@ -51,7 +51,7 @@ public abstract class AbstractTestExampleSffFile{
     }
     final SFFFlowgram FF585OX02HCMO2 = new SFFFlowgram("FF585OX02HCMO2",
         new DefaultNucleotideSequence(
-        		Nucleotides.getNucleotidesFor(
+        		Nucleotides.parse(
                   "TCAGCTGGGCTCAAGTGATCTGCCCACCTCAGCTTCCCAAAGTGTTGGGATTACAGGCACGAACCACTGTGCTCGGTCAGCTCTTTTTTTGTTTTTTGGTTTTTTTCCAGGATCCAGTCAAAGTTTGGTTGGAACCGTCCGGGTTTTTAAAAACCCGGAATTCAAACCCTTTCGGTTCCAACACTCAGACCTCACCCTGAGCGGGCTGGCAAGGC")),
                   new EncodedQualitySequence(runLengthQualityCodec,
                           PhredQuality.valueOf(new byte[]{37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 38, 20, 20, 20, 20, 20, 20, 20, 38, 25, 25, 25, 25, 25, 25, 37, 37, 29, 29, 29, 29, 29, 29, 29, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 38, 38, 40, 40, 40, 40, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 33, 33, 30, 29, 29, 29, 26, 33, 33, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 38, 33, 33, 26, 29, 29, 33, 38, 37, 37, 37, 38, 38, 38, 38, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 33, 33, 33, 38, 37, 37, 37, 37, 37, 37, 37, 37, 37})),
@@ -62,7 +62,7 @@ public abstract class AbstractTestExampleSffFile{
     
     final SFFFlowgram FF585OX02HCD8G = new SFFFlowgram("FF585OX02HCD8G",
             new DefaultNucleotideSequence(
-            		Nucleotides.getNucleotidesFor(
+            		Nucleotides.parse(
                       "TCAGGGGGGGTCTTCTCCTGTGTGGAGAAATGGTGGCAGAAGCCTGGGGCCAGGCAGAGGAGAGGGAAAAGGTCAAAATTAACTTCTCTCCCCAGTCCCAAACCAACGTTGGAACCGAAAGGGTTTGAATTCAAACCCTTTCGGTTCCAACATGGTGAGACTCTGGGCCACAGGCCGGTTAGCAGTCTGAGCGGGCTGGCAAGGC")),
                       new EncodedQualitySequence(runLengthQualityCodec,
                               PhredQuality.valueOf(new byte[]{37, 37, 37, 30, 30, 30, 30, 30, 30, 30, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 40, 40, 40, 39, 38, 38, 38, 38, 40, 40, 40, 39, 38, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 38, 38, 38, 37, 37, 38, 38, 38, 38, 38, 38, 34, 34, 34, 34, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 33, 33, 33, 33, 38, 38, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 38, 38, 33, 33, 34, 34, 38, 38, 32, 20, 20, 20, 20, 20, 20, 20, 20, 31, 28, 31, 31, 31, 31, 31, 20, 20, 20, 20, 20, 20, 20, 20, 32, 32, 38, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 38, 38, 38, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37})),
@@ -74,7 +74,7 @@ public abstract class AbstractTestExampleSffFile{
     
     final SFFFlowgram FF585OX02FNE4N = new SFFFlowgram("FF585OX02FNE4N",
             new DefaultNucleotideSequence(
-            		Nucleotides.getNucleotidesFor(
+            		Nucleotides.parse(
                       "TCAGGGGGGCACCATTTACAAGGATGATGCCTCCTAAATGTGGTGCAGCATGGTGGCCCCAGGTGTTTACTTCTATACTAAGGCCACACAGATGAATGGTCAAAAATTTGGTGACAGAAATCAATGTTAGATTCTTTAGCTTCTGTTTCCTTCCTCCTTTATTGCCACTGCCTCCAAGTTGGAACCGAAGGGTTTGAATTCAAACCCCTGAGCGGGCTGGCAAGGC")),
                       new EncodedQualitySequence(runLengthQualityCodec,
                               PhredQuality.valueOf(new byte[]{35, 35, 35, 31, 31, 31, 31, 31, 31, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 40, 38, 38, 38, 39, 39, 39, 37, 35, 35, 32, 32, 32, 33, 35, 35, 35, 34, 34, 34, 34, 35, 32, 33, 33, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 32, 32, 32, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 32, 32, 32, 32, 32, 31, 34, 34, 34, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 34, 34, 34, 34, 34, 35, 35, 35, 35, 33, 34, 34, 32, 21, 20, 20, 20, 18, 18, 18, 18, 17, 17, 18, 26, 31, 32, 32, 32, 32, 26, 26, 21, 21, 21, 21, 29, 35, 35, 35, 35, 29, 29, 29, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35})),
@@ -86,7 +86,7 @@ public abstract class AbstractTestExampleSffFile{
     
     final SFFFlowgram FF585OX02GMGGN = new SFFFlowgram("FF585OX02GMGGN",
             new DefaultNucleotideSequence(
-            		Nucleotides.getNucleotidesFor(
+            		Nucleotides.parse(
                       "TCAGAATTCAAACCCTTTCGGTTCCAACTTTAAAATTAATAATTATTTTTCCCATGTTGTCTAAACAGCTTTAAATATATTTTAATGGGATGTCTCAAAGCTTAGATAAGAATGCTCAGCAAACATATCCAATTTTTAAAATGATATTCATTTATTTTGTATGATTATTGCAACATCACCTCTTCTGTATTATGTGGCCATGTGGAAGAGAATGAGAATGTCACATTCACTTACCTTTGAATAGCAGGCTACTTTGGTATGCATTTTTA")),
                       new EncodedQualitySequence(runLengthQualityCodec,
                               PhredQuality.valueOf(new byte[]{35, 35, 35, 35, 35, 35, 35, 35, 33, 24, 24, 24, 33, 33, 35, 21, 21, 21, 26, 33, 33, 31, 31, 30, 30, 30, 30, 32, 30, 16, 16, 15, 15, 15, 15, 31, 31, 35, 35, 35, 33, 33, 34, 35, 33, 23, 23, 20, 20, 20, 30, 30, 35, 35, 33, 33, 35, 35, 35, 35, 35, 29, 24, 24, 24, 29, 35, 35, 33, 30, 30, 30, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 33, 33, 33, 35, 35, 35, 35, 35, 35, 33, 24, 24, 24, 35, 35, 35, 35, 35, 35, 35, 23, 22, 24, 30, 29, 33, 35, 35, 35, 35, 35, 35, 35, 35, 29, 29, 29, 29, 26, 35, 35, 33, 27, 27, 27, 27, 14, 14, 14, 14, 14, 15, 15, 15, 15, 11, 31, 33, 36, 35, 33, 35, 35, 35, 23, 24, 24, 24, 33, 35, 35, 33, 29, 20, 29, 35, 35, 35, 35, 35, 35, 35, 35, 33, 29, 29, 29, 33, 35, 35, 35, 35, 35, 35, 35, 35, 29, 29, 29, 33, 35, 35, 35, 33, 33, 33, 33, 35, 35, 35, 35, 35, 35, 35, 20, 20, 20, 27, 27, 35, 27, 20, 20, 20, 20, 33, 33, 35, 35, 27, 27, 27, 33, 35, 34, 34, 34, 34, 34, 34, 34, 34, 24, 24, 24, 24, 24, 24, 24, 20, 20, 20, 29, 24, 24, 24, 24, 32, 32, 32, 32, 32, 34, 27, 21, 18, 18, 16, 16, 13, 13, 14, 23, 25, 25, 20, 20, 13, 13, 13, 13, 13, 13})),
@@ -97,7 +97,7 @@ public abstract class AbstractTestExampleSffFile{
     
     final SFFFlowgram FF585OX02FHO5X = new SFFFlowgram("FF585OX02FHO5X",
             new DefaultNucleotideSequence(
-            		Nucleotides.getNucleotidesFor(
+            		Nucleotides.parse(
                       "TCAGGGGGGCTTTGGATGTTGGAACCGAAAGGGTTTGAATTCAAACCCTTTCGGTTCCAACGATTTAAACCTACATCCATTTAACTCCAAATCCTGAACGGTTTCCAATAAACAACTTTACATTTGTGTAGCAAATTCCAGGCTATGTAAGAAAGGAGGACTCCACGGTGCACTGAGCGGGCTGGCAAGGC")),
                       new EncodedQualitySequence(runLengthQualityCodec,
                               PhredQuality.valueOf(new byte[]{37, 37, 34, 15, 15, 22, 22, 22, 22, 38, 38, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 39, 39, 39, 39, 37, 38, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 39, 39, 39, 39, 34, 36, 36, 40, 40, 40, 39, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 38, 38, 38, 37, 37, 37, 34, 34, 34, 38, 38, 37, 37, 37, 37, 37, 38, 38, 38, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37})),

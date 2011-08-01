@@ -34,10 +34,8 @@ public class ScaffoldUtil {
 
     public static Range convertGappedContigRangeToUngappedScaffoldRange(Contig<? extends PlacedRead> contig, Range gappedContigRange, Scaffold scaffold){
         NucleotideSequence consensus =contig.getConsensus();
-        int flankingGappedStart = AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)gappedContigRange.getStart());
-        int flankingGappedEnd = AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)gappedContigRange.getEnd());
-        Range ungappedRange = Range.buildRange(consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex(flankingGappedStart),
-                consensus.convertGappedValidRangeIndexToUngappedValidRangeIndex(flankingGappedEnd)
+       Range ungappedRange = Range.buildRange(consensus.toUngappedIndex((int)gappedContigRange.getStart()),
+                consensus.toUngappedIndex((int)gappedContigRange.getEnd())
                 );
         
        return scaffold.convertContigRangeToScaffoldRange(contig.getId(), ungappedRange);

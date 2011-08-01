@@ -642,7 +642,7 @@ public static Map<List<Slice>, List<ConsensusResult>> generateMostCommonBasecall
     			continue;
     		}
     		Map<Nucleotide, Integer> histogram = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
-    		for(Nucleotide bases : Nucleotides.getNucleotidesFor("ACGT-")){
+    		for(Nucleotide bases : Nucleotides.parse("ACGT-")){
     			histogram.put(bases, Integer.valueOf(0));
     		}
     		for(SliceElement e : s){

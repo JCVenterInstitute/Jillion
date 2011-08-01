@@ -240,7 +240,7 @@ private SFFUtil(){}
         return new SFFFlowgram(
                 readHeader.getName(),
                 new DefaultNucleotideSequence(
-                        Nucleotides.getNucleotidesFor(readData.getBasecalls())),
+                        Nucleotides.parse(readData.getBasecalls())),
                         new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                                 PhredQuality.valueOf(readData.getQualities())),
                 SFFUtil.computeValues(readData),

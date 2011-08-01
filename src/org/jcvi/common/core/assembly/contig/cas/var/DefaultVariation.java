@@ -152,7 +152,7 @@ public class DefaultVariation implements Variation{
     @Override
     public String toString(){
         StringBuilder variationList = new StringBuilder();
-        for(Nucleotide base : Nucleotides.getNucleotidesFor("ACGTN-")){
+        for(Nucleotide base : Nucleotides.parse("ACGTN-")){
             final List<Nucleotide> asList = Arrays.asList(base);
             if(histogram.containsKey(asList)){
                 variationList.append(String.format("\t%s: %d", base, histogram.get(asList)));

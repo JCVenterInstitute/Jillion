@@ -48,7 +48,7 @@ public interface NucleotideSequence extends Sequence<Nucleotide>{
      */
     List<Integer> getGapIndexes();    
     /**
-     * Get the number of gaps in the gapped basecalls.
+     * Get the number of gaps in this sequence.
      * @return the number of gaps; will always be {@code >=0}.
      */
     int getNumberOfGaps();
@@ -64,31 +64,7 @@ public interface NucleotideSequence extends Sequence<Nucleotide>{
      * @return
      */
     Range getValidRange();
-    /**
-     * Convert the given gapped valid range index into its
-     * ungapped equivalent.
-     * @param gappedValidRangeIndex the gapped valid range index to convert.
-     * @return the ungapped equivalent to the given gapped index.
-     * @see #convertUngappedValidRangeIndexToGappedValidRangeIndex(int)
-     */
-    int convertGappedValidRangeIndexToUngappedValidRangeIndex(int gappedValidRangeIndex);
-    /**
-     * Convert the given ungapped valid range index into its
-     * gapped equivalent.
-     * @param ungappedValidRangeIndex the ungapped valid range index to convert.
-     * @return the gapped equivalent to the given ungapped index.
-     * @see #convertGappedValidRangeIndexToUngappedValidRangeIndex(int)
-     */
-    int convertUngappedValidRangeIndexToGappedValidRangeIndex(int ungappedValidRangeIndex);
-    /**
-     * Convert the given gapped valid range into an ungapped valid range.
-     * @param gappedValidRange the gapped valid range to convert.
-     * @return the ungapped equivalent.
-     */
-    Range convertGappedValidRangeToUngappedValidRange(Range gappedValidRange);
-    
-    Range convertUngappedValidRangeToGappedValidRange(Range ungappedValidRange);
-    
+   
     /**
      * Is the {@link Nucleotide} at the given gapped index a gap?
      * @param gappedIndex the gappedIndex to check.
@@ -124,4 +100,8 @@ public interface NucleotideSequence extends Sequence<Nucleotide>{
      * UNgapped index.
      */
     int computeNumberOfInclusiveGapsInUngappedValidRangeUntil(int ungappedValidRangeIndex);
+    
+    int toUngappedIndex(int gappedIndex);
+    
+    int toGappedIndex(int ungappedIndex);
 }

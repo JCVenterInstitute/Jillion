@@ -148,9 +148,9 @@ public class ConvertPositions {
                     int deltaCoordinate = (int)coordinate+delta;
                     if(isGapped){
                         deltaCoordinate = AssemblyUtil.getLeftFlankingNonGapIndex(values, deltaCoordinate);
-                        convertedCoordinate =values.convertGappedValidRangeIndexToUngappedValidRangeIndex(deltaCoordinate);
+                        convertedCoordinate =values.toUngappedIndex(deltaCoordinate);
                     }else{
-                        convertedCoordinate = values.convertUngappedValidRangeIndexToGappedValidRangeIndex(deltaCoordinate);
+                        convertedCoordinate = values.toGappedIndex(deltaCoordinate);
                     }
                     System.out.printf("%d\t%d%n", coordinate,convertedCoordinate+1);
                 }

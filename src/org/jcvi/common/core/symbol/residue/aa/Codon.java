@@ -286,7 +286,7 @@ public class Codon
         
         CODON_MAP = new HashMap<List<Nucleotide>, Codon>(AMINO_ACID_MAP.size(), 1F);
         for(Entry<String, AminoAcid> entry : AMINO_ACID_MAP.entrySet()){
-            List<Nucleotide> codon = Nucleotides.getNucleotidesFor(entry.getKey());
+            List<Nucleotide> codon = Nucleotides.parse(entry.getKey());
             CODON_MAP.put(codon, new Codon(codon.get(0),codon.get(1),codon.get(2), 
                     entry.getValue()));
         }
@@ -323,7 +323,7 @@ public class Codon
     }
     public static List<Codon> getCodonsFor(NucleotideSequence basecalls, Frame frame){
         return getCodonsFor(Nucleotides.convertToString(
-                Nucleotides.convertToUngapped(basecalls.decode())),frame);
+                Nucleotides.ungap(basecalls.decode())),frame);
      }
     public static Codon getCodonFor(Nucleotide base1, Nucleotide base2, Nucleotide base3){
         return getCodonFor(Arrays.asList(base1,base2,base3));
@@ -333,7 +333,7 @@ public class Codon
         if(triplet.length() !=3){
             throw new IllegalArgumentException("triplet must have 3 bases");
         }
-        return getCodonFor(Nucleotides.getNucleotidesFor(triplet.substring(0, 3)));
+        return getCodonFor(Nucleotides.parse(triplet.substring(0, 3)));
     }
     public static Codon getCodonFor(List<Nucleotide> triplet){
         return getCodonByOffset(triplet,0);
@@ -345,7 +345,7 @@ public class Codon
     public static Codon getCodonByOffset(String basecalls, int offset){
         final String triplet = basecalls.substring(offset,offset+3);
         return getCodonByOffset(
-                Nucleotides.getNucleotidesFor(triplet),
+                Nucleotides.parse(triplet),
                 0);
     }
     public static Codon getCodonByOffset(NucleotideSequence basecalls, int offset){
@@ -384,20 +384,7 @@ public class Codon
     public AminoAcid getAminoAcid() {
         return aminoAcid;
     }
-    public boolean matches(Codon that)
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            final Nucleotide base = this.codonGlyphs[i];
-            final Nucleotide query = that.codonGlyphs[i];
-
-            if (!base.matches(query)){
-                return false;
-            }
-        }
-
-        return true;
-    }
+    
 
     @Override
     public int hashCode() {
