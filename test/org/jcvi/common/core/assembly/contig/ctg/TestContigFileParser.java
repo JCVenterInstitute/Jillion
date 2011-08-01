@@ -36,8 +36,8 @@ import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -495,7 +495,7 @@ public abstract class TestContigFileParser {
     @Test
     public void decodeLastConsensus() throws Exception{
         Contig contig928 = getContig928From(getFile());
-        assertEquals(consensusForContig928, Nucleotide.convertToString(contig928.getConsensus().decode()));
+        assertEquals(consensusForContig928, Nucleotides.convertToString(contig928.getConsensus().decode()));
     }
 
     protected abstract Contig getContig928From(File file) throws Exception;

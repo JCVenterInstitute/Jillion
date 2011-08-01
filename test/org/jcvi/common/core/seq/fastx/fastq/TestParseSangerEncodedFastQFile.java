@@ -26,7 +26,7 @@ import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQFileDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastQFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class TestParseSangerEncodedFastQFile {
     public void qualityValueStartsWithAmpersand() throws DataStoreException{
         FastQRecord actual = sut.get("SOLEXA1_0007:1:13:1658:1080#GGCTAC/2");
         assertEquals("CGTAGTACGATATACGCGCGTGTGTACTGCTACGTCTCACTTCTTTTTCCCCACGGGATGTTATTTCCCTTTTAAGCTTCCTGTACAGTTTTGCCGGGCT",
-                Nucleotide.convertToString(actual.getNucleotides().decode()));
+                Nucleotides.convertToString(actual.getNucleotides().decode()));
         assertEquals(QUALITY_CODEC.decode("@;7C9;A)565A;4..9;2;45,?@###########################################################################").decode(),
                 actual.getQualities().decode());
     }
@@ -61,7 +61,7 @@ public class TestParseSangerEncodedFastQFile {
     public void normalRecord() throws DataStoreException{
         FastQRecord actual = sut.get("SOLEXA1_0007:2:13:163:254#GATCAG/2");
         assertEquals("CGTAGTACGATATACGCGCGTGTACTGCTACGTCTCACTTTCGCAAGATTGCTCAGCTCATTGATGCTCAATGCTGGGCCATATCTCTTTTCTTTTTTTC",
-                Nucleotide.convertToString(actual.getNucleotides().decode()));
+                Nucleotides.convertToString(actual.getNucleotides().decode()));
         assertEquals(QUALITY_CODEC.decode("HHHHGHHEHHHHHE=HAHCEGEGHAG>CHH>EG5@>5*ECE+>AEEECGG72B&A*)569B+03B72>5.A>+*A>E+7A@G<CAD?@############").decode(),
                 actual.getQualities().decode());
     }

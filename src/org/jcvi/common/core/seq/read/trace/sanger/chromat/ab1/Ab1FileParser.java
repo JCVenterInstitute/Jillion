@@ -55,6 +55,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.UserDefinedTag
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateUtils;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -182,7 +183,7 @@ public final class Ab1FileParser {
 		List<ByteArrayTaggedDataRecord> qualityRecords =groupedDataRecordMap.byteArrayRecords.get(TaggedDataName.JTC_QUALITY_VALUES);
 		for(int i=0; i<qualityRecords.size(); i++){
 		    ByteArrayTaggedDataRecord qualityRecord = qualityRecords.get(i);
-			List<Nucleotide> basecalls = Nucleotide.getGlyphsFor(basecallsList.get(i));
+			List<Nucleotide> basecalls = Nucleotides.getNucleotidesFor(basecallsList.get(i));
 			byte[][] qualities = splitQualityDataByChannel(basecalls, qualityRecord.parseDataRecordFrom(traceData));
 			if(i == ORIGINAL_VERSION && visitor instanceof AbiChromatogramFileVisitor){
 				AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor)visitor;
@@ -616,7 +617,7 @@ public final class Ab1FileParser {
 	private static List<Nucleotide> parseChannelOrder(GroupedTaggedRecords dataRecordMap ){
 		AsciiTaggedDataRecord order = dataRecordMap.asciiDataRecords.get(TaggedDataName.FILTER_WHEEL_ORDER).get(0);
 		
-		return Nucleotide.getGlyphsFor(order.parseDataRecordFrom(null));
+		return Nucleotides.getNucleotidesFor(order.parseDataRecordFrom(null));
 
 	}
 

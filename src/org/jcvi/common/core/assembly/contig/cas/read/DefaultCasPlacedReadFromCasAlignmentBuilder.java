@@ -38,6 +38,7 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.util.Builder;
 
 public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<DefaultCasPlacedRead>{
@@ -67,7 +68,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         this.fullUngappedLength = fullRangeSequence.getUngappedLength();
         
         if(isReversed){
-            allBases = Nucleotide.reverseCompliment(fullRangeSequence.decode(traceTrimRange));
+            allBases = Nucleotides.reverseCompliment(fullRangeSequence.decode(traceTrimRange));
             validRangeStart = traceTrimRange ==null?0:AssemblyUtil.reverseComplimentValidRange(traceTrimRange, fullUngappedLength).getStart();
         }
         else{
@@ -140,7 +141,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     }
   
     public String validBases(){
-        return Nucleotide.convertToString(validBases);
+        return Nucleotides.convertToString(validBases);
     }
     @Override
     public DefaultCasPlacedRead build() {

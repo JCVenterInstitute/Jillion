@@ -51,6 +51,7 @@ import org.jcvi.common.core.assembly.contig.cas.var.Variation;
 import org.jcvi.common.core.assembly.contig.cas.var.VariationLog;
 import org.jcvi.common.core.assembly.contig.cas.var.Variation.Type;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 /**
  * @author dkatzel
  *
@@ -196,14 +197,14 @@ public class Compare2VarFiles {
                     @Override
                     public int compare(List<Nucleotide> o1,
                             List<Nucleotide> o2) {
-                        return Nucleotide.convertToString(o1).compareTo(Nucleotide.convertToString(o2));
+                        return Nucleotides.convertToString(o1).compareTo(Nucleotides.convertToString(o2));
                     }
                     
                 }
                 );
         keys.addAll(histogram.keySet());
         for(Entry<List<Nucleotide>, Integer> entry : histogram.entrySet()){
-            variationList.append(String.format(" %s: %d", Nucleotide.convertToString(entry.getKey()), entry.getValue()));
+            variationList.append(String.format(" %s: %d", Nucleotides.convertToString(entry.getKey()), entry.getValue()));
         }
         
         return variationList.toString();

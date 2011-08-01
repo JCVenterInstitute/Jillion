@@ -39,6 +39,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 
 public final class SFFUtil {
@@ -75,7 +76,7 @@ private SFFUtil(){}
      */
     private Linkers(String sequence) {
         this.forwardSequence = new DefaultNucleotideSequence(sequence);
-        this.reverseSequence = new DefaultNucleotideSequence(Nucleotide.reverseCompliment(
+        this.reverseSequence = new DefaultNucleotideSequence(Nucleotides.reverseCompliment(
                 forwardSequence.decode()));
     }
 
@@ -239,7 +240,7 @@ private SFFUtil(){}
         return new SFFFlowgram(
                 readHeader.getName(),
                 new DefaultNucleotideSequence(
-                        Nucleotide.getGlyphsFor(readData.getBasecalls())),
+                        Nucleotides.getNucleotidesFor(readData.getBasecalls())),
                         new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                                 PhredQuality.valueOf(readData.getQualities())),
                 SFFUtil.computeValues(readData),

@@ -27,6 +27,7 @@ import java.util.List;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.Codon;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -46,7 +47,7 @@ public class TestCodon {
     private static final String base2       = "AAAAAACCCCCCCCCCCCCCCGGGGGGTTTTTTTTAAAAAACCCCCCCCCCCCCCCGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTAAAAAACCCCCCCCCCCCCCCGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTGGGAAAAAACCCCCCCCCCCCCCCGGGGGTTTTTTTTT";
     private static final String base3       = "ACGRTYABCDGHKMNRSTVWYACGRTYACGHMTWYACGRTYABCDGHKMNRSTVWYABCDGHKMNRSTVWYABCDGHKMNRSTVWYACGRTYABCDGHKMNRSTVWYABCDGHKMNRSTVWYABCDGHKMNRSTVWYAGRACGRTYABCDGHKMNRSTVWYACGTYACGRTYAGR";
 
-    private static final List<Nucleotide> EXPECTED_START_CODON = Nucleotide.getGlyphsFor("ATG");
+    private static final List<Nucleotide> EXPECTED_START_CODON = Nucleotides.getNucleotidesFor("ATG");
     private final AminoAcid expectedAminoAcid;
     private final boolean isStartCodon;
     private final boolean isStopCodon;
@@ -58,7 +59,7 @@ public class TestCodon {
         for(int i=0; i<aminoAcids.length(); i++){
             final char aminoAbbreviation = aminoAcids.charAt(i);
             AminoAcid aa = aminoAbbreviation !='*'? AminoAcid.getGlyphFor(aminoAbbreviation): null;
-            List<Nucleotide> codon = Nucleotide.getGlyphsFor(
+            List<Nucleotide> codon = Nucleotides.getNucleotidesFor(
                                             Arrays.asList(base1.charAt(i),
                                                             base2.charAt(i),
                                                             base3.charAt(i)));

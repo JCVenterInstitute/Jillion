@@ -45,6 +45,7 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -196,7 +197,7 @@ public abstract class AbstractTestBasesSectionDecoder {
         SCFChromatogram chromatogram = sut.getChromatogram();
         assertEquals(newOffset-currentOffset-skipDistance, (int)bases.getLength()*12);
         assertEquals(chromatogram.getBasecalls().decode(), 
-                 Nucleotide.getGlyphsFor(c.basecalls()));
+                 Nucleotides.getNucleotidesFor(c.basecalls()));
         Sequence<ShortGlyph> encodedPeaks = new EncodedSequence<ShortGlyph>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(c.peaks()));
         assertEquals(chromatogram.getPeaks().getData(),
                 encodedPeaks);

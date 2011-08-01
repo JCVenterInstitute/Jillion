@@ -25,6 +25,7 @@ import java.util.List;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -50,7 +51,7 @@ public class TestNexteraTransposonTrimmer {
     public void forward(){
         List<Nucleotide> bases = new ArrayList<Nucleotide>();
         bases.addAll(TransposonEndSequences.FORWARD.decode());
-        bases.addAll(Nucleotide.getGlyphsFor("ACGTACGTACGT"));
+        bases.addAll(Nucleotides.getNucleotidesFor("ACGTACGTACGT"));
         
         Range expectedRange = Range.buildRangeOfLength(
                 TransposonEndSequences.FORWARD.getLength(),
@@ -64,7 +65,7 @@ public class TestNexteraTransposonTrimmer {
         List<Nucleotide> bases = new ArrayList<Nucleotide>();
         
         bases.addAll(TransposonEndSequences.REVERSE.decode());
-        bases.addAll(Nucleotide.getGlyphsFor("ACGTACGTACGT"));
+        bases.addAll(Nucleotides.getNucleotidesFor("ACGTACGTACGT"));
         
         Range expectedRange = Range.buildRangeOfLength(
                 TransposonEndSequences.REVERSE.getLength(),

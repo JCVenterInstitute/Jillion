@@ -49,6 +49,7 @@ import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public class Ace2Fasta {
 
@@ -91,9 +92,9 @@ public class Ace2Fasta {
                 
                 @Override
                 protected void visitNewContig(String contigId, String consensusString) {
-                    List<Nucleotide>consensus = Nucleotide.getGlyphsFor(consensusString);
+                    List<Nucleotide>consensus = Nucleotides.getNucleotidesFor(consensusString);
                     if(!gapped){
-                        consensus = Nucleotide.convertToUngapped(consensus);
+                        consensus = Nucleotides.convertToUngapped(consensus);
                     }
                     String id = contigIdMap.containsKey(contigId)?
                                         contigIdMap.get(contigId)

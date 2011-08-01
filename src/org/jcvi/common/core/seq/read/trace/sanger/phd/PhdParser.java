@@ -140,7 +140,7 @@ public class PhdParser {
             
                 if(infoPattern.find()){
                     visitor.visitBasecall(
-                            Nucleotide.getGlyphFor(infoPattern.group(1).charAt(0)),
+                            Nucleotide.parse(infoPattern.group(1).charAt(0)),
                             PhredQuality.valueOf(Byte.parseByte(infoPattern.group(2))),
                             Integer.parseInt(infoPattern.group(3)));
                 }

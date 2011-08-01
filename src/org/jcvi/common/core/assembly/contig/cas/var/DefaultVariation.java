@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 /**
  * {@code DefaultVariation} is a default implementation 
@@ -151,7 +152,7 @@ public class DefaultVariation implements Variation{
     @Override
     public String toString(){
         StringBuilder variationList = new StringBuilder();
-        for(Nucleotide base : Nucleotide.getGlyphsFor("ACGTN-")){
+        for(Nucleotide base : Nucleotides.getNucleotidesFor("ACGTN-")){
             final List<Nucleotide> asList = Arrays.asList(base);
             if(histogram.containsKey(asList)){
                 variationList.append(String.format("\t%s: %d", base, histogram.get(asList)));

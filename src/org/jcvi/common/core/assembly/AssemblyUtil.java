@@ -37,6 +37,7 @@ import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageRegion;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 /**
  * {@code AssemblyUtil} is a utility class for working
  * with {@link PlacedRead}s and gapped {@link NucleotideSequence}.
@@ -80,7 +81,7 @@ public final class AssemblyUtil {
             NucleotideSequence gappedValidRange, Direction dir, Range validRange, List<Nucleotide> ungappedUncomplimentedFullRangeBases){
         List<Nucleotide> fullRangeComplimented;
         if(dir == Direction.REVERSE){
-            fullRangeComplimented = Nucleotide.reverseCompliment(ungappedUncomplimentedFullRangeBases);
+            fullRangeComplimented = Nucleotides.reverseCompliment(ungappedUncomplimentedFullRangeBases);
         }
         else{
             fullRangeComplimented = ungappedUncomplimentedFullRangeBases;

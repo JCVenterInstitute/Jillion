@@ -30,6 +30,7 @@ import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -89,8 +90,8 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	
 	private Map<TigrAssemblerContigAttribute,String> generateConsensusAttributes(){
 		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
-		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, Nucleotide.convertToString(delegate.getConsensus().decodeUngapped()));
-		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, Nucleotide.convertToString(delegate.getConsensus().decode()));
+		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, Nucleotides.convertToString(delegate.getConsensus().decodeUngapped()));
+		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, Nucleotides.convertToString(delegate.getConsensus().decode()));
 	
 		return map;
 	}

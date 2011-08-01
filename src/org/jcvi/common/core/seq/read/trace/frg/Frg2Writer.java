@@ -46,7 +46,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 
@@ -177,7 +177,7 @@ public class Frg2Writer {
        out.write(String.format(FRG_2_FORMAT, frag.getId(),
                library.getId(),
                writeSourceComment(frag),
-               Nucleotide.convertToString(frag.getBasecalls().decode()),
+               Nucleotides.convertToString(frag.getBasecalls().decode()),
                new String(QUALITY_CODEC.encode(frag.getQualities().decode())),
                vectorClearRange.getLocalStart(),vectorClearRange.getLocalEnd(),
                clearRange.getLocalStart(),clearRange.getLocalEnd()

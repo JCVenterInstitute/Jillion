@@ -50,7 +50,7 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 
 
@@ -281,7 +281,7 @@ public final class ChromatogramXMLSerializer {
                        ChromatogramXMLSerializer.class,
                                      "buildBasicChromatogram",
                                      new Object[]{
-                   Nucleotide.convertToString(chromatogram.getBasecalls().decode()), 
+                   Nucleotides.convertToString(chromatogram.getBasecalls().decode()), 
                    new EncodedByteData(PhredQuality.toArray(chromatogram.getQualities().decode())).encodeData(),
                    chromatogram.getPeaks(),
                    chromatogram.getChannelGroup(),

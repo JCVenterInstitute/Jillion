@@ -29,18 +29,19 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequenceFastaRecord{
 
    
     public DefaultNucleotideSequenceFastaRecord(String identifier, Sequence<Nucleotide> sequence){
-        super(identifier, Nucleotide.convertToString(sequence.decode()));
+        super(identifier, Nucleotides.convertToString(sequence.decode()));
     }
     public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, Sequence<Nucleotide> sequence){
-        super(identifier, comments,Nucleotide.convertToString(sequence.decode()));
+        super(identifier, comments,Nucleotides.convertToString(sequence.decode()));
     }
     public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, List<Nucleotide> sequence){
-        super(identifier, comments,Nucleotide.convertToString(sequence));
+        super(identifier, comments,Nucleotides.convertToString(sequence));
     }
     public DefaultNucleotideSequenceFastaRecord(String identifier,  List<Nucleotide> sequence){
         this(identifier, null,sequence);
@@ -94,7 +95,7 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
     @Override
     protected NucleotideSequence encodeNucleotides(
             CharSequence sequence) {
-        return new DefaultNucleotideSequence( Nucleotide.getGlyphsFor(sequence));
+        return new DefaultNucleotideSequence( Nucleotides.getNucleotidesFor(sequence));
     }
 
 

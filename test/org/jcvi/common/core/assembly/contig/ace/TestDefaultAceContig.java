@@ -22,8 +22,8 @@ package org.jcvi.common.core.assembly.contig.ace;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -53,6 +53,6 @@ public class TestDefaultAceContig {
             assertEquals(16, consensus.getLength());
             assertEquals("id",contig.getId());
             assertEquals(1,contig.getNumberOfReads());
-            assertEquals("ACGTACGTACGTACGT", Nucleotide.convertToString(contig.getPlacedReadById("read").getSequence().decode()));
+            assertEquals("ACGTACGTACGTACGT", Nucleotides.convertToString(contig.getPlacedReadById("read").getSequence().decode()));
     }
 }

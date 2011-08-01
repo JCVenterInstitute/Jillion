@@ -38,6 +38,7 @@ import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.assembly.contig.slice.consensus.ConsensusResult;
 import org.jcvi.common.core.assembly.contig.slice.consensus.DefaultConsensusResult;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.util.MapValueComparator;
 
 import static org.jcvi.common.core.Direction.FORWARD;
@@ -624,7 +625,7 @@ public final class ConsensusCallerTestUtil {
 private static List<ConsensusResult> createConsensusResults(String basecalls, int... consensusQualities){
     List<ConsensusResult> result = new ArrayList<ConsensusResult>();
     for(int i=0; i< basecalls.length(); i++){
-        result.add(new DefaultConsensusResult(Nucleotide.getGlyphFor(basecalls.charAt(i)), consensusQualities[i]));
+        result.add(new DefaultConsensusResult(Nucleotide.parse(basecalls.charAt(i)), consensusQualities[i]));
     }
     return result;
 }
@@ -641,7 +642,7 @@ public static Map<List<Slice>, List<ConsensusResult>> generateMostCommonBasecall
     			continue;
     		}
     		Map<Nucleotide, Integer> histogram = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
-    		for(Nucleotide bases : Nucleotide.getGlyphsFor("ACGT-")){
+    		for(Nucleotide bases : Nucleotides.getNucleotidesFor("ACGT-")){
     			histogram.put(bases, Integer.valueOf(0));
     		}
     		for(SliceElement e : s){

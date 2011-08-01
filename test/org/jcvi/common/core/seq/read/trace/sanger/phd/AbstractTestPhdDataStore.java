@@ -29,7 +29,7 @@ import java.util.Iterator;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,7 +57,7 @@ public abstract class AbstractTestPhdDataStore extends AbstractTestPhd{
     protected void phdRecordMatchesExpected(Phd actual) {
         assertEquals(expectedQualities, actual.getQualities().decode());        
         assertEquals(expectedPositions, actual.getPeaks().getData().decode());      
-        assertEquals(expectedBasecalls, Nucleotide.convertToString(actual.getBasecalls().decode()));
+        assertEquals(expectedBasecalls, Nucleotides.convertToString(actual.getBasecalls().decode()));
         assertEquals(expectedProperties, actual.getComments());
     }
     

@@ -26,8 +26,8 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.trim.AbstractContigTrimmer;
 import org.jcvi.common.core.assembly.contig.trim.PlacedReadTrimmer;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 /**
  * {@code AceContigTrimmer} is an Ace implementation of
@@ -56,7 +56,7 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
     @Override
     protected void beginTrimmingContig(AceContig contig) {
         this.oldConsensus = contig.getConsensus();
-        builder = new DefaultAceContig.Builder(contig.getId(), Nucleotide.convertToString(oldConsensus.decode()));
+        builder = new DefaultAceContig.Builder(contig.getId(), Nucleotides.convertToString(oldConsensus.decode()));
         
         currentRanges = null;
     }
