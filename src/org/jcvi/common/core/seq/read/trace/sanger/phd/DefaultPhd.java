@@ -31,8 +31,8 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public class DefaultPhd implements Phd {
 
@@ -136,7 +136,7 @@ public class DefaultPhd implements Phd {
 
     @Override
     public String toString() {
-        return Nucleotide.convertToString(basecalls.decode());
+        return Nucleotides.convertToString(basecalls.decode());
     }
 
     @Override

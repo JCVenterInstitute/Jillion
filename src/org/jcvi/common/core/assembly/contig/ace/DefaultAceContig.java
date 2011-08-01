@@ -37,6 +37,7 @@ import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
 
@@ -60,7 +61,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         public Builder(String contigId, String fullConsensus){
            this(contigId,
         		   new DefaultNucleotideSequence(
-                    Nucleotide.getGlyphsFor(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)))
+                    Nucleotides.getNucleotidesFor(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)))
             );
         }
         public Builder(String contigId, NucleotideSequence fullConsensus){
@@ -90,7 +91,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         
         public Builder addRead(AcePlacedRead acePlacedRead) {
          return addRead(acePlacedRead.getId(),
-        		 Nucleotide.convertToString(acePlacedRead.getSequence().decode()),
+        		 Nucleotides.convertToString(acePlacedRead.getSequence().decode()),
         		 (int)acePlacedRead.getStart(),
         		 acePlacedRead.getDirection(),
         		 acePlacedRead.getValidRange(),

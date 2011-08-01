@@ -31,6 +31,7 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -134,7 +135,7 @@ public class AceFileUtil {
                     phdFullBases);
             qualities = phdQualities.decode();
         }else{
-            final List<Nucleotide> complimentedFullBases = Nucleotide.reverseCompliment(phdFullBases);
+            final List<Nucleotide> complimentedFullBases = Nucleotides.reverseCompliment(phdFullBases);
             Range complimentedValidRange = AssemblyUtil.reverseComplimentValidRange(
                     ungappedValidRange,
                     complimentedFullBases.size());

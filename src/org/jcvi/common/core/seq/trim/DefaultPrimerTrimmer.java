@@ -32,6 +32,7 @@ import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.experimental.align.Aligner;
 import org.jcvi.common.experimental.align.Alignment;
 import org.jcvi.common.experimental.align.NucleotideSubstitutionMatrix;
@@ -110,7 +111,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
                 final Alignment reverseAlignment;
                 if(alsoCheckReverseCompliment){
                     reverseAlignment = aligner.alignSequence(
-                            new DefaultNucleotideSequence(Nucleotide.reverseCompliment(sequence.decode())),
+                            new DefaultNucleotideSequence(Nucleotides.reverseCompliment(sequence.decode())),
                             primer);
                 }else{
                     reverseAlignment = NULL_ALIGNMENT_OBJECT;

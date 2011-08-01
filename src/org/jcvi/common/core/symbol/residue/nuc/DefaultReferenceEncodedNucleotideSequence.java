@@ -116,7 +116,7 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
         for(int i=startReferenceEncodingOffset; i<endReferenceEncodingOffset; i++){
             //get the corresponding index to this reference
             int referenceIndex = i + startOffset;
-            Nucleotide g = Nucleotide.getGlyphFor(toBeEncoded.charAt(i));
+            Nucleotide g = Nucleotide.parse(toBeEncoded.charAt(i));
             final Nucleotide referenceGlyph = reference.get(referenceIndex);            
             
             final Integer indexAsInteger = Integer.valueOf(i);

@@ -27,6 +27,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 /**
  * {@code TigrAssemblerPlacedReadAdapter} is a Adapter which allows
  * a PlacedRead to conform to the TigrAssemblerPlacedRead interface.
@@ -60,7 +61,7 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_LEFT, ""+(this.getStart()+1));
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_RIGHT, ""+(this.getEnd()+1));
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_START_OFFSET, ""+(this.getStart()));
-		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, Nucleotide.convertToString(this.getSequence().decode()));
+		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, Nucleotides.convertToString(this.getSequence().decode()));
 		
 		Range validRange = this.getValidRange();
 		if(this.getDirection()== Direction.FORWARD){

@@ -33,6 +33,7 @@ import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceElement;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public abstract class AbstractConsensusCaller implements ConsensusCaller{
  private final PhredQuality highQualityThreshold;
@@ -113,7 +114,7 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
 
     private Map<Nucleotide, Integer> initalizeNucleotideMap() {
         Map<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
-        for(Nucleotide glyph : Nucleotide.getGlyphsFor("ACGT-")){
+        for(Nucleotide glyph : Nucleotides.getNucleotidesFor("ACGT-")){
             map.put(glyph, Integer.valueOf(0));
         }
         return map;

@@ -32,6 +32,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
 
@@ -101,8 +102,8 @@ public class DefaultPlacedRead implements PlacedRead {
         		return false;
         	}
         	if(!read.getSequence().decode().equals(other.getSequence().decode())){
-        		System.out.println(Nucleotide.convertToString(read.getSequence().decode()));
-        		System.out.println(Nucleotide.convertToString(other.getSequence().decode()));
+        		System.out.println(Nucleotides.convertToString(read.getSequence().decode()));
+        		System.out.println(Nucleotides.convertToString(other.getSequence().decode()));
         		System.out.println();
         		return false;
         	}

@@ -33,8 +33,8 @@ import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.junit.Test;
 public class TestDefaultNucleotideGlyphCodec {
-    List<Nucleotide> evenBases = Nucleotide.getGlyphsFor("ACGTACGTWS-NACGT");
-    List<Nucleotide> oddBases =  Nucleotide.getGlyphsFor("ACGTACGTWS-NACGTA");
+    List<Nucleotide> evenBases = Nucleotides.getNucleotidesFor("ACGTACGTWS-NACGT");
+    List<Nucleotide> oddBases =  Nucleotides.getNucleotidesFor("ACGTACGTWS-NACGTA");
     
     DefaultNucleotideGlyphCodec sut = DefaultNucleotideGlyphCodec.getInstance();
     
@@ -62,7 +62,7 @@ public class TestDefaultNucleotideGlyphCodec {
     private void assertFinalBaseInOddLengthSequenceCorrectlyDecoded(
             String finalBase) {
         String basesString = "ATTTGCTATCCATA"+finalBase;
-        List<Nucleotide> expectedGlyphs = Nucleotide.getGlyphsFor(basesString);
+        List<Nucleotide> expectedGlyphs = Nucleotides.getNucleotidesFor(basesString);
         byte[] encoded =sut.encode(expectedGlyphs);
         assertEquals("did not decode final base of "+finalBase + " correctly",
                 expectedGlyphs, sut.decode(encoded));

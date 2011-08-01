@@ -92,7 +92,7 @@ public class TestNucleotideGlyph {
         List<Nucleotide> forward = Arrays.asList(Adenine,Cytosine,Guanine, Thymine, Gap,Cytosine);
         List<Nucleotide> expectedReversed = Arrays.asList(Guanine, Gap, Adenine,Cytosine,Guanine, Thymine);
         
-        assertEquals(expectedReversed, Nucleotide.reverseCompliment(forward));
+        assertEquals(expectedReversed, Nucleotides.reverseCompliment(forward));
     }
 
 

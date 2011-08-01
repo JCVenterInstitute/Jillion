@@ -43,6 +43,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.util.CloseableIterator;
 
 /**
@@ -235,7 +236,7 @@ public class HiLowAceContigPhdDatastore implements PhdDataStore{
                 
                 if(dir==Direction.REVERSE){
                     Collections.reverse(currentHiLowQualities);
-                    fullLengthBasecalls = new DefaultNucleotideSequence(Nucleotide.reverseCompliment(fullLengthBasecalls.decode()));
+                    fullLengthBasecalls = new DefaultNucleotideSequence(Nucleotides.reverseCompliment(fullLengthBasecalls.decode()));
                 }
                 QualitySequence qualities = new EncodedQualitySequence(
                                             RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,

@@ -20,8 +20,8 @@
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -45,6 +45,6 @@ public class TestSffUtil_Linkers {
     }
     
     private void assertMatches(String expected, NucleotideSequence actual){
-        assertEquals(expected, Nucleotide.convertToString(actual.decode()));
+        assertEquals(expected, Nucleotides.convertToString(actual.decode()));
     }
 }

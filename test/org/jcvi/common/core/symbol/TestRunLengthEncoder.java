@@ -32,12 +32,13 @@ import java.util.List;
 import org.jcvi.common.core.symbol.RunLength;
 import org.jcvi.common.core.symbol.RunLengthEncoder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRunLengthEncoder {
 
    String BasesAsString = "AAAAAAAAAAAATAAAAAAAAAAAATTTAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAA";
-    List<Nucleotide> list = Nucleotide.getGlyphsFor(BasesAsString);
+    List<Nucleotide> list = Nucleotides.getNucleotidesFor(BasesAsString);
     List<RunLength<Nucleotide>> expectedEncoding = Arrays.asList(
             new RunLength<Nucleotide>(Nucleotide.Adenine,12),
             new RunLength<Nucleotide>(Nucleotide.Thymine,1),

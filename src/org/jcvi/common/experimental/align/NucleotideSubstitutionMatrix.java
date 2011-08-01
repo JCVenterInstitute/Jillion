@@ -29,6 +29,7 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 /**
  * A <code>NucleotideSubstitutionMatrix</code> is a simple implementation of a 
@@ -119,8 +120,8 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
      */
     private void setAmbiguityScore(int score)
     {
-        for(Nucleotide g : Nucleotide.getGlyphsFor("ACGT")){
-            this.setScores(g, score, g.getNucleotides());
+        for(Nucleotide g : Nucleotides.getNucleotidesFor("ACGT")){
+            this.setScores(g, score, g.getUnAmbiguousNucleotidesFor());
         }
        
     }
@@ -200,7 +201,7 @@ public class NucleotideSubstitutionMatrix implements SubstitutionMatrix<Nucleoti
      */
     private int indexOf(char a)
     {
-        final Nucleotide glyph = Nucleotide.getGlyphFor(a);
+        final Nucleotide glyph = Nucleotide.parse(a);
         if(glyph ==null){
             return Nucleotide.Unknown.ordinal();
         }

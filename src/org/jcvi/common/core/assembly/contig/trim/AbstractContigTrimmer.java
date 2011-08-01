@@ -33,6 +33,7 @@ import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 /**
  * {@code AbstractContigTrimmer} is an abstract implementation
@@ -84,7 +85,7 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
             
             final NucleotideSequence originalGappedValidBases = placedRead.getSequence();
             final List<Nucleotide> trimedBasecalls = originalGappedValidBases.decode(newTrimRange);
-            String trimmedBases = Nucleotide.convertToString(trimedBasecalls);
+            String trimmedBases = Nucleotides.convertToString(trimedBasecalls);
             long ungappedLength = new DefaultNucleotideSequence(trimedBasecalls).getUngappedLength();
             
             

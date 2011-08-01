@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 /**
  * A <code>Codon</code> represents a triplet of {@link Nucleotide}s which specify an 
@@ -285,7 +286,7 @@ public class Codon
         
         CODON_MAP = new HashMap<List<Nucleotide>, Codon>(AMINO_ACID_MAP.size(), 1F);
         for(Entry<String, AminoAcid> entry : AMINO_ACID_MAP.entrySet()){
-            List<Nucleotide> codon = Nucleotide.getGlyphsFor(entry.getKey());
+            List<Nucleotide> codon = Nucleotides.getNucleotidesFor(entry.getKey());
             CODON_MAP.put(codon, new Codon(codon.get(0),codon.get(1),codon.get(2), 
                     entry.getValue()));
         }
@@ -321,8 +322,8 @@ public class Codon
        return getCodonsFor(basecalls,Frame.ZERO);
     }
     public static List<Codon> getCodonsFor(NucleotideSequence basecalls, Frame frame){
-        return getCodonsFor(Nucleotide.convertToString(
-                Nucleotide.convertToUngapped(basecalls.decode())),frame);
+        return getCodonsFor(Nucleotides.convertToString(
+                Nucleotides.convertToUngapped(basecalls.decode())),frame);
      }
     public static Codon getCodonFor(Nucleotide base1, Nucleotide base2, Nucleotide base3){
         return getCodonFor(Arrays.asList(base1,base2,base3));
@@ -332,7 +333,7 @@ public class Codon
         if(triplet.length() !=3){
             throw new IllegalArgumentException("triplet must have 3 bases");
         }
-        return getCodonFor(Nucleotide.getGlyphsFor(triplet.substring(0, 3)));
+        return getCodonFor(Nucleotides.getNucleotidesFor(triplet.substring(0, 3)));
     }
     public static Codon getCodonFor(List<Nucleotide> triplet){
         return getCodonByOffset(triplet,0);
@@ -344,7 +345,7 @@ public class Codon
     public static Codon getCodonByOffset(String basecalls, int offset){
         final String triplet = basecalls.substring(offset,offset+3);
         return getCodonByOffset(
-                Nucleotide.getGlyphsFor(triplet),
+                Nucleotides.getNucleotidesFor(triplet),
                 0);
     }
     public static Codon getCodonByOffset(NucleotideSequence basecalls, int offset){

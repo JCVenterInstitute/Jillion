@@ -36,8 +36,8 @@ import org.jcvi.common.core.assembly.contig.cas.align.DefaultCasMatch;
 import org.jcvi.common.core.assembly.contig.cas.read.CasNucleotideDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
@@ -142,7 +142,7 @@ public class TestDefaultCasGappedReferenceMap {
         }
         sut.visitEndOfFile();
         assertEquals("GTTC-AAATTG",
-                Nucleotide.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
+                Nucleotides.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
     @Test
@@ -161,7 +161,7 @@ public class TestDefaultCasGappedReferenceMap {
         }
         sut.visitEndOfFile();
         assertEquals("GTTC-AAATTG",
-                Nucleotide.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
+                Nucleotides.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
     @Test
@@ -182,7 +182,7 @@ public class TestDefaultCasGappedReferenceMap {
         }
         sut.visitEndOfFile();
         assertEquals("GTTC-AAATTG",
-                Nucleotide.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
+                Nucleotides.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
     @Test
@@ -203,7 +203,7 @@ public class TestDefaultCasGappedReferenceMap {
         }
         sut.visitEndOfFile();
         assertEquals("GTTC-AAA-TTG",
-                Nucleotide.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
+                Nucleotides.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
     @Test
@@ -224,7 +224,7 @@ public class TestDefaultCasGappedReferenceMap {
         }
         sut.visitEndOfFile();
         assertEquals("GTTC--AAATTG",
-                Nucleotide.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
+                Nucleotides.convertToString(sut.getGappedReferenceFor(referenceId).decode()));
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
 }

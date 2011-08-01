@@ -32,13 +32,13 @@ public class TestNucleotideGlyph_GetGlyphsFor {
     public void convertGlyph(){
         for(Nucleotide g: Nucleotide.values()){
             final Character uppercase = g.getCharacter();
-            assertEquals(g, Nucleotide.getGlyphFor(uppercase));
-            assertEquals(g, Nucleotide.getGlyphFor(Character.toLowerCase(uppercase)));
+            assertEquals(g, Nucleotide.parse(uppercase));
+            assertEquals(g, Nucleotide.parse(Character.toLowerCase(uppercase)));
         }
     }
     @Test
     public void convertXToN(){
-        assertEquals(Nucleotide.Unknown, Nucleotide.getGlyphFor('X'));
-        assertEquals(Nucleotide.Unknown, Nucleotide.getGlyphFor('x'));
+        assertEquals(Nucleotide.Unknown, Nucleotide.parse('X'));
+        assertEquals(Nucleotide.Unknown, Nucleotide.parse('x'));
     }
 }

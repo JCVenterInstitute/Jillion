@@ -184,45 +184,33 @@ public enum Nucleotide implements Symbol {
     public Nucleotide compliment() {
        return COMPLIMENT_MAP.get(this);
     }
-    /**
-     * Given the input List of {@link Nucleotide}s
-     * return the reverse compliment as a new List.
-     * @param glyphs the {@link Nucleotide}s to reverse compliment.
-     * @return the reverse compliment of the given List as a new List.
-     */
-    public static List<Nucleotide> reverseCompliment(List<Nucleotide> glyphs) {
-        List<Nucleotide> reversed = new ArrayList<Nucleotide>(glyphs.size());
-        for(int i=glyphs.size()-1; i>=0; i--){
-            reversed.add(glyphs.get(i).compliment());
-        }
-        return reversed;
-     }
+    
     /**
      * Get the {@link Nucleotide} for the given
      * String  representation.  If the given String is more than
      * one character long, only the first character will be considered.
      * For example,
-     * {@link #getGlyphFor(String) getGlyphFor("A")} will return
+     * {@link #parse(String) getGlyphFor("A")} will return
      * {@link #Adenine}.
      * @param base the nucleotide as a String of length 1.
      * @return a {@link Nucleotide} equivalent.
      * @throws IllegalArgumentException if the given
      * character can not be mapped to a {@link Nucleotide}.
      */
-    public static Nucleotide getGlyphFor(String base){
-        return getGlyphFor(base.charAt(0));
+    public static Nucleotide parse(String base){
+        return parse(base.trim().charAt(0));
     }
     /**
      * Get the {@link Nucleotide} for the given
      * character representation.  For example,
-     * {@link #getGlyphFor(char) getGlyphFor('A')} will return
+     * {@link #parse(char) getGlyphFor('A')} will return
      * {@link #Adenine}.
      * @param base the nucleotide as a character.
      * @return a {@link Nucleotide} equivalent.
      * @throws IllegalArgumentException if the given
      * character can not be mapped to a {@link Nucleotide}.
      */
-    public static Nucleotide getGlyphFor(char base){
+    public static Nucleotide parse(char base){
         
         Character upperCased = Character.toUpperCase(base);
         if(CHARACTER_MAP.containsKey(upperCased)){
@@ -255,50 +243,11 @@ public enum Nucleotide implements Symbol {
         return !isGap() && this !=Adenine && 
         this !=Cytosine && this != Guanine && this != Thymine;
     }
-
-    public static List<Nucleotide> convertToUngapped(List<Nucleotide> gapped){
-        List<Nucleotide> ungapped = new ArrayList<Nucleotide>(gapped.size());
-        for(Nucleotide possibleGap : gapped){
-            if(!possibleGap.isGap()){
-                ungapped.add(possibleGap);
-            }
-        }
-        return ungapped;
-    }
-    public static List<Nucleotide> getGlyphsFor(char[] array){
-       return getGlyphsFor(new String(array));
-    }
-    public static List<Nucleotide> getGlyphsFor(List<Character> list) {
-        StringBuilder builder = new StringBuilder();
-        for(Character c: list){
-            builder.append(c);
-        }
-        return  getGlyphsFor(builder);
-    }
-    public static List<Nucleotide> getGlyphsFor(CharSequence s){
-        List<Nucleotide> result = new ArrayList<Nucleotide>(s.length());
-        try{
-            for(int i=0; i<s.length(); i++){            
-                result.add(getGlyphFor(s.charAt(i)));
-            }
-            return result;
-        }catch(IllegalArgumentException e){
-            throw new IllegalArgumentException("could not getGlyphs for "+ s,e);
-        }
-        
-    }
-
-    public static String convertToString(List<Nucleotide> glyphs){
-        StringBuilder result = new StringBuilder();
-        for(Nucleotide g: glyphs){
-            result.append(g.toString());
-        }
-        return result.toString();
-    }
+    
     
     /**
      * Checks to see if the given nucleotide matches this nucleotide.  A "match" is defined as
-     * any relationship where a nucleotide or one of its ambiguous constituents is eqivalent to 
+     * any relationship where a nucleotide or one of its ambiguous constituents is equivalent to 
      * the other nucleotide or its constituents.
      * 
      * @param that The <code>NucleotideGlyph</code> to compare.
@@ -319,7 +268,7 @@ public enum Nucleotide implements Symbol {
      * @return <code>true</code> if the two nucleotides represent a potential match, 
      * <code>false</code> if they do not.
      */
-    public static boolean calculateMatch(Nucleotide a, Nucleotide b)
+    private static boolean calculateMatch(Nucleotide a, Nucleotide b)
     {
         if (a.equals(b)){
             return true;
@@ -348,15 +297,15 @@ public enum Nucleotide implements Symbol {
     }
     /**
      * Get the Set of unambiguous {@link Nucleotide}s that
-     * make up this ambiguity.
+     * make up this {@link Nucleotide}.
      * @return the Set of unambiguous {@link Nucleotide}s that
      * make up this ambiguity or {@code this} if this is not
-     * an ambiguity or an empty set if teh given {@link Nucleotide} is a gap. 
+     * an ambiguity or an empty set if the given {@link Nucleotide} is a gap. 
      */
-    public static Set<Nucleotide> getNucleotidesFor(Nucleotide ambiguity){
+    public Set<Nucleotide> getUnAmbiguousNucleotidesFor(){
         
-        if(CONSTIUENT_TO_AMBIGUITY.containsKey(ambiguity)){
-            return EnumSet.copyOf(CONSTIUENT_TO_AMBIGUITY.get(ambiguity));
+        if(CONSTIUENT_TO_AMBIGUITY.containsKey(this)){
+            return EnumSet.copyOf(CONSTIUENT_TO_AMBIGUITY.get(this));
         }
         return EnumSet.noneOf(Nucleotide.class);
     }
@@ -378,17 +327,6 @@ public enum Nucleotide implements Symbol {
         }
         return Gap;        
     }
-    /**
-     * Get the Set of unambiguous {@link Nucleotide}s that
-     * make up this ambiguity.
-     * @return the Set of unambiguous {@link Nucleotide}s that
-     * make up this ambiguity or {@code this} if this is not
-     * an ambiguity or an empty set if this is a gap.  This is the same as {@link #getNucleotidesFor(Nucleotide)
-     * NucleotideGlyph.getNucleotidesFor(this)}.
-     * @see #getNucleotidesFor(Nucleotide)
-     */
-    public Set<Nucleotide> getNucleotides(){
-        return getNucleotidesFor(this);
-    }
+    
     
 }

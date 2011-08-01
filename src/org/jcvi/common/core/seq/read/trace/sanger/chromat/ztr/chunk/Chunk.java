@@ -60,6 +60,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.DataFactory;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.RawData;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 /**
  * The Chunk is the basic unit of the ZTR Structure.
@@ -108,7 +109,7 @@ public enum Chunk {
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
-			String basecalls = Nucleotide.convertToString(ztrChromatogram.getBasecalls().decode());
+			String basecalls = Nucleotides.convertToString(ztrChromatogram.getBasecalls().decode());
 			
 			ByteBuffer buffer = ByteBuffer.allocate(basecalls.length()+1);
 			buffer.put(PADDING_BYTE);
