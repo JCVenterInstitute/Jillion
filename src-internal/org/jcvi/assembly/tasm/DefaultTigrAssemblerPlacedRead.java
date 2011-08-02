@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.Direction;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
@@ -44,8 +45,9 @@ public class DefaultTigrAssemblerPlacedRead extends DefaultPlacedRead implements
      */
     public DefaultTigrAssemblerPlacedRead(
             Read<ReferenceEncodedNucleotideSequence> read, long start,
-            Direction sequenceDirection) {
-        this(read, start, sequenceDirection,new EnumMap<TigrAssemblerReadAttribute,String>(TigrAssemblerReadAttribute.class));
+            Direction sequenceDirection,Range validRange) {
+        this(read, start, sequenceDirection,validRange, 
+                new EnumMap<TigrAssemblerReadAttribute,String>(TigrAssemblerReadAttribute.class));
     }
     /**
      * @param read
@@ -54,8 +56,8 @@ public class DefaultTigrAssemblerPlacedRead extends DefaultPlacedRead implements
      */
     public DefaultTigrAssemblerPlacedRead(
             Read<ReferenceEncodedNucleotideSequence> read, long start,
-            Direction sequenceDirection, EnumMap<TigrAssemblerReadAttribute, String> attributes) {
-        super(read, start, sequenceDirection);
+            Direction sequenceDirection, Range validRange, EnumMap<TigrAssemblerReadAttribute, String> attributes) {
+        super(read, start, sequenceDirection,validRange);
         Map<TigrAssemblerReadAttribute, String> map = new EnumMap<TigrAssemblerReadAttribute, String>(attributes);
         this.attributes = Collections.unmodifiableMap(map);
     }

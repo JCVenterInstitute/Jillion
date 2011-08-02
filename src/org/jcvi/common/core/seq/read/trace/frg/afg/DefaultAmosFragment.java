@@ -114,7 +114,7 @@ public class DefaultAmosFragment implements AmosFragment{
     * {@inheritDoc}
     */
     @Override
-    public NucleotideSequence getSequence() {
+    public NucleotideSequence getNucleotideSequence() {
         return basecalls;
     }
 

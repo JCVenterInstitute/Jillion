@@ -90,7 +90,7 @@ public class TestAceFileWriter {
             assertEquals("# reads", expectedContig.getNumberOfReads(), actualContig.getNumberOfReads());
             for(AcePlacedRead expectedRead : expectedContig.getPlacedReads()){
                 AcePlacedRead actualRead = actualContig.getPlacedReadById(expectedRead.getId());
-                assertEquals("basecalls", expectedRead.getSequence(), actualRead.getSequence());
+                assertEquals("basecalls", expectedRead.getNucleotideSequence(), actualRead.getNucleotideSequence());
                 assertEquals("offset", expectedRead.getStart(), actualRead.getStart());
                 assertEquals("validRange", expectedRead.getValidRange(), actualRead.getValidRange());
                 assertEquals("dir", expectedRead.getDirection(), actualRead.getDirection());

@@ -27,30 +27,28 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.Sequence;
-
+/**
+ * {@code DefaultNucleotideSequence} is the default
+ * implementation of a {@link NucleotideSequence}.  Internally,
+ * each {@link Nucleotide} is encoded as 2 bits.
+ * @author dkatzel
+ *
+ *
+ */
 public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     private final int[] gaps;
-    private final Range validRange;
     private final Sequence<Nucleotide> encodedBasecalls;
-    public DefaultNucleotideSequence(Collection<Nucleotide> glyphs, Range validRange){
-        this.validRange = validRange;
+    public DefaultNucleotideSequence(Collection<Nucleotide> glyphs){
         this.gaps = computeGapIndexes(glyphs);
         this.encodedBasecalls = new EncodedSequence<Nucleotide>(DefaultNucleotideGlyphCodec.getInstance(),glyphs);
    
     }
-    public DefaultNucleotideSequence(Collection<Nucleotide> glyphs){
-        this(glyphs, Range.buildRange(0, glyphs.size()-1));
-    }
-    public DefaultNucleotideSequence(String basecalls, Range validRange){
-        this(Nucleotides.parse(basecalls), validRange);
-    }
-    public DefaultNucleotideSequence(char[] basecalls){
+    public DefaultNucleotideSequence(String basecalls){
         this(Nucleotides.parse(basecalls));
     }
-    public DefaultNucleotideSequence(String basecalls){
+    public DefaultNucleotideSequence(char[] basecalls){
         this(Nucleotides.parse(basecalls));
     }
     private int[] computeGapIndexes(Collection<Nucleotide> glyphs) {
@@ -76,11 +74,6 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
             result.add(this.gaps[i]);
         }
         return result;
-    }
-
-    @Override
-    public Range getValidRange() {
-        return validRange;
     }
 
     @Override
@@ -128,7 +121,11 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     }
     @Override
     public String toString() {
-        return encodedBasecalls.decode().toString();
+        StringBuilder result = new StringBuilder((int)encodedBasecalls.getLength());
+        for(Nucleotide base : this){
+            result.append(base);
+        }
+        return result.toString();
     }
     /**
     * {@inheritDoc}

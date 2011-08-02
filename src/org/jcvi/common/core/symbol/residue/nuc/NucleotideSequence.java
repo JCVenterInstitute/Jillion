@@ -25,7 +25,6 @@ package org.jcvi.common.core.symbol.residue.nuc;
 
 import java.util.List;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
 /**
  * {@code NucleotideSequence} an interface to abstract
@@ -52,18 +51,6 @@ public interface NucleotideSequence extends Sequence<Nucleotide>{
      * @return the number of gaps; will always be {@code >=0}.
      */
     int getNumberOfGaps();
-    /**
-     * Get the valid {@link Range} which is ungapped "good" part of the basecalls.  Depending
-     * on what this {@link NucleotideSequence} represents can change the 
-     * meaning of valid range some possible meanings include:
-     * <ul>
-     * <li>the high quality region<li>
-     * <li>the region that aligns to a reference</li>
-     * <li>the region used to compute assembly consensus</li>
-     * </ul>
-     * @return
-     */
-    Range getValidRange();
    
     /**
      * Is the {@link Nucleotide} at the given gapped index a gap?
@@ -87,21 +74,13 @@ public interface NucleotideSequence extends Sequence<Nucleotide>{
     /**
      * Compute the number of gaps in the valid range until AND INCLUDING the given
      * gapped index.
-     * @param gappedValidRangeIndex the index to count the number of gaps until.
+     * @param gappedOffset the index to count the number of gaps until.
      * @return the number of gaps in the valid range until AND INCLUDING the given
      * gapped index.
      */
-    int computeNumberOfInclusiveGapsInGappedValidRangeUntil(int gappedValidRangeIndex);
-    /**
-     * Compute the number of gaps in the valid range until AND INCLUDING the given
-     * UNgapped index.
-     * @param ungappedValidRangeIndex the index to count the number of gaps until.
-     * @return the number of gaps in the valid range until AND INCLUDING the given
-     * UNgapped index.
-     */
-    int computeNumberOfInclusiveGapsInUngappedValidRangeUntil(int ungappedValidRangeIndex);
+    int getNumberOfGapsUntil(int gappedOffset);
     
-    int toUngappedIndex(int gappedIndex);
+    int getUngappedOffsetFor(int gappedIndex);
     
-    int toGappedIndex(int ungappedIndex);
+    int getGappedOffsetFor(int ungappedIndex);
 }

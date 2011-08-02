@@ -25,6 +25,7 @@ package org.jcvi.common.core.symbol;
 
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
@@ -75,4 +76,33 @@ public class EncodedShortGlyph implements Sequence<ShortGlyph>{
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public Iterator<ShortGlyph> iterator() {
+         return new ShortSequenceIterator();
+     }
+     
+     private class ShortSequenceIterator implements Iterator<ShortGlyph>{
+         private int i=0;
+
+         @Override
+         public boolean hasNext() {
+             return i< getLength();
+         }
+         @Override
+         public ShortGlyph next() {
+             ShortGlyph next = get(i);
+             i++;
+             return next;
+         }
+
+         @Override
+         public void remove() {
+             throw new UnsupportedOperationException("can not remove shorts");
+             
+         }
+         
+     }
 }

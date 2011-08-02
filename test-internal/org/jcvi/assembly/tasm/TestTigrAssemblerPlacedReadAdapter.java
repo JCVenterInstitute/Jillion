@@ -43,7 +43,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	int offset = 1234;
 	String readSequence = "ACGT-ACGT";
 	ReferenceEncodedNucleotideSequence gappedBasecalls = new DefaultReferenceEncodedNucleotideSequence(
-			new DefaultNucleotideSequence("NNNNNACGT-ACGT"),readSequence,5,validRange);
+			new DefaultNucleotideSequence("NNNNNACGT-ACGT"),readSequence,5);
 	Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead<ReferenceEncodedNucleotideSequence>(id, gappedBasecalls);
 	
 	
@@ -54,7 +54,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	
 	@Test
 	public void adaptedReadShouldDelegateAllPlacedReadMethods(){
-		PlacedRead delegate = new DefaultPlacedRead(read, offset, Direction.FORWARD);
+		PlacedRead delegate = new DefaultPlacedRead(read, offset, Direction.FORWARD,validRange);
 		TigrAssemblerPlacedReadAdapter sut = new TigrAssemblerPlacedReadAdapter(delegate);
 		assertCommonGettersCorrect(sut);		
 		assertCommonAttributesCorrect(delegate, sut);
@@ -65,7 +65,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	}
 	@Test
 	public void reverseReadShouldHaveSwappedSeqLeftandSeqRightAttributes(){
-		PlacedRead delegate = new DefaultPlacedRead(read, offset, Direction.REVERSE);
+		PlacedRead delegate = new DefaultPlacedRead(read, offset, Direction.REVERSE,validRange);
 		TigrAssemblerPlacedReadAdapter sut = new TigrAssemblerPlacedReadAdapter(delegate);
 		assertCommonGettersCorrect(sut);		
 		assertCommonAttributesCorrect(delegate, sut);
@@ -78,7 +78,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	private void assertCommonGettersCorrect(TigrAssemblerPlacedReadAdapter sut) {
 		assertEquals(id, sut.getId());
 		
-		assertEquals(gappedBasecalls, sut.getSequence());
+		assertEquals(gappedBasecalls, sut.getNucleotideSequence());
 		assertEquals(offset, sut.getStart());
 		assertEquals(offset+gappedBasecalls.getLength()-1, sut.getEnd());
 		assertEquals(gappedBasecalls.getLength(),sut.getLength());

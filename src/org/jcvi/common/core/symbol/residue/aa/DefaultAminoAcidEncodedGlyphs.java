@@ -2,6 +2,7 @@ package org.jcvi.common.core.symbol.residue.aa;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
@@ -55,6 +56,13 @@ public class DefaultAminoAcidEncodedGlyphs implements AminoAcidSequence {
 	public long getLength() {
 		return encodedAminoAcids.getLength();
 	}
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Iterator<AminoAcid> iterator() {
+        return encodedAminoAcids.iterator();
+    }
 
 }
 

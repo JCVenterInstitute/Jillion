@@ -182,7 +182,7 @@ public class TestConsedUtil_Split0x {
         assertEquals("direction",expected.getDirection(),actual.getDirection());
         
         assertEquals("phdInfo",expected.getPhdInfo(),actual.getPhdInfo());
-        assertEquals("basecalls",expected.getSequence().decode(),actual.getSequence().decode());
+        assertEquals("basecalls",expected.getNucleotideSequence().decode(),actual.getNucleotideSequence().decode());
         assertEquals("validRange",expected.getValidRange(),actual.getValidRange());
     }
 }

@@ -150,7 +150,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
             validRange = AssemblyUtil.reverseComplimentValidRange(validRange, fullUngappedLength);
         }
         Read<NucleotideSequence> read = new DefaultRead(readId,
-                        new DefaultNucleotideSequence(validBases,validRange));
+                        new DefaultNucleotideSequence(validBases));
         return new DefaultCasPlacedRead(read, startOffset, validRange, dir,(int)fullUngappedLength);
     }
 

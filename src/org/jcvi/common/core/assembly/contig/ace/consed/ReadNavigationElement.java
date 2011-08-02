@@ -95,7 +95,7 @@ public class ReadNavigationElement extends AbstractNavigationElement{
             Range gappedFeatureValidRange, 
             int fullLength,
             String comment){
-        Range ungappedRange = AssemblyUtil.convertGappedRangeIntoUngappedRange(read.getSequence(), gappedFeatureValidRange);
+        Range ungappedRange = AssemblyUtil.convertGappedRangeIntoUngappedRange(read.getNucleotideSequence(), gappedFeatureValidRange);
         if(read.getDirection() == Direction.REVERSE){
             ungappedRange =AssemblyUtil.reverseComplimentValidRange(ungappedRange, fullLength);
         }

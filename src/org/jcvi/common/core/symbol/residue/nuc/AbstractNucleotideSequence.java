@@ -24,6 +24,7 @@
 package org.jcvi.common.core.symbol.residue.nuc;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
@@ -38,7 +39,7 @@ public abstract class AbstractNucleotideSequence implements NucleotideSequence{
         return getLength() - getNumberOfGaps();
     }
     @Override
-    public int computeNumberOfInclusiveGapsInGappedValidRangeUntil(int gappedValidRangeIndex) {
+    public int getNumberOfGapsUntil(int gappedValidRangeIndex) {
         int numberOfGaps=0;
         for(Integer gapIndex :getGapIndexes()){
             if(gapIndex.intValue() <=gappedValidRangeIndex){
@@ -47,8 +48,7 @@ public abstract class AbstractNucleotideSequence implements NucleotideSequence{
         }
         return numberOfGaps;
     }
-    @Override
-    public int computeNumberOfInclusiveGapsInUngappedValidRangeUntil(int ungappedValidRangeIndex) {
+    private int computeNumberOfInclusiveGapsInUngappedValidRangeUntil(int ungappedValidRangeIndex) {
         int numberOfGaps=0;
         for(Integer gapIndex :getGapIndexes()){
             //need to account for extra length due to gaps being added to ungapped index
@@ -86,16 +86,47 @@ public abstract class AbstractNucleotideSequence implements NucleotideSequence{
     * {@inheritDoc}
     */
     @Override
-    public int toUngappedIndex(int gappedIndex) {
-        return gappedIndex - computeNumberOfInclusiveGapsInGappedValidRangeUntil(gappedIndex);
+    public int getUngappedOffsetFor(int gappedIndex) {
+        return gappedIndex - getNumberOfGapsUntil(gappedIndex);
     }
     /**
     * {@inheritDoc}
     */
     @Override
-    public int toGappedIndex(int ungappedIndex) {
+    public int getGappedOffsetFor(int ungappedIndex) {
         return ungappedIndex +computeNumberOfInclusiveGapsInUngappedValidRangeUntil(ungappedIndex);
     }
-    
-    
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Iterator<Nucleotide> iterator() {
+        return new NucleotideSequenceIterator();
+    }
+    /**
+     * Iterator that doesn't need to decode
+     * the entire sequence to get the iterator.
+     * @author dkatzel
+     */
+    private class NucleotideSequenceIterator implements Iterator<Nucleotide>{
+        private int i=0;
+
+        @Override
+        public boolean hasNext() {
+            return i< getLength();
+        }
+        @Override
+        public Nucleotide next() {
+            Nucleotide next = get(i);
+            i++;
+            return next;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("can not remove nucleotides");
+            
+        }
+        
+    }
 }

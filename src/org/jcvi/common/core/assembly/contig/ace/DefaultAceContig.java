@@ -91,7 +91,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         
         public Builder addRead(AcePlacedRead acePlacedRead) {
          return addRead(acePlacedRead.getId(),
-        		 Nucleotides.convertToString(acePlacedRead.getSequence().decode()),
+        		 Nucleotides.convertToString(acePlacedRead.getNucleotideSequence().decode()),
         		 (int)acePlacedRead.getStart(),
         		 acePlacedRead.getDirection(),
         		 acePlacedRead.getValidRange(),
@@ -177,8 +177,8 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             final String newContigId;
             if(adjustedContigIdCoordinateSystem !=null){
                 Range ungappedContigRange = Range.buildRange(
-                                    validConsensus.toUngappedIndex(contigLeft),
-                                    validConsensus.toUngappedIndex(contigRight))
+                                    validConsensus.getUngappedOffsetFor(contigLeft),
+                                    validConsensus.getUngappedOffsetFor(contigRight))
                         .convertRange(adjustedContigIdCoordinateSystem);
                  //contig left and right are in 0 based use
                 newContigId = String.format("%s_%d_%d",contigId,

@@ -185,8 +185,8 @@ public class ConsedUtil {
         String contigConsensus =Nucleotides.convertToString(consensus.decode(contigRange));
         //id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
         String contigId = String.format("%s_%d_%d",originalContigId, 
-                oldStart + consensus.toUngappedIndex((int) contigRange.getStart()),
-                oldStart + consensus.toUngappedIndex((int) contigRange.getEnd()));
+                oldStart + consensus.getUngappedOffsetFor((int) contigRange.getStart()),
+                oldStart + consensus.getUngappedOffsetFor((int) contigRange.getEnd()));
         DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contigId, contigConsensus);
         
         for(String readId : contigReads){
@@ -195,7 +195,7 @@ public class ConsedUtil {
                 throw new NullPointerException("got a null read for id " + readId);
             }
             builder.addRead(readId, 
-                    Nucleotides.convertToString(read.getSequence().decode()), 
+                    Nucleotides.convertToString(read.getNucleotideSequence().decode()), 
                     (int)(read.getStart() - contigRange.getStart()), 
                     read.getDirection(), read.getValidRange(), read.getPhdInfo(),
                     read.getUngappedFullLength());

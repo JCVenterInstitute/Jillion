@@ -212,7 +212,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
         expect(realRead.getId()).andReturn(id);
         expect(qualityFastaMap.get(id)).andReturn(encodedQualities);
         expect(realRead.getStart()).andReturn(0L);
-        expect(realRead.getSequence()).andReturn(encodedBases);
+        expect(realRead.getNucleotideSequence()).andReturn(encodedBases);
         expect(encodedBases.get(index)).andReturn(consensusBase);  
         expect(qualityValueStrategy.getQualityFor(realRead, encodedQualities, index)).andReturn(returnedQuality);
         expect(realRead.getDirection()).andReturn(dir);
@@ -234,7 +234,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
         expect(realRead.getId()).andReturn(id);
         expect(qualityFastaMap.get(id)).andReturn(encodedQualities);
         expect(realRead.getStart()).andReturn(0L);
-        expect(realRead.getSequence()).andReturn(encodedBases);
+        expect(realRead.getNucleotideSequence()).andReturn(encodedBases);
         expect(encodedBases.get(index)).andReturn(notConsensusBase);      
         expect(qualityValueStrategy.getQualityFor(realRead, encodedQualities, index)).andReturn(returnedQuality);
         expect(realRead.getDirection()).andReturn(dir);

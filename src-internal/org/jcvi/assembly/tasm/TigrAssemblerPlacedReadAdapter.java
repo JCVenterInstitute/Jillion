@@ -61,7 +61,7 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_LEFT, ""+(this.getStart()+1));
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_RIGHT, ""+(this.getEnd()+1));
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_START_OFFSET, ""+(this.getStart()));
-		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, Nucleotides.convertToString(this.getSequence().decode()));
+		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, Nucleotides.convertToString(this.getNucleotideSequence().decode()));
 		
 		Range validRange = this.getValidRange();
 		if(this.getDirection()== Direction.FORWARD){
@@ -97,13 +97,13 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	}
 
 	@Override
-	public long convertReferenceIndexToValidRangeIndex(long referenceIndex) {
-		return delegatePlacedRead.convertReferenceIndexToValidRangeIndex(referenceIndex);
+	public long toGappedValidRangeOffset(long referenceIndex) {
+		return delegatePlacedRead.toGappedValidRangeOffset(referenceIndex);
 	}
 
 	@Override
-	public long convertValidRangeIndexToReferenceIndex(long validRangeIndex) {
-		return delegatePlacedRead.convertValidRangeIndexToReferenceIndex(validRangeIndex);
+	public long toReferenceOffset(long validRangeIndex) {
+		return delegatePlacedRead.toReferenceOffset(validRangeIndex);
 	}
 
 	@Override
@@ -122,8 +122,8 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	}
 
 	@Override
-	public NucleotideSequence getSequence() {
-		return delegatePlacedRead.getSequence();
+	public NucleotideSequence getNucleotideSequence() {
+		return delegatePlacedRead.getNucleotideSequence();
 	}
 
 	@Override

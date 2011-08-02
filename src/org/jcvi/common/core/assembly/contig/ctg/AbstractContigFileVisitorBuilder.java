@@ -57,6 +57,6 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
                 encodeBasecalls(consensus));
     }
     private DefaultNucleotideSequence encodeBasecalls(String basecalls) {
-        return new DefaultNucleotideSequence(Nucleotides.parse(basecalls), Range.buildRange(0, basecalls.length()));
+        return new DefaultNucleotideSequence(Nucleotides.parse(basecalls));
     }
 }

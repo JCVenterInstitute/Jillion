@@ -72,8 +72,8 @@ public class AceReadPositionPrinter {
             
             int nonGapEndPosition = AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)gappedOneBasedRange.getEnd());
             Range unGappedOneBasesRange = Range.buildRange(
-                    consensus.toUngappedIndex(nonGapStartPosition),
-                    consensus.toUngappedIndex(nonGapEndPosition)).convertRange(CoordinateSystem.RESIDUE_BASED);
+                    consensus.getUngappedOffsetFor(nonGapStartPosition),
+                    consensus.getUngappedOffsetFor(nonGapEndPosition)).convertRange(CoordinateSystem.RESIDUE_BASED);
             System.out.printf("%s\t%s\t%d\t%d\t%d\t%d\t%s%n", currentContigId, readId, 
                     unGappedOneBasesRange.getLocalStart(), unGappedOneBasesRange.getLocalEnd(),
                     gappedOneBasedRange.getLocalStart(), gappedOneBasedRange.getLocalEnd(),

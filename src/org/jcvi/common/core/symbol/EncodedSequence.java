@@ -26,6 +26,7 @@ package org.jcvi.common.core.symbol;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
@@ -118,6 +119,16 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
     @Override
     public String toString() {
         return decode().toString();
+    }
+    /**
+    * Default iterator returns the iterator from
+    * the result of {@link #decode()}.  This method
+    * should be overridden if a more efficient 
+    * iterator could be generated.
+    */
+    @Override
+    public Iterator<T> iterator() {
+        return decode().iterator();
     }
     
 

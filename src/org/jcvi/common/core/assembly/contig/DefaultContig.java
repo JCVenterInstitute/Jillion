@@ -96,8 +96,8 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             
         }
         @Override
-        protected PlacedRead createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, Direction dir){
-            return new DefaultPlacedRead(read,offset,dir);
+        protected PlacedRead createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, Direction dir, Range validRange){
+            return new DefaultPlacedRead(read,offset,dir,validRange);
         }
        
         public DefaultContig<PlacedRead> build(){

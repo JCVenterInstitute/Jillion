@@ -20,6 +20,7 @@
 package org.jcvi.common.core.symbol.qual;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
@@ -115,6 +116,18 @@ public class EncodedQualitySequence implements QualitySequence{
         } else if (!delegate.equals(other.delegate))
             return false;
         return true;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Iterator<PhredQuality> iterator() {
+        //decode whole thing since that is 
+        //probably better for most quality encodings
+        //such as run length encoding so we 
+        //only have 1 decode cycle
+        return delegate.iterator();
     }
     
     

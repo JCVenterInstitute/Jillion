@@ -34,7 +34,7 @@ public class DefaultRead<T extends NucleotideSequence> implements Read<T>{
         this.glyphs = sequence;
     }
     @Override
-    public T getSequence() {
+    public T getNucleotideSequence() {
         return glyphs;
     }
 
@@ -73,7 +73,7 @@ public class DefaultRead<T extends NucleotideSequence> implements Read<T>{
     }
     @Override
     public String toString() {
-        return "read : " + getId() + "  validRange" + getSequence().getValidRange()+"  " + getSequence().decode().toString();
+        return "read : " + getId() + "  " + getNucleotideSequence();
     }
 
     

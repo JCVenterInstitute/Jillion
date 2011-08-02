@@ -120,7 +120,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
                     CoverageRegion<R> coverageRegion = coverageMap.getRegionWhichCovers(consensusIndex);
 
                     for (R read : coverageRegion) {
-                        int gappedValidRangeIndex = (int)read.convertReferenceIndexToValidRangeIndex(consensusIndex);
+                        int gappedValidRangeIndex = (int)read.toGappedValidRangeOffset(consensusIndex);
                         if (isASnp(read, gappedValidRangeIndex)){                           
 
                             Range oldValidRange = getPreviousValidRange(trimmedReads, read);
@@ -160,7 +160,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
      
         int fullRangeIndex = AssemblyUtil.convertToUngappedFullRangeIndex(read,(int)qualityValues.getLength(), gappedTrimIndex);
         // need to +1 passed fullRangeIndex to trim off snp for non-gaps
-        if(!read.getSequence().isGap(gappedValidRangeIndex)){
+        if(!read.getNucleotideSequence().isGap(gappedValidRangeIndex)){
             fullRangeIndex ++;
         }
         long fullLength = qualityValues.getLength();
@@ -192,7 +192,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
     private int computeGappedTrimIndex(R read,
             int gappedValidRangeIndex) {
         int gappedTrimIndex;
-        final NucleotideSequence encodedGlyphs = read.getSequence();
+        final NucleotideSequence encodedGlyphs = read.getNucleotideSequence();
         if (read.getDirection() == Direction.FORWARD) {
             gappedTrimIndex = AssemblyUtil.getRightFlankingNonGapIndex(encodedGlyphs,
                     gappedValidRangeIndex);

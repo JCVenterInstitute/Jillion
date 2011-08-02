@@ -65,12 +65,13 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
     public void getUngappedQualityFromForwardRead(){
         int gappedReadIndex = 12;
         int fullIndex = 22;
-        expect(placedRead.getSequence()).andReturn(encodedGlyphs).anyTimes();
+        expect(placedRead.getNucleotideSequence()).andReturn(encodedGlyphs).anyTimes();
         expect(encodedGlyphs.isGap(gappedReadIndex)).andReturn(false);
         expect(placedRead.getDirection()).andReturn(Direction.FORWARD);
         Range validRange = Range.buildRange(10,100);
         expect(placedRead.getValidRange()).andReturn(validRange);
-        expect(placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedReadIndex)).andReturn(gappedReadIndex);
+        expect(encodedGlyphs.getUngappedOffsetFor(gappedReadIndex)).andReturn(gappedReadIndex);
+     //   expect(placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedReadIndex)).andReturn(gappedReadIndex);
         expect(fullQualities.getLength()).andReturn(validRange.getEnd()+validRange.getStart());
         
        // expect(encodedGlyphs.toUngappedIndex(gappedReadIndex)).andReturn(gappedReadIndex);
@@ -85,14 +86,15 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         int gappedReadIndex = 12;
         Range validRange = Range.buildRange(10,100);
         int fullLength=110;
-        expect(placedRead.getSequence()).andReturn(encodedGlyphs).anyTimes();
+        expect(placedRead.getNucleotideSequence()).andReturn(encodedGlyphs).anyTimes();
         expect(placedRead.getDirection()).andReturn(Direction.REVERSE);
         expect(encodedGlyphs.isGap(gappedReadIndex)).andReturn(false);
+        expect(encodedGlyphs.getUngappedOffsetFor(gappedReadIndex)).andReturn(gappedReadIndex);
         
         expect(placedRead.getValidRange()).andReturn(validRange).times(3);
         expect(fullQualities.getLength()).andReturn((long)fullLength);
         int fullIndex = 22;
-        expect(placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedReadIndex)).andReturn(gappedReadIndex);
+      //  expect(placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedReadIndex)).andReturn(gappedReadIndex);
         
      //   expect(encodedGlyphs.toUngappedIndex(gappedReadIndex)).andReturn(gappedReadIndex);
         expect(fullQualities.get(fullLength-fullIndex)).andReturn(expectedQuality);

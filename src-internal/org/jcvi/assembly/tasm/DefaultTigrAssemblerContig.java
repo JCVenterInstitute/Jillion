@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jcvi.common.core.Direction;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.AbstractContigBuilder;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
@@ -158,8 +159,8 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
         @Override
         protected TigrAssemblerPlacedRead createPlacedRead(
                 Read<ReferenceEncodedNucleotideSequence> read, long offset,
-                Direction dir) {
-            return new DefaultTigrAssemblerPlacedRead(read, offset, dir,readAttributeMaps.get(read.getId()));
+                Direction dir, Range validRange) {
+            return new DefaultTigrAssemblerPlacedRead(read, offset, dir,validRange,readAttributeMaps.get(read.getId()));
         }
         
         

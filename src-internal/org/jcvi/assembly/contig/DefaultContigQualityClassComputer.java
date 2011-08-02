@@ -84,7 +84,7 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
             final Sequence<PhredQuality> qualityRecord = qualityDataStore.get(placedRead.getId());
             if(qualityRecord !=null){
                 int indexIntoRead = (int) (index - placedRead.getStart());
-                final Nucleotide calledBase = placedRead.getSequence().get(indexIntoRead);
+                final Nucleotide calledBase = placedRead.getNucleotideSequence().get(indexIntoRead);
                 
                 PhredQuality qualityValue =qualityValueStrategy.getQualityFor(placedRead, qualityRecord, indexIntoRead);
                 boolean agreesWithConsensus = isSame(consensusBase, calledBase);

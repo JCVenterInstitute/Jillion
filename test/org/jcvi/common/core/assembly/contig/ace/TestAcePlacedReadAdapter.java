@@ -64,16 +64,16 @@ public class TestAcePlacedReadAdapter {
     @Test
     public void convertReferenceIndexToValidRangeIndex() {
         
-        expect(mockPlacedRead.convertReferenceIndexToValidRangeIndex(referenceIndex)).andReturn(validRangeIndex);
+        expect(mockPlacedRead.toGappedValidRangeOffset(referenceIndex)).andReturn(validRangeIndex);
         replay(mockPlacedRead);
-        assertEquals(validRangeIndex, sut.convertReferenceIndexToValidRangeIndex(referenceIndex));
+        assertEquals(validRangeIndex, sut.toGappedValidRangeOffset(referenceIndex));
         verify(mockPlacedRead);
     }
     @Test
     public void convertValidRangeIndexToReferenceIndex() {
-        expect(mockPlacedRead.convertValidRangeIndexToReferenceIndex(validRangeIndex)).andReturn(referenceIndex);
+        expect(mockPlacedRead.toReferenceOffset(validRangeIndex)).andReturn(referenceIndex);
         replay(mockPlacedRead);
-        assertEquals(referenceIndex, sut.convertValidRangeIndexToReferenceIndex(validRangeIndex));
+        assertEquals(referenceIndex, sut.toReferenceOffset(validRangeIndex));
         verify(mockPlacedRead);
     }
     @Test
@@ -103,9 +103,9 @@ public class TestAcePlacedReadAdapter {
     @Test
     public void getEncodedGlyphs() {
         NucleotideSequence encodedGlyphs = createMock(NucleotideSequence.class);
-        expect(mockPlacedRead.getSequence()).andReturn(encodedGlyphs);
+        expect(mockPlacedRead.getNucleotideSequence()).andReturn(encodedGlyphs);
         replay(mockPlacedRead);
-        assertEquals(encodedGlyphs, sut.getSequence());
+        assertEquals(encodedGlyphs, sut.getNucleotideSequence());
         verify(mockPlacedRead);
         
     }

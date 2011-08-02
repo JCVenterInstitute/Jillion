@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
 
 public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferenceEncodedNucleotideSequence{
@@ -41,7 +40,6 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
     private int overhangOffset=0;
     private final int length;
     private final int startOffset;
-    private final Range validRange;
     private final NucleotideSequence reference;
 
     
@@ -71,11 +69,10 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
     }
 
     public DefaultReferenceEncodedNucleotideSequence(NucleotideSequence reference,
-            String toBeEncoded, int startOffset,Range validRange){
+            String toBeEncoded, int startOffset){
         List<Integer> tempGapList = new ArrayList<Integer>();     
         this.startOffset = startOffset;
         this.length = toBeEncoded.length();
-        this.validRange = validRange;
         this.reference = reference;
         TreeMap<Integer, Nucleotide> differentGlyphMap = new TreeMap<Integer, Nucleotide>();
         populateFields(reference, toBeEncoded, startOffset, tempGapList,differentGlyphMap);
@@ -219,10 +216,7 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
         }
         return result;
     }
-    @Override
-    public Range getValidRange() {
-        return validRange;
-    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -232,8 +226,6 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
         result = prime * result + Arrays.hashCode(gaps);
         result = prime * result + length;
         result = prime * result + startOffset;
-        result = prime * result
-                + ((validRange == null) ? 0 : validRange.hashCode());
         return result;
     }
     @Override
@@ -271,13 +263,7 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
         if (startOffset != other.startOffset) {
             return false;
         }
-        if (validRange == null) {
-            if (other.validRange != null) {
-                return false;
-            }
-        } else if (!validRange.equals(other.validRange)) {
-            return false;
-        }
+       
         return true;
     }
     

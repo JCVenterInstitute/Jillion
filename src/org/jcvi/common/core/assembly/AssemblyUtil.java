@@ -63,7 +63,7 @@ public final class AssemblyUtil {
      * @see #buildGappedComplimentedFullRangeBases(NucleotideSequence, Direction, Range, List)
      */
     public static <R extends PlacedRead> List<Nucleotide> buildGappedComplimentedFullRangeBases(R placedRead, List<Nucleotide> ungappedUncomplimentedFullRangeBases){
-       return buildGappedComplimentedFullRangeBases(placedRead.getSequence(), placedRead.getDirection(), placedRead.getValidRange(), ungappedUncomplimentedFullRangeBases);
+       return buildGappedComplimentedFullRangeBases(placedRead.getNucleotideSequence(), placedRead.getDirection(), placedRead.getValidRange(), ungappedUncomplimentedFullRangeBases);
     }
     /**
      * Create a List of {@link Nucleotide}s that corresponds to the gapped full range
@@ -131,7 +131,8 @@ public final class AssemblyUtil {
     
     public static <R extends PlacedRead> int convertToUngappedFullRangeIndex(R placedRead,
             int fullLength, int gappedIndex, Range validRange) {
-        int ungappedValidRangeIndex = convertToUngappedValidRangeIndex(placedRead, gappedIndex);        
+       
+        int ungappedValidRangeIndex =  placedRead.getNucleotideSequence().getUngappedOffsetFor(gappedIndex);
         if(placedRead.getDirection() == Direction.REVERSE){
             validRange = Range.buildRange(fullLength - placedRead.getValidRange().getEnd(), 
                                                     fullLength - placedRead.getValidRange().getStart());
@@ -143,21 +144,12 @@ public final class AssemblyUtil {
         
         return distanceFromLeft;
     }
-
-
-
-    public static int convertToUngappedValidRangeIndex(PlacedRead placedRead, int gappedIndex) {
-       return placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedIndex);
-    }
     
     public static boolean afterEndOfRead(int rightFlankingNonGapIndex,
             NucleotideSequence placedRead) {
         return rightFlankingNonGapIndex> placedRead.getLength()-1;
     }
 
-    public static boolean isAGap(NucleotideSequence glyphs, int gappedReadIndex) {
-        return glyphs.isGap(gappedReadIndex);
-    }
     /**
      * Get the first non-gap {@link Nucleotide} from the left side of the given
      * gappedReadIndex on the given encoded glyphs.  If the given base is not a gap, 
@@ -170,7 +162,7 @@ public final class AssemblyUtil {
         if(beforeStartOfRead(gappedReadIndex)){
             return gappedReadIndex;
         }
-        if(isAGap(gappedNucleotides, gappedReadIndex)){
+        if(gappedNucleotides.isGap(gappedReadIndex)){
             return getLeftFlankingNonGapIndex(gappedNucleotides,gappedReadIndex-1);
         }
         
@@ -192,7 +184,7 @@ public final class AssemblyUtil {
         if(afterEndOfRead(gappedReadIndex, placedRead)){
             return gappedReadIndex;
         }
-        if(isAGap(placedRead, gappedReadIndex)){
+        if(placedRead.isGap(gappedReadIndex)){
             return getRightFlankingNonGapIndex(placedRead,gappedReadIndex+1);
         }
         return gappedReadIndex;
@@ -200,10 +192,10 @@ public final class AssemblyUtil {
     
     public static Range convertGappedRangeIntoUngappedRange(final NucleotideSequence encodedGlyphs,
             Range gappedFeatureValidRange) {
-        int numberOfGapsTilStart=encodedGlyphs.computeNumberOfInclusiveGapsInGappedValidRangeUntil((int)gappedFeatureValidRange.getStart());
+        int numberOfGapsTilStart=encodedGlyphs.getNumberOfGapsUntil((int)gappedFeatureValidRange.getStart());
         int ungappedLeft = (int)gappedFeatureValidRange.getStart() - numberOfGapsTilStart;
         
-        int numberOfGapsTilEnd=encodedGlyphs.computeNumberOfInclusiveGapsInGappedValidRangeUntil((int)gappedFeatureValidRange.getEnd());
+        int numberOfGapsTilEnd=encodedGlyphs.getNumberOfGapsUntil((int)gappedFeatureValidRange.getEnd());
         
         int ungappedRight = (int)gappedFeatureValidRange.getEnd() - numberOfGapsTilEnd;
         Range ungappedRange = Range.buildRange(ungappedLeft, ungappedRight);

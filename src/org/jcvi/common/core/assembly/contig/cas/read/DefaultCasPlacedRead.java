@@ -70,8 +70,8 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
         return startOffset;
     }
     @Override
-    public NucleotideSequence getSequence() {
-        return read.getSequence();
+    public NucleotideSequence getNucleotideSequence() {
+        return read.getNucleotideSequence();
     }
     @Override
     public String getId() {
@@ -84,14 +84,14 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
                 + read + "]";
     }
     @Override
-    public long convertReferenceIndexToValidRangeIndex(long referenceIndex) {
+    public long toGappedValidRangeOffset(long referenceIndex) {
         
         long validRangeIndex= referenceIndex - getStart();
         checkValidRange(validRangeIndex);
         return validRangeIndex;
     }
     @Override
-    public long convertValidRangeIndexToReferenceIndex(long validRangeIndex) {
+    public long toReferenceOffset(long validRangeIndex) {
         checkValidRange(validRangeIndex);
         return getStart() +validRangeIndex;
     }
@@ -164,7 +164,7 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
         return Range.buildRange(getStart(), getEnd());
     }
     private boolean isAGap(int gappedValidRangeIndex) {
-        return getSequence().getGapIndexes().contains(Integer.valueOf(gappedValidRangeIndex));
+        return getNucleotideSequence().getGapIndexes().contains(Integer.valueOf(gappedValidRangeIndex));
     }
     @Override
     public int convertGappedValidRangeIndexToUngappedValidRangeIndex(
@@ -175,7 +175,7 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
             //which we can't convert into an ungapped index
             throw new IllegalArgumentException(gappedValidRangeIndex + " is a gap");
         }
-        int numberOfGaps = getSequence().computeNumberOfInclusiveGapsInGappedValidRangeUntil(gappedValidRangeIndex);
+        int numberOfGaps = getNucleotideSequence().getNumberOfGapsUntil(gappedValidRangeIndex);
         return gappedValidRangeIndex-numberOfGaps;
     }
 
@@ -184,9 +184,9 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
             Range gappedValidRange) {
        return Range.buildRange(
                convertGappedValidRangeIndexToUngappedValidRangeIndex(
-                       AssemblyUtil.getLeftFlankingNonGapIndex(getSequence(),(int)gappedValidRange.getStart())),
+                       AssemblyUtil.getLeftFlankingNonGapIndex(getNucleotideSequence(),(int)gappedValidRange.getStart())),
                convertGappedValidRangeIndexToUngappedValidRangeIndex(
-                       AssemblyUtil.getLeftFlankingNonGapIndex(getSequence(), (int)gappedValidRange.getEnd()))
+                       AssemblyUtil.getLeftFlankingNonGapIndex(getNucleotideSequence(), (int)gappedValidRange.getEnd()))
                 
         );
     }
@@ -203,7 +203,8 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
     @Override
     public int convertUngappedValidRangeIndexToGappedValidRangeIndex(
             int ungappedValidRangeIndex) {
-        int numberOfGaps = getSequence().computeNumberOfInclusiveGapsInUngappedValidRangeUntil(ungappedValidRangeIndex);
+        NucleotideSequence nucleotideSequence = getNucleotideSequence();
+        int numberOfGaps = nucleotideSequence.getNumberOfGapsUntil(nucleotideSequence.getGappedOffsetFor(ungappedValidRangeIndex));
         return ungappedValidRangeIndex+numberOfGaps;
     }
 }

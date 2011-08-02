@@ -26,7 +26,6 @@ package org.jcvi.common.core.symbol.residue.nuc;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.GlyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
@@ -55,7 +54,7 @@ public class TestReferenceEncodedNucleotideSequence {
         assertDecodedCorrectly(offset, sequenceAsString);
     }
     private void assertDecodedCorrectly(int offset, String sequenceAsString) {
-        DefaultReferenceEncodedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset, Range.buildRange(0,sequenceAsString.length()-1));
+        DefaultReferenceEncodedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset);
         assertEquals(sequenceAsString.length(), sut.getLength());
         assertEquals(sequenceAsString, Nucleotides.convertToString(sut.decode()));
         for(int i=0; i< sequenceAsString.length(); i++){
@@ -128,7 +127,7 @@ public class TestReferenceEncodedNucleotideSequence {
         
         int offset = 414;
         DefaultReferenceEncodedNucleotideSequence actual = new DefaultReferenceEncodedNucleotideSequence(
-                encodedConsensus, sequence, offset, Range.buildRange(7,571));
+                encodedConsensus, sequence, offset);
         List<Integer> expectedGapIndexes = Arrays.asList(174, 178,180,181,182,186);
         assertEquals(expectedGapIndexes,actual.getGapIndexes());
         assertEquals(expectedGapIndexes.size(), actual.getNumberOfGaps());

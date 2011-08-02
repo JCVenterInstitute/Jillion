@@ -37,7 +37,7 @@ import org.jcvi.common.core.Range;
  *
  *
  */
-public interface Sequence<T extends Symbol> {
+public interface Sequence<T extends Symbol> extends Iterable<T>{
     /**
      * Decode the entire list of encoded {@link Symbol}s into
      * a List.

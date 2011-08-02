@@ -92,12 +92,12 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
         if(fullQualities ==null){
             throw new NullPointerException("null qualities for "+placedRead);
         }
-        final NucleotideSequence encodedGlyphs = placedRead.getSequence();
-        if(!AssemblyUtil.isAGap(encodedGlyphs, gappedReadIndex)){
+        final NucleotideSequence sequence = placedRead.getNucleotideSequence();
+        if(!sequence.isGap(gappedReadIndex)){
             return getQualityForNonGapBase(placedRead, fullQualities, gappedReadIndex);
         }
-        int leftFlankingNonGapIndex = AssemblyUtil.getLeftFlankingNonGapIndex(encodedGlyphs,gappedReadIndex-1);
-        int rightFlankingNonGapIndex = AssemblyUtil.getRightFlankingNonGapIndex(encodedGlyphs,gappedReadIndex+1);
+        int leftFlankingNonGapIndex = AssemblyUtil.getLeftFlankingNonGapIndex(sequence,gappedReadIndex-1);
+        int rightFlankingNonGapIndex = AssemblyUtil.getRightFlankingNonGapIndex(sequence,gappedReadIndex+1);
         
         final PhredQuality qualityOfGap = getQualityValueForGap(leftFlankingNonGapIndex, rightFlankingNonGapIndex, placedRead, fullQualities,gappedReadIndex);
         
@@ -115,7 +115,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
         if(AssemblyUtil.beforeStartOfRead(leftFlankingNonGapIndex)){
             return getQualityValueIfReadStartsWithGap();
         }
-        if(AssemblyUtil.afterEndOfRead(rightFlankingNonGapIndex, placedRead.getSequence())){
+        if(AssemblyUtil.afterEndOfRead(rightFlankingNonGapIndex, placedRead.getNucleotideSequence())){
             return getQualityValueIfReadEndsWithGap();
         }
         PhredQuality leftFlankingQuality = getQualityForNonGapBase(placedRead, fullQualities, leftFlankingNonGapIndex);
