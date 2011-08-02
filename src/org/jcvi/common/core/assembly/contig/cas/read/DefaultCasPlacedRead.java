@@ -43,6 +43,15 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
     private final int ungappedFullLength;
     public DefaultCasPlacedRead(Read read, long startOffset,Range validRange, 
             Direction dir, int ungappedFullLength){
+        if(read==null){
+            throw new NullPointerException("read can not be null");
+        }
+        if(validRange ==null){
+            throw new NullPointerException("validRange can not be null");
+        }
+        if(dir ==null){
+            throw new NullPointerException("direction can not be null");
+        }
         this.read= read;
         this.validRange = validRange;
         this.startOffset = startOffset;
@@ -107,6 +116,7 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
     public Direction getDirection() {
         return dir;
     }
+    //TODO fix me we can compute snps by the alignment regions
     @Override
     public Map<Integer, Nucleotide> getSnps() {
         return Collections.emptyMap();
@@ -135,14 +145,16 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
             return false;            
         }
         DefaultCasPlacedRead other = (DefaultCasPlacedRead) obj;
-        if (read == null) {
-            if (other.read != null){
-                return false;
-            }
-        } else if (!read.equals(other.read)){
+        if (!read.equals(other.read)){
             return false;
         }
         if (startOffset != other.startOffset){
+            return false;
+        }
+        if (dir != other.dir){
+            return false;
+        }
+        if (!validRange.equals(other.validRange)){
             return false;
         }
         return true;

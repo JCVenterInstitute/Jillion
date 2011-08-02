@@ -32,6 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestDefaultCasAlignmentRegion.class,
+        TestPhaseChangeCasAlignmentRegion.class,
         TestDefaultCasAlignment.class,
        AllCasScoreUnitTests.class 
     }
