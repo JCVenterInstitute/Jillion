@@ -175,25 +175,33 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()){
             return false;
+        }
         DefaultAcePlacedRead other = (DefaultAcePlacedRead) obj;
         if (phdInfo == null) {
-            if (other.phdInfo != null)
+            if (other.phdInfo != null){
                 return false;
-        } else if (!phdInfo.equals(other.phdInfo))
+            }
+        } else if (!phdInfo.equals(other.phdInfo)){
             return false;
+        }
         if (placedRead == null) {
-            if (other.placedRead != null)
+            if (other.placedRead != null){
                 return false;
-        } else if (!placedRead.equals(other.placedRead))
+            }
+        } else if (!placedRead.equals(other.placedRead)){
             return false;
-        if (ungappedFullLength != other.ungappedFullLength)
+        }
+        if (ungappedFullLength != other.ungappedFullLength){
             return false;
+        }
         return true;
     }
 
