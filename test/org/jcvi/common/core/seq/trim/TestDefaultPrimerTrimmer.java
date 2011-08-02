@@ -121,7 +121,7 @@ public class TestDefaultPrimerTrimmer {
         NucleotideSequence sequence = new DefaultNucleotideSequence("ACGTACGTACGTAAACGCC");
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new DefaultNucleotideSequence("A"));
         
-        assertEquals(sequence.getValidRange(), sut.trim(sequence, datastore));
+        assertEquals(Range.buildRangeOfLength(sequence.getLength()), sut.trim(sequence, datastore));
         
     }
     

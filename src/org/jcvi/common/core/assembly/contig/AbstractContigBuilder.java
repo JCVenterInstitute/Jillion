@@ -47,8 +47,8 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
         }
         public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, Direction dir){
             
-            NucleotideSequence referenceEncoded = new DefaultReferenceEncodedNucleotideSequence(consensus,basecalls, offset,validRange);
-            final P actualPlacedRead = createPlacedRead(new DefaultRead(id, referenceEncoded), offset,dir );
+            NucleotideSequence referenceEncoded = new DefaultReferenceEncodedNucleotideSequence(consensus,basecalls, offset);
+            final P actualPlacedRead = createPlacedRead(new DefaultRead(id, referenceEncoded), offset,dir, validRange );
             
             return addRead(actualPlacedRead);
         }
@@ -56,7 +56,7 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
             reads.add(read);
             return this;
         }
-        protected abstract P createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, Direction dir);
+        protected abstract P createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, Direction dir, Range validRange);
         
         public NucleotideSequence getConsensus() {
             return consensus;

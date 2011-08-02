@@ -42,15 +42,16 @@ public class DefaultPlacedRead implements PlacedRead {
     private final Read<ReferenceEncodedNucleotideSequence> read;
     private final long start;
     private final Direction sequenceDirection;
+    private final Range validRange;
     
-    
-    public DefaultPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long start, Direction sequenceDirection){
+    public DefaultPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long start, Direction sequenceDirection, Range validRange){
         if(read==null){
             throw new IllegalArgumentException("read can not be null");
         }
         this.read = read;
         this.start= start;
         this.sequenceDirection = sequenceDirection;
+        this.validRange = validRange;
     }
     @Override
     public long getLength() {
@@ -96,15 +97,15 @@ public class DefaultPlacedRead implements PlacedRead {
         	if(!read.getId().equals(other.getId())){
         		return false;
         	}
-        	if(read.getSequence()==null && other.getSequence() !=null){
+        	if(read.getNucleotideSequence()==null && other.getNucleotideSequence() !=null){
         		return false;
         	}
-        	if(other.getSequence() ==null){
+        	if(other.getNucleotideSequence() ==null){
         		return false;
         	}
-        	if(!read.getSequence().decode().equals(other.getSequence().decode())){
-        		System.out.println(Nucleotides.convertToString(read.getSequence().decode()));
-        		System.out.println(Nucleotides.convertToString(other.getSequence().decode()));
+        	if(!read.getNucleotideSequence().decode().equals(other.getNucleotideSequence().decode())){
+        		System.out.println(Nucleotides.convertToString(read.getNucleotideSequence().decode()));
+        		System.out.println(Nucleotides.convertToString(other.getNucleotideSequence().decode()));
         		System.out.println();
         		return false;
         	}
@@ -131,7 +132,7 @@ public class DefaultPlacedRead implements PlacedRead {
 
     public Map<Integer, Nucleotide> getSnps(){
         Map<Integer, Nucleotide> map = new TreeMap<Integer, Nucleotide>();
-        final ReferenceEncodedNucleotideSequence encodedGlyphs = read.getSequence();
+        final ReferenceEncodedNucleotideSequence encodedGlyphs = read.getNucleotideSequence();
         for(Integer offset : encodedGlyphs.getSnpOffsets()){
             map.put(offset, encodedGlyphs.get(offset));
         }
@@ -139,8 +140,8 @@ public class DefaultPlacedRead implements PlacedRead {
         
     }
     @Override
-    public NucleotideSequence getSequence() {
-        return read.getSequence();
+    public NucleotideSequence getNucleotideSequence() {
+        return read.getNucleotideSequence();
     }
     @Override
     public String getId() {
@@ -148,17 +149,17 @@ public class DefaultPlacedRead implements PlacedRead {
     }
     @Override
     public Range getValidRange(){
-        return read.getSequence().getValidRange();
+        return validRange;
     }
     @Override
-    public long convertReferenceIndexToValidRangeIndex(long referenceIndex) {
+    public long toGappedValidRangeOffset(long referenceIndex) {
         
         long validRangeIndex= referenceIndex - getStart();
         checkValidRange(validRangeIndex);
         return validRangeIndex;
     }
     @Override
-    public long convertValidRangeIndexToReferenceIndex(long validRangeIndex) {
+    public long toReferenceOffset(long validRangeIndex) {
         checkValidRange(validRangeIndex);
         return getStart() +validRangeIndex;
     }
@@ -186,7 +187,7 @@ public class DefaultPlacedRead implements PlacedRead {
     }
 
     private boolean isAGap(int gappedValidRangeIndex) {
-        return getSequence().getGapIndexes().contains(Integer.valueOf(gappedValidRangeIndex));
+        return getNucleotideSequence().getGapIndexes().contains(Integer.valueOf(gappedValidRangeIndex));
     }
     @Override
     public int convertGappedValidRangeIndexToUngappedValidRangeIndex(
@@ -197,7 +198,7 @@ public class DefaultPlacedRead implements PlacedRead {
             //which we can't convert into an ungapped index
             throw new IllegalArgumentException(gappedValidRangeIndex + " is a gap");
         }
-        int numberOfGaps = getSequence().computeNumberOfInclusiveGapsInGappedValidRangeUntil(gappedValidRangeIndex);
+        int numberOfGaps = getNucleotideSequence().getNumberOfGapsUntil(gappedValidRangeIndex);
         return gappedValidRangeIndex-numberOfGaps;
     }
 
@@ -206,9 +207,9 @@ public class DefaultPlacedRead implements PlacedRead {
             Range gappedValidRange) {
        return Range.buildRange(
                convertGappedValidRangeIndexToUngappedValidRangeIndex(
-                       AssemblyUtil.getLeftFlankingNonGapIndex(getSequence(),(int)gappedValidRange.getStart())),
+                       AssemblyUtil.getLeftFlankingNonGapIndex(getNucleotideSequence(),(int)gappedValidRange.getStart())),
                convertGappedValidRangeIndexToUngappedValidRangeIndex(
-                       AssemblyUtil.getLeftFlankingNonGapIndex(getSequence(), (int)gappedValidRange.getEnd()))
+                       AssemblyUtil.getLeftFlankingNonGapIndex(getNucleotideSequence(), (int)gappedValidRange.getEnd()))
                 
         );
     }
@@ -225,7 +226,8 @@ public class DefaultPlacedRead implements PlacedRead {
     @Override
     public int convertUngappedValidRangeIndexToGappedValidRangeIndex(
             int ungappedValidRangeIndex) {
-        int numberOfGaps = getSequence().computeNumberOfInclusiveGapsInUngappedValidRangeUntil(ungappedValidRangeIndex);
+        NucleotideSequence nucleotideSequence = getNucleotideSequence();
+        int numberOfGaps = nucleotideSequence.getNumberOfGapsUntil(nucleotideSequence.getGappedOffsetFor(ungappedValidRangeIndex));
         return ungappedValidRangeIndex+numberOfGaps;
     }
     

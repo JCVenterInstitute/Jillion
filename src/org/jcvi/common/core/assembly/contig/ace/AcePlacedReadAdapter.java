@@ -59,12 +59,12 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return phdInfo;
     }
     @Override
-    public long convertReferenceIndexToValidRangeIndex(long referenceIndex) {
-        return placedRead.convertReferenceIndexToValidRangeIndex(referenceIndex);
+    public long toGappedValidRangeOffset(long referenceIndex) {
+        return placedRead.toGappedValidRangeOffset(referenceIndex);
     }
     @Override
-    public long convertValidRangeIndexToReferenceIndex(long validRangeIndex) {
-        return placedRead.convertValidRangeIndexToReferenceIndex(validRangeIndex);
+    public long toReferenceOffset(long validRangeIndex) {
+        return placedRead.toReferenceOffset(validRangeIndex);
     }
     @Override
     public Direction getDirection() {
@@ -79,8 +79,8 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.getValidRange();
     }
     @Override
-    public NucleotideSequence getSequence() {
-        return placedRead.getSequence();
+    public NucleotideSequence getNucleotideSequence() {
+        return placedRead.getNucleotideSequence();
     }
     @Override
     public String getId() {

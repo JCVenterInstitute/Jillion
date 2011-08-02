@@ -90,7 +90,7 @@ public class NewblerMappedAceContigUtil {
     private static AceContig buildAceContigFor(AceContig originalAceContig, TraceDataStore<Phd> phdDataStore,String id,String consensusId,Range contigRange) throws DataStoreException{
         
         final AcePlacedRead consensusRead = originalAceContig.getPlacedReadById(consensusId);
-        final String consensus = Nucleotides.convertToString(consensusRead.getSequence().decode());
+        final String consensus = Nucleotides.convertToString(consensusRead.getNucleotideSequence().decode());
         DefaultAceContig.Builder builder = new DefaultAceContig.Builder(id,consensus);
         for(AcePlacedRead read : originalAceContig.getPlacedReads()){
             
@@ -100,7 +100,7 @@ public class NewblerMappedAceContigUtil {
               //  System.out.println(read.getId());
                 final int newOffset = (int)(read.getStart() -consensusRead.getStart());
                 builder.addRead(read.getId(), 
-                        Nucleotides.convertToString(read.getSequence().decode()),
+                        Nucleotides.convertToString(read.getNucleotideSequence().decode()),
                         newOffset,
                         read.getDirection(),
                         read.getValidRange(), read.getPhdInfo(),

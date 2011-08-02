@@ -85,10 +85,10 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
         }
         final int start = AssemblyUtil.getRightFlankingNonGapIndex(oldConsensus, (int)newContigRange.getStart());
         
-        int ungappedStart =start - oldConsensus.computeNumberOfInclusiveGapsInGappedValidRangeUntil(start);
+        int ungappedStart =start - oldConsensus.getNumberOfGapsUntil(start);
         final int end = AssemblyUtil.getRightFlankingNonGapIndex(oldConsensus, (int)newContigRange.getEnd());
       //  int ungappedEnd =oldConsensus.convertGappedValidRangeIndexToUngappedValidRangeIndex(AssemblyUtil.getLeftFlankingNonGapIndex(oldConsensus, end));
-        int ungappedEnd = end - oldConsensus.computeNumberOfInclusiveGapsInGappedValidRangeUntil(end);
+        int ungappedEnd = end - oldConsensus.getNumberOfGapsUntil(end);
         return String.format("%s_%d_%d",oldContigId,ungappedStart+1, ungappedEnd+1);
     
     }

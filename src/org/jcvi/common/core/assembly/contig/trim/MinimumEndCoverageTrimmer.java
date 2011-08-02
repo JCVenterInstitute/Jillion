@@ -56,8 +56,8 @@ public class MinimumEndCoverageTrimmer<P extends PlacedRead, C extends Contig<P>
             return currentRangeOfBases;
         }
         Range currentValidRangeOnReference =Range.buildRange(
-                placedRead.convertValidRangeIndexToReferenceIndex(currentRangeOfBases.getStart()),
-                placedRead.convertValidRangeIndexToReferenceIndex(currentRangeOfBases.getEnd()));
+                placedRead.toReferenceOffset(currentRangeOfBases.getStart()),
+                placedRead.toReferenceOffset(currentRangeOfBases.getEnd()));
         
         Range placedReadTrimRange =trimmedContigRange.intersection(currentValidRangeOnReference);
         //short circut if returns empty range
@@ -65,10 +65,10 @@ public class MinimumEndCoverageTrimmer<P extends PlacedRead, C extends Contig<P>
         if(placedReadTrimRange.isEmpty()){
             return placedReadTrimRange;
         }
-        int gappedLeftIndex = (int)placedRead.convertReferenceIndexToValidRangeIndex(placedReadTrimRange.getStart());
-        int gappedRightIndex =(int)placedRead.convertReferenceIndexToValidRangeIndex(placedReadTrimRange.getEnd());
-        int newLeftStart =AssemblyUtil.getRightFlankingNonGapIndex(placedRead.getSequence(), gappedLeftIndex);
-        int newRightStart =AssemblyUtil.getLeftFlankingNonGapIndex(placedRead.getSequence(), gappedRightIndex);
+        int gappedLeftIndex = (int)placedRead.toGappedValidRangeOffset(placedReadTrimRange.getStart());
+        int gappedRightIndex =(int)placedRead.toGappedValidRangeOffset(placedReadTrimRange.getEnd());
+        int newLeftStart =AssemblyUtil.getRightFlankingNonGapIndex(placedRead.getNucleotideSequence(), gappedLeftIndex);
+        int newRightStart =AssemblyUtil.getLeftFlankingNonGapIndex(placedRead.getNucleotideSequence(), gappedRightIndex);
         
         return Range.buildRange(newLeftStart,newRightStart);
     }

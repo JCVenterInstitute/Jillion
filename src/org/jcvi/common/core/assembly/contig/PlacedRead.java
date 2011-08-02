@@ -30,15 +30,28 @@ import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public interface PlacedRead extends Read, Placed<PlacedRead>{
 
 
     Map<Integer, Nucleotide> getSnps();
+    /**
+     * Get the valid {@link Range} which is ungapped "good" part of the basecalls.  Depending
+     * on what this {@link NucleotideSequence} represents can change the 
+     * meaning of valid range some possible meanings include:
+     * <ul>
+     * <li>the high quality region<li>
+     * <li>the region that aligns to a reference</li>
+     * <li>the region used to compute assembly consensus</li>
+     * </ul>
+     * @return
+     */
     Range getValidRange();
+    
     Direction getDirection();
-    long convertReferenceIndexToValidRangeIndex(long referenceIndex);
-    long convertValidRangeIndexToReferenceIndex(long validRangeIndex);
+    long toGappedValidRangeOffset(long referenceOffset);
+    long toReferenceOffset(long gappedValidRangeOffset);
     
     /**
      * Convert the given gapped valid range index into its

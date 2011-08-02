@@ -95,6 +95,12 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
                     // TODO Auto-generated method stub
                     return null;
                 }
+
+                @Override
+                public Iterator<PhredQuality> iterator() {
+                    // TODO Auto-generated method stub
+                    return null;
+                }
                 
             };
         }
@@ -222,7 +228,7 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
                 quality = qualityValueStrategy.getQualityFor(read, fullQualities, indexIntoRead);
             }
             builder.addSliceElement(id,
-                    read.getSequence().get(indexIntoRead),
+                    read.getNucleotideSequence().get(indexIntoRead),
                     quality, read.getDirection());
         }
         return builder.build();

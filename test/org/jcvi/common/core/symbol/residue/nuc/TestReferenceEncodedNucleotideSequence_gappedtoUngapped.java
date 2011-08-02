@@ -23,7 +23,6 @@
  */
 package org.jcvi.common.core.symbol.residue.nuc;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideGlyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
@@ -37,30 +36,30 @@ public class TestReferenceEncodedNucleotideSequence_gappedtoUngapped {
     String ungappedBasecalls = "ACGTACGTACGTACGT";
     DefaultNucleotideGlyphCodec codec = DefaultNucleotideGlyphCodec.getInstance();
     NucleotideSequence encodedReference = new DefaultNucleotideSequence(reference);
-    DefaultReferenceEncodedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference, gappedBasecalls,0, Range.buildRange(0, gappedBasecalls.length()-1));
+    DefaultReferenceEncodedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference, gappedBasecalls,0);
     
     
     @Test
     public void convertGappedToUngapped_beforeGapsShouldReturnSameNumber(){
-        assertEquals(0,sut.toUngappedIndex(0));
-        assertEquals(7,sut.toUngappedIndex(7));
+        assertEquals(0,sut.getUngappedOffsetFor(0));
+        assertEquals(7,sut.getUngappedOffsetFor(7));
         
-        assertEquals(0, sut.toGappedIndex(0));
-        assertEquals(7,sut.toGappedIndex(7));
+        assertEquals(0, sut.getGappedOffsetFor(0));
+        assertEquals(7,sut.getGappedOffsetFor(7));
     }
     
     @Test
     public void indexOfGapToUngappedIndexShouldReturnIndexMinusNumGaps(){
         final int indexOfFirstGap = gappedBasecalls.indexOf('-');
-        assertEquals(indexOfFirstGap -1, sut.toUngappedIndex(indexOfFirstGap));
+        assertEquals(indexOfFirstGap -1, sut.getUngappedOffsetFor(indexOfFirstGap));
     }
     
     @Test
     public void convertGappedToUngappedOneGapShouldReturnIndexMinusOne(){
         final int indexOfFirstGap = gappedBasecalls.indexOf('-');
         assertEquals(2, sut.getNumberOfGaps());
-        assertEquals(indexOfFirstGap,sut.toUngappedIndex(indexOfFirstGap+1));
-        assertEquals(indexOfFirstGap-1,sut.toUngappedIndex(indexOfFirstGap));
+        assertEquals(indexOfFirstGap,sut.getUngappedOffsetFor(indexOfFirstGap+1));
+        assertEquals(indexOfFirstGap-1,sut.getUngappedOffsetFor(indexOfFirstGap));
     }
     @Test
     public void convertGappedToUngappedLastIndexShouldReturnLengthMinusNumberOfGaps(){
@@ -68,8 +67,8 @@ public class TestReferenceEncodedNucleotideSequence_gappedtoUngapped {
         int gappedLength = gappedBasecalls.length();
         int lastGappedIndex = gappedLength-1;
         final int lastUngappedIndex = lastGappedIndex-numberOfGaps;
-        assertEquals(lastUngappedIndex, sut.toUngappedIndex(lastGappedIndex));
-        assertEquals(lastGappedIndex, sut.toGappedIndex(lastUngappedIndex));
+        assertEquals(lastUngappedIndex, sut.getUngappedOffsetFor(lastGappedIndex));
+        assertEquals(lastGappedIndex, sut.getGappedOffsetFor(lastUngappedIndex));
         assertEquals(numberOfGaps, sut.getNumberOfGaps());
     }
     

@@ -46,18 +46,18 @@ public class TestDefaultPlacedRead {
     Read<ReferenceEncodedNucleotideSequence> read;
     Direction dir = Direction.FORWARD;
     long start = 100;
-    
+    long length = 200L;
+    Range validRange = Range.buildRange(start, length);
     DefaultPlacedRead sut ;
     @Before
     public void setup(){
         read = createMock(Read.class);
-        sut = new DefaultPlacedRead(read, start,dir);
+        sut = new DefaultPlacedRead(read, start,dir,validRange);
     }
     @Test
     public void constructor(){
         String id = "id";
-        long length = 200L;
-        Range validRange = Range.buildRange(start, length);
+        
         ReferenceEncodedNucleotideSequence glyphs = createMock(ReferenceEncodedNucleotideSequence.class);
    
         Map<Integer,Nucleotide> snpMap = new HashMap<Integer, Nucleotide>();
@@ -70,16 +70,15 @@ public class TestDefaultPlacedRead {
             expect(glyphs.get(entry.getKey().intValue())).andReturn(entry.getValue());
         }
         expect(read.getId()).andReturn(id);
-        expect(read.getSequence()).andReturn(glyphs).times(3);
+        expect(read.getNucleotideSequence()).andStubReturn(glyphs);
         expect(read.getLength()).andReturn(length).times(2);
-        expect(glyphs.getValidRange()).andReturn(validRange);
         expect(glyphs.getSnpOffsets()).andReturn(snps);
         replay(read, glyphs);
         assertEquals(dir,sut.getDirection());
         assertEquals(start, sut.getStart());
         assertEquals(read, sut.getRead());
         assertEquals(id, sut.getId());
-        assertEquals(glyphs, sut.getSequence());
+        assertEquals(glyphs, sut.getNucleotideSequence());
         assertEquals(length, sut.getLength());
         assertEquals(start+ length-1 , sut.getEnd());
         assertEquals(validRange, sut.getValidRange());
@@ -102,24 +101,24 @@ public class TestDefaultPlacedRead {
     
     @Test
     public void sameValuesAreEqual(){
-        PlacedRead sameValues =  new DefaultPlacedRead(read, start,dir);
+        PlacedRead sameValues =  new DefaultPlacedRead(read, start,dir,validRange);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
     @Test
     public void differentReadIsNotEqual(){
         Read differentRead = createMock(Read.class);
-        PlacedRead hasDifferentRead =  new DefaultPlacedRead(differentRead, start,dir);
+        PlacedRead hasDifferentRead =  new DefaultPlacedRead(differentRead, start,dir,validRange);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentRead);
     }
     @Test
     public void differentStartIsNotEqual(){
-        PlacedRead hasDifferentStart =  new DefaultPlacedRead(read, start-1,dir);
+        PlacedRead hasDifferentStart =  new DefaultPlacedRead(read, start-1,dir,validRange);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentStart);
     }
     @Test
     public void nullReadThrowsIllegalArgumentException(){
         try{
-            new DefaultPlacedRead(null, start,dir);
+            new DefaultPlacedRead(null, start,dir,validRange);
             fail("should throw IllegalArgument exception when passed read is null");
         }catch(IllegalArgumentException e){
             assertEquals("read can not be null", e.getMessage());

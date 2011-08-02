@@ -81,9 +81,9 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
             if(newTrimRange.isEmpty()){
                 continue;
             }
-            long newOffset = placedRead.convertValidRangeIndexToReferenceIndex((int)newTrimRange.getStart());
+            long newOffset = placedRead.toReferenceOffset((int)newTrimRange.getStart());
             
-            final NucleotideSequence originalGappedValidBases = placedRead.getSequence();
+            final NucleotideSequence originalGappedValidBases = placedRead.getNucleotideSequence();
             final List<Nucleotide> trimedBasecalls = originalGappedValidBases.decode(newTrimRange);
             String trimmedBases = Nucleotides.convertToString(trimedBasecalls);
             long ungappedLength = new DefaultNucleotideSequence(trimedBasecalls).getUngappedLength();
@@ -91,11 +91,11 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
             
             final Range ungappedNewValidRange;
             if(placedRead.getDirection()==Direction.FORWARD){
-                int numberOfGapsTrimmedOff= originalGappedValidBases.computeNumberOfInclusiveGapsInGappedValidRangeUntil((int)newTrimRange.getStart());
+                int numberOfGapsTrimmedOff= originalGappedValidBases.getNumberOfGapsUntil((int)newTrimRange.getStart());
                 ungappedNewValidRange = Range.buildRangeOfLength(oldValidRange.getStart()+ newTrimRange.getStart()-numberOfGapsTrimmedOff, ungappedLength).convertRange(CoordinateSystem.RESIDUE_BASED);
                 
             }else{
-                int numberOfGapsTrimmedOffLeft = originalGappedValidBases.computeNumberOfInclusiveGapsInGappedValidRangeUntil((int)newTrimRange.getStart());
+                int numberOfGapsTrimmedOffLeft = originalGappedValidBases.getNumberOfGapsUntil((int)newTrimRange.getStart());
                 long numberOfBasesTrimmedOffLeft = newTrimRange.getStart()-numberOfGapsTrimmedOffLeft;
                 
                 long numberOfBasesTrimmedOffRight = originalGappedValidBases.getUngappedLength() -ungappedLength-numberOfBasesTrimmedOffLeft;

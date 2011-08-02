@@ -25,9 +25,11 @@ package org.jcvi.common.core.symbol;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 /**
  * {@code EncodedByteSquence} encodes a {@link Sequence}
  * of {@link ByteGlyph}s.
@@ -81,5 +83,36 @@ public class EncodedByteSquence implements Sequence<ByteGlyph>{
         }
         return result;
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Iterator<ByteGlyph> iterator() {
+        return new ByteSequenceIterator();
+    }
+    
+    private class ByteSequenceIterator implements Iterator<ByteGlyph>{
+        private int i=0;
+
+        @Override
+        public boolean hasNext() {
+            return i< getLength();
+        }
+        @Override
+        public ByteGlyph next() {
+            ByteGlyph next = get(i);
+            i++;
+            return next;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("can not remove bytes");
+            
+        }
+        
+    }
+    
+    
 
 }

@@ -58,7 +58,7 @@ public class DefaultQualityCompactedSliceMap extends AbstractCompactedSliceMap{
         for(PlacedRead read : region){
             int indexIntoRead = (int) (i - read.getStart());
             builder.addSliceElement(read.getId(),
-                    read.getSequence().get(indexIntoRead),
+                    read.getNucleotideSequence().get(indexIntoRead),
                     defaultPhredQuality,
                     read.getDirection());
         }
