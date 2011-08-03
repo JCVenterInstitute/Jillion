@@ -1,11 +1,8 @@
 package org.jcvi.common.core.symbol;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
 import java.util.Collections;
 import java.util.List;
-
+import static org.junit.Assert.*;
 import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.ShortGlyphDeltaEncoder;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
@@ -42,7 +39,7 @@ public class TestShortGlyphDeltaEncoderWhenDecoding {
 	}
 	private static void assertEncodedAndDecode(List<ShortGlyph> list) {
 		byte[] encoded =SUT.encode(list);
-		assertThat(list, is(equalTo(SUT.decode(encoded))));
+		assertEquals(list, SUT.decode(encoded));		
 	}
 	
 	@Test

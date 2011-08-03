@@ -63,8 +63,8 @@ import org.jcvi.common.core.assembly.contig.cas.CasPhdReadVisitor.TraceDetails;
 import org.jcvi.common.core.assembly.contig.cas.read.AbstractCasFileNucleotideDataStore;
 import org.jcvi.common.core.assembly.contig.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.common.core.assembly.contig.cas.read.ReferenceCasFileNucleotideDataStore;
-import org.jcvi.common.core.assembly.contig.cas.read.SffTrimDataStore;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.trim.SffTrimDataStoreBuilder;
 import org.jcvi.common.core.assembly.trim.TrimDataStore;
 import org.jcvi.common.core.assembly.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
@@ -163,7 +163,7 @@ public class Cas2Consed3 {
                      MultipleWrapper.createMultipleWrapper(CasFileVisitor.class,
                      referenceIdLookup,referenceNucleotideDataStore,gappedReferenceMap,
                      numberOfReadsVisitor));
-             final SffTrimDataStore sffTrimDatastore = new SffTrimDataStore();
+             final SffTrimDataStoreBuilder sffTrimDatastoreBuilder = new SffTrimDataStoreBuilder();
              CasFileVisitor sffTrimDataStoreVisitor  =new AbstractOnePassCasFileVisitor() {
                 
                 @Override
@@ -178,7 +178,7 @@ public class Cas2Consed3 {
                             String extension =FilenameUtils.getExtension(readFilename);
                             if("sff".equals(extension)){
                                 try {
-                                    SffParser.parseSFF(new File(casWorkingDirectory,readFilename), sffTrimDatastore);
+                                    SffParser.parseSFF(new File(casWorkingDirectory,readFilename), sffTrimDatastoreBuilder);
                                 } catch (Exception e) {
                                     throw new IllegalStateException("error trying to read sff file " + readFilename,e);
                                 } 
@@ -189,7 +189,7 @@ public class Cas2Consed3 {
             };
             CasParser.parseOnlyMetaData(casFile, sffTrimDataStoreVisitor);
             TrimDataStore multiTrimDataStore =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(
-                    TrimDataStore.class, trimDatastore, sffTrimDatastore);
+                    TrimDataStore.class, trimDatastore, sffTrimDatastoreBuilder.build());
             
              final Map<Integer, DefaultAceContig.Builder> builders = new HashMap<Integer, DefaultAceContig.Builder>();
              

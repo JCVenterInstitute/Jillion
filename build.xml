@@ -349,12 +349,6 @@
 		    	<zipfileset src="${lib}/log4j-1.2.15.jar"/>
 		    	<zipfileset src="${lib}/joda-time-1.5.2.jar"/>
 		    	<zipfileset src="${lib}/junit-4.8.2.jar"/>
-		    	<!-- apache poi for reading/writing excel files -->
-		    	<zipfileset src="${lib}/poi-3.7-20101029.jar"/>
-		    	<zipfileset src="${lib}/poi-ooxml-3.7-20101029.jar"/>
-		    	<zipfileset src="${lib}/dom4j-1.6.1.jar"/>
-		    	<zipfileset src="${lib}/geronimo-stax-api_1.0_spec-1.0.jar"/>
-		    	<zipfileset src="${lib}/xmlbeans-2.3.0.jar"/>
 		    	
 		    	
 		    	<zipfileset src="${lib}/finj-1.1.5.jar"/>

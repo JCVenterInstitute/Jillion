@@ -28,8 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.*;
+import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -65,7 +64,7 @@ public class TestIOUtil_unsignedByteToSignedByte {
     
     @Test
     public void convertUnsignedToSigned(){
-        assertThat(IOUtil.convertUnsignedByteToSignedByte(unsigned),is(equalTo(signed)));
+        assertEquals(IOUtil.convertUnsignedByteToSignedByte(unsigned), signed);
     }
     
 }
