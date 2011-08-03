@@ -19,9 +19,7 @@
 
 package org.jcvi.common.core.io;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,6 +68,6 @@ public class TestIOUtil_unsignedIntToSignedInt {
     
     @Test
     public void convertUnsignedToSigned(){
-        assertThat(IOUtil.convertUnsignedIntToSignedInt(unsigned),is(equalTo(signed)));
+        assertEquals(IOUtil.convertUnsignedIntToSignedInt(unsigned), signed);
     }
 }

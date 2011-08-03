@@ -23,7 +23,6 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
-import org.apache.log4j.Logger;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
@@ -46,30 +45,24 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 public class TestAceContigBuilderInvalidRead {
 
-    private Logger mockLogger;
     private final String consensus = "ACGT";
     private final String contigId = "id";
     private DefaultAceContig.Builder sut;
     @Before
     public void setup(){
-        mockLogger = createMock(Logger.class);
         sut = new DefaultAceContig.Builder(contigId, consensus);
-        sut.logger(mockLogger);
     }
     
-    @Test
-    public void invalidReadShouldBeLoggedAndIgnored(){
+    @Test(expected= IllegalArgumentException.class)
+    public void readThatGoesOffTheReferenceShouldThrowException(){
         String readId = "readId";
         int offset =1;
         String validBases = consensus;
         
         Range clearRange = Range.buildRangeOfLength(0, validBases.length());
         PhdInfo phdInfo = createMock(PhdInfo.class);
-        mockLogger.error(eq("could not add read "+readId), isA(IllegalArgumentException.class));
-        replay(mockLogger);
         addReadToBuilder(readId, validBases, offset, Direction.FORWARD, clearRange, phdInfo);
         assertEquals(sut.numberOfReads(),0);
-        verify(mockLogger);
     }
     
     private void addReadToBuilder(String id,String validBases,int offset,Direction dir, Range validRange, PhdInfo phdInfo){

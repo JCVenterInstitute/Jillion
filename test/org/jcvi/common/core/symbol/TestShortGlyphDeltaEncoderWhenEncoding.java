@@ -7,8 +7,7 @@ import org.jcvi.common.core.symbol.ShortGlyph;
 import org.jcvi.common.core.symbol.ShortGlyphDeltaEncoder;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.junit.Test;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 public class TestShortGlyphDeltaEncoderWhenEncoding {
 
@@ -18,7 +17,7 @@ public class TestShortGlyphDeltaEncoderWhenEncoding {
 	public void emptyList(){
 		byte[] expected =new byte[]{};
 		byte[] actual =sut.encode(new ArrayList<ShortGlyph>());
-		assertThat(actual, is(equalTo(expected)));
+		assertArrayEquals(expected, actual);
 	}
 	@Test
 	public void oneElement(){
@@ -28,7 +27,7 @@ public class TestShortGlyphDeltaEncoderWhenEncoding {
 					.array();
 		
 		byte[] actual =sut.encode(ShortGlyphFactory.getInstance().getGlyphsFor(input));
-		assertThat("one element",actual, is(equalTo(expected)));
+		assertArrayEquals(expected, actual);
 	}
 	
 	@Test
@@ -40,7 +39,7 @@ public class TestShortGlyphDeltaEncoderWhenEncoding {
 					.array();
 		
 		byte[] actual =sut.encode(ShortGlyphFactory.getInstance().getGlyphsFor(input));
-		assertThat(actual, is(equalTo(expected)));
+		assertArrayEquals(expected, actual);
 	}
 	
 	@Test
@@ -53,7 +52,7 @@ public class TestShortGlyphDeltaEncoderWhenEncoding {
 					.array();
 		
 		byte[] actual =sut.encode(ShortGlyphFactory.getInstance().getGlyphsFor(input));
-		assertThat(actual, is(equalTo(expected)));
+		assertArrayEquals(expected, actual);
 	}
 	
 	@Test
@@ -66,6 +65,6 @@ public class TestShortGlyphDeltaEncoderWhenEncoding {
 					.array();
 		
 		byte[] actual =sut.encode(ShortGlyphFactory.getInstance().getGlyphsFor(input));
-		assertThat(actual, is(equalTo(expected)));
+		assertArrayEquals(expected, actual);
 	}
 }

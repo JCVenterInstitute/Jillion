@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
@@ -51,7 +50,6 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
     public static class Builder{
         private NucleotideSequence fullConsensus;
         private String contigId;
-        private Logger logger = Logger.getRootLogger();
         private CoordinateSystem adjustedContigIdCoordinateSystem=null;
         
         private List<DefaultAcePlacedRead.Builder> aceReadBuilders = new ArrayList<DefaultAcePlacedRead.Builder>();
@@ -80,11 +78,6 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         public String getContigId() {
             return contigId;
         }
-
-        public Builder logger(Logger logger){
-            this.logger = logger;
-            return this;
-        }
         public int numberOfReads(){
             return aceReadBuilders.size();
         }
@@ -112,15 +105,12 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             //BCISD-211
             int correctedOffset = Math.max(0,offset);
             adjustContigLeftAndRight(validBases, correctedOffset);
-            try{
                 DefaultAcePlacedRead.Builder aceReadBuilder = createNewAceReadBuilder(readId, validBases, correctedOffset, dir, 
                         clearRange,phdInfo,ungappedFullLength);
                 
                 
                 aceReadBuilders.add(aceReadBuilder);
-            }catch(Exception e){
-                logger.error("could not add read "+ readId, e);               
-            }
+            
             return this;
         }
         private DefaultAcePlacedRead.Builder createNewAceReadBuilder(

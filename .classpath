@@ -12,11 +12,6 @@
 	<classpathentry kind="src" path="exe-internal"/>
 	<classpathentry kind="src" path="primerDesign-src"/>
 	<classpathentry kind="src" path="primerDesign-test"/>
-	<classpathentry exported="true" kind="lib" path="lib/hamcrest-all-1.2.jar" sourcepath="lib/hamcrest-all-1.2.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/JCVI-JavaCommon/lib/hamcrest-all-1.2.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/cglib-nodep.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-cli-1.2.jar">
 		<attributes>
@@ -67,15 +62,5 @@
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/objenesis-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/junit-4.8.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/xmlbeans-2.3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/dom4j-1.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/geronimo-stax-api_1.0_spec-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ooxml-schemas-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/poi-3.7-20101029.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://poi.apache.org/apidocs"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.7-20101029.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
