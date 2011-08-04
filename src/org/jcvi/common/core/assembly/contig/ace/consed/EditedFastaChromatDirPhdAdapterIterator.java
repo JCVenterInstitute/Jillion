@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.util.CloseableIterator;
@@ -47,7 +47,7 @@ import org.joda.time.DateTime;
 public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaConsedPhdAdaptedIterator{
 
     private final CloseableIterator<QualityFastaRecord> qualityIterator;
-    private final CloseableIterator<PositionFastaRecord<Sequence<ShortGlyph>>> positionIterator;
+    private final CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> positionIterator;
     
     private QualityFastaRecord currentQualityFasta;
     private Peaks currentPeaks;
@@ -71,7 +71,7 @@ public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaCons
      * @param fastaFile
      * @return
      */
-    private CloseableIterator<PositionFastaRecord<Sequence<ShortGlyph>>> createPositionIterator(
+    private CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> createPositionIterator(
             File fastaFile) {
         File posFile = getFileLike(fastaFile,"pos");
         if(!posFile.exists()){

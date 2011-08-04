@@ -27,20 +27,101 @@ import java.nio.ByteBuffer;
 /**
  * <code>ValueSizeStrategy</code> is a strategy pattern
  * implementation to abstract away the number of bytes
- * read/written to a {@link ByteBuffer}.  This simplifies algorithms
+ * read from/written to a {@link ByteBuffer}.  This simplifies algorithms
  * and allows read/write operations to be written once and re-used by
  * different implementations that need to read/write different sized data.
  * @author dkatzel
  *
  *
  */
-public interface ValueSizeStrategy<N extends Number> {
+enum ValueSizeStrategy {
+    /**
+     * Read and write a single byte at a time.
+     */
+    BYTE(1){
+        /**
+         * get the next (unsigned) byte from the buffer.
+         * @param buf the buffer to read the byte from.
+         * @return an unsigned byte value as an int.
+         */
+        @Override
+        public long getNext(ByteBuffer buf) {
+            return buf.get();
+        }
+        /**
+         * puts the given byte value into the given buffer.
+         * @param value the value to write (must be able to be cast to a <code>byte</code>)
+         * @param buf the Buffer to write to.
+         */
+        @Override
+        public void put(long value, ByteBuffer buf) {
+            buf.put((byte)value);
+        }    
+    },
+    /**
+     * Read and write a short int (2 bytes) at a time.
+     */
+    SHORT(2){
+        /**
+         * get the next short from the buffer.
+         * @param buf the buffer to read the byte from.
+         * @return a short value as an int.
+         */
+        @Override
+        public long getNext(ByteBuffer buf) {
+            return buf.getShort();
+        }
+        /**
+         * puts the given short value into the given buffer.
+         * @param value the value to write (must be able to be cast to a <code>short</code>)
+         * @param buf the Buffer to write to.
+         */
+        @Override
+        public void put(long value, ByteBuffer buf) {
+            buf.putShort((short)value);
+        }
+    },
+    /**
+     * Read and write a 4 byte int at a time.
+     */
+    INT(4){
+        @Override
+        public long getNext(ByteBuffer buf) {
+            return buf.getInt();
+        }
+        @Override
+        public void put(long value, ByteBuffer buf) {
+            buf.putInt((int)value);
+        }
+    },
+    /**
+     * Read and write 8 byte integers (longs).
+     */
+    LONG(8){
+        @Override
+        public long getNext(ByteBuffer buf) {
+            return buf.getLong();
+        }
+
+        @Override
+        public void put(long value, ByteBuffer buf) {
+            buf.putLong(value);
+            
+        }
+    }
+    ;
+    
+    private final int numberOfBytesPerValue;
+    
+    private ValueSizeStrategy(int numberOfBytesPerValue) {
+        this.numberOfBytesPerValue = numberOfBytesPerValue;
+    }
     /**
      * Gets the next value from the given buffer.
      * @param buf the ByteBuffer to read from.
      * @return the value read from the buffer as an long.
      */
-    N getNext(ByteBuffer buf);
+    abstract long getNext(ByteBuffer buf);
     /**
      * Puts the given value into the buffer. If this
      * implementation reads/writes data smaller than an long,
@@ -50,7 +131,13 @@ public interface ValueSizeStrategy<N extends Number> {
      * @param buf the buffer to write to.
      * 
      */
-    void put(long value, ByteBuffer buf);
-    
-    int numberOfBytesPerValue();
+    abstract void put(long value, ByteBuffer buf);
+    /**
+     * Get the number of bytes read or written to 
+     * during each get or put operation.
+     * @return 1,2,4, or 8.
+     */
+    public int numberOfBytesPerValue() {
+        return numberOfBytesPerValue;
+    }
 }

@@ -3,7 +3,7 @@ package org.jcvi.common.core.symbol;
 import java.util.Collections;
 import java.util.List;
 import static org.junit.Assert.*;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphDeltaEncoder;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.junit.Test;
@@ -15,36 +15,36 @@ public class TestShortGlyphDeltaEncoderWhenDecoding {
 	
 	@Test
 	public void emptyList(){
-		assertEncodedAndDecode(Collections.<ShortGlyph>emptyList());
+		assertEncodedAndDecode(Collections.<ShortSymbol>emptyList());
 	}
 	@Test
 	public void oneElement(){
-		List<ShortGlyph> list = FACTORY.getGlyphsFor(new short[]{5});
+		List<ShortSymbol> list = FACTORY.getGlyphsFor(new short[]{5});
 		assertEncodedAndDecode(list);
 	}
 	
 	@Test
 	public void twoElements(){
-		List<ShortGlyph> list = FACTORY.getGlyphsFor(
+		List<ShortSymbol> list = FACTORY.getGlyphsFor(
 		new short[]{5,10});
 		assertEncodedAndDecode(list);
 	}
 	
 	@Test
 	public void threeElements(){
-		List<ShortGlyph> list = FACTORY.getGlyphsFor(
+		List<ShortSymbol> list = FACTORY.getGlyphsFor(
 		new short[]{5,10,45});
 		
 		assertEncodedAndDecode(list);
 	}
-	private static void assertEncodedAndDecode(List<ShortGlyph> list) {
+	private static void assertEncodedAndDecode(List<ShortSymbol> list) {
 		byte[] encoded =SUT.encode(list);
 		assertEquals(list, SUT.decode(encoded));		
 	}
 	
 	@Test
 	public void negativeDelta(){
-		List<ShortGlyph> list = FACTORY.getGlyphsFor(
+		List<ShortSymbol> list = FACTORY.getGlyphsFor(
 		new short[]{5,10,45,30});
 		assertEncodedAndDecode(list);
 	}

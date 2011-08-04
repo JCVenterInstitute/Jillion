@@ -16,19 +16,16 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jul 6, 2009
- *
+
+package org.jcvi.common.core.symbol.qual;
+
+import org.jcvi.common.core.symbol.GlyphCodec;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.common.core.symbol;
-
-public class Level3DeltaEncoder implements DeltaEncoder{
-
-    @Override
-    public long computeDelta(long lastValue, long secondToLastValue,
-            long thirdToLastValue) {
-        return 3*lastValue - 3*secondToLastValue + thirdToLastValue;
-    }
+public interface QualitySymbolCodec extends GlyphCodec<PhredQuality>{
 
 }

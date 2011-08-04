@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 /**
  * {@code EncodedByteSquence} encodes a {@link Sequence}
  * of {@link ByteSymbol}s.
@@ -37,14 +36,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
  */
 public class EncodedByteSquence implements Sequence<ByteSymbol>{
 
-    private static final ByteGlyphFactory<ByteSymbol> FACTORY = new ByteGlyphFactory<ByteSymbol>(){
-
-        @Override
-        protected ByteSymbol createNewGlyph(Byte b) {
-            return new ByteSymbol(b);
-        }
-        
-    };
+    private static final ByteSymbolFactory<ByteSymbol> FACTORY = DefaultByteGlyphFactory.getInstance();
     private final byte[] data;
     public EncodedByteSquence(List<ByteSymbol> bytes){
         this.data = encode(bytes);
@@ -65,7 +57,7 @@ public class EncodedByteSquence implements Sequence<ByteSymbol>{
 
     @Override
     public ByteSymbol get(int index) {
-        return FACTORY.getGlyphFor(data[index]);
+        return FACTORY.getSymbolFor(data[index]);
     }
 
     @Override

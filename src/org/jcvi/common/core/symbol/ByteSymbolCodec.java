@@ -20,6 +20,6 @@
 package org.jcvi.common.core.symbol;
 
 
-public interface ByteGlyphCodec <G extends ByteSymbol> extends GlyphCodec<G>{
+public interface ByteSymbolCodec <G extends ByteSymbol> extends GlyphCodec<G>{
 
 }

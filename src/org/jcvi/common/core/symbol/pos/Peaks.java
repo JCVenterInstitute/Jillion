@@ -29,7 +29,7 @@ import java.util.List;
 import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.util.CommonUtil;
 
@@ -45,17 +45,17 @@ import org.jcvi.common.core.util.CommonUtil;
 public class Peaks{
     private static final ShortGlyphFactory FACTORY = ShortGlyphFactory.getInstance();
     private static final DefaultShortGlyphCodec CODEC = DefaultShortGlyphCodec.getInstance();
-    private Sequence<ShortGlyph> data;
+    private Sequence<ShortSymbol> data;
 
     public Peaks(short[] data){
         this(FACTORY.getGlyphsFor(data));
        
     }
-    public Peaks(List<ShortGlyph> data){
-        this.data = new EncodedSequence<ShortGlyph>(CODEC, data);
+    public Peaks(List<ShortSymbol> data){
+        this.data = new EncodedSequence<ShortSymbol>(CODEC, data);
        
     }
-    public Peaks(Sequence<ShortGlyph> data){
+    public Peaks(Sequence<ShortSymbol> data){
         if(data==null){
             throw new NullPointerException("encoded data can not be null");
         }
@@ -72,7 +72,7 @@ public class Peaks{
     /**
      * @return the data
      */
-    public Sequence<ShortGlyph> getData() {
+    public Sequence<ShortSymbol> getData() {
         return data;
     }
 

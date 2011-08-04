@@ -1,6 +1,6 @@
 package org.jcvi.common.core.symbol;
 
-public class DefaultByteGlyphFactory extends  ByteGlyphFactory<ByteSymbol>{
+final class DefaultByteGlyphFactory extends  ByteSymbolFactory<ByteSymbol>{
 
 	private static final DefaultByteGlyphFactory INSTANCE = new DefaultByteGlyphFactory();
 	

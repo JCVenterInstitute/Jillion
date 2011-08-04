@@ -17,50 +17,42 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Dec 30, 2008
+ * Created on Jan 22, 2009
  *
  * @author dkatzel
  */
 package org.jcvi.common.core.symbol;
 
-import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
+import java.util.Collection;
 
-/**
- * <code>ShortValueSizeStrategy</code> is an implementation
- * of {@link ValueSizeStrategy} that reads/writes single bytes.
- * @author dkatzel
- *
- */
-public class ShortValueSizeStrategy implements ValueSizeStrategy<Short> {
-    
-	private static ShortValueSizeStrategy INSTANCE = new ShortValueSizeStrategy();
-	
-	public static ShortValueSizeStrategy getInstance(){
-		return INSTANCE;
-	}
-	private ShortValueSizeStrategy(){}
-	/**
-     * get the next short from the buffer.
-     * @param buf the buffer to read the byte from.
-     * @return a short value as an int.
-     */
-    @Override
-    public Short getNext(ByteBuffer buf) {
-        return buf.getShort();
-    }
-    /**
-     * puts the given short value into the given buffer.
-     * @param value the value to write (must be able to be cast to a <code>short</code>)
-     * @param buf the Buffer to write to.
-     */
-    @Override
-    public void put(long value, ByteBuffer buf) {
-        buf.putShort((short)value);
-    }
-    @Override
-    public int numberOfBytesPerValue() {
-        return 2;
-    }
-    
+public class ShortSymbol extends DefaultNumericGlyph implements Comparable<ShortSymbol>{
 
+
+    public ShortSymbol(short s){
+        super(Short.valueOf(s));
+    }
+    @Override
+    public Short getNumber() {
+        return (Short)super.getNumber();
+    }
+    @Override
+    public int compareTo(ShortSymbol o) {
+        return getNumber().compareTo(o.getNumber());
+    }
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+    public static short[] toArray(Collection<ShortSymbol> shorts){
+        ShortBuffer buf = ShortBuffer.allocate(shorts.size());
+        for(ShortSymbol aShort : shorts){
+            buf.put(aShort.getNumber());
+        }
+        return buf.array();
+    }
 }

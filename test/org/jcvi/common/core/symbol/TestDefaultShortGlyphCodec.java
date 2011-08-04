@@ -35,7 +35,7 @@ public class TestDefaultShortGlyphCodec {
     
     private static final short[] decodedShorts = new short[]{12345,10,0,Short.MAX_VALUE, Short.MIN_VALUE,-255,256,5000};
 
-    private static final List<ShortGlyph> decodedGlyphs = FACTORY.getGlyphsFor(decodedShorts);
+    private static final List<ShortSymbol> decodedGlyphs = FACTORY.getGlyphsFor(decodedShorts);
     
     private static byte[] encodedShortsAsByteArray;
     
@@ -51,7 +51,7 @@ public class TestDefaultShortGlyphCodec {
     DefaultShortGlyphCodec sut = DefaultShortGlyphCodec.getInstance();
     @Test
     public void decode(){
-        List<ShortGlyph> actualGlyphs =sut.decode(encodedShortsAsByteArray);
+        List<ShortSymbol> actualGlyphs =sut.decode(encodedShortsAsByteArray);
         assertEquals(decodedGlyphs, actualGlyphs);
     }
     

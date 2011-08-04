@@ -31,19 +31,19 @@ import java.util.List;
 import org.jcvi.common.core.Range;
 /**
  * {@code EncodedShortGlyph} encodes a {@link Sequence}
- * of {@link ShortGlyph}s.
+ * of {@link ShortSymbol}s.
  * @author dkatzel
  */
-public class EncodedShortGlyph implements Sequence<ShortGlyph>{
+public class EncodedShortSymbol implements Sequence<ShortSymbol>{
 
     private static final ShortGlyphFactory FACTORY = ShortGlyphFactory.getInstance();
     private final short[] data;
-    public EncodedShortGlyph(List<ShortGlyph> shorts){
+    public EncodedShortSymbol(List<ShortSymbol> shorts){
         this.data = encode(shorts);
     }
-    private short[] encode(List<ShortGlyph> shorts) {
+    private short[] encode(List<ShortSymbol> shorts) {
         ShortBuffer buffer = ShortBuffer.allocate(shorts.size());
-        for(ShortGlyph byteGlyph : shorts){
+        for(ShortSymbol byteGlyph : shorts){
             buffer.put(byteGlyph.getNumber().shortValue());
         }
         return buffer.array();
@@ -51,12 +51,12 @@ public class EncodedShortGlyph implements Sequence<ShortGlyph>{
     
     
     @Override
-    public List<ShortGlyph> decode() {
+    public List<ShortSymbol> decode() {
          return FACTORY.getGlyphsFor(data);
     }
 
     @Override
-    public ShortGlyph get(int index) {
+    public ShortSymbol get(int index) {
         return FACTORY.getGlyphFor(data[index]);
     }
 
@@ -65,11 +65,11 @@ public class EncodedShortGlyph implements Sequence<ShortGlyph>{
         return data.length;
     }
     @Override
-    public List<ShortGlyph> decode(Range range) {
+    public List<ShortSymbol> decode(Range range) {
         if(range==null){
             return decode();
         }
-        List<ShortGlyph> result = new ArrayList<ShortGlyph>();
+        List<ShortSymbol> result = new ArrayList<ShortSymbol>();
         for(long index : range){
             result.add(get((int)index));
         }
@@ -80,11 +80,11 @@ public class EncodedShortGlyph implements Sequence<ShortGlyph>{
      * {@inheritDoc}
      */
      @Override
-     public Iterator<ShortGlyph> iterator() {
+     public Iterator<ShortSymbol> iterator() {
          return new ShortSequenceIterator();
      }
      
-     private class ShortSequenceIterator implements Iterator<ShortGlyph>{
+     private class ShortSequenceIterator implements Iterator<ShortSymbol>{
          private int i=0;
 
          @Override
@@ -92,8 +92,8 @@ public class EncodedShortGlyph implements Sequence<ShortGlyph>{
              return i< getLength();
          }
          @Override
-         public ShortGlyph next() {
-             ShortGlyph next = get(i);
+         public ShortSymbol next() {
+             ShortSymbol next = get(i);
              i++;
              return next;
          }

@@ -30,7 +30,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdTag;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.junit.Before;
@@ -65,7 +65,7 @@ public class TestBuildArtificialPhd {
         assertEquals(id, phd.getId());
         assertEquals(mockBasecalls, phd.getBasecalls());
         assertEquals(mockQualities, phd.getQualities());
-        Sequence<ShortGlyph> actualPeaks = phd.getPeaks().getData();
+        Sequence<ShortSymbol> actualPeaks = phd.getPeaks().getData();
         for(int i=0; i< lengthOfBases; i++){
             assertEquals(Short.valueOf((short)(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak)), actualPeaks.get(i).getNumber());
         }
@@ -85,7 +85,7 @@ public class TestBuildArtificialPhd {
         assertEquals(id, phd.getId());
         assertEquals(mockBasecalls, phd.getBasecalls());
         assertEquals(mockQualities, phd.getQualities());
-        Sequence<ShortGlyph> actualPeaks = phd.getPeaks().getData();
+        Sequence<ShortSymbol> actualPeaks = phd.getPeaks().getData();
         for(int i=0; i< lengthOfBases; i++){
             assertEquals(Short.valueOf((short)(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak)), actualPeaks.get(i).getNumber());
         }

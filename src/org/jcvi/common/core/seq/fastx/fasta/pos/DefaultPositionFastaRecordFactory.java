@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.fastx.fasta.pos;
 
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 
 public class DefaultPositionFastaRecordFactory implements PositionFastaRecordFactory{
  private static final DefaultPositionFastaRecordFactory INSTANCE = new DefaultPositionFastaRecordFactory();
@@ -35,14 +35,14 @@ public class DefaultPositionFastaRecordFactory implements PositionFastaRecordFac
         return INSTANCE;
     }
     @Override
-    public PositionFastaRecord<Sequence<ShortGlyph>> createFastaRecord(
+    public PositionFastaRecord<Sequence<ShortSymbol>> createFastaRecord(
             String id, String comments, String recordBody) {
         return PositionsFastaRecordUtil.buildFastaRecord(id, comments, recordBody);
         
     }
 
     @Override
-    public PositionFastaRecord<Sequence<ShortGlyph>> createFastaRecord(
+    public PositionFastaRecord<Sequence<ShortSymbol>> createFastaRecord(
             String id, String recordBody) {
         return createFastaRecord(id, null,recordBody);
     }

@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class TestShortGlyph {
     short value = 5000;
-    ShortGlyph sut = new ShortGlyph(value);
+    ShortSymbol sut = new ShortSymbol(value);
     
     @Test
     public void getNumber(){

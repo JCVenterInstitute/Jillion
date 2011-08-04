@@ -29,7 +29,7 @@ import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualityGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 /**
  * {@code FastQQualityCodec} is a can encode and decode
@@ -89,7 +89,7 @@ public enum FastQQualityCodec {
 		    }
 	}
 	;
-	private final QualityGlyphCodec qualityCodec = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
+	private final QualitySymbolCodec qualityCodec = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
 	
 	/**
 	 * Decode the given FASTQ quality encoded String

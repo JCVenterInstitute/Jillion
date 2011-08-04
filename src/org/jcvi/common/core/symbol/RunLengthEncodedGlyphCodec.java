@@ -29,9 +29,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualityGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
 
-public class RunLengthEncodedGlyphCodec implements QualityGlyphCodec{
+public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
     public static final RunLengthEncodedGlyphCodec DEFAULT_INSTANCE = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
     
     private final byte guard;

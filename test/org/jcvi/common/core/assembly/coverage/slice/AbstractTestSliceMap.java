@@ -34,7 +34,7 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.qual.QualityDataStoreAdapter;
-import org.jcvi.common.core.symbol.qual.QualityGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public abstract class AbstractTestSliceMap {
 
     protected abstract SliceMap createSliceMapFor(Contig<PlacedRead> contig, QualityDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy);
     private QualityDataStore qualityDataStore;
-    private static final QualityGlyphCodec CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
+    private static final QualitySymbolCodec CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
     @Before
     public void setup(){
         Map<String, QualitySequence> qualities = new HashMap<String, QualitySequence>();

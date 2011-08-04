@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -141,7 +141,7 @@ public class DefaultPhd implements Phd {
 
     @Override
     public int getNumberOfTracePositions() {
-        Sequence<ShortGlyph> encodedPeaks= peaks.getData();        
+        Sequence<ShortSymbol> encodedPeaks= peaks.getData();        
         int lastIndex= (int)encodedPeaks.getLength() -1;
         return encodedPeaks.get(lastIndex).getNumber();
     }

@@ -30,7 +30,7 @@ import java.nio.ShortBuffer;
 import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.testUtil.TestUtil;
@@ -43,7 +43,7 @@ public class TestPeaks {
     private short[] peaks = new short[]{110,120,130,140,150,160};
     private short[] differentPeaks = new short[]{30,40,50,60,70,80,90};
     private Peaks sut = new Peaks(peaks);
-    private Sequence<ShortGlyph> encodedPeaks = new EncodedSequence<ShortGlyph>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(peaks));
+    private Sequence<ShortSymbol> encodedPeaks = new EncodedSequence<ShortSymbol>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(peaks));
     @Test
     public void constructor(){
         assertEquals(encodedPeaks, sut.getData());

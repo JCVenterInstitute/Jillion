@@ -25,9 +25,9 @@ package org.jcvi.common.core.seq.fastx.fasta.pos;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStore;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 
-public abstract class AbstractPositionFastaFileDataStore extends AbstractFastaFileDataStore<PositionFastaRecord<Sequence<ShortGlyph>>>{
+public abstract class AbstractPositionFastaFileDataStore extends AbstractFastaFileDataStore<PositionFastaRecord<Sequence<ShortSymbol>>>{
 
     private final PositionFastaRecordFactory fastaRecordFactory;
 

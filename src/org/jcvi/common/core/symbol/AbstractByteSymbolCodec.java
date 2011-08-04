@@ -17,49 +17,47 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Jan 22, 2009
+ * Created on Feb 23, 2009
  *
  * @author dkatzel
  */
 package org.jcvi.common.core.symbol;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 
-public abstract class ByteGlyphFactory<G extends ByteSymbol> implements GlyphFactory<G, Byte>{
+public abstract class AbstractByteSymbolCodec<T extends ByteSymbol> implements ByteSymbolCodec<T>{
 
-    private final Map<Number, G> map = new HashMap<Number, G>();
-    
+    protected abstract T getValueOf(byte b);
     @Override
-    public List<G> getGlyphsFor(List<Byte> s) {
-        List<G> glyphs = new ArrayList<G>();
-        for(int i=0; i<s.size(); i++){
-            glyphs.add(getGlyphFor(s.get(i)));
-        }
-        return glyphs;
-    }
-
-    public List<G> getGlyphsFor(byte[] bytes) {
-        List<G> glyphs = new ArrayList<G>();
-        for(int i=0; i<bytes.length; i++){
-            glyphs.add(getGlyphFor(bytes[i]));
+    public List<T> decode(byte[] encodedGlyphs) {
+        List<T> glyphs = new ArrayList<T>();
+        ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+        while(buf.hasRemaining()){
+            glyphs.add(getValueOf(buf.get()));
         }
         return glyphs;
     }
 
     @Override
-    public synchronized G getGlyphFor(Byte b) {
-        if(map.containsKey(b)){
-            return map.get(b);
-        }
-        G newGlyph = createNewGlyph(b);
-        map.put(b, newGlyph);
-        return newGlyph;
+    public T decode(byte[] encodedGlyphs, int index) {
+        return getValueOf(encodedGlyphs[index]);
     }
 
-    protected abstract G createNewGlyph(Byte b);
-    
+    @Override
+    public int decodedLengthOf(byte[] encodedGlyphs) {
+        return encodedGlyphs.length;
+    }
+
+    @Override
+    public byte[] encode(Collection<T> glyphs) {
+        ByteBuffer buf = ByteBuffer.allocate(glyphs.size());
+        for(ByteSymbol g : glyphs){
+            buf.put(g.getNumber().byteValue());
+        }
+        return buf.array();
+    }
 }

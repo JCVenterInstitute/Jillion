@@ -5,19 +5,19 @@ import java.nio.ShortBuffer;
 import java.util.List;
 
 
-public class ShortGlyphDeltaEncoder extends AbstractDeltaEncoderCodec<ShortGlyph, Short>{
+public class ShortGlyphDeltaEncoder extends AbstractDeltaEncoderCodec<ShortSymbol>{
 
 	public ShortGlyphDeltaEncoder(DeltaEncoder deltaEncoder) {
-		super(deltaEncoder, ShortValueSizeStrategy.getInstance());
+		super(deltaEncoder, ValueSizeStrategy.SHORT);
 	}
 
 	public ShortGlyphDeltaEncoder(){
-		this(Level1DeltaEncoder.getInstance());
+		this(DeltaEncoder.LEVEL_1);
 	}
 	
 
 	@Override
-	protected List<ShortGlyph> convertToGlyphs(ByteBuffer decodedData) {
+	protected List<ShortSymbol> convertToGlyphs(ByteBuffer decodedData) {
 		ShortBuffer buf = ShortBuffer.allocate(decodedData.remaining()/2);
 		while(decodedData.hasRemaining()){
 			buf.put(decodedData.getShort());

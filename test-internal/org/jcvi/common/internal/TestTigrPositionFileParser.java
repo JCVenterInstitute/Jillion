@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionDataStore;
-import org.jcvi.common.core.symbol.EncodedShortGlyph;
+import org.jcvi.common.core.symbol.EncodedShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.internal.TigrPositionsFileParser;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -38,7 +38,7 @@ public class TestTigrPositionFileParser {
     private static final ShortGlyphFactory FACTORY = ShortGlyphFactory.getInstance();
     String pathToPosfile = "files/example.pos";
     
-    EncodedShortGlyph IWKNA07T07A12MP1027R = new EncodedShortGlyph(
+    EncodedShortSymbol IWKNA07T07A12MP1027R = new EncodedShortSymbol(
             FACTORY.getGlyphsFor(new short[]{
                     7, 15, 28, 39, 61, 83, 100, 130, 153, 160, 176, 193, 203, 216, 
                     230, 238, 246, 262, 278, 293, 305, 318, 327, 339, 352, 365,
@@ -147,7 +147,7 @@ public class TestTigrPositionFileParser {
             })
         );
     
-    EncodedShortGlyph IWKNA07T08G07MP461F = new EncodedShortGlyph(
+    EncodedShortSymbol IWKNA07T08G07MP461F = new EncodedShortSymbol(
             FACTORY.getGlyphsFor(new short[]{
                     6, 19, 32, 45, 65, 88, 102, 106, 133, 139, 157, 165, 176,
                      182, 195, 208, 216, 230, 243, 255, 269, 284, 297, 305, 319,

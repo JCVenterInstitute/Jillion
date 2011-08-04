@@ -37,13 +37,13 @@ import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.util.CloseableIterator;
 
 public class DefaultPositionFastaFileDataStore extends AbstractPositionFastaFileDataStore{
 
-private final Map<String, PositionFastaRecord<Sequence<ShortGlyph>>> map = new HashMap<String, PositionFastaRecord<Sequence<ShortGlyph>>>();
-private DataStore<PositionFastaRecord<Sequence<ShortGlyph>>> datastore;
+private final Map<String, PositionFastaRecord<Sequence<ShortSymbol>>> map = new HashMap<String, PositionFastaRecord<Sequence<ShortSymbol>>>();
+private DataStore<PositionFastaRecord<Sequence<ShortSymbol>>> datastore;
 /**
  * @param fastaRecordFactory
  */
@@ -94,14 +94,14 @@ public void close() throws IOException {
 @Override
 public void visitEndOfFile() {
     super.visitEndOfFile();
-    datastore = new SimpleDataStore<PositionFastaRecord<Sequence<ShortGlyph>>>(map);
+    datastore = new SimpleDataStore<PositionFastaRecord<Sequence<ShortSymbol>>>(map);
 }
 @Override
 public boolean contains(String id) throws DataStoreException {
     return datastore.contains(id);
 }
 @Override
-public PositionFastaRecord<Sequence<ShortGlyph>> get(String id)
+public PositionFastaRecord<Sequence<ShortSymbol>> get(String id)
         throws DataStoreException {
     return datastore.get(id);
 }
@@ -114,7 +114,7 @@ public int size() throws DataStoreException {
     return datastore.size();
 }
 @Override
-public CloseableIterator<PositionFastaRecord<Sequence<ShortGlyph>>> iterator() {
+public CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> iterator() {
     return datastore.iterator();
 }
 }

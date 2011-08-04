@@ -42,7 +42,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionDec
 import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
@@ -198,7 +198,7 @@ public abstract class AbstractTestBasesSectionDecoder {
         assertEquals(newOffset-currentOffset-skipDistance, (int)bases.getLength()*12);
         assertEquals(chromatogram.getBasecalls().decode(), 
                  Nucleotides.parse(c.basecalls()));
-        Sequence<ShortGlyph> encodedPeaks = new EncodedSequence<ShortGlyph>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(c.peaks()));
+        Sequence<ShortSymbol> encodedPeaks = new EncodedSequence<ShortSymbol>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(c.peaks()));
         assertEquals(chromatogram.getPeaks().getData(),
                 encodedPeaks);
         

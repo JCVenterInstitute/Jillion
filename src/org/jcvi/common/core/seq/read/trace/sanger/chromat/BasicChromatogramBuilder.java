@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -86,7 +86,7 @@ public final class BasicChromatogramBuilder {
         }
         public BasicChromatogramBuilder(Chromatogram copy){
        this(Nucleotides.convertToString(copy.getBasecalls().decode()),
-       ShortGlyph.toArray(copy.getPeaks().getData().decode()),
+       ShortSymbol.toArray(copy.getPeaks().getData().decode()),
        copy.getChannelGroup(),
        copy.getComments()
        );

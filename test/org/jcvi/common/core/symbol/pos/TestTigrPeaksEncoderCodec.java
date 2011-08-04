@@ -26,7 +26,7 @@ package org.jcvi.common.core.symbol.pos;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.pos.TigrPeaksEncoder;
 import org.jcvi.common.core.symbol.pos.TigrPeaksEncoderGlyphCodec;
@@ -45,7 +45,7 @@ public class TestTigrPeaksEncoderCodec {
     
     TigrPeaksEncoderGlyphCodec sut = TigrPeaksEncoderGlyphCodec.INSTANCE;
     
-    List<ShortGlyph> peaks = ShortGlyphFactory.getInstance().getGlyphsFor(
+    List<ShortSymbol> peaks = ShortGlyphFactory.getInstance().getGlyphsFor(
                             PEAKS_AS_SHORTS);
     
     @Test
@@ -67,7 +67,7 @@ public class TestTigrPeaksEncoderCodec {
     @Test
     public void decodeIndex(){
         for(int i=0; i< peaks.size(); i++){
-            ShortGlyph actual =sut.decode(EXPECTED_ENCODED_PEAKS, i);
+            ShortSymbol actual =sut.decode(EXPECTED_ENCODED_PEAKS, i);
             assertEquals(peaks.get(i), actual);
         }
     }

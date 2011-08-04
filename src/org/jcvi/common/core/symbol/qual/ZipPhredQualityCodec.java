@@ -28,7 +28,7 @@ import org.jcvi.common.core.symbol.AbstractZipByteGlyphCodec;
  * @author dkatzel
  *
  */
-public class ZipPhredQualityCodec extends AbstractZipByteGlyphCodec<PhredQuality>{
+public class ZipPhredQualityCodec extends AbstractZipByteGlyphCodec<PhredQuality> implements QualitySymbolCodec{
 
 	@Override
 	protected List<PhredQuality> getGlyphsFor(byte[] decodedBytes) {
