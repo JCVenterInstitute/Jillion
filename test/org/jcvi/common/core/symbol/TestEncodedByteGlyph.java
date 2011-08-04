@@ -28,16 +28,16 @@ import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestEncodedByteGlyph {
-    ByteGlyphFactory<ByteGlyph> FACTORY = new ByteGlyphFactory<ByteGlyph>(){
+    ByteGlyphFactory<ByteSymbol> FACTORY = new ByteGlyphFactory<ByteSymbol>(){
 
         @Override
-        protected ByteGlyph createNewGlyph(Byte b) {
-            return new ByteGlyph(b);
+        protected ByteSymbol createNewGlyph(Byte b) {
+            return new ByteSymbol(b);
         }
         
     };
     byte[] bytes = new byte[]{-20,40,Byte.MAX_VALUE,Byte.MIN_VALUE,21,86,99,0,4};
-    List<ByteGlyph> glyphs = FACTORY.getGlyphsFor(bytes);
+    List<ByteSymbol> glyphs = FACTORY.getGlyphsFor(bytes);
     
     EncodedByteSquence sut = new EncodedByteSquence(glyphs);
     

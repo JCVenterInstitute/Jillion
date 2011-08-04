@@ -30,16 +30,16 @@ import java.util.zip.Inflater;
 /**
  * {@code AbstractZipByteGlyphCodec} is a 
  * ByteGlyphCodec which uses ZIP compression
- * to encode {@link ByteGlyph}s.  ZIP should greatly 
+ * to encode {@link ByteSymbol}s.  ZIP should greatly 
  * reduce the size of the data being encoded at a slight
  * cost of extra computation time to uncompress the data
  * to decode it.
  * @author dkatzel
  *
- * @param <G> the {@link ByteGlyph} implementation
+ * @param <G> the {@link ByteSymbol} implementation
  * which is being encoded.
  */
-public abstract class AbstractZipByteGlyphCodec<G extends ByteGlyph> implements ByteGlyphCodec<G>{
+public abstract class AbstractZipByteGlyphCodec<G extends ByteSymbol> implements ByteGlyphCodec<G>{
 
 
 	/**

@@ -30,24 +30,24 @@ import java.util.List;
 import org.junit.Test;
 
 public class TestDefaultByteGlyphCodec {
- private static final ByteGlyphFactory FACTORY = new ByteGlyphFactory<ByteGlyph>(){
+ private static final ByteGlyphFactory FACTORY = new ByteGlyphFactory<ByteSymbol>(){
 
      @Override
-     protected ByteGlyph createNewGlyph(Byte b) {
-         return new ByteGlyph(b);
+     protected ByteSymbol createNewGlyph(Byte b) {
+         return new ByteSymbol(b);
      }
      
  };
     
     private static final byte[] decodedByteArray = new byte[]{123,10,0,Byte.MAX_VALUE, Byte.MIN_VALUE,-125,65,99};
 
-    private static final List<ByteGlyph> decodedGlyphs = FACTORY.getGlyphsFor(decodedByteArray);
+    private static final List<ByteSymbol> decodedGlyphs = FACTORY.getGlyphsFor(decodedByteArray);
 
     
     DefaultByteGlyphCodec sut = new DefaultByteGlyphCodec(FACTORY);
     @Test
     public void decode(){
-        List<ByteGlyph> actualGlyphs =sut.decode(decodedByteArray);
+        List<ByteSymbol> actualGlyphs =sut.decode(decodedByteArray);
         assertEquals(decodedGlyphs, actualGlyphs);
     }
     

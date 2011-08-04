@@ -16,34 +16,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 22, 2009
- *
+
+package org.jcvi.common.core.symbol.qual;
+
+import org.junit.Test;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.common.core.symbol;
+public class TestPhredQualityStaticMethods {
 
-public class ByteGlyph extends DefaultNumericGlyph implements Comparable<ByteGlyph>{
-
-    public ByteGlyph(byte b){
-        super(Byte.valueOf(b));
-    }
-    @Override
-    public Byte getNumber() {
-        return (Byte)super.getNumber();
-    }
-    @Override
-    public int compareTo(ByteGlyph o) {
-        return getNumber().compareTo(o.getNumber());
-    }
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-    @Override
-    public int hashCode() {
-        return super.hashCode();
+    @Test(expected = IllegalArgumentException.class)
+    public void zeroErrorProbabilityShouldThrowIllegalArgumentException(){
+        PhredQuality.withErrorProbability(0);
     }
     
-
+    @Test(expected = IllegalArgumentException.class)
+    public void negativeErrorProbabilityShouldThrowIllegalArgumentException(){
+        PhredQuality.withErrorProbability(-.3);
+    }
+    @Test(expected = IllegalArgumentException.class)
+    public void ErrorProbabilityOf1ShouldThrowIllegalArgumentException(){
+        PhredQuality.withErrorProbability(1);
+    }
+    @Test(expected = IllegalArgumentException.class)
+    public void ErrorProbabilityOfGreaterThan1ShouldThrowIllegalArgumentException(){
+        PhredQuality.withErrorProbability(2);
+    }
 }

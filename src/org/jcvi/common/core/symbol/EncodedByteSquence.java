@@ -32,26 +32,26 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 /**
  * {@code EncodedByteSquence} encodes a {@link Sequence}
- * of {@link ByteGlyph}s.
+ * of {@link ByteSymbol}s.
  * @author dkatzel
  */
-public class EncodedByteSquence implements Sequence<ByteGlyph>{
+public class EncodedByteSquence implements Sequence<ByteSymbol>{
 
-    private static final ByteGlyphFactory<ByteGlyph> FACTORY = new ByteGlyphFactory<ByteGlyph>(){
+    private static final ByteGlyphFactory<ByteSymbol> FACTORY = new ByteGlyphFactory<ByteSymbol>(){
 
         @Override
-        protected ByteGlyph createNewGlyph(Byte b) {
-            return new ByteGlyph(b);
+        protected ByteSymbol createNewGlyph(Byte b) {
+            return new ByteSymbol(b);
         }
         
     };
     private final byte[] data;
-    public EncodedByteSquence(List<ByteGlyph> bytes){
+    public EncodedByteSquence(List<ByteSymbol> bytes){
         this.data = encode(bytes);
     }
-    private byte[] encode(List<ByteGlyph> bytes) {
+    private byte[] encode(List<ByteSymbol> bytes) {
         ByteBuffer buffer = ByteBuffer.allocate(bytes.size());
-        for(ByteGlyph byteGlyph : bytes){
+        for(ByteSymbol byteGlyph : bytes){
             buffer.put(byteGlyph.getNumber().byteValue());
         }
         return buffer.array();
@@ -59,12 +59,12 @@ public class EncodedByteSquence implements Sequence<ByteGlyph>{
     
     
     @Override
-    public List<ByteGlyph> decode() {
+    public List<ByteSymbol> decode() {
          return FACTORY.getGlyphsFor(data);
     }
 
     @Override
-    public ByteGlyph get(int index) {
+    public ByteSymbol get(int index) {
         return FACTORY.getGlyphFor(data[index]);
     }
 
@@ -73,11 +73,11 @@ public class EncodedByteSquence implements Sequence<ByteGlyph>{
         return data.length;
     }
     @Override
-    public List<ByteGlyph> decode(Range range) {
+    public List<ByteSymbol> decode(Range range) {
         if(range==null){
             return decode();
         }
-        List<ByteGlyph> result = new ArrayList<ByteGlyph>();
+        List<ByteSymbol> result = new ArrayList<ByteSymbol>();
         for(long index : range){
             result.add(get((int)index));
         }
@@ -87,11 +87,11 @@ public class EncodedByteSquence implements Sequence<ByteGlyph>{
     * {@inheritDoc}
     */
     @Override
-    public Iterator<ByteGlyph> iterator() {
+    public Iterator<ByteSymbol> iterator() {
         return new ByteSequenceIterator();
     }
     
-    private class ByteSequenceIterator implements Iterator<ByteGlyph>{
+    private class ByteSequenceIterator implements Iterator<ByteSymbol>{
         private int i=0;
 
         @Override
@@ -99,8 +99,8 @@ public class EncodedByteSquence implements Sequence<ByteGlyph>{
             return i< getLength();
         }
         @Override
-        public ByteGlyph next() {
-            ByteGlyph next = get(i);
+        public ByteSymbol next() {
+            ByteSymbol next = get(i);
             i++;
             return next;
         }

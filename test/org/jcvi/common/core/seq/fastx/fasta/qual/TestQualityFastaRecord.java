@@ -39,7 +39,7 @@ public class TestQualityFastaRecord {
     private String comment = "comment";
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
 
-    byte[] bytes = new byte[]{10,20,70,50,60,0,55,1,2,3,4,5,6,7,8,9,10,10,20,30,12,11,2,5};
+    byte[] bytes = new byte[]{10,20,70,50,60,2,55,1,2,3,4,5,6,7,8,9,10,10,20,30,12,11,2,5};
    
     private QualitySequence encodedBytes = new EncodedQualitySequence(RUN_LENGTH_CODEC,PhredQuality.valueOf(bytes));
     DefaultQualityFastaRecord sut = new DefaultQualityFastaRecord(id,comment,encodedBytes);

@@ -49,9 +49,10 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
 
     byte delta = (byte)1;
     int index = 1234;
-    PhredQuality threshold = PhredQuality.valueOf((byte)30);
-    PhredQuality lowQuality = threshold.decreaseBy(delta);
-    PhredQuality highQuality = threshold.increaseBy(delta);
+    PhredQuality threshold = PhredQuality.valueOf(30);
+    PhredQuality lowQuality = PhredQuality.valueOf(29);
+    PhredQuality highQuality = PhredQuality.valueOf(31);
+    
     
     
     QualityValueStrategy qualityValueStrategy;

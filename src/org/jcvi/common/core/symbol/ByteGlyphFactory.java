@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public abstract class ByteGlyphFactory<G extends ByteGlyph> implements GlyphFactory<G, Byte>{
+public abstract class ByteGlyphFactory<G extends ByteSymbol> implements GlyphFactory<G, Byte>{
 
     private final Map<Number, G> map = new HashMap<Number, G>();
     

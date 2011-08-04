@@ -21,10 +21,10 @@ package org.jcvi.common.core.symbol;
 
 import java.util.List;
 
-public class DefaultZipByteGlyphCodec extends AbstractZipByteGlyphCodec<ByteGlyph> {
+public class DefaultZipByteGlyphCodec extends AbstractZipByteGlyphCodec<ByteSymbol> {
 
 	@Override
-	protected List<ByteGlyph> getGlyphsFor(byte[] decodedBytes) {
+	protected List<ByteSymbol> getGlyphsFor(byte[] decodedBytes) {
 		
 		return DefaultByteGlyphFactory.getInstance().getGlyphsFor(decodedBytes);
 	}

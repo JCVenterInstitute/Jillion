@@ -89,7 +89,7 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
             }
             return sum;
         }
-            return PhredQuality.convertErrorProbability(normalizedProbability);
+            return PhredQuality.computeQualityScore(normalizedProbability);
     }
 
    
@@ -153,11 +153,15 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
                     baseWithLowestErrorProbability));
             basesUsed.add(baseWithLowestErrorProbability);
             errorProbabilityOfAmbiguity = 1-sumOfProbabilitySuccess;
-        }while( sumOfProbabilitySuccess <1D && PhredQuality.convertErrorProbability(errorProbabilityOfAmbiguity) < getHighQualityThreshold().getNumber().intValue()
+        }while( sumOfProbabilitySuccess <1D && underThreshold(errorProbabilityOfAmbiguity)
                 && basesUsed.size()< baseCount );
         
         return basesUsed;
     }
+    
+    private boolean underThreshold(double errorProbability){
+        return PhredQuality.computeQualityScore(errorProbability) < getHighQualityThreshold().getNumber();
+     }
     /**
      * Sorts {@link ProbabilityStruct} by comparing the 
      * probability of the given {@link Nucleotide}.
