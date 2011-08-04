@@ -32,13 +32,13 @@ import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.symbol.qual.QualityGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.CloseableIterator;
 
 public class QualitySffDataStore implements QualityDataStore{
 
-    private static final QualityGlyphCodec QUALITY_CODEC = 
+    private static final QualitySymbolCodec QUALITY_CODEC = 
         RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
     private final DataStore<? extends Flowgram> flowgramDataStore;
     private final boolean trim;

@@ -23,9 +23,9 @@
  */
 package org.jcvi.common.core.symbol.qual;
 
-import org.jcvi.common.core.symbol.AbstractByteGlyphCodec;
+import org.jcvi.common.core.symbol.AbstractByteSymbolCodec;
 
-public class DefaultEncodedPhredGlyphCodec extends AbstractByteGlyphCodec<PhredQuality> implements QualityGlyphCodec{
+public class DefaultEncodedPhredGlyphCodec extends AbstractByteSymbolCodec<PhredQuality> implements QualitySymbolCodec{
 
     @Override
     protected PhredQuality getValueOf(byte b) {

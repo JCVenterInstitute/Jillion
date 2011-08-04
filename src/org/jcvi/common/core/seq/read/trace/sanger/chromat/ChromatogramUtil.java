@@ -35,7 +35,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFil
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFileParser;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
@@ -112,7 +112,7 @@ public  final class ChromatogramUtil {
             short[] tSignal = new short[(FALSE_WAVEFORM.length-1)*(bases.size()+1)];
             short[] gSignal = new short[(FALSE_WAVEFORM.length-1)*(bases.size()+1)];
             
-            short[] peakLocations = ShortGlyph.toArray(peaks.getData().decode());
+            short[] peakLocations = ShortSymbol.toArray(peaks.getData().decode());
             byte[] qualityValues =PhredQuality.toArray(this.qualities.decode());
             for(int i=0; i<peakLocations.length; i++){
                 Nucleotide basecall = bases.get(i);

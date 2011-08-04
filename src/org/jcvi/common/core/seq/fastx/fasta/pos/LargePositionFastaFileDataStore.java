@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaRecordFact
 import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaRecordFactory;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.util.CloseableIterator;
 
 
@@ -77,9 +77,9 @@ public boolean visitRecord(String id, String comment, String entireBody) {
 
 @Override
 public boolean contains(String id) throws DataStoreException {
-	CloseableIterator<PositionFastaRecord<Sequence<ShortGlyph>>> iter =iterator();
+	CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> iter =iterator();
 	while(iter.hasNext()){
-		PositionFastaRecord<Sequence<ShortGlyph>> fasta = iter.next();
+		PositionFastaRecord<Sequence<ShortSymbol>> fasta = iter.next();
 		if(fasta.getId().equals(id)){
 			IOUtil.closeAndIgnoreErrors(iter);
 			return true;
@@ -90,12 +90,12 @@ public boolean contains(String id) throws DataStoreException {
 }
 
 @Override
-public synchronized PositionFastaRecord<Sequence<ShortGlyph>> get(String id)
+public synchronized PositionFastaRecord<Sequence<ShortSymbol>> get(String id)
         throws DataStoreException {
 	
-	CloseableIterator<PositionFastaRecord<Sequence<ShortGlyph>>> iter =iterator();
+	CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> iter =iterator();
 	while(iter.hasNext()){
-		PositionFastaRecord<Sequence<ShortGlyph>> fasta = iter.next();
+		PositionFastaRecord<Sequence<ShortSymbol>> fasta = iter.next();
 		if(fasta.getId().equals(id)){
 			IOUtil.closeAndIgnoreErrors(iter);
 			return fasta;
@@ -130,7 +130,7 @@ public synchronized int size() throws DataStoreException {
 
 
 @Override
-public synchronized CloseableIterator<PositionFastaRecord<Sequence<ShortGlyph>>> iterator() {
+public synchronized CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> iterator() {
     checkNotYetClosed();
     LargePositionFastaRecordIterator iter= new LargePositionFastaRecordIterator(fastaFile);
         iter.start();

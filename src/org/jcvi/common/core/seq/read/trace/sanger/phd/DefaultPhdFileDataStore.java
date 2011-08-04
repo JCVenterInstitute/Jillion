@@ -34,25 +34,25 @@ import java.util.Properties;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualityGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.common.core.util.CloseableIteratorAdapter;
 
 public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
-    private static final QualityGlyphCodec QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
+    private static final QualitySymbolCodec QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
     
     private final Map<String, DefaultPhd> map = new HashMap<String, DefaultPhd>();
    
     
     @Override
     protected void visitPhd(String id, List<Nucleotide> bases,
-            List<PhredQuality> qualities, List<ShortGlyph> positions,
+            List<PhredQuality> qualities, List<ShortSymbol> positions,
             Properties comments, List<PhdTag> tags) {
         map.put(id, new DefaultPhd(id,
                 new DefaultNucleotideSequence(bases),

@@ -23,7 +23,7 @@ import java.io.File;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaRecordIterator;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 
 /**
  * @author dkatzel
@@ -31,7 +31,7 @@ import org.jcvi.common.core.symbol.ShortGlyph;
  *
  */
 public class LargePositionFastaRecordIterator extends AbstractLargeFastaRecordIterator
-            <Sequence<ShortGlyph>,PositionFastaRecord<Sequence<ShortGlyph>>>{
+            <Sequence<ShortSymbol>,PositionFastaRecord<Sequence<ShortSymbol>>>{
 
     public static LargePositionFastaRecordIterator createNewIteratorFor(File fastaFile){
         LargePositionFastaRecordIterator iter = new LargePositionFastaRecordIterator(fastaFile);

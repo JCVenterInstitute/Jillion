@@ -32,23 +32,23 @@ import java.util.regex.Pattern;
 import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 
 public class PositionsFastaRecordUtil {
     private static final Pattern ID_LINE_PATTERN = Pattern.compile("^>(\\S+).*");
     private static final ShortGlyphFactory GLYPH_FACTORY  = ShortGlyphFactory.getInstance();
 
-    public static DefaultPositionFastaRecord<Sequence<ShortGlyph>> buildFastaRecord(
+    public static DefaultPositionFastaRecord<Sequence<ShortSymbol>> buildFastaRecord(
             String identifier, String comment, CharSequence sequence) {
-        List<ShortGlyph> positions = parsePositions(sequence);
-        return new DefaultPositionFastaRecord<Sequence<ShortGlyph>>(identifier, comment, 
-                new EncodedSequence<ShortGlyph>(DefaultShortGlyphCodec.getInstance(),positions));
+        List<ShortSymbol> positions = parsePositions(sequence);
+        return new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(identifier, comment, 
+                new EncodedSequence<ShortSymbol>(DefaultShortGlyphCodec.getInstance(),positions));
     }
 
-    public static List<ShortGlyph> parsePositions(CharSequence sequence) {
+    public static List<ShortSymbol> parsePositions(CharSequence sequence) {
         Scanner scanner = new Scanner(sequence.toString());
-        List<ShortGlyph> result = new ArrayList<ShortGlyph>();
+        List<ShortSymbol> result = new ArrayList<ShortSymbol>();
         while(scanner.hasNextShort()){
             result.add(GLYPH_FACTORY.getGlyphFor(scanner.nextShort()));
         }

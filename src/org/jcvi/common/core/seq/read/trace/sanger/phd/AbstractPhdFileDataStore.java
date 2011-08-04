@@ -32,7 +32,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
@@ -43,7 +43,7 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
     private List<Nucleotide> currentBases = new ArrayList<Nucleotide>();
     private List<PhredQuality> currentQualities = new ArrayList<PhredQuality>();
-    private List<ShortGlyph> currentPositions = new ArrayList<ShortGlyph>();
+    private List<ShortSymbol> currentPositions = new ArrayList<ShortSymbol>();
     private List<PhdTag> tags = new ArrayList<PhdTag>();
     private boolean initialized = false;
     private Properties currentComments;
@@ -84,7 +84,7 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     protected abstract void visitPhd(String id,
             List<Nucleotide> bases,
             List<PhredQuality> qualities,
-            List<ShortGlyph> positions, 
+            List<ShortSymbol> positions, 
             Properties comments,
             List<PhdTag> tags);
     
@@ -100,7 +100,7 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     protected void resetCurrentValues(){
         currentBases= new ArrayList<Nucleotide>();
         currentQualities= new ArrayList<PhredQuality>();
-        currentPositions= new ArrayList<ShortGlyph>();
+        currentPositions= new ArrayList<ShortSymbol>();
         tags = new ArrayList<PhdTag>();
     }
 

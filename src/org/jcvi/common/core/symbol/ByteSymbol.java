@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.symbol;
 
-public class ByteSymbol extends DefaultNumericGlyph implements Comparable<ByteSymbol>{
+public class ByteSymbol<T extends ByteSymbol> extends DefaultNumericGlyph implements Comparable<T>{
 
     public ByteSymbol(byte b){
         super(Byte.valueOf(b));
@@ -33,7 +33,7 @@ public class ByteSymbol extends DefaultNumericGlyph implements Comparable<ByteSy
         return (Byte)super.getNumber();
     }
     @Override
-    public int compareTo(ByteSymbol o) {
+    public int compareTo(T o) {
         return getNumber().compareTo(o.getNumber());
     }
     @Override

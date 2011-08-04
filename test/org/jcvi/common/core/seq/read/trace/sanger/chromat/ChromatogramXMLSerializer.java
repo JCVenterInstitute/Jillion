@@ -47,7 +47,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
@@ -149,9 +149,9 @@ public final class ChromatogramXMLSerializer {
                 (peaks==null)? "":convertToEncodedShortData(peaks.getData()).encodeData(),
                } );
         }
-        private EncodedShortData convertToEncodedShortData(Sequence<ShortGlyph> shortGlyphs){
+        private EncodedShortData convertToEncodedShortData(Sequence<ShortSymbol> shortGlyphs){
             ShortBuffer buf = ShortBuffer.allocate((int)shortGlyphs.getLength());
-            for(ShortGlyph g : shortGlyphs.decode()){
+            for(ShortSymbol g : shortGlyphs.decode()){
                 buf.put(g.getNumber().shortValue());
             }
             return new EncodedShortData(buf.array());

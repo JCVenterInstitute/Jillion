@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public final class DefaultShortGlyphCodec implements GlyphCodec<ShortGlyph>{
+public final class DefaultShortGlyphCodec implements GlyphCodec<ShortSymbol>{
 
     private static final ShortGlyphFactory FACTORY = ShortGlyphFactory.getInstance();
     
@@ -42,8 +42,8 @@ public final class DefaultShortGlyphCodec implements GlyphCodec<ShortGlyph>{
         return INSTANCE;
     }
     @Override
-    public List<ShortGlyph> decode(byte[] encodedGlyphs) {
-        List<ShortGlyph> glyphs = new ArrayList<ShortGlyph>();
+    public List<ShortSymbol> decode(byte[] encodedGlyphs) {
+        List<ShortSymbol> glyphs = new ArrayList<ShortSymbol>();
         ShortBuffer buf = ByteBuffer.wrap(encodedGlyphs).asShortBuffer();
         while(buf.hasRemaining()){
             glyphs.add(FACTORY.getGlyphFor(buf.get()));
@@ -52,7 +52,7 @@ public final class DefaultShortGlyphCodec implements GlyphCodec<ShortGlyph>{
     }
 
     @Override
-    public ShortGlyph decode(byte[] encodedGlyphs, int index) {
+    public ShortSymbol decode(byte[] encodedGlyphs, int index) {
         int indexIntoShortAray = index*2;
         final int hi = encodedGlyphs[indexIntoShortAray]<<8;
         final byte low = encodedGlyphs[indexIntoShortAray+1];
@@ -66,9 +66,9 @@ public final class DefaultShortGlyphCodec implements GlyphCodec<ShortGlyph>{
     }
 
     @Override
-    public byte[] encode(Collection<ShortGlyph> glyphs) {
+    public byte[] encode(Collection<ShortSymbol> glyphs) {
         ByteBuffer buf = ByteBuffer.allocate(glyphs.size()*2);
-        for(ShortGlyph g : glyphs){
+        for(ShortSymbol g : glyphs){
             buf.putShort(g.getNumber());
         }
         return buf.array();

@@ -39,7 +39,7 @@ import org.jcvi.common.core.symbol.Symbol;
  *
  *
  */
-public final class PhredQuality extends ByteSymbol{
+public final class PhredQuality extends ByteSymbol<PhredQuality>{
     //127 should be good enough for anybody
     public static final byte MAX_VALUE = Byte.MAX_VALUE;
     public static final byte MIN_VALUE = 0;
@@ -147,11 +147,6 @@ public final class PhredQuality extends ByteSymbol{
     @Override
     public String toString() {        
         return String.format("Q%02d",this.getNumber());
-    }
-    
-    
-    public int compareTo(PhredQuality o) {
-        return super.compareTo(o);
     }
     
     

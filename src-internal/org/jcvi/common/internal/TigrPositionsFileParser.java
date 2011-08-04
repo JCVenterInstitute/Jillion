@@ -38,9 +38,9 @@ import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionDataStoreAdapter;
-import org.jcvi.common.core.symbol.EncodedShortGlyph;
+import org.jcvi.common.core.symbol.EncodedShortSymbol;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 
 public class TigrPositionsFileParser {
@@ -57,7 +57,7 @@ public class TigrPositionsFileParser {
         }
     }
     public static PositionDataStore getPeakMap(InputStream tigrPosFile){
-        Map<String, Sequence<ShortGlyph>> map = new HashMap<String, Sequence<ShortGlyph>>();
+        Map<String, Sequence<ShortSymbol>> map = new HashMap<String, Sequence<ShortSymbol>>();
         Scanner scanner = new Scanner(tigrPosFile);
         while(scanner.hasNextLine()){
             String line = scanner.nextLine();
@@ -67,20 +67,20 @@ public class TigrPositionsFileParser {
                 //ignore tigr peak version
                 //Integer version = Integer.parseInt(matcher.group(2));
                 String positionsAsHex = matcher.group(3);
-                EncodedShortGlyph encodedPositions = convertToGlyphs(positionsAsHex);
+                EncodedShortSymbol encodedPositions = convertToGlyphs(positionsAsHex);
                 map.put(id, encodedPositions);
             }
         }
-        return new PositionDataStoreAdapter(new SimpleDataStore<Sequence<ShortGlyph>>(map));
+        return new PositionDataStoreAdapter(new SimpleDataStore<Sequence<ShortSymbol>>(map));
         
     }
-    private static EncodedShortGlyph convertToGlyphs(String positionsAsHex) {
+    private static EncodedShortSymbol convertToGlyphs(String positionsAsHex) {
         List<Short> shorts = new ArrayList<Short>(positionsAsHex.length()/4);
         for(int i=0; i< positionsAsHex.length(); i+=4){
             String hex = getNextValueAsHex(positionsAsHex, i);
             shorts.add(Short.parseShort(hex, 16));            
         }
-        return new EncodedShortGlyph(FACTORY.getGlyphsFor(shorts));
+        return new EncodedShortSymbol(FACTORY.getSymbolsFor(shorts));
     }
     private static String getNextValueAsHex(String positionsAsHex, int i) {
         return positionsAsHex.substring(i, i+4);

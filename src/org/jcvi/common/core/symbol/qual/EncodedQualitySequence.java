@@ -40,7 +40,7 @@ public class EncodedQualitySequence implements QualitySequence{
      * @param codec
      * @param data
      */
-    public EncodedQualitySequence(QualityGlyphCodec codec,
+    public EncodedQualitySequence(QualitySymbolCodec codec,
             byte[] data) {
         delegate = new EncodedSequence<PhredQuality>(codec, data);
     }
@@ -49,7 +49,7 @@ public class EncodedQualitySequence implements QualitySequence{
      * @param codec
      * @param glyphsToEncode
      */
-    public EncodedQualitySequence(QualityGlyphCodec codec,
+    public EncodedQualitySequence(QualitySymbolCodec codec,
             Collection<PhredQuality> glyphsToEncode) {
         delegate = new EncodedSequence<PhredQuality>(codec, glyphsToEncode);
     }

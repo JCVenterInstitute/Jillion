@@ -23,7 +23,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionDataStore;
 import org.jcvi.common.core.seq.read.trace.AbstractTraceDataStoreAdapter;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 
 
 /**
@@ -31,7 +31,7 @@ import org.jcvi.common.core.symbol.ShortGlyph;
  *
  *
  */
-public class SangerTracePositionDataStoreAdapter <T extends SangerTrace> extends AbstractTraceDataStoreAdapter<T,Sequence<ShortGlyph>> implements PositionDataStore{
+public class SangerTracePositionDataStoreAdapter <T extends SangerTrace> extends AbstractTraceDataStoreAdapter<T,Sequence<ShortSymbol>> implements PositionDataStore{
 
     public static <T extends SangerTrace, E extends T> SangerTracePositionDataStoreAdapter<T> adapt(DataStore<E> delegate){
         return (SangerTracePositionDataStoreAdapter<T>) new SangerTracePositionDataStoreAdapter<E>(delegate);
@@ -44,7 +44,7 @@ public class SangerTracePositionDataStoreAdapter <T extends SangerTrace> extends
     }
 
     @Override
-    protected Sequence<ShortGlyph> adapt(T delegate) {
+    protected Sequence<ShortSymbol> adapt(T delegate) {
         return delegate.getPeaks().getData();
     }
 

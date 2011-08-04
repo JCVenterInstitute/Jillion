@@ -28,7 +28,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.joda.time.format.DateTimeFormat;
@@ -84,7 +84,7 @@ public class PhdWriter {
     private static String writeCalledInfo( Phd phd){
         List<Nucleotide> bases = phd.getBasecalls().decode();
         List<PhredQuality> qualities = phd.getQualities().decode();
-        List<ShortGlyph> peaks = phd.getPeaks().getData().decode();
+        List<ShortSymbol> peaks = phd.getPeaks().getData().decode();
         StringBuilder result = new StringBuilder();
         for(int i=0;i< bases.size(); i++){
             result.append(String.format("%s %d %d%n",

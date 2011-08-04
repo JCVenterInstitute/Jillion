@@ -27,9 +27,9 @@ import java.util.List;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 
-public class DefaultPositionFastaRecord <T extends Sequence<ShortGlyph>> extends AbstractFastaRecord<T> implements PositionFastaRecord<T>{
+public class DefaultPositionFastaRecord <T extends Sequence<ShortSymbol>> extends AbstractFastaRecord<T> implements PositionFastaRecord<T>{
 
     private final T positions;
     public DefaultPositionFastaRecord(String id, T positions){
@@ -44,7 +44,7 @@ public class DefaultPositionFastaRecord <T extends Sequence<ShortGlyph>> extends
     protected CharSequence getRecordBody() {
         StringBuilder result = new StringBuilder();
         
-       final List<ShortGlyph> decodedPositions = positions.decode();
+       final List<ShortSymbol> decodedPositions = positions.decode();
        for(int i=1; i<decodedPositions.size(); i++){
            result.append(String.format("%04d", decodedPositions.get(i-1).getNumber()));
            if(i%12 == 0){

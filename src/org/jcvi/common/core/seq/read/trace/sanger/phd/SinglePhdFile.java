@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
@@ -45,7 +45,7 @@ public class SinglePhdFile implements  Phd{
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
     private List<Nucleotide> bases = new ArrayList<Nucleotide>();
     private List<PhredQuality> qualities = new ArrayList<PhredQuality>();
-    private List<ShortGlyph> positions = new ArrayList<ShortGlyph>();
+    private List<ShortSymbol> positions = new ArrayList<ShortSymbol>();
     private List<PhdTag> tags = new ArrayList<PhdTag>();
     private Properties comments=null;
     private String id=null;

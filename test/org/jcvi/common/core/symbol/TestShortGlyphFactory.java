@@ -36,20 +36,20 @@ public class TestShortGlyphFactory {
     short[] shortArray = new short[]{10,20,30,40,27,66,127, -120};
     @Test
     public void getGlyphsForArray(){
-        List<ShortGlyph> actual =sut.getGlyphsFor(shortArray);
-        List<ShortGlyph> expected = buildExpectedGlyphList();
+        List<ShortSymbol> actual =sut.getGlyphsFor(shortArray);
+        List<ShortSymbol> expected = buildExpectedGlyphList();
         assertEquals(expected, actual);
     }
     
     @Test
     public void getGlyphsForList(){
-        List<ShortGlyph> actual =sut.getGlyphsFor(convertToArray(shortArray));
-        List<ShortGlyph> expected = buildExpectedGlyphList();
+        List<ShortSymbol> actual =sut.getSymbolsFor(convertToArray(shortArray));
+        List<ShortSymbol> expected = buildExpectedGlyphList();
         assertEquals(expected, actual);
     }
 
-    private List<ShortGlyph> buildExpectedGlyphList() {
-        List<ShortGlyph> expected = new ArrayList<ShortGlyph>(shortArray.length);
+    private List<ShortSymbol> buildExpectedGlyphList() {
+        List<ShortSymbol> expected = new ArrayList<ShortSymbol>(shortArray.length);
         for(int i=0; i<shortArray.length; i++){
             expected.add(sut.getGlyphFor(shortArray[i]));
         }

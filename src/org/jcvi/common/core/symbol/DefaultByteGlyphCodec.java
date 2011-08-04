@@ -23,20 +23,16 @@
  */
 package org.jcvi.common.core.symbol;
 
-public class DefaultByteGlyphCodec extends AbstractByteGlyphCodec<ByteSymbol>{
+public class DefaultByteGlyphCodec extends AbstractByteSymbolCodec<ByteSymbol>{
 
-    private final ByteGlyphFactory<ByteSymbol> factory;
+    private final ByteSymbolFactory<ByteSymbol> factory;
    
-    public DefaultByteGlyphCodec(ByteGlyphFactory<ByteSymbol> factory){
+    public DefaultByteGlyphCodec(ByteSymbolFactory<ByteSymbol> factory){
         this.factory = factory;
     }
 
     @Override
     protected ByteSymbol getValueOf(byte b) {
-        return factory.getGlyphFor(b);
+        return factory.getSymbolFor(b);
     }
-
-    
-
-
 }

@@ -30,14 +30,14 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionFastaRecord;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 
 
 public class TestDefaultPositionsFastaDataStore extends AbstractTestPositionsFastaDataStore{
 
 
     @Override
-    protected DataStore<PositionFastaRecord<Sequence<ShortGlyph>>> createPositionFastaMap(File fastaFile) throws IOException {
+    protected DataStore<PositionFastaRecord<Sequence<ShortSymbol>>> createPositionFastaMap(File fastaFile) throws IOException {
         return new DefaultPositionFastaFileDataStore(fastaFile);
     }
 }

@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.pos.Peaks;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -214,7 +214,7 @@ public class ArtificialPhd implements Phd{
     @Override
     public synchronized Peaks getPeaks() {
         if(fakePositions ==null){
-            List<ShortGlyph> fakePositions = new ArrayList<ShortGlyph>(numberOfBases);
+            List<ShortSymbol> fakePositions = new ArrayList<ShortSymbol>(numberOfBases);
             
             for(int i=0; i< numberOfBases; i++){
                 fakePositions.add(PEAK_FACTORY.getGlyphFor(i * numberOfPositionsForEachPeak +positionOfFirstPeak ));

@@ -36,7 +36,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBui
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
@@ -89,7 +89,7 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
 
     protected void writeBasesDataToBuffer(ByteBuffer buffer, SCFChromatogram c, int numberOfBases) {
         
-        Sequence<ShortGlyph> peaks = c.getPeaks().getData();
+        Sequence<ShortSymbol> peaks = c.getPeaks().getData();
         final ChannelGroup channelGroup = c.getChannelGroup();
         final ByteBuffer aConfidence = ByteBuffer.wrap(channelGroup.getAChannel().getConfidence().getData());
         final ByteBuffer cConfidence = ByteBuffer.wrap(channelGroup.getCChannel().getConfidence().getData());

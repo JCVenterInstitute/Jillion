@@ -16,16 +16,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Jan 14, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.common.core.symbol;
 
-package org.jcvi.common.core.symbol.qual;
-
-import org.jcvi.common.core.symbol.GlyphCodec;
-
+import java.util.List;
 /**
+ * {@code SymbolFactory} abstracts
+ * how a Symbol is created so that implementations
+ * may cache often used values or use singletons.
  * @author dkatzel
  *
  *
  */
-public interface QualityGlyphCodec extends GlyphCodec<PhredQuality>{
-
+interface SymbolFactory<T extends Symbol, V> {
+    /**
+     * Get the corresponding Symbol for the given value
+     * @param value the value to get the symbol of.
+     * @return the Symbol instance, should not be null.
+     */
+    T getSymbolFor(V value);
+    /**
+     * Get a list of corresponding {@link Symbol}s for the given values
+     * @param values the value to get the symbol of.
+     * @return the Symbol instance, should not be null.
+     */
+    List<T> getSymbolsFor(List<V> values);
 }

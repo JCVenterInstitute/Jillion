@@ -23,8 +23,29 @@
  */
 package org.jcvi.common.core.symbol;
 
-public interface DeltaEncoder {
-
-    long computeDelta(long lastValue, long secondToLastValue, long thirdToLastValue);
+public enum DeltaEncoder {
+    LEVEL_1{
+        @Override
+        long computeDelta(long lastValue, long secondToLastValue,
+                long thirdToLastValue) {
+            return lastValue;
+        }
+    },
+    LEVEL_2{
+        @Override
+        long computeDelta(long lastValue, long secondToLastValue,
+                long thirdToLastValue) {
+            return  2*lastValue - secondToLastValue;
+        }
+    },
+    LEVEL_3{
+        @Override
+        long computeDelta(long lastValue, long secondToLastValue,
+                long thirdToLastValue) {
+            return 3*lastValue - 3*secondToLastValue + thirdToLastValue;
+        }
+    }
+    ;
+    abstract long computeDelta(long lastValue, long secondToLastValue, long thirdToLastValue);
     
 }

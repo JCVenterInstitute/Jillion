@@ -28,11 +28,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.common.core.symbol.GlyphCodec;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 
 
-public enum TigrPeaksEncoderGlyphCodec implements GlyphCodec<ShortGlyph>{
+public enum TigrPeaksEncoderGlyphCodec implements GlyphCodec<ShortSymbol>{
 
     INSTANCE;
     
@@ -42,14 +42,14 @@ public enum TigrPeaksEncoderGlyphCodec implements GlyphCodec<ShortGlyph>{
     
 
     @Override
-    public List<ShortGlyph> decode(byte[] encodedGlyphs) {
+    public List<ShortSymbol> decode(byte[] encodedGlyphs) {
         String encodedString = new String(encodedGlyphs);
         return GLYPH_FACTORY.getGlyphsFor(
                 TigrPeaksEncoder.decode(encodedString));
     }
 
     @Override
-    public ShortGlyph decode(byte[] encodedGlyphs, int index) {
+    public ShortSymbol decode(byte[] encodedGlyphs, int index) {
         return GLYPH_FACTORY.getGlyphFor(
                 TigrPeaksEncoder.decode(new String(encodedGlyphs,CHARSET), index+1)[index]);
     }
@@ -60,8 +60,8 @@ public enum TigrPeaksEncoderGlyphCodec implements GlyphCodec<ShortGlyph>{
     }
 
     @Override
-    public byte[] encode(Collection<ShortGlyph> glyphs) {
-        return TigrPeaksEncoder.encode(ShortGlyph.toArray(glyphs)).getBytes(CHARSET);
+    public byte[] encode(Collection<ShortSymbol> glyphs) {
+        return TigrPeaksEncoder.encode(ShortSymbol.toArray(glyphs)).getBytes(CHARSET);
     }
 
    

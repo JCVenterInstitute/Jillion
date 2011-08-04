@@ -58,7 +58,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.Data;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.DataFactory;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.RawData;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
@@ -167,7 +167,7 @@ public enum Chunk {
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
-			short[] peaks =ShortGlyph.toArray(ztrChromatogram.getPeaks().getData().decode());
+			short[] peaks =ShortSymbol.toArray(ztrChromatogram.getPeaks().getData().decode());
 			ByteBuffer buffer = ByteBuffer.allocate(peaks.length*4+4);
 			//raw byte + 3 pads
 			buffer.putInt(0);

@@ -39,7 +39,7 @@ import java.util.zip.Inflater;
  * @param <G> the {@link ByteSymbol} implementation
  * which is being encoded.
  */
-public abstract class AbstractZipByteGlyphCodec<G extends ByteSymbol> implements ByteGlyphCodec<G>{
+public abstract class AbstractZipByteGlyphCodec<G extends ByteSymbol> implements ByteSymbolCodec<G>{
 
 
 	/**

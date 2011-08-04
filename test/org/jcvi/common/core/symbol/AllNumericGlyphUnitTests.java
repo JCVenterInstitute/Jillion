@@ -36,7 +36,6 @@ import org.junit.runners.Suite.SuiteClasses;
        TestShortGlyphFactory.class,
        TestEncodedByteGlyph.class,
        TestEncodedShortGlyph.class,
-       TestDefaultByteGlyphCodec.class,
        TestDefaultShortGlyphCodec.class
     }
     )

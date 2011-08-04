@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 
-public final class ShortGlyphFactory implements GlyphFactory<ShortGlyph, Short>{
-    private static final Map<Number, ShortGlyph> MAP = new HashMap<Number, ShortGlyph>();
+public final class ShortGlyphFactory implements SymbolFactory<ShortSymbol, Short>{
+    private static final Map<Number, ShortSymbol> MAP = new HashMap<Number, ShortSymbol>();
     
     private static final ShortGlyphFactory INSTANCE = new ShortGlyphFactory();
     
@@ -40,31 +40,31 @@ public final class ShortGlyphFactory implements GlyphFactory<ShortGlyph, Short>{
         return INSTANCE;
     }
     
-    public List<ShortGlyph> getGlyphsFor(short[] shorts) {
-        List<ShortGlyph> glyphs = new ArrayList<ShortGlyph>();
+    public List<ShortSymbol> getGlyphsFor(short[] shorts) {
+        List<ShortSymbol> glyphs = new ArrayList<ShortSymbol>();
         for(int i=0; i<shorts.length; i++){
             glyphs.add(getGlyphFor(shorts[i]));
         }
         return glyphs;
     }
     
-    public synchronized ShortGlyph getGlyphFor(int b) {
-        return getGlyphFor(Short.valueOf((short)Math.min(b, Short.MAX_VALUE)));
+    public synchronized ShortSymbol getGlyphFor(int b) {
+        return getSymbolFor(Short.valueOf((short)Math.min(b, Short.MAX_VALUE)));
     }
-    public synchronized ShortGlyph getGlyphFor(Short b) {
+    public synchronized ShortSymbol getSymbolFor(Short b) {
         if(MAP.containsKey(b)){
             return MAP.get(b);
         }
-        ShortGlyph newGlyph = new ShortGlyph(b);
+        ShortSymbol newGlyph = new ShortSymbol(b);
         MAP.put(b, newGlyph);
         return newGlyph;
     }
     
     @Override
-    public List<ShortGlyph> getGlyphsFor(List<Short> shorts) {
-        List<ShortGlyph> glyphs = new ArrayList<ShortGlyph>();
+    public List<ShortSymbol> getSymbolsFor(List<Short> shorts) {
+        List<ShortSymbol> glyphs = new ArrayList<ShortSymbol>();
         for(int i=0; i<shorts.size(); i++){
-            glyphs.add(getGlyphFor(shorts.get(i)));
+            glyphs.add(getSymbolFor(shorts.get(i)));
         }
         return glyphs;
     }

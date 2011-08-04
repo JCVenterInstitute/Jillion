@@ -17,26 +17,49 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Jul 6, 2009
+ * Created on Jan 22, 2009
  *
  * @author dkatzel
  */
 package org.jcvi.common.core.symbol;
 
-public class Level1DeltaEncoder implements DeltaEncoder{
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-	public static final Level1DeltaEncoder INSTANCE = new Level1DeltaEncoder();
-	public static Level1DeltaEncoder getInstance(){
-		return INSTANCE;
-	}
-	private Level1DeltaEncoder(){}
-	
-    @Override
-    public long computeDelta(long lastValue, long secondToLastValue,
-            long thirdToLastValue) {
-        return lastValue;
-    }
-   
+
+abstract class ByteSymbolFactory<T extends ByteSymbol> implements SymbolFactory<T, Byte>{
+
+    private final Map<Number, T> map = new HashMap<Number, T>();
     
+    @Override
+    public List<T> getSymbolsFor(List<Byte> s) {
+        List<T> glyphs = new ArrayList<T>();
+        for(int i=0; i<s.size(); i++){
+            glyphs.add(getSymbolFor(s.get(i)));
+        }
+        return glyphs;
+    }
+
+    public List<T> getGlyphsFor(byte[] bytes) {
+        List<T> glyphs = new ArrayList<T>();
+        for(int i=0; i<bytes.length; i++){
+            glyphs.add(getSymbolFor(bytes[i]));
+        }
+        return glyphs;
+    }
+
+    @Override
+    public synchronized T getSymbolFor(Byte b) {
+        if(map.containsKey(b)){
+            return map.get(b);
+        }
+        T newGlyph = createNewGlyph(b);
+        map.put(b, newGlyph);
+        return newGlyph;
+    }
+
+    protected abstract T createNewGlyph(Byte b);
     
 }

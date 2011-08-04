@@ -34,18 +34,18 @@ import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.GlyphCodec;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 
 public abstract class AbstractTestPositionsFastaDataStore {
     private static final String QUAL_FILE_PATH = "files/1119369023656.peak";
-    private static final GlyphCodec<ShortGlyph> CODEC = DefaultShortGlyphCodec.getInstance();
+    private static final GlyphCodec<ShortSymbol> CODEC = DefaultShortGlyphCodec.getInstance();
     
-    PositionFastaRecord<Sequence<ShortGlyph>> expected = new DefaultPositionFastaRecord<Sequence<ShortGlyph>>(
+    PositionFastaRecord<Sequence<ShortSymbol>> expected = new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(
             "1119369023656", 
-            new EncodedSequence<ShortGlyph>(CODEC,ShortGlyphFactory.getInstance().getGlyphsFor(
+            new EncodedSequence<ShortSymbol>(CODEC,ShortGlyphFactory.getInstance().getGlyphsFor(
             new short[]{
                     2, 9, 29, 42, 55, 71, 92, 102, 125, 140, 163, 184,
                     194, 207, 220, 235, 248, 260, 271, 285, 298, 307, 316, 328,
@@ -119,12 +119,12 @@ public abstract class AbstractTestPositionsFastaDataStore {
     ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultPositionsFastaDataStore.class);
     @Test
     public void parseFile() throws Exception{
-        DataStore<PositionFastaRecord<Sequence<ShortGlyph>>> sut = 
+        DataStore<PositionFastaRecord<Sequence<ShortSymbol>>> sut = 
         	createPositionFastaMap(
         			RESOURCES.getFile(QUAL_FILE_PATH));
        assertEquals(1, sut.size());
         assertEquals(expected, sut.get("1119369023656"));
     }
     
-    protected abstract DataStore<PositionFastaRecord<Sequence<ShortGlyph>>> createPositionFastaMap(File fastaFile) throws Exception;
+    protected abstract DataStore<PositionFastaRecord<Sequence<ShortSymbol>>> createPositionFastaMap(File fastaFile) throws Exception;
 }

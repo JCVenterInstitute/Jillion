@@ -3,7 +3,7 @@ package org.jcvi.common.core.symbol;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphDeltaEncoder;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.junit.Test;
@@ -16,7 +16,7 @@ public class TestShortGlyphDeltaEncoderWhenEncoding {
 	@Test
 	public void emptyList(){
 		byte[] expected =new byte[]{};
-		byte[] actual =sut.encode(new ArrayList<ShortGlyph>());
+		byte[] actual =sut.encode(new ArrayList<ShortSymbol>());
 		assertArrayEquals(expected, actual);
 	}
 	@Test

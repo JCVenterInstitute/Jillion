@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.util.CommonUtil;
 
 public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
@@ -95,7 +95,7 @@ public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
 
     @Override
     public int getNumberOfTracePositions() {
-        Sequence<ShortGlyph> encodedPeaks= getPeaks().getData();        
+        Sequence<ShortSymbol> encodedPeaks= getPeaks().getData();        
         int lastIndex= (int)encodedPeaks.getLength() -1;
         return encodedPeaks.get(lastIndex).getNumber();
     }

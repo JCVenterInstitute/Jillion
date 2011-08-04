@@ -45,7 +45,7 @@ public enum ReadFileType {
         }if("sff".equals(extension)){
             return SFF;
         }
-        if("fasta".equals(extension) || "fna".equals(extension) || "fa".equals(extension)){
+        if("fasta".equals(extension) || "fna".equals(extension) || "fa".equals(extension) || "seq".equals(extension)){
             return FASTA;
         }
         return SANGER;

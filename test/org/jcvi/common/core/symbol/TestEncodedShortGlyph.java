@@ -32,9 +32,9 @@ import org.junit.Test;
 public class TestEncodedShortGlyph {
     private static final ShortGlyphFactory FACTORY = ShortGlyphFactory.getInstance();
     short[] bytes = new short[]{-20,1000,1138,123,Short.MAX_VALUE,0, Short.MIN_VALUE, 23243, 12312};
-    List<ShortGlyph> glyphs = FACTORY.getGlyphsFor(bytes);
+    List<ShortSymbol> glyphs = FACTORY.getGlyphsFor(bytes);
     
-    EncodedShortGlyph sut = new EncodedShortGlyph(glyphs);
+    EncodedShortSymbol sut = new EncodedShortSymbol(glyphs);
     
     @Test
     public void decode(){

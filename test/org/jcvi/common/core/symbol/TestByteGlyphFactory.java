@@ -30,7 +30,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestByteGlyphFactory {
 
-    ByteGlyphFactory<ByteSymbol>  sut = new ByteGlyphFactory<ByteSymbol>(){
+    ByteSymbolFactory<ByteSymbol>  sut = new ByteSymbolFactory<ByteSymbol>(){
 
         @Override
         protected ByteSymbol createNewGlyph(Byte b) {
@@ -49,7 +49,7 @@ public class TestByteGlyphFactory {
     
     @Test
     public void getGlyphsForList(){
-        List<ByteSymbol> actual =sut.getGlyphsFor(convertToArray(byteArray));
+        List<ByteSymbol> actual =sut.getSymbolsFor(convertToArray(byteArray));
         List<ByteSymbol> expected = buildExpectedGlyphList();
         assertEquals(expected, actual);
     }
@@ -57,7 +57,7 @@ public class TestByteGlyphFactory {
     private List<ByteSymbol> buildExpectedGlyphList() {
         List<ByteSymbol> expected = new ArrayList<ByteSymbol>(byteArray.length);
         for(int i=0; i<byteArray.length; i++){
-            expected.add(sut.getGlyphFor(byteArray[i]));
+            expected.add(sut.getSymbolFor(byteArray[i]));
         }
         return expected;
     }

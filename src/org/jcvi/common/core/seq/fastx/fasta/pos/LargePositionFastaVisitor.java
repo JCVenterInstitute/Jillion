@@ -23,14 +23,14 @@ import java.io.File;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaRecordIterator;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 
 /**
  * @author dkatzel
  *
  *
  */
-public class LargePositionFastaVisitor extends AbstractLargeFastaRecordIterator<Sequence<ShortGlyph>, PositionFastaRecord<Sequence<ShortGlyph>>>{
+public class LargePositionFastaVisitor extends AbstractLargeFastaRecordIterator<Sequence<ShortSymbol>, PositionFastaRecord<Sequence<ShortSymbol>>>{
 
    
 

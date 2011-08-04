@@ -25,8 +25,8 @@ package org.jcvi.common.core.seq.fastx.fasta.pos;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortGlyph;
+import org.jcvi.common.core.symbol.ShortSymbol;
 
-public interface PositionDataStore extends DataStore<Sequence<ShortGlyph>>{
+public interface PositionDataStore extends DataStore<Sequence<ShortSymbol>>{
 
 }
