@@ -30,11 +30,11 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestByteGlyphFactory {
 
-    ByteGlyphFactory<ByteGlyph>  sut = new ByteGlyphFactory<ByteGlyph>(){
+    ByteGlyphFactory<ByteSymbol>  sut = new ByteGlyphFactory<ByteSymbol>(){
 
         @Override
-        protected ByteGlyph createNewGlyph(Byte b) {
-            return new ByteGlyph(b);
+        protected ByteSymbol createNewGlyph(Byte b) {
+            return new ByteSymbol(b);
         }
         
     };
@@ -42,20 +42,20 @@ public class TestByteGlyphFactory {
     byte[] byteArray = new byte[]{10,20,30,40,27,66,127, -120};
     @Test
     public void getGlyphsForArray(){
-        List<ByteGlyph> actual =sut.getGlyphsFor(byteArray);
-        List<ByteGlyph> expected = buildExpectedGlyphList();
+        List<ByteSymbol> actual =sut.getGlyphsFor(byteArray);
+        List<ByteSymbol> expected = buildExpectedGlyphList();
         assertEquals(expected, actual);
     }
     
     @Test
     public void getGlyphsForList(){
-        List<ByteGlyph> actual =sut.getGlyphsFor(convertToArray(byteArray));
-        List<ByteGlyph> expected = buildExpectedGlyphList();
+        List<ByteSymbol> actual =sut.getGlyphsFor(convertToArray(byteArray));
+        List<ByteSymbol> expected = buildExpectedGlyphList();
         assertEquals(expected, actual);
     }
 
-    private List<ByteGlyph> buildExpectedGlyphList() {
-        List<ByteGlyph> expected = new ArrayList<ByteGlyph>(byteArray.length);
+    private List<ByteSymbol> buildExpectedGlyphList() {
+        List<ByteSymbol> expected = new ArrayList<ByteSymbol>(byteArray.length);
         for(int i=0; i<byteArray.length; i++){
             expected.add(sut.getGlyphFor(byteArray[i]));
         }

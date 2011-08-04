@@ -30,45 +30,98 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.ByteGlyph;
-
-public final class PhredQuality extends ByteGlyph{
-    //90 should be enough for anybody
-    public static final byte MAX_VALUE = 90;
+import org.jcvi.common.core.symbol.ByteSymbol;
+import org.jcvi.common.core.symbol.Symbol;
+/**
+ * {@code PhredQuality} is a {@link Symbol} representation of
+ * a Phred quality score.
+ * @author dkatzel
+ *
+ *
+ */
+public final class PhredQuality extends ByteSymbol{
+    //127 should be good enough for anybody
+    public static final byte MAX_VALUE = Byte.MAX_VALUE;
     public static final byte MIN_VALUE = 0;
-    
-    public static final byte TIGR_TED_EDIT_VALUE = 99;
-    public static final byte TIGR_CLOE_EDIT_VALUE = 40;
     private static final double TEN = 10D;
-    private static final Map<Byte, PhredQuality> MAP;
+    private static final Map<Byte, PhredQuality> CACHE;
     static{
-        MAP = new HashMap<Byte, PhredQuality>();
-        for(byte b=MIN_VALUE; b<=MAX_VALUE; b++){
-            MAP.put(Byte.valueOf(b), new PhredQuality(b));
+        CACHE = new HashMap<Byte, PhredQuality>();
+        //need to add the negative check since max ++ will
+        //overflow into negative values of b
+        for(byte b=MIN_VALUE; b>=MIN_VALUE && b<=MAX_VALUE; b++){
+            CACHE.put(Byte.valueOf(b), new PhredQuality(b));
         }
     }
     
     private PhredQuality(byte b) {
         super(b);        
     }
+    /**
+     * Get the {@link PhredQuality} with the given
+     * associated error probability.
+     * @param errorProbability a double between 0 and 1 exclusive
+     * @return a {@link PhredQuality} instance, never null.
+     * @throws IllegalArgumentException if the given probability
+     *  is not between 0 and 1 exclusive
+     */
+    public static PhredQuality withErrorProbability(double errorProbability){
+        return PhredQuality.valueOf(computeQualityScore(errorProbability));
+    }
     
-    public static int convertErrorProbability(double errorProbability){
+    /**
+     * Get the quality score with the given
+     * associated error probability.
+     * @param errorProbability a double between 0 and 1 exclusive
+     * @return an int instance, never negative
+     * @throws IllegalArgumentException if the given probability
+     *  is not between 0 and 1 exclusive
+     */
+    public static int computeQualityScore(double errorProbability){
+        if(errorProbability<=0){
+            throw new IllegalArgumentException("probability must be > 0 : "+ errorProbability);
+        }
+        if(errorProbability>=1){
+            throw new IllegalArgumentException("probability must be < 1: "+ errorProbability);
+        }
         return (int)Math.round(-TEN * Math.log10(errorProbability));
     }
+    /**
+     * Get the error probability that a basecall
+     * of this phred value is incorrectly called.
+     * @return {@literal 10^(-q/10)}
+     */
     public double getErrorProbability(){
-        return Math.pow(TEN, this.getNumber()/-TEN);
-       
+        return Math.pow(TEN, this.getNumber()/-TEN);       
     }
-    
-    public static PhredQuality valueOf(int b){
-       return valueOf((byte)b);
+    /**
+     * Get the corresponding {@link PhredQuality} instance
+     * with the given quality score.
+     * @param qualityScore the quality score
+     * @return
+     */
+    public static PhredQuality valueOf(int qualityScore){
+       return valueOf((byte)qualityScore);
     }
-    public static PhredQuality valueOf(byte b){
-        if(b<MIN_VALUE || b > MAX_VALUE){
-            throw new IllegalArgumentException("value of our range "+b);
+    /**
+     * Get the {@link PhredQuality} instance with the
+     * given qualityScore.
+     * @param qualityScore the quality score that the PhredQuality
+     * instance should have.
+     * @return a {@link PhredQuality}, never null.
+     * @throws IllegalArgumentException if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
+     */
+    public static PhredQuality valueOf(byte qualityScore){
+        if(qualityScore < MIN_VALUE || qualityScore > MAX_VALUE){
+            throw new IllegalArgumentException("qualityScore of our range "+qualityScore);
         }
-        return MAP.get(Byte.valueOf(b));
+        return CACHE.get(Byte.valueOf(qualityScore));
     }
+    /**
+     * 
+     * @param bytes
+     * @return
+     */
     public static List<PhredQuality> valueOf(byte[] bytes){
         List<PhredQuality> list = new ArrayList<PhredQuality>(bytes.length);
         for(int i=0; i<bytes.length; i++){
@@ -76,34 +129,12 @@ public final class PhredQuality extends ByteGlyph{
         }
         return list;
     }
-    public static PhredQuality tigrValueOf(int b){
-        return tigrValueOf((byte)b);
-     }
     /**
-     * returns the {@link PhredQuality} of a quality 
-     * that has been created at TIGR.  The TIGR legacy editor
-     * TED stored human edited qualities as <code>99</code>
-     * which is out of phred quality ranges.  TED's successor,
-     * CLOE, stored human edited qualities as <code>40</code>.
-     * This method will change any TIGR TED edited qualities
-     * from <code>99</code> to <code>40</code>; anything else 
-     * is left as is.
-     * @param b
-     * @return if b == 99 return valueOf(40) else return valueOf(b)
+     * Create an array of bytes which correspond to the 
+     * input collection of {@link PhredQuality}s.
+     * @param qualities a collection of PhredQuality values.
+     * @return a new byte array, never null.
      */
-    public static PhredQuality tigrValueOf(byte b){
-        if(b == TIGR_TED_EDIT_VALUE){
-            return valueOf(TIGR_CLOE_EDIT_VALUE);
-        }
-       return valueOf(b);
-    }
-    public static List<PhredQuality> tigrValueOf(byte[] bytes){
-        List<PhredQuality> list = new ArrayList<PhredQuality>(bytes.length);
-        for(int i=0; i<bytes.length; i++){
-            list.add(tigrValueOf(bytes[i]));
-        }
-        return list;
-    }
     public static byte[] toArray(Collection<PhredQuality> qualities){
         ByteBuffer buf = ByteBuffer.allocate(qualities.size());
         for(PhredQuality quality : qualities){
@@ -118,17 +149,11 @@ public final class PhredQuality extends ByteGlyph{
         return String.format("Q%02d",this.getNumber());
     }
     
-    public PhredQuality increaseBy(byte delta){
-        return valueOf((byte)(getNumber() + delta));
+    
+    public int compareTo(PhredQuality o) {
+        return super.compareTo(o);
     }
-    public PhredQuality decreaseBy(byte delta){
-        return increaseBy((byte)(-delta));
-    }
-    public PhredQuality increaseBy(PhredQuality q){
-        return increaseBy(q.getNumber());
-    }
-    public PhredQuality decreaseBy(PhredQuality q){
-        return decreaseBy(q.getNumber());
-    }
+    
+    
     
 }

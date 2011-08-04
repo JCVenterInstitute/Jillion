@@ -16,28 +16,34 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
-package org.jcvi.common.core.symbol.qual;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-/**
+/*
+ * Created on Jan 22, 2009
+ *
  * @author dkatzel
- *
- *
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestPhredQualityStaticMethods.class,
-        TestPhredQuality.class,
-        TestZipPhredQualityCodec.class,
-        TestTigrQualitiesEncoder.class,
-        TestTigrQualitiesEncoderCodec.class
+package org.jcvi.common.core.symbol;
+
+public class ByteSymbol extends DefaultNumericGlyph implements Comparable<ByteSymbol>{
+
+    public ByteSymbol(byte b){
+        super(Byte.valueOf(b));
     }
-    )
-public class AllPhredQualityTests {
+    @Override
+    public Byte getNumber() {
+        return (Byte)super.getNumber();
+    }
+    @Override
+    public int compareTo(ByteSymbol o) {
+        return getNumber().compareTo(o.getNumber());
+    }
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+    
 
 }

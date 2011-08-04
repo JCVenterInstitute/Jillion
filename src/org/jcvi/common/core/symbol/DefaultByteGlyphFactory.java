@@ -1,6 +1,6 @@
 package org.jcvi.common.core.symbol;
 
-public class DefaultByteGlyphFactory extends  ByteGlyphFactory<ByteGlyph>{
+public class DefaultByteGlyphFactory extends  ByteGlyphFactory<ByteSymbol>{
 
 	private static final DefaultByteGlyphFactory INSTANCE = new DefaultByteGlyphFactory();
 	
@@ -10,8 +10,8 @@ public class DefaultByteGlyphFactory extends  ByteGlyphFactory<ByteGlyph>{
 	private DefaultByteGlyphFactory(){}
 	
     @Override
-    protected ByteGlyph createNewGlyph(Byte b) {
-        return new ByteGlyph(b);
+    protected ByteSymbol createNewGlyph(Byte b) {
+        return new ByteSymbol(b);
     }
     
 }

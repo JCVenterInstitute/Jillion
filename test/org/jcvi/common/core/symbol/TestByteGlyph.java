@@ -27,7 +27,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestByteGlyph {
     byte value = (byte)99;
-    ByteGlyph sut = new ByteGlyph(value);
+    ByteSymbol sut = new ByteSymbol(value);
     
     @Test
     public void getNumber(){

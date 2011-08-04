@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public abstract class AbstractByteGlyphCodec<G extends ByteGlyph> implements ByteGlyphCodec<G>{
+public abstract class AbstractByteGlyphCodec<G extends ByteSymbol> implements ByteGlyphCodec<G>{
 
     protected abstract G getValueOf(byte b);
     @Override
@@ -55,7 +55,7 @@ public abstract class AbstractByteGlyphCodec<G extends ByteGlyph> implements Byt
     @Override
     public byte[] encode(Collection<G> glyphs) {
         ByteBuffer buf = ByteBuffer.allocate(glyphs.size());
-        for(ByteGlyph g : glyphs){
+        for(ByteSymbol g : glyphs){
             buf.put(g.getNumber().byteValue());
         }
         return buf.array();

@@ -74,6 +74,6 @@ public class TestPhredQuality {
     }
     @Test
     public void convertToQuality(){
-        assertEquals(quality, PhredQuality.valueOf(PhredQuality.convertErrorProbability(errorProbability)));
+        assertEquals(quality, PhredQuality.withErrorProbability(errorProbability));
     }
 }
