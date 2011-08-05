@@ -158,7 +158,7 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     private void bulkPutPeaks(ByteBuffer buffer,
             Sequence<ShortSymbol> peaks) {
        for(ShortSymbol glyph : peaks.decode()){
-           buffer.putInt(glyph.getNumber().intValue());
+           buffer.putInt(glyph.getValue().intValue());
        }
         
     }

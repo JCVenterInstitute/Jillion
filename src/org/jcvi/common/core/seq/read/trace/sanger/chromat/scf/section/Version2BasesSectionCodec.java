@@ -102,7 +102,7 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
         final ByteBuffer deletionConfidence = getOptionalField(c.getDeletionConfidence());
 
         for(int i=0; i<numberOfBases; i++){
-           buffer.putInt(peaks.get(i).getNumber().intValue());
+           buffer.putInt(peaks.get(i).getValue().intValue());
            buffer.put(aConfidence.get());
            buffer.put(cConfidence.get());
            buffer.put(gConfidence.get());

@@ -51,7 +51,7 @@ public enum FastQQualityCodec {
 
 		    @Override
 		    protected char encode(PhredQuality quality) {
-		        return (char)(quality.getNumber().intValue()+64);
+		        return (char)(quality.getValue().intValue()+64);
 		    }
 	},
 	/**
@@ -65,7 +65,7 @@ public enum FastQQualityCodec {
 
 		    @Override
 		    protected char encode(PhredQuality quality) {
-		        return (char)(quality.getNumber().intValue()+33);
+		        return (char)(quality.getValue().intValue()+33);
 		    }
 	},
 	/**
@@ -101,7 +101,7 @@ public enum FastQQualityCodec {
     public QualitySequence decode(String fastqQualities) {
         ByteBuffer buffer = ByteBuffer.allocate(fastqQualities.length());
         for(int i=0; i<fastqQualities.length(); i++){
-            buffer.put(decode(fastqQualities.charAt(i)).getNumber());
+            buffer.put(decode(fastqQualities.charAt(i)).getValue());
         }
         return new EncodedQualitySequence(
                                     qualityCodec,

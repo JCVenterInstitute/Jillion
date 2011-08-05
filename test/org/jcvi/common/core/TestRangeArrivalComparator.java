@@ -127,46 +127,22 @@ public class TestRangeArrivalComparator
         Assert.assertEquals(0, this.comp.compare(a, a));
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testCompare_nullFirstParam() 
     {
-        try
-        {
-            this.comp.compare(null, a);
-        }
-        catch (IllegalArgumentException e) 
-        {
-            return;
-        }
-        Assert.fail("No exception thrown for null parameter.");
+        this.comp.compare(null, a);
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testCompare_nullLastParam() 
     {
-        try
-        {
-            this.comp.compare(a, null);
-        }
-        catch (IllegalArgumentException e) 
-        {
-            return;
-        }
-        Assert.fail("No exception thrown for null parameter.");
+        this.comp.compare(a, null);
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testCompare_nullBothParam() 
     {
-        try
-        {
-            this.comp.compare(null, null);
-        }
-        catch (IllegalArgumentException e) 
-        {
-            return;
-        }
-        Assert.fail("No exception thrown for all null parameters.");
+        this.comp.compare(null, null);
     }
 
 }

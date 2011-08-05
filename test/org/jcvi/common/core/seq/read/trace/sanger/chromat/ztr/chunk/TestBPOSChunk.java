@@ -30,7 +30,7 @@ import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.Chunk;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -59,7 +59,7 @@ public class TestBPOSChunk {
     @Test
     public void encode() throws TraceEncoderException{
     	ZTRChromatogram chromatogram = createMock(ZTRChromatogram.class);
-    	expect(chromatogram.getPeaks()).andReturn(new Peaks(decodedPeaks));
+    	expect(chromatogram.getPeaks()).andReturn(new SangerPeak(decodedPeaks));
     	replay(chromatogram);
     	byte[] actual =sut.encodeChunk(chromatogram);
     	assertArrayEquals(encodedPositions, actual);

@@ -27,7 +27,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 import java.util.HashMap;
 import java.util.Map;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -52,7 +52,7 @@ public class BasicChromatogram implements Chromatogram {
 
     private final ChannelGroup channelGroup;
     private final NucleotideSequence basecalls;
-    private final Peaks peaks;
+    private final SangerPeak peaks;
     private final QualitySequence qualities;
 
     /**
@@ -68,11 +68,11 @@ public class BasicChromatogram implements Chromatogram {
                c.getChannelGroup(),
                 c.getComments());
     }
-    public BasicChromatogram(NucleotideSequence basecalls,QualitySequence qualities, Peaks peaks,
+    public BasicChromatogram(NucleotideSequence basecalls,QualitySequence qualities, SangerPeak peaks,
             ChannelGroup channelGroup){
         this(basecalls, qualities, peaks, channelGroup, new HashMap<String,String>());
     }
-    public BasicChromatogram(String basecalls, byte[] qualities,Peaks peaks,
+    public BasicChromatogram(String basecalls, byte[] qualities,SangerPeak peaks,
             ChannelGroup channelGroup,
             Map<String,String> comments){
         this(new DefaultNucleotideSequence( Nucleotides.parse(basecalls)),
@@ -80,7 +80,7 @@ public class BasicChromatogram implements Chromatogram {
                 peaks,
                      channelGroup, comments);
     }
-    public BasicChromatogram(NucleotideSequence basecalls, QualitySequence qualities,Peaks peaks,
+    public BasicChromatogram(NucleotideSequence basecalls, QualitySequence qualities,SangerPeak peaks,
            ChannelGroup channelGroup,
            Map<String,String> comments){
         canNotBeNull(basecalls, peaks, channelGroup, comments);
@@ -104,7 +104,7 @@ public class BasicChromatogram implements Chromatogram {
         return basecalls;
     }
     @Override
-    public Peaks getPeaks() {
+    public SangerPeak getPeaks() {
         return peaks;
     }
 

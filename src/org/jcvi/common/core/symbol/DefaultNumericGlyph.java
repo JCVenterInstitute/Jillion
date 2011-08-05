@@ -33,7 +33,7 @@ public class DefaultNumericGlyph implements NumericSymbol{
         this.number = number;
     }
     @Override
-    public Number getNumber() {
+    public Number getValue() {
         return number;
     }
 
@@ -62,7 +62,7 @@ public class DefaultNumericGlyph implements NumericSymbol{
     }
     @Override
     public String toString() {
-        return getNumber().toString();
+        return getValue().toString();
     }
     
     

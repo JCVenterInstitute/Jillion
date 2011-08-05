@@ -39,7 +39,7 @@ enum CompactedSliceElementCodec {
     INSTANCE
     ;
     public static final int SIZE_OF_ENCODED_DATA =2;
-    private static final DefaultNucleotideGlyphCodec CODEC = DefaultNucleotideGlyphCodec.getInstance();
+    private static final DefaultNucleotideGlyphCodec CODEC = DefaultNucleotideGlyphCodec.INSTANCE;
     
     public byte[] compact(Nucleotide base, PhredQuality quality, Direction direction) {
         byte compacted = CODEC.encode(base)[4];
@@ -47,7 +47,7 @@ enum CompactedSliceElementCodec {
             compacted = (byte)(compacted | 0x01);
         }
         byte[] ret = new byte[SIZE_OF_ENCODED_DATA];
-        ret[0] = quality.getNumber().byteValue();
+        ret[0] = quality.getValue().byteValue();
         ret[1]= compacted;
         return ret;
     }

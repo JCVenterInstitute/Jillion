@@ -89,8 +89,8 @@ public class PhdWriter {
         for(int i=0;i< bases.size(); i++){
             result.append(String.format("%s %d %d%n",
                                             bases.get(i), 
-                                            qualities.get(i).getNumber(),
-                                            peaks.get(i).getNumber()));
+                                            qualities.get(i).getValue(),
+                                            peaks.get(i).getValue()));
         }
         
         return result.toString();

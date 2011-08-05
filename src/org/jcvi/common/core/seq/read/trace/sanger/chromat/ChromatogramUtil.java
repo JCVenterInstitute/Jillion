@@ -36,7 +36,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFil
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.Builder;
@@ -66,7 +66,7 @@ public  final class ChromatogramUtil {
         
         
         private final Sequence<Nucleotide> basecalls;
-        private final Peaks peaks;
+        private final SangerPeak peaks;
         private final Sequence<PhredQuality> qualities;
         /**
          * Construct a new FakeChannelGroupBuilder which will
@@ -80,7 +80,7 @@ public  final class ChromatogramUtil {
          * and peaks are not all the same length
          */
         public FakeChannelGroupBuilder(Sequence<Nucleotide> basecalls,
-                Sequence<PhredQuality> qualities, Peaks peaks) {
+                Sequence<PhredQuality> qualities, SangerPeak peaks) {
             if(basecalls.getLength() != qualities.getLength()){
                 throw new IllegalArgumentException("basecalls must be same length as qualities");
             }
@@ -159,11 +159,11 @@ public  final class ChromatogramUtil {
      * @param numberOfPeaks the number of peaks to make.
      * @param numberOfPositionsBetweenEachPeak the number of positions
      * apart to space each peak.
-     * @return a new {@link Peaks} instance.
+     * @return a new {@link SangerPeak} instance.
      * @throws IllegalArgumentException if numberOfPeaks is {@code <0} or numberOfPositionsBetweenEachPeak
      * is {code <1}.
      */
-    public static  Peaks buildFakePeaks(int numberOfPeaks, int numberOfPositionsBetweenEachPeak){
+    public static  SangerPeak buildFakePeaks(int numberOfPeaks, int numberOfPositionsBetweenEachPeak){
         if(numberOfPositionsBetweenEachPeak<1){
             throw new IllegalArgumentException("number of positions between each peak must be > 0");
         }
@@ -171,16 +171,16 @@ public  final class ChromatogramUtil {
         for ( int i = 0; i < numberOfPeaks; i++ ) {
             fakePeaks.put((short)((numberOfPositionsBetweenEachPeak)*(i+1)));
         }
-        return new Peaks(fakePeaks);
+        return new SangerPeak(fakePeaks);
     }
     /**
      * Create a new instance of Peaks that are equally spaced apart
      * using the default space between each peak.
      * @param numberOfPeaks the number of peaks to make.
-     * @return a new {@link Peaks} instance.
+     * @return a new {@link SangerPeak} instance.
      * @throws IllegalArgumentException if numberOfPeaks is {@code <0}
      */
-    public static  Peaks buildFakePeaks(int numberOfPeaks) {
+    public static  SangerPeak buildFakePeaks(int numberOfPeaks) {
         return buildFakePeaks(numberOfPeaks, FALSE_WAVEFORM.length-1);
     }
     public static void parseChromatogram(File chromatogramFile, ChromatogramFileVisitor visitor) throws IOException, TraceDecoderException{

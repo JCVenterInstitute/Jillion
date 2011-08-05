@@ -29,7 +29,7 @@ import java.util.Properties;
 
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
@@ -39,13 +39,13 @@ public class DefaultPhd implements Phd {
     private final String id;
     private final NucleotideSequence basecalls;
     private final QualitySequence qualities;
-    private final Peaks peaks;
+    private final SangerPeak peaks;
     private final Properties comments;
     private final List<PhdTag> tags;
     
     public DefaultPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
-            Peaks peaks, Properties comments,
+            SangerPeak peaks, Properties comments,
             List<PhdTag> tags){
     	this.id = id;
         this.basecalls = basecalls;
@@ -56,12 +56,12 @@ public class DefaultPhd implements Phd {
     }
     public DefaultPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
-            Peaks peaks,Properties comments){
+            SangerPeak peaks,Properties comments){
         this(id,basecalls, qualities, peaks, comments,Collections.<PhdTag>emptyList());
     }
     public DefaultPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
-            Peaks peaks){
+            SangerPeak peaks){
         this(id,basecalls, qualities, peaks, new Properties());
     }
     
@@ -71,7 +71,7 @@ public class DefaultPhd implements Phd {
     }
 
     @Override
-    public Peaks getPeaks() {
+    public SangerPeak getPeaks() {
         return peaks;
     }
 
@@ -143,7 +143,7 @@ public class DefaultPhd implements Phd {
     public int getNumberOfTracePositions() {
         Sequence<ShortSymbol> encodedPeaks= peaks.getData();        
         int lastIndex= (int)encodedPeaks.getLength() -1;
-        return encodedPeaks.get(lastIndex).getNumber();
+        return encodedPeaks.get(lastIndex).getValue();
     }
 
     @Override

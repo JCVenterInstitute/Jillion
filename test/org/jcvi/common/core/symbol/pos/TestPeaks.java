@@ -32,7 +32,7 @@ import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class TestPeaks {
     
     private short[] peaks = new short[]{110,120,130,140,150,160};
     private short[] differentPeaks = new short[]{30,40,50,60,70,80,90};
-    private Peaks sut = new Peaks(peaks);
+    private SangerPeak sut = new SangerPeak(peaks);
     private Sequence<ShortSymbol> encodedPeaks = new EncodedSequence<ShortSymbol>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(peaks));
     @Test
     public void constructor(){
@@ -55,7 +55,7 @@ public class TestPeaks {
 
     @Test
     public void equalsSameValues(){
-        Peaks sameValues = new  Peaks(peaks);
+        SangerPeak sameValues = new  SangerPeak(peaks);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
 
@@ -69,20 +69,20 @@ public class TestPeaks {
     }
     @Test
     public void notEqualsDifferentValues(){
-        Peaks differentValues = new Peaks(differentPeaks);
+        SangerPeak differentValues = new SangerPeak(differentPeaks);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
 
     @Test
     public void ShortBufferConstructor(){
-        Peaks sameValues = new Peaks(ShortBuffer.wrap(peaks));
+        SangerPeak sameValues = new SangerPeak(ShortBuffer.wrap(peaks));
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
 
     @Test
     public void equalsShortBufferAtDifferentPositions(){
         final ShortBuffer buffer = ShortBuffer.wrap(peaks);
-        Peaks sameValues = new Peaks(buffer);
+        SangerPeak sameValues = new SangerPeak(buffer);
         buffer.position(2);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }

@@ -29,8 +29,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestDefaultNucleotideGlyphCodec.class,
         TestNucleotideGlyph.class,
+        TestDefaultNucleotideGlyphCodec.class,
+        TestNoAmbiguitiesEncodedNucleotideCodec.class,        
         TestDefaultNucleotideSequence.class,
         TestNucleotideGlyphGetAmbiguity.class,
         TestReferenceEncodedNucleotideSequence.class,

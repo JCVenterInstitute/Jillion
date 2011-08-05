@@ -65,7 +65,7 @@ public class TestPositionFastaRecord {
         List<ShortSymbol> pos = fasta.getValue().decode();
         for(int i=1; i<pos.size(); i++){
             
-            builder.append(String.format("%04d", pos.get(i-1).getNumber()));
+            builder.append(String.format("%04d", pos.get(i-1).getValue()));
             if(i%12==0){
                 appendCarriageReturn(builder);
             }
@@ -73,7 +73,7 @@ public class TestPositionFastaRecord {
                 builder.append(" ");
             }
         }
-        builder.append(String.format("%04d", pos.get(pos.size() -1).getNumber()));
+        builder.append(String.format("%04d", pos.get(pos.size() -1).getValue()));
         appendCarriageReturn(builder);
         return builder.toString();
     }

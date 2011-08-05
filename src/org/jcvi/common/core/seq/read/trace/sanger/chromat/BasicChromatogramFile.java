@@ -20,7 +20,7 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
@@ -145,7 +145,7 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     * {@inheritDoc}
     */
     @Override
-    public Peaks getPeaks() {
+    public SangerPeak getPeaks() {
         return delegate.getPeaks();
     }
 

@@ -97,7 +97,7 @@ public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
     public int getNumberOfTracePositions() {
         Sequence<ShortSymbol> encodedPeaks= getPeaks().getData();        
         int lastIndex= (int)encodedPeaks.getLength() -1;
-        return encodedPeaks.get(lastIndex).getNumber();
+        return encodedPeaks.get(lastIndex).getValue();
     }
     
     

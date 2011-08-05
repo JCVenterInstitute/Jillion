@@ -40,9 +40,10 @@ import org.jcvi.common.core.symbol.Sequence;
 public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     private final int[] gaps;
     private final Sequence<Nucleotide> encodedBasecalls;
-    public DefaultNucleotideSequence(Collection<Nucleotide> glyphs){
-        this.gaps = computeGapIndexes(glyphs);
-        this.encodedBasecalls = new EncodedSequence<Nucleotide>(DefaultNucleotideGlyphCodec.getInstance(),glyphs);
+    public DefaultNucleotideSequence(Collection<Nucleotide> nucleotides){
+        this.gaps = computeGapIndexes(nucleotides);
+        NucleotideCodec codec = NucleotideCodecs.getNucleotideCodecFor(nucleotides);
+        this.encodedBasecalls = new EncodedSequence<Nucleotide>(codec,nucleotides);
    
     }
     public DefaultNucleotideSequence(String basecalls){
@@ -83,6 +84,9 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
 
     @Override
     public Nucleotide get(int index) {
+        if(isGap(index)){
+            return Nucleotide.Gap;
+        }
         return encodedBasecalls.get(index);
     }
 

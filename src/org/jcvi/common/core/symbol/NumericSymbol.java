@@ -27,6 +27,6 @@ package org.jcvi.common.core.symbol;
 public interface NumericSymbol extends Symbol {
 
   
-    Number getNumber();
+    Number getValue();
 
 }

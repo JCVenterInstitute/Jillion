@@ -44,8 +44,11 @@ import org.jcvi.common.core.symbol.GlyphCodec;
  *
  *
  */
-public final class DefaultNucleotideGlyphCodec implements GlyphCodec<Nucleotide>{
-
+public enum DefaultNucleotideGlyphCodec implements NucleotideCodec{
+    /**
+     * Singleton instance.
+     */
+    INSTANCE;
     /**
      * Maintains the mapping of each glyph singleton with
      * its assigned glyphcode value.  The glyphcodes have been specially
@@ -101,11 +104,6 @@ public final class DefaultNucleotideGlyphCodec implements GlyphCodec<Nucleotide>
         for(Entry<Byte, Nucleotide> entry : BYTE_TO_GLYPH_MAP.entrySet()){
             GLYPH_TO_BYTE_MAP.put(entry.getValue(), entry.getKey());           
         }
-    }
-    private static DefaultNucleotideGlyphCodec INSTANCE = new DefaultNucleotideGlyphCodec();
-    private DefaultNucleotideGlyphCodec(){}
-    public static DefaultNucleotideGlyphCodec getInstance(){
-        return INSTANCE;
     }
     @Override
     public List<Nucleotide> decode(byte[] encodedGlyphs) {

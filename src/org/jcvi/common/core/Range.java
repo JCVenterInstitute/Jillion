@@ -23,7 +23,6 @@
  */
 package org.jcvi.common.core;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -87,10 +86,10 @@ public final class Range implements Placed<Range>,Iterable<Long>
                  * We don't accept null values for comparison.
                  */
                 if (first == null){
-                    throw new InvalidParameterException("The first parameter in the comparison is null.");
+                    throw new NullPointerException("The first parameter in the comparison is null.");
                 }
                 if (second == null){
-                    throw new InvalidParameterException("The second parameter in the comparison is null.");
+                    throw new NullPointerException("The second parameter in the comparison is null.");
                 }
 
                 /*
@@ -124,10 +123,10 @@ public final class Range implements Placed<Range>,Iterable<Long>
                  * We don't accept null values for comparison.
                  */
                 if (first == null){
-                    throw new InvalidParameterException("The first parameter in the comparison is null.");
+                    throw new NullPointerException("The first parameter in the comparison is null.");
                 }
                 if (second == null){
-                    throw new InvalidParameterException("The second parameter in the comparison is null.");
+                    throw new NullPointerException("The second parameter in the comparison is null.");
                 }
                 
                 /*

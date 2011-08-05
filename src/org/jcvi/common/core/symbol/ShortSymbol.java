@@ -33,12 +33,12 @@ public class ShortSymbol extends DefaultNumericGlyph implements Comparable<Short
         super(Short.valueOf(s));
     }
     @Override
-    public Short getNumber() {
-        return (Short)super.getNumber();
+    public Short getValue() {
+        return (Short)super.getValue();
     }
     @Override
     public int compareTo(ShortSymbol o) {
-        return getNumber().compareTo(o.getNumber());
+        return getValue().compareTo(o.getValue());
     }
     @Override
     public boolean equals(Object obj) {
@@ -51,7 +51,7 @@ public class ShortSymbol extends DefaultNumericGlyph implements Comparable<Short
     public static short[] toArray(Collection<ShortSymbol> shorts){
         ShortBuffer buf = ShortBuffer.allocate(shorts.size());
         for(ShortSymbol aShort : shorts){
-            buf.put(aShort.getNumber());
+            buf.put(aShort.getValue());
         }
         return buf.array();
     }

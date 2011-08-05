@@ -69,7 +69,7 @@ public final class DefaultShortGlyphCodec implements GlyphCodec<ShortSymbol>{
     public byte[] encode(Collection<ShortSymbol> glyphs) {
         ByteBuffer buf = ByteBuffer.allocate(glyphs.size()*2);
         for(ShortSymbol g : glyphs){
-            buf.putShort(g.getNumber());
+            buf.putShort(g.getValue());
         }
         return buf.array();
     }

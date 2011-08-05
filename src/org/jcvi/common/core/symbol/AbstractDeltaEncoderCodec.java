@@ -41,7 +41,7 @@ public abstract class AbstractDeltaEncoderCodec<G extends NumericSymbol> impleme
 	private ByteBuffer convertToByteBuffer(Collection<G> glyphs) {
 		ByteBuffer buf = ByteBuffer.allocate(glyphs.size() * valueSizeStrategy.numberOfBytesPerValue());
 		for(G glyph : glyphs){
-			valueSizeStrategy.put(glyph.getNumber().longValue(), buf);
+			valueSizeStrategy.put(glyph.getValue().longValue(), buf);
 		}
 		buf.flip();
 		return buf;

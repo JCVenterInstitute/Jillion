@@ -29,7 +29,7 @@ import java.util.Properties;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
@@ -41,7 +41,7 @@ import static org.easymock.EasyMock.*;
 public class TestBasicChromatogram {
     
     ChannelGroup mockChannelGroup = createMock(ChannelGroup.class);
-    Peaks mockPeaks= createMock(Peaks.class);
+    SangerPeak mockPeaks= createMock(SangerPeak.class);
     NucleotideSequence basecalls = createMock(NucleotideSequence.class);
     QualitySequence qualities = createMock(QualitySequence.class);
     Map<String,String> expectedProperties;
@@ -181,7 +181,7 @@ public class TestBasicChromatogram {
     
     @Test
     public void notEqualsDifferentPeaks(){
-        Peaks differentPeaks = createMock(Peaks.class);
+        SangerPeak differentPeaks = createMock(SangerPeak.class);
         BasicChromatogram nullPeaks = new BasicChromatogram(basecalls, qualities,differentPeaks, mockChannelGroup,
                 expectedProperties);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, nullPeaks);

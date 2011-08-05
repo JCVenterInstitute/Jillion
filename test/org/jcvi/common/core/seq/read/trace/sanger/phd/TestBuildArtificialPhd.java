@@ -67,7 +67,7 @@ public class TestBuildArtificialPhd {
         assertEquals(mockQualities, phd.getQualities());
         Sequence<ShortSymbol> actualPeaks = phd.getPeaks().getData();
         for(int i=0; i< lengthOfBases; i++){
-            assertEquals(Short.valueOf((short)(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak)), actualPeaks.get(i).getNumber());
+            assertEquals(Short.valueOf((short)(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak)), actualPeaks.get(i).getValue());
         }
         assertCommentsAndTagsAreEmpty(phd);
         verify(mockBasecalls, mockQualities);
@@ -87,7 +87,7 @@ public class TestBuildArtificialPhd {
         assertEquals(mockQualities, phd.getQualities());
         Sequence<ShortSymbol> actualPeaks = phd.getPeaks().getData();
         for(int i=0; i< lengthOfBases; i++){
-            assertEquals(Short.valueOf((short)(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak)), actualPeaks.get(i).getNumber());
+            assertEquals(Short.valueOf((short)(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak)), actualPeaks.get(i).getValue());
         }
         assertEquals(mockProperties, phd.getComments());
         assertEquals(mockTags, phd.getTags());

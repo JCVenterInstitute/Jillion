@@ -42,20 +42,20 @@ import org.jcvi.common.core.util.CommonUtil;
  *
  *
  */
-public class Peaks{
+public class SangerPeak{
     private static final ShortGlyphFactory FACTORY = ShortGlyphFactory.getInstance();
     private static final DefaultShortGlyphCodec CODEC = DefaultShortGlyphCodec.getInstance();
     private Sequence<ShortSymbol> data;
 
-    public Peaks(short[] data){
+    public SangerPeak(short[] data){
         this(FACTORY.getGlyphsFor(data));
        
     }
-    public Peaks(List<ShortSymbol> data){
+    public SangerPeak(List<ShortSymbol> data){
         this.data = new EncodedSequence<ShortSymbol>(CODEC, data);
        
     }
-    public Peaks(Sequence<ShortSymbol> data){
+    public SangerPeak(Sequence<ShortSymbol> data){
         if(data==null){
             throw new NullPointerException("encoded data can not be null");
         }
@@ -65,7 +65,7 @@ public class Peaks{
     /**
      * @param data
      */
-    public Peaks(ShortBuffer data) {
+    public SangerPeak(ShortBuffer data) {
         this(data.array());
     }
 
@@ -84,10 +84,10 @@ public class Peaks{
        if(obj == this){
            return true;
        }
-       if(!(obj instanceof Peaks)){
+       if(!(obj instanceof SangerPeak)){
            return false;
        }
-       Peaks other = (Peaks) obj;
+       SangerPeak other = (SangerPeak) obj;
        return CommonUtil.bothNull(getData(), other.getData())  
                    ||        
             (!CommonUtil.onlyOneIsNull(getData(), other.getData()) 

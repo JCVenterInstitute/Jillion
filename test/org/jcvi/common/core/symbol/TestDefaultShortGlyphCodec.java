@@ -69,7 +69,7 @@ public class TestDefaultShortGlyphCodec {
     @Test
     public void indexedDecode(){
         for(int i=0; i<decodedShorts.length; i++){
-            assertEquals( decodedGlyphs.get(i).getNumber(), sut.decode(encodedShortsAsByteArray, i).getNumber());
+            assertEquals( decodedGlyphs.get(i).getValue(), sut.decode(encodedShortsAsByteArray, i).getValue());
         }
         
     }

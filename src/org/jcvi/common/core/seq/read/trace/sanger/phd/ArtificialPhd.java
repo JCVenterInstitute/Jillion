@@ -31,7 +31,7 @@ import java.util.Properties;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
@@ -53,7 +53,7 @@ public class ArtificialPhd implements Phd{
     private final QualitySequence qualities;
    private final Properties comments;
    private final List<PhdTag> tags;
-   private Peaks fakePositions=null;
+   private SangerPeak fakePositions=null;
    private final int numberOfPositionsForEachPeak;
    private final int numberOfBases;
    private final int positionOfFirstPeak;
@@ -212,14 +212,14 @@ public class ArtificialPhd implements Phd{
     }
 
     @Override
-    public synchronized Peaks getPeaks() {
+    public synchronized SangerPeak getPeaks() {
         if(fakePositions ==null){
             List<ShortSymbol> fakePositions = new ArrayList<ShortSymbol>(numberOfBases);
             
             for(int i=0; i< numberOfBases; i++){
                 fakePositions.add(PEAK_FACTORY.getGlyphFor(i * numberOfPositionsForEachPeak +positionOfFirstPeak ));
             }
-            this.fakePositions = new Peaks(fakePositions);
+            this.fakePositions = new SangerPeak(fakePositions);
         }
         return fakePositions;
     }

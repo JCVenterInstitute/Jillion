@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultConfidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.PrivateData;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
@@ -44,7 +44,7 @@ public class TestSCFChromatogram {
 
 
     ChannelGroup mockChannelGroup = createMock(ChannelGroup.class);
-    Peaks mockPeaks= createMock(Peaks.class);
+    SangerPeak mockPeaks= createMock(SangerPeak.class);
     NucleotideSequence basecalls = createMock(NucleotideSequence.class);
     QualitySequence qualities = createMock(QualitySequence.class);
     Map<String,String> expectedProperties = new HashMap<String, String>();

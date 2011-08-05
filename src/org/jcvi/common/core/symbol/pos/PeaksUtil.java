@@ -31,14 +31,14 @@ public final class PeaksUtil {
     /**
      * Generate Fake Peak Data for a given number of Bases.
      * @param numberOfPeaks the number of peaks to fake.
-     * @return a {@link Peaks}.
+     * @return a {@link SangerPeak}.
      * @throws IllegalArgumentException if {@code numberOfPeaks < 0 }
      */
-    public static Peaks generateFakePeaks(int numberOfPeaks){
+    public static SangerPeak generateFakePeaks(int numberOfPeaks){
         ShortBuffer buf = ShortBuffer.allocate(numberOfPeaks);
         for(int i=0; i<buf.capacity(); i++){
             buf.put((short)(i*10 +5));
         }
-        return new Peaks(buf);
+        return new SangerPeak(buf);
     }
 }
