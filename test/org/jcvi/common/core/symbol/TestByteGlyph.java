@@ -31,7 +31,7 @@ public class TestByteGlyph {
     
     @Test
     public void getNumber(){
-        assertEquals(Byte.valueOf(value), sut.getNumber());
+        assertEquals(Byte.valueOf(value), sut.getValue());
     }
     @Test
     public void getName(){

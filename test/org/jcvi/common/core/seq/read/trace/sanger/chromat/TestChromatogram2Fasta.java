@@ -24,7 +24,7 @@ import java.io.IOException;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
@@ -49,7 +49,7 @@ public class TestChromatogram2Fasta {
 		expect(chromo.getBasecalls()).andStubReturn(new DefaultNucleotideSequence(basecalls));
 		expect(chromo.getQualities()).andStubReturn(new EncodedQualitySequence(
 				RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, PhredQuality.valueOf(quals)));
-		expect(chromo.getPeaks()).andStubReturn(new Peaks(peaks));
+		expect(chromo.getPeaks()).andStubReturn(new SangerPeak(peaks));
 		replay(chromo);
 	}
 	@Test

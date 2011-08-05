@@ -48,7 +48,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramWriter;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.IOLibLikeZTRChromatogramWriter;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -143,7 +143,7 @@ public class MakeChromatogram {
                qualities = qualDataStore.get(id).getValue();
             }else{
                 byte[] buf = new byte[(int)basecalls.getLength()];
-                Arrays.fill(buf, defaultQuality.getNumber());
+                Arrays.fill(buf, defaultQuality.getValue());
                 qualities = new EncodedQualitySequence(
                          RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, PhredQuality.valueOf(buf));
             }
@@ -165,7 +165,7 @@ public class MakeChromatogram {
     private static Chromatogram buildSyntheticChromatogram(String sequenceName,
             NucleotideSequence basecalls,
             QualitySequence qualities) {
-            Peaks fakePeaks = ChromatogramUtil.buildFakePeaks((int)basecalls.getLength());
+            SangerPeak fakePeaks = ChromatogramUtil.buildFakePeaks((int)basecalls.getLength());
             ChannelGroup fakeChannelGroup =
             new ChromatogramUtil.FakeChannelGroupBuilder(basecalls,qualities, fakePeaks).build();
             

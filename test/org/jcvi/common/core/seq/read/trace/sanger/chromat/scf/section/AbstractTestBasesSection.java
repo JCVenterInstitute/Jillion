@@ -41,7 +41,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.AbstractBasesSectionCodec;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -84,7 +84,7 @@ public abstract class AbstractTestBasesSection {
                 new Channel(tConfidence,positions));
         BasicChromatogram basicChromatogram = new BasicChromatogram(
                 encodedBases,encodedQualities,
-                new Peaks(peaks),channelGroup);
+                new SangerPeak(peaks),channelGroup);
         chromatogram = new SCFChromatogramImpl(basicChromatogram);
 
         sut = createAbstractBasesSectionHandler();

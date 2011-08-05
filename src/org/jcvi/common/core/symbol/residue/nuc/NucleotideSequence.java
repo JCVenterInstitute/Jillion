@@ -80,7 +80,7 @@ public interface NucleotideSequence extends Sequence<Nucleotide>{
      */
     int getNumberOfGapsUntil(int gappedOffset);
     
-    int getUngappedOffsetFor(int gappedIndex);
+    int getUngappedOffsetFor(int gappedOffset);
     
-    int getGappedOffsetFor(int ungappedIndex);
+    int getGappedOffsetFor(int ungappedOffset);
 }

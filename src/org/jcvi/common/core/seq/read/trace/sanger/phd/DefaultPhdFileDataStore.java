@@ -35,7 +35,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
@@ -57,7 +57,7 @@ public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
         map.put(id, new DefaultPhd(id,
                 new DefaultNucleotideSequence(bases),
                 new EncodedQualitySequence(QUALITY_CODEC, qualities),
-                new Peaks(positions),
+                new SangerPeak(positions),
                 comments,
                 tags));
         

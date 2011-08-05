@@ -103,7 +103,7 @@ public abstract class AbstractZipByteGlyphCodec<G extends ByteSymbol> implements
 		byte[] data = new byte[glyphs.size()];
 		int i=0;
 		for(G glyph : glyphs){
-		    data[i]= glyph.getNumber();
+		    data[i]= glyph.getValue();
 		    i++;
 		}
 		

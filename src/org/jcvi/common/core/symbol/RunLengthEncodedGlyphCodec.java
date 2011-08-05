@@ -107,7 +107,7 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
         buf.putInt(glyphs.size());
         buf.put(guard);
         for(RunLength<PhredQuality> runLength : runLengthList){
-            if(runLength.getValue().getNumber().byteValue() == guard){
+            if(runLength.getValue().getValue().byteValue() == guard){
                 
                 for(int repeatCount = 0; repeatCount<runLength.getLength(); repeatCount++){
                     buf.put(guard);
@@ -117,12 +117,12 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
             }
             else{
                 if(runLength.getLength() ==1){
-                    buf.put(runLength.getValue().getNumber().byteValue());
+                    buf.put(runLength.getValue().getValue().byteValue());
                 }
                 else{
                     buf.put(guard);
                     buf.putShort((short)runLength.getLength());
-                    buf.put(runLength.getValue().getNumber().byteValue());
+                    buf.put(runLength.getValue().getValue().byteValue());
                 }
             }
         }
@@ -134,7 +134,7 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
         int singletons=0;
         int nonSingletons=0;
         for(RunLength<PhredQuality> runLength : runLengthList){
-            if(runLength.getValue().getNumber().byteValue() == guard){
+            if(runLength.getValue().getValue().byteValue() == guard){
                 numGuards+=runLength.getLength();
             }
             else if(runLength.getLength() ==1){

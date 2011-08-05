@@ -653,9 +653,9 @@ public static Map<List<Slice>, List<ConsensusResult>> generateMostCommonBasecall
     		int consensusQuality=0;
     		for(SliceElement e : s){
     			if(e.getBase() == mostCommonBase){
-    				consensusQuality += e.getQuality().getNumber();
+    				consensusQuality += e.getQuality().getValue();
     			}else{
-    				consensusQuality -= e.getQuality().getNumber();
+    				consensusQuality -= e.getQuality().getValue();
     			}
     		}
     		consensusResults.add(new DefaultConsensusResult(mostCommonBase, consensusQuality));

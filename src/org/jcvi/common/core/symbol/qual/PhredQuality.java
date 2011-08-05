@@ -92,7 +92,15 @@ public final class PhredQuality extends ByteSymbol<PhredQuality>{
      * @return {@literal 10^(-q/10)}
      */
     public double getErrorProbability(){
-        return Math.pow(TEN, this.getNumber()/-TEN);       
+        return Math.pow(TEN, this.getValue()/-TEN);       
+    }
+    /**
+     * Get this {@link PhredQuality}'s 
+     * quality score as a byte.
+     * @return a positive byte value.
+     */
+    public byte getQualityScore(){
+        return getValue().byteValue();
     }
     /**
      * Get the corresponding {@link PhredQuality} instance
@@ -138,7 +146,7 @@ public final class PhredQuality extends ByteSymbol<PhredQuality>{
     public static byte[] toArray(Collection<PhredQuality> qualities){
         ByteBuffer buf = ByteBuffer.allocate(qualities.size());
         for(PhredQuality quality : qualities){
-            buf.put(quality.getNumber());
+            buf.put(quality.getValue());
         }
         return buf.array();
     }
@@ -146,7 +154,7 @@ public final class PhredQuality extends ByteSymbol<PhredQuality>{
 
     @Override
     public String toString() {        
-        return String.format("Q%02d",this.getNumber());
+        return String.format("Q%02d",this.getValue());
     }
     
     

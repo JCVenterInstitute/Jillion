@@ -33,7 +33,7 @@ public class TestShortGlyph {
     
     @Test
     public void getNumber(){
-        assertEquals(Short.valueOf(value), sut.getNumber());
+        assertEquals(Short.valueOf(value), sut.getValue());
     }
     @Test
     public void getName(){

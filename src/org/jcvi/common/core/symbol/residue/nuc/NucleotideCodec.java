@@ -16,33 +16,16 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jul 17, 2009
- *
+
+package org.jcvi.common.core.symbol.residue.nuc;
+
+import org.jcvi.common.core.symbol.GlyphCodec;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.common.core.symbol.pos;
+public interface NucleotideCodec extends GlyphCodec<Nucleotide>{
 
-import org.jcvi.common.core.symbol.pos.SangerPeak;
-import org.jcvi.common.core.symbol.pos.PeaksUtil;
-import org.junit.Test;
-import static org.junit.Assert.*;
-public class TestPeaksUtil {
-
-    @Test
-    public void generateEmptyPeaks(){
-        SangerPeak emptyPeaks = PeaksUtil.generateFakePeaks(0);
-        assertEquals(emptyPeaks.getData().getLength(),0L);
-    }
-    @Test(expected = IllegalArgumentException.class)
-    public void geneateFakePeaksNegativeShouldThrowIllegalArgumentException(){
-        PeaksUtil.generateFakePeaks(-1);
-    }
-    @Test
-    public void generateFakePeaks(){
-        short[] expected = new short[]{5,15,25,35,45};
-        SangerPeak actualpeaks = PeaksUtil.generateFakePeaks(expected.length);
-        
-        assertEquals(new SangerPeak(expected), actualpeaks);
-    }
 }

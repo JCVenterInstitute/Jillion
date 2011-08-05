@@ -33,7 +33,7 @@ import java.util.Properties;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -64,7 +64,7 @@ public class SinglePhdFile implements  Phd{
 					RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
 					qualities),
 					
-					new Peaks(positions),comments,
+					new SangerPeak(positions),comments,
 					tags);
 	}
     public SinglePhdFile(InputStream singlePhdStream) {
@@ -76,7 +76,7 @@ public class SinglePhdFile implements  Phd{
 					RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
 					qualities),
 					
-					new Peaks(positions),comments,
+					new SangerPeak(positions),comments,
 					tags);
 	}
 
@@ -113,7 +113,7 @@ public class SinglePhdFile implements  Phd{
 	}
 	
 	@Override
-	public Peaks getPeaks() {
+	public SangerPeak getPeaks() {
 		return delegatePhd.getPeaks();
 	}
 	@Override

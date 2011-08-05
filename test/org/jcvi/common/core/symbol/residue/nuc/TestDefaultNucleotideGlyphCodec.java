@@ -36,7 +36,7 @@ public class TestDefaultNucleotideGlyphCodec {
     List<Nucleotide> evenBases = Nucleotides.parse("ACGTACGTWS-NACGT");
     List<Nucleotide> oddBases =  Nucleotides.parse("ACGTACGTWS-NACGTA");
     
-    DefaultNucleotideGlyphCodec sut = DefaultNucleotideGlyphCodec.getInstance();
+    DefaultNucleotideGlyphCodec sut = DefaultNucleotideGlyphCodec.INSTANCE;
     
     @Test
     public void evenEncodesAndDecodes(){

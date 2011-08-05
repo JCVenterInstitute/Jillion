@@ -31,7 +31,7 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
@@ -41,14 +41,14 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         super(record, rootDirPath);
     }
     @Override
-    public Peaks getPeaks() {
+    public SangerPeak getPeaks() {
         InputStream in=null;
         DefaultPositionFastaFileDataStore datastore =new DefaultPositionFastaFileDataStore();
         try{
             in = getInputStreamFor(TraceInfoField.PEAK_FILE);
             datastore =new DefaultPositionFastaFileDataStore();
             FastaParser.parseFasta(in, datastore);
-            return new Peaks(datastore.iterator().next().getValue().decode());
+            return new SangerPeak(datastore.iterator().next().getValue().decode());
         } catch (IOException e) {
             throw new IllegalArgumentException("peak file not valid",e);
         }

@@ -29,12 +29,12 @@ public class ByteSymbol<T extends ByteSymbol> extends DefaultNumericGlyph implem
         super(Byte.valueOf(b));
     }
     @Override
-    public Byte getNumber() {
-        return (Byte)super.getNumber();
+    public Byte getValue() {
+        return (Byte)super.getValue();
     }
     @Override
     public int compareTo(T o) {
-        return getNumber().compareTo(o.getNumber());
+        return getValue().compareTo(o.getValue());
     }
     @Override
     public boolean equals(Object obj) {

@@ -44,7 +44,7 @@ public class EncodedShortSymbol implements Sequence<ShortSymbol>{
     private short[] encode(List<ShortSymbol> shorts) {
         ShortBuffer buffer = ShortBuffer.allocate(shorts.size());
         for(ShortSymbol byteGlyph : shorts){
-            buffer.put(byteGlyph.getNumber().shortValue());
+            buffer.put(byteGlyph.getValue().shortValue());
         }
         return buffer.array();
     }

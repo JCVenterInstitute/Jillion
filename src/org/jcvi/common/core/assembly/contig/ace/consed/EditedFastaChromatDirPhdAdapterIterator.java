@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.util.CloseableIterator;
 import org.joda.time.DateTime;
@@ -50,7 +50,7 @@ public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaCons
     private final CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> positionIterator;
     
     private QualityFastaRecord currentQualityFasta;
-    private Peaks currentPeaks;
+    private SangerPeak currentPeaks;
     /**
      * @param fastaIterator
      * @param fastaFile
@@ -107,7 +107,7 @@ public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaCons
     @Override
     public PhdReadRecord next() {
         currentQualityFasta = qualityIterator.next();
-        currentPeaks = new Peaks(positionIterator.next().getValue());
+        currentPeaks = new SangerPeak(positionIterator.next().getValue());
         return super.next();
     }
     @Override

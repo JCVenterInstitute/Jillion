@@ -32,7 +32,7 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.pos.Peaks;
+import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -222,7 +222,7 @@ public final class BasicChromatogramBuilder {
             return new BasicChromatogram(
                     new DefaultNucleotideSequence(basecalls()),
                     generateQualities(channelGroup),                        
-                        new Peaks(peaks()),
+                        new SangerPeak(peaks()),
                                                 channelGroup,
                                                 properties());
         }

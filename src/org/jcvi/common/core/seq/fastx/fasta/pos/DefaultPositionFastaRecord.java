@@ -46,7 +46,7 @@ public class DefaultPositionFastaRecord <T extends Sequence<ShortSymbol>> extend
         
        final List<ShortSymbol> decodedPositions = positions.decode();
        for(int i=1; i<decodedPositions.size(); i++){
-           result.append(String.format("%04d", decodedPositions.get(i-1).getNumber()));
+           result.append(String.format("%04d", decodedPositions.get(i-1).getValue()));
            if(i%12 == 0){
                this.appendCarriageReturnAndLineFeed(result);
            }
@@ -55,7 +55,7 @@ public class DefaultPositionFastaRecord <T extends Sequence<ShortSymbol>> extend
            }        
        }
        //last value doesn't get a space
-       result.append(String.format("%04d", decodedPositions.get(decodedPositions.size()-1).getNumber()));
+       result.append(String.format("%04d", decodedPositions.get(decodedPositions.size()-1).getValue()));
        return result.toString();
     }
 

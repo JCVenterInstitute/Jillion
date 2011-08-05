@@ -56,7 +56,7 @@ public abstract class AbstractByteSymbolCodec<T extends ByteSymbol> implements B
     public byte[] encode(Collection<T> glyphs) {
         ByteBuffer buf = ByteBuffer.allocate(glyphs.size());
         for(ByteSymbol g : glyphs){
-            buf.put(g.getNumber().byteValue());
+            buf.put(g.getValue().byteValue());
         }
         return buf.array();
     }

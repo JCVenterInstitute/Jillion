@@ -44,7 +44,7 @@ public class EncodedByteSquence implements Sequence<ByteSymbol>{
     private byte[] encode(List<ByteSymbol> bytes) {
         ByteBuffer buffer = ByteBuffer.allocate(bytes.size());
         for(ByteSymbol byteGlyph : bytes){
-            buffer.put(byteGlyph.getNumber().byteValue());
+            buffer.put(byteGlyph.getValue().byteValue());
         }
         return buffer.array();
     }
