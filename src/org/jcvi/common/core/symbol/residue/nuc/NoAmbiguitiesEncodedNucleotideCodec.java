@@ -39,7 +39,9 @@ import org.jcvi.common.core.symbol.GlyphCodec;
  *
  */
 public enum NoAmbiguitiesEncodedNucleotideCodec implements NucleotideCodec{
-
+    /**
+     * Singleton instance.
+     */
     INSTANCE
     ;
     static boolean canEncode(Iterable<Nucleotide> nucleotides){
@@ -59,18 +61,32 @@ public enum NoAmbiguitiesEncodedNucleotideCodec implements NucleotideCodec{
     
     private static final int NUCLEOTIDES_PER_BYTE =4;
 
-
+    /**
+     * This is a sentinel value for a gap.  Since we 
+     * can only store 2 bits per base, a byte of 5 is too big.
+     * 
+     */
     private static final byte GAP_BYTE = 5;
     
    
+    private int computeBytesPerGapOffset(int length){
+        if(length<= Byte.MAX_VALUE){
+            return 1;
+        }
+        if(length<= Short.MAX_VALUE){
+            return 2;
+        }
+        return 4;
+    }
     @Override
     public List<Nucleotide> decode(byte[] encodedGlyphs) {
         ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
         int length = decodedLengthOf(encodedGlyphs);
-        List<Integer> gaps = getGapOffsets(buf);
+        int numberOfBytesPerGap = computeBytesPerGapOffset(length);
+        List<Integer> gaps = getGapOffsets(buf,numberOfBytesPerGap);
         List<Nucleotide> result = new ArrayList<Nucleotide>(length);
         
-        for(int i=HEADER_LENGTH+4*gaps.size(); i<encodedGlyphs.length-1; i++){
+        for(int i=HEADER_LENGTH+numberOfBytesPerGap*gaps.size(); i<encodedGlyphs.length-1; i++){
             result.addAll(decodeNext4Values(encodedGlyphs[i]));
         }
         if(length>0){
@@ -89,41 +105,50 @@ public enum NoAmbiguitiesEncodedNucleotideCodec implements NucleotideCodec{
         }
         return result;
     }
-    private List<Integer> getGapOffsets(ByteBuffer buf){
+    private List<Integer> getGapOffsets(ByteBuffer buf, int bytesPerOffset){
         buf.position(4);
         int numberOfGaps =buf.getInt();
         List<Integer> gaps = new ArrayList<Integer>();
         for(int i=0; i<numberOfGaps; i++){
-            gaps.add(buf.getInt());
+            if(bytesPerOffset ==1){
+                gaps.add(Integer.valueOf(buf.get()));
+            }else if(bytesPerOffset ==2){
+                gaps.add(Integer.valueOf(buf.getShort()));
+            }else{            
+                gaps.add(buf.getInt());
+            }
         }
         return gaps;
     }
     @Override
     public Nucleotide decode(byte[] encodedGlyphs, int index){
-        List<Integer> gaps = getGapOffsets(ByteBuffer.wrap(encodedGlyphs));
+        int length = decodedLengthOf(encodedGlyphs);
+        int numberOfBytesPerGap = computeBytesPerGapOffset(length);
+       
+        List<Integer> gaps = getGapOffsets(ByteBuffer.wrap(encodedGlyphs),numberOfBytesPerGap);
         if(gaps.contains(Integer.valueOf(index))){
             return Nucleotide.Gap;
         }
-        final byte getByteForGlyph = getEncodedByteForGlyph(encodedGlyphs,gaps.size(),index);
+        final byte getByteForGlyph = getEncodedByteForGlyph(encodedGlyphs,gaps.size(),numberOfBytesPerGap,index);
         return decode(getByteForGlyph, index %NUCLEOTIDES_PER_BYTE);
     }
     private Nucleotide decode(final byte getByteForGlyph, int index) {
         List<Nucleotide> values = decodeNext4Values(getByteForGlyph);
         return values.get(index);
     }
-    private byte getEncodedByteForGlyph(byte[] encodedGlyphs, int numberOfGaps, int index) {
-        final int encodedIndex = computeEncodedIndexForGlyph(numberOfGaps,index);
+    private byte getEncodedByteForGlyph(byte[] encodedGlyphs, int numberOfGaps,int numberOfBytesPerGap, int index) {
+        final int encodedIndex = computeEncodedIndexForGlyph(numberOfGaps,numberOfBytesPerGap,index);
         if(encodedIndex >= encodedGlyphs.length){
             throw new ArrayIndexOutOfBoundsException("index "+index + " corresponds to encodedIndex "+encodedIndex + "  encodedglyph length is "+encodedGlyphs.length);
         }
         final byte getByteForGlyph = encodedGlyphs[encodedIndex];
         return getByteForGlyph;
     }
-    private int computeEncodedIndexForGlyph(int numberOfGaps,int index) {
+    private int computeEncodedIndexForGlyph(int numberOfGaps,int numberOfBytesPerGap,int index) {
         if(index<0){
             throw new IllegalArgumentException("index can not be negative: "+index);
         }
-        final int encodedIndexForGlyph = HEADER_LENGTH+4*numberOfGaps+index/4;
+        final int encodedIndexForGlyph = HEADER_LENGTH+numberOfBytesPerGap*numberOfGaps+index/4;
         return encodedIndexForGlyph;
     }
 
@@ -150,11 +175,21 @@ public enum NoAmbiguitiesEncodedNucleotideCodec implements NucleotideCodec{
         Iterator<Nucleotide> iterator = glyphs.iterator();
         List<Integer> gaps = encodeAll(iterator, unEncodedSize, encodedBases);
         encodedBases.flip();
-        ByteBuffer result = ByteBuffer.allocate(HEADER_LENGTH + gaps.size()*4 + encodedBasesSize);
+        
+        int numberOfBytesPerGap = computeBytesPerGapOffset(unEncodedSize);
+        
+        ByteBuffer result = ByteBuffer.allocate(HEADER_LENGTH + gaps.size()*numberOfBytesPerGap + encodedBasesSize);
         result.putInt(unEncodedSize);
+       
         result.putInt(gaps.size());
         for(Integer gap : gaps){
-            result.putInt(gap);
+            if(numberOfBytesPerGap==1){
+                result.put(gap.byteValue());
+            }else if(numberOfBytesPerGap==2){
+                result.putShort(gap.shortValue());
+            }else{
+                result.putInt(gap);
+            }
         }
         result.put(encodedBases);
         return result.array();

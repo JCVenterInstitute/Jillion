@@ -19,6 +19,7 @@
 
 package org.jcvi.common.core.symbol.residue.nuc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -112,6 +113,16 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
         assertEquals(nucleotides,sut.decode(actual));
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
+    /**
+     * Gaps in each of the 4 offsets in a byte
+     */
+    @Test
+    public void encodeWithFourGaps(){
+        List<Nucleotide> nucleotides = Nucleotides.parse("ACGT-CGTA-GTAC-TACG-ACGT");
+        byte[] actual =sut.encode(nucleotides);
+        assertEquals(nucleotides,sut.decode(actual));
+        assertDecodeByIndexIsCorrect(nucleotides, actual);        
+    }
     
     @Test
     public void encodeWithTwoConsecutiveGaps(){
@@ -119,5 +130,38 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
         byte[] actual =sut.encode(nucleotides);
         assertEquals(nucleotides,sut.decode(actual));
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
+    }
+    
+    @Test
+    public void gapOffsetsEncodedAsShorts(){
+        int size = 2* Byte.MAX_VALUE+1;
+        List<Nucleotide> longBases = new ArrayList<Nucleotide>(size);
+        for(int i=0; i< Byte.MAX_VALUE ;i++){
+            longBases.add(Nucleotide.parse("C"));
+        }
+        longBases.add(Nucleotide.Gap);
+        for(int i=0; i< Byte.MAX_VALUE ;i++){
+            longBases.add(Nucleotide.parse("T"));
+        }
+        
+        byte[] actual =sut.encode(longBases);
+        assertEquals(longBases,sut.decode(actual));
+        assertDecodeByIndexIsCorrect(longBases, actual);    
+    }
+    @Test
+    public void gapOffsetsEncodedAsInts(){
+        int size = 2* Short.MAX_VALUE+1;
+        List<Nucleotide> longBases = new ArrayList<Nucleotide>(size);
+        for(int i=0; i< Short.MAX_VALUE ;i++){
+            longBases.add(Nucleotide.parse("C"));
+        }
+        longBases.add(Nucleotide.Gap);
+        for(int i=0; i< Short.MAX_VALUE ;i++){
+            longBases.add(Nucleotide.parse("T"));
+        }
+        
+        byte[] actual =sut.encode(longBases);
+        assertEquals(longBases,sut.decode(actual));
+        assertDecodeByIndexIsCorrect(longBases, actual);    
     }
 }
