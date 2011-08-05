@@ -117,7 +117,7 @@ public enum FastQQualityCodec {
      */
     public String encode(Sequence<PhredQuality> qualities) {
         StringBuilder builder= new StringBuilder();
-        for(PhredQuality quality : qualities.decode()){
+        for(PhredQuality quality : qualities.asList()){
             builder.append(encode(quality));
         }
         return builder.toString();

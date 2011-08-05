@@ -69,7 +69,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     
     private void assertContigParsedCorrectly(Contig<PlacedRead> expected, Contig<? extends PlacedRead> actual) {
         assertEquals(expected.getId(), actual.getId()); 
-        assertEquals(expected.getConsensus().decode(), actual.getConsensus().decode());
+        assertEquals(expected.getConsensus().asList(), actual.getConsensus().asList());
         assertEquals(expected.getId(),expected.getNumberOfReads(), actual.getNumberOfReads());
         for(PlacedRead expectedRead : expected.getPlacedReads()){
             assertPlacedReadParsedCorrectly(expectedRead, actual.getPlacedReadById(expectedRead.getId()));
@@ -84,7 +84,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
         assertEquals(expected.getEnd(), actual.getEnd());
         assertEquals(expected.getLength(), actual.getLength());
         assertEquals(expected.getId(),expected.getValidRange(), actual.getValidRange());
-        assertEquals(expected.getNucleotideSequence().decode(), actual.getNucleotideSequence().decode());
+        assertEquals(expected.getNucleotideSequence().asList(), actual.getNucleotideSequence().asList());
         
     }
 }

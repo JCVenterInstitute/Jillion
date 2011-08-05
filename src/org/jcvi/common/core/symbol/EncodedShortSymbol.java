@@ -51,7 +51,7 @@ public class EncodedShortSymbol implements Sequence<ShortSymbol>{
     
     
     @Override
-    public List<ShortSymbol> decode() {
+    public List<ShortSymbol> asList() {
          return FACTORY.getGlyphsFor(data);
     }
 
@@ -65,9 +65,9 @@ public class EncodedShortSymbol implements Sequence<ShortSymbol>{
         return data.length;
     }
     @Override
-    public List<ShortSymbol> decode(Range range) {
+    public List<ShortSymbol> asList(Range range) {
         if(range==null){
-            return decode();
+            return asList();
         }
         List<ShortSymbol> result = new ArrayList<ShortSymbol>();
         for(long index : range){

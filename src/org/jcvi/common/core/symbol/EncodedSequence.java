@@ -68,7 +68,7 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
         this.data = Arrays.copyOf(data, data.length);
     }
 
-    public List<T> decode(){
+    public List<T> asList(){
         return codec.decode(data);
     }
     public long getLength(){
@@ -104,9 +104,9 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
         return codec.decode(data, index);
     }
     @Override
-    public List<T> decode(Range range) {
+    public List<T> asList(Range range) {
         if(range ==null){
-            return decode();
+            return asList();
         }
         List<T> result = new ArrayList<T>();
         if(range.isSubRangeOf(Range.buildRangeOfLength(0, getLength()))){
@@ -118,17 +118,17 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
     }
     @Override
     public String toString() {
-        return decode().toString();
+        return asList().toString();
     }
     /**
     * Default iterator returns the iterator from
-    * the result of {@link #decode()}.  This method
+    * the result of {@link #asList()}.  This method
     * should be overridden if a more efficient 
     * iterator could be generated.
     */
     @Override
     public Iterator<T> iterator() {
-        return decode().iterator();
+        return asList().iterator();
     }
     
 

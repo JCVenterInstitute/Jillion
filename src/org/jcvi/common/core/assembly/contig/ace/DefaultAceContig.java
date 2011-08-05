@@ -58,7 +58,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         
         public Builder(String contigId, String fullConsensus){
            this(contigId,
-        		   new DefaultNucleotideSequence(
+        		   DefaultNucleotideSequence.create(
                     Nucleotides.parse(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)))
             );
         }
@@ -84,7 +84,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         
         public Builder addRead(AcePlacedRead acePlacedRead) {
          return addRead(acePlacedRead.getId(),
-        		 Nucleotides.convertToString(acePlacedRead.getNucleotideSequence().decode()),
+        		 Nucleotides.convertToString(acePlacedRead.getNucleotideSequence().asList()),
         		 (int)acePlacedRead.getStart(),
         		 acePlacedRead.getDirection(),
         		 acePlacedRead.getValidRange(),
@@ -138,14 +138,14 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             }
         }
         public DefaultAceContig build(){
-            Set<AcePlacedRead> placedReads = new HashSet<AcePlacedRead>(aceReadBuilders.size());
+            Set<AcePlacedRead> placedReads = new HashSet<AcePlacedRead>(aceReadBuilders.size()+1,1F);
             
             if(numberOfReads()==0){
                 //force empty contig if no reads...
                 return new DefaultAceContig(contigId, new DefaultNucleotideSequence(""),placedReads);
             }
             
-            List<Nucleotide> updatedConsensus = updateConsensus(fullConsensus.decode());
+            List<Nucleotide> updatedConsensus = updateConsensus(fullConsensus.asList());
             //contig left (and right) might be beyond consensus depending on how
             //trimmed the data is and what assembly/consensus caller is used.
             //force contig left and right to be within the called consensus

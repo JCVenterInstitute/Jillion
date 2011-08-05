@@ -46,7 +46,7 @@ public class AceFileUtil {
     public static final DateTimeFormatter TAG_DATE_TIME_FORMATTER = DateTimeFormat.forPattern("YYMMdd:HHmmss");
     
     public static String convertToAcePaddedBasecalls(NucleotideSequence basecalls){
-        return convertToAcePaddedBasecalls(basecalls.decode(),null);
+        return convertToAcePaddedBasecalls(basecalls.asList(),null);
      }
      public static String convertToAcePaddedBasecalls(List<Nucleotide> basecalls,List<PhredQuality> qualities){
          StringBuilder result = new StringBuilder();
@@ -125,7 +125,7 @@ public class AceFileUtil {
     public static String createAcePlacedReadRecord(String readId, NucleotideSequence gappedValidBasecalls, 
             Range ungappedValidRange, Direction dir, Phd phd, PhdInfo phdInfo){
         final NucleotideSequence fullBasecalls = phd.getBasecalls();
-        final List<Nucleotide> phdFullBases = fullBasecalls.decode();
+        final List<Nucleotide> phdFullBases = fullBasecalls.asList();
         
         final List<Nucleotide> fullGappedValidRange;
         final List<PhredQuality> qualities;
@@ -133,7 +133,7 @@ public class AceFileUtil {
         if(dir == Direction.FORWARD){
             fullGappedValidRange = AssemblyUtil.buildGappedComplimentedFullRangeBases(gappedValidBasecalls,dir,ungappedValidRange, 
                     phdFullBases);
-            qualities = phdQualities.decode();
+            qualities = phdQualities.asList();
         }else{
             final List<Nucleotide> complimentedFullBases = Nucleotides.reverseCompliment(phdFullBases);
             Range complimentedValidRange = AssemblyUtil.reverseComplimentValidRange(
@@ -144,7 +144,7 @@ public class AceFileUtil {
             fullGappedValidRange = createReverseComplimentedGappedFullLengthBasecalls(
                     gappedValidBasecalls, complimentedFullBases,
                     complimentedValidRange);
-            List<PhredQuality> uncomplimentedQualities = phdQualities.decode();
+            List<PhredQuality> uncomplimentedQualities = phdQualities.asList();
             qualities = new ArrayList<PhredQuality>(uncomplimentedQualities.size());
             for(int i=uncomplimentedQualities.size()-1; i>=0; i--){
                 qualities.add(uncomplimentedQualities.get(i));
@@ -171,7 +171,7 @@ public class AceFileUtil {
         final List<Nucleotide> fullGappedValidRange;
         fullGappedValidRange=new ArrayList<Nucleotide>();
         fullGappedValidRange.addAll(complimentedFullBases.subList(0, (int)complimentedValidRange.getStart()));            
-        fullGappedValidRange.addAll(gappedValidBasecalls.decode());
+        fullGappedValidRange.addAll(gappedValidBasecalls.asList());
         fullGappedValidRange.addAll(complimentedFullBases.subList(
                 (int)complimentedValidRange.getEnd()+1, 
                 complimentedFullBases.size()));

@@ -21,6 +21,8 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta;
 
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.util.CommonUtil;
 
 
@@ -33,7 +35,7 @@ import org.jcvi.common.core.util.CommonUtil;
  * @author jsitz
  * @author dkatzel
  */
-public abstract class AbstractFastaRecord<T> implements FastaRecord<T>
+public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S>> implements FastaRecord<S,T>
 {
     
     private final String identifier;

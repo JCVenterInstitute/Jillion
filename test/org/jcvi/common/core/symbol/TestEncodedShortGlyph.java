@@ -38,7 +38,7 @@ public class TestEncodedShortGlyph {
     
     @Test
     public void decode(){
-        assertEquals(glyphs, sut.decode());
+        assertEquals(glyphs, sut.asList());
     }
     @Test
     public void length(){

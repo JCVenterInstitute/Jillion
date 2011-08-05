@@ -85,8 +85,8 @@ public final class BasicChromatogramBuilder {
             properties(properties);
         }
         public BasicChromatogramBuilder(Chromatogram copy){
-       this(Nucleotides.convertToString(copy.getBasecalls().decode()),
-       ShortSymbol.toArray(copy.getPeaks().getData().decode()),
+       this(Nucleotides.convertToString(copy.getBasecalls().asList()),
+       ShortSymbol.toArray(copy.getPeaks().getData().asList()),
        copy.getChannelGroup(),
        copy.getComments()
        );

@@ -24,10 +24,11 @@
 package org.jcvi.common.core.seq.fastx.fasta.nuc;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecordVisitor;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 
-public abstract class AbstractNucleotideFastaVisitor extends AbstractFastaRecordVisitor<NucleotideSequence, NucleotideSequenceFastaRecord>{
+public abstract class AbstractNucleotideFastaVisitor extends AbstractFastaRecordVisitor<Nucleotide,NucleotideSequence, NucleotideSequenceFastaRecord>{
 
     public AbstractNucleotideFastaVisitor(){
         this(DefaultNucleotideFastaRecordFactory.getInstance());

@@ -102,8 +102,8 @@ public class TestHiLowAceContigPhdDatastore {
                 new EncodedQualitySequence(new DefaultEncodedPhredGlyphCodec(), expectedQualities),
                 19);
         Phd actual = sut.get("K26-217c");
-        assertEquals(expected.getBasecalls().decode(),actual.getBasecalls().decode());
-        assertEquals(expected.getQualities().decode(),actual.getQualities().decode());
+        assertEquals(expected.getBasecalls().asList(),actual.getBasecalls().asList());
+        assertEquals(expected.getQualities().asList(),actual.getQualities().asList());
     }
 
     
@@ -168,8 +168,8 @@ public class TestHiLowAceContigPhdDatastore {
                         expectedQualities),
                 19);
         Phd actual = sut.get(id);
-        assertEquals(expected.getBasecalls().decode(),actual.getBasecalls().decode());
-        assertEquals(expected.getQualities().decode(),actual.getQualities().decode());
+        assertEquals(expected.getBasecalls().asList(),actual.getBasecalls().asList());
+        assertEquals(expected.getQualities().asList(),actual.getQualities().asList());
     }
     /**
      * @param expectedQualities

@@ -66,7 +66,7 @@ public class QualitySffDataStore implements QualityDataStore{
         QualitySequence qualities= flowgram.getQualities();
         if(trim){
          return new EncodedQualitySequence(QUALITY_CODEC, 
-                 qualities.decode(SFFUtil.getTrimRangeFor(flowgram)));   
+                 qualities.asList(SFFUtil.getTrimRangeFor(flowgram)));   
         }
         return qualities;
     }

@@ -196,7 +196,7 @@ public abstract class AbstractTestBasesSectionDecoder {
         verify(mockHeader);
         SCFChromatogram chromatogram = sut.getChromatogram();
         assertEquals(newOffset-currentOffset-skipDistance, (int)bases.getLength()*12);
-        assertEquals(chromatogram.getBasecalls().decode(), 
+        assertEquals(chromatogram.getBasecalls().asList(), 
                  Nucleotides.parse(c.basecalls()));
         Sequence<ShortSymbol> encodedPeaks = new EncodedSequence<ShortSymbol>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(c.peaks()));
         assertEquals(chromatogram.getPeaks().getData(),

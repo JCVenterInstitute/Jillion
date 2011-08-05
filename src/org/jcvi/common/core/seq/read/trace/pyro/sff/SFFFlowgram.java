@@ -123,9 +123,9 @@ public class SFFFlowgram implements Flowgram {
         final int prime = 31;
         int result = 1;
         result = prime * result + id.hashCode();
-        result = prime * result + basecalls.decode().hashCode();
+        result = prime * result + basecalls.asList().hashCode();
         result = prime * result + Arrays.hashCode(values);
-        result = prime * result + qualities.decode().hashCode();
+        result = prime * result + qualities.asList().hashCode();
         result = prime * result + qualitiesClip.hashCode();
         result = prime * result + adapterClip.hashCode();
         
@@ -150,8 +150,8 @@ public class SFFFlowgram implements Flowgram {
         
         return
         CommonUtil.similarTo(id, other.getId()) &&
-        CommonUtil.similarTo(basecalls.decode(), other.basecalls.decode()) &&
-        CommonUtil.similarTo(qualities.decode(), other.qualities.decode()) &&
+        CommonUtil.similarTo(basecalls.asList(), other.basecalls.asList()) &&
+        CommonUtil.similarTo(qualities.asList(), other.qualities.asList()) &&
         CommonUtil.similarTo(qualitiesClip, other.qualitiesClip) &&
         CommonUtil.similarTo(adapterClip, other.adapterClip) &&
         Arrays.equals(values, other.values);

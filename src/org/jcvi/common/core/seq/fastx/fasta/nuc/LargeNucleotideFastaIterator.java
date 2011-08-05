@@ -22,6 +22,7 @@ package org.jcvi.common.core.seq.fastx.fasta.nuc;
 import java.io.File;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaRecordIterator;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
@@ -29,7 +30,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  *
  *
  */
-public class LargeNucleotideFastaIterator extends AbstractLargeFastaRecordIterator<NucleotideSequence, NucleotideSequenceFastaRecord>{
+public class LargeNucleotideFastaIterator extends AbstractLargeFastaRecordIterator<Nucleotide,NucleotideSequence, NucleotideSequenceFastaRecord>{
 
 	 public static LargeNucleotideFastaIterator createNewIteratorFor(File fastaFile){
 		 LargeNucleotideFastaIterator iter = new LargeNucleotideFastaIterator(fastaFile);

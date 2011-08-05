@@ -81,7 +81,7 @@ public final class FastQUtil {
             builder.append(" ").append(fastQRecord.getComment());
         }
         builder.append("\n")
-        .append(Nucleotides.convertToString(fastQRecord.getNucleotides().decode())).append("\n")
+        .append(Nucleotides.convertToString(fastQRecord.getNucleotides().asList())).append("\n")
         .append("+");
         if(writeIdOnQualityLine){
             builder.append(id);

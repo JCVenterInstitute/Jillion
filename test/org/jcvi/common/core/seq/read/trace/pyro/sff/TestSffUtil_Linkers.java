@@ -45,6 +45,6 @@ public class TestSffUtil_Linkers {
     }
     
     private void assertMatches(String expected, NucleotideSequence actual){
-        assertEquals(expected, Nucleotides.convertToString(actual.decode()));
+        assertEquals(expected, Nucleotides.convertToString(actual.asList()));
     }
 }

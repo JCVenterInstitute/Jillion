@@ -29,7 +29,7 @@ import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 
-public class DefaultQualityFastaRecord extends AbstractFastaRecord<QualitySequence> implements QualityFastaRecord{
+public class DefaultQualityFastaRecord extends AbstractFastaRecord<PhredQuality,QualitySequence> implements QualityFastaRecord{
     private final QualitySequence qualities;
     public DefaultQualityFastaRecord(String id, QualitySequence qualities){
         this(id, null, qualities);
@@ -43,7 +43,7 @@ public class DefaultQualityFastaRecord extends AbstractFastaRecord<QualitySequen
     protected CharSequence getRecordBody() {
         StringBuilder result = new StringBuilder();
         
-       final List<PhredQuality> decodedQualities = qualities.decode();
+       final List<PhredQuality> decodedQualities = qualities.asList();
        for(int i=1; i<decodedQualities.size(); i++){
            result.append(String.format("%02d", decodedQualities.get(i-1).getValue()));
            if(i%17 == 0){

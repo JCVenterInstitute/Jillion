@@ -27,7 +27,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
 
-public interface FastaDataStore<G extends Symbol, T extends Sequence<G>,F extends FastaRecord<T>> extends DataStore<F>{
+public interface FastaDataStore<G extends Symbol, T extends Sequence<G>,F extends FastaRecord<G,T>> extends DataStore<F>{
 
     
 

@@ -73,7 +73,7 @@ public class UpdateConsensusAceContigBuilder extends DefaultAceContig.Builder{
     private void addReadToConsensusMap(PlacedRead casPlacedRead) {
         long startOffset = casPlacedRead.getStart();
         int i=0;
-        for(Nucleotide base : casPlacedRead.getNucleotideSequence().decode()){
+        for(Nucleotide base : casPlacedRead.getNucleotideSequence().asList()){
             long index = startOffset+i;
             if(!consensusMap.containsKey(index)){
                 consensusMap.put(index, new EnumMap<Nucleotide, Integer>(Nucleotide.class));

@@ -151,7 +151,7 @@ public final class ChromatogramXMLSerializer {
         }
         private EncodedShortData convertToEncodedShortData(Sequence<ShortSymbol> shortGlyphs){
             ShortBuffer buf = ShortBuffer.allocate((int)shortGlyphs.getLength());
-            for(ShortSymbol g : shortGlyphs.decode()){
+            for(ShortSymbol g : shortGlyphs.asList()){
                 buf.put(g.getValue().shortValue());
             }
             return new EncodedShortData(buf.array());
@@ -281,8 +281,8 @@ public final class ChromatogramXMLSerializer {
                        ChromatogramXMLSerializer.class,
                                      "buildBasicChromatogram",
                                      new Object[]{
-                   Nucleotides.convertToString(chromatogram.getBasecalls().decode()), 
-                   new EncodedByteData(PhredQuality.toArray(chromatogram.getQualities().decode())).encodeData(),
+                   Nucleotides.convertToString(chromatogram.getBasecalls().asList()), 
+                   new EncodedByteData(PhredQuality.toArray(chromatogram.getQualities().asList())).encodeData(),
                    chromatogram.getPeaks(),
                    chromatogram.getChannelGroup(),
                    chromatogram.getComments(),

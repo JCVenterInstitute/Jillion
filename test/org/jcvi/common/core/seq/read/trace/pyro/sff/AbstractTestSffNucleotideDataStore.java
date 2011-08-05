@@ -53,8 +53,8 @@ public abstract class AbstractTestSffNucleotideDataStore extends AbstractTestExa
         Iterator<String> ids = sut.getIds();
         while(ids.hasNext()){
             String id = ids.next();
-            assertEquals(sut.get(id).decode(),
-                    dataStore.get(id).getBasecalls().decode());
+            assertEquals(sut.get(id).asList(),
+                    dataStore.get(id).getBasecalls().asList());
         }
     }
     

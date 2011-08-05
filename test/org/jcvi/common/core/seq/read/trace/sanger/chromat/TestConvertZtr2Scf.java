@@ -86,7 +86,7 @@ public class TestConvertZtr2Scf {
         for(int i=0; i< numberOfBases; i++){
             expectedQualities.add(PhredQuality.valueOf(0));
         }
-        assertEquals(expectedQualities,encodedScf.getQualities().decode());
+        assertEquals(expectedQualities,encodedScf.getQualities().asList());
     }
     
     

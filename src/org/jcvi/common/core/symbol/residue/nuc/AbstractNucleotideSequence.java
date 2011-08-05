@@ -62,9 +62,9 @@ public abstract class AbstractNucleotideSequence implements NucleotideSequence{
    
     
     @Override
-    public List<Nucleotide> decode(Range range) {
+    public List<Nucleotide> asList(Range range) {
         if(range==null){
-            return decode();
+            return asList();
         }
         List<Nucleotide> result = new ArrayList<Nucleotide>();
         for(long index : range){
@@ -75,7 +75,7 @@ public abstract class AbstractNucleotideSequence implements NucleotideSequence{
 
     @Override
     public List<Nucleotide> decodeUngapped() {
-        List<Nucleotide> withoutGaps = decode();
+        List<Nucleotide> withoutGaps = asList();
         final List<Integer> gapIndexes = getGapIndexes();
         for(int i= gapIndexes.size()-1; i>=0; i--){
             withoutGaps.remove(gapIndexes.get(i).intValue());

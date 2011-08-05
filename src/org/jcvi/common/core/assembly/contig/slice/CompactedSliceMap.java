@@ -65,7 +65,7 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
         public NullQualityDataStore(final PhredQuality defaultQuality){
             fakeQualities = new QualitySequence(){
                 @Override
-                public List<PhredQuality> decode() {
+                public List<PhredQuality> asList() {
                     // TODO Auto-generated method stub
                     return null;
                 }
@@ -91,7 +91,7 @@ public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<P
                 * {@inheritDoc}
                 */
                 @Override
-                public List<PhredQuality> decode(Range range) {
+                public List<PhredQuality> asList(Range range) {
                     // TODO Auto-generated method stub
                     return null;
                 }

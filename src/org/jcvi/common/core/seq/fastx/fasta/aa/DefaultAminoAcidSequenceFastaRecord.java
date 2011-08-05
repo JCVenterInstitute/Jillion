@@ -14,7 +14,7 @@ public class DefaultAminoAcidSequenceFastaRecord extends AbstractAminoAcidSequen
  */
 
     public DefaultAminoAcidSequenceFastaRecord(String identifier, AminoAcidSequence glyphs){
-    	super(identifier, AminoAcid.convertToString(glyphs.decode()));
+    	super(identifier, AminoAcid.convertToString(glyphs.asList()));
     }
     
 	/**
@@ -57,7 +57,7 @@ public class DefaultAminoAcidSequenceFastaRecord extends AbstractAminoAcidSequen
 	@Override
 	protected CharSequence decodeAminoAcids() {
 		StringBuilder result = new StringBuilder();
-		for(AminoAcid aa : getValue().decode()){
+		for(AminoAcid aa : getValue().asList()){
 			result.append(aa.getAbbreviation());
 		}
 		return result;

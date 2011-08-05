@@ -35,10 +35,10 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
 
    
     public DefaultNucleotideSequenceFastaRecord(String identifier, Sequence<Nucleotide> sequence){
-        super(identifier, Nucleotides.convertToString(sequence.decode()));
+        super(identifier, Nucleotides.convertToString(sequence.asList()));
     }
     public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, Sequence<Nucleotide> sequence){
-        super(identifier, comments,Nucleotides.convertToString(sequence.decode()));
+        super(identifier, comments,Nucleotides.convertToString(sequence.asList()));
     }
     public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, List<Nucleotide> sequence){
         super(identifier, comments,Nucleotides.convertToString(sequence));
@@ -86,7 +86,7 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
     protected CharSequence decodeNucleotides() {
 
         StringBuilder result = new StringBuilder();
-        for(Nucleotide glyph : getValue().decode()){
+        for(Nucleotide glyph : getValue().asList()){
             result.append(glyph.getCharacter());
         }
         return result;

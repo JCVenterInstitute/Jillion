@@ -83,7 +83,7 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
     
     private NucleotideSequence createSNPValues(
             TreeMap<Integer, Nucleotide> differentGlyphMap) {
-        return new DefaultNucleotideSequence(differentGlyphMap.values());
+        return DefaultNucleotideSequence.createGappy(differentGlyphMap.values());
 
     }
     private int[] createSNPIndexes(TreeMap<Integer, Nucleotide> snpMap){
@@ -157,7 +157,7 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
     }
 
     @Override
-    public List<Nucleotide> decode() {
+    public List<Nucleotide> asList() {
         List<Nucleotide> result = new ArrayList<Nucleotide>(length);
         for(int i=0; i< length; i++){
             result.add(get(i));

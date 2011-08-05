@@ -77,7 +77,7 @@ private SFFUtil(){}
     private Linkers(String sequence) {
         this.forwardSequence = new DefaultNucleotideSequence(sequence);
         this.reverseSequence = new DefaultNucleotideSequence(Nucleotides.reverseCompliment(
-                forwardSequence.decode()));
+                forwardSequence.asList()));
     }
 
     public NucleotideSequence getForwardSequence() {

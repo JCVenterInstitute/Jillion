@@ -19,13 +19,16 @@
 
 package org.jcvi.common.core.seq.fastx.fasta;
 
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.Symbol;
+
 
 /**
  * @author dkatzel
  *
  *
  */
-public abstract class AbstractFastaRecordVisitor<T, F extends FastaRecord<T>> extends AbstractFastaVisitor {
+public abstract class AbstractFastaRecordVisitor<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S,T>> extends AbstractFastaVisitor {
 
     private final FastaRecordFactory<F> recordFactory;
     

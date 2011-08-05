@@ -64,9 +64,9 @@ public class TestDefaultFolderTraceArchiveDataStore {
        
     }
     private static void assertTraceArchiveTraceValuesEqual(TraceArchiveTrace expected, TraceArchiveTrace actual){
-        assertEquals(expected.getBasecalls().decode(), actual.getBasecalls().decode());
-        assertEquals(expected.getQualities().decode(), actual.getQualities().decode());
-        assertEquals(expected.getPeaks().getData().decode(), actual.getPeaks().getData().decode());
+        assertEquals(expected.getBasecalls().asList(), actual.getBasecalls().asList());
+        assertEquals(expected.getQualities().asList(), actual.getQualities().asList());
+        assertEquals(expected.getPeaks().getData().asList(), actual.getPeaks().getData().asList());
     }
     @Test
     public void getTrace() throws DataStoreException{

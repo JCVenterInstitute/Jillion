@@ -58,8 +58,8 @@ public class EncodedQualitySequence implements QualitySequence{
     * {@inheritDoc}
     */
     @Override
-    public List<PhredQuality> decode() {
-        return delegate.decode();
+    public List<PhredQuality> asList() {
+        return delegate.asList();
     }
 
     /**
@@ -82,8 +82,8 @@ public class EncodedQualitySequence implements QualitySequence{
     * {@inheritDoc}
     */
     @Override
-    public List<PhredQuality> decode(Range range) {
-        return delegate.decode(range);
+    public List<PhredQuality> asList(Range range) {
+        return delegate.asList(range);
     }
 
     /**

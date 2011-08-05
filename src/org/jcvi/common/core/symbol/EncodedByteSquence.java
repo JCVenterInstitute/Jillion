@@ -51,7 +51,7 @@ public class EncodedByteSquence implements Sequence<ByteSymbol>{
     
     
     @Override
-    public List<ByteSymbol> decode() {
+    public List<ByteSymbol> asList() {
          return FACTORY.getGlyphsFor(data);
     }
 
@@ -65,9 +65,9 @@ public class EncodedByteSquence implements Sequence<ByteSymbol>{
         return data.length;
     }
     @Override
-    public List<ByteSymbol> decode(Range range) {
+    public List<ByteSymbol> asList(Range range) {
         if(range==null){
-            return decode();
+            return asList();
         }
         List<ByteSymbol> result = new ArrayList<ByteSymbol>();
         for(long index : range){

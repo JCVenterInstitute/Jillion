@@ -67,13 +67,13 @@ public class TestCas2Consed3 {
 	      
 	      for(AceContig contig : dataStore){
 	    	  Contig<PlacedRead> expectedContig= getExpectedContig(contig.getId());
-	    	  assertEquals("consensus", expectedContig.getConsensus().decode(),
-	    			  contig.getConsensus().decode());
+	    	  assertEquals("consensus", expectedContig.getConsensus().asList(),
+	    			  contig.getConsensus().asList());
 	    	  assertEquals("# reads", expectedContig.getNumberOfReads(), contig.getNumberOfReads());
 	    	  for(AcePlacedRead actualRead : contig.getPlacedReads()){
 	    		  String readId =actualRead.getId();
 	    		  PlacedRead expectedRead = expectedContig.getPlacedReadById(readId);
-	    		  assertEquals("read basecalls", expectedRead.getNucleotideSequence().decode(), actualRead.getNucleotideSequence().decode());
+	    		  assertEquals("read basecalls", expectedRead.getNucleotideSequence().asList(), actualRead.getNucleotideSequence().asList());
 	    		  assertEquals("read offset", expectedRead.getStart(), actualRead.getStart());
 	    	  }
 	      }

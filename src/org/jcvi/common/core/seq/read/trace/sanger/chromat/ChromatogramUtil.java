@@ -97,7 +97,7 @@ public  final class ChromatogramUtil {
         
         @Override
         public ChannelGroup build() {
-            List<Nucleotide> bases = basecalls.decode();
+            List<Nucleotide> bases = basecalls.asList();
             // build bogus confidence arrays
             //automatically filled with 0s
             byte[] aConfidence = new byte[bases.size()];
@@ -112,8 +112,8 @@ public  final class ChromatogramUtil {
             short[] tSignal = new short[(FALSE_WAVEFORM.length-1)*(bases.size()+1)];
             short[] gSignal = new short[(FALSE_WAVEFORM.length-1)*(bases.size()+1)];
             
-            short[] peakLocations = ShortSymbol.toArray(peaks.getData().decode());
-            byte[] qualityValues =PhredQuality.toArray(this.qualities.decode());
+            short[] peakLocations = ShortSymbol.toArray(peaks.getData().asList());
+            byte[] qualityValues =PhredQuality.toArray(this.qualities.asList());
             for(int i=0; i<peakLocations.length; i++){
                 Nucleotide basecall = bases.get(i);
                 short peakLocation = peakLocations[i];

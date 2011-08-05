@@ -90,7 +90,7 @@ public final class AssemblyUtil {
         for(int i=0; i< validRange.getStart(); i++ ){
             gappedComplimentedFullRange.add(fullRangeComplimented.get(i));
         }
-        gappedComplimentedFullRange.addAll(gappedValidRange.decode());
+        gappedComplimentedFullRange.addAll(gappedValidRange.asList());
         for(int i=(int)validRange.getEnd()+1; i< fullRangeComplimented.size(); i++){
             gappedComplimentedFullRange.add(fullRangeComplimented.get(i));
         }

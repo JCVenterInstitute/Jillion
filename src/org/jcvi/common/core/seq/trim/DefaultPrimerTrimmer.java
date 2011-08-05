@@ -111,7 +111,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
                 final Alignment reverseAlignment;
                 if(alsoCheckReverseCompliment){
                     reverseAlignment = aligner.alignSequence(
-                            new DefaultNucleotideSequence(Nucleotides.reverseCompliment(sequence.decode())),
+                            new DefaultNucleotideSequence(Nucleotides.reverseCompliment(sequence.asList())),
                             primer);
                 }else{
                     reverseAlignment = NULL_ALIGNMENT_OBJECT;

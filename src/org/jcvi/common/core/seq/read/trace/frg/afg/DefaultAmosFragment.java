@@ -139,13 +139,13 @@ public class DefaultAmosFragment implements AmosFragment{
         final int prime = 31;
         int result = 1;
         result = prime * result
-                + ((basecalls == null) ? 0 : basecalls.decode().hashCode());
+                + ((basecalls == null) ? 0 : basecalls.asList().hashCode());
         result = prime * result
                 + ((clearRange == null) ? 0 : clearRange.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + index;
         result = prime * result
-                + ((qualities == null) ? 0 : qualities.decode().hashCode());
+                + ((qualities == null) ? 0 : qualities.asList().hashCode());
         result = prime * result
                 + ((qualityRange == null) ? 0 : qualityRange.hashCode());
         result = prime * result
@@ -169,7 +169,7 @@ public class DefaultAmosFragment implements AmosFragment{
             if (other.basecalls != null) {
                 return false;
             }
-        } else if (!basecalls.decode().equals(other.basecalls.decode())) {
+        } else if (!basecalls.asList().equals(other.basecalls.asList())) {
             return false;
         }
         if (clearRange == null) {
@@ -193,7 +193,7 @@ public class DefaultAmosFragment implements AmosFragment{
             if (other.qualities != null) {
                 return false;
             }
-        } else if (!qualities.decode().equals(other.qualities.decode())) {
+        } else if (!qualities.asList().equals(other.qualities.asList())) {
             return false;
         }
         if (qualityRange == null) {

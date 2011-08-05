@@ -68,10 +68,10 @@ public class TestTrimFasta {
         
         NucleotideFastaDataStore actualDataStore = new DefaultNucleotideFastaFileDataStore(outputFile);
         assertEquals(Nucleotides.convertToString(
-                    actualDataStore.get("read1").getValue().decode()),
+                    actualDataStore.get("read1").getValue().asList()),
                     "CCCTTT");
         assertEquals(Nucleotides.convertToString(
-                actualDataStore.get("read2").getValue().decode()),
+                actualDataStore.get("read2").getValue().asList()),
                 "AAACCCTTTGGGG");
     }
 }

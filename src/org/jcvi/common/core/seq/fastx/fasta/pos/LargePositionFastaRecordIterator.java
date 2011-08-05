@@ -31,7 +31,7 @@ import org.jcvi.common.core.symbol.ShortSymbol;
  *
  */
 public class LargePositionFastaRecordIterator extends AbstractLargeFastaRecordIterator
-            <Sequence<ShortSymbol>,PositionFastaRecord<Sequence<ShortSymbol>>>{
+            <ShortSymbol, Sequence<ShortSymbol>,PositionFastaRecord<Sequence<ShortSymbol>>>{
 
     public static LargePositionFastaRecordIterator createNewIteratorFor(File fastaFile){
         LargePositionFastaRecordIterator iter = new LargePositionFastaRecordIterator(fastaFile);

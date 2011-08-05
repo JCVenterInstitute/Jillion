@@ -77,7 +77,7 @@ public class DefaultNucleotideSffDataStore implements NucleotideDataStore{
         if(trim){
            
             return new DefaultNucleotideSequence(
-                    fullRange.decode(SFFUtil.getTrimRangeFor(flowgram)));
+                    fullRange.asList(SFFUtil.getTrimRangeFor(flowgram)));
         }
         return fullRange;
     }

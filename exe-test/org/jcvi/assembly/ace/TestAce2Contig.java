@@ -77,10 +77,10 @@ public class TestAce2Contig {
       
       AceContigDataStore aceContigDataStore = new DefaultAceFileDataStore(aceFile);
       AceContig aceContig = aceContigDataStore.get("Contig1");
-      assertEquals(aceContig.getConsensus().decode(), contig.getConsensus().decode());
+      assertEquals(aceContig.getConsensus().asList(), contig.getConsensus().asList());
       for(AcePlacedRead expectedRead : aceContig.getPlacedReads()){
           PlacedRead actualRead = contig.getPlacedReadById(expectedRead.getId());
-          assertEquals(expectedRead.getNucleotideSequence().decode(),actualRead.getNucleotideSequence().decode());
+          assertEquals(expectedRead.getNucleotideSequence().asList(),actualRead.getNucleotideSequence().asList());
           assertEquals(expectedRead.asRange(), actualRead.asRange());
       }
       assertTrue( FileUtils.contentEquals(expectedContigFile, actualContigFile));

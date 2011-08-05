@@ -28,6 +28,6 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 
 
-public interface PositionFastaRecord<T extends Sequence<ShortSymbol>> extends FastaRecord<T> {
+public interface PositionFastaRecord<T extends Sequence<ShortSymbol>> extends FastaRecord<ShortSymbol,T> {
 
 }
