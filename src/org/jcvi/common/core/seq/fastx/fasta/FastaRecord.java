@@ -22,6 +22,8 @@
 package org.jcvi.common.core.seq.fastx.fasta;
 
 import org.jcvi.common.core.seq.fastx.FastXRecord;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.Symbol;
 
 
 
@@ -32,7 +34,7 @@ import org.jcvi.common.core.seq.fastx.FastXRecord;
  * @author jsitz
  * @author dkatzel
  */
-public interface FastaRecord<T> extends FastXRecord<T>
+public interface FastaRecord<S extends Symbol,T extends Sequence<S>> extends FastXRecord<S,T>
 {
     
     /**

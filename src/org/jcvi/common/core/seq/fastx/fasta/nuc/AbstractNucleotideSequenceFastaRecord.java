@@ -27,6 +27,7 @@ package org.jcvi.common.core.seq.fastx.fasta.nuc;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 
@@ -39,7 +40,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  * @author jsitz@jcvi.org
  * @author dkatzel
  */
-public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFastaRecord<NucleotideSequence> implements NucleotideSequenceFastaRecord
+public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFastaRecord<Nucleotide,NucleotideSequence> implements NucleotideSequenceFastaRecord
 {
     private final NucleotideSequence sequence;
     private final long checksum;

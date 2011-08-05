@@ -236,7 +236,7 @@ public class HiLowAceContigPhdDatastore implements PhdDataStore{
                 
                 if(dir==Direction.REVERSE){
                     Collections.reverse(currentHiLowQualities);
-                    fullLengthBasecalls = new DefaultNucleotideSequence(Nucleotides.reverseCompliment(fullLengthBasecalls.decode()));
+                    fullLengthBasecalls = new DefaultNucleotideSequence(Nucleotides.reverseCompliment(fullLengthBasecalls.asList()));
                 }
                 QualitySequence qualities = new EncodedQualitySequence(
                                             RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,

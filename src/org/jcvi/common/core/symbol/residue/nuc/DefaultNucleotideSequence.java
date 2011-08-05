@@ -40,12 +40,31 @@ import org.jcvi.common.core.symbol.Sequence;
 public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     private final int[] gaps;
     private final Sequence<Nucleotide> encodedBasecalls;
+    
+    public static DefaultNucleotideSequence create(String nucleotides){
+        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides));
+    }
+    public static DefaultNucleotideSequence create(char[] nucleotides){
+        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides));
+    }
+    
+    public static DefaultNucleotideSequence create(Collection<Nucleotide> nucleotides){
+        return new DefaultNucleotideSequence(nucleotides);
+    }
+    public static DefaultNucleotideSequence createGappy(Collection<Nucleotide> nucleotides){
+        return new DefaultNucleotideSequence(nucleotides, DefaultNucleotideGlyphCodec.INSTANCE);
+    }
+    
     public DefaultNucleotideSequence(Collection<Nucleotide> nucleotides){
+        this(nucleotides,NucleotideCodecs.getNucleotideCodecFor(nucleotides));
+   
+    }
+    public DefaultNucleotideSequence(Collection<Nucleotide> nucleotides,NucleotideCodec codec ){
         this.gaps = computeGapIndexes(nucleotides);
-        NucleotideCodec codec = NucleotideCodecs.getNucleotideCodecFor(nucleotides);
         this.encodedBasecalls = new EncodedSequence<Nucleotide>(codec,nucleotides);
    
     }
+    
     public DefaultNucleotideSequence(String basecalls){
         this(Nucleotides.parse(basecalls));
     }
@@ -78,8 +97,8 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     }
 
     @Override
-    public List<Nucleotide> decode() {
-        return encodedBasecalls.decode();
+    public List<Nucleotide> asList() {
+        return encodedBasecalls.asList();
     }
 
     @Override
@@ -109,7 +128,7 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
         int result = 1;
         result = prime
                 * result
-                + encodedBasecalls.decode().hashCode();
+                + encodedBasecalls.asList().hashCode();
         return result;
     }
     @Override
@@ -121,7 +140,7 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
             return false;
         }
         DefaultNucleotideSequence other = (DefaultNucleotideSequence) obj;
-       return encodedBasecalls.decode().equals(other.encodedBasecalls.decode());
+       return encodedBasecalls.asList().equals(other.encodedBasecalls.asList());
     }
     @Override
     public String toString() {

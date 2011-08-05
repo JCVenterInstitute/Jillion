@@ -56,7 +56,7 @@ public class TestReferenceEncodedNucleotideSequence {
     private void assertDecodedCorrectly(int offset, String sequenceAsString) {
         DefaultReferenceEncodedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset);
         assertEquals(sequenceAsString.length(), sut.getLength());
-        assertEquals(sequenceAsString, Nucleotides.convertToString(sut.decode()));
+        assertEquals(sequenceAsString, Nucleotides.convertToString(sut.asList()));
         for(int i=0; i< sequenceAsString.length(); i++){
             assertEquals(Nucleotide.parse(sequenceAsString.charAt(i)),
                     sut.get(i));
@@ -133,7 +133,7 @@ public class TestReferenceEncodedNucleotideSequence {
         assertEquals(expectedGapIndexes.size(), actual.getNumberOfGaps());
        
         assertEquals(sequence.length(), actual.getLength());
-        assertEquals(sequence,Nucleotides.convertToString(actual.decode()));
+        assertEquals(sequence,Nucleotides.convertToString(actual.asList()));
     }
     
     

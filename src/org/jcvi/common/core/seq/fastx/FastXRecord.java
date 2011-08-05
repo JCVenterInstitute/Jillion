@@ -19,13 +19,16 @@
 
 package org.jcvi.common.core.seq.fastx;
 
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.Symbol;
+
 /**
  * {@code FastXRecord} is an interface for interacting
  * with a single record in a fastX format.
  * @param <T> the type used as the value of the record
  * @author dkatzel
  */
-public interface FastXRecord<T>
+public interface FastXRecord<S extends Symbol,T extends Sequence<S>>
 {
     /**
      * Get the Id of this record.

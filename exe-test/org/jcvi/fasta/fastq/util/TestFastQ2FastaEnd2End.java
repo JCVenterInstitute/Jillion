@@ -83,11 +83,11 @@ public class TestFastQ2FastaEnd2End {
          
          assertEquals(2, filteredSeqDataStore.size());
          assertEquals(2, filteredQualityDataStore.size());
-         assertEquals(originalDataStore.get(id).getNucleotides().decode(),filteredSeqDataStore.get(id).getValue().decode());
-         assertEquals(originalDataStore.get(id).getQualities().decode(),filteredQualityDataStore.get(id).getValue().decode());
+         assertEquals(originalDataStore.get(id).getNucleotides().asList(),filteredSeqDataStore.get(id).getValue().asList());
+         assertEquals(originalDataStore.get(id).getQualities().asList(),filteredQualityDataStore.get(id).getValue().asList());
          
-         assertEquals(originalDataStore.get(otherId).getNucleotides().decode(),filteredSeqDataStore.get(otherId).getValue().decode());
-         assertEquals(originalDataStore.get(otherId).getQualities().decode(),filteredQualityDataStore.get(otherId).getValue().decode());
+         assertEquals(originalDataStore.get(otherId).getNucleotides().asList(),filteredSeqDataStore.get(otherId).getValue().asList());
+         assertEquals(originalDataStore.get(otherId).getQualities().asList(),filteredQualityDataStore.get(otherId).getValue().asList());
        
      }
      @Test
@@ -104,11 +104,11 @@ public class TestFastQ2FastaEnd2End {
         
         assertEquals(2, filteredSeqDataStore.size());
         assertEquals(2, filteredQualityDataStore.size());
-        assertEquals(originalDataStore.get(id).getNucleotides().decode(),filteredSeqDataStore.get(id).getValue().decode());
-        assertEquals(originalDataStore.get(id).getQualities().decode(),filteredQualityDataStore.get(id).getValue().decode());
+        assertEquals(originalDataStore.get(id).getNucleotides().asList(),filteredSeqDataStore.get(id).getValue().asList());
+        assertEquals(originalDataStore.get(id).getQualities().asList(),filteredQualityDataStore.get(id).getValue().asList());
         
-        assertEquals(originalDataStore.get(otherId).getNucleotides().decode(),filteredSeqDataStore.get(otherId).getValue().decode());
-        assertEquals(originalDataStore.get(otherId).getQualities().decode(),filteredQualityDataStore.get(otherId).getValue().decode());
+        assertEquals(originalDataStore.get(otherId).getNucleotides().asList(),filteredSeqDataStore.get(otherId).getValue().asList());
+        assertEquals(originalDataStore.get(otherId).getQualities().asList(),filteredQualityDataStore.get(otherId).getValue().asList());
   
      }
     
@@ -127,8 +127,8 @@ public class TestFastQ2FastaEnd2End {
          assertEquals(1, filteredQualityDataStore.size());
          assertFalse(filteredSeqDataStore.contains(otherId));
          assertFalse(filteredQualityDataStore.contains(otherId));
-         assertEquals(originalDataStore.get(id).getNucleotides().decode(),filteredSeqDataStore.get(id).getValue().decode());
-         assertEquals(originalDataStore.get(id).getQualities().decode(),filteredQualityDataStore.get(id).getValue().decode());
+         assertEquals(originalDataStore.get(id).getNucleotides().asList(),filteredSeqDataStore.get(id).getValue().asList());
+         assertEquals(originalDataStore.get(id).getQualities().asList(),filteredQualityDataStore.get(id).getValue().asList());
          
      }
      @Test
@@ -148,8 +148,8 @@ public class TestFastQ2FastaEnd2End {
          assertFalse(filteredSeqDataStore.contains(id));
          assertFalse(filteredQualityDataStore.contains(id));
          
-         assertEquals(originalDataStore.get(otherId).getNucleotides().decode(),filteredSeqDataStore.get(otherId).getValue().decode());
-         assertEquals(originalDataStore.get(otherId).getQualities().decode(),filteredQualityDataStore.get(otherId).getValue().decode());
+         assertEquals(originalDataStore.get(otherId).getNucleotides().asList(),filteredSeqDataStore.get(otherId).getValue().asList());
+         assertEquals(originalDataStore.get(otherId).getQualities().asList(),filteredQualityDataStore.get(otherId).getValue().asList());
         
      }
 }

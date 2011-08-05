@@ -91,7 +91,7 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	private Map<TigrAssemblerContigAttribute,String> generateConsensusAttributes(){
 		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
 		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, Nucleotides.convertToString(delegate.getConsensus().decodeUngapped()));
-		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, Nucleotides.convertToString(delegate.getConsensus().decode()));
+		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, Nucleotides.convertToString(delegate.getConsensus().asList()));
 	
 		return map;
 	}
@@ -100,7 +100,7 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		// TODO is this supposed to be %N in reads or %N in consensus or both?
 		//going with consensus for now since its the assembly table
 		int numberOfNs =0;
-		for(Nucleotide g: delegate.getConsensus().decode()){
+		for(Nucleotide g: delegate.getConsensus().asList()){
 			if(g == Nucleotide.Unknown){
 				numberOfNs++;
 			}

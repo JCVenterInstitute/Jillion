@@ -25,10 +25,11 @@ package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 
-public class QualityFastaRecordDataStoreAdapter extends FastaRecordDataStoreAdapter<QualitySequence,QualityFastaRecord> implements QualityDataStore{
+public class QualityFastaRecordDataStoreAdapter extends FastaRecordDataStoreAdapter<PhredQuality,QualitySequence,QualityFastaRecord> implements QualityDataStore{
     /**
      * Convert of {@code DataStore<F>} into a DataStore{@code DataStore<T>}
      * @param datastoreOfFastaRecords the DataStore of F to wrap.

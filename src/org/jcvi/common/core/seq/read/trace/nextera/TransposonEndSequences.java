@@ -33,5 +33,5 @@ public final class TransposonEndSequences {
     public static final NucleotideSequence FORWARD = new DefaultNucleotideSequence("AGATGTGTATAAGAGACAG");
     
     public static final NucleotideSequence REVERSE = new DefaultNucleotideSequence(
-                                                Nucleotides.reverseCompliment(FORWARD.decode()));
+                                                Nucleotides.reverseCompliment(FORWARD.asList()));
 }

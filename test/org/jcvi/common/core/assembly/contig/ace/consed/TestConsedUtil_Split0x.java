@@ -162,7 +162,7 @@ public class TestConsedUtil_Split0x {
     
     private void assertContigsEqual(AceContig expected, AceContig actual){
         assertEquals("id",expected.getId(),actual.getId());
-        assertEquals("consensus", expected.getConsensus().decode(), actual.getConsensus().decode());
+        assertEquals("consensus", expected.getConsensus().asList(), actual.getConsensus().asList());
         assertEquals("numberOfReads", expected.getNumberOfReads(), actual.getNumberOfReads());
         for(AcePlacedRead expectedRead: expected.getPlacedReads()){
             final String id = expectedRead.getId();
@@ -182,7 +182,7 @@ public class TestConsedUtil_Split0x {
         assertEquals("direction",expected.getDirection(),actual.getDirection());
         
         assertEquals("phdInfo",expected.getPhdInfo(),actual.getPhdInfo());
-        assertEquals("basecalls",expected.getNucleotideSequence().decode(),actual.getNucleotideSequence().decode());
+        assertEquals("basecalls",expected.getNucleotideSequence().asList(),actual.getNucleotideSequence().asList());
         assertEquals("validRange",expected.getValidRange(),actual.getValidRange());
     }
 }

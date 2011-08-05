@@ -31,14 +31,14 @@ public class DefaultAminoAcidEncodedGlyphs implements AminoAcidSequence {
 	}
 		
 	@Override
-	public List<AminoAcid> decode() {
-		return encodedAminoAcids.decode();
+	public List<AminoAcid> asList() {
+		return encodedAminoAcids.asList();
 	}
 
 	@Override
-	public List<AminoAcid> decode(Range range) {
+	public List<AminoAcid> asList(Range range) {
         if (range == null){
-            return decode();
+            return asList();
         }
         List<AminoAcid> result = new ArrayList<AminoAcid>((int)range.size());
         for (long index : range){

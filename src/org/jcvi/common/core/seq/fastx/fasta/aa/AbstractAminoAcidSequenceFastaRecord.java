@@ -2,6 +2,7 @@ package org.jcvi.common.core.seq.fastx.fasta.aa;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
+import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 
 /*
@@ -11,7 +12,7 @@ import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
  * @author naxelrod
  */
 
-public abstract class AbstractAminoAcidSequenceFastaRecord extends AbstractFastaRecord<AminoAcidSequence> implements
+public abstract class AbstractAminoAcidSequenceFastaRecord extends AbstractFastaRecord<AminoAcid,AminoAcidSequence> implements
 		AminoAcidSequenceFastaRecord {
 
     private final AminoAcidSequence sequence;

@@ -38,12 +38,12 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
 
     private DefaultAceContig.Builder contigBuilder;
     private final Date phdDate;
-    private final DataStore<? extends FastXRecord<? extends Sequence<? extends Symbol>>> fullLengthFastXDataStore;
+    private final DataStore<? extends FastXRecord> fullLengthFastXDataStore;
     /**
      * Create a new AceAdapted Contig File DataStore using the given phdDate.
      * @param phdDate the date all faked phd files should be timestamped with.
      */
-    public AbstractAceAdaptedContigFileDataStore(DataStore<? extends FastXRecord<? extends Sequence<? extends Symbol>>> fullLengthFastXDataStore,Date phdDate) {
+    public AbstractAceAdaptedContigFileDataStore(DataStore<? extends FastXRecord> fullLengthFastXDataStore,Date phdDate) {
         this.phdDate = new Date(phdDate.getTime());
         this.fullLengthFastXDataStore = fullLengthFastXDataStore;
     }

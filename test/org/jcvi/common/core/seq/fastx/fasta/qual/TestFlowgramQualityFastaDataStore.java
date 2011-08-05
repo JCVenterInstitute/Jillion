@@ -76,7 +76,7 @@ public class TestFlowgramQualityFastaDataStore {
     private void assertRecordsEqual(
             Sequence<PhredQuality> expectedRecord,
             Sequence<PhredQuality> actualRecord) {
-        assertEquals(expectedRecord.decode(), actualRecord.decode());
+        assertEquals(expectedRecord.asList(), actualRecord.asList());
         
     }
     

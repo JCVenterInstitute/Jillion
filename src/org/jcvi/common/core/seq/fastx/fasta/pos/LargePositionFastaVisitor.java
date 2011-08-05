@@ -30,7 +30,7 @@ import org.jcvi.common.core.symbol.ShortSymbol;
  *
  *
  */
-public class LargePositionFastaVisitor extends AbstractLargeFastaRecordIterator<Sequence<ShortSymbol>, PositionFastaRecord<Sequence<ShortSymbol>>>{
+public class LargePositionFastaVisitor extends AbstractLargeFastaRecordIterator<ShortSymbol,Sequence<ShortSymbol>, PositionFastaRecord<Sequence<ShortSymbol>>>{
 
    
 

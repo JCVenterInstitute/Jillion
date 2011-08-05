@@ -22,6 +22,7 @@ package org.jcvi.common.core.seq.fastx.fasta.qual;
 import java.io.File;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaRecordIterator;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 /**
@@ -29,7 +30,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
  *
  *
  */
-public class LargeQualityFastaIterator extends AbstractLargeFastaRecordIterator<QualitySequence, QualityFastaRecord>{
+public class LargeQualityFastaIterator extends AbstractLargeFastaRecordIterator<PhredQuality,QualitySequence, QualityFastaRecord>{
     public static LargeQualityFastaIterator createNewIteratorFor(File fastaFile){
         LargeQualityFastaIterator iter = new LargeQualityFastaIterator(fastaFile);
                iter.start();           

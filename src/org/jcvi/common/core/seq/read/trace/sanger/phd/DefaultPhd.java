@@ -95,7 +95,7 @@ public class DefaultPhd implements Phd {
         int result = 1;
         result = prime * result + id.hashCode();
         result = prime * result
-                + basecalls.decode().hashCode();
+                + basecalls.asList().hashCode();
         result = prime * result
                 + comments.hashCode();
         result = prime * result + peaks.hashCode();
@@ -119,16 +119,16 @@ public class DefaultPhd implements Phd {
         if(!id.equals(other.getId())){
         	return false;
         }
-       if (!basecalls.decode().equals(other.getBasecalls().decode())){
+       if (!basecalls.asList().equals(other.getBasecalls().asList())){
             return false;
        }
         if (!comments.equals(other.getComments())){
             return false;
         }
-        if (!peaks.getData().decode().equals(other.getPeaks().getData().decode())){
+        if (!peaks.getData().asList().equals(other.getPeaks().getData().asList())){
             return false;
         }
-        if (!qualities.decode().equals(other.getQualities().decode())){
+        if (!qualities.asList().equals(other.getQualities().asList())){
             return false;
         }
         return true;
@@ -136,7 +136,7 @@ public class DefaultPhd implements Phd {
 
     @Override
     public String toString() {
-        return Nucleotides.convertToString(basecalls.decode());
+        return Nucleotides.convertToString(basecalls.asList());
     }
 
     @Override

@@ -22,6 +22,8 @@ package org.jcvi.common.core.seq.fastx.fasta;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.util.AbstractBlockingCloseableIterator;
 
 /**
@@ -29,7 +31,7 @@ import org.jcvi.common.core.util.AbstractBlockingCloseableIterator;
  *
  *
  */
-public class AbstractLargeFastaRecordIterator<T,F extends FastaRecord<T>> extends AbstractBlockingCloseableIterator<F>{
+public class AbstractLargeFastaRecordIterator<S extends Symbol, T extends Sequence<S>,F extends FastaRecord<S,T>> extends AbstractBlockingCloseableIterator<F>{
 
     private final File fastaFile;
     private final FastaRecordFactory<F> recordFactory;
@@ -53,7 +55,7 @@ public class AbstractLargeFastaRecordIterator<T,F extends FastaRecord<T>> extend
     */
     @Override
     protected void backgroundThreadRunMethod() {
-        FastaVisitor visitor = new AbstractFastaRecordVisitor<T, F>(recordFactory) {
+        FastaVisitor visitor = new AbstractFastaRecordVisitor<S,T, F>(recordFactory) {
 
             @Override
             protected boolean visitFastaRecord(F fastaRecord) {

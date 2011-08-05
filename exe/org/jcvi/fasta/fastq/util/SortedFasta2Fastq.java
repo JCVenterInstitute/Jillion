@@ -87,7 +87,7 @@ public class SortedFasta2Fastq {
     
     private static final int DEFAULT_QUEUE_SIZE = 1000;
     
-    private abstract static class BlockedFastaVisitor<T extends Symbol,E extends Sequence<T>, F extends FastaRecord<E>> extends Thread{
+    private abstract static class BlockedFastaVisitor<T extends Symbol,E extends Sequence<T>, F extends FastaRecord<T,E>> extends Thread{
         final BlockingQueue<F> queue;
         final File file;
        

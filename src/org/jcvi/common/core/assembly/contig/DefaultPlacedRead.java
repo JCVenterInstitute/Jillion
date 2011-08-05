@@ -103,9 +103,9 @@ public class DefaultPlacedRead implements PlacedRead {
         	if(other.getNucleotideSequence() ==null){
         		return false;
         	}
-        	if(!read.getNucleotideSequence().decode().equals(other.getNucleotideSequence().decode())){
-        		System.out.println(Nucleotides.convertToString(read.getNucleotideSequence().decode()));
-        		System.out.println(Nucleotides.convertToString(other.getNucleotideSequence().decode()));
+        	if(!read.getNucleotideSequence().asList().equals(other.getNucleotideSequence().asList())){
+        		System.out.println(Nucleotides.convertToString(read.getNucleotideSequence().asList()));
+        		System.out.println(Nucleotides.convertToString(other.getNucleotideSequence().asList()));
         		System.out.println();
         		return false;
         	}

@@ -39,7 +39,7 @@ public abstract class AbstractTestAminoAcidEncodedGlyphs {
 	protected abstract Sequence<AminoAcid> encode(List<AminoAcid> aminoAcids);
 	@Test
 	public void decode(){
-		assertEquals(aminoAcids,sut.decode());
+		assertEquals(aminoAcids,sut.asList());
 	}
 	@Test
 	public void length(){
@@ -50,7 +50,7 @@ public abstract class AbstractTestAminoAcidEncodedGlyphs {
 	public void decodeWithRangeShouldOnlyDecodeSubrange(){
 		Range range = Range.buildRange(2, 5);
 		List<AminoAcid> expected = aminoAcids.subList(2, 6);
-		assertEquals(expected, sut.decode(range));
+		assertEquals(expected, sut.asList(range));
 	}
 	@Test
 	public void get(){

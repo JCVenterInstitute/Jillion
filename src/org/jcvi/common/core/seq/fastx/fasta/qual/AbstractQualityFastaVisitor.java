@@ -20,6 +20,7 @@
 package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecordVisitor;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 /**
@@ -27,7 +28,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
  *
  *
  */
-public abstract class AbstractQualityFastaVisitor extends AbstractFastaRecordVisitor<QualitySequence, QualityFastaRecord>{
+public abstract class AbstractQualityFastaVisitor extends AbstractFastaRecordVisitor<PhredQuality,QualitySequence, QualityFastaRecord>{
 
     public AbstractQualityFastaVisitor(){
         this(DefaultQualityFastaRecordFactory.getInstance());

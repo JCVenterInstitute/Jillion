@@ -495,7 +495,7 @@ public abstract class TestContigFileParser {
     @Test
     public void decodeLastConsensus() throws Exception{
         Contig contig928 = getContig928From(getFile());
-        assertEquals(consensusForContig928, Nucleotides.convertToString(contig928.getConsensus().decode()));
+        assertEquals(consensusForContig928, Nucleotides.convertToString(contig928.getConsensus().asList()));
     }
 
     protected abstract Contig getContig928From(File file) throws Exception;

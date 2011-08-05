@@ -259,7 +259,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         public DefaultAcePlacedRead build(){
             ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = 
                 new DefaultReferenceEncodedNucleotideSequence(reference,
-                        Nucleotides.convertToString(referencedGlyphs.decode()),offset);
+                        Nucleotides.convertToString(referencedGlyphs.asList()),offset);
             Read read = new DefaultRead(readId, 
                     updatedEncodedBasecalls);
             return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength,clearRange);

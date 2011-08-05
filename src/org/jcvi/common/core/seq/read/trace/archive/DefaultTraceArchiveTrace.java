@@ -48,7 +48,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
             in = getInputStreamFor(TraceInfoField.PEAK_FILE);
             datastore =new DefaultPositionFastaFileDataStore();
             FastaParser.parseFasta(in, datastore);
-            return new SangerPeak(datastore.iterator().next().getValue().decode());
+            return new SangerPeak(datastore.iterator().next().getValue().asList());
         } catch (IOException e) {
             throw new IllegalArgumentException("peak file not valid",e);
         }

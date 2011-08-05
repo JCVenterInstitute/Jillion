@@ -25,6 +25,7 @@ package org.jcvi.common.core.seq.fastx.fasta.nuc;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
@@ -35,7 +36,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  *
  *
  */
-public class NucleotideFastaRecordDataStoreAdatper<F extends NucleotideSequenceFastaRecord> extends FastaRecordDataStoreAdapter<NucleotideSequence,F> implements NucleotideDataStore{
+public class NucleotideFastaRecordDataStoreAdatper<F extends NucleotideSequenceFastaRecord> extends FastaRecordDataStoreAdapter<Nucleotide,NucleotideSequence,F> implements NucleotideDataStore{
     /**
      * Convert of {@code DataStore<F>} into a DataStore{@code DataStore<T>}
      * @param <F> a {@code FastaRecord<Nucleotide>}.

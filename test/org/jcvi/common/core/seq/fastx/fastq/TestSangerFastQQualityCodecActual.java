@@ -40,7 +40,7 @@ public class TestSangerFastQQualityCodecActual {
             new byte[]{40,24,40,38,24,40,34});
     @Test
     public void decode(){       
-        assertEquals(qualities, sut.decode(encodedqualities).decode());
+        assertEquals(qualities, sut.decode(encodedqualities).asList());
     }
     @Test
     public void encode(){       

@@ -39,11 +39,11 @@ import org.jcvi.common.core.Range;
  */
 public interface Sequence<T extends Symbol> extends Iterable<T>{
     /**
-     * Decode the entire list of encoded {@link Symbol}s into
+     * Get all the {@link Symbol}s as
      * a List.
      * @return a List of {@link Symbol}s.
      */
-    List<T> decode();
+    List<T> asList();
     /**
      * Gets the specific {@link Symbol} at the specified index.
      * this should return the same {@link Symbol} as
@@ -67,11 +67,11 @@ public interface Sequence<T extends Symbol> extends Iterable<T>{
     @Override
     boolean equals(Object obj);
     /**
-     * Decodes the {@link Symbol}s for the given range
+     * Get only the {@link Symbol}s for the given range
      * @param range the range to trim against, if null, then decode
-     * all {@link Symbol}s (the same as {@link #decode()}).
+     * all {@link Symbol}s (the same as {@link #asList()}).
      * @return
      */
-    List<T> decode(Range range);
+    List<T> asList(Range range);
 
 }

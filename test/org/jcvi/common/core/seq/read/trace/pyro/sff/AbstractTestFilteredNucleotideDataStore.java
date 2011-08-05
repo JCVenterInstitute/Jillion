@@ -72,12 +72,12 @@ private final DefaultSffFileDataStore dataStore;
     @Test
     public void includedIdShouldBeInDataStore() throws DataStoreException{
         assertEquals(getRelaventDataFrom(FF585OX02FHO5X),
-                sut.get("FF585OX02FHO5X").decode());
+                sut.get("FF585OX02FHO5X").asList());
     }
     @Test
     public void includedIdShouldBeInDataStore2() throws DataStoreException{
         assertEquals(getRelaventDataFrom(FF585OX02HCMO2),
-                sut.get("FF585OX02HCMO2").decode());
+                sut.get("FF585OX02HCMO2").asList());
     }
     @Test
     public void excludedIdShouldNotBeInDataStore() throws DataStoreException{

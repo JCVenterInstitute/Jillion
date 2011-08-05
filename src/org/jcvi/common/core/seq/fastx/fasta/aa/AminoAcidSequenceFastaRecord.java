@@ -1,6 +1,7 @@
 package org.jcvi.common.core.seq.fastx.fasta.aa;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
+import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 
 /**
@@ -10,7 +11,7 @@ import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
  * @author naxelrod
  *
  */
-public interface AminoAcidSequenceFastaRecord extends FastaRecord<AminoAcidSequence> {
+public interface AminoAcidSequenceFastaRecord extends FastaRecord<AminoAcid,AminoAcidSequence> {
 
 	AminoAcidSequence getValue();
 	

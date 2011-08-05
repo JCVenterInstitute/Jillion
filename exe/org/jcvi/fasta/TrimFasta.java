@@ -107,7 +107,7 @@ public class TrimFasta {
                         out.write(new DefaultNucleotideSequenceFastaRecord(
                                 fastaRecord.getId(),
                                 fastaRecord.getComment(),
-                                basecalls.decode(trimRange))
+                                basecalls.asList(trimRange))
                                     .toString().getBytes());
                     } catch (IOException e) {
                        throw new IllegalStateException("error writing to output fasta",e);

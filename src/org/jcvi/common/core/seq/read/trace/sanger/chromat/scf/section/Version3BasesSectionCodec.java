@@ -150,14 +150,14 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
 
     private void bulkPut(ByteBuffer buffer,
             Sequence<Nucleotide> basecalls) {
-       for(Nucleotide glyph : basecalls.decode()){
+       for(Nucleotide glyph : basecalls.asList()){
            buffer.put((byte)glyph.getCharacter().charValue());
        }
         
     }
     private void bulkPutPeaks(ByteBuffer buffer,
             Sequence<ShortSymbol> peaks) {
-       for(ShortSymbol glyph : peaks.decode()){
+       for(ShortSymbol glyph : peaks.asList()){
            buffer.putInt(glyph.getValue().intValue());
        }
         

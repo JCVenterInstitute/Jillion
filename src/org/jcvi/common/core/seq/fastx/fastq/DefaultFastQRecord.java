@@ -87,9 +87,9 @@ public class DefaultFastQRecord implements FastQRecord {
                 + ((comments == null) ? 0 : comments.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result
-                + ((nucleotides == null) ? 0 : nucleotides.decode().hashCode());
+                + ((nucleotides == null) ? 0 : nucleotides.asList().hashCode());
         result = prime * result
-                + ((qualities == null) ? 0 : qualities.decode().hashCode());
+                + ((qualities == null) ? 0 : qualities.asList().hashCode());
         return result;
     }
     @Override
@@ -122,14 +122,14 @@ public class DefaultFastQRecord implements FastQRecord {
             if (other.getNucleotides() != null) {
                 return false;
             }
-        } else if (!nucleotides.decode().equals(other.getNucleotides().decode())) {
+        } else if (!nucleotides.asList().equals(other.getNucleotides().asList())) {
             return false;
         }
         if (qualities == null) {
             if (other.getQualities() != null) {
                 return false;
             }
-        } else if (!qualities.decode().equals(other.getQualities().decode())) {
+        } else if (!qualities.asList().equals(other.getQualities().asList())) {
             return false;
         }
         return true;

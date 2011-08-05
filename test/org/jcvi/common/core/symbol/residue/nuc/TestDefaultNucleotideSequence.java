@@ -38,7 +38,7 @@ public class TestDefaultNucleotideSequence {
     @Test
     public void decode(){
         List<Nucleotide> expected = Nucleotides.parse(gappedBasecalls);
-        assertEquals(expected, sut.decode());
+        assertEquals(expected, sut.asList());
     }
     
     @Test

@@ -28,6 +28,8 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.util.CloseableIterator;
 /**
  * {@code FastaRecordDataStoreAdapter} adapts a {@link DataStore} of {@link FastaRecord}s
@@ -36,7 +38,7 @@ import org.jcvi.common.core.util.CloseableIterator;
  *
  *
  */
-public class FastaRecordDataStoreAdapter<T,F extends FastaRecord<T>> implements DataStore<T> {
+public class FastaRecordDataStoreAdapter<S extends Symbol,T extends Sequence<S>,F extends FastaRecord<S,T>> implements DataStore<T> {
 
     private final DataStore<F> delegate;
     /**
@@ -46,8 +48,8 @@ public class FastaRecordDataStoreAdapter<T,F extends FastaRecord<T>> implements 
      * @param datastoreOfFastaRecords the DataStore of F to wrap.
      * @return a new {@code DataStore<T>} which wraps the given datastore. 
      */
-    public static <T,F extends FastaRecord<T>> FastaRecordDataStoreAdapter<T,F> adapt(DataStore<F> datastoreOfFastaRecords){
-        return new FastaRecordDataStoreAdapter<T,F>(datastoreOfFastaRecords);
+    public static <S extends Symbol,T extends Sequence<S>,F extends FastaRecord<S,T>> FastaRecordDataStoreAdapter<S,T,F> adapt(DataStore<F> datastoreOfFastaRecords){
+        return new FastaRecordDataStoreAdapter<S,T,F>(datastoreOfFastaRecords);
     }
     public FastaRecordDataStoreAdapter(DataStore<F> datastoreOfFastaRecords){
         this.delegate = datastoreOfFastaRecords;
