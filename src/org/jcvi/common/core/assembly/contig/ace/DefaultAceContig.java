@@ -62,6 +62,11 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
                     Nucleotides.parse(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)))
             );
         }
+        public Builder(String contigId, List<Nucleotide> fullConsensus){
+            this(contigId,
+                    DefaultNucleotideSequence.create(fullConsensus)
+             );
+         }
         public Builder(String contigId, NucleotideSequence fullConsensus){
         	this.fullConsensus = fullConsensus;
         	 this.contigId = contigId;
@@ -90,6 +95,13 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         		 acePlacedRead.getValidRange(),
         		 acePlacedRead.getPhdInfo(),
         		 acePlacedRead.getUngappedFullLength());
+        }
+        
+        public Builder addAllReads(Iterable<AcePlacedRead> reads){
+            for(AcePlacedRead read : reads){
+                addRead(read);
+            }
+            return this;
         }
     	
         public Builder addRead(String readId, String validBases, int offset,
