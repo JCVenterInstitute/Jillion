@@ -41,7 +41,6 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.util.CloseableIterator;
@@ -57,17 +56,32 @@ import org.jcvi.common.core.util.CloseableIterator;
  * that the actual phd file can not be parsed.
  * @author dkatzel
  */
-public class HiLowAceContigPhdDatastore implements PhdDataStore{
-    static final PhredQuality DEFAULT_LOW_QUALITY = PhredQuality.valueOf(15);
-    static final PhredQuality DEFAULT_HIGH_QUALITY = AceFileUtil.ACE_DEFAULT_HIGH_QUALITY_THRESHOLD;
+public final class HiLowAceContigPhdDatastore implements PhdDataStore{
+    public static final PhredQuality DEFAULT_LOW_QUALITY = PhredQuality.valueOf(15);
+    public static final PhredQuality DEFAULT_HIGH_QUALITY = AceFileUtil.ACE_DEFAULT_HIGH_QUALITY_THRESHOLD;
     private final PhdDataStore delegate;
     
+    public static HiLowAceContigPhdDatastore create(File aceContigFile, final String contigId) throws IOException{
+        return new HiLowAceContigPhdDatastore(aceContigFile, contigId);
+    }
+    public static HiLowAceContigPhdDatastore create(File aceContigFile) throws IOException{
+        return new HiLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
+    }
     public HiLowAceContigPhdDatastore(File aceContigFile, final String contigId) throws IOException{
         this(aceContigFile,contigId,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
     public HiLowAceContigPhdDatastore(File aceContigFile, final String contigId, 
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser visitor = new FullLengthPhdParser(contigId, lowQuality,highQuality);
+        
+        AceFileParser.parseAceFile(aceContigFile, visitor);
+        delegate = new PhdDataStoreAdapter(new SimpleDataStore<Phd>(visitor.getPhds()));
+        
+    }
+    
+    public HiLowAceContigPhdDatastore(File aceContigFile, 
+            final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
+        FullLengthPhdParser visitor = new FullLengthPhdParser(lowQuality,highQuality);
         
         AceFileParser.parseAceFile(aceContigFile, visitor);
         delegate = new PhdDataStoreAdapter(new SimpleDataStore<Phd>(visitor.getPhds()));
@@ -143,13 +157,27 @@ public class HiLowAceContigPhdDatastore implements PhdDataStore{
         private final String contigId;
         private final PhredQuality lowQuality;
         private final PhredQuality highQuality;
-        
+        private FullLengthPhdParser(final PhredQuality lowQuality, final PhredQuality highQuality) {
+            this(null,lowQuality,highQuality);
+        }
         private FullLengthPhdParser(String contigId,final PhredQuality lowQuality, final PhredQuality highQuality) {
             this.contigId = contigId;
             this.lowQuality = lowQuality;
             this.highQuality = highQuality;
         }
 
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitHeader(int numberOfContigs,
+                int totalNumberOfReads) {
+            if(contigId==null){
+                phds = new HashMap<String, Phd>(totalNumberOfReads+1, 1F);
+                contigOfInterest=true;
+            }
+            super.visitHeader(numberOfContigs, totalNumberOfReads);
+        }
         /**
          * @return the phds
          */
@@ -167,6 +195,10 @@ public class HiLowAceContigPhdDatastore implements PhdDataStore{
         */
         @Override
         public synchronized boolean visitEndOfContig() {
+            
+            if(contigId==null){
+                return true;
+            }
             //keep parsing until we finish 
             //our contig of interest
             return !contigOfInterest;
@@ -179,9 +211,11 @@ public class HiLowAceContigPhdDatastore implements PhdDataStore{
         public synchronized void visitContigHeader(String aceContigId,
                 int numberOfBases, int numberOfReads,
                 int numberOfBaseSegments, boolean reverseComplimented) {
-            contigOfInterest =aceContigId.equals(contigId);
-            if(contigOfInterest){
-                phds = new HashMap<String, Phd>(numberOfReads);
+            if(contigId !=null){
+                contigOfInterest =aceContigId.equals(contigId);
+                if(contigOfInterest){
+                    phds = new HashMap<String, Phd>(numberOfReads+1, 1F);
+                }
             }
             super.visitContigHeader(aceContigId, numberOfBases, numberOfReads,
                     numberOfBaseSegments, reverseComplimented);

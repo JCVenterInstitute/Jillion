@@ -50,7 +50,7 @@ public class TestDefaultEncodedNuclotideFastaRecord {
     public void constructor(){
         assertEquals(id, sut.getId());
         assertEquals(comment, sut.getComment());
-        assertEquals(encodedGlyphs, sut.getValue());
+        assertEquals(encodedGlyphs, sut.getSequence());
         assertEquals(FastaUtil.calculateCheckSum(bases), sut.getChecksum());
         assertEquals(buildExpectedToString(comment), sut.toString());
     }
@@ -60,7 +60,7 @@ public class TestDefaultEncodedNuclotideFastaRecord {
         
         assertEquals(id, fasta.getId());
         assertEquals(comment, fasta.getComment());
-        assertEquals(encodedGlyphs, fasta.getValue());
+        assertEquals(encodedGlyphs, fasta.getSequence());
         assertEquals(FastaUtil.calculateCheckSum(bases), fasta.getChecksum());
         assertEquals(buildExpectedToString(comment), fasta.toString());
     }
@@ -70,7 +70,7 @@ public class TestDefaultEncodedNuclotideFastaRecord {
         
         assertEquals(id, fasta.getId());
         assertNull(fasta.getComment());
-        assertEquals(encodedGlyphs, fasta.getValue());
+        assertEquals(encodedGlyphs, fasta.getSequence());
         assertEquals(FastaUtil.calculateCheckSum(bases), fasta.getChecksum());
         assertEquals(buildExpectedToString(null), fasta.toString());
     }
@@ -80,7 +80,7 @@ public class TestDefaultEncodedNuclotideFastaRecord {
         
         assertEquals(id, fasta.getId());
         assertNull(fasta.getComment());
-        assertEquals(encodedGlyphs, fasta.getValue());
+        assertEquals(encodedGlyphs, fasta.getSequence());
         assertEquals(FastaUtil.calculateCheckSum(bases), fasta.getChecksum());
         assertEquals(buildExpectedToString(null), fasta.toString());
     }

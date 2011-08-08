@@ -208,7 +208,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
 
     public static class Builder{
         private String readId;
-        private ReferenceEncodedNucleotideSequence referencedGlyphs;
+        private ReferenceEncodedNucleotideSequence referencedEncodedBases;
         private int offset;
         private Range clearRange;
         private PhdInfo phdInfo;
@@ -225,16 +225,13 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             this.offset = offset;
             this.phdInfo = phdInfo;
             
-            
-            //NucleotideEncodedGlyphs reference,
-            //String toBeEncoded, int startOffset, Range validRange
-            this.referencedGlyphs = new DefaultReferenceEncodedNucleotideSequence(
+            this.referencedEncodedBases = new DefaultReferenceEncodedNucleotideSequence(
                     reference, validBases, offset);
-            if(referencedGlyphs.getNumberOfBasesAfterReference()<0 || referencedGlyphs.getNumberOfBasesAfterReference()>0){
+            if(referencedEncodedBases.getNumberOfBasesAfterReference()<0 || referencedEncodedBases.getNumberOfBasesAfterReference()>0){
                 throw new IllegalArgumentException(String.format("read %s goes off the reference before %d, after %d",
                         readId,
-                        referencedGlyphs.getNumberOfBasesBeforeReference(),
-                        referencedGlyphs.getNumberOfBasesAfterReference()));
+                        referencedEncodedBases.getNumberOfBasesBeforeReference(),
+                        referencedEncodedBases.getNumberOfBasesAfterReference()));
             }
             this.ungappedFullLength = ungappedFullLength;
         }
@@ -259,46 +256,11 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         public DefaultAcePlacedRead build(){
             ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = 
                 new DefaultReferenceEncodedNucleotideSequence(reference,
-                        Nucleotides.convertToString(referencedGlyphs.asList()),offset);
-            Read read = new DefaultRead(readId, 
-                    updatedEncodedBasecalls);
+                        Nucleotides.convertToString(referencedEncodedBases.asList()),offset);
+            Read read = new DefaultRead(readId, updatedEncodedBasecalls);
             return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength,clearRange);
         }
         
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
-     @Override
-     public int convertGappedValidRangeIndexToUngappedValidRangeIndex(
-             int gappedValidRangeIndex) {
-         return placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedValidRangeIndex);
-     }
-     /**
-     * {@inheritDoc}
-     */
-     @Override
-     public int convertUngappedValidRangeIndexToGappedValidRangeIndex(
-             int ungappedValidRangeIndex) {
-         return placedRead.convertUngappedValidRangeIndexToGappedValidRangeIndex(ungappedValidRangeIndex);
-     }
-     /**
-     * {@inheritDoc}
-     */
-     @Override
-     public Range convertGappedValidRangeToUngappedValidRange(
-             Range gappedValidRange) {
-         return placedRead.convertGappedValidRangeToUngappedValidRange(gappedValidRange);
-     }
-     /**
-     * {@inheritDoc}
-     */
-     @Override
-     public Range convertUngappedValidRangeToGappedValidRange(
-             Range ungappedValidRange) {
-         return placedRead.convertUngappedValidRangeToGappedValidRange(ungappedValidRange);
-     }
-   
 }

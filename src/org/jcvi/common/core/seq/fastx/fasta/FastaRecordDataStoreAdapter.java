@@ -33,7 +33,7 @@ import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.util.CloseableIterator;
 /**
  * {@code FastaRecordDataStoreAdapter} adapts a {@link DataStore} of {@link FastaRecord}s
- * into a {@link DataStore} of the value returned by {@link FastaRecord#getValue()}.
+ * into a {@link DataStore} of the value returned by {@link FastaRecord#getSequence()}.
  * @author dkatzel
  *
  *
@@ -62,7 +62,7 @@ public class FastaRecordDataStoreAdapter<S extends Symbol,T extends Sequence<S>,
 
     @Override
     public T get(String id) throws DataStoreException {
-        return delegate.get(id).getValue();
+        return delegate.get(id).getSequence();
     }
 
     @Override

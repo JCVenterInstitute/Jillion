@@ -209,7 +209,7 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
     }
 
     @Override
-    public List<Integer> getGapIndexes() {
+    public List<Integer> getGapOffsets() {
         List<Integer> result = new ArrayList<Integer>();
         for(int i=0; i<this.gaps.length; i++){
             result.add(this.gaps[i]);

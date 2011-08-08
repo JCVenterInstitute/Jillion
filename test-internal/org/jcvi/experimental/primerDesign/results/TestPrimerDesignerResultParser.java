@@ -60,7 +60,7 @@ public class TestPrimerDesignerResultParser {
                 .setDesignGroupID(designGroupID)
                 .setRange(range)
                 .setOrientation(orientation)
-                .setPrimerSequence(new DefaultNucleotideSequenceFastaRecord("temp",primerSequence).getValue())
+                .setPrimerSequence(new DefaultNucleotideSequenceFastaRecord("temp",primerSequence).getSequence())
                 .build();
     }
 }

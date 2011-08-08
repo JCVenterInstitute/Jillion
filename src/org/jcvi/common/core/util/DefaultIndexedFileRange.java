@@ -38,7 +38,7 @@ public class DefaultIndexedFileRange implements IndexedFileRange{
     }
     public DefaultIndexedFileRange(int initialSize){
         //preserves insertion order
-        ranges = new LinkedHashMap<String, Range>(initialSize, 1F);
+        ranges = new LinkedHashMap<String, Range>(initialSize+1, 1F);
     }
     
     @Override

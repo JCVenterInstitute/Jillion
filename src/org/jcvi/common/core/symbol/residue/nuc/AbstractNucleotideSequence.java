@@ -41,7 +41,7 @@ public abstract class AbstractNucleotideSequence implements NucleotideSequence{
     @Override
     public int getNumberOfGapsUntil(int gappedValidRangeIndex) {
         int numberOfGaps=0;
-        for(Integer gapIndex :getGapIndexes()){
+        for(Integer gapIndex :getGapOffsets()){
             if(gapIndex.intValue() <=gappedValidRangeIndex){
                 numberOfGaps++;
             }
@@ -50,7 +50,7 @@ public abstract class AbstractNucleotideSequence implements NucleotideSequence{
     }
     private int computeNumberOfInclusiveGapsInUngappedValidRangeUntil(int ungappedValidRangeIndex) {
         int numberOfGaps=0;
-        for(Integer gapIndex :getGapIndexes()){
+        for(Integer gapIndex :getGapOffsets()){
             //need to account for extra length due to gaps being added to ungapped index
             if(gapIndex.intValue() <=ungappedValidRangeIndex + numberOfGaps){
                 numberOfGaps++;
@@ -74,9 +74,9 @@ public abstract class AbstractNucleotideSequence implements NucleotideSequence{
     }
 
     @Override
-    public List<Nucleotide> decodeUngapped() {
+    public List<Nucleotide> asUngappedList() {
         List<Nucleotide> withoutGaps = asList();
-        final List<Integer> gapIndexes = getGapIndexes();
+        final List<Integer> gapIndexes = getGapOffsets();
         for(int i= gapIndexes.size()-1; i>=0; i--){
             withoutGaps.remove(gapIndexes.get(i).intValue());
         }

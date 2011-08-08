@@ -57,7 +57,7 @@ public class DefaultAminoAcidSequenceFastaRecord extends AbstractAminoAcidSequen
 	@Override
 	protected CharSequence decodeAminoAcids() {
 		StringBuilder result = new StringBuilder();
-		for(AminoAcid aa : getValue().asList()){
+		for(AminoAcid aa : getSequence().asList()){
 			result.append(aa.getAbbreviation());
 		}
 		return result;

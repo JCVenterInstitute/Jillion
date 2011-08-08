@@ -61,12 +61,12 @@ public class TestSimpleDataStore {
         assertEquals(2, sut.size());
     }
     @Test
-    public void close() throws IOException{
+    public void gettingAfterCloseShouldThrowIllegalStateException() throws IOException, DataStoreException{
         sut.close();
         try{
             sut.get("key1");
             fail("should throw dataStoreException after closing");
-        }catch(DataStoreException e){
+        }catch(IllegalStateException e){
             //pass
         }
     }

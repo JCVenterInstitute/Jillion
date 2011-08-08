@@ -35,22 +35,22 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.IndexedFileRange;
 
-public class IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore extends IndexedPhdFileDataStore{
+public class IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore{
 
     private static final String FAKE_READ_TYPE = "type: fake\n";
     private static final String WHOLE_READ_TAG = "WR";
     public IgnoreFakeReadsInNewblerMappedPhdBallFileDataStore(File phdBall,
             IndexedFileRange recordLocations) throws FileNotFoundException {
-        super(phdBall, recordLocations);
+       
     }
 
-    @Override
+    
     protected synchronized void visitPhd(String id, List<Nucleotide> bases,
             List<PhredQuality> qualities, List<ShortSymbol> positions,
             Properties comments, List<PhdTag> tags) {
         for(PhdTag tag: tags){
             if(isFakeRead(tag)){
-                super.visitPhd(id, bases, qualities, positions, comments,tags);
+               // super.visitPhd(id, bases, qualities, positions, comments,tags);
                 break;
             }
         }

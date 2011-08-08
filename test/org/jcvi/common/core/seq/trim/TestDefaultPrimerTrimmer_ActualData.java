@@ -59,7 +59,7 @@ public class TestDefaultPrimerTrimmer_ActualData {
         sequence = new DefaultNucleotideFastaFileDataStore(
                                 RESOURCES.getFile("files/fullLength.fasta"),
                                 DefaultNucleotideFastaRecordFactory.getInstance())
-                        .get("SAJJA07T27G07MP1F").getValue();
+                        .get("SAJJA07T27G07MP1F").getSequence();
     }
     
     @Test

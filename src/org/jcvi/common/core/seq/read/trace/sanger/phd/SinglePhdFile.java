@@ -213,7 +213,23 @@ public class SinglePhdFile implements  Phd{
 
 
 
-	    @Override
+	    /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean visitBeginPhd(String id) {
+            return true;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean visitEndPhd() {
+            return false;
+        }
+
+        @Override
 	    public synchronized void visitLine(String line) {
 	        
 	    }

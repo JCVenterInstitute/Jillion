@@ -198,36 +198,4 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
         return delegatePlacedRead.asRange();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-     @Override
-     public int convertGappedValidRangeIndexToUngappedValidRangeIndex(
-             int gappedValidRangeIndex) {
-         return delegatePlacedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedValidRangeIndex);
-     }
-     /**
-     * {@inheritDoc}
-     */
-     @Override
-     public int convertUngappedValidRangeIndexToGappedValidRangeIndex(
-             int ungappedValidRangeIndex) {
-         return delegatePlacedRead.convertUngappedValidRangeIndexToGappedValidRangeIndex(ungappedValidRangeIndex);
-     }
-     /**
-     * {@inheritDoc}
-     */
-     @Override
-     public Range convertGappedValidRangeToUngappedValidRange(
-             Range gappedValidRange) {
-         return delegatePlacedRead.convertGappedValidRangeToUngappedValidRange(gappedValidRange);
-     }
-     /**
-     * {@inheritDoc}
-     */
-     @Override
-     public Range convertUngappedValidRangeToGappedValidRange(
-             Range ungappedValidRange) {
-         return delegatePlacedRead.convertUngappedValidRangeToGappedValidRange(ungappedValidRange);
-     }
 }

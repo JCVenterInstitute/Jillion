@@ -49,7 +49,7 @@ public abstract class AbstractAminoAcidSequenceFastaRecord extends AbstractFasta
 	}
 	
 	@Override
-	public AminoAcidSequence getValue() {
+	public AminoAcidSequence getSequence() {
 		return this.sequence;
 	}
 	

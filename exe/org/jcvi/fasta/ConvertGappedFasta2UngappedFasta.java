@@ -73,7 +73,7 @@ public class ConvertGappedFasta2UngappedFasta {
                         NucleotideSequenceFastaRecord fastaRecord) {
                     NucleotideSequenceFastaRecord ungapped =
                         new DefaultNucleotideSequenceFastaRecord(fastaRecord.getId(), fastaRecord.getComment(),
-                                fastaRecord.getValue().decodeUngapped());
+                                fastaRecord.getSequence().asUngappedList());
                     output.print(ungapped);
                     return true;
                     

@@ -96,7 +96,7 @@ public class TrimFasta {
                 protected boolean visitFastaRecord(
                         NucleotideSequenceFastaRecord fastaRecord) {
                     String id = fastaRecord.getId();
-                    final NucleotideSequence basecalls = fastaRecord.getValue();
+                    final NucleotideSequence basecalls = fastaRecord.getSequence();
                     long untrimmedLength = basecalls.getLength();
                     Integer l = leftTrimPoints.get(id);
                     Integer r = rightTrimPoints.get(id);

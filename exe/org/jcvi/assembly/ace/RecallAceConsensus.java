@@ -210,7 +210,7 @@ public class RecallAceConsensus {
                 }
                 final DefaultNucleotideSequence gappedRecalledConsensus = new DefaultNucleotideSequence(recalledConsensus);
                 if(fastaOut !=null){
-                    fastaOut.print(new DefaultNucleotideSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.decodeUngapped()));
+                    fastaOut.print(new DefaultNucleotideSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.asUngappedList()));
                 }
                 DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contig.getId(), gappedRecalledConsensus);
                 for(AcePlacedRead read : contig.getPlacedReads()){

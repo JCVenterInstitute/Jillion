@@ -67,7 +67,7 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
         try {
             contigBuilder.addRead(readId, basecalls ,offset, dir, 
                     validRange ,info,
-                    (int)(fullLengthFastXDataStore.get(readId).getValue().getLength()));
+                    (int)(fullLengthFastXDataStore.get(readId).getSequence().getLength()));
         } catch (DataStoreException e) {
             throw new IllegalStateException("error getting full length trace for "+ readId);
         }

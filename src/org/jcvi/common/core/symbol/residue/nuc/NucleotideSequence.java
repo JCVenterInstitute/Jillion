@@ -40,12 +40,13 @@ import org.jcvi.common.core.symbol.Sequence;
  */
 public interface NucleotideSequence extends Sequence<Nucleotide>{
     /**
-     * Get a List of all the gap indexes into the gapped basecalls
-     * which are Gaps.  The size of the returned list should be
+     * Get a List of all the offsets into this
+     * sequence which are gaps.  This list SHOULD be
+     * sorted by offset in ascending order.  The size of the returned list should be
      * the same as the value returned by {@link #getNumberOfGaps()}.
-     * @return a List of gap indexes as Integers.
+     * @return a List of gap offsets as Integers.
      */
-    List<Integer> getGapIndexes();    
+    List<Integer> getGapOffsets();    
     /**
      * Get the number of gaps in this sequence.
      * @return the number of gaps; will always be {@code >=0}.
@@ -54,10 +55,10 @@ public interface NucleotideSequence extends Sequence<Nucleotide>{
    
     /**
      * Is the {@link Nucleotide} at the given gapped index a gap?
-     * @param gappedIndex the gappedIndex to check.
+     * @param gappedOffset the gappedOffset to check.
      * @return {@code true} is it is a gap; {@code false} otherwise.
      */
-    boolean isGap(int gappedIndex);
+    boolean isGap(int gappedOffset);
     /**
      * Get the number of {@link Nucleotide}s in this {@link NucleotideSequence} 
      * that are not gaps.
@@ -70,7 +71,7 @@ public interface NucleotideSequence extends Sequence<Nucleotide>{
      * @return a List of {@link Nucleotide}s containing only the 
      * ungapped bases.
      */
-    List<Nucleotide> decodeUngapped();
+    List<Nucleotide> asUngappedList();
     /**
      * Compute the number of gaps in the valid range until AND INCLUDING the given
      * gapped index.

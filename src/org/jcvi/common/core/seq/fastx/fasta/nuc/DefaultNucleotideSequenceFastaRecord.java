@@ -86,7 +86,7 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
     protected CharSequence decodeNucleotides() {
 
         StringBuilder result = new StringBuilder();
-        for(Nucleotide glyph : getValue().asList()){
+        for(Nucleotide glyph : getSequence().asList()){
             result.append(glyph.getCharacter());
         }
         return result;

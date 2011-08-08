@@ -48,7 +48,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
             in = getInputStreamFor(TraceInfoField.PEAK_FILE);
             datastore =new DefaultPositionFastaFileDataStore();
             FastaParser.parseFasta(in, datastore);
-            return new SangerPeak(datastore.iterator().next().getValue().asList());
+            return new SangerPeak(datastore.iterator().next().getSequence().asList());
         } catch (IOException e) {
             throw new IllegalArgumentException("peak file not valid",e);
         }
@@ -65,7 +65,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         try{
             in = getInputStreamFor(TraceInfoField.BASE_FILE);
             FastaParser.parseFasta(in, datastore);
-            return datastore.iterator().next().getValue();
+            return datastore.iterator().next().getSequence();
         } catch (IOException e) {
             throw new IllegalArgumentException("basecall file not valid",e);
         }
@@ -82,7 +82,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         try{
             in = getInputStreamFor(TraceInfoField.QUAL_FILE);
             FastaParser.parseFasta(in, datastore);
-            return datastore.iterator().next().getValue();
+            return datastore.iterator().next().getSequence();
         } catch (IOException e) {
             throw new IllegalArgumentException("quality file not valid",e);
         }

@@ -137,10 +137,10 @@ public class MakeChromatogram {
                 null;
         for(NucleotideSequenceFastaRecord fasta : seqFasta){
             String id = fasta.getId();
-            NucleotideSequence basecalls = fasta.getValue();
+            NucleotideSequence basecalls = fasta.getSequence();
             final QualitySequence qualities;
             if(qualDataStore !=null){
-               qualities = qualDataStore.get(id).getValue();
+               qualities = qualDataStore.get(id).getSequence();
             }else{
                 byte[] buf = new byte[(int)basecalls.getLength()];
                 Arrays.fill(buf, defaultQuality.getValue());

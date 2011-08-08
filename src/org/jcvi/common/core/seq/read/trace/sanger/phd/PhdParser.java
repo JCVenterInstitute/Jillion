@@ -99,7 +99,10 @@ public class PhdParser {
         visitor.visitFile();
         Properties currentComments=null;
         boolean inComments=false;
-        while(parser.hasNextLine()){
+        boolean keepParsing=true;
+        boolean parseCurrentPhd=true;
+        boolean firstRecord=true;
+        while(keepParsing && parser.hasNextLine()){
             String lineWithCR;
             try {
                 lineWithCR = parser.nextLine();
@@ -111,8 +114,17 @@ public class PhdParser {
             String line = lineWithCR.substring(0,lineWithCR.length()-1);
             Matcher beginSeqMatcher = BEGIN_SEQUENCE_PATTERN.matcher(line);
             if(beginSeqMatcher.find()){
-                String id = beginSeqMatcher.group(1);
-                visitor.visitBeginSequence(id);
+                if(!firstRecord){
+                    keepParsing = visitor.visitEndPhd();                    
+                }
+                if(keepParsing){
+                    firstRecord=false;
+                    String id = beginSeqMatcher.group(1);
+                    parseCurrentPhd = visitor.visitBeginPhd(id);
+                    if(parseCurrentPhd){
+                        visitor.visitBeginSequence(id);
+                    }
+                }
             }
             else if(line.startsWith(BEGIN_COMMENT)){
                 inComments=true;
@@ -120,45 +132,62 @@ public class PhdParser {
             }
             else if(line.startsWith(END_COMMENT)){
                 inComments=false;
-                visitor.visitComment(currentComments);
+                if(parseCurrentPhd){
+                    visitor.visitComment(currentComments);
+                }
             }
-            else if(line.startsWith(BEGIN_DNA)){                
-                visitor.visitBeginDna();
+            else if(line.startsWith(BEGIN_DNA)){   
+                if(parseCurrentPhd){
+                    visitor.visitBeginDna();
+                }
             }
             else if(line.startsWith(END_DNA)){
-                visitor.visitEndDna();
+                if(parseCurrentPhd){
+                    visitor.visitEndDna();
+                }
             }
             else if(line.startsWith(END_SEQUENCE)){
-                visitor.visitEndSequence();
+                if(parseCurrentPhd){
+                    visitor.visitEndSequence();
+                }
             }
             
             else if(line.startsWith(END_ITEM)){
-                visitor.visitEndTag();
+                if(parseCurrentPhd){
+                    visitor.visitEndTag();
+                }
             }
             else{
                 Matcher infoPattern = CALLED_INFO_PATTERN.matcher(line);
             
                 if(infoPattern.find()){
-                    visitor.visitBasecall(
+                    if(parseCurrentPhd){
+                        visitor.visitBasecall(
                             Nucleotide.parse(infoPattern.group(1).charAt(0)),
                             PhredQuality.valueOf(Byte.parseByte(infoPattern.group(2))),
                             Integer.parseInt(infoPattern.group(3)));
+                    }
                 }
                 else{
                     Matcher commentMatcher = COMMENT_PATTERN.matcher(line);
                     if(inComments && commentMatcher.find()){
-                        currentComments.put(commentMatcher.group(1), commentMatcher.group(2));
+                        if(parseCurrentPhd){
+                            currentComments.put(commentMatcher.group(1), commentMatcher.group(2));
+                        }
                     }
                     else{
                         Matcher tagMatcher = BEGIN_TAG_PATTERN.matcher(line);
                         if(tagMatcher.find()){
-                            visitor.visitBeginTag(tagMatcher.group(1));
+                            if(parseCurrentPhd){
+                                visitor.visitBeginTag(tagMatcher.group(1));
+                            }
                         }
                     }
                 }
                 
             }
         }
+        visitor.visitEndPhd();
         visitor.visitEndOfFile();
     }
 }

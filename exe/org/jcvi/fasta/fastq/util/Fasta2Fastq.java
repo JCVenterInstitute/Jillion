@@ -138,7 +138,7 @@ public class Fasta2Fastq {
                 public boolean visitRecord(String id, String comment, String entireBody) {
                     try {
                         if(filter.accept(id, comment)){
-                            QualitySequence qualities =qualityDataStore.get(id).getValue();
+                            QualitySequence qualities =qualityDataStore.get(id).getSequence();
                             if(qualities ==null){
                                 throw new IllegalStateException("no quality values for "+ id);
                             }

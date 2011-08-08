@@ -54,7 +54,7 @@ public class PrimerDesignerResultParser {
                 PrimerDesignResult.Builder builder = new PrimerDesignResult.Builder(file);
 
                 builder.setParentID(parentID);
-                builder.setPrimerSequence(primerFasta.getValue());
+                builder.setPrimerSequence(primerFasta.getSequence());
 
                 String primerIdString = primerFasta.getId();
                 Matcher idMatcher = PRIMER_PAIR_ID_PATTERN.matcher(primerIdString);

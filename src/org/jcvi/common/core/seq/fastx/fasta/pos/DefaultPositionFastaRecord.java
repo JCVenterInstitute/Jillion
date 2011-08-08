@@ -61,7 +61,7 @@ public class DefaultPositionFastaRecord <T extends Sequence<ShortSymbol>> extend
 
    
     @Override
-    public T getValue() {
+    public T getSequence() {
         return positions;
     }
     

@@ -33,6 +33,7 @@ import org.junit.runners.Suite.SuiteClasses;
      TestDefaultPhdFileDataStore.class,
      TestIndexPhdFileDataStore.class,
      TestFakePhdReadParser.class,
+     TestPhdDataStoreBuilderWith2InputFiles.class,
      TestBuildArtificialPhd.class,
      TestPhdWriter.class
     }

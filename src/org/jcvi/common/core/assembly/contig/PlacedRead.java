@@ -52,30 +52,5 @@ public interface PlacedRead extends Read, Placed<PlacedRead>{
     Direction getDirection();
     long toGappedValidRangeOffset(long referenceOffset);
     long toReferenceOffset(long gappedValidRangeOffset);
-    
-    /**
-     * Convert the given gapped valid range index into its
-     * ungapped equivalent.
-     * @param gappedValidRangeIndex the gapped valid range index to convert.
-     * @return the ungapped equivalent to the given gapped index.
-     * @see #convertUngappedValidRangeIndexToGappedValidRangeIndex(int)
-     */
-    int convertGappedValidRangeIndexToUngappedValidRangeIndex(int gappedValidRangeIndex);
-    /**
-     * Convert the given ungapped valid range index into its
-     * gapped equivalent.
-     * @param ungappedValidRangeIndex the ungapped valid range index to convert.
-     * @return the gapped equivalent to the given ungapped index.
-     * @see #convertGappedValidRangeIndexToUngappedValidRangeIndex(int)
-     */
-    int convertUngappedValidRangeIndexToGappedValidRangeIndex(int ungappedValidRangeIndex);
-    /**
-     * Convert the given gapped valid range into an ungapped valid range.
-     * @param gappedValidRange the gapped valid range to convert.
-     * @return the ungapped equivalent.
-     */
-    Range convertGappedValidRangeToUngappedValidRange(Range gappedValidRange);
-    
-    Range convertUngappedValidRangeToGappedValidRange(Range ungappedValidRange);
-    
+ 
 }

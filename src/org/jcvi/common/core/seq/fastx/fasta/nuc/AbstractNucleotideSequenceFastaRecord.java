@@ -90,7 +90,7 @@ public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFast
     }
 
     @Override
-    public NucleotideSequence getValue() 
+    public NucleotideSequence getSequence() 
     {
         return this.sequence;
     }

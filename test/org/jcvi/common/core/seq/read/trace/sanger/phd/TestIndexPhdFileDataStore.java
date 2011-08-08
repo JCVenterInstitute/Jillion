@@ -35,7 +35,7 @@ public class TestIndexPhdFileDataStore extends AbstractTestPhdDataStore{
     @Override
     protected PhdDataStore createPhdDataStore(File phdfile)
             throws FileNotFoundException {
-        return new IndexedPhdFileDataStore(phdfile);
+        return IndexedPhdFileDataStore.create(phdfile);
     }
 
 }
