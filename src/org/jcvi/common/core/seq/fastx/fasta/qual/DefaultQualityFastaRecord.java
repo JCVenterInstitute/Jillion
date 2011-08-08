@@ -59,7 +59,7 @@ public class DefaultQualityFastaRecord extends AbstractFastaRecord<PhredQuality,
     }
 
     @Override
-    public QualitySequence getValue() {
+    public QualitySequence getSequence() {
         return qualities;
     }
     

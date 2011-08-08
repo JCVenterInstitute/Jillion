@@ -78,7 +78,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdWriter;
 import org.jcvi.common.core.seq.trim.DefaultTrimFileDataStore;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.ReadWriteFileServer;
@@ -240,10 +239,8 @@ public class Cas2Consed3 {
                 IOUtil.closeAndIgnoreErrors(phdOut);
             }
              //here we are done building
-             PhdDataStore phdDataStore = new IndexedPhdFileDataStore(phdFile, 
-                         new DefaultIndexedFileRange(
-                                 (int)numberOfReadsVisitor.getReadCounter()),
-                                 true);
+             PhdDataStore phdDataStore = IndexedPhdFileDataStore.create(phdFile, (int)numberOfReadsVisitor.getReadCounter());
+          
              long numberOfContigs=0;
              long numberOfReads =0;
              File tempAce = new File(editDir, "temp.ace");
@@ -259,7 +256,7 @@ public class Cas2Consed3 {
                      consensusOut.print(
                              new DefaultNucleotideSequenceFastaRecord(
                                      splitContig.getId(), 
-                                     splitContig.getConsensus().decodeUngapped())
+                                     splitContig.getConsensus().asUngappedList())
                              .toFormattedString());
                      AceFileWriter.writeAceContig(splitContig, phdDataStore, tempOut);
                  }

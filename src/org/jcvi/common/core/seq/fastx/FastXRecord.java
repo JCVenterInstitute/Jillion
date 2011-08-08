@@ -43,6 +43,6 @@ public interface FastXRecord<S extends Symbol,T extends Sequence<S>>
      */
     String getComment();
     
-    T getValue();
+    T getSequence();
 
 }

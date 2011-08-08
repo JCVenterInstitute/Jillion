@@ -24,11 +24,9 @@
 package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.io.IOUtil;
 /**
  * {@code DefaultPhdDataStoreFactory} is an implementation
  * of {@link PhdDataStoreFactory} that creates {@link DefaultPhdFileDataStore}s.
@@ -41,17 +39,10 @@ public class DefaultPhdFileDataStoreFactory implements PhdDataStoreFactory {
     @Override
     public PhdDataStore createPhdDataStoreFactoryFor(File phdBall)
             throws DataStoreException {
-        DefaultPhdFileDataStore datastore = new DefaultPhdFileDataStore();
-        FileInputStream in=null;
         try {
-            in = new FileInputStream(phdBall);
-            PhdParser.parsePhd(in, datastore);
-            return datastore;
+            return DefaultPhdFileDataStore.create(phdBall);
         } catch (FileNotFoundException e) {
             throw new DataStoreException("could not parse phd ball", e);
-        }
-        finally{
-            IOUtil.closeAndIgnoreErrors(in);
         }
         
     }

@@ -47,4 +47,8 @@ public interface PhdFileVisitor extends TextFileVisitor{
     
     void visitEndTag();
     
+    boolean visitBeginPhd(String id);
+    
+    boolean visitEndPhd();
+    
 }

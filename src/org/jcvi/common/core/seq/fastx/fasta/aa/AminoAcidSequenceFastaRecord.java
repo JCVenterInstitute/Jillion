@@ -13,6 +13,6 @@ import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
  */
 public interface AminoAcidSequenceFastaRecord extends FastaRecord<AminoAcid,AminoAcidSequence> {
 
-	AminoAcidSequence getValue();
+	AminoAcidSequence getSequence();
 	
 }

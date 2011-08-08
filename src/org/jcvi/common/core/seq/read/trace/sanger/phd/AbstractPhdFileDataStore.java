@@ -152,11 +152,25 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     @Override
     public synchronized void visitEndSequence() {
         checkNotYetInitialized();
-        
     }
 
+    
 
 
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean visitBeginPhd(String id) {
+        return true;
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean visitEndPhd() {
+        return true;
+    }
     @Override
     public synchronized void visitLine(String line) {
         checkNotYetInitialized();
@@ -173,6 +187,7 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
         if(currentId !=null){
             visitPhd(currentId, currentBases, currentQualities, currentPositions, currentComments,tags);
         }
+        resetCurrentValues();
         initialized=true;
     }
 

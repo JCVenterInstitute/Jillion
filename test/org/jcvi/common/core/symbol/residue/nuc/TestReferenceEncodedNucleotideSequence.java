@@ -129,7 +129,7 @@ public class TestReferenceEncodedNucleotideSequence {
         DefaultReferenceEncodedNucleotideSequence actual = new DefaultReferenceEncodedNucleotideSequence(
                 encodedConsensus, sequence, offset);
         List<Integer> expectedGapIndexes = Arrays.asList(174, 178,180,181,182,186);
-        assertEquals(expectedGapIndexes,actual.getGapIndexes());
+        assertEquals(expectedGapIndexes,actual.getGapOffsets());
         assertEquals(expectedGapIndexes.size(), actual.getNumberOfGaps());
        
         assertEquals(sequence.length(), actual.getLength());

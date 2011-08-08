@@ -16,59 +16,49 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Dec 8, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
+
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhdFileDataStore;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdParser;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdTag;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
-import org.jcvi.common.io.fileServer.FileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
-public class TestFakePhdReadParser {
-
-    private static final String PHD_FILE = "files/fake.phd";
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestPhdDataStoreBuilderWith2InputFiles extends AbstractTestPhd{
+    private static final ResourceFileServer RESOURCE = new ResourceFileServer(TestPhdDataStoreBuilderWith2InputFiles.class);
     
-    private static FileServer RESOURCES = new ResourceFileServer(TestFakePhdReadParser.class);
-
     @Test
-    public void parseFakeReads() throws IOException, DataStoreException{
-        PhdDataStoreBuilder builder = DefaultPhdFileDataStore.createBuilder();        
-        PhdParser.parsePhd(RESOURCES.getFileAsStream(PHD_FILE), builder);
-        PhdDataStore dataStore = builder.build();
-        Phd fakePhd = dataStore.get("HA");
-        assertIsFake(fakePhd);
-        assertEquals(1738, fakePhd.getBasecalls().getLength());
+    public void testCanReadMultiplePhdFiles() throws FileNotFoundException, IOException, DataStoreException{
+        PhdDataStoreBuilder sut = DefaultPhdFileDataStore.createBuilder();
+        PhdParser.parsePhd(RESOURCE.getFile(PHD_FILE), sut);
+        PhdParser.parsePhd(RESOURCE.getFile("files/fake.phd"), sut);
         
-        assertIsFake(dataStore.get("contig00001"));
+        PhdDataStore datastore = sut.build();
+        assertEquals(4, datastore.size());
+
+        phdRecordMatchesExpected(datastore.get("1095595674585"));
         
-        Phd realPhd = dataStore.get("FTF2AAH02G7TE3.6-91");
+        Phd realPhd = datastore.get("FTF2AAH02G7TE3.6-91");
         assertEquals(
                 "TCAGCGCGTAGTCGACGCAGCTGTCGTGTGCAGCAAAAGCAGGTAGATATTGAAAGATGAGTCTTCTAACCGAGGTCGAAACGTACGTTCTCTCTATCGTCCCGTCAGGCCCCCTCCAAGACCGCGATCGCGCAGAGACTTGTAAGAATGTGTTTGTCAGGGAAAAACGAAACCGACTCTTGTAGGCGGCTCATGGAAGTAGGGTCCGTAAAAGAACAAGAACCAACTCCTCGTTCACCTCCTGACTAAGGGGTAAGTTTTAGGTTAGTTTGTTGGTTCTACGCTCACCGTCGCCACGTGAGCGAGGACGTGCGACGCGTAGGTAACGGCCGTTTGTTCCGAAAACTAAGCCCGTTAACTTAGGGAAGTAGGGGTAGGTCCAACCAACATGGACGAGAGCGGTCGAACTACGTACAACGAAGGACTTAAAAGGGTAAAAGTAAACAATTACCTACTAGGGGCGGAAAAGAAGGTGGCGACCTACCTAGTTAAGTTTACTAACCTAGGTTGGCACTTAGTCACGCTGCGACTGGGTCCGTCCTATGTTACAACAGGAGTAGGGACGGTGTGACCACTGAGTAGGCGATTGGTCCCGAACGACGGACAGCGTGCGTACG" 
-        		, 
-        		Nucleotides.convertToString(realPhd.getBasecalls().asList()));
+                , 
+                Nucleotides.convertToString(realPhd.getBasecalls().asList()));
     }
 
-    private void assertIsFake(Phd fakePhd) {
-        boolean isFake=false;
-       for(PhdTag tag :fakePhd.getTags()){
-           if("WR".equals(tag.getTagName())){
-               if(tag.getTagValue().contains("type: fake")){
-                   isFake=true;
-                   break;
-               }
-           }
-       }
-       assertTrue(isFake);
+    protected void phdRecordMatchesExpected(Phd actual) {
+        assertEquals(expectedQualities, actual.getQualities().asList());        
+        assertEquals(expectedPositions, actual.getPeaks().getData().asList());      
+        assertEquals(expectedBasecalls, Nucleotides.convertToString(actual.getBasecalls().asList()));
+        assertEquals(expectedProperties, actual.getComments());
     }
+    
 }

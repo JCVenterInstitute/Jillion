@@ -100,14 +100,14 @@ public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaCons
     protected Phd createPhd(Properties requiredComments, NucleotideSequenceFastaRecord fasta,
             SCFChromatogram chromo) {
         final String id = fasta.getId();
-        return new DefaultPhd(id, fasta.getValue(), currentQualityFasta.getValue(), 
+        return new DefaultPhd(id, fasta.getSequence(), currentQualityFasta.getSequence(), 
                 currentPeaks, requiredComments);
     }
 
     @Override
     public PhdReadRecord next() {
         currentQualityFasta = qualityIterator.next();
-        currentPeaks = new SangerPeak(positionIterator.next().getValue());
+        currentPeaks = new SangerPeak(positionIterator.next().getSequence());
         return super.next();
     }
     @Override

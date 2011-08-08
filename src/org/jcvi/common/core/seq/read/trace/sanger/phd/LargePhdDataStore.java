@@ -90,10 +90,10 @@ public class LargePhdDataStore implements PhdDataStore{
         InputStream streamOfRecord;
         try {
             streamOfRecord = getRecordFor(id);        
-            DefaultPhdFileDataStore datastore = new DefaultPhdFileDataStore();
-            PhdParser.parsePhd(streamOfRecord, datastore);
+            PhdDataStoreBuilder builder = DefaultPhdFileDataStore.createBuilder();
+            PhdParser.parsePhd(streamOfRecord, builder);
             
-            return datastore.get(id);
+            return builder.build().get(id);
         } catch (FileNotFoundException e) {
             throw new DataStoreException("could not parse phd for "+id, e);
         }

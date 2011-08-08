@@ -66,7 +66,7 @@ public class DefaultFastQRecord implements FastQRecord {
      * @see #getNucleotides()
      */
      @Override
-     public NucleotideSequence getValue() {
+     public NucleotideSequence getSequence() {
          return getNucleotides();
      }
      

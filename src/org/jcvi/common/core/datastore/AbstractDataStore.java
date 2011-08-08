@@ -30,9 +30,9 @@ import org.jcvi.common.core.util.CloseableIterator;
 public abstract class  AbstractDataStore<T> implements DataStore<T>{
     private boolean isClosed;
     
-    private synchronized void throwExceptionIfClosed() throws DataStoreException {
+    private synchronized void throwExceptionIfClosed() {
         if(isClosed){
-            throw new DataStoreException("DataStore is closed");
+            throw new IllegalStateException("DataStore is closed");
         }
     }
     

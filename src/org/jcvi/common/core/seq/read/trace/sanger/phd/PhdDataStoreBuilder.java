@@ -16,39 +16,20 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/**
- * 
- */
-package org.jcvi.common.core.seq.fastx.fasta;
 
-import org.jcvi.common.core.seq.fastx.FastXRecord;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.Symbol;
+package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
-
+import org.jcvi.common.core.util.Builder;
 
 /**
- * {@code FastaRecord} is an interface for interacting
- * with a single FASTA record.
- * @param <T> the type used as the value of the record
- * @author jsitz
+ * {@code PhdDataStoreBuilder} will build a PhdDataStore up 
+ * from visiting phd files.  Depending on the implementation,
+ * it is possible for multiple files to be visited to create a
+ * {@link PhdDataStore} that spans multiple files.
  * @author dkatzel
+ *
+ *
  */
-public interface FastaRecord<S extends Symbol,T extends Sequence<S>> extends FastXRecord<S,T>
-{
-    
-    /**
-     * Gets the entire formatted fasta record as a {@link CharSequence}.
-     */
-    CharSequence toFormattedString();
-
-    long getChecksum();
-    /**
-     * Delegates to {@link #toFormattedString()}.
-     * @return a correctly formatted FASTA record
-     * as a String.
-     */
-    @Override
-    String toString();
+public interface PhdDataStoreBuilder extends PhdFileVisitor, Builder<PhdDataStore>{
 
 }

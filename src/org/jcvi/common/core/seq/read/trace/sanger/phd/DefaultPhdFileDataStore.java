@@ -25,14 +25,13 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
@@ -41,79 +40,115 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-import org.jcvi.common.core.util.CloseableIterator;
-import org.jcvi.common.core.util.CloseableIteratorAdapter;
-
-public class DefaultPhdFileDataStore extends AbstractPhdFileDataStore{
-    private static final QualitySymbolCodec QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
+/**
+ * {@code DefaultPhdFileDataStore} is a {@link PhdDataStore}
+ * implementation that will store all {@link Phd} records
+ * in memory for fast lookup but will take up lots of memory
+ * (90+ % of the phdBall file size).
+ * @author dkatzel
+ *
+ *
+ */
+public final class DefaultPhdFileDataStore{
+    /**
+     * Create a new {@link PhdDataStore} for the given
+     * {@literal phd.ball} file.
+     * @param phdBall the {@literal phd.ball} to parse.
+     * @return a new DefaultPhdFileDataStore; never null.
+     * @throws FileNotFoundException if the given file
+     * does not exist.
+     * @throws NullPointerException if phdBall is null.
+     */
+    public static PhdDataStore create(File phdBall) throws FileNotFoundException{
+        if(phdBall ==null){
+            throw new NullPointerException("phdball can not be null");
+        }
+        PhdDataStoreBuilder builder =  createBuilder();
+        PhdParser.parsePhd(phdBall, builder);
+        return builder.build();
+    }
+    /**
+     * Create a new {@link PhdDataStore} for the given
+     * {@literal phd.ball} file but only store the {@link Phd}
+     * records of those reads that match the given {@link DataStoreFilter}.
+     * @param phdBall the {@literal phd.ball} to parse.
+     * @param filter the {@link DataStoreFilter} to use to 
+     * filter which reads get into the datastore.
+     * @return a new DefaultPhdFileDataStore; never null.
+     * @throws FileNotFoundException if the given file
+     * does not exist.
+     * @throws NullPointerException if the given phdBall OR the given filter
+     * is null.
+     */
+    public static PhdDataStore create(File phdBall,DataStoreFilter filter) throws FileNotFoundException{
+        PhdDataStoreBuilder builder =createBuilder(filter);
+        PhdParser.parsePhd(phdBall, builder);
+        return builder.build();
+    }
+    /**
+     * Create a new {@link PhdDataStoreBuilder} that can visit multiple
+     * phd files.
+     * @return a new PhdDataStoreBuilder; never null.
+     */
+    public static PhdDataStoreBuilder createBuilder(){
+        return new DefaultPhdDataStoreBuilder();
+    }
+    /**
+     * Create a new {@link PhdDataStoreBuilder} that can visit multiple
+     * phd files.
+     * @param filter the {@link DataStoreFilter} to use to 
+     * filter which reads get into the datastore.
+     * @return a new PhdDataStoreBuilder; never null.
+     * @throws NullPointerException if the given filter
+     * is null.
+     */
+    public static PhdDataStoreBuilder createBuilder(DataStoreFilter filter){
+        return new DefaultPhdDataStoreBuilder(filter);
+    }
     
-    private final Map<String, DefaultPhd> map = new HashMap<String, DefaultPhd>();
-   
-    
-    @Override
-    protected void visitPhd(String id, List<Nucleotide> bases,
-            List<PhredQuality> qualities, List<ShortSymbol> positions,
-            Properties comments, List<PhdTag> tags) {
-        map.put(id, new DefaultPhd(id,
-                new DefaultNucleotideSequence(bases),
-                new EncodedQualitySequence(QUALITY_CODEC, qualities),
-                new SangerPeak(positions),
-                comments,
-                tags));
+    /**
+     * Private implementation that will store all the phds
+     * in a Map.
+     * @author dkatzel
+     *
+     *
+     */
+    private static class DefaultPhdDataStoreBuilder extends AbstractPhdDataStoreBuilder{
+        private static final QualitySymbolCodec QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
+        //linked map to preserve iteration order
+        private final Map<String, Phd> map = new LinkedHashMap<String, Phd>();
+      
         
-    }
+        private DefaultPhdDataStoreBuilder() {
+            super();
+        }
 
-    /**
-     * 
-     */
-    public DefaultPhdFileDataStore() {
-        super();
-    }
+        private DefaultPhdDataStoreBuilder(DataStoreFilter filter) {
+            super(filter);
+        }
 
-    /**
-     * @param filter
-     */
-    public DefaultPhdFileDataStore(DataStoreFilter filter) {
-        super(filter);
-    }
-    public DefaultPhdFileDataStore(File phdFile, DataStoreFilter filter) throws FileNotFoundException {
-        super(filter);
-        PhdParser.parsePhd(phdFile, this);
-    }
-    
-    public DefaultPhdFileDataStore(File phdFile) throws FileNotFoundException {
-        super();
-        PhdParser.parsePhd(phdFile, this);
-    }
-    
-    @Override
-    public synchronized boolean contains(String id) throws DataStoreException {
-        checkNotYetClosed();
-        return map.containsKey(id);
-    }
+        @Override
+        public PhdDataStore build() {
+            return new PhdDataStoreAdapter(new SimpleDataStore<Phd>(map));
+        }
 
-    @Override
-    public synchronized Phd get(String id) throws DataStoreException {
-        checkNotYetClosed();
-        return map.get(id);
-    }
-
-    @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
-        checkNotYetClosed();
-        return CloseableIteratorAdapter.adapt(map.keySet().iterator());
-    }
-
-    @Override
-    public synchronized int size() throws DataStoreException {
-        checkNotYetClosed();
-        return map.size();
-    }
-
-    @Override
-    public synchronized void close() throws IOException {
-        super.close();
-        map.clear();
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected boolean visitPhd(String id, List<Nucleotide> bases,
+                List<PhredQuality> qualities, List<ShortSymbol> positions,
+                Properties comments, List<PhdTag> tags) {
+            map.put(id, new DefaultPhd(id,
+                    DefaultNucleotideSequence.create(bases),
+                    new EncodedQualitySequence(QUALITY_CODEC, qualities),
+                    new SangerPeak(positions),
+                    comments,
+                    tags));
+            
+            return true;
+            
+        }
         
     }
 

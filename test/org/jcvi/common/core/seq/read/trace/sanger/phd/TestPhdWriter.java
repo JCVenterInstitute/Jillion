@@ -52,9 +52,9 @@ public class TestPhdWriter extends AbstractTestPhd{
                 expectedProperties);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PhdWriter.writePhd(phd, out);
-        DefaultPhdFileDataStore expected = new DefaultPhdFileDataStore(RESOURCE.getFile(PHD_FILE));
-        DefaultPhdFileDataStore actual = new DefaultPhdFileDataStore();
+        PhdDataStore expected = DefaultPhdFileDataStore.create(RESOURCE.getFile(PHD_FILE));
+        PhdDataStoreBuilder actual = DefaultPhdFileDataStore.createBuilder();
         PhdParser.parsePhd(new ByteArrayInputStream(out.toByteArray()), actual);
-        assertEquals(expected.get(id),actual.get(id));
+        assertEquals(expected.get(id),actual.build().get(id));
     }
 }

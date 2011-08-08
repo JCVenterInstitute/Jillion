@@ -79,7 +79,7 @@ public class ReverseComplimentFasta {
                 protected boolean visitFastaRecord(
                         NucleotideSequenceFastaRecord fastaRecord) {
                     List<Nucleotide> revcompliment =Nucleotides.reverseCompliment(
-                            fastaRecord.getValue().asList());
+                            fastaRecord.getSequence().asList());
                     try {
                         out.write(new DefaultNucleotideSequenceFastaRecord(
                                 fastaRecord.getId(),

@@ -91,12 +91,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         		 acePlacedRead.getPhdInfo(),
         		 acePlacedRead.getUngappedFullLength());
         }
-    	@Deprecated
-        public Builder addRead(String readId, String validBases, int offset,
-                Direction dir, Range clearRange,PhdInfo phdInfo){
-            return addRead(readId, validBases, offset, dir, clearRange, phdInfo,
-                    validBases.replaceAll("-", "").length());
-        }
+    	
         public Builder addRead(String readId, String validBases, int offset,
                 Direction dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
             //contig left (and right) might be beyond consensus depending on how
@@ -153,22 +148,18 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             contigLeft = Math.max(contigLeft, 0);
             contigRight = Math.min(contigRight,(int)fullConsensus.getLength());
             //here only include the gapped valid range consensus bases
-            //throw away the rest
-            final List<Nucleotide> validConsensusGlyphs = 
-                    new ArrayList<Nucleotide>(
-                            updatedConsensus.subList(contigLeft, contigRight));
-            
-            NucleotideSequence validConsensus = new DefaultNucleotideSequence(validConsensusGlyphs);
+            //throw away the rest            
+            NucleotideSequence validConsensus = DefaultNucleotideSequence.create(updatedConsensus.subList(contigLeft, contigRight));
             for(DefaultAcePlacedRead.Builder aceReadBuilder : aceReadBuilders){
                 int newOffset = aceReadBuilder.offset() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);
                 placedReads.add(aceReadBuilder.build());                
-            }
+            }            
             final String newContigId;
             if(adjustedContigIdCoordinateSystem !=null){
                 Range ungappedContigRange = Range.buildRange(
-                                    validConsensus.getUngappedOffsetFor(contigLeft),
-                                    validConsensus.getUngappedOffsetFor(contigRight))
+                            fullConsensus.getUngappedOffsetFor(contigLeft),
+                            fullConsensus.getUngappedOffsetFor(contigRight))
                         .convertRange(adjustedContigIdCoordinateSystem);
                  //contig left and right are in 0 based use
                 newContigId = String.format("%s_%d_%d",contigId,
@@ -177,6 +168,8 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             }else{
                 newContigId = contigId;
             }
+            aceReadBuilders.clear();
+            fullConsensus = null;
             return new DefaultAceContig(newContigId, validConsensus,placedReads);
         }
         

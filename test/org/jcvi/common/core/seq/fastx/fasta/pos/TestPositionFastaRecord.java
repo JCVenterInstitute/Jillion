@@ -62,7 +62,7 @@ public class TestPositionFastaRecord {
                     .append(fasta.getComment());
         }
         appendCarriageReturn(builder);
-        List<ShortSymbol> pos = fasta.getValue().asList();
+        List<ShortSymbol> pos = fasta.getSequence().asList();
         for(int i=1; i<pos.size(); i++){
             
             builder.append(String.format("%04d", pos.get(i-1).getValue()));
@@ -93,7 +93,7 @@ public class TestPositionFastaRecord {
         assertEquals(0L, fasta.getChecksum());
         final String expectedRecord = buildExpectedRecord(fasta);
         assertEquals(expectedRecord, fasta.toFormattedString().toString());
-        assertEquals(encodedPositions, fasta.getValue());
+        assertEquals(encodedPositions, fasta.getSequence());
     }
     @Test
     public void constructorWithoutComment(){

@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -80,10 +81,16 @@ public abstract class AbstractTestPhdDataStore extends AbstractTestPhd{
         Phd actual = iter.next();
         phdRecordMatchesExpected(actual);
         assertFalse(iter.hasNext());
+        try{
+            iter.next();
+            fail("should throw nosuchElementException when done iterating");
+        }catch(NoSuchElementException expected){
+            //expected
+        }
     }
     
     @Test
-    public void getAfterCloseShouldThrowIllegalStateException() throws IOException, DataStoreException{
+    public void getAfterCloseShouldIllegalStateException() throws IOException, DataStoreException{
         sut.close();
         try {
             sut.get("1095595674585");

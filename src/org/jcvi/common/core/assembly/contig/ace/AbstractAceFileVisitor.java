@@ -72,6 +72,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         if(readingConsensus){
             readingConsensus=false;
            visitNewContig(currentContigId, ConsedUtil.convertAceGapsToContigGaps(currentBasecalls.toString()));
+           
         }
         final AssembledFrom assembledFromObj = new AssembledFrom(readId, gappedStartOffset, dir);
         currentAssembledFromMap.put(readId, assembledFromObj);
@@ -241,8 +242,15 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     public synchronized void visitEndOfFile() {
         throwExceptionIfInitialized();  
         visitEndOfContig();
+        clearTempData();
         initialized = true;
         
+    }
+    
+    private void clearTempData(){
+        currentContigId = null;
+        currentAssembledFromMap = null;
+        currentBasecalls = null;
     }
 
     @Override

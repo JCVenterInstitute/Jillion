@@ -69,7 +69,7 @@ public class PhdDirQualityDataStore implements PhdDataStore{
         if(phdBall ==null){
             phdBallDataStore = null;
         }else{
-            phdBallDataStore = new DefaultPhdFileDataStore(phdBall);
+            phdBallDataStore = DefaultPhdFileDataStore.create(phdBall);
         }
     }
 
@@ -112,7 +112,7 @@ public class PhdDirQualityDataStore implements PhdDataStore{
             return phdBallDataStore.get(id);
         }
         try {
-            return new DefaultPhdFileDataStore(phdFile).get(id);
+            return DefaultPhdFileDataStore.create(phdFile).get(id);
         } catch (FileNotFoundException e) {
             throw new DataStoreException("could not get phd file for "+id);
         }

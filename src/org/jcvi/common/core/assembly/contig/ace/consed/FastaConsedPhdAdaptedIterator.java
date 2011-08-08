@@ -84,14 +84,14 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
         QualitySequence qualities = getQualitiesFor(nextFasta);
         return ArtificialPhd.createNewbler454Phd(
                 id, 
-                nextFasta.getValue(), 
+                nextFasta.getSequence(), 
                 qualities,
                 requiredComments);
 	}
 	
     protected QualitySequence getQualitiesFor(
             NucleotideSequenceFastaRecord nextFasta) {
-        int numberOfQualities =(int) nextFasta.getValue().getLength();
+        int numberOfQualities =(int) nextFasta.getSequence().getLength();
 		PhredQuality[] qualities = new PhredQuality[numberOfQualities];
 		Arrays.fill(qualities, defaultQualityValue);
 		

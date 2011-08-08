@@ -23,85 +23,192 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
+import org.jcvi.common.core.symbol.ShortGlyphFactory;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+/**
+ * {@code AbstractPhdFileVisitor} is a {@link PhdFileVisitor}
+ * implementation that will keep track of all
+ * the data associated with the current {@link Phd}
+ * record being visited.  Once an entire Phd record
+ * has been visited, this class with make a call to {@link #visitPhd(String, List, List, List, Properties, List)}.
+ * 
+ * @see #visitPhd(String, List, List, List, Properties, List)
+ * @author dkatzel
+ *
+ *
+ */
+public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
 
-public class AbstractPhdFileVisitor implements PhdFileVisitor{
-
-    private boolean initialized;
+    private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
+    private List<Nucleotide> currentBases = new ArrayList<Nucleotide>();
+    private List<PhredQuality> currentQualities = new ArrayList<PhredQuality>();
+    private List<ShortSymbol> currentPositions = new ArrayList<ShortSymbol>();
+    private List<PhdTag> tags = new ArrayList<PhdTag>();
+    private Properties currentComments;
+    private String currentId; 
+    private String currentTag;
+    private boolean inTag=false;
+    private StringBuilder currentTagValueBuilder;
     
-    private synchronized void throwExceptionIfAlreadyInitialized(){
-        if(initialized){
-            throw new IllegalStateException("already initialized");
-        }
+    private final DataStoreFilter filter;
+    /**
+     * Create a new AbstractPhdFileVisitor
+     * that will visit all phd records (no filter).
+     */
+    public AbstractPhdFileVisitor(){
+        this(EmptyDataStoreFilter.INSTANCE);
     }
+    /**
+     * Create a new AbstractPhdFileVisitor with the given filter.  Any
+     * phd records that are not accepted by this filter will not get
+     * the {@link #visitPhd(String, List, List, List, Properties, List)}
+     * method called on it.
+     * @param filter the DataStoreFilter to use; can not be null.
+     * @throws NullPointerException if filter is null.
+     */
+    public AbstractPhdFileVisitor(DataStoreFilter filter){
+        if(filter ==null){
+            throw new NullPointerException("filter can not be null");
+        }
+        this.filter= filter;
+    }
+    /**
+     * Visit the current Phd record that is being visited.  Only phds
+     * that are accepted by the DataStoreFilter (if any)
+     * will get this method called on it.
+     * It is up to the concrete implementation of this class
+     * to handle this data as it sees fit.
+     * @param id the id of this phd record.
+     * @param bases the basecalls of this Phd
+     * @param qualities the quality scores of this phd.
+     * @param positions the positions of this phd.
+     * @param comments any comments of this Phd may be emtpy but never null.
+     * @param tags any tags of this phd, may be emtpy but never null.
+     * @return {@code true} if should keep parsing; {@code false}
+     * otherwise.
+     */
+    protected abstract boolean visitPhd(String id,
+            List<Nucleotide> bases,
+            List<PhredQuality> qualities,
+            List<ShortSymbol> positions, 
+            Properties comments,
+            List<PhdTag> tags);
+    
     @Override
     public synchronized void visitBasecall(Nucleotide base, PhredQuality quality,
             int tracePosition) {
-        throwExceptionIfAlreadyInitialized();        
+        currentBases.add(base);
+       currentQualities.add(quality);
+       currentPositions.add(PEAK_FACTORY.getGlyphFor(tracePosition));            
     }
 
-    @Override
-    public synchronized void visitBeginDna() {
-        throwExceptionIfAlreadyInitialized();
-        
+    private void resetCurrentValues(){
+        currentBases= new ArrayList<Nucleotide>();
+        currentQualities= new ArrayList<PhredQuality>();
+        currentPositions= new ArrayList<ShortSymbol>();
+        tags = new ArrayList<PhdTag>();
     }
 
-    @Override
-    public synchronized void visitBeginSequence(String id) {
-        throwExceptionIfAlreadyInitialized();
-        
-    }
+
 
     @Override
-    public synchronized void visitBeginTag(String tagName) {
-        throwExceptionIfAlreadyInitialized();
-        
+    public void visitBeginDna() {
     }
+
+
+
+    @Override
+    public synchronized void visitBeginSequence(String id) {      
+    }
+
+
 
     @Override
     public synchronized void visitComment(Properties comments) {
-        throwExceptionIfAlreadyInitialized();
-        
+        this.currentComments = comments;
     }
 
+
+
     @Override
-    public synchronized void visitEndDna() {
-        throwExceptionIfAlreadyInitialized();
-        
+    public synchronized void visitEndDna() {        
     }
+
+
 
     @Override
     public synchronized void visitEndSequence() {
-        throwExceptionIfAlreadyInitialized();
-        
+       
     }
 
+
+
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    public synchronized void visitEndTag() {
-        throwExceptionIfAlreadyInitialized();
-        
+    public synchronized boolean visitBeginPhd(String id) {
+        this.currentId = id;
+        return true;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public synchronized boolean visitEndPhd() {
+        boolean keepParsing=true;
+        if(filter.accept(currentId)){
+            keepParsing= visitPhd(currentId, currentBases, currentQualities, currentPositions, currentComments,tags);
+        }
+        resetCurrentValues();
+        return keepParsing;
     }
 
     @Override
     public synchronized void visitLine(String line) {
-        throwExceptionIfAlreadyInitialized();
-        
+        if(inTag){
+            currentTagValueBuilder.append(line);
+        }
     }
+
+
 
     @Override
     public synchronized void visitEndOfFile() {
-        throwExceptionIfAlreadyInitialized();
-        initialized = true;
+       
         
     }
 
+
+
     @Override
     public synchronized void visitFile() {
-        throwExceptionIfAlreadyInitialized();
-        
+    }
+
+
+    @Override
+    public synchronized void visitBeginTag(String tagName) {
+        currentTag =tagName;
+        currentTagValueBuilder = new StringBuilder();
+        inTag =true;
+    }
+
+    @Override
+    public synchronized void visitEndTag() {
+        if(!inTag){
+            throw new IllegalStateException("invalid tag");
+        }
+        tags.add(new DefaultPhdTag(currentTag, currentTagValueBuilder.toString()));
+        inTag = false;
     }
 
 }

@@ -78,8 +78,8 @@ public class TestFastQ2Fasta {
 
         for(FastQRecord fastQRecord : fastqDataStore){
             String id = fastQRecord.getId();
-            assertEquals("qualities",fastQRecord.getQualities().asList(), qualFastaDataStore.get(id).getValue().asList());
-            assertEquals("seq",fastQRecord.getNucleotides().asList(), seqFastaDataStore.get(id).getValue().asList());
+            assertEquals("qualities",fastQRecord.getQualities().asList(), qualFastaDataStore.get(id).getSequence().asList());
+            assertEquals("seq",fastQRecord.getNucleotides().asList(), seqFastaDataStore.get(id).getSequence().asList());
         }
         return fastqDataStore.size();
     }
