@@ -33,4 +33,10 @@ public interface FastQRecord extends FastXRecord<Nucleotide,NucleotideSequence>{
     NucleotideSequence getNucleotides();
     
     QualitySequence getQualities();
+    /**
+     * 
+    * Delegates to {@link #getNucleotides()}.
+     */
+    @Override
+    NucleotideSequence getSequence();
 }

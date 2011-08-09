@@ -25,25 +25,29 @@ import java.util.TreeSet;
 
 import org.jcvi.common.core.seq.plate.Well.IndexOrder;
 /**
- * {@code NextWellIterator} is a way to abstract away
+ * {@code PlatePopulator} is a way to abstract away
  * how a plate is to be populated.  All the logic on what the next
  * well to fill is encapsulated in this class so callers of this class
  * don't need to worry about the business logic.
  * @author dkatzel
- *
- *
  */
-public final class NextWellIterator{
+public final class PlatePopulator{
+    
     private final IndexOrder indexOrder;
-    private final SortedSet<org.jcvi.common.core.seq.plate.Well> unusedWells;
+    
+    private final SortedSet<Well> unusedWells;
+    
     private final PlateFormat format;
    
     /**
-     * Create a new NextWellIterator.
-     * @param indexOrder
-     * @param format
+     * Create a new PlatePopulator.
+     * @param indexOrder the order that the wells
+     * should get populated.
+     * @param format the {@link PlateFormat} of the
+     * plate(s) to be populated.
+     * @throws NullPointerException if any arguments are null.
      */
-    public NextWellIterator(IndexOrder indexOrder,PlateFormat format) {
+    public PlatePopulator(IndexOrder indexOrder,PlateFormat format) {
         if(indexOrder==null){
             throw new NullPointerException("index order can not be null");
         }
@@ -52,7 +56,7 @@ public final class NextWellIterator{
         }
         this.indexOrder = indexOrder;
         this.format = format;
-        unusedWells = new TreeSet<org.jcvi.common.core.seq.plate.Well>(indexOrder.createWellComparator(format));
+        unusedWells = new TreeSet<Well>(indexOrder.createWellComparator(format));
         newPlate();
     }
     /**
@@ -61,7 +65,7 @@ public final class NextWellIterator{
      * @return {@code true} if the well has been used; {@code false} otherwise.
      * @throws NullPointerException if well is null.
      */
-    public boolean isUnused(org.jcvi.common.core.seq.plate.Well well){
+    public boolean isUnused(Well well){
         if(well==null){
             throw new NullPointerException("well can not be null");
         }
@@ -74,7 +78,7 @@ public final class NextWellIterator{
      * @throws IllegalArgumentException if the well has
      * already been used.
      */
-    public void use(org.jcvi.common.core.seq.plate.Well well){
+    public void use(Well well){
         if(well==null){
             throw new NullPointerException("well can not be null");
         }
@@ -85,7 +89,7 @@ public final class NextWellIterator{
         
     }
     /**
-     * Is this plate finsihed or does this plate no longer have any unused wells
+     * Is this plate finished or does this plate no longer have any unused wells
      * on it. 
      * @return {@code true} if the plate is finished or  has used up all its
      * wells; {@code false} otherwise.
