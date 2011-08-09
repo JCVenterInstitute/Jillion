@@ -19,7 +19,7 @@
 
 package org.jcvi.common.internal.command.grid;
 /**
- * JCVI Grid has several different "queues" which allow
+ * The JCVI Grid has several different "queues" which allow
  * jobs to run for limited periods of time.  Queues for faster
  * running jobs have higher scheduling priority.
  *
@@ -44,7 +44,15 @@ public enum JcviQueue {
      * be killed because it is taking too long, however
      * the default queue has the lowest scheduling priority.
      */
-    DEFAULT("default");
+    DEFAULT("default"),
+    /**
+     * This queue is intended for high memory jobs
+     * that will complete under 8 hours.  As of 
+     * 2011, this queue has 64 CPUs and 128GB.
+     * Any jobs running for longer than 8 hours on the himem queue 
+     * will be killed.
+     */
+    HI_MEM("himem");
 
     private final String queueName;
 
