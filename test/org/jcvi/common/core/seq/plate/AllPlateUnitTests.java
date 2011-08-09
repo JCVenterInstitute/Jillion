@@ -34,7 +34,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestWellFactories.class,
         TestWell.class,
         TestWellQuadrant.class,
-        TestNextWellIterator.class
+        TestPlatePopulator.class
     }
     )
 public class AllPlateUnitTests {

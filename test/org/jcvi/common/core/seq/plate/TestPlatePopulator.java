@@ -21,7 +21,7 @@ package org.jcvi.common.core.seq.plate;
 
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.seq.plate.NextWellIterator;
+import org.jcvi.common.core.seq.plate.PlatePopulator;
 import org.jcvi.common.core.seq.plate.PlateFormat;
 import org.jcvi.common.core.seq.plate.Well;
 import org.jcvi.common.core.seq.plate.Well.IndexOrder;
@@ -34,14 +34,14 @@ import static org.junit.Assert.*;
  *
  *
  */
-public class TestNextWellIterator {
+public class TestPlatePopulator {
     IndexOrder order = IndexOrder.ROW_MAJOR;
     PlateFormat plateFormat = PlateFormat._96;
-    NextWellIterator sut;
+    PlatePopulator sut;
     
     @Before
     public void setup(){
-        sut = new NextWellIterator(order, plateFormat);
+        sut = new PlatePopulator(order, plateFormat);
     }
     @Test
     public void nextWellShouldGetNextWellFromIndex(){
@@ -91,11 +91,11 @@ public class TestNextWellIterator {
     }
     @Test(expected = NullPointerException.class)
     public void constructorWithNullPlateFormatShouldThrowNPE(){
-        new NextWellIterator(IndexOrder.COLUMN_MAJOR, null);
+        new PlatePopulator(IndexOrder.COLUMN_MAJOR, null);
     }
     @Test(expected = NullPointerException.class)
     public void constructorWithNullIndexOrderShouldThrowNPE(){
-        new NextWellIterator(null, PlateFormat._384);
+        new PlatePopulator(null, PlateFormat._384);
     }
     
     @Test(expected = NullPointerException.class)

@@ -25,7 +25,7 @@ import org.jcvi.common.core.symbol.Symbol;
 /**
  * {@code FastXRecord} is an interface for interacting
  * with a single record in a fastX format.
- * @param <T> the type used as the value of the record
+ * @param <T> the Sequence type used as the value of the record
  * @author dkatzel
  */
 public interface FastXRecord<S extends Symbol,T extends Sequence<S>>
@@ -42,7 +42,10 @@ public interface FastXRecord<S extends Symbol,T extends Sequence<S>>
      * or {@code null} if there is no comment.
      */
     String getComment();
-    
+    /**
+     * Get the Sequence associated with this record.
+     * @return a Sequence, never null.
+     */
     T getSequence();
 
 }
