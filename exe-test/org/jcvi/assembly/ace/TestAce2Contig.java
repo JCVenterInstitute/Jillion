@@ -75,7 +75,7 @@ public class TestAce2Contig {
       DefaultContigFileDataStore contigFileDataStore = new DefaultContigFileDataStore(actualContigFile);
       Contig<PlacedRead> contig = contigFileDataStore.get("Contig1");
       
-      AceContigDataStore aceContigDataStore = new DefaultAceFileDataStore(aceFile);
+      AceContigDataStore aceContigDataStore = DefaultAceFileDataStore.create(aceFile);
       AceContig aceContig = aceContigDataStore.get("Contig1");
       assertEquals(aceContig.getConsensus().asList(), contig.getConsensus().asList());
       for(AcePlacedRead expectedRead : aceContig.getPlacedReads()){

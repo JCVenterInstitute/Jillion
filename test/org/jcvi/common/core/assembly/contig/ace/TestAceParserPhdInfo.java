@@ -50,7 +50,7 @@ public class TestAceParserPhdInfo {
     Map<String, PhdInfo> phdInfoMap;
     @BeforeClass
     public static void parseContig() throws DataStoreException, IOException{
-        actualContig =new DefaultAceFileDataStore(RESOURCES.getFile(ACE_FILE))
+        actualContig =DefaultAceFileDataStore.create(RESOURCES.getFile(ACE_FILE))
                             .get("Contig1");
     }
     @Before

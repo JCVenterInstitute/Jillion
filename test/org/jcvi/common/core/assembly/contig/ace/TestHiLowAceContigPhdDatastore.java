@@ -52,7 +52,7 @@ public class TestHiLowAceContigPhdDatastore {
     @Before
     public void setup() throws IOException{
         File ace = rs.getFile("files/sample.ace");
-        sut = new HiLowAceContigPhdDatastore(ace, "Contig1");
+        sut = HiLowAceContigPhdDatastore.create(ace, "Contig1");
     }
     
     @After

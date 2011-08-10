@@ -28,69 +28,132 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.util.CloseableIterator;
-import org.jcvi.common.core.util.CloseableIteratorAdapter;
+/**
+ * {@code DefaultAceFileDataStore} is a AceContigDataStore
+ * implementation that stores all the {@link AceContig}s
+ * in a Map.  This implementation is not very 
+ * memory effiecient and therefore should not be used
+ * for large ace files.
+ * @author dkatzel
+ *
+ *
+ */
+public final class DefaultAceFileDataStore implements AceContigDataStore{
+    /**
+     * Create a new empty AceContigDataStoreBuilder
+     * that will need to be populated.
+     * @return a new AceContigDataStoreBuilder; never null.
+     */
+    public static AceContigDataStoreBuilder createBuilder(){
+        return new DefaultAceFileDataStoreBuilder();
+    }
+    /**
+     * Create a new AceContigDataStore that stores
+     * all the {@link AceContig}s in a Map.
+     * @param aceFile the ace file to use to 
+     * to populate the datstore.
+     * @return a new AceContigDataStore which contains
+     * all the {@link AceContig}s specified in the given
+     * ace file.
+     * @throws IOException if there is a problem reading the ace file.
+     */
+    public static AceContigDataStore create(File aceFile) throws IOException{
+        AceContigDataStoreBuilder builder = createBuilder();
+        AceFileParser.parseAceFile(aceFile, builder);
+        return builder.build();
+    }
+    
+    private final DataStore<AceContig> delegate;
 
-public class DefaultAceFileDataStore extends AbstractAceContigBuilder implements AceContigDataStore{
-
-    private Map<String, AceContig> contigMap = new LinkedHashMap<String, AceContig>();
-
-    private boolean isClosed;
    
-    private void throwExceptionIfClosed() throws DataStoreException {
-        if(isClosed){
-            throw new DataStoreException("DataStore is closed");
-        }
+    private DefaultAceFileDataStore(DataStore<AceContig> delegate) {
+        this.delegate = delegate;
     }
-    
-    public DefaultAceFileDataStore(){
-        super();
-    }
-    
-    public DefaultAceFileDataStore(File aceFile) throws IOException{
-        super();
-        AceFileParser.parseAceFile(aceFile, this);
-    }
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    protected void visitContig(AceContig contig) {
-       contigMap.put(contig.getId(), contig);
-        
+    public CloseableIterator<String> getIds() throws DataStoreException {
+        return delegate.getIds();
     }
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    public boolean contains(String contigId) throws DataStoreException {
-        throwExceptionIfClosed();
-        return contigMap.containsKey(contigId);
+    public AceContig get(String id) throws DataStoreException {
+        return delegate.get(id);
     }
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    public AceContig get(String contigId) throws DataStoreException {
-        throwExceptionIfClosed();
-        return contigMap.get(contigId);
+    public boolean contains(String id) throws DataStoreException {
+        return delegate.contains(id);
     }
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    public CloseableIterator<String> getIds() {       
-        return CloseableIteratorAdapter.adapt(contigMap.keySet().iterator());
+    public int size() throws DataStoreException {
+        return delegate.size();
     }
-    @Override
-    public int size() {
-        return contigMap.size();
-    }
-    @Override
-    public void close() throws IOException {
-        isClosed = true;
-        contigMap.clear();
-    }
-    @Override
-    public CloseableIterator<AceContig> iterator() {
-        return CloseableIteratorAdapter.adapt(contigMap.values().iterator());
-    }
-
     /**
     * {@inheritDoc}
     */
     @Override
     public boolean isClosed() throws DataStoreException {
-        return isClosed;
+        return delegate.isClosed();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void close() throws IOException {
+       delegate.close();
+        
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public CloseableIterator<AceContig> iterator() {
+        return delegate.iterator();
     }
 
+    private static class DefaultAceFileDataStoreBuilder extends AbstractAceContigBuilder implements AceContigDataStoreBuilder{
+        private Map<String, AceContig> contigMap;
+
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitHeader(int numberOfContigs,
+                int totalNumberOfReads) {            
+            super.visitHeader(numberOfContigs, totalNumberOfReads);
+            contigMap = new LinkedHashMap<String, AceContig>(numberOfContigs+1,1F);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public AceContigDataStore build() {
+            return new DefaultAceFileDataStore(new SimpleDataStore<AceContig>(contigMap));
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected void visitContig(AceContig contig) {
+            contigMap.put(contig.getId(), contig);
+            
+        }
+        
+    }
 }

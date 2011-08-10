@@ -67,10 +67,10 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
     public static HiLowAceContigPhdDatastore create(File aceContigFile) throws IOException{
         return new HiLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
-    public HiLowAceContigPhdDatastore(File aceContigFile, final String contigId) throws IOException{
+    private HiLowAceContigPhdDatastore(File aceContigFile, final String contigId) throws IOException{
         this(aceContigFile,contigId,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
-    public HiLowAceContigPhdDatastore(File aceContigFile, final String contigId, 
+    private HiLowAceContigPhdDatastore(File aceContigFile, final String contigId, 
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser visitor = new FullLengthPhdParser(contigId, lowQuality,highQuality);
         
