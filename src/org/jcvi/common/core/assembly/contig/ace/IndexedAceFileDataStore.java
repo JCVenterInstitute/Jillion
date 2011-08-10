@@ -40,54 +40,56 @@ import org.jcvi.common.core.util.IndexedFileRange;
  * file offsets to the various contigs contained
  * inside the ace file.  This allows large files to provide random 
  * access without taking up much memory.  The downside is each contig
- * must be re-parsed each time.
+ * must be re-parsed each time and the ace file must exist and not
+ * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-public class IndexedAceFileDataStore extends AbstractAceContigBuilder implements AceContigDataStore{
+public final class IndexedAceFileDataStore implements AceContigDataStore{
     private final IndexedFileRange indexFileRange;
     private final File file;
-    private int currentStartOffset;
-    private int currentLineLength;
-    private int currentFileOffset;
-    
-    public IndexedAceFileDataStore(File file, IndexedFileRange indexFileRange ) throws IOException{
-       this(file,indexFileRange,true);
+    /**
+     * Create a new empty {@link AceContigDataStoreBuilder}
+     * that will create an {@link IndexedAceFileDataStore} 
+     * once the builder has been built.  Only the 
+     * given ace file should be used with to populate/index
+     * the returned builder.
+     * @param aceFile aceFile the aceFile to parse.  NOTE: 
+     * the file isn't actually parsed in this method.  The builder
+     * will only store a reference to this file for future
+     * use when it needs to re-parse after indexing has occurred.
+     * @return a new AceContigDataStoreBuilder, never null.
+     * throws NullPointerException if aceFile is null.
+     */
+    public static AceContigDataStoreBuilder createBuilder(File aceFile){
+        return new IndexedAceFileDataStoreBuilder(aceFile);
     }
-    public IndexedAceFileDataStore(File file, IndexedFileRange indexFileRange,boolean initializeNow ) throws IOException{
+    /**
+     * Create a new {@link AceContigDataStore} instance
+     * for the contigs in the given aceFile.
+     * @param aceFile the aceFile to parse.
+     * @return a new  a new {@link AceContigDataStore}
+     * that only stores an index containing file offsets to the various contigs contained
+     * inside the ace file. 
+     * @throws IOException if there is a problem reading the ace file
+     * @throws NullPointerException if aceFile is null.
+     */
+    public static AceContigDataStore create(File aceFile) throws IOException{
+        AceContigDataStoreBuilder builder = createBuilder(aceFile);
+        AceFileParser.parseAceFile(aceFile, builder);
+        return builder.build();
+    }
+    
+    
+    private IndexedAceFileDataStore(File file, IndexedFileRange indexFileRange){
         this.indexFileRange = indexFileRange;
         this.file = file;
-        if(initializeNow){
-            AceFileParser.parseAceFile(file, this);
-        }
     }
-    public IndexedAceFileDataStore(File file) throws IOException{
+    
+    private IndexedAceFileDataStore(File file){
         this(file, new DefaultIndexedFileRange());
     }
 
-    @Override
-    public synchronized void visitLine(String line) {        
-        super.visitLine(line);
-        final int length = line.length();
-        currentLineLength = length;
-        currentFileOffset+=length;
-        
-    }
-
-    @Override
-    public synchronized void visitContigHeader(String contigId, int numberOfBases,
-            int numberOfReads, int numberOfBaseSegments,
-            boolean reverseComplimented) {
-        super.visitContigHeader(contigId, numberOfBases, numberOfReads,
-                numberOfBaseSegments, reverseComplimented);
-        currentStartOffset=currentFileOffset-currentLineLength;
-    }
-
-    @Override
-    protected synchronized void visitContig(AceContig contig) {
-        indexFileRange.put(contig.getId(), Range.buildRange(currentStartOffset, currentFileOffset));
-        currentStartOffset=currentFileOffset+1;
-    }
-
+    
     @Override
     public boolean contains(String contigId) throws DataStoreException {
         return indexFileRange.contains(contigId);
@@ -98,10 +100,10 @@ public class IndexedAceFileDataStore extends AbstractAceContigBuilder implements
         Range range = indexFileRange.getRangeFor(contigId);
         InputStream inputStream=null;
         try {
-            DefaultAceFileDataStore visitor = new DefaultAceFileDataStore();
+            AceContigDataStoreBuilder builder = DefaultAceFileDataStore.createBuilder();
             inputStream = IOUtil.createInputStreamFromFile(file,range);
-            AceFileParser.parseAceFile(inputStream,visitor);
-            return visitor.get(contigId);
+            AceFileParser.parseAceFile(inputStream,builder);
+            return builder.build().get(contigId);
         } catch (Exception e) {
             throw new DataStoreException("error trying to get contig "+ contigId,e);
         }finally{
@@ -141,7 +143,12 @@ public class IndexedAceFileDataStore extends AbstractAceContigBuilder implements
         return indexFileRange.isClosed();
     }
     
-    
+    /**
+     * Special implementation of a {@link CloseableIterator}
+     * that directly parses the ace file.  This allows us
+     * to iterate over the entire file in 1 pass.
+     * @author dkatzel
+     */
     private class AceFileDataStoreIterator extends AbstractBlockingCloseableIterator<AceContig>{
 
         /**
@@ -176,5 +183,63 @@ public class IndexedAceFileDataStore extends AbstractAceContigBuilder implements
             
         }
         
+    }
+    
+    private static class IndexedAceFileDataStoreBuilder extends AbstractAceContigBuilder implements AceContigDataStoreBuilder{
+        private IndexedFileRange indexFileRange;
+        private final File aceFile;
+        private int currentStartOffset;
+        private int currentLineLength;
+        private int currentFileOffset;
+        
+     
+        public IndexedAceFileDataStoreBuilder(File aceFile){
+            if(aceFile==null){
+                throw new NullPointerException("ace file cannot be null");
+            }           
+            this.aceFile = aceFile;
+        }
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitHeader(int numberOfContigs,
+                int totalNumberOfReads) {
+            super.visitHeader(numberOfContigs, totalNumberOfReads);
+            indexFileRange = new DefaultIndexedFileRange(numberOfContigs);
+        }
+
+        @Override
+        public synchronized void visitLine(String line) {        
+            super.visitLine(line);
+            final int length = line.length();
+            currentLineLength = length;
+            currentFileOffset+=length;
+            
+        }
+
+        @Override
+        public synchronized void visitContigHeader(String contigId, int numberOfBases,
+                int numberOfReads, int numberOfBaseSegments,
+                boolean reverseComplimented) {
+            super.visitContigHeader(contigId, numberOfBases, numberOfReads,
+                    numberOfBaseSegments, reverseComplimented);
+            currentStartOffset=currentFileOffset-currentLineLength;
+        }
+
+        @Override
+        protected synchronized void visitContig(AceContig contig) {
+            indexFileRange.put(contig.getId(), Range.buildRange(currentStartOffset, currentFileOffset));
+            currentStartOffset=currentFileOffset+1;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public AceContigDataStore build() {
+            return new IndexedAceFileDataStore(aceFile, indexFileRange);
+        }
+
     }
 }

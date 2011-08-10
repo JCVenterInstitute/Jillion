@@ -36,12 +36,12 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
+import org.jcvi.common.core.assembly.contig.ace.AceContigDataStore;
 import org.jcvi.common.core.assembly.contig.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.assembly.contig.ctg.IndexedContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaFileDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
 
 public class ConvertPositions {
 
@@ -122,7 +122,7 @@ public class ConvertPositions {
                 values= datastore.get(id).getConsensus();
             }else{
                 File aceFile = new File(commandLine.getOptionValue("a"));
-                IndexedAceFileDataStore datastore = new IndexedAceFileDataStore(aceFile, new DefaultIndexedFileRange());
+                AceContigDataStore datastore =IndexedAceFileDataStore.create(aceFile);
                 values = datastore.get(id).getConsensus();
             }
             

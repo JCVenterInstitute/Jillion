@@ -62,7 +62,7 @@ public class TestCas2Consed3 {
 	      cas2consed3.convert(TrimDataStoreUtil.EMPTY_DATASTORE,new UnTrimmedExtensionTrimMap(),FastQQualityCodec.ILLUMINA);
 	      
 	      File aceFile = tempDir.getFile("edit_dir/"+prefix+".ace.1");
-	      AceContigDataStore dataStore = new DefaultAceFileDataStore(aceFile);
+	      AceContigDataStore dataStore = DefaultAceFileDataStore.create(aceFile);
 	      assertEquals("# contigs", expectedDataStore.size(), dataStore.size());
 	      
 	      for(AceContig contig : dataStore){

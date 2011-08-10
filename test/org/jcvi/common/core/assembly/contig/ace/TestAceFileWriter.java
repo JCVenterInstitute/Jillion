@@ -80,9 +80,10 @@ public class TestAceFileWriter {
             AceFileWriter.writeAceContig(contig, phdDataStore, out);
         }
         
-        DefaultAceFileDataStore reparsedAceDataStore = new DefaultAceFileDataStore();
-        AceFileParser.parseAceFile(new ByteArrayInputStream(out.toByteArray()), reparsedAceDataStore);
+        AceContigDataStoreBuilder builder = DefaultAceFileDataStore.createBuilder();
+        AceFileParser.parseAceFile(new ByteArrayInputStream(out.toByteArray()), builder);
         
+        AceContigDataStore reparsedAceDataStore = builder.build();
         assertEquals("# contigs", aceDataStore.size(), reparsedAceDataStore.size());
         for(AceContig expectedContig : aceDataStore){
             AceContig actualContig = reparsedAceDataStore.get(expectedContig.getId());            

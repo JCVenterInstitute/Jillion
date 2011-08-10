@@ -40,6 +40,8 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.GapQualityValueStrategies;
 import org.jcvi.common.core.assembly.contig.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.contig.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
 import org.jcvi.common.core.assembly.contig.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
@@ -162,7 +164,7 @@ public class RecallAceConsensus {
             PhdDataStore masterPhdDataStore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(PhdDataStore.class, phdDataStore,phdballDataStore);
             QualityDataStore qualityDataStore = TraceQualityDataStoreAdapter.adapt(masterPhdDataStore); 
             ConsensusCaller consensusCaller = createConsensusCaller(RecallType.parse(commandLine.getOptionValue("recall_with")), PhredQuality.valueOf(30));
-            IndexedAceFileDataStore aceContigDataStore = new IndexedAceFileDataStore(inputAceFile,new DefaultIndexedFileRange(),false);
+            AceContigDataStoreBuilder aceContigDataStoreBuilder = IndexedAceFileDataStore.createBuilder(inputAceFile);
             AceFileVisitor headerVisitor = new AbstractAceFileVisitor() {
                 
                 /**
@@ -192,9 +194,10 @@ public class RecallAceConsensus {
                     
                 }
             };
-            AceFileVisitor aceVisitors = MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, headerVisitor,aceContigDataStore);
+            AceFileVisitor aceVisitors = MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, headerVisitor,aceContigDataStoreBuilder);
             System.out.println("begin parsing");
             AceFileParser.parseAceFile(inputAceFile, aceVisitors);
+            AceContigDataStore aceContigDataStore = aceContigDataStoreBuilder.build();
             System.out.println("begin for loop");
             for(AceContig contig : aceContigDataStore){
                 System.out.println(contig.getId());

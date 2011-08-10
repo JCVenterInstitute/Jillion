@@ -37,6 +37,7 @@ import org.apache.commons.io.IOUtils;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
 import org.jcvi.common.core.assembly.contig.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
@@ -82,16 +83,16 @@ public class RemoveReferenceFromNewblerMappedAce {
             FileOutputStream tempOut = new FileOutputStream(tempAce);
             FileOutputStream aceOutStream = new FileOutputStream(aceOut);
             
-            IndexedAceFileDataStore dataStore = new IndexedAceFileDataStore(aceFile);
+            AceContigDataStoreBuilder dataStoreBuilder = IndexedAceFileDataStore.createBuilder(aceFile);
             DefaultAceFileTagMap aceTagMap = new DefaultAceFileTagMap();
             AceFileParser.parseAceFile(aceFile, MultipleWrapper.createMultipleWrapper(AceFileVisitor.class,
-                    dataStore,aceTagMap));
+                    dataStoreBuilder,aceTagMap));
             int numberOfReads =0;
             int numberOfContigs=0;
             
-            for(AceContig contig : dataStore){
+            for(AceContig contig : dataStoreBuilder.build()){
                 String contigId = contig.getId();
-                PhdDataStore phdDataStore = new HiLowAceContigPhdDatastore(aceFile, contigId);
+                PhdDataStore phdDataStore = HiLowAceContigPhdDatastore.create(aceFile, contigId);
                 
                 for(AceContig actualContig :NewblerMappedAceContigUtil.removeReferenceFrom(contig, phdDataStore)){
                     numberOfContigs++;
