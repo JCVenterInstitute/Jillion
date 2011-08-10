@@ -322,7 +322,7 @@ public class Codon
        return getCodonsFor(basecalls,Frame.ZERO);
     }
     public static List<Codon> getCodonsFor(NucleotideSequence basecalls, Frame frame){
-        return getCodonsFor(Nucleotides.convertToString(
+        return getCodonsFor(Nucleotides.asString(
                 Nucleotides.ungap(basecalls.asList())),frame);
      }
     public static Codon getCodonFor(Nucleotide base1, Nucleotide base2, Nucleotide base3){

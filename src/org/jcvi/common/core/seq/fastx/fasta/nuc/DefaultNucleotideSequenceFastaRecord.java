@@ -35,13 +35,13 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
 
    
     public DefaultNucleotideSequenceFastaRecord(String identifier, Sequence<Nucleotide> sequence){
-        super(identifier, Nucleotides.convertToString(sequence.asList()));
+        super(identifier, Nucleotides.asString(sequence.asList()));
     }
     public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, Sequence<Nucleotide> sequence){
-        super(identifier, comments,Nucleotides.convertToString(sequence.asList()));
+        super(identifier, comments,Nucleotides.asString(sequence.asList()));
     }
     public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, List<Nucleotide> sequence){
-        super(identifier, comments,Nucleotides.convertToString(sequence));
+        super(identifier, comments,Nucleotides.asString(sequence));
     }
     public DefaultNucleotideSequenceFastaRecord(String identifier,  List<Nucleotide> sequence){
         this(identifier, null,sequence);

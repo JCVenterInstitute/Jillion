@@ -63,7 +63,7 @@ public class TestCodonCreationMethods {
             Codon expectedCodon) {
         this.triplet = triplet;
         this.expectedCodon = expectedCodon;
-        this.tripletBases = Nucleotides.convertToString(triplet);
+        this.tripletBases = Nucleotides.asString(triplet);
     }
     
     @Test

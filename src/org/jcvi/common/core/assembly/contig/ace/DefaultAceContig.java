@@ -89,7 +89,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         
         public Builder addRead(AcePlacedRead acePlacedRead) {
          return addRead(acePlacedRead.getId(),
-        		 Nucleotides.convertToString(acePlacedRead.getNucleotideSequence().asList()),
+        		 Nucleotides.asString(acePlacedRead.getNucleotideSequence().asList()),
         		 (int)acePlacedRead.getStart(),
         		 acePlacedRead.getDirection(),
         		 acePlacedRead.getValidRange(),

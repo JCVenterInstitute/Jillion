@@ -95,7 +95,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_LEFT),""+(delegate.getStart()+1));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_RIGHT),""+(delegate.getEnd()+1));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.GAPPED_SEQUENCE),
-				Nucleotides.convertToString(gappedBasecalls.asList()));
+				Nucleotides.asString(gappedBasecalls.asList()));
 		
 		for(Entry<TigrAssemblerReadAttribute, String> entry : sut.getAttributes().entrySet()){
 			assertEquals(entry.getValue(), sut.getAttributeValue(entry.getKey()));

@@ -120,7 +120,9 @@ public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{
         throwExceptionIfInitialized();
         visitNewContig(null);
         initialized = true;
-        
+        this.currentReadId = null;
+        this.currentReadValidRange= null;
+        currentBasecalls = null;
     }
 
    

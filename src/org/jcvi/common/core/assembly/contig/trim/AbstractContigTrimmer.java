@@ -85,7 +85,7 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
             
             final NucleotideSequence originalGappedValidBases = placedRead.getNucleotideSequence();
             final List<Nucleotide> trimedBasecalls = originalGappedValidBases.asList(newTrimRange);
-            String trimmedBases = Nucleotides.convertToString(trimedBasecalls);
+            String trimmedBases = Nucleotides.asString(trimedBasecalls);
             long ungappedLength = new DefaultNucleotideSequence(trimedBasecalls).getUngappedLength();
             
             

@@ -59,4 +59,15 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
     private DefaultNucleotideSequence encodeBasecalls(String basecalls) {
         return new DefaultNucleotideSequence(Nucleotides.parse(basecalls));
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitEndOfFile() {
+        currentContigBuilder=null;
+        super.visitEndOfFile();
+    }
+    
+    
 }

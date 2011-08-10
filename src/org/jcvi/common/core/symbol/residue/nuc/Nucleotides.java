@@ -20,6 +20,7 @@
 package org.jcvi.common.core.symbol.residue.nuc;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -65,31 +66,35 @@ public final class Nucleotides {
        return parse(new String(array));
     }
     /**
-     * Parse the given List of Characters containing
+     * Parse the given Collection of Characters containing
      * nucleotides and return an equivalent List
-     * of {@link Nucleotide}s.
-     * @param list the List to parse, may have
-     * leading and/or trailing whitespace.
+     * of {@link Nucleotide}s.  Any whitespace characters
+     * will be ignored.
+     * @param chars the collection of characters to parse, may have
+     * whitespace which will be ignored.
      * @return a new List will never be null.
      * @throws NullPointerException if nucleotides is null.
      * @throws IllegalArgumentException if there is a
-     * character in the nucleotides aside from leading or trailing 
+     * character in the nucleotides aside from 
      * whitespace that can not be parsed into a Nucleotide.
      *
      */
-    public static List<Nucleotide> parse(List<Character> list) {
-        StringBuilder builder = new StringBuilder(list.size());
-        for(Character c: list){
-            builder.append(c);
+    public static List<Nucleotide> parse(Collection<Character> chars) {
+        List<Nucleotide> result = new ArrayList<Nucleotide>(chars.size());        
+        for(Character c: chars){
+            if(!Character.isWhitespace(c)){
+                result.add(Nucleotide.parse(c));
+            }
+            
         }
-        return  parse(builder);
+        return  result;
     }
     /**
      * Parse the given {@link CharSequence} containing
      * nucleotides and return an equivalent List
      * of {@link Nucleotide}s.
      * @param nucleotides the charSequence to parse, may have
-     * leading and/or trailing whitespace.
+     * whitespace which will be ignored.
      * @return a new List will never be null.
      * @throws NullPointerException if nucleotides is null.
      * @throws IllegalArgumentException if there is a
@@ -102,7 +107,10 @@ public final class Nucleotides {
         List<Nucleotide> result = new ArrayList<Nucleotide>(trimmed.length());
         try{
             for(int i=0; i<trimmed.length(); i++){            
-                result.add(Nucleotide.parse(trimmed.charAt(i)));
+                char charAt = trimmed.charAt(i);
+                if(!Character.isWhitespace(charAt)){
+                    result.add(Nucleotide.parse(charAt));
+                }
             }
             return result;
         }catch(IllegalArgumentException e){
@@ -118,7 +126,7 @@ public final class Nucleotides {
      * @return a new String, will never be null.
      * @throws NullPointerException if nucleotides is null.
      */
-    public static String convertToString(Iterable<Nucleotide> nucleotides){
+    public static String asString(Iterable<Nucleotide> nucleotides){
         StringBuilder result = new StringBuilder();
         for(Nucleotide g: nucleotides){
             result.append(g.toString());

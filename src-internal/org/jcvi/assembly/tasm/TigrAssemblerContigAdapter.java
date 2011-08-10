@@ -90,8 +90,8 @@ public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	
 	private Map<TigrAssemblerContigAttribute,String> generateConsensusAttributes(){
 		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
-		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, Nucleotides.convertToString(delegate.getConsensus().asUngappedList()));
-		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, Nucleotides.convertToString(delegate.getConsensus().asList()));
+		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, Nucleotides.asString(delegate.getConsensus().asUngappedList()));
+		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, Nucleotides.asString(delegate.getConsensus().asList()));
 	
 		return map;
 	}

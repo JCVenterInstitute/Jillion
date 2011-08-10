@@ -109,7 +109,7 @@ public enum Chunk {
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
-			String basecalls = Nucleotides.convertToString(ztrChromatogram.getBasecalls().asList());
+			String basecalls = Nucleotides.asString(ztrChromatogram.getBasecalls().asList());
 			
 			ByteBuffer buffer = ByteBuffer.allocate(basecalls.length()+1);
 			buffer.put(PADDING_BYTE);
