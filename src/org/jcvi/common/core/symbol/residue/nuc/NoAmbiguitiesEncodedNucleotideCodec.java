@@ -68,7 +68,15 @@ public enum NoAmbiguitiesEncodedNucleotideCodec implements NucleotideCodec{
      */
     private static final byte GAP_BYTE = 5;
     
-   
+    /**
+     * We can compress our data more if the length
+     * is small enough that any possible
+     * gap index will fit in only 1/2 or 4 bytes.
+     * @param length the length of the nucleotide sequence
+     * to encode.
+     * @return 1 2 or 4 depending on how many
+     * bytes are required to store each offset for the length.
+     */
     private int computeBytesPerGapOffset(int length){
         if(length<= Byte.MAX_VALUE){
             return 1;
@@ -83,39 +91,44 @@ public enum NoAmbiguitiesEncodedNucleotideCodec implements NucleotideCodec{
         ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
         int length = decodedLengthOf(encodedGlyphs);
         int numberOfBytesPerGap = computeBytesPerGapOffset(length);
-        List<Integer> gaps = getGapOffsets(buf,numberOfBytesPerGap);
+        int[] gaps = getGapOffsets(buf,numberOfBytesPerGap);
         List<Nucleotide> result = new ArrayList<Nucleotide>(length);
         
-        for(int i=HEADER_LENGTH+numberOfBytesPerGap*gaps.size(); i<encodedGlyphs.length-1; i++){
-            result.addAll(decodeNext4Values(encodedGlyphs[i]));
+        int startOfEncodedBases = HEADER_LENGTH+numberOfBytesPerGap*gaps.length;
+        for(int i=startOfEncodedBases; i<encodedGlyphs.length-1; i++){
+            result.addAll(decodeNucleotidesIn(encodedGlyphs[i]));
         }
         if(length>0){
             int remainder = length% NUCLEOTIDES_PER_BYTE;
-            List<Nucleotide> lastValues = decodeNext4Values(encodedGlyphs[encodedGlyphs.length-1]);
+            List<Nucleotide> lastValues = decodeNucleotidesIn(encodedGlyphs[encodedGlyphs.length-1]);
             if(remainder ==0){
                 result.addAll(lastValues);
             }else{
                 result.addAll(lastValues.subList(0, remainder));
             }            
         }
-        for(Integer gapOffset : gaps){
-            int asPrimitive = gapOffset.intValue();
-            result.remove(asPrimitive);
-            result.add(asPrimitive, Nucleotide.Gap);
+        for(int i=0; i<gaps.length; i++){
+            int gapOffset = gaps[i];
+            //we had to put something in the gap
+            //location as a place holder so get rid of it
+            result.remove(gapOffset);
+            result.add(gapOffset, Nucleotide.Gap);
         }
+        
         return result;
     }
-    private List<Integer> getGapOffsets(ByteBuffer buf, int bytesPerOffset){
+    private int[] getGapOffsets(ByteBuffer buf, int bytesPerOffset){
         buf.position(4);
-        int numberOfGaps =buf.getInt();
-        List<Integer> gaps = new ArrayList<Integer>();
-        for(int i=0; i<numberOfGaps; i++){
-            if(bytesPerOffset ==1){
-                gaps.add(Integer.valueOf(buf.get()));
-            }else if(bytesPerOffset ==2){
-                gaps.add(Integer.valueOf(buf.getShort()));
-            }else{            
-                gaps.add(buf.getInt());
+        int[] gaps = new int[buf.getInt()];
+        
+        for(int i=0; i<gaps.length; i++){
+            switch(bytesPerOffset){
+                case 1 : gaps[i] =buf.get();
+                        break;
+                case 2 : gaps[i] =buf.getShort();
+                        break; 
+                default : gaps[i] =buf.getInt();
+                        break;
             }
         }
         return gaps;
@@ -125,15 +138,15 @@ public enum NoAmbiguitiesEncodedNucleotideCodec implements NucleotideCodec{
         int length = decodedLengthOf(encodedGlyphs);
         int numberOfBytesPerGap = computeBytesPerGapOffset(length);
        
-        List<Integer> gaps = getGapOffsets(ByteBuffer.wrap(encodedGlyphs),numberOfBytesPerGap);
-        if(gaps.contains(Integer.valueOf(index))){
+        int[] gaps = getGapOffsets(ByteBuffer.wrap(encodedGlyphs),numberOfBytesPerGap);
+        if(Arrays.binarySearch(gaps, index)>=0){
             return Nucleotide.Gap;
         }
-        final byte getByteForGlyph = getEncodedByteForGlyph(encodedGlyphs,gaps.size(),numberOfBytesPerGap,index);
+        final byte getByteForGlyph = getEncodedByteForGlyph(encodedGlyphs,gaps.length,numberOfBytesPerGap,index);
         return decode(getByteForGlyph, index %NUCLEOTIDES_PER_BYTE);
     }
     private Nucleotide decode(final byte getByteForGlyph, int index) {
-        List<Nucleotide> values = decodeNext4Values(getByteForGlyph);
+        List<Nucleotide> values = decodeNucleotidesIn(getByteForGlyph);
         return values.get(index);
     }
     private byte getEncodedByteForGlyph(byte[] encodedGlyphs, int numberOfGaps,int numberOfBytesPerGap, int index) {
@@ -171,7 +184,6 @@ public enum NoAmbiguitiesEncodedNucleotideCodec implements NucleotideCodec{
             final int unEncodedSize) {
         int encodedBasesSize = computeHeaderlessEncodedSize(unEncodedSize);
         ByteBuffer encodedBases = ByteBuffer.allocate(encodedBasesSize);
-       // encodedBases.putInt(unEncodedSize);
         Iterator<Nucleotide> iterator = glyphs.iterator();
         List<Integer> gaps = encodeAll(iterator, unEncodedSize, encodedBases);
         encodedBases.flip();
@@ -273,7 +285,7 @@ public enum NoAmbiguitiesEncodedNucleotideCodec implements NucleotideCodec{
         }
         return getByteFor(nucleotide);
     }
-    private List<Nucleotide> decodeNext4Values(byte b) {
+    private List<Nucleotide> decodeNucleotidesIn(byte b) {
         byte b0 = (byte)((b &0xC0)>>>6);
         byte b1 = (byte)((b &0x30)>>>4);
         byte b2 = (byte)((b &0x0C)>>>2);
