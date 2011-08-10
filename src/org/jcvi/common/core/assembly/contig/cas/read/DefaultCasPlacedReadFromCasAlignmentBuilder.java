@@ -141,7 +141,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     }
   
     public String validBases(){
-        return Nucleotides.convertToString(validBases);
+        return Nucleotides.asString(validBases);
     }
     @Override
     public DefaultCasPlacedRead build() {

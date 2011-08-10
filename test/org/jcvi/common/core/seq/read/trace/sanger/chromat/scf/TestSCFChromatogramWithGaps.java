@@ -49,7 +49,7 @@ public class TestSCFChromatogramWithGaps {
     public void parse() throws SCFDecoderException, IOException{
         SCFChromatogram actual =SCFCodecs.VERSION_3.decode(
         		RESOURCES.getFileAsStream(File_path));
-        assertEquals(Nucleotides.convertToString(actual.getBasecalls().asList()), "-----");
+        assertEquals(Nucleotides.asString(actual.getBasecalls().asList()), "-----");
         
     }
 }
