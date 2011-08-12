@@ -25,7 +25,7 @@ package org.jcvi.common.core.util;
 
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.util.EmptyIterator;
+import org.jcvi.common.core.util.iter.EmptyIterator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestEmptyIterator {

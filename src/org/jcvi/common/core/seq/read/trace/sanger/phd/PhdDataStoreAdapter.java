@@ -23,7 +23,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code PhdDataStoreAdapter} wraps a {@link DataStore}
  * of {@link Phd}s to match the interface of a

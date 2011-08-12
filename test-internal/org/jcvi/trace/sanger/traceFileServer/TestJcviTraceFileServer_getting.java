@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.auth.JCVIEncodedAuthorizer;
-import org.jcvi.common.core.util.StringUtilities;
+import org.jcvi.common.core.util.JoinedStringBuilder;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.FileType;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.RequestType;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.ReturnFormat;
@@ -114,7 +114,7 @@ public class TestJcviTraceFileServer_getting {
     public void getMultipleFileAsStream() throws MalformedURLException, IOException{
         List<String> idsAsList = Arrays.asList("id_1","id_2", "id_3");
         InputStream expectedInputStream = createMock(InputStream.class);
-        expect(sut.createURLConnectionFor(new StringUtilities.JoinedStringBuilder(
+        expect(sut.createURLConnectionFor(new JoinedStringBuilder(
                 idsAsList)
         .glue(",")
         .build()

@@ -23,7 +23,7 @@
  *
  * Copyright 2008 J. Craig Venter Institute
  */
-package org.jcvi.common.core.util;
+package org.jcvi.common.core.util.iter;
 
 import java.util.Arrays;
 import java.util.Iterator;

@@ -22,7 +22,7 @@ package org.jcvi.common.core.seq.fastx.fasta;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import org.jcvi.common.core.util.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 
 /**
  * @author dkatzel

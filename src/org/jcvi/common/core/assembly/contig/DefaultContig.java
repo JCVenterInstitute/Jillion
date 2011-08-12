@@ -60,7 +60,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
 
 	public static class Builder extends AbstractContigBuilder<PlacedRead, DefaultContig<PlacedRead>>{
         public Builder(String id, String consensus){
-           this(id, new DefaultNucleotideSequence(consensus));
+           this(id, DefaultNucleotideSequence.create(consensus));
         }
         public Builder(String id, NucleotideSequence consensus){
             super(id,consensus);

@@ -31,7 +31,12 @@ import java.util.List;
  *
  */
 public final class Nucleotides {
-
+    /**
+     * Can not instantiate.
+     */
+    private Nucleotides(){
+        throw new IllegalStateException("not allowed to instantiate");
+    }
     /**
      * Creates a new list of {@link Nucleotide}s which is the
      * same as the input list except all the {@link Nucleotide#Gap}

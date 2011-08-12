@@ -57,9 +57,8 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         private int contigRight = -1;
         
         public Builder(String contigId, String fullConsensus){
-           this(contigId,
-        		   DefaultNucleotideSequence.create(
-                    Nucleotides.parse(ConsedUtil.convertAceGapsToContigGaps(fullConsensus)))
+           this(contigId,                   
+                    Nucleotides.parse(ConsedUtil.convertAceGapsToContigGaps(fullConsensus))
             );
         }
         public Builder(String contigId, List<Nucleotide> fullConsensus){

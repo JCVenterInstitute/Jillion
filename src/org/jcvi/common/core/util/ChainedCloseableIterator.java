@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * {@code ChainedCloseableIterator}

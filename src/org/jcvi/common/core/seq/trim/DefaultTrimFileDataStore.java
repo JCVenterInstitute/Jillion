@@ -30,7 +30,7 @@ import org.jcvi.common.core.assembly.trim.TrimDataStore;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * {@code DefaultTrimFileDataStore} is a implementation

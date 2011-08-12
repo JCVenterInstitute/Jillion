@@ -31,6 +31,7 @@ import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -208,7 +209,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
 
     public static class Builder{
         private String readId;
-        private ReferenceEncodedNucleotideSequence referencedEncodedBases;
+        private NucleotideSequence referencedEncodedBases;
         private int offset;
         private Range clearRange;
         private PhdInfo phdInfo;
@@ -225,14 +226,14 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             this.offset = offset;
             this.phdInfo = phdInfo;
             
-            this.referencedEncodedBases = new DefaultReferenceEncodedNucleotideSequence(
-                    reference, validBases, offset);
-            if(referencedEncodedBases.getNumberOfBasesAfterReference()<0 || referencedEncodedBases.getNumberOfBasesAfterReference()>0){
-                throw new IllegalArgumentException(String.format("read %s goes off the reference before %d, after %d",
-                        readId,
-                        referencedEncodedBases.getNumberOfBasesBeforeReference(),
-                        referencedEncodedBases.getNumberOfBasesAfterReference()));
+            this.referencedEncodedBases = DefaultNucleotideSequence.createGappy(validBases);
+            if(offset + validBases.length() > reference.getLength()){
+                throw new IllegalArgumentException("read goes beyond the reference");
             }
+            if(offset <0){
+                throw new IllegalArgumentException("read goes before the reference");
+            }
+            
             this.ungappedFullLength = ungappedFullLength;
         }
         
@@ -259,6 +260,10 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
                         Nucleotides.asString(referencedEncodedBases.asList()),offset);
             Read read = new DefaultRead(readId, updatedEncodedBasecalls);
             return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength,clearRange);
+        
+        /*    Read read = new DefaultRead(readId, referencedEncodedBases);
+            return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength,clearRange);
+     */
         }
         
     }

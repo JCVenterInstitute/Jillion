@@ -42,7 +42,7 @@ import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.fastq.FastQUtil;
-import org.jcvi.common.core.util.StringUtilities;
+import org.jcvi.common.core.util.JoinedStringBuilder;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.FirstWordStringIdParser;
 import org.jcvi.common.io.idReader.IdReader;
@@ -132,7 +132,7 @@ public class FastQFile {
                 String qualDefLine = scanner.nextLine();
                 String qualities = scanner.nextLine();
                 if(filter.accept(id)){
-                    String record= new StringUtilities.JoinedStringBuilder(defLine,basecalls,qualDefLine,qualities)
+                    String record= new JoinedStringBuilder(defLine,basecalls,qualDefLine,qualities)
                                         .glue("\n")
                                         .suffix("\n")
                                         .build();

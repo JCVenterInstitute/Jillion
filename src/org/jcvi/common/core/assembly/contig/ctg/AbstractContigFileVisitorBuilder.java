@@ -54,19 +54,20 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
     @Override
     protected void visitBeginContig(String contigId, String consensus) {
         currentContigBuilder = new DefaultContig.Builder(contigId,
-                encodeBasecalls(consensus));
+                encodedConsensus(consensus));
     }
-    private DefaultNucleotideSequence encodeBasecalls(String basecalls) {
-        return new DefaultNucleotideSequence(Nucleotides.parse(basecalls));
+    private DefaultNucleotideSequence encodedConsensus(String basecalls) {
+        //consensus probably is very gappy
+        return DefaultNucleotideSequence.create(Nucleotides.parse(basecalls));
     }
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public void visitEndOfFile() {
-        currentContigBuilder=null;
+    public void visitEndOfFile() {        
         super.visitEndOfFile();
+        currentContigBuilder=null;
     }
     
     

@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.util;
+package org.jcvi.common.core.util.iter;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

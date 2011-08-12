@@ -26,7 +26,7 @@ package org.jcvi.common.core.util;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.util.ArrayIterable;
+import org.jcvi.common.core.util.iter.ArrayIterable;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestArrayIterable {

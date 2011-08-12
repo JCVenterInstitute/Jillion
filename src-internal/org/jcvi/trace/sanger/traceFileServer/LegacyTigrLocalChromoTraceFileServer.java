@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.zip.ZipInputStream;
 
 import org.jcvi.common.core.util.FileIterator;
-import org.jcvi.common.core.util.StringUtilities;
+import org.jcvi.common.core.util.JoinedStringBuilder;
 /**
  * {@code LegacyTigrLocalChromoTraceFileServer} is a {@link TraceFileServer}
  * implementation that can read a legacy TIGR "local chromo" directory.
@@ -51,7 +51,7 @@ public class LegacyTigrLocalChromoTraceFileServer implements TraceFileServer, It
     
     protected String generateLocalChromoPathFor(String seqName){
         
-        return new StringUtilities.JoinedStringBuilder(
+        return new JoinedStringBuilder(
                 baseDir, 
                 seqName.substring(0, 3),
                 seqName.substring(0, 4),

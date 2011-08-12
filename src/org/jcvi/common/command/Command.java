@@ -33,7 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.common.core.util.StringUtilities;
+import org.jcvi.common.core.util.JoinedStringBuilder;
 
 /**
  * A <code>Command</code> is a utility object which encapsulates all of the data necessary to
@@ -252,7 +252,7 @@ public class Command
     @Override
     public final String toString()
     {
-        return new StringUtilities.JoinedStringBuilder(this.getCommandLine())
+        return new JoinedStringBuilder(this.getCommandLine())
                     .glue(" ")
                     .build();
     }

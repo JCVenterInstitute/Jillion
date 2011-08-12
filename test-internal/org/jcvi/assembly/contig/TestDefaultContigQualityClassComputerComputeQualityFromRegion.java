@@ -37,7 +37,7 @@ import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.util.EmptyIterator;
+import org.jcvi.common.core.util.iter.EmptyIterator;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.junit.Before;
 import org.junit.Test;

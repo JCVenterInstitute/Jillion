@@ -34,8 +34,8 @@ import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.util.AbstractLargeIdIterator;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.AbstractLargeIdIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code LargeFastQFileDataStore} is a {@link FastQDataStore} implementation
  * to be used a very large FastQ Files.  No data contained in this

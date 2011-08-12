@@ -140,7 +140,7 @@ public final class DefaultPhdFileDataStore{
                 List<PhredQuality> qualities, List<ShortSymbol> positions,
                 Properties comments, List<PhdTag> tags) {
             map.put(id, new DefaultPhd(id,
-                    DefaultNucleotideSequence.create(bases),
+                    DefaultNucleotideSequence.createGappy(bases),
                     new EncodedQualitySequence(QUALITY_CODEC, qualities),
                     new SangerPeak(positions),
                     comments,

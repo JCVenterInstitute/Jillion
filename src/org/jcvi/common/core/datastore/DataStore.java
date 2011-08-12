@@ -26,8 +26,8 @@ package org.jcvi.common.core.datastore;
 import java.io.Closeable;
 import java.util.Iterator;
 
-import org.jcvi.common.core.util.CloseableIterable;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterable;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * A {@code DataStore} is an interface for fetching objects by
  * an id.  How the data in the datastore is stored is implementation

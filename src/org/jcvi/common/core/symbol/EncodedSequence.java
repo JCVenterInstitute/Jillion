@@ -58,6 +58,14 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
     public EncodedSequence(GlyphCodec<T> codec, Collection<T> glyphsToEncode) {
         this(codec, codec.encode(glyphsToEncode));
     }
+    
+    protected byte[] getData(){
+        return data;
+    }
+    
+    protected GlyphCodec<T> getCodec(){
+        return codec;
+    }
     /**
      * @param codec
      * @param data

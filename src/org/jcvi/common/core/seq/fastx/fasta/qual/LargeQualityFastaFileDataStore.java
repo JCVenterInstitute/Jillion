@@ -32,7 +32,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code LargeQualityFastaFileDataStore} is an implementation
  * of {@link AbstractQualityFastaFileDataStore} which does not

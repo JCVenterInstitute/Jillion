@@ -28,6 +28,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jcvi.common.core.util.iter.ArrayIterable;
 /**
  * {@code MultipleWrapper} uses dymanic proxies to wrap
  * several instances of an interface.  This allows

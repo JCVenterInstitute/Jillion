@@ -27,7 +27,7 @@ import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.util.ArrayIterator;
+import org.jcvi.common.core.util.iter.ArrayIterator;
 
 /**
  * @author dkatzel

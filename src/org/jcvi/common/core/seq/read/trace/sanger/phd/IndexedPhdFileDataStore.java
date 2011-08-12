@@ -42,9 +42,9 @@ import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.ByteBufferInputStream;
-import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code IndexedPhdFileDataStore} is an implementation of 
  * {@link PhdDataStore} that only stores an index containing
