@@ -30,7 +30,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code FastaRecordDataStoreAdapter} adapts a {@link DataStore} of {@link FastaRecord}s
  * into a {@link DataStore} of the value returned by {@link FastaRecord#getSequence()}.

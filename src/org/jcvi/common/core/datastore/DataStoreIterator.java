@@ -25,7 +25,7 @@ package org.jcvi.common.core.datastore;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public class DataStoreIterator<T> implements CloseableIterator<T>{
     private final CloseableIterator<String> ids; 

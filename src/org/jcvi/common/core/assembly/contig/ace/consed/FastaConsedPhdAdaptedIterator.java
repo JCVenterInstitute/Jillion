@@ -33,7 +33,7 @@ import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.joda.time.DateTime;
 
 public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{

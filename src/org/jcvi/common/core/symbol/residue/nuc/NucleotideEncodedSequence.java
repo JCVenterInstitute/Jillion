@@ -19,17 +19,30 @@
 
 package org.jcvi.common.core.symbol.residue.nuc;
 
+import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.common.core.symbol.GlyphCodec;
+import org.jcvi.common.core.symbol.EncodedSequence;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface NucleotideCodec extends GlyphCodec<Nucleotide>{
+public class NucleotideEncodedSequence extends EncodedSequence<Nucleotide>{
 
+    /**
+     * @param codec
+     * @param data
+     */
+    public NucleotideEncodedSequence(NucleotideCodec codec, byte[] data) {
+        super(codec, data);
+    }
+
+    public NucleotideEncodedSequence(NucleotideCodec codec,
+            Collection<Nucleotide> glyphsToEncode) {
+        super(codec, glyphsToEncode);
+    }
     /**
      * Get a List of all the offsets into this
      * sequence which are gaps.  This list SHOULD be
@@ -37,32 +50,54 @@ public interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * the same as the value returned by {@link #getNumberOfGaps()}.
      * @return a List of gap offsets as Integers.
      */
-    List<Integer> getGapOffsets(byte[] encodedGlyphs);    
+    public List<Integer> getGapOffsets() {       
+        NucleotideCodec codec = asNucleotideCodec();
+        return codec.getGapOffsets(getData());
+    }
+
+    private NucleotideCodec asNucleotideCodec() {
+        NucleotideCodec codec =(NucleotideCodec)getCodec();
+        return codec;
+    }
+    
+      
     /**
      * Get the number of gaps in this sequence.
      * @return the number of gaps; will always be {@code >=0}.
      */
-    int getNumberOfGaps(byte[] encodedGlyphs);
+    public int getNumberOfGaps(){
+        NucleotideCodec codec = asNucleotideCodec();
+        return codec.getNumberOfGaps(getData());
+    }
    
     /**
      * Is the {@link Nucleotide} at the given gapped index a gap?
      * @param gappedOffset the gappedOffset to check.
      * @return {@code true} is it is a gap; {@code false} otherwise.
      */
-    boolean isGap(byte[] encodedGlyphs,int gappedOffset);
+    public boolean isGap(int gappedOffset){
+        NucleotideCodec codec = asNucleotideCodec();
+        return codec.isGap(getData(),gappedOffset);
+    }
     /**
      * Get the number of {@link Nucleotide}s in this {@link NucleotideSequence} 
      * that are not gaps.
      * @return the number of non gaps as a long.
      */
-    long getUngappedLength(byte[] encodedGlyphs);
+    public long getUngappedLength(){
+        NucleotideCodec codec = asNucleotideCodec();
+        return codec.getUngappedLength(getData());
+    }
     /**
      * Decode only the ungapped bases and return them as a List of
      * {@link Nucleotide}s.
      * @return a List of {@link Nucleotide}s containing only the 
      * ungapped bases.
      */
-    List<Nucleotide> asUngappedList(byte[] encodedGlyphs);
+    public List<Nucleotide> asUngappedList(){
+        NucleotideCodec codec = asNucleotideCodec();
+        return codec.asUngappedList(getData());
+    }
     /**
      * Compute the number of gaps in the valid range until AND INCLUDING the given
      * gapped index.
@@ -70,9 +105,18 @@ public interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * @return the number of gaps in the valid range until AND INCLUDING the given
      * gapped index.
      */
-    int getNumberOfGapsUntil(byte[] encodedGlyphs,int gappedOffset);
+    public int getNumberOfGapsUntil(int gappedOffset){
+        NucleotideCodec codec = asNucleotideCodec();
+        return codec.getNumberOfGapsUntil(getData(), gappedOffset);
+    }
     
-    int getUngappedOffsetFor(byte[] encodedGlyphs,int gappedOffset);
+    public int getUngappedOffsetFor(int gappedOffset){
+        NucleotideCodec codec = asNucleotideCodec();
+        return codec.getUngappedOffsetFor(getData(), gappedOffset);
+    }
     
-    int getGappedOffsetFor(byte[] encodedGlyphs,int ungappedOffset);
+    public int getGappedOffsetFor(int ungappedOffset){
+        NucleotideCodec codec = asNucleotideCodec();
+        return codec.getGappedOffsetFor(getData(), ungappedOffset);
+    }
 }

@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFFlowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDataStore;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

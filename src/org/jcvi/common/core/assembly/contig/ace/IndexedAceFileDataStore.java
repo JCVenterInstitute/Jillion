@@ -30,10 +30,10 @@ import java.io.InputStream;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.AbstractBlockingCloseableIterator;
-import org.jcvi.common.core.util.CloseableIterator;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
+import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code IndexedAceFileDataStore} is an implementation of 
  * {@link AceContigDataStore} that only stores an index containing
@@ -102,6 +102,8 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         try {
             AceContigDataStoreBuilder builder = DefaultAceFileDataStore.createBuilder();
             inputStream = IOUtil.createInputStreamFromFile(file,range);
+            //need to explicitly say we have 1 contig for maps to get populated correctly
+            builder.visitHeader(1, 0);
             AceFileParser.parseAceFile(inputStream,builder);
             return builder.build().get(contigId);
         } catch (Exception e) {

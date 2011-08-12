@@ -34,8 +34,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.util.ChainedCloseableIterator;
-import org.jcvi.common.core.util.CloseableIterator;
-import org.jcvi.common.core.util.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 /**
  * {@code MultipleDataStoreWrapper} is a special proxy to wrap
  * several DataStore instances behind a single iterface.  This

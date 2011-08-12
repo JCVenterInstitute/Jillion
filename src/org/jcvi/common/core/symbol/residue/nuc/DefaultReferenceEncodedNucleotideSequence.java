@@ -23,8 +23,10 @@
  */
 package org.jcvi.common.core.symbol.residue.nuc;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -32,16 +34,16 @@ import org.jcvi.common.core.symbol.Sequence;
 
 public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferenceEncodedNucleotideSequence{
 
-    private final int[] gaps;
-    private final int[] snpIndexes;
-    private final NucleotideSequence snpValues;
+   // private final int[] gaps;
+   // private final int[] snpIndexes;
+  //  private final NucleotideSequence snpValues;
     private NucleotideSequence beforeValues=null;
     private NucleotideSequence afterValues=null;
     private int overhangOffset=0;
     private final int length;
     private final int startOffset;
     private final NucleotideSequence reference;
-
+    private final byte[] encodedSnpsInfo;
     
     /**
     * {@inheritDoc}
@@ -61,9 +63,11 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
 
     @Override
     public List<Integer> getSnpOffsets() {
-        List<Integer> snps = new ArrayList<Integer>(snpIndexes.length);
-        for(int i =0; i< snpIndexes.length; i++){
-            snps.add(Integer.valueOf(snpIndexes[i]));
+        ByteBuffer buf = ByteBuffer.wrap(encodedSnpsInfo);
+        int size = buf.getInt();
+        List<Integer> snps = new ArrayList<Integer>(size);
+        for(int i=0; i<size; i++){
+            snps.add(Integer.valueOf(buf.getInt()));
         }
         return snps;
     }
@@ -74,11 +78,24 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
         this.startOffset = startOffset;
         this.length = toBeEncoded.length();
         this.reference = reference;
-        TreeMap<Integer, Nucleotide> differentGlyphMap = new TreeMap<Integer, Nucleotide>();
-        populateFields(reference, toBeEncoded, startOffset, tempGapList,differentGlyphMap);
-        gaps = convertToPrimitiveArray(tempGapList);
+        TreeMap<Integer, Nucleotide> differentGlyphMap = populateFields(reference, toBeEncoded, startOffset, tempGapList);
+        
+        int numSnps = differentGlyphMap.size();
+        
+       
+        ByteBuffer buffer = ByteBuffer.allocate(4+5*numSnps);
+        buffer.putInt(numSnps);
+        for(Integer offset : differentGlyphMap.keySet()){
+            buffer.putInt(offset);
+        }
+        for(Nucleotide n : differentGlyphMap.values()){
+            buffer.put((byte)n.ordinal());
+        }
+        encodedSnpsInfo = buffer.array();
+       /* gaps = convertToPrimitiveArray(tempGapList);
         snpIndexes = createSNPIndexes(differentGlyphMap);
         snpValues = createSNPValues(differentGlyphMap);
+        */
     }
     
     private NucleotideSequence createSNPValues(
@@ -103,9 +120,10 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
         return array;
     }
     private TreeMap<Integer, Nucleotide> populateFields(Sequence<Nucleotide> reference,
-            String toBeEncoded, int startOffset, List<Integer> tempGapList,TreeMap<Integer, Nucleotide> differentGlyphMap) {
+            String toBeEncoded, int startOffset, List<Integer> tempGapList) {
         handleBeforeReference(toBeEncoded, startOffset);
         handleAfterReference(reference, toBeEncoded, startOffset);
+        TreeMap<Integer, Nucleotide> differentGlyphMap = new TreeMap<Integer, Nucleotide>();
         
         int startReferenceEncodingOffset = computeStartReferenceEncodingOffset();
         int endReferenceEncodingOffset = computeEndReferenceEncodingOffset(toBeEncoded);
@@ -140,7 +158,7 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
         if(lastOffsetOfSequence > reference.getLength()){
             int overhang = (int)(toBeEncoded.length()+startOffset - reference.getLength());
             overhangOffset = toBeEncoded.length()-overhang;
-            afterValues = new DefaultNucleotideSequence(toBeEncoded.substring(overhangOffset));
+            afterValues = DefaultNucleotideSequence.create(toBeEncoded.substring(overhangOffset));
         }
     }
 
@@ -148,7 +166,7 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
     private void handleBeforeReference(String toBeEncoded, int startOffset) {
         if(startOffset<0){
             //handle before values
-            beforeValues = new DefaultNucleotideSequence(toBeEncoded.substring(0, Math.abs(startOffset)));
+            beforeValues = DefaultNucleotideSequence.create(toBeEncoded.substring(0, Math.abs(startOffset)));
         }
     }
 
@@ -172,13 +190,15 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
         if(isAfterReference(index)){
             return afterValues.get(index-overhangOffset);
         }
-        if(isGap(index)){
-            return Nucleotide.Gap;
+        
+        ByteBuffer buf = ByteBuffer.wrap(encodedSnpsInfo);
+        int size = buf.getInt();
+        for(int i=0; i<size; i++){
+            if(index ==buf.getInt()){
+                return Nucleotide.values()[encodedSnpsInfo[4+size*4+i]];
+            }
         }
-        int snpIndex =Arrays.binarySearch(snpIndexes, index);
-        if(snpIndex>=0){
-            return snpValues.get(snpIndex);
-        }
+        
         int referenceIndex = index+startOffset;
         return reference.get(referenceIndex);
     }
@@ -195,12 +215,8 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
 
     @Override
     public boolean isGap(int index) {
-        for(int i=0; i<this.gaps.length; i++){
-            if(gaps[i] == index){
-                return true;
-            }
-        }
-        return false;
+        return getGapOffsets().contains(Integer.valueOf(index));
+        
     }
     
     @Override
@@ -210,20 +226,54 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
 
     @Override
     public List<Integer> getGapOffsets() {
-        List<Integer> result = new ArrayList<Integer>();
-        for(int i=0; i<this.gaps.length; i++){
-            result.add(this.gaps[i]);
+      //first, get gaps from our aligned section of the reference
+        //we may have a snp in the gap location
+        //so we need to check for that
+       
+        List<Integer> refGapOffsets = reference.getGapOffsets();
+        List<Integer> gaps = new ArrayList<Integer>(refGapOffsets.size());
+        for(Integer refGap : refGapOffsets){
+            int adjustedCoordinate = refGap.intValue() - startOffset;
+            if(adjustedCoordinate >=0 && adjustedCoordinate<length){
+                gaps.add(Integer.valueOf(adjustedCoordinate));
+            }
         }
-        return result;
+        //now check our snps to see
+        //1. if we have snp where the ref has a gap
+        //2. if we have gap
+        ByteBuffer buf = ByteBuffer.wrap(encodedSnpsInfo);
+        int size = buf.getInt();
+        List<Integer> snps = new ArrayList<Integer>(size);
+        for(int i=0; i<size; i++){
+            Integer snpOffset = Integer.valueOf(buf.getInt());
+            //we have a snp where the ref has a gap
+            //remove it from our list of gaps
+            if(gaps.contains(snpOffset)){
+                gaps.remove(snpOffset);
+            }
+            snps.add(snpOffset);
+        }
+        int i=0;
+        while(buf.hasRemaining()){
+            if(Nucleotide.values()[buf.get()] == Nucleotide.Gap){
+                gaps.add(snps.get(i));
+            }
+            i++;
+        }
+        //sort gaps so they are in order
+        //before this line, our gaps are in
+        //sorted ref gaps
+        //followed by sorted snps
+        Collections.sort(gaps);
+        return gaps;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(snpIndexes);
-        result = prime * result + snpValues.hashCode();
-        result = prime * result + Arrays.hashCode(gaps);
+        result = prime * result + Arrays.hashCode(encodedSnpsInfo);
+        result = prime * result + reference.hashCode();
         result = prime * result + length;
         result = prime * result + startOffset;
         return result;
@@ -240,21 +290,10 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
             return false;
         }
         DefaultReferenceEncodedNucleotideSequence other = (DefaultReferenceEncodedNucleotideSequence) obj;
-        if (!Arrays.equals(snpIndexes,other.snpIndexes)) {
+        if (!Arrays.equals(encodedSnpsInfo,other.encodedSnpsInfo)) {
             return false;
         }
-        if (snpValues == null) {
-            if (other.snpValues != null) {
-                return false;
-            }
-        } else if (!snpValues.equals(other.snpValues)) {
-            return false;
-        }
-        if (gaps == null) {
-            if (other.gaps != null) {
-                return false;
-            }
-        } else if (!Arrays.equals(gaps,other.gaps)) {
+        if(!reference.equals(other.reference)){
             return false;
         }
         if (length != other.length) {
@@ -272,7 +311,7 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
      */
      @Override
      public int getNumberOfGaps() {
-         return gaps.length;
+         return getGapOffsets().size();
      }
     
     

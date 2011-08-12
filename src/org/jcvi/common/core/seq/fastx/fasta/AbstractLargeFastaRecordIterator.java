@@ -24,7 +24,7 @@ import java.io.FileNotFoundException;
 
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
-import org.jcvi.common.core.util.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 
 /**
  * @author dkatzel

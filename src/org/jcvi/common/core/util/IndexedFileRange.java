@@ -24,6 +24,7 @@
 package org.jcvi.common.core.util;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public interface IndexedFileRange {
 

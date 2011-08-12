@@ -39,7 +39,6 @@ import org.junit.runners.Suite.SuiteClasses;
         TestMultipleWrapper.class,
         TestCloseableIteratorAdapter.class,
         TestChainedCloseableIterator.class,
-        TestGenericUtil.class,
         TestMapValueComparator.class
     }
     )

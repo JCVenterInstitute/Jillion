@@ -27,6 +27,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -243,5 +244,100 @@ public enum DefaultNucleotideGlyphCodec implements NucleotideCodec{
     public int decodedLengthOf(byte[] encodedGlyphs) {
         ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
         return buf.getInt();
+    }
+    
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public List<Integer> getGapOffsets(byte[] encodedGlyphs) {
+        List<Nucleotide> gapped =decode(encodedGlyphs);
+        return getGapOffsets(gapped);
+    }
+    private List<Integer> getGapOffsets(List<Nucleotide> gapped) {
+        List<Integer> result = new ArrayList<Integer>();
+        for(int i=0; i<gapped.size(); i++){
+            if(gapped.get(i)==Nucleotide.Gap){
+                result.add(Integer.valueOf(i));
+            }
+        }       
+        return result;
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getNumberOfGaps(byte[] encodedGlyphs) {
+        return getGapOffsets(encodedGlyphs).size();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isGap(byte[] encodedGlyphs, int gappedOffset) {
+        return getGapOffsets(encodedGlyphs).contains(Integer.valueOf(gappedOffset));
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getUngappedLength(byte[] encodedGlyphs) {
+        List<Nucleotide> gapped =decode(encodedGlyphs);
+        return gapped.size() -getGapOffsets(gapped).size();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public List<Nucleotide> asUngappedList(byte[] encodedGlyphs) {
+        List<Nucleotide> gapped =decode(encodedGlyphs);
+        List<Integer> gapOffsets = getGapOffsets(gapped);
+        Collections.reverse(gapOffsets);
+        for(Integer offset : gapOffsets){
+            gapped.remove(offset.intValue());
+        }
+        return gapped;
+    }
+   
+  
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getUngappedOffsetFor(byte[] encodedGlyphs, int gappedOffset) {
+        return gappedOffset - getNumberOfGapsUntil(encodedGlyphs,gappedOffset);
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getGappedOffsetFor(byte[] encodedGlyphs, int ungappedOffset) {
+       /*
+        *  int[] gaps =getGapOffsetsFrom(encodedGlyphs);
+        int currentOffset=ungappedOffset;
+        for(int i=0; i<gaps.length && gaps[i]>currentOffset; i++){
+            currentOffset++;
+        }
+        return currentOffset;
+        */
+        List<Integer> gaps = getGapOffsets(encodedGlyphs);
+        int currentOffset=ungappedOffset;
+        for(int i=0; i<gaps.size() && gaps.get(i).intValue()>currentOffset; i++){
+            currentOffset++;
+        }
+        return currentOffset;
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getNumberOfGapsUntil(byte[] encodedGlyphs, int gappedOffset) {
+        int numberOfGaps=0;
+        for(Integer gapIndex :getGapOffsets(encodedGlyphs)){
+            if(gapIndex.intValue() <=gappedOffset){
+                numberOfGaps++;
+            }
+        }
+        return numberOfGaps;
     }
 }

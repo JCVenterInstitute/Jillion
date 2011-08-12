@@ -36,8 +36,8 @@ import java.util.zip.ZipInputStream;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.CloseableIterator;
-import org.jcvi.common.core.util.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 /**
  * An {@code InMemoryZipDataStore} is a {@link ZipDataStore} implementation
  * that unzips the given

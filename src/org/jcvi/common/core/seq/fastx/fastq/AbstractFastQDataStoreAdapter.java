@@ -28,7 +28,7 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public abstract class AbstractFastQDataStoreAdapter<T> implements DataStore<T>{
     private final DataStore<FastQRecord> dataStore;

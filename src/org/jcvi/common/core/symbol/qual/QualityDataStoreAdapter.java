@@ -29,7 +29,7 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * A <code>QualityDataStoreAdapter</code> adapts the heavily parameterized

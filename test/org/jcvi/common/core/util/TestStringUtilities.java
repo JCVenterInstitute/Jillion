@@ -20,51 +20,28 @@ package org.jcvi.common.core.util;
 
 import static org.junit.Assert.*;
 
-import org.jcvi.common.core.util.StringUtilities;
 import org.junit.Test;
 
 public class TestStringUtilities {
 
-    @Test
-    public void testToCamelCase() 
-    {
-        assertEquals("Standard Title", "thisIsCamelCase", StringUtilities.toCamelCase("This is Camel Case").toString());
-        assertEquals("Single Word", "test", StringUtilities.toCamelCase("Test").toString());
-        assertEquals("Leading whitespace", "thisIsATest", StringUtilities.toCamelCase("   This is a Test").toString());
-        assertEquals("Trailing whitespace", "thisIsATest", StringUtilities.toCamelCase("This is a Test   ").toString());
-        assertEquals("Digits", "digit89Test", StringUtilities.toCamelCase("digit 89 test").toString());
-        assertEquals("Standard Title (InitialCap)", "ThisIsCamelCase", StringUtilities.toCamelCase("This is Camel Case", true).toString());
-        assertEquals("Leading whitespace (InitialCap)", "ThisIsATest", StringUtilities.toCamelCase("   This is a Test", true).toString());
-        assertEquals("Trailing whitespace (InitialCap)", "ThisIsATest", StringUtilities.toCamelCase("This is a Test   ", true).toString());
-    }
-    
-    @Test
-    public void isNumber(){
-        assertTrue("single digit",StringUtilities.isNumber("1"));
-        assertTrue("multiple digits",StringUtilities.isNumber("12345"));
-        assertTrue("decimal point",StringUtilities.isNumber("12.345"));
-        assertTrue("leading decimal point",StringUtilities.isNumber(".345"));
-        assertFalse("letter",StringUtilities.isNumber("A"));
-        assertFalse("word",StringUtilities.isNumber("nope"));
-        assertFalse("sentence",StringUtilities.isNumber("not a number"));
-    }
+  
     
     @Test
     public void joinBuilderStringsWithNoGlue(){
         assertEquals("LarryMoeCurly",
-                new StringUtilities.JoinedStringBuilder("Larry","Moe","Curly").build());
+                new JoinedStringBuilder("Larry","Moe","Curly").build());
     }
     
     @Test
     public void joinBuilderNoElements(){
         assertEquals("",
-                new StringUtilities.JoinedStringBuilder().build());
+                new JoinedStringBuilder().build());
     }
     
     @Test
     public void joinBuilderStringsWithGlue(){
         assertEquals("Larry,Moe,Curly",
-                new StringUtilities.JoinedStringBuilder("Larry","Moe","Curly")
+                new JoinedStringBuilder("Larry","Moe","Curly")
                         .glue(",")
                         .build());
     }
@@ -72,20 +49,20 @@ public class TestStringUtilities {
     @Test
     public void joinBuilderObjectsWithNoGlue(){
         assertEquals("LarryMoeCurly",
-                new StringUtilities.JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"}).build());
+                new JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"}).build());
     }
     
     @Test
     public void joinBuilderObjectsWithGlue(){
         assertEquals("Larry,Moe,Curly",
-                new StringUtilities.JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"})
+                new JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"})
                         .glue(",")
                         .build());
     }
     @Test
     public void joinBuilderObjectsWithPrefix(){
         assertEquals("Stooges=Larry,Moe,Curly",
-                new StringUtilities.JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"})
+                new JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"})
                         .glue(",")
                         .prefix("Stooges=")
                         .build());
@@ -93,7 +70,7 @@ public class TestStringUtilities {
     @Test
     public void joinBuilderObjectsWithSuffix(){
         assertEquals("Larry,Moe,Curly were the best stooges",
-                new StringUtilities.JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"})
+                new JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"})
                         .glue(",")
                         .suffix(" were the best stooges")
                         .build());

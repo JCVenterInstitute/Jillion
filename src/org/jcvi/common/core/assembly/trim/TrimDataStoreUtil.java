@@ -23,9 +23,9 @@ import java.io.IOException;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.CloseableIterator;
-import org.jcvi.common.core.util.CloseableIteratorAdapter;
-import org.jcvi.common.core.util.EmptyIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.EmptyIterator;
 
 /**
  * @author dkatzel

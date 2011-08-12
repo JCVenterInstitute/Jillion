@@ -27,6 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
 public class DefaultIndexedFileRange implements IndexedFileRange{
 

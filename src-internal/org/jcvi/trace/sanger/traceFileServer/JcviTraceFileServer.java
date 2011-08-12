@@ -29,7 +29,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import org.jcvi.auth.JCVIEncodedAuthorizer;
-import org.jcvi.common.core.util.StringUtilities;
+import org.jcvi.common.core.util.JoinedStringBuilder;
 import org.jcvi.common.io.fileServer.ReadWriteFileServer;
 import org.jcvi.common.net.http.HttpGetRequestBuilder;
 import org.jtc.chromatogram_archiver.api.archiver.client.JTCChromatogramArchiver;
@@ -343,7 +343,7 @@ public abstract class JcviTraceFileServer implements TraceFileServer{
     public InputStream getMultipleFilesAsStream(Iterable<?> ids,
             final RequestType requestType, final FileType fileType, ReturnFormat returnFormat)
             throws IOException {
-        return getFileAsStream(new StringUtilities.JoinedStringBuilder(ids)
+        return getFileAsStream(new JoinedStringBuilder(ids)
                                 .glue(',')
                                 .build()
                                 ,requestType, fileType, returnFormat);

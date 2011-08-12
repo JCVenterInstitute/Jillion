@@ -31,7 +31,7 @@ import java.util.zip.ZipFile;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * {@code DefaultZipDataStore} is a default implementation

@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
+import org.jcvi.common.core.util.iter.ArrayIterable;
+import org.jcvi.common.core.util.iter.EmptyIterator;
+
 /**
  * {@code FileIterator} is an {@link Iterator} for File objects.
  * @author dkatzel

@@ -23,12 +23,9 @@
  */
 package org.jcvi.common.core.symbol.residue.nuc;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.common.core.symbol.EncodedSequence;
-import org.jcvi.common.core.symbol.Sequence;
 /**
  * {@code DefaultNucleotideSequence} is the default
  * implementation of a {@link NucleotideSequence}.  Internally,
@@ -38,8 +35,7 @@ import org.jcvi.common.core.symbol.Sequence;
  *
  */
 public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
-    private final int[] gaps;
-    private final Sequence<Nucleotide> encodedBasecalls;
+    private final NucleotideEncodedSequence encodedBasecalls;
     
     public static DefaultNucleotideSequence create(String nucleotides){
         return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides));
@@ -51,17 +47,21 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     public static DefaultNucleotideSequence create(Collection<Nucleotide> nucleotides){
         return new DefaultNucleotideSequence(nucleotides);
     }
+    public static DefaultNucleotideSequence createNoAmbiguities(Collection<Nucleotide> nucleotides){
+        return new DefaultNucleotideSequence(nucleotides, NoAmbiguitiesEncodedNucleotideCodec.INSTANCE);
+    }
     public static DefaultNucleotideSequence createGappy(Collection<Nucleotide> nucleotides){
         return new DefaultNucleotideSequence(nucleotides, DefaultNucleotideGlyphCodec.INSTANCE);
     }
-    
+    public static DefaultNucleotideSequence createGappy(CharSequence nucleotides){
+        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides), DefaultNucleotideGlyphCodec.INSTANCE);
+    }
     public DefaultNucleotideSequence(Collection<Nucleotide> nucleotides){
         this(nucleotides,NucleotideCodecs.getNucleotideCodecFor(nucleotides));
    
     }
     public DefaultNucleotideSequence(Collection<Nucleotide> nucleotides,NucleotideCodec codec ){
-        this.gaps = computeGapIndexes(nucleotides);
-        this.encodedBasecalls = new EncodedSequence<Nucleotide>(codec,nucleotides);
+        this.encodedBasecalls = new NucleotideEncodedSequence(codec,nucleotides);
    
     }
     
@@ -71,29 +71,11 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     public DefaultNucleotideSequence(char[] basecalls){
         this(Nucleotides.parse(basecalls));
     }
-    private int[] computeGapIndexes(Collection<Nucleotide> glyphs) {
-       List<Integer> gaps = new ArrayList<Integer>();
-       int i=0;
-        for(Nucleotide glyph :glyphs){
-            if(glyph.isGap()){
-                gaps.add(Integer.valueOf(i));
-            }
-            i++;
-        }
-        int[] array = new int[gaps.size()];
-        for(int j=0; j<gaps.size(); j++){
-            array[j] = gaps.get(j).intValue();
-        }
-        return array;
-    }
+
     
     @Override
     public List<Integer> getGapOffsets() {
-        List<Integer> result = new ArrayList<Integer>();
-        for(int i=0; i<this.gaps.length; i++){
-            result.add(this.gaps[i]);
-        }
-        return result;
+        return encodedBasecalls.getGapOffsets();
     }
 
     @Override
@@ -102,10 +84,7 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     }
 
     @Override
-    public Nucleotide get(int index) {
-        if(isGap(index)){
-            return Nucleotide.Gap;
-        }
+    public Nucleotide get(int index) {       
         return encodedBasecalls.get(index);
     }
 
@@ -115,12 +94,7 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     }
     @Override
     public boolean isGap(int index) {
-        for(int i=0; i<this.gaps.length; i++){
-            if(gaps[i] == index){
-                return true;
-            }
-        }
-        return false;
+        return encodedBasecalls.isGap(index);
     }
     @Override
     public int hashCode() {
@@ -144,18 +118,14 @@ public class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     }
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder((int)encodedBasecalls.getLength());
-        for(Nucleotide base : this){
-            result.append(base);
-        }
-        return result.toString();
+        return Nucleotides.asString(asList());
     }
     /**
     * {@inheritDoc}
     */
     @Override
     public int getNumberOfGaps() {
-        return gaps.length;
+        return encodedBasecalls.getNumberOfGaps();
     }
 
     

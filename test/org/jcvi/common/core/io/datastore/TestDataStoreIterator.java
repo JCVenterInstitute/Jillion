@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.junit.Before;
 import org.junit.Test;
 public class TestDataStoreIterator {

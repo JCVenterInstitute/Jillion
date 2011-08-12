@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaFileDataStor
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaRecordFactory;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.util.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 
 public class LargePositionFastaFileDataStore extends AbstractPositionFastaFileDataStore{
