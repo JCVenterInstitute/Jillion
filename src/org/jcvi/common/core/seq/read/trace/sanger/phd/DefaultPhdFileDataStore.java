@@ -38,8 +38,8 @@ import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 /**
  * {@code DefaultPhdFileDataStore} is a {@link PhdDataStore}
  * implementation that will store all {@link Phd} records
@@ -140,7 +140,7 @@ public final class DefaultPhdFileDataStore{
                 List<PhredQuality> qualities, List<ShortSymbol> positions,
                 Properties comments, List<PhdTag> tags) {
             map.put(id, new DefaultPhd(id,
-                    DefaultNucleotideSequence.createGappy(bases),
+                    NucleotideSequenceFactory.createGappy(bases),
                     new EncodedQualitySequence(QUALITY_CODEC, qualities),
                     new SangerPeak(positions),
                     comments,

@@ -34,9 +34,8 @@ import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.DefaultRead;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -49,7 +48,7 @@ public abstract class TestContigFileParser {
     int numberOfReads= 210;
     ResourceFileServer RESOURCES = new ResourceFileServer(TestContigFileParser.class);
 
-                        NucleotideSequence contigConsensus = new DefaultNucleotideSequence(
+                        NucleotideSequence contigConsensus = NucleotideSequenceFactory.createGappy(
         "TAAAGTGGCCACTAAATATGTTAAGAAGGTTACTGGCAAACTAGCCGTGCGCTTTAAGGC" +
         "GTTAGGTGTAGTCGTTGTCAGGAAAATTACTGAATGGTTTGATTTAGCCGTGGACATTGC" +
         "TGCTAGTGCCGCTGGATGGCTTTGCTACCAGCTGGTAAATGGCTTATTCGCAGTGGCCAA" +
@@ -408,7 +407,7 @@ public abstract class TestContigFileParser {
     
     DefaultPlacedRead CVGWB15T06B037761RM = new DefaultPlacedRead(
             new DefaultRead("CVGWB15T06B037761RM",
-                 new DefaultReferenceEncodedNucleotideSequence(contigConsensus,
+                    NucleotideSequenceFactory.createReferenceEncoded(contigConsensus,
                          "AAGTTTAATACTGATAATAAGGTTATATACACCACAGAAGTGGCTTCAAAGCTTAATTTT" +
                          "AAGTTGTGTTGTTTGGCCTTTAAGAATGCTTTACAGACGTTTAATTGGAGTGTTGTGTAC" +
                          "AGGGGCTTCTTTCTAGTGGCAACAGTCTTTTTATTATGG-TTTAACTTTTTGTATGCCAA" +
@@ -430,7 +429,7 @@ public abstract class TestContigFileParser {
     
     PlacedRead CVGWB47T06D1122735FMB = new DefaultPlacedRead(
             new DefaultRead("CVGWB47T06D1122735FMB",
-                 new DefaultReferenceEncodedNucleotideSequence(contigConsensus,
+                    NucleotideSequenceFactory.createReferenceEncoded(contigConsensus,
                          "GTACCTATGTAGAAAATAACGGTCACCCGAAATTAGATTGGCTAGACCTTGACCCGCAAT" +
                          "TGTGTAATTCAGGAA-GGATTTCCGCAAAGAGTGGTAACTCTCTCTTTAGGAGTTTCCAT" +
                          "TTTACTGATTTTTACAACTACACAGGAGAAGGCGACCAAATTATATTTTATGAAGGAGTT" +

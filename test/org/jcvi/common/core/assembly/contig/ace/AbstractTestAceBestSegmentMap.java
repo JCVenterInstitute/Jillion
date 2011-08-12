@@ -41,12 +41,12 @@ import org.jcvi.common.core.assembly.contig.slice.DefaultSliceMap;
 import org.jcvi.common.core.assembly.contig.slice.Slice;
 import org.jcvi.common.core.assembly.contig.slice.SliceMap;
 import org.jcvi.common.core.assembly.coverage.slice.TestSliceUtil;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.junit.Test;
 
 public abstract class AbstractTestAceBestSegmentMap {
-    private final NucleotideSequence consensus = new DefaultNucleotideSequence("ACGT");
+    private final NucleotideSequence consensus = NucleotideSequenceFactory.create("ACGT");
     AceBestSegmentMap sut;
     SliceMap sliceMap;
 

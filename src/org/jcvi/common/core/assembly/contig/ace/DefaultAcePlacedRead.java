@@ -31,10 +31,9 @@ import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
@@ -226,7 +225,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             this.offset = offset;
             this.phdInfo = phdInfo;
             
-            this.referencedEncodedBases = DefaultNucleotideSequence.createGappy(validBases);
+            this.referencedEncodedBases = NucleotideSequenceFactory.create(validBases);
             if(offset + validBases.length() > reference.getLength()){
                 throw new IllegalArgumentException("read goes beyond the reference");
             }
@@ -255,15 +254,11 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         }
         
         public DefaultAcePlacedRead build(){
-            ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = 
-                new DefaultReferenceEncodedNucleotideSequence(reference,
+            ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = NucleotideSequenceFactory.createReferenceEncoded(
+                        reference,
                         Nucleotides.asString(referencedEncodedBases.asList()),offset);
             Read read = new DefaultRead(readId, updatedEncodedBasecalls);
             return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength,clearRange);
-        
-        /*    Read read = new DefaultRead(readId, referencedEncodedBases);
-            return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength,clearRange);
-     */
         }
         
     }

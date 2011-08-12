@@ -26,8 +26,8 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 
@@ -47,8 +47,7 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
         }
         public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, Direction dir){
             
-            NucleotideSequence referenceEncoded = new DefaultReferenceEncodedNucleotideSequence(consensus,basecalls, offset);
-          // NucleotideSequence referenceEncoded = DefaultNucleotideSequence.create(basecalls);
+            NucleotideSequence referenceEncoded = NucleotideSequenceFactory.createReferenceEncoded(consensus,basecalls, offset);
             final P actualPlacedRead = createPlacedRead(new DefaultRead(id, referenceEncoded), offset,dir, validRange );
             
             return addRead(actualPlacedRead);

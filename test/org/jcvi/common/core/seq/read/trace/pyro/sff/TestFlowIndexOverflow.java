@@ -40,7 +40,7 @@ import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -64,7 +64,7 @@ public class TestFlowIndexOverflow{
     short[] encodedValues = new short[]{213,0,2, 97, 120};
     
     private final SFFFlowgram FCPRO0N01A48YO = new SFFFlowgram("FCPRO0N01A48YO",
-            new DefaultNucleotideSequence(
+            NucleotideSequenceFactory.create(
                     Nucleotides.parse(
                       "TCAGCGATACACATAGCGCGTACATCCACATCGTGGCGTCTCAAGGCACACAGGGGGATAGGN")),
                       new EncodedQualitySequence(runLengthQualityCodec,

@@ -28,10 +28,10 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.trim.DefaultPrimerTrimmer;
 import org.jcvi.common.core.seq.trim.PrimerTrimmer;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 
 /**
  * @author dkatzel
@@ -112,7 +112,7 @@ public final class NexteraTransposonTrimmer implements PrimerTrimmer{
     */
     @Override
     public Range trim(String sequence, NucleotideDataStore primersToTrimAgainst) {
-        return trim(new DefaultNucleotideSequence(sequence));
+        return trim(NucleotideSequenceFactory.create(sequence));
     }
     
     

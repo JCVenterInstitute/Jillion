@@ -28,9 +28,9 @@ import java.util.List;
 import org.jcvi.common.core.symbol.Sequence;
 /**
  * {@code NucleotideSequence} an interface to abstract
- * how {@link Nucleotide}s are encoded in memory.  Nucleotide data
+ * how a {@link Sequence} of {@link Nucleotide}s are encoded in memory.  Nucleotide data
  * can be stored in many different ways depending
- * on the use case and particular circumstances of how this data is to be used.
+ * on the use case and size and composition of the seuqnece.
  * Different encoding implementations can take up more or less memory or require
  * more computations to decode.  This interface hides implementation details
  * regarding the decoding so users don't have to worry about it.

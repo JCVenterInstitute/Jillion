@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdWriter;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -46,7 +46,7 @@ public class TestPhdWriter extends AbstractTestPhd{
     public void write() throws IOException, DataStoreException{
         Phd phd = new DefaultPhd(
         		id,
-                new DefaultNucleotideSequence(expectedBasecalls), 
+        		NucleotideSequenceFactory.create(expectedBasecalls), 
                 new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, expectedQualities), 
                 new SangerPeak(expectedPositions),
                 expectedProperties);

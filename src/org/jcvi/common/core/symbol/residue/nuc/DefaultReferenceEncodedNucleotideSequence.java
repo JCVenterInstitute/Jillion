@@ -32,7 +32,7 @@ import java.util.TreeMap;
 
 import org.jcvi.common.core.symbol.Sequence;
 
-public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferenceEncodedNucleotideSequence{
+final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferenceEncodedNucleotideSequence{
 
     private NucleotideSequence beforeValues=null;
     private NucleotideSequence afterValues=null;

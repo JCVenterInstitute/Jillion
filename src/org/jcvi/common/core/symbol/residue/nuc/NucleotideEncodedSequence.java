@@ -25,11 +25,13 @@ import java.util.List;
 import org.jcvi.common.core.symbol.EncodedSequence;
 
 /**
+ * {@code NucleotideEncodedSequence} is a special
+ * implementation of {@link EncodedSequence}
+ * that has extra methods for working with Nucleotides
+ * and gap computations.
  * @author dkatzel
- *
- *
  */
-public class NucleotideEncodedSequence extends EncodedSequence<Nucleotide>{
+final class NucleotideEncodedSequence extends EncodedSequence<Nucleotide>{
 
     /**
      * @param codec
@@ -51,13 +53,12 @@ public class NucleotideEncodedSequence extends EncodedSequence<Nucleotide>{
      * @return a List of gap offsets as Integers.
      */
     public List<Integer> getGapOffsets() {       
-        NucleotideCodec codec = asNucleotideCodec();
-        return codec.getGapOffsets(getData());
+        return getCodec().getGapOffsets(getData());
     }
-
-    private NucleotideCodec asNucleotideCodec() {
-        NucleotideCodec codec =(NucleotideCodec)getCodec();
-        return codec;
+    
+    @Override
+    protected NucleotideCodec getCodec() {
+        return (NucleotideCodec)super.getCodec();
     }
     
       
@@ -66,8 +67,7 @@ public class NucleotideEncodedSequence extends EncodedSequence<Nucleotide>{
      * @return the number of gaps; will always be {@code >=0}.
      */
     public int getNumberOfGaps(){
-        NucleotideCodec codec = asNucleotideCodec();
-        return codec.getNumberOfGaps(getData());
+        return getCodec().getNumberOfGaps(getData());
     }
    
     /**
@@ -76,8 +76,7 @@ public class NucleotideEncodedSequence extends EncodedSequence<Nucleotide>{
      * @return {@code true} is it is a gap; {@code false} otherwise.
      */
     public boolean isGap(int gappedOffset){
-        NucleotideCodec codec = asNucleotideCodec();
-        return codec.isGap(getData(),gappedOffset);
+        return getCodec().isGap(getData(),gappedOffset);
     }
     /**
      * Get the number of {@link Nucleotide}s in this {@link NucleotideSequence} 
@@ -85,8 +84,7 @@ public class NucleotideEncodedSequence extends EncodedSequence<Nucleotide>{
      * @return the number of non gaps as a long.
      */
     public long getUngappedLength(){
-        NucleotideCodec codec = asNucleotideCodec();
-        return codec.getUngappedLength(getData());
+        return getCodec().getUngappedLength(getData());
     }
     /**
      * Decode only the ungapped bases and return them as a List of
@@ -95,8 +93,7 @@ public class NucleotideEncodedSequence extends EncodedSequence<Nucleotide>{
      * ungapped bases.
      */
     public List<Nucleotide> asUngappedList(){
-        NucleotideCodec codec = asNucleotideCodec();
-        return codec.asUngappedList(getData());
+        return getCodec().asUngappedList(getData());
     }
     /**
      * Compute the number of gaps in the valid range until AND INCLUDING the given
@@ -106,17 +103,14 @@ public class NucleotideEncodedSequence extends EncodedSequence<Nucleotide>{
      * gapped index.
      */
     public int getNumberOfGapsUntil(int gappedOffset){
-        NucleotideCodec codec = asNucleotideCodec();
-        return codec.getNumberOfGapsUntil(getData(), gappedOffset);
+        return getCodec().getNumberOfGapsUntil(getData(), gappedOffset);
     }
     
     public int getUngappedOffsetFor(int gappedOffset){
-        NucleotideCodec codec = asNucleotideCodec();
-        return codec.getUngappedOffsetFor(getData(), gappedOffset);
+        return getCodec().getUngappedOffsetFor(getData(), gappedOffset);
     }
     
     public int getGappedOffsetFor(int ungappedOffset){
-        NucleotideCodec codec = asNucleotideCodec();
-        return codec.getGappedOffsetFor(getData(), ungappedOffset);
+        return getCodec().getGappedOffsetFor(getData(), ungappedOffset);
     }
 }

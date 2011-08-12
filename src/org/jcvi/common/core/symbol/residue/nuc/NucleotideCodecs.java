@@ -26,7 +26,7 @@ import java.util.Collection;
  *
  *
  */
-public final class NucleotideCodecs {
+final class NucleotideCodecs {
 
     public static NucleotideCodec getNucleotideCodecFor(Collection<Nucleotide> nucleotides){
         

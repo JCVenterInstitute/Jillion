@@ -19,8 +19,8 @@
 
 package org.jcvi.common.core.seq.read.trace.nextera;
 
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 /**
@@ -30,8 +30,8 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
  */
 public final class TransposonEndSequences {
 
-    public static final NucleotideSequence FORWARD = new DefaultNucleotideSequence("AGATGTGTATAAGAGACAG");
+    public static final NucleotideSequence FORWARD = NucleotideSequenceFactory.create("AGATGTGTATAAGAGACAG");
     
-    public static final NucleotideSequence REVERSE = new DefaultNucleotideSequence(
+    public static final NucleotideSequence REVERSE = NucleotideSequenceFactory.create(
                                                 Nucleotides.reverseCompliment(FORWARD.asList()));
 }

@@ -36,9 +36,9 @@ import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 
@@ -75,8 +75,8 @@ private SFFUtil(){}
      * @param sequence
      */
     private Linkers(String sequence) {
-        this.forwardSequence = new DefaultNucleotideSequence(sequence);
-        this.reverseSequence = new DefaultNucleotideSequence(Nucleotides.reverseCompliment(
+        this.forwardSequence = NucleotideSequenceFactory.create(sequence);
+        this.reverseSequence = NucleotideSequenceFactory.create(Nucleotides.reverseCompliment(
                 forwardSequence.asList()));
     }
 
@@ -239,7 +239,7 @@ private SFFUtil(){}
             SFFReadData readData) {
         return new SFFFlowgram(
                 readHeader.getName(),
-                new DefaultNucleotideSequence(
+                NucleotideSequenceFactory.create(
                         Nucleotides.parse(readData.getBasecalls())),
                         new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                                 PhredQuality.valueOf(readData.getQualities())),

@@ -28,7 +28,8 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFileVisitor{
@@ -56,9 +57,9 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
         currentContigBuilder = new DefaultContig.Builder(contigId,
                 encodedConsensus(consensus));
     }
-    private DefaultNucleotideSequence encodedConsensus(String basecalls) {
+    private NucleotideSequence encodedConsensus(String basecalls) {
         //consensus probably is very gappy
-        return DefaultNucleotideSequence.create(Nucleotides.parse(basecalls));
+        return NucleotideSequenceFactory.create(Nucleotides.parse(basecalls));
     }
 
     /**

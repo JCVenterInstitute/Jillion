@@ -33,9 +33,9 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.AbstractContig;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
@@ -63,7 +63,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         }
         public Builder(String contigId, List<Nucleotide> fullConsensus){
             this(contigId,
-                    DefaultNucleotideSequence.create(fullConsensus)
+                    NucleotideSequenceFactory.create(fullConsensus)
              );
          }
         public Builder(String contigId, NucleotideSequence fullConsensus){
@@ -148,7 +148,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             
             if(numberOfReads()==0){
                 //force empty contig if no reads...
-                return new DefaultAceContig(contigId, new DefaultNucleotideSequence(""),placedReads);
+                return new DefaultAceContig(contigId, NucleotideSequenceFactory.create(""),placedReads);
             }
             
             List<Nucleotide> updatedConsensus = updateConsensus(fullConsensus.asList());
@@ -160,7 +160,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             contigRight = Math.min(contigRight,(int)fullConsensus.getLength());
             //here only include the gapped valid range consensus bases
             //throw away the rest            
-            NucleotideSequence validConsensus = DefaultNucleotideSequence.create(updatedConsensus.subList(contigLeft, contigRight));
+            NucleotideSequence validConsensus = NucleotideSequenceFactory.create(updatedConsensus.subList(contigLeft, contigRight));
             for(DefaultAcePlacedRead.Builder aceReadBuilder : aceReadBuilders){
                 int newOffset = aceReadBuilder.offset() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);

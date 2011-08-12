@@ -40,8 +40,8 @@ import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
@@ -264,13 +264,13 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
                 int offset, Direction dir, Range validRange,
                 PhdInfo phdInfo, int ungappedFullLength) {
             if(contigOfInterest){
-                NucleotideSequence fullLengthBasecalls = new DefaultNucleotideSequence(
+                NucleotideSequence fullLengthBasecalls = NucleotideSequenceFactory.create(
                                         ConsedUtil.convertAceGapsToContigGaps(getCurrentFullLengthBasecalls())
                                                             .replaceAll("-", ""));
                 
                 if(dir==Direction.REVERSE){
                     Collections.reverse(currentHiLowQualities);
-                    fullLengthBasecalls = new DefaultNucleotideSequence(Nucleotides.reverseCompliment(fullLengthBasecalls.asList()));
+                    fullLengthBasecalls = NucleotideSequenceFactory.create(Nucleotides.reverseCompliment(fullLengthBasecalls.asList()));
                 }
                 QualitySequence qualities = new EncodedQualitySequence(
                                             RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,

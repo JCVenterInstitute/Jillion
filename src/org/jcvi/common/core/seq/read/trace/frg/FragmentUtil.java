@@ -28,8 +28,8 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 
 /**
  * @author dkatzel
@@ -100,7 +100,7 @@ public final class FragmentUtil {
             }
             bases.append(line);
         }
-       return new DefaultNucleotideSequence(bases.toString());
+       return NucleotideSequenceFactory.create(bases);
     }
     
     

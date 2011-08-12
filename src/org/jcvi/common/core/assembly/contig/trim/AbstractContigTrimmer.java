@@ -30,9 +30,9 @@ import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 /**
@@ -86,7 +86,7 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
             final NucleotideSequence originalGappedValidBases = placedRead.getNucleotideSequence();
             final List<Nucleotide> trimedBasecalls = originalGappedValidBases.asList(newTrimRange);
             String trimmedBases = Nucleotides.asString(trimedBasecalls);
-            long ungappedLength = new DefaultNucleotideSequence(trimedBasecalls).getUngappedLength();
+            long ungappedLength = NucleotideSequenceFactory.create(trimedBasecalls).getUngappedLength();
             
             
             final Range ungappedNewValidRange;
