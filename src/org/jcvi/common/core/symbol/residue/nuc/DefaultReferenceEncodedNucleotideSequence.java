@@ -34,9 +34,6 @@ import org.jcvi.common.core.symbol.Sequence;
 
 public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferenceEncodedNucleotideSequence{
 
-   // private final int[] gaps;
-   // private final int[] snpIndexes;
-  //  private final NucleotideSequence snpValues;
     private NucleotideSequence beforeValues=null;
     private NucleotideSequence afterValues=null;
     private int overhangOffset=0;
@@ -92,33 +89,9 @@ public final class DefaultReferenceEncodedNucleotideSequence extends AbstractNuc
             buffer.put((byte)n.ordinal());
         }
         encodedSnpsInfo = buffer.array();
-       /* gaps = convertToPrimitiveArray(tempGapList);
-        snpIndexes = createSNPIndexes(differentGlyphMap);
-        snpValues = createSNPValues(differentGlyphMap);
-        */
     }
     
-    private NucleotideSequence createSNPValues(
-            TreeMap<Integer, Nucleotide> differentGlyphMap) {
-        return DefaultNucleotideSequence.createGappy(differentGlyphMap.values());
-
-    }
-    private int[] createSNPIndexes(TreeMap<Integer, Nucleotide> snpMap){
-        int[]snps = new int[snpMap.size()];
-        int i=0;
-        for(Integer index : snpMap.keySet()){
-            snps[i]=index.intValue();
-            i++;
-        }
-        return snps;
-    }
-    private int[] convertToPrimitiveArray(List<Integer> list){
-        int[] array = new int[list.size()];
-        for(int i=0; i<list.size(); i++){
-            array[i] = list.get(i).intValue();
-        }
-        return array;
-    }
+    
     private TreeMap<Integer, Nucleotide> populateFields(Sequence<Nucleotide> reference,
             String toBeEncoded, int startOffset, List<Integer> tempGapList) {
         handleBeforeReference(toBeEncoded, startOffset);

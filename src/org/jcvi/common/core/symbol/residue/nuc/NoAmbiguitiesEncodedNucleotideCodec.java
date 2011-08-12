@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.DeltaEncoder;
 import org.jcvi.common.core.symbol.GlyphCodec;
 
 /**

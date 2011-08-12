@@ -73,15 +73,31 @@ public interface NucleotideSequence extends Sequence<Nucleotide>{
      */
     List<Nucleotide> asUngappedList();
     /**
-     * Compute the number of gaps in the valid range until AND INCLUDING the given
+     * Get the number of gaps in the valid range until AND INCLUDING the given
      * gapped index.
      * @param gappedOffset the index to count the number of gaps until.
      * @return the number of gaps in the valid range until AND INCLUDING the given
      * gapped index.
      */
     int getNumberOfGapsUntil(int gappedOffset);
-    
+    /**
+     * Get the corresponding ungapped offset into
+     * this sequence for the given
+     * gapped offset.
+     * @param gappedOffset the offset into the gapped coordinate
+     * system of the desired nucleotide.
+     * @return the corresponding offset for the equivalent
+     * location in the ungapped sequence.
+     */
     int getUngappedOffsetFor(int gappedOffset);
-    
+    /**
+     * Get the corresponding gapped offset into
+     * this sequence for the given
+     * ungapped offset.
+     * @param ungappedOffset the offset into the ungapped coordinate
+     * system of the desired nucleotide.
+     * @return the corresponding offset for the equivalent
+     * location in the gapped sequence.
+     */
     int getGappedOffsetFor(int ungappedOffset);
 }
