@@ -25,7 +25,7 @@
  */
 package org.jcvi.align;
 
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.experimental.align.Aligner;
 import org.jcvi.common.experimental.align.Alignment;
 import org.jcvi.common.experimental.align.NucleotideSubstitutionMatrix;
@@ -156,8 +156,8 @@ public class TestSmithWatermanAligner
         
         
         final Alignment alignment = sut.alignSequence(
-                new DefaultNucleotideSequence(reference),
-                new DefaultNucleotideSequence(query));
+                NucleotideSequenceFactory.create(reference),
+                NucleotideSequenceFactory.create(query));
         
         Assert.assertEquals(queryAlign[0], alignment.getQueryAlignment().getStart());
         Assert.assertEquals(queryAlign[1], alignment.getQueryAlignment().getStop());

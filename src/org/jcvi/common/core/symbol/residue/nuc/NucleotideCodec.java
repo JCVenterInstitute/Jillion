@@ -28,7 +28,7 @@ import org.jcvi.common.core.symbol.GlyphCodec;
  *
  *
  */
-public interface NucleotideCodec extends GlyphCodec<Nucleotide>{
+interface NucleotideCodec extends GlyphCodec<Nucleotide>{
 
     /**
      * Get a List of all the offsets into this

@@ -37,8 +37,8 @@ import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
 import org.jcvi.common.core.assembly.contig.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 
 /**
  * @author dkatzel
@@ -53,7 +53,7 @@ public class AceReadPositionPrinter {
         @Override
         protected void visitNewContig(String contigId, String consensus) {
             currentContigId = contigId;
-            this.consensus = new DefaultNucleotideSequence(
+            this.consensus = NucleotideSequenceFactory.create(
                         ConsedUtil.convertAceGapsToContigGaps(consensus));
         }
         

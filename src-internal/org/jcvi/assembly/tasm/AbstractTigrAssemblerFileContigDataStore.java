@@ -28,8 +28,8 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 
 /**
  * {@code AbstractTigrAssemblerFileContigDataStore} is a {@link DataStore}
@@ -90,7 +90,7 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         */
         @Override
         public void visitConsensusBasecallsLine(String lineOfBasecalls) {
-            currentContigConsensus = new DefaultNucleotideSequence(lineOfBasecalls);
+            currentContigConsensus = NucleotideSequenceFactory.create(lineOfBasecalls);
             
         }
 

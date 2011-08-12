@@ -35,9 +35,9 @@ import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegionType;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.util.Builder;
 
@@ -150,7 +150,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
             validRange = AssemblyUtil.reverseComplimentValidRange(validRange, fullUngappedLength);
         }
         Read<NucleotideSequence> read = new DefaultRead(readId,
-                        new DefaultNucleotideSequence(validBases));
+                NucleotideSequenceFactory.create(validBases));
         return new DefaultCasPlacedRead(read, startOffset, validRange, dir,(int)fullUngappedLength);
     }
 

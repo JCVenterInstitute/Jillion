@@ -32,8 +32,8 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.qual.DefaultEncodedPhredGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.After;
@@ -86,7 +86,7 @@ public class TestHiLowAceContigPhdDatastore {
         
         
         Phd expected = new ArtificialPhd("K26-217c", 
-                new DefaultNucleotideSequence("tcccCgtgagatcatcctgaAGTGGAGGGCATGGGGCTTGGCTGGGCTTA" +
+                NucleotideSequenceFactory.create("tcccCgtgagatcatcctgaAGTGGAGGGCATGGGGCTTGGCTGGGCTTA" +
                 "GAGCTAACATACACAGGATGCTGAAAAAGAACAACACAAgntGTGTGGAG" +
                 "CAAAGGAAAGGGAAATCAGCTTGAAGCTGATGTTAGTGTGCTTGGGCTGA" +
                 "GTACAGCCATGctntCAGTTGAGGCACGGTTGGCTCCCCATGGGCAAGAT" +
@@ -125,7 +125,7 @@ public class TestHiLowAceContigPhdDatastore {
             "CACACACATAagaCATtctaAATTTTTACTCAAacgatcCccggaaccac" +
             "acg";
         
-        NucleotideSequence reverseComplimented = new DefaultNucleotideSequence(Nucleotides.reverseCompliment(
+        NucleotideSequence reverseComplimented = NucleotideSequenceFactory.create(Nucleotides.reverseCompliment(
                                                         Nucleotides.parse(basecalls)));
     
         List<PhredQuality> expectedQualities = new ArrayList<PhredQuality>();

@@ -36,10 +36,29 @@ import org.jcvi.common.core.symbol.GlyphCodec;
  * plus some extra bytes for storing the gaps. This should 
  * greatly reduce the memory footprint of most kinds of read data.
  * @author dkatzel
- *
- *
  */
 public enum NoAmbiguitiesEncodedNucleotideCodec implements NucleotideCodec{
+    /*
+     * Implementation Details:
+     * ====================================
+     * We store everything as a single byte array which
+     * contains a header with the decoded size, and number of gaps as ints.
+     * Header
+     * int32: decoded size
+     * int32: #gaps
+     * 
+     * Next, we store gaps offsets (if any)
+     * We can use the decoded size to figure out how many
+     * bits per offset we need (unsigned). Anything <256 (like a next-gen read)
+     * only needs 1 byte while sanger/ small contig consensuses can fit in 2 bytes.
+     * 
+     * Finally, the rest of the byte array contains the ACGT- basecalls
+     * stored as 2bits each.  A gap is recorded here to keep offsets correct.
+     * 
+     * We can find a basecall by pulling out the gap offsets and seeing if 
+     * the offset we want is there.  If so return gap, else compute offset into encoded 
+     * byte array for ACGT call and then do bit shifting to get the 2bits we need.
+     */
     /**
      * Singleton instance.
      */
@@ -55,11 +74,14 @@ public enum NoAmbiguitiesEncodedNucleotideCodec implements NucleotideCodec{
     }
     
     /**
-     * The header will contain an int value specifying how many glyphs are encoded.
+     * The header will contain 2 int values specifying how many nucleotides
+     * total are encoded plus how many gaps.
      */
     private static final int HEADER_LENGTH = 8;
     
-    
+    /**
+     * We can store ACGTs as 2 bits so that's 4 per byte.
+     */
     private static final int NUCLEOTIDES_PER_BYTE =4;
 
     private static final int UNSIGNED_BYTE_MAX = 255;

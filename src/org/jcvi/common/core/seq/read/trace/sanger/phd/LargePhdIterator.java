@@ -30,8 +30,8 @@ import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 
 /**
@@ -70,7 +70,7 @@ public class LargePhdIterator extends AbstractBlockingCloseableIterator<Phd>{
                     List<PhredQuality> qualities, List<ShortSymbol> positions,
                     Properties comments, List<PhdTag> tags) {
                 Phd phd = new DefaultPhd(id,
-                        new DefaultNucleotideSequence(bases),
+                        NucleotideSequenceFactory.create(bases),
                         new EncodedQualitySequence(QUALITY_CODEC, qualities),
                         new SangerPeak(positions),
                         comments,

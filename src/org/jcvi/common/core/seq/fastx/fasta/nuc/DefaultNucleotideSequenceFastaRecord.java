@@ -26,9 +26,9 @@ package org.jcvi.common.core.seq.fastx.fasta.nuc;
 import java.util.List;
 
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequenceFastaRecord{
@@ -95,7 +95,7 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
     @Override
     protected NucleotideSequence encodeNucleotides(
             CharSequence sequence) {
-        return new DefaultNucleotideSequence( Nucleotides.parse(sequence));
+        return NucleotideSequenceFactory.create(sequence);
     }
 
 

@@ -186,7 +186,16 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         }
         
     }
-    
+    /**
+     * {@code IndexedAceFileDataStoreBuilder} is a {@link AceContigDataStoreBuilder}
+     * that will keep track of offsets into the ace file
+     * where each contig begins and ends.  This allows us to only store
+     * a few numbers which can be used later to only read the
+     * section of the ace file with the contig we want.
+     * @author dkatzel
+     *
+     *
+     */
     private static class IndexedAceFileDataStoreBuilder extends AbstractAceContigBuilder implements AceContigDataStoreBuilder{
         private IndexedFileRange indexFileRange;
         private final File aceFile;
@@ -239,7 +248,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         * {@inheritDoc}
         */
         @Override
-        public AceContigDataStore build() {
+        public synchronized AceContigDataStore build() {
             return new IndexedAceFileDataStore(aceFile, indexFileRange);
         }
 

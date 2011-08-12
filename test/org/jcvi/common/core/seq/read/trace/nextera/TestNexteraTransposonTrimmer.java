@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -56,7 +56,7 @@ public class TestNexteraTransposonTrimmer {
         Range expectedRange = Range.buildRangeOfLength(
                 TransposonEndSequences.FORWARD.getLength(),
                 12);
-        Range actualRange= sut.trim(new DefaultNucleotideSequence(bases));
+        Range actualRange= sut.trim(NucleotideSequenceFactory.create(bases));
         assertEquals(expectedRange,actualRange);
     }
     
@@ -70,7 +70,7 @@ public class TestNexteraTransposonTrimmer {
         Range expectedRange = Range.buildRangeOfLength(
                 TransposonEndSequences.REVERSE.getLength(),
                 12);
-        Range actualRange= sut.trim(new DefaultNucleotideSequence(bases));
+        Range actualRange= sut.trim(NucleotideSequenceFactory.create(bases));
         assertEquals(expectedRange,actualRange);
     }
 }

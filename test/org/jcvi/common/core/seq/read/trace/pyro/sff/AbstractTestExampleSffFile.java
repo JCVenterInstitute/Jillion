@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFFlowgram;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.FileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -50,7 +50,7 @@ public abstract class AbstractTestExampleSffFile{
         }
     }
     final SFFFlowgram FF585OX02HCMO2 = new SFFFlowgram("FF585OX02HCMO2",
-        new DefaultNucleotideSequence(
+            NucleotideSequenceFactory.create(
         		Nucleotides.parse(
                   "TCAGCTGGGCTCAAGTGATCTGCCCACCTCAGCTTCCCAAAGTGTTGGGATTACAGGCACGAACCACTGTGCTCGGTCAGCTCTTTTTTTGTTTTTTGGTTTTTTTCCAGGATCCAGTCAAAGTTTGGTTGGAACCGTCCGGGTTTTTAAAAACCCGGAATTCAAACCCTTTCGGTTCCAACACTCAGACCTCACCCTGAGCGGGCTGGCAAGGC")),
                   new EncodedQualitySequence(runLengthQualityCodec,
@@ -61,7 +61,7 @@ public abstract class AbstractTestExampleSffFile{
     );
     
     final SFFFlowgram FF585OX02HCD8G = new SFFFlowgram("FF585OX02HCD8G",
-            new DefaultNucleotideSequence(
+            NucleotideSequenceFactory.create(
             		Nucleotides.parse(
                       "TCAGGGGGGGTCTTCTCCTGTGTGGAGAAATGGTGGCAGAAGCCTGGGGCCAGGCAGAGGAGAGGGAAAAGGTCAAAATTAACTTCTCTCCCCAGTCCCAAACCAACGTTGGAACCGAAAGGGTTTGAATTCAAACCCTTTCGGTTCCAACATGGTGAGACTCTGGGCCACAGGCCGGTTAGCAGTCTGAGCGGGCTGGCAAGGC")),
                       new EncodedQualitySequence(runLengthQualityCodec,
@@ -73,7 +73,7 @@ public abstract class AbstractTestExampleSffFile{
         );
     
     final SFFFlowgram FF585OX02FNE4N = new SFFFlowgram("FF585OX02FNE4N",
-            new DefaultNucleotideSequence(
+            NucleotideSequenceFactory.create(
             		Nucleotides.parse(
                       "TCAGGGGGGCACCATTTACAAGGATGATGCCTCCTAAATGTGGTGCAGCATGGTGGCCCCAGGTGTTTACTTCTATACTAAGGCCACACAGATGAATGGTCAAAAATTTGGTGACAGAAATCAATGTTAGATTCTTTAGCTTCTGTTTCCTTCCTCCTTTATTGCCACTGCCTCCAAGTTGGAACCGAAGGGTTTGAATTCAAACCCCTGAGCGGGCTGGCAAGGC")),
                       new EncodedQualitySequence(runLengthQualityCodec,
@@ -85,7 +85,7 @@ public abstract class AbstractTestExampleSffFile{
         );
     
     final SFFFlowgram FF585OX02GMGGN = new SFFFlowgram("FF585OX02GMGGN",
-            new DefaultNucleotideSequence(
+            NucleotideSequenceFactory.create(
             		Nucleotides.parse(
                       "TCAGAATTCAAACCCTTTCGGTTCCAACTTTAAAATTAATAATTATTTTTCCCATGTTGTCTAAACAGCTTTAAATATATTTTAATGGGATGTCTCAAAGCTTAGATAAGAATGCTCAGCAAACATATCCAATTTTTAAAATGATATTCATTTATTTTGTATGATTATTGCAACATCACCTCTTCTGTATTATGTGGCCATGTGGAAGAGAATGAGAATGTCACATTCACTTACCTTTGAATAGCAGGCTACTTTGGTATGCATTTTTA")),
                       new EncodedQualitySequence(runLengthQualityCodec,
@@ -96,7 +96,7 @@ public abstract class AbstractTestExampleSffFile{
         );
     
     final SFFFlowgram FF585OX02FHO5X = new SFFFlowgram("FF585OX02FHO5X",
-            new DefaultNucleotideSequence(
+            NucleotideSequenceFactory.create(
             		Nucleotides.parse(
                       "TCAGGGGGGCTTTGGATGTTGGAACCGAAAGGGTTTGAATTCAAACCCTTTCGGTTCCAACGATTTAAACCTACATCCATTTAACTCCAAATCCTGAACGGTTTCCAATAAACAACTTTACATTTGTGTAGCAAATTCCAGGCTATGTAAGAAAGGAGGACTCCACGGTGCACTGAGCGGGCTGGCAAGGC")),
                       new EncodedQualitySequence(runLengthQualityCodec,

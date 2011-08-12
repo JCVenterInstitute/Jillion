@@ -28,10 +28,10 @@ import java.util.List;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.experimental.align.Aligner;
 import org.jcvi.common.experimental.align.Alignment;
@@ -111,7 +111,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
                 final Alignment reverseAlignment;
                 if(alsoCheckReverseCompliment){
                     reverseAlignment = aligner.alignSequence(
-                            new DefaultNucleotideSequence(Nucleotides.reverseCompliment(sequence.asList())),
+                            NucleotideSequenceFactory.create(Nucleotides.reverseCompliment(sequence.asList())),
                             primer);
                 }else{
                     reverseAlignment = NULL_ALIGNMENT_OBJECT;
@@ -158,7 +158,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
     */
     @Override
     public Range trim(String sequence, NucleotideDataStore primersToTrimAgainst) {
-        return trim(new DefaultNucleotideSequence(sequence), primersToTrimAgainst);
+        return trim(NucleotideSequenceFactory.create(sequence), primersToTrimAgainst);
     }
 
 }

@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.Chunk;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
@@ -101,7 +101,7 @@ public class TestCNF4Chunk {
     			new Channel(gconf,new short[0]), 
     			new Channel(tconf,new short[0]));
 
-    	expect(chromatogram.getBasecalls()).andReturn(new DefaultNucleotideSequence(bases));
+    	expect(chromatogram.getBasecalls()).andReturn(NucleotideSequenceFactory.create(bases));
     	expect(chromatogram.getChannelGroup()).andReturn(channelGroup);
     
     	replay(chromatogram);

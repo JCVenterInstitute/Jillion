@@ -21,9 +21,9 @@ package org.jcvi.common.core.seq.trim;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.trim.DefaultPrimerTrimmer;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -35,11 +35,11 @@ public class TestInternalPrimerHit {
 
     private final DefaultPrimerTrimmer sut = new DefaultPrimerTrimmer(13, .9f);
     
-    private final NucleotideSequence sequence = new DefaultNucleotideSequence(
+    private final NucleotideSequence sequence = NucleotideSequenceFactory.create(
             "AGGAAAAATTTTTGATTGGATGTCATCCGACTTTACTTTTCTTGAAGTTCCAGCGCAAAATGCCATAAGCACCACATTCCCATATACTGGAGATCCTCCATACAGCCATGGAACAGGAACAGGATACACCATGGACACAGTTAACAGAACACATCAATATTCAGAAAAGGGGAAATGGACAACAAACTCAGAGACTGGAGCCCCCCAACTTAACCCAATTGATGGACCACTGCCCGAGGACAATGAGCCAAGTGGATATGCACAAACGGACTGTGTCCTTGAAGCAATGGCTTTCCTTGAAGAGTCCCACCCAGGAATCTTTGAAAACTCGTGTCTTGAAACGATGGAAGTTGTCCAACAAACAAGAGTGGACAAGTTGACCCAAGGCCGTCAGACCTATGATTGGACACTAAACAGGAACCAGCCGGCTGCAACTGCATTAGCTAATACTATAGAGGTCTTCAGATCGAACGGTCTGACAGCTAATGAATCAGGGAGACTAATAGATTTTCTCAAGGATGTGATGGAATCAATGGATAAAGAGGAAATGGAAATAACAACACACTTCCAGGTCATAGCTGTTTCCTAAACA");
 
-    private final NucleotideSequence forwardPrimer = new DefaultNucleotideSequence("TGTAAAACGACGGCCAGTCRAAAGCAGGCAAACCAT");
-    private final NucleotideSequence reversePrimer = new DefaultNucleotideSequence("CAGGAAACAGCTATGACCTGGAARTGYGTTGTKATTTCCATY");
+    private final NucleotideSequence forwardPrimer = NucleotideSequenceFactory.create("TGTAAAACGACGGCCAGTCRAAAGCAGGCAAACCAT");
+    private final NucleotideSequence reversePrimer = NucleotideSequenceFactory.create("CAGGAAACAGCTATGACCTGGAARTGYGTTGTKATTTCCATY");
 
 
     @Test

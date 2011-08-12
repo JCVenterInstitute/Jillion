@@ -34,7 +34,7 @@ import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -65,7 +65,7 @@ public class TestFrg2Parser {
         final Range clearRangeFor061 = Range.buildRange(0,650);
         mockVisitor.visitFragment(FrgVisitorAction.ADD, 
                 "334369678", ".", 
-                new DefaultNucleotideSequence(
+                NucleotideSequenceFactory.create(
                         Nucleotides.parse(
                                 "ATGATCGGCAGTGAATTGTATACGACTCACTATAGGGCGAATTGGAGCTCCACGCGGTGGCGGCCGCTCTAGAACTAGTGGATCCCCCGGGCTGCAGGAA" +
 "TTCGATTAGGTGGAGGCCACGCTGCGCGACCCCAGCGCCCAGTCCGTAACGCACGTGCTGCAGGCAGGTGCCGGTCAGTGTGTGTGTGGTGGGGGCGGCG" +
@@ -96,7 +96,7 @@ new EncodedQualitySequence(RUN_LENGTH_CODEC,
         
         mockVisitor.visitFragment(FrgVisitorAction.ADD, 
                 "334370061", ".", 
-                new DefaultNucleotideSequence(
+                NucleotideSequenceFactory.create(
                         Nucleotides.parse(
 					"ACTCAGCCTAAATACCTCACTAAGGGAACAAAGCTGGTACGGGCCCCCCCTCGAGGTCGACGGTATCGATAAGCTTGATCGGCTGGTCCCATTCGCCTTC" +
 					"CCATTCCAATTCCCGTATTCCCATCCCCACTCCGATCCCCATTCGCAGATTCCCATTCCCATATTCACCATTCCCAGCCCCAGGCCACGCACCAGCGAGC" +

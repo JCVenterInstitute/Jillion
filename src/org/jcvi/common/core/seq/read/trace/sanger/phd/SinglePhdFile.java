@@ -37,9 +37,9 @@ import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 
 public class SinglePhdFile implements  Phd{
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
@@ -59,7 +59,7 @@ public class SinglePhdFile implements  Phd{
     	PhdParser.parsePhd(singlePhdFile, new SinglePhdFileVisitor());
     	
 		this.delegatePhd = new DefaultPhd(id, 
-				new DefaultNucleotideSequence(bases),
+				NucleotideSequenceFactory.create(bases),
 			new EncodedQualitySequence( 
 					RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
 					qualities),
@@ -71,7 +71,7 @@ public class SinglePhdFile implements  Phd{
     	PhdParser.parsePhd(singlePhdStream, new SinglePhdFileVisitor());
     	
 		this.delegatePhd = new DefaultPhd(id, 
-				new DefaultNucleotideSequence(bases),
+				NucleotideSequenceFactory.create(bases),
 			new EncodedQualitySequence( 
 					RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
 					qualities),

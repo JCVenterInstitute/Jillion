@@ -29,9 +29,9 @@ import java.util.List;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class TestDefaultEncodedNuclotideFastaRecord {
     private String comment = "comment";
     String bases = "ACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGT-N";
     List<Nucleotide> glyphs = Nucleotides.parse(bases);
-    NucleotideSequence encodedGlyphs = new DefaultNucleotideSequence(glyphs);
+    NucleotideSequence encodedGlyphs = NucleotideSequenceFactory.create(glyphs);
 
     DefaultNucleotideSequenceFastaRecord sut = new DefaultNucleotideSequenceFastaRecord(id, comment, bases);
     @Test

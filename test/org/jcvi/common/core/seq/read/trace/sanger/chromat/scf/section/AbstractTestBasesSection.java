@@ -24,8 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section;
 
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,17 +44,16 @@ import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 
 
 public abstract class AbstractTestBasesSection {
     protected static final String DECODED_BASES = "ACGTACGT";
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
 
-    protected NucleotideSequence encodedBases = new DefaultNucleotideSequence(Nucleotides.parse(DECODED_BASES));
+    protected NucleotideSequence encodedBases = NucleotideSequenceFactory.create(DECODED_BASES);
     protected SCFHeader mockHeader;
     protected SCFChromatogramImpl chromatogram;
     protected byte[] calledConfidence = new byte[]{40,40,40,40,63,38,38,38};
