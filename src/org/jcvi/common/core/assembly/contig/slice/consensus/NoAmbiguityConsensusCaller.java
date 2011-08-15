@@ -44,7 +44,7 @@ public class NoAmbiguityConsensusCaller extends AbstractChurchillWatermanConsens
 
     @Override
     protected Nucleotide getConsensus(
-            ProbabilityStruct normalizedErrorProbabilityStruct, Slice slice) {
+            ConsensusProbabilities normalizedErrorProbabilityStruct, Slice slice) {
       //assume A is the answer initially
         Nucleotide result = Adenine;
         double lowestErrorProbability = normalizedErrorProbabilityStruct.getProbabilityFor(Adenine);

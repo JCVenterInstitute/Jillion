@@ -45,7 +45,12 @@ import java.util.Scanner;
 import org.jcvi.common.core.Range;
 
 public final class IOUtil {
-
+    /**
+     * Some methods need to use Log base 2
+     * alot so it's easier to factor this out as a constant.
+     */
+    private static final double LOG_2 = Math.log(2);
+    
     public enum ENDIAN{
         BIG,
         LITTLE
@@ -630,5 +635,38 @@ public final class IOUtil {
        }finally{
            IOUtil.closeAndIgnoreErrors(fileInputStream,fastaFileChannel);
        }
+    }
+    /**
+     * Get the number of bits required
+     * to represent this value in binary.
+     * @param value the value as an positive long.
+     * @return the number of bits that are required
+     * to represent this value as an unsigned binary
+     * integer.
+     * @throw IllegalArgumentException if value < 0.
+     */
+    public static int getUnsignedBitCount(long value) {
+        if(value <0){
+            throw new IllegalArgumentException("value can not be <0");
+        }
+        if(value ==Long.MAX_VALUE){
+            //special case
+            return 64;
+        }
+        return (int)Math.ceil(Math.log(value+1)/LOG_2);
+    }   
+    
+    /**
+     * Get the number of bytes required
+     * to represent this value in binary.
+     * @param value the value as an positive long.
+     * @return the number of bytes that are required
+     * to represent this value as an unsigned binary
+     * integer.
+     * @throw IllegalArgumentException if value < 0.
+     */
+    public static int getUnsignedByteCount(long value){
+        int numBits = getUnsignedBitCount(value);
+        return numBits/8+ (numBits%8==0?0:1);
     }
 }

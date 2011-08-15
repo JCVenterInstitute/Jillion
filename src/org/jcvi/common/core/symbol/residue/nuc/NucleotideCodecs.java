@@ -21,19 +21,43 @@ package org.jcvi.common.core.symbol.residue.nuc;
 
 import java.util.Collection;
 
+import org.jcvi.common.core.io.IOUtil;
+
 /**
  * @author dkatzel
  *
  *
  */
 final class NucleotideCodecs {
-
+    /**
+     * Get the optimal NucleotideCodec for the given
+     * collection of Nucleotides.  This method must 
+     * iterate through potentially the entire collection.
+     * @param nucleotides the nucleotides to be encoded by a NucleotideCodec.
+     * @return a NucleotideCodec implementation, never null.
+     */
     public static NucleotideCodec getNucleotideCodecFor(Collection<Nucleotide> nucleotides){
-        
-        if(NoAmbiguitiesEncodedNucleotideCodec.canEncode(nucleotides)){
+        int numGaps=0;
+        int size = nucleotides.size();
+        for(Nucleotide nuc: nucleotides){
+            if(nuc.isAmbiguity()){
+                return DefaultNucleotideGlyphCodec.INSTANCE;
+            }
+            if(nuc.isGap()){
+                numGaps++;
+            }
+        }
+        //we have only ACGT-
+        //if there are too many gaps, then
+        //it isn't a good idea to use 2bit encoding + gaps
+        int bytesPerGap =IOUtil.getUnsignedByteCount(size);
+        int encodedGapSize = bytesPerGap *numGaps;
+        //simple metric right now is use
+        //2bit or 4 bit based on which one takes less memory
+        if(encodedGapSize< size/4){
             return NoAmbiguitiesEncodedNucleotideCodec.INSTANCE; 
         }
-        
         return DefaultNucleotideGlyphCodec.INSTANCE;
     }
+    
 }

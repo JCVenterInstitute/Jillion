@@ -62,7 +62,7 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
     protected abstract ConsensusResult callConsensusWithCoverage(Slice slice);
 
 
-    protected Map<Nucleotide, Integer> generateBasecallHistogramMap(
+    protected final Map<Nucleotide, Integer> generateBasecallHistogramMap(
             Slice slice) {
         Map<Nucleotide, Integer> histogramMap = initalizeNucleotideMap();
         for(SliceElement sliceElement : slice){
@@ -72,19 +72,6 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
         removeUnusedBases(histogramMap);
         return histogramMap;
     }
-    protected Map<Nucleotide, Integer> generateHighQualityHistogramMap(
-            Slice slice) {
-        Map<Nucleotide, Integer> histogramMap = initalizeNucleotideMap();
-        for(SliceElement sliceElement : slice){
-            Nucleotide basecall =sliceElement.getBase();
-            if(sliceElement.getQuality().compareTo(getHighQualityThreshold())>=0){
-                histogramMap.put(basecall, Integer.valueOf(histogramMap.get(basecall) + 1));
-            }
-        }
-        removeUnusedBases(histogramMap);
-        return histogramMap;
-    }
-
 
     private void removeUnusedBases(Map<Nucleotide, Integer> histogramMap) {
         List<Nucleotide> tobeRemoved = new ArrayList<Nucleotide>();
@@ -97,8 +84,8 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
             histogramMap.remove(baseToRemove);
         }
     }
-
-    protected Map<Nucleotide, Integer> generateQualityValueSumMap(Slice slice) {
+    
+    protected final Map<Nucleotide, Integer> generateQualityValueSumMap(Slice slice) {
         Map<Nucleotide, Integer> qualityValueSumMap = initalizeNucleotideMap();
         for(SliceElement sliceElement : slice){
             Nucleotide basecall =sliceElement.getBase();
