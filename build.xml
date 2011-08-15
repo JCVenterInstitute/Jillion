@@ -160,7 +160,9 @@
 					 this avoids the need for emma filters-->
 				<!-- debug = true required for emma reports to see line coverage and link to source-->
 				<javac debug="true" destdir="${bin}"  classpathref="classpath">
-					<src path="${src-internal}"/>					
+					<src path="${src-internal}"/>	
+					<src path="${exe}"/>
+					
 			  	</javac>
 				<emma enabled="${emma.enabled}" >
 									      <instr instrpath="${bin}"
@@ -174,6 +176,7 @@
 		
 			<copy todir="${bin}">
 						<fileset dir="${src-internal}" excludes="**/*.java"/>
+						<fileset dir="${exe}" excludes="**/*.java"/>
 					</copy>
 		 </target>
 	
