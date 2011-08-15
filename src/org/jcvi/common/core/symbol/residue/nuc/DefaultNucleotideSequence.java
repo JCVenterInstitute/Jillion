@@ -51,10 +51,10 @@ class DefaultNucleotideSequence extends AbstractNucleotideSequence{
         return new DefaultNucleotideSequence(nucleotides, NoAmbiguitiesEncodedNucleotideCodec.INSTANCE);
     }
     public static DefaultNucleotideSequence createGappy(Collection<Nucleotide> nucleotides){
-        return new DefaultNucleotideSequence(nucleotides, DefaultNucleotideGlyphCodec.INSTANCE);
+        return new DefaultNucleotideSequence(nucleotides, DefaultNucleotideCodec.INSTANCE);
     }
     public static DefaultNucleotideSequence createGappy(CharSequence nucleotides){
-        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides), DefaultNucleotideGlyphCodec.INSTANCE);
+        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides), DefaultNucleotideCodec.INSTANCE);
     }
     public DefaultNucleotideSequence(Collection<Nucleotide> nucleotides){
         this(nucleotides,NucleotideCodecs.getNucleotideCodecFor(nucleotides));

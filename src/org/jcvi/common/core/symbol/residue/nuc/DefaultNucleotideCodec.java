@@ -45,7 +45,7 @@ import org.jcvi.common.core.symbol.GlyphCodec;
  *
  *
  */
-public enum DefaultNucleotideGlyphCodec implements NucleotideCodec{
+public enum DefaultNucleotideCodec implements NucleotideCodec{
     /**
      * Singleton instance.
      */
@@ -165,6 +165,7 @@ public enum DefaultNucleotideGlyphCodec implements NucleotideCodec{
      * @param glyph
      * @return
      */
+    @Override
     public byte[] encode(Nucleotide glyph) {
         ByteBuffer result = ByteBuffer.allocate(singleGlyphEncodedSize);
         result.putInt(1);

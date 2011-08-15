@@ -29,14 +29,14 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collections;
 import java.util.List;
 
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideGlyphCodec;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideCodec;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.junit.Test;
 public class TestDefaultNucleotideGlyphCodec {
     List<Nucleotide> evenBases = Nucleotides.parse("ACGTACGTWS-NACGT");
     List<Nucleotide> oddBases =  Nucleotides.parse("ACGTACGTWS-NACGTA");
     
-    DefaultNucleotideGlyphCodec sut = DefaultNucleotideGlyphCodec.INSTANCE;
+    DefaultNucleotideCodec sut = DefaultNucleotideCodec.INSTANCE;
     
     @Test
     public void evenEncodesAndDecodes(){

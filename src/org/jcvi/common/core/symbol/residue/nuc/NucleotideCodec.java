@@ -75,4 +75,11 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
     int getUngappedOffsetFor(byte[] encodedGlyphs,int gappedOffset);
     
     int getGappedOffsetFor(byte[] encodedGlyphs,int ungappedOffset);
+    
+    /**
+     * Convenience method to encode a single nucleotide.
+     * @param nucleotide
+     * @return the byte array which encodes the single given nucleotide.
+     */
+    byte[] encode(Nucleotide nucleotide);
 }
