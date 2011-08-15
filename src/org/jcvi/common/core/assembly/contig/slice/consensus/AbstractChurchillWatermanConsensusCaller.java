@@ -62,13 +62,13 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
     }
     
 
-    protected abstract Nucleotide getConsensus(ProbabilityStruct normalizedErrorProbabilityStruct,Slice slice) ;
+    protected abstract Nucleotide getConsensus(ConsensusProbabilities normalizedErrorProbabilityStruct,Slice slice) ;
  
     
     @Override
-    public ConsensusResult callConsensusWithCoverage(Slice slice) {
+    public final ConsensusResult callConsensusWithCoverage(Slice slice) {
         Map<Nucleotide, Integer> qualityValueSumMap = generateQualityValueSumMap(slice);
-        ProbabilityStruct normalizedErrorProbabilityStruct = generateNormalizedProbabilityStruct(qualityValueSumMap);
+        ConsensusProbabilities normalizedErrorProbabilityStruct = generateNormalizedProbabilityStruct(qualityValueSumMap);
         Nucleotide consensus=  getConsensus(normalizedErrorProbabilityStruct,slice);
         return new DefaultConsensusResult(consensus,
                 
@@ -77,8 +77,8 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
     }
 
 
-    protected int getErrorProbability(
-            ProbabilityStruct normalizedErrorProbabilityStruct,
+    private int getErrorProbability(
+            ConsensusProbabilities normalizedErrorProbabilityStruct,
             Slice slice) {
         double normalizedProbability= getProbabilityFor(normalizedErrorProbabilityStruct);
         if(normalizedProbability == 0.0D){
@@ -94,7 +94,7 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
 
    
     
-    protected double getProbabilityFor(ProbabilityStruct normalizedErrorProbabilityStruct){
+    private double getProbabilityFor(ConsensusProbabilities normalizedErrorProbabilityStruct){
         //find lowest
         Double lowest = Double.MAX_VALUE;
         for(Entry<Nucleotide, Double> entry: normalizedErrorProbabilityStruct.entrySet()){
@@ -103,44 +103,48 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
                 lowest = currentValue;
             }
         }
+        if(lowest.equals(Double.MAX_VALUE)){
+            //no probabilities
+            return 0D;
+        }
         return lowest;
     }
-    private ProbabilityStruct generateNormalizedProbabilityStruct(
+    private ConsensusProbabilities generateNormalizedProbabilityStruct(
             Map<Nucleotide, Integer> qualityValueSumMap) {
-        List<ProbabilityStruct> probabilityStructs = createProbabilityStructsForEachBase(qualityValueSumMap);
-        ProbabilityStruct rawErrorProbabilityStruct = createRawErrorProbabilityStruct(probabilityStructs);
+        List<ConsensusProbabilities> probabilityStructs = createProbabilityStructsForEachBase(qualityValueSumMap);
+        ConsensusProbabilities rawErrorProbabilityStruct = createRawErrorProbabilityStruct(probabilityStructs);
         return rawErrorProbabilityStruct.normalize();
     }
-    private ProbabilityStruct createRawErrorProbabilityStruct(
-            List<ProbabilityStruct> probabilityStructs) {
+    private ConsensusProbabilities createRawErrorProbabilityStruct(
+            List<ConsensusProbabilities> probabilityStructs) {
         Map<Nucleotide, Double> rawErrorProbabilityMap = new EnumMap<Nucleotide, Double>(Nucleotide.class);
         for(Nucleotide base : ConsensusUtil.BASES_TO_CONSIDER){
             rawErrorProbabilityMap.put(base, calculateRawErrorProbabilityFor(base, probabilityStructs));
         }        
-        return new ProbabilityStruct(rawErrorProbabilityMap);
+        return new ConsensusProbabilities(rawErrorProbabilityMap);
     }
 
-    private List<ProbabilityStruct> createProbabilityStructsForEachBase(
+    private List<ConsensusProbabilities> createProbabilityStructsForEachBase(
             Map<Nucleotide, Integer> qualityValueSumMap) {
-        List<ProbabilityStruct> probabilityStructs= new ArrayList<ProbabilityStruct>();
+        List<ConsensusProbabilities> probabilityStructs= new ArrayList<ConsensusProbabilities>();
         for(Nucleotide base : ConsensusUtil.BASES_TO_CONSIDER){
-            probabilityStructs.add(new ProbabilityStruct(base, qualityValueSumMap.get(base)));
+            probabilityStructs.add(new ConsensusProbabilities(base, qualityValueSumMap.get(base)));
         }
                
         return probabilityStructs;
     }
 
     private double calculateRawErrorProbabilityFor(Nucleotide base,
-            List<ProbabilityStruct> probabilityStructs) {
+            List<ConsensusProbabilities> probabilityStructs) {
         double result = 1D;
-        for(ProbabilityStruct struct : probabilityStructs){
+        for(ConsensusProbabilities struct : probabilityStructs){
             result *=struct.getProbabilityFor(base);
         }
         return result;
     }
    
-    protected Set<Nucleotide> getBasesUsedTowardsAmbiguity(
-            ProbabilityStruct normalizedErrorProbabilityStruct, int baseCount) {
+    protected final Set<Nucleotide> getBasesUsedTowardsAmbiguity(
+            ConsensusProbabilities normalizedErrorProbabilityStruct, int baseCount) {
         double errorProbabilityOfAmbiguity;
         double sumOfProbabilitySuccess=0D;
         Set<Nucleotide> basesUsed = EnumSet.noneOf(Nucleotide.class);
@@ -163,15 +167,15 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
         return PhredQuality.computeQualityScore(errorProbability) < getHighQualityThreshold().getValue();
      }
     /**
-     * Sorts {@link ProbabilityStruct} by comparing the 
+     * Sorts {@link ConsensusProbabilities} by comparing the 
      * probability of the given {@link Nucleotide}.
      * @author dkatzel
      *
      *
      */
     private static class LowestProbabilityComparator implements Comparator<Nucleotide>{
-        private final ProbabilityStruct probabilityStruct;
-        LowestProbabilityComparator(ProbabilityStruct probabilityStruct){
+        private final ConsensusProbabilities probabilityStruct;
+        LowestProbabilityComparator(ConsensusProbabilities probabilityStruct){
             this.probabilityStruct = probabilityStruct;
         }
         @Override

@@ -32,21 +32,26 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-
-final class ProbabilityStruct{
+/**
+ * {@code ConsensusProbabilities} contains the probabilities
+ * that each non-ambiguous base is the consensus.
+ * @author dkatzel
+ *
+ *
+ */
+public final class ConsensusProbabilities{
 
     private static final double ONE_TENTH = 0.1D;
 
     private static final double ONE_QUARTER = 0.25D;
+    
     private final Map<Nucleotide, Double> probabilityMap;
     
-    public ProbabilityStruct(Map<Nucleotide, Double> probabilityMap){
+    ConsensusProbabilities(Map<Nucleotide, Double> probabilityMap){
         this.probabilityMap = Collections.unmodifiableMap(new EnumMap<Nucleotide, Double>(probabilityMap));
     }
-    public Double getProbabilityFor(Nucleotide base){
-        return probabilityMap.get(base);
-    }
-    public ProbabilityStruct(Nucleotide consensus,int cumulativeQualityValue){
+    
+    ConsensusProbabilities(Nucleotide consensus,int cumulativeQualityValue){
         double probability = Math.pow(ONE_TENTH, cumulativeQualityValue*ONE_TENTH);
         probabilityMap = new EnumMap<Nucleotide, Double>(Nucleotide.class);
         for(Nucleotide currentBase : BASES_TO_CONSIDER){
@@ -60,7 +65,22 @@ final class ProbabilityStruct{
             }
         }
     }
-    public ProbabilityStruct normalize(){
+    /**
+     * Get the probability that the given nucleotide is
+     * the consensus, may be null if the probability
+     * of that base isn't specified.
+     * @param base the nucleotide to get the probability 
+     * of.
+     * @return the probability as a Double or null
+     */
+    public Double getProbabilityFor(Nucleotide base){
+        if(base==null){
+            throw new NullPointerException("base can not be null");
+        }
+        return probabilityMap.get(base);
+    }
+    
+    public ConsensusProbabilities normalize(){
         double sumOfRawProbabilities= 0D;
         for(Nucleotide currentBase : ConsensusUtil.BASES_TO_CONSIDER){
             sumOfRawProbabilities+= probabilityMap.get(currentBase);
@@ -72,7 +92,7 @@ final class ProbabilityStruct{
         newMap.put(Nucleotide.Thymine, computeNormalizedProbabilityFor(Nucleotide.Thymine, sumOfRawProbabilities));
         newMap.put(Nucleotide.Gap, computeNormalizedProbabilityFor(Nucleotide.Gap, sumOfRawProbabilities));
         
-        return new ProbabilityStruct(newMap);
+        return new ConsensusProbabilities(newMap);
     }
     
     private Double computeNormalizedProbabilityFor(Nucleotide base, double sumOfRawProbabilities){
@@ -88,5 +108,14 @@ final class ProbabilityStruct{
     public Set<Entry<Nucleotide, Double>> entrySet(){
         return probabilityMap.entrySet();
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public String toString() {
+        return "ProbabilityStruct [probabilityMap=" + probabilityMap + "]";
+    }
+    
+    
     
 }
