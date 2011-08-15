@@ -218,6 +218,7 @@ public enum NoAmbiguitiesEncodedNucleotideCodec implements NucleotideCodec{
      * @param glyph
      * @return
      */
+    @Override
     public byte[] encode(Nucleotide glyph) {
         return encodeNucleotides(Arrays.asList(glyph),1);
         

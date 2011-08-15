@@ -20,7 +20,7 @@ public class LargeNoQualitySliceMapFactory<P extends PlacedRead, R extends Cover
         this.cacheSize = cacheSize;
     }
     public LargeNoQualitySliceMapFactory(){
-        this(LargeNoQualitySliceMap.DEFAULT_PHRED_QUALITY, LargeNoQualitySliceMap.DEFAULT_CACHE_SIZE);
+        this(LargeNoQualitySliceMap.DEFAULT_PHRED_QUALITY, LargeSliceMap.DEFAULT_CACHE_SIZE);
     }
 
     @Override

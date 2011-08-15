@@ -46,10 +46,10 @@ public final class NucleotideSequenceFactory {
         return new DefaultNucleotideSequence(nucleotides, NoAmbiguitiesEncodedNucleotideCodec.INSTANCE);
     }
     public static NucleotideSequence createGappy(Collection<Nucleotide> nucleotides){
-        return new DefaultNucleotideSequence(nucleotides, DefaultNucleotideGlyphCodec.INSTANCE);
+        return new DefaultNucleotideSequence(nucleotides, DefaultNucleotideCodec.INSTANCE);
     }
     public static NucleotideSequence createGappy(CharSequence nucleotides){
-        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides), DefaultNucleotideGlyphCodec.INSTANCE);
+        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides), DefaultNucleotideCodec.INSTANCE);
     }
     public static ReferenceEncodedNucleotideSequence createReferenceEncoded(NucleotideSequence reference,
             String toBeEncoded, int startOffset){

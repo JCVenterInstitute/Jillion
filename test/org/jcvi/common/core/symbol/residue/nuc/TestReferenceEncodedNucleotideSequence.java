@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.common.core.symbol.GlyphCodec;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideGlyphCodec;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
@@ -35,7 +35,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestReferenceEncodedNucleotideSequence {
-    GlyphCodec codec = DefaultNucleotideGlyphCodec.INSTANCE;
+    GlyphCodec codec = DefaultNucleotideCodec.INSTANCE;
     String referenceAsString = "ACGTACGTACGTACGTACGTACGTACGT";
 
     

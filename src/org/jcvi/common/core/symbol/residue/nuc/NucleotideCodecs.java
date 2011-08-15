@@ -41,7 +41,7 @@ final class NucleotideCodecs {
         int size = nucleotides.size();
         for(Nucleotide nuc: nucleotides){
             if(nuc.isAmbiguity()){
-                return DefaultNucleotideGlyphCodec.INSTANCE;
+                return DefaultNucleotideCodec.INSTANCE;
             }
             if(nuc.isGap()){
                 numGaps++;
@@ -57,7 +57,7 @@ final class NucleotideCodecs {
         if(encodedGapSize< size/4){
             return NoAmbiguitiesEncodedNucleotideCodec.INSTANCE; 
         }
-        return DefaultNucleotideGlyphCodec.INSTANCE;
+        return DefaultNucleotideCodec.INSTANCE;
     }
     
 }

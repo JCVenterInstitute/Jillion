@@ -23,7 +23,7 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideGlyphCodec;
+import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideCodec;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
@@ -39,7 +39,7 @@ enum CompactedSliceElementCodec {
     INSTANCE
     ;
     public static final int SIZE_OF_ENCODED_DATA =2;
-    private static final DefaultNucleotideGlyphCodec CODEC = DefaultNucleotideGlyphCodec.INSTANCE;
+    private static final DefaultNucleotideCodec CODEC = DefaultNucleotideCodec.INSTANCE;
     
     public byte[] compact(Nucleotide base, PhredQuality quality, Direction direction) {
         byte compacted = CODEC.encode(base)[4];
