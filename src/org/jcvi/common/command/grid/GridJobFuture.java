@@ -19,6 +19,7 @@
 
 package org.jcvi.common.command.grid;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
@@ -36,6 +37,9 @@ public class GridJobFuture extends FutureTask<Integer>{
     private final GridJob job;
     private volatile boolean wasCancelled=false;
     private Exception cancellationException = null;
+    private Integer returnCode=null;
+    private ExecutionException returnedException;
+    
     public GridJobFuture(GridJob gridJob) {
         super(gridJob);
         this.job = gridJob;
@@ -71,6 +75,25 @@ public class GridJobFuture extends FutureTask<Integer>{
      */
     public Exception getCancellationException() {
         return cancellationException;
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public synchronized Integer get() throws InterruptedException, ExecutionException {
+        //we can only get the results from the grid once
+        //so let's cache the return code.
+        if(returnCode ==null && returnedException==null){
+            try{
+                returnCode=super.get();
+            }catch(ExecutionException e){
+                returnedException = e;
+            }
+        }
+        if(returnedException!=null){
+            throw returnedException;
+        }
+        return returnCode;
     }
     
     
