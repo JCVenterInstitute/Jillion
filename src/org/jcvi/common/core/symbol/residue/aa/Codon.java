@@ -296,7 +296,8 @@ public class Codon
                 Codon.getCodonFor("TAA"),
                 Codon.getCodonFor("TAG"),
                 Codon.getCodonFor("TAR"),
-                Codon.getCodonFor("TGA"));
+                Codon.getCodonFor("TGA"),
+                Codon.getCodonFor("TRA"));
     }
     /** An array of three glyphs representing the codon. */
     private final Nucleotide[] codonGlyphs;
