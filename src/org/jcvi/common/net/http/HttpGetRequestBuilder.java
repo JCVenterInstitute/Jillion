@@ -49,6 +49,9 @@ public class HttpGetRequestBuilder  {
     public HttpGetRequestBuilder(String urlbase){
         urlBuilder.append(urlbase);
     }
+    public HttpGetRequestBuilder(URL urlbase){
+        this(urlbase.toString());
+    }
     /**
      * Add a Key-Value pair as a Get parameter, the values will be converted
      * into a String and then URL Encoded.
