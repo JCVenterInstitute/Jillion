@@ -37,7 +37,11 @@ import org.ggf.drmaa.DrmaaException;
  */
 public final class TestGridHelper {
 
-    public static final DrmaaException EXPECTED_CANCELLATION_EXCEPTION = new DrmaaException("expected") {};
+    public static final DrmaaException EXPECTED_CANCELLATION_EXCEPTION = new DrmaaException("expected") {
+
+        private static final long serialVersionUID = 1L;
+        
+    };
     
     public static final class LongRunningGridJobHelper extends Thread{
         private final GridJob mockGridJob;
