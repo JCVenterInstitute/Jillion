@@ -49,6 +49,11 @@ public class HttpGetRequestBuilder  {
     public HttpGetRequestBuilder(String urlbase){
         urlBuilder.append(urlbase);
     }
+    /**
+     * Constructs a new instance of {@link HttpGetRequestBuilder}.
+     * @param urlbase the beginning part of the HTTP URL before
+     * any get parameters (everything in the URL before the "?")
+     */
     public HttpGetRequestBuilder(URL urlbase){
         this(urlbase.toString());
     }
