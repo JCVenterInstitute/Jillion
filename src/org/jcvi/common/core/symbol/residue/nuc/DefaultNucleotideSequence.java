@@ -102,7 +102,7 @@ class DefaultNucleotideSequence extends AbstractNucleotideSequence{
         int result = 1;
         result = prime
                 * result
-                + encodedBasecalls.asList().hashCode();
+                + encodedBasecalls.hashCode();
         return result;
     }
     @Override
@@ -114,7 +114,7 @@ class DefaultNucleotideSequence extends AbstractNucleotideSequence{
             return false;
         }
         DefaultNucleotideSequence other = (DefaultNucleotideSequence) obj;
-       return encodedBasecalls.asList().equals(other.encodedBasecalls.asList());
+       return encodedBasecalls.equals(other.encodedBasecalls);
     }
     @Override
     public String toString() {

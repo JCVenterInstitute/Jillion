@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.util.CommonUtil;
 
 final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferenceEncodedNucleotideSequence{
 
@@ -245,10 +246,12 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(encodedSnpsInfo);
+        
         result = prime * result + reference.hashCode();
         result = prime * result + length;
         result = prime * result + startOffset;
+        result = prime * result + Arrays.hashCode(encodedSnpsInfo);
+        result = prime * result + (beforeValues==null ? 0 : beforeValues.hashCode());
         return result;
     }
     @Override
@@ -263,9 +266,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
             return false;
         }
         DefaultReferenceEncodedNucleotideSequence other = (DefaultReferenceEncodedNucleotideSequence) obj;
-        if (!Arrays.equals(encodedSnpsInfo,other.encodedSnpsInfo)) {
-            return false;
-        }
+       
         if(!reference.equals(other.reference)){
             return false;
         }
@@ -275,7 +276,15 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
         if (startOffset != other.startOffset) {
             return false;
         }
-       
+        if (!Arrays.equals(encodedSnpsInfo,other.encodedSnpsInfo)) {
+            return false;
+        }
+        if(!CommonUtil.similarTo(beforeValues, other.beforeValues)){
+            return false;
+        }
+        if(!CommonUtil.similarTo(afterValues, other.afterValues)){
+            return false;
+        }
         return true;
     }
     
