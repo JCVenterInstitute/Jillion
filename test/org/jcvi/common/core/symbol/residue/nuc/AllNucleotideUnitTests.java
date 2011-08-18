@@ -31,7 +31,8 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestNucleotideGlyph.class,
         TestDefaultNucleotideGlyphCodec.class,
-        TestNoAmbiguitiesEncodedNucleotideCodec.class,        
+        TestNoAmbiguitiesEncodedNucleotideCodec.class,  
+        TestACGTNNucleotideCodec.class,
         TestDefaultNucleotideSequence.class,
         TestNucleotideGlyphGetAmbiguity.class,
         TestReferenceEncodedNucleotideSequence.class,
