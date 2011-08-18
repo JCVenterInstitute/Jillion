@@ -45,6 +45,9 @@ public final class NucleotideSequenceFactory {
     public static NucleotideSequence createNoAmbiguities(Collection<Nucleotide> nucleotides){
         return new DefaultNucleotideSequence(nucleotides, NoAmbiguitiesEncodedNucleotideCodec.INSTANCE);
     }
+    public static NucleotideSequence createACGTN(Collection<Nucleotide> nucleotides){
+        return DefaultNucleotideSequence.createACGTN(nucleotides);
+    }
     public static NucleotideSequence createGappy(Collection<Nucleotide> nucleotides){
         return new DefaultNucleotideSequence(nucleotides, DefaultNucleotideCodec.INSTANCE);
     }
