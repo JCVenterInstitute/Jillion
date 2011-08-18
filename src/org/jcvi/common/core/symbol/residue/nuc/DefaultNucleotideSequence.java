@@ -47,6 +47,9 @@ class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     public static DefaultNucleotideSequence create(Collection<Nucleotide> nucleotides){
         return new DefaultNucleotideSequence(nucleotides);
     }
+    public static DefaultNucleotideSequence createACGTN(Collection<Nucleotide> nucleotides){
+        return new DefaultNucleotideSequence(nucleotides, ACGTNNucloetideCodec.INSTANCE);
+    }
     public static DefaultNucleotideSequence createNoAmbiguities(Collection<Nucleotide> nucleotides){
         return new DefaultNucleotideSequence(nucleotides, NoAmbiguitiesEncodedNucleotideCodec.INSTANCE);
     }

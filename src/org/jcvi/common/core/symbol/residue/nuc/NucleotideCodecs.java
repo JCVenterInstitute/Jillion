@@ -38,24 +38,35 @@ final class NucleotideCodecs {
      */
     public static NucleotideCodec getNucleotideCodecFor(Collection<Nucleotide> nucleotides){
         int numGaps=0;
+        int numNs=0;
         int size = nucleotides.size();
         for(Nucleotide nuc: nucleotides){
-            if(nuc.isAmbiguity()){
-                return DefaultNucleotideCodec.INSTANCE;
-            }
             if(nuc.isGap()){
                 numGaps++;
+            }else if(nuc == Nucleotide.Unknown){
+                numNs++;
             }
+            else if(nuc.isAmbiguity()){
+                return DefaultNucleotideCodec.INSTANCE;
+            }
+            
         }
-        //we have only ACGT-
+        if(numGaps>0 && numNs >0){
+            return DefaultNucleotideCodec.INSTANCE;
+        }
+       
+        //we have only ACGT- or ACGTN
         //if there are too many gaps, then
         //it isn't a good idea to use 2bit encoding + gaps
-        int bytesPerGap =IOUtil.getUnsignedByteCount(size);
-        int encodedGapSize = bytesPerGap *numGaps;
+        int bytesPerGapOrN =IOUtil.getUnsignedByteCount(size);
+        int encodedGapSize = bytesPerGapOrN *numGaps;
         //simple metric right now is use
         //2bit or 4 bit based on which one takes less memory
         if(encodedGapSize< size/4){
-            return NoAmbiguitiesEncodedNucleotideCodec.INSTANCE; 
+            if(numGaps>0){
+                return NoAmbiguitiesEncodedNucleotideCodec.INSTANCE; 
+            }
+            return ACGTNNucloetideCodec.INSTANCE;
         }
         return DefaultNucleotideCodec.INSTANCE;
     }
