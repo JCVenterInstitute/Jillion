@@ -20,9 +20,9 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.IOLibLikeZTRChromatogramWriter;

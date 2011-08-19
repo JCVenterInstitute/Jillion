@@ -25,6 +25,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -42,7 +43,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.IOUtil.ReadResults;

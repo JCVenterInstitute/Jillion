@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.collections.IteratorUtils;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
@@ -33,10 +32,8 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * {@code ChainedCloseableIterator}
  * is a CloseableIterator that chains
  * multiple {@link CloseableIterator}s
- * together similar to Apache Commons
- * Collections chainedIterator works 
- * for {@link Iterator}s.
- * @see IteratorUtils#chainedIterator(java.util.Collection)
+ * together similar to {@link ChainedIterator}
+ * but for {@link CloseableIterator}s
  * 
  * @author dkatzel
  *
@@ -53,7 +50,7 @@ public class ChainedCloseableIterator<T> implements CloseableIterator<T>{
     @SuppressWarnings("unchecked")
     public ChainedCloseableIterator(Collection<? extends CloseableIterator<T>> delegates) {
         this.delegates = new ArrayList<CloseableIterator<T>>(delegates);
-        this.iterator = IteratorUtils.chainedIterator(delegates);
+        this.iterator = ChainedIterator.create(delegates);
     }
 
     /**

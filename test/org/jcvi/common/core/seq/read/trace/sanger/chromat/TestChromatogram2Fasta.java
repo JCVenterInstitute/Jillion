@@ -19,9 +19,9 @@
 
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.pos.SangerPeak;

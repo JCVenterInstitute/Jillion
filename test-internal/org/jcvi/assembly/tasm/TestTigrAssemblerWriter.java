@@ -19,9 +19,9 @@
 
 package org.jcvi.assembly.tasm;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.io.fileServer.FileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;

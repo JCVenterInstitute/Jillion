@@ -66,7 +66,7 @@ public class TestChainedCloseableIterator {
 			sut.next();
 			fail("should throw NoSuchElementException when no more elements");
 		}catch(NoSuchElementException expected){
-			assertEquals("iterator has been closed", expected.getMessage());
+			
 		}
 	}
 	@Test
