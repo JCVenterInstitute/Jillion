@@ -70,7 +70,9 @@ public class RemoveRedundantMatePairs {
                 "input fastq file is encoded as a SANGER fastq file (default is ILLUMINA 1.3+)")
                     .isFlag(true)
                        .build());
-        
+        options.addOption(new CommandLineOptionBuilder("s", "expected number of non-redundant mates (used to preallocate hash)")
+        .isRequired(true)
+        .build());
         
         options.addOption(CommandLineUtils.createHelpOption());
         if(CommandLineUtils.helpRequested(args)){
@@ -80,7 +82,7 @@ public class RemoveRedundantMatePairs {
         try {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             
-            
+            int expectedSize = Integer.parseInt(commandLine.getOptionValue("s"));
             FastQQualityCodec qualityCodec =commandLine.hasOption("sanger")?
                                                 FastQQualityCodec.SANGER:
                                                 FastQQualityCodec.ILLUMINA;
@@ -102,7 +104,7 @@ public class RemoveRedundantMatePairs {
             FileOutputStream out1 = new FileOutputStream(nonRedundantMate1);
             FileOutputStream out2 = new FileOutputStream(nonRedundantMate2);
             long recordsSeen=0;
-            Set<NucleotideSequence> nonRedundantList = new HashSet<NucleotideSequence>(30000000);
+            Set<NucleotideSequence> nonRedundantList = new HashSet<NucleotideSequence>(expectedSize,1F);
             while(mate1Iterator.hasNext()){
                 FastQRecord forward = mate1Iterator.next();
                 FastQRecord reverse = mate2Iterator.next();
