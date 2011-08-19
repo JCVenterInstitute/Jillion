@@ -66,13 +66,17 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
      * @throws InterruptedException
      */
     public void start(){
-      new Thread(){
+      final IteratorThread iteratorThread =new IteratorThread();
+        iteratorThread.start();
+        //if the vm exits while we are still blocking
+        //we will run forever...
+        //add shutdown hook to try to kill ourselves
+        Runtime.getRuntime().addShutdownHook(new Thread(){
             @Override
             public void run() {
-                backgroundThreadRunMethod();
+                iteratorThread.kill();
             }
-            
-        }.start();
+        });
         blockingGetNextRecord();
 		
     }
@@ -117,10 +121,7 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	    public void close() throws IOException {
 	        isClosed=true;
 	        nextRecord=endOfFileToken;
-	        queue.clear();
-	        //remove element from queue
-	      //  queue.poll();  
-	        
+	        queue.clear();	        
 	    }
 	    /**
 	    * {@inheritDoc}
@@ -148,4 +149,23 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	 		return isClosed;
 	 	}
 
+	     /**
+	      * Background thread that runs this iterator
+	      * and can be killed
+	      * @author dkatzel
+	      *
+	      *
+	      */
+	     private class IteratorThread extends Thread{
+	         /**
+	          * closes the blocked iterator.
+	          */
+	         public void kill(){
+	             IOUtil.closeAndIgnoreErrors(AbstractBlockingCloseableIterator.this);                
+	         }
+	         @Override
+	         public void run() {
+	            backgroundThreadRunMethod();
+	         }
+	     }
 }

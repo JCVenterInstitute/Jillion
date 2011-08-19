@@ -119,7 +119,7 @@ public class RemoveRedundantMatePairs {
                 }
                 recordsSeen++;
                 if(recordsSeen%100000==0){
-                    System.out.println("records seen = "+recordsSeen);
+                    System.out.println("mates seen = "+recordsSeen);
                 }
             }
             System.out.println("final number of mates seen ="+ recordsSeen);

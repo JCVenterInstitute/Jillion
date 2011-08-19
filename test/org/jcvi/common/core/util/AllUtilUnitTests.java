@@ -37,6 +37,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestBreadthFirstFileIterator.class,
         TestStringUtilities.class,
         TestMultipleWrapper.class,
+        TestChainedIterator.class,
         TestCloseableIteratorAdapter.class,
         TestChainedCloseableIterator.class,
         TestMapValueComparator.class
