@@ -54,11 +54,11 @@ public class HttpPostStream
      */
     public HttpPostStream(URLConnection connection, Charset dataCharset) throws IOException
     {
-        super();
-
+        connection.setDoOutput(true);
         this.out = connection.getOutputStream();
         this.encodingName = dataCharset.name();
         this.varCount = 0;
+        
     }
     /**
      * Creates a new <code>HttpPostStream</code> attached to an existing 
