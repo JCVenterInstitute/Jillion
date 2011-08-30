@@ -33,6 +33,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+        TestReadFileType.class,
         TestCasUtil.class,
         TestDifferentFileCasIdLookupAdapter.class,
         TestDefaultCasGappedReferenceMap.class,

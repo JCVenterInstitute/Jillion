@@ -20,6 +20,7 @@
 package org.jcvi.common.core.assembly.contig.cas;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +78,12 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 		super.visitReadFileInfo(readFileInfo);
 		for(String filename :readFileInfo.getFileNames()){
 			
-			File file = getTrimmedFileFor(filename);
+			File file;
+            try {
+                file = getTrimmedFileFor(filename);
+            } catch (FileNotFoundException e) {
+                throw new IllegalStateException(e);
+            }
 			ReadFileType readType = ReadFileType.getTypeFromFile(filename);
 			switch(readType){
 			    case ILLUMINA:
@@ -132,8 +138,19 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
         phdIterator = new ChainedCloseableIterator<PhdReadRecord>(iterators);
     }
 
-    private File getTrimmedFileFor(String pathToDataStore) {
-	        File dataStoreFile = new File(workingDir, pathToDataStore);
+	
+    private File getTrimmedFileFor(String pathToDataStore) throws FileNotFoundException {
+            boolean isAbsolutePath = pathToDataStore.charAt(0) == File.separatorChar;
+            final File dataStoreFile;
+            if(isAbsolutePath){
+                dataStoreFile = new File(pathToDataStore);
+            }else{
+                dataStoreFile = new File(workingDir, pathToDataStore);
+            }            
+	       
+	        if(!dataStoreFile.exists()){
+	            throw new FileNotFoundException(dataStoreFile.getAbsolutePath());
+	        }
 	        File trimmedDataStore = trimMap.getUntrimmedFileFor(dataStoreFile);
 	        return trimmedDataStore;
 	    }

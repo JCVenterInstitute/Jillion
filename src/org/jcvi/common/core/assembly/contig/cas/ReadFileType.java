@@ -40,7 +40,7 @@ public enum ReadFileType {
     }
     public static ReadFileType getTypeFromFile(String readFileName){
         String extension =FilenameUtils.getExtension(readFileName);
-        if("fastq".equals(extension)){
+        if("fastq".equals(extension) || readFileName.matches("s_+\\d+_sequence\\.txt")){
            return ILLUMINA;
         }if("sff".equals(extension)){
             return SFF;
