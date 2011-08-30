@@ -151,10 +151,16 @@ public class TestReadFileType {
     public void s_2_sequenceDotTxtShouldBeIlluminaFile(){
         assertEquals(ReadFileType.ILLUMINA, 
                 ReadFileType.getTypeFromFile(new File("s_2_sequence.txt")));
+        //s_2_sequence.txt
     }
     @Test
     public void s_2_sequenceDotTxtShouldBeIllumina(){
         assertEquals(ReadFileType.ILLUMINA, 
                 ReadFileType.getTypeFromFile("s_2_sequence.txt"));
+    }
+    @Test
+    public void fullPaths_2_sequenceDotTxtShouldBeIllumina(){
+        assertEquals(ReadFileType.ILLUMINA, 
+                ReadFileType.getTypeFromFile("/path/to/file/s_2_sequence.txt"));
     }
 }
