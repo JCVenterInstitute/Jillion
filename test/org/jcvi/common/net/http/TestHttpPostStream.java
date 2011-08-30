@@ -41,7 +41,7 @@ public class TestHttpPostStream extends EasyMockSupport{
     public void setup() throws IOException{
         out= new ByteArrayOutputStream();
         URLConnection urlConnection = createMock(URLConnection.class);
-                       
+        urlConnection.setDoOutput(true);
         expect(urlConnection.getOutputStream()).andReturn(out);
         replayAll();
         sut = new HttpPostStream(urlConnection);
