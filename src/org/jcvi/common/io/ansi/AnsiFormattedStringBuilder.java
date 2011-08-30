@@ -48,48 +48,80 @@ public class AnsiFormattedStringBuilder {
     public AnsiFormattedStringBuilder append(String string){
         return privateAppend(string, Collections.<AnsiAttribute>emptySet());
     }
+    public AnsiFormattedStringBuilder append(String string, AnsiFont font){
+        if(font ==null){
+            return privateAppend(string, Collections.<AnsiAttribute>emptySet());
+        }
+        return privateAppend(string, Collections.<AnsiAttribute>singleton(font));
+    }
     public AnsiFormattedStringBuilder append(Object object){
         return append(object.toString());
     }
-    public AnsiFormattedStringBuilder append(String string, Set<GraphicRenditions> graphics){       
-        return privateAppend(string,graphics);
+    public AnsiFormattedStringBuilder append(Object object, AnsiFont font){
+        return append(object.toString(),font);
     }
-    public AnsiFormattedStringBuilder append(String string, GraphicRenditions graphic){       
+    public AnsiFormattedStringBuilder append(String string, Set<TextAttributes> textAttribute){       
+        return privateAppend(string,textAttribute);
+    }
+    
+    public AnsiFormattedStringBuilder append(String string, TextAttributes graphic){       
         return privateAppend(string,EnumSet.of(graphic));
     }
+    public AnsiFormattedStringBuilder append(String string, AnsiFont font, TextAttributes textAttribute){
+        if(textAttribute==null){
+            throw new NullPointerException("textAttribute can not be null");
+        }
+        return append(string,font,(ForegroundColors)null,EnumSet.of(textAttribute));
+    }
     public AnsiFormattedStringBuilder append(String string, ForegroundColors foreground){
-        return append(string, foreground, Collections.<GraphicRenditions>emptySet());
+        return append(string, foreground, Collections.<TextAttributes>emptySet());
     }
     public AnsiFormattedStringBuilder append(String string, BackgroundColors background){
-        return append(string, background, Collections.<GraphicRenditions>emptySet());
+        return append(string, background, Collections.<TextAttributes>emptySet());
     }
-    public AnsiFormattedStringBuilder append(String string, ForegroundColors foreground, Set<GraphicRenditions> graphics){
-        if(!graphics.isEmpty()){
-            List<AnsiAttribute> attrs = new ArrayList<AnsiAttribute>(graphics.size() +1);
+    public AnsiFormattedStringBuilder append(String string, ForegroundColors foreground, Set<TextAttributes> textAttributes){
+        return append(string,null, foreground,textAttributes);
+    }
+    public AnsiFormattedStringBuilder append(String string,AnsiFont font, ForegroundColors foreground, Set<TextAttributes> textAttributes){
+        List<AnsiAttribute> attrs = new ArrayList<AnsiAttribute>(textAttributes.size() +2);
+        if(font!=null){
+            attrs.add(font);
+        }
+        if(foreground!=null){
             attrs.add(foreground);
-            for(GraphicRenditions g : graphics){
-                attrs.add(g);
-            }
-            return privateAppend(string,attrs);
         }
-        return privateAppend(string,Collections.<AnsiAttribute>singleton(foreground));
+        for(TextAttributes g : textAttributes){
+            attrs.add(g);
+        }
+        return privateAppend(string,attrs);
+
     }
-    public AnsiFormattedStringBuilder append(String string, BackgroundColors background, Set<GraphicRenditions> graphics){
-        if(!graphics.isEmpty()){
-            List<AnsiAttribute> attrs = new ArrayList<AnsiAttribute>(graphics.size() +1);
+    public AnsiFormattedStringBuilder append(String string, BackgroundColors background, Set<TextAttributes> textAttributes){
+        return append(string,null,background,textAttributes);
+    }
+    public AnsiFormattedStringBuilder append(String string, AnsiFont font,BackgroundColors background, Set<TextAttributes> textAttributes){
+        List<AnsiAttribute> attrs = new ArrayList<AnsiAttribute>(textAttributes.size() +2);
+        if(font!=null){
+            attrs.add(font);
+        }
+        if(background!=null){
             attrs.add(background);
-            for(GraphicRenditions g : graphics){
-                attrs.add(g);
-            }
-            return privateAppend(string,attrs);
         }
-        return privateAppend(string,Collections.<AnsiAttribute>singleton(background));
+        for(TextAttributes g : textAttributes){
+            attrs.add(g);
+        }
+        return privateAppend(string,attrs);
+       
     }
-    public AnsiFormattedStringBuilder append(String string, ForegroundColors foreground,BackgroundColors background, GraphicRenditions...graphics){
-        List<AnsiAttribute> attrs = new ArrayList<AnsiAttribute>(graphics.length +2);
+   
+    public AnsiFormattedStringBuilder append(String string, AnsiFont font, ForegroundColors foreground,BackgroundColors background, TextAttributes...graphics){
+        List<AnsiAttribute> attrs = new ArrayList<AnsiAttribute>(graphics.length +3);
+        if(font !=null){
+            attrs.add(font);
+        }
         attrs.add(foreground);
         attrs.add(background);
-        for(GraphicRenditions g : graphics){
+        for(TextAttributes g : graphics){
             attrs.add(g);
         }
         privateAppend(string,attrs);

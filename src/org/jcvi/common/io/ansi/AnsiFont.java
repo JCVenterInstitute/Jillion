@@ -17,24 +17,47 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.io;
+package org.jcvi.common.io.ansi;
 
-import org.jcvi.common.io.ansi.AllAnsiUnitTests;
-import org.jcvi.common.io.fileServer.AllFileServerUnitTests;
-import org.jcvi.common.io.idReader.AllIdReaderUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Map;
+import java.util.TreeMap;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        AllIdReaderUnitTests.class,
-        AllAnsiUnitTests.class,
-        AllFileServerUnitTests.class
-       
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public final class AnsiFont implements AnsiAttribute{
+    
+    private static final Map<Integer, AnsiFont> FONTS;
+    static{
+        FONTS = new TreeMap<Integer, AnsiFont>();
+        for(int i=0; i<10; i++){
+            FONTS.put(i, new AnsiFont(10+i));
+        }
+        
     }
-    )
-public class AllIOUnitTests {
+    
+    public static AnsiFont getAlteranteFont(int n){
+        if(n <0 && n>9){
+            throw new IllegalArgumentException("nth alternate must be between 0 and 9");
+        }
+        return FONTS.get(Integer.valueOf(n));
+    }
+    private final EscapeCode escapeCode;
+    
+    private AnsiFont(int code){
+        escapeCode = new EscapeCode(code);
+    }
+    
+    @Override
+    public EscapeCode getEscapeCode() {
+        return escapeCode;
+    }
+    
+    @Override
+    public String toString(){
+        return escapeCode.toString();
+    }
 
 }

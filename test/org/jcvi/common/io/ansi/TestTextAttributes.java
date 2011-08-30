@@ -19,50 +19,21 @@
 
 package org.jcvi.common.io.ansi;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
  *
  */
-public enum GraphicRenditions implements AnsiAttribute{
+public class TestTextAttributes {
 
-    /** The ANSI code for bold text */
-    BOLD(1),
-    /** The ANSI code for underlined text */
-    UNDERSCORE(4),
-    /** The ANSI code for blinking text */
-    BLINK(5),
-    /** The ANSI code for text with inverted colors */
-    REVERSE(7),
-    /** The ANSI code for concealed text */
-    CONCEAL(8)
-    ;
-    
-    /** The ANSI control index. */
-    private final EscapeCode escapeCode;
-    
-    /**
-     * Creates a new <code>ANSIColor</code>.
-     * 
-     * @param code The ANSI graphics mode index.
-     */
-    private GraphicRenditions(int code)
-    {
-        escapeCode = new EscapeCode(code);
+    @Test
+    public void correctEscapeCode(){
+        assertEquals(new EscapeCode(1),TextAttributes.BOLD.getEscapeCode());
+        assertEquals(new EscapeCode(4),TextAttributes.UNDERLINE.getEscapeCode());
+        assertEquals(new EscapeCode(5),TextAttributes.BLINK.getEscapeCode());
+        assertEquals(new EscapeCode(7),TextAttributes.REVERSE.getEscapeCode());
+        assertEquals(new EscapeCode(8),TextAttributes.CONCEAL.getEscapeCode());
     }
-
-    /**
-     * @return the escapeCode
-     */
-    @Override
-    public EscapeCode getEscapeCode() {
-        return escapeCode;
-    }
-    /**
-     * {@inheritDoc}
-     */
-     @Override
-     public String toString() {
-         return escapeCode.toString();
-     }
 }

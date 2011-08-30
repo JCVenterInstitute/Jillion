@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -17,24 +17,9 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.io;
-
-import org.jcvi.common.io.ansi.AllAnsiUnitTests;
-import org.jcvi.common.io.fileServer.AllFileServerUnitTests;
-import org.jcvi.common.io.idReader.AllIdReaderUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        AllIdReaderUnitTests.class,
-        AllAnsiUnitTests.class,
-        AllFileServerUnitTests.class
-       
-    }
-    )
-public class AllIOUnitTests {
-
-}
+/**
+ * This package contains classes for working with ANSI escape
+ * sequences to control formatting and color for termainal
+ * output.
+ */
+package org.jcvi.common.io.ansi;

@@ -20,6 +20,10 @@
 package org.jcvi.common.io.ansi;
 
 /**
+ * {@code EscapeCode} is a 
+ * class that encapsulates the 
+ * ANSI escape code for a particular
+ * formatting instruction.
  * @author dkatzel
  *
  *
@@ -62,6 +66,38 @@ final class EscapeCode {
     @Override
     public String toString() {
         return controlCode;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + code;
+        return result;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof EscapeCode)) {
+            return false;
+        }
+        EscapeCode other = (EscapeCode) obj;
+        if (code != other.code) {
+            return false;
+        }
+        return true;
     }
     
     

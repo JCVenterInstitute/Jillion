@@ -17,11 +17,8 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.io;
+package org.jcvi.common.io.ansi;
 
-import org.jcvi.common.io.ansi.AllAnsiUnitTests;
-import org.jcvi.common.io.fileServer.AllFileServerUnitTests;
-import org.jcvi.common.io.idReader.AllIdReaderUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -29,12 +26,12 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        AllIdReaderUnitTests.class,
-        AllAnsiUnitTests.class,
-        AllFileServerUnitTests.class
-       
+        TestEscapeCode.class,
+        TestTextAttributes.class,
+        TestForegroundColors.class,
+        TestBackgroundColors.class,
     }
     )
-public class AllIOUnitTests {
+public class AllAnsiUnitTests {
 
 }

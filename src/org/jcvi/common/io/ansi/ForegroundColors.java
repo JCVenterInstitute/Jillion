@@ -21,46 +21,46 @@ package org.jcvi.common.io.ansi;
 
 
 /**
+ * {@code ForegroundColors} are the valid
+ * ANSI escape codes for setting
+ * text colors.
  * @author dkatzel
- *
- *
  */
 public enum ForegroundColors implements AnsiAttribute{
 
     /** The ANSI code for black text */
-    BLACK(AnsiUtil.foregroundCode(0, false)),
+    BLACK(0, false),
     /** The ANSI code for red text */
-    RED(AnsiUtil.foregroundCode(1, false)),
+    RED(1, false),
     /** The ANSI code for green text */
-    GREEN(AnsiUtil.foregroundCode(2, false)),
+    GREEN(2, false),
     /** The ANSI code for yellow text */
-    YELLOW(AnsiUtil.foregroundCode(3, false)),
+    YELLOW(3, false),
     /** The ANSI code for blue text */
-    BLUE(AnsiUtil.foregroundCode(4, false)),
+    BLUE(4, false),
     /** The ANSI code for magenta text */
-    MAGENTA(AnsiUtil.foregroundCode(5, false)),
+    MAGENTA(5, false),
     /** The ANSI code for cyan text */
-    CYAN(AnsiUtil.foregroundCode(6, false)),
+    CYAN(6, false),
     /** The ANSI code for white text */
-    WHITE(AnsiUtil.foregroundCode(7, false)),
+    WHITE(7, false),
     
     /** The ANSI code for bright black text */
-    BRIGHT_BLACK(AnsiUtil.foregroundCode(0, true)),
+    BRIGHT_BLACK(0, true),
     /** The ANSI code for bright red text */
-    BRIGHT_RED(AnsiUtil.foregroundCode(1, true)),
+    BRIGHT_RED(1, true),
     /** The ANSI code for bright green text */
-    BRIGHT_GREEN(AnsiUtil.foregroundCode(2, true)),
+    BRIGHT_GREEN(2, true),
     /** The ANSI code for bright yellow text */
-    BRIGHT_YELLOW(AnsiUtil.foregroundCode(3, true)),
+    BRIGHT_YELLOW(3, true),
     /** The ANSI code for bright blue text */
-    BRIGHT_BLUE(AnsiUtil.foregroundCode(4, true)),
+    BRIGHT_BLUE(4, true),
     /** The ANSI code for bright magenta text */
-    BRIGHT_MAGENTA(AnsiUtil.foregroundCode(5, true)),
+    BRIGHT_MAGENTA(5, true),
     /** The ANSI code for bright cyan text */
-    BRIGHT_CYAN(AnsiUtil.foregroundCode(6, true)),
+    BRIGHT_CYAN(6, true),
     /** The ANSI code for bright white text */
-    BRIGHT_WHITE(AnsiUtil.foregroundCode(7, true))
-    
+    BRIGHT_WHITE(7, true)    
     ;
     /** The ANSI control index. */
     private final EscapeCode escapeCode;
@@ -70,11 +70,11 @@ public enum ForegroundColors implements AnsiAttribute{
      * 
      * @param code The ANSI graphics mode index.
      */
-    private ForegroundColors(int code)
+    private ForegroundColors(int colorCode, boolean bright)
     {
-        escapeCode = new EscapeCode(code);
+        escapeCode = new EscapeCode(AnsiUtil.foregroundCode(colorCode,bright));
     }
-
+    
     /**
      * @return the escapeCode
      */
