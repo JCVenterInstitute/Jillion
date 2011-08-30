@@ -19,12 +19,42 @@
 
 package org.jcvi.common.io.ansi;
 
+import org.jcvi.common.core.testUtil.TestUtil;
+import org.junit.Test;
+import static  org.junit.Assert.*;
 /**
  * @author dkatzel
  *
  *
  */
-interface AnsiAttribute {
+public class TestEscapeCode {
 
-    EscapeCode getEscapeCode();
+    private final byte code = 123;
+    private final EscapeCode sut = new EscapeCode(code);
+    @Test
+    public void constructor(){        
+        assertEquals(code, sut.getCode());
+        assertEquals("\u001B["+code+"m",sut.getControlCode());
+    }
+    @Test
+    public void equalsSameRefShouldBeEqual(){
+        TestUtil.assertEqualAndHashcodeSame(sut, sut);
+    }
+    @Test
+    public void notEqualToNull(){
+        assertFalse(sut.equals(null));
+    }
+    @Test
+    public void notEqualToDifferentClass(){
+        assertFalse(sut.equals("not an EscapeCode"));
+    }
+    @Test
+    public void equalsSameValue(){
+        TestUtil.assertEqualAndHashcodeSame(sut, new EscapeCode(code));
+    }
+    
+    @Test
+    public void notEqualDifferentCode(){
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, new EscapeCode((byte)(code+1)));
+    }
 }

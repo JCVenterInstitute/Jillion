@@ -17,24 +17,52 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.io;
+package org.jcvi.common.io.ansi;
 
-import org.jcvi.common.io.ansi.AllAnsiUnitTests;
-import org.jcvi.common.io.fileServer.AllFileServerUnitTests;
-import org.jcvi.common.io.idReader.AllIdReaderUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public enum TextAttributes implements AnsiAttribute{
 
-@RunWith(Suite.class)
-@SuiteClasses(
+    /** The ANSI code for bold text */
+    BOLD(1),
+    /** The ANSI code for underlined text */
+    UNDERLINE(4),
+    /** The ANSI code for blinking text */
+    BLINK(5),
+    /** The ANSI code for text with inverted colors */
+    REVERSE(7),
+    /** The ANSI code for concealed text */
+    CONCEAL(8)
+    ;
+    
+    /** The ANSI control index. */
+    private final EscapeCode escapeCode;
+    
+    /**
+     * Creates a new <code>ANSIColor</code>.
+     * 
+     * @param code The ANSI graphics mode index.
+     */
+    private TextAttributes(int code)
     {
-        AllIdReaderUnitTests.class,
-        AllAnsiUnitTests.class,
-        AllFileServerUnitTests.class
-       
+        escapeCode = new EscapeCode(code);
     }
-    )
-public class AllIOUnitTests {
 
+    /**
+     * @return the escapeCode
+     */
+    @Override
+    public EscapeCode getEscapeCode() {
+        return escapeCode;
+    }
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public String toString() {
+         return escapeCode.toString();
+     }
 }
