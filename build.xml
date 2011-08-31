@@ -331,7 +331,7 @@
 		    </classpath>
 	   </testability>	   
 	</target>
-	<target name="jar-src-all" description="jar of all source files" depends= "revision, internal.source.only.bin">
+	<target name="jar-src-all" description="jar of all source files" depends= "revision, bin">
 		
 		    <jarjar jarfile="${project-name}-${version}-r${revision}.jar">
 		        <fileset dir="${bin}"/>
