@@ -340,7 +340,7 @@
 		    	<zipfileset src="${lib}/objenesis-1.2.jar"/>		    	
 		    	<zipfileset src="${lib}/cglib-nodep.jar"/>		    	
 		    	<zipfileset src="${lib}/log4j-1.2.15.jar"/>
-		    	<zipfileset src="${lib}/joda-time-1.5.2.jar"/>
+		    	<zipfileset src="${lib}/joda-time-2.0.jar"/>
 		    	<zipfileset src="${lib}/junit-4.8.2.jar"/>
 		    	
 		    	
