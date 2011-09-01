@@ -29,7 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestEscapeCode.class,
         TestTextAttributes.class,
         TestForegroundColors.class,
-        TestBackgroundColors.class,
+        TestBackgroundColors.class
     }
     )
 public class AllAnsiUnitTests {
