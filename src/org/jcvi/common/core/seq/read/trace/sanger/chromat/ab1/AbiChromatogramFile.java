@@ -19,31 +19,34 @@
 
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1;
 
-import java.util.List;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface AbiChromatogram extends Chromatogram{
+public final class AbiChromatogramFile {
 
-    /**
-     * Get the original, unedited Chromatogram.  
-     * @return the originalChromatogram
-     */
-    Chromatogram getOriginalChromatogram();
-
-
-
-    /**
-     * Get the order for which channel contained
-     * which Nucleotide data.
-     * @return the channelOrder
-     */
-    List<Nucleotide> getChannelOrder();
-
+    public static AbiChromatogram create(File abiFile) throws FileNotFoundException, TraceDecoderException{
+        AbiChromatogramBuilder builder = new AbiChromatogramBuilder();
+        Ab1FileParser.parseAb1File(abiFile, builder);        
+        return builder.build();
+    }
+    
+    public static AbiChromatogram create(InputStream abiStream) throws TraceDecoderException{
+        try{
+            AbiChromatogramBuilder builder = new AbiChromatogramBuilder();
+            Ab1FileParser.parseAb1File(abiStream, builder);            
+            return builder.build();
+        }finally{
+            IOUtil.closeAndIgnoreErrors(abiStream);
+        }
+    }
+    
 }

@@ -631,8 +631,8 @@ public final class Ab1FileParser {
 		try{
 			for(long i=0; i<numberOfTaggedRecords; i++){
 				String rawTagName = new String(IOUtil.readByteArray(in, 4),"UTF-8");
-				TaggedDataName tagName = TaggedDataName.parseTaggedDataName(
-						rawTagName);
+				
+				TaggedDataName tagName = TaggedDataName.parseTaggedDataName(rawTagName);
 				
 				long tagNumber = IOUtil.readUnsignedInt(in);
 				TaggedDataRecordBuilder builder = 

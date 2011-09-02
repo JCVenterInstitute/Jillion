@@ -276,14 +276,17 @@ public enum TaggedDataName {
 	phQL("phQL"),
 	phTR("phTR"),
 	
-	MATRIX_FILE_NAME("MTFX")
+	MATRIX_FILE_NAME("MTFX"),
 	
+	FTab("FTab"),
 	
+	FVoc("FVoc"),
 	
-	
-	
-	
-	
+	Feat("Feat"),
+	OFFS("OFFS"),
+	ScSt("ScSt"),
+	OfSc("OfSc"),
+	Satd("Satd"),
 	;
 	
 	private static final Map<String, TaggedDataName> MAP;
@@ -295,8 +298,10 @@ public enum TaggedDataName {
 	}
 	
 	public static TaggedDataName parseTaggedDataName(String taggedDataName){
-		
-		return MAP.get(taggedDataName);
+		if(MAP.containsKey(taggedDataName)){
+		    return MAP.get(taggedDataName);
+		}
+		throw new IllegalArgumentException("unknown tag data name "+ taggedDataName);
 		
 	}
 	private final String name;
