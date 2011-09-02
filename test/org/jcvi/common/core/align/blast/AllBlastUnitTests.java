@@ -17,16 +17,8 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core;
+package org.jcvi.common.core.align.blast;
 
-import org.jcvi.common.core.align.AllAlignUnitTests;
-import org.jcvi.common.core.assembly.AllAssemblyUnitTests;
-import org.jcvi.common.core.io.AllCoreIOUnitTests;
-import org.jcvi.common.core.io.datastore.AllDataStoreUnitTests;
-import org.jcvi.common.core.seq.AllSeqUnitTests;
-import org.jcvi.common.core.symbol.AllGlyphUnitTests;
-import org.jcvi.common.core.testUtil.TestTestUtilSuite;
-import org.jcvi.common.core.util.AllUtilUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -34,27 +26,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestSequenceDirection.class,
-        TestRange.class,
-        TestRangeArrivalComparator.class,
-        TestRangeDepartureComparator.class,
-        TestEmptyRange.class,
-        TestRangeIterator.class,
-        TestRangeComparatorShortestToLongest.class,
-        TestRangeComparatorLongestToShortest.class,
-        
-        
-        TestTestUtilSuite.class,
-        AllUtilUnitTests.class,
-        AllCoreIOUnitTests.class,
-        AllGlyphUnitTests.class,
-        AllSeqUnitTests.class,
-        AllDataStoreUnitTests.class,
-        AllAssemblyUnitTests.class,
-        AllAlignUnitTests.class
-        
+        TestBlastHit.class,
+        TestTabularBlastParser.class
     }
     )
-public class AllCoreUnitTests {
+public class AllBlastUnitTests {
 
 }
