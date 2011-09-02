@@ -34,6 +34,7 @@ import java.util.List;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.AbiChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramParser;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.SinglePhdFile;
@@ -66,10 +67,20 @@ public enum SangerTraceParser implements SangerTraceCodec{
                 }
                 
             }
+          //try as ab1
+            
+            try{
+                return AbiChromatogramFile.create(traceFile);           
+            }catch(Exception e){
+                e.printStackTrace();
+            }
             //try as phd            
             try{
             	return new SinglePhdFile(traceFile);
             }catch(Exception e){}
+            
+            
+            
             throw new TraceDecoderException("unknown trace format");
         
     }
@@ -85,6 +96,13 @@ public enum SangerTraceParser implements SangerTraceCodec{
                 catch(TraceDecoderException e){
                     bufferedIn.reset();
                 }
+            }
+            //try as ab1            
+            try{
+                bufferedIn.mark(MARK_LIMIT);
+                return AbiChromatogramFile.create(bufferedIn);           
+            }catch(Exception e){
+                bufferedIn.reset();
             }
           //try as phd   
             try{

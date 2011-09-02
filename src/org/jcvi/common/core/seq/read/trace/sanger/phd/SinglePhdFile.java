@@ -153,11 +153,13 @@ public class SinglePhdFile implements  Phd{
 	 */
 	private class SinglePhdFileVisitor implements PhdFileVisitor{
 	    private boolean firstRecord=true;
+	    private boolean validRecord=false;
 	    @Override
 	    public synchronized void visitBeginTag(String tagName) {
 	        currentTag =tagName;
 	        currentTagValueBuilder = new StringBuilder();
 	        inTag =true;
+	        validRecord=true;
 	    }
 
 	    @Override
@@ -238,6 +240,9 @@ public class SinglePhdFile implements  Phd{
 
 	    @Override
 	    public synchronized void visitEndOfFile() {
+	        if(!validRecord){
+	            throw new IllegalStateException("not a valid phdfile not phd records found");
+	        }
 	    }
 
 
