@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.jcvi.common.core.symbol.Symbol;
 /**
@@ -82,7 +83,7 @@ public enum Nucleotide implements Symbol {
         COMPLIMENT_MAP.put(Gap, Gap);
         COMPLIMENT_MAP.put(Unknown, Unknown);  
         
-        CHARACTER_MAP = new HashMap<Character, Nucleotide>();
+        CHARACTER_MAP = new TreeMap<Character, Nucleotide>();
         for(Nucleotide n: Nucleotide.values()){
             CHARACTER_MAP.put(n.getCharacter(), n);
         }
@@ -130,6 +131,13 @@ public enum Nucleotide implements Symbol {
     
     private Nucleotide(Character c){
         this.c = c;
+    }
+    public static String getAllCharacters(){
+        StringBuilder builder = new StringBuilder();
+        for(Character c : CHARACTER_MAP.keySet()){
+            builder.append(c);
+        }
+        return builder.toString();
     }
     /**
      * Return the Character equivalent of this

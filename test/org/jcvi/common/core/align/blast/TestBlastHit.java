@@ -21,6 +21,7 @@ package org.jcvi.common.core.align.blast;
 
 import java.math.BigDecimal;
 
+import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.testUtil.TestUtil;
@@ -40,8 +41,8 @@ public class TestBlastHit {
     private int length = 806;
     private int mismatches = 118;
     private int numGapOpenings = 2;
-    private Range queryRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED,1,806);
-    private Range subjectRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED,99,904);
+    private DirectedRange queryRange = DirectedRange.create(Range.buildRange(CoordinateSystem.RESIDUE_BASED,1,806));
+    private DirectedRange subjectRange = DirectedRange.create(Range.buildRange(CoordinateSystem.RESIDUE_BASED,99,904));
     
     private BigDecimal eValue = new BigDecimal("2e-172");
     private BigDecimal bitScore = new BigDecimal(636.8D);
@@ -143,14 +144,14 @@ public class TestBlastHit {
     @Test
     public void differentQueryRangeShouldNotBeEqual(){
         BlastHit different = BlastHitBuilder.copy(sut)
-                            .queryRange(queryRange.shiftLeft(2))
+                            .queryRange(DirectedRange.create(queryRange.getRange().shiftLeft(2)))
                             .build();
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, different);
     }
     @Test
     public void differentSubjectRangeShouldNotBeEqual(){
         BlastHit different = BlastHitBuilder.copy(sut)
-                            .subjectRange(subjectRange.shiftLeft(2))
+                            .subjectRange(DirectedRange.create(subjectRange.getRange().shiftLeft(2)))
                             .build();
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, different);
     }
@@ -265,9 +266,5 @@ public class TestBlastHit {
         BlastHitBuilder.copy(sut)
                         .eValue(new BigDecimal(-1));
     }
-    @Test(expected = IllegalArgumentException.class)
-    public void eValueGreaterThanOneShouldThrowIllegalArgumentException(){
-        BlastHitBuilder.copy(sut)
-                        .eValue(new BigDecimal(1.01));
-    }
+    
 }

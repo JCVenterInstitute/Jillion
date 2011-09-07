@@ -27,7 +27,7 @@ import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.Range;
+import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
@@ -65,24 +65,26 @@ public final class TablularBlastParser {
             visitor.visitLine(line);
             Matcher matcher = HIT_PATTERN.matcher(line);
             if(matcher.find()){
+                
+                DirectedRange queryRange = DirectedRange.parse(matcher.group(7), matcher.group(8), CoordinateSystem.RESIDUE_BASED);
+                DirectedRange subjectRange = DirectedRange.parse(matcher.group(9), matcher.group(10), CoordinateSystem.RESIDUE_BASED);
+               
                 BlastHit hit =BlastHitBuilder.create(matcher.group(1))
                                 .subject(matcher.group(2))
                                 .percentIdentity(Double.parseDouble(matcher.group(3)))
                                 .alignmentLength(Integer.parseInt(matcher.group(4)))
                                 .numMismatches(Integer.parseInt(matcher.group(5)))
-                                .numGapOpenings(Integer.parseInt(matcher.group(6)))
-                                .queryRange(Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
-                                        Integer.parseInt(matcher.group(7)),
-                                        Integer.parseInt(matcher.group(8))))
-                                .subjectRange(Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
-                                    Integer.parseInt(matcher.group(9)),
-                                    Integer.parseInt(matcher.group(10))))
+                                .numGapOpenings(Integer.parseInt(matcher.group(6)))                                
                                 .eValue(new BigDecimal(matcher.group(11)))
-                                .bitScore(new BigDecimal(matcher.group(12)))
+                                .bitScore(new BigDecimal(matcher.group(12)))              
+                                .queryRange(queryRange)
+                                .subjectRange(subjectRange)
                                 .build();
                 visitor.visitBlastHit(hit);
             }
         }
         visitor.visitEndOfFile();
     }
+    
+   
 }

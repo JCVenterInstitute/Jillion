@@ -22,6 +22,7 @@ package org.jcvi.common.core.align.blast;
 import java.io.IOException;
 import java.math.BigDecimal;
 
+import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -71,8 +72,8 @@ public class TestTabularBlastParser {
                 .alignmentLength(806)
                 .numMismatches(117)
                 .numGapOpenings(0)
-                .queryRange(Range.buildRange(CoordinateSystem.RESIDUE_BASED,1,806))
-                .subjectRange(Range.buildRange(CoordinateSystem.RESIDUE_BASED,99,904))
+                .queryRange(DirectedRange.create(Range.buildRange(CoordinateSystem.RESIDUE_BASED,1,806)))
+                .subjectRange(DirectedRange.create(Range.buildRange(CoordinateSystem.RESIDUE_BASED,99,904)))
                 .eValue(new BigDecimal("0.0"))
                 .bitScore(new BigDecimal("644.8"))
                 .build());
@@ -83,8 +84,8 @@ public class TestTabularBlastParser {
                 .alignmentLength(806)
                 .numMismatches(118)
                 .numGapOpenings(0)
-                .queryRange(Range.buildRange(CoordinateSystem.RESIDUE_BASED,1,806))
-                .subjectRange(Range.buildRange(CoordinateSystem.RESIDUE_BASED,99,904))
+                .queryRange(DirectedRange.create(Range.buildRange(CoordinateSystem.RESIDUE_BASED,1,806)))
+                .subjectRange(DirectedRange.create(Range.buildRange(CoordinateSystem.RESIDUE_BASED,99,904)))
                 .eValue(new BigDecimal("1e-179"))
                 .bitScore(new BigDecimal("636.8"))
                 .build());
@@ -95,8 +96,8 @@ public class TestTabularBlastParser {
                 .alignmentLength(806)
                 .numMismatches(121)
                 .numGapOpenings(0)
-                .queryRange(Range.buildRange(CoordinateSystem.RESIDUE_BASED,1,806))
-                .subjectRange(Range.buildRange(CoordinateSystem.RESIDUE_BASED,99,904))
+                .queryRange(DirectedRange.create(Range.buildRange(CoordinateSystem.RESIDUE_BASED,1,806)))
+                .subjectRange(DirectedRange.create(Range.buildRange(CoordinateSystem.RESIDUE_BASED,99,904)))
                 .eValue(new BigDecimal("2e-172"))
                 .bitScore(new BigDecimal("613.0"))
                 .build());

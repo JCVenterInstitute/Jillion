@@ -21,7 +21,7 @@ package org.jcvi.common.core.align.blast;
 
 import java.math.BigDecimal;
 
-import org.jcvi.common.core.Range;
+import org.jcvi.common.core.DirectedRange;
 
 /**
  * @author dkatzel
@@ -41,7 +41,7 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
         private String subjectId;
         private Double percentIdentity;
         private BigDecimal eValue, bitScore;
-        private Range queryRange, subjectRange;
+        private DirectedRange queryRange, subjectRange;
         private Integer numGapsOpenings ,numMismatches,alignmentLength;
         
         private BlastHitBuilder(BlastHit copy) {
@@ -107,7 +107,7 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
             return this;
         }
         
-        public BlastHitBuilder queryRange(Range queryRange){
+        public BlastHitBuilder queryRange(DirectedRange queryRange){
             if(queryRange ==null){
                 throw new NullPointerException("queryRange can not be null");
             }
@@ -115,7 +115,7 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
             return this;
         }
 
-        public BlastHitBuilder subjectRange(Range subjectRange){
+        public BlastHitBuilder subjectRange(DirectedRange subjectRange){
             if(subjectRange ==null){
                 throw new NullPointerException("subjectRange can not be null");
             }
@@ -128,9 +128,6 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
             }
             if(eValue.compareTo(BigDecimal.ZERO)<0){
                 throw new IllegalArgumentException("e-value score must be positive: " + eValue);
-            }
-            if(eValue.compareTo(BigDecimal.ONE)>0){
-                throw new IllegalArgumentException("e-value score must be <=1 : " + eValue);
             }
             this.eValue = eValue;
             return this;
@@ -210,13 +207,13 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
     private final String queryId,subjectId;
     private final double percentIdentity;
     private final BigDecimal eValue, bitScore;
-    private final Range queryRange, subjectRange;
+    private final DirectedRange queryRange, subjectRange;
     private final int numGapsOpenings,numMismatches;
     private final int alignmentLength;
     
     private BlastHitImpl(String queryId, String subjectId,
             double percentIdentity, BigDecimal bitScore, BigDecimal eValue,
-            Range queryRange, Range subjectRange, int numGapsOpenings,
+            DirectedRange queryRange, DirectedRange subjectRange, int numGapsOpenings,
             int numMismatches, int alignmentLength) {
         this.queryId = queryId;
         this.subjectId = subjectId;
@@ -229,6 +226,7 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
         this.numMismatches = numMismatches;
         this.alignmentLength = alignmentLength;
     }
+
 
         /**
     * {@inheritDoc}
@@ -295,7 +293,7 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
         * {@inheritDoc}
         */
         @Override
-        public Range getQueryRange() {
+        public DirectedRange getQueryRange() {
             return queryRange;
         }
     
@@ -303,7 +301,7 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
         * {@inheritDoc}
         */
         @Override
-        public Range getSubjectRange() {
+        public DirectedRange getSubjectRange() {
             return subjectRange;
         }
     
