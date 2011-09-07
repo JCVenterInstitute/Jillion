@@ -22,7 +22,7 @@ package org.jcvi.common.core.align.blast;
 import java.math.BigDecimal;
 import java.util.Comparator;
 
-import org.jcvi.common.core.Range;
+import org.jcvi.common.core.DirectedRange;
 
 /**
  * @author dkatzel
@@ -42,9 +42,9 @@ public interface BlastHit {
     
     int getNumberOfGapOpenings();
     
-    Range getQueryRange();
+    DirectedRange getQueryRange();
     
-    Range getSubjectRange();
+    DirectedRange getSubjectRange();
     /**
      * Get the Expectation value of this hit.
      * The value provides a measure of statistical

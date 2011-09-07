@@ -820,6 +820,15 @@ public final class Range implements Placed<Range>,Iterable<Long>
         }
         return Range.mergeRanges(complimentedRanges);
     }
+    
+    public List<Range> complimentFrom(Collection<Range> ranges){
+        List<Range> universe = Range.mergeRanges(new ArrayList<Range>(ranges));
+        List<Range> compliments = new ArrayList<Range>(universe.size());
+        for(Range range : universe){
+            compliments.addAll(range.compliment(this));
+        }
+        return Range.mergeRanges(compliments);
+    }
 
     /**
      * Checks to see if this <code>Range</code> starts before the given

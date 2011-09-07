@@ -39,6 +39,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestRangeArrivalComparator.class,
         TestRangeDepartureComparator.class,
         TestEmptyRange.class,
+        TestRangeCompliment.class,
         TestRangeIterator.class,
         TestRangeComparatorShortestToLongest.class,
         TestRangeComparatorLongestToShortest.class,
