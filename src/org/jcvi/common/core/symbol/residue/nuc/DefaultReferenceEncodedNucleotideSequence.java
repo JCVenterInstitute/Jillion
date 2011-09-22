@@ -297,6 +297,9 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
      }
     
     
-
+     @Override
+     public String toString(){
+         return Nucleotides.asString(asList());
+     }
     
 }

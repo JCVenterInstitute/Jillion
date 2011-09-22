@@ -49,7 +49,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 
-public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
+public abstract class AbstractCasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 
 	private final File workingDir;
 	private final CasTrimMap trimMap;
@@ -58,7 +58,7 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	private final TrimDataStore validRangeDataStore;
 	private final List<CloseableIterator<PhdReadRecord>> iterators = new ArrayList<CloseableIterator<PhdReadRecord>>();
     private final TraceDetails traceDetails;
-	public CasPhdReadVisitor(File workingDir, CasTrimMap trimMap,
+	public AbstractCasPhdReadVisitor(File workingDir, CasTrimMap trimMap,
 			List<NucleotideSequence> orderedGappedReferences,
 			TrimDataStore validRangeDataStore,
 			TraceDetails traceDetails) {
@@ -69,7 +69,13 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 		this.orderedGappedReferences = orderedGappedReferences;
 		this.validRangeDataStore = validRangeDataStore;
 	}
-
+	public AbstractCasPhdReadVisitor(CasInfo casInfo) {
+	    this(   casInfo.getCasWorkingDirectory(),
+	            casInfo.getCasTrimMap(),
+	            casInfo.getOrderedGappedReferenceList(),
+	            casInfo.getMultiTrimDataStore(),
+	            casInfo.getTraceDetails());
+	}
 	protected final NucleotideSequence getGappedReference(int index){
 	    return orderedGappedReferences.get(index);
 	}
@@ -158,26 +164,35 @@ public abstract class CasPhdReadVisitor extends AbstractOnePassCasFileVisitor{
 	@Override
 	protected final synchronized void visitMatch(CasMatch match, long readCounter) {
 		PhdReadRecord phdReadRecord =phdIterator.next();
-		
-		if(match.matchReported()){
-			Phd phd = phdReadRecord.getPhd();
-			PhdInfo info = phdReadRecord.getPhdInfo();
-			int casReferenceId = (int)match.getChosenAlignment().contigSequenceId();
-			NucleotideSequence gappedReference =orderedGappedReferences.get(casReferenceId);
-			String id = phd.getId();
-			try {
-				CasPlacedRead placedRead = CasUtil.createCasPlacedRead(match, id, 
-						phd.getBasecalls(), 
-						validRangeDataStore.get(id), gappedReference);
-				AcePlacedRead acePlacedRead = new AcePlacedReadAdapter(placedRead, info, 
-				        placedRead.getUngappedFullLength());
-				visitAcePlacedRead(acePlacedRead,phd,casReferenceId);
-			} catch (Exception e) {
-			    IOUtil.closeAndIgnoreErrors(phdIterator);
-				throw new IllegalStateException("error getting trim range for " + id, e);
-			}
-		}
+		try {
+    		if(match.matchReported()){
+    			int casReferenceId = (int)match.getChosenAlignment().contigSequenceId();
+    			NucleotideSequence gappedReference =orderedGappedReferences.get(casReferenceId);
+    			visitMatch(match, phdReadRecord, gappedReference);    			
+    		}else{
+    		    visitUnMatched(phdReadRecord);
+    		}
+		} catch (Exception e) {
+            IOUtil.closeAndIgnoreErrors(phdIterator);
+            throw new IllegalStateException("error getting trim range for " + phdReadRecord.getPhd().getId(), e);
+        }
 	}
+	protected void visitUnMatched(PhdReadRecord phdReadRecord) throws Exception{
+	    //no-op
+	}
+    protected void visitMatch(CasMatch match, PhdReadRecord phdReadRecord,NucleotideSequence gappedReference)
+            throws Exception {
+        Phd phd = phdReadRecord.getPhd();
+        PhdInfo info = phdReadRecord.getPhdInfo();
+        String id = phd.getId();
+        int casReferenceId = (int)match.getChosenAlignment().contigSequenceId();
+        CasPlacedRead placedRead = CasUtil.createCasPlacedRead(match, id, 
+        		phd.getBasecalls(), 
+        		validRangeDataStore.get(id), gappedReference);
+        AcePlacedRead acePlacedRead = new AcePlacedReadAdapter(placedRead, info, 
+                placedRead.getUngappedFullLength());
+        visitAcePlacedRead(acePlacedRead,phd,casReferenceId);
+    }
 
 	protected abstract void visitAcePlacedRead(AcePlacedRead acePlacedRead,
 			Phd phd,

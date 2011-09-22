@@ -46,7 +46,7 @@ public class TestTabularBlastParser {
     public void parseFile() throws IOException{
         setupExpectations();
         replay(sut);
-        TablularBlastParser.parse(resources.getFile("files/tabular.out"), sut);
+        TabularBlastParser.parse(resources.getFile("files/tabular.out"), sut);
         verify(sut);
     }
     
@@ -54,7 +54,7 @@ public class TestTabularBlastParser {
     public void parseInputStream() throws IOException{
         setupExpectations();
         replay(sut);
-        TablularBlastParser.parse(resources.getFileAsStream("files/tabular.out"), sut);
+        TabularBlastParser.parse(resources.getFileAsStream("files/tabular.out"), sut);
         verify(sut);
     }
     /**
@@ -66,7 +66,7 @@ public class TestTabularBlastParser {
         expectLastCall().times(3);
         
         
-        sut.visitBlastHit(BlastHitBuilder.create("AF178033")
+        sut.visitHsp(HspBuilder.create("AF178033")
                 .subject("EMORG:AF031391")
                 .percentIdentity(85.48D)
                 .alignmentLength(806)
@@ -78,7 +78,7 @@ public class TestTabularBlastParser {
                 .bitScore(new BigDecimal("644.8"))
                 .build());
         
-        sut.visitBlastHit(BlastHitBuilder.create("AF178033")
+        sut.visitHsp(HspBuilder.create("AF178033")
                 .subject("EMORG:AF353201")
                 .percentIdentity(85.36D)
                 .alignmentLength(806)
@@ -90,7 +90,7 @@ public class TestTabularBlastParser {
                 .bitScore(new BigDecimal("636.8"))
                 .build());
         
-        sut.visitBlastHit(BlastHitBuilder.create("AF178033")
+        sut.visitHsp(HspBuilder.create("AF178033")
                 .subject("EMORG:AF353200")
                 .percentIdentity(84.99D)
                 .alignmentLength(806)

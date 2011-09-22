@@ -34,6 +34,7 @@ import org.jcvi.common.core.assembly.contig.QualityValueStrategy;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 
 public class DefaultSliceMap extends AbstractSliceMap{
@@ -46,11 +47,18 @@ public class DefaultSliceMap extends AbstractSliceMap{
     public static <PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> DefaultSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy){
         return new DefaultSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
-    private final Map<Long, Slice> sliceMap = new HashMap<Long, Slice>();
-    private final long size;
+    private Map<Long, Slice> sliceMap = new HashMap<Long, Slice>();
+    private long size;
+    protected PhredQuality defaultQuality;
     public DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
                         QualityDataStore qualityDataStore,
                         QualityValueStrategy qualityValueStrategy){
+        this(coverageMap,qualityDataStore, qualityValueStrategy,null);
+    }
+    protected DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
+            QualityDataStore qualityDataStore,
+            QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality){
+        this.defaultQuality = defaultQuality;
         this.size = coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()+1;
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
             for(long i=region.getStart(); i<=region.getEnd(); i++ ){
@@ -58,10 +66,20 @@ public class DefaultSliceMap extends AbstractSliceMap{
                 sliceMap.put(Long.valueOf(i),new DefaultSlice.Builder()
                                             .addAll(sliceElements)
                                             .build());
+            
             }
         }
     }
+
     
+    
+    /**
+     * @return the defaultQuality
+     */
+    protected PhredQuality getDefaultQuality() {
+        return defaultQuality;
+    }
+
     public DefaultSliceMap(List<Slice> slices){
         size = slices.size();
         for(int i=0; i< size; i++){

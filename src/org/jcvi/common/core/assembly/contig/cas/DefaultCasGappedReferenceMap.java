@@ -185,7 +185,7 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
         return gappedReferences.get(referenceId);
     }
     
-    public List<NucleotideSequence> asList(){
+    public List<NucleotideSequence> getOrderedList(){
     	int size = gappedReferences.size();
     	List<NucleotideSequence> list = new ArrayList<NucleotideSequence>(size);
     	for(long i = 0; i<size; i++){

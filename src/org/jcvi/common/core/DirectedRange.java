@@ -70,16 +70,27 @@ public final class DirectedRange implements Placed<DirectedRange>{
         private static DirectedRange convertIntoRange(Matcher dashMatcher, CoordinateSystem coordinateSystem) {
             long first = Long.parseLong(dashMatcher.group(1));
             long second = Long.parseLong(dashMatcher.group(2));
+            return convertIntoRange(coordinateSystem, first, second);
+                    
+        }
+
+        private static DirectedRange convertIntoRange(
+                CoordinateSystem coordinateSystem, long first, long second) {
             if(first<second){
                 Range range =Range.buildRange(coordinateSystem,first,second);
                 return new DirectedRange(range, Direction.FORWARD);
             }
             Range range =Range.buildRange(coordinateSystem,second,first);
             return new DirectedRange(range, Direction.REVERSE);
-                    
         }
         public static DirectedRange parse(String rangeAsString){
             return parse(rangeAsString,CoordinateSystem.ZERO_BASED);
+        }
+        public static DirectedRange parse(long firstCoord, long secondCoord){
+            return convertIntoRange(CoordinateSystem.ZERO_BASED, firstCoord, secondCoord);
+        }
+        public static DirectedRange parse(long firstCoord, long secondCoord, CoordinateSystem coordinateSystem){
+            return convertIntoRange(coordinateSystem, firstCoord, secondCoord);
         }
         public static DirectedRange parse(String firstCoord, String secondCoord){
             return parse(firstCoord,secondCoord,CoordinateSystem.ZERO_BASED);

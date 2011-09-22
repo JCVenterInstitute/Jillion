@@ -364,8 +364,8 @@ public class ScoringMatrix<G extends Symbol>
         /*
          * Store the decisions for later resolution
          */
-        int cellScore = 0;
-        int pathDirection = ScoringMatrix.PATH_TERM;
+        final int cellScore;
+        final int pathDirection;
         
         if (diagScore >= horzScore && diagScore >= vertScore)
         {

@@ -77,7 +77,7 @@ public class SmithWatermanAligner implements Aligner<Nucleotide>
      */
     public Alignment alignSequence(Sequence<Nucleotide> querySequence, Sequence<Nucleotide> referenceSequence)
     {
-        final AlignmentFactory alignment = new AlignmentFactory();
+        final AlignmentBuilder alignment = new AlignmentBuilder();
         final ScoringMatrix<Nucleotide> score = new ScoringMatrix<Nucleotide>(referenceSequence, querySequence, this.gapScore);
 
         /*
