@@ -45,26 +45,21 @@ import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
-import org.jcvi.common.core.assembly.contig.cas.AbstractDefaultCasFileLookup;
 import org.jcvi.common.core.assembly.contig.cas.AbstractOnePassCasFileVisitor;
 import org.jcvi.common.core.assembly.contig.cas.CasFileInfo;
 import org.jcvi.common.core.assembly.contig.cas.CasFileVisitor;
+import org.jcvi.common.core.assembly.contig.cas.CasInfo;
 import org.jcvi.common.core.assembly.contig.cas.CasMatch;
 import org.jcvi.common.core.assembly.contig.cas.CasParser;
-import org.jcvi.common.core.assembly.contig.cas.CasPhdReadVisitor;
+import org.jcvi.common.core.assembly.contig.cas.AbstractCasPhdReadVisitor;
 import org.jcvi.common.core.assembly.contig.cas.CasTrimMap;
-import org.jcvi.common.core.assembly.contig.cas.DefaultCasGappedReferenceMap;
-import org.jcvi.common.core.assembly.contig.cas.DefaultReferenceCasFileLookup;
+import org.jcvi.common.core.assembly.contig.cas.CasUtil;
 import org.jcvi.common.core.assembly.contig.cas.EmptyCasTrimMap;
+import org.jcvi.common.core.assembly.contig.cas.ExternalTrimInfo;
 import org.jcvi.common.core.assembly.contig.cas.ReadFileType;
 import org.jcvi.common.core.assembly.contig.cas.UnTrimmedExtensionTrimMap;
 import org.jcvi.common.core.assembly.contig.cas.UpdateConsensusAceContigBuilder;
-import org.jcvi.common.core.assembly.contig.cas.CasPhdReadVisitor.TraceDetails;
-import org.jcvi.common.core.assembly.contig.cas.read.AbstractCasFileNucleotideDataStore;
-import org.jcvi.common.core.assembly.contig.cas.read.FastaCasDataStoreFactory;
-import org.jcvi.common.core.assembly.contig.cas.read.ReferenceCasFileNucleotideDataStore;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
-import org.jcvi.common.core.assembly.trim.SffTrimDataStoreBuilder;
 import org.jcvi.common.core.assembly.trim.TrimDataStore;
 import org.jcvi.common.core.assembly.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
@@ -72,7 +67,6 @@ import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
@@ -151,60 +145,26 @@ public class Cas2Consed3 {
         File logFile = consedOutputDir.createNewFile("cas2consed.log");
         PrintStream logOut = new PrintStream(logFile);
         long startTime = DateTimeUtils.currentTimeMillis();
+        
         try{
-             final AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup(casWorkingDirectory);
-   
-             AbstractCasFileNucleotideDataStore referenceNucleotideDataStore = new ReferenceCasFileNucleotideDataStore(
-                     new FastaCasDataStoreFactory(casWorkingDirectory,trimToUntrimmedMap,10));
-             DefaultCasGappedReferenceMap gappedReferenceMap = new DefaultCasGappedReferenceMap(referenceNucleotideDataStore, referenceIdLookup);
-             ConsedDirTraceFolderCreator numberOfReadsVisitor = new ConsedDirTraceFolderCreator(casWorkingDirectory,trimToUntrimmedMap,consedOutputDir);
-             CasParser.parseCas(casFile, 
-                     MultipleWrapper.createMultipleWrapper(CasFileVisitor.class,
-                     referenceIdLookup,referenceNucleotideDataStore,gappedReferenceMap,
-                     numberOfReadsVisitor));
-             final SffTrimDataStoreBuilder sffTrimDatastoreBuilder = new SffTrimDataStoreBuilder();
-             CasFileVisitor sffTrimDataStoreVisitor  =new AbstractOnePassCasFileVisitor() {
-                
-                @Override
-                protected void visitMatch(CasMatch match, long readCounter) {
-                    //no-op
-                }
-    
-                @Override
-                public synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
-                    super.visitReadFileInfo(readFileInfo);
-                    for(String readFilename : readFileInfo.getFileNames()){
-                            String extension =FilenameUtils.getExtension(readFilename);
-                            if("sff".equals(extension)){
-                                try {
-                                    SffParser.parseSFF(new File(casWorkingDirectory,readFilename), sffTrimDatastoreBuilder);
-                                } catch (Exception e) {
-                                    throw new IllegalStateException("error trying to read sff file " + readFilename,e);
-                                } 
-                            }
-                        }
-                    }
-                
-            };
-            CasParser.parseOnlyMetaData(casFile, sffTrimDataStoreVisitor);
-            TrimDataStore multiTrimDataStore =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(
-                    TrimDataStore.class, trimDatastore, sffTrimDatastoreBuilder.build());
+            ExternalTrimInfo externalTrimInfo = ExternalTrimInfo.create(trimToUntrimmedMap, trimDatastore);
+            final CasInfo casInfo = CasUtil.createCasInfoBuilder(casFile)
+                                .fastQQualityCodec(fastqQualityCodec)
+                                .externalTrimInfo(externalTrimInfo)
+                                .hasEdits(hasEdits)
+                                .chromatDir(chromatDir)
+                                .build();
+            final Map<Integer, DefaultAceContig.Builder> builders = new HashMap<Integer, DefaultAceContig.Builder>();
             
-             final Map<Integer, DefaultAceContig.Builder> builders = new HashMap<Integer, DefaultAceContig.Builder>();
-             
-             final File phdFile = new File(phdBallDir, "phd.ball.1");
+            final File phdFile = new File(phdBallDir, "phd.ball.1");
             final OutputStream phdOut = new FileOutputStream(phdFile);
-            try{
-                TraceDetails traceDetails = new TraceDetails.Builder(fastqQualityCodec)
-                                                        .chromatDir(chromatDir)
-                                                        .hasEdits(hasEdits)
-                                                        .build();
-                 CasPhdReadVisitor visitor = new CasPhdReadVisitor(
-                         casWorkingDirectory,trimToUntrimmedMap,
-                         gappedReferenceMap.asList(),
-                         multiTrimDataStore,
-                         traceDetails
-                         ) {
+            final ConsedDirTraceFolderCreator numberOfReadsVisitor = new ConsedDirTraceFolderCreator(casWorkingDirectory,trimToUntrimmedMap,consedOutputDir);
+            
+            
+            
+              try{
+                  
+                 AbstractCasPhdReadVisitor visitor = new AbstractCasPhdReadVisitor(casInfo) {
                     
                         @Override
                         protected void visitAcePlacedRead(AcePlacedRead acePlacedRead, Phd phd,
@@ -212,7 +172,8 @@ public class Cas2Consed3 {
                             Integer refKey = Integer.valueOf(casReferenceId);
                             if(!builders.containsKey(refKey)){
                                 final UpdateConsensusAceContigBuilder builder = new UpdateConsensusAceContigBuilder(
-                                        referenceIdLookup.getLookupIdFor(casReferenceId), 
+                                        
+                                        casInfo.getReferenceIdLookup().getLookupIdFor(casReferenceId), 
                                         getGappedReference(casReferenceId));
                                 builder.adjustContigIdToReflectCoordinates(CoordinateSystem.RESIDUE_BASED);
                                 builders.put(refKey, builder);
@@ -234,7 +195,9 @@ public class Cas2Consed3 {
                         }
                         
                 };
-                 CasParser.parseCas(casFile, visitor);
+                 CasParser.parseCas(casFile, 
+                         MultipleWrapper.createMultipleWrapper(CasFileVisitor.class,
+                         visitor, numberOfReadsVisitor));
             }finally{
                 IOUtil.closeAndIgnoreErrors(phdOut);
             }
