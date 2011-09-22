@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.common.core.symbol.residue.Residue;
 
 /**
  * {@code AminoAcid} is a {@link Symbol} representation 
@@ -34,7 +35,7 @@ import org.jcvi.common.core.symbol.Symbol;
  *
  *
  */
-public enum AminoAcid implements Symbol{
+public enum AminoAcid implements Residue{
     
     Isoleucine("Isolucine","Ile",'I'),
     Leucine("Leucine","Leu",'L'),

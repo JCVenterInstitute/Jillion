@@ -49,7 +49,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @param sequence the initial nucleotide sequence.
      * @throws NullPointerException if sequence is null.
      */
-    public NucleotideSequenceBuilder(NucleotideSequence sequence){
+    public NucleotideSequenceBuilder(Iterable<Nucleotide> sequence){
         this(Nucleotides.asString(sequence));
     }
     /**
@@ -69,7 +69,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * to the end our builder.
      * @throws NullPointerException if sequence is null.
      */
-    public NucleotideSequenceBuilder append(NucleotideSequence sequence){
+    public NucleotideSequenceBuilder append(Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
         return append(Nucleotides.asString(sequence));
     }
@@ -181,21 +181,24 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @return this
      * @throws NullPointerException if sequence is null.
      */
-    public NucleotideSequenceBuilder insert(int offset, NucleotideSequence sequence){
+    public NucleotideSequenceBuilder insert(int offset, Iterable<Nucleotide> sequence){
        return insert(offset, Nucleotides.asString(sequence));
     }
+    public NucleotideSequenceBuilder insert(int offset, Nucleotide base){
+        return insert(offset, base.toString());
+     }
     /**
      * Inserts the given sequence the beginning
      * of the builder's mutable sequence.
      * This is the same as calling 
-     * {@link #insert(int, NucleotideSequence) insert(0,sequence)}
+     * {@link #insert(int, Iterable) insert(0,sequence)}
      * @param sequence the nucleotide sequence to be 
      * inserted at the beginning.
      * @return this.
      * @throws NullPointerException if sequence is null.
-     * @see #insert(int, NucleotideSequence)
+     * @see #insert(int, Iterable)
      */
-    public NucleotideSequenceBuilder prepend(NucleotideSequence sequence){
+    public NucleotideSequenceBuilder prepend(Iterable<Nucleotide> sequence){
         return insert(0, Nucleotides.asString(sequence));
     }
     /**
@@ -207,6 +210,11 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     @Override
     public NucleotideSequence build() {
         return NucleotideSequenceFactory.create(builder);
+    }
+    
+    
+    public String subString(Range range){
+        return builder.substring((int)range.getStart(), (int)range.getEnd()+1);
     }
 
 }

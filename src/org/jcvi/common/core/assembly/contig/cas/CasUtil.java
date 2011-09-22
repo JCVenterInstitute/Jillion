@@ -23,21 +23,34 @@
  */
 package org.jcvi.common.core.assembly.contig.cas;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.contig.cas.AbstractCasPhdReadVisitor.TraceDetails;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignment;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegion;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegionType;
+import org.jcvi.common.core.assembly.contig.cas.read.AbstractCasFileNucleotideDataStore;
 import org.jcvi.common.core.assembly.contig.cas.read.CasPlacedRead;
 import org.jcvi.common.core.assembly.contig.cas.read.DefaultCasPlacedReadFromCasAlignmentBuilder;
+import org.jcvi.common.core.assembly.contig.cas.read.FastaCasDataStoreFactory;
+import org.jcvi.common.core.assembly.contig.cas.read.ReferenceCasFileNucleotideDataStore;
+import org.jcvi.common.core.assembly.trim.SffTrimDataStoreBuilder;
+import org.jcvi.common.core.assembly.trim.TrimDataStore;
+import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.IOUtil.ENDIAN;
+import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.util.Builder;
+import org.jcvi.common.core.util.MultipleWrapper;
 /**
  * {@code CasUtil} is a utility class for dealing with the binary
  * encodings inside a .cas file.
@@ -195,7 +208,177 @@ public final class CasUtil {
         }
         
         return builder.build();
-           
-        
 	}
+
+    public static CasInfoBuilder createCasInfoBuilder(File casFile){
+        return new CasInfoBuilder(casFile);
+    }
+    
+    public final static class CasInfoBuilder implements Builder<CasInfo>{
+        private final File casFile;
+        private FastQQualityCodec fastqQualityCodec = FastQQualityCodec.SANGER;
+        private ExternalTrimInfo externalTrimInfo = ExternalTrimInfo.createEmptyInfo();
+        private boolean hasEdits=false;
+        private File chromatDir = null;
+        
+        
+        private CasInfoBuilder(File casFile){
+            if(casFile ==null){
+                throw new NullPointerException("cas file can not be null");
+            }
+            this.casFile = casFile;
+        }
+        
+        public CasInfoBuilder fastQQualityCodec(FastQQualityCodec fastqQualityCodec){
+            if(fastqQualityCodec ==null){
+                throw new NullPointerException("fastq quality codec can not be null");
+            }
+            this.fastqQualityCodec = fastqQualityCodec;
+            return this;
+        }
+        public CasInfoBuilder externalTrimInfo(ExternalTrimInfo externalTrimInfo){
+            if(externalTrimInfo ==null){
+                throw new NullPointerException("externalTrimInfo can not be null");
+            }
+            this.externalTrimInfo = externalTrimInfo;
+            return this;
+        }
+        public CasInfoBuilder chromatDir(File chromatDir){            
+            this.chromatDir = chromatDir;
+            return this;
+        }
+        public CasInfoBuilder hasEdits(boolean hasEdits){
+            this.hasEdits = hasEdits;
+            return this;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public CasInfo build() {
+            try {
+                return new CasInfoImpl(casFile, fastqQualityCodec, externalTrimInfo, chromatDir, hasEdits);
+            } catch (IOException e) {
+                throw new IllegalStateException("error building cas info",e);
+            }
+        }
+        
+    }
+    
+    private static class CasInfoImpl implements CasInfo{
+
+        private final TrimDataStore multiTrimDataStore;
+        private final TraceDetails traceDetails;
+        private final File workingDirectory;
+        private final List<NucleotideSequence> orderedGappedReferences;
+        private final CasTrimMap casTrimMap;
+        private final CasIdLookup referenceIdLookup;
+        
+        private CasInfoImpl(File casFile, FastQQualityCodec fastqQualityCodec, ExternalTrimInfo externalTrimInfo,
+                File chromatDir, boolean hasEdits) throws IOException{
+            final File casWorkingDirectory = casFile.getParentFile();
+            final AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup(casWorkingDirectory);
+            
+            
+            AbstractCasFileNucleotideDataStore referenceNucleotideDataStore = new ReferenceCasFileNucleotideDataStore(
+                    new FastaCasDataStoreFactory(casWorkingDirectory,externalTrimInfo.getCasTrimMap(),10));
+            DefaultCasGappedReferenceMap gappedReferenceMap = new DefaultCasGappedReferenceMap(referenceNucleotideDataStore, referenceIdLookup);
+            CasParser.parseCas(casFile, 
+                    MultipleWrapper.createMultipleWrapper(CasFileVisitor.class,
+                    referenceIdLookup,referenceNucleotideDataStore,gappedReferenceMap
+                    ));
+            final SffTrimDataStoreBuilder sffTrimDatastoreBuilder = new SffTrimDataStoreBuilder();
+            CasFileVisitor sffTrimDataStoreVisitor  =new AbstractOnePassCasFileVisitor() {
+               
+               @Override
+               protected void visitMatch(CasMatch match, long readCounter) {
+                   //no-op
+               }
+
+               @Override
+               public synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
+                   super.visitReadFileInfo(readFileInfo);
+                   for(String readFilename : readFileInfo.getFileNames()){
+                           String extension =FilenameUtils.getExtension(readFilename);
+                           if("sff".equals(extension)){
+                               try {
+                                   SffParser.parseSFF(new File(casWorkingDirectory,readFilename), sffTrimDatastoreBuilder);
+                               } catch (Exception e) {
+                                   throw new IllegalStateException("error trying to read sff file " + readFilename,e);
+                               } 
+                           }
+                       }
+                   }
+               
+           };
+           CasParser.parseOnlyMetaData(casFile, sffTrimDataStoreVisitor);
+           multiTrimDataStore =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(
+                   TrimDataStore.class, externalTrimInfo.getTrimDataStore(), sffTrimDatastoreBuilder.build());
+           
+           traceDetails = new TraceDetails.Builder(fastqQualityCodec)
+                       .chromatDir(chromatDir)
+                       .hasEdits(hasEdits)
+                       .build();
+           this.orderedGappedReferences = gappedReferenceMap.getOrderedList();
+           this.workingDirectory = casWorkingDirectory;
+           this.casTrimMap = externalTrimInfo.getCasTrimMap();
+           this.referenceIdLookup = referenceIdLookup;
+        }
+       
+        
+        /**
+         * @return the multiTrimDataStore
+         */
+        @Override
+        public TrimDataStore getMultiTrimDataStore() {
+            return multiTrimDataStore;
+        }
+        /**
+         * @return the traceDetails
+         */
+        @Override
+        public TraceDetails getTraceDetails() {
+            return traceDetails;
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public List<NucleotideSequence> getOrderedGappedReferenceList() {
+            return orderedGappedReferences;
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public File getCasWorkingDirectory() {
+            return workingDirectory;
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public CasTrimMap getCasTrimMap() {
+            return casTrimMap;
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public CasIdLookup getReferenceIdLookup() {
+            return referenceIdLookup;
+        }
+
+
+        
+        
+    }
 }

@@ -22,19 +22,20 @@ package org.jcvi.common.core.align.blast;
 import java.math.BigDecimal;
 
 import org.jcvi.common.core.DirectedRange;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * @author dkatzel
  *
  *
  */
-public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<BlastHit>{
+public final class HspBuilder implements org.jcvi.common.core.util.Builder<Hsp>{
 
-    public static BlastHitBuilder create(String queryId){
-        return new BlastHitBuilder(queryId);
+    public static HspBuilder create(String queryId){
+        return new HspBuilder(queryId);
     }
-    public static BlastHitBuilder copy(BlastHit copy){
-        return new BlastHitBuilder(copy);
+    public static HspBuilder copy(Hsp copy){
+        return new HspBuilder(copy);
     }
 
         private String queryId;
@@ -43,8 +44,9 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
         private BigDecimal eValue, bitScore;
         private DirectedRange queryRange, subjectRange;
         private Integer numGapsOpenings ,numMismatches,alignmentLength;
+        private NucleotideSequence queryAlignment, subjectAlignment;
         
-        private BlastHitBuilder(BlastHit copy) {
+        private HspBuilder(Hsp copy) {
            
             bitScore(copy.getBitScore())
             .eValue(copy.getEvalue())
@@ -58,11 +60,19 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
             .alignmentLength(copy.getAlignmentLength())
             ;
         }
-        private BlastHitBuilder(String queryId) {
+        private HspBuilder(String queryId) {
             query(queryId);
         }
-
-        public BlastHitBuilder query(String queryId) {
+        public HspBuilder gappedAlignments(NucleotideSequence queryAlignment, NucleotideSequence subjectAlignment) {
+            if((queryAlignment ==null && subjectAlignment !=null) ||
+               (subjectAlignment ==null && queryAlignment !=null)){
+                throw new NullPointerException("gapped alignments must be either both null or neither null");
+            }
+            this.queryAlignment = queryAlignment;
+            this.subjectAlignment = subjectAlignment;
+            return this;
+        }
+        public HspBuilder query(String queryId) {
             if(queryId ==null){
                 throw new NullPointerException("query id can not be null");
             }
@@ -74,7 +84,7 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
             return this;
         }
         
-        public BlastHitBuilder subject(String subjectId){
+        public HspBuilder subject(String subjectId){
             if(subjectId ==null){
                 throw new NullPointerException("subject id can not be null");
             }
@@ -86,7 +96,7 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
             return this;
         }
 
-        public BlastHitBuilder percentIdentity(double percentIdentity){            
+        public HspBuilder percentIdentity(double percentIdentity){            
             if(percentIdentity <0){
                 throw new IllegalArgumentException("percentIdentity score must be positive: " + percentIdentity);
             }
@@ -96,7 +106,7 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
             this.percentIdentity = percentIdentity;
             return this;
         }
-        public BlastHitBuilder bitScore(BigDecimal bitScore){  
+        public HspBuilder bitScore(BigDecimal bitScore){  
             if(bitScore ==null){
                 throw new NullPointerException("bit score can not be null");
             }
@@ -107,7 +117,7 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
             return this;
         }
         
-        public BlastHitBuilder queryRange(DirectedRange queryRange){
+        public HspBuilder queryRange(DirectedRange queryRange){
             if(queryRange ==null){
                 throw new NullPointerException("queryRange can not be null");
             }
@@ -115,14 +125,14 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
             return this;
         }
 
-        public BlastHitBuilder subjectRange(DirectedRange subjectRange){
+        public HspBuilder subjectRange(DirectedRange subjectRange){
             if(subjectRange ==null){
                 throw new NullPointerException("subjectRange can not be null");
             }
             this.subjectRange = subjectRange;
             return this;
         }
-        public BlastHitBuilder eValue(BigDecimal eValue){
+        public HspBuilder eValue(BigDecimal eValue){
             if(eValue ==null){
                 throw new NullPointerException("e-value can not be null");
             }
@@ -133,21 +143,21 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
             return this;
         }
         
-        public BlastHitBuilder numGapOpenings(int numberOfGapOpenings){
+        public HspBuilder numGapOpenings(int numberOfGapOpenings){
             if(numberOfGapOpenings<0){
                 throw new IllegalArgumentException("number of gap openings can not be negative : " + numberOfGapOpenings);
             }
             this.numGapsOpenings = numberOfGapOpenings;
             return this;
         }
-        public BlastHitBuilder numMismatches(int numberOfMismatches){
+        public HspBuilder numMismatches(int numberOfMismatches){
             if(numberOfMismatches<0){
                 throw new IllegalArgumentException("number of mismatches can not be negative : " + numberOfMismatches);
             }
             this.numMismatches = numberOfMismatches;
             return this;
         }
-        public BlastHitBuilder alignmentLength(int alignmentLength){
+        public HspBuilder alignmentLength(int alignmentLength){
             if(alignmentLength<0){
                 throw new IllegalArgumentException("alignment length can not be negative : " + alignmentLength);
             }
@@ -158,13 +168,14 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
         * {@inheritDoc}
         */
         @Override
-        public BlastHit build() {
+        public Hsp build() {
             verifyAllValuesSet();
             return new BlastHitImpl(queryId, subjectId, 
                     percentIdentity, bitScore, 
                     eValue, 
                     queryRange, subjectRange, 
-                    numGapsOpenings, numMismatches, alignmentLength);
+                    numGapsOpenings, numMismatches, alignmentLength,
+                    queryAlignment, subjectAlignment);
         }
 
         /**
@@ -202,7 +213,7 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
         
     
 
-    private static class BlastHitImpl implements BlastHit{
+    private static class BlastHitImpl implements Hsp{
         
     private final String queryId,subjectId;
     private final double percentIdentity;
@@ -210,11 +221,14 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
     private final DirectedRange queryRange, subjectRange;
     private final int numGapsOpenings,numMismatches;
     private final int alignmentLength;
+    private final NucleotideSequence queryAlignment;
+    private final NucleotideSequence subjectAlignment;
     
     private BlastHitImpl(String queryId, String subjectId,
             double percentIdentity, BigDecimal bitScore, BigDecimal eValue,
             DirectedRange queryRange, DirectedRange subjectRange, int numGapsOpenings,
-            int numMismatches, int alignmentLength) {
+            int numMismatches, int alignmentLength,
+            NucleotideSequence queryAlignment,NucleotideSequence subjectAlignment) {
         this.queryId = queryId;
         this.subjectId = subjectId;
         this.percentIdentity = percentIdentity;
@@ -225,6 +239,8 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
         this.numGapsOpenings = numGapsOpenings;
         this.numMismatches = numMismatches;
         this.alignmentLength = alignmentLength;
+        this.queryAlignment = queryAlignment;
+        this.subjectAlignment = subjectAlignment;
     }
 
 
@@ -232,14 +248,43 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
     * {@inheritDoc}
     */
     @Override
-    public String toString() {
-        return "BlastHit [queryId=" + queryId + ", subjectId=" + subjectId
-                + ", percentIdentity=" + percentIdentity + ", bitScore="
-                + bitScore + ", eValue=" + eValue + ", queryRange="
-                + queryRange + ", subjectRange=" + subjectRange
-                + ", numGapsOpenings=" + numGapsOpenings + ", numMismatches="
-                + numMismatches + ", alignmentLength=" + alignmentLength + "]";
+    public boolean hasAlignments() {
+        return queryAlignment!=null;
     }
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public NucleotideSequence getGappedQueryAlignment() {
+        return queryAlignment;
+    }
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public NucleotideSequence getGappedSubjectAlignment() {
+        return subjectAlignment;
+    }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String toString() {
+            return "BlastHitImpl [queryId=" + queryId + ", subjectId="
+                    + subjectId + ", percentIdentity=" + percentIdentity
+                    + ", eValue=" + eValue + ", bitScore=" + bitScore
+                    + ", queryRange=" + queryRange + ", subjectRange="
+                    + subjectRange + ", numGapsOpenings=" + numGapsOpenings
+                    + ", numMismatches=" + numMismatches + ", alignmentLength="
+                    + alignmentLength + ", queryAlignment=" + queryAlignment
+                    + ", subjectAlignment=" + subjectAlignment + "]";
+        }
 
         /**
         * {@inheritDoc}
@@ -332,21 +377,30 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
             final int prime = 31;
             int result = 1;
             result = prime * result + alignmentLength;
-            long temp;
-            temp =  prime * result + bitScore.hashCode();
-            result = prime * result + (int) (temp ^ (temp >>> 32));
-            result = prime * result + eValue.hashCode();
+            result = prime * result
+                    + ((bitScore == null) ? 0 : bitScore.hashCode());
+            result = prime * result
+                    + ((eValue == null) ? 0 : eValue.hashCode());
             result = prime * result + numGapsOpenings;
             result = prime * result + numMismatches;
+            long temp;
             temp = Double.doubleToLongBits(percentIdentity);
             result = prime * result + (int) (temp ^ (temp >>> 32));
-            result = prime * result + queryId.hashCode();
+            result = prime
+                    * result
+                    + ((queryAlignment == null) ? 0 : queryAlignment.hashCode());
             result = prime * result
-                    + queryRange.hashCode();
+                    + ((queryId == null) ? 0 : queryId.hashCode());
             result = prime * result
-                    + subjectId.hashCode();
+                    + ((queryRange == null) ? 0 : queryRange.hashCode());
+            result = prime
+                    * result
+                    + ((subjectAlignment == null) ? 0 : subjectAlignment
+                            .hashCode());
             result = prime * result
-                    + subjectRange.hashCode();
+                    + ((subjectId == null) ? 0 : subjectId.hashCode());
+            result = prime * result
+                    + ((subjectRange == null) ? 0 : subjectRange.hashCode());
             return result;
         }
         /**
@@ -367,10 +421,18 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
             if (alignmentLength != other.alignmentLength) {
                 return false;
             }
-            if (!bitScore.equals(other.bitScore)) {
+            if (bitScore == null) {
+                if (other.bitScore != null) {
+                    return false;
+                }
+            } else if (!bitScore.equals(other.bitScore)) {
                 return false;
             }
-            if (!eValue.equals(other.eValue)) {
+            if (eValue == null) {
+                if (other.eValue != null) {
+                    return false;
+                }
+            } else if (!eValue.equals(other.eValue)) {
                 return false;
             }
             if (numGapsOpenings != other.numGapsOpenings) {
@@ -383,16 +445,46 @@ public final class BlastHitBuilder implements org.jcvi.common.core.util.Builder<
                     .doubleToLongBits(other.percentIdentity)) {
                 return false;
             }
-            if (!queryId.equals(other.queryId)) {
+            if (queryAlignment == null) {
+                if (other.queryAlignment != null) {
+                    return false;
+                }
+            } else if (!queryAlignment.equals(other.queryAlignment)) {
                 return false;
             }
-            if (!queryRange.equals(other.queryRange)) {
+            if (queryId == null) {
+                if (other.queryId != null) {
+                    return false;
+                }
+            } else if (!queryId.equals(other.queryId)) {
                 return false;
             }
-            if (!subjectId.equals(other.subjectId)) {
+            if (queryRange == null) {
+                if (other.queryRange != null) {
+                    return false;
+                }
+            } else if (!queryRange.equals(other.queryRange)) {
                 return false;
             }
-            if (!subjectRange.equals(other.subjectRange)) {
+            if (subjectAlignment == null) {
+                if (other.subjectAlignment != null) {
+                    return false;
+                }
+            } else if (!subjectAlignment.equals(other.subjectAlignment)) {
+                return false;
+            }
+            if (subjectId == null) {
+                if (other.subjectId != null) {
+                    return false;
+                }
+            } else if (!subjectId.equals(other.subjectId)) {
+                return false;
+            }
+            if (subjectRange == null) {
+                if (other.subjectRange != null) {
+                    return false;
+                }
+            } else if (!subjectRange.equals(other.subjectRange)) {
                 return false;
             }
             return true;

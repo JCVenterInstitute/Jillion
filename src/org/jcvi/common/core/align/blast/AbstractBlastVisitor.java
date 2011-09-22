@@ -19,14 +19,43 @@
 
 package org.jcvi.common.core.align.blast;
 
-import org.jcvi.common.core.io.TextFileVisitor;
-
 /**
  * @author dkatzel
  *
  *
  */
-public interface BlastVisitor extends TextFileVisitor{
+public abstract class AbstractBlastVisitor implements BlastVisitor{
 
-    void visitHsp(Hsp hsp);
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitLine(String line) {
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitFile() {
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitEndOfFile() {
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void visitHsp(Hsp hsp) {
+        
+    }
+
 }

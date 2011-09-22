@@ -23,13 +23,14 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 
 import org.jcvi.common.core.DirectedRange;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface BlastHit {
+public interface Hsp {
     String getQueryId();
     
     String getSubjectId();
@@ -62,11 +63,31 @@ public interface BlastHit {
      */
     
     BigDecimal getBitScore();
+    /**
+     * Does this Hsp contain the actual
+     * alignment information.  If {@code true}
+     * then {@link #getGappedQueryAlignment()}
+     * and {@link #getGappedSubjectAlignment()}
+     * will return non-null objects.
+     * @return {@code true} if this Hsp
+     * does contain alignment information; {@code false}
+     * otherwise.
+     */
+    boolean hasAlignments();
     
-    public enum Comparators implements Comparator<BlastHit>{
+    /**
+     * @return the gappedQueryAlignment
+     */
+    NucleotideSequence getGappedQueryAlignment();
+    /**
+     * @return the gappedSubjectAlignment
+     */
+    NucleotideSequence getGappedSubjectAlignment();
+    
+    public enum Comparators implements Comparator<Hsp>{
         BIT_SCORE{
             @Override
-            public int compare(BlastHit o1, BlastHit o2) {
+            public int compare(Hsp o1, Hsp o2) {
                 int queryCmp = o1.getQueryId().compareTo(o2.getQueryId());
                 if(queryCmp !=0){
                     return queryCmp;

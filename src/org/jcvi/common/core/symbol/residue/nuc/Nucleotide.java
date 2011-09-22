@@ -26,13 +26,13 @@ package org.jcvi.common.core.symbol.residue.nuc;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.common.core.symbol.residue.Residue;
 /**
  * {@code Nucleotide} is a {@link Symbol}
  * implementation for DNA Nucleotides.
@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.Symbol;
  *
  *
  */
-public enum Nucleotide implements Symbol {
+public enum Nucleotide implements Residue {
     //order is in ambiguity traversal order that is most efficient.
     Unknown(Character.valueOf('N')),
     NotThymine(Character.valueOf('V')),

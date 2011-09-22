@@ -41,7 +41,7 @@ import org.jcvi.common.core.Range;
  *
  * @author jsitz@jcvi.org
  */
-public class AlignmentFactory
+public class AlignmentBuilder
 {
     /** The coordinate in the query sequence where the alignment begins. */
     private int queryStart;
@@ -76,7 +76,7 @@ public class AlignmentFactory
     /**
      * Creates a new <code>AlignmentFactory</code>.
      */
-    public AlignmentFactory()
+    public AlignmentBuilder()
     {
         super();
         

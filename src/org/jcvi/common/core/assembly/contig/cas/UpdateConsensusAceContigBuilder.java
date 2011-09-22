@@ -48,7 +48,7 @@ public class UpdateConsensusAceContigBuilder extends DefaultAceContig.Builder{
     public UpdateConsensusAceContigBuilder(String contigId,
             NucleotideSequence fullConsensus) {
         super(contigId, fullConsensus);
-        consensusMap = new HashMap<Long,Map<Nucleotide,Integer>>((int)fullConsensus.getLength());
+        consensusMap = new HashMap<Long,Map<Nucleotide,Integer>>((int)fullConsensus.getLength()+1, 1F);
         
     }
 
