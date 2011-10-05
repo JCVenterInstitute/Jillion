@@ -31,7 +31,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestIlluminaUtil.class
+        TestIlluminaUtil.class,
+        TestCasava18.class
         
     }
     )
