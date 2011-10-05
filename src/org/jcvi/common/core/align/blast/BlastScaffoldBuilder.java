@@ -108,26 +108,4 @@ public class BlastScaffoldBuilder implements BlastVisitor, Builder<Scaffold>{
     public Scaffold build() {
         return scaffoldBuilder.build();
     }
-
-    public static void main(String[] args) throws IOException{
-        File blastFile = new File("/local/netapp_scratch/VIRAL/dkatzel/clustalw2/denovoVsEditedRef.blast.out");
-        Scaffold scaffold = BlastScaffoldBuilder.createFromTabularBlastOutput(blastFile, "hadv_edited_ref");
-    
-        CoverageMap<CoverageRegion<PlacedContig>> contigCoverageMap = scaffold.getContigCoverageMap();
-        List<Range> regionsOfInterest = Arrays.asList( 
-                Range.buildRange(28500,28800),
-                Range.buildRange(29300,29450)
-                );
-        for(Range regionOfInterest : regionsOfInterest){
-            System.out.println("for "+ regionOfInterest);
-            for(CoverageRegion<PlacedContig> region : contigCoverageMap.getRegionsWhichIntersect(regionOfInterest)){
-                System.out.println("\t"+region);
-                for(PlacedContig contig : region){
-                    System.out.println("\t\t"+contig.getContigId());
-                }
-            }
-        }
-        
-    }
-
 }
