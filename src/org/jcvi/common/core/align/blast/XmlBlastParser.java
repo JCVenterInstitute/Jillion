@@ -187,34 +187,4 @@ public final class XmlBlastParser {
             return openings;
         }
     }
-    
-    public static void main(String[] args){
-        File xml = new File("/local/netapp_scratch/VIRAL/dkatzel/clustalw2/denovoVsEditedRef.blast.xml");
-        XmlBlastParser.parse(xml, new BlastVisitor() {
-            
-            @Override
-            public void visitFile() {
-                // TODO Auto-generated method stub
-                
-            }
-            
-            @Override
-            public void visitEndOfFile() {
-                // TODO Auto-generated method stub
-                
-            }
-            
-            @Override
-            public void visitLine(String line) {
-                // TODO Auto-generated method stub
-                
-            }
-            
-            @Override
-            public void visitHsp(Hsp hsp) {
-                System.out.println(hsp);
-                
-            }
-        });
-    }
 }
