@@ -40,12 +40,17 @@ public final class AbiChromatogramFile {
     }
     
     public static AbiChromatogram create(InputStream abiStream) throws TraceDecoderException{
+        return create(abiStream,true);
+    }
+    public static AbiChromatogram create(InputStream abiStream, boolean autoClose) throws TraceDecoderException{
         try{
             AbiChromatogramBuilder builder = new AbiChromatogramBuilder();
             Ab1FileParser.parseAb1File(abiStream, builder);            
             return builder.build();
         }finally{
-            IOUtil.closeAndIgnoreErrors(abiStream);
+            if(autoClose){
+                IOUtil.closeAndIgnoreErrors(abiStream);
+            }
         }
     }
     

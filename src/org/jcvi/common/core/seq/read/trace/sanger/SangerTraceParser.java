@@ -100,7 +100,7 @@ public enum SangerTraceParser implements SangerTraceCodec{
             //try as ab1            
             try{
                 bufferedIn.mark(MARK_LIMIT);
-                return AbiChromatogramFile.create(bufferedIn);           
+                return AbiChromatogramFile.create(bufferedIn,false);           
             }catch(Exception e){
                 bufferedIn.reset();
             }

@@ -28,17 +28,36 @@ import java.util.regex.Pattern;
  *
  *
  */
-public class IlluminaUtil {
+public final class IlluminaUtil {
 
     private static final Pattern NAME_PATTERN = Pattern.compile(
             "^(SOLEXA\\d+).*:(\\d+):(\\d+):(\\d+):(\\d+)#(\\D+)?(\\d+)?\\/(\\d+)$");
-
+    /**
+     * Name pattern for Casava 1.8 which has different format
+     * and space before mate info.
+     */
+    private static final Pattern CASAVA_1_8_PATTERN = Pattern.compile(
+    "^(\\S+):(\\d+):(\\S+):(\\d+):(\\d+)#(\\D+)?(\\d+)?\\/(\\d+)$");
+    
     public static boolean isIlluminaRead(String readId){
         if(readId == null){
             throw new NullPointerException();
         }
         Matcher matcher = NAME_PATTERN.matcher(readId);
-        return matcher.matches();
+        if( matcher.matches()){
+            return true;
+        }
+        
+        return CASAVA_1_8_PATTERN.matcher(readId).matches();
+    }
+    
+    public static String getRunId(String illuminaReadId){
+        Matcher matcher = CASAVA_1_8_PATTERN.matcher(illuminaReadId);
+        if(!matcher.matches()){
+                throw new IllegalArgumentException("is not an illumina read id "+illuminaReadId);
+            
+        }
+        return matcher.group(2);
     }
     /**
      * Gets the unique instrument name from the given read id.
@@ -66,15 +85,31 @@ public class IlluminaUtil {
      * Illumina Read ID.
      * @throws NullPointerException if the given id is null.
      */
-    public static final int getFlowcellLane(String illuminaReadId){
+    public static final String getFlowcellId(String illuminaReadId){
         if(illuminaReadId == null){
             throw new NullPointerException();
         }
         Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
-        if(!matcher.matches()){
-            throw new IllegalArgumentException("is not an illumina read id "+illuminaReadId);
+        if(matcher.matches()){
+            return getLegacyFlowCellId(matcher);
         }
-        return Integer.parseInt(matcher.group(2));
+        Matcher casava18Matcher = CASAVA_1_8_PATTERN.matcher(illuminaReadId);
+        if(casava18Matcher.matches()){
+            return getCasava18FlowCellId(casava18Matcher);
+        }
+        throw new IllegalArgumentException("is not an illumina read id "+illuminaReadId);
+    }
+    
+    /**
+     * @param matcher
+     * @return
+     */
+    private static String getCasava18FlowCellId(Matcher matcher) {
+        return matcher.group(3);
+    }
+
+    private static String getLegacyFlowCellId(Matcher legacyMatcher){
+        return legacyMatcher.group(2);
     }
     
     /**

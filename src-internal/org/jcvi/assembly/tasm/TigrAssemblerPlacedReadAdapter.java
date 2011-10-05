@@ -58,8 +58,11 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 		attributes.put(TigrAssemblerReadAttribute.NAME, getId());
 		
 		//TODO is asm_lend / asm_rend ungapped or gapped?
-		attributes.put(TigrAssemblerReadAttribute.CONTIG_LEFT, ""+(this.getStart()+1));
-		attributes.put(TigrAssemblerReadAttribute.CONTIG_RIGHT, ""+(this.getEnd()+1));
+		//try ungapped?
+		int asm_lend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getStart());
+		int asm_rend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getEnd());
+		attributes.put(TigrAssemblerReadAttribute.CONTIG_LEFT, ""+asm_lend);
+		attributes.put(TigrAssemblerReadAttribute.CONTIG_RIGHT, ""+asm_rend);
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_START_OFFSET, ""+(this.getStart()));
 		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, Nucleotides.asString(this.getNucleotideSequence().asList()));
 		
