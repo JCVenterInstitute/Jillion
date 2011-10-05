@@ -46,17 +46,17 @@ public class TestIlluminaUtil {
     }
     @Test
     public void flowCell(){
-        assertEquals(4, IlluminaUtil.getFlowcellLane(ID));
-        assertEquals(4, IlluminaUtil.getFlowcellLane(NEW_ID));
+        assertEquals("4", IlluminaUtil.getFlowcellId(ID));
+        assertEquals("4", IlluminaUtil.getFlowcellId(NEW_ID));
     }
     
     @Test(expected= NullPointerException.class)
     public void nullIdForFlowCellShouldThrowNPE(){
-        IlluminaUtil.getFlowcellLane(null);
+        IlluminaUtil.getFlowcellId(null);
     }
     @Test(expected= IllegalArgumentException.class)
     public void invalidIdForFlowCellShouldThrowNPE(){
-        IlluminaUtil.getFlowcellLane("not an illumina id");
+        IlluminaUtil.getFlowcellId("not an illumina id");
     }
     @Test
     public void xClusterCoordinate(){

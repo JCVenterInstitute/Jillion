@@ -37,7 +37,9 @@ public interface FastQFileVisitor extends TextFileVisitor{
      * Begin a new FASTQ Record block for the given read.
      * @param id the read id
      * @param optionalComment any optional comments about the read
-     * given on the defline.
+     * given on the defline. Note: if the Fastq records were created using 
+     * Casava 1.8, then the comment will contain the mate information.
+     * If there is no comment, then this parameter is {@code null).
      * @return a {@code true} if this parser should parse the 
      * read data; {@code false} if this parser should skip this
      * read and continue on to the next read.
