@@ -19,6 +19,11 @@
 
 package org.jcvi.common.core.symbol.residue.nuc;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.util.Builder;
 
@@ -34,14 +39,15 @@ import org.jcvi.common.core.util.Builder;
  *
  */
 public final class NucleotideSequenceBuilder implements Builder<NucleotideSequence>{
-
-    private final StringBuilder builder;
+    
+    private byte[] array;
+    private int currentLength=0;
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains no nucleotides.
      */
     public NucleotideSequenceBuilder(){
-        this.builder = new StringBuilder();
+        array = new byte[16];
     }
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -50,7 +56,9 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @throws NullPointerException if sequence is null.
      */
     public NucleotideSequenceBuilder(Iterable<Nucleotide> sequence){
-        this(Nucleotides.asString(sequence));
+        assertNotNull(sequence);
+        this.array = convertToEncodedArray(sequence);
+        this.currentLength =array.length;
     }
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -59,8 +67,20 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @throws NullPointerException if sequence is null.
      */
     public NucleotideSequenceBuilder(String sequence){
-        assertNotNull(sequence);
-        this.builder = new StringBuilder(sequence);
+        this(Nucleotides.parse(sequence));
+        
+    }
+    
+    private byte[] convertToEncodedArray(Iterable<Nucleotide> nucleotides){
+        List<Byte> list = new ArrayList<Byte>();
+        for(Nucleotide n : nucleotides){
+            list.add((byte)n.ordinal());
+        }
+        ByteBuffer buf = ByteBuffer.allocate(list.size());
+        for(Byte b : list){
+            buf.put(b.byteValue());
+        }
+        return buf.array();
     }
     /**
      * Appends the given sequence to the end
@@ -71,7 +91,20 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      */
     public NucleotideSequenceBuilder append(Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
-        return append(Nucleotides.asString(sequence));
+        byte[] newData = convertToEncodedArray(sequence);
+        int newLength = currentLength+newData.length;
+        ensureCapacity(newLength);
+        System.arraycopy(newData, 0, array, currentLength, newData.length);
+        this.currentLength = newLength;
+        return this;
+    }
+    
+    private void ensureCapacity(int newSize){
+        if(array.length <newSize){
+            byte[] increasedArray = new byte[newSize];
+            System.arraycopy(array, 0, increasedArray, 0, array.length);
+            this.array = increasedArray;
+        }
     }
     /**
      * Appends the given sequence to the end
@@ -81,9 +114,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @throws NullPointerException if sequence is null.
      */
     public NucleotideSequenceBuilder append(String sequence){
-        assertNotNull(sequence);
-        builder.append(sequence);
-        return this;
+        return append(Nucleotides.parse(sequence));
     }
     /**
      * Inserts the given sequence to the builder's mutable sequence
@@ -99,16 +130,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @throws IllegalArgumentException if offset is invalid.
      */
     public NucleotideSequenceBuilder insert(int offset, String sequence){
-        assertNotNull(sequence);
-        if(offset<0){
-            throw new IllegalArgumentException("offset can not have negatives coordinates: "+ offset);
-        }
-        if(offset> getLength()){
-            throw new IllegalArgumentException(
-                    String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
-        }   
-        builder.insert(offset, sequence);
-        return this;
+        return insert(offset, Nucleotides.parse(sequence));
     }
     private void assertNotNull(Object sequence) {
         if(sequence ==null){
@@ -122,7 +144,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * of the nucleotide sequence.
      */
     public int getLength(){
-        return builder.length();
+        return currentLength;
     }
     /**
      * Deletes the nucleotides from the given range of this 
@@ -149,8 +171,16 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
             if(start> getLength()){
                 throw new IllegalArgumentException(
                         String.format("range can not start beyond current length (%d) : %d", getLength(),start));
-            }        
-            builder.delete((int)range.getStart(), (int)range.getEnd()+1);
+            }   
+            int end = Math.min(currentLength-1, (int)range.getEnd());
+            int len = end - start+1;
+            if (len > 0) {
+                System.arraycopy(array, start+len, array, start, currentLength -end-1);
+                this.currentLength -=len;
+            }
+            //  System.arraycopy(value, start+len, value, start, count-end);
+            
+           
         }
         return this;
     }
@@ -182,10 +212,26 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @throws NullPointerException if sequence is null.
      */
     public NucleotideSequenceBuilder insert(int offset, Iterable<Nucleotide> sequence){
-       return insert(offset, Nucleotides.asString(sequence));
+        assertNotNull(sequence);
+        if(offset<0){
+            throw new IllegalArgumentException("offset can not have negatives coordinates: "+ offset);
+        }
+        if(offset> getLength()){
+            throw new IllegalArgumentException(
+                    String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
+        }   
+        byte[] newData = convertToEncodedArray(sequence);
+        int newDataLength = currentLength+newData.length;
+        ensureCapacity(newDataLength);       
+        //shift downstream bases
+        System.arraycopy(array, offset, array, offset+newData.length, currentLength -offset);
+        //add new data
+        System.arraycopy(newData, 0, array, offset, newData.length);
+        this.currentLength=newDataLength;
+        return this;
     }
     public NucleotideSequenceBuilder insert(int offset, Nucleotide base){
-        return insert(offset, base.toString());
+        return insert(offset, Collections.singleton(base));
      }
     /**
      * Inserts the given sequence the beginning
@@ -209,12 +255,23 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     */
     @Override
     public NucleotideSequence build() {
-        return NucleotideSequenceFactory.create(builder);
+        return subSequence(Range.buildRangeOfLength(currentLength));
     }
     
+    private List<Nucleotide> convertToNucleotides(Range range){
+        List<Nucleotide> bases = new ArrayList<Nucleotide>((int)range.getLength());
+        int start = (int)range.getStart();
+        int end = (int)range.getEnd();
+        Nucleotide[] values = Nucleotide.values();
+        for(int i=start; i<=end; i++){            
+            bases.add(values[array[i]]);
+        }
+        return bases;
+    }
     
-    public String subString(Range range){
-        return builder.substring((int)range.getStart(), (int)range.getEnd()+1);
+    public NucleotideSequence subSequence(Range range){
+        return NucleotideSequenceFactory.create(convertToNucleotides(range));
+        
     }
 
 }
