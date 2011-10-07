@@ -13,28 +13,16 @@ public class ViterbiPath implements PathDecoder<Nucleotide>{
 	public List<Integer> decodePath(Hmm<Nucleotide> hmm, Sequence<Nucleotide> sequence) {
 		int sequenceLength = (int)sequence.getLength();
 		int numberOfStates = hmm.getNumberOfStates();
-		double[][] probabilityOfMostProbPath = new double[hmm.getNumberOfStates()][sequenceLength];
 		
-		Integer[][] stateOfOptimalPredecessor = new Integer[numberOfStates][sequenceLength];
-		//intialize borders of matrices
-		for(int k=0; k<sequenceLength; k++ ){
-			for(int i=0; i<hmm.getNumberOfStates(); i++){
-				probabilityOfMostProbPath[i][k] = Double.NEGATIVE_INFINITY;
-				stateOfOptimalPredecessor[i][k]=null;
-			}
-		}
+		Matrices matrices = new Matrices(hmm.getNumberOfStates(), sequenceLength);
+		
 		//first col must always start at state 0
 		Nucleotide firstBase = sequence.get(0);
 		for(int i=1; i<hmm.getNumberOfStates();i++ ){
 			HmmState<Nucleotide> state = hmm.getState(i);
-			//remember log(0) = neg infinity
-			double temp1 = hmm.getTransitionProbabilityOf(0,i);
-			double temp2 = state.getProbabilityOf(firstBase);
-			probabilityOfMostProbPath[i][0] = Math.log10(temp1) +
-											Math.log10(temp2);
-			if(probabilityOfMostProbPath[i][0] >Double.NEGATIVE_INFINITY){
-				stateOfOptimalPredecessor[i][0]=0;
-			}
+			double prob = computeInitialProbability(hmm, firstBase, state);			
+			matrices.setInitialProbability(i, prob);
+			
 		}
 		
 		for(int k=1; k<sequenceLength; k++){			
@@ -43,14 +31,14 @@ public class ViterbiPath implements PathDecoder<Nucleotide>{
 				int candidateStateIndex = candidateState.getIndex();
 				for(HmmState<Nucleotide> nextState: hmm.getTransitionStatesFrom(candidateState)){
 					int nextStateIndex = nextState.getIndex();
-					double temp1 = hmm.getTransitionProbabilityOf(candidateStateIndex,nextStateIndex);
-					double temp2 = candidateState.getProbabilityOf(base);
-					double prob = probabilityOfMostProbPath[candidateStateIndex][k-1] +
-									Math.log10(temp1) +
-									Math.log10(temp2);
-					if(prob > probabilityOfMostProbPath[nextStateIndex][k]){
-						probabilityOfMostProbPath[nextStateIndex][k] = prob;
-						stateOfOptimalPredecessor[nextStateIndex][k] = candidateStateIndex;
+					double transitionProb = hmm.getTransitionProbabilityOf(candidateStateIndex,nextStateIndex);
+					double probabilityOfBasecall = candidateState.getProbabilityOf(base);
+					double prob = matrices.getProbabilityOfMostProbablePath(candidateStateIndex, k-1) +
+									Math.log10(transitionProb) +
+									Math.log10(probabilityOfBasecall);
+					if(prob > matrices.getProbabilityOfMostProbablePath(nextStateIndex,k)){
+					    matrices.updateMostProbablePath(k, candidateStateIndex, nextStateIndex, prob);
+						
 					}
 				
 				}
@@ -64,9 +52,9 @@ public class ViterbiPath implements PathDecoder<Nucleotide>{
 		//find optimal penultimate state
 		for(int i=2; i< numberOfStates; i++){
 			double tempI = Math.log10(hmm.getTransitionProbabilityOf(i,0));
-			double probOfI = probabilityOfMostProbPath[i][sequenceLength-1]+tempI;
+			double probOfI = matrices.getProbabilityOfMostProbablePath(i,sequenceLength-1)+tempI;
 			double tempY = Math.log10(hmm.getTransitionProbabilityOf(y,0));
-			double probOfY = probabilityOfMostProbPath[y][sequenceLength-1]+tempY;
+			double probOfY = matrices.getProbabilityOfMostProbablePath(y,sequenceLength-1)+tempY;
 			
 			if(probOfI >  probOfY){
 				y=i;
@@ -75,16 +63,83 @@ public class ViterbiPath implements PathDecoder<Nucleotide>{
 		//traceback
 		for(int k=sequenceLength-1; k>=0; k--){
 			path.add(y);
-			Integer temp = stateOfOptimalPredecessor[y][k];
-			y= temp;
+			y =matrices.getOptimalPredecessorStateOf(y,k);
 		}
 		path.add(0);
-		//convert from stack to list
+		return asList(path);
+	}
+
+    private List<Integer> asList(LIFOQueue<Integer> path) {
+        //convert from stack to list
 		List<Integer> pathList = new ArrayList<Integer>();
 		while(!path.isEmpty()){
 			pathList.add(path.remove());
 		}
-		return pathList;
+        return pathList;
+    }
+
+    private double computeInitialProbability(Hmm<Nucleotide> hmm,
+            Nucleotide base, HmmState<Nucleotide> state) {
+        double temp1 = hmm.getTransitionProbabilityOf(0,state.getIndex());
+        double temp2 = state.getProbabilityOf(base);
+        return Math.log10(temp1) + Math.log10(temp2);
+    }
+	
+	private static class Matrices{
+	    private final double[][] probabilityOfMostProbPath;
+        
+        private final Integer[][] stateOfOptimalPredecessor;
+        
+        public Matrices(int numberOfStates, int sequenceLength){
+            probabilityOfMostProbPath = new double[numberOfStates][sequenceLength];            
+            stateOfOptimalPredecessor = new Integer[numberOfStates][sequenceLength];
+            initialize(numberOfStates, sequenceLength);
+        }
+
+        /**
+         * @param currentState
+         * @param k
+         */
+        public Integer getOptimalPredecessorStateOf(int currentState, int sequenceOffset) {
+            return stateOfOptimalPredecessor[currentState][sequenceOffset];            
+        }
+
+        /**
+         * @param sequenceOffset
+         * @param candidateStateIndex
+         * @param nextStateIndex
+         * @param prob
+         */
+        public void updateMostProbablePath(int sequenceOffset, int candidateStateIndex,
+                int nextStateIndex, double prob) {
+            probabilityOfMostProbPath[nextStateIndex][sequenceOffset] = prob;
+            stateOfOptimalPredecessor[nextStateIndex][sequenceOffset] = candidateStateIndex;            
+        }
+
+        /**
+         * @param i
+         * @param j
+         * @param prob
+         */
+        public void setInitialProbability(int i, double prob) {
+            probabilityOfMostProbPath[i][0] = prob;
+            if(probabilityOfMostProbPath[i][0] >Double.NEGATIVE_INFINITY){
+                stateOfOptimalPredecessor[i][0]=0;
+            }
+            
+        }
+
+        public double getProbabilityOfMostProbablePath(int stateIndex, int sequenceOffset){
+            return probabilityOfMostProbPath[stateIndex][sequenceOffset];
+        }
+        private void initialize(int numberOfStates, int sequenceLength) {
+            for(int k=0; k<sequenceLength; k++ ){
+                for(int i=0; i<numberOfStates; i++){
+                    probabilityOfMostProbPath[i][k] = Double.NEGATIVE_INFINITY;
+                    stateOfOptimalPredecessor[i][k]=null;
+                }
+            }
+        }
 	}
 
 }
