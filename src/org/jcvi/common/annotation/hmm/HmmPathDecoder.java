@@ -1,4 +1,4 @@
-package org.jcvi.common.annotation.predict;
+package org.jcvi.common.annotation.hmm;
 
 import java.util.List;
 
