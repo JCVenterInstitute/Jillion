@@ -6,6 +6,7 @@ import java.util.List;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -13,6 +14,7 @@ import static org.junit.Assert.*;
 public class TestViterbiPath {
 
 	private static Hmm<Nucleotide> HMM;
+	private ViterbiPathDecoder viterbi;
 	
 	@BeforeClass
 	public static void buildHmm(){
@@ -48,22 +50,21 @@ public class TestViterbiPath {
 		
 		HMM = builder.build();		
 	}
-	
+	@Before
+	public void createViterbiObject(){
+		viterbi = new ViterbiPathDecoder(HMM);
+	}
 	@Test
 	public void TAGCTGATCGT(){
 		NucleotideSequence sequence = NucleotideSequenceFactory.create("TAGCTGATCGT");
-		ViterbiPath viterbi = new ViterbiPath();
-		
-		List<Integer> path =viterbi.decodePath(HMM, sequence);
+		List<Integer> path =viterbi.decodePath(sequence);
 		assertEquals(Arrays.asList(0, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 0), path);
 	}
 	
 	@Test
 	public void ATCGTA(){
 		NucleotideSequence sequence = NucleotideSequenceFactory.create("ATCGTA");
-		ViterbiPath viterbi = new ViterbiPath();
-		
-		List<Integer> path =viterbi.decodePath(HMM, sequence);
+		List<Integer> path =viterbi.decodePath(sequence);
 		assertEquals(Arrays.asList(0, 1, 2, 2, 2, 2, 4, 0), path);
 	}
 }
