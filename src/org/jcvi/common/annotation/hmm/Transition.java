@@ -1,4 +1,4 @@
-package org.jcvi.common.annotation.predict;
+package org.jcvi.common.annotation.hmm;
 
 public final class Transition {
 

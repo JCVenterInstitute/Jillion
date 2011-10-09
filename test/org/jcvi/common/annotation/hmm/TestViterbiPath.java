@@ -1,8 +1,11 @@
-package org.jcvi.common.annotation.predict;
+package org.jcvi.common.annotation.hmm;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.jcvi.common.annotation.hmm.Hmm;
+import org.jcvi.common.annotation.hmm.NucleotideHmmBuilder;
+import org.jcvi.common.annotation.hmm.ViterbiPathDecoder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
