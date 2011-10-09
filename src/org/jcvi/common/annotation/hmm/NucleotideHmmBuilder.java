@@ -151,6 +151,14 @@ public class NucleotideHmmBuilder implements Builder<Hmm<Nucleotide>>{
 		public int compareTo(HmmState<Nucleotide> o) {
 			return Integer.valueOf(index).compareTo(o.getIndex());
 		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "NucleotideHmmState [index=" + index + ", "
+					+ probabilities + "]";
+		}
 		
 	}
 	
@@ -261,6 +269,20 @@ public class NucleotideHmmBuilder implements Builder<Hmm<Nucleotide>>{
 			}
 			return probabilies.get(toIndex);
 		}
+
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "NucleotideHmm [states=" + states + "\nemissionMatrix="
+					+ emissionMatrix + "\ntransitionState=" + transitionState
+					+ "\ntransitionProbabilities=" + transitionProbabilities
+					+ "]";
+		}
+		
+		
 		
 	}
 }
