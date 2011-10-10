@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 
-public class Gene {
+public final class Gene {
 
 	private final List<Range> exons;
 	private final List<Range> introns;
@@ -16,6 +16,15 @@ public class Gene {
 		this(name, Arrays.asList(ranges));
 	}
 	public Gene(String name, List<Range> exons){
+	    if(name ==null){
+	        throw new NullPointerException("name can not be null");
+	    }
+	    if(exons ==null){
+            throw new NullPointerException("exons can not be null");
+        }
+	    if(exons.isEmpty()){
+	        throw new IllegalArgumentException("must have at least 1 exon");
+	    }
 		this.name = name;
 		this.exons = new ArrayList<Range>(exons);
 		Collections.sort(this.exons);
