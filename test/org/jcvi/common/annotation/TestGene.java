@@ -5,12 +5,24 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.testUtil.TestUtil;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 public class TestGene {
 	private final String name = "name";
 	private final Gene gene = new Gene(name, Range.buildRange(1,10));
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
+
+	@Test
+	public void nullNameShouldThrowNPE(){
+	    thrown.expect(NullPointerException.class);
+	    thrown.expectMessage("name can not be null");
+	    new Gene(null, Range.buildRange(1,10));
+	}
 	@Test
 	public void oneExon(){		
 		assertEquals(name, gene.getName());

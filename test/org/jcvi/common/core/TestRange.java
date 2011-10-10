@@ -1190,4 +1190,11 @@ public class TestRange{
             );
         assertEquals(expectedList, Range.mergeRangesIntoClusters(inputList, maxClusterDistance));
     }
+    
+    @Test
+    public void copyIsDifferentReferenceButEqual(){
+        Range copy = range.copy();
+        assertNotSame(copy, range);
+        assertEquals(range,copy);
+    }
 }

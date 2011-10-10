@@ -93,6 +93,7 @@ public class TestConsedNavigationWriter {
 		.append(String.format("READ: %s\n",element.getTargetId()))
 		.append(String.format("UNPADDED_READ_POS: %d %d\n",
 				range.getLocalStart(), range.getLocalEnd()))
+		.append("COMMENT: \n")
 		.append("END_REGION\n");
 		assertEquals(expectedOutput.toString(), new String(out.toByteArray()));
 	}
@@ -133,6 +134,7 @@ public class TestConsedNavigationWriter {
 		.append(String.format("CONTIG: %s\n",element.getTargetId()))
 		.append(String.format("UNPADDED_CONS_POS: %d %d\n",
 				range.getLocalStart(), range.getLocalEnd()))
+		.append("COMMENT: \n")
 		.append("END_REGION\n");
 		assertEquals(expectedOutput.toString(), new String(out.toByteArray()));
 	}
@@ -154,12 +156,14 @@ public class TestConsedNavigationWriter {
 		.append(String.format("CONTIG: %s\n",element.getTargetId()))
 		.append(String.format("UNPADDED_CONS_POS: %d %d\n",
 				range.getLocalStart(), range.getLocalEnd()))
+		.append("COMMENT: \n")
 		.append("END_REGION\n")
 		.append("BEGIN_REGION\n")
 		.append(String.format("TYPE: %s\n",Type.READ))
 		.append(String.format("READ: another%s\n",element.getTargetId()))
 		.append(String.format("UNPADDED_READ_POS: %d %d\n",
 				range.getLocalStart()-3, range.getLocalEnd()-3))
+		.append("COMMENT: \n")
 		.append("END_REGION\n");
 		assertEquals(expectedOutput.toString(), new String(out.toByteArray()));
 	}
