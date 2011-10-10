@@ -26,7 +26,9 @@ package org.jcvi.common.core.assembly.contig.ace;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
@@ -196,34 +198,23 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
      *
      *
      */
-    private static class IndexedAceFileDataStoreBuilder extends AbstractAceContigBuilder implements AceContigDataStoreBuilder{
+    private static class IndexedAceFileDataStoreBuilder implements AceContigDataStoreBuilder{
         private IndexedFileRange indexFileRange;
         private final File aceFile;
         private int currentStartOffset;
         private int currentLineLength;
         private int currentFileOffset;
+        private boolean firstContig=true;
+        private String currentContigId;
         
-     
         public IndexedAceFileDataStoreBuilder(File aceFile){
             if(aceFile==null){
                 throw new NullPointerException("ace file cannot be null");
             }           
             this.aceFile = aceFile;
         }
-        
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public synchronized void visitHeader(int numberOfContigs,
-                int totalNumberOfReads) {
-            super.visitHeader(numberOfContigs, totalNumberOfReads);
-            indexFileRange = new DefaultIndexedFileRange(numberOfContigs);
-        }
-
         @Override
         public synchronized void visitLine(String line) {        
-            super.visitLine(line);
             final int length = line.length();
             currentLineLength = length;
             currentFileOffset+=length;
@@ -234,14 +225,15 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         public synchronized void visitContigHeader(String contigId, int numberOfBases,
                 int numberOfReads, int numberOfBaseSegments,
                 boolean reverseComplimented) {
-            super.visitContigHeader(contigId, numberOfBases, numberOfReads,
-                    numberOfBaseSegments, reverseComplimented);
+            if(!firstContig){
+                visitContig();
+            }
+            currentContigId = contigId;
             currentStartOffset=currentFileOffset-currentLineLength;
+            firstContig=false;
         }
-
-        @Override
-        protected synchronized void visitContig(AceContig contig) {
-            indexFileRange.put(contig.getId(), Range.buildRange(currentStartOffset, currentFileOffset));
+        protected synchronized void visitContig() {
+            indexFileRange.put(currentContigId, Range.buildRange(currentStartOffset, currentFileOffset));
             currentStartOffset=currentFileOffset+1;
         }
         /**
@@ -251,6 +243,155 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         public synchronized AceContigDataStore build() {
             return new IndexedAceFileDataStore(aceFile, indexFileRange);
         }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitFile() {
+            
+        }
 
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitEndOfFile() {
+            visitContig();
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitHeader(int numberOfContigs, int totalNumberOfReads) {
+            indexFileRange = new DefaultIndexedFileRange(numberOfContigs);
+            
+        }
+
+     
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitConsensusQualities() {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitAssembledFromLine(String readId, Direction dir,
+                int gappedStartOffset) {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitBaseSegment(Range gappedConsensusRange, String readId) {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitReadHeader(String readId, int gappedLength) {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitQualityLine(int qualLeft, int qualRight,
+                int alignLeft, int alignRight) {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTraceDescriptionLine(String traceName, String phdName,
+                Date date) {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitBasesLine(String bases) {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitReadTag(String id, String type, String creator,
+                long gappedStart, long gappedEnd, Date creationDate,
+                boolean isTransient) {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean visitEndOfContig() {
+            return true;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitBeginConsensusTag(String id, String type,
+                String creator, long gappedStart, long gappedEnd,
+                Date creationDate, boolean isTransient) {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitConsensusTagComment(String comment) {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitConsensusTagData(String data) {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitEndConsensusTag() {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitWholeAssemblyTag(String type, String creator,
+                Date creationDate, String data) {
+            
+        }
+        
     }
+   
+    
 }
