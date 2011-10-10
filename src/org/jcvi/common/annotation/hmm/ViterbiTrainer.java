@@ -112,24 +112,4 @@ public class ViterbiTrainer implements HmmTrainer<Nucleotide>{
 		
 		}
 	}
-
-	private static final class LabeledSequence{
-		private final Sequence<Nucleotide> sequence;
-		private final List<Integer> path;
-		public LabeledSequence(Sequence<Nucleotide> sequence, List<Integer> path) {
-			this.sequence = sequence;
-			this.path = path;
-		}
-
-		public Sequence<Nucleotide> getSequence() {
-			return sequence;
-		}
-
-		public List<Integer> getPath() {
-			return path;
-		}
-		
-		
-	}
-
 }

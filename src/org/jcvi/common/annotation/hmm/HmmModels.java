@@ -1,5 +1,6 @@
 package org.jcvi.common.annotation.hmm;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -205,7 +206,17 @@ public enum HmmModels {
 	public int getNumberOfStates() {
 		return numberOfStates;
 	}
-	public final int[] labelSequence(Sequence<Nucleotide> sequence, List<Gene> genes){
+	public final LabeledSequence computeLabeledSequence(Sequence<Nucleotide> sequence, List<Gene> genes){
+	    int[] labels = labelSequence(sequence, genes);
+	    List<Integer> path = new ArrayList<Integer>(labels.length+2);
+	    path.add(Integer.valueOf(0)); //initial state
+	    for(int i=0; i< labels.length; i++){
+	        path.add(labels[i]);
+	    }
+	    path.add(Integer.valueOf(0)); //final state
+	    return new LabeledSequence(sequence, path);
+	}
+	final int[] labelSequence(Sequence<Nucleotide> sequence, List<Gene> genes){
 		List<Nucleotide> sequenceAsList = sequence.asList();
 		int[] labels = new int[sequenceAsList.size()];
 		//initialize to intergenic state
