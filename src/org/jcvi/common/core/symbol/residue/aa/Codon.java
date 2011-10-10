@@ -358,14 +358,14 @@ public class Codon
         }
         return CODON_MAP.get(basecalls.asList(Range.buildRangeOfLength(offset, 3)));
     }
-    public static Codon getCodonByOffset(List<Nucleotide> triplet, int offset){
+    public static Codon getCodonByOffset(List<Nucleotide> bases, int offset){
         if(offset<0){
             throw new IllegalArgumentException("offset must be >=0 "+ offset);
         }
-        if(triplet.size()<offset+3){
-            throw new IllegalArgumentException("must have at least 3 nucleotides after given offset "+ (triplet.size()-(offset+3)));
+        if(bases.size()<offset+3){
+            throw new IllegalArgumentException("must have at least 3 nucleotides after given offset "+ (bases.size()-(offset+3)));
         }
-        return CODON_MAP.get(triplet.subList(offset, offset+3));
+        return CODON_MAP.get(bases.subList(offset, offset+3));
     }
     /**
      * Creates a new <code>Codon</code>.
@@ -405,7 +405,19 @@ public class Codon
         Codon other = (Codon) obj;
         return Arrays.equals(codonGlyphs, other.codonGlyphs);
     }
-    /* (non-Javadoc)
+    
+    
+    /**
+	 * @return the codonGlyphs
+	 */
+	public List<Nucleotide> getNucleotides() {
+		List<Nucleotide> triplet = new ArrayList(3);
+		for(int i=0; i< 3; i++){
+			triplet.add(codonGlyphs[i]);
+		}
+		return triplet;
+	}
+	/* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
