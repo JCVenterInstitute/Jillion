@@ -1149,6 +1149,17 @@ public final class Range implements Placed<Range>,Iterable<Long>
     public Range asRange() {
         return this;
     }
+    /**
+     * Creates a new Range object
+     * with the same values.  The returned
+     * object will have a different reference
+     * but will be equal to this Range.
+     * @return a new Range instance with the same
+     * values as this range.
+     */
+    public Range copy(){
+        return new Range(getLocalStart(), getLocalEnd(), getCoordinateSystem());
+    }
     
     private static class RangeIterator implements Iterator<Long>{
         private final long from;

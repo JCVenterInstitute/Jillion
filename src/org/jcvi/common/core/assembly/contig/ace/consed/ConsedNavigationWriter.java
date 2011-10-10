@@ -67,9 +67,9 @@ public class ConsedNavigationWriter implements Closeable{
         builder.append(String.format("READ: %s\n",element.getTargetId()));
         Range range = element.getUngappedPositionRange().convertRange(CoordinateSystem.RESIDUE_BASED);
         builder.append(String.format("UNPADDED_READ_POS: %d %d\n",range.getLocalStart(), range.getLocalEnd()));
-        if(element.getComment() !=null){
-            builder.append(String.format("COMMENT: %s\n",element.getComment()));
-        }
+        String comment = element.getComment();
+        //consed requires a comment line even if it is empty
+        builder.append(String.format("COMMENT: %s\n",comment==null? "": comment));
         builder.append("END_REGION\n");
         out.write(builder.toString().getBytes());
     }
@@ -81,9 +81,10 @@ public class ConsedNavigationWriter implements Closeable{
         builder.append(String.format("CONTIG: %s\n",element.getTargetId()));
         Range range = element.getUngappedPositionRange().convertRange(CoordinateSystem.RESIDUE_BASED);
         builder.append(String.format("UNPADDED_CONS_POS: %d %d\n",range.getLocalStart(), range.getLocalEnd()));
-        if(element.getComment() !=null){
-            builder.append(String.format("COMMENT: %s\n",element.getComment()));
-        }
+        String comment = element.getComment();
+        //consed requires a comment line even if it is empty
+        builder.append(String.format("COMMENT: %s\n",comment==null? "": comment));
+       
         builder.append("END_REGION\n");
         
         out.write(builder.toString().getBytes());
