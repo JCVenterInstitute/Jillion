@@ -10,7 +10,14 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.aa.Codon;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-
+/**
+ * {@code HmmModels} contain HMM models
+ * with differing numbers of states.  The higher the number
+ * of states, the better (hopefully) gene prediction results
+ * can be obtained.
+ * @author dkatzel
+ *
+ */
 public enum HmmModels {
 	/**
 	 * 4 state model for gene finding.
@@ -21,10 +28,7 @@ public enum HmmModels {
 	 * <li> intron</li>
 	 * </ol>
 	 */
-	H3(4){		
-		
-		
-			
+	H3{	
 		@Override
 		protected int[] visitOnlyExon(List<Nucleotide> exonBases){
 			return visitExon(exonBases);
@@ -57,8 +61,12 @@ public enum HmmModels {
 	 * 6 state Model where each phase of the exon gets
 	 * its own state.
 	 */
-	H5(6){
-		private int exonPhase=0;
+	H5{
+		/**
+		 * Counts the number of bases seen
+		 * in exons so far.  Used to compute the phase.
+		 */
+		private int numberOfBasesInExonSoFar=0;
 
 		protected int[] visitOnlyExon(List<Nucleotide> exonBases){
 			return visitExon(exonBases);
@@ -78,8 +86,8 @@ public enum HmmModels {
 		private int[] visitExon(List<Nucleotide> exonBases) {
 			int[] array = new int[exonBases.size()];
 			for(int i=0; i<exonBases.size(); i++){
-				array[i] = 2 + exonPhase%3;
-				exonPhase++;
+				array[i] = 2 + numberOfBasesInExonSoFar%3;
+				numberOfBasesInExonSoFar++;
 			}
 			return array;
 		}
@@ -93,8 +101,19 @@ public enum HmmModels {
 		
 		
 	},
-	H27(28){
-		private int exonPhase=0;
+	/**
+	 * A 28 state model that contains 3 separate intron submodels to 
+	 * label introns in different frames differently.  Each
+	 * intron model also has unique states to label
+	 * donor and acceptor sites.
+	 */
+	H27{
+		/**
+		 * Counts the number of bases seen
+		 * in exons so far.  Used to compute the phase.
+		 */
+		private int numberOfBasesInExonSoFar=0;
+		
 		@Override
 		protected int[] visitOnlyExon(List<Nucleotide> exonBases) {
 			int[] array = new int[exonBases.size()];
@@ -133,8 +152,8 @@ public enum HmmModels {
 		protected  int[] visitMiddleExon(List<Nucleotide> exonBases) {
 			int[] array = new int[exonBases.size()];
 			for(int i=0; i<exonBases.size(); i++){
-				array[i] = 5 + exonPhase%3;
-				exonPhase++;
+				array[i] = 5 + numberOfBasesInExonSoFar%3;
+				numberOfBasesInExonSoFar++;
 			}			
 			return array;
 		}
@@ -142,8 +161,8 @@ public enum HmmModels {
 		protected int[] visitFinalExon(List<Nucleotide> exonBases) {
 			int[] array = new int[exonBases.size()];
 			for(int i=0; i<exonBases.size()-3; i++){
-				array[i] = 5 + exonPhase%3;
-				exonPhase++;
+				array[i] = 5 + numberOfBasesInExonSoFar%3;
+				numberOfBasesInExonSoFar++;
 			}
 			labelStopCodon(exonBases, array);
 			return array;
@@ -155,10 +174,10 @@ public enum HmmModels {
 			for(int i=0; i<exonBases.size() && i<3; i++){
 				array[i] = i+2;
 			}
-			exonPhase=0;
+			numberOfBasesInExonSoFar=0;
 			for(int i=3; i<exonBases.size(); i++){
-				array[i] = 5 + exonPhase%3;
-				exonPhase++;
+				array[i] = 5 + numberOfBasesInExonSoFar%3;
+				numberOfBasesInExonSoFar++;
 			}
 			return array;
 		}
@@ -170,11 +189,11 @@ public enum HmmModels {
 			//use exonPhase -1 so that when we get back
 			//into an exon we are in the correct phase.
 			final int phaseShift;
-			if(exonPhase ==0){
+			if(numberOfBasesInExonSoFar ==0){
 				//special case to avoid negative shifts
 				phaseShift=10;
 			}else{
-				phaseShift= 5*((exonPhase-1)%3);
+				phaseShift= 5*((numberOfBasesInExonSoFar-1)%3);
 			}
 			Arrays.fill(array, 15+phaseShift);
 			//first bases are GT
@@ -198,14 +217,67 @@ public enum HmmModels {
 		}
 	}
 	;
-	private final int numberOfStates;
-	HmmModels(int numberOfStates){
-		this.numberOfStates = numberOfStates;
-	}
-
-	public int getNumberOfStates() {
-		return numberOfStates;
-	}
+	/**
+	 * This gene only contain 1 exons (and therefore, no introns).
+	 * This exon should start with a start codon and end with a stop codon. 
+	 * @param exonBases the bases of this exon
+	 * @return an int array of the state labels traversed. The ith
+	 * index in the array should correspond to the ith index
+	 * in the List of exonBases.  Will never be null.
+	 */
+	protected abstract int[] visitOnlyExon(List<Nucleotide> exonBases);
+	/**
+	 * Visit the first exon of a gene that will contain multiple exons.
+	 * This exon should start with a start codon but will not end 
+	 * with a stop codon. 
+	 * @param exonBases the bases of this exon
+	 * @return an int array of the state labels traversed. The ith
+	 * index in the array should correspond to the ith index
+	 * in the List of exonBases.  Will never be null.
+	 */
+	protected abstract int[] visitInitialExon(List<Nucleotide> exonBases);	
+	/**
+	 * Visit the an internal exon of a gene that contains multiple exons.
+	 * This exon should neither start with a start codon nor end 
+	 * with a stop codon. 
+	 * @param exonBases the bases of this exon
+	 * @return an int array of the state labels traversed. The ith
+	 * index in the array should correspond to the ith index
+	 * in the List of exonBases.  Will never be null.
+	 */
+	protected abstract  int[] visitMiddleExon(List<Nucleotide> exonBases);
+	/**
+	 * Visit the last exon of a gene that contains multiple exons.
+	 * This exon will not start with a start codon but will end 
+	 * with a stop codon. 
+	 * @param exonBases the bases of this exon
+	 * @return an int array of the state labels traversed. The ith
+	 * index in the array should correspond to the ith index
+	 * in the List of exonBases.  Will never be null.
+	 */
+	protected abstract int[] visitFinalExon(List<Nucleotide> exonBases);
+	/**
+	 * Visit an intron.
+	 * This intron should start with a start donor site (GT) and end 
+	 * with an acceptor site (AG).
+	 * @param intronBases the bases of this intron
+	 * @return an int array of the state labels traversed. The ith
+	 * index in the array should correspond to the ith index
+	 * in the List of intronBases.  Will never be null.
+	 */
+	protected abstract  int[] visitIntron(List<Nucleotide> intronBases);
+	
+	/**
+	 * Compute the {@link LabeledSequence} including initial and final states q0
+	 * for the given Sequence and corresponding genes.
+	 * @param sequence the nucleotide sequence to use.
+	 * @param genes the corresponding {@link Gene} which contains
+	 * intron and exon coordinates mapped to the sequence.
+	 * @return a new LabeledSequence instance containing
+	 * the path starting at the
+	 * initial state 0, traversing through the HmmModel 
+	 * and ending in the terminal state 0.
+	 */
 	public final LabeledSequence computeLabeledSequence(Sequence<Nucleotide> sequence, List<Gene> genes){
 	    int[] labels = labelSequence(sequence, genes);
 	    List<Integer> path = new ArrayList<Integer>(labels.length+2);
@@ -216,6 +288,14 @@ public enum HmmModels {
 	    path.add(Integer.valueOf(0)); //final state
 	    return new LabeledSequence(sequence, path);
 	}
+	
+	/**
+	 * Same as {@link #computeLabeledSequence(Sequence, List)} but return only the path
+	 * through the model as an int array and do not include the initial and terminal states.
+	 * @param sequence
+	 * @param genes
+	 * @return
+	 */
 	final int[] labelSequence(Sequence<Nucleotide> sequence, List<Gene> genes){
 		List<Nucleotide> sequenceAsList = sequence.asList();
 		int[] labels = new int[sequenceAsList.size()];
@@ -233,47 +313,53 @@ public enum HmmModels {
 			if(exons.size() ==1){
 				//only 1 exon need to include both start and stop codons
 				Range exon = exons.get(0);
-				int[] exonStates = visitOnlyExon(sequence.asList(exon));
-				System.arraycopy(exonStates, 0, labels, (int)exon.getStart(), exonStates.length);
+				labels = handleSingleExon(sequence, labels, exon);
 			}else{
-				Range exon = exons.get(0);
-				int[] exonStates = visitInitialExon(sequence.asList(exon));
-				System.arraycopy(exonStates, 0, labels, (int)exon.getStart(), exonStates.length);
-				if(introns.hasNext()){
-					Range intron = introns.next();
-					int[] intronStates = visitIntron(sequence.asList(intron));
-					System.arraycopy(intronStates, 0, labels, (int)intron.getStart(), intronStates.length);
-				}
+				Range initialExon = exons.get(0);
+				labels = handleInitialExon(sequence, labels, initialExon);
+				labels =handleIntron(sequence, labels, introns.next());
+				
 				for(int i=1; i< exons.size()-1; i++){
-					exon = exons.get(i);
-					int[] middleExonStates = visitMiddleExon(sequence.asList(exon));
-					System.arraycopy(middleExonStates, 0, labels, (int)exon.getStart(), middleExonStates.length);
-					if(introns.hasNext()){
-						Range intron = introns.next();
-						int[] intronStates = visitIntron(sequence.asList(intron));
-						System.arraycopy(intronStates, 0, labels, (int)intron.getStart(), intronStates.length);
-					}
+					Range middleExon = exons.get(i);
+					labels =handleMiddleExon(sequence, labels, middleExon);
+					handleIntron(sequence, labels, introns.next());
 				}
 				Range finalExon = exons.get(exons.size()-1);
-				int[] finalExonStates = visitFinalExon(sequence.asList(finalExon));
-				System.arraycopy(finalExonStates, 0, labels, (int)finalExon.getStart(), finalExonStates.length);
-				
+				labels =handleFinalExon(sequence, labels, finalExon);				
 			}
 					
 		}
 		return labels;
 	}
 
-	
+	private int[] handleFinalExon(Sequence<Nucleotide> sequence, int[] labels, Range finalExon) {
+		int[] finalExonStates = visitFinalExon(sequence.asList(finalExon));
+		System.arraycopy(finalExonStates, 0, labels, (int)finalExon.getStart(), finalExonStates.length);
+		return labels;
+	}
 
-	protected abstract int[] visitFinalExon(List<Nucleotide> exonBases);
+	private int[] handleMiddleExon(Sequence<Nucleotide> sequence, int[] labels, Range middleExon) {
+		int[] middleExonStates = visitMiddleExon(sequence.asList(middleExon));
+		System.arraycopy(middleExonStates, 0, labels, (int)middleExon.getStart(), middleExonStates.length);
+		return labels;
+	}
 
-	protected abstract  int[] visitMiddleExon(List<Nucleotide> exonBases);
+	private int[] handleInitialExon(Sequence<Nucleotide> sequence, int[] labels, Range initialExon) {
+		int[] exonStates = visitInitialExon(sequence.asList(initialExon));
+		System.arraycopy(exonStates, 0, labels, (int)initialExon.getStart(), exonStates.length);
+		return labels;
+	}
 
-	protected abstract  int[] visitIntron(List<Nucleotide> exonBases);
+	private int[] handleIntron(Sequence<Nucleotide> sequence, int[] labels,	Range intron) {
+		int[] intronStates = visitIntron(sequence.asList(intron));
+		System.arraycopy(intronStates, 0, labels, (int)intron.getStart(), intronStates.length);
+		return labels;
+	}
 
-	protected abstract int[] visitInitialExon(List<Nucleotide> exonBases);
-	protected abstract int[] visitOnlyExon(List<Nucleotide> exonBases);
-	
-
+	private int[] handleSingleExon(Sequence<Nucleotide> sequence, int[] labels,
+			Range exon) {
+		int[] exonStates = visitOnlyExon(sequence.asList(exon));
+		System.arraycopy(exonStates, 0, labels, (int)exon.getStart(), exonStates.length);
+		return labels;
+	}
 }
