@@ -12,6 +12,7 @@ import java.util.TreeSet;
 
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.Builder;
+import org.jcvi.common.core.util.JoinedStringBuilder;
 
 public class NucleotideHmmBuilder implements Builder<Hmm<Nucleotide>>{
 
@@ -156,7 +157,7 @@ public class NucleotideHmmBuilder implements Builder<Hmm<Nucleotide>>{
 		 */
 		@Override
 		public String toString() {
-			return "NucleotideHmmState [index=" + index + ", "
+			return "[state index=" + index + ", "
 					+ probabilities + "]";
 		}
 		
@@ -276,9 +277,12 @@ public class NucleotideHmmBuilder implements Builder<Hmm<Nucleotide>>{
 		 */
 		@Override
 		public String toString() {
-			return "NucleotideHmm [states=" + states + "\nemissionMatrix="
-					+ emissionMatrix + "\ntransitionState=" + transitionState
-					+ "\ntransitionProbabilities=" + transitionProbabilities
+			
+			return "NucleotideHmm [states=" + new JoinedStringBuilder(states).glue("\n").build()
+			+ "\nemissionMatrix="
+					+ new JoinedStringBuilder(emissionMatrix.entrySet()).glue("\n").build()
+					+ "\ntransitionState=" + new JoinedStringBuilder(transitionState.entrySet()).glue("\n").build()
+					+ "\ntransitionProbabilities=" + new JoinedStringBuilder(transitionProbabilities.entrySet()).glue("\n").build()
 					+ "]";
 		}
 		
