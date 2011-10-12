@@ -116,7 +116,7 @@ public class GridFindAbacusErrorsInAce {
         GridJobExecutorService executor=null;
         try{
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
-            String projectCode = commandLine.getOptionValue("project_code");
+            String projectCode = commandLine.getOptionValue("P");
             boolean wantsNav = commandLine.hasOption("nav");
             File navFile=null;
             if(wantsNav){
