@@ -21,11 +21,13 @@ package org.jcvi.assembly.ace;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
@@ -84,12 +86,9 @@ public class GridFindAbacusErrorsInAce {
                 .longName("ace")
                 .isRequired(true)
                 .build());
-        options.addOption(new CommandLineOptionBuilder("o", "path to output file (if not used output printed to STDOUT)")
-        .longName("out")
-        .isRequired(true)
-        .build());
         
         options.addOption(new CommandLineOptionBuilder("nav", "path to optional consed navigation file to see abacus errors easier in consed")
+        .isRequired(true)
         .build());
         
         options.addOption(CommandLineUtils.createHelpOption());
@@ -127,6 +126,7 @@ public class GridFindAbacusErrorsInAce {
                     throw new IOException("error creating file; already exists and cannot delete"+ navFile.getAbsolutePath());
                 }
             }
+           
             executor = new GridJobExecutorService(session,"abacusErrorDetector", 100);
             List<SimpleGridJob> jobs = new ArrayList<SimpleGridJob>();
             File aceFile = new File(commandLine.getOptionValue("a"));
@@ -174,6 +174,22 @@ public class GridFindAbacusErrorsInAce {
             }
            }
             executor.shutdown();
+            
+            PrintWriter navWriter= new PrintWriter(navFile);
+           
+            for(File partialNav : files){
+                Scanner scanner = new Scanner(partialNav);
+                while(scanner.hasNextLine()){
+                    String line = scanner.nextLine();
+                    navWriter.println(line);
+                }
+                scanner.close();                    
+            }
+            navWriter.close();
+            for(File partialNav : files){
+                IOUtil.deleteIgnoreError(partialNav);
+            }
+            
            
         } catch (ParseException e) {
             e.printStackTrace();
