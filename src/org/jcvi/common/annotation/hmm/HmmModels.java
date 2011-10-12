@@ -278,7 +278,8 @@ public enum HmmModels {
 	 * initial state 0, traversing through the HmmModel 
 	 * and ending in the terminal state 0.
 	 */
-	public final LabeledSequence computeLabeledSequence(Sequence<Nucleotide> sequence, List<Gene> genes){
+	public final LabeledSequence computeLabeledSequence(
+								Sequence<Nucleotide> sequence, List<Gene> genes){
 	    int[] labels = labelSequence(sequence, genes);
 	    List<Integer> path = new ArrayList<Integer>(labels.length+2);
 	    path.add(Integer.valueOf(0)); //initial state

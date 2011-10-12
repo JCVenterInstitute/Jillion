@@ -50,7 +50,8 @@ public class ViterbiTrainer implements HmmTrainer<Nucleotide>{
 			
 			while(baseIterator.hasNext()){
 				Nucleotide base = baseIterator.next();
-				int currentState = pathIterator.next();				
+				int currentState = pathIterator.next();	
+				//update counts of transitions and emissions
 				transitionCounts[previousState][currentState]++;				
 				emissionCounts[currentState][getIndexFor(base)]++;
 				previousState = currentState;
@@ -67,10 +68,10 @@ public class ViterbiTrainer implements HmmTrainer<Nucleotide>{
 			if(totalEmissionCountsForState ==0){
 				//we didn't use this state this time... use previous model?
 				HmmState<Nucleotide> previousModelState = previousModel.getState(i);
-				hmmBuilder.addProbability(i, Nucleotide.Adenine, previousModelState.getProbabilityOf(Nucleotide.Adenine));
-				hmmBuilder.addProbability(i, Nucleotide.Cytosine,previousModelState.getProbabilityOf(Nucleotide.Cytosine));
-				hmmBuilder.addProbability(i, Nucleotide.Guanine, previousModelState.getProbabilityOf(Nucleotide.Guanine));
-				hmmBuilder.addProbability(i, Nucleotide.Thymine, previousModelState.getProbabilityOf(Nucleotide.Thymine));
+				hmmBuilder.addProbability(i, Nucleotide.Adenine, previousModelState.getProbabilityOfEmitting(Nucleotide.Adenine));
+				hmmBuilder.addProbability(i, Nucleotide.Cytosine,previousModelState.getProbabilityOfEmitting(Nucleotide.Cytosine));
+				hmmBuilder.addProbability(i, Nucleotide.Guanine, previousModelState.getProbabilityOfEmitting(Nucleotide.Guanine));
+				hmmBuilder.addProbability(i, Nucleotide.Thymine, previousModelState.getProbabilityOfEmitting(Nucleotide.Thymine));
 		
 			}else{
 				hmmBuilder.addProbability(i, Nucleotide.Adenine, computeProbability( emissionCounts[i][0], totalEmissionCountsForState));

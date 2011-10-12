@@ -25,11 +25,29 @@ public class ViterbiPathDecoder implements HmmPathDecoder<Nucleotide>{
 		return new Matrices(sequence)
 					.computePathViaTraceback();
 	}
-	
+	/**
+	 * Private inner class that keeps track of our 
+	 * probability matrix and optimal predecessor matrix.
+	 * @author dkatzel
+	 *
+	 */
 	private class Matrices{
+		/**
+		 * matrix of path probabilities of the most
+		 * probable path from the starting state 0
+		 * until the current state i which will
+		 * emit our current basecall k.
+		 */
 	    private final double[][] probabilityOfMostProbPath;
-        
+        /**
+         * Keeps track of our optimal predecessor state
+         * which will be used for the traceback
+         * at the end of this algorithm.
+         */
         private final Integer[][] stateOfOptimalPredecessor;
+        /**
+         * our sequence to traverse.
+         */
         private final Sequence<Nucleotide> sequence;
         
         public Matrices(Sequence<Nucleotide> sequence){
@@ -86,7 +104,7 @@ public class ViterbiPathDecoder implements HmmPathDecoder<Nucleotide>{
         private double computeInitialProbability(Hmm<Nucleotide> hmm,
                 Nucleotide firstBase, HmmState<Nucleotide> state) {
             double temp1 = hmm.getTransitionProbabilityOf(0,state.getIndex());
-            double temp2 = state.getProbabilityOf(firstBase);
+            double temp2 = state.getProbabilityOfEmitting(firstBase);
             return Math.log10(temp1) + Math.log10(temp2);
         }
         
@@ -144,7 +162,7 @@ public class ViterbiPathDecoder implements HmmPathDecoder<Nucleotide>{
     				for(HmmState<Nucleotide> nextState: hmm.getTransitionStatesFrom(candidateState)){
     					int nextStateIndex = nextState.getIndex();
     					double transitionProb = hmm.getTransitionProbabilityOf(candidateStateIndex,nextStateIndex);
-    					double probabilityOfBasecall = candidateState.getProbabilityOf(base);
+    					double probabilityOfBasecall = candidateState.getProbabilityOfEmitting(base);
     					
     					double prob = getProbabilityOfNextState(candidateStateIndex, k, transitionProb, probabilityOfBasecall);
     					//if prob is the max probability we've

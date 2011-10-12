@@ -94,7 +94,7 @@ public class NucleotideHmmBuilder implements Builder<Hmm<Nucleotide>>{
 
 
 		@Override
-		public double getProbabilityOf(Nucleotide base) {
+		public double getProbabilityOfEmitting(Nucleotide base) {
 			if(base ==null){
 				throw new NullPointerException("base can not be null");
 			}
