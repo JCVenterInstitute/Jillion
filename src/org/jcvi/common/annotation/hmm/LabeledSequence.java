@@ -25,13 +25,16 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
+ * {@code LabeledSequence} an object
+ * that keeps track of a Sequence and its
+ * path through an arbitrary HMM model.
  * @author dkatzel
- *
- *
  */
 public final class LabeledSequence{
     private final Sequence<Nucleotide> sequence;
     private final List<Integer> path;
+    
+    
     public LabeledSequence(Sequence<Nucleotide> sequence, List<Integer> path) {
         this.sequence = sequence;
         this.path = path;
