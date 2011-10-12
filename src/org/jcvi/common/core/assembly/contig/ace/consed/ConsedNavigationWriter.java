@@ -38,6 +38,25 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 public class ConsedNavigationWriter implements Closeable{
 
     private final OutputStream out;
+    
+    
+    public static ConsedNavigationWriter create(String title, OutputStream out) throws IOException{
+        if(title ==null){
+            throw new NullPointerException("title can not be null");
+        }
+        return new ConsedNavigationWriter(title, out);
+    }
+    /**
+     * Create a partial consed navigiation file without a title.
+     * This should only be used if the navigation file creation is being split up 
+     * into multiple pieces to be combined downstream.
+     * @param out
+     * @return
+     * @throws IOException
+     */
+    public static ConsedNavigationWriter createPartial(OutputStream out) throws IOException{
+        return new ConsedNavigationWriter(null, out);
+    }
     /**
      * Creates a new ConsedNavigationWriter which will
      * write out navigation data to the given {@link OutputStream}.
@@ -48,10 +67,13 @@ public class ConsedNavigationWriter implements Closeable{
      * @throws NullPointerException if title or outputStream are {@code null}.
      */
     public ConsedNavigationWriter(String title, OutputStream out) throws IOException{
-        if(title ==null){
-            throw new NullPointerException("title can not be null");
+        if(out ==null){
+            throw new NullPointerException("output stream can not be null");
         }
-        out.write(String.format("TITLE: %s\n",title).getBytes());
+        if(title!=null){
+            out.write(String.format("TITLE: %s\n",title).getBytes());
+        }
+        
         this.out= out;
         
     }
