@@ -43,7 +43,6 @@ import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
 import org.jcvi.common.core.assembly.contig.ace.AceContigDataStore;
-import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedNavigationWriter;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsensusNavigationElement;
@@ -68,24 +67,92 @@ import org.jcvi.common.io.idReader.StringIdParser;
  *
  *
  */
-public class FindAbacusErrors {
+public class AbacusErrorFinder {
     private final int clusterDistance;
-    
-    public FindAbacusErrors(int clusterDistance){
+    private final int minAbacusLength;
+    public AbacusErrorFinder(int clusterDistance, int minAbacusLength){
         this.clusterDistance = clusterDistance;
+        this.minAbacusLength = minAbacusLength;
     }
-    
+    private <P extends PlacedRead, C extends Contig<P>> List<Range> filterCandidates(C contig,
+            List<Range> ungappedCandidateRanges) {
+        CoverageMap<CoverageRegion<P>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
+        NucleotideSequence consensus = contig.getConsensus();
+        List<Range> errorRanges = new ArrayList<Range>(ungappedCandidateRanges.size());
+        for(Range ungappedCandidateRange : ungappedCandidateRanges){           
+            int gappedStart = consensus.getGappedOffsetFor((int)ungappedCandidateRange.getStart())+1;
+            int gappedEnd = consensus.getGappedOffsetFor((int)ungappedCandidateRange.getEnd()+1) -1;
+            Range gappedCandidateRange = Range.buildRange(gappedStart, gappedEnd);
+            Set<String> readIds = new HashSet<String>();
+            for(CoverageRegion<P> region : coverageMap.getRegionsWhichIntersect(gappedCandidateRange)){
+                for(P read : region){
+                    readIds.add(read.getId());
+                }
+            }
+            boolean isAbacusError=true;
+            for(String readId : readIds){
+                P read =contig.getPlacedReadById(readId);              
+                long adjustedStart = Math.max(gappedCandidateRange.getStart(), read.getStart());
+                long adjustedEnd = Math.min(gappedCandidateRange.getEnd(), read.getEnd());
+                boolean spansEntireRegion = (adjustedStart == gappedCandidateRange.getStart()) && (adjustedEnd == gappedCandidateRange.getEnd());
+                if(spansEntireRegion){
+                    Range rangeOfInterest = Range.buildRange(
+                            read.toGappedValidRangeOffset(adjustedStart),
+                            read.toGappedValidRangeOffset(adjustedEnd));
+                   double numGaps=0;
+                    for(Nucleotide n :read.getNucleotideSequence().asList(rangeOfInterest)){
+                        if(n.isGap()){
+                            numGaps++;
+                        }
+                    }
+                    double percentGaps = numGaps/rangeOfInterest.getLength();
+                    if(percentGaps <.5D){
+                        isAbacusError=false;
+                        break;
+                    }
+                    
+                }
+            }
+            if(isAbacusError){
+                errorRanges.add(ungappedCandidateRange);
+            }
+            
+        }
+        return errorRanges;
+    }
+
+    private List<Range> convertToUngappedRanges(List<Range> abacusErrors,
+            NucleotideSequence consensus) {
+        List<Range> ungappedRanges = new ArrayList<Range>(abacusErrors.size());
+        for(Range error : abacusErrors){
+            if(error.getLength() >=5){
+                int ungappedStart =consensus.getUngappedOffsetFor((int)error.getStart());
+                int ungappedEnd =consensus.getUngappedOffsetFor((int)error.getEnd());
+                
+                ungappedRanges.add(Range.buildRange(ungappedStart, ungappedEnd)); 
+            }
+        }
+
+        List<Range> candidateRanges = Range.mergeRanges(ungappedRanges);
+        return candidateRanges;
+    }
     public <P extends PlacedRead, C extends Contig<P>> List<Range>  findAbacusErrors(C contig){
+        List<Range> ungappedCandidateRanges = getUngappedCandidateRanges(contig);
+        return filterCandidates(contig, ungappedCandidateRanges) ;
+        
+    }
+    private <P extends PlacedRead, C extends Contig<P>> List<Range> getUngappedCandidateRanges(C contig) {
+        
         List<Range> gapRangesPerRead = new ArrayList<Range>(contig.getNumberOfReads());
-        for(P placedRead : contig.getPlacedReads()){
+        for(P placedRead : contig.getPlacedReads()){           
             List<Range> gaps = new ArrayList<Range>(placedRead.getNucleotideSequence().getNumberOfGaps());
             for(Integer gapOffset : placedRead.getNucleotideSequence().getGapOffsets()){
                 Range buildRange = Range.buildRange(gapOffset.intValue() + placedRead.getStart());
                 gaps.add(buildRange);
             }
             List<Range> mergeRanges = Range.mergeRanges(gaps);
-            for(Range mergedRange: mergeRanges ){
-                if(mergedRange.getLength() >=3){
+            for(Range mergedRange: mergeRanges ){               
+                if(mergedRange.getLength() >=minAbacusLength){
                     gapRangesPerRead.add(mergedRange);
                 }
             }
@@ -94,14 +161,15 @@ public class FindAbacusErrors {
         CoverageMap<CoverageRegion<Range>> clusteredGapCoverage = DefaultCoverageMap.buildCoverageMap(gapRangesPerRead);
     
         List<Range> abacusErrors = new ArrayList<Range>();
-        for(CoverageRegion<Range> gapRegion : clusteredGapCoverage){
+       
+        for(CoverageRegion<Range> gapRegion : clusteredGapCoverage){          
             if(gapRegion.getCoverage() >0){
                 abacusErrors.add(gapRegion.asRange());
             }            
         }
         
-        return Range.mergeRanges(abacusErrors,clusterDistance) ;
-        
+        List<Range> ungappedCandidateRanges = convertToUngappedRanges(Range.mergeRanges(abacusErrors,clusterDistance), contig.getConsensus());
+        return ungappedCandidateRanges;
     }
     
     /**
@@ -151,7 +219,7 @@ public class FindAbacusErrors {
             }else{
                 consedNavWriter =null;
             }
-            final FindAbacusErrors abacusErrorFinder = new FindAbacusErrors(5);
+            final AbacusErrorFinder abacusErrorFinder = new AbacusErrorFinder(5,3);
             try{
                 AceContigDataStore datastore = IndexedAceFileDataStore.create(aceFile);
                 Iterator<String> contigIds = datastore.getIds();
@@ -211,15 +279,12 @@ public class FindAbacusErrors {
         return filter;
     }
 
-    private static void findErrorsIn(FindAbacusErrors abacusErrorFinder,
+    private static void findErrorsIn(AbacusErrorFinder abacusErrorFinder,
             AceContig contig, PrintWriter out,ConsedNavigationWriter consedNavigationWriter) throws IOException {
         String contigId=contig.getId();
         out.println(contig.getId());
-        NucleotideSequence consensus = contig.getConsensus();
-        List<Range> candidateRanges = getCandidateRanges(abacusErrorFinder.findAbacusErrors(contig), consensus);
-        out.println("found " + candidateRanges.size() + " candidate abacus errors");
-        List<Range> errorRanges = filterCandidates(contig, consensus, candidateRanges);
-        
+        List<Range> errorRanges = abacusErrorFinder.findAbacusErrors(contig);
+       
         out.println("found "+ errorRanges.size() + " abacus errors");
         for(Range errorRange : errorRanges){
             Range residueBasedRange = errorRange.convertRange(CoordinateSystem.RESIDUE_BASED);
@@ -229,69 +294,6 @@ public class FindAbacusErrors {
             out.printf("abacus error range : %s%n", residueBasedRange);
             
         }
-    }
-
-    private static List<Range> filterCandidates(AceContig contig,
-            NucleotideSequence consensus, List<Range> candidateRanges) {
-        CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
-        
-        List<Range> errorRanges = new ArrayList<Range>(candidateRanges.size());
-        for(Range ungappedCandidateRange : candidateRanges){
-            int gappedStart = consensus.getGappedOffsetFor((int)ungappedCandidateRange.getStart())+1;
-            int gappedEnd = consensus.getGappedOffsetFor((int)ungappedCandidateRange.getEnd()+1) -1;
-            Range gappedCandidateRange = Range.buildRange(gappedStart, gappedEnd);
-            Set<String> readIds = new HashSet<String>();
-            for(CoverageRegion<AcePlacedRead> region : coverageMap.getRegionsWhichIntersect(gappedCandidateRange)){
-                for(AcePlacedRead read : region){
-                    readIds.add(read.getId());
-                }
-            }
-            boolean isAbacusError=true;
-            for(String readId : readIds){
-                AcePlacedRead read =contig.getPlacedReadById(readId);              
-                long adjustedStart = Math.max(gappedCandidateRange.getStart(), read.getStart());
-                long adjustedEnd = Math.min(gappedCandidateRange.getEnd(), read.getEnd());
-                boolean spansEntireRegion = (adjustedStart == gappedCandidateRange.getStart()) && (adjustedEnd == gappedCandidateRange.getEnd());
-                if(spansEntireRegion){
-                    Range rangeOfInterest = Range.buildRange(
-                            read.toGappedValidRangeOffset(adjustedStart),
-                            read.toGappedValidRangeOffset(adjustedEnd));
-                   double numGaps=0;
-                    for(Nucleotide n :read.getNucleotideSequence().asList(rangeOfInterest)){
-                        if(n.isGap()){
-                            numGaps++;
-                        }
-                    }
-                    double percentGaps = numGaps/rangeOfInterest.getLength();
-                    if(percentGaps <.5D){
-                        isAbacusError=false;
-                        break;
-                    }
-                    
-                }
-            }
-            if(isAbacusError){
-                errorRanges.add(ungappedCandidateRange);
-            }
-            
-        }
-        return errorRanges;
-    }
-
-    private static List<Range> getCandidateRanges(List<Range> abacusErrors,
-            NucleotideSequence consensus) {
-        List<Range> ungappedRanges = new ArrayList<Range>(abacusErrors.size());
-        for(Range error : abacusErrors){
-            if(error.getLength() >=5){
-                int ungappedStart =consensus.getUngappedOffsetFor((int)error.getStart());
-                int ungappedEnd =consensus.getUngappedOffsetFor((int)error.getEnd());
-                
-                ungappedRanges.add(Range.buildRange(ungappedStart, ungappedEnd)); 
-            }
-        }
-
-        List<Range> candidateRanges = Range.mergeRanges(ungappedRanges);
-        return candidateRanges;
     }
     
     private static void printHelp(Options options) {

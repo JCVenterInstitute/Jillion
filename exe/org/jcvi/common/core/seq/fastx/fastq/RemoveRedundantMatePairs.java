@@ -90,7 +90,8 @@ public class RemoveRedundantMatePairs {
             File mate1 = new File(commandLine.getOptionValue("mate1"));
             File mate2 = new File(commandLine.getOptionValue("mate2"));
             
-            Range comparisonRange=Range.buildRangeOfLength(Integer.parseInt(commandLine.getOptionValue("n")));
+            int comparisonRangeLength = Integer.parseInt(commandLine.getOptionValue("n"));
+            Range comparisonRange=Range.buildRangeOfLength(comparisonRangeLength);
             
             LargeFastQFileIterator mate1Iterator = LargeFastQFileIterator.createNewIteratorFor(mate1, qualityCodec);
             LargeFastQFileIterator mate2Iterator = LargeFastQFileIterator.createNewIteratorFor(mate2, qualityCodec);
@@ -104,29 +105,33 @@ public class RemoveRedundantMatePairs {
             FileOutputStream out1 = new FileOutputStream(nonRedundantMate1);
             FileOutputStream out2 = new FileOutputStream(nonRedundantMate2);
             long recordsSeen=0;
-            Set<NucleotideSequence> nonRedundantList = new HashSet<NucleotideSequence>(expectedSize,1F);
+            Set<NucleotideSequence> nonRedundantSet = new HashSet<NucleotideSequence>(expectedSize+1,1F);
             while(mate1Iterator.hasNext()){
                 FastQRecord forward = mate1Iterator.next();
                 FastQRecord reverse = mate2Iterator.next();
-                List<Nucleotide> combinedList = new ArrayList<Nucleotide>(60);
+                List<Nucleotide> combinedList = new ArrayList<Nucleotide>(comparisonRangeLength*2);
                 combinedList.addAll(forward.getSequence().asList(comparisonRange));
                 combinedList.addAll(reverse.getSequence().asList(comparisonRange));
                 NucleotideSequence seq =NucleotideSequenceFactory.createACGTN(combinedList);
-                if(!nonRedundantList.contains(seq)){
+                if(!nonRedundantSet.contains(seq)){
                     out1.write(FastQUtil.encode(forward, qualityCodec).getBytes());
                     out2.write(FastQUtil.encode(reverse, qualityCodec).getBytes());
-                    nonRedundantList.add(seq);
+                    nonRedundantSet.add(seq);
                 }
                 recordsSeen++;
                 if(recordsSeen%100000==0){
                     System.out.println("mates seen = "+recordsSeen);
                 }
             }
+            if(mate2Iterator.hasNext()){
+                //different number of reads in mate files
+                throw new MismatchedMateFiles(recordsSeen);
+            }
             System.out.println("final number of mates seen ="+ recordsSeen);
-            System.out.println("num mates written ="+ nonRedundantList.size());
+            System.out.println("num mates written ="+ nonRedundantSet.size());
             out1.close();
             out2.close();
-            nonRedundantList.clear();
+            nonRedundantSet.clear();
         } catch (ParseException e) {
             printHelp(options);
             System.exit(1);
@@ -142,5 +147,14 @@ public class RemoveRedundantMatePairs {
                 options,
                "Created by Danny Katzel"
                   );
+    }
+    
+    private static class MismatchedMateFiles extends RuntimeException{
+
+        private static final long serialVersionUID = -4501169214579449464L;
+
+        public MismatchedMateFiles(long recordsSeen){
+            super(String.format("input mate files have different number of records, both should have %d", recordsSeen));
+        }
     }
 }
