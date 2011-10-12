@@ -20,7 +20,9 @@
 package org.jcvi.assembly.ace;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,13 +55,13 @@ import org.jcvi.common.command.grid.SimpleGridJob;
 import org.jcvi.common.command.grid.GridJob.MemoryUnit;
 import org.jcvi.common.core.assembly.contig.ace.AceContigDataStore;
 import org.jcvi.common.core.assembly.contig.ace.IndexedAceFileDataStore;
+import org.jcvi.common.core.assembly.contig.ace.consed.ConsedNavigationWriter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.internal.command.grid.JcviQueue;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
 import org.jcvi.common.io.idReader.IdReaderException;
@@ -142,7 +144,8 @@ public class GridFindAbacusErrorsInAce {
                     findAbacusErrorWorker.setOption("-ace", aceFile.getAbsolutePath());
                     findAbacusErrorWorker.setOption("-c", contigId);
                     if(wantsNav){
-                        File temp = File.createTempFile(aceFile.getName(), "ctg."+contigId+".nav");
+                        File temp = new File(navFile.getParentFile(),navFile.getName()+".ctg."+contigId);
+                        
                         findAbacusErrorWorker.setOption("-nav", temp.getAbsolutePath());
                         files.add(temp);
                     }
@@ -162,10 +165,11 @@ public class GridFindAbacusErrorsInAce {
                         }
                     });
                     job.setMemory(16, MemoryUnit.GB);
+                    job.setWorkingDirectory(navFile.getParentFile());
                     jobs.add(job.build());
                 }             
             }
-       
+           
            for(Future<?> future : executor.invokeAll(jobs)){
                try {
                 future.get();
@@ -174,13 +178,15 @@ public class GridFindAbacusErrorsInAce {
             }
            }
             executor.shutdown();
-            
-            PrintWriter navWriter= new PrintWriter(navFile);
-           
+            OutputStream out = new FileOutputStream(navFile);
+            PrintWriter navWriter= new PrintWriter(out);
+            ConsedNavigationWriter.create("Abacus errors for " + aceFile.getName(), out);
             for(File partialNav : files){
+                System.out.println("reading "+ partialNav.getName());
                 Scanner scanner = new Scanner(partialNav);
                 while(scanner.hasNextLine()){
                     String line = scanner.nextLine();
+                    System.out.println(line);
                     navWriter.println(line);
                 }
                 scanner.close();                    

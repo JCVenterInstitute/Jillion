@@ -92,8 +92,8 @@ public class DetectAbacusErrorsContigWorker {
             if(commandLine.hasOption("nav")){
                 //append to nav file since the parent grid util
                 //is handling managing the files
-                consedNavWriter = new ConsedNavigationWriter("Abacus errors for " + aceFile.getName(), 
-                        new FileOutputStream(commandLine.getOptionValue("nav"),true));
+                consedNavWriter = ConsedNavigationWriter.createPartial( 
+                        new FileOutputStream(commandLine.getOptionValue("nav")));
             }else{
                 consedNavWriter =null;
             }
