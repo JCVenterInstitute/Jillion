@@ -143,8 +143,20 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @return the current length
      * of the nucleotide sequence.
      */
-    public int getLength(){
+    public long getLength(){
         return currentLength;
+    }
+    
+    public NucleotideSequenceBuilder replace(int offset, Nucleotide replacement){
+        if(offset <0 || offset > array.length){
+            throw new IllegalArgumentException(
+                    String.format("offset %d out of range (length = %d)",array.length,offset));
+        }
+        if(replacement ==null){
+            throw new NullPointerException("replacement base can not be null");
+        }
+        array[offset]= (byte)replacement.ordinal();
+        return this;
     }
     /**
      * Deletes the nucleotides from the given range of this 
@@ -255,10 +267,20 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     */
     @Override
     public NucleotideSequence build() {
-        return subSequence(Range.buildRangeOfLength(currentLength));
+        return NucleotideSequenceFactory.create(asList());
     }
-    
-    private List<Nucleotide> convertToNucleotides(Range range){
+    /**
+     * Create a new NucleotideSequence instance
+     * from containing only current mutable nucleotides
+     * in the given range.
+     * @param range the range of nucleotides to build (gapped).
+     * @return a new NucleotideSequence never null
+     * but may be empty.
+     */
+    public NucleotideSequence build(Range range) {
+        return NucleotideSequenceFactory.create(asList(range));
+    }
+    public List<Nucleotide> asList(Range range){
         List<Nucleotide> bases = new ArrayList<Nucleotide>((int)range.getLength());
         int start = (int)range.getStart();
         int end = (int)range.getEnd();
@@ -268,10 +290,19 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         }
         return bases;
     }
-    
-    public NucleotideSequence subSequence(Range range){
-        return NucleotideSequenceFactory.create(convertToNucleotides(range));
-        
+    public List<Nucleotide> asList(){
+        return asList(Range.buildRangeOfLength(currentLength));
     }
+    
+    /**
+     * Get the current Nucleotides as a String
+     * this will return the same string 
+     * as Nucleotides.asString(this.asList()))
+     */
+    @Override
+    public String toString(){
+        return Nucleotides.asString(asList());
+    }
+
 
 }

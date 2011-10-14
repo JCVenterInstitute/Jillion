@@ -19,10 +19,8 @@
 
 package org.jcvi.common.core.assembly.contig.cas;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -32,6 +30,7 @@ import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig.Builder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 /**
  * @author dkatzel
@@ -52,16 +51,20 @@ public class UpdateConsensusAceContigBuilder extends DefaultAceContig.Builder{
         
     }
 
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    protected List<Nucleotide> updateConsensus(
-            List<Nucleotide> originalFullConsensus) {
-        List<Nucleotide> updatedConsensus = new ArrayList<Nucleotide>(originalFullConsensus.size());
-        for(int i=0; i<originalFullConsensus.size(); i++ )   {
+    protected void finalizeContig() {
+        updateConsensus();
+    }
+
+    protected void updateConsensus() {
+        NucleotideSequenceBuilder consensusBuilder = getConsensusBuilder();
+        for(int i=0; i<consensusBuilder.getLength(); i++ )   {
             final Map<Nucleotide, Integer> histogramMap = consensusMap.get(Long.valueOf(i));
-            updatedConsensus.add(findMostOccuringBase(histogramMap));
+            consensusBuilder.replace(i,findMostOccuringBase(histogramMap));
         }
-        
-        return updatedConsensus;
     }
 
     @Override

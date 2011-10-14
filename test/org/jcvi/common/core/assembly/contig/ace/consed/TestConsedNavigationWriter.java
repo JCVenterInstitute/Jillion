@@ -42,10 +42,7 @@ public class TestConsedNavigationWriter {
 		sut = new ConsedNavigationWriter(title, out);
 	}
 	
-	@Test(expected = NullPointerException.class)
-	public void nullTitleShouldThrowNPE() throws IOException{
-		new ConsedNavigationWriter(null, out);
-	}
+	
 	@Test(expected = NullPointerException.class)
 	public void nullOutputStreamShouldThrowNPE() throws IOException{
 		new ConsedNavigationWriter(title, null);

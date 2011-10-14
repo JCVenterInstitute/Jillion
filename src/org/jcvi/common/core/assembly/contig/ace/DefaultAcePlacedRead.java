@@ -23,6 +23,8 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.Direction;
@@ -33,6 +35,7 @@ import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
@@ -208,7 +211,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
 
     public static class Builder{
         private String readId;
-        private NucleotideSequence referencedEncodedBases;
+        private NucleotideSequenceBuilder basesBuilder;
         private int offset;
         private Range clearRange;
         private PhdInfo phdInfo;
@@ -225,14 +228,14 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             this.offset = offset;
             this.phdInfo = phdInfo;
             
-            this.referencedEncodedBases = NucleotideSequenceFactory.create(validBases);
+            this.basesBuilder = new NucleotideSequenceBuilder(validBases);
             if(offset + validBases.length() > reference.getLength()){
                 throw new IllegalArgumentException("read goes beyond the reference");
             }
             if(offset <0){
                 throw new IllegalArgumentException("read goes before the reference");
             }
-            
+            this.reference = reference;
             this.ungappedFullLength = ungappedFullLength;
         }
         
@@ -242,25 +245,105 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             this.offset = newOffset;
             return this;
         }
-        public int offset(){
+        public int getStartOffset(){
             return offset;
         }
-        public String id(){
+        public String getId(){
             return readId;
         }
-        public Builder setOffset(int newOffset){
+        public Builder setStartOffset(int newOffset){
             this.offset = newOffset;
             return this;
         }
         
+        /**
+         * @return the clearRange
+         */
+        public Range getClearRange() {
+            return clearRange;
+        }
+
+
+        /**
+         * @return the phdInfo
+         */
+        public PhdInfo getPhdInfo() {
+            return phdInfo;
+        }
+
+
+        /**
+         * @return the dir
+         */
+        public Direction getDirection() {
+            return dir;
+        }
+
+        
+
+        /**
+         * @return the ungappedFullLength
+         */
+        public int getUngappedFullLength() {
+            return ungappedFullLength;
+        }
+
+
         public DefaultAcePlacedRead build(){
             ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = NucleotideSequenceFactory.createReferenceEncoded(
                         reference,
-                        Nucleotides.asString(referencedEncodedBases.asList()),offset);
+                        basesBuilder.toString(),offset);
             Read read = new DefaultRead(readId, updatedEncodedBasecalls);
             return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength,clearRange);
         }
         
+        public Builder reAbacus(Range gappedValidRangeToChange, List<Nucleotide> newBasecalls){
+            List<Nucleotide> oldUngappedBasecalls = Nucleotides.ungap(basesBuilder.asList(gappedValidRangeToChange));
+            List<Nucleotide> newUngappedBasecalls = new ArrayList<Nucleotide>(newBasecalls.size());
+            //make sure we aren't adding/editing any basecalls
+            //only gaps should be affected
+            for(Nucleotide newBase : newBasecalls){
+                if(!newBase.isGap()){
+                    newUngappedBasecalls.add(newBase);
+                }
+            }
+            if(!oldUngappedBasecalls.equals(newUngappedBasecalls)){
+                throw new IllegalReAbacus(oldUngappedBasecalls,newUngappedBasecalls);
+            }
+            basesBuilder.delete(gappedValidRangeToChange);
+            basesBuilder.insert((int)gappedValidRangeToChange.getStart(), newBasecalls);
+            return this;
+        }
+
+        public long getLength(){
+            return basesBuilder.getLength();
+        }
+        public long getEnd(){
+            return offset + getLength()-1;
+        }
+        
+        public Range asRange(){
+            return Range.buildRange(offset,getEnd());
+        }
+        /**
+         * @return the basesBuilder
+         */
+        public NucleotideSequenceBuilder getBasesBuilder() {
+            return basesBuilder;
+        }
+        
+        
     }
 
+    protected static final class IllegalReAbacus extends IllegalArgumentException{
+
+        private static final long serialVersionUID = -8272559886165301526L;
+
+        public IllegalReAbacus(List<Nucleotide> oldUngappedBasecalls, List<Nucleotide> newUngappedBasecalls){
+            super(String.format("reAbacusing must retain same ungapped basecalls! '%s' vs '%s'", 
+                    Nucleotides.asString(oldUngappedBasecalls),
+                    Nucleotides.asString(newUngappedBasecalls)
+                    ));
+        }
+    }
 }
