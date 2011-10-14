@@ -201,9 +201,9 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
     private static class IndexedAceFileDataStoreBuilder implements AceContigDataStoreBuilder{
         private IndexedFileRange indexFileRange;
         private final File aceFile;
-        private int currentStartOffset;
+        private long currentStartOffset;
         private int currentLineLength;
-        private int currentFileOffset;
+        private long currentFileOffset;
         private boolean firstContig=true;
         private String currentContigId;
         
