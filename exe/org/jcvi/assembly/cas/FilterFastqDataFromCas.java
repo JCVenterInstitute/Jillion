@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -117,7 +118,7 @@ public class FilterFastqDataFromCas {
             for(Entry<Integer, List<ReadRange>> entry : fastqReadMap.entrySet()){
                 List<ReadRange> readRanges = entry.getValue();
                 CoverageMap<CoverageRegion<ReadRange>> coverageMap = DefaultCoverageMap.buildCoverageMap(readRanges);
-                Set<String> neededReads = new HashSet<String>(readRanges.size());
+                Set<String> neededReads = new TreeSet<String>();
                 //first pass find all reads that are needed to meet min coverage levels
                 for(CoverageRegion<ReadRange> region : coverageMap){
                     int coverageDepth = region.getCoverage();
