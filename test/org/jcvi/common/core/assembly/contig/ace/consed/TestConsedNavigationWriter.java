@@ -39,22 +39,28 @@ public class TestConsedNavigationWriter {
 	@Before
 	public void setup() throws IOException{
 		out = new ByteArrayOutputStream();
-		sut = new ConsedNavigationWriter(title, out);
+		sut = ConsedNavigationWriter.create(title, out);
 	}
 	
 	
 	@Test(expected = NullPointerException.class)
 	public void nullOutputStreamShouldThrowNPE() throws IOException{
-		new ConsedNavigationWriter(title, null);
+		ConsedNavigationWriter.create(title, null);
 	}
 	@Test
-	public void noElementsToWriteShouldOnlyWriteTitle() throws IOException{
-		
+	public void noElementsToWriteShouldOnlyWriteTitle() throws IOException{		
 		sut.close();
 		String expectedOutput = "TITLE: "+title+"\n";
 		assertEquals(expectedOutput, new String(out.toByteArray()));
 	}
-	
+	@Test
+    public void partialWriterShouldNotWriteTitle() throws IOException{   
+	    ByteArrayOutputStream partialOut=new ByteArrayOutputStream();
+	    ConsedNavigationWriter partialWriter = ConsedNavigationWriter.createPartial(partialOut);
+	    partialWriter.close();
+        String expectedOutput = "";
+        assertEquals(expectedOutput, new String(partialOut.toByteArray()));
+    }
 	@Test
 	public void oneReadElement() throws IOException{
 		String readId = "readId";

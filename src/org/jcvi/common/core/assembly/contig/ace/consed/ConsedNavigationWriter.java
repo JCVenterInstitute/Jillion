@@ -66,7 +66,7 @@ public class ConsedNavigationWriter implements Closeable{
      * to the outputStream.
      * @throws NullPointerException if title or outputStream are {@code null}.
      */
-    public ConsedNavigationWriter(String title, OutputStream out) throws IOException{
+    private ConsedNavigationWriter(String title, OutputStream out) throws IOException{
         if(out ==null){
             throw new NullPointerException("output stream can not be null");
         }
