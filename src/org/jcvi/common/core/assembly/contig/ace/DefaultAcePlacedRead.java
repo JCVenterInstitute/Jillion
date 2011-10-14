@@ -256,6 +256,12 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             return this;
         }
         
+        public Builder shiftRight(int numberOfBases){
+            return setStartOffset(offset+numberOfBases);
+        }
+        public Builder shiftLeft(int numberOfBases){
+            return setStartOffset(offset-numberOfBases);
+        }
         /**
          * @return the clearRange
          */
@@ -296,7 +302,9 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             Read read = new DefaultRead(readId, updatedEncodedBasecalls);
             return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength,clearRange);
         }
-        
+        public Builder reAbacus(Range gappedValidRangeToChange, String newBasecalls){
+            return reAbacus(gappedValidRangeToChange, Nucleotides.parse(newBasecalls));
+        }
         public Builder reAbacus(Range gappedValidRangeToChange, List<Nucleotide> newBasecalls){
             List<Nucleotide> oldUngappedBasecalls = Nucleotides.ungap(basesBuilder.asList(gappedValidRangeToChange));
             List<Nucleotide> newUngappedBasecalls = new ArrayList<Nucleotide>(newBasecalls.size());
