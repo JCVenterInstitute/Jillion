@@ -19,29 +19,19 @@
 
 package org.jcvi.common.core.assembly.contig.ace.consed;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.common.core.io.TextFileVisitor;
 
 /**
  * @author dkatzel
  *
  *
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestConsedUtil.class,
-        TestConsedUtil_Split0x.class,
-        TestConsedUtilGetLatestAce.class,
-        TestConsensusNavigationElement.class,
-        TestConsensusNavigationElementFactoryMethod.class,
-        TestReadNavigationElement.class,
-        TestConsedUtilGetNextAceVersion.class,
-        TestConsedNavigationWriter.class,
-        TestConsedNavigationParser.class
-    }
-    )
-public class AllConsedUnitTests {
+public interface ConsedNavigationVisitor extends TextFileVisitor{
 
+    void visitTitle(String title);    
+   
+    void visitElement(ReadNavigationElement readElement);
+    
+    
+    void visitElement(ConsensusNavigationElement consensusElement);
 }
