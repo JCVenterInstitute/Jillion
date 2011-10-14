@@ -73,7 +73,7 @@ import org.jcvi.common.io.idReader.StringIdParser;
  *
  */
 public class GridFindAbacusErrorsInAce {
-
+    private static final int DEFAULT_MAX_JOBS = 300;
     private static final File ABACUS_WORKER_EXE = new File("/usr/local/devel/DAS/software/Elvira/bin/workers/detectAbacusErrorsInAce");
     /**
      * @param args
@@ -89,7 +89,7 @@ public class GridFindAbacusErrorsInAce {
                 .isRequired(true)
                 .build());
         
-        options.addOption(new CommandLineOptionBuilder("nav", "path to optional consed navigation file to see abacus errors easier in consed")
+        options.addOption(new CommandLineOptionBuilder("nav", "path to consed navigation file to see abacus errors easier in consed (required)")
         .isRequired(true)
         .build());
         
@@ -105,7 +105,11 @@ public class GridFindAbacusErrorsInAce {
         options.addOption(new CommandLineOptionBuilder("P", "grid project code (required)")
         .isRequired(true)
         .build());
-        
+        options.addOption(new CommandLineOptionBuilder("max_submitted_jobs", "max number of jobs that are SUBMITTED to the grid " +
+        		"at any time.  If there are more jobs than this number to submit, then this program will queue them internally " +
+        		"and wait for the currently submitted jobs to finish.  NOTE: it is still up to the grid engine to schedule the jobs that have" +
+        		"been submitted.  If this option isn't set, then the default value is used : " + DEFAULT_MAX_JOBS)
+        .build());
         
         if(CommandLineUtils.helpRequested(args)){
             printHelp(options);
@@ -128,8 +132,10 @@ public class GridFindAbacusErrorsInAce {
                     throw new IOException("error creating file; already exists and cannot delete"+ navFile.getAbsolutePath());
                 }
             }
-           
-            executor = new GridJobExecutorService(session,"abacusErrorDetector", 100);
+            int maxJobs = commandLine.hasOption("max_submitted_jobs")?
+                    Integer.parseInt(commandLine.getOptionValue("max_submitted_jobs"))
+                    : DEFAULT_MAX_JOBS;
+            executor = new GridJobExecutorService(session,"abacusErrorDetector", maxJobs);
             List<SimpleGridJob> jobs = new ArrayList<SimpleGridJob>();
             File aceFile = new File(commandLine.getOptionValue("a"));
             final DataStoreFilter filter = getDataStoreFilter(commandLine);
