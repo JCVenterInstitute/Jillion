@@ -49,6 +49,7 @@ import org.junit.runners.Suite.SuiteClasses;
        TestHiLowAceContigPhdDatastore.class,
        TestAceContigTrimmer.class,
        TestDefaultAcePlacedReadReAbacus.class,
+       TestDefaultAceContigBuilderReAbacus.class,
        
        AllConsedUnitTests.class
     }

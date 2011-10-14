@@ -107,6 +107,9 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             return this;
         }
     	
+        public DefaultAcePlacedRead.Builder getAcePlacedReadBuilder(String readId){
+            return aceReadBuilderMap.get(readId);
+        }
         public Builder addRead(String readId, String validBases, int offset,
                 Direction dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
             //contig left (and right) might be beyond consensus depending on how
