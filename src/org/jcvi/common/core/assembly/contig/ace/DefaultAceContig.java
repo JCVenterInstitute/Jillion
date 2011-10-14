@@ -23,9 +23,11 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jcvi.common.core.Direction;
@@ -35,6 +37,7 @@ import org.jcvi.common.core.assembly.contig.AbstractContig;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
@@ -49,10 +52,10 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
 
     public static class Builder{
         private NucleotideSequence fullConsensus;
+        private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
         private CoordinateSystem adjustedContigIdCoordinateSystem=null;
-        
-        private List<DefaultAcePlacedRead.Builder> aceReadBuilders = new ArrayList<DefaultAcePlacedRead.Builder>();
+        private final Map<String, DefaultAcePlacedRead.Builder>aceReadBuilderMap = new HashMap<String, DefaultAcePlacedRead.Builder>();
         private int contigLeft= -1;
         private int contigRight = -1;
         
@@ -69,6 +72,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         public Builder(String contigId, NucleotideSequence fullConsensus){
         	this.fullConsensus = fullConsensus;
         	 this.contigId = contigId;
+        	 this.mutableConsensus = new NucleotideSequenceBuilder(fullConsensus);
         }
         
         public Builder adjustContigIdToReflectCoordinates(CoordinateSystem coordinateSystem){
@@ -83,7 +87,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             return contigId;
         }
         public int numberOfReads(){
-            return aceReadBuilders.size();
+            return aceReadBuilderMap.size();
         }
         
         public Builder addRead(AcePlacedRead acePlacedRead) {
@@ -115,7 +119,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
                         clearRange,phdInfo,ungappedFullLength);
                 
                 
-                aceReadBuilders.add(aceReadBuilder);
+                aceReadBuilderMap.put(readId,aceReadBuilder);
             
             return this;
         }
@@ -132,7 +136,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             adjustContigRight(validBases, offset);
         }
         private void adjustContigRight(String validBases, int offset) {
-            final int endOfNewRead = offset+ validBases.length();
+            final int endOfNewRead = offset+ validBases.length()-1;
             if(endOfNewRead <= fullConsensus.getLength() && (contigRight ==-1 || endOfNewRead > contigRight)){
                 contigRight = endOfNewRead ;
             }
@@ -143,29 +147,36 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
                 contigLeft = offset;
             }
         }
+        
+        
+        /**
+         * @return the mutableConsensus
+         */
+        public NucleotideSequenceBuilder getConsensusBuilder() {
+            return mutableConsensus;
+        }
         public DefaultAceContig build(){
-            Set<AcePlacedRead> placedReads = new HashSet<AcePlacedRead>(aceReadBuilders.size()+1,1F);
-            
+             
             if(numberOfReads()==0){
                 //force empty contig if no reads...
-                return new DefaultAceContig(contigId, NucleotideSequenceFactory.create(""),placedReads);
+                return new DefaultAceContig(contigId, NucleotideSequenceFactory.create(""),Collections.<AcePlacedRead>emptySet());
             }
-            
-            List<Nucleotide> updatedConsensus = updateConsensus(fullConsensus.asList());
+            finalizeContig();
+            Set<AcePlacedRead> placedReads = new HashSet<AcePlacedRead>(aceReadBuilderMap.size()+1,1F);
             //contig left (and right) might be beyond consensus depending on how
             //trimmed the data is and what assembly/consensus caller is used.
             //force contig left and right to be within the called consensus
-            //BCISD-211
+            //BCISD-211            
             contigLeft = Math.max(contigLeft, 0);
-            contigRight = Math.min(contigRight,(int)fullConsensus.getLength());
+            contigRight = Math.min(contigRight,(int)mutableConsensus.getLength()-1);
             //here only include the gapped valid range consensus bases
             //throw away the rest            
-            NucleotideSequence validConsensus = NucleotideSequenceFactory.create(updatedConsensus.subList(contigLeft, contigRight));
-            for(DefaultAcePlacedRead.Builder aceReadBuilder : aceReadBuilders){
-                int newOffset = aceReadBuilder.offset() - contigLeft;
+            NucleotideSequence validConsensus = NucleotideSequenceFactory.create(mutableConsensus.asList(Range.buildRange(contigLeft, contigRight)));
+            for(DefaultAcePlacedRead.Builder aceReadBuilder : aceReadBuilderMap.values()){
+                int newOffset = aceReadBuilder.getStartOffset() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);
                 placedReads.add(aceReadBuilder.build());                
-            }            
+            }   
             final String newContigId;
             if(adjustedContigIdCoordinateSystem !=null){
                 Range ungappedContigRange = Range.buildRange(
@@ -179,14 +190,23 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             }else{
                 newContigId = contigId;
             }
-            aceReadBuilders.clear();
+            aceReadBuilderMap.clear();
             fullConsensus = null;
             return new DefaultAceContig(newContigId, validConsensus,placedReads);
         }
         
-        protected List<Nucleotide> updateConsensus(List<Nucleotide> validConsensusGlyphs){
-            return validConsensusGlyphs;
-        }
+        /**
+         * This method will be called inside of {@link #build()}
+         * to let subclasses further manipulate the contig conensus
+         * or underlying reads before the final immutable contig is built.
+         * Implementors can assume that all the reads that are to be added
+         * to this contig have already been added and no further
+         * additional data will be inserted into this contig.
+         */
+        protected void finalizeContig() {
+            // no-op
+            
+        }        
     }
     
 }
