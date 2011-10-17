@@ -30,6 +30,8 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
@@ -52,6 +54,17 @@ public final class DefaultAceFileDataStore implements AceContigDataStore{
         return new DefaultAceFileDataStoreBuilder();
     }
     /**
+     * Create a new empty AceContigDataStoreBuilder
+     * that will need to be populated.
+     * @param filter a {@link DataStoreFilter} that can be used
+     * to include/exclude certain contigs can not be null.
+     * @return a new AceContigDataStoreBuilder; never null.
+     * @throws NullPointerException if filter is null.
+     */
+    public static AceContigDataStoreBuilder createBuilder(DataStoreFilter filter){
+        return new DefaultAceFileDataStoreBuilder(filter);
+    }
+    /**
      * Create a new AceContigDataStore that stores
      * all the {@link AceContig}s in a Map.
      * @param aceFile the ace file to use to 
@@ -66,7 +79,24 @@ public final class DefaultAceFileDataStore implements AceContigDataStore{
         AceFileParser.parseAceFile(aceFile, builder);
         return builder.build();
     }
-    
+    /**
+     * Create a new AceContigDataStore that stores
+     * all the {@link AceContig}s in a Map.
+     * @param aceFile the ace file to use to 
+     * to populate the datstore.
+     * @param filter a {@link DataStoreFilter} that can be used
+     * to include/exclude certain contigs can not be null.
+     * @return a new AceContigDataStore which contains
+     * all the {@link AceContig}s specified in the given
+     * ace file.
+     * @throws IOException if there is a problem reading the ace file.
+     * @throws NullPointerException if filter is null.
+     */
+    public static AceContigDataStore create(File aceFile,DataStoreFilter filter) throws IOException{
+        AceContigDataStoreBuilder builder = createBuilder(filter);
+        AceFileParser.parseAceFile(aceFile, builder);
+        return builder.build();
+    }
     private final DataStore<AceContig> delegate;
 
    
@@ -126,8 +156,18 @@ public final class DefaultAceFileDataStore implements AceContigDataStore{
 
     private static class DefaultAceFileDataStoreBuilder extends AbstractAceContigBuilder implements AceContigDataStoreBuilder{
         private Map<String, AceContig> contigMap;
-
+        private final DataStoreFilter filter;
         
+        public DefaultAceFileDataStoreBuilder(){
+            this(EmptyDataStoreFilter.INSTANCE);
+        }
+        public DefaultAceFileDataStoreBuilder(DataStoreFilter filter) {
+            if(filter==null){
+                throw new NullPointerException("filter can not be null");
+            }
+            this.filter = filter;
+        }
+
         /**
         * {@inheritDoc}
         */
@@ -142,10 +182,24 @@ public final class DefaultAceFileDataStore implements AceContigDataStore{
         * {@inheritDoc}
         */
         @Override
+        public synchronized boolean visitContigHeader(String contigId,
+                int numberOfBases, int numberOfReads, int numberOfBaseSegments,
+                boolean reverseComplimented) {
+            if(filter.accept(contigId)){
+                super.visitContigHeader(contigId, numberOfBases, numberOfReads,
+                        numberOfBaseSegments, reverseComplimented);
+                return true;
+            }
+            return false;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public AceContigDataStore build() {
             return new DefaultAceFileDataStore(new SimpleDataStore<AceContig>(contigMap));
         }
-
+        
         /**
         * {@inheritDoc}
         */

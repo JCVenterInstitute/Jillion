@@ -176,7 +176,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             //throw away the rest            
             NucleotideSequence validConsensus = NucleotideSequenceFactory.create(mutableConsensus.asList(Range.buildRange(contigLeft, contigRight)));
             for(DefaultAcePlacedRead.Builder aceReadBuilder : aceReadBuilderMap.values()){
-                int newOffset = aceReadBuilder.getStartOffset() - contigLeft;
+                int newOffset = (int)aceReadBuilder.getStart() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);
                 placedReads.add(aceReadBuilder.build());                
             }   

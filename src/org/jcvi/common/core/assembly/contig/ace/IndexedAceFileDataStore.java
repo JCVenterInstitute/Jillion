@@ -222,7 +222,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         }
 
         @Override
-        public synchronized void visitContigHeader(String contigId, int numberOfBases,
+        public synchronized boolean visitContigHeader(String contigId, int numberOfBases,
                 int numberOfReads, int numberOfBaseSegments,
                 boolean reverseComplimented) {
             if(!firstContig){
@@ -231,6 +231,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
             currentContigId = contigId;
             currentStartOffset=currentFileOffset-currentLineLength;
             firstContig=false;
+            return false;
         }
         protected synchronized void visitContig() {
             indexFileRange.put(currentContigId, Range.buildRange(currentStartOffset, currentFileOffset));

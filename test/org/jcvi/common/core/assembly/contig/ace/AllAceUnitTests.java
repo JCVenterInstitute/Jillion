@@ -50,6 +50,7 @@ import org.junit.runners.Suite.SuiteClasses;
        TestAceContigTrimmer.class,
        TestDefaultAcePlacedReadReAbacus.class,
        TestDefaultAceContigBuilderReAbacus.class,
+       TestAceVisitorSkipContigs.class,
        
        AllConsedUnitTests.class
     }

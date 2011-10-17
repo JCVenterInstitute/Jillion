@@ -61,30 +61,10 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
         assertEquals(expectedContigDataStore.size(), actual.size());
         for(AceContig actualAceContig : actual){
             Contig<PlacedRead> expectedContig = expectedContigDataStore.get(actualAceContig.getId());
-            assertContigParsedCorrectly(expectedContig, actualAceContig);
+            AceContigTestUtil.assertContigParsedCorrectly(expectedContig, actualAceContig);
         }
         
     }
 
-    
-    private void assertContigParsedCorrectly(Contig<PlacedRead> expected, Contig<? extends PlacedRead> actual) {
-        assertEquals(expected.getId(), actual.getId()); 
-        assertEquals(expected.getConsensus().asList(), actual.getConsensus().asList());
-        assertEquals(expected.getId(),expected.getNumberOfReads(), actual.getNumberOfReads());
-        for(PlacedRead expectedRead : expected.getPlacedReads()){
-            assertPlacedReadParsedCorrectly(expectedRead, actual.getPlacedReadById(expectedRead.getId()));
-        }
-        
-    }
-
-    private void assertPlacedReadParsedCorrectly(PlacedRead expected,
-            PlacedRead actual) {
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getStart(), actual.getStart());
-        assertEquals(expected.getEnd(), actual.getEnd());
-        assertEquals(expected.getLength(), actual.getLength());
-        assertEquals(expected.getId(),expected.getValidRange(), actual.getValidRange());
-        assertEquals(expected.getNucleotideSequence().asList(), actual.getNucleotideSequence().asList());
-        
-    }
+  
 }

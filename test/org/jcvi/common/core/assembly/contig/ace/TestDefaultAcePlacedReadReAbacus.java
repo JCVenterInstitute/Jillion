@@ -63,7 +63,7 @@ public class TestDefaultAcePlacedReadReAbacus {
     @Test
     public void confirmInitialValues(){
         assertEquals(readId, sut.getId());
-        assertEquals(originalStartOffset, sut.getStartOffset());
+        assertEquals(originalStartOffset, sut.getStart());
         assertEquals(dir, sut.getDirection());
         assertEquals(phdInfo, sut.getPhdInfo());
         assertEquals(ungappedFullLength, sut.getUngappedFullLength());
@@ -74,7 +74,7 @@ public class TestDefaultAcePlacedReadReAbacus {
     @Test
     public void shiftBases(){
         sut.setStartOffset(originalStartOffset+5);
-        assertEquals(originalStartOffset+5, sut.getStartOffset());
+        assertEquals(originalStartOffset+5, sut.getStart());
         
         assertEquals(readId, sut.getId());
         assertEquals(dir, sut.getDirection());
