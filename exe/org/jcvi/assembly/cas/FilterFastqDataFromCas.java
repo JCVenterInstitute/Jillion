@@ -80,6 +80,7 @@ public class FilterFastqDataFromCas {
         
         if(CommandLineUtils.helpRequested(args)){
             printHelp(options);
+            System.exit(0);
         }
         
         try {
