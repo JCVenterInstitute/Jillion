@@ -208,7 +208,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         * {@inheritDoc}
         */
         @Override
-        public synchronized void visitContigHeader(String aceContigId,
+        public synchronized boolean visitContigHeader(String aceContigId,
                 int numberOfBases, int numberOfReads,
                 int numberOfBaseSegments, boolean reverseComplimented) {
             if(contigId !=null){
@@ -217,7 +217,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
                     phds = new HashMap<String, Phd>(numberOfReads+1, 1F);
                 }
             }
-            super.visitContigHeader(aceContigId, numberOfBases, numberOfReads,
+            return super.visitContigHeader(aceContigId, numberOfBases, numberOfReads,
                     numberOfBaseSegments, reverseComplimented);
         }
 

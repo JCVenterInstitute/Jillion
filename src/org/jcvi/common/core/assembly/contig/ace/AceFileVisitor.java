@@ -53,15 +53,23 @@ public interface AceFileVisitor extends TextFileVisitor{
      * which indicate reads phrap has chosen to be the consensus
      * at a particular position.
      * @param reverseComplimented is this contig reverse complimented
+     * @return {@code true} if this contig should be parsed; {@code false}
+     * if this contig should be skipped.  If this contig is to be skipped,
+     * then only {@link #visitLine(String)} and {@link #visitEndOfContig()} methods will get called
+     * for this contig.
      */
-    void visitContigHeader(String contigId, int numberOfBases, int numberOfReads, int numberOfBaseSegments, boolean reverseComplimented);
+    boolean visitContigHeader(String contigId, int numberOfBases, int numberOfReads, int numberOfBaseSegments, boolean reverseComplimented);
     /**
-     * begin visiting consensus qualities.
+     * begin visiting consensus qualities.  This method will only
+     * get called if the current contig is being parsed which is determined
+     * by the return value of {@link #visitContigHeader(String, int, int, int, boolean)}.
      */
     void visitConsensusQualities();
     /**
      * AssembledFroms define the location of the 
-     * read within a contig.
+     * read within a contig.  This method will only
+     * get called if the current contig is being parsed which is determined
+     * by the return value of {@link #visitContigHeader(String, int, int, int, boolean)}.
      * @param readId id of read.
      * @param dir {@link Direction} of read inside contig.
      * @param gappedStartOffset gapped start offset of read inside contig.
@@ -69,19 +77,25 @@ public interface AceFileVisitor extends TextFileVisitor{
     void visitAssembledFromLine(String readId, Direction dir, int gappedStartOffset);
     /**
      * Base Segments indicate reads phrap has chosen to be the consensus
-     * at a particular position.
+     * at a particular position.  This method will only
+     * get called if the current contig is being parsed which is determined
+     * by the return value of {@link #visitContigHeader(String, int, int, int, boolean)}.
      * @param gappedConsensusRange range of consensus being defined.
      * @param readId read id that provides coverage at that range.
      */
     void visitBaseSegment(Range gappedConsensusRange, String readId);
     /**
-     * begin visiting a read.
+     * Begin visiting a read.  This method will only
+     * get called if the current contig is being parsed which is determined
+     * by the return value of {@link #visitContigHeader(String, int, int, int, boolean)}.
      * @param readId id of read being visited.
      * @param gappedLength gapped length of read.
      */
     void visitReadHeader(String readId, int gappedLength);
     /**
-     * visit quality line of currently visited read.
+     * Visit quality line of currently visited read.  This method will only
+     * get called if the current contig is being parsed which is determined
+     * by the return value of {@link #visitContigHeader(String, int, int, int, boolean)}.
      * @param qualLeft left position(1-based)  of clear range.
      * @param qualRight right position(1-based) of clear range.
      * @param alignLeft left alignment(1-based) position. 
@@ -91,14 +105,18 @@ public interface AceFileVisitor extends TextFileVisitor{
     /**
      * Visit Trace Description line of currently visited read.
      * @param traceName name of trace file corresponding
-     * to currently visited read.
+     * to currently visited read.  This method will only
+     * get called if the current contig is being parsed which is determined
+     * by the return value of {@link #visitContigHeader(String, int, int, int, boolean)}.
      * @param phdName name of phd file.
      * @param date date phd file created.
      */
     void visitTraceDescriptionLine(String traceName, String phdName, Date date);
     /**
      * Visit a line of basecalls of currently visited read. A read 
-     * probably has several lines of basecalls.
+     * probably has several lines of basecalls.  This method will only
+     * get called if the current contig is being parsed which is determined
+     * by the return value of {@link #visitContigHeader(String, int, int, int, boolean)}.
      * @param bases (some of) the basecalls of the currently visited read.
      */
     void visitBasesLine(String bases);

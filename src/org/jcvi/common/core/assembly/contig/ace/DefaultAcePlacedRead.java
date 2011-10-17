@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.Direction;
+import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
@@ -209,7 +210,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
     }
 
 
-    public static class Builder{
+    public static class Builder implements Placed<Builder>{
         private String readId;
         /**
          * Our original encoded sequence.  If we 
@@ -255,7 +256,8 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             this.offset = newOffset;
             return this;
         }
-        public int getStartOffset(){
+        @Override
+        public long getStart(){
             return offset;
         }
         public String getId(){
@@ -332,14 +334,15 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             basesBuilder.insert((int)gappedValidRangeToChange.getStart(), newBasecalls);
             return this;
         }
-
+        @Override
         public long getLength(){
             return basesBuilder.getLength();
         }
+        @Override
         public long getEnd(){
             return offset + getLength()-1;
         }
-        
+        @Override
         public Range asRange(){
             return Range.buildRange(offset,getEnd());
         }
@@ -359,6 +362,20 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
                 return Nucleotides.asString(originalSequence);
             }
             return basesBuilder.toString();
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int compareTo(Builder o) {
+            
+            int rangeCompare = asRange().compareTo(o.asRange());
+            if(rangeCompare !=0){
+                return rangeCompare;
+            }
+            return getId().compareTo(o.getId());
         }
         
     }

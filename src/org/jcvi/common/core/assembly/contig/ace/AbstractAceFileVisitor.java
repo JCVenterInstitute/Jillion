@@ -101,7 +101,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     }
 
     @Override
-    public synchronized void visitContigHeader(String contigId, int numberOfBases,
+    public synchronized boolean visitContigHeader(String contigId, int numberOfBases,
             int numberOfReads, int numberOfBaseSegments,
             boolean reverseComplimented) {
         throwExceptionIfInitialized();
@@ -109,6 +109,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         currentAssembledFromMap = new HashMap<String, AssembledFrom>();
         readingConsensus = true;
         currentBasecalls = new StringBuilder();
+        return true;
     }
 
     @Override

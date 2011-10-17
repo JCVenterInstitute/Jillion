@@ -91,7 +91,7 @@ public final class AceFileParser {
         if(!parserState.stopParsing){        
             visitor.visitEndOfContig();
         }else{
-            //if parserstate reached the end of the file
+            //if parser state reached the end of the file
             //then we have already closed our stream
             //this will force it if we haven't
             IOUtil.closeAndIgnoreErrors(parserState);
@@ -102,15 +102,20 @@ public final class AceFileParser {
         final AceFileVisitor visitor;
         final TextLineParser parser;
         private boolean stopParsing;
+        private boolean parseCurrentContig;
         
         ParserState(AceFileVisitor visitor,
                 InputStream inputStream) throws IOException{
-           this(visitor, true,  new TextLineParser(new BufferedInputStream(inputStream)), false);
+           this(visitor, true,  new TextLineParser(new BufferedInputStream(inputStream)), false,true);
        }
         
         public ParserState stopParsing(){
-            return new ParserState(visitor, isFirstContigInFile, parser,true);
+            return new ParserState(visitor, isFirstContigInFile, parser,true,parseCurrentContig);
         }
+        public ParserState dontParseCurrentContig(){
+            return new ParserState(visitor, isFirstContigInFile, parser,stopParsing,false);
+        }
+        
         /**
          * @return
          * @throws IOException 
@@ -124,14 +129,19 @@ public final class AceFileParser {
             return SectionHandler.handleSection(line, this);
         }
         ParserState(AceFileVisitor visitor, boolean isFirstContigInFile,
-               TextLineParser parser, boolean stopParsing) {
+               TextLineParser parser, boolean stopParsing, boolean parseCurrentContig) {
             this.visitor = visitor;
             this.isFirstContigInFile = isFirstContigInFile;
             this.parser = parser;
             this.stopParsing=stopParsing;
+            this.parseCurrentContig = parseCurrentContig;
         }
         public boolean done(){
             return stopParsing || !parser.hasNextLine();
+        }
+        
+        public boolean parseCurrentContig(){
+            return parseCurrentContig;
         }
         /**
          * Returns new ParserStruct instance but which
@@ -141,7 +151,7 @@ public final class AceFileParser {
          * set to {@code false}.
          */
         ParserState updateContigBeingVisited(){
-            return new ParserState(visitor, false, parser,stopParsing);
+            return new ParserState(visitor, false, parser,stopParsing,true);
         }
 
         /**
@@ -173,9 +183,11 @@ public final class AceFileParser {
         },
         CONSENSUS_QUALITIES("^BQ\\s*"){
             @Override
-            ParserState handle(Matcher matcher, ParserState struct, String line) {
-                struct.visitor.visitConsensusQualities();
-                return struct;
+            ParserState handle(Matcher matcher, ParserState parserState, String line) {
+                if(parserState.parseCurrentContig()){
+                    parserState.visitor.visitConsensusQualities();
+                }
+                return parserState;
             }
         },
         /**
@@ -184,9 +196,11 @@ public final class AceFileParser {
          */
         BASECALLS("^([*a-zA-Z]+)\\s*$"){
             @Override
-            ParserState handle(Matcher basecallMatcher, ParserState struct, String line) {
-                struct.visitor.visitBasesLine(basecallMatcher.group(1));
-                return struct;
+            ParserState handle(Matcher basecallMatcher, ParserState parserState, String line) {
+                if(parserState.parseCurrentContig()){
+                    parserState.visitor.visitBasesLine(basecallMatcher.group(1));
+                }
+                return parserState;
             } 
         },
         CONTIG_HEADER("^CO\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+([UC])"){
@@ -202,41 +216,50 @@ public final class AceFileParser {
                 int numberOfReads = Integer.parseInt(contigMatcher.group(3));
                 int numberOfBaseSegments = Integer.parseInt(contigMatcher.group(4));
                 boolean reverseComplimented = isComplimented(contigMatcher.group(5));
-                ret.visitor.visitContigHeader(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
+                boolean parseCurrentContig =ret.visitor.visitContigHeader(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
+                if(!parseCurrentContig){
+                    ret = ret.dontParseCurrentContig();
+                }
                 return ret;
             } 
             
         },
         ASSEMBLED_FROM("^AF\\s+(\\S+)\\s+([U|C])\\s+(-?\\d+)"){
             @Override
-            ParserState handle(Matcher assembledFromMatcher, ParserState struct, String line) {
-                String name = assembledFromMatcher.group(1);
-                final String group = assembledFromMatcher.group(2);
-                Direction dir = isComplimented(group)? Direction.REVERSE : Direction.FORWARD;
-                int fullRangeOffset = Integer.parseInt(assembledFromMatcher.group(3));
-                struct.visitor.visitAssembledFromLine(name, dir, fullRangeOffset);
-                return struct;
+            ParserState handle(Matcher assembledFromMatcher, ParserState parserState, String line) {
+                if(parserState.parseCurrentContig()){
+                    String name = assembledFromMatcher.group(1);
+                    final String group = assembledFromMatcher.group(2);
+                    Direction dir = isComplimented(group)? Direction.REVERSE : Direction.FORWARD;
+                    int fullRangeOffset = Integer.parseInt(assembledFromMatcher.group(3));
+                    parserState.visitor.visitAssembledFromLine(name, dir, fullRangeOffset);
+                }
+                return parserState;
             } 
         },
         READ_HEADER("^RD\\s+(\\S+)\\s+(\\d+)"){
             @Override
-            ParserState handle(Matcher readMatcher, ParserState struct, String line) {
-                String readId = readMatcher.group(1);
-                int fullLength = Integer.parseInt(readMatcher.group(2));
-                struct.visitor.visitReadHeader(readId, fullLength);
-                return struct;
+            ParserState handle(Matcher readMatcher, ParserState parserState, String line) {
+                if(parserState.parseCurrentContig()){
+                    String readId = readMatcher.group(1);
+                    int fullLength = Integer.parseInt(readMatcher.group(2));
+                    parserState.visitor.visitReadHeader(readId, fullLength);
+                }
+                return parserState;
             } 
         },
         READ_QUALITY("^QA\\s+(-?\\d+)\\s+(-?\\d+)\\s+(\\d+)\\s+(\\d+)"){
             @Override
-            ParserState handle(Matcher qualityMatcher, ParserState struct, String line) {
-                int clearLeft = Integer.parseInt(qualityMatcher.group(1));
-                int clearRight = Integer.parseInt(qualityMatcher.group(2));
-                
-                int alignLeft = Integer.parseInt(qualityMatcher.group(3));
-                int alignRight = Integer.parseInt(qualityMatcher.group(4));
-                struct.visitor.visitQualityLine(clearLeft, clearRight, alignLeft, alignRight);
-                return struct;
+            ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) {
+                if(parserState.parseCurrentContig()){
+                    int clearLeft = Integer.parseInt(qualityMatcher.group(1));
+                    int clearRight = Integer.parseInt(qualityMatcher.group(2));
+                    
+                    int alignLeft = Integer.parseInt(qualityMatcher.group(3));
+                    int alignRight = Integer.parseInt(qualityMatcher.group(4));
+                    parserState.visitor.visitQualityLine(clearLeft, clearRight, alignLeft, alignRight);
+                }
+                return parserState;
             } 
         },
         TRACE_DESCRIPTION("^DS\\s+"){
@@ -247,22 +270,24 @@ public final class AceFileParser {
             private final Pattern sffFakeChromatogramPattern = Pattern.compile("sff:(\\S+)?\\.sff:(\\S+)");
              
             @Override
-            ParserState handle(Matcher qualityMatcher, ParserState struct, String line) throws IOException {
-                Matcher chromatogramMatcher = chromatFilePattern.matcher(line);
-                if(!chromatogramMatcher.find()){
-                    throw new IOException("could not parse chromatogram name from "+line);
+            ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
+                if(parserState.parseCurrentContig()){
+                    Matcher chromatogramMatcher = chromatFilePattern.matcher(line);
+                    if(!chromatogramMatcher.find()){
+                        throw new IOException("could not parse chromatogram name from "+line);
+                    }
+                    String traceName =  chromatogramMatcher.group(1);
+                    String phdName = parsePhdName(line, traceName);
+                    
+                    Matcher timeMatcher = timePattern.matcher(line);
+                    if(!timeMatcher.find()){
+                        throw new IOException("could not parse phd time stamp from "+ line);
+                    }
+                    Date date= AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parseDateTime(                                                
+                            timeMatcher.group(1)).toDate();
+                    parserState.visitor.visitTraceDescriptionLine(traceName, phdName, date);
                 }
-                String traceName =  chromatogramMatcher.group(1);
-                String phdName = parsePhdName(line, traceName);
-                
-                Matcher timeMatcher = timePattern.matcher(line);
-                if(!timeMatcher.find()){
-                    throw new IOException("could not parse phd time stamp from "+ line);
-                }
-                Date date= AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parseDateTime(                                                
-                        timeMatcher.group(1)).toDate();
-                struct.visitor.visitTraceDescriptionLine(traceName, phdName, date);
-                return struct;
+                return parserState;
             }
 
             private String parsePhdName(String line, String traceName) {
@@ -291,10 +316,10 @@ public final class AceFileParser {
             private final Pattern readTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}:\\d{6})");
             
             @Override
-            ParserState handle(Matcher qualityMatcher, ParserState struct, String line) throws IOException {
+            ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
                 String lineWithCR;
-                lineWithCR = struct.parser.nextLine();
-                struct.visitor.visitLine(lineWithCR);
+                lineWithCR = parserState.parser.nextLine();
+                parserState.visitor.visitLine(lineWithCR);
                 Matcher readTagMatcher = readTagPattern.matcher(lineWithCR);
                 if(!readTagMatcher.find()){
                     throw new IllegalStateException("expected read tag infomration: " + lineWithCR); 
@@ -306,13 +331,13 @@ public final class AceFileParser {
                 long gappedEnd = Long.parseLong(readTagMatcher.group(5));
                 Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
                         readTagMatcher.group(6)).toDate();
-                struct.visitor.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, true);
-                lineWithCR = struct.parser.nextLine();
-                struct.visitor.visitLine(lineWithCR);
+                parserState.visitor.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, true);
+                lineWithCR = parserState.parser.nextLine();
+                parserState.visitor.visitLine(lineWithCR);
                 if(!lineWithCR.startsWith("}")){
                     throw new IllegalStateException("expected close read tag: " + lineWithCR); 
                 }
-                return struct;
+                return parserState;
             } 
         },
         WHOLE_ASSEMBLY_TAG("^WA\\{"){
@@ -362,10 +387,10 @@ public final class AceFileParser {
             private final Pattern consensusTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}:\\d{6})(\\s+(noTrans))?");
             
             @Override
-            ParserState handle(Matcher qualityMatcher, ParserState struct, String line) throws IOException {
+            ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
                 String lineWithCR;
-                lineWithCR = struct.parser.nextLine();
-                struct.visitor.visitLine(lineWithCR);
+                lineWithCR = parserState.parser.nextLine();
+                parserState.visitor.visitLine(lineWithCR);
                 Matcher tagMatcher = consensusTagPattern.matcher(lineWithCR);
                 if(!tagMatcher.find()){
                     throw new IllegalStateException("expected read tag infomration: " + lineWithCR); 
@@ -379,15 +404,15 @@ public final class AceFileParser {
                         tagMatcher.group(6)).toDate();
                 boolean isTransient = tagMatcher.group(7)!=null;
                 
-                struct.visitor.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
+                parserState.visitor.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
                 
                 
                 boolean doneTag =false;
                 boolean inComment=false;
                 
-                parseConsensusTagData(struct, doneTag, inComment);
-                struct.visitor.visitEndConsensusTag();
-                return struct;
+                parseConsensusTagData(parserState, doneTag, inComment);
+                parserState.visitor.visitEndConsensusTag();
+                return parserState;
             }
 
             private void parseConsensusTagData(ParserState struct,

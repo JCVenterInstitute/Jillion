@@ -44,12 +44,22 @@ public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
      * that was built from an Ace File.
      */
     protected abstract void  visitContig(AceContig contig);
-    
-    
+    /**
+     * Override this method if any modifications
+     * need to be made to the builder before the contig has been built.
+     * This method will be called after all the reads have been
+     * visited but before {@link #visitContig(AceContig)}. 
+     * By default, this method does nothing.
+     * @param contigBuilder
+     */
+    protected void postProcess(final DefaultAceContig.Builder contigBuilder){
+        //no-op
+    }
     
     @Override
     public boolean visitEndOfContig() {
         if(contigBuilder !=null){
+            postProcess(contigBuilder);
             visitContig(contigBuilder.build());
             contigBuilder=null;
         }
