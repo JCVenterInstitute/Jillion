@@ -211,7 +211,17 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
 
     public static class Builder{
         private String readId;
-        private NucleotideSequenceBuilder basesBuilder;
+        /**
+         * Our original encoded sequence.  If we 
+         * edit the basecalls, this will get set to null
+         * and we use {@link #basesBuilder} instead.
+         */
+        private NucleotideSequence originalSequence;
+        /**
+         * Our edited sequence, only used if needed
+         * since it takes up more memory.
+         */
+        private NucleotideSequenceBuilder basesBuilder=null;
         private int offset;
         private Range clearRange;
         private PhdInfo phdInfo;
@@ -227,8 +237,8 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             this.clearRange = clearRange;
             this.offset = offset;
             this.phdInfo = phdInfo;
-            
-            this.basesBuilder = new NucleotideSequenceBuilder(validBases);
+            this.originalSequence = NucleotideSequenceFactory.create(validBases);
+            this.basesBuilder =null;
             if(offset + validBases.length() > reference.getLength()){
                 throw new IllegalArgumentException("read goes beyond the reference");
             }
@@ -298,7 +308,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         public DefaultAcePlacedRead build(){
             ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = NucleotideSequenceFactory.createReferenceEncoded(
                         reference,
-                        basesBuilder.toString(),offset);
+                        currentBasecallsAsString(),offset);
             Read read = new DefaultRead(readId, updatedEncodedBasecalls);
             return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength,clearRange);
         }
@@ -306,7 +316,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             return reAbacus(gappedValidRangeToChange, Nucleotides.parse(newBasecalls));
         }
         public Builder reAbacus(Range gappedValidRangeToChange, List<Nucleotide> newBasecalls){
-            List<Nucleotide> oldUngappedBasecalls = Nucleotides.ungap(basesBuilder.asList(gappedValidRangeToChange));
+            List<Nucleotide> oldUngappedBasecalls = Nucleotides.ungap(getBasesBuilder().asList(gappedValidRangeToChange));
             List<Nucleotide> newUngappedBasecalls = new ArrayList<Nucleotide>(newBasecalls.size());
             //make sure we aren't adding/editing any basecalls
             //only gaps should be affected
@@ -336,10 +346,20 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         /**
          * @return the basesBuilder
          */
-        public NucleotideSequenceBuilder getBasesBuilder() {
+        public synchronized NucleotideSequenceBuilder getBasesBuilder() {
+            if(basesBuilder==null){
+                this.basesBuilder = new NucleotideSequenceBuilder(originalSequence);
+                originalSequence=null;
+            }
             return basesBuilder;
         }
         
+        private synchronized String currentBasecallsAsString(){
+            if(originalSequence !=null){
+                return Nucleotides.asString(originalSequence);
+            }
+            return basesBuilder.toString();
+        }
         
     }
 
