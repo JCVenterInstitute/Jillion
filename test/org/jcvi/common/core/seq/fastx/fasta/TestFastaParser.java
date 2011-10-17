@@ -19,6 +19,7 @@
 
 package org.jcvi.common.core.seq.fastx.fasta;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -175,6 +176,16 @@ public class TestFastaParser {
         
         replay(mockVisitor);
         FastaParser.parseFasta(RESOURCES.getFile("files/seqs.fasta"), mockVisitor);
+        verify(mockVisitor);
+    }
+    
+    @Test
+    public void parseEmptyFile(){
+        mockVisitor.visitFile();
+        mockVisitor.visitEndOfFile();
+        
+        replay(mockVisitor);
+        FastaParser.parseFasta(new ByteArrayInputStream(new byte[]{}), mockVisitor);
         verify(mockVisitor);
     }
 }

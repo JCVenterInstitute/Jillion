@@ -127,6 +127,7 @@ public final class FastaParser {
                 throw new NullPointerException("input stream can not be null");
             }
             parser = new TextLineParser(new BufferedInputStream(in));
+            done= !parser.hasNextLine();
         }
         
         public boolean done(){
@@ -212,7 +213,7 @@ public final class FastaParser {
         };
         
         static ParserState handleNextSection(ParserState parserState,FastaVisitor visitor) throws IOException{
-            String line =parserState.getNextLine();
+            String line =parserState.getNextLine();            
             for(SectionHandler handler : values()){
                 if(handler.canHandle(line)){
                     return handler.sectionSpecificHandle(line, parserState, visitor);
