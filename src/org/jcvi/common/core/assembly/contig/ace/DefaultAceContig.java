@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,7 +107,9 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             }
             return this;
         }
-    	
+    	public Collection<DefaultAcePlacedRead.Builder> getAllAcePlacedReadBuilders(){
+    	    return aceReadBuilderMap.values();
+    	}
         public DefaultAcePlacedRead.Builder getAcePlacedReadBuilder(String readId){
             return aceReadBuilderMap.get(readId);
         }

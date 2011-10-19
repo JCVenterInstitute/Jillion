@@ -79,6 +79,8 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         
     }
     
+    
+    
     public HiLowAceContigPhdDatastore(File aceContigFile, 
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser visitor = new FullLengthPhdParser(lowQuality,highQuality);

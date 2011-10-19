@@ -86,6 +86,7 @@ public class TrimNexteraSff {
         tempOut = new FileOutputStream(tempReadDataFile);
         this.untrimmedSffFile = untrimmedSffFile;
         this.tempReadDataFile = tempReadDataFile;
+        tempReadDataFile.deleteOnExit();
     }
     
     public void trimAndWriteNewSff(OutputStream out) throws IOException{

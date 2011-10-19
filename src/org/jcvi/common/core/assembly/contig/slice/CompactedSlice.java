@@ -93,6 +93,16 @@ public class CompactedSlice implements Slice{
         return ids.contains(elementId);
     }
 
+    @Override
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        for(SliceElement element : this){
+            builder.append(element).append( " | ");
+        }
+        
+        
+        return builder.toString();
+    }
     /**
     * {@inheritDoc}
     */
