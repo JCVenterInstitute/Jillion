@@ -160,6 +160,7 @@ public class GridReAbacusAce {
             System.exit(1);
         }finally{
             IOUtil.closeAndIgnoreErrors(out);
+            session.exit();
         }
         
     }
