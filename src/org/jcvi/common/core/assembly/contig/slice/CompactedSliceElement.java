@@ -118,6 +118,14 @@ public class CompactedSliceElement implements SliceElement{
         }
         return true;
     }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public String toString() {
+        return "CompactedSliceElement [id=" + id + ", getBase()=" + getBase()
+                + "]";
+    }
     
     
 

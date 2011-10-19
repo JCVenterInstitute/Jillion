@@ -336,7 +336,10 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         }
         @Override
         public long getLength(){
-            return basesBuilder.getLength();
+            if(basesBuilder !=null){
+                return basesBuilder.getLength();
+            }
+            return originalSequence.getLength();
         }
         @Override
         public long getEnd(){
@@ -357,6 +360,12 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             return basesBuilder;
         }
         
+        public synchronized NucleotideSequence getCurrentNucleotideSequence(){
+            if(originalSequence !=null){
+                return originalSequence;
+            }
+            return basesBuilder.build();
+        }
         private synchronized String currentBasecallsAsString(){
             if(originalSequence !=null){
                 return Nucleotides.asString(originalSequence);

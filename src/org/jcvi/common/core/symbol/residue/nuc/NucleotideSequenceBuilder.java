@@ -83,6 +83,19 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         return buf.array();
     }
     /**
+     * Appends the given base to the end
+     * of the builder's mutable sequence.
+     * @param base a single nucleotide sequence to be appended
+     * to the end our builder.
+     * @throws NullPointerException if base is null.
+     */
+    public NucleotideSequenceBuilder append(Nucleotide base){
+        if(base==null){
+            throw new NullPointerException("base can not be null");
+        }
+        return append(Collections.singleton(base));
+    }
+    /**
      * Appends the given sequence to the end
      * of the builder's mutable sequence.
      * @param sequence the nucleotide sequence to be appended
