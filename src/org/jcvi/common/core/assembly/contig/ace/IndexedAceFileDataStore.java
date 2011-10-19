@@ -273,8 +273,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
             return false;
         }
         protected synchronized void visitContig() {
-            indexFileRange.put(currentContigId, Range.buildRange(currentStartOffset, currentFileOffset));
-            currentStartOffset=currentFileOffset+1;
+           
         }
         /**
         * {@inheritDoc}
@@ -387,6 +386,8 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         */
         @Override
         public boolean visitEndOfContig() {
+            indexFileRange.put(currentContigId, Range.buildRange(currentStartOffset, currentFileOffset));
+            currentStartOffset=currentFileOffset+1;
             return true;
         }
 
