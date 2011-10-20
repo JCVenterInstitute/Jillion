@@ -88,7 +88,7 @@ public final class AceFileParser {
     }
     private static void handleEndOfParsing(AceFileVisitor visitor,
             ParserState parserState) {
-        if(!parserState.stopParsing){        
+        if(!parserState.stopParsing && parserState.inAContig){        
             visitor.visitEndOfContig();
         }else{
             //if parser state reached the end of the file
@@ -103,17 +103,18 @@ public final class AceFileParser {
         final TextLineParser parser;
         private boolean stopParsing;
         private boolean parseCurrentContig;
+        private boolean inAContig;
         
         ParserState(AceFileVisitor visitor,
                 InputStream inputStream) throws IOException{
-           this(visitor, true,  new TextLineParser(new BufferedInputStream(inputStream)), false,true);
+           this(visitor, true,  new TextLineParser(new BufferedInputStream(inputStream)), false,true,false);
        }
         
         public ParserState stopParsing(){
-            return new ParserState(visitor, isFirstContigInFile, parser,true,parseCurrentContig);
+            return new ParserState(visitor, isFirstContigInFile, parser,true,parseCurrentContig,inAContig);
         }
         public ParserState dontParseCurrentContig(){
-            return new ParserState(visitor, isFirstContigInFile, parser,stopParsing,false);
+            return new ParserState(visitor, isFirstContigInFile, parser,stopParsing,false,inAContig);
         }
         
         /**
@@ -129,12 +130,13 @@ public final class AceFileParser {
             return SectionHandler.handleSection(line, this);
         }
         ParserState(AceFileVisitor visitor, boolean isFirstContigInFile,
-               TextLineParser parser, boolean stopParsing, boolean parseCurrentContig) {
+               TextLineParser parser, boolean stopParsing, boolean parseCurrentContig, boolean inAContig) {
             this.visitor = visitor;
             this.isFirstContigInFile = isFirstContigInFile;
             this.parser = parser;
             this.stopParsing=stopParsing;
             this.parseCurrentContig = parseCurrentContig;
+            this.inAContig = inAContig;
         }
         public boolean done(){
             return stopParsing || !parser.hasNextLine();
@@ -143,6 +145,7 @@ public final class AceFileParser {
         public boolean parseCurrentContig(){
             return parseCurrentContig;
         }
+        
         /**
          * Returns new ParserStruct instance but which
          * states that a different contig is being visited. 
@@ -150,10 +153,19 @@ public final class AceFileParser {
          * values except {@link #isFirstContigInFile} is now
          * set to {@code false}.
          */
-        ParserState updateContigBeingVisited(){
-            return new ParserState(visitor, false, parser,stopParsing,true);
+        ParserState inAContig(){
+            return new ParserState(visitor, false, parser,stopParsing,true,true);
         }
-
+        /**
+         * Returns new ParserStruct instance but which
+         * states that a different contig is being visited. 
+         * @return a new ParserStruct object with the same 
+         * values except {@link #isFirstContigInFile} is now
+         * set to {@code false}.
+         */
+        ParserState notInAContig(){
+            return new ParserState(visitor, false, parser,stopParsing,true,false);
+        }
         /**
         * {@inheritDoc}
         */
@@ -210,7 +222,8 @@ public final class AceFileParser {
                 if(!struct.isFirstContigInFile && !ret.visitor.visitEndOfContig()){
                     ret= ret.stopParsing();
                 }
-                ret = ret.updateContigBeingVisited();
+                ret= ret.inAContig();
+                //ret = ret.updateContigBeingVisited();
                 String contigId = contigMatcher.group(1);
                 int numberOfBases = Integer.parseInt(contigMatcher.group(2));
                 int numberOfReads = Integer.parseInt(contigMatcher.group(3));
@@ -317,6 +330,10 @@ public final class AceFileParser {
             
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
+                if(parserState.inAContig){
+                    parserState.visitor.visitEndOfContig();
+                    parserState.notInAContig();
+                }
                 String lineWithCR;
                 lineWithCR = parserState.parser.nextLine();
                 parserState.visitor.visitLine(lineWithCR);
@@ -344,10 +361,14 @@ public final class AceFileParser {
             private final Pattern wholeAssemblyTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\d{6}:\\d{6})");
             
             @Override
-            ParserState handle(Matcher qualityMatcher, ParserState struct, String line) throws IOException {
+            ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
+                if(parserState.inAContig){
+                    parserState.visitor.visitEndOfContig();
+                    parserState =parserState.notInAContig();
+                }
                 String lineWithCR;
-                lineWithCR = struct.parser.nextLine();
-                struct.visitor.visitLine(lineWithCR);
+                lineWithCR = parserState.parser.nextLine();
+                parserState.visitor.visitLine(lineWithCR);
                 Matcher tagMatcher = wholeAssemblyTagPattern.matcher(lineWithCR);
                 if(!tagMatcher.find()){
                     throw new IllegalStateException("expected whole assembly tag information: " + lineWithCR); 
@@ -357,9 +378,9 @@ public final class AceFileParser {
                 Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
                         tagMatcher.group(3)).toDate();
                                             
-                StringBuilder data = parseWholeAssemblyTagData(struct);
-                struct.visitor.visitWholeAssemblyTag(type, creator, creationDate, data.toString());
-                return struct;
+                StringBuilder data = parseWholeAssemblyTagData(parserState);
+                parserState.visitor.visitWholeAssemblyTag(type, creator, creationDate, data.toString());
+                return parserState;
             }
 
             private StringBuilder parseWholeAssemblyTagData(ParserState struct)
@@ -388,6 +409,10 @@ public final class AceFileParser {
             
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
+                if(parserState.inAContig){
+                    parserState.visitor.visitEndOfContig();
+                    parserState.notInAContig();
+                }
                 String lineWithCR;
                 lineWithCR = parserState.parser.nextLine();
                 parserState.visitor.visitLine(lineWithCR);

@@ -241,7 +241,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         private long currentFileOffset;
         private boolean firstContig=true;
         private String currentContigId;
-        private boolean lastLine;
+        private boolean hasTags=false;
         public IndexedAceFileDataStoreBuilder(File aceFile){
             if(aceFile==null){
                 throw new NullPointerException("ace file cannot be null");
@@ -256,13 +256,9 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         public synchronized void visitLine(String line) {        
             final int length = line.length();
             currentLineLength = length;
-            currentFileOffset+=length;
-            lastLine = true;
-            
+            currentFileOffset+=length;            
         }
-        private void notLastLine(){
-            lastLine=false;
-        }
+        
         @Override
         public synchronized boolean visitContigHeader(String contigId, int numberOfBases,
                 int numberOfReads, int numberOfBaseSegments,
@@ -273,7 +269,6 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
             currentContigId = contigId;
             currentStartOffset=currentFileOffset-currentLineLength;
             firstContig=false;
-            notLastLine();
             return false;
         }
         protected synchronized void visitContig() {
@@ -299,8 +294,10 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         */
         @Override
         public void visitEndOfFile() {
-            visitContig();
-            
+            if(!hasTags){
+                Range range = indexFileRange.getRangeFor(currentContigId);
+                indexFileRange.put(currentContigId, range.grow(0, currentLineLength));
+            }
         }
 
         /**
@@ -311,7 +308,6 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
             if(indexFileRange==null){
                 indexFileRange = new DefaultIndexedFileRange(numberOfContigs);
             }
-            notLastLine();
             
         }
 
@@ -322,7 +318,6 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         */
         @Override
         public void visitConsensusQualities() {
-            notLastLine();
         }
 
         /**
@@ -331,7 +326,6 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         @Override
         public void visitAssembledFromLine(String readId, Direction dir,
                 int gappedStartOffset) {
-            notLastLine();
         }
 
         /**
@@ -339,7 +333,6 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         */
         @Override
         public void visitBaseSegment(Range gappedConsensusRange, String readId) {
-            notLastLine();
         }
 
         /**
@@ -347,7 +340,6 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         */
         @Override
         public void visitReadHeader(String readId, int gappedLength) {
-            notLastLine();
         }
 
         /**
@@ -356,7 +348,6 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         @Override
         public void visitQualityLine(int qualLeft, int qualRight,
                 int alignLeft, int alignRight) {
-            notLastLine();
         }
 
         /**
@@ -365,7 +356,6 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         @Override
         public void visitTraceDescriptionLine(String traceName, String phdName,
                 Date date) {
-            notLastLine();
         }
 
         /**
@@ -373,7 +363,6 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         */
         @Override
         public void visitBasesLine(String bases) {
-            notLastLine();
         }
 
         /**
@@ -383,21 +372,17 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         public void visitReadTag(String id, String type, String creator,
                 long gappedStart, long gappedEnd, Date creationDate,
                 boolean isTransient) {
-            notLastLine();
+            hasTags=true;
         }
 
         /**
         * {@inheritDoc}
         */
         @Override
-        public boolean visitEndOfContig() {
-            long endOffset = currentFileOffset;
-            if(!lastLine){
-                endOffset -=currentLineLength;
-            }
+        public boolean visitEndOfContig() {    
             indexFileRange.put(currentContigId, Range.buildRange(currentStartOffset, 
-                    endOffset));
-           
+                    currentFileOffset-currentLineLength-1));
+            visitContig();
             return true;
         }
 
@@ -408,7 +393,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         public void visitBeginConsensusTag(String id, String type,
                 String creator, long gappedStart, long gappedEnd,
                 Date creationDate, boolean isTransient) {
-            notLastLine();
+            hasTags=true;
         }
 
         /**
@@ -416,7 +401,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         */
         @Override
         public void visitConsensusTagComment(String comment) {
-            notLastLine();
+            hasTags=true;
         }
 
         /**
@@ -424,7 +409,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         */
         @Override
         public void visitConsensusTagData(String data) {
-            notLastLine();
+            hasTags=true;
         }
 
         /**
@@ -432,7 +417,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         */
         @Override
         public void visitEndConsensusTag() {
-            notLastLine();
+            hasTags=true;
         }
 
         /**
@@ -441,7 +426,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         @Override
         public void visitWholeAssemblyTag(String type, String creator,
                 Date creationDate, String data) {
-            notLastLine();
+            hasTags=true;
         }
         
     }
