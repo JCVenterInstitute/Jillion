@@ -138,8 +138,9 @@ public class GridReAbacusAce {
             int maxJobs = commandLine.hasOption("max_submitted_jobs")?
                     Integer.parseInt(commandLine.getOptionValue("max_submitted_jobs"))
                     : DEFAULT_MAX_JOBS;
-            executor = new GridJobExecutorService(session,"abacusErrorDetector", maxJobs);
             File workDir = outputAceFile.getParentFile();
+            executor = new GridJobExecutorService(session,"abacusErrorDetector", maxJobs);
+            
             MasterAceVisitor visitor = new MasterAceVisitor(out, inputAceFile,navigationFile, session, projectCode,workDir,executor, numberOfFlankingBases,outputAceFile);
       
             AceFileParser.parseAceFile(inputAceFile, visitor);
@@ -310,6 +311,7 @@ public class GridReAbacusAce {
              findAbacusErrorWorker.setOption("-nav", navigationFile.getAbsolutePath());
              findAbacusErrorWorker.setOption("-o", tempOutputFile.getAbsolutePath());
              findAbacusErrorWorker.setOption("-flank", ""+numberOfFlankingBases);
+             findAbacusErrorWorker.setWorkingDir(workDir);
              GridJobBuilder<SimpleGridJob> job = GridJobBuilders.createSimpleGridJobBuilder(
                                                  session,
                                                  findAbacusErrorWorker, 
