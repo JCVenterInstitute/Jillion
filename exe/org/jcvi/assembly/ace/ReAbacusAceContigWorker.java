@@ -106,7 +106,7 @@ public class ReAbacusAceContigWorker {
         muscle.setOption("-out", outfile.getAbsolutePath());        
         String blastLine;
         Process process =muscle.execute();
-      /*  BufferedReader input =
+       /* BufferedReader input =
             new BufferedReader
               (new InputStreamReader(process.getErrorStream()));
           while ((blastLine = input.readLine()) != null) {
@@ -203,7 +203,7 @@ public class ReAbacusAceContigWorker {
     private static void reabacusContig(File inputAceFile,
             Map<String, List<Range>> abacusErrorMap, String contigId,
             OutputStream out, int numberOfFlankingBases, PhdDataStore phdDataStore) throws IOException {
-        AbacusFixerBuilder contigFixer = new AbacusFixerBuilder(abacusErrorMap, numberOfFlankingBases, out, phdDataStore);
+        AbacusFixerBuilder contigFixer = new AbacusFixerBuilder(abacusErrorMap,contigId, numberOfFlankingBases, out, phdDataStore);
         AceFileParser.parseAceFile(inputAceFile, contigFixer);
     }
     /**
@@ -265,12 +265,14 @@ public class ReAbacusAceContigWorker {
         private final int numberOfFlankingBases;
         private final OutputStream aceOut;
         private final PhdDataStore phdDataStore;
-        public AbacusFixerBuilder(Map<String, List<Range>> abacusProblemRanges, int numberOfFlankingBases, 
+        private final String contigId;
+        public AbacusFixerBuilder(Map<String, List<Range>> abacusProblemRanges, String contigId, int numberOfFlankingBases, 
                 OutputStream aceOut, PhdDataStore phdDataStore) {
             this.abacusProblemRanges = abacusProblemRanges;
             this.numberOfFlankingBases = numberOfFlankingBases;
             this.aceOut = aceOut;
             this.phdDataStore = phdDataStore;
+            this.contigId = contigId;
         }
 
         
@@ -281,7 +283,7 @@ public class ReAbacusAceContigWorker {
         public synchronized boolean visitContigHeader(String contigId,
                 int numberOfBases, int numberOfReads, int numberOfBaseSegments,
                 boolean reverseComplimented) {
-           if(abacusProblemRanges.containsKey(contigId)){
+           if(this.contigId.equals(contigId) && abacusProblemRanges.containsKey(contigId)){
             return super.visitContigHeader(contigId, numberOfBases, numberOfReads,
                     numberOfBaseSegments, reverseComplimented);
            }
@@ -306,11 +308,10 @@ public class ReAbacusAceContigWorker {
                 CoverageMap<CoverageRegion<DefaultAcePlacedRead.Builder>> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllAcePlacedReadBuilders());
                 
                 for(Range ungappedProblemRange : reversedSortedRanges){
+                    System.out.println("now working on "+ ungappedProblemRange);
                     int gappedStart=consensus.getGappedOffsetFor((int)ungappedProblemRange.getStart()- numberOfFlankingBases)+1;
                     int gappedEnd = consensus.getGappedOffsetFor((int)ungappedProblemRange.getEnd()+1+numberOfFlankingBases)-1;
-                    if(gappedStart == 98037){
-                        System.out.println("here");
-                    }
+                   
                     Range gappedAbacusProblemRange = Range.buildRange(gappedStart,gappedEnd);
                   //  System.out.println("gapped abacus problem range = "+ gappedAbacusProblemRange);
                    // System.out.println(Nucleotides.asString(consensus.asList(gappedAbacusProblemRange)));
@@ -369,12 +370,12 @@ public class ReAbacusAceContigWorker {
                     
                     
                     try {
-                        System.out.println("running muscle...");
+                        System.out.println("running muscle... for " + ungappedProblemRange);
                         int exitCode=muscle(ungappedFasta, gappedFastaFile);
                         if(exitCode !=0){
                             throw new IllegalStateException("error with muscle call for abacus range "+ ungappedProblemRange);
                         }
-                        
+                        System.out.println(exitCode);
                         NucleotideFastaDataStore gappedFastaDataStore = new DefaultNucleotideFastaFileDataStore(gappedFastaFile);
                         int consensusSize =(int)gappedFastaDataStore.iterator().next().getSequence().getLength();
                         CompactedSlice.Builder[] sliceBuilders = new CompactedSlice.Builder[consensusSize];
@@ -467,7 +468,7 @@ public class ReAbacusAceContigWorker {
                        throw new IllegalStateException(e);
                     }
                 }
-                
+                System.out.println("done modifying contig read to be built");
             }
 
         }
