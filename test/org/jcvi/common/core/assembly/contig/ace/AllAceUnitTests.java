@@ -44,6 +44,7 @@ import org.junit.runners.Suite.SuiteClasses;
        TestAcePlacedReadAdapter.class,
        TestDefaultAceFileTagMap.class,
        TestDefaultAceFileDataStore.class,
+       TestIndexAceFileOffsets.class,
        TestIndexedAceFileDataStore.class,
        TestAceFileWriter.class,
        TestHiLowAceContigPhdDatastore.class,
