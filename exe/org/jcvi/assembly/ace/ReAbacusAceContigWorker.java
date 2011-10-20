@@ -169,7 +169,7 @@ public class ReAbacusAceContigWorker {
                 //only reabacus if we have to
                 //use hiLow phd to get lowercase/upper case right when we write out
                 //the new file.
-                PhdDataStore hilowPhdDataStore = HiLowAceContigPhdDatastore.create(inputAceFile);
+                PhdDataStore hilowPhdDataStore = HiLowAceContigPhdDatastore.create(inputAceFile, contigId);
                 reabacusContig(inputAceFile, abacusErrorMap,contigId, out, numberOfFlankingBases, hilowPhdDataStore);
             }else{
                 //just stream contig?
@@ -295,6 +295,7 @@ public class ReAbacusAceContigWorker {
         @Override
         protected void postProcess(Builder contigBuilder) {
             String contigId = contigBuilder.getContigId();
+            System.out.println(contigId);
             if(abacusProblemRanges.containsKey(contigId)){
                 //fix 
                 List<Range> rangesToMerge = abacusProblemRanges.get(contigId);
