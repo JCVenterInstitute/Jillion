@@ -206,9 +206,13 @@ public final class AceFileParser {
          * Handles both basecalls from contig consensus as well
          * as basecalls from reads.
          */
-        BASECALLS("^([*a-zA-Z]+)\\s*$"){
+        BASECALLS("^([\\-*a-zA-Z]+)\\s*$"){
             @Override
             ParserState handle(Matcher basecallMatcher, ParserState parserState, String line) {
+                if(line.indexOf('-') !=-1){
+                    //contains a gap as a '-' instead of a '*'
+                    throw new IllegalStateException("invalid ace file: found '-' used as a gap instead of '*' : "+line);
+                }
                 if(parserState.parseCurrentContig()){
                     parserState.visitor.visitBasesLine(basecallMatcher.group(1));
                 }
