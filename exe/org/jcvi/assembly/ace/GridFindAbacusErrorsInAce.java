@@ -125,12 +125,14 @@ public class GridFindAbacusErrorsInAce {
             String projectCode = commandLine.getOptionValue("P");
             boolean wantsNav = commandLine.hasOption("nav");
             File navFile=null;
+            File workDir = new File(".");
             if(wantsNav){
                 navFile = new File(commandLine.getOptionValue("nav"));
                 IOUtil.deleteIgnoreError(navFile);
                 if(!navFile.createNewFile()){
                     throw new IOException("error creating file; already exists and cannot delete"+ navFile.getAbsolutePath());
                 }
+                workDir = new File(navFile.getAbsolutePath()).getParentFile();
             }
             int maxJobs = commandLine.hasOption("max_submitted_jobs")?
                     Integer.parseInt(commandLine.getOptionValue("max_submitted_jobs"))
@@ -155,6 +157,7 @@ public class GridFindAbacusErrorsInAce {
                         findAbacusErrorWorker.setOption("-nav", temp.getAbsolutePath());
                         files.add(temp);
                     }
+                    findAbacusErrorWorker.setWorkingDir(workDir);
                     GridJobBuilder<SimpleGridJob> job = GridJobBuilders.createSimpleGridJobBuilder(
                                                         session,
                                                         findAbacusErrorWorker, 
@@ -170,6 +173,7 @@ public class GridFindAbacusErrorsInAce {
                             return 0;
                         }
                     });
+                    job.setWorkingDirectory(workDir);
                     job.setMemory(16, MemoryUnit.GB);
                     job.setWorkingDirectory(navFile.getParentFile());
                     jobs.add(job.build());
