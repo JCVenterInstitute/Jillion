@@ -52,7 +52,7 @@ import org.junit.runners.Suite.SuiteClasses;
        TestDefaultAcePlacedReadReAbacus.class,
        TestDefaultAceContigBuilderReAbacus.class,
        TestAceVisitorSkipContigs.class,
-       
+       TestAceFileParserWithInvalidGapChar.class,
        AllConsedUnitTests.class
     }
 )
