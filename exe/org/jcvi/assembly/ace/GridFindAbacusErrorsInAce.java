@@ -142,7 +142,7 @@ public class GridFindAbacusErrorsInAce {
                 if(!navFile.createNewFile()){
                     throw new IOException("error creating file; already exists and cannot delete"+ navFile.getAbsolutePath());
                 }
-                workDir = new File(navFile.getAbsolutePath()).getParentFile();
+                workDir = navFile.getCanonicalFile().getParentFile();
             }
             int maxJobs = commandLine.hasOption("max_submitted_jobs")?
                     Integer.parseInt(commandLine.getOptionValue("max_submitted_jobs"))
