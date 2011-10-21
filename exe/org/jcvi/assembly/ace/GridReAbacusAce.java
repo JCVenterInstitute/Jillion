@@ -67,6 +67,7 @@ import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.ReadAceTag;
 import org.jcvi.common.core.assembly.contig.ace.WholeAssemblyAceTag;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.internal.command.grid.JcviQueue;
 
 /**
  * @author dkatzel
@@ -99,7 +100,9 @@ public class GridReAbacusAce {
                 "We add flanking bases in order to improve the alignments.  " +
                 "Default flank if not specified is "+ DEFAULT_FLANK_LENGTH)
         .build());
-        
+        options.addOption(new CommandLineOptionBuilder("himem", "use the himem queue")
+        .isFlag(true)
+        .build());
         
         options.addOption(new CommandLineOptionBuilder("P", "grid project code (required)")
         .isRequired(true)
@@ -138,10 +141,12 @@ public class GridReAbacusAce {
             int maxJobs = commandLine.hasOption("max_submitted_jobs")?
                     Integer.parseInt(commandLine.getOptionValue("max_submitted_jobs"))
                     : DEFAULT_MAX_JOBS;
+                    
+            boolean useHiMem = commandLine.hasOption("himem");
             File workDir = new File(outputAceFile.getAbsolutePath()).getParentFile();
             executor = new GridJobExecutorService(session,"abacusErrorDetector", maxJobs);
             
-            MasterAceVisitor visitor = new MasterAceVisitor(out, inputAceFile,navigationFile, session, projectCode,workDir,executor, numberOfFlankingBases,outputAceFile);
+            MasterAceVisitor visitor = new MasterAceVisitor(out, inputAceFile,navigationFile, session, projectCode,workDir,executor, numberOfFlankingBases,outputAceFile, useHiMem);
       
             AceFileParser.parseAceFile(inputAceFile, visitor);
             //when we get here we are done all jobs
@@ -193,9 +198,9 @@ public class GridReAbacusAce {
         private final GridJobExecutorService executor;
         private final int numberOfFlankingBases;
         private final List<String> contigIds = new ArrayList<String>();
-        
+        private final boolean useHiMem;
         public MasterAceVisitor(OutputStream aceOut, File aceFile, File navigationFile, Session session, String projectCode,
-                File workDir,GridJobExecutorService executor, int numberOfFlankingBases,File outputAceFile) {
+                File workDir,GridJobExecutorService executor, int numberOfFlankingBases,File outputAceFile,boolean useHiMem) {
             this.aceOut = aceOut;
             this.outputAceFile = outputAceFile;
             this.aceFile = aceFile;
@@ -205,6 +210,7 @@ public class GridReAbacusAce {
             this.workDir =workDir;
             this.executor = executor;
             this.numberOfFlankingBases = numberOfFlankingBases;
+            this.useHiMem=useHiMem;
         }
 
         /**
@@ -316,6 +322,9 @@ public class GridReAbacusAce {
                                                  session,
                                                  findAbacusErrorWorker, 
                                                  projectCode);
+             if(useHiMem){
+                 job.setQueue(JcviQueue.HI_MEM.getQueueName());
+             }
              job.postExecutionHook(new PostExecutionHook() {
                  
                  @Override
