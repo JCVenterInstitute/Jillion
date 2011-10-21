@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -57,7 +58,6 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
-import org.jcvi.common.core.assembly.contig.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.contig.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.contig.ace.DefaultConsensusAceTag;
@@ -79,7 +79,15 @@ public class GridReAbacusAce {
     private static final int DEFAULT_FLANK_LENGTH = 20;
     private static final int DEFAULT_MAX_JOBS = 300;
     
-    private static final File ABACUS_WORKER_EXE = new File("/usr/local/devel/VIRIFX/software/Elvira/bin/workers/reAbacusAceContig");
+    private static final File ABACUS_WORKER_EXE;
+    
+    static{
+        try {
+            ABACUS_WORKER_EXE =getPathToAbacusWorker();
+        } catch (IOException e) {
+            throw new RuntimeException("error reading property file",e);
+        }
+    }
     
     
     public static void main(String[] args) throws IOException, DrmaaException {
@@ -182,7 +190,19 @@ public class GridReAbacusAce {
                   );
     }
     
-    
+    private static final File getPathToAbacusWorker() throws IOException{
+       InputStream in = GridReAbacusAce.class.getResourceAsStream("/javacommon.config");
+       Properties props =new Properties();
+       try{
+           props.load(in);
+       }finally{
+           IOUtil.closeAndIgnoreErrors(in);
+       }
+       if(!props.contains("re_abacus_worker")){
+           throw new IllegalStateException("could not read property 're_abacus_worker'");
+       }
+       return new File(props.get("re_abacus_worker").toString());
+    }
     private static final class MasterAceVisitor extends AbstractAceFileVisitor{
         private final OutputStream aceOut;
         
@@ -349,13 +369,6 @@ public class GridReAbacusAce {
              // TODO Auto-generated method stub
              
          }
-
-        /**
-         * @return the jobs
-         */
-        public List<SimpleGridJob> getJobs() {
-            return jobs;
-        }
 
         /**
         * {@inheritDoc}

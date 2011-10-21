@@ -22,6 +22,7 @@ package org.jcvi.assembly.ace;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -74,7 +76,15 @@ import org.jcvi.common.io.idReader.StringIdParser;
  */
 public class GridFindAbacusErrorsInAce {
     private static final int DEFAULT_MAX_JOBS = 300;
-    private static final File ABACUS_WORKER_EXE = new File("/usr/local/devel/DAS/software/Elvira/bin/workers/detectAbacusErrorsInAce");
+    private static final File ABACUS_WORKER_EXE;
+    
+    static{
+        try {
+            ABACUS_WORKER_EXE= getPathToAbacusWorker();
+        } catch (IOException e) {
+           throw new RuntimeException("error reading config file",e);
+        }
+    }
     /**
      * @param args
      * @throws DrmaaException 
@@ -255,4 +265,18 @@ public class GridFindAbacusErrorsInAce {
         }
         return ids;
     }
+    
+    private static final File getPathToAbacusWorker() throws IOException{
+        InputStream in = GridReAbacusAce.class.getResourceAsStream("/javacommon.config");
+        Properties props =new Properties();
+        try{
+            props.load(in);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+        if(!props.contains("detect_abacus_worker")){
+            throw new IllegalStateException("could not read property 'detect_abacus_worker'");
+        }
+        return new File(props.get("detect_abacus_worker").toString());
+     }
 }
