@@ -21,7 +21,6 @@ package org.jcvi.assembly.ace;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
@@ -88,10 +88,16 @@ import org.jcvi.common.core.util.IndexedFileRange;
 public class ReAbacusAceContigWorker {
 
     private static final int DEFAULT_FLANK_LENGTH = 20;
-    /**
-     * path to muscle we need to change this so it's not hardcoded...
-     */
-    private static final File MUSCLE = new File("/usr/local/bin/muscle");
+
+    private static final File MUSCLE;
+    
+    static{
+        try {
+            MUSCLE= getPathToMuscle();
+        } catch (IOException e) {
+            throw new RuntimeException("error reading config file",e);
+        }
+    }
     /**
      * Run muscle and write the gapped alignment results
      * to the given output file as a multifasta.
@@ -508,4 +514,18 @@ public class ReAbacusAceContigWorker {
         }
         
     }
+    
+    private static final File getPathToMuscle() throws IOException{
+        InputStream in = GridReAbacusAce.class.getResourceAsStream("/javacommon.config");
+        Properties props =new Properties();
+        try{
+            props.load(in);
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+        if(!props.contains("muscle")){
+            throw new IllegalStateException("could not read property 'muscle'");
+        }
+        return new File(props.get("muscle").toString());
+     }
 }
