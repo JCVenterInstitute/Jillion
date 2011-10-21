@@ -523,7 +523,7 @@ public class ReAbacusAceContigWorker {
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
-        if(!props.contains("muscle")){
+        if(!props.containsKey("muscle")){
             throw new IllegalStateException("could not read property 'muscle'");
         }
         return new File(props.get("muscle").toString());

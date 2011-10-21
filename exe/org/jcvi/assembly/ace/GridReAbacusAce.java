@@ -198,7 +198,7 @@ public class GridReAbacusAce {
        }finally{
            IOUtil.closeAndIgnoreErrors(in);
        }
-       if(!props.contains("re_abacus_worker")){
+       if(!props.containsKey("re_abacus_worker")){
            throw new IllegalStateException("could not read property 're_abacus_worker'");
        }
        return new File(props.get("re_abacus_worker").toString());

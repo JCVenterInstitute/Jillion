@@ -274,7 +274,7 @@ public class GridFindAbacusErrorsInAce {
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
-        if(!props.contains("detect_abacus_worker")){
+        if(!props.containsKey("detect_abacus_worker")){
             throw new IllegalStateException("could not read property 'detect_abacus_worker'");
         }
         return new File(props.get("detect_abacus_worker").toString());
