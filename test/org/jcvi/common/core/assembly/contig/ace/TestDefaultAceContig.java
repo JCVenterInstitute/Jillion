@@ -44,6 +44,19 @@ public class TestDefaultAceContig {
         assertEquals(0,contig.getNumberOfReads());
     }
     @Test
+    public void callingBuildTwiceShouldThrowIllegalStateException(){
+        DefaultAceContig.Builder sut =  new DefaultAceContig.Builder("id",
+                "ACGTACGTACGTACGT");
+        sut.build();
+        
+        try{
+            sut.build();
+            fail("should throw IllegalStateException if build() called twice");
+        }catch(IllegalStateException e){
+            //expected
+        }
+    }
+    @Test
     public void readThatHasNegativeOffsetShouldGetTrimmedToOffsetZero(){
         DefaultAceContig.Builder sut =  new DefaultAceContig.Builder("id",
                                             "ACGTACGTACGTACGT");
