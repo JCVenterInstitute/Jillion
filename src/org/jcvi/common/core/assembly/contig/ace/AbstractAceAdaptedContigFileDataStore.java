@@ -35,7 +35,7 @@ import org.jcvi.common.core.seq.fastx.FastXRecord;
 
 public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractContigFileVisitor{
 
-    private DefaultAceContig.Builder contigBuilder;
+    private AceContigBuilder contigBuilder;
     private final Date phdDate;
     private final DataStore<? extends FastXRecord> fullLengthFastXDataStore;
     /**
@@ -73,7 +73,7 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
         
     }
 
-    protected abstract void visitAceContig(DefaultAceContig aceContig);
+    protected abstract void visitAceContig(AceContig aceContig);
     
 
     

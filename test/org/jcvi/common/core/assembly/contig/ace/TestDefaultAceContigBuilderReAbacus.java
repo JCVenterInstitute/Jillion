@@ -33,7 +33,7 @@ public class TestDefaultAceContigBuilderReAbacus {
     PhdInfo read1PhdInfo = createMock(PhdInfo.class);
     @Test
     public void abacus(){
-        DefaultAceContig.Builder sut =  new DefaultAceContig.Builder("id",
+        AceContigBuilder sut =  new DefaultAceContig.Builder("id",
                           "ACGT-----ACGT")
         
         .addRead("read1",   "GT-T---ACG", 2, Direction.FORWARD, Range.buildRange(2,7), read1PhdInfo, 10)
@@ -45,7 +45,7 @@ public class TestDefaultAceContigBuilderReAbacus {
         sut.getAcePlacedReadBuilder("read3").reAbacus(Range.buildRange(1,5), "T");
         sut.getConsensusBuilder().delete(Range.buildRange(4,8)).insert(4, "T");
            
-        DefaultAceContig contig =sut.build();
+        AceContig contig =sut.build();
         assertEquals("ACGTTACGT", contig.getConsensus().toString());
         AcePlacedRead read1 = contig.getPlacedReadById("read1");
         assertEquals("GTTACG", read1.getNucleotideSequence().toString());
@@ -62,7 +62,7 @@ public class TestDefaultAceContigBuilderReAbacus {
     
     @Test
     public void abacusAndShiftDownstreamReads(){
-        DefaultAceContig.Builder sut =  new DefaultAceContig.Builder("id",
+        AceContigBuilder sut =  new DefaultAceContig.Builder("id",
                           "ACGT-----ACGT")
         
         .addRead("read1",   "GT-T---ACG", 2, Direction.FORWARD, Range.buildRange(2,7), read1PhdInfo, 10)
@@ -76,7 +76,7 @@ public class TestDefaultAceContigBuilderReAbacus {
         sut.getConsensusBuilder().delete(Range.buildRange(4,8)).insert(4, "T");
         sut.getAcePlacedReadBuilder("read4").shiftLeft(4);
            
-        DefaultAceContig contig =sut.build();
+        AceContig contig =sut.build();
         assertEquals("ACGTTACGT", contig.getConsensus().toString());
         AcePlacedRead read1 = contig.getPlacedReadById("read1");
         assertEquals("GTTACG", read1.getNucleotideSequence().toString());

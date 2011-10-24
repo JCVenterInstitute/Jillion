@@ -51,7 +51,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         super(id, consensus, reads);
     }
 
-    public static class Builder{
+    public static class Builder implements AceContigBuilder{
         private NucleotideSequence fullConsensus;
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
@@ -59,7 +59,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         private final Map<String, DefaultAcePlacedRead.Builder>aceReadBuilderMap = new HashMap<String, DefaultAcePlacedRead.Builder>();
         private int contigLeft= -1;
         private int contigRight = -1;
-        
+        private boolean built=false;
         public Builder(String contigId, String fullConsensus){
            this(contigId,                   
                     Nucleotides.parse(ConsedUtil.convertAceGapsToContigGaps(fullConsensus))
@@ -76,21 +76,41 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         	 this.mutableConsensus = new NucleotideSequenceBuilder(fullConsensus);
         }
         
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public Builder adjustContigIdToReflectCoordinates(CoordinateSystem coordinateSystem){
             adjustedContigIdCoordinateSystem = coordinateSystem;
             return this;
         }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public Builder setContigId(String contigId){
             this.contigId = contigId;
             return this;
         }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public String getContigId() {
             return contigId;
         }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public int numberOfReads(){
             return aceReadBuilderMap.size();
         }
         
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public Builder addRead(AcePlacedRead acePlacedRead) {
          return addRead(acePlacedRead.getId(),
         		 Nucleotides.asString(acePlacedRead.getNucleotideSequence().asList()),
@@ -101,18 +121,34 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         		 acePlacedRead.getUngappedFullLength());
         }
         
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public Builder addAllReads(Iterable<AcePlacedRead> reads){
             for(AcePlacedRead read : reads){
                 addRead(read);
             }
             return this;
         }
-    	public Collection<DefaultAcePlacedRead.Builder> getAllAcePlacedReadBuilders(){
+    	/**
+        * {@inheritDoc}
+        */
+    	@Override
+        public Collection<DefaultAcePlacedRead.Builder> getAllAcePlacedReadBuilders(){
     	    return aceReadBuilderMap.values();
     	}
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public DefaultAcePlacedRead.Builder getAcePlacedReadBuilder(String readId){
             return aceReadBuilderMap.get(readId);
         }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public Builder addRead(String readId, String validBases, int offset,
                 Direction dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
             //contig left (and right) might be beyond consensus depending on how
@@ -156,13 +192,21 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         
         
         /**
-         * @return the mutableConsensus
-         */
+        * {@inheritDoc}
+        */
+        @Override
         public NucleotideSequenceBuilder getConsensusBuilder() {
             return mutableConsensus;
         }
-        public DefaultAceContig build(){
-             
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized DefaultAceContig build(){
+             if(built){
+                 throw new IllegalStateException("this contig has already been built");
+             }
+             built=true;
             if(numberOfReads()==0){
                 //force empty contig if no reads...
                 return new DefaultAceContig(contigId, NucleotideSequenceFactory.create(""),Collections.<AcePlacedRead>emptySet());

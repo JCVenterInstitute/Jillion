@@ -38,13 +38,16 @@ import org.apache.commons.io.FilenameUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
+import org.jcvi.common.core.assembly.contig.ace.DefaultAcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
+import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.joda.time.DateTime;
@@ -128,17 +131,17 @@ public class ConsedUtil {
      * Some Assemblers (mostly reference assemblers) create contigs with zero coverage
      * regions (0x) but that have the reference basecalls as the consensus in those 
      * areas. This method removes the parts of the contig which only have consensus. 
-     * @param contig an {@link AceContig} that may have 0x regions.  Can not be null.
-     * @param coverageMap the coverage map that corresponds to the given contig.
+     * @param contigBuilder an {@link AceContig} that may have 0x regions.  Can not be null.
      * @param adjustIdCoordinates this contig id already has coordinates appended to the end
      * of the id, adjust these coordinates instead of appending new ones...
      * @return a list of (possibly new) AceContigs of the broken given contig.  
      * If there are no 0x regions in the given contig, then a list containing
      * only the reference of the given contig is returned.
      */
-    public static List<AceContig> split0xContig(AceContig contig, CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap, boolean adjustIdCoordinates){
+    public static List<AceContig> split0xContig(AceContigBuilder contigBuilder, boolean adjustIdCoordinates){
         List<Range> coveredRegions = new ArrayList<Range>();
-        NucleotideSequence consensus = contig.getConsensus();
+        NucleotideSequence consensus = contigBuilder.getConsensusBuilder().build();
+        CoverageMap<CoverageRegion<DefaultAcePlacedRead.Builder>> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllAcePlacedReadBuilders());
         for(CoverageRegion region : coverageMap){
             if(region.getCoverage()>0){
                 
@@ -151,10 +154,10 @@ public class ConsedUtil {
         List<Range> contigRanges =Range.mergeRanges(coveredRegions);
         if(contigRanges.size()==1){
             //no 0x region
-            return Arrays.asList(contig);
+            return Arrays.asList(contigBuilder.build());
         }
         List<AceContig> newContigs = new ArrayList<AceContig>(contigRanges.size());
-        String originalContigId= contig.getId();
+        String originalContigId= contigBuilder.getContigId();
         int oldStart=1;
         if(adjustIdCoordinates){
             Matcher matcher = ACE_CONTIG_ID_PATTERN.matcher(originalContigId);
@@ -164,21 +167,21 @@ public class ConsedUtil {
             }
         }
         for(Range contigRange : contigRanges){
-            DefaultAceContig splitContig = createSplitContig(contig,
+            AceContig splitContig = createSplitContig(contigBuilder,
                     coverageMap, consensus, originalContigId, oldStart,
                     contigRange);
             newContigs.add(splitContig);
         }
         return newContigs;
     }
-    private static DefaultAceContig createSplitContig(AceContig contig,
-            CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap,
+    private static AceContig createSplitContig(AceContigBuilder builderToSplit,
+            CoverageMap<CoverageRegion<DefaultAcePlacedRead.Builder>> coverageMap,
             NucleotideSequence consensus, String originalContigId,
             int oldStart, Range contigRange) {
         Set<String> contigReads = new HashSet<String>();
         
-        for(CoverageRegion<AcePlacedRead> region : coverageMap.getRegionsWithin(contigRange)){
-            for(AcePlacedRead read : region){
+        for(CoverageRegion<DefaultAcePlacedRead.Builder> region : coverageMap.getRegionsWithin(contigRange)){
+            for(DefaultAcePlacedRead.Builder read : region){
                 contigReads.add(read.getId());
             }
         }
@@ -187,20 +190,20 @@ public class ConsedUtil {
         String contigId = String.format("%s_%d_%d",originalContigId, 
                 oldStart + consensus.getUngappedOffsetFor((int) contigRange.getStart()),
                 oldStart + consensus.getUngappedOffsetFor((int) contigRange.getEnd()));
-        DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contigId, contigConsensus);
+        AceContigBuilder builder = new DefaultAceContig.Builder(contigId, contigConsensus);
         
         for(String readId : contigReads){
-            final AcePlacedRead read = contig.getPlacedReadById(readId);
+            final DefaultAcePlacedRead.Builder read = builderToSplit.getAcePlacedReadBuilder(readId);
             if(read ==null){
                 throw new NullPointerException("got a null read for id " + readId);
             }
             builder.addRead(readId, 
-                    Nucleotides.asString(read.getNucleotideSequence().asList()), 
+                    read.getBasesBuilder().toString(), 
                     (int)(read.getStart() - contigRange.getStart()), 
-                    read.getDirection(), read.getValidRange(), read.getPhdInfo(),
+                    read.getDirection(), read.getClearRange(), read.getPhdInfo(),
                     read.getUngappedFullLength());
         }
-        DefaultAceContig splitContig = builder.build();
+        AceContig splitContig = builder.build();
         return splitContig;
     }
     /**

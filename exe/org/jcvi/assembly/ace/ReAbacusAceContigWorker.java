@@ -48,12 +48,12 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.AbstractAceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.HiLowAceContigPhdDatastore;
 import org.jcvi.common.core.assembly.contig.ace.IndexedAceFileDataStore;
-import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig.Builder;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedNavigationParser;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedNavigationVisitor;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsensusNavigationElement;
@@ -301,7 +301,7 @@ public class ReAbacusAceContigWorker {
         * {@inheritDoc}
         */
         @Override
-        protected void postProcess(Builder contigBuilder) {
+        protected void postProcess(AceContigBuilder contigBuilder) {
             String contigId = contigBuilder.getContigId();
             System.out.println(contigId);
             if(abacusProblemRanges.containsKey(contigId)){

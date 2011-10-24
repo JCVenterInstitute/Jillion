@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +42,7 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
@@ -59,7 +61,6 @@ import org.jcvi.common.core.assembly.contig.cas.ExternalTrimInfo;
 import org.jcvi.common.core.assembly.contig.cas.ReadFileType;
 import org.jcvi.common.core.assembly.contig.cas.UnTrimmedExtensionTrimMap;
 import org.jcvi.common.core.assembly.contig.cas.UpdateConsensusAceContigBuilder;
-import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.assembly.trim.TrimDataStore;
 import org.jcvi.common.core.assembly.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
@@ -210,10 +211,11 @@ public class Cas2Consed3 {
              File consensusFile = consedOutputDir.createNewFile(prefix+ ".ace.1.consensus.fasta");
              OutputStream tempOut = new FileOutputStream(tempAce);
              PrintStream consensusOut = new PrintStream(consensusFile);
-             for(DefaultAceContig.Builder builder : builders.values()){
-                 AceContig contig =builder.build();
+             Iterator<DefaultAceContig.Builder> builderIterator = builders.values().iterator();
+             while(builderIterator.hasNext()){
+                 AceContigBuilder builder = builderIterator.next();
                  
-                 for(AceContig splitContig : ConsedUtil.split0xContig(contig,DefaultCoverageMap.buildCoverageMap(contig), true)){
+                 for(AceContig splitContig : ConsedUtil.split0xContig(builder,true)){
                      numberOfContigs++;
                      numberOfReads+= splitContig.getNumberOfReads();
                      consensusOut.print(
@@ -223,6 +225,7 @@ public class Cas2Consed3 {
                              .toFormattedString());
                      AceFileWriter.writeAceContig(splitContig, phdDataStore, tempOut);
                  }
+                 builderIterator.remove();
              }
              IOUtil.closeAndIgnoreErrors(tempOut,consensusOut);
              File ace = new File(editDir, prefix+".ace.1");

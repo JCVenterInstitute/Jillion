@@ -40,6 +40,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.GapQualityValueStrategies;
 import org.jcvi.common.core.assembly.contig.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceContigDataStore;
 import org.jcvi.common.core.assembly.contig.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
@@ -214,7 +215,7 @@ public class RecallAceConsensus {
                 if(fastaOut !=null){
                     fastaOut.print(new DefaultNucleotideSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.asUngappedList()));
                 }
-                DefaultAceContig.Builder builder = new DefaultAceContig.Builder(contig.getId(), gappedRecalledConsensus);
+                AceContigBuilder builder = new DefaultAceContig.Builder(contig.getId(), gappedRecalledConsensus);
                 for(AcePlacedRead read : contig.getPlacedReads()){
                     builder.addRead(read);
                 }

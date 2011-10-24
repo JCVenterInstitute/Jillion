@@ -52,7 +52,7 @@ public class TestAceContigTrimmer {
     }
     
     private static class TestAceBuilder{
-    	private final DefaultAceContig.Builder builder;
+    	private final AceContigBuilder builder;
     	
     	TestAceBuilder(String id, String consensus){
     		builder = new DefaultAceContig.Builder(id,consensus);

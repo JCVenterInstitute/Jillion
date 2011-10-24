@@ -28,6 +28,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.AceContigTestUtil;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
@@ -46,24 +47,21 @@ public class TestConsedUtil_Split0x {
     private final String originalId="origId";
     private final String referenceConsensus = "AACGTACGTAAACGTACGTAA";
     
-    private static class TestAceBuilder{
-    	private final DefaultAceContig.Builder builder;
+    private static class TestAceBuilder extends DefaultAceContig.Builder{
     	
     	TestAceBuilder(String id, String consensus){
-    		builder = new DefaultAceContig.Builder(id,consensus);
+    		super(id,consensus);
     	}
     	
     	TestAceBuilder addRead(String readId, String gappedBasecalls,int offset, Direction dir, Range validRange, PhdInfo phdInfo){
-    		builder.addRead(readId, gappedBasecalls,offset,dir,validRange,phdInfo,offset+gappedBasecalls.length());
+    		super.addRead(readId, gappedBasecalls,offset,dir,validRange,phdInfo,offset+gappedBasecalls.length());
     		return this;
     	}
-    	AceContig build(){
-    		return builder.build();
-    	}
+    	
     }
     @Test
     public void contigWithNo0xRegionsShouldNotTrim(){       
-        AceContig contig =
+        TestAceBuilder contigBuilder =
         	new TestAceBuilder(originalId,referenceConsensus)
         .addRead("read1", referenceConsensus.substring(0, 11), 0, 
                 Direction.FORWARD, 
@@ -72,14 +70,22 @@ public class TestConsedUtil_Split0x {
         .addRead("read2", referenceConsensus.substring(10), 10, 
                 Direction.FORWARD, 
                 Range.buildRange(0, 11).convertRange(CoordinateSystem.RESIDUE_BASED), 
-                createMock(PhdInfo.class))        	
-        	
-        	.build();
-        CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
+                createMock(PhdInfo.class));
         
-        final List<AceContig> actualcontigs = ConsedUtil.split0xContig(contig, coverageMap, false);
+        final List<AceContig> actualcontigs = ConsedUtil.split0xContig(contigBuilder, false);
         assertEquals(1,actualcontigs.size());
-        assertSame(contig, actualcontigs.get(0));
+        AceContig expected = new TestAceBuilder(originalId,referenceConsensus)
+                                .addRead("read1", referenceConsensus.substring(0, 11), 0, 
+                                        Direction.FORWARD, 
+                                        Range.buildRange(0, 10).convertRange(CoordinateSystem.RESIDUE_BASED), 
+                                        createMock(PhdInfo.class))
+                                .addRead("read2", referenceConsensus.substring(10), 10, 
+                                        Direction.FORWARD, 
+                                        Range.buildRange(0, 11).convertRange(CoordinateSystem.RESIDUE_BASED), 
+                                        createMock(PhdInfo.class))
+                                        .build();
+        
+        AceContigTestUtil.assertContigsEqual(expected, actualcontigs.get(0));
     }
     
     @Test
@@ -87,7 +93,7 @@ public class TestConsedUtil_Split0x {
         final PhdInfo read1Phd = createMock(PhdInfo.class);
         final PhdInfo read2Phd = createMock(PhdInfo.class);
 
-        AceContig contig = new TestAceBuilder(originalId,referenceConsensus)
+        TestAceBuilder contig = new TestAceBuilder(originalId,referenceConsensus)
 		        .addRead("read1", referenceConsensus.substring(0, 11), 0, 
 		                Direction.FORWARD, 
 		                Range.buildRange(0, 10).convertRange(CoordinateSystem.RESIDUE_BASED), 
@@ -95,12 +101,10 @@ public class TestConsedUtil_Split0x {
 		        .addRead("read2", referenceConsensus.substring(12), 12, 
 		                Direction.FORWARD, 
 		                Range.buildRange(0, 9).convertRange(CoordinateSystem.RESIDUE_BASED), 
-		                read2Phd)
-		        	
-        		.build();
-        CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
+		                read2Phd);
+		       
     
-        List<AceContig> splitContigs = ConsedUtil.split0xContig(contig, coverageMap, false);
+        List<AceContig> splitContigs = ConsedUtil.split0xContig(contig,  false);
         assertEquals("# of split contigs", 2, splitContigs.size());
         
         AceContig expectedFirstContig = new TestAceBuilder(
@@ -126,7 +130,7 @@ public class TestConsedUtil_Split0x {
 
         final PhdInfo read1Phd = createMock(PhdInfo.class);
         final PhdInfo read2Phd = createMock(PhdInfo.class);
-        AceContig contig = new TestAceBuilder("id_1_12",referenceConsensus)
+        TestAceBuilder contig = new TestAceBuilder("id_1_12",referenceConsensus)
         
 		        .addRead("read1", referenceConsensus.substring(0, 11), 0, 
 		                Direction.FORWARD, 
@@ -135,11 +139,9 @@ public class TestConsedUtil_Split0x {
 		        .addRead("read2", referenceConsensus.substring(12), 12, 
 		                Direction.FORWARD, 
 		                Range.buildRange(0, 9).convertRange(CoordinateSystem.RESIDUE_BASED), 
-		                read2Phd)
-	                .build();
-        CoverageMap<CoverageRegion<AcePlacedRead>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
-    
-        List<AceContig> splitContigs = ConsedUtil.split0xContig(contig, coverageMap, true);
+		                read2Phd);
+        List<AceContig> splitContigs = ConsedUtil.split0xContig(contig, true);
+        
         assertEquals("# of split contigs", 2, splitContigs.size());
         
         AceContig expectedFirstContig = new TestAceBuilder(
