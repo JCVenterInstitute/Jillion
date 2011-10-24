@@ -56,7 +56,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
         private CoordinateSystem adjustedContigIdCoordinateSystem=null;
-        private final Map<String, DefaultAcePlacedRead.Builder>aceReadBuilderMap = new HashMap<String, DefaultAcePlacedRead.Builder>();
+        private final Map<String, AcePlacedReadBuilder>aceReadBuilderMap = new HashMap<String, AcePlacedReadBuilder>();
         private int contigLeft= -1;
         private int contigRight = -1;
         private boolean built=false;
@@ -135,14 +135,14 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         * {@inheritDoc}
         */
     	@Override
-        public Collection<DefaultAcePlacedRead.Builder> getAllAcePlacedReadBuilders(){
+        public Collection<AcePlacedReadBuilder> getAllAcePlacedReadBuilders(){
     	    return aceReadBuilderMap.values();
     	}
         /**
         * {@inheritDoc}
         */
         @Override
-        public DefaultAcePlacedRead.Builder getAcePlacedReadBuilder(String readId){
+        public AcePlacedReadBuilder getAcePlacedReadBuilder(String readId){
             return aceReadBuilderMap.get(readId);
         }
         /**
@@ -157,7 +157,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             //BCISD-211
             int correctedOffset = Math.max(0,offset);
             adjustContigLeftAndRight(validBases, correctedOffset);
-                DefaultAcePlacedRead.Builder aceReadBuilder = createNewAceReadBuilder(readId, validBases, correctedOffset, dir, 
+            AcePlacedReadBuilder aceReadBuilder = createNewAceReadBuilder(readId, validBases, correctedOffset, dir, 
                         clearRange,phdInfo,ungappedFullLength);
                 
                 
@@ -165,10 +165,10 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             
             return this;
         }
-        private DefaultAcePlacedRead.Builder createNewAceReadBuilder(
+        private AcePlacedReadBuilder createNewAceReadBuilder(
                 String readId, String validBases, int offset,
                 Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength) {
-            return new DefaultAcePlacedRead.Builder(
+            return DefaultAcePlacedRead.createBuilder(
                     fullConsensus,readId,
                     ConsedUtil.convertAceGapsToContigGaps(validBases),
                     offset,dir,clearRange,phdInfo,ungappedFullLength);
@@ -222,7 +222,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             //here only include the gapped valid range consensus bases
             //throw away the rest            
             NucleotideSequence validConsensus = NucleotideSequenceFactory.create(mutableConsensus.asList(Range.buildRange(contigLeft, contigRight)));
-            for(DefaultAcePlacedRead.Builder aceReadBuilder : aceReadBuilderMap.values()){
+            for(AcePlacedReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
                 int newOffset = (int)aceReadBuilder.getStart() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);
                 placedReads.add(aceReadBuilder.build());                
