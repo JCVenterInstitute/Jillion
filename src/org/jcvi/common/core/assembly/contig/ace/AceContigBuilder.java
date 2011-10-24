@@ -45,9 +45,9 @@ public interface AceContigBuilder {
 
     AceContigBuilder addAllReads(Iterable<AcePlacedRead> reads);
 
-    Collection<DefaultAcePlacedRead.Builder> getAllAcePlacedReadBuilders();
+    Collection<AcePlacedReadBuilder> getAllAcePlacedReadBuilders();
 
-    DefaultAcePlacedRead.Builder getAcePlacedReadBuilder(String readId);
+    AcePlacedReadBuilder getAcePlacedReadBuilder(String readId);
 
     AceContigBuilder addRead(String readId, String validBases, int offset,
             Direction dir, Range clearRange, PhdInfo phdInfo,

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
@@ -46,6 +45,13 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
     private final int ungappedFullLength;
     private final PlacedRead placedRead;
     
+    
+    public static AcePlacedReadBuilder createBuilder(NucleotideSequence reference, String readId,String validBases,
+            int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
+            int ungappedFullLength){
+        return new Builder(reference, readId, validBases, 
+                offset, dir, clearRange, phdInfo, ungappedFullLength);
+    }
     public DefaultAcePlacedRead(Read<ReferenceEncodedNucleotideSequence> read,
             long start, Direction dir,PhdInfo phdInfo, int ungappedFullLength, Range validRange) {
         this.placedRead = new DefaultPlacedRead(read, start, dir,validRange);
@@ -210,7 +216,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
     }
 
 
-    public static class Builder implements Placed<Builder>{
+    private static class Builder implements AcePlacedReadBuilder{
         private String readId;
         /**
          * Our original encoded sequence.  If we 
@@ -251,48 +257,74 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         }
         
         
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public Builder reference(NucleotideSequence reference, int newOffset){
             this.reference = reference;
             this.offset = newOffset;
             return this;
         }
+        /**
+        * {@inheritDoc}
+        */
         @Override
         public long getStart(){
             return offset;
         }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public String getId(){
             return readId;
         }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public Builder setStartOffset(int newOffset){
             this.offset = newOffset;
             return this;
         }
         
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public Builder shiftRight(int numberOfBases){
             return setStartOffset(offset+numberOfBases);
         }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public Builder shiftLeft(int numberOfBases){
             return setStartOffset(offset-numberOfBases);
         }
         /**
-         * @return the clearRange
-         */
+        * {@inheritDoc}
+        */
+        @Override
         public Range getClearRange() {
             return clearRange;
         }
 
 
         /**
-         * @return the phdInfo
-         */
+        * {@inheritDoc}
+        */
+        @Override
         public PhdInfo getPhdInfo() {
             return phdInfo;
         }
 
 
         /**
-         * @return the dir
-         */
+        * {@inheritDoc}
+        */
+        @Override
         public Direction getDirection() {
             return dir;
         }
@@ -300,13 +332,18 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         
 
         /**
-         * @return the ungappedFullLength
-         */
+        * {@inheritDoc}
+        */
+        @Override
         public int getUngappedFullLength() {
             return ungappedFullLength;
         }
 
 
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public DefaultAcePlacedRead build(){
             ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = NucleotideSequenceFactory.createReferenceEncoded(
                         reference,
@@ -314,9 +351,17 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             Read read = new DefaultRead(readId, updatedEncodedBasecalls);
             return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength,clearRange);
         }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public Builder reAbacus(Range gappedValidRangeToChange, String newBasecalls){
             return reAbacus(gappedValidRangeToChange, Nucleotides.parse(newBasecalls));
         }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public Builder reAbacus(Range gappedValidRangeToChange, List<Nucleotide> newBasecalls){
             List<Nucleotide> oldUngappedBasecalls = Nucleotides.ungap(getBasesBuilder().asList(gappedValidRangeToChange));
             List<Nucleotide> newUngappedBasecalls = new ArrayList<Nucleotide>(newBasecalls.size());
@@ -334,6 +379,9 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             basesBuilder.insert((int)gappedValidRangeToChange.getStart(), newBasecalls);
             return this;
         }
+        /**
+        * {@inheritDoc}
+        */
         @Override
         public long getLength(){
             if(basesBuilder !=null){
@@ -341,17 +389,24 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             }
             return originalSequence.getLength();
         }
+        /**
+        * {@inheritDoc}
+        */
         @Override
         public long getEnd(){
             return offset + getLength()-1;
         }
+        /**
+        * {@inheritDoc}
+        */
         @Override
         public Range asRange(){
             return Range.buildRange(offset,getEnd());
         }
         /**
-         * @return the basesBuilder
-         */
+        * {@inheritDoc}
+        */
+        @Override
         public synchronized NucleotideSequenceBuilder getBasesBuilder() {
             if(basesBuilder==null){
                 this.basesBuilder = new NucleotideSequenceBuilder(originalSequence);
@@ -360,6 +415,10 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             return basesBuilder;
         }
         
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public synchronized NucleotideSequence getCurrentNucleotideSequence(){
             if(originalSequence !=null){
                 return originalSequence;
@@ -378,7 +437,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         * {@inheritDoc}
         */
         @Override
-        public int compareTo(Builder o) {
+        public int compareTo(AcePlacedReadBuilder o) {
             
             int rangeCompare = asRange().compareTo(o.asRange());
             if(rangeCompare !=0){

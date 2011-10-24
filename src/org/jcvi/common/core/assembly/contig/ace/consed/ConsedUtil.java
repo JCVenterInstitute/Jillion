@@ -39,10 +39,9 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
 import org.jcvi.common.core.assembly.contig.ace.AceContigBuilder;
-import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.contig.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
-import org.jcvi.common.core.assembly.contig.ace.DefaultAcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
@@ -141,7 +140,7 @@ public class ConsedUtil {
     public static List<AceContig> split0xContig(AceContigBuilder contigBuilder, boolean adjustIdCoordinates){
         List<Range> coveredRegions = new ArrayList<Range>();
         NucleotideSequence consensus = contigBuilder.getConsensusBuilder().build();
-        CoverageMap<CoverageRegion<DefaultAcePlacedRead.Builder>> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllAcePlacedReadBuilders());
+        CoverageMap<CoverageRegion<AcePlacedReadBuilder>> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllAcePlacedReadBuilders());
         for(CoverageRegion region : coverageMap){
             if(region.getCoverage()>0){
                 
@@ -175,13 +174,13 @@ public class ConsedUtil {
         return newContigs;
     }
     private static AceContig createSplitContig(AceContigBuilder builderToSplit,
-            CoverageMap<CoverageRegion<DefaultAcePlacedRead.Builder>> coverageMap,
+            CoverageMap<CoverageRegion<AcePlacedReadBuilder>> coverageMap,
             NucleotideSequence consensus, String originalContigId,
             int oldStart, Range contigRange) {
         Set<String> contigReads = new HashSet<String>();
         
-        for(CoverageRegion<DefaultAcePlacedRead.Builder> region : coverageMap.getRegionsWithin(contigRange)){
-            for(DefaultAcePlacedRead.Builder read : region){
+        for(CoverageRegion<AcePlacedReadBuilder> region : coverageMap.getRegionsWithin(contigRange)){
+            for(AcePlacedReadBuilder read : region){
                 contigReads.add(read.getId());
             }
         }
@@ -193,7 +192,7 @@ public class ConsedUtil {
         AceContigBuilder builder = new DefaultAceContig.Builder(contigId, contigConsensus);
         
         for(String readId : contigReads){
-            final DefaultAcePlacedRead.Builder read = builderToSplit.getAcePlacedReadBuilder(readId);
+            final AcePlacedReadBuilder read = builderToSplit.getAcePlacedReadBuilder(readId);
             if(read ==null){
                 throw new NullPointerException("got a null read for id " + readId);
             }
