@@ -52,7 +52,7 @@ public class TestAceVisitorSkipContigs{
         
         for(AceContig aceContig : datastore){
             Contig<PlacedRead> contig = contigDataStore.get(aceContig.getId());
-            AceContigTestUtil.assertContigParsedCorrectly(contig, aceContig);
+            AceContigTestUtil.assertContigsEqual(contig, aceContig);
         }
         
     }

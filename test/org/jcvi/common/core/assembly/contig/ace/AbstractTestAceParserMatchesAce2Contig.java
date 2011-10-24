@@ -61,7 +61,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
         assertEquals(expectedContigDataStore.size(), actual.size());
         for(AceContig actualAceContig : actual){
             Contig<PlacedRead> expectedContig = expectedContigDataStore.get(actualAceContig.getId());
-            AceContigTestUtil.assertContigParsedCorrectly(expectedContig, actualAceContig);
+            AceContigTestUtil.assertContigsEqual(expectedContig, actualAceContig);
         }
         
     }

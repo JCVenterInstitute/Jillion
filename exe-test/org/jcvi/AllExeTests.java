@@ -20,6 +20,7 @@
 package org.jcvi;
 
 import org.jcvi.assembly.ace.AllAceExeTests;
+import org.jcvi.assembly.cas.TestFilterFastqDataFromCas;
 import org.jcvi.fasta.TestTrimFasta;
 import org.jcvi.fasta.fastq.util.TestFastQ2FastaEnd2End;
 import org.jcvi.fasta.fastq.util.TestFastQFile;
@@ -37,7 +38,9 @@ import org.junit.runners.Suite.SuiteClasses;
    TestFastQFile.class,
    TestFastQ2FastaEnd2End.class,
    TestTrimFasta.class,
-   AllAceExeTests.class
+   AllAceExeTests.class,
+   
+   TestFilterFastqDataFromCas.class
 }
 )
 public class AllExeTests {

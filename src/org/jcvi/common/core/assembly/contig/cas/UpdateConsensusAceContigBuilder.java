@@ -27,7 +27,6 @@ import java.util.Map.Entry;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
-import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig.Builder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
@@ -65,10 +64,11 @@ public class UpdateConsensusAceContigBuilder extends DefaultAceContig.Builder{
             final Map<Nucleotide, Integer> histogramMap = consensusMap.get(Long.valueOf(i));
             consensusBuilder.replace(i,findMostOccuringBase(histogramMap));
         }
+        consensusMap.clear();
     }
 
     @Override
-    public Builder addRead(AcePlacedRead acePlacedRead) {
+    public DefaultAceContig.Builder addRead(AcePlacedRead acePlacedRead) {
         addReadToConsensusMap(acePlacedRead);
         return super.addRead(acePlacedRead);
     }

@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
 import org.jcvi.common.core.datastore.DataStore;
@@ -91,7 +92,7 @@ public class NewblerMappedAceContigUtil {
         
         final AcePlacedRead consensusRead = originalAceContig.getPlacedReadById(consensusId);
         final String consensus = Nucleotides.asString(consensusRead.getNucleotideSequence().asList());
-        DefaultAceContig.Builder builder = new DefaultAceContig.Builder(id,consensus);
+        AceContigBuilder builder = new DefaultAceContig.Builder(id,consensus);
         for(AcePlacedRead read : originalAceContig.getPlacedReads()){
             
             Matcher matcher = ACTUAL_CONSENSUS_ID_PATTERN.matcher(id);

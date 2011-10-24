@@ -47,7 +47,7 @@ public class TestAceContigBuilderInvalidRead {
 
     private final String consensus = "ACGT";
     private final String contigId = "id";
-    private DefaultAceContig.Builder sut;
+    private AceContigBuilder sut;
     @Before
     public void setup(){
         sut = new DefaultAceContig.Builder(contigId, consensus);

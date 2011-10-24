@@ -37,7 +37,7 @@ import org.jcvi.common.core.Range;
 public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
    
    
-    private DefaultAceContig.Builder contigBuilder;
+    private AceContigBuilder contigBuilder;
     /**
      * Visit the given fully constructed AceContig. 
      * @param contig the fully constructed AceContig
@@ -52,7 +52,7 @@ public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
      * By default, this method does nothing.
      * @param contigBuilder
      */
-    protected void postProcess(final DefaultAceContig.Builder contigBuilder){
+    protected void postProcess(final AceContigBuilder contigBuilder){
         //no-op
     }
     

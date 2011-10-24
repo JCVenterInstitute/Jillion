@@ -39,7 +39,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
  */
 public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceContig> {
 
-    private DefaultAceContig.Builder builder;
+    private AceContigBuilder builder;
     private NucleotideSequence oldConsensus;
     private List<Range> currentRanges;
     /**

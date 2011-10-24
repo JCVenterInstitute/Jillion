@@ -35,7 +35,7 @@ public final class AceContigTestUtil {
    
 
     
-    public static  void assertContigParsedCorrectly(Contig<? extends PlacedRead> expected, Contig<? extends PlacedRead> actual) {
+    public static  void assertContigsEqual(Contig<? extends PlacedRead> expected, Contig<? extends PlacedRead> actual) {
         assertEquals(expected.getId(), actual.getId()); 
         assertEquals(expected.getConsensus().asList(), actual.getConsensus().asList());
         assertEquals(expected.getId(),expected.getNumberOfReads(), actual.getNumberOfReads());

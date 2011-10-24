@@ -52,7 +52,7 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
         ContigFileParser.parse(contigFile, this);
     }
     @Override
-    protected void visitAceContig(DefaultAceContig aceContig) {
+    protected void visitAceContig(AceContig aceContig) {
         map.put(aceContig.getId(), aceContig);        
     }
 

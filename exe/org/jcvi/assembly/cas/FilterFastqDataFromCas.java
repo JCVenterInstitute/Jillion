@@ -57,6 +57,81 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
  */
 public class FilterFastqDataFromCas {
 
+    public static Set<String> filterReads(File casFile,final CasInfo casInfo, int maxSolexaCoverageDepth) throws IOException{
+        final Map<Integer, List<ReadRange>> fastqReadMap = new TreeMap<Integer, List<ReadRange>>();
+        final Set<String> allNeededReads = new TreeSet<String>();
+        AbstractCasPhdReadVisitor visitor = new AbstractCasPhdReadVisitor(casInfo) {
+            
+            @Override
+            protected void visitAcePlacedRead(AcePlacedRead acePlacedRead, Phd phd,
+                    int casReferenceId) {
+                String readId = acePlacedRead.getId();
+                if(readId.startsWith("SOLEXA")){
+                    Integer casRefId = casReferenceId;
+                    if(!fastqReadMap.containsKey(casRefId)){
+                        fastqReadMap.put(casRefId, new ArrayList<ReadRange>(1000000));
+                    }
+                    ReadRange readRange = new ReadRange(readId, acePlacedRead.asRange());
+                    fastqReadMap.get(casRefId).add(readRange);
+                }
+            }
+        };
+        
+        CasParser.parseCas(casFile, visitor);
+        for(Entry<Integer, List<ReadRange>> entry : fastqReadMap.entrySet()){
+            List<ReadRange> readRanges = entry.getValue();
+            CoverageMap<CoverageRegion<ReadRange>> coverageMap = DefaultCoverageMap.buildCoverageMap(readRanges);
+            Set<String> neededReads = getNeededReadsFor(maxSolexaCoverageDepth, coverageMap);
+            allNeededReads.addAll(neededReads);
+        }
+        return allNeededReads;
+    }
+
+    static Set<String> getNeededReadsFor(int maxSolexaCoverageDepth,
+            CoverageMap<CoverageRegion<ReadRange>> coverageMap) {
+        Set<String> neededReads = new TreeSet<String>();
+        //first pass find all reads that are needed to meet min coverage levels
+        for(CoverageRegion<ReadRange> region : coverageMap){
+            int coverageDepth = region.getCoverage();
+            if(coverageDepth <= maxSolexaCoverageDepth){
+                //need all reads at this coverage level
+                for(ReadRange readRange : region){
+                    neededReads.add(readRange.getReadId());
+                }
+            }
+        }
+        //2nd pass find reads that aren't needed
+        for(CoverageRegion<ReadRange> region : coverageMap){
+            int coverageDepth = region.getCoverage();
+            if(coverageDepth > maxSolexaCoverageDepth){                        
+                Set<String> unseenReads = new HashSet<String>(coverageDepth);
+                for(ReadRange readRange : region){
+                    String id = readRange.getReadId();
+                    if(!neededReads.contains(id)){
+                        unseenReads.add(id);
+                    }
+                }
+                int seenReadCount = coverageDepth - unseenReads.size();
+                if(seenReadCount <maxSolexaCoverageDepth){
+                    //we need to keep some
+                    int numToKeep = maxSolexaCoverageDepth -seenReadCount;
+                    int numSaved=0;
+                    for(ReadRange readRange : region){
+                        String id = readRange.getReadId();
+                        if(!neededReads.contains(id)){
+                            neededReads.add(id);
+                            numSaved++;
+                        }
+                        if(numSaved==numToKeep){
+                            break;
+                        }
+                    }                            
+                }
+            }
+        }
+        return neededReads;
+    }
+    
     public static void main(String[] args) throws IOException{
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder("cas", "path to cas file (required)")
@@ -90,79 +165,20 @@ public class FilterFastqDataFromCas {
                     FastQQualityCodec.ILLUMINA
                  : FastQQualityCodec.SANGER;
             int maxSolexaCoverageDepth = Integer.parseInt(commandLine.getOptionValue("d"));
+            PrintWriter out = new PrintWriter(commandLine.getOptionValue("o"));
             //don't need to worry about trim points etc because
             //I don't actually care about the sequence...
             final CasInfo casInfo = CasUtil.createCasInfoBuilder(casFile)
                                     .fastQQualityCodec(fastqQualityCodec)            
                                     .build();
-            final Map<Integer, List<ReadRange>> fastqReadMap = new TreeMap<Integer, List<ReadRange>>();
             
-            AbstractCasPhdReadVisitor visitor = new AbstractCasPhdReadVisitor(casInfo) {
-                
-                @Override
-                protected void visitAcePlacedRead(AcePlacedRead acePlacedRead, Phd phd,
-                        int casReferenceId) {
-                    String readId = acePlacedRead.getId();
-                    if(readId.startsWith("SOLEXA")){
-                        Integer casRefId = casReferenceId;
-                        if(!fastqReadMap.containsKey(casRefId)){
-                            fastqReadMap.put(casRefId, new ArrayList<ReadRange>(1000000));
-                        }
-                        ReadRange readRange = new ReadRange(readId, acePlacedRead.asRange());
-                        fastqReadMap.get(casRefId).add(readRange);
-                    }
-                }
-            };
             
-            CasParser.parseCas(casFile, visitor);
-            PrintWriter out = new PrintWriter(commandLine.getOptionValue("o"));
-            for(Entry<Integer, List<ReadRange>> entry : fastqReadMap.entrySet()){
-                List<ReadRange> readRanges = entry.getValue();
-                CoverageMap<CoverageRegion<ReadRange>> coverageMap = DefaultCoverageMap.buildCoverageMap(readRanges);
-                Set<String> neededReads = new TreeSet<String>();
-                //first pass find all reads that are needed to meet min coverage levels
-                for(CoverageRegion<ReadRange> region : coverageMap){
-                    int coverageDepth = region.getCoverage();
-                    if(coverageDepth <= maxSolexaCoverageDepth){
-                        //need all reads at this coverage level
-                        for(ReadRange readRange : region){
-                            neededReads.add(readRange.getReadId());
-                        }
-                    }
-                }
-                //2nd pass find reads that aren't needed
-                for(CoverageRegion<ReadRange> region : coverageMap){
-                    int coverageDepth = region.getCoverage();
-                    if(coverageDepth > maxSolexaCoverageDepth){                        
-                        Set<String> unseenReads = new HashSet<String>(coverageDepth);
-                        for(ReadRange readRange : region){
-                            String id = readRange.getReadId();
-                            if(!neededReads.contains(id)){
-                                unseenReads.add(id);
-                            }
-                        }
-                        int seenReadCount = coverageDepth - unseenReads.size();
-                        if(seenReadCount <maxSolexaCoverageDepth){
-                            //we need to keep some
-                            int numToKeep = maxSolexaCoverageDepth -unseenReads.size();
-                            int numSaved=0;
-                            for(ReadRange readRange : region){
-                                String id = readRange.getReadId();
-                                if(!neededReads.contains(id)){
-                                    neededReads.add(id);
-                                    numSaved++;
-                                }
-                                if(numSaved==numToKeep){
-                                    break;
-                                }
-                            }                            
-                        }
-                    }
-                }
-                for(String neededRead : neededReads){
-                    out.println(neededRead);
-                }
+            Set<String> readsToKeep = filterReads(casFile, casInfo, maxSolexaCoverageDepth);
+           
+            for(String neededRead : readsToKeep){
+                out.println(neededRead);
             }
+           
             out.close();
             
         } catch (ParseException e) {
@@ -171,7 +187,7 @@ public class FilterFastqDataFromCas {
         }
     }
 
-    private static class ReadRange implements Placed<ReadRange>{
+    static class ReadRange implements Placed<ReadRange>{
         private final Range range;
         private final String readId;
         
@@ -181,6 +197,15 @@ public class FilterFastqDataFromCas {
         }
         
         
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String toString() {
+            return "ReadRange [readId=" + readId + ", range=" + range + "]";
+        }
+
+
         /**
          * @return the range
          */
