@@ -112,13 +112,15 @@ public class ReAbacusAceContigWorker {
         muscle.setOption("-in", inputFasta.getAbsolutePath());
         muscle.setOption("-out", outfile.getAbsolutePath()); 
         muscle.addFlag("-refine");
-        String blastLine;
+        String line;
         Process process =muscle.execute();
-        BufferedReader input =
-            new BufferedReader
+        
+        BufferedReader stdOutStream =null;
+        try{
+        stdOutStream= new BufferedReader
               (new InputStreamReader(process.getErrorStream()));
-          while ((blastLine = input.readLine()) != null) {
-              System.out.println(blastLine);
+          while ((line = stdOutStream.readLine()) != null) {
+              System.out.println(line);
           }
           
           try {
@@ -126,6 +128,9 @@ public class ReAbacusAceContigWorker {
           }catch (InterruptedException e) {
               throw new IOException("interrupted", e);
           }
+        }finally{
+            IOUtil.closeAndIgnoreErrors(stdOutStream);
+        }
     }
     /**
      * @param args
