@@ -273,8 +273,13 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         return insert(0, Nucleotides.asString(sequence));
     }
     /**
-    * Create a new NucleotideSequence instance
-    * from the current mutable nucleotides.
+    * {@inheritDoc}
+    * <p>
+    * Create a new {@link NucleotideSequence} instance
+    * from the current mutable nucleotides.  This method
+    * does not destroy any temp data so this method
+    * could be called multiple times each time 
+    * creating a new {@link NucleotideSequence}.
     * @return a new NucleotideSequence never null
     * but may be empty.
     */

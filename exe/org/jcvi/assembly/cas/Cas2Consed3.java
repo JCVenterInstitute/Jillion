@@ -40,11 +40,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
 import org.jcvi.common.core.assembly.contig.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.contig.cas.AbstractOnePassCasFileVisitor;
@@ -73,6 +73,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdWriter;
 import org.jcvi.common.core.seq.trim.DefaultTrimFileDataStore;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.ReadWriteFileServer;
@@ -176,7 +177,6 @@ public class Cas2Consed3 {
                                         
                                         casInfo.getReferenceIdLookup().getLookupIdFor(casReferenceId), 
                                         getGappedReference(casReferenceId));
-                                builder.adjustContigIdToReflectCoordinates(CoordinateSystem.RESIDUE_BASED);
                                 builders.put(refKey, builder);
                             }
                             try {
@@ -214,7 +214,21 @@ public class Cas2Consed3 {
              Iterator<DefaultAceContig.Builder> builderIterator = builders.values().iterator();
              while(builderIterator.hasNext()){
                  AceContigBuilder builder = builderIterator.next();
-                 
+                 NucleotideSequence fullConsensus =builder.getConsensusBuilder().build();
+                 long ungappedLength = fullConsensus.getUngappedLength();
+                 long firstReadStart= fullConsensus.getLength();
+                 for(AcePlacedReadBuilder readBuilder : builder.getAllAcePlacedReadBuilders()){
+                     long start =readBuilder.getStart();
+                     if(start < firstReadStart){
+                         firstReadStart = start;
+                     }
+                 }
+                 long ungappedStart = fullConsensus.getUngappedOffsetFor((int)firstReadStart);
+                 //update contig id to append mapped coordinates 1- ungapped length
+                 String newContigId = String.format("%s_%d_%d",builder.getContigId(),
+                                     ungappedStart+1,
+                                         ungappedLength);
+                 builder.setContigId(newContigId);
                  for(AceContig splitContig : ConsedUtil.split0xContig(builder,true)){
                      numberOfContigs++;
                      numberOfReads+= splitContig.getNumberOfReads();

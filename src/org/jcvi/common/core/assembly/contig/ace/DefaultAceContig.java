@@ -33,7 +33,6 @@ import java.util.Set;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.contig.AbstractContig;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
@@ -55,7 +54,6 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         private NucleotideSequence fullConsensus;
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
-        private CoordinateSystem adjustedContigIdCoordinateSystem=null;
         private final Map<String, AcePlacedReadBuilder>aceReadBuilderMap = new HashMap<String, AcePlacedReadBuilder>();
         private int contigLeft= -1;
         private int contigRight = -1;
@@ -75,20 +73,15 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         	 this.contigId = contigId;
         	 this.mutableConsensus = new NucleotideSequenceBuilder(fullConsensus);
         }
-        
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public Builder adjustContigIdToReflectCoordinates(CoordinateSystem coordinateSystem){
-            adjustedContigIdCoordinateSystem = coordinateSystem;
-            return this;
-        }
+       
         /**
         * {@inheritDoc}
         */
         @Override
         public Builder setContigId(String contigId){
+            if(contigId==null){
+                throw new NullPointerException("contig id can not be null");
+            }
             this.contigId = contigId;
             return this;
         }
@@ -144,6 +137,19 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         @Override
         public AcePlacedReadBuilder getAcePlacedReadBuilder(String readId){
             return aceReadBuilderMap.get(readId);
+        }
+        
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void removeRead(String readId) {
+            if(readId==null){
+                throw new NullPointerException("read id can not be null");
+            }
+            aceReadBuilderMap.remove(readId);
+            
         }
         /**
         * {@inheritDoc}
@@ -226,28 +232,15 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
                 int newOffset = (int)aceReadBuilder.getStart() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);
                 placedReads.add(aceReadBuilder.build());                
-            }   
-            final String newContigId;
-            if(adjustedContigIdCoordinateSystem !=null){
-                Range ungappedContigRange = Range.buildRange(
-                            fullConsensus.getUngappedOffsetFor(contigLeft),
-                            fullConsensus.getUngappedOffsetFor(contigRight))
-                        .convertRange(adjustedContigIdCoordinateSystem);
-                 //contig left and right are in 0 based use
-                newContigId = String.format("%s_%d_%d",contigId,
-                        ungappedContigRange.getLocalStart(),
-                        ungappedContigRange.getLocalEnd());
-            }else{
-                newContigId = contigId;
-            }
+            } 
             aceReadBuilderMap.clear();
             fullConsensus = null;
-            return new DefaultAceContig(newContigId, validConsensus,placedReads);
+            return new DefaultAceContig(contigId, validConsensus,placedReads);
         }
         
         /**
          * This method will be called inside of {@link #build()}
-         * to let subclasses further manipulate the contig conensus
+         * to let subclasses further manipulate the contig consensus
          * or underlying reads before the final immutable contig is built.
          * Implementors can assume that all the reads that are to be added
          * to this contig have already been added and no further
