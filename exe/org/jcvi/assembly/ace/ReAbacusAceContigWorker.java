@@ -114,13 +114,13 @@ public class ReAbacusAceContigWorker {
         muscle.addFlag("-refine");
         String blastLine;
         Process process =muscle.execute();
-        /*BufferedReader input =
+        BufferedReader input =
             new BufferedReader
               (new InputStreamReader(process.getErrorStream()));
           while ((blastLine = input.readLine()) != null) {
               System.out.println(blastLine);
           }
-          */
+          
           try {
             return process.waitFor();
           }catch (InterruptedException e) {
