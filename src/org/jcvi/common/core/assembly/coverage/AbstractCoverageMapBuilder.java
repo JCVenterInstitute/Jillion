@@ -23,9 +23,13 @@
  */
 package org.jcvi.common.core.assembly.coverage;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
@@ -36,7 +40,7 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
 
     private P enteringObject;
     private P leavingObject;
-    private List<P> coveringObjects;
+    private Queue<P> coveringObjects;
     private Iterator<P> enteringIterator;
     private Iterator<P> leavingIterator;
     private List<CoverageRegionBuilder<P>> coverageRegionBuilders;
@@ -45,7 +49,13 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
     protected abstract Iterator<P> createLeavingIterator();
     
     protected abstract CoverageMap<R> build(List<CoverageRegionBuilder<P>> coverageRegionBuilders);
-
+    
+    public AbstractCoverageMapBuilder(){
+        coveringObjects =  new ArrayDeque<P>();
+    }
+    public AbstractCoverageMapBuilder(int maxAllowedCoverage) {
+        coveringObjects =  new ArrayBlockingQueue<P>(maxAllowedCoverage);
+    }
     @Override
     public CoverageMap<R> build() {
         initialize();
@@ -55,7 +65,7 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
     private void initialize() {
         enteringIterator = createEnteringIterator();
         leavingIterator = createLeavingIterator();
-        coveringObjects = new ArrayList<P>();
+
         enteringObject = getNextObject(enteringIterator);
         leavingObject = getNextObject(leavingIterator);
         coverageRegionBuilders = new ArrayList<CoverageRegionBuilder<P>>();
@@ -73,8 +83,7 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
     private void removeAnyBuildersWithEmptyRanges() {
         //iterate backwards to avoid concurrent modification errors
         for (int i = coverageRegionBuilders.size() - 1; i >= 0; i--) {
-            CoverageRegionBuilder<P> builder = coverageRegionBuilders
-                    .get(i);
+            CoverageRegionBuilder<P> builder = coverageRegionBuilders.get(i);
             Range range = Range.buildRange(builder.start(), builder.end());
             if (range.isEmpty()) {
                 coverageRegionBuilders.remove(i);
@@ -179,7 +188,7 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
     }
 
     private void addAndAdvanceEnteringObject() {
-        coveringObjects.add(enteringObject);
+        coveringObjects.offer(enteringObject);
         enteringObject = getNextObject(enteringIterator);
     }
 
@@ -205,12 +214,12 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
             final long endCoordinate = enteringObject.getStart() - 1;
             setEndCoordinateOfPreviousRegion(endCoordinate);
         }
-        coveringObjects.add(enteringObject);
+        coveringObjects.offer(enteringObject);
         coverageRegionBuilders.add(createNewCoverageRegionBuilder(coveringObjects, enteringObject.getStart() ));
 
     }
 
-    protected abstract CoverageRegionBuilder<P> createNewCoverageRegionBuilder(List<P> elements, long start);
+    protected abstract CoverageRegionBuilder<P> createNewCoverageRegionBuilder(Collection<P> elements, long start);
     
     private CoverageRegionBuilder<P> getPreviousRegion() {
         return coverageRegionBuilders.get(coverageRegionBuilders.size() - 1);

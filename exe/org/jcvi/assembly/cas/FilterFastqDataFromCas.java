@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -80,9 +81,17 @@ public class FilterFastqDataFromCas {
         CasParser.parseCas(casFile, visitor);
         for(Entry<Integer, List<ReadRange>> entry : fastqReadMap.entrySet()){
             List<ReadRange> readRanges = entry.getValue();
-            CoverageMap<CoverageRegion<ReadRange>> coverageMap = DefaultCoverageMap.buildCoverageMap(readRanges);
-            Set<String> neededReads = getNeededReadsFor(maxSolexaCoverageDepth, coverageMap);
-            allNeededReads.addAll(neededReads);
+            //shuffle reads around since they are 
+            //probably sorted by name which for solexa means sorted by region on the machine
+            //and we want
+            //an even distribution
+            Collections.shuffle(readRanges);
+            CoverageMap<CoverageRegion<ReadRange>> coverageMap = DefaultCoverageMap.buildCoverageMap(readRanges, maxSolexaCoverageDepth);
+            for(CoverageRegion<ReadRange> region : coverageMap){
+                for(ReadRange readRange : region){
+                    allNeededReads.add(readRange.getReadId());
+                }
+            }
         }
         return allNeededReads;
     }

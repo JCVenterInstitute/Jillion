@@ -45,12 +45,19 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
             buildCoverageMap(Collection<V> elements){
         return (DefaultCoverageMap<V,T>)new Builder(elements).build();
     }
-
+    @SuppressWarnings("unchecked")
+    public static <V extends Placed,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
+            buildCoverageMap(Collection<V> elements, int maxAllowedCoverage){
+        return (DefaultCoverageMap<V,T>)new Builder(elements,maxAllowedCoverage).build();
+    }
     public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
         buildCoverageMap(C contig){
             return (DefaultCoverageMap<PR,T>)new Builder(contig.getPlacedReads()).build();
     }
-    
+    public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T>    
+        buildCoverageMap(C contig, int maxAllowedCoverage){
+            return (DefaultCoverageMap<PR,T>)new Builder(contig.getPlacedReads(),maxAllowedCoverage).build();
+    }
     private static class PlacedStartComparator <T extends Placed> implements Comparator<T>,Serializable {       
         /**
          * 
@@ -251,7 +258,16 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         private final List<P> startCoordinateSortedList = new ArrayList<P>();
         private final List<P> endCoordinateSortedList = new ArrayList<P>();
         
+        public Builder(Collection<P> elements, int maxAllowedCoverage){
+            super(maxAllowedCoverage);
+            initialize(elements);
+        }
         public Builder(Collection<P> elements) {
+            initialize(elements);
+            
+        }
+        
+        private final void initialize(Collection<P> elements){
             startCoordinateSortedList.addAll(elements);
             endCoordinateSortedList.addAll(elements);
             filterAmpliconsWithoutCoordinates(startCoordinateSortedList);
@@ -259,10 +275,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
             Collections.sort(startCoordinateSortedList,
                     new PlacedStartComparator<P>());
             Collections.sort(endCoordinateSortedList, new PlacedEndComparator<P>());
-            
         }
-        
-        
         /**
          * If there are no coordinates (start or end are null) then we remove them
          * so they don't mess up our computations.
@@ -279,7 +292,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         }
         @Override
         protected CoverageRegionBuilder<P> createNewCoverageRegionBuilder(
-                List<P> elements, long start) {
+                Collection<P> elements, long start) {
             return new DefaultCoverageRegion.Builder<P>(start, elements);
         }
 

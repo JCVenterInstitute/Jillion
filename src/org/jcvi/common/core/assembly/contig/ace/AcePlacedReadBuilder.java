@@ -27,13 +27,15 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.Builder;
 
 /**
+ * {@code AcePlacedReadBuilder} is a {@link Builder}
  * @author dkatzel
  *
  *
  */
-public interface AcePlacedReadBuilder extends Placed<AcePlacedReadBuilder>{
+public interface AcePlacedReadBuilder extends Placed<AcePlacedReadBuilder>, Builder<AcePlacedRead>{
 
     AcePlacedReadBuilder reference(NucleotideSequence reference, int newOffset);
 
@@ -66,7 +68,14 @@ public interface AcePlacedReadBuilder extends Placed<AcePlacedReadBuilder>{
      * @return the ungappedFullLength
      */
     int getUngappedFullLength();
-
+    /**
+     * 
+    * {@inheritDoc}
+    * <p>
+    * Creates a new AcePlacedRead instance using the current
+    * values given to this builder.
+     */
+    @Override
     AcePlacedRead build();
 
     AcePlacedReadBuilder reAbacus(Range gappedValidRangeToChange, String newBasecalls);
