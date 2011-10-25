@@ -379,7 +379,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         * {@inheritDoc}
         */
         @Override
-        public boolean visitEndOfContig() {    
+        public synchronized boolean visitEndOfContig() {    
             indexFileRange.put(currentContigId, Range.buildRange(currentStartOffset, 
                     currentFileOffset-currentLineLength-1));
             visitContig();

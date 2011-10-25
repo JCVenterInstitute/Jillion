@@ -383,7 +383,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         * {@inheritDoc}
         */
         @Override
-        public long getLength(){
+        public synchronized long getLength(){
             if(basesBuilder !=null){
                 return basesBuilder.getLength();
             }
@@ -444,6 +444,67 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
                 return rangeCompare;
             }
             return getId().compareTo(o.getId());
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((basesBuilder == null) ? 0 : basesBuilder.hashCode());
+            result = prime * result + offset;
+            result = prime * result
+                    + ((readId == null) ? 0 : readId.hashCode());
+            result = prime * result
+                    + ((reference == null) ? 0 : reference.hashCode());
+            return result;
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof Builder)) {
+                return false;
+            }
+            Builder other = (Builder) obj;
+            if (basesBuilder == null) {
+                if (other.basesBuilder != null) {
+                    return false;
+                }
+            } else if (!basesBuilder.asList().equals(other.basesBuilder.asList())) {
+                return false;
+            }
+            if (offset != other.offset) {
+                return false;
+            }
+            if (readId == null) {
+                if (other.readId != null) {
+                    return false;
+                }
+            } else if (!readId.equals(other.readId)) {
+                return false;
+            }
+            if (reference == null) {
+                if (other.reference != null) {
+                    return false;
+                }
+            } else if (!reference.equals(other.reference)) {
+                return false;
+            }
+            return true;
         }
         
     }

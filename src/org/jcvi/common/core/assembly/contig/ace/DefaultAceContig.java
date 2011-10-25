@@ -179,17 +179,17 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
                     ConsedUtil.convertAceGapsToContigGaps(validBases),
                     offset,dir,clearRange,phdInfo,ungappedFullLength);
         }
-        private void adjustContigLeftAndRight(String validBases, int offset) {
+        private synchronized void adjustContigLeftAndRight(String validBases, int offset) {
             adjustContigLeft(offset);
             adjustContigRight(validBases, offset);
         }
-        private void adjustContigRight(String validBases, int offset) {
+        private synchronized void adjustContigRight(String validBases, int offset) {
             final int endOfNewRead = offset+ validBases.length()-1;
             if(endOfNewRead <= fullConsensus.getLength() && (contigRight ==-1 || endOfNewRead > contigRight)){
                 contigRight = endOfNewRead ;
             }
         }
-        private void adjustContigLeft(int offset) {
+        private synchronized void adjustContigLeft(int offset) {
             
             if(contigLeft ==-1 || offset <contigLeft){
                 contigLeft = offset;

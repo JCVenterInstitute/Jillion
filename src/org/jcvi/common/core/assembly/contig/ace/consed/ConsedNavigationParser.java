@@ -39,26 +39,14 @@ import org.jcvi.common.core.io.TextLineParser;
  */
 public class ConsedNavigationParser {
 
-    public static Pattern TITLE_PATTERN = Pattern.compile("TITLE: (\\.+)\n");
-    public static Pattern TYPE_PATTERN = Pattern.compile("TYPE: (\\S+)\n");
-    public static Pattern READ_ID_PATTERN = Pattern.compile("READ: (.+)\n");
-    public static Pattern CONTIG_ID_PATTERN = Pattern.compile("CONTIG: (.+)\n");
-    public static Pattern COMMENT_PATTERN = Pattern.compile("COMMENT: (.+)\n");
-    public static Pattern READ_POSITION_PATTERN = Pattern.compile("UNPADDED_READ_POS: (\\d+) (\\d+)\n");
-    public static Pattern CONSENSUS_POSITION_PATTERN = Pattern.compile("UNPADDED_CONS_POS: (\\d+) (\\d+)\n");
-    
-    /*
-     *  StringBuilder builder = new StringBuilder("BEGIN_REGION\n");
-        builder.append(String.format("TYPE: %s\n",element.getType()));
-        builder.append(String.format("READ: %s\n",element.getTargetId()));
-        Range range = element.getUngappedPositionRange().convertRange(CoordinateSystem.RESIDUE_BASED);
-        builder.append(String.format("UNPADDED_READ_POS: %d %d\n",range.getLocalStart(), range.getLocalEnd()));
-        String comment = element.getComment();
-        //consed requires a comment line even if it is empty
-        builder.append(String.format("COMMENT: %s\n",comment==null? "": comment));
-        builder.append("END_REGION\n");
-        out.write(builder.toString().getBytes());
-     */
+    private static final Pattern TITLE_PATTERN = Pattern.compile("TITLE: (\\.+)\n");
+    private static final Pattern TYPE_PATTERN = Pattern.compile("TYPE: (\\S+)\n");
+    private static final Pattern READ_ID_PATTERN = Pattern.compile("READ: (.+)\n");
+    private static final Pattern CONTIG_ID_PATTERN = Pattern.compile("CONTIG: (.+)\n");
+    private static final Pattern COMMENT_PATTERN = Pattern.compile("COMMENT: (.+)\n");
+    private static final Pattern READ_POSITION_PATTERN = Pattern.compile("UNPADDED_READ_POS: (\\d+) (\\d+)\n");
+    private static final Pattern CONSENSUS_POSITION_PATTERN = Pattern.compile("UNPADDED_CONS_POS: (\\d+) (\\d+)\n");
+   
     public static void parse(File navFile, ConsedNavigationVisitor visitor) throws IOException{
         InputStream in =null;
         try{
