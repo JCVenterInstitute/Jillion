@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -109,16 +110,17 @@ public class ReAbacusAceContigWorker {
     private static int muscle(File inputFasta, File outfile) throws IOException{
         Command muscle = new Command(MUSCLE);
         muscle.setOption("-in", inputFasta.getAbsolutePath());
-        muscle.setOption("-out", outfile.getAbsolutePath());        
+        muscle.setOption("-out", outfile.getAbsolutePath()); 
+        muscle.addFlag("-refine");
         String blastLine;
         Process process =muscle.execute();
-        BufferedReader input =
+        /*BufferedReader input =
             new BufferedReader
               (new InputStreamReader(process.getErrorStream()));
           while ((blastLine = input.readLine()) != null) {
               System.out.println(blastLine);
           }
-          
+          */
           try {
             return process.waitFor();
           }catch (InterruptedException e) {
@@ -305,6 +307,7 @@ public class ReAbacusAceContigWorker {
             String contigId = contigBuilder.getContigId();
             System.out.println(contigId);
             if(abacusProblemRanges.containsKey(contigId)){
+              
                 //fix 
                 List<Range> rangesToMerge = abacusProblemRanges.get(contigId);
                 List<Range> reversedSortedRanges = new ArrayList<Range>(Range.mergeRanges(rangesToMerge));
@@ -315,6 +318,9 @@ public class ReAbacusAceContigWorker {
                 
                 for(Range ungappedProblemRange : reversedSortedRanges){
                     System.out.println("now working on "+ ungappedProblemRange);
+                    if(ungappedProblemRange.getStart()>=222600){
+                        System.out.println("here");
+                    }
                     int gappedStart=consensus.getGappedOffsetFor((int)ungappedProblemRange.getStart()- numberOfFlankingBases)+1;
                     int gappedEnd = consensus.getGappedOffsetFor((int)ungappedProblemRange.getEnd()+1+numberOfFlankingBases)-1;
                    
@@ -330,6 +336,7 @@ public class ReAbacusAceContigWorker {
                     
                  //   System.out.println("affected reads : ");
                     Map<String, NucleotideSequenceFastaRecord> ungappedSequences = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
+                    int maxSeenLength=0;
                     for(String readId : affectedReads){
                         AcePlacedReadBuilder readBuilder =contigBuilder.getAcePlacedReadBuilder(readId);
                         int flankedStart = Math.max(0,gappedStart);
@@ -351,7 +358,12 @@ public class ReAbacusAceContigWorker {
                         List<Nucleotide> gappedProblemSequence = readBuilder.getBasesBuilder().asList(affectedSequenceRange);
                       //  System.out.println(Nucleotides.asString(gappedProblemSequence));
                         String coment = String.format("%s - %s", affectedSequenceRange.getStart(), affectedSequenceRange.getEnd());
-                        NucleotideSequenceFastaRecord fasta = new DefaultNucleotideSequenceFastaRecord(readId, coment,Nucleotides.ungap(gappedProblemSequence));
+                        List<Nucleotide> ungappedProblemSequenceRange = Nucleotides.ungap(gappedProblemSequence);
+                        if(ungappedProblemSequenceRange.size()>maxSeenLength){
+                            maxSeenLength = ungappedProblemSequenceRange.size();
+                        }
+                        
+                        NucleotideSequenceFastaRecord fasta = new DefaultNucleotideSequenceFastaRecord(readId, coment,ungappedProblemSequenceRange);
                         ungappedSequences.put(readId, fasta);
                     }
                     
@@ -370,7 +382,23 @@ public class ReAbacusAceContigWorker {
                     }
                     System.out.println("writing fasta file");
                     for(NucleotideSequenceFastaRecord fasta : ungappedSequences.values()){
-                        writer.print(fasta.toString());
+                        if(fasta.getSequence().getLength() < maxSeenLength){
+                            int numberOfGapsToAdd = (int)(maxSeenLength -fasta.getSequence().getLength());
+                            char[] gaps = new char[numberOfGapsToAdd];
+                            Arrays.fill(gaps, '-');
+                            //this read is too short add leading/trailing gaps to help muscle?
+                            Range range =Range.parseRange(fasta.getComment());
+                            NucleotideSequenceBuilder newSequenceBuilder = new NucleotideSequenceBuilder(fasta.getSequence());
+                            if(range.getStart()==0){
+                                //start of the read                                
+                                newSequenceBuilder.prepend(new String(gaps));
+                            }else{
+                                newSequenceBuilder.append(new String(gaps));
+                            }
+                            writer.print(new DefaultNucleotideSequenceFastaRecord(fasta.getId(), fasta.getComment(),newSequenceBuilder.asList()));
+                        }else{
+                            writer.print(fasta.toString());
+                        }
                     }
                     writer.close();
                     
