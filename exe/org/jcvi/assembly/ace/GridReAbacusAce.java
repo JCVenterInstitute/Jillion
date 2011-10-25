@@ -99,7 +99,7 @@ public class GridReAbacusAce {
         options.addOption(new CommandLineOptionBuilder("nav", "consed navigation file input that says where the problems are to be fixed (required)")
         .isRequired(true)
         .build());
-        options.addOption(new CommandLineOptionBuilder("o", "path to partial ace output file (required)")
+        options.addOption(new CommandLineOptionBuilder("o", "path to ace output file (required)")
         .isRequired(true)
         .longName("out")
         .build());
@@ -117,7 +117,7 @@ public class GridReAbacusAce {
         .build());
         options.addOption(new CommandLineOptionBuilder("max_submitted_jobs", "max number of jobs that are SUBMITTED to the grid " +
                 "at any time.  If there are more jobs than this number to submit, then this program will queue them internally " +
-                "and wait for the currently submitted jobs to finish.  NOTE: it is still up to the grid engine to schedule the jobs that have" +
+                "and wait for the currently submitted jobs to finish.  NOTE: it is still up to the grid engine to schedule the jobs that have " +
                 "been submitted.  If this option isn't set, then the default value is used : " + DEFAULT_MAX_JOBS)
         .build());
         
@@ -182,7 +182,7 @@ public class GridReAbacusAce {
     
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "reAbacusAceContigWorker -a <ace file> -c <contig id> -o <partial ace out file>", 
+        formatter.printHelp( "reAbacusAce -a <ace file> -c <contig id> -o <partial ace out file>", 
                 
                 "Parse an ace file and write out ungapped consensus coordinates of abacus assembly errors",
                 options,

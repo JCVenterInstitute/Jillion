@@ -117,7 +117,7 @@ public class GridFindAbacusErrorsInAce {
         .build());
         options.addOption(new CommandLineOptionBuilder("max_submitted_jobs", "max number of jobs that are SUBMITTED to the grid " +
         		"at any time.  If there are more jobs than this number to submit, then this program will queue them internally " +
-        		"and wait for the currently submitted jobs to finish.  NOTE: it is still up to the grid engine to schedule the jobs that have" +
+        		"and wait for the currently submitted jobs to finish.  NOTE: it is still up to the grid engine to schedule the jobs that have " +
         		"been submitted.  If this option isn't set, then the default value is used : " + DEFAULT_MAX_JOBS)
         .build());
         
