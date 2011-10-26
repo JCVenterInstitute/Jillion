@@ -49,7 +49,7 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
 
     @Override
     protected void visitBeginContig(String contigId, String consensus) {
-        contigBuilder = new DefaultAceContig.Builder(contigId, consensus);
+        contigBuilder = DefaultAceContig.createBuilder(contigId, consensus);
     }
 
     @Override

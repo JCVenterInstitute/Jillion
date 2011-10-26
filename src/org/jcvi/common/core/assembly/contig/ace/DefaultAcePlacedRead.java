@@ -31,6 +31,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.contig.PlacedReadBuilder;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
@@ -262,6 +263,9 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         */
         @Override
         public Builder reference(NucleotideSequence reference, int newOffset){
+            if(reference ==null){
+                throw new NullPointerException("reference can not be null");
+            }
             this.reference = reference;
             this.offset = newOffset;
             return this;
@@ -435,9 +439,9 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
 
         /**
         * {@inheritDoc}
-        */
+        */        
         @Override
-        public int compareTo(AcePlacedReadBuilder o) {
+        public int compareTo(PlacedReadBuilder<AcePlacedRead> o) {
             
             int rangeCompare = asRange().compareTo(o.asRange());
             if(rangeCompare !=0){
@@ -447,6 +451,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         }
 
 
+        
         /**
         * {@inheritDoc}
         */

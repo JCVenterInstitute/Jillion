@@ -23,12 +23,18 @@ import java.util.Collection;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
+import org.jcvi.common.core.assembly.contig.ContigBuilder;
 import org.jcvi.common.core.util.Builder;
 
 /**
  * {@code AceContigBuilder} is a {@link Builder}
  * for {@link AceContig}s that allows
+ * creating a contig object by adding placed reads
+ * and setting a consensus.  An {@link AceContigBuilder}
+ * can be used to create AceContig objects that 
+ * have been created by an assembler or can be used
+ * to create contigs from the imagination.
+ * There are additional methods to allow
  * the contig consensus or underlying
  * reads to be modified before
  * the creation of the {@link AceContig} instance
@@ -37,72 +43,10 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public interface AceContigBuilder extends Builder<AceContig>{
-    /**
-     * Change the contig id to the given id.
-     * @param contigId the new id this contig should have.
-     * @return this.
-     * @throws NullPointerException if contigId is null.
-     */
-   AceContigBuilder setContigId(String contigId);
-   /**
-    * Get the current contig id.
-    * @return the contig id.
-    */
-    String getContigId();
-    /**
-     * Get the number of reads currently
-     * in this contig.
-     * @return an int will always be >=0.
-     */
-    int numberOfReads();
-    /**
-     * Add the given {@link AcePlacedRead} read to this contig with the given values.  This read
-     * can later get modified via the {@link #getAcePlacedReadBuilder(String)}.
-     * @param acePlacedRead the read to add (can not be null).
-     * @return this.
-     * @throws NullPointerException if acePlacedRead is null.
-     */
-    AceContigBuilder addRead(AcePlacedRead acePlacedRead);
-    /**
-     * Adds all the given reads to this contig.  These reads
-     * can later get modified via the {@link #getAcePlacedReadBuilder(String)}.
-     * @param reads the reads to add (can not be null).
-     * @return this.
-     * @throws NullPointerException if reads is null.
-     */
-    AceContigBuilder addAllReads(Iterable<AcePlacedRead> reads);
-    /**
-     * Get a collection of all the AcePlacedReadBuilders that are
-     * currently associated with this contig.  This collection
-     * is backed by the contig builder so any changes to the 
-     * returned collection or modifications to any of its 
-     * {@link AcePlacedReadBuilder}s will modify the contig
-     * as well.
-     * @return a a collection of all the AcePlacedReadBuilders that are
-     * currently associated with this contig; never null.
-     */
-    Collection<AcePlacedReadBuilder> getAllAcePlacedReadBuilders();
-    /**
-     * Get the {@link AcePlacedReadBuilder} for the read in this 
-     * contig with the given read id.  Any changes to the returned
-     * instance will modify that read in this contig.
-     * @param readId the id of the read to get.
-     * @return a {@link AcePlacedReadBuilder}, will return 
-     * null if no read with that id currently exists for this contig.
-     */
-    AcePlacedReadBuilder getAcePlacedReadBuilder(String readId);
-    /**
-     * Remove the read with the given read id from this contig.
-     * If this contig doesn't have a read with that readId, then
-     * the contig is unchanged.
-     * @param readId the read id to remove, can not be null.
-     * @throws NullPointerException if readId is null.
-     */
-    void removeRead(String readId);
+public interface AceContigBuilder extends ContigBuilder<AcePlacedRead,AceContig>{
     /**
      * Add a read to this contig with the given values.  This read
-     * can later get modified via the {@link #getAcePlacedReadBuilder(String)}.
+     * can later get modified via the {@link #getPlacedReadBuilder(String)}.
      * @param readId the Id this read should have
      * @param validBases the gapped bases of this read that align (however well/badly)
      * to this contig and will be used as underlying sequence data for this contig.
@@ -121,31 +65,20 @@ public interface AceContigBuilder extends Builder<AceContig>{
     AceContigBuilder addRead(String readId, String validBases, int offset,
             Direction dir, Range clearRange, PhdInfo phdInfo,
             int ungappedFullLength);
-
     /**
-     * Get the {@link NucleotideSequenceBuilder} instance that 
-     * will be the consensus in the built contig, any changes
-     * to the returned instance will modify the consensus
-     * in this contig.
-     * @return the {@link NucleotideSequenceBuilder} for this
-     * contig's consensus, never null.
-     */
-    NucleotideSequenceBuilder getConsensusBuilder();
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Take the current read and consensus data 
-     * (which has possibly been previous edited and/or shifted)
-     * and create a new AceContig instance.  Calling this method
-     * might release resources or destroy temp data
-     * that is required to built this contig, therefore
-     * this method should be only called once per builder instance.
-     * If this method is called more than once, then 
-     * an {@link IllegalStateException} will be thrown.
-     * @return a new AceContig instance, never null.
-     * @throws IllegalStateException if this method is called more than once.
+     * 
+    * {@inheritDoc}
+    * <p/>
+    * Get the {@link AcePlacedReadBuilder} for the given read id.
      */
     @Override
-    AceContig build();
+    AcePlacedReadBuilder getPlacedReadBuilder(String readId);
+    
+    /**
+     * 
+    * {@inheritDoc}
+     */
+    @Override
+    Collection<AcePlacedReadBuilder> getAllPlacedReadBuilders();
 
 }

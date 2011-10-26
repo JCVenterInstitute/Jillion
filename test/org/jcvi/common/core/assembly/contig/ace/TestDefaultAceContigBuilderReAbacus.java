@@ -33,16 +33,16 @@ public class TestDefaultAceContigBuilderReAbacus {
     PhdInfo read1PhdInfo = createMock(PhdInfo.class);
     @Test
     public void abacus(){
-        AceContigBuilder sut =  new DefaultAceContig.Builder("id",
+        AceContigBuilder sut =  DefaultAceContig.createBuilder("id",
                           "ACGT-----ACGT")
         
         .addRead("read1",   "GT-T---ACG", 2, Direction.FORWARD, Range.buildRange(2,7), read1PhdInfo, 10)
         .addRead("read2", "ACGT--T--AC", 0, Direction.FORWARD, Range.buildRange(2,8), read1PhdInfo, 10)
         .addRead("read3",    "T---T-ACGT", 3, Direction.FORWARD, Range.buildRange(2,8), read1PhdInfo, 10);
         
-        sut.getAcePlacedReadBuilder("read1").reAbacus(Range.buildRange(2,6), "T");
-        sut.getAcePlacedReadBuilder("read2").reAbacus(Range.buildRange(4,8), "T");
-        sut.getAcePlacedReadBuilder("read3").reAbacus(Range.buildRange(1,5), "T");
+        sut.getPlacedReadBuilder("read1").reAbacus(Range.buildRange(2,6), "T");
+        sut.getPlacedReadBuilder("read2").reAbacus(Range.buildRange(4,8), "T");
+        sut.getPlacedReadBuilder("read3").reAbacus(Range.buildRange(1,5), "T");
         sut.getConsensusBuilder().delete(Range.buildRange(4,8)).insert(4, "T");
            
         AceContig contig =sut.build();
@@ -62,7 +62,7 @@ public class TestDefaultAceContigBuilderReAbacus {
     
     @Test
     public void abacusAndShiftDownstreamReads(){
-        AceContigBuilder sut =  new DefaultAceContig.Builder("id",
+        AceContigBuilder sut =  DefaultAceContig.createBuilder("id",
                           "ACGT-----ACGT")
         
         .addRead("read1",   "GT-T---ACG", 2, Direction.FORWARD, Range.buildRange(2,7), read1PhdInfo, 10)
@@ -70,11 +70,11 @@ public class TestDefaultAceContigBuilderReAbacus {
         .addRead("read3",    "T---T-ACGT", 3, Direction.FORWARD, Range.buildRange(2,8), read1PhdInfo, 10)
         .addRead("read4",           "ACGT", 9, Direction.FORWARD, Range.buildRange(2,4), read1PhdInfo, 10);
         
-        sut.getAcePlacedReadBuilder("read1").reAbacus(Range.buildRange(2,6), "T");
-        sut.getAcePlacedReadBuilder("read2").reAbacus(Range.buildRange(4,8), "T");
-        sut.getAcePlacedReadBuilder("read3").reAbacus(Range.buildRange(1,5), "T");
+        sut.getPlacedReadBuilder("read1").reAbacus(Range.buildRange(2,6), "T");
+        sut.getPlacedReadBuilder("read2").reAbacus(Range.buildRange(4,8), "T");
+        sut.getPlacedReadBuilder("read3").reAbacus(Range.buildRange(1,5), "T");
         sut.getConsensusBuilder().delete(Range.buildRange(4,8)).insert(4, "T");
-        sut.getAcePlacedReadBuilder("read4").shiftLeft(4);
+        sut.getPlacedReadBuilder("read4").shiftLeft(4);
            
         AceContig contig =sut.build();
         assertEquals("ACGTTACGT", contig.getConsensus().toString());

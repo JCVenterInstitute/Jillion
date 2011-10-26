@@ -19,14 +19,21 @@
 
 package org.jcvi.common.core.assembly.contig.cas;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.Direction;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
+import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
@@ -36,30 +43,23 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
  *
  *
  */
-public class UpdateConsensusAceContigBuilder extends DefaultAceContig.Builder{
+public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
 
     private final Map<Long, Map<Nucleotide, Integer>> consensusMap;
+    private final AceContigBuilder builder;
     /**
      * @param contigId
      * @param fullConsensus
      */
     public UpdateConsensusAceContigBuilder(String contigId,
             NucleotideSequence fullConsensus) {
-        super(contigId, fullConsensus);
+        builder = DefaultAceContig.createBuilder(contigId, fullConsensus);
         consensusMap = new HashMap<Long,Map<Nucleotide,Integer>>((int)fullConsensus.getLength()+1, 1F);
         
     }
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    protected void finalizeContig() {
-        updateConsensus();
-    }
-
     protected void updateConsensus() {
-        NucleotideSequenceBuilder consensusBuilder = getConsensusBuilder();
+        NucleotideSequenceBuilder consensusBuilder = builder.getConsensusBuilder();
         for(int i=0; i<consensusBuilder.getLength(); i++ )   {
             final Map<Nucleotide, Integer> histogramMap = consensusMap.get(Long.valueOf(i));
             consensusBuilder.replace(i,findMostOccuringBase(histogramMap));
@@ -68,9 +68,10 @@ public class UpdateConsensusAceContigBuilder extends DefaultAceContig.Builder{
     }
 
     @Override
-    public DefaultAceContig.Builder addRead(AcePlacedRead acePlacedRead) {
+    public UpdateConsensusAceContigBuilder addRead(AcePlacedRead acePlacedRead) {
         addReadToConsensusMap(acePlacedRead);
-        return super.addRead(acePlacedRead);
+        builder.addRead(acePlacedRead);
+        return this;
     }
 
     private void addReadToConsensusMap(PlacedRead casPlacedRead) {
@@ -104,4 +105,94 @@ public class UpdateConsensusAceContigBuilder extends DefaultAceContig.Builder{
         }
         return mostOccuringBase;
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public UpdateConsensusAceContigBuilder setContigId(String contigId) {
+        builder.setContigId(contigId);
+        return this;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public String getContigId() {
+        return builder.getContigId();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int numberOfReads() {
+        return builder.numberOfReads();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public UpdateConsensusAceContigBuilder addAllReads(
+            Iterable<AcePlacedRead> reads) {
+        builder.addAllReads(reads);
+        return this;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void removeRead(String readId) {
+        builder.removeRead(readId);
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public NucleotideSequenceBuilder getConsensusBuilder() {        
+        return builder.getConsensusBuilder();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public AceContig build() {
+        this.updateConsensus();
+        return builder.build();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public UpdateConsensusAceContigBuilder addRead(String readId, String validBases,
+            int offset, Direction dir, Range clearRange, PhdInfo phdInfo,
+            int ungappedFullLength) {
+        builder.addRead(readId, validBases, offset, dir, clearRange, phdInfo, ungappedFullLength);
+        return this;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public AcePlacedReadBuilder getPlacedReadBuilder(String readId) {
+        return builder.getPlacedReadBuilder(readId);
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Collection<AcePlacedReadBuilder> getAllPlacedReadBuilders() {
+        return builder.getAllPlacedReadBuilders();
+    }
+    
+    
 }

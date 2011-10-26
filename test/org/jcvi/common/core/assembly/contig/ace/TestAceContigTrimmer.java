@@ -55,7 +55,7 @@ public class TestAceContigTrimmer {
     	private final AceContigBuilder builder;
     	
     	TestAceBuilder(String id, String consensus){
-    		builder = new DefaultAceContig.Builder(id,consensus);
+    		builder = DefaultAceContig.createBuilder(id,consensus);
     	}
     	TestAceBuilder addRead(String readId, String gappedBasecalls,int offset, Direction dir, Range validRange){
     		builder.addRead(readId, gappedBasecalls,offset,dir,validRange,null,offset+gappedBasecalls.length());

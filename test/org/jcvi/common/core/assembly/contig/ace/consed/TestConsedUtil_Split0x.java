@@ -22,20 +22,25 @@ package org.jcvi.common.core.assembly.contig.ace.consed;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
+import org.jcvi.common.core.assembly.contig.ContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceContigTestUtil;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.junit.Test;
 /**
  * @author dkatzel
@@ -47,16 +52,109 @@ public class TestConsedUtil_Split0x {
     private final String originalId="origId";
     private final String referenceConsensus = "AACGTACGTAAACGTACGTAA";
     
-    private static class TestAceBuilder extends DefaultAceContig.Builder{
-    	
+    private static class TestAceBuilder implements AceContigBuilder{
+    	private final AceContigBuilder builder;
     	TestAceBuilder(String id, String consensus){
-    		super(id,consensus);
+    		builder = DefaultAceContig.createBuilder(id,consensus);
     	}
     	
     	TestAceBuilder addRead(String readId, String gappedBasecalls,int offset, Direction dir, Range validRange, PhdInfo phdInfo){
-    		super.addRead(readId, gappedBasecalls,offset,dir,validRange,phdInfo,offset+gappedBasecalls.length());
+    	    builder.addRead(readId, gappedBasecalls,offset,dir,validRange,phdInfo,offset+gappedBasecalls.length());
     		return this;
     	}
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ContigBuilder<AcePlacedRead, AceContig> setContigId(
+                String contigId) {
+            return builder.setContigId(contigId);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String getContigId() {
+            return builder.getContigId();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int numberOfReads() {
+            return builder.numberOfReads();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ContigBuilder<AcePlacedRead, AceContig> addRead(
+                AcePlacedRead placedRead) {
+            return builder.addRead(placedRead);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ContigBuilder<AcePlacedRead, AceContig> addAllReads(
+                Iterable<AcePlacedRead> reads) {
+            return builder.addAllReads(reads);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void removeRead(String readId) {
+            builder.removeRead(readId);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public NucleotideSequenceBuilder getConsensusBuilder() {
+            return builder.getConsensusBuilder();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public AceContig build() {
+            return builder.build();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public AceContigBuilder addRead(String readId, String validBases,
+                int offset, Direction dir, Range clearRange, PhdInfo phdInfo,
+                int ungappedFullLength) {
+            return builder.addRead(readId, validBases, offset, dir, clearRange, phdInfo, ungappedFullLength);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public AcePlacedReadBuilder getPlacedReadBuilder(String readId) {
+            return builder.getPlacedReadBuilder(readId);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Collection<AcePlacedReadBuilder> getAllPlacedReadBuilders() {
+            return builder.getAllPlacedReadBuilders();
+        }
     	
     }
     @Test

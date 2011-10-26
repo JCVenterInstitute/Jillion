@@ -69,7 +69,7 @@ public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
     
     @Override
     protected void visitNewContig(String contigId, String consensus) {
-        contigBuilder= new DefaultAceContig.Builder(contigId, consensus);
+        contigBuilder= DefaultAceContig.createBuilder(contigId, consensus);
         
     }
     

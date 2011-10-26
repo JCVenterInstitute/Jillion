@@ -35,9 +35,9 @@ public class TestDefaultAceContig {
 
     @Test
     public void noPlacedReadsShouldMakeEmptyContig(){
-        DefaultAceContig.Builder sut =  new DefaultAceContig.Builder("id",
+        AceContigBuilder sut =  DefaultAceContig.createBuilder("id",
                 "ACGTACGTACGTACGT");
-        DefaultAceContig contig =sut.build();
+        AceContig contig =sut.build();
         NucleotideSequence consensus =contig.getConsensus();
         assertEquals(0, consensus.getLength());
         assertEquals("id",contig.getId());
@@ -45,7 +45,7 @@ public class TestDefaultAceContig {
     }
     @Test
     public void callingBuildTwiceShouldThrowIllegalStateException(){
-        DefaultAceContig.Builder sut =  new DefaultAceContig.Builder("id",
+        AceContigBuilder sut =  DefaultAceContig.createBuilder("id",
                 "ACGTACGTACGTACGT");
         sut.build();
         
@@ -58,10 +58,10 @@ public class TestDefaultAceContig {
     }
     @Test
     public void readThatHasNegativeOffsetShouldGetTrimmedToOffsetZero(){
-        DefaultAceContig.Builder sut =  new DefaultAceContig.Builder("id",
+        AceContigBuilder sut =  DefaultAceContig.createBuilder("id",
                                             "ACGTACGTACGTACGT");
         sut.addRead("read", "ACGTACGTACGTACGT", -2, Direction.FORWARD, Range.buildRange(2, 18), null,16);
-            DefaultAceContig contig =sut.build();
+            AceContig contig =sut.build();
             NucleotideSequence consensus =contig.getConsensus();
             assertEquals(16, consensus.getLength());
             assertEquals("id",contig.getId());

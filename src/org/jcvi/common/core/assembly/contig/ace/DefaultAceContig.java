@@ -40,7 +40,12 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
-
+/**
+ * {@code DefaultAceContig} is the default implementation of {@link AceContig}.
+ * @author dkatzel
+ *
+ *
+ */
 public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
 
     
@@ -49,8 +54,47 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             Set<AcePlacedRead> reads) {
         super(id, consensus, reads);
     }
-
-    public static class Builder implements AceContigBuilder{
+    /**
+     * Create a new {@link AceContigBuilder} for a contig with the given
+     * contig id and starting with the given consensus.  Both the contig id
+     * and the consensus can be changed by calling methods on the returned
+     * builder.
+     * @param contigId the initial contig id to use for this contig (may later be changed)
+     * @param consensus the initial contig consensus for this contig (may be changed later)
+     * @return a new {@link AceContigBuilder} instance; never null.
+     * @throws NullPointerException if contigId or consensus are null.
+     */
+    public static AceContigBuilder createBuilder(String contigId, String consensus){
+        return new Builder(contigId, consensus);
+    }
+    /**
+     * Create a new {@link AceContigBuilder} for a contig with the given
+     * contig id and starting with the given consensus.  Both the contig id
+     * and the consensus can be changed by calling methods on the returned
+     * builder.
+     * @param contigId the initial contig id to use for this contig (may later be changed)
+     * @param consensus the initial contig consensus for this contig (may be changed later)
+     * @return a new {@link AceContigBuilder} instance; never null.
+     * @throws NullPointerException if contigId or consensus are null.
+     */
+    public static AceContigBuilder createBuilder(String contigId, List<Nucleotide> consensus){
+        return new Builder(contigId, consensus);
+    }
+    /**
+     * Create a new {@link AceContigBuilder} for a contig with the given
+     * contig id and starting with the given consensus.  Both the contig id
+     * and the consensus can be changed by calling methods on the returned
+     * builder.
+     * @param contigId the initial contig id to use for this contig (may later be changed)
+     * @param consensus the initial contig consensus for this contig (may be changed later)
+     * @return a new {@link AceContigBuilder} instance; never null.
+     * @throws NullPointerException if contigId or consensus are null.
+     */
+    public static AceContigBuilder createBuilder(String contigId, NucleotideSequence consensus){
+        return new Builder(contigId, consensus);
+    }
+    
+    private static class Builder implements AceContigBuilder{
         private NucleotideSequence fullConsensus;
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
@@ -69,6 +113,12 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
              );
          }
         public Builder(String contigId, NucleotideSequence fullConsensus){
+            if(contigId ==null){
+                throw new NullPointerException("contig id can not be null");
+            }
+            if(fullConsensus ==null){
+                throw new NullPointerException("consensus can not be null");
+            }
         	this.fullConsensus = fullConsensus;
         	 this.contigId = contigId;
         	 this.mutableConsensus = new NucleotideSequenceBuilder(fullConsensus);
@@ -128,14 +178,14 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         * {@inheritDoc}
         */
     	@Override
-        public Collection<AcePlacedReadBuilder> getAllAcePlacedReadBuilders(){
+        public Collection<AcePlacedReadBuilder> getAllPlacedReadBuilders(){
     	    return aceReadBuilderMap.values();
     	}
         /**
         * {@inheritDoc}
         */
         @Override
-        public AcePlacedReadBuilder getAcePlacedReadBuilder(String readId){
+        public AcePlacedReadBuilder getPlacedReadBuilder(String readId){
             return aceReadBuilderMap.get(readId);
         }
         
@@ -217,7 +267,6 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
                 //force empty contig if no reads...
                 return new DefaultAceContig(contigId, NucleotideSequenceFactory.create(""),Collections.<AcePlacedRead>emptySet());
             }
-            finalizeContig();
             Set<AcePlacedRead> placedReads = new HashSet<AcePlacedRead>(aceReadBuilderMap.size()+1,1F);
             //contig left (and right) might be beyond consensus depending on how
             //trimmed the data is and what assembly/consensus caller is used.
@@ -237,19 +286,6 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             fullConsensus = null;
             return new DefaultAceContig(contigId, validConsensus,placedReads);
         }
-        
-        /**
-         * This method will be called inside of {@link #build()}
-         * to let subclasses further manipulate the contig consensus
-         * or underlying reads before the final immutable contig is built.
-         * Implementors can assume that all the reads that are to be added
-         * to this contig have already been added and no further
-         * additional data will be inserted into this contig.
-         */
-        protected void finalizeContig() {
-            // no-op
-            
-        }        
     }
     
 }

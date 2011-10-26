@@ -215,7 +215,7 @@ public class RecallAceConsensus {
                 if(fastaOut !=null){
                     fastaOut.print(new DefaultNucleotideSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.asUngappedList()));
                 }
-                AceContigBuilder builder = new DefaultAceContig.Builder(contig.getId(), gappedRecalledConsensus);
+                AceContigBuilder builder = DefaultAceContig.createBuilder(contig.getId(), gappedRecalledConsensus);
                 for(AcePlacedRead read : contig.getPlacedReads()){
                     builder.addRead(read);
                 }
