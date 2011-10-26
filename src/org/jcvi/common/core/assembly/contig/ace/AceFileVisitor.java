@@ -32,6 +32,9 @@ import org.jcvi.common.core.io.TextFileVisitor;
 /**
  * {@code AceFileVisitor} is a {@link FileVisitor}
  * implementation for Ace Files.
+ * <p/>
+ * The {@link AceFileVisitor} will have the appropriate
+ * visit methods called on it as an ace file is parsed/ traversed.
  * @author dkatzel
  *
  *

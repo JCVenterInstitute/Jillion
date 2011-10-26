@@ -156,7 +156,7 @@ public class Cas2Consed3 {
                                 .hasEdits(hasEdits)
                                 .chromatDir(chromatDir)
                                 .build();
-            final Map<Integer, DefaultAceContig.Builder> builders = new HashMap<Integer, DefaultAceContig.Builder>();
+            final Map<Integer, AceContigBuilder> builders = new HashMap<Integer, AceContigBuilder>();
             
             final File phdFile = new File(phdBallDir, "phd.ball.1");
             final OutputStream phdOut = new FileOutputStream(phdFile);
@@ -211,13 +211,13 @@ public class Cas2Consed3 {
              File consensusFile = consedOutputDir.createNewFile(prefix+ ".ace.1.consensus.fasta");
              OutputStream tempOut = new FileOutputStream(tempAce);
              PrintStream consensusOut = new PrintStream(consensusFile);
-             Iterator<DefaultAceContig.Builder> builderIterator = builders.values().iterator();
+             Iterator<AceContigBuilder> builderIterator = builders.values().iterator();
              while(builderIterator.hasNext()){
                  AceContigBuilder builder = builderIterator.next();
                  NucleotideSequence fullConsensus =builder.getConsensusBuilder().build();
                  long ungappedLength = fullConsensus.getUngappedLength();
                  long firstReadStart= fullConsensus.getLength();
-                 for(AcePlacedReadBuilder readBuilder : builder.getAllAcePlacedReadBuilders()){
+                 for(AcePlacedReadBuilder readBuilder : builder.getAllPlacedReadBuilders()){
                      long start =readBuilder.getStart();
                      if(start < firstReadStart){
                          firstReadStart = start;

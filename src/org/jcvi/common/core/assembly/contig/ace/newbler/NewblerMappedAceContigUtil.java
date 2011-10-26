@@ -92,7 +92,7 @@ public class NewblerMappedAceContigUtil {
         
         final AcePlacedRead consensusRead = originalAceContig.getPlacedReadById(consensusId);
         final String consensus = Nucleotides.asString(consensusRead.getNucleotideSequence().asList());
-        AceContigBuilder builder = new DefaultAceContig.Builder(id,consensus);
+        AceContigBuilder builder = DefaultAceContig.createBuilder(id,consensus);
         for(AcePlacedRead read : originalAceContig.getPlacedReads()){
             
             Matcher matcher = ACTUAL_CONSENSUS_ID_PATTERN.matcher(id);

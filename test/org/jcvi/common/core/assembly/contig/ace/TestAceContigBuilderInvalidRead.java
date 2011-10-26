@@ -50,7 +50,7 @@ public class TestAceContigBuilderInvalidRead {
     private AceContigBuilder sut;
     @Before
     public void setup(){
-        sut = new DefaultAceContig.Builder(contigId, consensus);
+        sut = DefaultAceContig.createBuilder(contigId, consensus);
     }
     
     @Test(expected= IllegalArgumentException.class)

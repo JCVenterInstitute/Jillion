@@ -19,86 +19,21 @@
 
 package org.jcvi.common.core.assembly.contig.ace;
 
-import java.util.List;
+import org.jcvi.common.core.assembly.contig.PlacedReadBuilder;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Placed;
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 
 /**
  * {@code AcePlacedReadBuilder} is a {@link Builder}
+ * for {@link AcePlacedRead}s for a specific contig.
+ * Methods in this interface can change the bases
+ * of this read or shift where on the reference (or contig consensus)
+ * this read lands.
  * @author dkatzel
  *
  *
  */
-public interface AcePlacedReadBuilder extends Placed<AcePlacedReadBuilder>, Builder<AcePlacedRead>{
-
-    AcePlacedReadBuilder reference(NucleotideSequence reference, int newOffset);
-
-    long getStart();
-
-    String getId();
-
-    AcePlacedReadBuilder setStartOffset(int newOffset);
-
-    AcePlacedReadBuilder shiftRight(int numberOfBases);
-
-    AcePlacedReadBuilder shiftLeft(int numberOfBases);
-
-    /**
-     * @return the clearRange
-     */
-    Range getClearRange();
-
-    /**
-     * @return the phdInfo
-     */
-    PhdInfo getPhdInfo();
-
-    /**
-     * @return the dir
-     */
-    Direction getDirection();
-
-    /**
-     * @return the ungappedFullLength
-     */
-    int getUngappedFullLength();
-    /**
-     * 
-    * {@inheritDoc}
-    * <p>
-    * Creates a new AcePlacedRead instance using the current
-    * values given to this builder.
-     */
-    @Override
-    AcePlacedRead build();
-
-    AcePlacedReadBuilder reAbacus(Range gappedValidRangeToChange, String newBasecalls);
-
-    AcePlacedReadBuilder reAbacus(Range gappedValidRangeToChange,
-            List<Nucleotide> newBasecalls);
-
-    long getLength();
-
-    long getEnd();
-
-    Range asRange();
-
-    /**
-     * @return the basesBuilder
-     */
-    NucleotideSequenceBuilder getBasesBuilder();
-
-    NucleotideSequence getCurrentNucleotideSequence();
-
-    /**
-     * {@inheritDoc}
-     */
-    int compareTo(AcePlacedReadBuilder o);
+public interface AcePlacedReadBuilder extends PlacedReadBuilder<AcePlacedRead>{
+   
 
 }

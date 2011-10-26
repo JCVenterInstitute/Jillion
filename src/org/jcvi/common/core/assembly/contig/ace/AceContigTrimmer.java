@@ -56,7 +56,7 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
     @Override
     protected void beginTrimmingContig(AceContig contig) {
         this.oldConsensus = contig.getConsensus();
-        builder = new DefaultAceContig.Builder(contig.getId(), Nucleotides.asString(oldConsensus));
+        builder = DefaultAceContig.createBuilder(contig.getId(), oldConsensus);
         
         currentRanges = null;
     }
