@@ -182,7 +182,7 @@ public class GridReAbacusAce {
     
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "reAbacusAce -a <ace file> -c <contig id> -o <partial ace out file>", 
+        formatter.printHelp( "gridReAbacusAce -a <ace file> -nav <input nav file> -o <ace out file>", 
                 
                 "Parse an ace file and write out ungapped consensus coordinates of abacus assembly errors",
                 options,
