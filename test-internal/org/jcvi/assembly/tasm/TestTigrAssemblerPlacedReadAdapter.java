@@ -28,6 +28,7 @@ import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
@@ -39,10 +40,12 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	
 	Range validRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED,5, 13);
 	String id = "readId";
-	int offset = 1234;
+	int offset = 5;
 	String readSequence = "ACGT-ACGT";
+	int ungappedLength = 500;
+	NucleotideSequence consensus = NucleotideSequenceFactory.create("NNNNNACGT-ACGT");
 	ReferenceEncodedNucleotideSequence gappedBasecalls = NucleotideSequenceFactory.createReferenceEncoded(
-	        NucleotideSequenceFactory.create("NNNNNACGT-ACGT"),readSequence,5);
+	        consensus ,readSequence,5);
 	Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead<ReferenceEncodedNucleotideSequence>(id, gappedBasecalls);
 	
 	
@@ -53,7 +56,9 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	
 	@Test
 	public void adaptedReadShouldDelegateAllPlacedReadMethods(){
-		PlacedRead delegate = new DefaultPlacedRead(read, offset, Direction.FORWARD,validRange);
+		PlacedRead delegate = DefaultPlacedRead.createBuilder(consensus, id, readSequence, offset, 
+		        Direction.FORWARD,validRange, ungappedLength)
+		        .build();
 		TigrAssemblerPlacedReadAdapter sut = new TigrAssemblerPlacedReadAdapter(delegate);
 		assertCommonGettersCorrect(sut);		
 		assertCommonAttributesCorrect(delegate, sut);
@@ -64,7 +69,9 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	}
 	@Test
 	public void reverseReadShouldHaveSwappedSeqLeftandSeqRightAttributes(){
-		PlacedRead delegate = new DefaultPlacedRead(read, offset, Direction.REVERSE,validRange);
+	    PlacedRead delegate = DefaultPlacedRead.createBuilder(consensus, id, readSequence, offset, 
+                Direction.REVERSE,validRange, ungappedLength)
+                .build();
 		TigrAssemblerPlacedReadAdapter sut = new TigrAssemblerPlacedReadAdapter(delegate);
 		assertCommonGettersCorrect(sut);		
 		assertCommonAttributesCorrect(delegate, sut);

@@ -23,15 +23,23 @@
  */
 package org.jcvi.common.core.assembly.contig;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.contig.ace.DefaultAcePlacedRead;
+import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
+import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
@@ -42,8 +50,18 @@ public class DefaultPlacedRead implements PlacedRead {
     private final long start;
     private final Direction sequenceDirection;
     private final Range validRange;
+    private final int ungappedFullLength;
     
-    public DefaultPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long start, Direction sequenceDirection, Range validRange){
+    
+    public static final PlacedReadBuilder<PlacedRead> createBuilder(NucleotideSequence reference, 
+            String readId,String validBases,
+            int offset, Direction dir, Range clearRange,
+            int ungappedFullLength){
+        return new Builder(reference, readId, validBases, offset, dir, 
+                clearRange, ungappedFullLength);
+    }
+    
+    DefaultPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
         if(read==null){
             throw new IllegalArgumentException("read can not be null");
         }
@@ -51,6 +69,7 @@ public class DefaultPlacedRead implements PlacedRead {
         this.start= start;
         this.sequenceDirection = sequenceDirection;
         this.validRange = validRange;
+        this.ungappedFullLength = ungappedFullLength;
     }
     @Override
     public long getLength() {
@@ -62,6 +81,15 @@ public class DefaultPlacedRead implements PlacedRead {
         return start;
     }
 
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getUngappedFullLength() {
+        return ungappedFullLength;
+    }
+    
+    
     public Read<ReferenceEncodedNucleotideSequence> getRead(){
         return read;
     }
@@ -185,5 +213,303 @@ public class DefaultPlacedRead implements PlacedRead {
         return Range.buildRange(getStart(), getEnd());
     }
     
+    private static class Builder implements PlacedReadBuilder<PlacedRead>{
+        private String readId;
+        /**
+         * Our original encoded sequence.  If we 
+         * edit the basecalls, this will get set to null
+         * and we use {@link #basesBuilder} instead.
+         */
+        private NucleotideSequence originalSequence;
+        /**
+         * Our edited sequence, only used if needed
+         * since it takes up more memory.
+         */
+        private NucleotideSequenceBuilder basesBuilder=null;
+        private int offset;
+        private Range clearRange;
+        private NucleotideSequence reference;
+        private final Direction dir;
+        private final int ungappedFullLength;
+        
+        public Builder(NucleotideSequence reference, String readId,String validBases,
+                            int offset, Direction dir, Range clearRange,
+                            int ungappedFullLength){
+            this.readId = readId;
+            this.dir =dir;
+            this.clearRange = clearRange;
+            this.offset = offset;
+            this.originalSequence = NucleotideSequenceFactory.create(validBases);
+            this.basesBuilder =null;
+            if(offset + validBases.length() > reference.getLength()){
+                throw new IllegalArgumentException("read goes beyond the reference");
+            }
+            if(offset <0){
+                throw new IllegalArgumentException("read goes before the reference");
+            }
+            this.reference = reference;
+            this.ungappedFullLength = ungappedFullLength;
+        }
+        
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Builder reference(NucleotideSequence reference, int newOffset){
+            if(reference ==null){
+                throw new NullPointerException("reference can not be null");
+            }
+            this.reference = reference;
+            this.offset = newOffset;
+            return this;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public long getStart(){
+            return offset;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String getId(){
+            return readId;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Builder setStartOffset(int newOffset){
+            this.offset = newOffset;
+            return this;
+        }
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Builder shiftRight(int numberOfBases){
+            return setStartOffset(offset+numberOfBases);
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Builder shiftLeft(int numberOfBases){
+            return setStartOffset(offset-numberOfBases);
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Range getClearRange() {
+            return clearRange;
+        }
 
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Direction getDirection() {
+            return dir;
+        }
+
+        
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int getUngappedFullLength() {
+            return ungappedFullLength;
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public PlacedRead build(){
+            ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = NucleotideSequenceFactory.createReferenceEncoded(
+                        reference,
+                        currentBasecallsAsString(),offset);
+            Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead(readId, updatedEncodedBasecalls);
+            return new DefaultPlacedRead(read, offset, dir, ungappedFullLength,clearRange);
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Builder reAbacus(Range gappedValidRangeToChange, String newBasecalls){
+            return reAbacus(gappedValidRangeToChange, Nucleotides.parse(newBasecalls));
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Builder reAbacus(Range gappedValidRangeToChange, List<Nucleotide> newBasecalls){
+            List<Nucleotide> oldUngappedBasecalls = Nucleotides.ungap(getBasesBuilder().asList(gappedValidRangeToChange));
+            List<Nucleotide> newUngappedBasecalls = new ArrayList<Nucleotide>(newBasecalls.size());
+            //make sure we aren't adding/editing any basecalls
+            //only gaps should be affected
+            for(Nucleotide newBase : newBasecalls){
+                if(!newBase.isGap()){
+                    newUngappedBasecalls.add(newBase);
+                }
+            }
+            if(!oldUngappedBasecalls.equals(newUngappedBasecalls)){
+                throw new IllegalReAbacus(oldUngappedBasecalls,newUngappedBasecalls);
+            }
+            basesBuilder.delete(gappedValidRangeToChange);
+            basesBuilder.insert((int)gappedValidRangeToChange.getStart(), newBasecalls);
+            return this;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized long getLength(){
+            if(basesBuilder !=null){
+                return basesBuilder.getLength();
+            }
+            return originalSequence.getLength();
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public long getEnd(){
+            return offset + getLength()-1;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Range asRange(){
+            return Range.buildRange(offset,getEnd());
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized NucleotideSequenceBuilder getBasesBuilder() {
+            if(basesBuilder==null){
+                this.basesBuilder = new NucleotideSequenceBuilder(originalSequence);
+                originalSequence=null;
+            }
+            return basesBuilder;
+        }
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized NucleotideSequence getCurrentNucleotideSequence(){
+            if(originalSequence !=null){
+                return originalSequence;
+            }
+            return basesBuilder.build();
+        }
+        private synchronized String currentBasecallsAsString(){
+            if(originalSequence !=null){
+                return Nucleotides.asString(originalSequence);
+            }
+            return basesBuilder.toString();
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */        
+        @Override
+        public int compareTo(PlacedReadBuilder<PlacedRead> o) {
+            
+            int rangeCompare = asRange().compareTo(o.asRange());
+            if(rangeCompare !=0){
+                return rangeCompare;
+            }
+            return getId().compareTo(o.getId());
+        }
+
+
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((basesBuilder == null) ? 0 : basesBuilder.hashCode());
+            result = prime * result + offset;
+            result = prime * result
+                    + ((readId == null) ? 0 : readId.hashCode());
+            result = prime * result
+                    + ((reference == null) ? 0 : reference.hashCode());
+            return result;
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof Builder)) {
+                return false;
+            }
+            Builder other = (Builder) obj;
+            if (basesBuilder == null) {
+                if (other.basesBuilder != null) {
+                    return false;
+                }
+            } else if (!basesBuilder.asList().equals(other.basesBuilder.asList())) {
+                return false;
+            }
+            if (offset != other.offset) {
+                return false;
+            }
+            if (readId == null) {
+                if (other.readId != null) {
+                    return false;
+                }
+            } else if (!readId.equals(other.readId)) {
+                return false;
+            }
+            if (reference == null) {
+                if (other.reference != null) {
+                    return false;
+                }
+            } else if (!reference.equals(other.reference)) {
+                return false;
+            }
+            return true;
+        }
+        
+    }
+
+    protected static final class IllegalReAbacus extends IllegalArgumentException{
+
+        private static final long serialVersionUID = -8272559886165301526L;
+
+        public IllegalReAbacus(List<Nucleotide> oldUngappedBasecalls, List<Nucleotide> newUngappedBasecalls){
+            super(String.format("reAbacusing must retain same ungapped basecalls! '%s' vs '%s'", 
+                    Nucleotides.asString(oldUngappedBasecalls),
+                    Nucleotides.asString(newUngappedBasecalls)
+                    ));
+        }
+    
+    }
 }

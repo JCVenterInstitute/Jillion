@@ -19,62 +19,118 @@
 
 package org.jcvi.common.core.assembly.contig;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
-import org.jcvi.common.core.util.Builder;
 
 /**
  * @author dkatzel
  *
  *
  */
-public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Contig<P>> implements Builder<C>{
-        private NucleotideSequence consensus;
+public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Contig<P>> implements ContigBuilder<P,C>{
+        private NucleotideSequenceBuilder consensus;
         private String id;
-        private final Set<P> reads;
+        private final Map<String, PlacedReadBuilder<P>> reads;
         public AbstractContigBuilder(String id, NucleotideSequence consensus){
             this.id = id;
-            this.consensus = consensus;
-            reads = new LinkedHashSet<P>();
+            this.consensus = new NucleotideSequenceBuilder(consensus);
+            reads = new LinkedHashMap<String,PlacedReadBuilder<P>>();
         }
         public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, Direction dir){
-            
-            NucleotideSequence referenceEncoded = NucleotideSequenceFactory.createReferenceEncoded(consensus,basecalls, offset);
-            final P actualPlacedRead = createPlacedRead(new DefaultRead(id, referenceEncoded), offset,dir, validRange );
-            
-            return addRead(actualPlacedRead);
+            reads.put(id, createPlacedReadBuilder(id,offset,validRange,basecalls,dir));
+            return this;
         }
         public  AbstractContigBuilder<P,C>  addRead(P read){
-            reads.add(read);
+            reads.put(read.getId(),createPlacedReadBuilder(read));
             return this;
         }
-        protected abstract P createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, Direction dir, Range validRange);
+        protected abstract PlacedReadBuilder<P> createPlacedReadBuilder(P read);
+        protected abstract PlacedReadBuilder<P> createPlacedReadBuilder(String id, int offset,Range validRange, String basecalls, Direction dir);
         
-        public NucleotideSequence getConsensus() {
-            return consensus;
-        }
-        public String getId() {
-            return id;
-        }
-        public AbstractContigBuilder<P,C> changeConsensus(NucleotideSequence newConsensus){
-            this.consensus = newConsensus;
-            return this;
-        }
+        protected abstract P createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, Direction dir, int ungappedFullLength,Range validRange);
+        
+       
         public AbstractContigBuilder<P,C> setId(String id){
             this.id = id;
             return this;
         }
-        public Set<P> getPlacedReads() {
-            return reads;
-        }
+        
+        /**
+         * 
+        * {@inheritDoc}
+         */
+        @Override
         public abstract C build();
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ContigBuilder<P, C> setContigId(String contigId) {
+            id = contigId;
+            return this;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String getContigId() {
+            return id;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int numberOfReads() {
+            return reads.size();
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ContigBuilder<P, C> addAllReads(Iterable<P> reads) {
+            for(P read : reads){
+                addRead(read);
+            }
+            return this;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Collection<? extends PlacedReadBuilder<P>> getAllPlacedReadBuilders() {
+            return reads.values();
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public PlacedReadBuilder<P> getPlacedReadBuilder(String readId) {
+            return reads.get(readId);
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void removeRead(String readId) {
+            reads.remove(readId);
+            
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public NucleotideSequenceBuilder getConsensusBuilder() {
+            return consensus;
+        }
+        
+        
    
 }

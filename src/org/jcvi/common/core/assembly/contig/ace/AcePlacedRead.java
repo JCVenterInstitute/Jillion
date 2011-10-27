@@ -29,6 +29,6 @@ public interface AcePlacedRead extends PlacedRead{
 
     PhdInfo getPhdInfo();
     
-    int getUngappedFullLength();
+    
     
 }
