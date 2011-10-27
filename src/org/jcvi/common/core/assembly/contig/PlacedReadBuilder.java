@@ -96,10 +96,6 @@ public interface PlacedReadBuilder<R extends PlacedRead> extends Placed<PlacedRe
      */
     Range getClearRange();
 
-    /**
-     * @return the phdInfo
-     */
-    PhdInfo getPhdInfo();
 
     /**
      * @return the dir

@@ -79,7 +79,10 @@ public class Ace2Contig {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             File aceFile = new File(commandLine.getOptionValue("a"));
             File contigOutFile = new File(commandLine.getOptionValue("c"));
-            IOUtil.mkdirs(contigOutFile.getParentFile());
+            File rootDir = contigOutFile.getAbsoluteFile().getParentFile();
+            if(rootDir!=null){
+                IOUtil.mkdirs(rootDir);
+            }
             final CtgFileWriter writer = new CtgFileWriter(new FileOutputStream(contigOutFile));
             final DataStoreFilter filter = CommandLineUtils.createDataStoreFilter(commandLine);
             

@@ -21,13 +21,20 @@ package org.jcvi.assembly.tasm;
 
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Map.Entry;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.contig.PlacedReadBuilder;
 import org.jcvi.common.core.seq.read.Read;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
 /**
@@ -35,29 +42,35 @@ import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequenc
  *
  *
  */
-public class DefaultTigrAssemblerPlacedRead extends DefaultPlacedRead implements TigrAssemblerPlacedRead{
+public class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
     private final Map<TigrAssemblerReadAttribute,String> attributes;
-    /**
-     * @param read
-     * @param start
-     * @param sequenceDirection
-     */
-    public DefaultTigrAssemblerPlacedRead(
-            Read<ReferenceEncodedNucleotideSequence> read, long start,
-            Direction sequenceDirection,Range validRange) {
-        this(read, start, sequenceDirection,validRange, 
-                new EnumMap<TigrAssemblerReadAttribute,String>(TigrAssemblerReadAttribute.class));
+    private final PlacedRead delegate;
+    
+    
+    public static TigrAssemblerPlacedReadBuilder createBuilder(NucleotideSequence reference, 
+            String readId,String validBases,
+            int offset, Direction dir, Range clearRange,
+            int ungappedFullLength){
+        return new Builder(reference, readId, validBases, offset, dir, clearRange, ungappedFullLength);
     }
     /**
      * @param read
      * @param start
      * @param sequenceDirection
      */
-    public DefaultTigrAssemblerPlacedRead(
-            Read<ReferenceEncodedNucleotideSequence> read, long start,
-            Direction sequenceDirection, Range validRange, EnumMap<TigrAssemblerReadAttribute, String> attributes) {
-        super(read, start, sequenceDirection,validRange);
+    private DefaultTigrAssemblerPlacedRead(
+            PlacedRead read) {
+        this(read, new EnumMap<TigrAssemblerReadAttribute,String>(TigrAssemblerReadAttribute.class));
+    }
+    /**
+     * @param read
+     * @param start
+     * @param sequenceDirection
+     */
+    private DefaultTigrAssemblerPlacedRead(
+            PlacedRead read, Map<TigrAssemblerReadAttribute, String> attributes) {
+        this.delegate = read;
         Map<TigrAssemblerReadAttribute, String> map = new EnumMap<TigrAssemblerReadAttribute, String>(attributes);
         this.attributes = Collections.unmodifiableMap(map);
     }
@@ -76,41 +89,348 @@ public class DefaultTigrAssemblerPlacedRead extends DefaultPlacedRead implements
 	public boolean hasAttribute(TigrAssemblerReadAttribute attribute) {
 		return attributes.containsKey(attribute);
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result
-				+ ((attributes == null) ? 0 : attributes.hashCode());
-		return result;
-	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!super.equals(obj)) {
-			return false;
-		}
-		if (!(obj instanceof DefaultTigrAssemblerPlacedRead)) {
-			return false;
-		}
-		DefaultTigrAssemblerPlacedRead other = (DefaultTigrAssemblerPlacedRead) obj;
-		if (attributes == null) {
-			if (other.attributes != null) {
-				return false;
-			}
-		} else if (!attributes.equals(other.attributes)) {
-			return false;
-		}
-		return true;
-	}
-    
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Map<Integer, Nucleotide> getSnps() {
+        return delegate.getSnps();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range getValidRange() {
+
+        return delegate.getValidRange();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Direction getDirection() {
+        return delegate.getDirection();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long toGappedValidRangeOffset(long referenceOffset) {
+        return delegate.toGappedValidRangeOffset(referenceOffset);
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long toReferenceOffset(long gappedValidRangeOffset) {
+        return delegate.toReferenceOffset(gappedValidRangeOffset);
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getUngappedFullLength() {
+        return delegate.getUngappedFullLength();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public String getId() {
+        return delegate.getId();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public NucleotideSequence getNucleotideSequence() {
+        return delegate.getNucleotideSequence();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getLength() {
+        return delegate.getLength();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getStart() {
+        return delegate.getStart();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getEnd() {
+        return delegate.getEnd();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range asRange() {
+        return delegate.asRange();
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compareTo(PlacedRead o) {
+        return delegate.compareTo(o);
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((attributes == null) ? 0 : attributes.hashCode());
+        result = prime * result
+                + ((delegate == null) ? 0 : delegate.hashCode());
+        return result;
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof DefaultTigrAssemblerPlacedRead)) {
+            return false;
+        }
+        DefaultTigrAssemblerPlacedRead other = (DefaultTigrAssemblerPlacedRead) obj;
+        if (attributes == null) {
+            if (other.attributes != null) {
+                return false;
+            }
+        } else if (!attributes.equals(other.attributes)) {
+            return false;
+        }
+        if (delegate == null) {
+            if (other.delegate != null) {
+                return false;
+            }
+        } else if (!delegate.equals(other.delegate)) {
+            return false;
+        }
+        return true;
+    }
+	
+    private static class Builder implements TigrAssemblerPlacedReadBuilder{
+
+        private final Map<TigrAssemblerReadAttribute, String> map =new EnumMap<TigrAssemblerReadAttribute,String>(TigrAssemblerReadAttribute.class);
+        private final PlacedReadBuilder<PlacedRead> delegate;
+        
+        
+        public Builder(NucleotideSequence reference, 
+                String readId,String validBases,
+                int offset, Direction dir, Range clearRange,
+                int ungappedFullLength) {
+            this.delegate = DefaultPlacedRead.createBuilder(reference, readId, validBases, offset, dir, clearRange, ungappedFullLength);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public TigrAssemblerPlacedReadBuilder addAllAttributes(
+                Map<TigrAssemblerReadAttribute, String> map) {
+            for(Entry<TigrAssemblerReadAttribute, String> entry : map.entrySet()){
+                addAttribute(entry.getKey(), entry.getValue());
+            }
+            return this;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public PlacedReadBuilder<TigrAssemblerPlacedRead> reference(
+                NucleotideSequence reference, int newOffset) {
+            delegate.reference(reference, newOffset);
+            return this;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public long getStart() {
+            return delegate.getStart();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String getId() {
+            return delegate.getId();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public PlacedReadBuilder<TigrAssemblerPlacedRead> setStartOffset(
+                int newOffset) {
+            delegate.setStartOffset(newOffset);
+            return this;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public PlacedReadBuilder<TigrAssemblerPlacedRead> shiftRight(
+                int numberOfBases) {
+            delegate.shiftRight(numberOfBases);
+            return this;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public PlacedReadBuilder<TigrAssemblerPlacedRead> shiftLeft(
+                int numberOfBases) {
+            delegate.shiftLeft(numberOfBases);
+            return this;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Range getClearRange() {
+            return delegate.getClearRange();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Direction getDirection() {
+            return delegate.getDirection();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int getUngappedFullLength() {
+            return delegate.getUngappedFullLength();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public TigrAssemblerPlacedRead build() {
+            return new DefaultTigrAssemblerPlacedRead(delegate.build(), map);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public PlacedReadBuilder<TigrAssemblerPlacedRead> reAbacus(
+                Range gappedValidRangeToChange, String newBasecalls) {
+            delegate.reAbacus(gappedValidRangeToChange, newBasecalls);
+            return this;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public PlacedReadBuilder<TigrAssemblerPlacedRead> reAbacus(
+                Range gappedValidRangeToChange, List<Nucleotide> newBasecalls) {
+            delegate.reAbacus(gappedValidRangeToChange, newBasecalls);
+            return this;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public long getLength() {
+            return delegate.getLength();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public long getEnd() {
+            return delegate.getEnd();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Range asRange() {
+            return delegate.asRange();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public NucleotideSequenceBuilder getBasesBuilder() {
+            return delegate.getBasesBuilder();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public NucleotideSequence getCurrentNucleotideSequence() {
+            return delegate.getCurrentNucleotideSequence();
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int compareTo(PlacedReadBuilder<TigrAssemblerPlacedRead> o) {
+            int rangeCompare = asRange().compareTo(o.asRange());
+            if(rangeCompare !=0){
+                return rangeCompare;
+            }
+            return getId().compareTo(o.getId());
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public TigrAssemblerPlacedReadBuilder addAttribute(
+                TigrAssemblerReadAttribute key, String value) {
+            map.put(key, value);
+            return this;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public TigrAssemblerPlacedReadBuilder removeAttribute(
+                TigrAssemblerReadAttribute key) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+        
+    }
 
 }

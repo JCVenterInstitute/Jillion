@@ -52,5 +52,7 @@ public interface PlacedRead extends Read, Placed<PlacedRead>{
     Direction getDirection();
     long toGappedValidRangeOffset(long referenceOffset);
     long toReferenceOffset(long gappedValidRangeOffset);
+    
+    int getUngappedFullLength();
  
 }

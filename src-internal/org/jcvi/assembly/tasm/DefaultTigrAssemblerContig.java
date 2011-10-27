@@ -22,7 +22,9 @@ package org.jcvi.assembly.tasm;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -31,8 +33,11 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.AbstractContigBuilder;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.DefaultContig;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.contig.PlacedReadBuilder;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
 /**
@@ -145,13 +150,56 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
         }
         @Override
         public DefaultTigrAssemblerContig build() {
-            return new DefaultTigrAssemblerContig(getId(),getConsensus(),
-                    getPlacedReads(),contigAttributes);
+            Set<TigrAssemblerPlacedRead> reads = new LinkedHashSet<TigrAssemblerPlacedRead>();
+            for(PlacedReadBuilder<TigrAssemblerPlacedRead> builder : getAllPlacedReadBuilders()){
+               ((TigrAssemblerPlacedReadBuilder)builder).addAllAttributes(readAttributeMaps.get(builder.getId()));
+                reads.add(builder.build());
+            }
+            return new DefaultTigrAssemblerContig(getContigId(),getConsensusBuilder().build(),
+                    reads,contigAttributes);
         }
     
         public Builder addReadAttributes(String id, EnumMap<TigrAssemblerReadAttribute, String> readAttributes) {
             readAttributeMaps.put(id, readAttributes);
             return this;
+        }
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected TigrAssemblerPlacedReadBuilder createPlacedReadBuilder(
+                TigrAssemblerPlacedRead read) {
+            TigrAssemblerPlacedReadBuilder builder =DefaultTigrAssemblerPlacedRead.createBuilder(
+                    getConsensusBuilder().build(), 
+                    read.getId(), 
+                    read.getNucleotideSequence().toString(), 
+                    (int)read.getStart(), 
+                    read.getDirection(), 
+                    read.getValidRange(),
+                    read.getUngappedFullLength());
+            for(Entry<TigrAssemblerReadAttribute,String> entry : read.getAttributes().entrySet()){
+                builder.addAttribute(entry.getKey(), entry.getValue());
+            }
+            return builder;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected TigrAssemblerPlacedReadBuilder createPlacedReadBuilder(
+                String id, int offset, Range validRange, String basecalls,
+                Direction dir) {
+            return DefaultTigrAssemblerPlacedRead.createBuilder(
+                    getConsensusBuilder().build(), 
+                    id, 
+                    basecalls, 
+                    offset, 
+                    dir, 
+                    validRange,
+                    //TODO need to actually compute ungapped full length here
+                    //should we pull from frg or db?
+                    (int)validRange.getEnd());
         }
         /**
         * {@inheritDoc}
@@ -159,8 +207,16 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
         @Override
         protected TigrAssemblerPlacedRead createPlacedRead(
                 Read<ReferenceEncodedNucleotideSequence> read, long offset,
-                Direction dir, Range validRange) {
-            return new DefaultTigrAssemblerPlacedRead(read, offset, dir,validRange,readAttributeMaps.get(read.getId()));
+                Direction dir, int ungappedFullLength, Range validRange) {
+            return DefaultTigrAssemblerPlacedRead.createBuilder(
+                    getConsensusBuilder().build(), 
+                    read.getId(), 
+                    Nucleotides.asString(read.getNucleotideSequence().asList()), 
+                    (int)offset, 
+                    dir, 
+                    validRange,
+                    ungappedFullLength)
+                    .build();
         }
         
         

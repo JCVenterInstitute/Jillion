@@ -43,7 +43,6 @@ import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequenc
 
 public class DefaultAcePlacedRead implements AcePlacedRead {
     private final PhdInfo phdInfo;
-    private final int ungappedFullLength;
     private final PlacedRead placedRead;
     
     
@@ -53,11 +52,9 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         return new Builder(reference, readId, validBases, 
                 offset, dir, clearRange, phdInfo, ungappedFullLength);
     }
-    public DefaultAcePlacedRead(Read<ReferenceEncodedNucleotideSequence> read,
-            long start, Direction dir,PhdInfo phdInfo, int ungappedFullLength, Range validRange) {
-        this.placedRead = new DefaultPlacedRead(read, start, dir,validRange);
+    private DefaultAcePlacedRead(PlacedRead placedRead, PhdInfo phdInfo) {
+        this.placedRead = placedRead;
         this.phdInfo =phdInfo;
-        this.ungappedFullLength =ungappedFullLength;
     }
 
     @Override
@@ -67,7 +64,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
 
     @Override
     public int getUngappedFullLength() {
-        return ungappedFullLength;
+        return placedRead.getUngappedFullLength();
     }
 
 
@@ -177,7 +174,6 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         result = prime * result + ((phdInfo == null) ? 0 : phdInfo.hashCode());
         result = prime * result
                 + ((placedRead == null) ? 0 : placedRead.hashCode());
-        result = prime * result + ungappedFullLength;
         return result;
     }
 
@@ -209,52 +205,23 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             }
         } else if (!placedRead.equals(other.placedRead)){
             return false;
-        }
-        if (ungappedFullLength != other.ungappedFullLength){
-            return false;
-        }
+        }        
         return true;
     }
 
 
     private static class Builder implements AcePlacedReadBuilder{
-        private String readId;
-        /**
-         * Our original encoded sequence.  If we 
-         * edit the basecalls, this will get set to null
-         * and we use {@link #basesBuilder} instead.
-         */
-        private NucleotideSequence originalSequence;
-        /**
-         * Our edited sequence, only used if needed
-         * since it takes up more memory.
-         */
-        private NucleotideSequenceBuilder basesBuilder=null;
-        private int offset;
-        private Range clearRange;
-        private PhdInfo phdInfo;
-        private NucleotideSequence reference;
-        private final Direction dir;
-        private final int ungappedFullLength;
+        private PhdInfo phdInfo;        
+        private final PlacedReadBuilder<PlacedRead> delegateBuilder;
+        
         
         public Builder(NucleotideSequence reference, String readId,String validBases,
                             int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
                             int ungappedFullLength){
-            this.readId = readId;
-            this.dir =dir;
-            this.clearRange = clearRange;
-            this.offset = offset;
+            this.delegateBuilder = DefaultPlacedRead.createBuilder(
+                    reference, readId, validBases, offset,
+                    dir, clearRange, ungappedFullLength);
             this.phdInfo = phdInfo;
-            this.originalSequence = NucleotideSequenceFactory.create(validBases);
-            this.basesBuilder =null;
-            if(offset + validBases.length() > reference.getLength()){
-                throw new IllegalArgumentException("read goes beyond the reference");
-            }
-            if(offset <0){
-                throw new IllegalArgumentException("read goes before the reference");
-            }
-            this.reference = reference;
-            this.ungappedFullLength = ungappedFullLength;
         }
         
         
@@ -263,11 +230,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         */
         @Override
         public Builder reference(NucleotideSequence reference, int newOffset){
-            if(reference ==null){
-                throw new NullPointerException("reference can not be null");
-            }
-            this.reference = reference;
-            this.offset = newOffset;
+            delegateBuilder.reference(reference, newOffset);
             return this;
         }
         /**
@@ -275,21 +238,21 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         */
         @Override
         public long getStart(){
-            return offset;
+            return delegateBuilder.getStart();
         }
         /**
         * {@inheritDoc}
         */
         @Override
         public String getId(){
-            return readId;
+            return delegateBuilder.getId();
         }
         /**
         * {@inheritDoc}
         */
         @Override
         public Builder setStartOffset(int newOffset){
-            this.offset = newOffset;
+            delegateBuilder.setStartOffset(newOffset);
             return this;
         }
         
@@ -298,21 +261,23 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         */
         @Override
         public Builder shiftRight(int numberOfBases){
-            return setStartOffset(offset+numberOfBases);
+            delegateBuilder.shiftRight(numberOfBases);
+            return this;
         }
         /**
         * {@inheritDoc}
         */
         @Override
         public Builder shiftLeft(int numberOfBases){
-            return setStartOffset(offset-numberOfBases);
+            delegateBuilder.shiftLeft(numberOfBases);
+            return this;
         }
         /**
         * {@inheritDoc}
         */
         @Override
         public Range getClearRange() {
-            return clearRange;
+            return delegateBuilder.getClearRange();
         }
 
 
@@ -330,7 +295,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         */
         @Override
         public Direction getDirection() {
-            return dir;
+            return delegateBuilder.getDirection();
         }
 
         
@@ -340,7 +305,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         */
         @Override
         public int getUngappedFullLength() {
-            return ungappedFullLength;
+            return delegateBuilder.getUngappedFullLength();
         }
 
 
@@ -349,38 +314,22 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         */
         @Override
         public DefaultAcePlacedRead build(){
-            ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = NucleotideSequenceFactory.createReferenceEncoded(
-                        reference,
-                        currentBasecallsAsString(),offset);
-            Read read = new DefaultRead(readId, updatedEncodedBasecalls);
-            return new DefaultAcePlacedRead(read, offset, dir, phdInfo,ungappedFullLength,clearRange);
+            return new DefaultAcePlacedRead(delegateBuilder.build(),phdInfo);
         }
         /**
         * {@inheritDoc}
         */
         @Override
         public Builder reAbacus(Range gappedValidRangeToChange, String newBasecalls){
-            return reAbacus(gappedValidRangeToChange, Nucleotides.parse(newBasecalls));
+            delegateBuilder.reAbacus(gappedValidRangeToChange, newBasecalls);
+            return this;
         }
         /**
         * {@inheritDoc}
         */
         @Override
         public Builder reAbacus(Range gappedValidRangeToChange, List<Nucleotide> newBasecalls){
-            List<Nucleotide> oldUngappedBasecalls = Nucleotides.ungap(getBasesBuilder().asList(gappedValidRangeToChange));
-            List<Nucleotide> newUngappedBasecalls = new ArrayList<Nucleotide>(newBasecalls.size());
-            //make sure we aren't adding/editing any basecalls
-            //only gaps should be affected
-            for(Nucleotide newBase : newBasecalls){
-                if(!newBase.isGap()){
-                    newUngappedBasecalls.add(newBase);
-                }
-            }
-            if(!oldUngappedBasecalls.equals(newUngappedBasecalls)){
-                throw new IllegalReAbacus(oldUngappedBasecalls,newUngappedBasecalls);
-            }
-            basesBuilder.delete(gappedValidRangeToChange);
-            basesBuilder.insert((int)gappedValidRangeToChange.getStart(), newBasecalls);
+            delegateBuilder.reAbacus(gappedValidRangeToChange, newBasecalls);
             return this;
         }
         /**
@@ -388,35 +337,28 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         */
         @Override
         public synchronized long getLength(){
-            if(basesBuilder !=null){
-                return basesBuilder.getLength();
-            }
-            return originalSequence.getLength();
+            return delegateBuilder.getLength();
         }
         /**
         * {@inheritDoc}
         */
         @Override
         public long getEnd(){
-            return offset + getLength()-1;
+            return delegateBuilder.getEnd();
         }
         /**
         * {@inheritDoc}
         */
         @Override
         public Range asRange(){
-            return Range.buildRange(offset,getEnd());
+            return delegateBuilder.asRange();
         }
         /**
         * {@inheritDoc}
         */
         @Override
         public synchronized NucleotideSequenceBuilder getBasesBuilder() {
-            if(basesBuilder==null){
-                this.basesBuilder = new NucleotideSequenceBuilder(originalSequence);
-                originalSequence=null;
-            }
-            return basesBuilder;
+            return delegateBuilder.getBasesBuilder();
         }
         
         /**
@@ -424,17 +366,9 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         */
         @Override
         public synchronized NucleotideSequence getCurrentNucleotideSequence(){
-            if(originalSequence !=null){
-                return originalSequence;
-            }
-            return basesBuilder.build();
+            return delegateBuilder.getCurrentNucleotideSequence();
         }
-        private synchronized String currentBasecallsAsString(){
-            if(originalSequence !=null){
-                return Nucleotides.asString(originalSequence);
-            }
-            return basesBuilder.toString();
-        }
+        
 
 
         /**
@@ -451,7 +385,6 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         }
 
 
-        
         /**
         * {@inheritDoc}
         */
@@ -459,13 +392,12 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
+            result = prime
+                    * result
+                    + ((delegateBuilder == null) ? 0 : delegateBuilder
+                            .hashCode());
             result = prime * result
-                    + ((basesBuilder == null) ? 0 : basesBuilder.hashCode());
-            result = prime * result + offset;
-            result = prime * result
-                    + ((readId == null) ? 0 : readId.hashCode());
-            result = prime * result
-                    + ((reference == null) ? 0 : reference.hashCode());
+                    + ((phdInfo == null) ? 0 : phdInfo.hashCode());
             return result;
         }
 
@@ -485,32 +417,28 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
                 return false;
             }
             Builder other = (Builder) obj;
-            if (basesBuilder == null) {
-                if (other.basesBuilder != null) {
+            if (delegateBuilder == null) {
+                if (other.delegateBuilder != null) {
                     return false;
                 }
-            } else if (!basesBuilder.asList().equals(other.basesBuilder.asList())) {
+            } else if (!delegateBuilder.equals(other.delegateBuilder)) {
                 return false;
             }
-            if (offset != other.offset) {
-                return false;
-            }
-            if (readId == null) {
-                if (other.readId != null) {
+            if (phdInfo == null) {
+                if (other.phdInfo != null) {
                     return false;
                 }
-            } else if (!readId.equals(other.readId)) {
-                return false;
-            }
-            if (reference == null) {
-                if (other.reference != null) {
-                    return false;
-                }
-            } else if (!reference.equals(other.reference)) {
+            } else if (!phdInfo.equals(other.phdInfo)) {
                 return false;
             }
             return true;
         }
+
+
+        
+       
+
+       
         
     }
 

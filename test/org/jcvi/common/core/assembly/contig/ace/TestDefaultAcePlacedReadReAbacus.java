@@ -100,7 +100,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         try{
             sut.reAbacus(Range.buildRange(3,9), Nucleotides.parse("TRCGT"));
             fail("should throw Exception");
-        }catch(IllegalReAbacus expected){
+        }catch(IllegalArgumentException expected){
             assertEquals("reAbacusing must retain same ungapped basecalls! 'TACGT' vs 'TRCGT'",
                     expected.getMessage());
         }

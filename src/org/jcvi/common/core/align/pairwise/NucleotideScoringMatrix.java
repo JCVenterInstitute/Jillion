@@ -17,28 +17,15 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly.contig.ace;
+package org.jcvi.common.core.align.pairwise;
 
-import org.jcvi.common.core.assembly.contig.PlacedReadBuilder;
-
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
- * {@code AcePlacedReadBuilder} is a {@link Builder}
- * for {@link AcePlacedRead}s for a specific contig.
- * Methods in this interface can change the bases
- * of this read or shift where on the reference (or contig consensus)
- * this read lands.
  * @author dkatzel
  *
  *
  */
-public interface AcePlacedReadBuilder extends PlacedReadBuilder<AcePlacedRead>{
-   
-
-    /**
-     * @return the phdInfo
-     */
-    PhdInfo getPhdInfo();
+public interface NucleotideScoringMatrix extends ScoringMatrix<Nucleotide>{
 
 }

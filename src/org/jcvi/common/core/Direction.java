@@ -55,7 +55,28 @@ public enum Direction
      * but it is currently not known.
      */
     UNKNOWN;
-
+    /**
+     * Parse a string to determine the {@link Direction}.
+     * A direction is considered to be {@link #FORWARD} if:
+     * <ul>
+     * <li>dirString is '+'</li>
+     * <li>dirString is 'forward' ignoring case</li>
+     * <li>dirString is 'f' ignoring case</li>
+     * <li>dirString is 'TF' ignoring case</li>
+     * <li>dirString is '0'</li>
+     * </ul>
+     * 
+     * A direction is considered to be {@link #REVERSE} if:
+     * <ul>
+     * <li>dirString is '-'</li>
+     * <li>dirString is 'reverse' ignoring case</li>
+     * <li>dirString is 'r' ignoring case</li>
+     * <li>dirString is 'TR' ignoring case</li>
+     * <li>dirString is '1'</li>
+     * </ul>
+     * @param dirString
+     * @return
+     */
     public static Direction parseSequenceDirection(String dirString){
         if("-".equals(dirString)){
             return Direction.REVERSE;
@@ -77,6 +98,12 @@ public enum Direction
         }
         if("TR".equalsIgnoreCase(dirString)){
             return Direction.REVERSE;
+        }
+        if("1".equals(dirString)){
+            return Direction.REVERSE;
+        }
+        if("0".equals(dirString)){
+            return Direction.FORWARD;
         }
         return Direction.UNKNOWN;
         

@@ -43,6 +43,10 @@ import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 public class TestDefaultPlacedRead {
 
+    /**
+     * 
+     */
+    private static final int ungappedLength = 500;
     Read<ReferenceEncodedNucleotideSequence> read;
     Direction dir = Direction.FORWARD;
     long start = 100;
@@ -52,7 +56,7 @@ public class TestDefaultPlacedRead {
     @Before
     public void setup(){
         read = createMock(Read.class);
-        sut = new DefaultPlacedRead(read, start,dir,validRange);
+        sut = new DefaultPlacedRead(read, start,dir,ungappedLength,validRange);
     }
     @Test
     public void constructor(){
@@ -101,24 +105,24 @@ public class TestDefaultPlacedRead {
     
     @Test
     public void sameValuesAreEqual(){
-        PlacedRead sameValues =  new DefaultPlacedRead(read, start,dir,validRange);
+        PlacedRead sameValues =  new DefaultPlacedRead(read, start,dir,500,validRange);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
     @Test
     public void differentReadIsNotEqual(){
         Read differentRead = createMock(Read.class);
-        PlacedRead hasDifferentRead =  new DefaultPlacedRead(differentRead, start,dir,validRange);
+        PlacedRead hasDifferentRead =  new DefaultPlacedRead(differentRead, start,dir,500,validRange);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentRead);
     }
     @Test
     public void differentStartIsNotEqual(){
-        PlacedRead hasDifferentStart =  new DefaultPlacedRead(read, start-1,dir,validRange);
+        PlacedRead hasDifferentStart =  new DefaultPlacedRead(read, start-1,dir,500,validRange);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentStart);
     }
     @Test
     public void nullReadThrowsIllegalArgumentException(){
         try{
-            new DefaultPlacedRead(null, start,dir,validRange);
+            new DefaultPlacedRead(null, start,dir,500,validRange);
             fail("should throw IllegalArgument exception when passed read is null");
         }catch(IllegalArgumentException e){
             assertEquals("read can not be null", e.getMessage());
