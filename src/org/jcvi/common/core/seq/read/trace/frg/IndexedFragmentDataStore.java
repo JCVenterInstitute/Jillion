@@ -35,15 +35,14 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
- * {@code FragmentDataStore} is an implementation of 
- * {@link PhdDataStore} that only stores an index containing
+ * {@code IndexedFragmentDataStore} is an implementation of 
+ * {@link FragmentDataStore} that only stores an index containing
  * file offsets to the various phd records contained
  * inside the phdball file.  This allows large files to provide random 
  * access without taking up much memory.  The downside is each phd
@@ -69,7 +68,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         this(file, new DefaultIndexedFileRange(), new DefaultIndexedFileRange(),parser);
     }
     @Override
-    public void visitFragment(FrgVisitorAction action, String fragmentId,
+    public void visitFragment(FrgAction action, String fragmentId,
             String libraryId, NucleotideSequence bases,
             QualitySequence qualities, Range validRange,
             Range vectorClearRange, String source) {
@@ -86,7 +85,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     }
 
     @Override
-    public void visitLibrary(FrgVisitorAction action, String id,
+    public void visitLibrary(FrgAction action, String id,
             MateOrientation orientation, Distance distance) {
         super.visitLibrary(action, id, orientation, distance);
         updateRangeStartPosition();
@@ -171,7 +170,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         return singleLinkVisitor.getMateId();
     }
     @Override
-    public void visitLink(FrgVisitorAction action, List<String> fragIds) {
+    public void visitLink(FrgAction action, List<String> fragIds) {
         throwErrorIfAlreadyInitialized();
         if(this.isAddOrModify(action)){
             Range fragmentRange = Range.buildRange(currentStart, currentPosition);
@@ -196,7 +195,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         }
 
         @Override
-        public void visitFragment(FrgVisitorAction action,
+        public void visitFragment(FrgAction action,
                 String fragmentId, String libraryId,
                 NucleotideSequence bases,
                 QualitySequence qualities, Range validRange,
@@ -214,10 +213,10 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         }
 
         @Override
-        public void visitLibrary(FrgVisitorAction action, String id,
+        public void visitLibrary(FrgAction action, String id,
                 MateOrientation orientation, Distance distance) {}
         @Override
-        public void visitLink(FrgVisitorAction action, List<String> fragIds) {}
+        public void visitLink(FrgAction action, List<String> fragIds) {}
         @Override
         public void visitEndOfFile(){}
         @Override
@@ -242,17 +241,17 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
             return mateId;
         }
         @Override
-        public void visitFragment(FrgVisitorAction action,
+        public void visitFragment(FrgAction action,
                 String fragmentId, String libraryId,
                 NucleotideSequence bases,
                 QualitySequence qualities, Range validRange,
                 Range vectorClearRange, String source) {}
 
         @Override
-        public void visitLibrary(FrgVisitorAction action, String id,
+        public void visitLibrary(FrgAction action, String id,
                 MateOrientation orientation, Distance distance) {}
         @Override
-        public void visitLink(FrgVisitorAction action, List<String> fragIds) {
+        public void visitLink(FrgAction action, List<String> fragIds) {
             for(String fragId : fragIds){
                 if(!fragId.equals(fragmentIdToGetMateOf)){
                     mateId = fragId;

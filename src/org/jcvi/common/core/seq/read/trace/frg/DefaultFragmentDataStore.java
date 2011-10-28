@@ -41,7 +41,7 @@ public class DefaultFragmentDataStore extends AbstractFragmentDataStore{
     
     
     @Override
-    public void visitLink(FrgVisitorAction action, List<String> fragIds) {
+    public void visitLink(FrgAction action, List<String> fragIds) {
         throwErrorIfAlreadyInitialized();
         if(fragIds.size() !=2){
             throw new IllegalArgumentException("only supports 1 : 1 mate pairs");
@@ -73,7 +73,7 @@ public class DefaultFragmentDataStore extends AbstractFragmentDataStore{
         return fragmentMates.containsKey(fragment.getId());
     }
     @Override
-    public void visitFragment(FrgVisitorAction action, String fragmentId,
+    public void visitFragment(FrgAction action, String fragmentId,
             String libraryId, NucleotideSequence bases,
             QualitySequence qualities, Range validRange,
             Range vectorClearRange, String source) {

@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor.FrgAction;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -83,7 +84,7 @@ public class Frg2Parser {
     }
     
     private void parseLinkFrom(String lkg, Frg2Visitor visitor) {
-        FrgVisitorAction action = parseAction(lkg);
+        FrgAction action = parseAction(lkg);
         Scanner scanner = new Scanner(lkg);
         List<String> fragIds = new ArrayList<String>();
         while(scanner.hasNextLine()){
@@ -96,10 +97,10 @@ public class Frg2Parser {
         visitor.visitLink(action, fragIds);
         
     }
-    private FrgVisitorAction parseAction(String message){
+    private FrgAction parseAction(String message){
         Matcher matcher = ACTION_PATTERN.matcher(message);
         if(matcher.find()){
-            return FrgVisitorAction.parseAction(matcher.group(1).charAt(0));
+            return FrgAction.parseAction(matcher.group(1).charAt(0));
         }
         throw new IllegalStateException("Could not find a Fragment Action in "+ message);
     }
@@ -107,7 +108,7 @@ public class Frg2Parser {
         String id = parseIdFrom(libraryRecord);
         MateOrientation orientation = parseMateOrientationFrom(libraryRecord);
         Distance distance = createDistanceFrom(libraryRecord);
-        FrgVisitorAction action = parseAction(libraryRecord);
+        FrgAction action = parseAction(libraryRecord);
         visitor.visitLibrary(action, id, orientation, distance);
     }
     private MateOrientation parseMateOrientationFrom(String libraryRecord) {
@@ -133,8 +134,8 @@ public class Frg2Parser {
 
     private void parseFragmentFrom(String frg,Frg2Visitor visitor) {
         String id = parseIdFrom(frg);
-        FrgVisitorAction action = parseAction(frg);
-        if(action == FrgVisitorAction.DELETE){
+        FrgAction action = parseAction(frg);
+        if(action == FrgAction.DELETE){
             //delete doesn't contain most of the info we need
             visitor.visitFragment(action, id,null,null,null,null,null,null);
         }
