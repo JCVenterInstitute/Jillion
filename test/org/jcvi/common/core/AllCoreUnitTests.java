@@ -34,7 +34,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestSequenceDirection.class,
+        TestDirection.class,
         TestRange.class,
         TestRangeArrivalComparator.class,
         TestRangeDepartureComparator.class,
