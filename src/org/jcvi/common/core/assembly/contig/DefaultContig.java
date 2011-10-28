@@ -26,8 +26,6 @@ package org.jcvi.common.core.assembly.contig;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-
-import org.jcvi.assembly.tasm.DefaultTigrAssemblerPlacedRead;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Read;
