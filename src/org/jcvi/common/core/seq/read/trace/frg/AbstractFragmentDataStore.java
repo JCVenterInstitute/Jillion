@@ -57,12 +57,12 @@ public abstract class AbstractFragmentDataStore implements Frg2Visitor, Fragment
     }
     
 
-    protected boolean isDelete(FrgVisitorAction action) {
-        return action == FrgVisitorAction.DELETE;
+    protected boolean isDelete(FrgAction action) {
+        return action == FrgAction.DELETE;
     }
 
-    protected boolean isAddOrModify(FrgVisitorAction action) {
-        return action == FrgVisitorAction.ADD || action == FrgVisitorAction.MODIFY;
+    protected boolean isAddOrModify(FrgAction action) {
+        return action == FrgAction.ADD || action == FrgAction.MODIFY;
     }
 
     protected void throwErrorIfAlreadyInitialized() {
@@ -96,7 +96,7 @@ public abstract class AbstractFragmentDataStore implements Frg2Visitor, Fragment
     }
     
     @Override
-    public void visitLibrary(FrgVisitorAction action, String id,
+    public void visitLibrary(FrgAction action, String id,
             MateOrientation orientation, Distance distance) {
         throwErrorIfAlreadyInitialized();
         if(isAddOrModify(action)){

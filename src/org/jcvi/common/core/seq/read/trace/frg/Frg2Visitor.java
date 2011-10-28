@@ -32,12 +32,30 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public interface Frg2Visitor extends TextFileVisitor{
     
-    void visitLibrary(FrgVisitorAction action, 
+    public enum FrgAction {
+        ADD,
+        MODIFY,
+        DELETE,
+        IGNORE;
+        
+        public static FrgAction parseAction(char action){
+            switch(action){
+                case 'A': return ADD;
+                case 'M': return MODIFY;
+                case 'D': return DELETE;
+                case 'I': return IGNORE;
+                default:
+                    throw new IllegalArgumentException("not a Frg action : "+ action);
+            }
+        }
+    }
+    
+    void visitLibrary(FrgAction action, 
                         String id,
                         MateOrientation orientation,
                         Distance distance);
     
-    void visitFragment(FrgVisitorAction action,
+    void visitFragment(FrgAction action,
                 String fragmentId, 
                 String libraryId,
                 NucleotideSequence bases,
@@ -46,5 +64,5 @@ public interface Frg2Visitor extends TextFileVisitor{
                 Range vectorClearRange,
                 String source);
     
-    void visitLink(FrgVisitorAction action, List<String> fragIds);
+    void visitLink(FrgAction action, List<String> fragIds);
 }

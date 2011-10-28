@@ -29,7 +29,7 @@ import java.util.Arrays;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Parser;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor;
-import org.jcvi.common.core.seq.read.trace.frg.FrgVisitorAction;
+import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor.FrgAction;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -59,11 +59,11 @@ public class TestFrg2Parser {
         Frg2Visitor mockVisitor = createMock(Frg2Visitor.class);
         mockVisitor.visitLine(isA(String.class));
         expectLastCall().anyTimes();
-        mockVisitor.visitLibrary(FrgVisitorAction.ADD, ".", MateOrientation.INNIE, 
+        mockVisitor.visitLibrary(FrgAction.ADD, ".", MateOrientation.INNIE, 
                 Distance.buildDistance(5821F, 1513F));
         final Range clearRangeFor678 = Range.buildRange(0,835);
         final Range clearRangeFor061 = Range.buildRange(0,650);
-        mockVisitor.visitFragment(FrgVisitorAction.ADD, 
+        mockVisitor.visitFragment(FrgAction.ADD, 
                 "334369678", ".", 
                 NucleotideSequenceFactory.create(
                         Nucleotides.parse(
@@ -94,7 +94,7 @@ new EncodedQualitySequence(RUN_LENGTH_CODEC,
         , clearRangeFor678, clearRangeFor678,
         "#  Not a comment; this is annotation about where the fragment came from\n");
         
-        mockVisitor.visitFragment(FrgVisitorAction.ADD, 
+        mockVisitor.visitFragment(FrgAction.ADD, 
                 "334370061", ".", 
                 NucleotideSequenceFactory.create(
                         Nucleotides.parse(
@@ -118,7 +118,7 @@ new EncodedQualitySequence(RUN_LENGTH_CODEC,
 		).getBytes())),
 		clearRangeFor061,clearRangeFor061,"");
 		
-		mockVisitor.visitLink(FrgVisitorAction.ADD, Arrays.asList("334370061","334369678"));
+		mockVisitor.visitLink(FrgAction.ADD, Arrays.asList("334370061","334369678"));
 		mockVisitor.visitEndOfFile();        
 		replay(mockVisitor);
         sut.parse(RESOURCES.getFileAsStream(FILE), mockVisitor);
