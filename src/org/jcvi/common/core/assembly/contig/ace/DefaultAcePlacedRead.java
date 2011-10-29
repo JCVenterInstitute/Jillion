@@ -23,7 +23,6 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,14 +31,10 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedReadBuilder;
-import org.jcvi.common.core.seq.read.DefaultRead;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
-import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
 public class DefaultAcePlacedRead implements AcePlacedRead {
     private final PhdInfo phdInfo;

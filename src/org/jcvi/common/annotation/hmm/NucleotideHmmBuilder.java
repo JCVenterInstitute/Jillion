@@ -299,12 +299,7 @@ public class NucleotideHmmBuilder implements Builder<Hmm<Nucleotide>>{
 			this.toIndex = toIndex;
 			this.probability = probability;
 		}
-		/**
-		 * @return the fromIndex
-		 */
-		public int getFromIndex() {
-			return fromIndex;
-		}
+		
 		/**
 		 * @return the toIndex
 		 */

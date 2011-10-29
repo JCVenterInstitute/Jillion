@@ -20,7 +20,6 @@
 package org.jcvi.common.core.assembly.scaffold;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;

@@ -27,7 +27,6 @@ import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.trim.AbstractContigTrimmer;
 import org.jcvi.common.core.assembly.contig.trim.PlacedReadTrimmer;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 /**
  * {@code AceContigTrimmer} is an Ace implementation of

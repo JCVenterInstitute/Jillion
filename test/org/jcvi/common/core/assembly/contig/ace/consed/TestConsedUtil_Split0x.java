@@ -37,9 +37,6 @@ import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
-import org.jcvi.common.core.assembly.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.junit.Test;
 /**

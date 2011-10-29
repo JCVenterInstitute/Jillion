@@ -31,9 +31,6 @@ import java.util.TreeMap;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
-import org.jcvi.common.core.assembly.contig.ace.DefaultAcePlacedRead;
-import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;

@@ -13,7 +13,6 @@ import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 public class NoQualitySliceMap extends DefaultSliceMap{

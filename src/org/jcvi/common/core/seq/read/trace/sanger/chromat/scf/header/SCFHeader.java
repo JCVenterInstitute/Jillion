@@ -23,7 +23,6 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header;
 
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.Section;
 
 /**
