@@ -34,7 +34,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultCoverageRegion.class,
         TestDefaultCoverageMap.class,
         TestDefaultCoverageMapAvgCoverage.class,
-        
+        TestCoverageRestrictedMap.class,
         AllSliceUnitTests.class
         
     }
