@@ -29,7 +29,6 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecordDataStoreAdapter;
-import org.jcvi.common.core.seq.trim.TestDefaultPrimerTrimmer_ActualData;
 import org.jcvi.common.core.seq.trim.lucy.LucyLikeQualityTrimmer;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;

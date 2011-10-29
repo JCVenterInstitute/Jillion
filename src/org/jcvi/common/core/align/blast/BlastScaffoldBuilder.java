@@ -21,15 +21,9 @@ package org.jcvi.common.core.align.blast;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import org.jcvi.common.core.DirectedRange;
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.scaffold.DefaultScaffold;
-import org.jcvi.common.core.assembly.scaffold.PlacedContig;
 import org.jcvi.common.core.assembly.scaffold.Scaffold;
 import org.jcvi.common.core.util.Builder;
 

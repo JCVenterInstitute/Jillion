@@ -24,7 +24,6 @@ import java.io.IOException;
 
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 
 /**

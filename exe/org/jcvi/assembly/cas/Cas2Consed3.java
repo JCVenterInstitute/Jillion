@@ -45,7 +45,6 @@ import org.jcvi.common.core.assembly.contig.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadBuilder;
-import org.jcvi.common.core.assembly.contig.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.contig.cas.AbstractOnePassCasFileVisitor;
 import org.jcvi.common.core.assembly.contig.cas.CasFileInfo;

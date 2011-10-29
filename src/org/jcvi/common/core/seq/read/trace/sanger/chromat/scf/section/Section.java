@@ -23,8 +23,6 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section;
 
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 
 /**
  * SCF files are broken down into different Sections.

@@ -19,7 +19,6 @@
 
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -232,7 +231,6 @@ public final class ZTRChromatogramFile{
      * @throws TraceDecoderException if the file is not correctly encoded.
      */
     public static ZTRChromatogram create(InputStream ztrInputStream) throws FileNotFoundException, TraceDecoderException{
-      //  BufferedInputStream buf = new BufferedInputStream(ztrInputStream);
         try{
             ZTRChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
             ZTRChromatogramFileParser.parseZTRFile(ztrInputStream, visitor);

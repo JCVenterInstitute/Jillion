@@ -5,8 +5,6 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import org.jcvi.io.*;
-
 import org.jcvi.common.command.Command;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
