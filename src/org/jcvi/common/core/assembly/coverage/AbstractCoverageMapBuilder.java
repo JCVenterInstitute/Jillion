@@ -76,11 +76,34 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
         if (anyRegionBuildersCreated()) {
             removeLastRegionBuilder();
             removeAnyBuildersWithEmptyRanges();
-
+            combineConsecutiveRegionsWithSameCoveringObjects();
         }
     }
-
-    private void removeAnyBuildersWithEmptyRanges() {
+    /**
+     * If we restrict the max coverage
+     * then we could have adjacent coverageRegions
+     * that actually have the same covering objects
+     * but different start and end coordinates.
+     * (These would have different coverage depths
+     * but we didn't add the missing read since it would
+     * put us over the limit)
+     */
+    private void combineConsecutiveRegionsWithSameCoveringObjects() {
+    	//iterate backwards to avoid concurrent modification errors
+    	CoverageRegionBuilder<P> previousBuilder=null;
+        for (int i = coverageRegionBuilders.size() - 1; i >= 0; i--) {
+            CoverageRegionBuilder<P> builder = coverageRegionBuilders.get(i);
+            if(previousBuilder!=null && previousBuilder.getElements().equals(builder.getElements())){
+            	//merge region
+            	builder.end(previousBuilder.end());
+            	//remove previous
+            	coverageRegionBuilders.remove(i+1);
+            }   
+            previousBuilder=builder;
+        }
+		
+	}
+	private void removeAnyBuildersWithEmptyRanges() {
         //iterate backwards to avoid concurrent modification errors
         for (int i = coverageRegionBuilders.size() - 1; i >= 0; i--) {
             CoverageRegionBuilder<P> builder = coverageRegionBuilders.get(i);
@@ -193,7 +216,7 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
     }
 
     private boolean isEntering() {
-        return enteringObject.getStart() <= leavingObject.getEnd() + 1;
+        return enteringObject.getStart() <= leavingObject.getEnd() ;
     }
 
     private void createNewRegionWithoutCurrentLeavingObject() {

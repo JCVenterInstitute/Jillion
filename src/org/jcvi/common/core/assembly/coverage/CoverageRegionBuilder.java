@@ -40,4 +40,6 @@ public interface CoverageRegionBuilder<P extends Placed> extends Builder<Coverag
    CoverageRegionBuilder<P> add(P element);
    CoverageRegionBuilder<P> remove(P element);
    CoverageRegionBuilder<P> removeAll(Collection<P> elements);
+   
+   Collection<P> getElements();
 }

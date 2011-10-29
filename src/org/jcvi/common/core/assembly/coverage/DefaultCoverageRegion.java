@@ -176,6 +176,11 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
             }
             return new DefaultCoverageRegion(Range.buildRange(start, end), elements);
         }
+
+		@Override
+		public Collection<T> getElements() {
+			return elements;
+		}
         
     }
 
