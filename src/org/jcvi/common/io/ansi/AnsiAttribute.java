@@ -20,6 +20,8 @@
 package org.jcvi.common.io.ansi;
 
 /**
+ * Marker interface for anything that
+ * has an ansi escape code.
  * @author dkatzel
  *
  *

@@ -22,11 +22,14 @@ package org.jcvi.common.io.ansi;
 
 
 /**
+ * Utility class to handle converting
+ * ANSI code numbers into ANSI control
+ * escape codes.
  * @author dkatzel
  *
  *
  */
-final class AnsiUtil {
+final class AnsiCodes {
 
     /** The Control Sequence Initiator string */
     private static final String CSI = "\u001B[";
@@ -39,7 +42,7 @@ final class AnsiUtil {
     /** The offset for all bright color codes */
     private static final byte BRIGHT_OFFSET = 60;
     
-    private AnsiUtil(){}
+    private AnsiCodes(){}
     /**
      * Calculates a ANSI foreground color code based on the color offset and the
      * brightness flag.

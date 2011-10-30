@@ -29,11 +29,16 @@ import java.util.Set;
 
 
 /**
+ * {@code AnsiFormattedStringBuilder} is a 
+ * wrapper around a {@link StringBuilder}
+ * but allows inserting ANSI terminal formatted
+ * Strings.  Since the ANSI formatting is complex,
+ * only appending to the builder is allowed.
  * @author dkatzel
  *
  *
  */
-public class AnsiFormattedStringBuilder {
+public final class AnsiFormattedStringBuilder {
     /** 
      * The ANSI code which causes text formatting to be reset to the default. 
      */
@@ -44,28 +49,66 @@ public class AnsiFormattedStringBuilder {
     public AnsiFormattedStringBuilder(){
         builder = new StringBuilder();
     }
-    
-    public AnsiFormattedStringBuilder append(String string){
-        return privateAppend(string, Collections.<AnsiAttribute>emptySet());
+    /**
+     * Append the given unformatted string
+     * to the builder.
+     * @param unformattedText the unformatted text to append.  
+     * If string is null, then the four
+     * letters "null" are appended.
+     * @return this
+     */
+    public AnsiFormattedStringBuilder append(String unformattedText){
+        return privateAppend(unformattedText, Collections.<AnsiAttribute>emptySet());
     }
+    /**
+     * Append the given string to the builder but formatted using the given
+     * {@link AnsiFont}.
+     * @param string the text to append.  If string is null, then the four
+     * letters "null" are appended.
+     * @param font the {@link AnsiFont} to format the text to append; can
+     * not be null.
+     * @return this.
+     * @throws NullPointerException if font is null.
+     */
     public AnsiFormattedStringBuilder append(String string, AnsiFont font){
         if(font ==null){
             return privateAppend(string, Collections.<AnsiAttribute>emptySet());
         }
         return privateAppend(string, Collections.<AnsiAttribute>singleton(font));
     }
+    /**
+     * Appends the given object's toString() representation
+     * to the builder as unformatted text.  This
+     * is the same as {@link #append(String) append(object.toString()}.
+     * @param object the object whose toString() is to be appended;
+     * can not be null.
+     * @return this
+     * @throws NullPointerException if object is null.
+     */
     public AnsiFormattedStringBuilder append(Object object){
         return append(object.toString());
     }
+    /**
+     * Appends the given object's toString() representation
+     * to the builder as text but formatted using the given
+     * {@link AnsiFont}.
+     * is the same as {@link #append(String, AnsiFont) append(object.toString(),font}.
+     * @param object the object whose toString() is to be appended;
+     * can not be null.
+     * @param font the {@link AnsiFont} to format the text to append; can
+     * not be null.
+     * @return this
+     * @throws NullPointerException if object is null or font are null.
+     */
     public AnsiFormattedStringBuilder append(Object object, AnsiFont font){
         return append(object.toString(),font);
     }
-    public AnsiFormattedStringBuilder append(String string, Set<TextAttributes> textAttribute){       
-        return privateAppend(string,textAttribute);
+    public AnsiFormattedStringBuilder append(String string, Set<TextAttributes> textAttributes){       
+        return privateAppend(string,textAttributes);
     }
     
-    public AnsiFormattedStringBuilder append(String string, TextAttributes graphic){       
-        return privateAppend(string,EnumSet.of(graphic));
+    public AnsiFormattedStringBuilder append(String string, TextAttributes textAttribute){       
+        return privateAppend(string,EnumSet.of(textAttribute));
     }
     public AnsiFormattedStringBuilder append(String string, AnsiFont font, TextAttributes textAttribute){
         if(textAttribute==null){
@@ -96,9 +139,33 @@ public class AnsiFormattedStringBuilder {
         return privateAppend(string,attrs);
 
     }
+    /**
+     * Append the given string to the builder but formatted using the given
+     * AnsiFont, background color and any additional
+     * {@link TextAttributes}.  The default font, foreground color will be used.
+     * @param string the text to append using the given formatting.
+     * @param font the {@link AnsiFont} to format the text.
+     * @param background the background color to format the text.
+     * @param attributes the {@link TextAttributes} to append;
+     * can not be null.
+     * @return this
+     * @throws NullPointerException attributes is null.
+     */
     public AnsiFormattedStringBuilder append(String string, BackgroundColors background, Set<TextAttributes> textAttributes){
         return append(string,null,background,textAttributes);
     }
+    /**
+     * Append the given string to the builder but formatted using the given
+     * AnsiFont, background color and any additional
+     * {@link TextAttributes}.  The default foreground color will be used.
+     * @param string the text to append using the given formatting.
+     * @param font the {@link AnsiFont} to format the text.
+     * @param background the background color to format the text.
+     * @param attributes the {@link TextAttributes} to append;
+     * can not be null.
+     * @return this
+     * @throws NullPointerException if attributes is null.
+     */
     public AnsiFormattedStringBuilder append(String string, AnsiFont font,BackgroundColors background, Set<TextAttributes> textAttributes){
         List<AnsiAttribute> attrs = new ArrayList<AnsiAttribute>(textAttributes.size() +2);
         if(font!=null){
@@ -108,21 +175,45 @@ public class AnsiFormattedStringBuilder {
             attrs.add(background);
         }
         for(TextAttributes g : textAttributes){
-            attrs.add(g);
+        	if(g !=null){
+        		attrs.add(g);
+        	}
         }
         return privateAppend(string,attrs);
        
     }
-   
-    public AnsiFormattedStringBuilder append(String string, AnsiFont font, ForegroundColors foreground,BackgroundColors background, TextAttributes...graphics){
-        List<AnsiAttribute> attrs = new ArrayList<AnsiAttribute>(graphics.length +3);
+    /**
+     * Append the given string to the builder but formatted using the given
+     * AnsiFont, foreground color, background color and any additional
+     * {@link TextAttributes}.
+     * @param string the text to append using the given formatting.
+     * @param font the {@link AnsiFont} to format the text; if
+     * null, then the default font will be used.
+     * @param foreground the foreground color to format the text; if
+     * null, then the default foreground color will be used.
+     * @param background the background color to format the text; if
+     * null, then the default background color will be used.
+     * @param attributes the {@link TextAttributes} to append;
+     * can not be null.
+     * @return this
+     * @throws NullPointerException if attributes is null.
+     */
+    public AnsiFormattedStringBuilder append(String string, AnsiFont font, ForegroundColors foreground,BackgroundColors background, TextAttributes...attributes){
+        List<AnsiAttribute> attrs = new ArrayList<AnsiAttribute>(attributes.length +3);
         if(font !=null){
             attrs.add(font);
         }
-        attrs.add(foreground);
-        attrs.add(background);
-        for(TextAttributes g : graphics){
-            attrs.add(g);
+        if(foreground !=null){
+        	attrs.add(foreground);
+        }
+        if(background !=null){
+        	attrs.add(background);
+        }
+        
+        for(TextAttributes g : attributes){
+        	if(g !=null){
+        		attrs.add(g);
+        	}
         }
         privateAppend(string,attrs);
         
@@ -132,7 +223,11 @@ public class AnsiFormattedStringBuilder {
         Iterator<A> iter = ansiAttributes.iterator();
         final boolean hasFormat = iter.hasNext();
         while(iter.hasNext()){
-            this.builder.append(iter.next());
+            A next = iter.next();
+            if(next==null){
+            	throw new NullPointerException("ansi attributes can not null");
+            }
+			this.builder.append(next);
         }        
         this.builder.append(string);
         if (hasFormat){
@@ -140,7 +235,14 @@ public class AnsiFormattedStringBuilder {
         }
         return this;
     }
-    
+    /**
+     * Returns the current String representation
+     * of all the text appended so far including
+     * ANSI escaped text.  This string will contain
+     * the escape codes that tell an ANSI compliant terminal
+     * how to format the text.  If this String is displayed
+     * on a non-compliant terminal it may appear garbled.
+     */
     public String toString(){
         return builder.toString();
     }

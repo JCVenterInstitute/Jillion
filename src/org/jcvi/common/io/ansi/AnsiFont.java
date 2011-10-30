@@ -23,6 +23,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ * Object representation of the various
+ * ANSI fonts supported by the operating system.
+ * Please note that not all fonts are supported
+ * on all systems.
  * @author dkatzel
  *
  *
@@ -37,7 +41,20 @@ public final class AnsiFont implements AnsiAttribute{
         }
         
     }
-    
+    /**
+     * Get the nth alternate ANSI font.  Please not that 
+     * not all alternatives are supported by all systems.
+     * @param n the nth alternative font to use.
+     * {@code 0} is the primary (default) font, some
+     * systems support up to 9 alternate fonts.
+     * @return the AnsiFont instance for the
+     * given alternate font.  An instance
+     * will be returned even if the system does 
+     * not support it.  If a system does not support
+     * the alternate font, the default font
+     * will be printed instead.
+     * @throws IllegalArgumentException if n <0 or n>=10
+     */
     public static AnsiFont getAlteranteFont(int n){
         if(n <0 && n>9){
             throw new IllegalArgumentException("nth alternate must be between 0 and 9");

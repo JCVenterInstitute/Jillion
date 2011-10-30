@@ -20,6 +20,8 @@
 package org.jcvi.common.io.ansi;
 
 /**
+ * Ansi Attributes that can change the format
+ * of the text.
  * @author dkatzel
  *
  *

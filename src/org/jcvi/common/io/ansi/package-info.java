@@ -21,5 +21,9 @@
  * This package contains classes for working with ANSI escape
  * sequences to control formatting and color for termainal
  * output.
+ * 
+ * @see <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">ANSI Escape Code Wikipedia Article</a>
+ * @author dkatzel
+ * @author jsitz@jcvi.org
  */
 package org.jcvi.common.io.ansi;

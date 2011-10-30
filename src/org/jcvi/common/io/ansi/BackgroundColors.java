@@ -72,7 +72,7 @@ public enum BackgroundColors implements AnsiAttribute{
      */
     private BackgroundColors(int code,boolean bright)
     {
-        escapeCode = new EscapeCode(AnsiUtil.backgroundCode(code,bright));
+        escapeCode = new EscapeCode(AnsiCodes.backgroundCode(code,bright));
     }
 
     /**

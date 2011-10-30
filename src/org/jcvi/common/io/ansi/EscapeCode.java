@@ -43,7 +43,7 @@ final class EscapeCode {
     EscapeCode(int code)
     {
         this.code = (byte)code;
-        this.controlCode = AnsiUtil.generateControlCodeFor(code);
+        this.controlCode = AnsiCodes.generateControlCodeFor(code);
     }
 
     /**
