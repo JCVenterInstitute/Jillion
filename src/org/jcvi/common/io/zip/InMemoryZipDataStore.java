@@ -24,6 +24,7 @@
 package org.jcvi.common.io.zip;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,9 +32,12 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import org.jcvi.common.core.datastore.AbstractDataStore;
+import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
@@ -45,7 +49,7 @@ import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
  *
  *
  */
-public class InMemoryZipDataStore extends AbstractInMemoryZipDataStore{
+public final class InMemoryZipDataStore extends AbstractDataStore<InputStream> implements ZipDataStore{
 
     private final Map<String, ByteBuffer> contents = new HashMap<String, ByteBuffer>();
     /**
@@ -96,45 +100,85 @@ public class InMemoryZipDataStore extends AbstractInMemoryZipDataStore{
     public static InMemoryZipDataStore createInMemoryZipDataStoreFrom(ZipInputStream zipInputStream) throws IOException{
         return new InMemoryZipDataStore(zipInputStream);
     }
+    /**
+     * Create a {@link DataStore} of <String, Inputstream> entries
+     * one for each {@link ZipEntry} in this zip file. 
+     * @param inputStream the inputstream of the zip file to convert
+     * into a datastore.
+     * @throws IOException if there is a problem reading the inputstream.
+     */
     private InMemoryZipDataStore(ZipInputStream inputStream) throws IOException{
-        insert(inputStream);
+    	ZipEntry entry = inputStream.getNextEntry();
+        while(entry !=null){
+            String name = entry.getName();
+            //depending on zip implementation, 
+            //we might not know file size so entry.getSize() will return -1
+            //therefore must use byteArrayoutputStream.
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            IOUtil.writeToOutputStream(inputStream, output);
+            addRecord(name, output.toByteArray());  
+            entry = inputStream.getNextEntry();
+        }
     }
-    
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public synchronized boolean contains(String id) throws DataStoreException {
         super.contains(id);
         return contents.containsKey(id);
     }
-
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public synchronized InputStream get(String id) throws DataStoreException {
         super.get(id);
         ByteBuffer buffer = contents.get(id);
         return new ByteArrayInputStream(buffer.array());
     }
-
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
         return CloseableIteratorAdapter.adapt(contents.keySet().iterator());
     }
-
+    /**
+     * 
+     * {@inheritDoc}
+     * <p/>
+     * Get the number of zip entries in the zip file.
+     */
     @Override
     public synchronized int size() throws DataStoreException {
         super.size();
         return contents.size();
     }
-
+    /**
+     * 
+     * {@inheritDoc}
+     * <p/>
+     * Closes the datastore and removes clears
+     * all the contents of this zip file from the heap.
+     * (but does not delete the file).
+     */
     @Override
     public synchronized void close() throws IOException {
         super.close();
         contents.clear();
     }
     /**
-    * {@inheritDoc}
-    */
-    @Override
-    protected void addRecord(String entryName, byte[] data) {
+     * Add the entry with the given entry name and its corresponding
+     * data to this datastore.
+     * @param entryName
+     * @param data
+     */
+    private void addRecord(String entryName, byte[] data) {
         contents.put(entryName, ByteBuffer.wrap(data));
         
     }

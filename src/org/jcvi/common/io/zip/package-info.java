@@ -17,6 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /**
- * This package contains classes for handling ZIP files as {@link org.jcvi.common.core.datastore.DataStore}s.
+ * This package contains classes for handling ZIP
+ *  files as {@link org.jcvi.common.core.datastore.DataStore}s.
  */
 package org.jcvi.common.io.zip;

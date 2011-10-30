@@ -41,7 +41,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class DefaultZipDataStore implements ZipDataStore{
+public final class DefaultZipDataStore implements ZipDataStore{
 
     private final ZipFile zipfile;
     private boolean isClosed=false;
