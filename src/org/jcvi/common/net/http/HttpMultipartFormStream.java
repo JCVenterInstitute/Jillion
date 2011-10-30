@@ -38,8 +38,9 @@ import java.util.Random;
  * variables, long data, and even standards-compliant file uploads.
  *
  * @author jsitz@jcvi.org
+ * @author dkatzel
  */
-public class HttpMultipartFormStream
+public final class HttpMultipartFormStream
 {
     /** The size of the buffer to use when copying file data. */
     private static final int TRANSFER_BUFFER_SIZE = 4096;
@@ -86,15 +87,12 @@ public class HttpMultipartFormStream
      */
     public HttpMultipartFormStream(URLConnection connection) throws IOException
     {
-        super();
 
         this.separator = HttpMultipartFormStream.generateSeparator();
 
         connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + this.separator);
 
         this.out = connection.getOutputStream();
-
-        this.initStream();
     }
 
     /**
@@ -103,30 +101,21 @@ public class HttpMultipartFormStream
      * the encoded string either for secondary processing (by using something
      * like a {@link ByteArrayOutputStream}) or for debugging.
      * 
-     * @param out The {@link OutputStream} to write the encoded data to.
-     * @throws IOException If there is an error writing the data.
+     * @param out The {@link OutputStream} to write the encoded data to;
+     * can not be null.
+     * @throws NullPointerException if out is null.
      */
-    public HttpMultipartFormStream(OutputStream out) throws IOException
+    public HttpMultipartFormStream(OutputStream out)
     {
-        super();
-
+    	if(out ==null){
+    		throw new NullPointerException("output stream can not be null");
+    	}
         this.separator = HttpMultipartFormStream.generateSeparator();
 
         this.out = out;
-
-        this.initStream();
     }
 
-    /**
-     * Performs any necessary initialization to the output stream.
-     * 
-     * @throws IOException If there is an error setting up the stream.
-     */
-    private void initStream() throws IOException
-    {
-        // Nothing to do here at the moment
-    }
-
+   
     /**
      * Writes a string to the output stream.  The string is encoded as US-ASCII.
      * 

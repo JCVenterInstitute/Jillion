@@ -37,10 +37,10 @@ import java.net.URL;
  *
  *
  */
-public class HttpGetRequestBuilder  {
+public final class HttpGetRequestBuilder  {
 
     private final StringBuilder urlBuilder = new StringBuilder();
-    int numberOfProperties =0;
+    private int numberOfProperties =0;
     /**
      * Constructs a new instance of {@link HttpGetRequestBuilder}.
      * @param urlbase the beginning part of the HTTP URL before

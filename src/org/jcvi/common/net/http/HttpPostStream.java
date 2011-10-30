@@ -31,8 +31,9 @@ import java.nio.charset.Charset;
  * the CGI 1.1 spec (<code>application/x-www-form-urlencoded</code>).
  *
  * @author jsitz@jcvi.org
+ * @author dkatzel
  */
-public class HttpPostStream
+public final class HttpPostStream
 {
 
     /** The stream to write data to. */
