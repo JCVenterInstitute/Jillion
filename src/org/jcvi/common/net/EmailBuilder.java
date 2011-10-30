@@ -62,11 +62,22 @@ public class EmailBuilder {
     private MimeMessage msg;
     private String message;
 
+    /**
+     * Creates a new EmailBuilder instance.
+     * @param emailHost the SMTP mail host that will be used to send
+     * the email.
+     * @param from the email address that this message 
+     * will be "from".
+     * @throws AddressException if the from address is an invalid
+     * email address format as specified by RFC RFC822.
+     * @throws MessagingException if there is a problem creating
+     * the message instance.
+     */
     public EmailBuilder(String emailHost,String from) throws AddressException, MessagingException{
         Properties props = new Properties();
         props.put("mail.smtp.host",emailHost);
         msg =createMimeMessage(props);
-        msg.setFrom(new InternetAddress(from));
+        msg.setFrom(new InternetAddress(from,true));
     }
     /**
      * Create a new MimeMessage using data contained
