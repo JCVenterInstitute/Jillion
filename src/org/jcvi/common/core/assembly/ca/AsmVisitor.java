@@ -25,9 +25,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.TextFileVisitor;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
@@ -154,7 +156,12 @@ public interface AsmVisitor extends TextFileVisitor{
             return parseMateStatus(statusCode.charAt(0));
         }
         public static MateStatus parseMateStatus(char statusCode){
-            return map.get(Character.valueOf(statusCode));
+            Character valueOf = Character.valueOf(statusCode);
+            if(!map.containsKey(valueOf)) {
+               throw new IllegalArgumentException("invalid mate status code :"+ statusCode);
+            }
+            return map.get(valueOf);
+            
         }
     }
     /**
@@ -206,7 +213,11 @@ public interface AsmVisitor extends TextFileVisitor{
             return parseUnitigStatus(statusCode.charAt(0));
         }
         public static UnitigStatus parseUnitigStatus(char statusCode){
-            return map.get(Character.valueOf(statusCode));
+            Character valueOf = Character.valueOf(statusCode);
+            if(!map.containsKey(valueOf)) {
+                throw new IllegalArgumentException("invalid unitig status code :"+ statusCode);
+             }
+            return map.get(valueOf);
         }
     }
     
@@ -495,7 +506,7 @@ public interface AsmVisitor extends TextFileVisitor{
      * (aside from many {@link #visitLine(String)}s) will be {@link #visitEndOfUnitig()}.
      */
     boolean visitUnitig(String externalId, long internalId, float aStat, float measureOfPolymorphism,
-            UnitigStatus status, NucleotideSequence consensusSequence, List<Integer> consensusQualities,
+            UnitigStatus status, NucleotideSequence consensusSequence, QualitySequence consensusQualities,
             int numberOfReads);
     /**
      * The current unitig has been completely visited.
@@ -508,13 +519,12 @@ public interface AsmVisitor extends TextFileVisitor{
      * @param readType the type of the read, usually 'R' for
      * random read.  This is the same type as from the frg file.
      * @param externalReadId the read id.
-     * @param readRange the gapped range on the unitig or contig that this read
-     * aligns to.
-     * @param direction the {@link Direction} of the read on this unitig or contig.
+     * @param readRange the {@link DirectedRange} which has the gapped range on the unitig or contig that this read
+     * aligns to and the {@link Direction} of the read on this unitig or contig.
      * @param gapOffsets the gap offsets of this read onto the frg sequence.
      */
     void visitReadLayout(char readType, String externalReadId, 
-            Range readRange, Direction direction, List<Integer> gapOffsets);
+            DirectedRange readRange, List<Integer> gapOffsets);
     
     /**
      * Visit one unitig layout onto the the current contig.
