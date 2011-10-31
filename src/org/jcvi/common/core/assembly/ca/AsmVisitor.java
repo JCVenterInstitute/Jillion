@@ -679,7 +679,9 @@ public interface AsmVisitor extends TextFileVisitor{
      */
     void visitContigPair(String externalContigId1,String externalContigId2, 
             float meanDistance, float stddev, LinkOrientation orientation);
-    
+    /**
+     * There are no more nested messages for the current scaffold.
+     */
     void visitEndOfScaffold();
     
     /**
