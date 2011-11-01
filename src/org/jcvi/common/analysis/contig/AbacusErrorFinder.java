@@ -41,9 +41,11 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 public class AbacusErrorFinder {
     private final int clusterDistance;
     private final int minAbacusLength;
-    public AbacusErrorFinder(int clusterDistance, int minAbacusLength){
+    private final double percentGap;
+    public AbacusErrorFinder(int clusterDistance, int minAbacusLength,double percentGap){
         this.clusterDistance = clusterDistance;
         this.minAbacusLength = minAbacusLength;
+        this.percentGap = percentGap;
     }
     private <P extends PlacedRead, C extends Contig<P>> List<Range> filterCandidates(C contig,
             List<Range> ungappedCandidateRanges) {
@@ -77,7 +79,7 @@ public class AbacusErrorFinder {
                         }
                     }
                     double percentGaps = numGaps/rangeOfInterest.getLength();
-                    if(percentGaps <.5D){
+                    if(percentGaps <percentGap){
                         isAbacusError=false;
                         break;
                     }
