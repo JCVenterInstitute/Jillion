@@ -263,6 +263,10 @@ public interface AsmVisitor extends TextFileVisitor{
             return parseLinkOrientation(statusCode.charAt(0));
         }
         public static LinkOrientation parseLinkOrientation(char statusCode){
+            Character valueOf = Character.valueOf(statusCode);
+            if(!map.containsKey(valueOf)) {
+               throw new IllegalArgumentException("invalid link orientation code :"+ statusCode);
+            }
             return map.get(Character.valueOf(statusCode));
         }
     }
@@ -280,7 +284,11 @@ public interface AsmVisitor extends TextFileVisitor{
          * and the link is determined
          * only by mate pairs.
          */
-         NO_OVERLAP('N'),
+         NO_OVERLAP('N'){
+             int getExpectedNumberOfMatePairEvidenceRecords(int numberOfContributingEdges){
+                 return numberOfContributingEdges;
+             }
+         },
          /**
           * Regular overlap.
           */
@@ -315,7 +323,24 @@ public interface AsmVisitor extends TextFileVisitor{
             return parseOverlapType(statusCode.charAt(0));
         }
         public static OverlapType parseOverlapType(char statusCode){
-            return map.get(Character.valueOf(statusCode));
+            Character valueOf = Character.valueOf(statusCode);
+            if(!map.containsKey(valueOf)){
+                throw new IllegalArgumentException("invalid overlap code :"+ statusCode);                
+            }
+            return map.get(valueOf);
+        }
+        /**
+         * This is the expected number of mate pair
+         * evidence records in the "jumplist" of a link
+         * message.  The expected number varies based on
+         * which overlap type this unitig/contig is.
+         * @param numberOfContributingEdges the number of edges
+         * specified in the message.
+         * @return the expected number of mate pairs to prove
+         * evidence of this link.
+         */
+        int getExpectedNumberOfMatePairEvidenceRecords(int numberOfContributingEdges){
+            return numberOfContributingEdges-1;
         }
     }
     
@@ -364,8 +389,12 @@ public interface AsmVisitor extends TextFileVisitor{
         public static OverlapStatus parseOverlapStatus(String statusCode){
             return parseOverlapStatus(statusCode.charAt(0));
         }
-        public static OverlapStatus parseOverlapStatus(char statusCode){
-            return map.get(Character.valueOf(statusCode));
+        public static OverlapStatus parseOverlapStatus(char statusCode){            
+            Character valueOf = Character.valueOf(statusCode);
+            if(!map.containsKey(valueOf)){
+                throw new IllegalArgumentException("invalid overlap status code :"+ statusCode);
+            }
+            return map.get(valueOf);
         }
     }
     
