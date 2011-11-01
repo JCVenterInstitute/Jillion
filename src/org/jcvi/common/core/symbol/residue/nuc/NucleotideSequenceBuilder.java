@@ -51,6 +51,20 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     }
     /**
      * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains no nucleotides.
+     * @param initialCapacity the initial capacity 
+     * of the array backing the nucleotidesequence
+     * (will be grown if sequence gets too large)
+     * @throws IllegalArgumentException if initialCapacity < 1.
+     */
+    public NucleotideSequenceBuilder(int initialCapacity){
+        if(initialCapacity<1){
+            throw new IllegalArgumentException("initial capacity must be >=1");
+        }
+        array = new byte[initialCapacity];
+    }
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
      * which currently contains the given sequence.
      * @param sequence the initial nucleotide sequence.
      * @throws NullPointerException if sequence is null.
