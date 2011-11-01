@@ -27,14 +27,20 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.ca.AsmVisitor.LinkOrientation;
+import org.jcvi.common.core.assembly.ca.AsmVisitor.MatePairEvidence;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.MateStatus;
+import org.jcvi.common.core.assembly.ca.AsmVisitor.OverlapStatus;
+import org.jcvi.common.core.assembly.ca.AsmVisitor.OverlapType;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.UnitigStatus;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
@@ -157,8 +163,7 @@ public final class AsmParser {
          */
         MODIFIED_DISTANCE_MESSAGE("MDI") {
             private final Pattern REF_ID_PATTERN = Pattern.compile("ref:\\((\\S+),(\\d+)\\)");
-            private final Pattern MEAN_PATTERN = Pattern.compile("mea:(\\S+)");
-            private final Pattern STD_DEV_PATTERN = Pattern.compile("std:(\\S+)");
+           
             private final Pattern MIN_PATTERN = Pattern.compile("min:(\\d+)");
             private final Pattern MAX_PATTERN = Pattern.compile("max:(\\d+)");
             private final Pattern HISTOGRAM_BUCKET_PATTERN = Pattern.compile("buc:(\\d+)");
@@ -569,6 +574,152 @@ public final class AsmParser {
                 return matcher.group(1).charAt(0);
             }
             
+        },
+        UNITIG_LINK("ULK"){
+            private final Pattern UNITIG_ID_PATTERN = Pattern.compile("ut\\d:(\\S+)");
+            private final Pattern LINK_ORIENTATION_PATTERN = Pattern.compile("ori:(\\S)");
+            private final Pattern OVERLAP_TYPE_PATTERN = Pattern.compile("ovt:(\\S)");
+            
+            private final Pattern CHIMERA_FLAG_PATTERN = Pattern.compile("ipc:(\\d)");
+            private final Pattern NUM_EDGES_PATTERN = Pattern.compile("num:(\\d+)");
+            
+            private final Pattern LINK_STATUS_PATTERN = Pattern.compile("sta:(\\S)");
+            private final Pattern JUMP_LIST_PATTERN = Pattern.compile("(\\S+),(\\S+),(\\S)");
+            
+            
+            @Override
+            protected void handle(ParserState parserState, AsmVisitor visitor)
+                    throws IOException {
+                String unitig1 = getUnitigId(parserState, visitor);
+                String unitig2 = getUnitigId(parserState, visitor);
+                LinkOrientation orientation = getLinkOrientation(parserState, visitor);
+                OverlapType overlapType = getOverlapType(parserState, visitor);
+                boolean isPossibleChimera = getChimeraFlag(parserState, visitor);
+                //includes guide was removed in CA 6
+                String nextLine = parserState.getNextLine();
+                visitor.visitLine(nextLine);
+                if(nextLine.startsWith("gui:")){
+                    nextLine = parserState.getNextLine();
+                    visitor.visitLine(nextLine);
+                }
+                float mean = parseMeanEdgeDistance(nextLine);
+                float stdDev = parseStdDevDistance(parserState, visitor);
+                int numberOfContributingEdges = parseNumberOfEdges(parserState, visitor);
+                OverlapStatus status = parseOverlapStatus(parserState, visitor);
+                String jumpList = parserState.getNextLine();
+                visitor.visitLine(jumpList);
+                if(!jumpList.startsWith("jls:")){
+                    throw new IOException("invalid jump list block : "+ jumpList);
+                }
+                Set<MatePairEvidence> evidenceList = parseMatePairEvidence(overlapType.getExpectedNumberOfMatePairEvidenceRecords(numberOfContributingEdges), parserState,visitor);
+                parseEndOfMessage(parserState, visitor);
+                if(parserState.shouldParseCurrentUnitig()){
+                    visitor.visitUnitigLink(unitig1, unitig2, orientation, overlapType, status, 
+                            numberOfContributingEdges, mean, stdDev, evidenceList);
+                }
+            }
+            
+            private Set<MatePairEvidence> parseMatePairEvidence(
+                    int expectedNumberOfMatePairEvidenceRecords,
+                    ParserState parserState, AsmVisitor visitor) throws IOException {
+                Set<MatePairEvidence> set = new LinkedHashSet<AsmVisitor.MatePairEvidence>();
+                for(int i=0; i<expectedNumberOfMatePairEvidenceRecords; i++){
+                    String line = parserState.getNextLine();
+                    visitor.visitLine(line);
+                    Matcher matcher = JUMP_LIST_PATTERN.matcher(line);
+                    if(!matcher.find()){
+                        throw new IOException("invalid jump list record: "+ line);
+                    }
+                    set.add(new MatePairEvidenceImpl(matcher.group(1), matcher.group(2)));
+                }
+                return set;
+            }
+
+            private OverlapStatus parseOverlapStatus(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line); 
+                Matcher matcher = LINK_STATUS_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error overlap status"+ line);
+                }
+                return OverlapStatus.parseOverlapStatus(matcher.group(1));
+            }
+
+            private int parseNumberOfEdges(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line); 
+                Matcher matcher = NUM_EDGES_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading # of edges"+ line);
+                }
+                return Integer.parseInt(matcher.group(1));
+            }
+
+            private float parseMeanEdgeDistance(String nextLine) throws IOException {
+                Matcher matcher = MEAN_PATTERN.matcher(nextLine);
+                if(!matcher.find()){
+                    throw new IOException("error reading is mean edge distance message"+ nextLine);
+                }
+                return Float.parseFloat(matcher.group(1));
+            }
+            
+            private float parseStdDevDistance(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line); 
+                Matcher matcher = STD_DEV_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading is std dev edge distance message"+ line);
+                }
+                return Float.parseFloat(matcher.group(1));
+            }
+
+            private boolean getChimeraFlag(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = CHIMERA_FLAG_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading is possible chimera message"+ line);
+                }
+                int value = Integer.parseInt(matcher.group(1));
+                return value ==1;
+            }
+
+            private LinkOrientation getLinkOrientation(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = LINK_ORIENTATION_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading link orientation message"+ line);
+                }
+                return LinkOrientation.parseLinkOrientation(matcher.group(1));
+            }
+            
+            private OverlapType getOverlapType(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = OVERLAP_TYPE_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading overlap type message"+ line);
+                }
+                return OverlapType.parseOverlapType(matcher.group(1));
+            }
+
+            private String getUnitigId(ParserState parserState, AsmVisitor visitor) throws IOException{
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = UNITIG_ID_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading unitig link message unitig id:"+ line);
+                }
+                return matcher.group(1);
+            }
+            
         }
         ;
         
@@ -577,6 +728,9 @@ public final class AsmParser {
         static Pattern MESSAGE_HEADER_PATTERN = Pattern.compile("\\{(\\S+)");
         static final Pattern MATE_STATUS_PATTERN = Pattern.compile("mst:(\\S)");
         static final Pattern ACCESSION_PATTERN = Pattern.compile("acc:\\((\\S+),(\\d+)\\)");
+        static final Pattern MEAN_PATTERN = Pattern.compile("mea:(\\S+)");
+        static final Pattern STD_DEV_PATTERN = Pattern.compile("std:(\\S+)");
+        
         
         private static final String END_MESSAGE = "}";
         private AsmMessageHandler(String messageCode){
@@ -660,6 +814,77 @@ public final class AsmParser {
             this.externalId = externalId;
             this.internalId = internalId;
         }
+        
+    }
+    
+    private static final class MatePairEvidenceImpl implements MatePairEvidence{
+        private final String read1,read2;
+        
+        private MatePairEvidenceImpl(String read1, String read2) {
+            this.read1 = read1;
+            this.read2 = read2;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String getRead1() {
+            return read1;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String getRead2() {
+            return read2;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((read1 == null) ? 0 : read1.hashCode());
+            result = prime * result + ((read2 == null) ? 0 : read2.hashCode());
+            return result;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof MatePairEvidenceImpl)) {
+                return false;
+            }
+            MatePairEvidenceImpl other = (MatePairEvidenceImpl) obj;
+            if (read1 == null) {
+                if (other.read1 != null) {
+                    return false;
+                }
+            } else if (!read1.equals(other.read1)) {
+                return false;
+            }
+            if (read2 == null) {
+                if (other.read2 != null) {
+                    return false;
+                }
+            } else if (!read2.equals(other.read2)) {
+                return false;
+            }
+            return true;
+        }
+        
         
     }
 }
