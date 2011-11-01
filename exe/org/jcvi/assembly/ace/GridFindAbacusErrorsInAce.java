@@ -121,6 +121,10 @@ public class GridFindAbacusErrorsInAce {
         		"been submitted.  If this option isn't set, then the default value is used : " + DEFAULT_MAX_JOBS)
         .build());
         
+        options.addOption(new CommandLineOptionBuilder("percent", "percentage expressed as a decimal 0 - 1 of the percentage of gaps vs non-gap " +
+                "characters per read in the region to be considered an abacus error default = "+ DetectAbacusErrorsContigWorker.DEFAULT_GAP_PERCENTAGE)
+        .build());
+        
         if(CommandLineUtils.helpRequested(args)){
             printHelp(options);
             System.exit(0);
@@ -144,6 +148,7 @@ public class GridFindAbacusErrorsInAce {
                 }
                 workDir = navFile.getCanonicalFile().getParentFile();
             }
+            final String userDefinedPercentage = commandLine.hasOption("percent")?commandLine.getOptionValue("percent") : null;
             int maxJobs = commandLine.hasOption("max_submitted_jobs")?
                     Integer.parseInt(commandLine.getOptionValue("max_submitted_jobs"))
                     : DEFAULT_MAX_JOBS;
@@ -166,6 +171,9 @@ public class GridFindAbacusErrorsInAce {
                         
                         findAbacusErrorWorker.setOption("-nav", temp.getAbsolutePath());
                         files.add(temp);
+                    }
+                    if(userDefinedPercentage !=null){
+                        findAbacusErrorWorker.setOption("-percent", userDefinedPercentage);
                     }
                     findAbacusErrorWorker.setWorkingDir(workDir);
                     GridJobBuilder<SimpleGridJob> job = GridJobBuilders.createSimpleGridJobBuilder(
