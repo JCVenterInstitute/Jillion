@@ -51,6 +51,7 @@ import org.jcvi.common.core.io.IOUtil;
  */
 public class DetectAbacusErrorsContigWorker {
 
+    public static final double DEFAULT_GAP_PERCENTAGE = .5D;
     /**
      * @param args
      * @throws IOException 
@@ -72,7 +73,9 @@ public class DetectAbacusErrorsContigWorker {
         
         options.addOption(new CommandLineOptionBuilder("nav", "path to optional consed navigation file to see abacus errors easier in consed")
         .build());
-        
+        options.addOption(new CommandLineOptionBuilder("percent", "percentage expressed as a decimal 0 - 1 of the percentage of gaps vs non-gap " +
+        		"characters per read in the region to be considered an abacus error default = "+ DEFAULT_GAP_PERCENTAGE)
+        .build());
         options.addOption(CommandLineUtils.createHelpOption());     
         
         
@@ -97,7 +100,10 @@ public class DetectAbacusErrorsContigWorker {
             }else{
                 consedNavWriter =null;
             }
-            final AbacusErrorFinder abacusErrorFinder = new AbacusErrorFinder(5,3);
+            double percentGap = commandLine.hasOption("percent")? 
+                    Double.parseDouble(commandLine.getOptionValue("percent"))
+                    : DEFAULT_GAP_PERCENTAGE;
+            final AbacusErrorFinder abacusErrorFinder = new AbacusErrorFinder(5,3,percentGap);
             try{
                 AceContigDataStore datastore = IndexedAceFileDataStore.create(aceFile);
                 Iterator<String> contigIds = datastore.getIds();
