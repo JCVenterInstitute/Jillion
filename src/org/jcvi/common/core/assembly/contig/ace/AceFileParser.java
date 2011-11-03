@@ -542,9 +542,6 @@ public final class AceFileParser {
             }
         }
         private static ResultHandler findCorrectHandlerFor(String line){
-            if(line.startsWith("RD")){
-                System.out.println("here");
-            }
             for(SectionHandler handler : HANDLERS_TO_CONSIDER){
                 Matcher matcher = handler.matcher(line);
                 if(matcher.find()){
