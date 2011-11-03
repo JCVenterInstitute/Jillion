@@ -42,7 +42,7 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class AceFileUtil {
     public static final PhredQuality ACE_DEFAULT_HIGH_QUALITY_THRESHOLD = PhredQuality.valueOf(26);
-    public static final DateTimeFormatter CHROMAT_DATE_TIME_FORMATTER = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy");
+    public static final DateTimeFormatter CHROMAT_DATE_TIME_FORMATTER = DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy");
     public static final DateTimeFormatter TAG_DATE_TIME_FORMATTER = DateTimeFormat.forPattern("YYMMdd:HHmmss");
     
     public static String convertToAcePaddedBasecalls(NucleotideSequence basecalls){
