@@ -58,9 +58,10 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
  */
 public class FilterFastqDataFromCas {
 
-    public static Set<String> filterReads(File casFile,final CasInfo casInfo, int maxSolexaCoverageDepth) throws IOException{
+    public static void filterReads(File casFile,final CasInfo casInfo, 
+            int maxSolexaCoverageDepth,PrintWriter out) throws IOException{
         final Map<Integer, List<ReadRange>> fastqReadMap = new TreeMap<Integer, List<ReadRange>>();
-        final Set<String> allNeededReads = new TreeSet<String>();
+       
         AbstractCasPhdReadVisitor visitor = new AbstractCasPhdReadVisitor(casInfo) {
             
             @Override
@@ -87,13 +88,17 @@ public class FilterFastqDataFromCas {
             //an even distribution
             Collections.shuffle(readRanges);
             CoverageMap<CoverageRegion<ReadRange>> coverageMap = DefaultCoverageMap.buildCoverageMap(readRanges, maxSolexaCoverageDepth);
+            Set<String> reads = new TreeSet<String>();
             for(CoverageRegion<ReadRange> region : coverageMap){
                 for(ReadRange readRange : region){
-                    allNeededReads.add(readRange.getReadId());
+                    reads.add(readRange.getReadId());
                 }
             }
+            System.out.printf("filtered reference %d: %d -> %d%n",entry.getKey(), readRanges.size(),reads.size());
+            for(String neededRead : reads){
+                out.println(neededRead);
+            }
         }
-        return allNeededReads;
     }
 
     static Set<String> getNeededReadsFor(int maxSolexaCoverageDepth,
@@ -182,12 +187,8 @@ public class FilterFastqDataFromCas {
                                     .build();
             
             
-            Set<String> readsToKeep = filterReads(casFile, casInfo, maxSolexaCoverageDepth);
-           
-            for(String neededRead : readsToKeep){
-                out.println(neededRead);
-            }
-           
+            filterReads(casFile, casInfo, maxSolexaCoverageDepth, out);           
+            
             out.close();
             
         } catch (ParseException e) {

@@ -37,7 +37,7 @@ import java.net.URL;
  *
  *
  */
-public final class HttpGetRequestBuilder  {
+public class HttpGetRequestBuilder  {
 
     private final StringBuilder urlBuilder = new StringBuilder();
     private int numberOfProperties =0;

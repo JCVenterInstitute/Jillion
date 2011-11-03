@@ -104,19 +104,28 @@ public final class AceFileParser {
         private boolean stopParsing;
         private boolean parseCurrentContig;
         private boolean inAContig;
+        private int expectedNumberOfReads;
+        private int numberOfReadsSeen;
         
         ParserState(AceFileVisitor visitor,
                 InputStream inputStream) throws IOException{
-           this(visitor, true,  new TextLineParser(new BufferedInputStream(inputStream)), false,true,false);
+           this(visitor, true,  new TextLineParser(new BufferedInputStream(inputStream)), false,true,false,0,0);
        }
         
         public ParserState stopParsing(){
-            return new ParserState(visitor, isFirstContigInFile, parser,true,parseCurrentContig,inAContig);
+            return new ParserState(visitor, isFirstContigInFile, parser,true,parseCurrentContig,inAContig, expectedNumberOfReads, numberOfReadsSeen);
         }
         public ParserState dontParseCurrentContig(){
-            return new ParserState(visitor, isFirstContigInFile, parser,stopParsing,false,inAContig);
+            return new ParserState(visitor, isFirstContigInFile, parser,stopParsing,false,inAContig, expectedNumberOfReads, numberOfReadsSeen);
         }
         
+        public boolean seenAllExpectedReads(){
+            return numberOfReadsSeen == expectedNumberOfReads;
+        }
+        public ParserState seenRead(){
+            numberOfReadsSeen++;
+            return this;
+        }
         /**
          * @return
          * @throws IOException 
@@ -130,13 +139,16 @@ public final class AceFileParser {
             return SectionHandler.handleSection(line, this);
         }
         ParserState(AceFileVisitor visitor, boolean isFirstContigInFile,
-               TextLineParser parser, boolean stopParsing, boolean parseCurrentContig, boolean inAContig) {
+               TextLineParser parser, boolean stopParsing, boolean parseCurrentContig, boolean inAContig,
+               int numberOfExpectedReads, int numberOfReadsSeen) {
             this.visitor = visitor;
             this.isFirstContigInFile = isFirstContigInFile;
             this.parser = parser;
             this.stopParsing=stopParsing;
             this.parseCurrentContig = parseCurrentContig;
             this.inAContig = inAContig;
+            this.numberOfReadsSeen = numberOfReadsSeen;
+            this.expectedNumberOfReads = numberOfExpectedReads;
         }
         public boolean done(){
             return stopParsing || !parser.hasNextLine();
@@ -153,8 +165,8 @@ public final class AceFileParser {
          * values except {@link #isFirstContigInFile} is now
          * set to {@code false}.
          */
-        ParserState inAContig(){
-            return new ParserState(visitor, false, parser,stopParsing,true,true);
+        ParserState inAContig(int numberOfExpectedReads){
+            return new ParserState(visitor, isFirstContigInFile, parser,stopParsing,true,true, numberOfExpectedReads,0);
         }
         /**
          * Returns new ParserStruct instance but which
@@ -164,7 +176,11 @@ public final class AceFileParser {
          * set to {@code false}.
          */
         ParserState notInAContig(){
-            return new ParserState(visitor, false, parser,stopParsing,true,false);
+            if(expectedNumberOfReads !=numberOfReadsSeen){
+                throw new IllegalStateException(
+                        String.format("did not visit all expected reads : %d vs %d", numberOfReadsSeen, expectedNumberOfReads));
+            }
+            return new ParserState(visitor, false, parser,stopParsing,true,false,0,0);
         }
         /**
         * {@inheritDoc}
@@ -226,13 +242,14 @@ public final class AceFileParser {
                 if(!struct.isFirstContigInFile && !ret.visitor.visitEndOfContig()){
                     ret= ret.stopParsing();
                 }
-                ret= ret.inAContig();
+               
                 //ret = ret.updateContigBeingVisited();
                 String contigId = contigMatcher.group(1);
                 int numberOfBases = Integer.parseInt(contigMatcher.group(2));
                 int numberOfReads = Integer.parseInt(contigMatcher.group(3));
                 int numberOfBaseSegments = Integer.parseInt(contigMatcher.group(4));
                 boolean reverseComplimented = isComplimented(contigMatcher.group(5));
+                ret= ret.inAContig(numberOfReads);
                 boolean parseCurrentContig =ret.visitor.visitContigHeader(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
                 if(!parseCurrentContig){
                     ret = ret.dontParseCurrentContig();
@@ -303,7 +320,9 @@ public final class AceFileParser {
                     Date date= AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parseDateTime(                                                
                             timeMatcher.group(1)).toDate();
                     parserState.visitor.visitTraceDescriptionLine(traceName, phdName, date);
+                    
                 }
+                parserState.seenRead();
                 return parserState;
             }
 
@@ -334,10 +353,11 @@ public final class AceFileParser {
             
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
-                if(parserState.inAContig){
+                if(parserState.inAContig && parserState.seenAllExpectedReads()){                    
+                    parserState =parserState.notInAContig();
                     parserState.visitor.visitEndOfContig();
-                    parserState.notInAContig();
                 }
+                
                 String lineWithCR;
                 lineWithCR = parserState.parser.nextLine();
                 parserState.visitor.visitLine(lineWithCR);
@@ -366,9 +386,9 @@ public final class AceFileParser {
             
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
-                if(parserState.inAContig){
-                    parserState.visitor.visitEndOfContig();
+                if(parserState.inAContig && parserState.seenAllExpectedReads()){
                     parserState =parserState.notInAContig();
+                    parserState.visitor.visitEndOfContig();                    
                 }
                 String lineWithCR;
                 lineWithCR = parserState.parser.nextLine();
@@ -413,9 +433,9 @@ public final class AceFileParser {
             
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
-                if(parserState.inAContig){
+                if(parserState.inAContig && parserState.seenAllExpectedReads()){                    
+                    parserState =parserState.notInAContig();
                     parserState.visitor.visitEndOfContig();
-                    parserState.notInAContig();
                 }
                 String lineWithCR;
                 lineWithCR = parserState.parser.nextLine();
@@ -522,6 +542,9 @@ public final class AceFileParser {
             }
         }
         private static ResultHandler findCorrectHandlerFor(String line){
+            if(line.startsWith("RD")){
+                System.out.println("here");
+            }
             for(SectionHandler handler : HANDLERS_TO_CONSIDER){
                 Matcher matcher = handler.matcher(line);
                 if(matcher.find()){

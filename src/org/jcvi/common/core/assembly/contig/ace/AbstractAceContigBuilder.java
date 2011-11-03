@@ -68,13 +68,17 @@ public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
     
     
     @Override
-    protected void visitNewContig(String contigId, String consensus) {
+    protected void visitNewContig(String contigId, String consensus, boolean complimented) {
         contigBuilder= DefaultAceContig.createBuilder(contigId, consensus);
+        contigBuilder.setComplimented(complimented);
         
     }
     
     protected void visitAceRead(String readId, String validBasecalls, int offset, Direction dir, Range validRange, PhdInfo phdInfo,
             int ungappedFullLength){
+        if(contigBuilder ==null){
+            System.out.println("here");
+        }
         contigBuilder.addRead(readId, validBasecalls ,offset, dir, 
                 validRange ,phdInfo,ungappedFullLength);
     }

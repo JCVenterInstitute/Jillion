@@ -193,6 +193,15 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     public Collection<AcePlacedReadBuilder> getAllPlacedReadBuilders() {
         return builder.getAllPlacedReadBuilders();
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public AceContigBuilder setComplimented(boolean complimented) {
+        builder.setComplimented(complimented);
+        return this;
+    }
     
     
 }

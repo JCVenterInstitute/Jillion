@@ -328,7 +328,7 @@ public class GridReAbacusAce {
         }
 
         @Override
-         protected void visitNewContig(final String contigId, String consensus) {
+         protected void visitNewContig(final String contigId, String consensus, boolean complimented) {
              Command findAbacusErrorWorker = new Command(ABACUS_WORKER_EXE);
              contigIds.add(contigId);
              File tempOutputFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);

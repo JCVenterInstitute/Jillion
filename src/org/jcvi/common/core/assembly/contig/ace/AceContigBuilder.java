@@ -81,4 +81,10 @@ public interface AceContigBuilder extends ContigBuilder<AcePlacedRead,AceContig>
     @Override
     Collection<AcePlacedReadBuilder> getAllPlacedReadBuilders();
 
+    /**
+     * Set this contig as being complimented.
+     * @param complimented
+     * @return this
+     */
+    AceContigBuilder setComplimented(boolean complimented);
 }
