@@ -124,4 +124,22 @@ public class TestCoverageRestrictedMap {
 		assertEquals(coverageMap.getRegion(5).asRange(), Range.buildRange(11,15));
 		assertEquals(1, coverageMap.getRegion(5).getCoverage());
 	}
+	
+	@Test
+    public void moreElementsThanRequiredInFirstRegionShouldLimitAllRegions(){
+        List<Range> ranges = Arrays.asList(
+                Range.buildRange(0,5),
+                Range.buildRange(2,7),
+                Range.buildRange(6,10),                
+                Range.buildRange(0,5)
+        );
+        
+        CoverageMap<CoverageRegion<Range>> coverageMap = 
+                            DefaultCoverageMap.buildCoverageMap(ranges, 2);
+        assertEquals(2,coverageMap.getNumberOfRegions());
+        assertEquals(coverageMap.getRegion(0).asRange(), Range.buildRange(0,5));
+        assertEquals(2, coverageMap.getRegion(0).getCoverage());
+        assertEquals(coverageMap.getRegion(1).asRange(), Range.buildRange(6,10));
+        assertEquals(1, coverageMap.getRegion(1).getCoverage());
+    }
 }

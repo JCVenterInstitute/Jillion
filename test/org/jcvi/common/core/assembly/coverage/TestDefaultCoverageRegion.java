@@ -59,7 +59,7 @@ public class TestDefaultCoverageRegion {
     public void add(){
 
         DefaultCoverageRegion<Placed> region = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1))
-                                    .add(seq2)
+                                    .offer(seq2)
                                     .end(end)
                                         .build();
         

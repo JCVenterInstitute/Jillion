@@ -23,10 +23,13 @@
  */
 package org.jcvi.common.core.assembly.coverage;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
@@ -82,7 +85,7 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
         final int prime = 31;
         int result = 1;
         result = prime * result + range.hashCode();
-        result = prime * result + elements.hashCode();
+        result = prime * result + new ArrayList<T>(elements).hashCode();
 
         return result;
     }
@@ -95,7 +98,8 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
             return false;
         }
         DefaultCoverageRegion other = (DefaultCoverageRegion) obj;
-        return CommonUtil.similarTo(elements,other.elements) &&
+        return CommonUtil.similarTo(new ArrayList<T>(elements),
+                new ArrayList<T>(other.elements)) &&
                 CommonUtil.similarTo(range.size(), other.getLength()) 
                 && CommonUtil.similarTo(range.getStart(), other.getStart());
     }
@@ -116,20 +120,27 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
     public static class Builder<T extends Placed> implements CoverageRegionBuilder<T>{
         private final long start;
         private long end;
-        private Collection<T> elements;
+        private Queue<T> elements;
         private boolean endIsSet;
         public final boolean isEndIsSet() {
             return endIsSet;
         }
-
         public Builder(long start, Iterable<T> elements){
+            this(start,elements,null);
+        }
+        public Builder(long start, Iterable<T> elements, Integer maxAllowedCoverage){
             if(elements ==null){
                 throw new IllegalArgumentException("elements can not be null");
             }
             this.start=start;
-            this.elements = new ArrayList<T>();
+            if(maxAllowedCoverage ==null){
+                this.elements = new ArrayDeque<T>();
+            }else{
+                this.elements = new ArrayBlockingQueue<T>(maxAllowedCoverage);
+            }
+            
             for(T e : elements){
-                this.elements.add(e);
+                this.elements.offer(e);
             }
         }
         public long start(){
@@ -158,8 +169,8 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
         public List<T> elements(){
             return new ArrayList<T>(elements);
         }
-        public Builder add(T element){
-            elements.add(element);
+        public Builder offer(T element){
+            elements.offer(element);
             return this;
         }
         public Builder remove(T element){
@@ -176,10 +187,13 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
             }
             return new DefaultCoverageRegion(Range.buildRange(start, end), elements);
         }
-
+        /**
+         * 
+        * {@inheritDoc}
+         */
 		@Override
 		public Collection<T> getElements() {
-			return elements;
+			return new ArrayList<T>(elements);
 		}
         
     }

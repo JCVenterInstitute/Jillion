@@ -61,7 +61,7 @@ public class TestDefaultCoverageMap {
    
     
     private DefaultCoverageRegion<Placed> createCoverageRegion(int start, int end, Placed... elements){
-        return new DefaultCoverageRegion.Builder<Placed>(start, Arrays.asList(elements)).end(end).build();
+        return new DefaultCoverageRegion.Builder<Placed>(start, Arrays.asList(elements),null).end(end).build();
     }
     @Test
     public void emptyListShouldReturnEmptyCoverageMap(){

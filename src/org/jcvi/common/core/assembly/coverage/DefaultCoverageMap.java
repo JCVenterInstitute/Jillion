@@ -292,8 +292,8 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         }
         @Override
         protected CoverageRegionBuilder<P> createNewCoverageRegionBuilder(
-                Collection<P> elements, long start) {
-            return new DefaultCoverageRegion.Builder<P>(start, elements);
+                Collection<P> elements, long start, Integer maxAllowedCoverage) {
+            return new DefaultCoverageRegion.Builder<P>(start, elements,maxAllowedCoverage);
         }
 
         private List<CoverageRegion<P>> buildAllCoverageRegions(List<CoverageRegionBuilder<P>> coverageRegionBuilders) {
