@@ -313,23 +313,36 @@ public class ReAbacusAceContigWorker {
             System.out.println(contigId);
             if(abacusProblemRanges.containsKey(contigId)){
               
-                //fix 
-                List<Range> rangesToMerge = abacusProblemRanges.get(contigId);
-                List<Range> reversedSortedRanges = new ArrayList<Range>(Range.mergeRanges(rangesToMerge));
-                Collections.reverse(reversedSortedRanges);
                 NucleotideSequenceBuilder contigConsensusBuilder = contigBuilder.getConsensusBuilder();
                 NucleotideSequence consensus = contigConsensusBuilder.build();
+                
+                //need to merge close ranges (including flanking)
+                //because if regions are too close we
+                //incorrectly shift reads the while fixing the 2nd region
+                //convert to gapped
+                List<Range> rangesToMerge = new ArrayList<Range>();
+                for(Range ungappedRange : abacusProblemRanges.get(contigId)){
+                    int gappedStart=consensus.getGappedOffsetFor((int)ungappedRange.getStart()- numberOfFlankingBases)+1;
+                    int gappedEnd = consensus.getGappedOffsetFor((int)ungappedRange.getEnd()+1+numberOfFlankingBases)-1;
+                   
+                    Range gappedFlankingRange = Range.buildRange(gappedStart, gappedEnd);
+                    rangesToMerge.add(gappedFlankingRange);
+                }
+                
+                List<Range> reversedSortedRanges = new ArrayList<Range>(Range.mergeRanges(rangesToMerge));
+                Collections.reverse(reversedSortedRanges);
+               
                 CoverageMap<CoverageRegion<AcePlacedReadBuilder>> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllPlacedReadBuilders());
                 
-                for(Range ungappedProblemRange : reversedSortedRanges){
+                for(Range gappedAbacusProblemRange : reversedSortedRanges){
+                    int gappedStart = (int)gappedAbacusProblemRange.getStart();
+                    int gappedEnd = (int)gappedAbacusProblemRange.getEnd();
+                    Range ungappedProblemRange = Range.buildRange(
+                            consensus.getUngappedOffsetFor(gappedStart),
+                            consensus.getUngappedOffsetFor(gappedEnd)
+                            );
+                    
                     System.out.println("now working on "+ ungappedProblemRange);
-                    if(ungappedProblemRange.getStart()>=222600){
-                        System.out.println("here");
-                    }
-                    int gappedStart=consensus.getGappedOffsetFor((int)ungappedProblemRange.getStart()- numberOfFlankingBases)+1;
-                    int gappedEnd = consensus.getGappedOffsetFor((int)ungappedProblemRange.getEnd()+1+numberOfFlankingBases)-1;
-                   
-                    Range gappedAbacusProblemRange = Range.buildRange(gappedStart,gappedEnd);
                   //  System.out.println("gapped abacus problem range = "+ gappedAbacusProblemRange);
                    // System.out.println(Nucleotides.asString(consensus.asList(gappedAbacusProblemRange)));
                     Set<String> affectedReads = new LinkedHashSet<String>();
