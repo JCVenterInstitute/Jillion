@@ -46,7 +46,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private String currentValidBases;
     private boolean skipCurrentRead=false;
     private String currentFullLengthBases;
-    
+    private boolean currentContigIsComplimented=false;
     private boolean initialized;
     
     public synchronized boolean isInitialized() {
@@ -71,7 +71,9 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         throwExceptionIfInitialized();
         if(readingConsensus){
             readingConsensus=false;
-           visitNewContig(currentContigId, ConsedUtil.convertAceGapsToContigGaps(currentBasecalls.toString()));
+           visitNewContig(currentContigId, 
+                   ConsedUtil.convertAceGapsToContigGaps(currentBasecalls.toString()),
+                   currentContigIsComplimented);
            
         }
         final AssembledFrom assembledFromObj = new AssembledFrom(readId, gappedStartOffset, dir);
@@ -84,9 +86,10 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * @param contigId the ID of the contig being visited.
      * @param consensus the basecalls as a string- NOTE that this has gaps as "*" instead
      * of "-".  
+     * @param isComplimented is this contig complimented
      * @see #visitEndOfContig()
      */
-    protected abstract void visitNewContig(String contigId, String consensus);
+    protected abstract void visitNewContig(String contigId, String consensus, boolean isComplimented);
 
     @Override
     public synchronized void visitConsensusQualities() {
@@ -109,6 +112,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         currentAssembledFromMap = new HashMap<String, AssembledFrom>();
         readingConsensus = true;
         currentBasecalls = new StringBuilder();
+        currentContigIsComplimented = reverseComplimented;
         return true;
     }
 

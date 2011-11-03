@@ -85,7 +85,7 @@ public class AceFileWriter {
                         AceFileUtil.TAG_DATE_TIME_FORMATTER.print(readTag.getCreationDate().getTime())), out);
         
     }
-    public static void writeAceContig(Contig<AcePlacedRead> contig,
+    public static void writeAceContig(AceContig contig,
             PhdDataStore phdDataStore, 
             OutputStream out) throws IOException, DataStoreException{
         final NucleotideSequence consensus = contig.getConsensus();
@@ -95,7 +95,7 @@ public class AceFileWriter {
                 consensus.getLength(),
                 contig.getNumberOfReads(),
                 0,
-                "U"), //always uncomplemented for now...
+                contig.isComplemented()? "C":"U"),
                 
                 out);
         out.flush();

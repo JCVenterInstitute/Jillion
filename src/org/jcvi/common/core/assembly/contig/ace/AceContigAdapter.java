@@ -38,7 +38,6 @@ public class AceContigAdapter implements AceContig{
 
     private final Contig<CasPlacedRead> delegate;
     private final Map<String, AcePlacedRead> adaptedReads = new HashMap<String, AcePlacedRead>();
-    
     /**
      * @param delegate
      */
@@ -51,6 +50,15 @@ public class AceContigAdapter implements AceContig{
                     idLookup.getFileFor(readId),
                     read.getUngappedFullLength()));
         }
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean isComplemented() {
+        //never complimented since it's a reference based assembly
+        return false;
     }
 
     @Override

@@ -137,7 +137,7 @@ public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceT
      * {@inheritDoc}
      */
      @Override
-     protected void visitNewContig(String contigId, String consensus) {
+     protected void visitNewContig(String contigId, String consensus, boolean complimented) {
          
      }
 

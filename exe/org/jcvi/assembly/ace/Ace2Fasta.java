@@ -91,7 +91,7 @@ public class Ace2Fasta {
             AceFileVisitor fastaVisitor = new AbstractAceFileVisitor() {
                 
                 @Override
-                protected void visitNewContig(String contigId, String consensusString) {
+                protected void visitNewContig(String contigId, String consensusString, boolean complimented) {
                     List<Nucleotide>consensus = Nucleotides.parse(consensusString);
                     if(!gapped){
                         consensus = Nucleotides.ungap(consensus);

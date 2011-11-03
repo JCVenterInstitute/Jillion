@@ -152,6 +152,15 @@ public class TestConsedUtil_Split0x {
         public Collection<AcePlacedReadBuilder> getAllPlacedReadBuilders() {
             return builder.getAllPlacedReadBuilders();
         }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public AceContigBuilder setComplimented(boolean complimented) {
+            builder.setComplimented(complimented);
+            return this;
+        }
     	
     }
     @Test
