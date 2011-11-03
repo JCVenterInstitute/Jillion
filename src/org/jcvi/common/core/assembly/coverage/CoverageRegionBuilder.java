@@ -37,7 +37,7 @@ public interface CoverageRegionBuilder<P extends Placed> extends Builder<Coverag
     
    CoverageRegionBuilder<P> end(long end);
    
-   CoverageRegionBuilder<P> add(P element);
+   CoverageRegionBuilder<P> offer(P element);
    CoverageRegionBuilder<P> remove(P element);
    CoverageRegionBuilder<P> removeAll(Collection<P> elements);
    

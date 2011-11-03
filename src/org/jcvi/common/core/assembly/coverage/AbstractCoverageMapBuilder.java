@@ -44,7 +44,7 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
     private Iterator<P> enteringIterator;
     private Iterator<P> leavingIterator;
     private List<CoverageRegionBuilder<P>> coverageRegionBuilders;
-
+    private final Integer maxAllowedCoverage;
     protected abstract Iterator<P> createEnteringIterator();
     protected abstract Iterator<P> createLeavingIterator();
     
@@ -52,9 +52,11 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
     
     public AbstractCoverageMapBuilder(){
         coveringObjects =  new ArrayDeque<P>();
+        this.maxAllowedCoverage =null;
     }
     public AbstractCoverageMapBuilder(int maxAllowedCoverage) {
         coveringObjects =  new ArrayBlockingQueue<P>(maxAllowedCoverage);
+        this.maxAllowedCoverage = maxAllowedCoverage;
     }
     @Override
     public CoverageMap<R> build() {
@@ -207,7 +209,11 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
     }
 
     private void addEnteringObjectToPreviousRegionBuilder() {
-        getPreviousRegion().add(enteringObject);
+        CoverageRegionBuilder<P> builder =getPreviousRegion();
+        if(this.maxAllowedCoverage !=null && builder.getElements().size()>=maxAllowedCoverage.intValue()){
+            return;
+        }
+        getPreviousRegion().offer(enteringObject);
     }
 
     private void addAndAdvanceEnteringObject() {
@@ -224,7 +230,7 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
         final long endCoordinate = leavingObject.getEnd();
 
         setEndCoordinateOfPreviousRegion(endCoordinate);
-        coverageRegionBuilders.add(createNewCoverageRegionBuilder(coveringObjects, leavingObject.getEnd() + 1 ));
+        coverageRegionBuilders.add(createNewCoverageRegionBuilder(coveringObjects, leavingObject.getEnd() + 1, maxAllowedCoverage ));
 
     }
 
@@ -238,11 +244,12 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
             setEndCoordinateOfPreviousRegion(endCoordinate);
         }
         coveringObjects.offer(enteringObject);
-        coverageRegionBuilders.add(createNewCoverageRegionBuilder(coveringObjects, enteringObject.getStart() ));
+        coverageRegionBuilders.add(createNewCoverageRegionBuilder(coveringObjects, enteringObject.getStart(), maxAllowedCoverage ));
 
     }
 
-    protected abstract CoverageRegionBuilder<P> createNewCoverageRegionBuilder(Collection<P> elements, long start);
+    protected abstract CoverageRegionBuilder<P> createNewCoverageRegionBuilder(
+            Collection<P> elements, long start, Integer maxAllowedCoverage);
     
     private CoverageRegionBuilder<P> getPreviousRegion() {
         return coverageRegionBuilders.get(coverageRegionBuilders.size() - 1);
