@@ -240,7 +240,7 @@ public interface AsmVisitor extends TextFileVisitor{
          /**
           * BA_AB
           */        
-         OUTIE('0'),
+         OUTIE('O'),
          /**
           * AB_BA
           */
@@ -292,7 +292,7 @@ public interface AsmVisitor extends TextFileVisitor{
          /**
           * Regular overlap.
           */
-         REGULAR('A'),
+         REGULAR('O'),
          /**
           * TODO: what does this mean?
           */        
@@ -458,11 +458,15 @@ public interface AsmVisitor extends TextFileVisitor{
             this.code = code;
         }
         
-        public static UnitigLayoutType parseUnitigLayoutType(String statusCode){
-            return parseUnitigLayoutType(statusCode.charAt(0));
+        public static UnitigLayoutType parseUnitigLayoutType(String typeCode){
+            return parseUnitigLayoutType(typeCode.charAt(0));
         }
-        public static UnitigLayoutType parseUnitigLayoutType(char statusCode){
-            return map.get(Character.valueOf(statusCode));
+        public static UnitigLayoutType parseUnitigLayoutType(char typeCode){
+            Character valueOf = Character.valueOf(typeCode);
+            if(!map.containsKey(valueOf)){
+                throw new IllegalArgumentException("invalid unitg layout type : "+ typeCode);
+            }
+            return map.get(valueOf);
         }
     }
     /**
@@ -560,16 +564,15 @@ public interface AsmVisitor extends TextFileVisitor{
      * @param type the {@link UnitigLayoutType} that explains
      * why the unitig is layed out here.
      * @param unitigExternalId the external id of this unitig.
-     * @param unitigRange the gapped range on the contig that this unitig
-     * aligns to.
-     * @param direction the {@link Direction} of the unitig on the contig.
+     * @param unitigRange the gapped {@link DirectedRange} on the contig that this unitig
+     * aligns to in the {@link Direction} of the unitig on the contig.
      * If direction is {@link Direction#REVERSE}, then the contig uses the 
      * reverse complement of the unitig's consensus sequence.
      * @param gapOffsets the gap offsets of this layed out unitig onto the unitig consensus sequence
      * (after reverse complementing?).
      */
     void visitUnitigLayout(UnitigLayoutType type, String unitigExternalId, 
-            Range unitigRange, Direction direction, List<Integer> gapOffsets);
+            DirectedRange unitigRange, List<Integer> gapOffsets);
     /**
      * Indicates connections between unitigs.  They summarize the edges in the unitig graph whose nodes
      * are unitigs.  The graph's edges are induced by mate pairs that have one read
@@ -580,6 +583,8 @@ public interface AsmVisitor extends TextFileVisitor{
      * to each other.
      * @param overlapType the {@link OverlapType}.
      * @param status the {@link OverlapStatus}.
+     * @param isPossibleChimera {@code true} if this unitg link a possible chimera;
+     * {@code false} otherwise.
      * @param numberOfEdges the number of contributing edges.
      * @param meanDistance the mean edge distance, may be negative.
      * @param stddev the standard deviation of edge distances.
@@ -588,8 +593,8 @@ public interface AsmVisitor extends TextFileVisitor{
      * that these two unitigs are linked.
      */
     void visitUnitigLink(String externalUnitigId1,String externalUnitigId2, LinkOrientation orientation,
-            OverlapType overlapType, OverlapStatus status, int numberOfEdges,
-            float meanDistance, float stddev, Set<MatePairEvidence> matePairEvidence);
+            OverlapType overlapType, OverlapStatus status, boolean isPossibleChimera,
+            int numberOfEdges, float meanDistance, float stddev, Set<MatePairEvidence> matePairEvidence);
     
     /**
      * Indicates connections between contigs.  They summarize the edges in a graph whose nodes
@@ -631,15 +636,15 @@ public interface AsmVisitor extends TextFileVisitor{
      * will be called {@code numberOfReads} times, before the call to {@link #visitEndOfContig()}.
      */
     boolean visitContig(String externalId, long internalId, boolean isDegenerate,
-            NucleotideSequence consensusSequence, List<Integer> consensusQualities,
+            NucleotideSequence consensusSequence, QualitySequence consensusQualities,
             int numberOfReads, int numberOfUnitigs, int numberOfVariants);
     
-    public interface VariantRecord{
+    public interface VariantRecord extends Comparable<VariantRecord>{
         /**
-         * The number of reads that contribute to this variant.
-         * @return
+         * The internal read ids that contribute to this variant.
+         * @return a list of IIDs 
          */
-        int getNumberOfContributingReads();
+        List<Long> getContributingReadIIDs();
         /**
          * The weight of this variant, the greater
          * the number the more major this variant is.
@@ -665,17 +670,15 @@ public interface AsmVisitor extends TextFileVisitor{
      * defaults to 11.
      * @param internalAccessionId the internal accession id of this variant.
      * @param accessionForPhasedVariant the accession for a different variant
-     * that is phased with this one.  Linking all the variants that are phased
+     * that is phased with this one.  If set to a negative number, then
+     * this variant has not related to another variant? Linking all the variants that are phased
      * with one another can be used to dephase mixed (or diploid?) sequence.
      * @param variantRecords a list of {@link VariantRecord} objects
      * that explain all the details of each part of the SNP.
-     * @param supportingInternalReadIds the internal read accessions
-     * of all the reads that support this variance.
      */
     void visitVariance(Range range, int numberOfSpanningReads,
             int anchorSize,long internalAccessionId, long accessionForPhasedVariant,
-            SortedSet<VariantRecord> variantRecords,
-            List<Long> supportingInternalReadIds);
+            SortedSet<VariantRecord> variantRecords);
     /**
      * There are no more nested messages for the current contig.
      */
