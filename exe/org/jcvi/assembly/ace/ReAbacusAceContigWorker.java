@@ -170,8 +170,11 @@ public class ReAbacusAceContigWorker {
         try{
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             String contigId = commandLine.getOptionValue("c");
-            
+            System.out.println("working on contig" + contigId);
             File inputAceFile = new File(commandLine.getOptionValue("a"));
+            if(!inputAceFile.exists()){
+                throw new IllegalArgumentException("can not see ace "+inputAceFile.getAbsolutePath());
+            }
             File navigationFile = new File(commandLine.getOptionValue("nav"));
             Map<String, List<Range>> abacusErrorMap = parseAbacusErrorsFrom(navigationFile);
             out = new FileOutputStream(commandLine.getOptionValue("o"));
@@ -191,6 +194,9 @@ public class ReAbacusAceContigWorker {
                 //populate offsets
                 IndexedAceFileDataStore.create(inputAceFile, contigOffsets);
                 Range fileRange =contigOffsets.getRangeFor(contigId);
+                if(fileRange ==null){
+                    throw new NullPointerException(String.format("could not find file range for contig %s", contigId));
+                }
                 InputStream inputStream = IOUtil.createInputStreamFromFile(inputAceFile,fileRange);
                 IOUtils.copy(inputStream, out);
             }
@@ -273,7 +279,7 @@ public class ReAbacusAceContigWorker {
     
     
     
-    private static class AbacusFixerBuilder extends AbstractAceContigBuilder{
+    static class AbacusFixerBuilder extends AbstractAceContigBuilder{
         private final Map<String, List<Range>> abacusProblemRanges;
         private final int numberOfFlankingBases;
         private final OutputStream aceOut;
