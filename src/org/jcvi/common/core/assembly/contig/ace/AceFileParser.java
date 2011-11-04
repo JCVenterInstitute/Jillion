@@ -166,7 +166,7 @@ public final class AceFileParser {
          * set to {@code false}.
          */
         ParserState inAContig(int numberOfExpectedReads){
-            return new ParserState(visitor, isFirstContigInFile, parser,stopParsing,true,true, numberOfExpectedReads,0);
+            return new ParserState(visitor, false, parser,stopParsing,true,true, numberOfExpectedReads,0);
         }
         /**
          * Returns new ParserStruct instance but which
@@ -249,6 +249,7 @@ public final class AceFileParser {
                 int numberOfReads = Integer.parseInt(contigMatcher.group(3));
                 int numberOfBaseSegments = Integer.parseInt(contigMatcher.group(4));
                 boolean reverseComplimented = isComplimented(contigMatcher.group(5));
+                
                 ret= ret.inAContig(numberOfReads);
                 boolean parseCurrentContig =ret.visitor.visitContigHeader(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
                 if(!parseCurrentContig){
