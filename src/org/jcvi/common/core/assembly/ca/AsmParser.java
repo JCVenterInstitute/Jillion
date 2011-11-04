@@ -27,21 +27,27 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.LinkOrientation;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.MatePairEvidence;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.MateStatus;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.OverlapStatus;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.OverlapType;
+import org.jcvi.common.core.assembly.ca.AsmVisitor.UnitigLayoutType;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.UnitigStatus;
+import org.jcvi.common.core.assembly.ca.AsmVisitor.VariantRecord;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
@@ -50,6 +56,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 
 /**
  * @author dkatzel
@@ -242,7 +249,7 @@ public final class AsmParser {
             
             
         },
-        FRAGMENT_MESSAGE_HANDLER("AFG"){
+        FRAGMENT("AFG"){
              
             private final Pattern IS_SINGLETON_PATTERN = Pattern.compile("cha:(\\d+)");
             private final Pattern CLEAR_RANGE_PATTERN = Pattern.compile("clr:(\\d+,\\d+)");
@@ -291,7 +298,7 @@ public final class AsmParser {
             }
             
         },
-        MATE_PAIR_HANDLER("AMP"){
+        MATE_PAIR("AMP"){
             private final Pattern FRG_ID_PATTERN = Pattern.compile("frg:(\\S+)");
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor)
@@ -315,12 +322,8 @@ public final class AsmParser {
             }
             
         },
-        UNITIG_MESSAGE_FORMAT("UTG"){
-            private final Pattern A_STAT_PATTERN = Pattern.compile("cov:(\\S+)");
-            private final Pattern POLYMORPHISM_PATTERN = Pattern.compile("mhp:(\\S+)");
-            private final Pattern STATUS_PATTERN = Pattern.compile("sta:(\\S)");
-            private final Pattern LENGTH_PATTERN = Pattern.compile("len:(\\d+)");
-            private final Pattern NUM_READS_PATTERN = Pattern.compile("nfr:(\\d+)");
+        UNITIG("UTG"){
+            
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
@@ -358,7 +361,7 @@ public final class AsmParser {
                     visitor.visitLine(nextLine);
                 }
                
-                int length = parseConsensusLength(nextLine);
+                int length = parseLength(nextLine);
                 NucleotideSequence consensus = parseConsensus(parserState, visitor,length);
                 QualitySequence consensusQualities = parseConsensusQualities(parserState,visitor,length);
                 //skip forced line
@@ -378,81 +381,19 @@ public final class AsmParser {
                                         i,idTuple.externalId,readHeader));
                     }
                     String code = matcher.group(1);
-                    if(!READ_TO_UNITIG_MAPPING.canHandle(code)){
+                    if(!READ_MAPPING.canHandle(code)){
                         throw new IOException(
                                 String.format("error reading read # %d for unitig %d; invalid header code :%s",
                                         i,idTuple.externalId,code));
                     
                     }
                     visitor.visitLine(readHeader);
-                    READ_TO_UNITIG_MAPPING.handle(parserState, visitor);
+                    READ_MAPPING.handle(parserState, visitor);
                 }
                 parseEndOfMessage(parserState, visitor);
                 visitor.visitEndOfUnitig();
             }
-            private int parseNumberOfReads(ParserState parserState,
-                    AsmVisitor visitor) throws IOException {
-                String line = parserState.getNextLine();
-                visitor.visitLine(line);
-                Matcher matcher = NUM_READS_PATTERN.matcher(line);
-                if(!matcher.find()){
-                    throw new IOException("error parsing unitig number of reads : "+ line);
-                }
-                return Integer.parseInt(matcher.group(1));
-            }
-            private QualitySequence parseConsensusQualities(
-                    ParserState parserState, AsmVisitor visitor, int length) throws IOException {
-                byte[] qualities = new byte[length];
-                //first line should be qlt
-                String line = parserState.getNextLine();
-                visitor.visitLine(line);
-                if(!line.startsWith("qlt:")){
-                   throw new IOException("expected start quality consensus block :"+line); 
-                }
-                line = parserState.getNextLine();
-                visitor.visitLine(line);
-                int offset=0;
-                while(!line.startsWith(".")){
-                    String trimmedLine = line.trim();
-                    for(int i=0; i<trimmedLine.length(); i++){
-                        //qualities are encoded as value + ascii zero
-                        qualities[offset+i]=(byte)(trimmedLine.charAt(i)- '0');
-                    }
-                    offset +=trimmedLine.length();
-                    line = parserState.getNextLine();
-                    visitor.visitLine(line);
-                }
-                if(offset !=length){
-                    throw new IOException( String.format("incorrect consensus quality length for %s: expected %d but was %d",
-                            getMessageCode(),
-                            length,offset));
-                }
-                return new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                        PhredQuality.valueOf(qualities));
-            }
-            private NucleotideSequence parseConsensus(ParserState parserState,
-                    AsmVisitor visitor, int expectedLength) throws IOException {
-                NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(expectedLength);
-                String line = parserState.getNextLine();
-                visitor.visitLine(line);
-                if(!line.startsWith("cns:")){
-                    throw new IOException("expected begin cns field but was "+line );
-                }
-                line = parserState.getNextLine();
-                visitor.visitLine(line);
-                while(!line.startsWith(".")){
-                    builder.append(line.trim());
-                    line = parserState.getNextLine();
-                    visitor.visitLine(line);
-                }
-                if(builder.getLength()!=expectedLength){
-                    throw new IOException(
-                            String.format("incorrect consensus length for %s: expected %d but was %d",
-                                    getMessageCode(),
-                                    expectedLength,builder.getLength()));
-                }
-                return builder.build();
-            }
+           
            
 
             private UnitigStatus parseUnitigStatus(String line) throws IOException {
@@ -479,18 +420,12 @@ public final class AsmParser {
                 return Float.parseFloat(matcher.group(1));
             }
             
-            private int parseConsensusLength(String line) throws IOException {               
-                Matcher matcher = LENGTH_PATTERN.matcher(line);
-                if(!matcher.find()){
-                    throw new IOException("error reading unitig consensus length:"+ line);
-                }
-                return Integer.parseInt(matcher.group(1));
-            }
+            
 
             
             
         },
-        READ_TO_UNITIG_MAPPING("MPS"){
+        READ_MAPPING("MPS"){
             private final Pattern TYPE_PATTERN = Pattern.compile("typ:(\\S)");
             private final Pattern READ_ID_PATTERN = Pattern.compile("mid:(\\S+)");
             private final Pattern RANGE_PATTERN = Pattern.compile("pos:(\\d+,\\d+)");
@@ -498,25 +433,30 @@ public final class AsmParser {
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
-               char type = parseReadType(parserState, visitor);
-               String readId = parseReadId(parserState,visitor);
-               String nextLine = parserState.getNextLine();
-               visitor.visitLine(nextLine);
-               //CA <= 5 had a src block which should be ignored
-               //CA 6+ doesn't have it anymore so need to handle
-               //both cases.
-               if(nextLine.startsWith("src")){
-                   skipReservedSource(parserState, visitor);
-                   nextLine = parserState.getNextLine();
+               handle(parserState, visitor, parserState.shouldParseCurrentUnitig());
+            }
+            @Override
+            protected void handle(ParserState parserState, AsmVisitor visitor,
+                    boolean parseReadLayout) throws IOException {
+                char type = parseReadType(parserState, visitor);
+                   String readId = parseReadId(parserState,visitor);
+                   String nextLine = parserState.getNextLine();
                    visitor.visitLine(nextLine);
-               }
-               
-               DirectedRange directedRange = parseDirectedRange(nextLine);
-               List<Integer> gapOffsets = parseGapOffsets(parserState,visitor);
-               parseEndOfMessage(parserState, visitor);
-               if(parserState.shouldParseCurrentUnitig()){
-                   visitor.visitReadLayout(type, readId, directedRange, gapOffsets);
-               }
+                   //CA <= 5 had a src block which should be ignored
+                   //CA 6+ doesn't have it anymore so need to handle
+                   //both cases.
+                   if(nextLine.startsWith("src")){
+                       skipReservedSource(parserState, visitor);
+                       nextLine = parserState.getNextLine();
+                       visitor.visitLine(nextLine);
+                   }
+                   
+                   DirectedRange directedRange = parseDirectedRange(nextLine);
+                   List<Integer> gapOffsets = parseGapOffsets(parserState,visitor);
+                   parseEndOfMessage(parserState, visitor);
+                   if(parseReadLayout){
+                       visitor.visitReadLayout(type, readId, directedRange, gapOffsets);
+                   }
             }
             private DirectedRange parseDirectedRange(String line) throws IOException {
                 Matcher matcher = RANGE_PATTERN.matcher(line);
@@ -615,7 +555,7 @@ public final class AsmParser {
                 parseEndOfMessage(parserState, visitor);
                 if(parserState.shouldParseCurrentUnitig()){
                     visitor.visitUnitigLink(unitig1, unitig2, orientation, overlapType, status, 
-                            numberOfContributingEdges, mean, stdDev, evidenceList);
+                            isPossibleChimera, numberOfContributingEdges, mean, stdDev, evidenceList);
                 }
             }
             
@@ -720,6 +660,301 @@ public final class AsmParser {
                 return matcher.group(1);
             }
             
+        },
+        CONTIG("CCO"){
+            private final Pattern DEGENERATE_PATTERN = Pattern.compile("pla:(\\S)");
+            
+            @Override
+            protected void handle(ParserState parserState, AsmVisitor visitor)
+                    throws IOException {
+                IdTuple idTuple =parseIds(parserState, visitor, ACCESSION_PATTERN);
+                boolean isDegenerate = parseIsDegenerateFlag(parserState, visitor);
+                String lengthLine = parserState.getNextLine();
+                visitor.visitLine(lengthLine);
+                int length = parseLength(lengthLine);
+                NucleotideSequence consensus = parseConsensus(parserState, visitor,length);
+                QualitySequence consensusQualities = parseConsensusQualities(parserState,visitor,length);
+                //skip forced line
+                String forcedLine = parserState.getNextLine();
+                visitor.visitLine(forcedLine);
+                int numberOfReads = parseNumberOfReads(parserState, visitor);
+                int numberOfUnitigs = parseNumberOfReads(parserState, visitor);
+                int numberOfVariants = parseNumberOfReads(parserState, visitor);
+                
+                boolean visitContig =visitor.visitContig(idTuple.externalId, idTuple.internalId, isDegenerate, 
+                        consensus, consensusQualities, 
+                        numberOfReads, numberOfUnitigs, numberOfVariants);
+                parserState.parseCurrentContig(visitContig);
+                for(int i=0; i<numberOfVariants; i++){
+                    String variantHeader = parserState.getNextLine();
+                    visitor.visitLine(variantHeader);
+                    String messageCode = parseMessageCode(variantHeader);
+                    if(!VARIANT.canHandle(messageCode)){
+                        throw new IOException("invalid variant block start : "+ variantHeader);
+                    }
+                    VARIANT.handle(parserState, visitor,visitContig);
+                }
+                for(int i=0; i<numberOfReads; i++){
+                    String readHeader = parserState.getNextLine();
+                    visitor.visitLine(readHeader);
+                    String messageCode = parseMessageCode(readHeader);
+                    if(!READ_MAPPING.canHandle(messageCode)){
+                        throw new IOException("invalid read mapping block start : "+ readHeader);
+                    }
+                    READ_MAPPING.handle(parserState, visitor,visitContig);
+                }
+                for(int i=0; i<numberOfUnitigs; i++){
+                    String unitigHeader = parserState.getNextLine();
+                    visitor.visitLine(unitigHeader);
+                    String messageCode = parseMessageCode(unitigHeader);
+                    if(!UNITIG_MAPPING.canHandle(messageCode)){
+                        throw new IOException("invalid unitig mapping block start : "+ unitigHeader);
+                    }
+                    UNITIG_MAPPING.handle(parserState, visitor,visitContig);
+                }
+                
+                parseEndOfMessage(parserState, visitor);
+                visitor.visitEndOfContig();
+                
+            }
+
+            private boolean parseIsDegenerateFlag(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = DEGENERATE_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading contig placement status (degenerate flag):"+ line);
+                }
+                //P is placed in a scaffold (maybe even a scaffold of just this contig
+                //U is unplaced i.e. degenerate
+                return matcher.group(1).charAt(0)=='U';
+            }
+            
+        },
+        UNITIG_MAPPING("UPS"){
+            private final Pattern TYPE_PATTERN = Pattern.compile("typ:(\\S)");
+            private final Pattern ID_PATTERN = Pattern.compile("lid:(\\S+)");
+            private final Pattern RANGE_PATTERN = Pattern.compile("pos:(\\d+,\\d+)");
+            private final Pattern NUM_OFFSETS_PATTERN = Pattern.compile("dln:(\\d+)");
+            @Override
+            protected void handle(ParserState parserState, AsmVisitor visitor)
+                    throws IOException {
+                handle(parserState,visitor,false);                
+            }
+
+            /**
+            * {@inheritDoc}
+            */
+            @Override
+            protected void handle(ParserState parserState, AsmVisitor visitor,
+                    boolean shouldVisitRecord) throws IOException {
+                UnitigLayoutType type = parseUnitigLayoutType(parserState, visitor);
+                String readId = parseReadId(parserState,visitor);
+                String nextLine = parserState.getNextLine();
+                visitor.visitLine(nextLine);
+                //CA <= 5 had a src block which should be ignored
+                //CA 6+ doesn't have it anymore so need to handle
+                //both cases.
+                if(nextLine.startsWith("src")){
+                    skipReservedSource(parserState, visitor);
+                    nextLine = parserState.getNextLine();
+                    visitor.visitLine(nextLine);
+                }
+                
+                DirectedRange directedRange = parseDirectedRange(nextLine);
+                List<Integer> gapOffsets = parseGapOffsets(parserState,visitor);
+                parseEndOfMessage(parserState, visitor);
+                if(shouldVisitRecord){
+                    visitor.visitUnitigLayout(type, readId, directedRange, gapOffsets);
+                }
+            }
+            private DirectedRange parseDirectedRange(String line) throws IOException {
+                Matcher matcher = RANGE_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading read-to-unitig placed range:"+ line);
+                }
+                return DirectedRange.parse(matcher.group(1));
+            }
+            private List<Integer> parseGapOffsets(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String lengthLine = parserState.getNextLine();
+                visitor.visitLine(lengthLine);
+                Matcher matcher = NUM_OFFSETS_PATTERN.matcher(lengthLine);
+                if(!matcher.find()){
+                    throw new IOException("error reading read-to-unitig delta encoding length:"+ lengthLine);
+                }
+                int expectedNumberOfOffsets = Integer.parseInt(matcher.group(1));
+                String beginDeltaEncodingLine = parserState.getNextLine();
+                if(!beginDeltaEncodingLine.startsWith("del:")){
+                    throw new IOException("error reading read-to-unitig delta encoding:"+ beginDeltaEncodingLine);
+                }
+                List<Integer> offsets = new ArrayList<Integer>(expectedNumberOfOffsets);
+                while(offsets.size()<expectedNumberOfOffsets){
+                    String offsetLine = parserState.getNextLine();
+                    visitor.visitLine(offsetLine);
+                    Scanner scanner = new Scanner(offsetLine);
+                    if(!scanner.hasNextInt()){
+                        throw new IOException("error reading read-to-unitig delta encoding not enough values :"+ offsetLine);
+                        
+                    }
+                    while(scanner.hasNextInt()){
+                        offsets.add(scanner.nextInt());
+                    }
+                }
+                return offsets;
+            }
+            private String parseReadId(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = ID_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading read-to-unitig read id:"+ line);
+                }
+                return matcher.group(1);
+            }
+            private UnitigLayoutType parseUnitigLayoutType(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = TYPE_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading unitig-to-contig mapping type:"+ line);
+                }
+                return UnitigLayoutType.parseUnitigLayoutType(matcher.group(1));
+            }
+            
+        },
+        VARIANT("VAR"){
+            final Pattern POSITION_PATTERN = Pattern.compile("pos:(\\d+,\\d+)");
+            final Pattern ANCHOR_PATTERN = Pattern.compile("anc:(\\d+)");
+            final Pattern VARIANT_ID_PATTERN = Pattern.compile("vid:(\\d+)");
+            final Pattern PHASE_PATTERN = Pattern.compile("pid:(\\S+)");
+            @Override
+            protected void handle(ParserState parserState, AsmVisitor visitor)
+                    throws IOException {
+                handle(parserState,visitor,false);                
+            }
+            /**
+             * {@inheritDoc}
+             */
+             @Override
+             protected void handle(ParserState parserState, AsmVisitor visitor,
+                     boolean shouldVisitRecord) throws IOException {
+                Range position = parseVariantPosition(parserState,visitor);
+                int numberOfReads = parseNumberOfReads(parserState, visitor);
+                int numberOfVariants = parseNumberOfVariants(parserState, visitor);
+                int anchorSize = parseAnchorSize(parserState, visitor);
+                int length = parseLength(parserState,visitor);
+                long variantId = parseVariantId(parserState,visitor);
+                long phasedVariantId = parsePhasedVariantId(parserState,visitor);
+                String[] contributingReadCountString = parseContributingReadcountString(parserState,visitor).split("/");
+                String[] weightString = parseWeightString(parserState,visitor).split("/");
+                String[] sequencesString = parseSequencesString(parserState,visitor).split("/");
+                String supportingReadIds = parseSupportingReadsString(parserState,visitor);
+                List<Long> readIds = new ArrayList<Long>(numberOfReads);                
+                for(String id : supportingReadIds.split("/")){
+                    readIds.add(Long.parseLong(id.trim()));
+                }
+                
+                parseEndOfMessage(parserState, visitor);
+                if(shouldVisitRecord){
+                    SortedSet<VariantRecord> variantRecords = new TreeSet<VariantRecord>();
+                    int readCounter=0;
+                    
+                    for(int i=0; i < numberOfVariants; i++){
+                        int numContributingReads = Integer.parseInt(contributingReadCountString[i].trim());
+                        int weight = Integer.parseInt(weightString[i].trim());
+                        NucleotideSequence seq = NucleotideSequenceFactory.create(sequencesString[i].trim());
+                        List<Long> reads = readIds.subList(readCounter, readCounter+numContributingReads);
+                        variantRecords.add(new VariantRecordImpl(reads, seq, weight));
+                        readCounter+=numContributingReads;
+                    }
+                    visitor.visitVariance(position, numberOfReads, anchorSize, 
+                            variantId, phasedVariantId, 
+                            variantRecords);
+                }
+             }
+            private String parseContributingReadcountString(
+                    ParserState parserState, AsmVisitor visitor) throws IOException {
+                return parseVariantBlock(parserState, visitor, "nra:");
+            }
+            private String parseWeightString(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                return parseVariantBlock(parserState, visitor, "wgt:");
+            }
+            private String parseSequencesString(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                return parseVariantBlock(parserState, visitor, "seq:");
+            }
+            private String parseSupportingReadsString(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                return parseVariantBlock(parserState, visitor, "rid:");
+            }
+            private String parseVariantBlock(ParserState parserState,
+                    AsmVisitor visitor, String expectedBlockStart) throws IOException{
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                if(!line.startsWith(expectedBlockStart)){
+                    throw new IOException("invalid start of variants block section : "+ line);
+                }
+                String value = parserState.getNextLine();
+                visitor.visitLine(value);
+                String endBlock = parserState.getNextLine();
+                visitor.visitLine(endBlock);
+                if(!endBlock.startsWith(".")){
+                    throw new IOException("invalid end of variant block section : "+ endBlock);
+                }
+                return value;
+            }
+            private int parseNumberOfVariants(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                // delegate to parse number of reads since the pattern
+                //is close enough, this method name is just
+                //to avoid confusion/ make it intent revealing
+                return parseNumberOfReads(parserState, visitor);
+            }
+            private Range parseVariantPosition(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = POSITION_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading variant record position:"+ line);
+                }
+                return Range.parseRange(matcher.group(1), CoordinateSystem.SPACE_BASED);
+            }
+            private int parseAnchorSize(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = ANCHOR_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading variant anchor size:"+ line);
+                }
+                return Integer.parseInt(matcher.group(1));
+            }
+            private long parseVariantId(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = VARIANT_ID_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading variant id"+ line);
+                }
+                return Long.parseLong(matcher.group(1));
+            }
+            private long parsePhasedVariantId(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = PHASE_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error reading variant id"+ line);
+                }
+                return Long.parseLong(matcher.group(1));
+            }
         }
         ;
         
@@ -731,6 +966,11 @@ public final class AsmParser {
         static final Pattern MEAN_PATTERN = Pattern.compile("mea:(\\S+)");
         static final Pattern STD_DEV_PATTERN = Pattern.compile("std:(\\S+)");
         
+        static final Pattern A_STAT_PATTERN = Pattern.compile("cov:(\\S+)");
+        static final Pattern POLYMORPHISM_PATTERN = Pattern.compile("mhp:(\\S+)");
+        static final Pattern STATUS_PATTERN = Pattern.compile("sta:(\\S)");
+        static final Pattern LENGTH_PATTERN = Pattern.compile("len:(\\d+)");
+        static final Pattern NUM_READS_PATTERN = Pattern.compile("n\\S\\S:(\\d+)");
         
         private static final String END_MESSAGE = "}";
         private AsmMessageHandler(String messageCode){
@@ -748,7 +988,18 @@ public final class AsmParser {
             return messageCode;
         }
 
+        public String parseMessageCode(String line){
+            Matcher matcher = MESSAGE_HEADER_PATTERN.matcher(line);
+            if(matcher.find()){
+                return matcher.group(1);
+            }
+            return null;
+        }
         protected abstract void handle(ParserState parserState, AsmVisitor visitor) throws IOException;
+        
+        protected void handle(ParserState parserState, AsmVisitor visitor, boolean shouldVisitRecord) throws IOException{
+            handle(parserState, visitor);
+        }
         public static void parse(ParserState parserState, AsmVisitor visitor) throws IOException{
             while(parserState.hasNextLine()){
                 String line =parserState.getNextLine();
@@ -804,6 +1055,82 @@ public final class AsmParser {
                 visitor.visitLine(line);
             }
             
+        }
+        int parseLength(ParserState parserState,
+                AsmVisitor visitor) throws IOException {
+            String line = parserState.getNextLine();
+            visitor.visitLine(line);
+            return parseLength(line);
+        }
+        int parseLength(String line) throws IOException {               
+            Matcher matcher = LENGTH_PATTERN.matcher(line);
+            if(!matcher.find()){
+                throw new IOException("error reading length:"+ line);
+            }
+            return Integer.parseInt(matcher.group(1));
+        }
+        int parseNumberOfReads(ParserState parserState,
+                AsmVisitor visitor) throws IOException {
+            String line = parserState.getNextLine();
+            visitor.visitLine(line);
+            Matcher matcher = NUM_READS_PATTERN.matcher(line);
+            if(!matcher.find()){
+                throw new IOException("error parsing unitig number of reads : "+ line);
+            }
+            return Integer.parseInt(matcher.group(1));
+        }
+        QualitySequence parseConsensusQualities(
+                ParserState parserState, AsmVisitor visitor, int length) throws IOException {
+            byte[] qualities = new byte[length];
+            //first line should be qlt
+            String line = parserState.getNextLine();
+            visitor.visitLine(line);
+            if(!line.startsWith("qlt:")){
+               throw new IOException("expected start quality consensus block :"+line); 
+            }
+            line = parserState.getNextLine();
+            visitor.visitLine(line);
+            int offset=0;
+            while(!line.startsWith(".")){
+                String trimmedLine = line.trim();
+                for(int i=0; i<trimmedLine.length(); i++){
+                    //qualities are encoded as value + ascii zero
+                    qualities[offset+i]=(byte)(trimmedLine.charAt(i)- '0');
+                }
+                offset +=trimmedLine.length();
+                line = parserState.getNextLine();
+                visitor.visitLine(line);
+            }
+            if(offset !=length){
+                throw new IOException( String.format("incorrect consensus quality length for %s: expected %d but was %d",
+                        getMessageCode(),
+                        length,offset));
+            }
+            return new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
+                    PhredQuality.valueOf(qualities));
+        }
+        NucleotideSequence parseConsensus(ParserState parserState,
+                AsmVisitor visitor, int expectedLength) throws IOException {
+            NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(expectedLength);
+            String line = parserState.getNextLine();
+            visitor.visitLine(line);
+            if(!line.startsWith("cns:")){
+                throw new IOException("expected begin cns field but was "+line );
+            }
+            line = parserState.getNextLine();
+            visitor.visitLine(line);
+            while(!line.startsWith(".")){
+                builder.append(line.trim());
+                line = parserState.getNextLine();
+                visitor.visitLine(line);
+            }
+            if(builder.getLength()!=expectedLength){
+                throw new IOException(
+                        String.format("incorrect consensus length for %s: expected %d but was %d",
+                                getMessageCode(),
+                                expectedLength,builder.getLength()));
+            }
+            return builder.build();
         }
     }
     
@@ -884,7 +1211,123 @@ public final class AsmParser {
             }
             return true;
         }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String toString() {
+            return "MatePairEvidenceImpl [read1=" + read1 + ", read2=" + read2
+                    + "]";
+        }
         
+        
+    }
+    
+    private static class VariantRecordImpl implements VariantRecord{
+
+        private final List<Long> readIds;
+        private final NucleotideSequence sequence;
+        private final int weight;
+        
+        
+        public VariantRecordImpl(List<Long> readIds,
+                NucleotideSequence sequence, int weight) {
+            this.readIds = Collections.unmodifiableList(readIds);
+            this.sequence = sequence;
+            this.weight = weight;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public List<Long> getContributingReadIIDs() {
+            return readIds;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int getWeight() {
+            return weight;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public NucleotideSequence getVariantSequence() {
+            return sequence;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int compareTo(VariantRecord o) {
+            return Integer.valueOf(weight).compareTo(o.getWeight());
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((readIds == null) ? 0 : readIds.hashCode());
+            result = prime * result
+                    + ((sequence == null) ? 0 : sequence.hashCode());
+            result = prime * result + weight;
+            return result;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof VariantRecordImpl)) {
+                return false;
+            }
+            VariantRecordImpl other = (VariantRecordImpl) obj;
+            if (readIds == null) {
+                if (other.readIds != null) {
+                    return false;
+                }
+            } else if (!readIds.equals(other.readIds)) {
+                return false;
+            }
+            if (sequence == null) {
+                if (other.sequence != null) {
+                    return false;
+                }
+            } else if (!sequence.equals(other.sequence)) {
+                return false;
+            }
+            if (weight != other.weight) {
+                return false;
+            }
+            return true;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String toString() {
+            return "VariantRecordImpl [readIds=" + readIds + ", sequence="
+                    + sequence + ", weight=" + weight + "]";
+        }
         
     }
 }
