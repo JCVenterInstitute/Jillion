@@ -120,7 +120,7 @@ public class ReAbacusAceContigWorker {
         stdOutStream= new BufferedReader
               (new InputStreamReader(process.getErrorStream()));
           while ((line = stdOutStream.readLine()) != null) {
-              System.out.println(line);
+             // System.out.println(line);
           }
           
           try {
