@@ -275,7 +275,8 @@ public class FilterFastqDataFromCas {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp( "filterFastqDataFromCLC -cas <cas file> -d <max coverage> -o <output include file> [OPTIONS]", 
                 
-                "Parse an CLC cas file and write out ungapped consensus coordinates of abacus assembly errors",
+                "Parse an CLC cas file and write out include list of solexa/ illumina read ids " +
+                "that are required inorder achieve the specified max coverage depth.",
                 options,
                "Created by Danny Katzel"
                   );
