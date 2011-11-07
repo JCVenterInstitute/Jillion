@@ -23,7 +23,6 @@ import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -83,10 +82,6 @@ public final class AsmParser {
     
     private static final class ParserState implements Closeable{
         private final TextLineParser parser;
-        private boolean parseCurrentUnitig=true;
-        private boolean parseCurrentContig=true;
-        private boolean parseCurrentScaffold=true;
-        private boolean reachedEOF =false;
         
         ParserState(InputStream inputStream) throws IOException{
             this.parser = new TextLineParser(inputStream);
@@ -97,11 +92,7 @@ public final class AsmParser {
         }
         
         String getNextLine() throws IOException{
-            String next= parser.nextLine();
-            if(!parser.hasNextLine()){
-                reachedEOF=true;
-            }
-            return next;
+            return parser.nextLine();            
         }
         /**
         * {@inheritDoc}
@@ -110,55 +101,6 @@ public final class AsmParser {
         public void close() throws IOException {
             parser.close();
             
-        }
-
-        /**
-         * @return the parseCurrentUnitig
-         */
-        public boolean shouldParseCurrentUnitig() {
-            return parseCurrentUnitig;
-        }
-
-        /**
-         * @param parseCurrentUnitig the parseCurrentUnitig to set
-         */
-        public void parseCurrentUnitig(boolean parseCurrentUnitig) {
-            this.parseCurrentUnitig = parseCurrentUnitig;
-        }
-
-        /**
-         * @return the parseCurrentContig
-         */
-        public boolean shouldParseCurrentContig() {
-            return parseCurrentContig;
-        }
-
-        /**
-         * @param parseCurrentContig the parseCurrentContig to set
-         */
-        public void parseCurrentContig(boolean parseCurrentContig) {
-            this.parseCurrentContig = parseCurrentContig;
-        }
-
-        /**
-         * @return the parseCurrentScaffold
-         */
-        public boolean shouldParseCurrentScaffold() {
-            return parseCurrentScaffold;
-        }
-
-        /**
-         * @param parseCurrentScaffold the parseCurrentScaffold to set
-         */
-        public void parseCurrentScaffold(boolean parseCurrentScaffold) {
-            this.parseCurrentScaffold = parseCurrentScaffold;
-        }
-
-        /**
-         * @return the reachedEOF
-         */
-        public boolean reachedEOF() {
-            return reachedEOF;
         }
         
         
@@ -370,7 +312,6 @@ public final class AsmParser {
                 int numberOfReads = parseNumberOfReads(parserState, visitor);
                 boolean shouldVisitUnitigReads =visitor.visitUnitig(idTuple.externalId, idTuple.internalId, aStat,
                         polymorphism, status, consensus, consensusQualities, numberOfReads);
-                parserState.parseCurrentUnitig(shouldVisitUnitigReads);
                 //read info is nested in each unitig
                 for(int i=0; i<numberOfReads; i++){
                     String readHeader = parserState.getNextLine();
@@ -388,7 +329,7 @@ public final class AsmParser {
                     
                     }
                     visitor.visitLine(readHeader);
-                    READ_MAPPING.handle(parserState, visitor);
+                    READ_MAPPING.handle(parserState, visitor,shouldVisitUnitigReads);
                 }
                 parseEndOfMessage(parserState, visitor);
                 visitor.visitEndOfUnitig();
@@ -433,7 +374,7 @@ public final class AsmParser {
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
-               handle(parserState, visitor, parserState.shouldParseCurrentUnitig());
+               handle(parserState, visitor, true);
             }
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor,
@@ -517,148 +458,28 @@ public final class AsmParser {
         },
         UNITIG_LINK("ULK"){
             private final Pattern UNITIG_ID_PATTERN = Pattern.compile("ut\\d:(\\S+)");
-            private final Pattern LINK_ORIENTATION_PATTERN = Pattern.compile("ori:(\\S)");
-            private final Pattern OVERLAP_TYPE_PATTERN = Pattern.compile("ovt:(\\S)");
-            
-            private final Pattern CHIMERA_FLAG_PATTERN = Pattern.compile("ipc:(\\d)");
-            private final Pattern NUM_EDGES_PATTERN = Pattern.compile("num:(\\d+)");
-            
-            private final Pattern LINK_STATUS_PATTERN = Pattern.compile("sta:(\\S)");
-            private final Pattern JUMP_LIST_PATTERN = Pattern.compile("(\\S+),(\\S+),(\\S)");
-            
             
             @Override
-            protected void handle(ParserState parserState, AsmVisitor visitor)
+            protected void handle(ParserState parserState, AsmVisitor visitor) throws IOException{
+                handle(parserState, visitor,true);
+            }
+            
+            @Override
+            protected void handle(ParserState parserState, AsmVisitor visitor, boolean shouldParse)
                     throws IOException {
-                String unitig1 = getUnitigId(parserState, visitor);
-                String unitig2 = getUnitigId(parserState, visitor);
-                LinkOrientation orientation = getLinkOrientation(parserState, visitor);
-                OverlapType overlapType = getOverlapType(parserState, visitor);
-                boolean isPossibleChimera = getChimeraFlag(parserState, visitor);
-                //includes guide was removed in CA 6
-                String nextLine = parserState.getNextLine();
-                visitor.visitLine(nextLine);
-                if(nextLine.startsWith("gui:")){
-                    nextLine = parserState.getNextLine();
-                    visitor.visitLine(nextLine);
-                }
-                float mean = parseMeanEdgeDistance(nextLine);
-                float stdDev = parseStdDevDistance(parserState, visitor);
-                int numberOfContributingEdges = parseNumberOfEdges(parserState, visitor);
-                OverlapStatus status = parseOverlapStatus(parserState, visitor);
-                String jumpList = parserState.getNextLine();
-                visitor.visitLine(jumpList);
-                if(!jumpList.startsWith("jls:")){
-                    throw new IOException("invalid jump list block : "+ jumpList);
-                }
-                Set<MatePairEvidence> evidenceList = parseMatePairEvidence(overlapType.getExpectedNumberOfMatePairEvidenceRecords(numberOfContributingEdges), parserState,visitor);
-                parseEndOfMessage(parserState, visitor);
-                if(parserState.shouldParseCurrentUnitig()){
-                    visitor.visitUnitigLink(unitig1, unitig2, orientation, overlapType, status, 
-                            isPossibleChimera, numberOfContributingEdges, mean, stdDev, evidenceList);
-                }
+                parseLinkMessage(parserState, visitor, shouldParse, UNITIG_ID_PATTERN);
+            }
+            @Override
+            protected void visitLink(AsmVisitor visitor, String unitig1,
+                    String unitig2, LinkOrientation orientation,
+                    OverlapType overlapType, boolean isPossibleChimera,
+                    float mean, float stdDev, int numberOfContributingEdges,
+                    OverlapStatus status, Set<MatePairEvidence> evidenceList) {
+                visitor.visitUnitigLink(unitig1, unitig2, orientation, overlapType, status, 
+                        isPossibleChimera, numberOfContributingEdges, mean, stdDev, evidenceList);
             }
             
-            private Set<MatePairEvidence> parseMatePairEvidence(
-                    int expectedNumberOfMatePairEvidenceRecords,
-                    ParserState parserState, AsmVisitor visitor) throws IOException {
-                Set<MatePairEvidence> set = new LinkedHashSet<AsmVisitor.MatePairEvidence>();
-                for(int i=0; i<expectedNumberOfMatePairEvidenceRecords; i++){
-                    String line = parserState.getNextLine();
-                    visitor.visitLine(line);
-                    Matcher matcher = JUMP_LIST_PATTERN.matcher(line);
-                    if(!matcher.find()){
-                        throw new IOException("invalid jump list record: "+ line);
-                    }
-                    set.add(new MatePairEvidenceImpl(matcher.group(1), matcher.group(2)));
-                }
-                return set;
-            }
-
-            private OverlapStatus parseOverlapStatus(ParserState parserState,
-                    AsmVisitor visitor) throws IOException {
-                String line = parserState.getNextLine();
-                visitor.visitLine(line); 
-                Matcher matcher = LINK_STATUS_PATTERN.matcher(line);
-                if(!matcher.find()){
-                    throw new IOException("error overlap status"+ line);
-                }
-                return OverlapStatus.parseOverlapStatus(matcher.group(1));
-            }
-
-            private int parseNumberOfEdges(ParserState parserState,
-                    AsmVisitor visitor) throws IOException {
-                String line = parserState.getNextLine();
-                visitor.visitLine(line); 
-                Matcher matcher = NUM_EDGES_PATTERN.matcher(line);
-                if(!matcher.find()){
-                    throw new IOException("error reading # of edges"+ line);
-                }
-                return Integer.parseInt(matcher.group(1));
-            }
-
-            private float parseMeanEdgeDistance(String nextLine) throws IOException {
-                Matcher matcher = MEAN_PATTERN.matcher(nextLine);
-                if(!matcher.find()){
-                    throw new IOException("error reading is mean edge distance message"+ nextLine);
-                }
-                return Float.parseFloat(matcher.group(1));
-            }
             
-            private float parseStdDevDistance(ParserState parserState,
-                    AsmVisitor visitor) throws IOException {
-                String line = parserState.getNextLine();
-                visitor.visitLine(line); 
-                Matcher matcher = STD_DEV_PATTERN.matcher(line);
-                if(!matcher.find()){
-                    throw new IOException("error reading is std dev edge distance message"+ line);
-                }
-                return Float.parseFloat(matcher.group(1));
-            }
-
-            private boolean getChimeraFlag(ParserState parserState,
-                    AsmVisitor visitor) throws IOException {
-                String line = parserState.getNextLine();
-                visitor.visitLine(line);
-                Matcher matcher = CHIMERA_FLAG_PATTERN.matcher(line);
-                if(!matcher.find()){
-                    throw new IOException("error reading is possible chimera message"+ line);
-                }
-                int value = Integer.parseInt(matcher.group(1));
-                return value ==1;
-            }
-
-            private LinkOrientation getLinkOrientation(ParserState parserState,
-                    AsmVisitor visitor) throws IOException {
-                String line = parserState.getNextLine();
-                visitor.visitLine(line);
-                Matcher matcher = LINK_ORIENTATION_PATTERN.matcher(line);
-                if(!matcher.find()){
-                    throw new IOException("error reading link orientation message"+ line);
-                }
-                return LinkOrientation.parseLinkOrientation(matcher.group(1));
-            }
-            
-            private OverlapType getOverlapType(ParserState parserState,
-                    AsmVisitor visitor) throws IOException {
-                String line = parserState.getNextLine();
-                visitor.visitLine(line);
-                Matcher matcher = OVERLAP_TYPE_PATTERN.matcher(line);
-                if(!matcher.find()){
-                    throw new IOException("error reading overlap type message"+ line);
-                }
-                return OverlapType.parseOverlapType(matcher.group(1));
-            }
-
-            private String getUnitigId(ParserState parserState, AsmVisitor visitor) throws IOException{
-                String line = parserState.getNextLine();
-                visitor.visitLine(line);
-                Matcher matcher = UNITIG_ID_PATTERN.matcher(line);
-                if(!matcher.find()){
-                    throw new IOException("error reading unitig link message unitig id:"+ line);
-                }
-                return matcher.group(1);
-            }
             
         },
         CONTIG("CCO"){
@@ -684,7 +505,6 @@ public final class AsmParser {
                 boolean visitContig =visitor.visitContig(idTuple.externalId, idTuple.internalId, isDegenerate, 
                         consensus, consensusQualities, 
                         numberOfReads, numberOfUnitigs, numberOfVariants);
-                parserState.parseCurrentContig(visitContig);
                 for(int i=0; i<numberOfVariants; i++){
                     String variantHeader = parserState.getNextLine();
                     visitor.visitLine(variantHeader);
@@ -955,7 +775,158 @@ public final class AsmParser {
                 }
                 return Long.parseLong(matcher.group(1));
             }
-        }
+        },
+        CONTIG_LINK("CLK"){
+            private final Pattern CONTIG_ID_PATTERN = Pattern.compile("co\\d:(\\S+)");
+            
+            @Override
+            protected void handle(ParserState parserState, AsmVisitor visitor) throws IOException{
+                handle(parserState, visitor,true);
+            }
+            
+            @Override
+            protected void handle(ParserState parserState, AsmVisitor visitor, boolean shouldParse)
+                    throws IOException {
+                parseLinkMessage(parserState, visitor, shouldParse, CONTIG_ID_PATTERN);
+            }
+            @Override
+            protected void visitLink(AsmVisitor visitor, String id1,
+                    String id2, LinkOrientation orientation,
+                    OverlapType overlapType, boolean isPossibleChimera,
+                    float mean, float stdDev, int numberOfContributingEdges,
+                    OverlapStatus status, Set<MatePairEvidence> evidenceList) {
+                visitor.visitContigLink(id1, id2, orientation, overlapType, status, 
+                        numberOfContributingEdges, mean, stdDev, evidenceList);
+            }
+            
+        },
+        SCAFFOLD_LINK("SLK"){
+            private final Pattern SCAFFOLD_ID_PATTERN = Pattern.compile("sc\\d:(\\S+)");
+            
+            @Override
+            protected void handle(ParserState parserState, AsmVisitor visitor) throws IOException{
+                handle(parserState, visitor,true);
+            }
+            
+            @Override
+            protected void handle(ParserState parserState, AsmVisitor visitor, boolean shouldParse)
+                    throws IOException {
+                parseLinkMessage(parserState, visitor, shouldParse, SCAFFOLD_ID_PATTERN);
+            }
+            @Override
+            protected void visitLink(AsmVisitor visitor, String id1,
+                    String id2, LinkOrientation orientation,
+                    OverlapType overlapType, boolean isPossibleChimera,
+                    float mean, float stdDev, int numberOfContributingEdges,
+                    OverlapStatus status, Set<MatePairEvidence> evidenceList) {
+                visitor.visitScaffoldLink(id1, id2, orientation, overlapType, status, 
+                        numberOfContributingEdges, mean, stdDev, evidenceList);
+            }
+            
+        },
+        /**
+         * Handles scaffold messages <strong>and</strong>
+         * nested contig link messages since
+         * there are different kinds of links depending 
+         * on the number of contigs in the scaffold.
+         */
+        SCAFFOLD("SCF"){
+            final Pattern NUM_PAIRS_PATTERN = Pattern.compile("noc:(\\d+)");
+            final Pattern CONTIG_ID_PATTERN = Pattern.compile("ct\\d:(\\S+)");
+            @Override
+            protected void handle(ParserState parserState, AsmVisitor visitor)
+                    throws IOException {
+                IdTuple idTuple = parseIds(parserState, visitor, ACCESSION_PATTERN);
+                int numberOfContigPairs = parseNumberOfContigPairs(parserState, visitor);
+                boolean visitContigPairs =visitor.visitScaffold(idTuple.externalId, idTuple.internalId, numberOfContigPairs);
+                
+                if(numberOfContigPairs==0){
+                    //only 1 contig
+                    handleSingleContig(parserState, visitor, visitContigPairs);
+                }else{
+                    for(int i=0; i< numberOfContigPairs; i++){
+                        handleContigPairs(parserState, visitor, visitContigPairs);
+                    }
+                }
+                parseEndOfMessage(parserState, visitor);
+                visitor.visitEndOfScaffold();
+            }
+            
+            private void handleSingleContig(ParserState parserState,
+                    AsmVisitor visitor, boolean visitContigPairs) throws IOException {
+                parsePairStart(parserState,visitor);
+                String contigId = parseContigId(parserState, visitor);
+                //ids should be the same
+                String duplicateId = parseContigId(parserState, visitor);
+                if(!contigId.equals(duplicateId)){
+                    throw new IOException(
+                            String.format("invalid single contig scaffold, " +
+                            		"contig ids ct1 and ct2 should be identical %s vs %s",
+                            		contigId, duplicateId));
+                }
+                //only 1 contig mean, stddev and ori should be ignored
+                String mean = parserState.getNextLine();
+                visitor.visitLine(mean);
+                String stdDev = parserState.getNextLine();
+                visitor.visitLine(stdDev);
+                String ori = parserState.getNextLine();
+                visitor.visitLine(ori);
+                parseEndOfMessage(parserState, visitor);
+                if(visitContigPairs){
+                    visitor.visitSingleContigInScaffold(contigId);
+                }
+                
+            }
+
+            private void handleContigPairs(ParserState parserState,
+                    AsmVisitor visitor, boolean visitContigPairs) throws IOException {
+                parsePairStart(parserState,visitor);
+                String contigId1 = parseContigId(parserState, visitor);
+ 
+                String contigId2 = parseContigId(parserState, visitor);                
+                float mean = parseMeanEdgeDistance(parserState, visitor);
+                float stdDev = parseStdDevDistance(parserState, visitor);
+                LinkOrientation orientation = getLinkOrientation(parserState, visitor);
+                
+                parseEndOfMessage(parserState, visitor);
+                if(visitContigPairs){                   
+                   visitor.visitContigPair(contigId1, contigId2, mean, stdDev, orientation);
+                }
+                
+            }
+            private int parseNumberOfContigPairs(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = NUM_PAIRS_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error parsing number of contig pairs : "+ line);
+                }
+                return Integer.parseInt(matcher.group(1));
+            }
+            
+            private String parseContigId(ParserState parserState,
+                    AsmVisitor visitor) throws IOException{
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = CONTIG_ID_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("error contig id :"+ line);
+                }
+                return matcher.group(1);
+            }
+            
+            private void parsePairStart(ParserState parserState,
+                    AsmVisitor visitor) throws IOException {
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                if(!line.startsWith("{CTP")){
+                    throw new IOException("error parsing contig pair header : "+ line);
+                }
+            }
+            
+        },
+        
         ;
         
         
@@ -971,6 +942,17 @@ public final class AsmParser {
         static final Pattern STATUS_PATTERN = Pattern.compile("sta:(\\S)");
         static final Pattern LENGTH_PATTERN = Pattern.compile("len:(\\d+)");
         static final Pattern NUM_READS_PATTERN = Pattern.compile("n\\S\\S:(\\d+)");
+        
+        
+        final Pattern LINK_ORIENTATION_PATTERN = Pattern.compile("ori:(\\S)");
+        final Pattern OVERLAP_TYPE_PATTERN = Pattern.compile("ovt:(\\S)");
+        
+        final Pattern CHIMERA_FLAG_PATTERN = Pattern.compile("ipc:(\\d)");
+        final Pattern NUM_EDGES_PATTERN = Pattern.compile("num:(\\d+)");
+        
+        final Pattern LINK_STATUS_PATTERN = Pattern.compile("sta:(\\S)");
+        final Pattern JUMP_LIST_PATTERN = Pattern.compile("(\\S+),(\\S+),(\\S)");
+        
         
         private static final String END_MESSAGE = "}";
         private AsmMessageHandler(String messageCode){
@@ -1015,6 +997,7 @@ public final class AsmParser {
                     }
                 }
             }
+            visitor.visitEndOfFile();
         }
         
         IdTuple parseIds(ParserState parserState, AsmVisitor visitor, Pattern pattern) throws IOException {
@@ -1132,6 +1115,159 @@ public final class AsmParser {
             }
             return builder.build();
         }
+        
+
+        Set<MatePairEvidence> parseMatePairEvidence(
+                int expectedNumberOfMatePairEvidenceRecords,
+                ParserState parserState, AsmVisitor visitor) throws IOException {
+            Set<MatePairEvidence> set = new LinkedHashSet<AsmVisitor.MatePairEvidence>();
+            for(int i=0; i<expectedNumberOfMatePairEvidenceRecords; i++){
+                String line = parserState.getNextLine();
+                visitor.visitLine(line);
+                Matcher matcher = JUMP_LIST_PATTERN.matcher(line);
+                if(!matcher.find()){
+                    throw new IOException("invalid jump list record: "+ line);
+                }
+                set.add(new MatePairEvidenceImpl(matcher.group(1), matcher.group(2)));
+            }
+            return set;
+        }
+
+        OverlapStatus parseOverlapStatus(ParserState parserState,
+                AsmVisitor visitor) throws IOException {
+            String line = parserState.getNextLine();
+            visitor.visitLine(line); 
+            Matcher matcher = LINK_STATUS_PATTERN.matcher(line);
+            if(!matcher.find()){
+                throw new IOException("error overlap status"+ line);
+            }
+            return OverlapStatus.parseOverlapStatus(matcher.group(1));
+        }
+
+        int parseNumberOfEdges(ParserState parserState,
+                AsmVisitor visitor) throws IOException {
+            String line = parserState.getNextLine();
+            visitor.visitLine(line); 
+            Matcher matcher = NUM_EDGES_PATTERN.matcher(line);
+            if(!matcher.find()){
+                throw new IOException("error reading # of edges"+ line);
+            }
+            return Integer.parseInt(matcher.group(1));
+        }
+
+        float parseMeanEdgeDistance(String nextLine) throws IOException {
+            Matcher matcher = MEAN_PATTERN.matcher(nextLine);
+            if(!matcher.find()){
+                throw new IOException("error reading is mean edge distance message"+ nextLine);
+            }
+            return Float.parseFloat(matcher.group(1));
+        }
+        float parseMeanEdgeDistance(ParserState parserState,
+                AsmVisitor visitor) throws IOException {
+            String nextLine = parserState.getNextLine();
+            visitor.visitLine(nextLine); 
+            Matcher matcher = MEAN_PATTERN.matcher(nextLine);
+            if(!matcher.find()){
+                throw new IOException("error reading is mean edge distance message"+ nextLine);
+            }
+            return Float.parseFloat(matcher.group(1));
+        }
+        
+        float parseStdDevDistance(ParserState parserState,
+                AsmVisitor visitor) throws IOException {
+            String line = parserState.getNextLine();
+            visitor.visitLine(line); 
+            Matcher matcher = STD_DEV_PATTERN.matcher(line);
+            if(!matcher.find()){
+                throw new IOException("error reading is std dev edge distance message"+ line);
+            }
+            return Float.parseFloat(matcher.group(1));
+        }
+
+        boolean getChimeraFlag(ParserState parserState,
+                AsmVisitor visitor) throws IOException {
+            String line = parserState.getNextLine();
+            visitor.visitLine(line);
+            Matcher matcher = CHIMERA_FLAG_PATTERN.matcher(line);
+            if(!matcher.find()){
+                throw new IOException("error reading is possible chimera message"+ line);
+            }
+            int value = Integer.parseInt(matcher.group(1));
+            return value ==1;
+        }
+
+        LinkOrientation getLinkOrientation(ParserState parserState,
+                AsmVisitor visitor) throws IOException {
+            String line = parserState.getNextLine();
+            visitor.visitLine(line);
+            Matcher matcher = LINK_ORIENTATION_PATTERN.matcher(line);
+            if(!matcher.find()){
+                throw new IOException("error reading link orientation message"+ line);
+            }
+            return LinkOrientation.parseLinkOrientation(matcher.group(1));
+        }
+        
+        OverlapType getOverlapType(ParserState parserState,
+                AsmVisitor visitor) throws IOException {
+            String line = parserState.getNextLine();
+            visitor.visitLine(line);
+            Matcher matcher = OVERLAP_TYPE_PATTERN.matcher(line);
+            if(!matcher.find()){
+                throw new IOException("error reading overlap type message"+ line);
+            }
+            return OverlapType.parseOverlapType(matcher.group(1));
+        }
+        
+        String getUnitigId(Pattern idPattern, ParserState parserState, AsmVisitor visitor) throws IOException{
+            String line = parserState.getNextLine();
+            visitor.visitLine(line);
+            Matcher matcher = idPattern.matcher(line);
+            if(!matcher.find()){
+                throw new IOException("error reading unitig link message unitig id:"+ line);
+            }
+            return matcher.group(1);
+        }
+
+        void parseLinkMessage(ParserState parserState, AsmVisitor visitor,
+                boolean shouldParse, Pattern idPattern) throws IOException {
+            String unitig1 = getUnitigId(idPattern, parserState, visitor);
+            String unitig2 = getUnitigId(idPattern, parserState, visitor);
+            LinkOrientation orientation = getLinkOrientation(parserState, visitor);
+            OverlapType overlapType = getOverlapType(parserState, visitor);
+            boolean isPossibleChimera = getChimeraFlag(parserState, visitor);
+            //includes guide was removed in CA 6
+            String nextLine = parserState.getNextLine();
+            visitor.visitLine(nextLine);
+            if(nextLine.startsWith("gui:")){
+                nextLine = parserState.getNextLine();
+                visitor.visitLine(nextLine);
+            }
+            float mean = parseMeanEdgeDistance(nextLine);
+            float stdDev = parseStdDevDistance(parserState, visitor);
+            int numberOfContributingEdges = parseNumberOfEdges(parserState, visitor);
+            OverlapStatus status = parseOverlapStatus(parserState, visitor);
+            String jumpList = parserState.getNextLine();
+            visitor.visitLine(jumpList);
+            if(!jumpList.startsWith("jls:")){
+                throw new IOException("invalid jump list block : "+ jumpList);
+            }
+            Set<MatePairEvidence> evidenceList = parseMatePairEvidence(overlapType.getExpectedNumberOfMatePairEvidenceRecords(numberOfContributingEdges), parserState,visitor);
+            parseEndOfMessage(parserState, visitor);
+            if(shouldParse){
+                visitLink(visitor, unitig1, unitig2, orientation,
+                        overlapType, isPossibleChimera, mean, stdDev,
+                        numberOfContributingEdges, status, evidenceList);
+            }
+        }
+        
+        protected void visitLink(AsmVisitor visitor, String unitig1,
+                String unitig2, LinkOrientation orientation,
+                OverlapType overlapType, boolean isPossibleChimera,
+                float mean, float stdDev, int numberOfContributingEdges,
+                OverlapStatus status, Set<MatePairEvidence> evidenceList){
+            throw new IllegalStateException("invalid state should not contain any links");
+        }
+
     }
     
     private static final class IdTuple{

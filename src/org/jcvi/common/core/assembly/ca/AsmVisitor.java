@@ -230,19 +230,19 @@ public interface AsmVisitor extends TextFileVisitor{
      */
     public enum LinkOrientation{
         /**
-         * AB_AB
+         * Indicates forward-forward.
          */
          NORMAL('N'),
          /**
-          * BA_BA
+          * Indicates reverse - reverse.
           */
          ANTI_NORMAL('A'),
          /**
-          * BA_AB
+          * Indicates reverse-forward.
           */        
          OUTIE('O'),
          /**
-          * AB_BA
+          * Indicates foward-reverse.
           */
          INNIE('I')
         ;
