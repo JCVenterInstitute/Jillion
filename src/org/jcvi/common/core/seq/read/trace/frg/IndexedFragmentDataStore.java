@@ -25,6 +25,7 @@ package org.jcvi.common.core.seq.read.trace.frg;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +36,7 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
@@ -58,6 +60,21 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     private final Frg2Parser parser;
     private int currentStart=0;
     private int currentPosition=-1;
+    
+    public static FragmentDataStore create(File frgFile) throws FileNotFoundException{
+        Frg2Parser parserInstance = new Frg2Parser();
+        IndexedFragmentDataStore datastore = new IndexedFragmentDataStore(frgFile, parserInstance);
+        InputStream in = null;
+        try{
+            in = new FileInputStream(frgFile);
+            parserInstance.parse(in, datastore);
+            return datastore;
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+       
+    }
+    
     public IndexedFragmentDataStore(File file, IndexedFileRange fragmentInfoIndexFileRange, IndexedFileRange mateInfoIndexFileRange, Frg2Parser parser) throws FileNotFoundException{
         this.fragmentInfoIndexFileRange = fragmentInfoIndexFileRange;
         this.mateInfoIndexFileRange = mateInfoIndexFileRange;
