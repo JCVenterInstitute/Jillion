@@ -42,7 +42,7 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
     protected void visitRead(String readId, int offset, Range validRange,
             String basecalls, Direction dir) {
        
-        currentContigBuilder.addRead(readId, offset, validRange,basecalls,dir); 
+        currentContigBuilder.addRead(readId, offset, validRange,basecalls,dir,(int)validRange.getEnd()); 
         
         
     }

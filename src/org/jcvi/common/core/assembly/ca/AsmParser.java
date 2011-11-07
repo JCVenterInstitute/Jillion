@@ -112,8 +112,10 @@ public final class AsmParser {
          */
         MODIFIED_DISTANCE_MESSAGE("MDI") {
             private final Pattern REF_ID_PATTERN = Pattern.compile("ref:\\((\\S+),(\\d+)\\)");
-           
-            private final Pattern MIN_PATTERN = Pattern.compile("min:(\\d+)");
+            /**
+             * min can be set to a negative value
+             */
+            private final Pattern MIN_PATTERN = Pattern.compile("min:(-?\\d+)");
             private final Pattern MAX_PATTERN = Pattern.compile("max:(\\d+)");
             private final Pattern HISTOGRAM_BUCKET_PATTERN = Pattern.compile("buc:(\\d+)");
             @Override

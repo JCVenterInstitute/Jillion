@@ -48,9 +48,9 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
    @Test
    public void _1xSangerShouldTrimOff(){
        Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
-       .addRead("IVAAA04T26B11NA512F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
-       .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
-       .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
+       .addRead("IVAAA04T26B11NA512F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD, 10)
+       .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE, 10)
+       .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE, 10)
        .build();
        
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
@@ -66,9 +66,9 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
    @Test
    public void _1xClosureSangerShouldTrimOff(){
        Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
-       .addRead("JHVXC05T00NP01F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
-       .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
-       .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
+       .addRead("JHVXC05T00NP01F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD, 10)
+       .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE, 10)
+       .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE, 10)
        .build();
        
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
@@ -84,10 +84,10 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
    @Test
    public void _1xSangerCloneCoverageShouldTrimOff(){
        Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
-       .addRead("IVAAA04T26B11NA512F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
-       .addRead("IVAAA04T26B11NA512FB", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
-       .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
-       .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
+       .addRead("IVAAA04T26B11NA512F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD, 10)
+       .addRead("IVAAA04T26B11NA512FB", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD, 10)
+       .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE, 10)
+       .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE, 10)
        .build();
        
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
@@ -103,10 +103,10 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
    @Test
    public void _2xSangerCloneCoverageShouldNotTrim(){
        Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
-       .addRead("IVAAA04T26B11NA512F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
-       .addRead("IVAAB04T26B11NA512F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
-       .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
-       .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
+       .addRead("IVAAA04T26B11NA512F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD, 10)
+       .addRead("IVAAB04T26B11NA512F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD, 10)
+       .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE, 10)
+       .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE, 10)
        .build();
        
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
@@ -119,10 +119,10 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
    @Test
    public void _2xClosureAndNonClosureMixSangerCloneCoverageShouldNotTrim(){
        Contig<PlacedRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
-       .addRead("IVAAB04T26B11NA512F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
-       .addRead("JHVXC05T00NP0334F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD)
-       .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
-       .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE)
+       .addRead("IVAAB04T26B11NA512F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD, 10)
+       .addRead("JHVXC05T00NP0334F", 0, Range.buildRange(0, 7), "ACGTACGT", Direction.FORWARD, 10)
+       .addRead("read2", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE, 10)
+       .addRead("read3", 2, Range.buildRange(0, 5), "GTACGT", Direction.REVERSE, 10)
        .build();
        
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));

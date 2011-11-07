@@ -28,11 +28,9 @@ import java.util.Set;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
-import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
 public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
 
@@ -59,7 +57,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
 		return super.hashCode();
 	}
 
-	public static class Builder extends AbstractContigBuilder<PlacedRead, DefaultContig<PlacedRead>>{
+	public static class Builder extends AbstractContigBuilder<PlacedRead, Contig<PlacedRead>>{
         public Builder(String id, String consensus){
            this(id, NucleotideSequenceFactory.create(consensus));
         }
@@ -71,7 +69,8 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
         }
         public Builder addRead(String id, int offset,String basecalls, Direction dir){
             int numberOfGaps = computeNumberOfGapsIn(basecalls);
-            return addRead(id, offset, Range.buildRangeOfLength(0,basecalls.length()-numberOfGaps),basecalls, dir);
+            int ungappedLength = basecalls.length()-numberOfGaps;
+            return addRead(id, offset, Range.buildRangeOfLength(0,ungappedLength),basecalls, dir,ungappedLength);
         }
         /**
          * @param basecalls
@@ -87,19 +86,15 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             return count;
         }
         @Override
-        public Builder addRead(String id, int offset,Range validRange, String basecalls, Direction dir){            
+        public Builder addRead(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){            
             if(offset <0){
                 throw new IllegalArgumentException("circular reads not supported");
                 
               }
-            super.addRead(id, offset, validRange, basecalls, dir);
+            super.addRead(id, offset, validRange, basecalls, dir,fullUngappedLength);
             return this;            
         }
-        @Override
-        protected PlacedRead createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, Direction dir,
-                int ungappedFullLength,Range validRange){
-            return new DefaultPlacedRead(read,offset,dir,ungappedFullLength, validRange);
-        }
+        
        
         public DefaultContig<PlacedRead> build(){
             Set<PlacedRead> reads = new LinkedHashSet<PlacedRead>();
@@ -131,7 +126,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
         @Override
         protected PlacedReadBuilder<PlacedRead> createPlacedReadBuilder(
                 String id, int offset, Range validRange, String basecalls,
-                Direction dir) {
+                Direction dir, int fullUngappedLength) {
             return DefaultPlacedRead.createBuilder(
                     getConsensusBuilder().build(), 
                     id, 
@@ -139,9 +134,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
                     offset, 
                     dir, 
                     validRange,
-                    //TODO need to actually compute ungapped full length here
-                    //should we pull from frg or db?
-                    (int)validRange.getEnd());
+                    fullUngappedLength);
         }
     }
 

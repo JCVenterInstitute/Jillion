@@ -188,7 +188,7 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
         @Override
         protected TigrAssemblerPlacedReadBuilder createPlacedReadBuilder(
                 String id, int offset, Range validRange, String basecalls,
-                Direction dir) {
+                Direction dir, int fullUngappedLength) {
             return DefaultTigrAssemblerPlacedRead.createBuilder(
                     getConsensusBuilder().build(), 
                     id, 
@@ -196,27 +196,9 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
                     offset, 
                     dir, 
                     validRange,
-                    //TODO need to actually compute ungapped full length here
-                    //should we pull from frg or db?
-                    (int)validRange.getEnd());
+                    fullUngappedLength);
         }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        protected TigrAssemblerPlacedRead createPlacedRead(
-                Read<ReferenceEncodedNucleotideSequence> read, long offset,
-                Direction dir, int ungappedFullLength, Range validRange) {
-            return DefaultTigrAssemblerPlacedRead.createBuilder(
-                    getConsensusBuilder().build(), 
-                    read.getId(), 
-                    Nucleotides.asString(read.getNucleotideSequence().asList()), 
-                    (int)offset, 
-                    dir, 
-                    validRange,
-                    ungappedFullLength)
-                    .build();
-        }
+       
         
         
     }

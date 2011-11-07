@@ -192,7 +192,8 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         public void visitEndReadBlock() {
             this.currentBuilder.addReadAttributes(currentReadId, currentReadAttributes);
             this.currentBuilder.addRead(currentReadId, currentOffset, currentValidRange,
-                    currentReadBasecalls, currentDirection);
+                    currentReadBasecalls, currentDirection,
+                    (int)currentValidRange.getEnd());
             
         }
        

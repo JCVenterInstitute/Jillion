@@ -296,6 +296,9 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         public void visitEndOfFile() {
             if(!hasTags){
                 Range range = indexFileRange.getRangeFor(currentContigId);
+                if(range ==null){
+                    throw new IllegalStateException("in complete ace file.  Did not finish reading "+ currentContigId);
+                }
                 indexFileRange.put(currentContigId, range.grow(0, currentLineLength));
             }
         }

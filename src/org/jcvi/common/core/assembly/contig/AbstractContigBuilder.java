@@ -25,10 +25,8 @@ import java.util.Map;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
 /**
  * @author dkatzel
@@ -44,19 +42,18 @@ public abstract class AbstractContigBuilder<P extends PlacedRead, C extends Cont
             this.consensus = new NucleotideSequenceBuilder(consensus);
             reads = new LinkedHashMap<String,PlacedReadBuilder<P>>();
         }
-        public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, Direction dir){
-            reads.put(id, createPlacedReadBuilder(id,offset,validRange,basecalls,dir));
+        public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){
+            reads.put(id, createPlacedReadBuilder(id,offset,validRange,basecalls,dir,fullUngappedLength));
             return this;
         }
+        
         public  AbstractContigBuilder<P,C>  addRead(P read){
             reads.put(read.getId(),createPlacedReadBuilder(read));
             return this;
         }
         protected abstract PlacedReadBuilder<P> createPlacedReadBuilder(P read);
-        protected abstract PlacedReadBuilder<P> createPlacedReadBuilder(String id, int offset,Range validRange, String basecalls, Direction dir);
-        
-        protected abstract P createPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long offset, Direction dir, int ungappedFullLength,Range validRange);
-        
+        protected abstract PlacedReadBuilder<P> createPlacedReadBuilder(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength);
+      
        
         public AbstractContigBuilder<P,C> setId(String id){
             this.id = id;
