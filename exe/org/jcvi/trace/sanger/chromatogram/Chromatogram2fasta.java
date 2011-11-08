@@ -121,7 +121,11 @@ public class Chromatogram2fasta {
                         .longName("pos")
                         .isFlag(true)
                         .build());
-        
+        options.addOption(CommandLineUtils.createHelpOption());
+        if(CommandLineUtils.helpRequested(args)){
+            printHelp(options);
+            System.exit(0);
+        }
        try {
         CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
         if(!commandLine.hasOption("s") && !commandLine.hasOption("p") && !commandLine.hasOption("q")){
@@ -165,16 +169,21 @@ public class Chromatogram2fasta {
             IOUtil.closeAndIgnoreErrors(posOut);
         }
     } catch (ParseException e) {
+        System.err.println(e.getMessage());
+        printHelp(options);
+    }
+
+    }
+
+    static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp( "chromatogram2fasta -i <file of chromatograms> [OPTIONS]", 
                 
-                "parse the chromtograms (either .scf or .ztr) whose paths are given in the -i option " +
+                "parse the chromtograms (either .scf or .ztr or ab1) whose paths are given in the -i option " +
                 "and generate .seq .qual and/or .pos multi fasta files.  The ids in the fasta file(s) "+
                 "will be the file name without the extension (ex : SEQNAME.scf will have a FASTA defline \">SEQNAME\")",
                 options,
                 "Created by Danny Katzel");
-    }
-
     }
 
 }
