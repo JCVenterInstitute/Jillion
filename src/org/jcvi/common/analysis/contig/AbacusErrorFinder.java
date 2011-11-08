@@ -20,8 +20,10 @@
 package org.jcvi.common.analysis.contig;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jcvi.common.core.Range;
@@ -42,6 +44,7 @@ public class AbacusErrorFinder {
     private final int clusterDistance;
     private final int minAbacusLength;
     private final double percentGap;
+   
     public AbacusErrorFinder(int clusterDistance, int minAbacusLength,double percentGap){
         this.clusterDistance = clusterDistance;
         this.minAbacusLength = minAbacusLength;
