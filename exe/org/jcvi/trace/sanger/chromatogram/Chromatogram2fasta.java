@@ -36,8 +36,10 @@ import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRe
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilderVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramParser;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
@@ -157,10 +159,10 @@ public class Chromatogram2fasta {
                 File chromatogramFile = new File(chromatogramFilePath);
                 
                 String id = FilenameUtils.getBaseName(chromatogramFile.getName());
-                BasicChromatogramFile chromo = new BasicChromatogramFile();
-                ChromatogramParser.parse(chromatogramFile, chromo);
+                BasicChromatogramBuilderVisitor builder = new BasicChromatogramBuilderVisitor();
+                ChromatogramParser.parse(chromatogramFile, builder);
                 
-                chromo2Fasta.writeChromatogram(id, chromo);
+                chromo2Fasta.writeChromatogram(id, builder.build());
                
             }
         }finally{
