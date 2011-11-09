@@ -33,7 +33,7 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public class BasicChromatogramBuilderVisitor implements ChromatogramFileVisitor, Builder<Chromatogram>{
+public final class BasicChromatogramBuilderVisitor implements ChromatogramFileVisitor, Builder<Chromatogram>{
 
 
     private BasicChromatogramBuilder builder;

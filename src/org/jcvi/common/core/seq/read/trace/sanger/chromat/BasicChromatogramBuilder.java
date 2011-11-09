@@ -147,6 +147,9 @@ public final class BasicChromatogramBuilder {
         }
 
         public final short[] aPositions() {
+            if(aPositions ==null){
+                return new short[]{};
+            }
             return Arrays.copyOf(aPositions, aPositions.length);
         }
 
@@ -156,6 +159,9 @@ public final class BasicChromatogramBuilder {
         }
 
         public final short[] cPositions() {
+            if(cPositions ==null){
+                return new short[]{};
+            }
             return Arrays.copyOf(cPositions, cPositions.length);
         }
 
@@ -165,6 +171,9 @@ public final class BasicChromatogramBuilder {
         }
 
         public final short[] gPositions() {
+            if(gPositions ==null){
+                return new short[]{};
+            }
             return Arrays.copyOf(gPositions, gPositions.length);
         }
 
@@ -174,6 +183,9 @@ public final class BasicChromatogramBuilder {
         }
 
         public final short[] tPositions() {
+            if(tPositions ==null){
+                return new short[]{};
+            }
             return Arrays.copyOf(tPositions, tPositions.length);
         }
 

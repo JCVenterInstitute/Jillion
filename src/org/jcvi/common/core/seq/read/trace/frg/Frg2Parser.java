@@ -23,6 +23,9 @@
  */
 package org.jcvi.common.core.seq.read.trace.frg;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor.FrgAction;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
@@ -56,6 +60,83 @@ public class Frg2Parser {
     private static final String BEGIN_FRG = "{FRG";
     private static final String BEGIN_LKG = "{LKG";
     
+    
+    public static void parse2(File frgFile, Frg2Visitor visitor) throws IOException{
+       InputStream in = null;
+       try{
+           in= new FileInputStream(frgFile);
+           parse2(in,visitor);
+       }finally{
+           IOUtil.closeAndIgnoreErrors(in);
+       }
+    }
+    public static void parse2(InputStream frgStream, Frg2Visitor visitor) throws IOException{
+        TextLineParser parser = new TextLineParser(frgStream);
+        while(parser.hasNextLine()){
+            String line = parser.nextLine();
+            visitor.visitLine(line);
+            if(!line.startsWith("#")){
+                if(line.startsWith(BEGIN_LIB)){
+                    handleLibrary(parser, visitor);
+                }
+                else if(line.startsWith(BEGIN_FRG)){
+                    handleFragment(parser,visitor);
+                }
+                else if(line.startsWith(BEGIN_LKG)){
+                    handleLink(parser,visitor);
+                }
+            }
+        }
+    }
+    /**
+     * @param parser
+     * @param visitor
+     * @throws IOException 
+     */
+    private static void handleLink(TextLineParser parser, Frg2Visitor visitor) throws IOException {
+        String actionLine = parser.nextLine();
+        visitor.visitLine(actionLine);
+        FrgAction action = parseAction(actionLine);
+        List<String> ids = new ArrayList<String>(2);
+        ids.add(parseFrgUid(parser, visitor));
+        ids.add(parseFrgUid(parser, visitor));
+        parseEndOfBlock(parser,visitor);
+        visitor.visitLink(action, ids);
+        
+    }
+    private static void parseEndOfBlock(TextLineParser parser, Frg2Visitor visitor) throws IOException{
+        String line = parser.nextLine();
+        visitor.visitLine(line);
+        if(!line.startsWith("}")){
+            throw new IOException("error reading end of block");
+        }
+    }
+    private static String parseFrgUid(TextLineParser parser, Frg2Visitor visitor) throws IOException{
+        String line = parser.nextLine();
+        visitor.visitLine(line);
+        Matcher matcher = LKG_FRG_ID_PATTERN.matcher(line);
+        if(!matcher.find()){
+           throw new IOException("error parsing frg UID : "+ line); 
+        }
+        return matcher.group(1);
+    }
+    /**
+     * @param parser
+     * @param visitor
+     */
+    private static void handleFragment(TextLineParser parser,
+            Frg2Visitor visitor) {
+        // TODO Auto-generated method stub
+        
+    }
+    /**
+     * @param parser
+     * @param visitor
+     */
+    private static void handleLibrary(TextLineParser parser, Frg2Visitor visitor) {
+        // TODO Auto-generated method stub
+        
+    }
     public void parse(InputStream in, Frg2Visitor visitor){
         
         Scanner scanner = new Scanner(in).useDelimiter( FragmentUtil.CR);
@@ -97,7 +178,7 @@ public class Frg2Parser {
         visitor.visitLink(action, fragIds);
         
     }
-    private FrgAction parseAction(String message){
+    private static FrgAction parseAction(String message){
         Matcher matcher = ACTION_PATTERN.matcher(message);
         if(matcher.find()){
             return FrgAction.parseAction(matcher.group(1).charAt(0));

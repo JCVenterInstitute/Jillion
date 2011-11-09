@@ -36,8 +36,6 @@ import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRe
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilder;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilderVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramParser;
