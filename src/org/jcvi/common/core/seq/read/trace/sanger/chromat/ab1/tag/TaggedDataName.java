@@ -287,6 +287,21 @@ public enum TaggedDataName {
 	ScSt("ScSt"),
 	OfSc("OfSc"),
 	Satd("Satd"),
+	
+	BufT("BufT"),
+	BufG("BufG"),
+	BufC("BufC"),
+	BufA("BufA"),
+	
+	LAST("LAST"),
+	P1AM("P1AM"),
+	P1RL("P1RL"),
+	P1WD("P1WD"),
+	P2AM("P2AM"),
+    P2RL("P2RL"),  
+    P2BA("P2BA"),
+    RGOw("RGOw")
+	
 	;
 	
 	private static final Map<String, TaggedDataName> MAP;
