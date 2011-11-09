@@ -21,9 +21,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
 import java.util.Properties;
 
+import org.jcvi.common.core.assembly.contig.ace.AceFileUtil;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  * {@code PhdUtil} is a Utility class for Phred Phd data.
@@ -32,12 +31,6 @@ import org.joda.time.format.DateTimeFormatter;
  *
  */
 public class PhdUtil {
-    /**
-     * This is a {@link DateTimeFormatter} for reading/ writing
-     * Phd date timestamps.
-     */
-    public static final DateTimeFormatter PHD_DATE_FORMAT = DateTimeFormat.forPattern(
-    "EEE MMM dd kk:mm:ss yyyy");
     
     /**
      * Phd records must include a date time stamp as a comment,
@@ -50,7 +43,7 @@ public class PhdUtil {
      */
     public static Properties createPhdTimeStampCommentFor(DateTime phdDate){
         Properties comments = new Properties();
-        comments.put("TIME", PHD_DATE_FORMAT.print(phdDate));        
+        comments.put("TIME", AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.print(phdDate));        
         return comments;
     }
     /**
@@ -65,7 +58,7 @@ public class PhdUtil {
      */
     public static Properties createPhdTimeStampAndChromatFileCommentsFor(DateTime phdDate, String filename){
         Properties comments = new Properties();
-        comments.put("TIME", PHD_DATE_FORMAT.print(phdDate));    
+        comments.put("TIME", AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.print(phdDate));    
         comments.put("CHROMAT_FILE", filename);  
         return comments;
     }
