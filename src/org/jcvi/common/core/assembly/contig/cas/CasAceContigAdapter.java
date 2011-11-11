@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.assembly.contig.ace;
+package org.jcvi.common.core.assembly.contig.cas;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -30,18 +30,21 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.cas.CasIdLookup;
+import org.jcvi.common.core.assembly.contig.ace.AceContig;
+import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadAdapter;
 import org.jcvi.common.core.assembly.contig.cas.read.CasPlacedRead;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
-public class AceContigAdapter implements AceContig{
+public class CasAceContigAdapter implements AceContig{
 
     private final Contig<CasPlacedRead> delegate;
     private final Map<String, AcePlacedRead> adaptedReads = new HashMap<String, AcePlacedRead>();
+    
     /**
      * @param delegate
      */
-    public AceContigAdapter(Contig<CasPlacedRead> delegate, Date phdDate,CasIdLookup idLookup) {
+    public CasAceContigAdapter(Contig<CasPlacedRead> delegate, Date phdDate,CasIdLookup idLookup) {
         this.delegate = delegate;
         for(CasPlacedRead read : delegate.getPlacedReads()){
             final String readId = read.getId();
