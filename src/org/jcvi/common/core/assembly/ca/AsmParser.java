@@ -42,6 +42,7 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.LinkOrientation;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.MatePairEvidence;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.MateStatus;
+import org.jcvi.common.core.assembly.ca.AsmVisitor.NestedContigMessageTypes;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.OverlapStatus;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.OverlapType;
 import org.jcvi.common.core.assembly.ca.AsmVisitor.UnitigLayoutType;
@@ -179,6 +180,7 @@ public final class AsmParser {
                 }
                 int numBuckets = Integer.parseInt(bucketMatcher.group(1));
                 String histogramStart =parserState.getNextLine();
+                visitor.visitLine(histogramStart);
                 if(!histogramStart.startsWith("his:")){
                     throw new IOException("invalid asm file: could not parse MDI start of histogram values: "+histogramStart);
                  }
@@ -202,7 +204,20 @@ public final class AsmParser {
             protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
                 IdTuple idTuple =parseIds(parserState, visitor, ACCESSION_PATTERN);
-                MateStatus mateStatus = parseMateStatus(parserState, visitor);
+                //old asm files used to have a scn block 
+                //which should be ignored
+                String scnLine = parserState.getNextLine();
+                visitor.visitLine(scnLine);
+                if(scnLine.startsWith("scn")){
+                    while(!scnLine.startsWith(".")){
+                        scnLine = parserState.getNextLine();
+                        visitor.visitLine(scnLine);
+                    }
+                    //get next line which should be status
+                    scnLine = parserState.getNextLine();
+                    visitor.visitLine(scnLine);
+                }
+                MateStatus mateStatus = parseMateStatus(scnLine);
                 //is chimeric line is now ignored
                 //but we need to visit the line anyway
                 //in case the visitor is counting bytes or lines
@@ -223,7 +238,7 @@ public final class AsmParser {
                 if(!matcher.find()){
                     throw new IOException("invalid asm file: could not parse AFG clear range: "+line);
                 }
-                return Range.parseRange(matcher.group(1));
+                return Range.parseRange(matcher.group(1),CoordinateSystem.SPACE_BASED);
             }
 
             
@@ -287,6 +302,8 @@ public final class AsmParser {
                 visitor.visitLine(nextLine);
                 //measure of polymorphism
                 //was introduced in CA 6
+                //looks like older versions
+                //had this value inside the src field
                 final float polymorphism;
                 if(nextLine.startsWith("mhp")){
                     polymorphism = parsePolymorphismMeasure(nextLine);
@@ -301,6 +318,9 @@ public final class AsmParser {
                 //skip legacy branch point lines
                 //which don't exist in newer versions of CA
                 if(nextLine.startsWith("abp")){
+                    //skip bbp as well
+                    nextLine = parserState.getNextLine();
+                    visitor.visitLine(nextLine);
                     nextLine = parserState.getNextLine();
                     visitor.visitLine(nextLine);
                 }
@@ -381,7 +401,8 @@ public final class AsmParser {
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor,
                     boolean parseReadLayout) throws IOException {
-                char type = parseReadType(parserState, visitor);
+                if(parseReadLayout){
+                   char type = parseReadType(parserState, visitor);
                    String readId = parseReadId(parserState,visitor);
                    String nextLine = parserState.getNextLine();
                    visitor.visitLine(nextLine);
@@ -396,10 +417,11 @@ public final class AsmParser {
                    
                    DirectedRange directedRange = parseDirectedRange(nextLine);
                    List<Integer> gapOffsets = parseGapOffsets(parserState,visitor);
-                   parseEndOfMessage(parserState, visitor);
-                   if(parseReadLayout){
-                       visitor.visitReadLayout(type, readId, directedRange, gapOffsets);
-                   }
+                   parseEndOfMessage(parserState, visitor);                   
+                   visitor.visitReadLayout(type, readId, directedRange, gapOffsets);
+                }else{
+                    skipCurrentBlock(parserState, visitor);
+                }
             }
             private DirectedRange parseDirectedRange(String line) throws IOException {
                 Matcher matcher = RANGE_PATTERN.matcher(line);
@@ -418,6 +440,7 @@ public final class AsmParser {
                 }
                 int expectedNumberOfOffsets = Integer.parseInt(matcher.group(1));
                 String beginDeltaEncodingLine = parserState.getNextLine();
+                visitor.visitLine(beginDeltaEncodingLine);
                 if(!beginDeltaEncodingLine.startsWith("del:")){
                     throw new IOException("error reading read-to-unitig delta encoding:"+ beginDeltaEncodingLine);
                 }
@@ -504,36 +527,55 @@ public final class AsmParser {
                 int numberOfUnitigs = parseNumberOfReads(parserState, visitor);
                 int numberOfVariants = parseNumberOfReads(parserState, visitor);
                 
-                boolean visitContig =visitor.visitContig(idTuple.externalId, idTuple.internalId, isDegenerate, 
+                Set<NestedContigMessageTypes> nestedTypesToVisit =visitor.visitContig(idTuple.externalId, idTuple.internalId, isDegenerate, 
                         consensus, consensusQualities, 
                         numberOfReads, numberOfUnitigs, numberOfVariants);
-                for(int i=0; i<numberOfVariants; i++){
-                    String variantHeader = parserState.getNextLine();
-                    visitor.visitLine(variantHeader);
-                    String messageCode = parseMessageCode(variantHeader);
-                    if(!VARIANT.canHandle(messageCode)){
-                        throw new IOException("invalid variant block start : "+ variantHeader);
+                if(nestedTypesToVisit.contains(NestedContigMessageTypes.VARIANTS)){
+                    for(int i=0; i<numberOfVariants; i++){
+                        String variantHeader = parserState.getNextLine();
+                        visitor.visitLine(variantHeader);
+                        String messageCode = parseMessageCode(variantHeader);
+                        if(!VARIANT.canHandle(messageCode)){
+                            throw new IOException("invalid variant block start : "+ variantHeader);
+                        }
+                        VARIANT.handle(parserState, visitor,true);
                     }
-                    VARIANT.handle(parserState, visitor,visitContig);
-                }
-                for(int i=0; i<numberOfReads; i++){
-                    String readHeader = parserState.getNextLine();
-                    visitor.visitLine(readHeader);
-                    String messageCode = parseMessageCode(readHeader);
-                    if(!READ_MAPPING.canHandle(messageCode)){
-                        throw new IOException("invalid read mapping block start : "+ readHeader);
+                }else{
+                    for(int i=0; i<numberOfVariants; i++){
+                        skipCurrentBlock(parserState, visitor);
                     }
-                    READ_MAPPING.handle(parserState, visitor,visitContig);
                 }
-                for(int i=0; i<numberOfUnitigs; i++){
-                    String unitigHeader = parserState.getNextLine();
-                    visitor.visitLine(unitigHeader);
-                    String messageCode = parseMessageCode(unitigHeader);
-                    if(!UNITIG_MAPPING.canHandle(messageCode)){
-                        throw new IOException("invalid unitig mapping block start : "+ unitigHeader);
+                if(nestedTypesToVisit.contains(NestedContigMessageTypes.READ_MAPPING)){
+                    for(int i=0; i<numberOfReads; i++){
+                        String readHeader = parserState.getNextLine();
+                        visitor.visitLine(readHeader);
+                        String messageCode = parseMessageCode(readHeader);
+                        if(!READ_MAPPING.canHandle(messageCode)){
+                            throw new IOException("invalid read mapping block start : "+ readHeader);
+                        }
+                        READ_MAPPING.handle(parserState, visitor,true);
                     }
-                    UNITIG_MAPPING.handle(parserState, visitor,visitContig);
+                }else{
+                    for(int i=0; i<numberOfReads; i++){
+                        skipCurrentBlock(parserState, visitor);
+                    }
                 }
+                if(nestedTypesToVisit.contains(NestedContigMessageTypes.UNITIG_MAPPING)){
+                    for(int i=0; i<numberOfUnitigs; i++){
+                        String unitigHeader = parserState.getNextLine();
+                        visitor.visitLine(unitigHeader);
+                        String messageCode = parseMessageCode(unitigHeader);
+                        if(!UNITIG_MAPPING.canHandle(messageCode)){
+                            throw new IOException("invalid unitig mapping block start : "+ unitigHeader);
+                        }
+                        UNITIG_MAPPING.handle(parserState, visitor,true);
+                    }
+                }else{
+                    for(int i=0; i<numberOfUnitigs; i++){
+                        skipCurrentBlock(parserState, visitor);
+                    }
+                }
+                
                 
                 parseEndOfMessage(parserState, visitor);
                 visitor.visitEndOfContig();
@@ -571,24 +613,27 @@ public final class AsmParser {
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor,
                     boolean shouldVisitRecord) throws IOException {
-                UnitigLayoutType type = parseUnitigLayoutType(parserState, visitor);
-                String readId = parseReadId(parserState,visitor);
-                String nextLine = parserState.getNextLine();
-                visitor.visitLine(nextLine);
-                //CA <= 5 had a src block which should be ignored
-                //CA 6+ doesn't have it anymore so need to handle
-                //both cases.
-                if(nextLine.startsWith("src")){
-                    skipReservedSource(parserState, visitor);
-                    nextLine = parserState.getNextLine();
-                    visitor.visitLine(nextLine);
-                }
-                
-                DirectedRange directedRange = parseDirectedRange(nextLine);
-                List<Integer> gapOffsets = parseGapOffsets(parserState,visitor);
-                parseEndOfMessage(parserState, visitor);
                 if(shouldVisitRecord){
+                    UnitigLayoutType type = parseUnitigLayoutType(parserState, visitor);
+                    String readId = parseReadId(parserState,visitor);
+                    String nextLine = parserState.getNextLine();
+                    visitor.visitLine(nextLine);
+                    //CA <= 5 had a src block which should be ignored
+                    //CA 6+ doesn't have it anymore so need to handle
+                    //both cases.
+                    if(nextLine.startsWith("src")){
+                        skipReservedSource(parserState, visitor);
+                        nextLine = parserState.getNextLine();
+                        visitor.visitLine(nextLine);
+                    }
+                    
+                    DirectedRange directedRange = parseDirectedRange(nextLine);
+                    List<Integer> gapOffsets = parseGapOffsets(parserState,visitor);
+                    parseEndOfMessage(parserState, visitor);
+               
                     visitor.visitUnitigLayout(type, readId, directedRange, gapOffsets);
+                }else{
+                    skipCurrentBlock(parserState, visitor);
                 }
             }
             private DirectedRange parseDirectedRange(String line) throws IOException {
@@ -664,6 +709,7 @@ public final class AsmParser {
              @Override
              protected void handle(ParserState parserState, AsmVisitor visitor,
                      boolean shouldVisitRecord) throws IOException {
+                if(shouldVisitRecord){
                 Range position = parseVariantPosition(parserState,visitor);
                 int numberOfReads = parseNumberOfReads(parserState, visitor);
                 int numberOfVariants = parseNumberOfVariants(parserState, visitor);
@@ -681,23 +727,26 @@ public final class AsmParser {
                 }
                 
                 parseEndOfMessage(parserState, visitor);
-                if(shouldVisitRecord){
-                    SortedSet<VariantRecord> variantRecords = new TreeSet<VariantRecord>();
-                    int readCounter=0;
-                    
-                    for(int i=0; i < numberOfVariants; i++){
-                        int numContributingReads = Integer.parseInt(contributingReadCountString[i].trim());
-                        int weight = Integer.parseInt(weightString[i].trim());
-                        NucleotideSequence seq = NucleotideSequenceFactory.create(sequencesString[i].trim());
-                        List<Long> reads = readIds.subList(readCounter, readCounter+numContributingReads);
-                        variantRecords.add(new VariantRecordImpl(reads, seq, weight));
-                        readCounter+=numContributingReads;
-                    }
-                    visitor.visitVariance(position, numberOfReads, anchorSize, 
-                            variantId, phasedVariantId, 
-                            variantRecords);
+                
+                SortedSet<VariantRecord> variantRecords = new TreeSet<VariantRecord>();
+                int readCounter=0;
+                
+                for(int i=0; i < numberOfVariants; i++){
+                    int numContributingReads = Integer.parseInt(contributingReadCountString[i].trim());
+                    int weight = Integer.parseInt(weightString[i].trim());
+                    NucleotideSequence seq = NucleotideSequenceFactory.create(sequencesString[i].trim());
+                    List<Long> reads = readIds.subList(readCounter, readCounter+numContributingReads);
+                    variantRecords.add(new VariantRecordImpl(reads, seq, weight));
+                    readCounter+=numContributingReads;
+                }
+                visitor.visitVariance(position, numberOfReads, anchorSize, 
+                        variantId, phasedVariantId, 
+                        variantRecords);
+                }else{
+                    skipCurrentBlock(parserState, visitor);
                 }
              }
+            
             private String parseContributingReadcountString(
                     ParserState parserState, AsmVisitor visitor) throws IOException {
                 return parseVariantBlock(parserState, visitor, "nra:");
@@ -987,19 +1036,31 @@ public final class AsmParser {
         public static void parse(ParserState parserState, AsmVisitor visitor) throws IOException{
             while(parserState.hasNextLine()){
                 String line =parserState.getNextLine();
-                visitor.visitLine(line);
-                Matcher matcher = MESSAGE_HEADER_PATTERN.matcher(line);
-                if(matcher.find()){
-                    String header = matcher.group(1);
-                    for(AsmMessageHandler handler : values()){
-                        if(handler.canHandle(header)){
-                            handler.handle(parserState, visitor);
-                            break;
+                if(line !=null){                    
+                    visitor.visitLine(line);
+                    Matcher matcher = MESSAGE_HEADER_PATTERN.matcher(line);
+                    if(matcher.find()){
+                        String header = matcher.group(1);
+                        for(AsmMessageHandler handler : values()){
+                            if(handler.canHandle(header)){
+                                handler.handle(parserState, visitor);
+                                break;
+                            }
                         }
                     }
                 }
             }
             visitor.visitEndOfFile();
+        }
+        
+        void skipCurrentBlock(ParserState parserState,
+                AsmVisitor visitor) throws IOException {
+            String line=null;
+            do{
+                line = parserState.getNextLine();
+                visitor.visitLine(line);
+            }while(line !=null && !line.startsWith("}"));
+            
         }
         
         IdTuple parseIds(ParserState parserState, AsmVisitor visitor, Pattern pattern) throws IOException {
@@ -1024,6 +1085,14 @@ public final class AsmParser {
                 AsmVisitor visitor) throws IOException {
             String line = parserState.getNextLine();
             visitor.visitLine(line);
+            Matcher matcher = MATE_STATUS_PATTERN.matcher(line);
+            if(!matcher.find()){
+                throw new IOException("invalid asm file: could not parse "+messageCode+" mate status: "+line);
+            }
+            return MateStatus.parseMateStatus(matcher.group(1));
+        }
+        
+        MateStatus parseMateStatus(String line) throws IOException {
             Matcher matcher = MATE_STATUS_PATTERN.matcher(line);
             if(!matcher.find()){
                 throw new IOException("invalid asm file: could not parse "+messageCode+" mate status: "+line);

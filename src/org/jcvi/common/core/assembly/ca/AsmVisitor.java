@@ -137,7 +137,15 @@ public interface AsmVisitor extends TextFileVisitor{
          * Each mate was placed in different
          * scaffolds.
          */
-        DIFFERENT_SCAFFOLD('F')
+        DIFFERENT_SCAFFOLD('F'),
+        /**
+         * <strong>DO NOT USE</strong>.
+         * Old deprecated bad mate status
+         * included here only to support 
+         * old asm files.
+         */
+        @Deprecated
+        DEPRECATED_BAD('B')
         ;
         private final char code;
         
@@ -398,6 +406,44 @@ public interface AsmVisitor extends TextFileVisitor{
         }
     }
     
+    /**
+     * {@code NestedContigMessageTypes}
+     * is an enum of all the possible 
+     * nested messages inside a contig message
+     * in an asm file.
+     * @author dkatzel
+     *
+     *
+     */
+    public enum NestedContigMessageTypes{
+        /**
+         * Visit all the reads that map to this contig.
+         * Including this as part of the Set returned by 
+         * {@link AsmVisitor#visitContig(String, long, boolean, NucleotideSequence, QualitySequence, int, int, int)}
+         * will make this visitor call
+         * {@link AsmVisitor#visitReadLayout(char, String, Range, Direction, List)}
+         * n times where n is the number of reads in the contig currently being visited.
+         */
+        READ_MAPPING,
+        /**
+         * Visit all the unitigs that map to this contig.
+         * Including this as part of the Set returned by 
+         * {@link AsmVisitor#visitContig(String, long, boolean, NucleotideSequence, QualitySequence, int, int, int)}
+         * will make this visitor call
+         * {@link AsmVisitor#visitUnitigLayout(UnitigLayoutType, String, DirectedRange, List)
+         * n times where n is the number of unitigs in the contig currently being visited.
+         */
+        UNITIG_MAPPING,
+        /**
+         * Visit all the variant messages of this contig.
+         * Including this as part of the Set returned by 
+         * {@link AsmVisitor#visitContig(String, long, boolean, NucleotideSequence, QualitySequence, int, int, int)}
+         * will make this visitor call
+         * {@link AsmVisitor#visitVariance(Range, int, int, long, long, SortedSet)
+         * n times where n is the number of variant records in the contig currently being visited.
+         */
+        VARIANTS
+    }
     
     public interface MatePairEvidence{
         String getRead1();
@@ -532,7 +578,7 @@ public interface AsmVisitor extends TextFileVisitor{
      * @param numberOfReads number of reads in the unitig, should always
      * be >=1.
      * @return {@code true} if the read layouts of this unitig
-     * should be visitied' {@code false} otherwise.  If a unitig's
+     * should be visited {@code false} otherwise.  If a unitig's
      * read layouts are to be visited, then the {@link #visitReadLayout(char, long, Range, Direction, List)}
      * will be called {@code numberOfReads} times followed by {@link #visitEndOfUnitig()}.
      * If the read layouts are not to be visited, then the next visit call 
@@ -618,7 +664,8 @@ public interface AsmVisitor extends TextFileVisitor{
             float meanDistance, float stddev, Set<MatePairEvidence> matePairEvidence);
     /**
      * Describes one contig.  A contig represents a contiguous span
-     * of the target genome.  The contig contains a layout of unitigs.
+     * of the target genome.  The contig contains a layout of reads, a layout of unitigs
+     * and any variants found in the underlying reads.
      * @param externalId the unique external id of this contig.
      * @param internalId an internal integer value that associates this contig with
      * future messages visited further on in the assembly pipeline. 
@@ -630,12 +677,15 @@ public interface AsmVisitor extends TextFileVisitor{
      * laid out in this contig.
      * @param numberOfVariants the number of variant (alternate allele)
      * consensus regions.
-     * @return {@code true} to visit the read and unitig layouts as well
+     * @return A Set of {@link NestedContigMessageTypes} to visit for this contig;
+     * can not be null.  If no nested messages should be visited, then 
+     * return an empty set. Regardless of the return value, {@link #visitEndOfContig()}
+     * will be called after any nested messages (if any) are visited.   Ithe read and unitig layouts as well
      * as the variant records for this contig; {@code false} otherwise. If a contig's
      * layouts are to be visited then calls to {@link #visitReadLayout(char, String, Range, Direction, List)}
      * will be called {@code numberOfReads} times, before the call to {@link #visitEndOfContig()}.
      */
-    boolean visitContig(String externalId, long internalId, boolean isDegenerate,
+    Set<NestedContigMessageTypes> visitContig(String externalId, long internalId, boolean isDegenerate,
             NucleotideSequence consensusSequence, QualitySequence consensusQualities,
             int numberOfReads, int numberOfUnitigs, int numberOfVariants);
     
