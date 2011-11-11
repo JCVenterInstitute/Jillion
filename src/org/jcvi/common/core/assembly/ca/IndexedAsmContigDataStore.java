@@ -375,7 +375,13 @@ public class IndexedAsmContigDataStore implements AsmContigDataStore{
         }
 
     }
-   
+    /**
+     * {@code SingleContigVisitor} parses (parts of) an asm file
+     * but only extracts information for the particular given contig. 
+     * @author dkatzel
+     *
+     *
+     */
     private static class SingleContigVisitor extends AbstractAsmVisitor{
         private final Map<String,Range> readMap;
         private final String contigId;
@@ -383,7 +389,17 @@ public class IndexedAsmContigDataStore implements AsmContigDataStore{
         private AsmContigBuilder currentBuilder=null;
         private final FragmentDataStore frgDataStore;
         private AsmContig contig=null;
-        
+        /**
+         * Constructor.  
+         * @param contigId the contig id to parse from asm file.
+         * @param readMap the readMap of clear ranges for only the reads
+         * we care about.  We only really care about the keys at first,
+         * this instance will be modified by this program to correctly
+         * set their values.
+         * @param frgDataStore the {@link FragmentDataStore}
+         * containing all the full length basecalls for this assembly.
+         * (needed to create read records)
+         */
         public SingleContigVisitor(String contigId, Map<String,Range> readMap,FragmentDataStore frgDataStore){
             this.contigId = contigId;
             this.readMap = readMap;

@@ -103,6 +103,11 @@ public class GridFindAbacusErrorsInAce {
         .isRequired(true)
         .build());
         
+        options.addOption(new CommandLineOptionBuilder("cwd", "path to what the working directory for this program should be.  This is where " +
+        		"all the grid STDERR and STDOUT files will go.  If not set" +
+        		" defaults to current working directory")
+        .build());
+        
         options.addOption(CommandLineUtils.createHelpOption());
         OptionGroup group = new OptionGroup();
         
@@ -139,20 +144,23 @@ public class GridFindAbacusErrorsInAce {
             String projectCode = commandLine.getOptionValue("P");
             boolean wantsNav = commandLine.hasOption("nav");
             File navFile=null;
-            File workDir = new File(".");
+            File workDir = commandLine.hasOption("cwd")?
+                    new File(commandLine.getOptionValue("cwd")) : new File(".");
+           
             if(wantsNav){
                 navFile = new File(commandLine.getOptionValue("nav"));
                 IOUtil.deleteIgnoreError(navFile);
                 if(!navFile.createNewFile()){
                     throw new IOException("error creating file; already exists and cannot delete"+ navFile.getAbsolutePath());
                 }
-                workDir = navFile.getCanonicalFile().getParentFile();
+               // workDir = navFile.getCanonicalFile().getParentFile();
             }
             final String userDefinedPercentage = commandLine.hasOption("percent")?commandLine.getOptionValue("percent") : null;
             int maxJobs = commandLine.hasOption("max_submitted_jobs")?
                     Integer.parseInt(commandLine.getOptionValue("max_submitted_jobs"))
                     : DEFAULT_MAX_JOBS;
             executor = new GridJobExecutorService(session,"abacusErrorDetector", maxJobs);
+            final GridJobExecutorService builtExecutor = executor;
             List<SimpleGridJob> jobs = new ArrayList<SimpleGridJob>();
             File aceFile = new File(commandLine.getOptionValue("a"));
             final DataStoreFilter filter = getDataStoreFilter(commandLine);
@@ -185,8 +193,21 @@ public class GridFindAbacusErrorsInAce {
                         @Override
                         public int execute(Map<String, JobInfo> jobInfoMap) throws Exception {
                             for(Entry<String, JobInfo> entry : jobInfoMap.entrySet()){
-                                System.out.printf("grid job %s for contig id  %s finished%n", 
-                                        entry.getKey(), contigId);
+                                JobInfo info = entry.getValue();
+                                if(info.hasSignaled()){
+                                    System.err.printf("grid job %s for contig id %d was cancelled%n",
+                                            entry.getKey(),contigId);
+                                    return 1;
+                                }
+                                if (info.hasExited() && info.getExitStatus() != 0){
+                                    System.err.printf("grid job %s for contig id %d FAILED%n",
+                                    entry.getKey(),contigId);
+                                    builtExecutor.shutdownNow();
+                                    return 1;
+                                }
+                                    System.out.printf("grid job %s for contig id  %s finished%n", 
+                                            entry.getKey(), contigId);
+                                
                             }
                             return 0;
                         }

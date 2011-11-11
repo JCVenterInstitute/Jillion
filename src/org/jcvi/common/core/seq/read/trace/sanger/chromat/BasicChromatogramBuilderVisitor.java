@@ -26,7 +26,7 @@ import org.jcvi.common.core.util.Builder;
 /**
  * {@code BasicChromatogramBuilderVisitor} is a 
  * {@link ChromatogramFileVisitor} implementation
- * that wraps a BasicChromatogramBuilder instance
+ * that wraps a {@link BasicChromatogramBuilder} instance
  * to build up a single chromatogram object
  * as the chromatogram file is visited.
  * @author dkatzel
