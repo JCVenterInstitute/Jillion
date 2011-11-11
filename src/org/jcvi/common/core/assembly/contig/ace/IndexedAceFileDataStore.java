@@ -384,7 +384,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         @Override
         public synchronized boolean visitEndOfContig() {    
             indexFileRange.put(currentContigId, Range.buildRange(currentStartOffset, 
-                    currentFileOffset-currentLineLength-1));
+                    currentFileOffset));
             visitContig();
             return true;
         }

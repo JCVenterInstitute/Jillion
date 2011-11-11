@@ -352,8 +352,20 @@ public class GridReAbacusAce {
                  @Override
                  public int execute(Map<String, JobInfo> jobInfoMap) throws Exception {
                      for(Entry<String, JobInfo> entry : jobInfoMap.entrySet()){
-                         System.out.printf("grid job %s for contig id  %s finished%n", 
-                                 entry.getKey(), contigId);
+                         JobInfo info = entry.getValue();
+                         if(info.hasSignaled()){
+                             System.err.printf("grid job %s for contig id %d was cancelled%n",
+                                     entry.getKey(),contigId);
+                             return 1;
+                         }
+                         if (info.hasExited() && info.getExitStatus() != 0){
+                             System.err.printf("grid job %s for contig id %d FAILED%n",
+                             entry.getKey(),contigId);
+                             executor.shutdownNow();
+                             return 1;
+                         }
+                             System.out.printf("grid job %s for contig id  %s finished%n", 
+                                     entry.getKey(), contigId);
                      }
                      return 0;
                  }
