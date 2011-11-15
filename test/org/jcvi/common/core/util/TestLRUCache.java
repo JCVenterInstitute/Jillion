@@ -25,7 +25,7 @@ package org.jcvi.common.core.util;
 
 import java.util.Map;
 
-import org.jcvi.common.core.util.LRUCache;
+import org.jcvi.common.core.util.Caches;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -39,7 +39,7 @@ public class TestLRUCache {
     protected Map<String, String> sut;
     
     protected Map<String,String> createLRUCache(int size){
-        return LRUCache.createLRUCache(size);
+        return Caches.createLRUCache(size);
     }
     @Before
     public void setup(){

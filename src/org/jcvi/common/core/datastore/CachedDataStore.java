@@ -29,7 +29,7 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.jcvi.common.core.util.LRUCache;
+import org.jcvi.common.core.util.Caches;
 
 /**
  * {@code CachedDataStore} uses the Java Proxy classes to
@@ -88,7 +88,7 @@ public class CachedDataStore <D extends DataStore> implements InvocationHandler{
    
     private CachedDataStore(D delegate, int cacheSize){
         this.delegate = delegate;
-        cache= LRUCache.createLRUCache(cacheSize);
+        cache= Caches.createLRUCache(cacheSize);
     }
    
     @Override

@@ -466,7 +466,7 @@ public class ReAbacusAceContigWorker {
                             basesBuilder.delete(sequenceRange);
                             
                             long length =basesBuilder.getLength();
-                            Range fixedBasesRange = newGappedRange.copy();
+                            Range fixedBasesRange = newGappedRange;
                             if(length-1 <sequenceRange.getStart()){
                                 //we are fixing the end of the read
                                 //trim off trailing gaps
