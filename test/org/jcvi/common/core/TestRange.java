@@ -668,7 +668,7 @@ public class TestRange{
         }
     }
 
-    private Range[] rangeList(Range ... ranges)
+    private Range[] rangeArray(Range ... ranges)
     {
         return ranges;
     }
@@ -676,51 +676,51 @@ public class TestRange{
     @Test public void testUnion()
     {
         Range add = Range.buildRange(5, 15);
-        assertRangesEqual(rangeList(Range.buildRange(1, 15)), this.range.union(add));
+        assertRangesEqual(rangeArray(Range.buildRange(1, 15)), this.range.union(add));
     }
     @Test public void testUnion_startsAfterTarget(){
         Range target= Range.buildRange(this.range.getStart()-30,this.range.getStart()-10 );
-        assertRangesEqual(rangeList(target,this.range), this.range.union(target));
+        assertRangesEqual(rangeArray(target,this.range), this.range.union(target));
     }
 
     @Test public void testUnion_disjoint()
     {
         Range add = Range.buildRange(15, 25);
-        assertRangesEqual(rangeList(this.range, add), this.range.union(add));
+        assertRangesEqual(rangeArray(this.range, add), this.range.union(add));
     }
 
     @Test public void testUnion_subrange()
     {
         Range add = Range.buildRange(4, 8);
-        assertRangesEqual(rangeList(this.range), this.range.union(add));
+        assertRangesEqual(rangeArray(this.range), this.range.union(add));
     }
 
     @Test public void testUnion_superrange()
     {
         Range add = Range.buildRange(-4, 18);
-        assertRangesEqual(rangeList(add), this.range.union(add));
+        assertRangesEqual(rangeArray(add), this.range.union(add));
     }
 
     @Test public void testUnion_sizeOneBeginning()
     {
         Range add = Range.buildRange(1, 1);
-        assertRangesEqual(rangeList(this.range), this.range.union(add));
+        assertRangesEqual(rangeArray(this.range), this.range.union(add));
     }
 
     @Test public void testUnion_sizeOneEnd()
     {
         Range add = Range.buildRange(10, 10);
-        assertRangesEqual(rangeList(this.range), this.range.union(add));
+        assertRangesEqual(rangeArray(this.range), this.range.union(add));
     }
 
     @Test public void testUnion_empty()
     {
-        assertRangesEqual(rangeList(this.range), this.range.union(emptyRange));
+        assertRangesEqual(rangeArray(this.range), this.range.union(emptyRange));
     }
 
     @Test public void testUnion_self()
     {
-        assertRangesEqual(rangeList(this.range), this.range.union(this.range));
+        assertRangesEqual(rangeArray(this.range), this.range.union(this.range));
     }
 
     @Test public void testUnion_null()

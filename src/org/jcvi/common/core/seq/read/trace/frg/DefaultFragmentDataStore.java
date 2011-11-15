@@ -24,6 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.frg;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
 public class DefaultFragmentDataStore extends AbstractFragmentDataStore{
     
-    private final Map<String, Fragment> fragments = new HashMap<String, Fragment>();
+    private final Map<String, Fragment> fragments = new LinkedHashMap<String, Fragment>();
     private final Map<String,String> fragmentMates = new HashMap<String, String>();
     
     

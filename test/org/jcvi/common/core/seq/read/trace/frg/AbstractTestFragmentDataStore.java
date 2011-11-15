@@ -25,6 +25,8 @@ package org.jcvi.common.core.seq.read.trace.frg;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -161,6 +163,33 @@ public abstract class  AbstractTestFragmentDataStore {
         assertEquals(expectedFragment.getLength(), actualFragment.getLength());
         assertEquals(expectedFragment.getLibraryId(), actualFragment.getLibraryId());
         
+    }
+    
+    @Test
+    public void testIdIterator() throws DataStoreException{
+
+        Iterator<String> expectedIterator = Arrays.asList(
+                "334369678",
+                "334370061"
+        ).iterator();
+        
+        Iterator<String> actualIterator = sut.getIds();
+        while(expectedIterator.hasNext()){
+            assertTrue(actualIterator.hasNext());
+            assertEquals(expectedIterator.next(), actualIterator.next());
+        }
+        assertFalse(actualIterator.hasNext());
+    }
+    
+    @Test
+    public void testIterator(){
+        Iterator<Fragment> expectedIterator = Arrays.asList(fragEndingIn78, fragEndingIn61).iterator();
+        Iterator<Fragment> actualIterator = sut.iterator();
+        while(expectedIterator.hasNext()){
+            assertTrue(actualIterator.hasNext());
+            assertEquals(expectedIterator.next(), actualIterator.next());
+        }
+        assertFalse(actualIterator.hasNext());
     }
     
 }

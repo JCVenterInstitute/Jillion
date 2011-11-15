@@ -28,12 +28,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.LRUCache;
 
 
 /**
@@ -300,10 +303,22 @@ public final class Range implements Placed<Range>,Iterable<Long>
      */
     private static Pattern DASH_PATTERN = Pattern.compile("(\\d+)\\s*-\\s*(\\d+)");
     private static Pattern COMMA_PATTERN = Pattern.compile("(\\d+)\\s*,\\s*(\\d+)");
-    
-    
+    /**
+     * Cache of previously built ranges. Need to keep caches
+     * for each coordinate system since that isn't used in equals or hashcode computations.
+     * Caches are SoftReferences mapped to their hashcodes
+     */
+    private static final Map<CoordinateSystem, Map<Integer, Range>> CACHE= new EnumMap<Range.CoordinateSystem, Map<Integer, Range>>(CoordinateSystem.class);
     private static final Comparator<Range> DEFAULT_COMPARATOR = Comparators.ARRIVAL;
 
+    /**
+     * Initialize cache with a soft reference cache
+     */
+    static{
+        for(CoordinateSystem cs : CoordinateSystem.values()){
+            CACHE.put(cs, LRUCache.<Integer, Range>createSoftReferencedValueLRUCache());
+        }
+    }
     /**
      * Factory method to build a {@link Range} object in
      * the {@link CoordinateSystem#ZERO_BASED} coordinate system.
@@ -351,7 +366,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @throws NullPointerException if the coordinateSystem is null.
      * @throws IllegalArgumentException if localEnd < localStart -1.
      */
-    public static Range buildRange(CoordinateSystem coordinateSystem,long localStart, long localEnd){
+    public static synchronized Range buildRange(CoordinateSystem coordinateSystem,long localStart, long localEnd){
         if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot build null coordinate system range");
         }
@@ -360,7 +375,16 @@ public final class Range implements Placed<Range>,Iterable<Long>
         long zeroBasedEnd = coordinateSystem.getEnd(localEnd);
 
         if(zeroBasedEnd >= zeroBasedStart) {
-            return new Range(zeroBasedStart,zeroBasedEnd,coordinateSystem);
+            Range range= new Range(zeroBasedStart,zeroBasedEnd,coordinateSystem);
+            //look to see if we already have this range in our cache
+          /*  Map<Integer, Range> cache =CACHE.get(coordinateSystem);
+            Integer hashcode = Integer.valueOf(range.hashCode());
+            if(cache.containsKey(hashcode)){
+                return cache.get(hashcode);
+            }
+            cache.put(hashcode, range);
+            */
+            return range;
         } else if (zeroBasedEnd == zeroBasedStart-1) {
             return buildEmptyRange(zeroBasedStart,zeroBasedEnd,coordinateSystem);
         } else {
@@ -385,8 +409,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
             return this;
         }
         
-        
-        return new Range(this.getStart(),this.getEnd(),coordinateSystem);
+        return Range.buildRange(coordinateSystem, coordinateSystem.getLocalStart(getStart()),coordinateSystem.getLocalEnd(getEnd()));
     }
     /**
      * Build and empty range in the zero-based coordinate system
@@ -597,6 +620,14 @@ public final class Range implements Placed<Range>,Iterable<Long>
         int result = 1;
         result = prime * result + (int) (start ^ (start >>> 32));
         result = prime * result + (int) (end ^ (end >>> 32));
+        //added length to hashcode computation
+        //hashcode for n and -n might be the same?
+        //so range of 5,10 and -5,10 would get the same
+        //hashcode if we don't take length into account
+        //this caused the cache to return the wrong values
+        //sometimes unless we added length to the computation
+        long length = getLength();
+        result = prime * result + (int)(length ^(length >>> 32));
         return result;
     }
     /* (non-Javadoc)

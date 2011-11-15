@@ -48,13 +48,15 @@ public class TestAcePlacedReadAdapter {
     long referenceIndex = 1234;
     long validRangeIndex = 7;
     Range validRange = Range.buildRange(1,10);
+    
     @Before
     public void setup(){
         mockPlacedRead = createMock(PlacedRead.class);
         expect(mockPlacedRead.getId()).andReturn(id);
         replay(mockPlacedRead);
-        sut = new AcePlacedReadAdapter(mockPlacedRead, date,null,(int)validRange.getLength()+5);
+        sut = new AcePlacedReadAdapter(mockPlacedRead, date,null);
         reset(mockPlacedRead);
+        expect(mockPlacedRead.getUngappedFullLength()).andStubReturn((int)validRange.getLength()+1);
     }
     
     @Test
