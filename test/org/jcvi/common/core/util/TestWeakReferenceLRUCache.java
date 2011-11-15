@@ -34,7 +34,7 @@ public class TestWeakReferenceLRUCache {
     @Test
     public void valueThatIsWeaklyReachableGetsRemoved() throws InterruptedException{
         
-        Map<String, Object> weakCache = LRUCache.createWeakReferencedValueLRUCache();
+        Map<String, Object> weakCache = Caches.createWeakReferencedValueLRUCache();
         weakCache.put("test", createObject());
         assertEquals(1, weakCache.size());
         assertEquals(Collections.singleton("test"),weakCache.keySet());
@@ -47,7 +47,7 @@ public class TestWeakReferenceLRUCache {
     
     @Test
     public void removesLeastRecentlyUsedStrongReference() throws InterruptedException{
-        Map<String, Object> weakCache = LRUCache.createWeakReferencedValueLRUCache(2);
+        Map<String, Object> weakCache = Caches.createWeakReferencedValueLRUCache(2);
         weakCache.put("test1", createObject());
         weakCache.put("test2", createObject());
         weakCache.put("test3", createObject());

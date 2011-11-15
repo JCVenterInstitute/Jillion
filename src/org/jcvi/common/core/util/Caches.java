@@ -40,62 +40,94 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * A <code>LRUCache</code> is a simplistic implementation of a 
- * Least-Recently-Used cache.  This uses the Java-native implementation of
- * a {@link LinkedHashMap} with last-access ordering and capacity limitation
- * to remove the element which was least recently accessed via the 
- * {@link #get(Object)} method.  This removal only occurs once the capacity
- * is reached.
- * <p>
- * This has the handy effect of creating a simple cache.  The greatest 
- * benefits when using this cache are seen when elements are accessed in
- * clusters, since they will generate large numbers of cache hits followed
- * by steadily dropping out of the cache.
+ * <code>Caches</code> is a utility class which contains various 
+ * implementations caches. Some implementations use a Least-Recently-Used
+ * policy (LRU) some implementations use {@link SoftReference}s or {@link WeakReference}s
+ * to avoid memory leaks.  
  * 
  * @param <K> The key type.
  * @param <V> The value Type.
  * 
+ * @author dkatzel
  * @author jsitz@jcvi.org
- * @author dkatzel@jcvi.org
+ * 
  */
-public class LRUCache<K, V> extends LinkedHashMap<K, V>
+public class Caches
 {
-    /** The Serial Version UID */
-    private static final long serialVersionUID = 6904810723111631250L;
+    
 
     private static final float DEFAULT_LOAD_FACTOR = 0.75F;
-    
+    /**
+     * The value of this constant is {@value}.
+     */
     public static final int DEFAULT_CAPACITY = 16;
     
     
     /**
      * Creates an LRUCache of default capacity.  Entries are held
-     * in the map until capacity is exceeded
+     * in the map until capacity is exceeded.
      * @param <K> the (strongly reference) key type
      * @param <V> the (strongly reference) value type
      * @param maxSize the max size of this cache before it should start removing
      * the least recently used.
-     * @return a new Map instance with default capacity
+     * @return a new Map instance with default capacity {@value #DEFAULT_CAPACITY}.
      */
     public static <K,V> Map<K,V> createLRUCache(){
         return createLRUCache(DEFAULT_CAPACITY);
     }
-    public static <K,V> Map<K,V> createLRUCache(int maxSize){
+    /**
+     * Creates an LRUCache of the given max capacity.  Entries are held
+     * in the map until capacity is exceeded.
+     * @param <K> the (strongly reference) key type
+     * @param <V> the (strongly reference) value type
+     * @param maxcapacity the max size of this cache before it should start removing
+     * the least recently used.
+     * @return a new Map instance with given capacity
+     */
+    public static <K,V> Map<K,V> createLRUCache(int maxcapacity){
        
-        return new LRUCache<K,V>(maxSize);
+        return new LRUCache<K,V>(maxcapacity);
     }
-    
-    
+    /**
+     * Create a map of strong references with an initial default capacity
+     * of {@value #DEFAULT_CAPACITY} which <strong>CAN GROW</strong>  if more than
+     * that number of entries is inserted.  This should have
+     * the same semantics as {@code new HashMap<K,V>() }.
+     * @param <K> the (strongly reference) key type
+     * @param <V> the (strongly reference) value type
+     * @return a new Map instance with default capacity that can grow
+     * if more entries are added just like a normal Map.
+     */
+    public static <K,V> Map<K,V> createMap(){
+        return createMap(DEFAULT_CAPACITY);
+    }
+    /**
+     * Create a map of strong references with an initial given capacity
+     * which <strong>CAN GROW</strong> if more than
+     * that number of entries is inserted.  This should have
+     * the same semantics as {@code new HashMap<K,V>() }.
+     * @param <K> the (strongly reference) key type
+     * @param <V> the (strongly reference) value type
+     * @param initialSize the initial size of the map which can later
+     * grow in size as more entries are added.
+     * @return a new Map instance with the given capacity that can grow
+     * if more entries are added just like a normal Map.
+     */
+    public static <K,V> Map<K,V> createMap(int initialSize){
+        return new LinkedHashMap<K,V>(initialSize);
+    }
     /**
      * Creates an LRUCache of default capacity where the VALUES in the map
      * are each wrapped with a {@link SoftReference}.  Entries can
-     * be removed by 2 different ways:
+     * be removed by 3 different ways:
      * <ol>
      * <li> If capacity is exceeded, then the least recently used
      * entry is removed to make room</li>
      * <li> Any entries may be removed if its value
      * is only weakly reachable AND the garbage collector
      * wants to reclaim memory.</li>
+     * <li> Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.</li>
      * </ol> 
      * @param <K> the (strongly reference) key type
      * @param <V> the softly referenced value type
@@ -104,17 +136,62 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
     public static <K,V> Map<K,V> createSoftReferencedValueLRUCache(){
         return createSoftReferencedValueLRUCache(DEFAULT_CAPACITY);
     }
+    
+    /**
+     * Creates an Map of default capacity {@value #DEFAULT_CAPACITY}
+     *  where the VALUES in the map
+     * are each wrapped with a {@link SoftReference}. The size 
+     * of this map <strong>CAN GROW</strong> if more
+     * entries are inserted.  Entries can
+     * be removed by 2 different ways:
+     * <ol>
+     * <li> If capacity is exceeded, then the least recently used
+     * entry is removed to make room</li>
+     * <li> Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.</li>
+     * </ol> 
+     * @param <K> the (strongly reference) key type
+     * @param <V> the softly referenced value type
+     * @return a new Map instance with default capacity
+     */
+    public static <K,V> Map<K,V> createSoftReferencedValueCache(){
+        return createSoftReferencedValueCache(DEFAULT_CAPACITY);
+    }
    
     /**
      * Creates an LRUCache where the VALUES in the map
-     * are each wrapped with a {@link SoftReference}.  Entries can
+     * are each wrapped with a {@link SoftReference}.  The size 
+     * of this map <strong>CAN GROW</strong> if more
+     * entries are inserted.  Entries can
      * be removed by 2 different ways:
+     * <ol>
+     * <li> If capacity is exceeded, then the least recently used
+     * entry is removed to make room</li>
+     * <li> Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.</li>
+     * </ol> 
+     * @param <K> the (strongly reference) key type
+     * @param <V> the softly referenced value type
+     * @param maxSize the max size of this cache before it should start removing
+     * the least recently used.
+     * @return a new Map instance with default capacity
+     */
+    public static <K,V> Map<K,V> createSoftReferencedValueCache(int maxSize){
+        return new SoftReferenceCache<K, V>(maxSize);
+    }
+    
+    /**
+     * Creates an LRUCache where the VALUES in the map
+     * are each wrapped with a {@link SoftReference}.  Entries can
+     * be removed by 3 different ways:
      * <ol>
      * <li> If capacity is exceeded, then the least recently used
      * entry is removed to make room</li>
      * <li> Any entries may be removed if its value
      * is only weakly reachable AND the garbage collector
      * wants to reclaim memory.</li>
+     * <li> Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.</li>
      * </ol> 
      * @param <K> the (strongly reference) key type
      * @param <V> the softly referenced value type
@@ -127,15 +204,64 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
     }
     
     /**
-     * Creates an LRUCache with default capacity where the VALUES in the map
-     * are each wrapped with a {@link WeakReference}.  This will
-     * allow the map to remove any entry if its value
-     * is only weakly reachable.
+     * Creates an LRUCache with max capacity of {@value #DEFAULT_CAPACITY} where the VALUES in the map
+     * are each wrapped with a {@link WeakReference}.  Entries can
+     * be removed by 3 different ways:
+     * <ol>
+     * <li> If capacity is exceeded, then the least recently used
+     * entry is removed to make room</li>
+     * <li> Any entries may be removed if its value
+     * is only weakly reachable</li>
+     * <li> Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.</li>
+     * </ol> 
      * @param <K> the (strongly reference) key type
-     * @param <V> the weakly referenced value type
-     * @return a new Map instance with default capacity
+     * @param <V> the softly referenced value type
+     * @return a new Map instance with default capacity.
      */
     public static <K,V> Map<K,V> createWeakReferencedValueLRUCache(){
+        return createWeakReferencedValueLRUCache(DEFAULT_CAPACITY);
+    }
+    /**
+     * Creates an LRUCache where the VALUES in the map
+     * are each wrapped with a {@link WeakReference}.  Entries can
+     * be removed by 3 different ways:
+     * <ol>
+     * <li> If capacity is exceeded, then the least recently used
+     * entry is removed to make room</li>
+     * <li> Any entries may be removed if its value
+     * is only weakly reachable</li>
+     * <li> Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.</li>
+     * </ol> 
+     * @param <K> the (strongly reference) key type
+     * @param <V> the softly referenced value type
+     * @param maxSize the max size of this cache before it should start removing
+     * the least recently used.
+     * @return a new Map instance with default capacity
+     */
+    public static <K,V> Map<K,V> createWeakReferencedValueLRUCache(int maxSize){
+        return new WeakReferenceLRUCache<K,V>(maxSize);
+    }
+    
+    /**
+     * Creates an LRUCache where the VALUES in the map
+     * are each wrapped with a {@link WeakReference}.  The size 
+     * of this map <strong>CAN GROW</strong> if more
+     * entries are inserted.  Entries can
+     * be removed by 2 different ways:
+     * <ol>
+     * <li> if its the value is only weakly reachable.</li>
+     * <li> Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.</li>
+     * </ol> 
+     * @param <K> the (strongly reference) key type
+     * @param <V> the softly referenced value type
+     * @param maxSize the max size of this cache before it should start removing
+     * the least recently used.
+     * @return a new Map instance with default capacity
+     */
+    public static <K,V> Map<K,V> createWeakReferencedValueCache(){
         return createWeakReferencedValueLRUCache(DEFAULT_CAPACITY);
     }
     /**
@@ -149,35 +275,45 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
      * the least recently used.
      * @return a new Map instance with default capacity
      */
-    public static <K,V> Map<K,V> createWeakReferencedValueLRUCache(int maxSize){
-        return new WeakReferenceLRUCache<K,V>(maxSize);
+    public static <K,V> Map<K,V> createWeakReferencedValueCache(int maxSize){
+        return new WeakReferenceCache<K,V>(maxSize);
     }
+    /**
+     * This uses the Java-native implementation of
+    * a {@link LinkedHashMap} with last-access ordering and capacity limitation
+    * to remove the element which was least recently accessed via the 
+    * {@link #get(Object)} method.  This removal only occurs once the capacity
+    * is reached.
+    * <p>
+    * This has the handy effect of creating a simple cache.  The greatest 
+    * benefits when using this cache are seen when elements are accessed in
+    * clusters, since they will generate large numbers of cache hits followed
+    * by steadily dropping out of the cache.
+    */
+    private static final class LRUCache<K,V> extends LinkedHashMap<K, V>{
+ 
+            private static final long serialVersionUID = -9015747210650112857L;
+        private final int capacity;
     
-    private final int capacity;
+        protected LRUCache(int capacity, float loadFactor)
+        {
+            super(capacity+1, loadFactor, true);
+            this.capacity = capacity;
+        }
     
-    protected LRUCache()
-    {
-        this(LRUCache.DEFAULT_CAPACITY, LRUCache.DEFAULT_LOAD_FACTOR);
-    }
-
-    protected LRUCache(int capacity, float loadFactor)
-    {
-        super(capacity+1, loadFactor, true);
-        this.capacity = capacity;
-    }
-
-    protected LRUCache(int capacity)
-    {
-        this(capacity, LRUCache.DEFAULT_LOAD_FACTOR);
-    }
-
+        protected LRUCache(int capacity)
+        {
+            this(capacity, Caches.DEFAULT_LOAD_FACTOR);
+        }
     
-    @Override
-    protected boolean removeEldestEntry(Entry<K, V> eldest)
-    {
-        return this.size() > this.capacity;
-    }
+        
+        @Override
+        protected boolean removeEldestEntry(Entry<K, V> eldest)
+        {
+            return this.size() > this.capacity;
+        }
     
+    }
     /**
      * {@code AbstractReferencedLRUCache} is an adapter so we can make an LRUCache
      * but the values are not strong Java References.  This will allow
@@ -197,10 +333,11 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
          * @param capacity
          * @param loadFactor
          */
-        public AbstractReferencedLRUCache(int maxSize) {
-            cache = new LRUCache(maxSize, DEFAULT_LOAD_FACTOR);
-            referenceKeyMap = new HashMap<Reference<? extends V>, K>(maxSize+1, DEFAULT_LOAD_FACTOR);
+        AbstractReferencedLRUCache(Map<K,R> map, int size) {
+            cache = map;
+            referenceKeyMap = new HashMap<Reference<? extends V>, K>(size+1, DEFAULT_LOAD_FACTOR);
         }
+        
         /**
          * Remove any entries in the 
          * cache that have had their values
@@ -332,6 +469,36 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
         }
         
     }
+    
+    /**
+     * {@code SoftReferenceLRUCache} creates an LRUCache which uses
+     * {@link SoftReference}s for the values.
+     * @author dkatzel
+     * @see SoftReference
+     *
+     */
+    private static class SoftReferenceCache<K,V> extends AbstractReferencedLRUCache<K,V, SoftReference<V>>{
+       
+       
+        /**
+         * @param capacity
+         * @param loadFactor
+         */
+        public SoftReferenceCache(int maxSize) {
+          super(new LinkedHashMap(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected SoftReference<V> createReferenceFor(V value, ReferenceQueue<V> referenceQueue) {
+            return new SoftReference<V>(value, referenceQueue);
+        }
+
+      
+
+    }
     /**
      * {@code SoftReferenceLRUCache} creates an LRUCache which uses
      * {@link SoftReference}s for the values.
@@ -347,7 +514,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
          * @param loadFactor
          */
         public SoftReferenceLRUCache(int maxSize) {
-          super(maxSize);
+          super(new LRUCache(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
         }
 
         /**
@@ -357,6 +524,8 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
         protected SoftReference<V> createReferenceFor(V value, ReferenceQueue<V> referenceQueue) {
             return new SoftReference<V>(value, referenceQueue);
         }
+
+      
 
     }
     /**
@@ -374,9 +543,37 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V>
          * @param loadFactor
          */
         public WeakReferenceLRUCache(int maxSize) {
-          super(maxSize);
+            super(new LRUCache(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
+        }
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected WeakReference<V> createReferenceFor(V value, ReferenceQueue<V> referenceQueue) {
+            return new WeakReference<V>(value,referenceQueue);
         }
 
+    }
+    
+    /**
+     * {@code WeakReferenceLRUCache} creates an LRUCache which uses
+     * {@link WeakReference}s for the values.
+     * @author dkatzel
+     * @see WeakReference
+     *
+     */
+    private static class WeakReferenceCache<K,V> extends AbstractReferencedLRUCache<K,V, WeakReference<V>>{
+        
+        
+        /**
+         * @param capacity
+         * @param loadFactor
+         */
+        public WeakReferenceCache(int maxSize) {
+            super(new LinkedHashMap(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
+        }
+        
         /**
         * {@inheritDoc}
         */

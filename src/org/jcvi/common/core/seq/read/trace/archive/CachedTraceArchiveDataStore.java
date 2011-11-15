@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.LRUCache;
+import org.jcvi.common.core.util.Caches;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code CachedTraceArchiveDataStore} is a {@link TraceArchiveDataStore}
@@ -52,7 +52,7 @@ public class CachedTraceArchiveDataStore implements TraceArchiveDataStore<TraceA
             throw new NullPointerException("traceArchiveDataStore can not be null");
         }
         this.traceArchiveDataStore = traceArchiveDataStore;
-        lruCahce = LRUCache.createLRUCache(cacheSize);
+        lruCahce = Caches.createLRUCache(cacheSize);
     }
 
     @Override

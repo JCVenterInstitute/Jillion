@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.util.CommonUtil;
-import org.jcvi.common.core.util.LRUCache;
+import org.jcvi.common.core.util.Caches;
 
 
 /**
@@ -57,8 +56,9 @@ import org.jcvi.common.core.util.LRUCache;
  * desire to represent no range at all.  A <code>Range</code> of 0 to 0 still
  * has a size of 1.  In order to represent a <code>Range</code> with size 0,
  * you need to explicitly use an empty range.
- * @author jsitz
  * @author dkatzel
+ * @author jsitz
+ * 
  */
 public final class Range implements Placed<Range>,Iterable<Long>
 {
@@ -308,21 +308,21 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * for each coordinate system since that isn't used in equals or hashcode computations.
      * Caches are SoftReferences mapped to their hashcodes
      */
-    private static final Map<CoordinateSystem, Map<Integer, Range>> CACHE= new EnumMap<Range.CoordinateSystem, Map<Integer, Range>>(CoordinateSystem.class);
+    private static final Map<Integer, Range> CACHE;
     private static final Comparator<Range> DEFAULT_COMPARATOR = Comparators.ARRIVAL;
 
     /**
-     * Initialize cache with a soft reference cache
+     * Initialize cache with a soft reference cache that will grow as needed.
      */
     static{
-        for(CoordinateSystem cs : CoordinateSystem.values()){
-            CACHE.put(cs, LRUCache.<Integer, Range>createSoftReferencedValueLRUCache());
-        }
+         CACHE = Caches.<Integer, Range>createSoftReferencedValueCache();
     }
     /**
-     * Factory method to build a {@link Range} object in
+     * Factory method to get a {@link Range} object in
      * the {@link CoordinateSystem#ZERO_BASED} coordinate system.
      * If end == start -1 then this method will return an {@link EmptyRange}.
+     * This method is not guaranteed to return new instances and may return
+     * a cached instance instead (flyweight pattern).
      * @param start start coordinate inclusive.
      * @param end end coordinate inclusive.
      * @return a {@link Range}.
@@ -373,24 +373,32 @@ public final class Range implements Placed<Range>,Iterable<Long>
 
         long zeroBasedStart = coordinateSystem.getStart(localStart);
         long zeroBasedEnd = coordinateSystem.getEnd(localEnd);
-
+        final Range range;
         if(zeroBasedEnd >= zeroBasedStart) {
-            Range range= new Range(zeroBasedStart,zeroBasedEnd,coordinateSystem);
-            //look to see if we already have this range in our cache
-          /*  Map<Integer, Range> cache =CACHE.get(coordinateSystem);
-            Integer hashcode = Integer.valueOf(range.hashCode());
-            if(cache.containsKey(hashcode)){
-                return cache.get(hashcode);
-            }
-            cache.put(hashcode, range);
-            */
-            return range;
+            range= new Range(zeroBasedStart,zeroBasedEnd,coordinateSystem);            
         } else if (zeroBasedEnd == zeroBasedStart-1) {
-            return buildEmptyRange(zeroBasedStart,zeroBasedEnd,coordinateSystem);
+            range = buildEmptyRange(zeroBasedStart,zeroBasedEnd,coordinateSystem);
         } else {
             throw new IllegalArgumentException("Range coordinates" + localStart + "," + localEnd
                 + " are not valid " + coordinateSystem + " coordinates");
         }
+        return getFromCache(range);
+    }
+    private static Range getFromCache(Range range) {
+        //look to see if we already have this range in our cache
+        Integer hashcode = createCacheKeyFor(range);
+        if(CACHE.containsKey(hashcode)){
+            return CACHE.get(hashcode);
+        }
+        CACHE.put(hashcode, range);
+        
+        return range;
+    }
+    private static int createCacheKeyFor(Range r){
+        //Range's hashcode causes too many collisions 
+        //however the toString() hashcode should be fine
+        //to ensure uniqueness in our cache.
+        return r.toString().hashCode();
     }
     /**
      * Create a new Range object which represents
@@ -408,8 +416,9 @@ public final class Range implements Placed<Range>,Iterable<Long>
         if(coordinateSystem.equals(this.coordinateSystem)){
             return this;
         }
-        
-        return Range.buildRange(coordinateSystem, coordinateSystem.getLocalStart(getStart()),coordinateSystem.getLocalEnd(getEnd()));
+        Range range = new Range(getStart(), getEnd(), coordinateSystem);
+        return getFromCache(range);
+        //return Range.buildRange(coordinateSystem, coordinateSystem.getLocalStart(getStart()),coordinateSystem.getLocalEnd(getEnd()));
     }
     /**
      * Build and empty range in the zero-based coordinate system
@@ -619,15 +628,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
         final int prime = 31;
         int result = 1;
         result = prime * result + (int) (start ^ (start >>> 32));
-        result = prime * result + (int) (end ^ (end >>> 32));
-        //added length to hashcode computation
-        //hashcode for n and -n might be the same?
-        //so range of 5,10 and -5,10 would get the same
-        //hashcode if we don't take length into account
-        //this caused the cache to return the wrong values
-        //sometimes unless we added length to the computation
-        long length = getLength();
-        result = prime * result + (int)(length ^(length >>> 32));
+        result = prime * result + (int) (end ^ (end >>> 32));       
         return result;
     }
     /* (non-Javadoc)
@@ -1179,17 +1180,6 @@ public final class Range implements Placed<Range>,Iterable<Long>
     @Override
     public Range asRange() {
         return this;
-    }
-    /**
-     * Creates a new Range object
-     * with the same values.  The returned
-     * object will have a different reference
-     * but will be equal to this Range.
-     * @return a new Range instance with the same
-     * values as this range.
-     */
-    public Range copy(){
-        return new Range(getLocalStart(), getLocalEnd(), getCoordinateSystem());
     }
     
     private static class RangeIterator implements Iterator<Long>{

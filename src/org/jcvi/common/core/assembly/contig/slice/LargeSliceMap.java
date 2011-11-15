@@ -37,7 +37,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.util.LRUCache;
+import org.jcvi.common.core.util.Caches;
 
 public class LargeSliceMap extends AbstractSliceMap{
     /**
@@ -78,7 +78,7 @@ public class LargeSliceMap extends AbstractSliceMap{
         this.qualityDataStore = qualityDataStore;
         this.qualityValueStrategy = qualityValueStrategy;
         this.range = range;
-        cache = LRUCache.createLRUCache(cacheSize);
+        cache = Caches.createLRUCache(cacheSize);
     }
     
     public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
