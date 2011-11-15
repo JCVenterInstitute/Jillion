@@ -26,7 +26,7 @@ import java.util.Properties;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.seq.read.trace.TraceDataStore;
-import org.jcvi.common.core.seq.read.trace.sanger.FileSangerTrace;
+import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.joda.time.DateTime;
 
@@ -35,7 +35,7 @@ import org.joda.time.DateTime;
  *
  *
  */
-public class PhdSangerTraceDataStoreAdapter<S extends FileSangerTrace> implements PhdDataStore{
+public class PhdSangerTraceDataStoreAdapter<S extends SangerTrace> implements PhdDataStore{
 
     private final TraceDataStore<S> delegate;
     private final Properties comments;
@@ -55,7 +55,7 @@ public class PhdSangerTraceDataStoreAdapter<S extends FileSangerTrace> implement
     @Override
     public Phd get(String id) throws DataStoreException {
         try{
-        FileSangerTrace trace = delegate.get(id); 
+            SangerTrace trace = delegate.get(id); 
         return new DefaultPhd(id,
         		trace.getBasecalls(), trace.getQualities(), trace.getPeaks(),
                 comments,Collections.<PhdTag>emptyList());

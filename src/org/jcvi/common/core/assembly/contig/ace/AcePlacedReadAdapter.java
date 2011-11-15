@@ -38,19 +38,16 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
 
     private final PlacedRead placedRead;
     private final PhdInfo phdInfo;
-    private final int ungappedFullLength;
     /**
      * @param placedRead
      */
-    public AcePlacedReadAdapter(PlacedRead placedRead,Date phdDate, File traceFile, int ungappedFullLength) {
+    public AcePlacedReadAdapter(PlacedRead placedRead,Date phdDate, File traceFile) {
       this(placedRead,
-    		  ConsedUtil.generatePhdInfoFor(traceFile, placedRead.getId(), phdDate),
-    		  ungappedFullLength);
+    		  ConsedUtil.generatePhdInfoFor(traceFile, placedRead.getId(), phdDate));
     }
-    public AcePlacedReadAdapter(PlacedRead placedRead,PhdInfo info, int ungappedFullLength) {
+    public AcePlacedReadAdapter(PlacedRead placedRead,PhdInfo info) {
         this.placedRead = placedRead;
         this.phdInfo= info;
-        this.ungappedFullLength = ungappedFullLength;
     }
 	
 
@@ -117,7 +114,7 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
     */
     @Override
     public int getUngappedFullLength() {
-        return ungappedFullLength;
+        return placedRead.getUngappedFullLength();
     }
 
     /**
@@ -134,7 +131,6 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         result = prime * result + ((phdInfo == null) ? 0 : phdInfo.hashCode());
         result = prime * result
                 + ((placedRead == null) ? 0 : placedRead.hashCode());
-        result = prime * result + ungappedFullLength;
         return result;
     }
     @Override
@@ -161,9 +157,6 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
                 return false;
             }
         } else if (!placedRead.equals(other.placedRead)) {
-            return false;
-        }
-        if (ungappedFullLength != other.ungappedFullLength) {
             return false;
         }
         return true;

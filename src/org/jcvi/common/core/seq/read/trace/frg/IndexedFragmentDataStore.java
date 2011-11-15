@@ -23,15 +23,11 @@
  */
 package org.jcvi.common.core.seq.read.trace.frg;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
@@ -41,6 +37,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
+import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code IndexedFragmentDataStore} is an implementation of 
@@ -56,7 +53,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
 
     private final IndexedFileRange fragmentInfoIndexFileRange, mateInfoIndexFileRange;
-    private final FileChannel fragFile;
+    private final File fragFile;
     private final Frg2Parser parser;
     private int currentStart=0;
     private int currentPosition=-1;
@@ -75,13 +72,13 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
        
     }
     
-    public IndexedFragmentDataStore(File file, IndexedFileRange fragmentInfoIndexFileRange, IndexedFileRange mateInfoIndexFileRange, Frg2Parser parser) throws FileNotFoundException{
+    public IndexedFragmentDataStore(File file, IndexedFileRange fragmentInfoIndexFileRange, IndexedFileRange mateInfoIndexFileRange, Frg2Parser parser){
         this.fragmentInfoIndexFileRange = fragmentInfoIndexFileRange;
         this.mateInfoIndexFileRange = mateInfoIndexFileRange;
         this.parser = parser;
-        this.fragFile = new RandomAccessFile(file, "r").getChannel();
+        this.fragFile = file;
     }
-    public IndexedFragmentDataStore(File file, Frg2Parser parser) throws FileNotFoundException{
+    public IndexedFragmentDataStore(File file, Frg2Parser parser){
         this(file, new DefaultIndexedFileRange(), new DefaultIndexedFileRange(),parser);
     }
     @Override
@@ -128,24 +125,18 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     public Fragment get(String id) throws DataStoreException {
         throwErrorIfClosed();
         Range range =fragmentInfoIndexFileRange.getRangeFor(id);
-        InputStream in = getInputStreamFor(range);
-        final SingleFragVisitor singleFragVisitor = new SingleFragVisitor();
-        parser.parse(in, singleFragVisitor);
-        return singleFragVisitor.getFragmentToReturn();
-    }
-    private InputStream getInputStreamFor(Range range)
-            throws DataStoreException {
-        ByteBuffer buffer;
+        InputStream in;
         try {
-            buffer = fragFile.map(FileChannel.MapMode.READ_ONLY, range.getStart(), range.size());
+            in = IOUtil.createInputStreamFromFile(fragFile, range);
+           
+            final SingleFragVisitor singleFragVisitor = new SingleFragVisitor();
+            parser.parse(in, singleFragVisitor);
+            return singleFragVisitor.getFragmentToReturn();
         } catch (IOException e) {
-            throw new DataStoreException("error memory mapping file ", e);
+            throw new DataStoreException("error reading frg file", e);
         }
-        byte[] array = new byte[(int)range.size()];
-        buffer.get(array);
-        InputStream in = new ByteArrayInputStream(array);
-        return in;
     }
+    
 
     @Override
     public CloseableIterator<String> getIds() {
@@ -163,25 +154,44 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     public void close() throws IOException {
         super.close();
         fragmentInfoIndexFileRange.close();
-        fragFile.close();
+        
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public CloseableIterator<Fragment> iterator() {
+        FrgIterator iter= new FrgIterator();
+        iter.start();
+        return iter;
     }
 
     @Override
     public Fragment getMateOf(Fragment fragment) throws DataStoreException {
         throwErrorIfClosed();
         final String fragId = fragment.getId();
-        String mateId = getMateIdOf(fragId);
-        return get(mateId);
+        try {
+            String mateId = getMateIdOf(fragId);
+            return get(mateId);
+        } catch (IOException e) {
+            throw new DataStoreException("error parsing mate info from frg file",e);
+        }
+        
     }
     @Override
     public boolean hasMate(Fragment fragment) throws DataStoreException {
         throwErrorIfClosed();
         final String fragId = fragment.getId();
-        return getMateIdOf(fragId) !=null;
+        try {
+            return getMateIdOf(fragId) !=null;
+        } catch (IOException e) {
+            throw new DataStoreException("error parsing mate info from frg file",e);
+        }
     }
-    private String getMateIdOf(final String fragId) throws DataStoreException {
+    private String getMateIdOf(final String fragId) throws IOException {
         Range range = mateInfoIndexFileRange.getRangeFor(fragId);
-        InputStream in = getInputStreamFor(range);
+        InputStream in = IOUtil.createInputStreamFromFile(fragFile, range);
         SingleLinkVisitor singleLinkVisitor = new SingleLinkVisitor(fragId);
         parser.parse(in, singleLinkVisitor);
         return singleLinkVisitor.getMateId();
@@ -282,6 +292,69 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         @Override
         public void visitFile() {            
         }
+    }
+    
+    
+    private class FrgIterator extends AbstractBlockingCloseableIterator<Fragment>{
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected void backgroundThreadRunMethod() {
+            Frg2Visitor visitor = new Frg2Visitor(){
+
+                @Override
+                public void visitLine(String line) { }
+
+                @Override
+                public void visitFile() {}
+
+                @Override
+                public void visitEndOfFile() {
+                    FrgIterator.this.finishedIterating();
+                    
+                }
+
+                @Override
+                public void visitLibrary(FrgAction action, String id,
+                        MateOrientation orientation, Distance distance) {}
+
+                @Override
+                public void visitFragment(FrgAction action, String fragmentId,
+                        String libraryId, NucleotideSequence bases,
+                        QualitySequence qualities, Range validRange,
+                        Range vectorClearRange, String source) {
+                    if(fragmentInfoIndexFileRange.contains(fragmentId)){
+                        //only add frgs we care about
+                        try {
+                            Library library = getLibrary(libraryId);
+                            Fragment frg =  new DefaultFragment(fragmentId, bases, 
+                                    qualities, validRange, vectorClearRange, 
+                                    library, source);
+                            FrgIterator.this.blockingPut(frg);
+                        } catch (DataStoreException e) {
+                            throw new IllegalStateException("could not get library "+ libraryId,e);
+                        }
+                    }
+                    
+                }
+
+                @Override
+                public void visitLink(FrgAction action, List<String> fragIds) {}
+                
+            };
+            InputStream in =null;
+            try{
+                in = new FileInputStream(fragFile);
+                new Frg2Parser().parse(in, visitor);
+            } catch (FileNotFoundException e) {
+               throw new IllegalStateException("error reading frg file",e);
+            }finally{
+                IOUtil.closeAndIgnoreErrors(in);
+            }
+        }
+        
     }
     
 }

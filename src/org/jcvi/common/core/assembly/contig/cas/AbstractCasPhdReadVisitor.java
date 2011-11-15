@@ -189,8 +189,7 @@ public abstract class AbstractCasPhdReadVisitor extends AbstractOnePassCasFileVi
         CasPlacedRead placedRead = CasUtil.createCasPlacedRead(match, id, 
         		phd.getBasecalls(), 
         		validRangeDataStore.get(id), gappedReference);
-        AcePlacedRead acePlacedRead = new AcePlacedReadAdapter(placedRead, info, 
-                placedRead.getUngappedFullLength());
+        AcePlacedRead acePlacedRead = new AcePlacedReadAdapter(placedRead, info);
         visitAcePlacedRead(acePlacedRead,phd,casReferenceId);
     }
 

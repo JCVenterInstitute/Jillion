@@ -50,8 +50,7 @@ public class CasAceContigAdapter implements AceContig{
             final String readId = read.getId();
             adaptedReads.put(readId, new AcePlacedReadAdapter(read,
                     phdDate, 
-                    idLookup.getFileFor(readId),
-                    read.getUngappedFullLength()));
+                    idLookup.getFileFor(readId)));
         }
     }
 

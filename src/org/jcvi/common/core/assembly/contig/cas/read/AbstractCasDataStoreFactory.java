@@ -67,7 +67,12 @@ public abstract class AbstractCasDataStoreFactory implements CasDataStoreFactory
     }
 
     private File getTrimmedFileFor(String pathToDataStore) {
-        File dataStoreFile = new File(workingDir, pathToDataStore);
+        final File dataStoreFile;
+        if(pathToDataStore.startsWith("/")){
+            dataStoreFile = new File(pathToDataStore);
+        }else{
+            dataStoreFile = new File(workingDir, pathToDataStore);
+        }
         File trimmedDataStore = trimMap.getUntrimmedFileFor(dataStoreFile);
         return trimmedDataStore;
     }

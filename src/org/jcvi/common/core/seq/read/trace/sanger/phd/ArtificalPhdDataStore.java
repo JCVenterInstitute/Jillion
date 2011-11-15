@@ -30,6 +30,9 @@ import java.util.Properties;
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.seq.read.trace.Trace;
+import org.jcvi.common.core.seq.read.trace.TraceNucleotideDataStoreAdapter;
+import org.jcvi.common.core.seq.read.trace.TraceQualityDataStoreAdapter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
@@ -47,8 +50,22 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
     private final DataStore<QualitySequence> qualDataStore;
     private final Properties comments = new Properties();
     
-   
-    
+    /**
+     * Create a new PhdDataStore from a DataStore of {@link Trace}
+     * objects.  The Trace's nucleotide and quality sequences
+     * will be used in the Phd objects but trace positions will be articially
+     * created. 
+     * @param <T>  the Trace type.
+     * @param traceDataStore the Datastore of traces to wrap.
+     * @param phdDate the date for the phd records to be included
+     * in a comment in the phd records (required for consed).
+     * @return a new {@link PhdDataStore} object;
+     * never null.
+     */
+    public static <T extends Trace>  PhdDataStore createFromTraceDataStore(DataStore<T> traceDataStore, DateTime phdDate){
+        return new ArtificalPhdDataStore(new TraceNucleotideDataStoreAdapter<T>(traceDataStore), 
+                new TraceQualityDataStoreAdapter<T>(traceDataStore), phdDate);
+    }
     /**
      * @param seqDataStore
      * @param qualDataStore
