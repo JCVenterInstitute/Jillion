@@ -434,8 +434,5 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
                 Date creationDate, String data) {
             hasTags=true;
         }
-        
     }
-   
-    
 }

@@ -27,8 +27,14 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.PlacedRead;
-
-public class AssembledFrom implements Comparable<AssembledFrom>{
+/**
+ * {@code AssembledFrom} defines the location of a read within 
+ * a contig and its orientation in the contig.
+ * @author dkatzel
+ *
+ *
+ */
+final class AssembledFrom implements Comparable<AssembledFrom>{
 
     private final String id;
     private final Direction dir;
