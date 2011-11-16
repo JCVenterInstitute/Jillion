@@ -74,11 +74,9 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
            visitNewContig(currentContigId, 
                    ConsedUtil.convertAceGapsToContigGaps(currentBasecalls.toString()),
                    currentContigIsComplimented);
-           
         }
         final AssembledFrom assembledFromObj = new AssembledFrom(readId, gappedStartOffset, dir);
         currentAssembledFromMap.put(readId, assembledFromObj);
-
     }
     /**
      * Begin visiting a new contig in the ace file.  Any visit methods between
@@ -142,6 +140,8 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         //I guess this happens in a referenced based alignment for
         //reads at the edges when the reads have good quality 
         //beyond the reference.
+        //It might also be possible that the read has been 
+        //edited and that could have changed the coordinates.
         //Therefore intersect the qual and align coords
         //to find the region we are interested in
         Range qualityRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
@@ -150,6 +150,9 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
                     .convertRange(CoordinateSystem.RESIDUE_BASED);
         
         AssembledFrom assembledFrom =currentAssembledFromMap.get(currentReadId);
+        if(assembledFrom ==null){
+            throw new IllegalStateException("unknown read no AF record for "+ currentReadId);
+        }
         currentOffset = computeReadOffset(assembledFrom, validRange.getLocalStart());            
         int clearLeft;
         int clearRight;
