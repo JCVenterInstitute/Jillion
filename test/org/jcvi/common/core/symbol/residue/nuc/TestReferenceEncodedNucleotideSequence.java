@@ -39,7 +39,7 @@ public class TestReferenceEncodedNucleotideSequence {
     String referenceAsString = "ACGTACGTACGTACGTACGTACGTACGT";
 
     
-    NucleotideSequence encodedReference = new DefaultNucleotideSequence(referenceAsString);
+    NucleotideSequence encodedReference = DefaultNucleotideSequence.create(referenceAsString);
     @Test
     public void oneGapNoDifferences(){
         int offset=5;
@@ -88,7 +88,7 @@ public class TestReferenceEncodedNucleotideSequence {
     }
     @Test
     public void fullSequence(){
-        NucleotideSequence encodedConsensus = new DefaultNucleotideSequence(
+        NucleotideSequence encodedConsensus = DefaultNucleotideSequence.create(
                 "GACATGGAAGTTTTATATTCATTGTCAAAAACTCTTAAAGATGCTAGGGACAAAATTGTT" +
                 "GAAGGTACACTATATTCTAATGTTAGCGATCTCATTCAACAATTCAATCAAATGATAGTA" +
                 "ACTATGAATGGAAATGACTTTCAAACTGGAGGAATTGGTAATTTGCCTATCAGAAACTGG" +
