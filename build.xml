@@ -354,12 +354,19 @@
 		    	
 		    	<zipfileset src="${lib-internal}/EUIDService.jar"/>
 		    	<zipfileset src="${lib-internal}/ChromatogramArchiver_client.jar"/>
+		    	
+		    	<manifest>
+		    		<attribute name ="Sealed" value ="true"/>
+		    	</manifest>
 		    </jarjar>
 	</target>
 	<target name="jar-src-core" description="jar of all source files" depends= "revision, internal.source.only.bin">
 		
 		    <jarjar jarfile="${project-name}-core-${version}-r${revision}.jar">
-		        <fileset dir="${bin}"/>		        
+		        <fileset dir="${bin}"/>	
+		    	<manifest>
+		    		<attribute name ="Sealed" value ="true"/>
+		    	</manifest>
 		    </jarjar>
 	</target>
 	<target name ="javancss" description ="run javancss on source">
