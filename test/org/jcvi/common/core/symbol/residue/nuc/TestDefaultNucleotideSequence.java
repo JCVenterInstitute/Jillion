@@ -33,7 +33,7 @@ public class TestDefaultNucleotideSequence {
 
     private String gappedBasecalls = "ACGTACGT-ACGTACG-T";
     
-    DefaultNucleotideSequence sut = new DefaultNucleotideSequence(gappedBasecalls);
+    NucleotideSequence sut = DefaultNucleotideSequence.createGappy(gappedBasecalls);
     
     @Test
     public void decode(){

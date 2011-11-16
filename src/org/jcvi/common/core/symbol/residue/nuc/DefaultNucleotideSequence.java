@@ -25,6 +25,9 @@ package org.jcvi.common.core.symbol.residue.nuc;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import org.jcvi.common.core.util.Caches;
 
 /**
  * {@code DefaultNucleotideSequence} is the default
@@ -35,17 +38,54 @@ import java.util.List;
  *
  */
 class DefaultNucleotideSequence extends AbstractNucleotideSequence{
+    
+    private static final Map<Integer,NucleotideSequence> CACHE;
+    
+    static{
+        CACHE = Caches.createSoftReferencedValueCache();
+    }
+    
     private final NucleotideEncodedSequence encodedBasecalls;
     
-    public static DefaultNucleotideSequence create(String nucleotides){
-        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides));
-    }
-    public static DefaultNucleotideSequence create(char[] nucleotides){
-        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides));
+    private static synchronized NucleotideSequence cache(String seq){
+        Integer key = seq.hashCode();
+        if(CACHE.containsKey(key)){
+            return CACHE.get(key);
+        }
+        NucleotideSequence value= new DefaultNucleotideSequence(Nucleotides.parse(seq));
+        CACHE.put(key,value);
+        return value;
     }
     
-    public static DefaultNucleotideSequence create(Collection<Nucleotide> nucleotides){
-        return new DefaultNucleotideSequence(nucleotides);
+    private static synchronized NucleotideSequence cache(Collection<Nucleotide> seq){
+        Integer key = Nucleotides.asString(seq).hashCode();
+        if(CACHE.containsKey(key)){
+            return CACHE.get(key);
+        }
+        NucleotideSequence value= new DefaultNucleotideSequence(seq);
+        CACHE.put(key,value);
+        return value;
+    }
+    
+    private static synchronized NucleotideSequence cache(Collection<Nucleotide> seq, NucleotideCodec codec){
+        Integer key = Nucleotides.asString(seq).hashCode();
+        if(CACHE.containsKey(key)){
+            return CACHE.get(key);
+        }
+        NucleotideSequence value= new DefaultNucleotideSequence(seq,codec);
+        CACHE.put(key,value);
+        return value;
+    }
+    
+    public static NucleotideSequence create(CharSequence nucleotides){
+        return cache(nucleotides.toString());
+    }
+    public static NucleotideSequence create(char[] nucleotides){
+        return cache(new String(nucleotides));
+    }
+    
+    public static NucleotideSequence create(Collection<Nucleotide> nucleotides){
+        return cache(nucleotides);
     }
     public static DefaultNucleotideSequence createACGTN(Collection<Nucleotide> nucleotides){
         return new DefaultNucleotideSequence(nucleotides, ACGTNNucloetideCodec.INSTANCE);
@@ -53,25 +93,22 @@ class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     public static DefaultNucleotideSequence createNoAmbiguities(Collection<Nucleotide> nucleotides){
         return new DefaultNucleotideSequence(nucleotides, NoAmbiguitiesEncodedNucleotideCodec.INSTANCE);
     }
-    public static DefaultNucleotideSequence createGappy(Collection<Nucleotide> nucleotides){
-        return new DefaultNucleotideSequence(nucleotides, DefaultNucleotideCodec.INSTANCE);
+    public static NucleotideSequence createGappy(Collection<Nucleotide> nucleotides){
+        return cache(nucleotides, DefaultNucleotideCodec.INSTANCE);
     }
-    public static DefaultNucleotideSequence createGappy(CharSequence nucleotides){
-        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides), DefaultNucleotideCodec.INSTANCE);
+    public static NucleotideSequence createGappy(CharSequence nucleotides){
+        return cache(Nucleotides.parse(nucleotides), DefaultNucleotideCodec.INSTANCE);
     }
-    public DefaultNucleotideSequence(Collection<Nucleotide> nucleotides){
+    private DefaultNucleotideSequence(Collection<Nucleotide> nucleotides){
         this(nucleotides,NucleotideCodecs.getNucleotideCodecFor(nucleotides));
    
     }
-    public DefaultNucleotideSequence(Collection<Nucleotide> nucleotides,NucleotideCodec codec ){
+    private DefaultNucleotideSequence(Collection<Nucleotide> nucleotides,NucleotideCodec codec ){
         this.encodedBasecalls = new NucleotideEncodedSequence(codec,nucleotides);
    
     }
     
-    public DefaultNucleotideSequence(String basecalls){
-        this(Nucleotides.parse(basecalls));
-    }
-    public DefaultNucleotideSequence(char[] basecalls){
+    private DefaultNucleotideSequence(String basecalls){
         this(Nucleotides.parse(basecalls));
     }
 

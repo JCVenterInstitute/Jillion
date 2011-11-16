@@ -33,26 +33,26 @@ public final class NucleotideSequenceFactory {
     }
     
     public static NucleotideSequence create(CharSequence nucleotides){
-        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides));
+        return DefaultNucleotideSequence.create(nucleotides);
     }
     public static NucleotideSequence create(char[] nucleotides){
-        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides));
+        return DefaultNucleotideSequence.create(Nucleotides.parse(nucleotides));
     }
     
     public static NucleotideSequence create(Collection<Nucleotide> nucleotides){
-        return new DefaultNucleotideSequence(nucleotides);
+        return DefaultNucleotideSequence.create(nucleotides);
     }
     public static NucleotideSequence createNoAmbiguities(Collection<Nucleotide> nucleotides){
-        return new DefaultNucleotideSequence(nucleotides, NoAmbiguitiesEncodedNucleotideCodec.INSTANCE);
+        return DefaultNucleotideSequence.createNoAmbiguities(nucleotides);
     }
     public static NucleotideSequence createACGTN(Collection<Nucleotide> nucleotides){
         return DefaultNucleotideSequence.createACGTN(nucleotides);
     }
     public static NucleotideSequence createGappy(Collection<Nucleotide> nucleotides){
-        return new DefaultNucleotideSequence(nucleotides, DefaultNucleotideCodec.INSTANCE);
+        return DefaultNucleotideSequence.createGappy(nucleotides);
     }
     public static NucleotideSequence createGappy(CharSequence nucleotides){
-        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides), DefaultNucleotideCodec.INSTANCE);
+        return DefaultNucleotideSequence.createGappy(nucleotides);
     }
     public static ReferenceEncodedNucleotideSequence createReferenceEncoded(NucleotideSequence reference,
             String toBeEncoded, int startOffset){
