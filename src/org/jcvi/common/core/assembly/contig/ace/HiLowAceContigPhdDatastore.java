@@ -240,7 +240,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         @Override
         public synchronized void visitBasesLine(String bases) {
             if(contigOfInterest && currentHiLowQualities !=null){
-                currentHiLowQualities.addAll(parseQualities(bases));
+                currentHiLowQualities.addAll(parseQualities(bases.trim()));
             }
             super.visitBasesLine(bases);
         }
@@ -253,6 +253,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
                 if(chars[i] =='-'){
                     continue;
                 }
+                
                 if(Character.isUpperCase(chars[i])){
                     qualities.add(highQuality);
                 }else{
