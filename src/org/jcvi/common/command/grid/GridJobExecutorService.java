@@ -113,7 +113,14 @@ public class GridJobExecutorService extends ThreadPoolExecutor
         return(GridJobFuture) submit((Callable<Integer>) gridJob);
     }
    
-    
+    /**
+     * 
+    * {@inheritDoc}
+    * <p/>
+    * Cancel's any currently running job using
+    * {@link GridJobFuture#cancel(boolean)}
+    * and stops any new queued jobs from ever running.
+     */
     @Override
     public synchronized List<Runnable> shutdownNow() {
        

@@ -229,6 +229,9 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         @Override
         public synchronized void visitReadHeader(String readId,
                 int gappedLength) {
+            if(readId.equals("100001375025")){
+                System.out.println("here making phd");
+            }
             if(contigOfInterest){
                 currentHiLowQualities = new ArrayList<PhredQuality>(gappedLength);
             }
@@ -267,8 +270,9 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
                 int offset, Direction dir, Range validRange,
                 PhdInfo phdInfo, int ungappedFullLength) {
             if(contigOfInterest){
+                String currentFullLengthBasecalls = getCurrentFullLengthBasecalls();
                 NucleotideSequence fullLengthBasecalls = NucleotideSequenceFactory.create(
-                                        ConsedUtil.convertAceGapsToContigGaps(getCurrentFullLengthBasecalls())
+                                        ConsedUtil.convertAceGapsToContigGaps(currentFullLengthBasecalls)
                                                             .replaceAll("-", ""));
                 
                 if(dir==Direction.REVERSE){

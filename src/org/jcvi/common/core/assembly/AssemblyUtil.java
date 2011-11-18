@@ -37,6 +37,7 @@ import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageRegion;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 /**
  * {@code AssemblyUtil} is a utility class for working
@@ -79,22 +80,25 @@ public final class AssemblyUtil {
      */
     public static List<Nucleotide> buildGappedComplimentedFullRangeBases(
             NucleotideSequence gappedValidRange, Direction dir, Range validRange, List<Nucleotide> ungappedUncomplimentedFullRangeBases){
-        List<Nucleotide> fullRangeComplimented;
+        List<Nucleotide> ungappedFullRangeComplimented;
         if(dir == Direction.REVERSE){
-            fullRangeComplimented = Nucleotides.reverseCompliment(ungappedUncomplimentedFullRangeBases);
+            ungappedFullRangeComplimented = Nucleotides.reverseCompliment(ungappedUncomplimentedFullRangeBases);
         }
         else{
-            fullRangeComplimented = ungappedUncomplimentedFullRangeBases;
+            ungappedFullRangeComplimented = ungappedUncomplimentedFullRangeBases;
         }
-        List<Nucleotide> gappedComplimentedFullRange = new ArrayList<Nucleotide>();
+        NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(ungappedFullRangeComplimented.size());
+
         for(int i=0; i< validRange.getStart(); i++ ){
-            gappedComplimentedFullRange.add(fullRangeComplimented.get(i));
+            builder.append(ungappedFullRangeComplimented.get(i));
         }
-        gappedComplimentedFullRange.addAll(gappedValidRange.asList());
-        for(int i=(int)validRange.getEnd()+1; i< fullRangeComplimented.size(); i++){
-            gappedComplimentedFullRange.add(fullRangeComplimented.get(i));
+        builder.append(gappedValidRange);
+        int numberOfGaps = gappedValidRange.getNumberOfGaps();
+        for(int i=(int)validRange.getEnd()+1; i< ungappedFullRangeComplimented.size(); i++ ){
+            builder.append(ungappedFullRangeComplimented.get(i));
         }
-        return gappedComplimentedFullRange;
+     
+        return builder.asList();
     }
     
     /**
