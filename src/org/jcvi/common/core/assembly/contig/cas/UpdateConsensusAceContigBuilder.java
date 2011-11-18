@@ -58,7 +58,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
         
     }
 
-    protected void updateConsensus() {
+    public void updateConsensus() {
         NucleotideSequenceBuilder consensusBuilder = builder.getConsensusBuilder();
         for(int i=0; i<consensusBuilder.getLength(); i++ )   {
             final Map<Nucleotide, Integer> histogramMap = consensusMap.get(Long.valueOf(i));
@@ -198,7 +198,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     * {@inheritDoc}
     */
     @Override
-    public AceContigBuilder setComplimented(boolean complimented) {
+    public UpdateConsensusAceContigBuilder setComplimented(boolean complimented) {
         builder.setComplimented(complimented);
         return this;
     }

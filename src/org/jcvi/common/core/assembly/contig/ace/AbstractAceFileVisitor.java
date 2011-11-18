@@ -30,8 +30,18 @@ import java.util.Map;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
-
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+/**
+ * {@code AbstractAceFileVisitor} is the main {@link AceFileVisitor}
+ * implementation that will interpret the visit method calls
+ * to build valid reads and contigs.
+ * @author dkatzel
+ *
+ *
+ */
 public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private String currentContigId;
     private String currentReadId;
@@ -146,52 +156,44 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         //to find the region we are interested in
         Range qualityRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
         Range alignmentRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
-        Range validRange = qualityRange.intersection(alignmentRange)
+        Range gappedValidRange = qualityRange.intersection(alignmentRange)
                     .convertRange(CoordinateSystem.RESIDUE_BASED);
         
         AssembledFrom assembledFrom =currentAssembledFromMap.get(currentReadId);
         if(assembledFrom ==null){
             throw new IllegalStateException("unknown read no AF record for "+ currentReadId);
         }
-        currentOffset = computeReadOffset(assembledFrom, validRange.getLocalStart());            
-        int clearLeft;
-        int clearRight;
-        if(assembledFrom.getSequenceDirection() == Direction.REVERSE){
-            clearLeft = reverseCompliment(currentReadGappedFullLength, validRange.getLocalStart());
-            clearRight = reverseCompliment(currentReadGappedFullLength, validRange.getLocalEnd());
-            int temp = clearLeft;
-            clearLeft = clearRight;
-            clearRight = temp;
-        }
-        else{
-            clearLeft = (int)validRange.getLocalStart();
-            clearRight = (int)validRange.getLocalEnd();
-        }
+        currentOffset = computeReadOffset(assembledFrom, gappedValidRange.getLocalStart());            
+       
         currentFullLengthBases = currentBasecalls.toString();
+        NucleotideSequence gappedFullLengthSequence = NucleotideSequenceFactory.createGappy(
+                currentFullLengthBases.replaceAll("\\*", "-"));
       //this will set currentValidBasecalls to only be the valid range
-        currentValidBases = currentFullLengthBases.substring(
-                        (int)validRange.getStart(), 
-                        (int)validRange.getEnd()+1); 
-        final int numberOfGaps = getNumberOfGapsIn(currentValidBases);
-        final int numberOfFullLengthGaps = getNumberOfGapsIn(currentValidBases);
+        NucleotideSequence gappedValidBases = NucleotideSequenceFactory.createGappy(
+                gappedFullLengthSequence.asList(gappedValidRange));
+        currentValidBases = gappedValidBases.toString();
+        final int numberOfFullLengthGaps = gappedFullLengthSequence.getNumberOfGaps();
         currentReadUngappedFullLength = currentReadGappedFullLength - numberOfFullLengthGaps;
-        clearRight -= numberOfGaps;               
-        currentClearRange = Range.buildRange(Range.CoordinateSystem.RESIDUE_BASED,clearLeft, clearRight);
-    }
-    private int getNumberOfGapsIn(String validBases) {
-        int count=0;
-        for(int i=0; i< validBases.length(); i++){
-            if(validBases.charAt(i) == '*'){
-               count++;
-            }
+        //dkatzel 2011-11-18
+        //It is possible that there are gaps outside of the valid
+        //range (maybe from editing the ace in consed?)
+        //we need to account for that
+        //the one problem is that this could cause minor
+        //differences if we then re-write the ace since
+        //we will lose the gaps outside of the valid range
+        //but that won't affect real assembly data
+        //it will only show up if both versions (before and after)
+        //of the file were diff'ed.
+        int ungappedClearLeft = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getStart());
+        int ungappedClearRight = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getEnd());
+        Range ungappedValidRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, ungappedClearLeft+1, ungappedClearRight+1 );
+        if(assembledFrom.getSequenceDirection() == Direction.REVERSE){
+            ungappedValidRange = AssemblyUtil.reverseComplimentValidRange(ungappedValidRange, currentReadUngappedFullLength);            
         }
-        return count;
+        currentClearRange = ungappedValidRange;
+        
     }
-
-
-    private int reverseCompliment(int fullLength, long position) {
-        return fullLength - (int)position+1;
-    }
+    
     
     private int computeReadOffset(AssembledFrom assembledFrom, long startPosition) {
         return assembledFrom.getStartOffset() + (int)startPosition -2;

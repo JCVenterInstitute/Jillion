@@ -28,6 +28,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.contig.Contig;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -155,7 +157,10 @@ public class AceFileWriter {
 
     private static String createAssembledFromRecord(AcePlacedRead read, long fullLength){
         AssembledFrom assembledFrom = AssembledFrom.createFrom(read, fullLength);
-        return AceFileUtil.createAssembledFromRecord(assembledFrom);
+        return String.format("AF %s %s %d%n",
+                assembledFrom.getId(),
+                assembledFrom.getSequenceDirection()==Direction.FORWARD? "U":"C",
+                        assembledFrom.getStartOffset());
     }
     
     

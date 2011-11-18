@@ -41,7 +41,6 @@ import org.apache.commons.io.IOUtils;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.assembly.contig.ace.AceContig;
-import org.jcvi.common.core.assembly.contig.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadBuilder;
@@ -155,7 +154,7 @@ public class Cas2Consed3 {
                                 .hasEdits(hasEdits)
                                 .chromatDir(chromatDir)
                                 .build();
-            final Map<Integer, AceContigBuilder> builders = new HashMap<Integer, AceContigBuilder>();
+            final Map<Integer, UpdateConsensusAceContigBuilder> builders = new HashMap<Integer, UpdateConsensusAceContigBuilder>();
             
             final File phdFile = new File(phdBallDir, "phd.ball.1");
             final OutputStream phdOut = new FileOutputStream(phdFile);
@@ -210,9 +209,10 @@ public class Cas2Consed3 {
              File consensusFile = consedOutputDir.createNewFile(prefix+ ".ace.1.consensus.fasta");
              OutputStream tempOut = new FileOutputStream(tempAce);
              PrintStream consensusOut = new PrintStream(consensusFile);
-             Iterator<AceContigBuilder> builderIterator = builders.values().iterator();
+             Iterator<UpdateConsensusAceContigBuilder> builderIterator = builders.values().iterator();
              while(builderIterator.hasNext()){
-                 AceContigBuilder builder = builderIterator.next();
+                 UpdateConsensusAceContigBuilder builder = builderIterator.next();
+                 builder.updateConsensus();
                  NucleotideSequence fullConsensus =builder.getConsensusBuilder().build();
                  long ungappedLength = fullConsensus.getUngappedLength();
                  long firstReadStart= fullConsensus.getLength();
