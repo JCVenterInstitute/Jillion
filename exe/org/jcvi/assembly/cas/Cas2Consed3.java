@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.jcvi.common.core.assembly.contig.ace.AceContig;
 import org.jcvi.common.core.assembly.contig.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadBuilder;
+import org.jcvi.common.core.assembly.contig.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.contig.cas.AbstractOnePassCasFileVisitor;
 import org.jcvi.common.core.assembly.contig.cas.CasFileInfo;
@@ -245,16 +247,17 @@ public class Cas2Consed3 {
              OutputStream out = new FileOutputStream(ace);
              out.write(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads).getBytes());
              IOUtils.copyLarge(new FileInputStream(tempAce), out);
-             IOUtil.closeAndIgnoreErrors(out);
+             
              IOUtil.deleteIgnoreError(tempAce);
              if(!makePhdBall){
                  IOUtil.deleteIgnoreError(phdFile);
              }
              else{
-                 consedOutputDir.createNewSymLink("../phdball_dir/"+phdFile.getName(), 
-                                 "edit_dir/phd.ball");
+                 AceFileWriter.writeWholeAssemblyTag(new DefaultWholeAssemblyAceTag("phdBall", "consed",
+                         new Date(DateTimeUtils.currentTimeMillis()), "../phdball_dir/"+phdFile.getName()), out);
+                
              }
-             
+             IOUtil.closeAndIgnoreErrors(out);
              long endTime = DateTimeUtils.currentTimeMillis();
              
              logOut.printf("took %s%n",new Period(endTime- startTime));
