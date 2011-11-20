@@ -249,6 +249,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * inserted at the given offset.
      * @return this
      * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if offset <0 or > current sequence length.
      */
     public NucleotideSequenceBuilder insert(int offset, Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
@@ -269,7 +270,24 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         this.currentLength=newDataLength;
         return this;
     }
+    /**
+     * Inserts the given {@link Nucleotide} to the builder's mutable sequence
+     * at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by 1
+     * base.
+     * @param offset the GAPPED offset into this mutable sequence
+     * to begin insertion.
+     * @param base the {@link Nucleotide} to be 
+     * inserted at the given offset.
+     * @return this
+     * @throws NullPointerException if base is null.
+     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     */
     public NucleotideSequenceBuilder insert(int offset, Nucleotide base){
+    	if(base ==null){
+    		throw new NullPointerException("base can not be null");
+    	}
         return insert(offset, Collections.singleton(base));
      }
     /**
@@ -312,16 +330,36 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     public NucleotideSequence build(Range range) {
         return NucleotideSequenceFactory.create(asList(range));
     }
+    /**
+     * Get a sublist of the current nucleotide sequence as a list
+     * of Nucleotide objects.
+     * @param range the  range of the sublist to generate.
+     * @return a new List of Nucleotides.
+     * @throws NullPointerException if range is null.
+     * @throws IllegalArgumentException if range is not a sublist of the current
+     * sequence.
+     */
     public List<Nucleotide> asList(Range range){
+    	Range currentRange = Range.buildRangeOfLength(currentLength);
+    	if(!range.isSubRangeOf(currentRange)){
+    		throw new IllegalArgumentException(
+    				"range is not a sub-range of the sequence: "+ range);
+    	}
         List<Nucleotide> bases = new ArrayList<Nucleotide>((int)range.getLength());
         int start = (int)range.getStart();
         int end = (int)range.getEnd();
+        
         Nucleotide[] values = Nucleotide.values();
         for(int i=start; i<=end; i++){            
             bases.add(values[array[i]]);
         }
         return bases;
     }
+    /**
+     * Get the entire current nucleotide sequence as a list
+     * of Nucleotide objects.
+     * @return a new List of Nucleotides.
+     */
     public List<Nucleotide> asList(){
         return asList(Range.buildRangeOfLength(currentLength));
     }
