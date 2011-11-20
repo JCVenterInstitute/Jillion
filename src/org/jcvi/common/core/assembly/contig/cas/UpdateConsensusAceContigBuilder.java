@@ -39,6 +39,13 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 /**
+ * {@code UpdateConsensusAceContigBuilder} is an {@link AceContigBuilder}
+ * implementation that can recompute the consensus using the
+ * <strong>initial</strong> underlying read basecalls.  If reads
+ * are modified or shifted after they have been added to this builder
+ * then the {@link #updateConsensus()} might generate incorrect
+ * consensus.
+ * 
  * @author dkatzel
  *
  *
@@ -59,6 +66,9 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     }
 
     public void updateConsensus() {
+    	if(consensusMap.isEmpty()){
+    		return;
+    	}
         NucleotideSequenceBuilder consensusBuilder = builder.getConsensusBuilder();
         for(int i=0; i<consensusBuilder.getLength(); i++ )   {
             final Map<Nucleotide, Integer> histogramMap = consensusMap.get(Long.valueOf(i));
@@ -137,8 +147,10 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     @Override
     public UpdateConsensusAceContigBuilder addAllReads(
             Iterable<AcePlacedRead> reads) {
-        builder.addAllReads(reads);
-        return this;
+    	for(AcePlacedRead read : reads){
+    		addRead(read);
+    	}
+    	return this;
     }
 
     /**
