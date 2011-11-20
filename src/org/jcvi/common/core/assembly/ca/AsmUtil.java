@@ -25,12 +25,24 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 /**
+ * {@code AsmUtil} is a utility class for working
+ * with Celera Assembler ASM encoded data.
  * @author dkatzel
  *
  *
  */
 public final  class AsmUtil {
-
+	/**
+	 * Generate a gapped sequence string from the ungapped valid range
+	 * sequence and the list of ASM encoded gap offsets (also known as
+	 * ASM del encoding).
+	 * @param ungappedSequence a List of {@link Nucleotide}s of the ungapped
+	 * valid range sequence to be gapped; this sequence should already
+	 * be complimented into the correct orientation.
+	 * @param asmEncodedGaps the List of Integers of the ASM del encoded
+	 * gaps.
+	 * @return a new String representing the gapped sequence.
+	 */
     public static String computeGappedSequence(List<Nucleotide> ungappedSequence, List<Integer> asmEncodedGaps){
         NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(ungappedSequence);
         for(int i=asmEncodedGaps.size()-1; i>=0; i--){
