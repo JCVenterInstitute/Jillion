@@ -523,7 +523,8 @@ public class ReAbacusAceContigWorker {
                         }
                         // for(Entry<String, NucleotideSequence> gappedSequence : gappedAlignmentDataStore.)
                     } catch (Exception e) {
-                       throw new IllegalStateException(e);
+                       throw new IllegalStateException(
+                               String.format("error re-abacusing contig %s ungapped range = "+ungappedProblemRange),e);
                     }
                 }
                 System.out.println("done modifying contig read to be built");
