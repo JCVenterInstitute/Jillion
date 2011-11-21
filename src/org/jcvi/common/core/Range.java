@@ -308,14 +308,13 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * for each coordinate system since that isn't used in equals or hashcode computations.
      * Caches are SoftReferences mapped to their hashcodes
      */
-    private static final Map<Integer, Range> CACHE;
+    private static final Map<String, Range> CACHE;
     private static final Comparator<Range> DEFAULT_COMPARATOR = Comparators.ARRIVAL;
-
     /**
      * Initialize cache with a soft reference cache that will grow as needed.
      */
     static{
-         CACHE = Caches.<Integer, Range>createSoftReferencedValueCache();
+         CACHE = Caches.<String, Range>createSoftReferencedValueCache();
     }
     /**
      * Factory method to get a {@link Range} object in
@@ -385,20 +384,25 @@ public final class Range implements Placed<Range>,Iterable<Long>
         return getFromCache(range);
     }
     private static Range getFromCache(Range range) {
-        //look to see if we already have this range in our cache
-        Integer hashcode = createCacheKeyFor(range);
-        if(CACHE.containsKey(hashcode)){
-            return CACHE.get(hashcode);
-        }
-        CACHE.put(hashcode, range);
-        
+        /* - 2011/11/21 - getting too many hash collisions only cache
+         * next-gen clear ranges
+         * 
+         */
+       // if(range.isSubRangeOf(CACHE_RANGE)){
+            //look to see if we already have this range in our cache
+            String hashcode = createCacheKeyFor(range);
+            if(CACHE.containsKey(hashcode)){
+                return CACHE.get(hashcode);
+            }
+            CACHE.put(hashcode, range);
+      //  }
         return range;
     }
-    private static int createCacheKeyFor(Range r){
+    private static String createCacheKeyFor(Range r){
         //Range's hashcode causes too many collisions 
-        //however the toString() hashcode should be fine
+        //however the toString() should be fine
         //to ensure uniqueness in our cache.
-        return r.toString().hashCode();
+        return r.toString();
     }
     /**
      * Create a new Range object which represents
