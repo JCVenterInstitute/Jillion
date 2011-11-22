@@ -179,7 +179,10 @@ public class FilterFastqDataFromCas {
                     FastQQualityCodec.ILLUMINA
                  : FastQQualityCodec.SANGER;
             int maxSolexaCoverageDepth = Integer.parseInt(commandLine.getOptionValue("d"));
-            PrintWriter out = new PrintWriter(commandLine.getOptionValue("o"));
+            File outputFile = new File(commandLine.getOptionValue("o"));
+            //create dirs if needed
+            outputFile.getParentFile().mkdirs();
+            PrintWriter out = new PrintWriter(outputFile);
             //don't need to worry about trim points etc because
             //I don't actually care about the sequence...
             final CasInfo casInfo = CasUtil.createCasInfoBuilder(casFile)
