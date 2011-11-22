@@ -174,6 +174,15 @@ public final class Range implements Placed<Range>,Iterable<Long>
     }
     /**
      * Enumeration of available range coordinate systems.
+     * <p/>
+     * Different file formats or conventions use
+     * different numbering systems in bioinformatics utilities.
+     * All Range objects use the same internal system to be inter-operable
+     * but users may want ranges to be input or output into different
+     * coordinate systems to fit their needs.  CoordinateSystem implementations
+     * can be used to translate to and from the various bioinformatics coordinate
+     * systems to simplify working with multiple coordinate systems at the same time.
+     * 
      */
     public enum CoordinateSystem {
         /**
@@ -252,7 +261,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
 
         /**
          * Fetches the shortened "tag" name for this <code>CoordinateSystem</code>.
-         * 
+         * to be used in the toString value.
          * @return A two-letter abbreviation for this <code>CoordinateSystem</code>.
          */
         public String getAbbreviatedName() 
@@ -275,19 +284,25 @@ public final class Range implements Placed<Range>,Iterable<Long>
         private long getLocalStart(long start) {
             return start + zeroBaseToCoordinateSystemStartAdjustmentValue;
         }
-
+        /**
+         * Get the end coordinate in this system from the 
+         * equivalent zero-based end coordinate.
+         */
         private long getLocalEnd(long end) {
             return end + zeroBaseToCoordinateSystemEndAdjustmentValue;
         }
 
         /**
          * Get zero base start and end locations
-        * from range coordinate system start and end locations
+        * from range coordinate system start location.
          */
         private long getStart(long localStart) {
             return localStart + coordinateSystemToZeroBaseStartAdjustmentValue;
         }
-
+        /**
+         * Get zero base end location
+        * from range coordinate system  end location.
+         */
         private long getEnd(long localEnd) {
             return localEnd + coordinateSystemToZeroBaseEndAdjustmentValue;
         }
@@ -384,18 +399,13 @@ public final class Range implements Placed<Range>,Iterable<Long>
         return getFromCache(range);
     }
     private static Range getFromCache(Range range) {
-        /* - 2011/11/21 - getting too many hash collisions only cache
-         * next-gen clear ranges
-         * 
-         */
-       // if(range.isSubRangeOf(CACHE_RANGE)){
-            //look to see if we already have this range in our cache
-            String hashcode = createCacheKeyFor(range);
-            if(CACHE.containsKey(hashcode)){
-                return CACHE.get(hashcode);
-            }
-            CACHE.put(hashcode, range);
-      //  }
+       
+        String hashcode = createCacheKeyFor(range);
+        if(CACHE.containsKey(hashcode)){
+            return CACHE.get(hashcode);
+        }
+        CACHE.put(hashcode, range);
+    
         return range;
     }
     private static String createCacheKeyFor(Range r){
@@ -1027,14 +1037,21 @@ public final class Range implements Placed<Range>,Iterable<Long>
     }
     /**
      * Combine the given Ranges into fewer ranges that cover the same region.
-     * This is the same as {@link #mergeAnyRangesThatCanBeCombined(List, int) mergeAnyRangesThatCanBeCombined(rangesToMerge,0)} 
+     * This is the same as {@link #mergeRanges(List, int) mergeRanges(rangesToMerge,0)} 
      * @param rangesToMerge
      * @return a new list of merged Ranges.
-     * @see #mergeAnyRangesThatCanBeCombined(List, int)
+     * @see #mergeRanges(List, int)
      */
     public static List<Range> mergeRanges(List<Range> rangesToMerge){
         return mergeRanges(rangesToMerge,CoordinateSystem.ZERO_BASED);
     }
+    /**
+     * Combine the given Ranges into fewer ranges that cover the same region.
+     * This is the same as {@link #mergeRanges(List, int,CoordinateSystem) mergeRanges(rangesToMerge,0,coordinateSystem)} 
+     * @param rangesToMerge
+     * @return a new list of merged Ranges.
+     * @see #mergeRanges(List, int)
+     */
     public static List<Range> mergeRanges(List<Range> rangesToMerge, CoordinateSystem coordinateSystem){
         return mergeRanges(rangesToMerge,0,coordinateSystem);
     }
@@ -1044,7 +1061,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * range [0-4].
      * @param rangesToMerge the ranges to be merged together.
      * @param maxDistanceBetweenAdjacentRanges the maximum distance between the end of one range
-     * and the start of another inorder
+     * and the start of another in order
      * to be merged.
      * @return a new list of merged Ranges.
      * @throws IllegalArgumentException if clusterDistance <0.
@@ -1075,6 +1092,23 @@ public final class Range implements Placed<Range>,Iterable<Long>
     }
     
     /**
+     * Convenience method for merging ranges into Clusters in the {@link CoordinateSystem#ZERO_BASED}
+     * Coordinate system. This is the same as
+     * {@link #mergeRangesIntoClusters(List, int, CoordinateSystem)
+     * mergeRangesIntoClusters(rangesToMerge,clusterDistance, CoordinateSystem.ZERO_BASED)}
+     * @param rangesToMerge the ranges to be merged together.
+     * @param maxClusterDistance the maximum distance between the end of one range
+     * and the start of another in order
+     * to be merged.
+     * @return a new list of merged Ranges.
+     * @throws IllegalArgumentException if clusterDistance <0.
+     * @see #mergeRangesIntoClusters(List, int, CoordinateSystem)
+     */
+    public static List<Range> mergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance){
+        return mergeRangesIntoClusters(rangesToMerge, maxClusterDistance, CoordinateSystem.ZERO_BASED);
+
+    }
+    /**
      * Combine the given Ranges into fewer ranges that cover the same region.
      * For example 2 ranges [0-2] and [1-4] could be merged into a single
      * range [0-4].
@@ -1082,13 +1116,11 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @param clusterDistance the maximum distance between the end of one range
      * and the start of another in order
      * to be merged.
+     * @param coordinateSystem the coordinate system the merged
+     * ranges should be in.
      * @return a new list of merged Ranges.
      * @throws IllegalArgumentException if clusterDistance <0.
      */
-    public static List<Range> mergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance){
-        return mergeRangesIntoClusters(rangesToMerge, maxClusterDistance, CoordinateSystem.ZERO_BASED);
-
-    }
     public static List<Range> mergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance,
             CoordinateSystem coordinateSystem){
         List<Range> tempRanges = Range.mergeRanges(rangesToMerge,coordinateSystem);
@@ -1108,9 +1140,29 @@ public final class Range implements Placed<Range>,Iterable<Long>
         privateMergeAnyRangesThatCanBeClustered(sortedSplitCopy, maxClusterDistance,coordinateSystem);
         return sortedSplitCopy;
     }
+    /**
+     * Splits a Range into a List of possibly several adjacent Range objects
+     * where each of the returned ranges has a max length specified in the current
+     * coordinate system.
+     * @param maxSplitLength the max length any of the returned split ranges can be.
+     * @return a List of split Ranges; never null or empty but may
+     * just be a single element if this Range is smaller than the max length
+     * specified.
+     */
     public List<Range> split(long maxSplitLength){
         return split(maxSplitLength, getCoordinateSystem());
     }
+    /**
+     * Splits a Range into a List of possibly several adjacent Range objects
+     * where each of the returned ranges has a max length specified in the specified
+     * coordinate system.
+     * @param maxSplitLength the max length any of the returned split ranges can be.
+     * @param coordinateSystem the coordinate system each of the returned
+     * split ranges should be in.
+     * @return a List of split Ranges; never null or empty but may
+     * just be a single element if this Range is smaller than the max length
+     * specified.
+     */
     public List<Range> split(long maxSplitLength, CoordinateSystem coordinateSystem){
         if(size()<maxSplitLength){
             return Collections.singletonList(this.convertRange(coordinateSystem));
@@ -1179,6 +1231,9 @@ public final class Range implements Placed<Range>,Iterable<Long>
         return size();
     }
     /**
+    * {@inheritDoc} 
+    * <p/>
+    * Returns this since it is already a Range.
     * @return this.
     */
     @Override
