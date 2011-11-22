@@ -104,27 +104,46 @@ public class ReAbacusAceContigWorker {
      * to the given output file as a multifasta.
      * @param inputFasta
      * @param outfile
+     * @param maxMem set the max memory in MB
+     * that muscle should allocate while performing alignments.
+     * muscle has trouble figuring out how much ram there is on some machines 
+     * this can cause problems if too much RAM is needed while computing
+     *  alignments if there are lots of reads 
+     *  so let's hard code a value that should be "good enough for anyone"
      * @return
      * @throws IOException
      */
-    private static int muscle(File inputFasta, File outfile) throws IOException{
+    private static int muscle(File inputFasta, File outfile, int maxMem) throws IOException{
         Command muscle = new Command(MUSCLE);
         muscle.setOption("-in", inputFasta.getAbsolutePath());
-        muscle.setOption("-out", outfile.getAbsolutePath()); 
+        muscle.setOption("-out", outfile.getAbsolutePath());
+        //muscle has trouble figuring out 
+        //how much ram there is on some machines
+        //this can cause problems if too much RAM 
+        //is needed while computing alignments if there are lots of reads
+        //so let's hard code a value that should be "good enough for anyone"
+        muscle.setOption("-maxmb", ""+maxMem); 
         muscle.addFlag("-refine");
         String line;
         Process process =muscle.execute();
         
         BufferedReader stdOutStream =null;
+        //we will capture the stderr but only print it if there's a problem
+        //muscle prints out a lot of output
+        StringBuilder stdErr = new StringBuilder();
         try{
         stdOutStream= new BufferedReader
               (new InputStreamReader(process.getErrorStream()));
           while ((line = stdOutStream.readLine()) != null) {
-              System.err.println(line);
+              stdErr.append(line).append("\n");
           }
           
           try {
-            return process.waitFor();
+            int returnCode= process.waitFor();
+            if(returnCode !=0){
+                System.err.print(stdErr.toString());
+            }
+            return returnCode;
           }catch (InterruptedException e) {
               throw new IOException("interrupted", e);
           }
@@ -429,7 +448,7 @@ public class ReAbacusAceContigWorker {
                     
                     try {
                         System.out.println("running muscle... for " + ungappedProblemRange);
-                        int exitCode=muscle(ungappedFasta, gappedFastaFile);
+                        int exitCode=muscle(ungappedFasta, gappedFastaFile,2000);
                         if(exitCode !=0){
                             throw new IllegalStateException("error with muscle call for abacus range "+ ungappedProblemRange);
                         }
@@ -524,7 +543,7 @@ public class ReAbacusAceContigWorker {
                         // for(Entry<String, NucleotideSequence> gappedSequence : gappedAlignmentDataStore.)
                     } catch (Exception e) {
                        throw new IllegalStateException(
-                               String.format("error re-abacusing contig %s ungapped range = "+ungappedProblemRange),e);
+                               String.format("error re-abacusing contig %s ungapped range = ",ungappedProblemRange),e);
                     }
                 }
                 System.out.println("done modifying contig read to be built");
