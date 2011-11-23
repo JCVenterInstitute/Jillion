@@ -17,13 +17,14 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly.contig.ace.consed;
+package org.jcvi.common.core.assembly.contig.cas.consed;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
+import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;

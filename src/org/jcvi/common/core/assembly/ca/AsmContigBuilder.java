@@ -22,14 +22,13 @@ package org.jcvi.common.core.assembly.ca;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ContigBuilder;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface AsmContigBuilder extends ContigBuilder<PlacedRead, AsmContig>{
+public interface AsmContigBuilder extends ContigBuilder<AsmPlacedRead, AsmContig>{
 
     void setDegenerate(boolean isDegenerate);
     

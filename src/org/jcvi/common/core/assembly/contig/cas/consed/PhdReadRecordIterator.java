@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly.contig.ace.consed;
+package org.jcvi.common.core.assembly.contig.cas.consed;
 
 import org.jcvi.common.core.util.iter.CloseableIterator;
 

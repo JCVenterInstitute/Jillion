@@ -17,15 +17,30 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly.ca;
+package org.jcvi.common.core.assembly.contig.cas;
 
-import org.jcvi.common.core.assembly.contig.ContigDataStore;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
+ * {@code ReadRecord} is a marker interface
+ * to represent a single read in a cas file
  * @author dkatzel
  *
  *
  */
-public interface AsmContigDataStore extends ContigDataStore<AsmPlacedRead, AsmContig>{
-
+public interface ReadRecord {
+    /**
+     * Get the id of this read record.
+     * @return the id (external id) should never
+     * be null.
+     */
+    String getId();
+    /**
+     * Get the ungapped full length basecalls
+     * used in as input to the CLC
+     * Assembler to generate the cas file.
+     * @return a {@link NucleotideSequence}, should
+     * never be null.
+     */
+    NucleotideSequence getBasecalls();
 }

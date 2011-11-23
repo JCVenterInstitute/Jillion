@@ -22,7 +22,6 @@ package org.jcvi.common.core.assembly.contig.cas;
 import java.io.File;
 import java.util.List;
 
-import org.jcvi.common.core.assembly.contig.cas.AbstractCasPhdReadVisitor.TraceDetails;
 import org.jcvi.common.core.assembly.trim.TrimDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 

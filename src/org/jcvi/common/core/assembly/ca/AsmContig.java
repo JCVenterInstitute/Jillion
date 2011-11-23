@@ -20,14 +20,13 @@
 package org.jcvi.common.core.assembly.ca;
 
 import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface AsmContig extends Contig<PlacedRead> {
+public interface AsmContig extends Contig<AsmPlacedRead> {
 
     boolean isDegenerate();
 }

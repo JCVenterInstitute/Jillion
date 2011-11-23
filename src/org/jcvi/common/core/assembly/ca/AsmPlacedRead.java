@@ -19,13 +19,20 @@
 
 package org.jcvi.common.core.assembly.ca;
 
-import org.jcvi.common.core.assembly.contig.ContigDataStore;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface AsmContigDataStore extends ContigDataStore<AsmPlacedRead, AsmContig>{
-
+public interface AsmPlacedRead extends PlacedRead{
+    /**
+     * Is this read a repeat surrogate
+     * unitig which was cautiously placed
+     * by Celera Assembler at one or more
+     * locations.
+     * @return
+     */
+    boolean isRepeatSurrogate();
 }

@@ -17,64 +17,59 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly.contig.ace.consed;
+package org.jcvi.common.core.assembly.contig.cas.consed;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.commons.io.FilenameUtils;
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
-import org.jcvi.common.core.seq.read.trace.sanger.FileSangerTrace;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
+import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.joda.time.DateTime;
 
-public class SangerTraceConsedPhdAdaptedIterator implements PhdReadRecordIterator{
-
-	private final CloseableIterator<? extends FileSangerTrace> fastqIterator;
-	private final DateTime phdDate;
+public class FlowgramConsedPhdAdaptedIterator implements PhdReadRecordIterator{
+	private final CloseableIterator<? extends Flowgram> flowgramIterator;
 	private final Properties requiredComments;
-	public SangerTraceConsedPhdAdaptedIterator(CloseableIterator<? extends FileSangerTrace> flowgramIterator,  DateTime phdDate ){
+	private final DateTime phdDate;
+	private final File sffFile;
+	public FlowgramConsedPhdAdaptedIterator(CloseableIterator<? extends Flowgram> flowgramIterator, File sffFile, DateTime phdDate ){
 		this.requiredComments = PhdUtil.createPhdTimeStampCommentFor(phdDate);
+		this.flowgramIterator = flowgramIterator;	
 		this.phdDate = phdDate;
-		this.fastqIterator = flowgramIterator;		
+		this.sffFile = sffFile;
 	}
 	@Override
 	public boolean hasNext() {
-		return fastqIterator.hasNext();
+		return flowgramIterator.hasNext();
 	}
 
 	@Override
 	public PhdReadRecord next() {
-		FileSangerTrace next = fastqIterator.next();
-		String name;
-		try {
-			name = FilenameUtils.getBaseName(next.getFile().getName());
+		Flowgram nextFlowgram = flowgramIterator.next();
+		String id = nextFlowgram.getId();
+		Phd phd= ArtificialPhd.createNewbler454Phd(
+				id, 
+				nextFlowgram.getBasecalls(), 
+				nextFlowgram.getQualities(),
+				requiredComments);
 		
-			Phd phd= new DefaultPhd(
-					name, 
-					next.getBasecalls(), 
-					next.getQualities(),
-					next.getPeaks(),
-					requiredComments);
-			
-			PhdInfo info = ConsedUtil.generatePhdInfoFor(next.getFile(), name, phdDate);
-			return new DefaultPhdReadRecord(phd, info);
-		} catch (IOException e) {
-			throw new IllegalStateException("could not get sanger trace file",e);
-		}
+		PhdInfo phdInfo = ConsedUtil.generatePhdInfoFor(sffFile, id, phdDate);
+		return new DefaultPhdReadRecord(phd,phdInfo);
 	}
 
 	@Override
 	public void remove() {
-		fastqIterator.remove();
+		flowgramIterator.remove();
 		
 	}
 	@Override
 	public void close() throws IOException {
-		fastqIterator.close();
+	   flowgramIterator.close();
 		
 	}
 
