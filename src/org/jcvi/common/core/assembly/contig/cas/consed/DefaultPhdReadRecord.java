@@ -17,10 +17,11 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly.contig.ace.consed;
+package org.jcvi.common.core.assembly.contig.cas.consed;
 
 import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class DefaultPhdReadRecord implements PhdReadRecord {
 
@@ -42,6 +43,8 @@ public class DefaultPhdReadRecord implements PhdReadRecord {
 		return phdInfo;
 	}
 
+	
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -85,5 +88,29 @@ public class DefaultPhdReadRecord implements PhdReadRecord {
 		}
 		return true;
 	}
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public String toString() {
+        return getPhd().getId();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public String getId() {
+        return phd.getId();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public NucleotideSequence getBasecalls() {
+        return phd.getBasecalls();
+    }
 
 }

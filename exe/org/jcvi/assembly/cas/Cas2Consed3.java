@@ -53,7 +53,6 @@ import org.jcvi.common.core.assembly.contig.cas.CasFileVisitor;
 import org.jcvi.common.core.assembly.contig.cas.CasInfo;
 import org.jcvi.common.core.assembly.contig.cas.CasMatch;
 import org.jcvi.common.core.assembly.contig.cas.CasParser;
-import org.jcvi.common.core.assembly.contig.cas.AbstractCasPhdReadVisitor;
 import org.jcvi.common.core.assembly.contig.cas.CasTrimMap;
 import org.jcvi.common.core.assembly.contig.cas.CasUtil;
 import org.jcvi.common.core.assembly.contig.cas.EmptyCasTrimMap;
@@ -61,6 +60,7 @@ import org.jcvi.common.core.assembly.contig.cas.ExternalTrimInfo;
 import org.jcvi.common.core.assembly.contig.cas.ReadFileType;
 import org.jcvi.common.core.assembly.contig.cas.UnTrimmedExtensionTrimMap;
 import org.jcvi.common.core.assembly.contig.cas.UpdateConsensusAceContigBuilder;
+import org.jcvi.common.core.assembly.contig.cas.consed.AbstractAcePlacedReadCasReadVisitor;
 import org.jcvi.common.core.assembly.trim.TrimDataStore;
 import org.jcvi.common.core.assembly.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
@@ -166,10 +166,9 @@ public class Cas2Consed3 {
             
               try{
                   
-                 AbstractCasPhdReadVisitor visitor = new AbstractCasPhdReadVisitor(casInfo) {
-                    
+                  AbstractAcePlacedReadCasReadVisitor visitor = new AbstractAcePlacedReadCasReadVisitor(casInfo) {
                         @Override
-                        protected void visitAcePlacedRead(AcePlacedRead acePlacedRead, Phd phd,
+                        protected void visitMatch(AcePlacedRead acePlacedRead, Phd phd,
                                 int casReferenceId) {
                             Integer refKey = Integer.valueOf(casReferenceId);
                             if(!builders.containsKey(refKey)){

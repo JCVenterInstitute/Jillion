@@ -32,7 +32,6 @@ import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.contig.cas.AbstractCasPhdReadVisitor.TraceDetails;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignment;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegion;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegionType;

@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
  */
 public class DefaultAsmContig implements AsmContig{
 
-    private final Contig<PlacedRead> contig;
+    private final Contig<AsmPlacedRead> contig;
     private final boolean isDegenerate;
     
     public static AsmContigBuilder createBuilder(String id, NucleotideSequence consensus){
@@ -49,7 +49,7 @@ public class DefaultAsmContig implements AsmContig{
     public static AsmContigBuilder createBuilder(String id, NucleotideSequence consensus, boolean isDegenerate){
         return new DefaultAsmContigBuilder(id, consensus, isDegenerate);
     }
-    private DefaultAsmContig(Contig<PlacedRead> contig, boolean isDegenerate) {
+    private DefaultAsmContig(Contig<AsmPlacedRead> contig, boolean isDegenerate) {
         this.contig = contig;
         this.isDegenerate = isDegenerate;
     }
@@ -74,7 +74,7 @@ public class DefaultAsmContig implements AsmContig{
     * {@inheritDoc}
     */
     @Override
-    public Set<PlacedRead> getPlacedReads() {
+    public Set<AsmPlacedRead> getPlacedReads() {
         return contig.getPlacedReads();
     }
 
@@ -90,7 +90,7 @@ public class DefaultAsmContig implements AsmContig{
     * {@inheritDoc}
     */
     @Override
-    public PlacedRead getPlacedReadById(String id) {
+    public AsmPlacedRead getPlacedReadById(String id) {
         return contig.getPlacedReadById(id);
     }
 
@@ -112,17 +112,19 @@ public class DefaultAsmContig implements AsmContig{
 
     private static class DefaultAsmContigBuilder implements AsmContigBuilder{
 
-        AbstractContigBuilder<PlacedRead, Contig<PlacedRead>> delegate;
+        AbstractContigBuilder<AsmPlacedRead, Contig<AsmPlacedRead>> delegate;
         boolean isDegenerate;
         DefaultAsmContigBuilder(String id, NucleotideSequence consensus,boolean isDegenerate){
-            delegate = new DefaultContig.Builder(id, consensus);
+           // delegate = new DefaultContig.Builder(id, consensus);
+            //TODO write builder code for asm
+            delegate =null;
             this.isDegenerate = isDegenerate;
         }
         /**
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<PlacedRead, AsmContig> setContigId(String contigId) {
+        public ContigBuilder<AsmPlacedRead, AsmContig> setContigId(String contigId) {
             delegate.setContigId(contigId);
             return this;
         }
@@ -147,8 +149,8 @@ public class DefaultAsmContig implements AsmContig{
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<PlacedRead, AsmContig> addRead(
-                PlacedRead placedRead) {
+        public ContigBuilder<AsmPlacedRead, AsmContig> addRead(
+                AsmPlacedRead placedRead) {
             delegate.addRead(placedRead);
             return this;
         }
@@ -168,8 +170,8 @@ public class DefaultAsmContig implements AsmContig{
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<PlacedRead, AsmContig> addAllReads(
-                Iterable<PlacedRead> reads) {
+        public ContigBuilder<AsmPlacedRead, AsmContig> addAllReads(
+                Iterable<AsmPlacedRead> reads) {
             delegate.addAllReads(reads);
             return this;
         }
@@ -178,7 +180,7 @@ public class DefaultAsmContig implements AsmContig{
         * {@inheritDoc}
         */
         @Override
-        public Collection<? extends PlacedReadBuilder<PlacedRead>> getAllPlacedReadBuilders() {
+        public Collection<? extends PlacedReadBuilder<AsmPlacedRead>> getAllPlacedReadBuilders() {
            
             return delegate.getAllPlacedReadBuilders();
         }
@@ -187,7 +189,7 @@ public class DefaultAsmContig implements AsmContig{
         * {@inheritDoc}
         */
         @Override
-        public PlacedReadBuilder<PlacedRead> getPlacedReadBuilder(String readId) {
+        public PlacedReadBuilder<AsmPlacedRead> getPlacedReadBuilder(String readId) {
             return delegate.getPlacedReadBuilder(readId);
         }
 

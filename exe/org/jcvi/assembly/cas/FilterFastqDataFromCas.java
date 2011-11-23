@@ -41,10 +41,10 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
-import org.jcvi.common.core.assembly.contig.cas.AbstractCasPhdReadVisitor;
 import org.jcvi.common.core.assembly.contig.cas.CasInfo;
 import org.jcvi.common.core.assembly.contig.cas.CasParser;
 import org.jcvi.common.core.assembly.contig.cas.CasUtil;
+import org.jcvi.common.core.assembly.contig.cas.consed.AbstractAcePlacedReadCasReadVisitor;
 import org.jcvi.common.core.assembly.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
@@ -62,10 +62,10 @@ public class FilterFastqDataFromCas {
             int maxSolexaCoverageDepth,PrintWriter out) throws IOException{
         final Map<Integer, List<ReadRange>> fastqReadMap = new TreeMap<Integer, List<ReadRange>>();
        
-        AbstractCasPhdReadVisitor visitor = new AbstractCasPhdReadVisitor(casInfo) {
+        AbstractAcePlacedReadCasReadVisitor visitor = new AbstractAcePlacedReadCasReadVisitor(casInfo) {
             
             @Override
-            protected void visitAcePlacedRead(AcePlacedRead acePlacedRead, Phd phd,
+            protected void visitMatch(AcePlacedRead acePlacedRead, Phd phd,
                     int casReferenceId) {
                 String readId = acePlacedRead.getId();
                 if(readId.startsWith("SOLEXA")){
