@@ -218,10 +218,32 @@ public class CasParser {
         (byte)0x00,
         (byte)0x01,
     };
-    
+    /**
+     * 
+     * @param file
+     * @param visitor
+     * @throws IOException
+     */
     public static void parseCas(File file, CasFileVisitor visitor) throws IOException{
         new CasParser(file, visitor,true);        
     }
+    /**
+     * Parse only the meta data associated with this cas file.  This will only 
+     * call:
+     * <ol>
+     * <li>{@link CasFileVisitor#visitMetaData(long, long)}</li>
+     * <li>{@link CasFileVisitor#visitAssemblyProgramInfo(String, String, String)}</li>
+     * <li>{@link CasFileVisitor#visitNumberOfContigFiles(long)}</li>
+     * <li>n calls to {@link CasFileVisitor#visitContigFileInfo(CasFileInfo)} where n is the number of contig files</li>
+     * <li>{@link CasFileVisitor#visitNumberOfReadFiles(long)}</li>
+     * <li>n calls to {@link CasFileVisitor#visitReadFileInfo(CasFileInfo)} where n is the number of read files</li>
+     * <li>{@link CasFileVisitor#visitScoringScheme(CasScoringScheme)}</li>
+     * <li> n calls to {@link CasFileVisitor#visitContigDescription(CasContigDescription)} where n is the number of contig files</li>
+     * </ol>
+     * @param file
+     * @param visitor
+     * @throws IOException
+     */
     public static void parseOnlyMetaData(File file, CasFileVisitor visitor) throws IOException{
         new CasParser(file, visitor,false);
         
