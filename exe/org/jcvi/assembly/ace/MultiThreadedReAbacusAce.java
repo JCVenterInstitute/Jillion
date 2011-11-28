@@ -104,6 +104,9 @@ public class MultiThreadedReAbacusAce {
         .isRequired(true)
         .longName("out")
         .build());
+        options.addOption(new CommandLineOptionBuilder("muscle_max_mem", "number of MBs max that muscle is allowed " +
+                "to allocate to perform abacus re-alignments default: "+ReAbacusAceContigWorker.MUSCLE_MAX_MEM_DEFAULT)
+        .build());
         
         options.addOption(new CommandLineOptionBuilder("flank", "number of bases on each side of the problem regions to include in the reabacus.  " +
                 "We add flanking bases in order to improve the alignments.  " +
@@ -130,6 +133,10 @@ public class MultiThreadedReAbacusAce {
             int numberOfFlankingBases = commandLine.hasOption("flank")? 
                     Integer.parseInt(commandLine.getOptionValue("flank"))
                     : DEFAULT_FLANK_LENGTH;
+                    
+            int maxMuscleMem = commandLine.hasOption("muscle_max_mem")? 
+                    Integer.parseInt(commandLine.getOptionValue("muscle_max_mem"))
+                    : ReAbacusAceContigWorker.MUSCLE_MAX_MEM_DEFAULT;  
             int numberOfThreads = Integer.parseInt(commandLine.getOptionValue("num_threads"));
             
             ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
@@ -148,7 +155,7 @@ public class MultiThreadedReAbacusAce {
                 String contigId = ids.next();
                 File tempOutputFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);
                 if(abacusErrorMap.containsKey(contigId)){
-                    Callable<Void> callable = new SingleContigReAbacusWorker(inputAceFile, abacusErrorMap, contigId, tempOutputFile, numberOfFlankingBases);
+                    Callable<Void> callable = new SingleContigReAbacusWorker(inputAceFile, abacusErrorMap, contigId, tempOutputFile, numberOfFlankingBases,maxMuscleMem);
                     futures.add(executor.submit(callable));
                 }else{
                     Callable<Void> callable = new StreamContigWorker(inputAceFile, contigOffsets.getRangeFor(contigId), tempOutputFile);
@@ -243,15 +250,16 @@ public class MultiThreadedReAbacusAce {
        private final String contigId;
        private final File outFile;
        private final int numberOfFlankingBases;
-       
+       private final int maxMuscleMem;
         SingleContigReAbacusWorker(File inputAceFile,
             Map<String, List<Range>> abacusErrorMap, String contigId,
-            File outFile, int numberOfFlankingBases){
+            File outFile, int numberOfFlankingBases, int maxMuscleMem){
             this.inputAceFile = inputAceFile;
             this.abacusErrorMap = abacusErrorMap;
             this.contigId = contigId;
             this.outFile = outFile;
             this.numberOfFlankingBases = numberOfFlankingBases;
+            this.maxMuscleMem = maxMuscleMem;
         }
         /**
         * {@inheritDoc}
@@ -260,7 +268,7 @@ public class MultiThreadedReAbacusAce {
         public Void call() throws IOException{
             PhdDataStore hilowPhdDataStore = HiLowAceContigPhdDatastore.create(inputAceFile, contigId);   
             OutputStream out = new FileOutputStream(outFile);
-            AbacusFixerBuilder contigFixer = new AbacusFixerBuilder(abacusErrorMap,contigId, numberOfFlankingBases, out, hilowPhdDataStore);
+            AbacusFixerBuilder contigFixer = new AbacusFixerBuilder(abacusErrorMap,contigId, numberOfFlankingBases, out, hilowPhdDataStore,maxMuscleMem);
             
             AceFileParser.parseAceFile(inputAceFile, contigFixer);
             return null;
