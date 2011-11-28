@@ -21,6 +21,7 @@ package org.jcvi.assembly.cas;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +48,7 @@ import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.contig.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
+import org.jcvi.common.core.assembly.contig.cas.AbstractCasFileVisitor;
 import org.jcvi.common.core.assembly.contig.cas.AbstractOnePassCasFileVisitor;
 import org.jcvi.common.core.assembly.contig.cas.CasFileInfo;
 import org.jcvi.common.core.assembly.contig.cas.CasFileVisitor;
@@ -74,6 +76,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdWriter;
 import org.jcvi.common.core.seq.trim.DefaultTrimFileDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.ReadWriteFileServer;
@@ -346,11 +349,11 @@ public class Cas2Consed3 {
 	                                .build());
 	        options.addOption(new CommandLineOptionBuilder("has_untrimmed", "some of the input files given to CLC were actually trimmed versions of the files. " +
 	        		"The full length untrimmed versions are in the same directory with the same name except they have an additional '.untrimmed' extension. " +
-	        		"Ex: myReads.fastq -> myReads.fastq.untrimmed")
+	        		"Futhermore, there will also be a .trimpoints file that formatted in sfffile's tab delimmed trim format which describes the " +
+	        		"trim points to convert the untrimmed basecalls into the trimmed basecalls" +
+	        		"Ex: myReads.fastq -> myReads.fastq.untrimmed and myRead.fastq.trimpoints")
 	        .isFlag(true)
             .build());
-	        options.addOption(new CommandLineOptionBuilder("trim", "trim file in sfffile's tab delimmed trim format")                                
-	                                                        .build());
 	        options.addOption(new CommandLineOptionBuilder("chromat_dir", "directory of chromatograms to be converted into phd "+
 	                "(it is assumed the read data for these chromatograms are in a fasta file(s) which the .cas file knows about")                                
 	                        .build());
@@ -381,20 +384,17 @@ public class Cas2Consed3 {
 	            
 	            String prefix = commandLine.hasOption("prefix")? commandLine.getOptionValue("prefix"): DEFAULT_PREFIX;
 	            TrimDataStore trimDatastore;
-	            if(commandLine.hasOption("trim")){
-	                List<TrimDataStore> dataStores = new ArrayList<TrimDataStore>();
-	                final String trimFiles = commandLine.getOptionValue("trim");
-	                for(String trimFile : trimFiles.split(",")){
-	                    dataStores.add( new DefaultTrimFileDataStore(new File(trimFile)));
-	                }
-	                trimDatastore = MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimDataStore.class, dataStores);
+	            CasTrimMap trimToUntrimmedMap;
+	            if(commandLine.hasOption("has_untrimmed")){
+	                TrimPointsDataStoreExtensionBuilder trimDataStoreBuilder = new TrimPointsDataStoreExtensionBuilder(casFile.getParentFile());
+	                CasParser.parseOnlyMetaData(casFile, trimDataStoreBuilder);
+	                trimDatastore = trimDataStoreBuilder.build();
+	                trimToUntrimmedMap = new UnTrimmedExtensionTrimMap();
 	            }else{
 	                trimDatastore = TrimDataStoreUtil.EMPTY_DATASTORE;
+	                trimToUntrimmedMap = EmptyCasTrimMap.getInstance();
 	            }
-	            CasTrimMap trimToUntrimmedMap = commandLine.hasOption("has_untrimmed")?
-	                                new UnTrimmedExtensionTrimMap():
-	                                    EmptyCasTrimMap.getInstance();
-	                                
+	            
 	            FastQQualityCodec qualityCodec=  commandLine.hasOption("useIllumina")?  
 	                       FastQQualityCodec.ILLUMINA
 	                    : FastQQualityCodec.SANGER;
@@ -448,4 +448,52 @@ public class Cas2Consed3 {
                 options,
                 "Created by Danny Katzel");
     }
+	
+	private static class TrimPointsDataStoreExtensionBuilder extends AbstractCasFileVisitor implements Builder<TrimDataStore>{
+
+	    private final File workingDir;
+	    private List<TrimDataStore> delegates = new ArrayList<TrimDataStore>();
+	    
+        public TrimPointsDataStoreExtensionBuilder(File workingDir) {
+            this.workingDir = workingDir;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitReadFileInfo(CasFileInfo readFileInfo) {
+            if(delegates ==null){
+                throw new IllegalStateException("can only parse a single cas file once");
+            }
+            for(String filePath : readFileInfo.getFileNames()){
+                try {
+                    File file = CasUtil.getFileFor(workingDir, filePath);
+                    File trimpoints = new File(file.getParentFile(), file.getName()+".trimpoints");
+                    if(trimpoints.exists()){
+                        delegates.add(new DefaultTrimFileDataStore(trimpoints));
+                    }else{
+                        //legacy cas2consed 1 named file with capital P
+                        File trimPoints = new File(file.getParentFile(), file.getName()+".trimPoints");
+                        if(trimPoints.exists()){
+                            delegates.add(new DefaultTrimFileDataStore(trimpoints));
+                        }
+                    }
+                } catch (FileNotFoundException e) {
+                    throw new IllegalStateException("error reading input file data",e);
+                }
+            }
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public TrimDataStore build() {
+            TrimDataStore datastore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimDataStore.class, delegates);
+            delegates = null;
+            return datastore;
+        }
+	    
+	}
 }
