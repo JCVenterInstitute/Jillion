@@ -20,15 +20,15 @@
 package org.jcvi.common.core.assembly.ca;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.contig.AbstractContigBuilder;
-import org.jcvi.common.core.assembly.contig.Contig;
+import org.jcvi.common.core.assembly.contig.AbstractContig;
 import org.jcvi.common.core.assembly.contig.ContigBuilder;
-import org.jcvi.common.core.assembly.contig.DefaultContig;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.assembly.contig.PlacedReadBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
@@ -38,9 +38,8 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
  *
  *
  */
-public class DefaultAsmContig implements AsmContig{
+public class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implements AsmContig{
 
-    private final Contig<AsmPlacedRead> contig;
     private final boolean isDegenerate;
     
     public static AsmContigBuilder createBuilder(String id, NucleotideSequence consensus){
@@ -49,58 +48,13 @@ public class DefaultAsmContig implements AsmContig{
     public static AsmContigBuilder createBuilder(String id, NucleotideSequence consensus, boolean isDegenerate){
         return new DefaultAsmContigBuilder(id, consensus, isDegenerate);
     }
-    private DefaultAsmContig(Contig<AsmPlacedRead> contig, boolean isDegenerate) {
-        this.contig = contig;
+    private DefaultAsmContig(String id, NucleotideSequence consensus,
+            Set<AsmPlacedRead> reads,boolean isDegenerate) {
+        super(id,consensus,reads);
         this.isDegenerate = isDegenerate;
     }
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public String getId() {
-        return contig.getId();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getNumberOfReads() {
-        return contig.getNumberOfReads();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Set<AsmPlacedRead> getPlacedReads() {
-        return contig.getPlacedReads();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public NucleotideSequence getConsensus() {
-        return contig.getConsensus();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public AsmPlacedRead getPlacedReadById(String id) {
-        return contig.getPlacedReadById(id);
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public boolean containsPlacedRead(String placedReadId) {
-        return contig.containsPlacedRead(placedReadId);
-    }
+   
 
     /**
     * {@inheritDoc}
@@ -112,12 +66,16 @@ public class DefaultAsmContig implements AsmContig{
 
     private static class DefaultAsmContigBuilder implements AsmContigBuilder{
 
-        AbstractContigBuilder<AsmPlacedRead, Contig<AsmPlacedRead>> delegate;
+        private NucleotideSequence fullConsensus;
+        private final NucleotideSequenceBuilder mutableConsensus;
+        private String contigId;
+        private final Map<String, AsmPlacedReadBuilder>aceReadBuilderMap = new HashMap<String, AsmPlacedReadBuilder>();
+   
         boolean isDegenerate;
         DefaultAsmContigBuilder(String id, NucleotideSequence consensus,boolean isDegenerate){
-           // delegate = new DefaultContig.Builder(id, consensus);
-            //TODO write builder code for asm
-            delegate =null;
+            this.contigId = id;
+            this.fullConsensus = consensus;
+            this.mutableConsensus = new NucleotideSequenceBuilder(fullConsensus);
             this.isDegenerate = isDegenerate;
         }
         /**
@@ -125,7 +83,7 @@ public class DefaultAsmContig implements AsmContig{
         */
         @Override
         public ContigBuilder<AsmPlacedRead, AsmContig> setContigId(String contigId) {
-            delegate.setContigId(contigId);
+            this.contigId =contigId;
             return this;
         }
 
@@ -134,7 +92,7 @@ public class DefaultAsmContig implements AsmContig{
         */
         @Override
         public String getContigId() {
-            return delegate.getContigId();
+            return contigId;
         }
 
         /**
@@ -142,7 +100,7 @@ public class DefaultAsmContig implements AsmContig{
         */
         @Override
         public int numberOfReads() {
-            return delegate.numberOfReads();
+            return aceReadBuilderMap.size();
         }
 
         /**
@@ -151,28 +109,36 @@ public class DefaultAsmContig implements AsmContig{
         @Override
         public ContigBuilder<AsmPlacedRead, AsmContig> addRead(
                 AsmPlacedRead placedRead) {
-            delegate.addRead(placedRead);
-            return this;
+            return addRead(placedRead.getId(),
+                    placedRead.getNucleotideSequence().toString(),
+                    (int)placedRead.getStart(),
+                    placedRead.getDirection(),
+                    placedRead.getValidRange(),
+                    placedRead.getUngappedFullLength(),
+                    placedRead.isRepeatSurrogate());
         }
         
-        /**
-         * {@inheritDoc}
-         */
-         @Override
-         public AsmContigBuilder addRead(String readId, String validBases,
-                 int offset, Direction dir, Range clearRange,
-                 int ungappedFullLength) {
-             delegate.addRead(readId, offset, clearRange, validBases, dir, ungappedFullLength);
-             return this;
-         }
 
+         /**
+          * {@inheritDoc}
+          */
+          @Override
+          public AsmContigBuilder addRead(String readId, String validBases,
+                  int offset, Direction dir, Range clearRange,
+                  int ungappedFullLength, boolean isSurrogate) {
+              aceReadBuilderMap.put(readId, DefaultAsmPlacedRead.createBuilder(
+                      this.fullConsensus, readId, validBases, offset, dir, clearRange, ungappedFullLength, isSurrogate));
+              return this;
+          }
         /**
         * {@inheritDoc}
         */
         @Override
         public ContigBuilder<AsmPlacedRead, AsmContig> addAllReads(
                 Iterable<AsmPlacedRead> reads) {
-            delegate.addAllReads(reads);
+           for(AsmPlacedRead read : reads){
+               addRead(read);
+           }
             return this;
         }
 
@@ -182,7 +148,7 @@ public class DefaultAsmContig implements AsmContig{
         @Override
         public Collection<? extends PlacedReadBuilder<AsmPlacedRead>> getAllPlacedReadBuilders() {
            
-            return delegate.getAllPlacedReadBuilders();
+            return aceReadBuilderMap.values();
         }
 
         /**
@@ -190,7 +156,7 @@ public class DefaultAsmContig implements AsmContig{
         */
         @Override
         public PlacedReadBuilder<AsmPlacedRead> getPlacedReadBuilder(String readId) {
-            return delegate.getPlacedReadBuilder(readId);
+            return aceReadBuilderMap.get(readId);
         }
 
         /**
@@ -198,7 +164,7 @@ public class DefaultAsmContig implements AsmContig{
         */
         @Override
         public void removeRead(String readId) {
-            delegate.removeRead(readId);            
+            aceReadBuilderMap.remove(readId);            
         }
 
         /**
@@ -206,7 +172,7 @@ public class DefaultAsmContig implements AsmContig{
         */
         @Override
         public NucleotideSequenceBuilder getConsensusBuilder() {
-            return delegate.getConsensusBuilder();
+            return mutableConsensus;
         }
 
         /**
@@ -214,8 +180,12 @@ public class DefaultAsmContig implements AsmContig{
         */
         @Override
         public AsmContig build() {
-            
-            return new DefaultAsmContig(delegate.build(), isDegenerate);
+            Set<AsmPlacedRead> reads = new HashSet<AsmPlacedRead>(aceReadBuilderMap.size()+1);
+            for(AsmPlacedReadBuilder builder : aceReadBuilderMap.values()){
+                reads.add(builder.build());
+            }
+            aceReadBuilderMap.clear();
+            return new DefaultAsmContig(contigId,mutableConsensus.build(),reads, isDegenerate);
         }
 
         /**

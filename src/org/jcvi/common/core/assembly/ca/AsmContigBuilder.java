@@ -52,5 +52,5 @@ public interface AsmContigBuilder extends ContigBuilder<AsmPlacedRead, AsmContig
      * @return this.
      */
     AsmContigBuilder addRead(String readId, String validBases, int offset,
-            Direction dir, Range clearRange, int ungappedFullLength);
+            Direction dir, Range clearRange, int ungappedFullLength, boolean isSurrogate);
 }
