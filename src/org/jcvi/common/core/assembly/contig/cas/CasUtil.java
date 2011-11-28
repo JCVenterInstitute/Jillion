@@ -24,6 +24,7 @@
 package org.jcvi.common.core.assembly.contig.cas;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -209,6 +210,29 @@ public final class CasUtil {
         return builder.build();
 	}
 
+    /**
+     * Get the java File object for a filepath in a cas file.
+     * @param workingDir the working directory this cas file was
+     * created in (usually the same location as the cas file itself).
+     * @param filePath the path to the file which may or may not
+     * be relative.
+     * @return a new File object that represents the file.
+     * @throws FileNotFoundException if the file does not exist.
+     */
+    public static File getFileFor(File workingDir,String filePath) throws FileNotFoundException {
+        boolean isAbsolutePath = filePath.charAt(0) == File.separatorChar;
+        final File dataStoreFile;
+        if(isAbsolutePath){
+            dataStoreFile = new File(filePath);
+        }else{
+            dataStoreFile = new File(workingDir, filePath);
+        }            
+         
+        if(!dataStoreFile.exists()){
+            throw new FileNotFoundException(dataStoreFile.getAbsolutePath());
+        }
+        return dataStoreFile;
+    }
     public static CasInfoBuilder createCasInfoBuilder(File casFile){
         return new CasInfoBuilder(casFile);
     }
@@ -375,9 +399,5 @@ public final class CasUtil {
         public CasIdLookup getReferenceIdLookup() {
             return referenceIdLookup;
         }
-
-
-        
-        
     }
 }

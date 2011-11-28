@@ -50,7 +50,6 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
             List<NucleotideSequence> orderedGappedReferences,
             TrimDataStore validRangeDataStore,
             TraceDetails traceDetails) {
-        super();
         this.traceDetails = traceDetails;
         this.workingDir = workingDir;
         this.trimMap = trimMap;
@@ -126,20 +125,11 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
 
     
     private File getTrimmedFileFor(String pathToDataStore) throws FileNotFoundException {
-            boolean isAbsolutePath = pathToDataStore.charAt(0) == File.separatorChar;
-            final File dataStoreFile;
-            if(isAbsolutePath){
-                dataStoreFile = new File(pathToDataStore);
-            }else{
-                dataStoreFile = new File(workingDir, pathToDataStore);
-            }            
-           
-            if(!dataStoreFile.exists()){
-                throw new FileNotFoundException(dataStoreFile.getAbsolutePath());
-            }
+            final File dataStoreFile = CasUtil.getFileFor(workingDir, pathToDataStore);
             File trimmedDataStore = trimMap.getUntrimmedFileFor(dataStoreFile);
             return trimmedDataStore;
         }
+    
 
     @Override
     protected final synchronized void visitMatch(CasMatch match, long readCounter) {
