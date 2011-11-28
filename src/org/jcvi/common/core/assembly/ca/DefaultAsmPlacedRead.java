@@ -16,12 +16,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Feb 9, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.common.core.assembly.contig.ace;
+
+package org.jcvi.common.core.assembly.ca;
 
 import java.util.List;
 import java.util.Map;
@@ -36,32 +32,74 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
-public class DefaultAcePlacedRead implements AcePlacedRead {
-    private final PhdInfo phdInfo;
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class DefaultAsmPlacedRead implements AsmPlacedRead{
+    private final boolean isSurrogate;
     private final PlacedRead placedRead;
     
-    
-    public static AcePlacedReadBuilder createBuilder(NucleotideSequence reference, String readId,String validBases,
-            int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
-            int ungappedFullLength){
+    public static AsmPlacedReadBuilder createBuilder(NucleotideSequence reference, String readId,String validBases,
+            int offset, Direction dir, Range clearRange,
+            int ungappedFullLength, boolean isSurrogate){
         return new Builder(reference, readId, validBases, 
-                offset, dir, clearRange, phdInfo, ungappedFullLength);
+                offset, dir, clearRange, ungappedFullLength,isSurrogate);
     }
-    private DefaultAcePlacedRead(PlacedRead placedRead, PhdInfo phdInfo) {
+    
+    private DefaultAsmPlacedRead(PlacedRead placedRead, boolean isSurrogate) {
         this.placedRead = placedRead;
-        this.phdInfo =phdInfo;
+        this.isSurrogate = isSurrogate;
     }
 
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    public PhdInfo getPhdInfo() {
-        return phdInfo;
+    public Map<Integer, Nucleotide> getSnps() {
+        return placedRead.getSnps();
     }
 
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range getValidRange() {
+        return placedRead.getValidRange();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Direction getDirection() {
+        return placedRead.getDirection();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long toGappedValidRangeOffset(long referenceOffset) {
+        return placedRead.toGappedValidRangeOffset(referenceOffset);
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long toReferenceOffset(long gappedValidRangeOffset) {
+        return placedRead.toReferenceOffset(gappedValidRangeOffset);
+    }
+
+    /**
+    * {@inheritDoc}
+    */
     @Override
     public int getUngappedFullLength() {
         return placedRead.getUngappedFullLength();
     }
-
 
     /**
     * {@inheritDoc}
@@ -123,100 +161,22 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
     * {@inheritDoc}
     */
     @Override
-    public Map<Integer, Nucleotide> getSnps() {
-        return placedRead.getSnps();
+    public boolean isRepeatSurrogate() {
+        return isSurrogate;
     }
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Range getValidRange() {
-        return placedRead.getValidRange();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Direction getDirection() {
-        return placedRead.getDirection();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public long toGappedValidRangeOffset(long referenceIndex) {
-        return placedRead.toGappedValidRangeOffset(referenceIndex);
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public long toReferenceOffset(long validRangeIndex) {
-        return placedRead.toReferenceOffset(validRangeIndex);
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((phdInfo == null) ? 0 : phdInfo.hashCode());
-        result = prime * result
-                + ((placedRead == null) ? 0 : placedRead.hashCode());
-        return result;
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj){
-            return true;
-        }
-        if (obj == null){
-            return false;
-        }
-        if (getClass() != obj.getClass()){
-            return false;
-        }
-        DefaultAcePlacedRead other = (DefaultAcePlacedRead) obj;
-        if (phdInfo == null) {
-            if (other.phdInfo != null){
-                return false;
-            }
-        } else if (!phdInfo.equals(other.phdInfo)){
-            return false;
-        }
-        if (placedRead == null) {
-            if (other.placedRead != null){
-                return false;
-            }
-        } else if (!placedRead.equals(other.placedRead)){
-            return false;
-        }        
-        return true;
-    }
-
-
-    private static class Builder implements AcePlacedReadBuilder{
-        private PhdInfo phdInfo;        
+    private static class Builder implements AsmPlacedReadBuilder{
+        private boolean isSurrogate=false;        
         private final PlacedReadBuilder<PlacedRead> delegateBuilder;
         
         
         public Builder(NucleotideSequence reference, String readId,String validBases,
-                            int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
-                            int ungappedFullLength){
+                            int offset, Direction dir, Range clearRange,
+                            int ungappedFullLength,boolean isSurrogate){
             this.delegateBuilder = DefaultPlacedRead.createBuilder(
                     reference, readId, validBases, offset,
                     dir, clearRange, ungappedFullLength);
-            this.phdInfo = phdInfo;
+            this.isSurrogate = isSurrogate;
         }
         
         
@@ -276,13 +236,6 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         }
 
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public PhdInfo getPhdInfo() {
-            return phdInfo;
-        }
 
 
         /**
@@ -308,8 +261,8 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         * {@inheritDoc}
         */
         @Override
-        public DefaultAcePlacedRead build(){
-            return new DefaultAcePlacedRead(delegateBuilder.build(),phdInfo);
+        public DefaultAsmPlacedRead build(){
+            return new DefaultAsmPlacedRead(delegateBuilder.build(),isSurrogate);
         }
         /**
         * {@inheritDoc}
@@ -370,7 +323,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         * {@inheritDoc}
         */        
         @Override
-        public int compareTo(PlacedReadBuilder<AcePlacedRead> o) {
+        public int compareTo(PlacedReadBuilder<AsmPlacedRead> o) {
             
             int rangeCompare = asRange().compareTo(o.asRange());
             if(rangeCompare !=0){
@@ -392,7 +345,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
                     + ((delegateBuilder == null) ? 0 : delegateBuilder
                             .hashCode());
             result = prime * result
-                    + ((phdInfo == null) ? 0 : phdInfo.hashCode());
+                    + (isSurrogate ? 1:0);
             return result;
         }
 
@@ -419,14 +372,30 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
             } else if (!delegateBuilder.equals(other.delegateBuilder)) {
                 return false;
             }
-            if (phdInfo == null) {
-                if (other.phdInfo != null) {
-                    return false;
-                }
-            } else if (!phdInfo.equals(other.phdInfo)) {
+            if(isSurrogate!=other.isSurrogate){
                 return false;
             }
             return true;
+        }
+
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean isRepeatSurrogate() {
+            return isSurrogate;
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void setRepeatSurrogate(boolean isRepeatSurrogate) {
+            this.isSurrogate = isRepeatSurrogate;
+            
         }
     }
 

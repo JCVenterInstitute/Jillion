@@ -441,7 +441,8 @@ public class IndexedAsmContigDataStore implements AsmContigDataStore{
                     currentBuilder.addRead(externalReadId, gappedValidBases,
                             (int)readRange.getStart(),readRange.getDirection(),
                             clearRange, 
-                            (int)fullLengthSequence.getLength());
+                            (int)fullLengthSequence.getLength(),
+                            false);
                 } catch (DataStoreException e) {
                     throw new IllegalStateException("error getting read id "+ externalReadId +
                             " from frg file",e);
