@@ -91,7 +91,7 @@ public class ReAbacusAceContigWorker {
     private static final int DEFAULT_FLANK_LENGTH = 20;
 
     private static final File MUSCLE;
-    
+    static final int MUSCLE_MAX_MEM_DEFAULT = 2000;
     static{
         try {
             MUSCLE= getPathToMuscle();
@@ -172,6 +172,10 @@ public class ReAbacusAceContigWorker {
         .isRequired(true)
         .longName("out")
         .build());
+        options.addOption(new CommandLineOptionBuilder("muscle_max_mem", "number of MBs max that muscle is allowed " +
+        		"to allocate to perform abacus re-alignments default: "+MUSCLE_MAX_MEM_DEFAULT)
+        .build());
+        
         
         options.addOption(new CommandLineOptionBuilder("flank", "number of bases on each side of the problem regions to include in the reabacus.  " +
         		"We add flanking bases in order to improve the alignments.  " +
@@ -200,12 +204,16 @@ public class ReAbacusAceContigWorker {
             int numberOfFlankingBases = commandLine.hasOption("flank")? 
                     Integer.parseInt(commandLine.getOptionValue("flank"))
                     : DEFAULT_FLANK_LENGTH;
+                    
+            int maxMuscleMem = commandLine.hasOption("muscle_max_mem")? 
+                    Integer.parseInt(commandLine.getOptionValue("muscle_max_mem"))
+                    : MUSCLE_MAX_MEM_DEFAULT;     
             if(abacusErrorMap.containsKey(contigId)){
                 //only reabacus if we have to
                 //use hiLow phd to get lowercase/upper case right when we write out
                 //the new file.
                 PhdDataStore hilowPhdDataStore = HiLowAceContigPhdDatastore.create(inputAceFile, contigId);
-                reabacusContig(inputAceFile, abacusErrorMap,contigId, out, numberOfFlankingBases, hilowPhdDataStore);
+                reabacusContig(inputAceFile, abacusErrorMap,contigId, out, numberOfFlankingBases, hilowPhdDataStore, maxMuscleMem);
             }else{
                 //just stream contig?
                 //use index to get file offset then just stream those bytes.
@@ -240,8 +248,9 @@ public class ReAbacusAceContigWorker {
      */
     private static void reabacusContig(File inputAceFile,
             Map<String, List<Range>> abacusErrorMap, String contigId,
-            OutputStream out, int numberOfFlankingBases, PhdDataStore phdDataStore) throws IOException {
-        AbacusFixerBuilder contigFixer = new AbacusFixerBuilder(abacusErrorMap,contigId, numberOfFlankingBases, out, phdDataStore);
+            OutputStream out, int numberOfFlankingBases, PhdDataStore phdDataStore,
+            int maxMuscleMem) throws IOException {
+        AbacusFixerBuilder contigFixer = new AbacusFixerBuilder(abacusErrorMap,contigId, numberOfFlankingBases, out, phdDataStore,maxMuscleMem);
         AceFileParser.parseAceFile(inputAceFile, contigFixer);
     }
     /**
@@ -304,13 +313,15 @@ public class ReAbacusAceContigWorker {
         private final OutputStream aceOut;
         private final PhdDataStore phdDataStore;
         private final String contigId;
+        private final int maxMuscleMem;
         public AbacusFixerBuilder(Map<String, List<Range>> abacusProblemRanges, String contigId, int numberOfFlankingBases, 
-                OutputStream aceOut, PhdDataStore phdDataStore) {
+                OutputStream aceOut, PhdDataStore phdDataStore,int maxMuscleMem) {
             this.abacusProblemRanges = abacusProblemRanges;
             this.numberOfFlankingBases = numberOfFlankingBases;
             this.aceOut = aceOut;
             this.phdDataStore = phdDataStore;
             this.contigId = contigId;
+            this.maxMuscleMem = maxMuscleMem;
         }
 
         
@@ -448,7 +459,7 @@ public class ReAbacusAceContigWorker {
                     
                     try {
                         System.out.println("running muscle... for " + ungappedProblemRange);
-                        int exitCode=muscle(ungappedFasta, gappedFastaFile,2000);
+                        int exitCode=muscle(ungappedFasta, gappedFastaFile,maxMuscleMem);
                         if(exitCode !=0){
                             throw new IllegalStateException("error with muscle call for abacus range "+ ungappedProblemRange);
                         }
