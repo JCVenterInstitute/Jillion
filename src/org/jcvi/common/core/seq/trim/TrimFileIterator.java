@@ -52,7 +52,6 @@ public class TrimFileIterator extends AbstractBlockingCloseableIterator<Range>{
 
 			@Override
 			public void visitEndOfFile() {
-				TrimFileIterator.this.finishedIterating();
 				
 			}
 

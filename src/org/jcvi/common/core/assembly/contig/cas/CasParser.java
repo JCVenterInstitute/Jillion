@@ -94,13 +94,11 @@ public class CasParser {
                 while(count <numberOfBytesInForThisMatch){
                     short matchValue = CasUtil.readCasUnsignedByte(dataIn);
                     if(matchValue == 255){
-                        builder.addPhaseChange(dataIn.readByte());
-                        
+                        builder.addPhaseChange(dataIn.readByte());                        
                         count++;
                     }
                     else if(matchValue<128){
-                        builder.addRegion(CasAlignmentRegionType.MATCH_MISMATCH, matchValue +1);
-                        
+                        builder.addRegion(CasAlignmentRegionType.MATCH_MISMATCH, matchValue +1);                        
                     }
                     else if(matchValue<192){
                         builder.addRegion(CasAlignmentRegionType.INSERT, matchValue -127);
@@ -144,7 +142,7 @@ public class CasParser {
             visitor.visitAssemblyProgramInfo(nameOfAssemblyProgram, version, parameters);
             
             long numberOfContigFiles =CasUtil.parseByteCountFrom(dataIn);
-           visitor.visitNumberOfContigFiles(numberOfContigFiles);            
+           visitor.visitNumberOfReferenceFiles(numberOfContigFiles);            
             for(long i=0; i< numberOfContigFiles; i++){
               boolean twoFiles =(dataIn.read() & 0x01)==1;
               long numberOfSequencesInFile = CasUtil.readCasUnsignedInt(dataIn);
@@ -154,7 +152,7 @@ public class CasParser {
               if(twoFiles){
                   names.add(CasUtil.parseCasStringFrom(dataIn));
               }
-              visitor.visitContigFileInfo(new DefaultCasFileInfo(names, numberOfSequencesInFile, residuesInFile));
+              visitor.visitReferenceFileInfo(new DefaultCasFileInfo(names, numberOfSequencesInFile, residuesInFile));
             }
             
             long numberOfReadFiles =CasUtil.parseByteCountFrom(dataIn);
@@ -193,7 +191,7 @@ public class CasParser {
                 for(long i=0; i<numberOfContigSequences; i++){
                     long contigLength = CasUtil.readCasUnsignedInt(dataIn);
                     boolean isCircular = (dataIn.readUnsignedShort() & 0x01)==1;
-                    visitor.visitContigDescription(new DefaultCasContigDescription(contigLength, isCircular));
+                    visitor.visitReferenceDescription(new DefaultCasReferenceDescription(contigLength, isCircular));
                     maxContigLength = Math.max(maxContigLength, contigLength);
                 }
                 numberOfBytesForContigNumber = CasUtil.numberOfBytesRequiredFor(numberOfContigSequences);
@@ -233,12 +231,12 @@ public class CasParser {
      * <ol>
      * <li>{@link CasFileVisitor#visitMetaData(long, long)}</li>
      * <li>{@link CasFileVisitor#visitAssemblyProgramInfo(String, String, String)}</li>
-     * <li>{@link CasFileVisitor#visitNumberOfContigFiles(long)}</li>
-     * <li>n calls to {@link CasFileVisitor#visitContigFileInfo(CasFileInfo)} where n is the number of contig files</li>
+     * <li>{@link CasFileVisitor#visitNumberOfReferenceFiles(long)}</li>
+     * <li>n calls to {@link CasFileVisitor#visitReferenceFileInfo(CasFileInfo)} where n is the number of contig files</li>
      * <li>{@link CasFileVisitor#visitNumberOfReadFiles(long)}</li>
      * <li>n calls to {@link CasFileVisitor#visitReadFileInfo(CasFileInfo)} where n is the number of read files</li>
      * <li>{@link CasFileVisitor#visitScoringScheme(CasScoringScheme)}</li>
-     * <li> n calls to {@link CasFileVisitor#visitContigDescription(CasContigDescription)} where n is the number of contig files</li>
+     * <li> n calls to {@link CasFileVisitor#visitReferenceDescription(CasContigDescription)} where n is the number of contig files</li>
      * </ol>
      * @param file
      * @param visitor

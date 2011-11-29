@@ -48,12 +48,13 @@ public interface CasFileVisitor extends FileVisitor{
     void visitAssemblyProgramInfo(String name, String version, String parameters);
     /**
      * Visit meta data for this .cas file.
-     * @param numberOfContigSequences total number of contig sequences
-     * in this .cas file.
+     * @param numberOfReferenceSequences total number of reference sequences
+     * in this .cas file.  <strong>NOTE:</strong> It is possible that not all the references
+     * had reads aligned to them.
      * @param numberOfReads total number of reads contained in this
      * .cas file.
      */
-    void visitMetaData(long numberOfContigSequences, long numberOfReads);
+    void visitMetaData(long numberOfReferenceSequences, long numberOfReads);
     /**
      * Visit the number of files
      * that contain all the read data in this .cas assembly.
@@ -64,19 +65,22 @@ public interface CasFileVisitor extends FileVisitor{
     /**
      * Visit the number of files
      * that contain all the reference data in this .cas assembly.
-     * @param numberOfContigFiles number of files containing read data should
+     * @param numberOfReferenceFiles number of files containing read data should
      * always be {@code >=0}.
      */
-    void visitNumberOfContigFiles(long numberOfContigFiles);
+    void visitNumberOfReferenceFiles(long numberOfReferenceFiles);
     /**
      * Visit the {@link CasFileInfo} for all the reference files
      * used in this .cas assembly.
-     * @param contigFileInfo a CasFileInfo containing all data
+     * @param referenceFileInfo a CasFileInfo containing all data
      * about the reference files used; never null.
      */
-    void visitContigFileInfo(CasFileInfo contigFileInfo);
+    void visitReferenceFileInfo(CasFileInfo referenceFileInfo);
     /**
-     * Visit the {@link CasFileInfo} for all the read files
+     * Visit the {@link CasFileInfo} for a single read file 
+     * or read mate pair.  This method will be called
+     * n times where n is the sum of the number of fragment read input files
+     * and the number of mated pairs of read input files
      * used in this .cas assembly.
      * @param readFileInfo a CasFileInfo containing all data
      * about the read files used; never null.
@@ -84,9 +88,21 @@ public interface CasFileVisitor extends FileVisitor{
     void visitReadFileInfo(CasFileInfo readFileInfo);
     
     void visitScoringScheme(CasScoringScheme scheme);
-    
-    void visitContigDescription(CasContigDescription description);
-    
+    /**
+     * Visit a {@link CasReferenceDescription} of one of the references
+     * used in this assembly.  This method will be called
+     * n times where n is the number of references used in this 
+     * cas file.
+     * @param description
+     */
+    void visitReferenceDescription(CasReferenceDescription description);
+    /**
+     * Contig pairs are currently not used in CLC reference
+     * assembly so this method will not get called
+     * however it is a place holder for when it is eventually
+     * included.
+     * @param contigPair
+     */
     void visitContigPair(CasContigPair contigPair);
     
 }

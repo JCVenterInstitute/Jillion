@@ -56,15 +56,15 @@ public abstract class AbstractOnePassCasFileVisitor extends AbstractCasFileVisit
     }
 
     @Override
-    public synchronized void visitContigDescription(CasContigDescription description) {
+    public synchronized void visitReferenceDescription(CasReferenceDescription description) {
         checkNotYetInitialized();
-        super.visitContigDescription(description);
+        super.visitReferenceDescription(description);
     }
 
     @Override
-    public synchronized void visitContigFileInfo(CasFileInfo contigFileInfo) {
+    public synchronized void visitReferenceFileInfo(CasFileInfo contigFileInfo) {
         checkNotYetInitialized();
-        super.visitContigFileInfo(contigFileInfo);
+        super.visitReferenceFileInfo(contigFileInfo);
     }
 
     @Override
@@ -108,9 +108,9 @@ public abstract class AbstractOnePassCasFileVisitor extends AbstractCasFileVisit
     }
 
     @Override
-    public synchronized void visitNumberOfContigFiles(long numberOfContigFiles) {
+    public synchronized void visitNumberOfReferenceFiles(long numberOfContigFiles) {
         checkNotYetInitialized();
-        super.visitNumberOfContigFiles(numberOfContigFiles);
+        super.visitNumberOfReferenceFiles(numberOfContigFiles);
     }
 
     @Override

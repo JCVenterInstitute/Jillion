@@ -62,12 +62,6 @@ public class AbstractLargeFastaRecordIterator<S extends Symbol, T extends Sequen
                 blockingPut(fastaRecord);
                 return !AbstractLargeFastaRecordIterator.this.isClosed();
             }
-
-            @Override
-            public void visitEndOfFile() {                
-                super.visitEndOfFile();
-                AbstractLargeFastaRecordIterator.this.finishedIterating();
-            }
         };
         try {
             FastaParser.parseFasta(fastaFile, visitor);

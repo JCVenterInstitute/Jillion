@@ -78,15 +78,7 @@ public class LargePhdIterator extends AbstractBlockingCloseableIterator<Phd>{
                 blockingPut(phd);
                 return !LargePhdIterator.this.isClosed();                
             }
-
-            /**
-            * {@inheritDoc}
-            */
-            @Override
-            public synchronized void visitEndOfFile() {                
-                super.visitEndOfFile();
-                LargePhdIterator.this.finishedIterating();
-            }            
+       
             
         };
         

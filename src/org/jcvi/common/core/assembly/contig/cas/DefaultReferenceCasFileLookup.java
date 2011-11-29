@@ -58,7 +58,7 @@ public class DefaultReferenceCasFileLookup extends AbstractDefaultCasFileLookup{
     }
 
     @Override
-    public void visitContigFileInfo(CasFileInfo contigFileInfo) {
+    public void visitReferenceFileInfo(CasFileInfo contigFileInfo) {
         checkNotYetInitialized();
         loadFiles(contigFileInfo);
     }
