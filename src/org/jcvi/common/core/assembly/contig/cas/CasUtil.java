@@ -185,7 +185,9 @@ public final class CasUtil {
 		CasAlignment alignment = match.getChosenAlignment();
         
         DefaultCasPlacedReadFromCasAlignmentBuilder builder;
-        
+        if(readId.equals("SOLEXA3_0041_FC:4:100:11098:11755#TAGCTT/2")){
+            System.out.println("here");
+        }
         long ungappedStartOffset = alignment.getStartOfMatch();
         long gappedStartOffset = gappedReference.getGappedOffsetFor((int)ungappedStartOffset);
         builder = new DefaultCasPlacedReadFromCasAlignmentBuilder(readId,

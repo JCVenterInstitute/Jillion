@@ -19,6 +19,7 @@
 
 package org.jcvi.common.core.util;
 
+import org.jcvi.common.core.util.iter.TestAbstractBlockingClosableIteratorExceptions;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -40,7 +41,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestChainedIterator.class,
         TestCloseableIteratorAdapter.class,
         TestChainedCloseableIterator.class,
-        TestMapValueComparator.class
+        TestMapValueComparator.class,
+        
+        TestAbstractBlockingClosableIteratorExceptions.class
     }
     )
 public class AllUtilUnitTests {

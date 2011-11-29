@@ -155,7 +155,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
     }
 
     @Override
-    public synchronized void visitContigDescription(CasContigDescription description) {
+    public synchronized void visitReferenceDescription(CasReferenceDescription description) {
         checkNotYetInitialized();
         
     }
@@ -180,7 +180,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
     }
 
     @Override
-    public synchronized void visitNumberOfContigFiles(long numberOfContigFiles) {
+    public synchronized void visitNumberOfReferenceFiles(long numberOfContigFiles) {
         checkNotYetInitialized();
         
     }

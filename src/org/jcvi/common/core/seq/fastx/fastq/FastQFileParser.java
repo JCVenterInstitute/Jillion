@@ -84,7 +84,7 @@ public class FastQFileParser {
 	            visitCurrentBlock = visitor.visitBeginBlock(id, optionalComment);
 	            if(visitCurrentBlock){
 	                visitor.visitLine(basecalls);
-	                NucleotideSequence encodedNucleotides = NucleotideSequenceFactory.createACGTN(Nucleotides.parse(basecalls.subSequence(0, basecalls.length()-1)));
+	                NucleotideSequence encodedNucleotides = NucleotideSequenceFactory.createACGTN(Nucleotides.parse(basecalls.substring(0, basecalls.length()-1)));
 	                visitor.visitNucleotides(encodedNucleotides);
 	                visitor.visitLine(qualLine);
 	                Matcher beginQualityMatcher =FastQUtil.QUAL_DEFLINE_PATTERN.matcher(qualLine);

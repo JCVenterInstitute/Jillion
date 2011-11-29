@@ -69,10 +69,6 @@ public class LargeFastQFileIterator extends AbstractBlockingCloseableIterator<Fa
         		        super.visitBeginBlock(id, optionalComment);
         		        return true;
         		    }
-        		    @Override
-        		    public void visitEndOfFile() {
-        		       LargeFastQFileIterator.this.finishedIterating();
-        		    }
 			};
             FastQFileParser.parse(fastQFile, visitor);
        } catch (IOException e) {

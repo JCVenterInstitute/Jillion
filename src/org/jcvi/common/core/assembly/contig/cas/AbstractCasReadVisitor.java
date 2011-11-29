@@ -41,7 +41,7 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
 
     private final File workingDir;
     private final CasTrimMap trimMap;
-    private CloseableIterator<R> phdIterator;
+    private CloseableIterator<R> readIterator;
     private final List<NucleotideSequence> orderedGappedReferences;
     private final TrimDataStore validRangeDataStore;
     private final List<CloseableIterator<R>> iterators = new ArrayList<CloseableIterator<R>>();
@@ -120,7 +120,7 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
       @Override
     public final synchronized void visitScoringScheme(CasScoringScheme scheme) {
         super.visitScoringScheme(scheme);
-        phdIterator = new ChainedCloseableIterator<R>(iterators);
+        readIterator = new ChainedCloseableIterator<R>(iterators);
     }
 
     
@@ -133,22 +133,22 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
 
     @Override
     protected final synchronized void visitMatch(CasMatch match, long readCounter) {
-        R phdReadRecord =phdIterator.next();
+        R readRecord =readIterator.next();
         try {
             if(match.matchReported()){
-                String recordId = phdReadRecord.getId();
+                String recordId = readRecord.getId();
                 int casReferenceId = (int)match.getChosenAlignment().contigSequenceId();
                 NucleotideSequence gappedReference =orderedGappedReferences.get(casReferenceId);
                 CasPlacedRead placedRead = CasUtil.createCasPlacedRead(match, recordId, 
-                        phdReadRecord.getBasecalls(), 
+                        readRecord.getBasecalls(), 
                         validRangeDataStore.get(recordId), gappedReference);
-                visitMatch(match, phdReadRecord, placedRead);              
+                visitMatch(match, readRecord, placedRead);              
             }else{
-                visitUnMatched(phdReadRecord);
+                visitUnMatched(readRecord);
             }
         } catch (Exception e) {
-            IOUtil.closeAndIgnoreErrors(phdIterator);
-            throw new IllegalStateException("error getting trim range for " + phdReadRecord, e);
+            IOUtil.closeAndIgnoreErrors(readIterator);
+            throw new IllegalStateException("error getting parsing data for " + readRecord, e);
         }
     }
     protected abstract void visitUnMatched(R readRecord) throws Exception;

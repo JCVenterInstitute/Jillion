@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.contig.cas;
 
-public class DefaultCasContigDescription implements CasContigDescription {
+public class DefaultCasReferenceDescription implements CasReferenceDescription {
     private final boolean isCircular;
     private long contigLength;
     
@@ -32,7 +32,7 @@ public class DefaultCasContigDescription implements CasContigDescription {
      * @param contigLength
      * @param isCircular
      */
-    public DefaultCasContigDescription(long contigLength, boolean isCircular) {
+    public DefaultCasReferenceDescription(long contigLength, boolean isCircular) {
         this.contigLength = contigLength;
         this.isCircular = isCircular;
     }

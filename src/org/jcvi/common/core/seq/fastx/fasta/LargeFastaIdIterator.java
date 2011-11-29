@@ -60,12 +60,6 @@ public class LargeFastaIdIterator extends AbstractBlockingCloseableIterator<Stri
                 LargeFastaIdIterator.this.blockingPut(id);
                 return LargeFastaIdIterator.this.isClosed();
             }
-
-            @Override
-            public void visitEndOfFile() {
-                super.visitEndOfFile();
-                LargeFastaIdIterator.this.finishedIterating();
-            }
         };
         try {
             FastaParser.parseFasta(fastaFile, visitor);

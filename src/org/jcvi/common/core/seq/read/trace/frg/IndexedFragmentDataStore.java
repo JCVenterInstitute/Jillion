@@ -312,7 +312,6 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
 
                 @Override
                 public void visitEndOfFile() {
-                    FrgIterator.this.finishedIterating();
                     
                 }
 

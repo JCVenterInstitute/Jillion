@@ -151,7 +151,6 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         
     }
 
-    
 
     @Override
     public CloseableIterator<AceContig> iterator() {
@@ -202,25 +201,19 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
                     AceFileDataStoreIterator.this.blockingPut(contig);
                     
                 }
-
-                /**
-                * {@inheritDoc}
-                */
-                @Override
-                public synchronized void visitEndOfFile() {
-                    AceFileDataStoreIterator.this.finishedIterating();
-                }
                 
                 
             };
             try {
                 AceFileParser.parseAceFile(file, builder);
-            } catch (IOException e) {
-                // should never happen
-                throw new RuntimeException("error iterating over ace file",e);
+            } catch (Exception e) {
+                //some kind of exception occured while we were parsing the ace file
+                throw new RuntimeException("error while iterating over ace file",e);
             }
             
         }
+
+       
         
     }
     /**

@@ -35,8 +35,8 @@ public class ReferenceCasFileNucleotideDataStore  extends AbstractCasFileNucleot
 
 
     @Override
-    public synchronized void visitContigFileInfo(CasFileInfo contigFileInfo) {
-        super.visitContigFileInfo(contigFileInfo);
+    public synchronized void visitReferenceFileInfo(CasFileInfo contigFileInfo) {
+        super.visitReferenceFileInfo(contigFileInfo);
         loadNucleotidesFrom(contigFileInfo);
     }
     /**

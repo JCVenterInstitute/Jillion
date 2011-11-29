@@ -20,6 +20,8 @@
 package org.jcvi.common.core.util.iter;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -29,15 +31,64 @@ import org.jcvi.common.core.io.IOUtil;
 /**
  * {@code AbstractBlockingCloseableIterator}
  * is a {@link CloseableIterator} that is
- * meant be used with a {@link FileVisitor}
- * so that a client may iterate over the records
- * being visited.  This class will block (in a separate
- * Thread) so that the subject being visited
- * only has to be visited once through over the lifetime
- * of this iterator.
+ * meant be used with a iterate over a large computationally intensive
+ * or memory intensive process.  Only 1 record (the next record
+ * to be returned by {@link Iterator#next()}) will be referenced by this class.
+ * This class will perform the intensive computation in a background Thread
+ * and will block that Thread until the next item to be iterated 
+ * is required.  Elements to be iterated over are placed onto the blocking
+ * iterator by {@link #blockingPut(Object)}.
+ * <p/>
+ * The background thread is not started until the {@link #start()}
+ * method is called.  This allows for subclasses to set up
+ * and initialize themselves in either the constructor
+ * or other pre-process steps.
+ * <p/>
+ * Example:
+ * <pre> 
+
+     //Example implementation 
+     //will compute the approximate value of PI.
+     //Each {@link BigDecimal} returned by this iterator
+     //will be a more accurate approximation.
+    
+    class ApproximatePiIterator extends AbstractBlockingCloseableIterator&lt;BigDecimal&gt;{
+        private final int numOfIterations;
+        
+        public ApproximatePiIterator(int numOfIterations) {
+            this.numOfIterations = numOfIterations;
+        }
+        
+        //Computes the value of &pi; using the Madhava–Leibniz series:
+        //&pi; = 4 &sum; (-1)<sup>k</sup> / (2k + 1)    
+        protected void backgroundThreadRunMethod() throws RuntimeException {
+            BigDecimal currentValue = BigDecimal.valueOf(1);
+            this.blockingPut(currentValue.multiply(FOUR));
+            for(int i=1; i&lt;numOfIterations; i++){
+                BigDecimal x = BigDecimal.valueOf(1D/(2*i+1));
+                if(i%2==0){
+                    currentValue = currentValue.add(x);
+                }else{
+                    currentValue = currentValue.subtract(x);
+                }
+                this.blockingPut(currentValue.multiply(FOUR));
+            }
+        }
+        
+    }
+    
+    public static void main(String[] args){
+        ApproximatePiIterator approxPi = new ApproximatePiIterator(5000);
+        approxPi.start();
+        while(approxPi.hasNext()){
+            System.out.println(approxPi.next());
+        }
+    }
+ * </pre>
+ * 
  * @author dkatzel
  *
- * @param <T> the records being iterated over.
+ * @param <T> the type of elements being iterated over.
  */
 public abstract class AbstractBlockingCloseableIterator<T> implements CloseableIterator<T>{
 
@@ -45,11 +96,14 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
     private BlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1);
     private Object nextRecord=null;
     private volatile boolean isClosed=false;
+    
+    private volatile RuntimeException uncaughtException;
+
     /**
      * @throws InterruptedException 
      * 
      */
-    public void blockingGetNextRecord(){
+    private void blockingGetNextRecord(){
         if(!isClosed){
             try {
 				nextRecord = queue.take();
@@ -83,22 +137,34 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
     /**
      * This is the method that is called by the {@link Thread#run()}
      * instance in the background thread created and started 
-     * in {@link #start()}.  Please set up and start and visiting
-     * and parsing that is required by this iterator.  Make sure
-     * all appropriate visit methods call the appropriate
-     * {@link #blockingPut(Object)} {@link #blockingGetNextRecord()}
-     * and {@link #finishedIterating()} methods.
+     * in {@link #start()}.  Please set up and start the items
+     * being iterated over.  Make sure
+     * to call
+     * {@link #blockingPut(Object)} when appropriate. 
+     * Any uncaught exceptions will be thrown by the 
+     * thread using the iterator the next time
+     * {@link #next()} or {@link #hasNext()}
+     * is used.
+     * @throws RunTimeException - any exception not caught or handled by this background
+     * thread should throw a RunTimeException which will be thrown
+     * on the next call to {@link #next()} or {@link #hasNext()}.
+     * 
      */
-    protected abstract void backgroundThreadRunMethod();
+    protected abstract void backgroundThreadRunMethod() throws RuntimeException;
 	/**
 	 * This method must be called when the visitor has finished
 	 * visiting in order to let the iterator know that there
 	 * are no more records left to block for.
 	 */
-    protected void finishedIterating(){
+    private void finishedIterating(){
     	blockingPut(endOfFileToken);
     }
-    public void blockingPut(Object obj){
+    /**
+     * Put the given object onto the queue to be iterated over
+     * and block until there is room for it in the queue.
+     * @param obj the object to put.
+     */
+    public final void blockingPut(Object obj){
         if(!isClosed){
 	        try {
 	            queue.put(obj);
@@ -107,10 +173,15 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	        }
 	    }
     }
-
-
+    /**
+     * 
+    * {@inheritDoc}
+    * <p/>
+    * Not supported.
+    * @throws UnsupportedOperationException always.
+     */
 	@Override
-	public void remove() {
+	public final void remove() {
 		throw new UnsupportedOperationException();		
 	}
 
@@ -118,7 +189,7 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	    * {@inheritDoc}
 	    */
 	    @Override
-	    public void close() throws IOException {
+	    public final void close() throws IOException {
 	        isClosed=true;
 	        nextRecord=endOfFileToken;
 	        queue.clear();	        
@@ -127,7 +198,10 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	    * {@inheritDoc}
 	    */
 	    @Override
-	    public T next() {
+	    public final T next() {
+	        if(!isClosed && uncaughtException !=null){
+	            throw uncaughtException;
+	        }
 	        if(!hasNext()){
 	            throw new NoSuchElementException("no records");
 	        }
@@ -138,14 +212,17 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	    }
 
 	     @Override
-	     public boolean hasNext() {
+	     public final boolean hasNext() {
+	         if(!isClosed && uncaughtException !=null){
+                throw uncaughtException;
+             }
 	         return !isClosed && nextRecord !=endOfFileToken;
 	     }
 	     
 	     /**
 	 	 * @return the isClosed
 	 	 */
-	     public boolean isClosed() {
+	     public final boolean isClosed() {
 	 		return isClosed;
 	 	}
 
@@ -165,7 +242,13 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	         }
 	         @Override
 	         public void run() {
-	            backgroundThreadRunMethod();
+	             try{
+	                 backgroundThreadRunMethod();
+	             }catch(RuntimeException e){
+	                 AbstractBlockingCloseableIterator.this.uncaughtException = e;	                 
+	             }finally{
+	                 finishedIterating();
+	             }
 	         }
 	     }
 }
