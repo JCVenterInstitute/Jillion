@@ -33,7 +33,7 @@ import java.util.List;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 
-public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceTagMap {
+public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceTags {
 
     private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
     private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();

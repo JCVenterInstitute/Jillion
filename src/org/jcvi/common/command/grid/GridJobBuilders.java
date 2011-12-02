@@ -173,16 +173,17 @@ public final class GridJobBuilders {
             this.preExecutionHook = copy.preExecutionHook;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#finalize()
+        /**
+         * 
+        * Forces job template to be released (if it 
+        * hasn't already).
+        * This is to try to avoid a memory leak of the underlying
+        * C drmma library and properly cleanup itself.
          */
         @Override
         protected void finalize() throws Throwable
         {
-            //force job template to be released
-            //incase it hasn't already
-            //this is to try to avoid a memory leak of the underlying
-            //C drmma library and properly cleanup itself.
+           
             this.releaseJobTemplate(this.jobTemplate);
             super.finalize();
         }
@@ -210,6 +211,7 @@ public final class GridJobBuilders {
             return 0;
         }
 
+        @SuppressWarnings("unused")
         protected int postScheduling()
         {
             // Do nothing by default

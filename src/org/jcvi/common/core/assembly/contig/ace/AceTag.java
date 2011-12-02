@@ -25,11 +25,29 @@ package org.jcvi.common.core.assembly.contig.ace;
 
 import java.util.Date;
 
-
+/**
+ * Ace files can contain tags at the end of the file
+ * which can inform consed tools of various features
+ * or hints or additional information that can not
+ * be explained in the standard ace file format.
+ * @author dkatzel
+ */
 public interface AceTag{
-
+    /**
+     * Each tag has a type which is a free form string 
+     * with no whitespace. 
+     * @return A String never null.
+     */
     String getType();
+    /**
+     * The program or tool that generated this tag.
+     * @return a String never null.
+     */
     String getCreator();
+    /**
+     * The date that this tag was created.
+     * @return a {@link Date}; never null.
+     */
     Date getCreationDate();
     /**
      * Get the data (not counting header info or comments) in the tag as a String.

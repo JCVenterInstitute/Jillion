@@ -113,7 +113,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
                                     .build();
         PlacedRead read = contig.getPlacedReadById("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{11,12,13,14,15,16}));
+                PhredQuality.valueOf(new byte[]{11,12,13,14,15,16,17,18}));
         
         assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
         assertEquals(ZERO,sut.getQualityFor(read, qualities, 5));

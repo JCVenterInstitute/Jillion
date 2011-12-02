@@ -24,10 +24,36 @@
 package org.jcvi.common.core.assembly.contig.ace;
 
 import java.util.List;
-
-public interface AceTagMap {
-
+/**
+ * {@code AceTags} is an interface
+ * used to group all the different 
+ * types of {@link AceTag}s
+ * together.
+ * @author dkatzel
+ */
+public interface AceTags {
+    /**
+     * Get all the consensus tags for this 
+     * assembly.
+     * @return a List of {@link ConsensusAceTag}s
+     * if no tags exists, then return an empty
+     * list; never null.
+     */
     List<ConsensusAceTag> getConsensusTags();
+    /**
+     * Get all the read tags for this 
+     * assembly.
+     * @return a List of {@link ReadAceTag}s
+     * if no tags exists, then return an empty
+     * list; never null.
+     */
     List<ReadAceTag> getReadTags();
+    /**
+     * Get all the assembly tags for this 
+     * assembly.
+     * @return a List of {@link WholeAssemblyAceTag}s
+     * if no tags exists, then return an empty
+     * list; never null.
+     */
     List<WholeAssemblyAceTag> getWholeAssemblyTags();
 }

@@ -166,9 +166,7 @@ public class AceFileWriter {
     
     private static String createPlacedReadRecord(AcePlacedRead read, Phd phd){
         return AceFileUtil.createAcePlacedReadRecord(
-                read.getId(),read.getNucleotideSequence(),  
-                read.getValidRange(), 
-                read.getDirection(),
+                read.getId(),read,
                 phd, 
                 read.getPhdInfo());
         

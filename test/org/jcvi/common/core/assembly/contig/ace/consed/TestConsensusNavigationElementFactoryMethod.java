@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 public class TestConsensusNavigationElementFactoryMethod {
     Range gappedFeatureRange = Range.buildRange(5,10);
     NucleotideSequence consensus = NucleotideSequenceFactory.create("ACGT-ACGTACGTACGT-ACGT");
-    Range ungappedFeatureRange= AssemblyUtil.convertGappedRangeIntoUngappedRange(consensus, gappedFeatureRange);
+    Range ungappedFeatureRange= AssemblyUtil.toUngappedRange(consensus, gappedFeatureRange);
     
     Contig<PlacedRead> mockContig;
     String id = "contigId";

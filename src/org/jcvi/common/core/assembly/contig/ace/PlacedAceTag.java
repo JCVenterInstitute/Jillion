@@ -24,9 +24,18 @@
 package org.jcvi.common.core.assembly.contig.ace;
 
 import org.jcvi.common.core.Placed;
-
+/**
+ * {@code PlacedAceTag} is a version of an 
+ * {@link AceTag} that maps to a particular location
+ * on a genomic element in the assembly.
+ * @author dkatzel
+ */
 public interface PlacedAceTag extends AceTag, Placed<PlacedAceTag> {
-
+    /**
+     * Get the Id of this tag which can refer to the read or contig
+     * this tag references.
+     * @return a String; never null.
+     */
     String getId();
     /**
      * Gapped Start offset.
@@ -46,7 +55,7 @@ public interface PlacedAceTag extends AceTag, Placed<PlacedAceTag> {
     /**
      * Should this tag be transferred to new
      * assembly if reassembled?
-     * @return {@code true} if should Not be transferred; {@code false}
+     * @return {@code true} if should <strong>not</strong> be transferred; {@code false}
      * otherwise.
      */
     boolean isTransient();

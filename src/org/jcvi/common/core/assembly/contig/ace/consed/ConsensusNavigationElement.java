@@ -97,7 +97,7 @@ public class ConsensusNavigationElement extends AbstractNavigationElement{
             throw new NullPointerException("feature range can not be null");
         }
        
-        Range ungappedRange = AssemblyUtil.convertGappedRangeIntoUngappedRange(contig.getConsensus(), gappedFeatureRange);
+        Range ungappedRange = AssemblyUtil.toUngappedRange(contig.getConsensus(), gappedFeatureRange);
         return new ConsensusNavigationElement(contig.getId(), ungappedRange,comment);
     }
 }

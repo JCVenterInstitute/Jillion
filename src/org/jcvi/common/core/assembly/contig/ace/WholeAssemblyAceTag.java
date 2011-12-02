@@ -23,7 +23,17 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
-
+/**
+ * A {@link WholeAssemblyAceTag} is an {@link AceTag}
+ * that applies to the entire assembly in the ace file
+ * usually these types of tags refer to things like
+ * where the phdball is located. Other uses of 
+ * Whole Assembly tags are to store version information
+ * about how this assembly was made.
+ * @author dkatzel
+ *
+ *
+ */
 public interface WholeAssemblyAceTag extends AceTag{
 
     

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultAceTagMap implements AceTagMap{
+public class DefaultAceTagMap implements AceTags{
 
     private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
     private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();

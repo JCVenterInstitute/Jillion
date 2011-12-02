@@ -27,8 +27,8 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
+import org.jcvi.common.core.assembly.contig.PlacedRead;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -168,28 +168,18 @@ public class AceFileUtil {
         }
         return gappedValidRange.convertRange(CoordinateSystem.RESIDUE_BASED);
     }
-    public static String createAcePlacedReadRecord(String readId, NucleotideSequence gappedValidBasecalls, 
-            Range ungappedValidRange, Direction dir, Phd phd, PhdInfo phdInfo){
+    public static String createAcePlacedReadRecord(String readId, PlacedRead placedRead, Phd phd, PhdInfo phdInfo){
+        
+        final NucleotideSequence gappedValidBasecalls = placedRead.getNucleotideSequence(); 
+        final Range ungappedValidRange = placedRead.getValidRange();
+        final Direction dir = placedRead.getDirection(); 
         final NucleotideSequence fullBasecalls = phd.getBasecalls();
         final List<Nucleotide> phdFullBases = fullBasecalls.asList();
         
-        final List<Nucleotide> fullGappedValidRange;
-        final List<PhredQuality> qualities;
-        final Sequence<PhredQuality> phdQualities = phd.getQualities();
-        
-        if(dir == Direction.FORWARD){
-            fullGappedValidRange = AssemblyUtil.buildGappedComplimentedFullRangeBases(gappedValidBasecalls,dir,ungappedValidRange, 
-                    phdFullBases);
-            qualities = phdQualities.asList();
-        }else{
-           Range complimentedValidRange = AssemblyUtil.reverseComplimentValidRange(
-                    ungappedValidRange,
-                    phdFullBases.size());
-            fullGappedValidRange = AssemblyUtil.buildGappedComplimentedFullRangeBases(gappedValidBasecalls,dir,complimentedValidRange, 
-                    phdFullBases);
-            qualities = phdQualities.asList();
-            Collections.reverse(qualities);
-           
+        final List<Nucleotide> fullGappedValidRange = AssemblyUtil.buildGappedComplimentedFullRangeBases(placedRead, phdFullBases);
+        final List<PhredQuality> qualities =phd.getQualities().asList();        
+        if(dir == Direction.REVERSE){
+            Collections.reverse(qualities);            
         }
         StringBuilder readRecord = new StringBuilder();
         readRecord.append(String.format("RD %s %d 0 0%n",
