@@ -33,8 +33,15 @@ import static org.junit.Assert.*;
  *
  */
 public class TestAbstractBlockingClosableIteratorExceptions {
+    private class ExpectedException extends RuntimeException{
 
-    private RuntimeException expectedException = new RuntimeException("expected");
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -7886752742909496815L;
+        
+    }
+    
     private List<String> names = Arrays.asList("moe","larry","curly", "shemp","curly joe", "joe");
     
     private class TestDouble extends AbstractBlockingCloseableIterator<String>{
@@ -62,7 +69,7 @@ public class TestAbstractBlockingClosableIteratorExceptions {
                 this.blockingPut(list.get(i));
             }
             if(numberOfRecordsUntilThrowException < list.size()){
-                throw expectedException;
+                throw new ExpectedException();
             }
             
         }
@@ -91,14 +98,14 @@ public class TestAbstractBlockingClosableIteratorExceptions {
         //should throw exception here
         try{
             iter.hasNext();
-        }catch(Exception e){
-            assertEquals(expectedException, e);
+        }catch(ExpectedException e){
+            //expected
         }
         
         try{
             iter.next();
-        }catch(Exception e){
-            assertEquals(expectedException, e);
+        }catch(ExpectedException e){
+          //expected
         }
     }
     

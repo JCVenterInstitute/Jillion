@@ -22,7 +22,19 @@
  * @author dkatzel
  */
 package org.jcvi.common.core.assembly.contig.ace;
-
+/**
+ * {@code ReadAceTag} is an {@link AceTag}
+ * that maps to a particular location on a specific
+ * read of a contig in an ace file.
+ * @author dkatzel
+ */
 public interface ReadAceTag extends PlacedAceTag {
 
+    /**
+     * Get the Id of read
+     * this tag references.
+     * <p/>
+     * {@inheritDoc}
+     */
+    String getId();
 }

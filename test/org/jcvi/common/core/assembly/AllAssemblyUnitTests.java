@@ -42,6 +42,7 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestAssemblyUtil_gappedfullRange.class,
         TestAssemblyUtil_reverseComplimentRange.class,
+        TestAssemblyUtil_convertToUngappedRange.class,
         
         AllContigUnitTests.class
     }

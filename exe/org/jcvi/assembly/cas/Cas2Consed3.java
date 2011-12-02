@@ -448,7 +448,15 @@ public class Cas2Consed3 {
                 options,
                 "Created by Danny Katzel");
     }
-	
+	/**
+	 * Finds any files that are in the same directory and have a similar name as the input read
+	 * files in the cas file.  This will find any files with the same name as 
+	 * the input files plus an extra ".trimpoints" or ".trimPoints" in the file name.
+	 * Ex : /path/to/data/myFile.fastq -> /path/to/data/myFile.fastq.trimpoints.
+	 * @author dkatzel
+	 *
+	 *
+	 */
 	private static class TrimPointsDataStoreExtensionBuilder extends AbstractCasFileVisitor implements Builder<TrimDataStore>{
 
 	    private final File workingDir;

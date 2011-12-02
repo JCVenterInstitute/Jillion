@@ -23,10 +23,29 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
-import java.util.Set;
-
+import java.util.List;
+/**
+ * {@code ConsensusAceTag} is an {@link AceTag}
+ * that maps to a particular location on the 
+ * consensus of a contig in an ace file.
+ * @author dkatzel
+ */
 public interface ConsensusAceTag extends PlacedAceTag {
-
-    Set<String> getComments();
-    String getData();
+    
+    /**
+     * Get the Id of contig
+     * this tag references.
+     * <p/>
+     * {@inheritDoc}
+     */
+    String getId();
+    /**
+     * Get any comments (if any) associated with this
+     * tag.
+     * @return a Set of all the comments (in case there are 
+     * multiple comments).  Each comment string may contain
+     * multiple lines, if there are no comments,
+     * then the list is empty; never null.
+     */
+    List<String> getComments();
 }

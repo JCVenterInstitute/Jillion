@@ -158,7 +158,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
 
         int gappedTrimIndex = computeGappedTrimIndex(read,gappedValidRangeIndex);
      
-        int fullRangeIndex = AssemblyUtil.convertToUngappedFullRangeIndex(read,(int)qualityValues.getLength(), gappedTrimIndex);
+        int fullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(read,(int)qualityValues.getLength(), gappedTrimIndex);
         // need to +1 passed fullRangeIndex to trim off snp for non-gaps
         if(!read.getNucleotideSequence().isGap(gappedValidRangeIndex)){
             fullRangeIndex ++;

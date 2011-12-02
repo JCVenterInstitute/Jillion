@@ -112,10 +112,10 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
     private PhredQuality getQualityValueForGap(int leftFlankingNonGapIndex,
             int rightFlankingNonGapIndex, PlacedRead placedRead,
             Sequence<PhredQuality> fullQualities,int indexOfGap) {
-        if(AssemblyUtil.beforeStartOfRead(leftFlankingNonGapIndex)){
+        if(leftFlankingNonGapIndex <0){
             return getQualityValueIfReadStartsWithGap();
         }
-        if(AssemblyUtil.afterEndOfRead(rightFlankingNonGapIndex, placedRead.getNucleotideSequence())){
+        if(rightFlankingNonGapIndex> placedRead.getLength()-1){
             return getQualityValueIfReadEndsWithGap();
         }
         PhredQuality leftFlankingQuality = getQualityForNonGapBase(placedRead, fullQualities, leftFlankingNonGapIndex);
@@ -129,7 +129,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
     protected PhredQuality getQualityForNonGapBase(PlacedRead placedRead, Sequence<PhredQuality> fullQualities,
             int gappedReadIndexForNonGapBase) {
         try{
-        int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeIndex(placedRead, (int)fullQualities.getLength(),gappedReadIndexForNonGapBase);
+        int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(placedRead, (int)fullQualities.getLength(),gappedReadIndexForNonGapBase);
         
             return fullQualities.get(ungappedFullRangeIndex);
         }

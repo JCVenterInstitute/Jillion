@@ -91,9 +91,9 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         expect(encodedGlyphs.isGap(gappedReadIndex)).andReturn(false);
         expect(encodedGlyphs.getUngappedOffsetFor(gappedReadIndex)).andReturn(gappedReadIndex);
         
-        expect(placedRead.getValidRange()).andReturn(validRange).times(3);
+        expect(placedRead.getValidRange()).andReturn(validRange).anyTimes();
         expect(fullQualities.getLength()).andReturn((long)fullLength);
-        int fullIndex = 22;
+        int fullIndex = 21;
       //  expect(placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedReadIndex)).andReturn(gappedReadIndex);
         
      //   expect(encodedGlyphs.toUngappedIndex(gappedReadIndex)).andReturn(gappedReadIndex);

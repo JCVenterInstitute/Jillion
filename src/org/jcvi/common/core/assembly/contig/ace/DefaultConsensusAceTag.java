@@ -23,22 +23,22 @@
  */
 package org.jcvi.common.core.assembly.contig.ace;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.jcvi.common.core.Placed;
 
 public class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag implements ConsensusAceTag{
-    private final Set<String> comments;
+    private final List<String> comments;
     
     private DefaultConsensusAceTag(String id, String type, String creator,
-            Date creationDate, Placed location, String data, Set<String> comments, boolean isTransient) {
+            Date creationDate, Placed location, String data, List<String> comments, boolean isTransient) {
         super(id, type, creator, creationDate, location, data, isTransient);
         this.comments = comments;
     }
     @Override
-    public Set<String> getComments() {
+    public List<String> getComments() {
         return comments;
     }
 
@@ -90,7 +90,7 @@ public class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag implemen
 
 
     public static class Builder implements org.jcvi.common.core.util.Builder<DefaultConsensusAceTag>{
-        private final Set<String> comments = new LinkedHashSet<String>();
+        private final List<String> comments = new ArrayList<String>();
         private final String id;
         
         private final Placed location;
