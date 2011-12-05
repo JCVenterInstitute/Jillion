@@ -24,7 +24,7 @@
 package org.jcvi.assembly.contig.trim;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.PlacedRead;
 
 public class DefaultTrimmedPlacedRead<T extends PlacedRead> implements TrimmedPlacedRead<T> {
 

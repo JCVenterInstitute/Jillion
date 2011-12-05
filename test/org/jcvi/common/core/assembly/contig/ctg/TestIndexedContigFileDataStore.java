@@ -26,8 +26,8 @@ package org.jcvi.common.core.assembly.contig.ctg;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.ctg.IndexedContigFileDataStore;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.ctg.IndexedContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 
 public class TestIndexedContigFileDataStore extends AbstractTestContigFileDataStore{

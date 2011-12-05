@@ -29,7 +29,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.assembly.contig.cas.CasUtil;
+import org.jcvi.common.core.assembly.clc.cas.CasUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.testUtil.EasyMockUtil;
 import org.junit.Test;

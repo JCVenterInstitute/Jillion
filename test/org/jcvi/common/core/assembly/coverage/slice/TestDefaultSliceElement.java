@@ -20,8 +20,8 @@
 package org.jcvi.common.core.assembly.coverage.slice;
 
 import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.assembly.contig.slice.DefaultSliceElement;
-import org.jcvi.common.core.assembly.contig.slice.SliceElement;
+import org.jcvi.common.core.assembly.util.slice.DefaultSliceElement;
+import org.jcvi.common.core.assembly.util.slice.SliceElement;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 

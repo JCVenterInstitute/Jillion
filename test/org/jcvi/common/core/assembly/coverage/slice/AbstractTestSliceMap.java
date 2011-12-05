@@ -22,12 +22,12 @@ package org.jcvi.common.core.assembly.coverage.slice;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.DefaultContig;
-import org.jcvi.common.core.assembly.contig.GapQualityValueStrategies;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.assembly.contig.QualityValueStrategy;
-import org.jcvi.common.core.assembly.contig.slice.SliceMap;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.DefaultContig;
+import org.jcvi.common.core.assembly.GapQualityValueStrategies;
+import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.QualityValueStrategy;
+import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;

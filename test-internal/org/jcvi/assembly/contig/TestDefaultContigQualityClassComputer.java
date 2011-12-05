@@ -24,9 +24,9 @@
 package org.jcvi.assembly.contig;
 
 import org.jcvi.common.core.Placed;
-import org.jcvi.common.core.assembly.contig.QualityValueStrategy;
-import org.jcvi.common.core.assembly.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.coverage.CoverageRegion;
+import org.jcvi.common.core.assembly.QualityValueStrategy;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;

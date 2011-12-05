@@ -21,12 +21,12 @@ package org.jcvi.common.core.assembly.contig.cas.consed;
 
 import java.io.File;
 
-import org.jcvi.common.core.assembly.contig.ace.AcePlacedRead;
-import org.jcvi.common.core.assembly.contig.ace.AcePlacedReadAdapter;
-import org.jcvi.common.core.assembly.contig.cas.AbstractCasReadVisitor;
-import org.jcvi.common.core.assembly.contig.cas.CasInfo;
-import org.jcvi.common.core.assembly.contig.cas.CasMatch;
-import org.jcvi.common.core.assembly.contig.cas.TraceDetails;
+import org.jcvi.common.core.assembly.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.ace.AcePlacedReadAdapter;
+import org.jcvi.common.core.assembly.clc.cas.AbstractCasReadVisitor;
+import org.jcvi.common.core.assembly.clc.cas.CasInfo;
+import org.jcvi.common.core.assembly.clc.cas.CasMatch;
+import org.jcvi.common.core.assembly.clc.cas.TraceDetails;
 import org.jcvi.common.core.assembly.contig.cas.read.CasPlacedRead;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaIterator;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastQFileIterator;

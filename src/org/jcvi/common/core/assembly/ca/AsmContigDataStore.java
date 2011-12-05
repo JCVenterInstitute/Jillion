@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.ca;
 
-import org.jcvi.common.core.assembly.contig.ContigDataStore;
+import org.jcvi.common.core.assembly.ContigDataStore;
 
 /**
  * @author dkatzel

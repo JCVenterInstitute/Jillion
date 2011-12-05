@@ -19,7 +19,7 @@
 
 package org.jcvi.assembly.tasm;
 
-import org.jcvi.common.core.assembly.contig.ContigDataStore;
+import org.jcvi.common.core.assembly.ContigDataStore;
 
 public interface TigrAssemblerContigDataStore extends ContigDataStore<TigrAssemblerPlacedRead, TigrAssemblerContig>{
 

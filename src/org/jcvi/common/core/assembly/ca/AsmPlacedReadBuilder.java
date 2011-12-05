@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.ca;
 
-import org.jcvi.common.core.assembly.contig.PlacedReadBuilder;
+import org.jcvi.common.core.assembly.PlacedReadBuilder;
 
 /**
  * @author dkatzel

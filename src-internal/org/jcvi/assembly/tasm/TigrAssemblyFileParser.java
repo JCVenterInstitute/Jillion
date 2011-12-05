@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.assembly.contig.ctg.ContigFileVisitor;
+import org.jcvi.common.core.assembly.ctg.ContigFileVisitor;
 import org.jcvi.common.core.io.IOUtil;
 
 /**

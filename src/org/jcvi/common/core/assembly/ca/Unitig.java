@@ -19,8 +19,8 @@
 
 package org.jcvi.common.core.assembly.ca;
 
-import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.PlacedRead;
 
 /**
  * @author dkatzel

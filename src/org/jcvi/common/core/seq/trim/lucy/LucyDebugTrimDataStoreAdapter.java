@@ -22,7 +22,7 @@ package org.jcvi.common.core.seq.trim.lucy;
 import java.io.IOException;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.trim.TrimDataStore;
+import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 

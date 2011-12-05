@@ -25,8 +25,8 @@ package org.jcvi.common.core.assembly.contig.cas.read;
 
 import java.io.File;
 
-import org.jcvi.common.core.assembly.contig.cas.CasTrimMap;
-import org.jcvi.common.core.assembly.contig.cas.EmptyCasTrimMap;
+import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
+import org.jcvi.common.core.assembly.clc.cas.EmptyCasTrimMap;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;

@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 import static org.junit.Assert.*;
 
-import org.jcvi.common.core.assembly.contig.cas.CasIdLookup;
-import org.jcvi.common.core.assembly.contig.cas.DifferentFileCasIdLookupAdapter;
+import org.jcvi.common.core.assembly.clc.cas.CasIdLookup;
+import org.jcvi.common.core.assembly.clc.cas.DifferentFileCasIdLookupAdapter;
 import org.junit.Before;
 import org.junit.Test;
 /**

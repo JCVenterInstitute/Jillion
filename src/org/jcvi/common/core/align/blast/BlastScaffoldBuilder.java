@@ -23,8 +23,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.DirectedRange;
-import org.jcvi.common.core.assembly.scaffold.DefaultScaffold;
-import org.jcvi.common.core.assembly.scaffold.Scaffold;
+import org.jcvi.common.core.assembly.DefaultScaffold;
+import org.jcvi.common.core.assembly.Scaffold;
 import org.jcvi.common.core.util.Builder;
 
 /**

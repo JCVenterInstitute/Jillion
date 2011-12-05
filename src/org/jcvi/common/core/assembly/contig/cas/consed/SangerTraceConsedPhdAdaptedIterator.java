@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
-import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
-import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
+import org.jcvi.common.core.assembly.ace.PhdInfo;
+import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.FileSangerTrace;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;

@@ -27,9 +27,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.common.core.assembly.contig.cas.AbstractOnePassCasFileVisitor;
-import org.jcvi.common.core.assembly.contig.cas.CasFileInfo;
-import org.jcvi.common.core.assembly.contig.cas.CasMatch;
+import org.jcvi.common.core.assembly.clc.cas.AbstractOnePassCasFileVisitor;
+import org.jcvi.common.core.assembly.clc.cas.CasFileInfo;
+import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;

@@ -27,8 +27,8 @@ import java.io.IOException;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.scaffold.DefaultScaffold;
-import org.jcvi.common.core.assembly.scaffold.Scaffold;
+import org.jcvi.common.core.assembly.DefaultScaffold;
+import org.jcvi.common.core.assembly.Scaffold;
 import org.jcvi.common.core.assembly.scaffold.agp.AgpParser;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
