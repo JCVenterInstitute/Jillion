@@ -23,6 +23,7 @@ import org.jcvi.common.core.assembly.ace.AllAceUnitTests;
 import org.jcvi.common.core.assembly.cas.AllCasUnitTests;
 import org.jcvi.common.core.assembly.contig.celera.AllCeleraUnitTests;
 import org.jcvi.common.core.assembly.ctg.AllCtgUnitTests;
+import org.jcvi.common.core.assembly.tasm.AllTasmUnitTests;
 import org.jcvi.common.core.assembly.util.trimmer.AllTrimUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -37,7 +38,8 @@ import org.junit.runners.Suite.SuiteClasses;
     AllAceUnitTests.class, 
     AllTrimUnitTests.class,    
     AllCasUnitTests.class,
-    AllCeleraUnitTests.class
+    AllCeleraUnitTests.class,
+    AllTasmUnitTests.class
     }
     )
 public class AllContigUnitTests {

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -17,26 +17,9 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly;
-
-import org.jcvi.assembly.contig.AllInternalContigUnitTests;
-import org.jcvi.common.core.assembly.util.trimmer.AllInternalTrimmingUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
 /**
- * @author dkatzel
- *
- *
+ * This package contains classes to handle the 
+ * TIGR Assembler file format.  TIGR Assembler files (.tasm)
+ * are produced by the TIGR Assembler.
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        AllInternalContigUnitTests.class,        
-        AllInternalTrimmingUnitTests.class
-    }
-    )
-public class AllInternalAssemblyUnitTests {
-
-}
+package org.jcvi.common.core.assembly.tasm;
