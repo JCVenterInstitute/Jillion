@@ -340,13 +340,13 @@ public final class AsmParser {
                     Matcher matcher = MESSAGE_HEADER_PATTERN.matcher(readHeader);
                     if(!matcher.find()){
                         throw new IOException(
-                                String.format("error reading read # %d for unitig %d; invalid header :%s",
+                                String.format("error reading read # %d for unitig %s; invalid header :%s",
                                         i,idTuple.externalId,readHeader));
                     }
                     String code = matcher.group(1);
                     if(!READ_MAPPING.canHandle(code)){
                         throw new IOException(
-                                String.format("error reading read # %d for unitig %d; invalid header code :%s",
+                                String.format("error reading read # %d for unitig %s; invalid header code :%s",
                                         i,idTuple.externalId,code));
                     
                     }

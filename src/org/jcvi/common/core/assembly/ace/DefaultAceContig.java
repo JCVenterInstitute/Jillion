@@ -143,7 +143,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
          * @return this
          */
         @Override
-        public Builder setComplimented(boolean complimented){
+        public synchronized Builder setComplimented(boolean complimented){
             this.complimented = complimented;
             return this;
         }

@@ -288,7 +288,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         * {@inheritDoc}
         */
         @Override
-        public void visitEndOfFile() {
+        public synchronized void visitEndOfFile() {
             if(!hasTags){
                 Range range = indexFileRange.getRangeFor(currentContigId);
                 if(range ==null){

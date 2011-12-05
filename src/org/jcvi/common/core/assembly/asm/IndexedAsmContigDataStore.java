@@ -360,7 +360,7 @@ public class IndexedAsmContigDataStore implements AsmContigDataStore{
         * {@inheritDoc}
         */
         @Override
-        public void visitEndOfContig() {
+        public synchronized void visitEndOfContig() {
             if(currentContigId !=null){
                this.fileRange.put(currentContigId, Range.buildRange(startCurrentContigOffset, currentFileOffset));
                currentContigId=null;
@@ -369,7 +369,7 @@ public class IndexedAsmContigDataStore implements AsmContigDataStore{
 
         
         @Override
-        public AsmContigDataStore build(){
+        public synchronized AsmContigDataStore build(){
             
             return new IndexedAsmContigDataStore(asmFile, fileRange,Range.buildRange(startAFG, endAFG),frgDataStore);
         }
