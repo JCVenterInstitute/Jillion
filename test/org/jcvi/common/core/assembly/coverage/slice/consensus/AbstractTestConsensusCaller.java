@@ -26,9 +26,9 @@ package org.jcvi.common.core.assembly.coverage.slice.consensus;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.common.core.assembly.contig.slice.Slice;
-import org.jcvi.common.core.assembly.contig.slice.consensus.ConsensusCaller;
-import org.jcvi.common.core.assembly.contig.slice.consensus.ConsensusResult;
+import org.jcvi.common.core.assembly.util.slice.Slice;
+import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
+import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

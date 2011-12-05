@@ -20,8 +20,8 @@ package org.jcvi.common.core.assembly.scaffold.agp;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.scaffold.DefaultScaffold;
-import org.jcvi.common.core.assembly.scaffold.ScaffoldDataStore;
+import org.jcvi.common.core.assembly.DefaultScaffold;
+import org.jcvi.common.core.assembly.ScaffoldDataStore;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

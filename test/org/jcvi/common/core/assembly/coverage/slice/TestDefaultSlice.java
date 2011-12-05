@@ -21,9 +21,9 @@ package org.jcvi.common.core.assembly.coverage.slice;
 
 import java.util.List;
 
-import org.jcvi.common.core.assembly.contig.slice.DefaultSlice;
-import org.jcvi.common.core.assembly.contig.slice.Slice;
-import org.jcvi.common.core.assembly.contig.slice.SliceElement;
+import org.jcvi.common.core.assembly.util.slice.DefaultSlice;
+import org.jcvi.common.core.assembly.util.slice.Slice;
+import org.jcvi.common.core.assembly.util.slice.SliceElement;
 
 /**
  * @author dkatzel

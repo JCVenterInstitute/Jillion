@@ -23,12 +23,12 @@ import static org.junit.Assert.assertEquals;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.DefaultContig;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.assembly.contig.trim.MinimumBidirectionalEndCoverageTrimmer;
-import org.jcvi.common.core.assembly.contig.trim.PlacedReadTrimmer;
-import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.DefaultContig;
+import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.trimmer.MinimumBidirectionalEndCoverageTrimmer;
+import org.jcvi.common.core.assembly.util.trimmer.PlacedReadTrimmer;
 import org.junit.Before;
 import org.junit.Test;
 

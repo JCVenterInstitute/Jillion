@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.contig.cas.read;
 
-import org.jcvi.common.core.assembly.contig.PlacedRead;
+import org.jcvi.common.core.assembly.PlacedRead;
 
 
 public interface CasPlacedRead extends PlacedRead {

@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.contig.cas.read;
 
 import java.io.File;
 
-import org.jcvi.common.core.assembly.contig.cas.CasTrimMap;
+import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;

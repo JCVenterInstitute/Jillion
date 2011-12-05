@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.contig.cas.align;
 
-import org.jcvi.common.core.assembly.contig.cas.CasMatch;
+import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 
 public class DefaultCasMatch implements CasMatch{
     private final boolean hasMatch,

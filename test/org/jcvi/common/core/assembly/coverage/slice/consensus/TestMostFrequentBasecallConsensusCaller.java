@@ -24,10 +24,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.assembly.contig.slice.Slice;
-import org.jcvi.common.core.assembly.contig.slice.consensus.ConsensusCaller;
-import org.jcvi.common.core.assembly.contig.slice.consensus.ConsensusResult;
-import org.jcvi.common.core.assembly.contig.slice.consensus.MostFrequentBasecallConsensusCaller;
+import org.jcvi.common.core.assembly.util.slice.Slice;
+import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
+import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusResult;
+import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
 import org.junit.runners.Parameterized.Parameters;
 
 public class TestMostFrequentBasecallConsensusCaller extends AbstractTestConsensusCaller{

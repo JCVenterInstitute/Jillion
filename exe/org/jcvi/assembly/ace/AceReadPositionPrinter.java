@@ -32,11 +32,11 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.assembly.contig.ace.AbstractAceFileVisitor;
-import org.jcvi.common.core.assembly.contig.ace.AceFileParser;
-import org.jcvi.common.core.assembly.contig.ace.AceFileVisitor;
-import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
-import org.jcvi.common.core.assembly.contig.ace.consed.ConsedUtil;
+import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
+import org.jcvi.common.core.assembly.ace.AceFileParser;
+import org.jcvi.common.core.assembly.ace.AceFileVisitor;
+import org.jcvi.common.core.assembly.ace.PhdInfo;
+import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 

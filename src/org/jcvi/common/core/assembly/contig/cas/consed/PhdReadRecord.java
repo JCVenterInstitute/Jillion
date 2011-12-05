@@ -19,8 +19,8 @@
 
 package org.jcvi.common.core.assembly.contig.cas.consed;
 
-import org.jcvi.common.core.assembly.contig.ace.PhdInfo;
-import org.jcvi.common.core.assembly.contig.cas.ReadRecord;
+import org.jcvi.common.core.assembly.ace.PhdInfo;
+import org.jcvi.common.core.assembly.clc.cas.ReadRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 
 public interface PhdReadRecord extends ReadRecord{

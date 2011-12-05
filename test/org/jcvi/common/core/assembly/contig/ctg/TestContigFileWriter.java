@@ -27,9 +27,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.assembly.contig.ctg.CtgFileWriter;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.ctg.CtgFileWriter;
+import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;

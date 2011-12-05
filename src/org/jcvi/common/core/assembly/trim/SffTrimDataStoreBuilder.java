@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
+import org.jcvi.common.core.assembly.util.trim.TrimDataStoreAdatper;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFCommonHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadData;

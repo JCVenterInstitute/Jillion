@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.ca;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.contig.ContigBuilder;
+import org.jcvi.common.core.assembly.ContigBuilder;
 
 /**
  * @author dkatzel

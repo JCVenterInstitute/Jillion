@@ -29,11 +29,11 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.assembly.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
+import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;

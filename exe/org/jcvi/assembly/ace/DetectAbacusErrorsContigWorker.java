@@ -36,11 +36,11 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.assembly.contig.ace.AceContig;
-import org.jcvi.common.core.assembly.contig.ace.AceContigDataStore;
-import org.jcvi.common.core.assembly.contig.ace.IndexedAceFileDataStore;
-import org.jcvi.common.core.assembly.contig.ace.consed.ConsedNavigationWriter;
-import org.jcvi.common.core.assembly.contig.ace.consed.ConsensusNavigationElement;
+import org.jcvi.common.core.assembly.ace.AceContig;
+import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
+import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationWriter;
+import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 

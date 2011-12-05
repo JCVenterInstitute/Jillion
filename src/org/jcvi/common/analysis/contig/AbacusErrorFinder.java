@@ -27,11 +27,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.assembly.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
+import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 

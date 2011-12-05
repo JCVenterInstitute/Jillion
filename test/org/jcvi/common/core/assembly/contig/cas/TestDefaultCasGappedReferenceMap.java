@@ -26,9 +26,9 @@ package org.jcvi.common.core.assembly.contig.cas;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.common.core.assembly.contig.cas.CasIdLookup;
-import org.jcvi.common.core.assembly.contig.cas.CasMatch;
-import org.jcvi.common.core.assembly.contig.cas.DefaultCasGappedReferenceMap;
+import org.jcvi.common.core.assembly.clc.cas.CasIdLookup;
+import org.jcvi.common.core.assembly.clc.cas.CasMatch;
+import org.jcvi.common.core.assembly.clc.cas.DefaultCasGappedReferenceMap;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignment;
 import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegionType;
 import org.jcvi.common.core.assembly.contig.cas.align.DefaultCasAlignment;

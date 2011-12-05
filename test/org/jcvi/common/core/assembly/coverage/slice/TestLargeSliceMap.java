@@ -19,12 +19,12 @@
 
 package org.jcvi.common.core.assembly.coverage.slice;
 
-import org.jcvi.common.core.assembly.contig.Contig;
-import org.jcvi.common.core.assembly.contig.PlacedRead;
-import org.jcvi.common.core.assembly.contig.QualityValueStrategy;
-import org.jcvi.common.core.assembly.contig.slice.LargeSliceMap;
-import org.jcvi.common.core.assembly.contig.slice.SliceMap;
-import org.jcvi.common.core.assembly.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.QualityValueStrategy;
+import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.slice.LargeSliceMap;
+import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 
 /**

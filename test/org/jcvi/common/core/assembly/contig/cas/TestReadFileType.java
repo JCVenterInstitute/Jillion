@@ -21,6 +21,7 @@ package org.jcvi.common.core.assembly.contig.cas;
 
 import java.io.File;
 
+import org.jcvi.common.core.assembly.clc.cas.ReadFileType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

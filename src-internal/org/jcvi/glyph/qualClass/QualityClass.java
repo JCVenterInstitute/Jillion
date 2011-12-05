@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.assembly.contig.slice.Slice;
-import org.jcvi.common.core.assembly.contig.slice.SliceElement;
+import org.jcvi.common.core.assembly.util.slice.Slice;
+import org.jcvi.common.core.assembly.util.slice.SliceElement;
 import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;

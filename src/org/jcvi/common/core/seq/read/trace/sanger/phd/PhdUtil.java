@@ -21,7 +21,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
 import java.util.Properties;
 
-import org.jcvi.common.core.assembly.contig.ace.AceFileUtil;
+import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.joda.time.DateTime;
 
 /**

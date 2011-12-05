@@ -32,11 +32,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
-import org.jcvi.common.core.assembly.contig.slice.DefaultSlice;
-import org.jcvi.common.core.assembly.contig.slice.Slice;
-import org.jcvi.common.core.assembly.contig.slice.SliceElement;
-import org.jcvi.common.core.assembly.contig.slice.consensus.ConsensusResult;
-import org.jcvi.common.core.assembly.contig.slice.consensus.DefaultConsensusResult;
+import org.jcvi.common.core.assembly.util.slice.DefaultSlice;
+import org.jcvi.common.core.assembly.util.slice.Slice;
+import org.jcvi.common.core.assembly.util.slice.SliceElement;
+import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusResult;
+import org.jcvi.common.core.assembly.util.slice.consensus.DefaultConsensusResult;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.util.MapValueComparator;

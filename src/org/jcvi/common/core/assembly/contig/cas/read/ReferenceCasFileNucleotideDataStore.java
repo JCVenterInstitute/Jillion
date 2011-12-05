@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.assembly.contig.cas.read;
 
-import org.jcvi.common.core.assembly.contig.cas.CasFileInfo;
-import org.jcvi.common.core.assembly.contig.cas.CasMatch;
+import org.jcvi.common.core.assembly.clc.cas.CasFileInfo;
+import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 
 public class ReferenceCasFileNucleotideDataStore  extends AbstractCasFileNucleotideDataStore {
 
