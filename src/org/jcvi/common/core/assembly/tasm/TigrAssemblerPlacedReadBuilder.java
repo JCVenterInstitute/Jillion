@@ -17,26 +17,22 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly;
+package org.jcvi.common.core.assembly.tasm;
 
-import org.jcvi.assembly.contig.AllInternalContigUnitTests;
-import org.jcvi.common.core.assembly.util.trimmer.AllInternalTrimmingUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Map;
+
+import org.jcvi.common.core.assembly.PlacedReadBuilder;
 
 /**
  * @author dkatzel
  *
  *
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        AllInternalContigUnitTests.class,        
-        AllInternalTrimmingUnitTests.class
-    }
-    )
-public class AllInternalAssemblyUnitTests {
+public interface TigrAssemblerPlacedReadBuilder extends PlacedReadBuilder<TigrAssemblerPlacedRead>{
 
+    TigrAssemblerPlacedReadBuilder addAttribute(TigrAssemblerReadAttribute key, String value);
+    
+    TigrAssemblerPlacedReadBuilder removeAttribute(TigrAssemblerReadAttribute key);
+    
+    TigrAssemblerPlacedReadBuilder addAllAttributes(Map<TigrAssemblerReadAttribute,String> map);
 }

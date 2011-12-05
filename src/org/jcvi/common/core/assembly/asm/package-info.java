@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -17,26 +17,10 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly;
-
-import org.jcvi.assembly.contig.AllInternalContigUnitTests;
-import org.jcvi.common.core.assembly.util.trimmer.AllInternalTrimmingUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
 /**
- * @author dkatzel
- *
- *
+ * Contains Classes and interfaces to work with 
+ * Celera Assembler data.
+ * 
+ * @see <a href ="http://www.sciencemag.org/content/287/5461/2196.full">Celera Assembler paper : Science 24 March 2000: 287 (5461), 2196-2204. [DOI:10.1126/science.287.5461.2196] </a>
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        AllInternalContigUnitTests.class,        
-        AllInternalTrimmingUnitTests.class
-    }
-    )
-public class AllInternalAssemblyUnitTests {
-
-}
+package org.jcvi.common.core.assembly.asm;

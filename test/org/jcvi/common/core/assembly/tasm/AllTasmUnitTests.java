@@ -17,15 +17,14 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly;
+package org.jcvi.common.core.assembly.tasm;
 
-import org.jcvi.assembly.contig.AllInternalContigUnitTests;
-import org.jcvi.common.core.assembly.util.trimmer.AllInternalTrimmingUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
+ * Runs all the TIGR Assembler internal unit tests.
  * @author dkatzel
  *
  *
@@ -33,10 +32,12 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        AllInternalContigUnitTests.class,        
-        AllInternalTrimmingUnitTests.class
+       TestTigrAssemblerContigDataStore.class ,
+       TestTigrAssemblerWriter.class,
+       TestTigrAssemblerPlacedReadAdapter.class,
+       TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes.class
     }
     )
-public class AllInternalAssemblyUnitTests {
+public class AllTasmUnitTests {
 
 }

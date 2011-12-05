@@ -17,26 +17,16 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly;
+package org.jcvi.common.core.assembly.asm;
 
-import org.jcvi.assembly.contig.AllInternalContigUnitTests;
-import org.jcvi.common.core.assembly.util.trimmer.AllInternalTrimmingUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.common.core.assembly.Contig;
 
 /**
  * @author dkatzel
  *
  *
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        AllInternalContigUnitTests.class,        
-        AllInternalTrimmingUnitTests.class
-    }
-    )
-public class AllInternalAssemblyUnitTests {
+public interface AsmContig extends Contig<AsmPlacedRead> {
 
+    boolean isDegenerate();
 }

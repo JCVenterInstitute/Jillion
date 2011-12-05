@@ -17,26 +17,23 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly;
+package org.jcvi.common.core.assembly.tasm;
 
-import org.jcvi.assembly.contig.AllInternalContigUnitTests;
-import org.jcvi.common.core.assembly.util.trimmer.AllInternalTrimmingUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.common.core.assembly.ctg.ContigFileVisitor;
 
 /**
  * @author dkatzel
  *
  *
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        AllInternalContigUnitTests.class,        
-        AllInternalTrimmingUnitTests.class
-    }
-    )
-public class AllInternalAssemblyUnitTests {
+public interface TigrAssemblyFileVisitor extends ContigFileVisitor{
 
+    void visitContigAttribute(String key, String value);
+    void visitReadAttribute(String key, String value);
+    
+    void visitBeginContigBlock();
+    void visitEndContigBlock();
+    
+    void visitBeginReadBlock();
+    void visitEndReadBlock();
 }

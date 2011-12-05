@@ -17,26 +17,22 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.assembly;
+package org.jcvi.common.core.assembly.asm;
 
-import org.jcvi.assembly.contig.AllInternalContigUnitTests;
-import org.jcvi.common.core.assembly.util.trimmer.AllInternalTrimmingUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.common.core.assembly.PlacedRead;
 
 /**
  * @author dkatzel
  *
  *
  */
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        AllInternalContigUnitTests.class,        
-        AllInternalTrimmingUnitTests.class
-    }
-    )
-public class AllInternalAssemblyUnitTests {
-
+public interface AsmPlacedRead extends PlacedRead{
+    /**
+     * Is this read a repeat surrogate
+     * unitig which was cautiously placed
+     * by Celera Assembler at one or more
+     * locations.
+     * @return
+     */
+    boolean isRepeatSurrogate();
 }
