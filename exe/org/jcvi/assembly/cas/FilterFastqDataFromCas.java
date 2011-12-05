@@ -44,7 +44,7 @@ import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.clc.cas.CasInfo;
 import org.jcvi.common.core.assembly.clc.cas.CasParser;
 import org.jcvi.common.core.assembly.clc.cas.CasUtil;
-import org.jcvi.common.core.assembly.contig.cas.consed.AbstractAcePlacedReadCasReadVisitor;
+import org.jcvi.common.core.assembly.clc.cas.consed.AbstractAcePlacedReadCasReadVisitor;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;

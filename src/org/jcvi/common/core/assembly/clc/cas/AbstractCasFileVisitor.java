@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.clc.cas;
 
-import org.jcvi.common.core.assembly.contig.cas.align.score.CasScoringScheme;
+import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
 /**
  * {@code AbstractCasFileVisitor} is an abstract implementation
  * of {@link CasFileVisitor} with all the methods of the interface

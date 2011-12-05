@@ -33,7 +33,7 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadAdapter;
-import org.jcvi.common.core.assembly.contig.cas.read.CasPlacedRead;
+import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class CasAceContigAdapter implements AceContig{

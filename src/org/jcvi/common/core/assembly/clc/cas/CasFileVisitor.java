@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.clc.cas;
 
-import org.jcvi.common.core.assembly.contig.cas.align.score.CasScoringScheme;
+import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.common.core.io.FileVisitor;
 /**
  * {@code CasFileVisitor} is a {@link FileVisitor} implementation

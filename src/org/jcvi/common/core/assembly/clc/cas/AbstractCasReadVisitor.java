@@ -23,8 +23,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import org.jcvi.common.core.assembly.contig.cas.align.score.CasScoringScheme;
-import org.jcvi.common.core.assembly.contig.cas.read.CasPlacedRead;
+
+import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
+import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;

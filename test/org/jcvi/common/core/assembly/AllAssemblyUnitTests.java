@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly;
 
-import org.jcvi.common.core.assembly.coverage.AllCoverageUnitTests;
+import org.jcvi.common.core.assembly.util.coverage.AllCoverageUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

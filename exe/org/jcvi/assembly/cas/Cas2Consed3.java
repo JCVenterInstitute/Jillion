@@ -62,7 +62,7 @@ import org.jcvi.common.core.assembly.clc.cas.ExternalTrimInfo;
 import org.jcvi.common.core.assembly.clc.cas.ReadFileType;
 import org.jcvi.common.core.assembly.clc.cas.UnTrimmedExtensionTrimMap;
 import org.jcvi.common.core.assembly.clc.cas.UpdateConsensusAceContigBuilder;
-import org.jcvi.common.core.assembly.contig.cas.consed.AbstractAcePlacedReadCasReadVisitor;
+import org.jcvi.common.core.assembly.clc.cas.consed.AbstractAcePlacedReadCasReadVisitor;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;

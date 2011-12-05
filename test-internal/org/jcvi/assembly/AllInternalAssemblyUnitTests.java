@@ -21,7 +21,7 @@ package org.jcvi.assembly;
 
 import org.jcvi.assembly.contig.AllInternalContigUnitTests;
 import org.jcvi.assembly.tasm.AllTasmUnitTests;
-import org.jcvi.common.core.assembly.contig.trim.AllInternalTrimmingUnitTests;
+import org.jcvi.common.core.assembly.util.trimmer.AllInternalTrimmingUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
