@@ -25,7 +25,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 
 /**
- * {@code AceContigBuilder} is a {@link Builder}
+ * {@code ContigBuilder} is a {@link Builder}
  * for {@link Contig}s that allows
  * creating a contig object by adding placed reads
  * and setting a consensus.  An {@link ContigBuilder}

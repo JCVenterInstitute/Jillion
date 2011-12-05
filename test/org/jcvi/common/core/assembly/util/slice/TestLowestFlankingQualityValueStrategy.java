@@ -21,13 +21,14 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.assembly;
+package org.jcvi.common.core.assembly.util.slice;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
-import org.jcvi.common.core.assembly.GapQualityValueStrategies;
 import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.DefaultContig.Builder;
+import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.Sequence;

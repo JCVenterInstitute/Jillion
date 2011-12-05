@@ -58,7 +58,7 @@ public class TestDefaultScaffold {
 
         DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
         for ( PlacedContig contig : placedContigs ) {
-            builder.add(contig.getContigId(),contig.getValidRange(), contig.getSequenceDirection());
+            builder.add(contig.getContigId(),contig.getValidRange(), contig.getDirection());
         }
         scaffold = builder.build();
     }

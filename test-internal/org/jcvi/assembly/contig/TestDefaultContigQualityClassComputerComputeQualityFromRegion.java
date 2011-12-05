@@ -29,8 +29,8 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.PlacedRead;
-import org.jcvi.common.core.assembly.QualityValueStrategy;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
+import org.jcvi.common.core.assembly.util.slice.QualityValueStrategy;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;

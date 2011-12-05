@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,23 +16,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 22, 2009
- *
- * @author dkatzel
+/**
+ * The assembly package contains objects 
+ * for working with genomic data that has
+ * been assembled into {@link org.jcvi.common.core.assembly.Contig}s
+ * and {@link org.jcvi.common.core.assembly.Scaffold}s.
  */
 package org.jcvi.common.core.assembly;
-
-import org.jcvi.common.core.datastore.DataStore;
-/**
- * {@code ContigDataStore} is a marker
- * interface for a {@link DataStore}
- * implementation which stores
- * {@link Contig}s of the same type.
- * @author dkatzel
- *
- *
- */
-public interface ContigDataStore<PR extends PlacedRead,C extends Contig<PR>> extends DataStore<C> {
-    
-}

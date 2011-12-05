@@ -30,7 +30,7 @@ import org.jcvi.common.core.Range;
 public interface PlacedContig extends Placed<PlacedContig> {
 
     String getContigId();
-    Direction getSequenceDirection();
+    Direction getDirection();
     
     Range getValidRange();
     

@@ -24,9 +24,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
-import org.jcvi.common.core.assembly.GapQualityValueStrategies;
 import org.jcvi.common.core.assembly.PlacedRead;
-import org.jcvi.common.core.assembly.QualityValueStrategy;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;

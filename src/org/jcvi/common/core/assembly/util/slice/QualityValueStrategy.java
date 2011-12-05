@@ -21,8 +21,9 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.assembly;
+package org.jcvi.common.core.assembly.util.slice;
 
+import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 
