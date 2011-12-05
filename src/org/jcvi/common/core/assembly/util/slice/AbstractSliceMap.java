@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.assembly.PlacedRead;
-import org.jcvi.common.core.assembly.QualityValueStrategy;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;

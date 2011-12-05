@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.assembly;
+package org.jcvi.common.core.assembly.util.slice;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

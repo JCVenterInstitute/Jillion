@@ -73,7 +73,7 @@ public class DefaultPlacedContig implements PlacedContig{
         return range;
     }
     @Override
-    public Direction getSequenceDirection() {
+    public Direction getDirection() {
         return direction;
     }
     @Override

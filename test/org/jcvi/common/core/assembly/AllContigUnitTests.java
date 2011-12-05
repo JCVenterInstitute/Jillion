@@ -24,6 +24,7 @@ import org.jcvi.common.core.assembly.cas.AllCasUnitTests;
 import org.jcvi.common.core.assembly.contig.celera.AllCeleraUnitTests;
 import org.jcvi.common.core.assembly.ctg.AllCtgUnitTests;
 import org.jcvi.common.core.assembly.tasm.AllTasmUnitTests;
+import org.jcvi.common.core.assembly.util.slice.AllQualityValueStrategyUnitTests;
 import org.jcvi.common.core.assembly.util.trimmer.AllTrimUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

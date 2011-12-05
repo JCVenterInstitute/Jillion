@@ -17,13 +17,13 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly;
+package org.jcvi.common.core.assembly.util.slice;
 
 import org.easymock.EasyMockSupport;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.GapQualityValueStrategies;
 import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;

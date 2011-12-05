@@ -21,7 +21,6 @@ package org.jcvi.common.core.assembly.util.slice;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.PlacedRead;
-import org.jcvi.common.core.assembly.QualityValueStrategy;
 import org.jcvi.common.core.assembly.util.slice.CompactedSliceMap;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.datastore.DataStoreException;

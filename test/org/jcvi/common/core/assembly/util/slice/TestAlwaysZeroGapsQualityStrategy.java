@@ -17,15 +17,15 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly;
+package org.jcvi.common.core.assembly.util.slice;
 
 import static org.junit.Assert.assertEquals;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
-import org.jcvi.common.core.assembly.GapQualityValueStrategies;
 import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.Sequence;

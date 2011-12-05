@@ -122,19 +122,19 @@ public class DefaultScaffold implements Scaffold {
                 + "(normalized range " + normalizedPlacedContigRange + ")");
         }
 
-        if ( placedContig.getSequenceDirection() == Direction.FORWARD ) {
+        if ( placedContig.getDirection() == Direction.FORWARD ) {
             long rightShift = placedContig.getStart();
             return Range.buildRange(
                     rightShift+placedContigRange.getStart(),
                     rightShift+placedContigRange.getEnd());
-        } else if ( placedContig.getSequenceDirection() == Direction.REVERSE ) {
+        } else if ( placedContig.getDirection() == Direction.REVERSE ) {
             long leftShift = placedContig.getEnd()-placedContigRange.getStart();
             return Range.buildRange(
                     leftShift-(placedContigRange.size()-1),
                     leftShift);
         } else {
             throw new IllegalArgumentException("Do not know how to convert a(n) " +
-                placedContig.getSequenceDirection() + " oriented placed contig range " +
+                placedContig.getDirection() + " oriented placed contig range " +
                 "to its equivalent parent scaffold range");
         }
     }
