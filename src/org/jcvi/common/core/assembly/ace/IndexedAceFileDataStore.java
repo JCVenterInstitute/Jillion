@@ -304,7 +304,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         * {@inheritDoc}
         */
         @Override
-        public void visitHeader(int numberOfContigs, int totalNumberOfReads) {
+        public synchronized void visitHeader(int numberOfContigs, int totalNumberOfReads) {
             if(indexFileRange==null){
                 indexFileRange = new DefaultIndexedFileRange(numberOfContigs);
             }

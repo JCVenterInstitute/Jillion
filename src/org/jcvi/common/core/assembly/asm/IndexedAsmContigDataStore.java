@@ -330,7 +330,7 @@ public class IndexedAsmContigDataStore implements AsmContigDataStore{
         * otherwise.
         */
         @Override
-        public Set<NestedContigMessageTypes> visitContig(String externalId, long internalId,
+        public synchronized Set<NestedContigMessageTypes> visitContig(String externalId, long internalId,
                 boolean isDegenerate, NucleotideSequence consensusSequence,
                 QualitySequence consensusQualities, int numberOfReads,
                 int numberOfUnitigs, int numberOfVariants) {
