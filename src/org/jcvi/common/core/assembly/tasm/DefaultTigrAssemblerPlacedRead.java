@@ -413,6 +413,51 @@ public class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((delegate == null) ? 0 : delegate.hashCode());
+            result = prime * result + ((map == null) ? 0 : map.hashCode());
+            return result;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof Builder)) {
+                return false;
+            }
+            Builder other = (Builder) obj;
+            if (delegate == null) {
+                if (other.delegate != null) {
+                    return false;
+                }
+            } else if (!delegate.equals(other.delegate)) {
+                return false;
+            }
+            if (map == null) {
+                if (other.map != null) {
+                    return false;
+                }
+            } else if (!map.equals(other.map)) {
+                return false;
+            }
+            return true;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public TigrAssemblerPlacedReadBuilder addAttribute(
                 TigrAssemblerReadAttribute key, String value) {
             map.put(key, value);
@@ -425,8 +470,8 @@ public class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         @Override
         public TigrAssemblerPlacedReadBuilder removeAttribute(
                 TigrAssemblerReadAttribute key) {
-            // TODO Auto-generated method stub
-            return null;
+            map.remove(key);
+            return this;
         }
         
     }

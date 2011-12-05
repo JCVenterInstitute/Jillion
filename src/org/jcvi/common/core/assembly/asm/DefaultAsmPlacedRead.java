@@ -165,6 +165,47 @@ public class DefaultAsmPlacedRead implements AsmPlacedRead{
         return isSurrogate;
     }
 
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (isSurrogate ? 1231 : 1237);
+        result = prime * result
+                + ((placedRead == null) ? 0 : placedRead.hashCode());
+        return result;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof DefaultAsmPlacedRead)) {
+            return false;
+        }
+        DefaultAsmPlacedRead other = (DefaultAsmPlacedRead) obj;
+        if (isSurrogate != other.isSurrogate) {
+            return false;
+        }
+        if (placedRead == null) {
+            if (other.placedRead != null) {
+                return false;
+            }
+        } else if (!placedRead.equals(other.placedRead)) {
+            return false;
+        }
+        return true;
+    }
+
     private static class Builder implements AsmPlacedReadBuilder{
         private boolean isSurrogate=false;        
         private final PlacedReadBuilder<PlacedRead> delegateBuilder;

@@ -41,7 +41,7 @@ public class AceContigAdapter implements AceContig{
     
     public AceContigAdapter(Contig<? extends PlacedRead> delegate, Date phdDate, boolean isComplimented) {
         this.delegate = delegate;
-        this.phdDate = phdDate;
+        this.phdDate = new Date(phdDate.getTime());
         this.isComplimented = isComplimented;
     }
 
