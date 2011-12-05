@@ -19,6 +19,7 @@
 
 package org.jcvi.assembly.ace;
 
+import org.jcvi.common.core.assembly.ace.TestAce2Contig;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
