@@ -336,7 +336,7 @@
 		    <jarjar jarfile="${project-name}-${version}-r${revision}.jar">
 		        <fileset dir="${bin}"/>
 		        
-		    	<zipfileset src="${lib}/easymock-3.0.jar"/>
+		    	<zipfileset src="${lib}/easymock-3.1.jar"/>
 		    	<zipfileset src="${lib}/objenesis-1.2.jar"/>		    	
 		    	<zipfileset src="${lib}/cglib-nodep.jar"/>		    	
 		    	<zipfileset src="${lib}/log4j-1.2.15.jar"/>

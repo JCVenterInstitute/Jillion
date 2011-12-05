@@ -51,13 +51,13 @@
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/JSAP-2.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="lib/easymock-3.0.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://easymock.org/api/easymock/3.0"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/objenesis-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/junit-4.8.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/joda-time-2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/easymock-3.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://easymock.org/api/easymock/3.1"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
