@@ -24,7 +24,7 @@
 package org.jcvi.common.core.assembly.clc.cas;
 
 
-import org.jcvi.common.core.assembly.contig.cas.align.CasAlignment;
+import org.jcvi.common.core.assembly.clc.cas.align.CasAlignment;
 
 public interface CasMatch {
 

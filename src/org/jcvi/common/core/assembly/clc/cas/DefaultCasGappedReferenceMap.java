@@ -31,10 +31,10 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.assembly.contig.cas.align.CasAlignment;
-import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegion;
-import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegionType;
-import org.jcvi.common.core.assembly.contig.cas.read.CasNucleotideDataStore;
+import org.jcvi.common.core.assembly.clc.cas.align.CasAlignment;
+import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegion;
+import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegionType;
+import org.jcvi.common.core.assembly.clc.cas.read.CasNucleotideDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;

@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.clc.cas;
 
-import org.jcvi.common.core.assembly.contig.cas.align.score.CasScoringScheme;
+import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
 
 public abstract class AbstractOnePassCasFileVisitor extends AbstractCasFileVisitor{
     private boolean initialized = false;

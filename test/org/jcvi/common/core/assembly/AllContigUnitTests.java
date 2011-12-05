@@ -20,10 +20,10 @@
 package org.jcvi.common.core.assembly;
 
 import org.jcvi.common.core.assembly.ace.AllAceUnitTests;
-import org.jcvi.common.core.assembly.contig.cas.AllCasUnitTests;
+import org.jcvi.common.core.assembly.cas.AllCasUnitTests;
 import org.jcvi.common.core.assembly.contig.celera.AllCeleraUnitTests;
-import org.jcvi.common.core.assembly.contig.ctg.AllCtgUnitTests;
-import org.jcvi.common.core.assembly.contig.trim.AllTrimUnitTests;
+import org.jcvi.common.core.assembly.ctg.AllCtgUnitTests;
+import org.jcvi.common.core.assembly.util.trimmer.AllTrimUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

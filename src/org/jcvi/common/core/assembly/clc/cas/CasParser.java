@@ -32,16 +32,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.common.core.assembly.contig.cas.align.CasAlignment;
-import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentRegionType;
-import org.jcvi.common.core.assembly.contig.cas.align.CasAlignmentType;
-import org.jcvi.common.core.assembly.contig.cas.align.DefaultCasAlignment;
-import org.jcvi.common.core.assembly.contig.cas.align.DefaultCasMatch;
-import org.jcvi.common.core.assembly.contig.cas.align.score.CasAlignmentScore;
-import org.jcvi.common.core.assembly.contig.cas.align.score.CasAlignmentScoreBuilder;
-import org.jcvi.common.core.assembly.contig.cas.align.score.CasScoreType;
-import org.jcvi.common.core.assembly.contig.cas.align.score.CasScoringScheme;
-import org.jcvi.common.core.assembly.contig.cas.align.score.DefaultCasScoringScheme;
+import org.jcvi.common.core.assembly.clc.cas.align.CasAlignment;
+import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegionType;
+import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentScore;
+import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentScoreBuilder;
+import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentType;
+import org.jcvi.common.core.assembly.clc.cas.align.CasScoreType;
+import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
+import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasAlignment;
+import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasMatch;
+import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasScoringScheme;
 import org.jcvi.common.core.io.IOUtil;
 
 public class CasParser {
