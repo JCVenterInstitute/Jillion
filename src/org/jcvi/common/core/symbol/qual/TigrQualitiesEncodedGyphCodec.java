@@ -26,6 +26,7 @@ package org.jcvi.common.core.symbol.qual;
 import java.util.Collection;
 import java.util.List;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.GlyphCodec;
 
 public final class TigrQualitiesEncodedGyphCodec implements GlyphCodec<PhredQuality>{
@@ -40,7 +41,7 @@ public final class TigrQualitiesEncodedGyphCodec implements GlyphCodec<PhredQual
     
     @Override
     public List<PhredQuality> decode(byte[] encodedGlyphs) {       
-        return PhredQuality.valueOf(TigrQualitiesEncoder.decode(new String(encodedGlyphs)));       
+        return PhredQuality.valueOf(TigrQualitiesEncoder.decode(new String(encodedGlyphs,IOUtil.UTF_8)));       
     }
 
     @Override
@@ -55,7 +56,7 @@ public final class TigrQualitiesEncodedGyphCodec implements GlyphCodec<PhredQual
 
     @Override
     public byte[] encode(Collection<PhredQuality> glyphs) {
-        return TigrQualitiesEncoder.encode(PhredQuality.toArray(glyphs)).getBytes();
+        return TigrQualitiesEncoder.encode(PhredQuality.toArray(glyphs)).getBytes(IOUtil.UTF_8);
     }
 
 }

@@ -21,8 +21,9 @@ package org.jcvi.common.core.seq.trim.lucy;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
@@ -47,7 +49,7 @@ public class LucyDebugFileDataStore implements LucyDebugTrimRecordDataStore{
     final DataStore<LucyDebugTrimRecord> datastore;
     public LucyDebugFileDataStore(File lucyDebugTrimFile) throws IOException{
         Map<String, LucyDebugTrimRecord> recordMap = new LinkedHashMap<String, LucyDebugTrimRecord>();
-        BufferedReader reader = new BufferedReader(new FileReader(lucyDebugTrimFile));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(lucyDebugTrimFile),IOUtil.UTF_8));
         try{
             String line;
             while((line = reader.readLine()) !=null){

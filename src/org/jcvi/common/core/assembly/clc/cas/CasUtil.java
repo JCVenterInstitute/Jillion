@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +61,8 @@ import org.jcvi.common.core.util.MultipleWrapper;
  */
 public final class CasUtil {
 
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
+    
     private CasUtil(){}
     /**
      * Get the number of bytes required to store the given number.
@@ -115,7 +118,7 @@ public final class CasUtil {
        
         byte bytes[] = IOUtil.readByteArray(in, length);
         
-        return new String(bytes);
+        return new String(bytes, UTF_8);
         
     }
     /**

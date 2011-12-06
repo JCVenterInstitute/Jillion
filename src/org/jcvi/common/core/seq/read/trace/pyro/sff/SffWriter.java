@@ -55,8 +55,8 @@ public class SffWriter {
         out.write(IOUtil.convertUnsignedShortToByteArray(keyLength));
         out.write(IOUtil.convertUnsignedShortToByteArray(header.getNumberOfFlowsPerRead()));
         out.write(SFFUtil.FORMAT_CODE);
-        out.write(header.getFlow().getBytes());
-        out.write(header.getKeySequence().getBytes());
+        out.write(header.getFlow().getBytes(IOUtil.UTF_8));
+        out.write(header.getKeySequence().getBytes(IOUtil.UTF_8));
         out.write(new byte[padding]);
         out.flush();
     }
@@ -80,7 +80,7 @@ public class SffWriter {
         out.write(IOUtil.convertUnsignedIntToByteArray(readHeader.getNumberOfBases()));
         writeClip(readHeader.getQualityClip(),out);
         writeClip(readHeader.getAdapterClip(), out);
-        out.write(name.getBytes());
+        out.write(name.getBytes(IOUtil.UTF_8));
         out.write(new byte[padding]);
         out.flush();
     }
@@ -94,7 +94,7 @@ public class SffWriter {
         out.write(flowValues.array());
         out.write(readData.getFlowIndexPerBase());
         final String basecalls = readData.getBasecalls();
-        out.write(basecalls.getBytes());
+        out.write(basecalls.getBytes(IOUtil.UTF_8));
         out.write(readData.getQualities());
         int readDataLength = SFFUtil.getReadDataLength(flowgramValues.length, basecalls.length());
         int padding =SFFUtil.caclulatePaddedBytes(readDataLength);

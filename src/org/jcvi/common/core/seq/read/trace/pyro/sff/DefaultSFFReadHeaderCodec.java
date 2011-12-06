@@ -67,7 +67,7 @@ public class DefaultSFFReadHeaderCodec implements SFFReadHeaderCodec {
         if(bytesRead != length){
             throw new SFFDecoderException("error decoding seq name");
         }
-        return new String(name);
+        return new String(name,IOUtil.UTF_8);
     }
 
     

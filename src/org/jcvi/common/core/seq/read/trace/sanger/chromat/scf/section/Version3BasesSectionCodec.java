@@ -124,7 +124,7 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
                 bases[i] = (byte)'N';
             }
         }
-        return new String(bases);
+        return new String(bases,IOUtil.UTF_8);
 
     }
 

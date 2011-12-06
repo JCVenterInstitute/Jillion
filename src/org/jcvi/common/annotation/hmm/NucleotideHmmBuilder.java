@@ -189,9 +189,10 @@ public class NucleotideHmmBuilder implements Builder<Hmm<Nucleotide>>{
 				total+=prob;
 			}
 			//initial/final state doesn't need to have probabilities
-			if(index !=0 && total !=1D){
+			//double isn't exact so give range of +/- 0.00000001
+			if(index !=0 && total <=.9999999D && total <= 1.0000001D){
 				throw new IllegalStateException(
-						String.format("basecall probabilities for state %d must total 100%% : %.2f%%",index, total));
+						String.format("basecall probabilities for state %d must total 100%% : %.2f%%",index, total*100));
 			}
 			return new NucleotideHmmState(index,probabilities);
 		}

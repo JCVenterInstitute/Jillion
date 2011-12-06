@@ -56,7 +56,8 @@ public class CommentSectionCodec implements SectionCodec {
             }
             Properties props = new Properties();
             props.load(new InputStreamReader(
-                        new ByteArrayInputStream(comments)));
+                        new ByteArrayInputStream(comments),
+                        IOUtil.UTF_8));
             //SCF has a \0 at the end of the comment section
             //java will interpret this as an extra property
             //remove it
@@ -89,7 +90,7 @@ public class CommentSectionCodec implements SectionCodec {
             builder.append("\n");
         }
         builder.append(NULL);
-        ByteBuffer buffer = ByteBuffer.wrap(builder.toString().getBytes());
+        ByteBuffer buffer = ByteBuffer.wrap(builder.toString().getBytes(IOUtil.UTF_8));
         header.setCommentSize(builder.length());
         return new EncodedSection(buffer,Section.COMMENTS);
     }
@@ -111,7 +112,8 @@ public class CommentSectionCodec implements SectionCodec {
             }
             Properties props = new Properties();
             props.load(new InputStreamReader(
-                        new ByteArrayInputStream(comments)));
+                        new ByteArrayInputStream(comments),
+                        IOUtil.UTF_8));
             //SCF has a \0 at the end of the comment section
             //java will interpret this as an extra property
             //remove it

@@ -42,7 +42,7 @@ public class VariationLogFileParser {
     
     private static final String CR = "\n";
     public static void parseVariationFile(File variationLogFile, VariationLogFileVisitor visitor) throws FileNotFoundException{
-        Scanner scanner = new Scanner(variationLogFile).useDelimiter(CR);
+        Scanner scanner = new Scanner(variationLogFile, "UTF-8").useDelimiter(CR);
         try{
             visitor.visitFile();
             boolean readVariationsForCurrentContig=true;

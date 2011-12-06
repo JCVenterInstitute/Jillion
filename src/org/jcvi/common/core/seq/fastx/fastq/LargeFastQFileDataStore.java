@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.iter.AbstractLargeIdIterator;
@@ -103,7 +104,7 @@ public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRec
         int count=0;
         Scanner scanner;
         try {
-            scanner = new Scanner(fastQFile);
+            scanner = new Scanner(fastQFile, IOUtil.UTF_8_NAME);
         
         while(scanner.hasNextLine()){
             String line = scanner.nextLine();

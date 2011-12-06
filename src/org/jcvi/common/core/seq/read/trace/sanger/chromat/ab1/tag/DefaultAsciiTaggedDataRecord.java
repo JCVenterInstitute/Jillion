@@ -19,6 +19,8 @@
 
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag;
 
+import org.jcvi.common.core.io.IOUtil;
+
 public class DefaultAsciiTaggedDataRecord extends AbstractTaggedDataRecord<StringTaggedDataRecord,String> implements AsciiTaggedDataRecord{
 
 	public DefaultAsciiTaggedDataRecord(TaggedDataName name, long number,
@@ -30,7 +32,7 @@ public class DefaultAsciiTaggedDataRecord extends AbstractTaggedDataRecord<Strin
 
 	@Override
 	protected String parseDataFrom(byte[] data) {
-		return new String(data);
+		return new String(data,IOUtil.UTF_8);
 	}
 
     /**

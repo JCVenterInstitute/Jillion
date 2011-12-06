@@ -168,7 +168,7 @@ public class ZTRChromatogramParser implements SangerTraceCodec {
                 throw new ChunkException("Can not parse Chunk Type");
             }
             
-            return Chunk.getChunk(new String(chunkType));
+            return Chunk.getChunk(new String(chunkType,IOUtil.UTF_8));
         }
         catch(Exception e)
         {

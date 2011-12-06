@@ -116,7 +116,7 @@ public class LargePhdDataStore implements PhdDataStore{
             Scanner scanner=null;
             int count=0;
             try {
-                scanner= new Scanner(phdFile);
+                scanner= new Scanner(phdFile,IOUtil.UTF_8_NAME);
                 while(scanner.hasNextLine()){
                     String line = scanner.nextLine();
                     if(line.startsWith("BEGIN_SEQUENCE")){
@@ -151,7 +151,7 @@ public class LargePhdDataStore implements PhdDataStore{
         Scanner scanner=null;
         
         try{
-            scanner = new Scanner(phdFile);
+            scanner = new Scanner(phdFile, IOUtil.UTF_8_NAME);
             final Pattern beginSequencePattern = Pattern.compile("BEGIN_SEQUENCE\\s+"+id);
             String line = scanner.nextLine();
             Matcher matcher = beginSequencePattern.matcher(line);

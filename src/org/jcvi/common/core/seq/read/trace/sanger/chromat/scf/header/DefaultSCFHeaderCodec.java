@@ -119,7 +119,7 @@ public class DefaultSCFHeaderCodec implements SCFHeaderCodec {
             throw new SCFHeaderDecoderException("File does not have magic number");
         }
         if(!Arrays.equals(MAGIC_NUMBER, actualMagicNumber)){
-            throw new SCFHeaderDecoderException("Magic number " + new String(actualMagicNumber)+" does not match expected");
+            throw new SCFHeaderDecoderException("Magic number " + new String(actualMagicNumber,IOUtil.UTF_8)+" does not match expected");
         }
     }
     private void skipSpare(DataInputStream in) throws IOException {
@@ -140,7 +140,7 @@ public class DefaultSCFHeaderCodec implements SCFHeaderCodec {
             throw new IOException("Stream truncated mid version");
         }
         try{
-            return Float.parseFloat(new String(version));
+            return Float.parseFloat(new String(version,IOUtil.UTF_8));
         }
         catch(NumberFormatException e){
             throw new IOException("could not parse version" +Arrays.toString(version),e);
@@ -173,7 +173,7 @@ public class DefaultSCFHeaderCodec implements SCFHeaderCodec {
         buffer.putInt(header.getBasesOffset());
         buffer.putInt(header.getCommentSize());
         buffer.putInt(header.getCommentOffset());
-        buffer.put(String.format("%1.2f",header.getVersion()).getBytes());
+        buffer.put(String.format("%1.2f",header.getVersion()).getBytes(IOUtil.UTF_8));
         buffer.putInt(header.getSampleSize());
         buffer.putInt(0); // code set is 0 for now
         buffer.putInt(header.getPrivateDataSize());

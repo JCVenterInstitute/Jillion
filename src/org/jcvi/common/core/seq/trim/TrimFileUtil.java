@@ -161,7 +161,7 @@ public final class TrimFileUtil {
             //force residue based
             Range trimRange = datastore.get(id)
                         .convertRange(CoordinateSystem.RESIDUE_BASED);
-            out.write(String.format("%s\t%d\t%d%n",id,trimRange.getLocalStart(), trimRange.getLocalEnd()).getBytes());
+            out.write(String.format("%s\t%d\t%d%n",id,trimRange.getLocalStart(), trimRange.getLocalEnd()).getBytes(IOUtil.UTF_8));
         }
     }
 }

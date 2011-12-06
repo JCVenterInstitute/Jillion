@@ -35,7 +35,7 @@ public class DefaultSFFReadDataCodec implements SFFReadDataCodec {
         try{
             short[] values = IOUtil.readShortArray(in, numberOfFlows);
             byte[] indexes = IOUtil.readByteArray(in, numberOfBases);
-            String bases = new String(IOUtil.readByteArray(in, numberOfBases));
+            String bases = new String(IOUtil.readByteArray(in, numberOfBases),IOUtil.UTF_8);
             byte[] qualities = IOUtil.readByteArray(in, numberOfBases);
 
             int readDataLength = SFFUtil.getReadDataLength(numberOfFlows, numberOfBases);

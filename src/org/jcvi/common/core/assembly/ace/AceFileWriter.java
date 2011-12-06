@@ -25,6 +25,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +40,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 public class AceFileWriter {
 
     private static final String CONTIG_HEADER = "CO %s %d %d %d %s%n";
-   
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
 
     public static void writeAceFileHeader(int numberOfContigs, int numberOfReads, OutputStream out) throws IOException{
         writeString(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads), out);
@@ -185,7 +186,7 @@ public class AceFileWriter {
   
     
     private static void writeString(String s, OutputStream out) throws IOException{
-        out.write(s.getBytes());
+        out.write(s.getBytes(UTF_8));
         
     }
 }
