@@ -17,14 +17,9 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common;
+package org.jcvi.common.annotation;
 
-
-import org.jcvi.common.annotation.AllAnnotationUnitTests;
-import org.jcvi.common.command.AllCommandUnitTests;
-import org.jcvi.common.core.AllCoreUnitTests;
-import org.jcvi.common.io.AllIOUnitTests;
-import org.jcvi.common.net.AllNetUnitTests;
+import org.jcvi.common.annotation.hmm.AllHmmUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -32,13 +27,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        AllCoreUnitTests.class,
-        AllIOUnitTests.class,
-        AllCommandUnitTests.class,
-        AllNetUnitTests.class,
-        AllAnnotationUnitTests.class
+        TestGene.class,
+        AllHmmUnitTests.class
     }
     )
-public class AllCommonUnitTests {
+public class AllAnnotationUnitTests {
 
 }
