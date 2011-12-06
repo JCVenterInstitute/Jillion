@@ -45,6 +45,17 @@ public class AceFileWriter {
         writeString(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads), out);
     }
    
+    public static void writeAceTags(AceTags aceTags, OutputStream out) throws IOException{
+        for(ReadAceTag readTag : aceTags.getReadTags()){
+            writeReadTag(readTag, out);
+        }
+        for(ConsensusAceTag consensusTag : aceTags.getConsensusTags()){
+            writeConsensusTag(consensusTag, out);
+        }
+        for(WholeAssemblyAceTag wholeAssemblyTag : aceTags.getWholeAssemblyTags()){
+            writeWholeAssemblyTag(wholeAssemblyTag, out);
+        }
+    }
     public static void writeWholeAssemblyTag(
             WholeAssemblyAceTag wholeAssemblyTag, OutputStream out) throws IOException {
         writeString(String.format("WA{%n%s %s %s%n%s%n}%n", 

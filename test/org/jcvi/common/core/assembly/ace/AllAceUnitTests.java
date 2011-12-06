@@ -42,7 +42,7 @@ import org.junit.runners.Suite.SuiteClasses;
        TestDefaultAceBestSegmentMap.class,
        TestOntheFlyAceBestSegmentMap.class,
        TestAcePlacedReadAdapter.class,
-       TestDefaultAceFileTagMap.class,
+       TestDefaultAceTagsFromAceFile.class,
        TestDefaultAceFileDataStore.class,
        TestIndexAceFileOffsets.class,
        TestIndexedAceFileDataStore.class,

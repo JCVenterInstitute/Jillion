@@ -42,8 +42,9 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
+import org.jcvi.common.core.assembly.ace.AceTags;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
-import org.jcvi.common.core.assembly.ace.DefaultAceFileTagMap;
+import org.jcvi.common.core.assembly.ace.DefaultAceTagsFromAceFile;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.io.IOUtil;
@@ -135,7 +136,7 @@ public class Ace2Fasta {
     private static Map<String, String> getContigIdMap(final File aceIn)
             throws IOException {
         final Map<String, String> contigIdMap = new HashMap<String, String>();
-        DefaultAceFileTagMap tagMap = new DefaultAceFileTagMap(aceIn);
+        AceTags tagMap = DefaultAceTagsFromAceFile.create(aceIn);
         for(ConsensusAceTag consensusTag: tagMap.getConsensusTags()){
             String originalId = consensusTag.getId();
             if(ConsedUtil.isContigRename(consensusTag)){

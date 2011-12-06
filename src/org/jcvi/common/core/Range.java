@@ -42,7 +42,7 @@ import org.jcvi.common.core.util.Caches;
  * A <code>Range</code> is a pair of coordinate values which describe a
  * contiguous subset of a sequence of values.  <code>Range</code>s are
  * immutable.  Changes to a <code>Range</code> are done using various methods
- * which generate new <code>Range</code> instances.
+ * which return different <code>Range</code> instances.
  * <p>
  * <code>Range</code>s have a start (or left) value and an end (or right)
  * value.  The start value will always be less than or equal to the end value.
@@ -56,6 +56,25 @@ import org.jcvi.common.core.util.Caches;
  * desire to represent no range at all.  A <code>Range</code> of 0 to 0 still
  * has a size of 1.  In order to represent a <code>Range</code> with size 0,
  * you need to explicitly use an empty range.
+ * </p>
+ * Ranges can also use a different {@link CoordinateSystem} which may not follow these
+ * guidelines.  This other coordinate system start and end values can be queried
+ * via the {@link #getLocalStart()} and {@link #getLocalEnd()} methods.  
+ * {@link CoordinateSystem}s can be specified either via the factory methods or a range 
+ * can be converted into a different coordinate system via the {@link #convertRange(CoordinateSystem)}
+ * method.
+ * 
+ * <p/>
+ * <strong>PLEASE NOTE</strong> Range objects should not be used
+ * for synchronization locks.  Range objects are cached and shared, synchronizing
+ * on the same object as other, unrelated code can cause deadlock.
+ * <pre> 
+ * &#047;&#047;don't do this
+ * private static Range range = Range.buildRange(1,10);
+ * ...
+ *   synchronized(range){ .. }
+ * ...
+ * </pre>
  * @author dkatzel
  * @author jsitz
  * 

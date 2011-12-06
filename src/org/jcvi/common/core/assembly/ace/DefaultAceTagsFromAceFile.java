@@ -25,51 +25,88 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+/**
+ * {@code DefaultAceTagsFromAceFile} is a class
+ * that can create {@link AceTags} instances
+ * by parsing an Ace file.
+ * @author dkatzel
+ *
+ *
+ */
+public final class DefaultAceTagsFromAceFile {
+    /**
+     * {@code AceTagsFromFileBuilder} is an {@link AceFileVisitor}
+     * that will populate an {@link AceTags} object
+     * as the ace file is parsed.  As with all
+     * {@link org.jcvi.common.core.util.Builder}s, the
+     * {@link #build()} method must be called
+     * to actually create the immutable instance.
+     * @author dkatzel
+     *
+     *
+     */
+    public static interface AceTagsFromFileBuilder extends AceFileVisitor, org.jcvi.common.core.util.Builder<AceTags>{
+        
+    }
 
-public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceTags {
-
-    private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
-    private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
-    private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
-    
-    private DefaultConsensusAceTag.Builder consensusTagBuilder;
-    public DefaultAceFileTagMap(){
+    /**
+     * Create a new {@link AceTagsFromFileBuilder} instance
+     * that needs to get visited by {@link AceFileParser}
+     * in order to create a new {@link AceTags} instance.
+     * This is useful if the client code wants to collect several different {@link AceFileVisitor}
+     * implementations that all need to parse an ace file
+     * so they can all visit the ace file at the same time
+     * so the ace file only has to be parsed once.
+     * @return a new {@link AceTagsFromFileBuilder}
+     * instance; never null.
+     */
+    public static AceTagsFromFileBuilder createBuilder(){
+        return new Builder();
+    }
+    /**
+     * Creates a new {@link AceTags} instance using data populated from
+     * the given ace file.  This is the same as:
+     * <pre>
+        AceTagsFromFileBuilder builder = createBuilder();
+        AceFileParser.parseAceFile(aceFile, builder);
+        return builder.build();
+        </pre>
+     * @param aceFile the ace File to parse.
+     * @return a new {@link AceTags} instance containing all of the
+     * {@link AceTag}s contained in the given ace file.
+     * @throws IOException if there is a problem parsing the ace file.
+     */
+    public static AceTags create(File aceFile) throws IOException{
+        AceTagsFromFileBuilder builder = createBuilder();
+        AceFileParser.parseAceFile(aceFile, builder);
+        return builder.build();
+    }
+    private DefaultAceTagsFromAceFile(){
         super();
     }
-    public DefaultAceFileTagMap(File aceFile) throws IOException{
-        AceFileParser.parseAceFile(aceFile, this);
-    }
-    private synchronized void  checkAlreadyInitialized(){
-        if(!isInitialized()){
-            throw new IllegalStateException("not yet initialized");
-        } 
-    }
     
-    @Override
-    public synchronized List<ConsensusAceTag> getConsensusTags() {
-        checkAlreadyInitialized();
-        return Collections.unmodifiableList(consensusTags);
-    }
 
-    @Override
-    public synchronized List<ReadAceTag> getReadTags() {
-        checkAlreadyInitialized();
-        return Collections.unmodifiableList(readTags);
-    }
+    
 
+   private static final class Builder extends AbstractAceFileVisitor implements AceTagsFromFileBuilder{
+       /**
+        * Consensus tags span multiple lines of the ace file so we need to build
+        * up the consensus tags as we parse.
+        */
+       private DefaultConsensusAceTag.Builder consensusTagBuilder;
+       private AceTagsBuilder aceTagsBuilder = DefaultAceTags.createBuilder();
+       
+    /**
+    * {@inheritDoc}
+    */
     @Override
-    public synchronized List<WholeAssemblyAceTag> getWholeAssemblyTags() {
-        checkAlreadyInitialized();
-        return Collections.unmodifiableList(wholeAssemblyTags);
+    public AceTags build() {
+        return aceTagsBuilder.build();
     }
-
 
     @Override
     public synchronized void visitBeginConsensusTag(String id, String type, String creator,
@@ -85,7 +122,7 @@ public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceT
     public void visitWholeAssemblyTag(String type, String creator,
             Date creationDate, String data) {
         super.visitWholeAssemblyTag(type, creator, creationDate, data);
-        wholeAssemblyTags.add(new DefaultWholeAssemblyAceTag(type, creator, creationDate, data));
+        aceTagsBuilder.addWholeAssemblyTag(new DefaultWholeAssemblyAceTag(type, creator, creationDate, data));
     }
     
 
@@ -108,7 +145,7 @@ public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceT
     @Override
     public void visitEndConsensusTag() {
         super.visitEndConsensusTag();
-        consensusTags.add(consensusTagBuilder.build());
+        aceTagsBuilder.addConsensusTag(consensusTagBuilder.build());
 
     }
 
@@ -119,7 +156,7 @@ public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceT
             long gappedStart, long gappedEnd, Date creationDate,
             boolean isTransient) {
         super.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-        readTags.add(new DefaultReadAceTag(id, type, creator, creationDate, 
+        aceTagsBuilder.addReadTag(new DefaultReadAceTag(id, type, creator, creationDate, 
                 Range.buildRange(gappedStart,gappedEnd), isTransient));
 
     }
@@ -140,7 +177,7 @@ public class DefaultAceFileTagMap extends AbstractAceFileVisitor implements AceT
      protected void visitNewContig(String contigId, String consensus, boolean complimented) {
          
      }
-
-   
+       
+   }
 
 }
