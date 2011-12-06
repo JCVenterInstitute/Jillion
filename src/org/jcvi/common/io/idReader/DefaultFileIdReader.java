@@ -106,7 +106,7 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
         boolean hasNext;
         boolean isClosed=false;
         FileIdIterator(InputStream in, IdParser<T> idParser){
-            scanner = new Scanner(in);
+            scanner = new Scanner(in, IOUtil.UTF_8_NAME);
             this.idParser = idParser;
         }
         private synchronized void getNextValidString(){

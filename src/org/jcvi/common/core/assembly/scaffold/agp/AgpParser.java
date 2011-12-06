@@ -65,7 +65,7 @@ public class AgpParser {
     }
 
     public static void parseAgpFile(InputStream in, AgpFileVisitor visitor, Range.CoordinateSystem agpFileCoordinateSystem){
-        Scanner scanner = new Scanner(in);
+        Scanner scanner = new Scanner(in, "UTF-8");
         while(scanner.hasNextLine()){
             String line = scanner.nextLine();
             Matcher matcher = CONTIG_PATTERN.matcher(line);

@@ -22,6 +22,7 @@ package org.jcvi.common.core.assembly.ace.consed;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
@@ -39,6 +40,7 @@ public class ConsedNavigationWriter implements Closeable{
 
     private final OutputStream out;
     
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
     
     public static ConsedNavigationWriter create(String title, OutputStream out) throws IOException{
         if(title ==null){
@@ -71,7 +73,7 @@ public class ConsedNavigationWriter implements Closeable{
             throw new NullPointerException("output stream can not be null");
         }
         if(title!=null){
-            out.write(String.format("TITLE: %s\n",title).getBytes());
+            out.write(String.format("TITLE: %s\n",title).getBytes(UTF_8));
         }
         
         this.out= out;
@@ -93,7 +95,7 @@ public class ConsedNavigationWriter implements Closeable{
         //consed requires a comment line even if it is empty
         builder.append(String.format("COMMENT: %s\n",comment==null? "": comment));
         builder.append("END_REGION\n");
-        out.write(builder.toString().getBytes());
+        out.write(builder.toString().getBytes(UTF_8));
     }
     
     public void writeNavigationElement(ConsensusNavigationElement element) throws IOException{
@@ -109,6 +111,6 @@ public class ConsedNavigationWriter implements Closeable{
        
         builder.append("END_REGION\n");
         
-        out.write(builder.toString().getBytes());
+        out.write(builder.toString().getBytes(UTF_8));
     }
 }

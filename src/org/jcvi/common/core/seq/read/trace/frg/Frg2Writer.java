@@ -157,7 +157,7 @@ public class Frg2Writer {
         
     }
     private void writeLinkageMessage(List<Fragment> mates,OutputStream out) throws IOException{
-        out.write(String.format(LKG_MESSAGE, mates.get(0).getId(),mates.get(1).getId()).getBytes());
+        out.write(String.format(LKG_MESSAGE, mates.get(0).getId(),mates.get(1).getId()).getBytes(IOUtil.UTF_8));
     }
     private void writeFragments(Iterable<Mated<Fragment>> matedFragsList, Iterable<Fragment> unmatedFrgs,OutputStream out) throws IOException {
         for(Mated<Fragment> matedFrags: matedFragsList){
@@ -178,10 +178,10 @@ public class Frg2Writer {
                library.getId(),
                writeSourceComment(frag),
                Nucleotides.asString(frag.getBasecalls().asList()),
-               new String(QUALITY_CODEC.encode(frag.getQualities().asList())),
+               new String(QUALITY_CODEC.encode(frag.getQualities().asList()),IOUtil.UTF_8),
                vectorClearRange.getLocalStart(),vectorClearRange.getLocalEnd(),
                clearRange.getLocalStart(),clearRange.getLocalEnd()
-               ).getBytes());
+               ).getBytes(IOUtil.UTF_8));
         
     }
     private String writeSourceComment(Fragment frag) {
@@ -189,7 +189,7 @@ public class Frg2Writer {
     }
 
     private void writeVersion(OutputStream out) throws IOException {
-        out.write(FRG_VERSION_2_TAG.getBytes());
+        out.write(FRG_VERSION_2_TAG.getBytes(IOUtil.UTF_8));
     }
     
     private void writeLibraries(Iterable<Mated<Fragment>> matedFrags, Iterable<Fragment> unmatedFrgs, OutputStream out) throws IOException {
@@ -216,6 +216,6 @@ public class Frg2Writer {
         final Distance distance = library.getDistance();
         out.write(String.format(LIBRARY_FORMAT,
                 library.getId(), library.getMateOrientation().getCharacter(),
-                distance.getMean(), distance.getStdDev()).getBytes());
+                distance.getMean(), distance.getStdDev()).getBytes(IOUtil.UTF_8));
     }
 }

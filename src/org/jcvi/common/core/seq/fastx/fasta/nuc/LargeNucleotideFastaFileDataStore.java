@@ -143,7 +143,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
         checkNotYetClosed();
         if(size ==null){
             try {
-                Scanner scanner = new Scanner(fastaFile);
+                Scanner scanner = new Scanner(fastaFile, IOUtil.UTF_8_NAME);
                 int counter =0;
                 while(scanner.hasNextLine()){
                     String line = scanner.nextLine();
@@ -173,7 +173,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
     private InputStream getRecordFor(String id) throws FileNotFoundException{
         Scanner scanner = null;
         try{
-            scanner = new Scanner(fastaFile);
+            scanner = new Scanner(fastaFile, IOUtil.UTF_8_NAME);
             String expectedHeader = String.format(">%s", id);
             String line = scanner.nextLine();
             boolean done=false;
@@ -209,7 +209,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
             if(!scanner.hasNextLine()){
                 record.append(line).append("\n");
             }
-            return new ByteArrayInputStream(record.toString().getBytes());
+            return new ByteArrayInputStream(record.toString().getBytes(IOUtil.UTF_8));
         }finally{
             IOUtil.closeAndIgnoreErrors(scanner);
         }

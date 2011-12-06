@@ -21,6 +21,7 @@ package org.jcvi.common.core.assembly.tasm;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -34,9 +35,9 @@ import org.jcvi.common.core.datastore.DataStoreException;
  *
  */
 public final class TigrAssemblerWriter {
-
-	private static final byte[] BLANK_LINE = "\n".getBytes();
-	private static final byte[] CONTIG_SEPARATOR = "|\n".getBytes();
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
+	private static final byte[] BLANK_LINE = "\n".getBytes(UTF_8);
+	private static final byte[] CONTIG_SEPARATOR = "|\n".getBytes(UTF_8);
 	
 	public static void writeContigSeparator(OutputStream out) throws IOException{
 	    out.write(CONTIG_SEPARATOR);
@@ -73,7 +74,7 @@ public final class TigrAssemblerWriter {
     			}
     				row.append(String.format("%s\n", 
     						contig.getAttributeValue(contigAttribute)));
-				out.write(row.toString().getBytes());
+				out.write(row.toString().getBytes(UTF_8));
 			}
 			
 		}
@@ -97,7 +98,7 @@ public final class TigrAssemblerWriter {
     					row.append("\n");
     				}
     				
-    				out.write(row.toString().getBytes());				
+    				out.write(row.toString().getBytes(UTF_8));				
     			}
     			if(placedReadIterator.hasNext()){
     				out.write(BLANK_LINE);

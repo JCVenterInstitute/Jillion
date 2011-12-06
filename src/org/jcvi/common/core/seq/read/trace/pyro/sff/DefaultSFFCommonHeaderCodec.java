@@ -33,7 +33,7 @@ import org.jcvi.common.core.io.IOUtil;
 
 public class DefaultSFFCommonHeaderCodec implements SFFCommonHeaderCodec {
 
-    private static final byte[] MAGIC_NUMBER = ".sff".getBytes();
+    private static final byte[] MAGIC_NUMBER = ".sff".getBytes(IOUtil.UTF_8);
     private static final byte[] ACCEPTED_VERSION = new byte[]{0,0,0,1};
     /**
      * Currently SFF only has 1 format code which has a value of <code>1</code>.
@@ -75,7 +75,7 @@ public class DefaultSFFCommonHeaderCodec implements SFFCommonHeaderCodec {
         if(bytesRead != flowsPerRead){
             throw new SFFDecoderException("error decoding flow");
         }
-        return new String(flow);
+        return new String(flow,IOUtil.UTF_8);
     }
     private String readKeySequence(DataInputStream in, int keyLength) throws IOException, SFFDecoderException {
         byte[] keySequence = new byte[keyLength];
@@ -83,7 +83,7 @@ public class DefaultSFFCommonHeaderCodec implements SFFCommonHeaderCodec {
         if(bytesRead != keyLength){
             throw new SFFDecoderException("error decoding keySequence");
         }
-        return new String(keySequence);
+        return new String(keySequence,IOUtil.UTF_8);
     }
     private void verifyFlowgramFormatCode(DataInputStream in) throws IOException, SFFDecoderException {
         //currently only 1 format code
@@ -124,8 +124,8 @@ public class DefaultSFFCommonHeaderCodec implements SFFCommonHeaderCodec {
         buf.putShort(keyLength);
         buf.put(IOUtil.convertUnsignedShortToByteArray(header.getNumberOfFlowsPerRead()));
         buf.put(FORMAT_CODE);
-        buf.put(header.getFlow().getBytes());
-        buf.put(header.getKeySequence().getBytes());
+        buf.put(header.getFlow().getBytes(IOUtil.UTF_8));
+        buf.put(header.getKeySequence().getBytes(IOUtil.UTF_8));
         return buf.array();
     }
 

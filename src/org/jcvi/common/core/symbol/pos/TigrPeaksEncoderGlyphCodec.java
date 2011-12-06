@@ -27,6 +27,7 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.GlyphCodec;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
@@ -43,7 +44,7 @@ public enum TigrPeaksEncoderGlyphCodec implements GlyphCodec<ShortSymbol>{
 
     @Override
     public List<ShortSymbol> decode(byte[] encodedGlyphs) {
-        String encodedString = new String(encodedGlyphs);
+        String encodedString = new String(encodedGlyphs,IOUtil.UTF_8);
         return GLYPH_FACTORY.getGlyphsFor(
                 TigrPeaksEncoder.decode(encodedString));
     }

@@ -40,6 +40,8 @@ import org.jcvi.common.core.io.IOUtil;
 public final class CasConversionUtil {
 
     private static final Pattern TRIM_FILE_MAP_PATTERN = Pattern.compile("(\\S+)\\s+(\\S+)");
+    
+    private static final String UTF_8 = "UTF-8";
     /**
      * Parse the given trimFileMap file.
      * <p>
@@ -72,7 +74,7 @@ public final class CasConversionUtil {
      */
     public static Map<String, String> parseTrimmedToUntrimmedFiles(InputStream in){
         Map<String, String> map = new HashMap<String, String>();
-        Scanner scanner = new Scanner(in);
+        Scanner scanner = new Scanner(in,UTF_8);
         while(scanner.hasNextLine()){
             String line = scanner.nextLine();
             Matcher matcher = TRIM_FILE_MAP_PATTERN.matcher(line);

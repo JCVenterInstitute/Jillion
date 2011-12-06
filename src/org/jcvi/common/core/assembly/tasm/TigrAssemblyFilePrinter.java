@@ -19,7 +19,10 @@
 
 package org.jcvi.common.core.assembly.tasm;
 
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
@@ -30,10 +33,10 @@ import org.jcvi.common.core.Range;
  *
  */
 public class TigrAssemblyFilePrinter implements TigrAssemblyFileVisitor{
-
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
     private final PrintWriter writer;
     public TigrAssemblyFilePrinter(){
-        this.writer = new PrintWriter(System.out,true);
+        this.writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out,UTF_8)),true);
     }
     
     /**

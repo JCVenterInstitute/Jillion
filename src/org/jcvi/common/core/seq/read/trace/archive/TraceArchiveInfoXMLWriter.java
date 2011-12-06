@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.XMLUtil;
 
 
@@ -71,7 +72,7 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
    
     
     private void writeString(OutputStream out, String value) throws IOException{
-        out.write(value.getBytes());
+        out.write(value.getBytes(IOUtil.UTF_8));
     }
     @Override
     public void write(TraceArchiveInfo info) throws IOException {

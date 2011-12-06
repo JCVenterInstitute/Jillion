@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -50,6 +51,16 @@ public final class IOUtil {
      * alot so it's easier to factor this out as a constant.
      */
     private static final double LOG_2 = Math.log(2);
+    /**
+     * {@value}
+     */
+    public static final String UTF_8_NAME = "UTF-8";
+    /**
+     * Singleton for the {@link Charset} implementation for 
+     * UTF-8.
+     */
+    public static final Charset UTF_8 = Charset.forName(UTF_8_NAME);
+    
     
     public enum ENDIAN{
         BIG,
@@ -418,7 +429,7 @@ public final class IOUtil {
         final ByteArrayOutputStream expectedOutStream = new ByteArrayOutputStream();
         OutputStreamReader reader = new OutputStreamReader(expectedOutStream);
         reader.read(in);
-        return expectedOutStream.toString();
+        return expectedOutStream.toString(UTF_8_NAME);
     }
     public static byte[] readStreamAsBytes(InputStream in) throws IOException {
         final ByteArrayOutputStream expectedOutStream = new ByteArrayOutputStream();

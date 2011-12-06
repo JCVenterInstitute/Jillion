@@ -139,7 +139,7 @@ public class Frg2Parser {
     }
     public void parse(InputStream in, Frg2Visitor visitor){
         
-        Scanner scanner = new Scanner(in).useDelimiter( FragmentUtil.CR);
+        Scanner scanner = new Scanner(in, IOUtil.UTF_8_NAME).useDelimiter( FragmentUtil.CR);
         try{
             while(scanner.hasNextLine()){
                 String line = scanner.nextLine();

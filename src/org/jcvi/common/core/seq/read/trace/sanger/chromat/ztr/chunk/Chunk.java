@@ -85,7 +85,7 @@ public enum Chunk {
             final int numberOfBases = unEncodedData.length -1;
             ByteBuffer buf = ByteBuffer.allocate(numberOfBases);
             buf.put(unEncodedData, 1, numberOfBases);
-            builder.basecalls(new String(buf.array()));
+            builder.basecalls(new String(buf.array(),IOUtil.UTF_8));
 
         }
 
@@ -97,7 +97,7 @@ public enum Chunk {
             ByteBuffer buf = ByteBuffer.allocate(numberOfBases);
             buf.put(unEncodedData, 1, numberOfBases);
             
-            final String basecalls = new String(buf.array());
+            final String basecalls = new String(buf.array(),IOUtil.UTF_8);
             visitor.visitBasecalls(basecalls);
             return basecalls;
             

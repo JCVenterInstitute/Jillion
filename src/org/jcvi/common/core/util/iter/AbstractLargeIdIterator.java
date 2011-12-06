@@ -42,7 +42,7 @@ public abstract class AbstractLargeIdIterator implements CloseableIterator<Strin
         updateNextObject();
     }
     protected Scanner createScannerFor(File file) throws FileNotFoundException{
-        return new Scanner(file);
+        return new Scanner(file, IOUtil.UTF_8_NAME);
     }
     private void updateNextObject(){
         if(scanner.hasNextLine()){

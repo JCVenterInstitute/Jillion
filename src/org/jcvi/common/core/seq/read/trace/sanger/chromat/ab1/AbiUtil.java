@@ -20,6 +20,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1;
 
 import java.util.Arrays;
 
+import org.jcvi.common.core.io.IOUtil;
+
 public final class AbiUtil {
 
 	private AbiUtil(){}
@@ -30,11 +32,11 @@ public final class AbiUtil {
     
 	public static final int HEADER_SIZE = 30;
 	public static String parseASCIIStringFrom(byte[] data){
-		return new String(data);
+		return new String(data,IOUtil.UTF_8);
 	}
 	
 	public static String parsePascalStringFrom(byte[] data){
-		return new String(data,1, data.length-1);
+		return new String(data,1, data.length-1,IOUtil.UTF_8);
 	}
 	
 	public static boolean isABIMagicNumber(byte[] magicNumber){

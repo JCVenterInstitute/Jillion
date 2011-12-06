@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
@@ -70,7 +71,7 @@ public final class FragmentUtil {
             encodedQualities.append(line);
         }
         return  
-               QUALITY_CODEC.decode(encodedQualities.toString().getBytes());        
+               QUALITY_CODEC.decode(encodedQualities.toString().getBytes(IOUtil.UTF_8));        
     }
     public static  boolean endOfMultilineField(String line) {
         return line.contains(".");

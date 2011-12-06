@@ -57,7 +57,7 @@ public final class AmosFragmentFileParser {
     }
     
     public static void parse(InputStream in, AmosFragmentVisitor visitor){
-        Scanner scanner = new Scanner(in).useDelimiter( FragmentUtil.CR);
+        Scanner scanner = new Scanner(in, IOUtil.UTF_8_NAME).useDelimiter( FragmentUtil.CR);
         try{
             while(scanner.hasNextLine()){
                 String line = scanner.nextLine();
