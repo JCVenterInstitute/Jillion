@@ -111,7 +111,8 @@ public class AceFileUtil {
                  if(optionalQualities!=null){
                      int offset = i- numberOfGapsSoFar;
                      if(optionalQualities.size()<=offset){
-                         throw new IllegalArgumentException("not enough ungapped qualities for input basecalls : "+ offset);
+                         throw new IllegalArgumentException(
+                                 String.format("not enough ungapped qualities for input basecalls found only %d qualities",offset));
                      }
                      PhredQuality quality =optionalQualities.get(i-numberOfGapsSoFar);
                      if(quality.compareTo(ACE_DEFAULT_HIGH_QUALITY_THRESHOLD)<0){
@@ -177,7 +178,10 @@ public class AceFileUtil {
         final List<Nucleotide> phdFullBases = fullBasecalls.asList();
         
         final List<Nucleotide> fullGappedValidRange = AssemblyUtil.buildGappedComplimentedFullRangeBases(placedRead, phdFullBases);
-        final List<PhredQuality> qualities =phd.getQualities().asList();        
+        final List<PhredQuality> qualities =phd.getQualities().asList();  
+        if(qualities.isEmpty()){
+            throw new IllegalStateException("empty qualities for read "+ readId);
+        }
         if(dir == Direction.REVERSE){
             Collections.reverse(qualities);            
         }
