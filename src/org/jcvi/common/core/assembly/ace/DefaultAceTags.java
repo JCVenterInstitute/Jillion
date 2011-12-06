@@ -24,35 +24,70 @@
 package org.jcvi.common.core.assembly.ace;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-public class DefaultAceTagMap implements AceTags{
+/**
+ * {@code DefaultAceTags} is a default implementation of
+ * {@link AceTags} that creates immutable
+ * Lists of each tag type.
+ * @author dkatzel
+ *
+ *
+ */
+public class DefaultAceTags implements AceTags{
 
     private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
     private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
     private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
+    /**
+     * Singleton instance of an {@link AceTags} implementation where all the getXXXTags()
+     * methods return empty lists.
+     */
+    public static final DefaultAceTags EMPTY_MAP = new DefaultAceTags.Builder().build();
     
-    public static final DefaultAceTagMap EMPTY_MAP = new DefaultAceTagMap.Builder().build();
-    
-    public DefaultAceTagMap(List<ConsensusAceTag> consensusTags,
+    public static AceTagsBuilder createBuilder(){
+        return new DefaultAceTags.Builder();
+    }
+    /**
+     * Create a new instance of DefaultAceTags using the given {@link AceTag}s.
+     * The input lists are copied to internal fields; 
+     * therefore any modifications to the input lists will not affect this object.
+     * @param consensusTags the list of {@link ConsensusAceTag}s; can not be null but may
+     * be empty.
+     * @param readTags the list of {@link ReadAceTag}s; can not be null but may
+     * be empty.
+     * @param wholeAssemblyTags the list of {@link WholeAssemblyAceTag}s; can not be null but may
+     * be empty.
+     * @throws NullPointerException if any of the input lists are null.
+     */
+    private DefaultAceTags(List<ConsensusAceTag> consensusTags,
             List<ReadAceTag> readTags,
             List<WholeAssemblyAceTag> wholeAssemblyTags){
         this.consensusTags.addAll(consensusTags);
         this.readTags.addAll(readTags);
         this.wholeAssemblyTags.addAll(wholeAssemblyTags);
     }
-    
+    /**
+     * {@inheritDoc} 
+     * @return an unmodifiable list
+     */
     @Override
     public List<ConsensusAceTag> getConsensusTags() {
         return Collections.unmodifiableList(consensusTags);
     }
-
+    /**
+     * {@inheritDoc} 
+     * @return an unmodifiable list
+     */
     @Override
     public List<ReadAceTag> getReadTags() {
         return Collections.unmodifiableList(readTags);
     }
-
+    /**
+     * {@inheritDoc} 
+     * @return an unmodifiable list
+     */
     @Override
     public List<WholeAssemblyAceTag> getWholeAssemblyTags() {
         return Collections.unmodifiableList(wholeAssemblyTags);
@@ -79,10 +114,10 @@ public class DefaultAceTagMap implements AceTags{
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof DefaultAceTagMap)) {
+        if (!(obj instanceof DefaultAceTags)) {
             return false;
         }
-        DefaultAceTagMap other = (DefaultAceTagMap) obj;
+        DefaultAceTags other = (DefaultAceTags) obj;
         return consensusTags.equals(other.getConsensusTags()) 
             && readTags.equals(other.getReadTags())
             && wholeAssemblyTags.equals(other.getWholeAssemblyTags());
@@ -92,27 +127,81 @@ public class DefaultAceTagMap implements AceTags{
 
 
 
-    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultAceTagMap>{
+    private static class Builder implements AceTagsBuilder {
         private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
         private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
         private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
         @Override
-        public DefaultAceTagMap build() {
-            return new DefaultAceTagMap(consensusTags, readTags, wholeAssemblyTags);
+        public DefaultAceTags build() {
+            return new DefaultAceTags(consensusTags, readTags, wholeAssemblyTags);
         }
-        
+        /**
+         * {@inheritDoc}
+         */
         public Builder addConsensusTag(ConsensusAceTag tag){
+            checkNotNull(tag);
             consensusTags.add(tag);
             return this;
         }
-        
+
+        private void checkNotNull(AceTag tag) {
+            if(tag ==null){
+                throw new NullPointerException("tag can not be null");
+            }
+        }
+        /**
+         * {@inheritDoc}
+         */
         public Builder addWholeAssemblyTag(WholeAssemblyAceTag tag){
+            checkNotNull(tag);
             wholeAssemblyTags.add(tag);
             return this;
         }
+        /**
+         * {@inheritDoc}
+         */
         public Builder addReadTag(ReadAceTag tag){
+            checkNotNull(tag);
             readTags.add(tag);
             return this;
         }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public AceTagsBuilder addAllConsensusTags(
+                Collection<? extends ConsensusAceTag> tags) {
+            for(ConsensusAceTag tag : tags){
+                addConsensusTag(tag);
+            }
+            return this;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public AceTagsBuilder addAllWholeAssemblyTags(
+                Collection<? extends WholeAssemblyAceTag> tags) {
+            for(WholeAssemblyAceTag tag : tags){
+                addWholeAssemblyTag(tag);
+            }
+            return this;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public AceTagsBuilder addAllReadAceTags(
+                Collection<? extends ReadAceTag> tags) {
+            for(ReadAceTag tag : tags){
+                addReadTag(tag);
+            }
+            return this;
+        }
+        
+        
     }
 }

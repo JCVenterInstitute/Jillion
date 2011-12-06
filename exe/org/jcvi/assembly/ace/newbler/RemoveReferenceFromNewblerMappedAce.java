@@ -41,7 +41,8 @@ import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
-import org.jcvi.common.core.assembly.ace.DefaultAceFileTagMap;
+import org.jcvi.common.core.assembly.ace.AceTags;
+import org.jcvi.common.core.assembly.ace.DefaultAceTagsFromAceFile;
 import org.jcvi.common.core.assembly.ace.HiLowAceContigPhdDatastore;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.assembly.ace.newbler.NewblerMappedAceContigUtil;
@@ -84,9 +85,9 @@ public class RemoveReferenceFromNewblerMappedAce {
             FileOutputStream aceOutStream = new FileOutputStream(aceOut);
             
             AceContigDataStoreBuilder dataStoreBuilder = IndexedAceFileDataStore.createBuilder(aceFile);
-            DefaultAceFileTagMap aceTagMap = new DefaultAceFileTagMap();
+            DefaultAceTagsFromAceFile.AceTagsFromFileBuilder aceTagsBuilder = DefaultAceTagsFromAceFile.createBuilder();
             AceFileParser.parseAceFile(aceFile, MultipleWrapper.createMultipleWrapper(AceFileVisitor.class,
-                    dataStoreBuilder,aceTagMap));
+                    dataStoreBuilder,aceTagsBuilder));
             int numberOfReads =0;
             int numberOfContigs=0;
             
@@ -105,7 +106,8 @@ public class RemoveReferenceFromNewblerMappedAce {
             AceFileWriter.writeAceFileHeader(numberOfContigs, numberOfReads, aceOutStream);
             InputStream in = new FileInputStream(tempAce);
             IOUtils.copy(in, aceOutStream);
-            
+            AceTags aceTags = aceTagsBuilder.build();
+            AceFileWriter.writeAceTags(aceTags, aceOutStream);
             IOUtil.closeAndIgnoreErrors(in,aceOutStream);
             
             

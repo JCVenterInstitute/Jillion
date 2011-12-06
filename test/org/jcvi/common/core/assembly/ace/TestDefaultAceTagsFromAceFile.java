@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
-import org.jcvi.common.core.assembly.ace.DefaultAceFileTagMap;
+import org.jcvi.common.core.assembly.ace.DefaultAceTagsFromAceFile;
 import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
@@ -38,9 +38,9 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class TestDefaultAceFileTagMap {
+public class TestDefaultAceTagsFromAceFile {
 
-    ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultAceFileTagMap.class);
+    ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultAceTagsFromAceFile.class);
     String fileName = "files/sample.ace";
     
     WholeAssemblyAceTag expectedWholeAssemblyTag = new DefaultWholeAssemblyAceTag(
@@ -86,10 +86,10 @@ public class TestDefaultAceFileTagMap {
             .appendData("3\n<-gap\nggcctcgggg\n")
             .build();
     
-    DefaultAceFileTagMap sut;
+    AceTags sut;
     @Before
     public void setup() throws IOException{
-        sut = new DefaultAceFileTagMap(RESOURCES.getFile(fileName));
+        sut = DefaultAceTagsFromAceFile.create(RESOURCES.getFile(fileName));
     }
     @Test
     public void wholeAssemblyTag(){
