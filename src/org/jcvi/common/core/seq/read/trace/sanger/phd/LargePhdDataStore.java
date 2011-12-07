@@ -23,20 +23,13 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.AbstractLargeIdIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code LargePhdDataStore} is a {@link PhdDataStore} implementation
@@ -51,6 +44,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  */
 public class LargePhdDataStore implements PhdDataStore{
 
+    static final Pattern BEGIN_SEQUENCE_PATTERN = Pattern.compile("BEGIN_SEQUENCE\\s+(\\S+)");
     private final File phdFile;
     private Integer size=null;
     boolean closed = false;
@@ -73,70 +67,56 @@ public class LargePhdDataStore implements PhdDataStore{
     @Override
     public synchronized boolean contains(String id) throws DataStoreException {
         checkIfClosed();
-        InputStream in=null;
-        try {
-            in= getRecordFor(id);
-            return in!=null;
-        } catch (FileNotFoundException e) {
-           throw new DataStoreException("could not parse phd file "+phdFile, e);
-        }finally{
-            IOUtil.closeAndIgnoreErrors(in);
+        CloseableIterator<Phd> iter = iterator();
+        while(iter.hasNext()){
+            Phd phd = iter.next();
+            if(phd.getId().equals(id)){
+                IOUtil.closeAndIgnoreErrors(iter);
+                return true;
+            }
         }
+        return false;
     }
 
     @Override
     public synchronized Phd get(String id) throws DataStoreException {
         checkIfClosed();
-        InputStream streamOfRecord;
-        try {
-            streamOfRecord = getRecordFor(id);        
-            PhdDataStoreBuilder builder = DefaultPhdFileDataStore.createBuilder();
-            PhdParser.parsePhd(streamOfRecord, builder);
-            
-            return builder.build().get(id);
-        } catch (FileNotFoundException e) {
-            throw new DataStoreException("could not parse phd for "+id, e);
+        CloseableIterator<Phd> iter = iterator();
+        while(iter.hasNext()){
+            Phd phd = iter.next();
+            if(phd.getId().equals(id)){
+                IOUtil.closeAndIgnoreErrors(iter);
+                return phd;
+            }
         }
+        throw new DataStoreException("could not find phd for "+id);
+        
     }
 
     @Override
     public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         checkIfClosed();
-        try {
-            return new PhdIdIterator();
-        } catch (FileNotFoundException e) {
-            throw new DataStoreException("could not parse phd file "+phdFile, e);
-        }
+        return new PhdIdIterator();
+       
     }
 
     @Override
     public synchronized int size() throws DataStoreException {
         checkIfClosed();
         if(size ==null){
-            Scanner scanner=null;
             int count=0;
-            try {
-                scanner= new Scanner(phdFile,IOUtil.UTF_8_NAME);
-                while(scanner.hasNextLine()){
-                    String line = scanner.nextLine();
-                    if(line.startsWith("BEGIN_SEQUENCE")){
-                        count++;
-                    }
-                }
-                size=count;
-            } catch (FileNotFoundException e) {
-                throw new DataStoreException("could not parse phd file "+phdFile, e);
+            CloseableIterator<Phd> iter = iterator();
+            while(iter.hasNext()){
+                count++;
+                iter.next();
             }
-            finally{
-                IOUtil.closeAndIgnoreErrors(scanner);
-                
-            }
+            size = Integer.valueOf(count);
         }
         return size;
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         closed = true;
         
     }
@@ -144,65 +124,51 @@ public class LargePhdDataStore implements PhdDataStore{
     @Override
     public synchronized CloseableIterator<Phd> iterator() {
         checkIfClosed();
-        return new DataStoreIterator<Phd>(this);
+        return LargePhdIterator.createNewIterator(phdFile);
     }
 
-    private InputStream getRecordFor(String id) throws FileNotFoundException{
-        Scanner scanner=null;
-        
-        try{
-            scanner = new Scanner(phdFile, IOUtil.UTF_8_NAME);
-            final Pattern beginSequencePattern = Pattern.compile("BEGIN_SEQUENCE\\s+"+id);
-            String line = scanner.nextLine();
-            Matcher matcher = beginSequencePattern.matcher(line);
-            while(!matcher.find() && scanner.hasNextLine()){
-                line = scanner.nextLine();
-                matcher = beginSequencePattern.matcher(line);
-            }
-            if(!scanner.hasNextLine()){
-                return null;
-            }
-            StringBuilder result = new StringBuilder();
-            while(scanner.hasNextLine() && !line.startsWith("END_SEQUENCE")){
-                result.append(line+ "\n");
-                line = scanner.nextLine();
-            }
-            
-            return new ByteArrayInputStream(result.toString().getBytes());
-        }
-        finally{
-            IOUtil.closeAndIgnoreErrors(scanner);
-        }
-        
-    } 
     
-    private class PhdIdIterator extends AbstractLargeIdIterator{
-        final Pattern beginSequencePattern = Pattern.compile("BEGIN_SEQUENCE\\s+(\\S+)");
+    private class PhdIdIterator implements CloseableIterator<String>{
+
+        private final CloseableIterator<Phd> phdIter;
         
-        private PhdIdIterator() throws FileNotFoundException{
-                super(phdFile);
+        private PhdIdIterator(){
+            phdIter = iterator();
         }
-        
-        
+        /**
+        * {@inheritDoc}
+        */
         @Override
-        protected void advanceToNextId(Scanner scanner) {
-         String line = scanner.nextLine();
-         while(!line.startsWith("END_SEQUENCE") && scanner.hasNextLine()){
-             line = scanner.nextLine();
-         }
+        public void remove() {
+            phdIter.remove();
             
         }
 
-
+        /**
+        * {@inheritDoc}
+        */
         @Override
-        protected String getNextId(Scanner scanner) {
-            Matcher matcher = beginSequencePattern.matcher(scanner.nextLine());
-            matcher.find();
-            return  matcher.group(1);
+        public boolean hasNext() {
+            return phdIter.hasNext();
         }
 
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void close() throws IOException {
+            phdIter.close();
+            
+        }
 
-        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String next() {
+            return phdIter.next().getId();
+        }
+       
         
     }
 
