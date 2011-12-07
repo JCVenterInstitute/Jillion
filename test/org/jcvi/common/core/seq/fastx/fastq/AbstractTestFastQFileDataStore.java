@@ -92,12 +92,12 @@ public abstract class AbstractTestFastQFileDataStore {
         assertFastQRecordsEqual(solexa_1692, sut.get(solexa_1692.getId()));
     }
     @Test
-    public void shouldThrowExceptionIfTryToGetAfterClose() throws IOException, DataStoreException{
+    public void shouldThrowExceptionIfTryToGetAfterClose() throws IOException{
         sut.close();
         try{
             sut.get(solexa_1489.getId());
             fail("should throw exception when get called when already closed");
-        }catch(IllegalStateException e){
+        }catch(DataStoreException e){
             //pass
         }
     }
