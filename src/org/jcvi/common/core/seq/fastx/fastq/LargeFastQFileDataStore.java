@@ -88,7 +88,9 @@ public class LargeFastQFileDataStore implements FastQDataStore<FastQRecord> {
     }
     @Override
     public synchronized FastQRecord get(String id) throws DataStoreException {
-        throwExceptionIfClosed();
+        if(closed){
+            throw new DataStoreException("datastore is closed");
+        }
         CloseableIterator<FastQRecord> iter = iterator();
         while(iter.hasNext()){
             FastQRecord fastQ = iter.next();
