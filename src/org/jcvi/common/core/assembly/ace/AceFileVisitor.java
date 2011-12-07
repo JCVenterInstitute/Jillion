@@ -123,7 +123,19 @@ public interface AceFileVisitor extends TextFileVisitor{
      * @param bases (some of) the basecalls of the currently visited read.
      */
     void visitBasesLine(String bases);
-    
+    /**
+     * Visit a tag that refers to data concerning a single read in the assembly.
+     * @param id the read id.
+     * @param type the type of this tag; will not have any whitespace.
+     * @param creator the program or tool that generated this tag.
+     * @param gappedStart the gapped start offset where this tag refers.  Depending
+     * on what the tag is used for this could be consensus coordinates or read coordinates.
+     * @param gappedEnd the gapped end offset where this tag refers.  Depending
+     * on what the tag is used for this could be consensus coordinates or read coordinates.
+     * @param creationDate the date that this tag was created.
+     * @param isTransient a transient tag should not be preserved if the assembly
+     * is re-assembled; returns {@code true} if transient; {@code false} otherwise.
+     */
     void visitReadTag(String id, String type, String creator, long gappedStart, long gappedEnd, Date creationDate, boolean isTransient);
     /**
      * The current contig being visited contains no more data.
@@ -131,11 +143,45 @@ public interface AceFileVisitor extends TextFileVisitor{
      * {@code false} otherwise.
      */
     boolean visitEndOfContig();
-    
+    /**
+     * Begin to start visiting a consensus tag.  Consensus tags are multiple lines
+     * and can contain nested comments inside them.  Any lines visited from now
+     * until {@link #visitEndConsensusTag()} will be for lines inside this tag.
+     * @param id the contig id.
+     * @param type the type of this tag; will not have any whitespace.
+     * @param creator the program or tool that generated this tag.
+     * @param gappedStart the gapped start offset where this tag refers.  Depending
+     * on what the tag is used for this could be consensus coordinates or read coordinates.
+     * @param gappedEnd the gapped end offset where this tag refers.  Depending
+     * on what the tag is used for this could be consensus coordinates or read coordinates.
+     * @param creationDate the date that this tag was created.
+     * @param isTransient a transient tag should not be preserved if the assembly
+     * is re-assembled; returns {@code true} if transient; {@code false} otherwise.
+     */
     void visitBeginConsensusTag(String id, String type, String creator, long gappedStart, long gappedEnd, Date creationDate, boolean isTransient);
+    /**
+     * The current consensus tag contains a comment (which might span multiple lines).
+     * @param comment the full comment as a string.
+     */
     void visitConsensusTagComment(String comment);
+    /**
+     * The current consensus tag contains a data.
+     * @param data the data as a string.
+     */
     void visitConsensusTagData(String data);
+    /**
+     * The current consensus tag has been completely parsed.
+     */
     void visitEndConsensusTag();
-    
+    /**
+     * Visit a tag that refers to data that concerns the entire ace file.  Example
+     * whole assembly tags are locations to phd.balls that store the quality data
+     * for all the reads in the assembly.
+     * @param type the type of this tag; will not have any whitespace.
+     * @param creator the program or tool that generated this tag.
+     * @param creationDate the date that this tag was created.
+     * @param data the actual content of this tag which could be a single line or span
+     * multiple lines depending on what the tag is for.
+     */
     void visitWholeAssemblyTag(String type, String creator, Date creationDate, String data);
 }

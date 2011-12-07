@@ -24,7 +24,12 @@
 package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.assembly.Contig;
-
+/**
+ * an {@code AceContig} is a {@link Contig}
+ * from an ace file.  Each {@link AceContig}
+ * is made up of {@link AcePlacedRead}s.
+ * @author dkatzel
+ */
 public interface AceContig extends Contig<AcePlacedRead>{
     /**
      * Is this contig complimented?
