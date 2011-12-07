@@ -38,8 +38,6 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  * The location is specific to the {@link Contig}
  * this read was placed in.
  * @author dkatzel
- *
- *
  */
 public interface PlacedRead extends Read, Placed<PlacedRead>{
 
