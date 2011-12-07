@@ -16,29 +16,23 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Mar 19, 2009
- *
- * @author dkatzel
- */
+
 package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.File;
+import java.io.FileNotFoundException;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-     TestDefaultPhdFileDataStore.class,
-     TestIndexPhdFileDataStore.class,
-     TestLargePhdFileDataStore.class,
-     TestFakePhdReadParser.class,
-     TestPhdDataStoreBuilderWith2InputFiles.class,
-     TestBuildArtificialPhd.class,
-     TestPhdWriter.class
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestLargePhdFileDataStore extends AbstractTestPhdDataStore{
+
+    @Override
+    protected PhdDataStore createPhdDataStore(File phdfile)
+            throws FileNotFoundException {
+        return new LargePhdDataStore(phdfile);
     }
-    )
-public class AllPhdUnitTests {
 
 }

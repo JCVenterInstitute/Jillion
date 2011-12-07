@@ -45,7 +45,7 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class AceFileUtil {
     /**
-     * This is the default value in consed that is used to distinquish
+     * This is the default value in consed that is used to distinguish
      * between high and low quality basecalls.  In consed
      * high quality bases are represented by uppercase
      * letters and low quality by lowercase letters.

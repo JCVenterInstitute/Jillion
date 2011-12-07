@@ -24,18 +24,11 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.util.iter.AbstractLargeIdIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code LargeFastQFileDataStore} is a {@link FastQDataStore} implementation
@@ -48,142 +41,130 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class LargeFastQFileDataStore extends AbstractFastQFileDataStore<FastQRecord> {
-    private static final Pattern BEGIN_SEQ_PATTERN = Pattern.compile("^@(\\S+)(\\s+)?(.+$)?");
+public class LargeFastQFileDataStore implements FastQDataStore<FastQRecord> {
+    private final FastQQualityCodec qualityCodec;
     private final File fastQFile;
     private Integer size=null;
+    private volatile boolean closed;
     
     /**
      * @param qualityCodec
      */
     public LargeFastQFileDataStore(File fastQFile, FastQQualityCodec qualityCodec) {
-        super(qualityCodec);
+        this.qualityCodec = qualityCodec;
         this.fastQFile = fastQFile;        
     }
 
     @Override
-    protected boolean visitFastQRecord(String id,
-            NucleotideSequence nucleotides,
-            QualitySequence qualities, String optionalComment) {
-        return true;
+    public synchronized void close() throws IOException {
+        closed = true;        
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public synchronized boolean isClosed() throws DataStoreException {
+         return closed;
+     }
+    
     @Override
-    public boolean contains(String id) throws DataStoreException {
-        return get(id)!=null;
-    }
-
-    @Override
-    public FastQRecord get(String id) throws DataStoreException {
+    public synchronized boolean contains(String id) throws DataStoreException {
         throwExceptionIfClosed();
-        try {
-            
-            DefaultFastQFileDataStore dataStore = new SingleFastQDataStore(id,fastQFile,this.getQualityCodec());
-            return dataStore.get(id);
-        } catch (IOException e) {
-            throw new DataStoreException("could not parse fasta q file",e);
+        CloseableIterator<FastQRecord> iter = iterator();
+        while(iter.hasNext()){
+            FastQRecord fastQ = iter.next();
+            if(fastQ.getId().equals(id)){
+                IOUtil.closeAndIgnoreErrors(iter);
+                return true;
+            }
+        }
+        return false;
+    }
+    private void throwExceptionIfClosed(){
+        if(closed){
+            throw new IllegalStateException("datastore is closed");
         }
     }
+    @Override
+    public synchronized FastQRecord get(String id) throws DataStoreException {
+        throwExceptionIfClosed();
+        CloseableIterator<FastQRecord> iter = iterator();
+        while(iter.hasNext()){
+            FastQRecord fastQ = iter.next();
+            if(fastQ.getId().equals(id)){
+                IOUtil.closeAndIgnoreErrors(iter);
+                return fastQ;
+            }
+        }
+        throw new DataStoreException("could not find fastq record for "+id);
+    }
 
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         throwExceptionIfClosed();
-        try {
-            return new FastQIdIterator();
-        } catch (FileNotFoundException e) {
-            throw new DataStoreException("could not parse fast q file",e);
-        }
+        return new FastQIdIterator();        
     }
 
     @Override
     public synchronized int size() throws DataStoreException {
         throwExceptionIfClosed();
-        if(size !=null){
-            return size;
-        }
-        int count=0;
-        Scanner scanner;
-        try {
-            scanner = new Scanner(fastQFile, IOUtil.UTF_8_NAME);
-        
-        while(scanner.hasNextLine()){
-            String line = scanner.nextLine();
-            if(line.startsWith("@")){
+        if(size ==null){
+            int count=0;
+            CloseableIterator<FastQRecord> iter = iterator();
+            while(iter.hasNext()){
                 count++;
+                iter.next();
             }
+            size = Integer.valueOf(count);
         }
-        size = count;
         return size;
-        } catch (FileNotFoundException e) {
-            size = 0;
-            throw new DataStoreException("could not determine size",e);
-        }
     }
     
     @Override
-    public CloseableIterator<FastQRecord> iterator() {
+    public synchronized CloseableIterator<FastQRecord> iterator() {
+        throwExceptionIfClosed();
         return LargeFastQFileIterator.createNewIteratorFor(fastQFile,qualityCodec);
   
     }
     
     
-    protected class FastQIdIterator extends AbstractLargeIdIterator{
-
-        private FastQIdIterator() throws FileNotFoundException{
-                super(fastQFile);
+    private class FastQIdIterator implements CloseableIterator<String>{
+        private final CloseableIterator<FastQRecord> iter;
+        private FastQIdIterator(){
+                iter = iterator();
         }
-        
-        
+        /**
+        * {@inheritDoc}
+        */
         @Override
-        protected void advanceToNextId(Scanner scanner) {
-          //skip basecalls line
-            scanner.nextLine();
-            //skip begin quality block
-            scanner.nextLine();
-            //skip qualities line
-            scanner.nextLine();
-            
+        public boolean hasNext() {
+            return iter.hasNext();
         }
-
-
+        /**
+        * {@inheritDoc}
+        */
         @Override
-        protected String getNextId(Scanner scanner) {
-            Matcher matcher = BEGIN_SEQ_PATTERN.matcher(scanner.nextLine());
-            matcher.find();
-            return  matcher.group(1);
+        public String next() {
+            return iter.next().getId();
         }
-
-
-        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void remove() {
+            iter.remove();            
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void close() throws IOException {
+            iter.close();            
+        }
         
     }
     
-    private static final class SingleFastQDataStore extends DefaultFastQFileDataStore{
 
-        private final String idToLookFor;
-        private boolean found=false;
-        
-        public SingleFastQDataStore(String idToLookFor,File fastQFile,FastQQualityCodec qualityCodec) throws IOException {
-            super(qualityCodec,1);
-            this.idToLookFor = idToLookFor;
-            FastQFileParser.parse(fastQFile, this);
-        }
-        @Override
-        public boolean visitBeginBlock(String id, String optionalComment) {
-            if(!found && idToLookFor.equals(id)){
-                found=true;
-                return super.visitBeginBlock(id, optionalComment);
-            }
-            return !found;
-        }
-        
-        @Override
-        public boolean visitEndBlock() {
-            super.visitEndBlock();
-            return !found;
-        }
-        
-        
-        
-    }
+   
 }
