@@ -107,12 +107,10 @@ public class Ace2Fasta {
                                                                     comment,
                                                                     consensus);
                     try {
-                        fastaOut.write(fasta.toFormattedString().toString().getBytes());
+                        fastaOut.write(fasta.toString().getBytes("UTF-8"));
                     } catch (IOException e) {
                        throw new RuntimeException("error writing Fasta Record for " + id,e);
                     }
-                    
-                    
                 }
                 
                 @Override
@@ -123,6 +121,7 @@ public class Ace2Fasta {
                 @Override
                 protected void visitAceRead(String readId, String validBasecalls,
                         int offset, Direction dir, Range validRange, PhdInfo phdInfo,int ungappedFullLength) {
+                    //no-op since we don't care about any reads
                 }
             };
             AceFileParser.parseAceFile(aceIn, fastaVisitor);
