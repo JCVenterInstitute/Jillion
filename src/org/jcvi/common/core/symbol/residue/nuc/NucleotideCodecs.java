@@ -51,11 +51,9 @@ final class NucleotideCodecs {
             }
             
         }
-        if(numGaps>0 && numNs >0){
-            return DefaultNucleotideCodec.INSTANCE;
-        }
+        
        
-        return getCodecForGappedSequence(numGaps, size);
+        return getCodecForGappedSequence(numGaps,numNs, size);
     }
     /**
      * Get the best {@link NucleotideCodec} for a gapped sequence.
@@ -68,7 +66,10 @@ final class NucleotideCodecs {
      * @param totalSize the total gapped size of the sequence to encode.
      * @return a NucleotideCodec instance; never null.
      */
-    public static NucleotideCodec getCodecForGappedSequence(int numGaps, int totalSize) {
+    public static NucleotideCodec getCodecForGappedSequence(int numGaps, int numNs, int totalSize) {
+        if(numGaps>0 && numNs >0){
+            return DefaultNucleotideCodec.INSTANCE;
+        }
         //we have only ACGT- or ACGTN
         //if there are too many gaps, then
         //it isn't a good idea to use 2bit encoding + gaps
