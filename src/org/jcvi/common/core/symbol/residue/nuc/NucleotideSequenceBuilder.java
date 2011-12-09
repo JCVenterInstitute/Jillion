@@ -40,9 +40,11 @@ import org.jcvi.common.core.util.Builder;
  */
 public final class NucleotideSequenceBuilder implements Builder<NucleotideSequence>{
     private static final int GAP_VALUE = Nucleotide.Gap.ordinal();
+    private static final int N_VALUE = Nucleotide.Unknown.ordinal();
     private byte[] array;
     private int currentLength=0;
     private int numGaps=0;
+    private int numNs=0;
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains no nucleotides.
@@ -72,7 +74,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      */
     public NucleotideSequenceBuilder(Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
-        this.array = convertToEncodedArray(sequence);
+        this.array = convertToEncodedArrayAndUpdateNumCounts(sequence);
         this.currentLength =array.length;
     }
     /**
@@ -85,13 +87,21 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         this(Nucleotides.parse(sequence));
         
     }
-    
-    private byte[] convertToEncodedArray(Iterable<Nucleotide> nucleotides){
+    /**
+     * Convert the input {@link Nucleotide}s into the encoded byte array
+     * we use internally and also update the number of gaps currently in this sequence.
+     * @param nucleotides the nucleotides to convert and count for gaps
+     * @return a byte array of the encoded nucleotides; also the private field
+     * numGaps and numNs have been incremented as a side effect.
+     */
+    private byte[] convertToEncodedArrayAndUpdateNumCounts(Iterable<Nucleotide> nucleotides){
         List<Byte> list = new ArrayList<Byte>();
         for(Nucleotide n : nucleotides){
             int value = n.ordinal();
             if(value == GAP_VALUE){
                 numGaps++;
+            }else if(value == N_VALUE){
+                numNs++;
             }
             list.add((byte)value);
         }
@@ -123,21 +133,25 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      */
     public NucleotideSequenceBuilder append(Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
-        byte[] newData = convertToEncodedArray(sequence);
+        byte[] newData = convertToEncodedArrayAndUpdateNumCounts(sequence);
         return appendArray(newData);
     }
     
     /**
-     * Appends the contents of the given {@link NucleotideSequenceBuilder} to the end
-     * of the builder's mutable sequence.
-     * @param sequenceBuilder the {@link NucleotideSequenceBuilder} to be appended
-     * to the end our builder.
-     * @throws NullPointerException if sequenceBuilder is null.
+     * Appends the current contents of the given {@link NucleotideSequenceBuilder} to the end
+     * of the builder's mutable sequence.  Any further modifications to the passed in builder
+     * will not be reflected in this builder.  This is an equivalent but more efficient way operation
+     * as {@code this.append(otherBuilder.build())}
+     * 
+     * @param otherBuilder the {@link NucleotideSequenceBuilder} whose current
+     * nucleotides are to be appended.
+     * @throws NullPointerException if otherBuilder is null.
      */
-    public NucleotideSequenceBuilder append(NucleotideSequenceBuilder sequenceBuilder){
-        assertNotNull(sequenceBuilder);
-        appendArray(sequenceBuilder.array);
-        numGaps += sequenceBuilder.numGaps;
+    public NucleotideSequenceBuilder append(NucleotideSequenceBuilder otherBuilder){
+        assertNotNull(otherBuilder);
+        appendArray(otherBuilder.array);
+        numGaps += otherBuilder.numGaps;
+        numNs +=otherBuilder.numNs;
         return this;
     }
     
@@ -148,10 +162,16 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         this.currentLength = newLength;
         return this;
     }
-    
-    private void ensureCapacity(int newSize){
-        if(array.length <newSize){
-            byte[] increasedArray = new byte[newSize];
+    /**
+     * Check to make sure our array is big enough
+     * to hold the newSize number of elements;
+     * grow the array if it's too small.
+     * @param newLength the new sequence length
+     * our sequence will be after we add the new nucleotides.
+     */
+    private void ensureCapacity(int newLength){
+        if(array.length <newLength){
+            byte[] increasedArray = new byte[newLength];
             System.arraycopy(array, 0, increasedArray, 0, array.length);
             this.array = increasedArray;
         }
@@ -234,17 +254,48 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
                 throw new IllegalArgumentException(
                         String.format("range can not start beyond current length (%d) : %d", getLength(),start));
             }   
+            
             int end = Math.min(currentLength-1, (int)range.getEnd());
             int len = end - start+1;
             if (len > 0) {
+                byte[] bytesToDelete = new byte[len];
+                System.arraycopy(array, start, bytesToDelete, 0, len);
+                numGaps-=countGapsFor(bytesToDelete);
+                numNs-=countNsFor(bytesToDelete);
                 System.arraycopy(array, start+len, array, start, currentLength -end-1);
                 this.currentLength -=len;
-            }
-            //  System.arraycopy(value, start+len, value, start, count-end);
-            
-           
+            }    
         }
         return this;
+    }
+    
+    
+    /**
+     * @return the numGaps
+     */
+    int getNumGaps() {
+        return numGaps;
+    }
+
+    private int countGapsFor(byte[] encodedBytes) {
+        int count=0;
+        for(int i=0; i<encodedBytes.length; i++){
+            if(encodedBytes[i]==GAP_VALUE){
+                count++;
+            }
+        }
+        return count;
+    }
+    
+
+    private int countNsFor(byte[] encodedBytes) {
+        int count=0;
+        for(int i=0; i<encodedBytes.length; i++){
+            if(encodedBytes[i]==N_VALUE){
+                count++;
+            }
+        }
+        return count;
     }
     /**
      * Inserts the given sequence the beginning
@@ -266,7 +317,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * downstream of this offset before this insert method
      * was executed, then those nucleotides will be shifted by n
      * bases where n is the length of the given sequence to insert.
-     * @param offset the GAPPED offset into this mutable sequence
+     * @param offset the <strong>gapped</strong> offset into this mutable sequence
      * to begin insertion.
      * @param sequence the nucleotide sequence to be 
      * inserted at the given offset.
@@ -283,7 +334,51 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
             throw new IllegalArgumentException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }   
-        byte[] newData = convertToEncodedArray(sequence);
+        byte[] newData = convertToEncodedArrayAndUpdateNumCounts(sequence);
+        return insertEncodedArray(offset, newData);
+    }
+    /**
+     * Inserts the contents of the given other  {@link NucleotideSequenceBuilder}
+     *  into this builder's mutable sequence
+     * starting at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * Any further modifications to the passed in builder
+     * will not be reflected in this builder.  This is an equivalent but more efficient operation
+     * as {@code this.insert(offset, otherBuilder.build())}
+     * 
+     * @param offset the <strong>gapped</strong> offset into this mutable sequence
+     * to begin insertion.
+     * @param otherBuilderthe {@link NucleotideSequenceBuilder} whose current
+     * nucleotides are to be inserted at the given offset.
+     * @return this
+     * @throws NullPointerException if otherBuilder is null.
+     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     */
+    public NucleotideSequenceBuilder insert(int offset, NucleotideSequenceBuilder otherBuilder){
+        assertNotNull(otherBuilder);
+        if(offset<0){
+            throw new IllegalArgumentException("offset can not have negatives coordinates: "+ offset);
+        }
+        if(offset> getLength()){
+            throw new IllegalArgumentException(
+                    String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
+        }   
+        numGaps +=otherBuilder.getNumGaps();
+        numNs +=otherBuilder.getNumNs();
+        return insertEncodedArray(offset, otherBuilder.array);
+    }
+    
+    
+    /**
+     * @return the numNs
+     */
+    int getNumNs() {
+        return numNs;
+    }
+    private NucleotideSequenceBuilder insertEncodedArray(int offset,
+            byte[] newData) {
         int newDataLength = currentLength+newData.length;
         ensureCapacity(newDataLength);       
         //shift downstream bases
@@ -327,6 +422,22 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     public NucleotideSequenceBuilder prepend(Iterable<Nucleotide> sequence){
         return insert(0, Nucleotides.asString(sequence));
     }
+    
+    /**
+     * Inserts the current contents of the given {@link NucleotideSequenceBuilder}
+     * to the beginning
+     * of this builder's mutable sequence.
+     * This is the same as calling 
+     * {@link #insert(int, NucleotideSequenceBuilder) insert(0,otherBuilder)}
+     * @param otherBuilder{@link NucleotideSequenceBuilder} whose current
+     * nucleotides are to be inserted at the beginning.
+     * @return this.
+     * @throws NullPointerException if otherBuilder is null.
+     * @see #insert(int, NucleotideSequenceBuilder)
+     */
+    public NucleotideSequenceBuilder prepend(NucleotideSequenceBuilder otherBuilder){
+        return insert(0, otherBuilder);
+    }
     /**
     * {@inheritDoc}
     * <p>
@@ -340,7 +451,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     */
     @Override
     public NucleotideSequence build() {
-        NucleotideCodec codec = NucleotideCodecs.getCodecForGappedSequence(numGaps, currentLength);
+        NucleotideCodec codec = NucleotideCodecs.getCodecForGappedSequence(numGaps, numNs, currentLength);
         return DefaultNucleotideSequence.create(asList(),codec);
     }
     /**

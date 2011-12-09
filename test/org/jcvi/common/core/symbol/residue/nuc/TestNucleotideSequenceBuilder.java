@@ -71,6 +71,19 @@ public class TestNucleotideSequenceBuilder {
     } 
     
     @Test
+    public void appendContentsOfOtherBuilder(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.append(new NucleotideSequenceBuilder("GGTGCA"));
+        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+    } 
+    @Test
+    public void appendContentsOfOtherBuilderWithGaps(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.append(new NucleotideSequenceBuilder("GGTG-CA"));
+        assertBuiltSequenceEquals("ACGTGGTG-CA",sut);
+        assertEquals(1, sut.getNumGaps());
+    } 
+    @Test
     public void prepend(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.prepend("GGTGCA");
@@ -82,7 +95,13 @@ public class TestNucleotideSequenceBuilder {
         sut.prepend(createSequence("GGTGCA"));
         assertBuiltSequenceEquals("GGTGCAACGT",sut);
     }
-    
+    @Test
+    public void prependContentsOfOtherBuilder(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.prepend(new NucleotideSequenceBuilder("G-TGCA"));
+        assertBuiltSequenceEquals("G-TGCAACGT",sut);
+        assertEquals(1, sut.getNumGaps());
+    }
     @Test
     public void insert(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
@@ -116,6 +135,13 @@ public class TestNucleotideSequenceBuilder {
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(2, createSequence("-N-"));
         assertBuiltSequenceEquals("AC-N-GT",sut);
+    }
+    @Test
+    public void insertContentsOfOtherBuilder(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.insert(2, new NucleotideSequenceBuilder("-N-"));
+        assertBuiltSequenceEquals("AC-N-GT",sut);
+        assertEquals(2, sut.getNumGaps());
     }
     @Test
     public void deleteEmptyShouldDoNothing(){
@@ -206,18 +232,37 @@ public class TestNucleotideSequenceBuilder {
     public void ungapNoGapsShouldNotAffectSequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("TGGA")
                     .ungap();
-        assertBuiltSequenceEquals("TGGA",sut);        
+        assertBuiltSequenceEquals("TGGA",sut); 
+        assertEquals(0, sut.getNumGaps());
     }
     @Test
     public void ungapHasOneGapShouldRemoveGap(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("TG-GA")
                     .ungap();
-        assertBuiltSequenceEquals("TGGA",sut);        
+        assertBuiltSequenceEquals("TGGA",sut);    
+        assertEquals(0, sut.getNumGaps());
     }
     @Test
     public void ungapHasMultipleGapsShouldRemoveAllGaps(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-G--A")
                     .ungap();
-        assertBuiltSequenceEquals("TGGA",sut);        
+        assertBuiltSequenceEquals("TGGA",sut);   
+        assertEquals(0, sut.getNumGaps());
+    }
+    
+    @Test
+    public void deleteRemovesNumGapsCorrectly(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-G--A")
+                                        .delete(Range.buildRange(2,5));
+        assertEquals(2,sut.getNumGaps());
+    }
+    
+    @Test
+    public void deleteRemovesNumNsCorrectly(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-N--A");
+        assertEquals(1, sut.getNumNs());
+        sut.delete(Range.buildRange(2,5));
+        assertEquals(2,sut.getNumGaps());
+        assertEquals(0, sut.getNumNs());
     }
 }
