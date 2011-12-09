@@ -17,9 +17,10 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly;
+package org.jcvi.common.core.assembly.util;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
