@@ -451,8 +451,11 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     */
     @Override
     public NucleotideSequence build() {
+        /*
         NucleotideCodec codec = NucleotideCodecs.getCodecForGappedSequence(numGaps, numNs, currentLength);
         return DefaultNucleotideSequence.create(asList(),codec);
+        */
+        return DefaultNucleotideSequence.create(asList());
     }
     /**
      * Create a new NucleotideSequence instance
