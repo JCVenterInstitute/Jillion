@@ -55,14 +55,28 @@ final class NucleotideCodecs {
             return DefaultNucleotideCodec.INSTANCE;
         }
        
+        return getCodecForGappedSequence(numGaps, size);
+    }
+    /**
+     * Get the best {@link NucleotideCodec} for a gapped sequence.
+     * Some codecs handle gaps differently which can either increase
+     * random access time or take up more memory.  This method
+     * knows implementation details of each codec inorder to decide
+     * which is the optimal NucleotideCodec for a gapped sequence
+     * with the given number of gaps vs the entire gapped size.
+     * @param numGaps the number of gaps.
+     * @param totalSize the total gapped size of the sequence to encode.
+     * @return a NucleotideCodec instance; never null.
+     */
+    public static NucleotideCodec getCodecForGappedSequence(int numGaps, int totalSize) {
         //we have only ACGT- or ACGTN
         //if there are too many gaps, then
         //it isn't a good idea to use 2bit encoding + gaps
-        int bytesPerGapOrN =IOUtil.getUnsignedByteCount(size);
+        int bytesPerGapOrN =IOUtil.getUnsignedByteCount(totalSize);
         int encodedGapSize = bytesPerGapOrN *numGaps;
         //simple metric right now is use
         //2bit or 4 bit based on which one takes less memory
-        if(encodedGapSize< size/4){
+        if(encodedGapSize< totalSize/4){
             if(numGaps>0){
                 return NoAmbiguitiesEncodedNucleotideCodec.INSTANCE; 
             }

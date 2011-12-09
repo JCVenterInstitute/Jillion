@@ -25,9 +25,6 @@ package org.jcvi.common.core.symbol.residue.nuc;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-
-import org.jcvi.common.core.util.Caches;
 
 /**
  * {@code DefaultNucleotideSequence} is the default
@@ -68,10 +65,17 @@ class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     public static NucleotideSequence createGappy(CharSequence nucleotides){
         return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides), DefaultNucleotideCodec.INSTANCE);
     }
+    static NucleotideSequence create(Collection<Nucleotide> nucleotides,NucleotideCodec codec){
+        if(codec ==null){
+            throw new NullPointerException("codec can not be null");
+        }
+        return new DefaultNucleotideSequence(nucleotides, codec);
+    }
     private DefaultNucleotideSequence(Collection<Nucleotide> nucleotides){
         this(nucleotides,NucleotideCodecs.getNucleotideCodecFor(nucleotides));
    
     }
+    
     private DefaultNucleotideSequence(Collection<Nucleotide> nucleotides,NucleotideCodec codec ){
         this.encodedBasecalls = new NucleotideEncodedSequence(codec,nucleotides);
    
