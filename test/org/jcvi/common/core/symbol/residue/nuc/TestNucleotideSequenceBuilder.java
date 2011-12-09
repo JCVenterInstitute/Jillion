@@ -182,7 +182,42 @@ public class TestNucleotideSequenceBuilder {
             .prepend("TCGAN-") //TCGAN-ACGTTCGA
             .insert(5,"AAAAA")//TCGANAAAAA-ACGTTCGA
             .delete(Range.buildRange(2,8)) //TCA-ACGTTCGA
-            .append("GGGGG"); //TCA-ACGTTCGAGGGGG
-        assertBuiltSequenceEquals("TCA-ACGTTCGAGGGGG",sut);
+            .append("GGGGG") //TCA-ACGTTCGAGGGGG
+            .ungap() //TCAACGTTCGAGGGGG
+            .reverseCompliment(); //CCCCCTCGAACGTTGA
+        assertBuiltSequenceEquals("CCCCCTCGAACGTTGA",sut);
+    }
+    
+    @Test
+    public void reverseComplimentOddNumberOfBases(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-");
+        sut.reverseCompliment();
+        assertBuiltSequenceEquals("-ACGT",sut);
+    }
+    
+    @Test
+    public void reverseComplimentEvenNumberOfBases(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("TGGA");
+        sut.reverseCompliment();
+        assertBuiltSequenceEquals("TCCA",sut);
+    }
+    
+    @Test
+    public void ungapNoGapsShouldNotAffectSequence(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("TGGA")
+                    .ungap();
+        assertBuiltSequenceEquals("TGGA",sut);        
+    }
+    @Test
+    public void ungapHasOneGapShouldRemoveGap(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("TG-GA")
+                    .ungap();
+        assertBuiltSequenceEquals("TGGA",sut);        
+    }
+    @Test
+    public void ungapHasMultipleGapsShouldRemoveAllGaps(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-G--A")
+                    .ungap();
+        assertBuiltSequenceEquals("TGGA",sut);        
     }
 }
