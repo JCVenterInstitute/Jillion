@@ -39,9 +39,10 @@ import org.jcvi.common.core.util.Builder;
  *
  */
 public final class NucleotideSequenceBuilder implements Builder<NucleotideSequence>{
-    
+    private static final int GAP_VALUE = Nucleotide.Gap.ordinal();
     private byte[] array;
     private int currentLength=0;
+    private int numGaps=0;
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains no nucleotides.
@@ -88,7 +89,11 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     private byte[] convertToEncodedArray(Iterable<Nucleotide> nucleotides){
         List<Byte> list = new ArrayList<Byte>();
         for(Nucleotide n : nucleotides){
-            list.add((byte)n.ordinal());
+            int value = n.ordinal();
+            if(value == GAP_VALUE){
+                numGaps++;
+            }
+            list.add((byte)value);
         }
         ByteBuffer buf = ByteBuffer.allocate(list.size());
         for(Byte b : list){
@@ -119,6 +124,24 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     public NucleotideSequenceBuilder append(Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
         byte[] newData = convertToEncodedArray(sequence);
+        return appendArray(newData);
+    }
+    
+    /**
+     * Appends the contents of the given {@link NucleotideSequenceBuilder} to the end
+     * of the builder's mutable sequence.
+     * @param sequenceBuilder the {@link NucleotideSequenceBuilder} to be appended
+     * to the end our builder.
+     * @throws NullPointerException if sequenceBuilder is null.
+     */
+    public NucleotideSequenceBuilder append(NucleotideSequenceBuilder sequenceBuilder){
+        assertNotNull(sequenceBuilder);
+        appendArray(sequenceBuilder.array);
+        numGaps += sequenceBuilder.numGaps;
+        return this;
+    }
+    
+    private NucleotideSequenceBuilder appendArray(byte[] newData) {
         int newLength = currentLength+newData.length;
         ensureCapacity(newLength);
         System.arraycopy(newData, 0, array, currentLength, newData.length);
@@ -317,7 +340,8 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     */
     @Override
     public NucleotideSequence build() {
-        return NucleotideSequenceFactory.create(asList());
+        NucleotideCodec codec = NucleotideCodecs.getCodecForGappedSequence(numGaps, currentLength);
+        return DefaultNucleotideSequence.create(asList(),codec);
     }
     /**
      * Create a new NucleotideSequence instance
@@ -373,6 +397,54 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     public String toString(){
         return Nucleotides.asString(asList());
     }
-
+    /**
+     * Reverse compliment all the nucleotides currently in this builder.
+     * Calling this method will only reverse compliment bases that 
+     * already exist in this builder; any additional operations
+     * to insert bases will not be affected.
+     * <p/>
+     * For example:
+     * <pre>
+     *      new NucleotideSequenceBuilder("CGGC")
+                .reverseCompliment()
+                .append("N");                
+     * </pre>
+     * will generate a Sequence "GCCGN".
+     * @return this.
+     */
+    public NucleotideSequenceBuilder reverseCompliment(){
+        int pivotOffset = currentLength/2;
+        Nucleotide[] values = Nucleotide.values();
+        for(int i=0; i<pivotOffset; i++){
+            int compOffset = currentLength-1-i;
+            Nucleotide tmp = values[array[i]].compliment();
+            array[i] = (byte) values[array[compOffset]].compliment().ordinal();
+            array[compOffset] = (byte) tmp.ordinal();
+        }
+        if(currentLength%2!=0){
+            array[pivotOffset] = (byte)values[array[pivotOffset]].compliment().ordinal();
+        }
+        return this;
+    }
+    /**
+     * Remove all gaps currently present in this builder.
+     * @return this.
+     */
+    public NucleotideSequenceBuilder ungap(){
+        if(numGaps>0){
+            byte[] ungapped = new byte[currentLength-numGaps];
+            
+            for(int oldOffset=0, newOffset=0; oldOffset<currentLength; oldOffset++){
+                if(array[oldOffset]!=GAP_VALUE){
+                    ungapped[newOffset] = array[oldOffset];
+                    newOffset++;
+                }
+            }
+            array = ungapped;
+            currentLength= array.length;
+            numGaps=0;
+        }
+        return this;
+    }
 
 }
