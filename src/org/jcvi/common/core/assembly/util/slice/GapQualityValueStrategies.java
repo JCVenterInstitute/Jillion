@@ -19,6 +19,10 @@
 
 package org.jcvi.common.core.assembly.util.slice;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.symbol.Sequence;
@@ -93,14 +97,19 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
         if(fullQualities ==null){
             throw new NullPointerException("null qualities for "+placedRead);
         }
+        final List<PhredQuality> unComplimentedQualities = fullQualities.asList();
+        if(placedRead.getDirection()==Direction.REVERSE){
+            Collections.reverse(unComplimentedQualities);
+        }
         final NucleotideSequence sequence = placedRead.getNucleotideSequence();
         if(!sequence.isGap(gappedReadIndex)){
-            return getQualityForNonGapBase(placedRead, fullQualities, gappedReadIndex);
+            
+            return getQualityForNonGapBase(placedRead, unComplimentedQualities, gappedReadIndex);
         }
         int leftFlankingNonGapIndex = AssemblyUtil.getLeftFlankingNonGapIndex(sequence,gappedReadIndex-1);
         int rightFlankingNonGapIndex = AssemblyUtil.getRightFlankingNonGapIndex(sequence,gappedReadIndex+1);
         
-        final PhredQuality qualityOfGap = getQualityValueForGap(leftFlankingNonGapIndex, rightFlankingNonGapIndex, placedRead, fullQualities,gappedReadIndex);
+        final PhredQuality qualityOfGap = getQualityValueForGap(leftFlankingNonGapIndex, rightFlankingNonGapIndex, placedRead, unComplimentedQualities,gappedReadIndex);
         
         return qualityOfGap;
     }
@@ -112,29 +121,28 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
     
     private PhredQuality getQualityValueForGap(int leftFlankingNonGapIndex,
             int rightFlankingNonGapIndex, PlacedRead placedRead,
-            Sequence<PhredQuality> fullQualities,int indexOfGap) {
+            List<PhredQuality> unComplimentedQualities,int indexOfGap) {
         if(leftFlankingNonGapIndex <0){
             return getQualityValueIfReadStartsWithGap();
         }
         if(rightFlankingNonGapIndex> placedRead.getLength()-1){
             return getQualityValueIfReadEndsWithGap();
-        }
-        PhredQuality leftFlankingQuality = getQualityForNonGapBase(placedRead, fullQualities, leftFlankingNonGapIndex);
-        PhredQuality rightFlankingQuality = getQualityForNonGapBase(placedRead, fullQualities, rightFlankingNonGapIndex);
+        }        
+        PhredQuality leftFlankingQuality = getQualityForNonGapBase(placedRead, unComplimentedQualities, leftFlankingNonGapIndex);
+        PhredQuality rightFlankingQuality = getQualityForNonGapBase(placedRead, unComplimentedQualities, rightFlankingNonGapIndex);
         int ithGapToCompute = indexOfGap - leftFlankingNonGapIndex-1;
         final int numberOfGapsBetweenFlanks = rightFlankingNonGapIndex-leftFlankingNonGapIndex-1;
         return computeQualityValueForGap(numberOfGapsBetweenFlanks, ithGapToCompute, leftFlankingQuality, rightFlankingQuality);
     }
     
 
-    protected PhredQuality getQualityForNonGapBase(PlacedRead placedRead, Sequence<PhredQuality> fullQualities,
+    protected PhredQuality getQualityForNonGapBase(PlacedRead placedRead, List<PhredQuality> uncomplimentedQualities,
             int gappedReadIndexForNonGapBase) {
         try{
-        int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(placedRead, (int)fullQualities.getLength(),gappedReadIndexForNonGapBase);
-        
-            return fullQualities.get(ungappedFullRangeIndex);
+            int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(placedRead, uncomplimentedQualities.size(),gappedReadIndexForNonGapBase);            
+            return uncomplimentedQualities.get(ungappedFullRangeIndex);
         }
-        catch(ArrayIndexOutOfBoundsException e){
+        catch(Exception e){
             throw new IllegalArgumentException("could not get quality for read " + placedRead +" at gapped index " +gappedReadIndexForNonGapBase,e);
         }
     }

@@ -16,34 +16,22 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Dec 16, 2008
- *
- * @author dkatzel
- */
-package org.jcvi.common.core.assembly;
 
-import org.jcvi.common.core.assembly.util.AllAssemblyUtilUnitTests;
-import org.jcvi.common.core.assembly.util.coverage.AllCoverageUnitTests;
+package org.jcvi.common.core.assembly.util;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-    {        
-                
-        
-        AllCoverageUnitTests.class,
-        AllScaffoldUnitTests.class,
-        
-        
-        
-        AllAssemblyUtilUnitTests.class,
-        
-        AllContigUnitTests.class
+    {   
+        TestAssemblyUtil_gappedfullRange.class,
+        TestAssemblyUtil_reverseComplimentRange.class,
+        TestAssemblyUtil_convertToUngappedRange.class,
+        TestAssemblyUtil_convertToUngappedFullRangeOffset.class
     }
     )
-public class AllAssemblyUnitTests {
+public class AllAssemblyUtilUnitTests {
 
 }

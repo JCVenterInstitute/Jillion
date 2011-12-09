@@ -29,9 +29,9 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.slice.QualityValueStrategy;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;
@@ -81,12 +81,12 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
             CoverageRegion<P> region, final Nucleotide consensusBase,
             QualityClass.Builder builder) throws DataStoreException {
         for(P placedRead : region){
-            final Sequence<PhredQuality> qualityRecord = qualityDataStore.get(placedRead.getId());
+            final QualitySequence qualityRecord = qualityDataStore.get(placedRead.getId());
             if(qualityRecord !=null){
-                int indexIntoRead = (int) (index - placedRead.getStart());
-                final Nucleotide calledBase = placedRead.getNucleotideSequence().get(indexIntoRead);
-                
-                PhredQuality qualityValue =qualityValueStrategy.getQualityFor(placedRead, qualityRecord, indexIntoRead);
+                int gappedOffset = (int) (index - placedRead.getStart());
+                NucleotideSequence gappedSequence = placedRead.getNucleotideSequence();
+                final Nucleotide calledBase = gappedSequence.get(gappedOffset);
+                PhredQuality qualityValue =qualityValueStrategy.getQualityFor(placedRead, qualityRecord, gappedOffset);
                 boolean agreesWithConsensus = isSame(consensusBase, calledBase);
                 boolean isHighQuality = isHighQuality(qualityValue);
                 Direction direction =placedRead.getDirection();

@@ -139,30 +139,23 @@ public final class AssemblyUtil {
         return convertToUngappedFullRangeOffset(placedRead, ungappedFullLength,
                 gappedOffset, validRange);
     }
-    /**
-     * Convert the given gapped valid range offset of a given read into its
-     * corresponding ungapped full length (untrimmed) equivalent.
-     * This is the same as 
-     * {@link #convertToUngappedFullRangeOffset(PlacedRead, int, int ) convertToUngappedFullRangeOffset(placedRead, placedRead.getUngappedFullLength(),
-                gappedOffset, placedRead.getValidRange())}.
-     * @param placedRead the read
-     * @param gappedOffset the gapped offset to convert into an ungapped full range offset
-     * @return the ungapped full range offset as a positive int.
-     */
-    public static  int convertToUngappedFullRangeOffset(PlacedRead placedRead,int gappedOffset) {
+    public static  int convertToUngappedFullRangeOffset(PlacedRead placedRead, int gappedOffset) {
+        Range validRange = placedRead.getValidRange();
         return convertToUngappedFullRangeOffset(placedRead, placedRead.getUngappedFullLength(),
-                gappedOffset, placedRead.getValidRange());
+                gappedOffset, validRange);
     }
     
     private static int convertToUngappedFullRangeOffset(PlacedRead placedRead,
             int fullLength, int gappedOffset, Range validRange) {
        
-        int ungappedValidRangeIndex =  placedRead.getNucleotideSequence().getUngappedOffsetFor(gappedOffset);
+        
+        NucleotideSequence nucleotideSequence = placedRead.getNucleotideSequence();
         if(placedRead.getDirection() == Direction.REVERSE){
-            Range complimentedValidRange = AssemblyUtil.reverseComplimentValidRange(validRange, fullLength);            
-            int distanceFromLeft=  ungappedValidRangeIndex + (int)complimentedValidRange.getStart();
-            return fullLength - distanceFromLeft;
+            int ungappedOffset=nucleotideSequence.getUngappedOffsetFor(gappedOffset);
+            int numberOfLeadingBasesTrimmed = fullLength-1 - (int)validRange.getEnd();
+            return numberOfLeadingBasesTrimmed + ungappedOffset;
         }        
+        int ungappedValidRangeIndex =  nucleotideSequence.getUngappedOffsetFor(gappedOffset);
         return ungappedValidRangeIndex + (int)validRange.getStart();
     }
    
