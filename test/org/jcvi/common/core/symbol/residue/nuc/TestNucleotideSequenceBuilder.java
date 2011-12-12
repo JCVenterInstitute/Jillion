@@ -45,7 +45,7 @@ public class TestNucleotideSequenceBuilder {
         assertBuiltSequenceEquals("ACGTGGTGCA",sut);
     }
     @Test
-    public void notingBuiltShouldReturnEmptySequence(){
+    public void nothingBuiltShouldReturnEmptySequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder();
         assertBuiltSequenceEquals("",sut);
     }
