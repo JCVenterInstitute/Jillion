@@ -265,4 +265,19 @@ public class TestNucleotideSequenceBuilder {
         assertEquals(2,sut.getNumGaps());
         assertEquals(0, sut.getNumNs());
     }
+    
+    @Test
+    public void countsNumberOfAmbiguitiesCorrectly(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-S--A");
+        assertEquals(1, sut.getNumAmbiguities());
+    }
+    
+    @Test
+    public void deleteRemovesNumAmbiguitiesCorrectly(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-S--A");
+        assertEquals(1, sut.getNumAmbiguities());
+        sut.delete(Range.buildRange(2,5));
+        assertEquals(2,sut.getNumGaps());
+        assertEquals(0, sut.getNumAmbiguities());
+    }
 }
