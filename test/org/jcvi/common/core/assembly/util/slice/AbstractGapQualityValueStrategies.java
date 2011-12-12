@@ -19,14 +19,18 @@
 
 package org.jcvi.common.core.assembly.util.slice;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.easymock.EasyMockSupport;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.util.Builder;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -40,15 +44,13 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
 
     GapQualityValueStrategies sut;
     private PlacedRead placedRead;
-    private Sequence<PhredQuality> fullQualities;
-    private NucleotideSequence encodedGlyphs;
+    private NucleotideSequence sequence;
     PhredQuality expectedQuality = PhredQuality.valueOf(42);
     @Before
     public void setup(){
         sut= getGapQualityValueStrategies();
         placedRead= createMock(PlacedRead.class);
-        encodedGlyphs = createMock(NucleotideSequence.class);
-        fullQualities = createMock(Sequence.class);
+        sequence = createMock(NucleotideSequence.class);
     }
     
     protected abstract GapQualityValueStrategies getGapQualityValueStrategies();
@@ -59,48 +61,74 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
     }
     @Test(expected = NullPointerException.class)
     public void nullPlacedReadShouldThrowNPE(){
-        sut.getQualityFor(null, fullQualities, 2);
+        sut.getQualityFor(null, createMock(QualitySequence.class), 2);
     }
     @Test
     public void getUngappedQualityFromForwardRead(){
         int gappedReadIndex = 12;
         int fullIndex = 22;
-        expect(placedRead.getNucleotideSequence()).andReturn(encodedGlyphs).anyTimes();
-        expect(encodedGlyphs.isGap(gappedReadIndex)).andReturn(false);
-        expect(placedRead.getDirection()).andReturn(Direction.FORWARD);
+        expect(placedRead.getNucleotideSequence()).andReturn(sequence).anyTimes();
+        expect(sequence.isGap(gappedReadIndex)).andReturn(false);
+        expect(placedRead.getDirection()).andStubReturn(Direction.FORWARD);
         Range validRange = Range.buildRange(10,100);
         expect(placedRead.getValidRange()).andReturn(validRange);
-        expect(encodedGlyphs.getUngappedOffsetFor(gappedReadIndex)).andReturn(gappedReadIndex);
-     //   expect(placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedReadIndex)).andReturn(gappedReadIndex);
-        expect(fullQualities.getLength()).andReturn(validRange.getEnd()+validRange.getStart());
+        expect(sequence.getUngappedOffsetFor(gappedReadIndex)).andReturn(gappedReadIndex);
+        long fullLength = validRange.getEnd()+validRange.getStart();
+        QualitySequence qualities =new MockQualitySequenceBuilder(fullLength)
+                                .setQuality(fullIndex, expectedQuality)
+                                .build();
         
-       // expect(encodedGlyphs.toUngappedIndex(gappedReadIndex)).andReturn(gappedReadIndex);
-        expect(fullQualities.get(fullIndex)).andReturn(expectedQuality);
         replayAll();
         assertEquals(expectedQuality,
-                sut.getQualityFor(placedRead, fullQualities, gappedReadIndex));
+                sut.getQualityFor(placedRead, qualities, gappedReadIndex));
         verifyAll();
     }
     @Test
     public void getUngappedQualityFromReverseRead(){
         int gappedReadIndex = 12;
+        int ungappedReadOffset = gappedReadIndex-2;
         Range validRange = Range.buildRange(10,100);
-        int fullLength=110;
-        expect(placedRead.getNucleotideSequence()).andReturn(encodedGlyphs).anyTimes();
-        expect(placedRead.getDirection()).andReturn(Direction.REVERSE);
-        expect(encodedGlyphs.isGap(gappedReadIndex)).andReturn(false);
-        expect(encodedGlyphs.getUngappedOffsetFor(gappedReadIndex)).andReturn(gappedReadIndex);
+        long fullLength=110;
+        expect(placedRead.getNucleotideSequence()).andReturn(sequence).anyTimes();
+        expect(placedRead.getDirection()).andStubReturn(Direction.REVERSE);
+        expect(sequence.isGap(gappedReadIndex)).andReturn(false);
+        expect(sequence.getUngappedOffsetFor(gappedReadIndex)).andReturn(ungappedReadOffset);
         
         expect(placedRead.getValidRange()).andReturn(validRange).anyTimes();
-        expect(fullQualities.getLength()).andReturn((long)fullLength);
-        int fullIndex = 21;
-      //  expect(placedRead.convertGappedValidRangeIndexToUngappedValidRangeIndex(gappedReadIndex)).andReturn(gappedReadIndex);
         
-     //   expect(encodedGlyphs.toUngappedIndex(gappedReadIndex)).andReturn(gappedReadIndex);
-        expect(fullQualities.get(fullLength-fullIndex)).andReturn(expectedQuality);
+        QualitySequence qualities =new MockQualitySequenceBuilder(fullLength)
+                                .setQuality(fullLength-1-((fullLength-1-validRange.getEnd()) +ungappedReadOffset), expectedQuality)
+                                .build();
         replayAll();
         assertEquals(expectedQuality,
-                sut.getQualityFor(placedRead, fullQualities, gappedReadIndex));
+                sut.getQualityFor(placedRead, qualities, gappedReadIndex));
         verifyAll();
     }
+    
+    private class MockQualitySequenceBuilder implements Builder<QualitySequence>{
+        private QualitySequence fullQualities = createMock(QualitySequence.class);
+        private PhredQuality[] quals;
+        
+        public MockQualitySequenceBuilder(long fullLength){
+            quals = new PhredQuality[(int)fullLength];
+            expect(fullQualities.getLength()).andStubReturn(fullLength);
+        }
+        
+        
+        public MockQualitySequenceBuilder setQuality(long offset, PhredQuality qual){
+            quals[(int)offset]= qual;
+            return this;
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public QualitySequence build() {
+            List<PhredQuality> list = Arrays.asList(quals);
+            expect(fullQualities.asList()).andReturn(list);
+            return fullQualities;
+        }
+        
+    }
+    
 }
