@@ -27,7 +27,6 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.PlacedRead;
-import org.jcvi.common.core.assembly.DefaultContig.Builder;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
@@ -124,9 +123,9 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
                                     .build();
         PlacedRead read = contig.getPlacedReadById("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{0,0,0,14,11,0,0}));
+                PhredQuality.valueOf(new byte[]{0,0,14,11,0,0,0}));
         
-        assertEquals(qualities.get(4),sut.getQualityFor(read, qualities, 4));
+        assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
     }
     @Test
     public void multiGapRightFlankingGapIsLowerShouldReturnRightFlankingQuality(){
@@ -161,10 +160,10 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
                                     .build();
         PlacedRead read = contig.getPlacedReadById("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{0,0,0, 14,11,0,0}));
+                PhredQuality.valueOf(new byte[]{0,0,14,11,0,0,0}));
         
-        assertEquals(qualities.get(4),sut.getQualityFor(read, qualities, 4));
-        assertEquals(qualities.get(4),sut.getQualityFor(read, qualities, 5));
+        assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
+        assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 5));
     }
     @Test
     public void multiGapReverseLeftFlankingGapIsLowerShouldReturnLeftFlankingQuality(){
@@ -173,9 +172,9 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
                                     .build();
         PlacedRead read = contig.getPlacedReadById("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{0,0,0,14,16,0,0}));
+                PhredQuality.valueOf(new byte[]{0,0,14,16,0,0,0}));
         
-        assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
-        assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 5));
+        assertEquals(qualities.get(2),sut.getQualityFor(read, qualities, 4));
+        assertEquals(qualities.get(2),sut.getQualityFor(read, qualities, 5));
     }
 }
