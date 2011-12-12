@@ -41,10 +41,13 @@ import org.jcvi.common.core.util.Builder;
 public final class NucleotideSequenceBuilder implements Builder<NucleotideSequence>{
     private static final int GAP_VALUE = Nucleotide.Gap.ordinal();
     private static final int N_VALUE = Nucleotide.Unknown.ordinal();
+    private static final int A_VALUE = Nucleotide.Adenine.ordinal();
+    private static final int C_VALUE = Nucleotide.Cytosine.ordinal();
+    private static final int G_VALUE = Nucleotide.Guanine.ordinal();
+    private static final int T_VALUE = Nucleotide.Thymine.ordinal();
     private byte[] array;
     private int currentLength=0;
-    private int numGaps=0;
-    private int numNs=0;
+    private SpecialNucleotideCounter counters = new SpecialNucleotideCounter();
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains no nucleotides.
@@ -74,7 +77,8 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      */
     public NucleotideSequenceBuilder(Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
-        this.array = convertToEncodedArrayAndUpdateNumCounts(sequence);
+        this.array = encode(sequence);
+        this.counters.increment(array);
         this.currentLength =array.length;
     }
     /**
@@ -94,15 +98,10 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @return a byte array of the encoded nucleotides; also the private field
      * numGaps and numNs have been incremented as a side effect.
      */
-    private byte[] convertToEncodedArrayAndUpdateNumCounts(Iterable<Nucleotide> nucleotides){
+    private byte[] encode(Iterable<Nucleotide> nucleotides){
         List<Byte> list = new ArrayList<Byte>();
         for(Nucleotide n : nucleotides){
             int value = n.ordinal();
-            if(value == GAP_VALUE){
-                numGaps++;
-            }else if(value == N_VALUE){
-                numNs++;
-            }
             list.add((byte)value);
         }
         ByteBuffer buf = ByteBuffer.allocate(list.size());
@@ -111,6 +110,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         }
         return buf.array();
     }
+    
     /**
      * Appends the given base to the end
      * of the builder's mutable sequence.
@@ -133,7 +133,8 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      */
     public NucleotideSequenceBuilder append(Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
-        byte[] newData = convertToEncodedArrayAndUpdateNumCounts(sequence);
+        byte[] newData = encode(sequence);
+        this.counters.increment(newData);
         return appendArray(newData);
     }
     
@@ -150,8 +151,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     public NucleotideSequenceBuilder append(NucleotideSequenceBuilder otherBuilder){
         assertNotNull(otherBuilder);
         appendArray(otherBuilder.array);
-        numGaps += otherBuilder.numGaps;
-        numNs +=otherBuilder.numNs;
+        counters.increment(otherBuilder.counters);
         return this;
     }
     
@@ -260,8 +260,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
             if (len > 0) {
                 byte[] bytesToDelete = new byte[len];
                 System.arraycopy(array, start, bytesToDelete, 0, len);
-                numGaps-=countGapsFor(bytesToDelete);
-                numNs-=countNsFor(bytesToDelete);
+                counters.decrement(bytesToDelete);
                 System.arraycopy(array, start+len, array, start, currentLength -end-1);
                 this.currentLength -=len;
             }    
@@ -269,34 +268,17 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         return this;
     }
     
-    
-    /**
-     * @return the numGaps
-     */
-    int getNumGaps() {
-        return numGaps;
-    }
-
-    private int countGapsFor(byte[] encodedBytes) {
-        int count=0;
-        for(int i=0; i<encodedBytes.length; i++){
-            if(encodedBytes[i]==GAP_VALUE){
-                count++;
-            }
-        }
-        return count;
+    int getNumGaps(){
+        return counters.getNumberOfGaps();
     }
     
-
-    private int countNsFor(byte[] encodedBytes) {
-        int count=0;
-        for(int i=0; i<encodedBytes.length; i++){
-            if(encodedBytes[i]==N_VALUE){
-                count++;
-            }
-        }
-        return count;
+    int getNumNs(){
+        return counters.getNumberOfNs();
     }
+    int getNumAmbiguities(){
+        return counters.getNumberOfAmbiguities();
+    }
+    
     /**
      * Inserts the given sequence the beginning
      * of the builder's mutable sequence.
@@ -334,7 +316,8 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
             throw new IllegalArgumentException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }   
-        byte[] newData = convertToEncodedArrayAndUpdateNumCounts(sequence);
+        byte[] newData = encode(sequence);
+        this.counters.increment(newData);
         return insertEncodedArray(offset, newData);
     }
     /**
@@ -365,18 +348,11 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
             throw new IllegalArgumentException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }   
-        numGaps +=otherBuilder.getNumGaps();
-        numNs +=otherBuilder.getNumNs();
+        counters.increment(otherBuilder.counters);
         return insertEncodedArray(offset, otherBuilder.array);
     }
     
-    
-    /**
-     * @return the numNs
-     */
-    int getNumNs() {
-        return numNs;
-    }
+   
     private NucleotideSequenceBuilder insertEncodedArray(int offset,
             byte[] newData) {
         int newDataLength = currentLength+newData.length;
@@ -451,11 +427,12 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     */
     @Override
     public NucleotideSequence build() {
-        /*
-        NucleotideCodec codec = NucleotideCodecs.getCodecForGappedSequence(numGaps, numNs, currentLength);
-        return DefaultNucleotideSequence.create(asList(),codec);
-        */
-        return DefaultNucleotideSequence.create(asList());
+        List<Nucleotide> asList = asList();
+        if(counters.getNumberOfAmbiguities()>0){
+            return DefaultNucleotideSequence.create(asList,DefaultNucleotideCodec.INSTANCE);
+        }
+        NucleotideCodec codec = NucleotideCodecs.getCodecForGappedSequence(counters.getNumberOfGaps(), counters.getNumberOfNs(), currentLength);
+        return DefaultNucleotideSequence.create(asList,codec);
     }
     /**
      * Create a new NucleotideSequence instance
@@ -545,6 +522,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @return this.
      */
     public NucleotideSequenceBuilder ungap(){
+        final int numGaps = counters.getNumberOfGaps();
         if(numGaps>0){
             byte[] ungapped = new byte[currentLength-numGaps];
             
@@ -556,9 +534,83 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
             }
             array = ungapped;
             currentLength= array.length;
-            numGaps=0;
+            counters.ungap();
         }
         return this;
     }
 
+    
+    private class SpecialNucleotideCounter{
+        private int numberOfGaps;
+        private int numberOfAmbiguities;
+        private int numberOfNs;
+        
+
+        void increment(byte[] array){
+            for(int i=0; i< array.length; i++){
+                handleValue(array[i],true);
+            }
+        }
+        void decrement(byte[] array){
+            for(int i=0; i< array.length; i++){
+                handleValue(array[i],false);
+            }
+        }
+        void handleValue(int value, boolean increment) {
+            if(value == GAP_VALUE){
+                if(increment){
+                    numberOfGaps++;
+                }else{
+                    numberOfGaps--;
+                }
+            }else if(value == N_VALUE){
+                if(increment){
+                numberOfNs++;
+                }else{
+                    numberOfNs--;
+                }
+            }else if(value != A_VALUE && value != C_VALUE && 
+                    value != G_VALUE && value != T_VALUE){
+                if(increment){
+                    numberOfAmbiguities++;
+                }else{
+                    numberOfAmbiguities--;
+                }
+                
+            }
+        }
+        void increment(SpecialNucleotideCounter other){
+            numberOfGaps +=other.numberOfGaps;
+            numberOfNs +=other.numberOfNs;
+            numberOfAmbiguities +=other.numberOfAmbiguities;
+        }
+        void decrement(SpecialNucleotideCounter other){
+            numberOfGaps -=other.numberOfGaps;
+            numberOfNs -=other.numberOfNs;
+            numberOfAmbiguities -=other.numberOfAmbiguities;
+        }
+        void ungap(){
+            numberOfGaps=0;
+        }
+        /**
+         * @return the numberOfGaps
+         */
+        int getNumberOfGaps() {
+            return numberOfGaps;
+        }
+        /**
+         * @return the numberOfAmbiguities
+         */
+        int getNumberOfAmbiguities() {
+            return numberOfAmbiguities;
+        }
+        /**
+         * @return the numberOfNs
+         */
+        int getNumberOfNs() {
+            return numberOfNs;
+        }
+        
+        
+    }
 }
