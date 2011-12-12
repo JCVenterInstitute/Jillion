@@ -46,7 +46,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     private static final int G_VALUE = Nucleotide.Guanine.ordinal();
     private static final int T_VALUE = Nucleotide.Thymine.ordinal();
     private byte[] array;
-    private CodecDecider decider = new CodecDecider();
+    private CodecDecider codecDecider = new CodecDecider();
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains no nucleotides.
@@ -77,7 +77,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     public NucleotideSequenceBuilder(Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
         this.array = encode(sequence);
-        this.decider.increment(array);
+        this.codecDecider.increment(array);
     }
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -133,7 +133,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         assertNotNull(sequence);
         byte[] newData = encode(sequence);        
         appendArray(newData);
-        this.decider.increment(newData);
+        this.codecDecider.increment(newData);
         return this;
     }
     
@@ -150,12 +150,12 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     public NucleotideSequenceBuilder append(NucleotideSequenceBuilder otherBuilder){
         assertNotNull(otherBuilder);
         appendArray(otherBuilder.array);
-        decider.increment(otherBuilder.decider);
+        codecDecider.increment(otherBuilder.codecDecider);
         return this;
     }
     
     private NucleotideSequenceBuilder appendArray(byte[] newData) {
-        int currentLength = decider.getCurrentLength();
+        int currentLength = codecDecider.getCurrentLength();
         int newLength = currentLength+newData.length;
         ensureCapacity(newLength);
         System.arraycopy(newData, 0, array, currentLength, newData.length);
@@ -213,18 +213,28 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * of the nucleotide sequence.
      */
     public long getLength(){
-        return decider.getCurrentLength();
+        return codecDecider.getCurrentLength();
     }
-    
+    /**
+     * Replace the Nucleotide at the given offset with a different nucleotide.
+     * @param offset the gapped offset to modify.
+     * @param replacement the new {@link Nucleotide} to replace the old
+     * {@link Nucleotide} at that location.
+     * @return this
+     * @throws NullPointerException if replacement is null.
+     * @throws IllegalArgumentException if offset is invalid.
+     */
     public NucleotideSequenceBuilder replace(int offset, Nucleotide replacement){
-        if(offset <0 || offset > array.length){
+        if(offset <0 || offset >= array.length){
             throw new IllegalArgumentException(
                     String.format("offset %d out of range (length = %d)",array.length,offset));
         }
         if(replacement ==null){
             throw new NullPointerException("replacement base can not be null");
         }
-        array[offset]= (byte)replacement.ordinal();
+        byte value = (byte)replacement.ordinal();
+        codecDecider.replace(offset, value);
+        array[offset]= value;
         return this;
     }
     /**
@@ -253,13 +263,13 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
                 throw new IllegalArgumentException(
                         String.format("range can not start beyond current length (%d) : %d", getLength(),start));
             }   
-            int lastOffset =decider.getCurrentLength()-1;
+            int lastOffset =codecDecider.getCurrentLength()-1;
             int end = Math.min(lastOffset, (int)range.getEnd());
             int len = end - start+1;
             if (len > 0) {
                 byte[] bytesToDelete = new byte[len];
                 System.arraycopy(array, start, bytesToDelete, 0, len);
-                decider.decrement(bytesToDelete);
+                codecDecider.decrement(bytesToDelete);
                 System.arraycopy(array, start+len, array, start, lastOffset -end);
 
             }    
@@ -268,14 +278,14 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     }
     
     int getNumGaps(){
-        return decider.getNumberOfGaps();
+        return codecDecider.getNumberOfGaps();
     }
     
     int getNumNs(){
-        return decider.getNumberOfNs();
+        return codecDecider.getNumberOfNs();
     }
     int getNumAmbiguities(){
-        return decider.getNumberOfAmbiguities();
+        return codecDecider.getNumberOfAmbiguities();
     }
     
     /**
@@ -311,13 +321,13 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         if(offset<0){
             throw new IllegalArgumentException("offset can not have negatives coordinates: "+ offset);
         }
-        if(offset> getLength()){
+        if(offset>= getLength()){
             throw new IllegalArgumentException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }   
         byte[] newData = encode(sequence);
         insertEncodedArray(offset, newData);
-        this.decider.increment(newData);
+        this.codecDecider.increment(newData);
         return this;
     }
     /**
@@ -344,19 +354,19 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         if(offset<0){
             throw new IllegalArgumentException("offset can not have negatives coordinates: "+ offset);
         }
-        if(offset> getLength()){
+        if(offset>= getLength()){
             throw new IllegalArgumentException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }   
         insertEncodedArray(offset, otherBuilder.array);
-        decider.increment(otherBuilder.decider);
+        codecDecider.increment(otherBuilder.codecDecider);
         return this;
     }
     
    
     private NucleotideSequenceBuilder insertEncodedArray(int offset,
             byte[] newData) {
-        int currentLength = decider.getCurrentLength();
+        int currentLength = codecDecider.getCurrentLength();
         int newDataLength = currentLength+newData.length;
         ensureCapacity(newDataLength);       
         //shift downstream bases
@@ -428,7 +438,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
     */
     @Override
     public NucleotideSequence build() {    
-        return DefaultNucleotideSequence.create(asList(),decider.getOptimalCodec());
+        return DefaultNucleotideSequence.create(asList(),codecDecider.getOptimalCodec());
     }
     
     /**
@@ -452,6 +462,9 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * sequence.
      */
     public List<Nucleotide> asList(Range range){
+        if(range==null){
+            throw new NullPointerException("range can not be null");
+        }
     	Range currentRange = Range.buildRangeOfLength(getLength());
     	if(!range.isSubRangeOf(currentRange)){
     		throw new IllegalArgumentException(
@@ -501,7 +514,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @return this.
      */
     public NucleotideSequenceBuilder reverseCompliment(){
-        int currentLength = decider.getCurrentLength();
+        int currentLength = codecDecider.getCurrentLength();
         int pivotOffset = currentLength/2;
         Nucleotide[] values = Nucleotide.values();
         for(int i=0; i<pivotOffset; i++){
@@ -520,8 +533,8 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @return this.
      */
     public NucleotideSequenceBuilder ungap(){
-        final int numGaps = decider.getNumberOfGaps();
-        int currentLength = decider.getCurrentLength();
+        final int numGaps = codecDecider.getNumberOfGaps();
+        int currentLength = codecDecider.getCurrentLength();
         if(numGaps>0){
             byte[] ungapped = new byte[currentLength-numGaps];
             
@@ -532,7 +545,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
                 }
             }
             array = ungapped;
-            decider.ungap();
+            codecDecider.ungap();
         }
         return this;
     }
@@ -559,6 +572,15 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
             return NucleotideCodecs.getCodecForGappedSequence(numberOfGaps, numberOfNs, currentLength);
         }
         
+        /**
+         * @param offset
+         * @param value
+         */
+        public void replace(int offset, byte value) {
+            handleValue(array[offset],false);
+            handleValue(value,true);
+        }
+
         void increment(byte[] array){
             for(int i=0; i< array.length; i++){
                 handleValue(array[i],true);
@@ -571,27 +593,38 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
             }
             currentLength-=array.length;
         }
-        private void handleValue(int value, boolean increment) {
+        void handleValue(int value, boolean increment) {
             if(value == GAP_VALUE){
-                if(increment){
-                    numberOfGaps++;
-                }else{
-                    numberOfGaps--;
-                }
+                handleGap(increment);
             }else if(value == N_VALUE){
-                if(increment){
-                numberOfNs++;
-                }else{
-                    numberOfNs--;
-                }
+                handleN(increment);
             }else if(value != A_VALUE && value != C_VALUE && 
                     value != G_VALUE && value != T_VALUE){
-                if(increment){
-                    numberOfAmbiguities++;
-                }else{
-                    numberOfAmbiguities--;
-                }
-                
+                handleAmbiguity(increment);                
+            }
+        }
+
+        private void handleAmbiguity(boolean increment) {
+            if(increment){
+                numberOfAmbiguities++;
+            }else{
+                numberOfAmbiguities--;
+            }
+        }
+
+        private void handleN(boolean increment) {
+            if(increment){
+            numberOfNs++;
+            }else{
+                numberOfNs--;
+            }
+        }
+
+        private void handleGap(boolean increment) {
+            if(increment){
+                numberOfGaps++;
+            }else{
+                numberOfGaps--;
             }
         }
         void increment(CodecDecider other){
@@ -600,12 +633,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
             numberOfAmbiguities +=other.numberOfAmbiguities;
             currentLength+=other.currentLength;
         }
-        void decrement(CodecDecider other){
-            numberOfGaps -=other.numberOfGaps;
-            numberOfNs -=other.numberOfNs;
-            numberOfAmbiguities -=other.numberOfAmbiguities;
-            currentLength-=other.currentLength;
-        }
+        
         void ungap(){
             currentLength-=numberOfGaps;
             numberOfGaps=0;
