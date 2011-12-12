@@ -97,7 +97,7 @@ protected static Hmm<Nucleotide> HMM;
 	}
 	@BeforeClass
 	public static void buildHmm(){
-		Random random = new Random();
+		Random random = new Random(123456);
 		random.nextInt(100);
 		NucleotideHmmBuilder builder = new NucleotideHmmBuilder(5);
 		setRandomBasecallProbs(builder,1,random);
