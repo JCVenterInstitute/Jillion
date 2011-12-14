@@ -24,6 +24,8 @@
 package org.jcvi.common.core.seq.fastx.fasta.nuc;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStore;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * {@code AbstractNucleotideFastaFileDataStore} is an implementation
@@ -32,7 +34,7 @@ import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStore;
  *
  *
  */
-public abstract class AbstractNucleotideFastaFileDataStore extends AbstractFastaFileDataStore<NucleotideSequenceFastaRecord> implements NucleotideFastaDataStore{
+public abstract class AbstractNucleotideFastaFileDataStore extends AbstractFastaFileDataStore<Nucleotide, NucleotideSequence,NucleotideSequenceFastaRecord> implements NucleotideFastaDataStore{
 
     private final NucleotideFastaRecordFactory fastaRecordFactory;
 
