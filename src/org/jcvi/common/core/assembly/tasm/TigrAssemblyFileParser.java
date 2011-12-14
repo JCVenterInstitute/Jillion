@@ -78,7 +78,7 @@ public class TigrAssemblyFileParser {
     public static void parse(InputStream inputStream, ContigFileVisitor visitor){
         boolean isTigrAssemblyVisitor = visitor instanceof TigrAssemblyFileVisitor;
         
-        Scanner scanner = new Scanner(inputStream).useDelimiter(CR);
+        Scanner scanner = new Scanner(inputStream, IOUtil.UTF_8_NAME).useDelimiter(CR);
         boolean inContigRecord=true;
         String currentSequenceName=null;
         int currentSequenceLeftEnd=-1;

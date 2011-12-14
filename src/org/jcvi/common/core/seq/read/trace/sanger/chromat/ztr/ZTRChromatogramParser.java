@@ -133,7 +133,7 @@ public class ZTRChromatogramParser implements SangerTraceCodec {
         if(!ZTRUtil.isMagicNumber(ztrMagic)){
 
            //does not match
-            String message = "ZTR header magic number does not match expected " +new String(ztrMagic) ;
+            String message = "ZTR header magic number does not match expected " +new String(ztrMagic, IOUtil.UTF_8) ;
             throw new TraceDecoderException(message);
         }
     }
