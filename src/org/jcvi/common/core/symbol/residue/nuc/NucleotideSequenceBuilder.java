@@ -86,9 +86,14 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @throws NullPointerException if sequence is null.
      */
     public NucleotideSequenceBuilder(String sequence){
-        this(Nucleotides.parse(sequence));
-        
+        this(Nucleotides.parse(sequence));        
     }
+
+	private NucleotideSequenceBuilder(byte[] encodedSequence) {
+		this.array = encodedSequence;
+		this.codecDecider.increment(array);
+	}
+
     /**
      * Convert the input {@link Nucleotide}s into the encoded byte array
      * we use internally and also update the number of gaps currently in this sequence.
@@ -309,7 +314,8 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * was executed, then those nucleotides will be shifted by n
      * bases where n is the length of the given sequence to insert.
      * @param offset the <strong>gapped</strong> offset into this mutable sequence
-     * to begin insertion.
+     * to begin insertion.  If the offset = the current length then this insertion
+     * is treated as an append.
      * @param sequence the nucleotide sequence to be 
      * inserted at the given offset.
      * @return this
@@ -321,7 +327,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         if(offset<0){
             throw new IllegalArgumentException("offset can not have negatives coordinates: "+ offset);
         }
-        if(offset>= getLength()){
+        if(offset> getLength()){
             throw new IllegalArgumentException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }   
@@ -480,6 +486,14 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         }
         return bases;
     }
+    
+	public NucleotideSequenceBuilder subSequence(Range range) {
+		byte[] subArray = new byte[(int) range.getLength()];
+		System.arraycopy(array, (int) range.getStart(), subArray, 0, subArray.length);
+		return new NucleotideSequenceBuilder(subArray);
+	}
+
+    
     /**
      * Get the entire current nucleotide sequence as a list
      * of Nucleotide objects.
