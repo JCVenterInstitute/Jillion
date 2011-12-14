@@ -350,7 +350,10 @@ public class DefaultPlacedRead implements PlacedRead {
         */
         @Override
         public Builder reAbacus(Range gappedValidRangeToChange, List<Nucleotide> newBasecalls){
-            List<Nucleotide> oldUngappedBasecalls = Nucleotides.ungap(getBasesBuilder().asList(gappedValidRangeToChange));
+            List<Nucleotide> oldUngappedBasecalls = getBasesBuilder()
+            										.subSequence(gappedValidRangeToChange)
+            										.ungap()
+            										.asList();
             List<Nucleotide> newUngappedBasecalls = new ArrayList<Nucleotide>(newBasecalls.size());
             //make sure we aren't adding/editing any basecalls
             //only gaps should be affected
