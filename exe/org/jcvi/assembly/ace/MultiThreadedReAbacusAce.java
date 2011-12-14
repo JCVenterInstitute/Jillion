@@ -189,6 +189,7 @@ public class MultiThreadedReAbacusAce {
                 }
                 InputStream in = new ByteArrayInputStream(tagWriter.getTagOutputStream().toByteArray());
                 IOUtils.copy(in, out);
+                IOUtil.closeAndIgnoreErrors(in);
             }
         }catch(ParseException e){
             System.err.println(e.getMessage());
