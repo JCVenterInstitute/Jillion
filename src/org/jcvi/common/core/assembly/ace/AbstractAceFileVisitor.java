@@ -251,7 +251,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     @Override
     public synchronized void visitEndOfFile() {
         throwExceptionIfInitialized();  
-        visitEndOfContig();
+      //  visitEndOfContig();
         clearTempData();
         initialized = true;
         
