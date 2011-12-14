@@ -205,7 +205,10 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	        if(!hasNext()){
 	            throw new NoSuchElementException("no records");
 	        }
-	        T next = (T)nextRecord;
+	        //if we are here then nextRecord must
+	        //be type T so we can safely cast
+	        @SuppressWarnings("unchecked")
+			T next = (T)nextRecord;
             blockingGetNextRecord();
 	        
 	        return next;

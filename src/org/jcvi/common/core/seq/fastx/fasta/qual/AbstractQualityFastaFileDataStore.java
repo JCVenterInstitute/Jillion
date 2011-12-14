@@ -24,6 +24,8 @@
 package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStore;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 /**
  * {@code AbstractQualityFastaFileDataStore} is an implementation
@@ -32,7 +34,7 @@ import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStore;
  *
  *
  */
-public abstract class AbstractQualityFastaFileDataStore extends AbstractFastaFileDataStore<QualityFastaRecord> implements QualityFastaDataStore{
+public abstract class AbstractQualityFastaFileDataStore extends AbstractFastaFileDataStore<PhredQuality, QualitySequence,QualityFastaRecord> implements QualityFastaDataStore{
 
     private final QualityFastaRecordFactory fastaRecordFactory;
 
