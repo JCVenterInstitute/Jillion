@@ -147,9 +147,14 @@ public class TestNucleotideSequenceBuilder {
         sut.insert(-1, Nucleotide.Gap);
     }
     @Test(expected = IllegalArgumentException.class)
-    public void insertNucleotideAtBeyondLastOffsetShouldThrowException(){
+    public void insertNucleotideAtBeyondLengthShouldThrowException(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.insert(4, Nucleotide.Gap);
+        sut.insert(5, Nucleotide.Gap);
+    }
+    public void insertNucleotideAtLengthShouldAppend(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.insert(5, Nucleotide.Gap);
+        assertBuiltSequenceEquals("ACGT-",sut);
     }
     @Test(expected = NullPointerException.class)
     public void insertNullNucleotideShouldThrowException(){
