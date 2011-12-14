@@ -51,7 +51,11 @@ public class TestAbstractBlockingClosableIteratorExceptions {
         public TestDouble(List<String> list){
             this(list, list.size()+1);
         }
-        
+        /**
+         * 
+         * @param list
+         * @param numberOfRecordsUntilThrowException
+         */
         public TestDouble(List<String> list,
                 int numberOfRecordsUntilThrowException) {
             this.numberOfRecordsUntilThrowException = numberOfRecordsUntilThrowException;
@@ -116,7 +120,6 @@ public class TestAbstractBlockingClosableIteratorExceptions {
         
         iter.next(); //moe
         iter.next(); //larry
-        iter.next(); //curly
         IOUtil.closeAndIgnoreErrors(iter);
         assertFalse(iter.hasNext());
         
