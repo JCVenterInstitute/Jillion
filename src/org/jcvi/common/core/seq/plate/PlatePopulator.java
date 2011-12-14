@@ -88,6 +88,10 @@ public final class PlatePopulator{
         unusedWells.remove(well);
         
     }
+    
+    public int getNumberOfUnusedWells(){
+    	return unusedWells.size();
+    }
     /**
      * Is this plate finished or does this plate no longer have any unused wells
      * on it. 
