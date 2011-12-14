@@ -547,7 +547,7 @@ public enum Chunk {
             try{
                 //skip first byte
                 in.read();
-                scanner = new Scanner(in).useDelimiter("\0+");
+                scanner = new Scanner(in, IOUtil.UTF_8_NAME).useDelimiter("\0+");
                  
                 while(scanner.hasNext()){
                     final String key = scanner.next();                
