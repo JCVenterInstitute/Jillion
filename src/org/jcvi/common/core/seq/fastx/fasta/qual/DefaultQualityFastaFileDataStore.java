@@ -24,20 +24,15 @@
 package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
-import org.jcvi.common.core.io.IOUtil;
+
 import org.jcvi.common.core.seq.fastx.FastXFilter;
+import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 /**
  * {@code DefaultQualityFastaFileDataStore} is the default implementation
  * of {@link AbstractQualityFastaFileDataStore} which stores
@@ -47,96 +42,48 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * @see LargeQualityFastaFileDataStore
  *
  */
-public class DefaultQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore{
+public class DefaultQualityFastaFileDataStore {
+    
+    public static QualityFastaDataStore create(File fastaFile) throws FileNotFoundException{
+    	return create(fastaFile,null);
+    }
+    
+    public static QualityFastaDataStore create(File fastaFile, FastXFilter filter) throws FileNotFoundException{
+    	QualityFastaDataStoreBuilderVisitor builder = createBuilder(filter);
+    	FastaParser.parseFasta(fastaFile, builder);
+    	return builder.build();
+    }
+    
+    public static QualityFastaDataStore create(InputStream fastaStream) throws FileNotFoundException{
+    	return create(fastaStream,null);
+    }
+    public static QualityFastaDataStore create(InputStream fastaStream, FastXFilter filter) throws FileNotFoundException{
+    	QualityFastaDataStoreBuilderVisitor builder = createBuilder(filter);
+    	FastaParser.parseFasta(fastaStream, builder);
+    	return builder.build();
+    }
+    public static QualityFastaDataStoreBuilderVisitor createBuilder(){
+    	return createBuilder(null);
+    }
+    public static QualityFastaDataStoreBuilderVisitor createBuilder(FastXFilter filter){
+    	return new DefaultQualityFastaDataStoreBuilderVisitor(filter);
+    }
+    
+    
+    private static class DefaultQualityFastaDataStoreBuilderVisitor 
+    				extends AbstractFastaFileDataStoreBuilderVisitor<PhredQuality, QualitySequence, QualityFastaRecord, QualityFastaDataStore>
+    		implements QualityFastaDataStoreBuilderVisitor{
+		
+		public DefaultQualityFastaDataStoreBuilderVisitor(FastXFilter filter){
+			super(new DefaultQualityFastaDataStoreBuilder(),filter);
+		}
 
-    private final Map<String, QualityFastaRecord> map = new HashMap<String, QualityFastaRecord>();
-    private DataStore<QualityFastaRecord> datastore;
-    private final FastXFilter filter;
-    /**
-     * @param fastaRecordFactory
-     */
-    public DefaultQualityFastaFileDataStore(
-            QualityFastaRecordFactory fastaRecordFactory) {
-        super(fastaRecordFactory);
-        this.filter=null;
+		@Override
+		protected QualityFastaRecord createFastaRecord(String id,
+				String comment, String entireBody) {
+			return DefaultQualityFastaRecordFactory.getInstance().createFastaRecord(id, comment,entireBody);
+		}
+    	
     }
-    /**
-     * Convenience constructor using the {@link DefaultQualityFastaRecordFactory}.
-     * This call is the same as {@link #DefaultQualityFastaFileDataStore(QualityFastaRecordFactory)
-     * new DefaultQualityFastaFileDataStore(DefaultQualityFastaRecordFactory.getInstance());}
-     */
-    public DefaultQualityFastaFileDataStore() {
-        super();
-        filter=null;
-    }
-    public DefaultQualityFastaFileDataStore(File fastaFile,QualityFastaRecordFactory fastaRecordFactory) throws FileNotFoundException {
-        this(fastaFile,fastaRecordFactory,null);
-    }
-    public DefaultQualityFastaFileDataStore(File fastaFile) throws FileNotFoundException {
-        this();        
-        parseFastaFile(fastaFile);
-    }
-    public DefaultQualityFastaFileDataStore(File fastaFile,FastXFilter filter) throws FileNotFoundException {
-        super();  
-        this.filter=filter;
-        parseFastaFile(fastaFile);
-    }
-    
-    public DefaultQualityFastaFileDataStore(File fastaFile,QualityFastaRecordFactory fastaRecordFactory, FastXFilter filter) throws FileNotFoundException {
-        super(fastaRecordFactory);
-        this.filter = filter;
-        parseFastaFile(fastaFile);
-    }
-    private void parseFastaFile(File fastaFile) throws FileNotFoundException {
-        InputStream in = new FileInputStream(fastaFile);
-        try{
-        FastaParser.parseFasta(in, this);
-        }
-        finally{
-            IOUtil.closeAndIgnoreErrors(in);
-        }
-    }
-    @Override
-    public boolean visitRecord(String id, String comment, String recordBody) {
-        if(filter==null || filter.accept(id)){
-            map.put(id, this.getFastaRecordFactory().createFastaRecord(id, comment,recordBody));
-        }
-        return true;
-    }
-    @Override
-    public void close() throws IOException {
-        super.close();
-        map.clear();
-        datastore.close();
-    }
-    
-    
-    @Override
-    public void visitEndOfFile() {
-        super.visitEndOfFile();
-        datastore = new SimpleDataStore<QualityFastaRecord>(map);
-    }
-    @Override
-    public boolean contains(String id) throws DataStoreException {
-        return datastore.contains(id);
-    }
-    @Override
-    public QualityFastaRecord get(String id)
-            throws DataStoreException {
-        return datastore.get(id);
-    }
-    @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return datastore.getIds();
-    }
-    @Override
-    public int size() throws DataStoreException {
-        return datastore.size();
-    }
-    @Override
-    public CloseableIterator<QualityFastaRecord> iterator() {
-        return datastore.iterator();
-    }
-    
 
 }

@@ -17,6 +17,9 @@ import org.jcvi.common.core.util.Builder;
 public interface FastaDataStoreBuilder<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>, D extends DataStore<F>> extends Builder<D>{
 	/**
 	 * Add the given {@link FastaRecord} to this builder.
+	 * If a FastaRecord with the same id already exists in this builder
+	 * then that record gets overwritten by this new record
+	 * (similar to adding an entry to a map with the same key).
 	 * @param fastaRecord the fastaRecord to add.
 	 * @return this.
 	 * @throws NullPointerException if fastaRecord is null.

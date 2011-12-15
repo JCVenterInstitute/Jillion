@@ -464,7 +464,7 @@ public class ReAbacusAceContigWorker {
                             throw new IllegalStateException("error with muscle call for abacus range "+ ungappedProblemRange);
                         }
                         System.out.println(exitCode);
-                        NucleotideFastaDataStore gappedFastaDataStore = new DefaultNucleotideFastaFileDataStore(gappedFastaFile);
+                        NucleotideFastaDataStore gappedFastaDataStore = DefaultNucleotideFastaFileDataStore.create(gappedFastaFile);
                         int consensusSize =(int)gappedFastaDataStore.iterator().next().getSequence().getLength();
                         CompactedSlice.Builder[] sliceBuilders = new CompactedSlice.Builder[consensusSize];
                         for(int i=0; i< sliceBuilders.length; i++){

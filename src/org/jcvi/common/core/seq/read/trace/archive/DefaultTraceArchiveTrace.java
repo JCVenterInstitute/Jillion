@@ -29,8 +29,11 @@ import java.io.InputStream;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaDataStore;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -61,10 +64,12 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     @Override
     public NucleotideSequence getBasecalls() {
         InputStream in=null;
-        DefaultNucleotideFastaFileDataStore datastore = new DefaultNucleotideFastaFileDataStore();
+        NucleotideFastaDataStore datastore=null;
+        NucleotideFastaDataStoreBuilderVisitor visitor= DefaultNucleotideFastaFileDataStore.createBuilder();
         try{
             in = getInputStreamFor(TraceInfoField.BASE_FILE);
-            FastaParser.parseFasta(in, datastore);
+            FastaParser.parseFasta(in, visitor);
+            datastore = visitor.build();
             return datastore.iterator().next().getSequence();
         } catch (IOException e) {
             throw new IllegalArgumentException("basecall file not valid",e);
@@ -77,17 +82,14 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
 
     @Override
     public QualitySequence getQualities() {
-        InputStream in=null;
-        DefaultQualityFastaFileDataStore datastore = new DefaultQualityFastaFileDataStore();
+        QualityFastaDataStore datastore =null;
         try{
-            in = getInputStreamFor(TraceInfoField.QUAL_FILE);
-            FastaParser.parseFasta(in, datastore);
+        	datastore = DefaultQualityFastaFileDataStore.create(getInputStreamFor(TraceInfoField.QUAL_FILE));           
             return datastore.iterator().next().getSequence();
         } catch (IOException e) {
             throw new IllegalArgumentException("quality file not valid",e);
         }
         finally{
-            IOUtil.closeAndIgnoreErrors(in);
             IOUtil.closeAndIgnoreErrors(datastore);
         }
     }

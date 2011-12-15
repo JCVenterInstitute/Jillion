@@ -23,8 +23,6 @@
  */
 package org.jcvi;
 
-import junit.framework.Test;
-
 import org.jcvi.align.AllAlignTests;
 import org.jcvi.common.AllCommonUnitTests;
 
@@ -44,11 +42,4 @@ import org.junit.runners.Suite.SuiteClasses;
     }
 )
 public class AllUnitTests {
-  //required for ant?
-    public static Test suite() {
-        return new junit.framework.JUnit4TestAdapter(AllUnitTests.class);
-     }
-    public static void main(String[] args)  {
-        junit.textui.TestRunner.run(AllUnitTests.suite());
-    }
 }

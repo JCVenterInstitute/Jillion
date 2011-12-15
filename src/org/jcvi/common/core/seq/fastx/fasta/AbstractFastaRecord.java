@@ -160,7 +160,7 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
         if (!(obj instanceof FastaRecord)){
             return false;
         }
-        AbstractFastaRecord other = (AbstractFastaRecord)obj;
+        AbstractFastaRecord<?,?> other = (AbstractFastaRecord<?,?>)obj;
         final long checksum = getChecksum();
         final long checksum2 = other.getChecksum();
         return 

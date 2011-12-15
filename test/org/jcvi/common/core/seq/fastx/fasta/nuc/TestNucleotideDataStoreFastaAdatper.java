@@ -40,7 +40,7 @@ public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFas
     @Override
     protected DataStore<NucleotideSequenceFastaRecord> buildMap(
             File file) throws IOException {
-        return new DefaultNucleotideFastaFileDataStore(file);
+        return DefaultNucleotideFastaFileDataStore.create(file);
     }
 
     @Test

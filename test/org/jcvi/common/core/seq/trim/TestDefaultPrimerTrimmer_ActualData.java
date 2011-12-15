@@ -53,12 +53,10 @@ public class TestDefaultPrimerTrimmer_ActualData {
         primerDataStore = 
         
             NucleotideFastaRecordDataStoreAdatper.adapt(
-                    new DefaultNucleotideFastaFileDataStore(
-                        RESOURCES.getFile("files/primers.fasta"),
-                        DefaultNucleotideFastaRecordFactory.getInstance()));
-        sequence = new DefaultNucleotideFastaFileDataStore(
-                                RESOURCES.getFile("files/fullLength.fasta"),
-                                DefaultNucleotideFastaRecordFactory.getInstance())
+                    DefaultNucleotideFastaFileDataStore.create(
+                        RESOURCES.getFile("files/primers.fasta")));
+        sequence = DefaultNucleotideFastaFileDataStore.create(
+                                RESOURCES.getFile("files/fullLength.fasta"))
                         .get("SAJJA07T27G07MP1F").getSequence();
     }
     

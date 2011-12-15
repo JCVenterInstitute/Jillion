@@ -35,6 +35,7 @@ import org.junit.runners.Suite.SuiteClasses;
      TestDefaultSequenceFastaDataStore.class,
      TestDefaultSequenceFastaDataStoreWithNoComment.class,
      TestLargeNucleotideFastaFileDataStore.class,
+     TestIndexedNucleotideFastaFileDataStore.class,
      TestLargeSequenceFastaMapWithNoComment.class,
      TestNucleotideDataStoreFastaAdatper.class,
      TestStreamingDefaultSequenceDataStore.class

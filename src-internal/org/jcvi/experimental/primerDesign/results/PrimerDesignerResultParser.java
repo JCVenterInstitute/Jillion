@@ -2,8 +2,11 @@ package org.jcvi.experimental.primerDesign.results;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 
 import java.util.*;
@@ -44,12 +47,14 @@ public class PrimerDesignerResultParser {
     }
 
     static List<PrimerDesignResult> parseResultsFile(File file, String parentID) {
+    	NucleotideFastaDataStore datastore =null;
         try {
             List<PrimerDesignResult> results = new ArrayList<PrimerDesignResult>();
 
-            DefaultNucleotideFastaFileDataStore dataStore = new DefaultNucleotideFastaFileDataStore();
-            FastaParser.parseFasta(file,dataStore);
-            for ( NucleotideSequenceFastaRecord primerFasta : dataStore ) {
+            NucleotideFastaDataStoreBuilderVisitor dataStoreBuilder = DefaultNucleotideFastaFileDataStore.createBuilder();
+            FastaParser.parseFasta(file,dataStoreBuilder);
+            datastore = dataStoreBuilder.build();
+			for ( NucleotideSequenceFastaRecord primerFasta : datastore ) {
 
                 PrimerDesignResult.Builder builder = new PrimerDesignResult.Builder(file);
 
@@ -80,6 +85,8 @@ public class PrimerDesignerResultParser {
             throw new PrimerDesignerResultParseException(
                 "Unable to parse primer designer results in input file " + file, e
             );
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(datastore);
         }
     }
 
