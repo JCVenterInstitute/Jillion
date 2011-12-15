@@ -25,25 +25,19 @@ public class TestViterbiTrainer {
 	@Test
 	public void oneIteration(){
 		ViterbiTrainer trainer = new ViterbiTrainer(1);
-		Hmm<Nucleotide> trainedHmm = trainer.train(HMM, sequences);
-		System.out.println(" 1 iteration...");
-		System.out.println(trainedHmm);
+		trainer.train(HMM, sequences);
 	}
 	
 	@Test
 	public void twoIterations(){
 		ViterbiTrainer trainer = new ViterbiTrainer(2);
-		Hmm<Nucleotide> trainedHmm = trainer.train(HMM, sequences);
-		System.out.println(" 2 iterations...");
-		System.out.println(trainedHmm);
+		trainer.train(HMM, sequences);
 	}
 	
 	@Test
 	public void tenIterations(){
 		ViterbiTrainer trainer = new ViterbiTrainer(10);
-		Hmm<Nucleotide> trainedHmm = trainer.train(HMM, sequences);
-		System.out.println(" 10 iterations...");
-		System.out.println(trainedHmm);
+		trainer.train(HMM, sequences);
 	}
 	
 protected static Hmm<Nucleotide> HMM;
