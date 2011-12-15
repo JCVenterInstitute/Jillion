@@ -66,7 +66,7 @@ public class TestTrimFasta {
                 "-o", outputFile.getAbsolutePath()
         });
         
-        NucleotideFastaDataStore actualDataStore = new DefaultNucleotideFastaFileDataStore(outputFile);
+        NucleotideFastaDataStore actualDataStore = DefaultNucleotideFastaFileDataStore.create(outputFile);
         assertEquals(Nucleotides.asString(
                     actualDataStore.get("read1").getSequence().asList()),
                     "CCCTTT");

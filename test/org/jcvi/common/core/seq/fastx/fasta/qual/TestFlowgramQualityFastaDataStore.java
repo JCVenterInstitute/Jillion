@@ -52,7 +52,7 @@ public class TestFlowgramQualityFastaDataStore {
     @Before
     public void setup() throws IOException, TraceDecoderException{
         expected = QualityFastaRecordDataStoreAdapter.adapt(
-                new DefaultQualityFastaFileDataStore(
+        		DefaultQualityFastaFileDataStore.create(
                 		RESOURCES.getFile(QUAL_EXPECTED)));
         DefaultSffFileDataStore datastore = new DefaultSffFileDataStore();
         SffParser.parseSFF(

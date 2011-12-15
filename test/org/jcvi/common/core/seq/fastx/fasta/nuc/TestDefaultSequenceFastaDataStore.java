@@ -33,9 +33,9 @@ public class TestDefaultSequenceFastaDataStore extends AbstractTestSequenceFasta
     
 
     @Override
-    protected DefaultNucleotideFastaFileDataStore parseFile(File file)
+    protected NucleotideFastaDataStore parseFile(File file)
             throws IOException {
-        return new DefaultNucleotideFastaFileDataStore(file);
+        return DefaultNucleotideFastaFileDataStore.create(file);
     }
     
 }

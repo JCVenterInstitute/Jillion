@@ -53,7 +53,7 @@ public class TestLucyQualityTrimmer {
     @Before
     public void setup() throws  IOException{
         qualities = QualityFastaRecordDataStoreAdapter.adapt(
-                new DefaultQualityFastaFileDataStore(RESOURCES.getFile("files/fullLength.qual")));
+        		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/fullLength.qual")));
     }
     
     @Test
@@ -74,7 +74,7 @@ public class TestLucyQualityTrimmer {
     @Test
     public void noGoodQualityDataShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
         QualityDataStore badQualDataStore =QualityFastaRecordDataStoreAdapter.adapt(
-                new DefaultQualityFastaFileDataStore(RESOURCES.getFile("files/bad.qual")));
+                DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/bad.qual")));
         final Sequence<PhredQuality> badQualities = badQualDataStore.get("SCJIA01T48H08PB26F");
         assertEquals(Range.buildEmptyRange(), sut.trim(badQualities));
     }
@@ -82,7 +82,7 @@ public class TestLucyQualityTrimmer {
     @Test
     public void bTrashShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
         QualityDataStore trashQualDataStore =QualityFastaRecordDataStoreAdapter.adapt(
-                new DefaultQualityFastaFileDataStore(RESOURCES.getFile("files/trash.qual")));
+        		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/trash.qual")));
         final Sequence<PhredQuality> trashQualities = trashQualDataStore.get("JBYHA01T19A06PB2A628FB");
         assertEquals(Range.buildEmptyRange(), sut.trim(trashQualities));
     }
@@ -90,7 +90,7 @@ public class TestLucyQualityTrimmer {
     @Test
     public void wTrashShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
         QualityDataStore trashQualDataStore =QualityFastaRecordDataStoreAdapter.adapt(
-                new DefaultQualityFastaFileDataStore(RESOURCES.getFile("files/trash.qual")));
+        		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/trash.qual")));
         final Sequence<PhredQuality> trashQualities = trashQualDataStore.get("JBZTB06T19E09NA1F");
         assertEquals(Range.buildEmptyRange(), sut.trim(trashQualities));
     }

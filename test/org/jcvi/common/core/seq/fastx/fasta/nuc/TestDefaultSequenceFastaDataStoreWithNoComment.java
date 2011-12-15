@@ -32,9 +32,9 @@ import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataSt
 public class TestDefaultSequenceFastaDataStoreWithNoComment extends AbstractTestSequenceFastaMapWithNoComment{
 
     @Override
-    protected DefaultNucleotideFastaFileDataStore buildMap(
+    protected NucleotideFastaDataStore buildMap(
             File file) throws IOException {
-        return new DefaultNucleotideFastaFileDataStore(file);
+        return DefaultNucleotideFastaFileDataStore.create(file);
     }
     
 

@@ -26,14 +26,13 @@ package org.jcvi.common.core.seq.fastx.fasta.qual;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecord;
+
 
 public class TestLargeQualityFastaDataStore extends AbstractTestQualityFastaDataStore{
 
     @Override
-    protected  DataStore<QualityFastaRecord> buildQualityFastaMapFrom(File file)
+    protected  QualityFastaDataStore createDataStore(File file)
             throws IOException {
         return new LargeQualityFastaFileDataStore(file);
     }

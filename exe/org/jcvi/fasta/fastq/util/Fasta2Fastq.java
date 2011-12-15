@@ -127,7 +127,7 @@ public class Fasta2Fastq {
           
             File qualFile = new File(commandLine.getOptionValue("q"));
             
-            final QualityFastaDataStore qualityDataStore = new DefaultQualityFastaFileDataStore(qualFile,filter);
+            final QualityFastaDataStore qualityDataStore = DefaultQualityFastaFileDataStore.create(qualFile,filter);
             
             File seqFile = new File(commandLine.getOptionValue("s"));
             final PrintWriter writer = new PrintWriter(commandLine.getOptionValue("o"));

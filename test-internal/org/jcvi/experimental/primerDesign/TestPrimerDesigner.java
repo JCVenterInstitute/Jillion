@@ -46,7 +46,7 @@ public class TestPrimerDesigner {
     public void testSingleRequestPrimerDesign() throws Exception {
         templateRecord = null;
         referenceFastaRecords =
-            new DefaultNucleotideFastaFileDataStore(
+            DefaultNucleotideFastaFileDataStore.create(
                 new File(this.getClass().getResource("files/454AllContigs.fasta").getFile())
         );
         primerConfigurationStub =

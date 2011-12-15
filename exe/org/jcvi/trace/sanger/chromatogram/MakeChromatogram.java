@@ -130,7 +130,7 @@ public class MakeChromatogram {
         NucleotideFastaDataStore seqFasta = new LargeNucleotideFastaFileDataStore(new File(commandLine.getOptionValue("s")));
         QualityFastaDataStore qualDataStore = null;
         if(commandLine.hasOption("q")){
-            qualDataStore = new DefaultQualityFastaFileDataStore(new File(commandLine.getOptionValue("q")));
+            qualDataStore = DefaultQualityFastaFileDataStore.create(new File(commandLine.getOptionValue("q")));
         }
         PhredQuality defaultQuality = commandLine.hasOption("default_quality")?
             PhredQuality.valueOf(Integer.parseInt(commandLine.getOptionValue("default_quality"))):

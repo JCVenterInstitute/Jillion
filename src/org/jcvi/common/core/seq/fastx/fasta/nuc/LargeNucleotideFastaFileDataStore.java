@@ -110,7 +110,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
             throws DataStoreException {
         checkNotYetClosed();
         InputStream in=null;
-        DefaultNucleotideFastaFileDataStore datastore=null;
+        NucleotideFastaDataStore datastore=null;
         try {
             in = getRecordFor(id);
         
@@ -118,9 +118,9 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
                 return null;
             }
       
-            datastore= new DefaultNucleotideFastaFileDataStore(getFastaRecordFactory());
-            FastaParser.parseFasta(in, datastore);
-            
+            NucleotideFastaDataStoreBuilderVisitor builder= DefaultNucleotideFastaFileDataStore.createBuilder();
+            FastaParser.parseFasta(in, builder);
+            datastore = builder.build();
             return datastore.get(id);
            
         } catch (FileNotFoundException e) {

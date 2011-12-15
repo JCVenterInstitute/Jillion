@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
 
 /**
@@ -36,14 +35,12 @@ import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataSt
 public class TestStreamingDefaultSequenceDataStore extends TestDefaultSequenceFastaDataStore{
 
     @Override
-    protected DefaultNucleotideFastaFileDataStore parseFile(File file)
+    protected NucleotideFastaDataStore parseFile(File file)
             throws IOException {
         InputStream in =null;
         try{
             in = new FileInputStream(file);
-            DefaultNucleotideFastaFileDataStore datastore = new DefaultNucleotideFastaFileDataStore();
-            FastaParser.parseFasta(in, datastore);
-            return datastore;
+            return DefaultNucleotideFastaFileDataStore.create(in);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
