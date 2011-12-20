@@ -47,8 +47,6 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * which can take some time.  It is recommended that instances are wrapped
  * in {@link CachedDataStore}.
  * @author dkatzel
- *
- *
  */
 public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFileDataStore{
     private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");

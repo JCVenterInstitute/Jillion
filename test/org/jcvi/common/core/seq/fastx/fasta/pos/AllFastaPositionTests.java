@@ -33,7 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestPositionFastaRecord.class,
        TestDefaultPositionsFastaDataStore.class,
-       TestLargePositionsFastaDataStore.class
+       TestLargePositionsFastaDataStore.class,
+       TestPositionFastaFileDataStore.class
     }
     )
 public class AllFastaPositionTests {

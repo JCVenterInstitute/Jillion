@@ -23,10 +23,17 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta.pos;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
+import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.ShortSymbol;
 
-public class DefaultPositionFastaRecordFactory implements PositionFastaRecordFactory{
+class DefaultPositionFastaRecordFactory implements PositionFastaRecordFactory{
  private static final DefaultPositionFastaRecordFactory INSTANCE = new DefaultPositionFastaRecordFactory();
     
     private DefaultPositionFastaRecordFactory(){}
@@ -37,7 +44,7 @@ public class DefaultPositionFastaRecordFactory implements PositionFastaRecordFac
     @Override
     public PositionFastaRecord<Sequence<ShortSymbol>> createFastaRecord(
             String id, String comments, String recordBody) {
-        return PositionsFastaRecordUtil.buildFastaRecord(id, comments, recordBody);
+        return buildFastaRecord(id, comments, recordBody);
         
     }
 
@@ -45,5 +52,23 @@ public class DefaultPositionFastaRecordFactory implements PositionFastaRecordFac
     public PositionFastaRecord<Sequence<ShortSymbol>> createFastaRecord(
             String id, String recordBody) {
         return createFastaRecord(id, null,recordBody);
+    }
+    
+    private static final ShortGlyphFactory GLYPH_FACTORY  = ShortGlyphFactory.getInstance();
+
+    private static PositionFastaRecord<Sequence<ShortSymbol>> buildFastaRecord(
+            String identifier, String comment, CharSequence sequence) {
+        List<ShortSymbol> positions = parsePositions(sequence);
+        return new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(identifier, comment, 
+                new EncodedSequence<ShortSymbol>(DefaultShortGlyphCodec.getInstance(),positions));
+    }
+
+    private static List<ShortSymbol> parsePositions(CharSequence sequence) {
+        Scanner scanner = new Scanner(sequence.toString());
+        List<ShortSymbol> result = new ArrayList<ShortSymbol>();
+        while(scanner.hasNextShort()){
+            result.add(GLYPH_FACTORY.getGlyphFor(scanner.nextShort()));
+        }
+        return result;
     }
 }

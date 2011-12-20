@@ -26,18 +26,14 @@ package org.jcvi.common.core.seq.fastx.fasta.pos;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.pos.PositionFastaRecord;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortSymbol;
 
 
 public class TestDefaultPositionsFastaDataStore extends AbstractTestPositionsFastaDataStore{
 
 
     @Override
-    protected DataStore<PositionFastaRecord<Sequence<ShortSymbol>>> createPositionFastaMap(File fastaFile) throws IOException {
-        return new DefaultPositionFastaFileDataStore(fastaFile);
+    protected PositionFastaDataStore createPositionFastaMap(File fastaFile) throws IOException {
+        return DefaultPositionFastaFileDataStore.create(fastaFile);
     }
 }

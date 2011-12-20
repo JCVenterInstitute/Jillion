@@ -24,97 +24,68 @@
 package org.jcvi.common.core.seq.fastx.fasta.pos;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.FastXFilter;
+import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.util.iter.CloseableIterator;
 
-public class DefaultPositionFastaFileDataStore extends AbstractPositionFastaFileDataStore{
+public class DefaultPositionFastaFileDataStore{
 
-private final Map<String, PositionFastaRecord<Sequence<ShortSymbol>>> map = new HashMap<String, PositionFastaRecord<Sequence<ShortSymbol>>>();
-private DataStore<PositionFastaRecord<Sequence<ShortSymbol>>> datastore;
-/**
- * @param fastaRecordFactory
- */
-public DefaultPositionFastaFileDataStore(
-        PositionFastaRecordFactory fastaRecordFactory) {
-    super(fastaRecordFactory);
-}
-
-/**
- * Convenience constructor using the {@link DefaultPositionFastaFileDataStore}.
- * This call is the same as {@link #DefaultPositionFastaFileDataStore(QualityFastaRecordFactory)
- * new DefaultPositionFastaFileDataStore(DefaultPositionFastaRecordFactory.getInstance());}
- */
-public DefaultPositionFastaFileDataStore() {
-    super();
-}
-
-public DefaultPositionFastaFileDataStore(File fastaFile,PositionFastaRecordFactory fastaRecordFactory) throws FileNotFoundException {
-    super(fastaRecordFactory);
-    parseFastaFile(fastaFile);
-}
-public DefaultPositionFastaFileDataStore(File fastaFile) throws FileNotFoundException {
-    super();
-    parseFastaFile(fastaFile);
-}
-private void parseFastaFile(File fastaFile) throws FileNotFoundException {
-    InputStream in = new FileInputStream(fastaFile);
-    try{
-    FastaParser.parseFasta(in, this);
-    }
-    finally{
-        IOUtil.closeAndIgnoreErrors(in);
-    }
-}
-@Override
-public boolean visitRecord(String id, String comment, String recordBody) {
-    map.put(id  , this.getFastaRecordFactory().createFastaRecord(id, comment,recordBody));
-    return true;
-}
-@Override
-public void close() throws IOException {
-    super.close();
-    map.clear();
-    datastore.close();
-}
-
-
-@Override
-public void visitEndOfFile() {
-    super.visitEndOfFile();
-    datastore = new SimpleDataStore<PositionFastaRecord<Sequence<ShortSymbol>>>(map);
-}
-@Override
-public boolean contains(String id) throws DataStoreException {
-    return datastore.contains(id);
-}
-@Override
-public PositionFastaRecord<Sequence<ShortSymbol>> get(String id)
-        throws DataStoreException {
-    return datastore.get(id);
-}
-@Override
-public CloseableIterator<String> getIds() throws DataStoreException {
-    return datastore.getIds();
-}
-@Override
-public int size() throws DataStoreException {
-    return datastore.size();
-}
-@Override
-public CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> iterator() {
-    return datastore.iterator();
-}
+	public static PositionFastaDataStoreBuilderVisitor createBuilder(){
+		return createBuilder(null);
+	}
+	public static PositionFastaDataStoreBuilderVisitor createBuilder(FastXFilter filter){
+		return new PositionFastaDataStoreBuilderVisitorImpl(filter);
+	}
+	
+	public static PositionFastaDataStore create(File fastaFile) throws FileNotFoundException{
+		return create(fastaFile,null);
+	}
+	public static PositionFastaDataStore create(File fastaFile, FastXFilter filter) throws FileNotFoundException{
+		PositionFastaDataStoreBuilderVisitor builder = createBuilder(filter);
+		FastaParser.parseFasta(fastaFile, builder);
+		return builder.build();
+	}
+	
+	public static PositionFastaDataStore create(InputStream in) throws FileNotFoundException{
+		return create(in,null);
+	}
+	public static PositionFastaDataStore create(InputStream in, FastXFilter filter) throws FileNotFoundException{
+		try{
+			PositionFastaDataStoreBuilderVisitor builder = createBuilder(filter);
+			FastaParser.parseFasta(in, builder);
+			return builder.build();
+		}finally{
+			IOUtil.closeAndIgnoreErrors(in);
+		}
+	}
+	
+	private static class PositionFastaDataStoreBuilderVisitorImpl extends 
+	AbstractFastaFileDataStoreBuilderVisitor<ShortSymbol, Sequence<ShortSymbol>, PositionFastaRecord<Sequence<ShortSymbol>>, PositionFastaDataStore> implements PositionFastaDataStoreBuilderVisitor{
+	
+		@Override
+		public PositionFastaDataStoreBuilderVisitorImpl addFastaRecord(
+				PositionFastaRecord<Sequence<ShortSymbol>> fastaRecord) {
+			super.addFastaRecord(fastaRecord);
+			return this;
+		}
+	
+		public PositionFastaDataStoreBuilderVisitorImpl() {
+			super(new DefaultPositionFastaDataStoreBuilder());
+		}
+		public PositionFastaDataStoreBuilderVisitorImpl(FastXFilter filter) {
+			super(new DefaultPositionFastaDataStoreBuilder(), filter);
+		}
+	
+		@Override
+		protected PositionFastaRecord<Sequence<ShortSymbol>> createFastaRecord(String id,
+				String comment, String entireBody) {
+			return DefaultPositionFastaRecordFactory.getInstance().createFastaRecord(id, comment, entireBody);
+		}
+		
+	}
 }

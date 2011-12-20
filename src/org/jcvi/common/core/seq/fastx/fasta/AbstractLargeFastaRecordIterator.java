@@ -34,7 +34,7 @@ import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 public class AbstractLargeFastaRecordIterator<S extends Symbol, T extends Sequence<S>,F extends FastaRecord<S,T>> extends AbstractBlockingCloseableIterator<F>{
 
     private final File fastaFile;
-    private final FastaRecordFactory<F> recordFactory;
+    private final FastaRecordFactory<S,T,F> recordFactory;
     
     
     
@@ -43,7 +43,7 @@ public class AbstractLargeFastaRecordIterator<S extends Symbol, T extends Sequen
      * @param recordFactory
      */
     public AbstractLargeFastaRecordIterator(File fastaFile,
-            FastaRecordFactory<F> recordFactory) {
+            FastaRecordFactory<S,T,F> recordFactory) {
         this.fastaFile = fastaFile;
         this.recordFactory = recordFactory;
     }
