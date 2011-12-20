@@ -24,6 +24,8 @@
 package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordFactory;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 /**
  * {@code NucleotideFastaRecordFactory} is an implementation 
@@ -33,6 +35,6 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaRecordFactory;
  *
  *
  */
-public interface QualityFastaRecordFactory extends FastaRecordFactory<QualityFastaRecord>{
+interface QualityFastaRecordFactory extends FastaRecordFactory<PhredQuality, QualitySequence,QualityFastaRecord>{
 
 }

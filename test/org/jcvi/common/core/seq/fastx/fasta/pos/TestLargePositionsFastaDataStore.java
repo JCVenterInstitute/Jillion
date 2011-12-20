@@ -36,7 +36,7 @@ public class TestLargePositionsFastaDataStore extends AbstractTestPositionsFasta
     @Override
     protected DataStore<PositionFastaRecord<Sequence<ShortSymbol>>> createPositionFastaMap(File fastaFile)
             throws Exception {
-        return new LargePositionFastaFileDataStore(fastaFile);
+        return LargePositionFastaFileDataStore.create(fastaFile);
     }
 
 }

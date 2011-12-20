@@ -32,6 +32,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataSt
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.pos.PositionFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaDataStore;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
@@ -44,19 +45,15 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         super(record, rootDirPath);
     }
     @Override
-    public SangerPeak getPeaks() {
-        InputStream in=null;
-        DefaultPositionFastaFileDataStore datastore =new DefaultPositionFastaFileDataStore();
+    public SangerPeak getPeaks() {      
+    	PositionFastaDataStore datastore = null;
         try{
-            in = getInputStreamFor(TraceInfoField.PEAK_FILE);
-            datastore =new DefaultPositionFastaFileDataStore();
-            FastaParser.parseFasta(in, datastore);
+            datastore =DefaultPositionFastaFileDataStore.create(getInputStreamFor(TraceInfoField.PEAK_FILE));
             return new SangerPeak(datastore.iterator().next().getSequence().asList());
         } catch (IOException e) {
             throw new IllegalArgumentException("peak file not valid",e);
         }
         finally{
-            IOUtil.closeAndIgnoreErrors(in);
             IOUtil.closeAndIgnoreErrors(datastore);
         }
     }

@@ -22,6 +22,10 @@
  * @author dkatzel
  */
 package org.jcvi.common.core.seq.fastx.fasta;
+
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.Symbol;
+
 /**
  * {@code FastaRecordFactory} is a Factory for creating
  * FastaRecords.
@@ -29,7 +33,7 @@ package org.jcvi.common.core.seq.fastx.fasta;
  *
  *
  */
-public interface FastaRecordFactory<T extends FastaRecord> {
+public interface FastaRecordFactory<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S,T>> {
     /**
      * Create a FastaRecord with the given id, comments and record body.
      * Any whitespace in the record body is ignored.
@@ -38,7 +42,7 @@ public interface FastaRecordFactory<T extends FastaRecord> {
      * @param recordBody the body of the fasta record, may contain whitespace.
      * @return a new FastaRecord.
      */
-    T createFastaRecord(String id, String comments, String recordBody);
+    F createFastaRecord(String id, String comments, String recordBody);
     /**
      * Convenience method for a creating a FastaRecord if there is no comment.
      * This is the same as {@link #createFastaRecord(String, String, String)
@@ -48,5 +52,5 @@ public interface FastaRecordFactory<T extends FastaRecord> {
      * @return a new FastaRecord.
      * @see FastaRecordFactory#createFastaRecord(String, String, String)
      */
-    T createFastaRecord(String id,  String recordBody);
+    F createFastaRecord(String id,  String recordBody);
 }

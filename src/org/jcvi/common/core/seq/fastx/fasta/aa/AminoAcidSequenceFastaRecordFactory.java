@@ -24,6 +24,8 @@
 package org.jcvi.common.core.seq.fastx.fasta.aa;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordFactory;
+import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
+import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 
 /**
  * {@code PeptideFastaRecordFactory} is an implementation 
@@ -33,6 +35,6 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaRecordFactory;
  *
  *
  */
-public interface AminoAcidSequenceFastaRecordFactory extends FastaRecordFactory<AminoAcidSequenceFastaRecord>{
+public interface AminoAcidSequenceFastaRecordFactory extends FastaRecordFactory<AminoAcid, AminoAcidSequence,AminoAcidSequenceFastaRecord>{
 
 }

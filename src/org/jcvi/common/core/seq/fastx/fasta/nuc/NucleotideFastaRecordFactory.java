@@ -24,6 +24,8 @@
 package org.jcvi.common.core.seq.fastx.fasta.nuc;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordFactory;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * {@code NucleotideFastaRecordFactory} is an implementation 
@@ -33,6 +35,6 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaRecordFactory;
  *
  *
  */
-public interface NucleotideFastaRecordFactory extends FastaRecordFactory<NucleotideSequenceFastaRecord>{
+interface NucleotideFastaRecordFactory extends FastaRecordFactory<Nucleotide, NucleotideSequence,NucleotideSequenceFastaRecord>{
 
 }

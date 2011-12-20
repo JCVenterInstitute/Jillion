@@ -30,13 +30,13 @@ import org.jcvi.common.core.symbol.Symbol;
  */
 public abstract class AbstractFastaRecordVisitor<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S,T>> extends AbstractFastaVisitor {
 
-    private final FastaRecordFactory<F> recordFactory;
+    private final FastaRecordFactory<S,T,F> recordFactory;
     
     
     /**
      * @param recordFactory
      */
-    public AbstractFastaRecordVisitor(FastaRecordFactory<F> recordFactory) {
+    public AbstractFastaRecordVisitor(FastaRecordFactory<S,T,F> recordFactory) {
         this.recordFactory = recordFactory;
     }
 
