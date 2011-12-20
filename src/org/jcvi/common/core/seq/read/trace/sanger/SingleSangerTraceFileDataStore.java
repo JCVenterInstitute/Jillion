@@ -20,7 +20,6 @@
 package org.jcvi.common.core.seq.read.trace.sanger;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -28,7 +27,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.TraceDataStore;
-import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
@@ -40,14 +38,10 @@ import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrace> implements TraceDataStore<SangerTrace> {
     private final String id;
     private final SangerTrace trace;
-    public SingleSangerTraceFileDataStore(File traceFile) throws FileNotFoundException, TraceDecoderException{
-        this(traceFile,SangerTraceParser.INSTANCE);
-    }
-    public SingleSangerTraceFileDataStore(File traceFile,SangerTraceCodec traceParser) throws FileNotFoundException, TraceDecoderException{
-        this.id = FilenameUtils.getBaseName(traceFile.getName());
-        this.trace =traceParser.decode(traceFile);
 
-        
+    public SingleSangerTraceFileDataStore(File traceFile) throws IOException{
+        this.id = FilenameUtils.getBaseName(traceFile.getName());
+        this.trace =SangerTraceParser.INSTANCE.decode(traceFile);
     }
     /**
     * {@inheritDoc}

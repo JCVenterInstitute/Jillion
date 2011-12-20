@@ -23,20 +23,19 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.List;
 
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.MagicNumberInputStream;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.AbiChromatogramFile;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFCodecs;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramParser;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.AbiUtil;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFile;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFUtils;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFile;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.SinglePhdFile;
 /**
  * {@code SangerTraceParser} is a SangerTraceCodec singleton
@@ -45,84 +44,65 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.SinglePhdFile;
  *
  *
  */
-public enum SangerTraceParser implements SangerTraceCodec{
-    INSTANCE
-    ;
-    private static final int MARK_LIMIT = 1024;
-    private static final ZTRChromatogramParser ZTR_PARSER = new ZTRChromatogramParser();
+public enum SangerTraceParser {
+    INSTANCE;
 
-    
-    private static final List<SangerTraceCodec> DECODER_ORDER = Arrays.asList(
-            ZTR_PARSER, SCFCodecs.VERSION_3, SCFCodecs.VERSION_2);
 
-    @Override
-    public SangerTrace decode(File traceFile) throws TraceDecoderException, FileNotFoundException{
-
-            for(SangerTraceCodec decoder: DECODER_ORDER){                   
-                try{
-                    return decoder.decode(traceFile);
-                }
-                catch(TraceDecoderException e){
-                    //try next one...
-                }
-                
-            }
-          //try as ab1
-            
-            try{
-                return AbiChromatogramFile.create(traceFile);           
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            //try as phd            
-            try{
-            	return new SinglePhdFile(traceFile);
-            }catch(Exception e){}
-            
-            
-            
-            throw new TraceDecoderException("unknown trace format");
-        
-    }
-    @Override
-    public SangerTrace decode(InputStream in) throws TraceDecoderException {
-        BufferedInputStream bufferedIn = new BufferedInputStream(in);
+    public SangerTrace decode(File traceFile) throws IOException{
+    	
+    	MagicNumberInputStream mIn =null;
         try{
-            for(SangerTraceCodec decoder: DECODER_ORDER){
-                bufferedIn.mark(MARK_LIMIT);
-                try{
-                    return decoder.decode(bufferedIn);
-                }
-                catch(TraceDecoderException e){
-                    bufferedIn.reset();
-                }
-            }
-            //try as ab1            
-            try{
-                bufferedIn.mark(MARK_LIMIT);
-                return AbiChromatogramFile.create(bufferedIn,false);           
-            }catch(Exception e){
-                bufferedIn.reset();
-            }
-          //try as phd   
-            try{
-            	return new SinglePhdFile(bufferedIn);
-            }catch(Exception e){
-            	e.printStackTrace();
-            }
-            
-        }catch(IOException ioException){
-            ioException.printStackTrace();
-            throw new TraceDecoderException("error resetting inputstream", ioException);
+        	mIn= new MagicNumberInputStream(traceFile);
+	        
+	        byte[] magicNumber = mIn.peekMagicNumber();
+	        if(AbiUtil.isABIMagicNumber(magicNumber)){
+	            return AbiChromatogramFile.create(mIn);
+	        }else if(ZTRUtil.isMagicNumber(magicNumber)){
+	        	return ZTRChromatogramFile.create(mIn);
+	        }else if(SCFUtils.isMagicNumber(magicNumber)){
+	        	return SCFChromatogramFile.create(mIn);
+	        }else{
+	        	//not a chromatogram file, try phd
+	        	try{
+	        		return SinglePhdFile.create(traceFile);
+	        	}catch(IOException ioException){
+	        		throw ioException;
+	        	}catch(Exception e){
+	        		//must not be a valid phd?
+	        		throw new TraceDecoderException("unknown trace format");
+	        	}
+	        }
         }finally{
-            IOUtil.closeAndIgnoreErrors(bufferedIn);
+        	IOUtil.closeAndIgnoreErrors(mIn);
         }
-        throw new TraceDecoderException("unknown trace format");
-    }
-    @Override
-    public void encode(SangerTrace trace, OutputStream out) throws IOException {
-        throw new UnsupportedOperationException("SangerTraceParser can not encode");
+          
+            
+            
         
+    }
+    public SangerTrace decode(InputStream in) throws TraceDecoderException {
+    	MagicNumberInputStream mIn =null;
+        try{
+        	mIn= new MagicNumberInputStream(in);
+	        
+	        byte[] magicNumber = mIn.peekMagicNumber();
+	        if(AbiUtil.isABIMagicNumber(magicNumber)){
+	            return AbiChromatogramFile.create(mIn);
+	        }else if(ZTRUtil.isMagicNumber(magicNumber)){
+	        	return ZTRChromatogramFile.create(mIn);
+	        }else if(SCFUtils.isMagicNumber(magicNumber)){
+	        	return SCFChromatogramFile.create(mIn);
+	        }else{
+	        	//not a chromatogram file, try phd
+	        	return SinglePhdFile.create(mIn);
+	        	
+	        }
+        }catch(Exception e){
+    		//must not be a valid?
+    		throw new TraceDecoderException("unknown trace format",e);
+    	}finally{
+        	IOUtil.closeAndIgnoreErrors(mIn);
+        }
     }
 
 

@@ -27,15 +27,12 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
-import org.jcvi.common.core.seq.read.trace.sanger.SangerTraceCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.SangerTraceParser;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
-    
-    private static final SangerTraceCodec TRACE_CODEC = SangerTraceParser.INSTANCE;
     
     private final SangerTrace trace;
     public TraceFileTraceArchiveTrace(TraceArchiveRecord record,
@@ -44,7 +41,7 @@ public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
         InputStream inputStream =null;
         try {
             inputStream = this.getInputStreamFor(TraceInfoField.TRACE_FILE);
-            trace = TRACE_CODEC.decode(inputStream);
+            trace = SangerTraceParser.INSTANCE.decode(inputStream);
         } catch (Exception e) {
            throw new IllegalArgumentException("invalid trace file",e);
         }

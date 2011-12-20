@@ -67,7 +67,7 @@ public enum SCFCodecs implements SCFCodec{
      */
     VERSION_3{
         @Override
-        public void encode(SangerTrace c, OutputStream out) throws IOException {
+        public void encode(Chromatogram c, OutputStream out) throws IOException {
             this.encode(out, (SCFChromatogram)c, 3);
         }
     },
@@ -76,7 +76,7 @@ public enum SCFCodecs implements SCFCodec{
      */
     VERSION_2{
         @Override
-        public void encode(SangerTrace c, OutputStream out) throws IOException {
+        public void encode(Chromatogram c, OutputStream out) throws IOException {
             this.encode(out, (SCFChromatogram)c, 2);
         }
     };
@@ -190,6 +190,7 @@ public enum SCFCodecs implements SCFCodec{
         encode(chromatogram, out);
         
     }
+    protected abstract void encode(Chromatogram c, OutputStream out) throws IOException;
     /**
      * Encodes the given {@link SCFChromatogram} into SCF version specific
      * format.

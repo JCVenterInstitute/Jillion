@@ -39,12 +39,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFUtils;
  *
  */
 public class DefaultSCFHeaderCodec implements SCFHeaderCodec {
-    /**
-     * Magic number of a SCF Header that tells parser
-     * that this is indeed an SCF file.
-     * The actual values are ASCII for <code>.scf</code>.
-     */
-    private static final byte[] MAGIC_NUMBER = new byte[]{0x2E,0x73,0x63,0x66};
+    
     /**
      * There is extra unused space at the end of the header; this is the length
      * of that unused space.
@@ -118,7 +113,7 @@ public class DefaultSCFHeaderCodec implements SCFHeaderCodec {
         if(bytesRead != actualMagicNumber.length){
             throw new SCFHeaderDecoderException("File does not have magic number");
         }
-        if(!Arrays.equals(MAGIC_NUMBER, actualMagicNumber)){
+        if(!SCFUtils.isMagicNumber(actualMagicNumber)){
             throw new SCFHeaderDecoderException("Magic number " + new String(actualMagicNumber,IOUtil.UTF_8)+" does not match expected");
         }
     }
@@ -164,7 +159,7 @@ public class DefaultSCFHeaderCodec implements SCFHeaderCodec {
         //is not leaked in the spare section
         //because NIO will not zero out the buffer upon creation
         ByteBuffer buffer = ByteBuffer.wrap(new byte[SCFUtils.HEADER_SIZE]);
-        buffer.put(MAGIC_NUMBER);
+        buffer.put(SCFUtils.getMagicNumber());
         buffer.putInt(header.getNumberOfSamples());
         buffer.putInt(header.getSampleOffset());
         buffer.putInt(header.getNumberOfBases());

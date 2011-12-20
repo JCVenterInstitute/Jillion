@@ -21,23 +21,52 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.MagicNumberInputStream;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.Ab1FileParser;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.AbiUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFileParser;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFUtils;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFileParser;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRUtil;
 
 public final class ChromatogramParser {
 
 	public static void parse(File chromatogramFile, ChromatogramFileVisitor visitor) throws IOException{
-		try {
-			SCFChromatogramFileParser.parseSCFFile(chromatogramFile, visitor);
-		} catch (TraceDecoderException e) {
-			try{
-				ZTRChromatogramFileParser.parseZTRFile(chromatogramFile, visitor);
-			} catch (TraceDecoderException e2) {
-				Ab1FileParser.parseAb1File(chromatogramFile, visitor);
-			}
+		MagicNumberInputStream mIn =null;
+        try{
+        	mIn= new MagicNumberInputStream(chromatogramFile);	        
+	        parseInputStream(visitor, mIn);
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(mIn);
+        }
+	}
+
+	private static void parseInputStream(ChromatogramFileVisitor visitor,
+			MagicNumberInputStream mIn) throws TraceDecoderException,
+			IOException {
+		byte[] magicNumber = mIn.peekMagicNumber();
+		if(AbiUtil.isABIMagicNumber(magicNumber)){
+			Ab1FileParser.parseAb1File(mIn, visitor);
+		}else if(ZTRUtil.isMagicNumber(magicNumber)){
+			ZTRChromatogramFileParser.parseZTRFile(mIn, visitor);
+		}else if(SCFUtils.isMagicNumber(magicNumber)){
+			SCFChromatogramFileParser.parseSCFFile(mIn, visitor);
+		}else{
+			throw new IOException("unknown chromatogram format (not ab1, scf or ztr)");
 		}
+	}
+	
+	public static void parse(InputStream chromatogramStream, ChromatogramFileVisitor visitor) throws IOException{
+		MagicNumberInputStream mIn =null;
+        try{
+        	mIn= new MagicNumberInputStream(chromatogramStream);	        
+	        parseInputStream(visitor, mIn);
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(mIn);
+        }
 	}
 }

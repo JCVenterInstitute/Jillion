@@ -26,7 +26,6 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFDecoderException;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -47,7 +46,7 @@ public class TestSCFChromatogramWithGaps {
     
     @Test
     public void parse() throws SCFDecoderException, IOException{
-        SCFChromatogram actual =SCFCodecs.VERSION_3.decode(
+        SCFChromatogram actual =SCFChromatogramFile.create(
         		RESOURCES.getFileAsStream(File_path));
         assertEquals(Nucleotides.asString(actual.getBasecalls().asList()), "-----");
         

@@ -25,7 +25,6 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -44,10 +43,10 @@ public class TestActualSCFCodec {
     @Test
     public void decodeAndEncodeMatch() throws SCFDecoderException, IOException{
         InputStream in = RESOURCES.getFileAsStream("files/GBKAK82TF.scf");
-        SCFChromatogram decoded = sut.decode(new DataInputStream(in));
+        SCFChromatogram decoded = SCFChromatogramFile.create(in);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        sut.encode(decoded, out);
-        SCFChromatogram decodedAgain = sut.decode(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
+        sut.write(decoded, out);
+        SCFChromatogram decodedAgain = SCFChromatogramFile.create(new ByteArrayInputStream(out.toByteArray()));
 
         assertEquals(decoded, decodedAgain);
         

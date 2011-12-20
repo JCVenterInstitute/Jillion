@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramFile;
@@ -72,6 +73,36 @@ public class TestChromatogramFileParser {
         BasicChromatogramFile actual = new BasicChromatogramFile();
         
 		ChromatogramParser.parse(ab1File,actual);
+        assertEquals(expected, actual);
+    }
+    
+    
+    @Test
+    public void parseZTRStream() throws TraceDecoderException, IOException{    	
+        InputStream ztrFile = RESOURCES.getFileAsStream(ZTR_FILE);
+        ZTRChromatogram expected = ZTRChromatogramFile.create(ztrFile);
+        ZTRChromatogramFileBuilderVisitor builder = ZTRChromatogramFile.createNewBuilderVisitor();
+        
+		ChromatogramParser.parse(RESOURCES.getFileAsStream(ZTR_FILE),builder);
+        assertEquals(expected, builder.build());
+    }
+    @Test
+    public void parseSCF3Stream() throws TraceDecoderException, IOException{    	
+    	InputStream scfFile = RESOURCES.getFileAsStream(SCF3_FILE);
+        SCFChromatogram expected = SCFChromatogramFile.create(scfFile);
+        SCFChromatogramFileBuilderVisitor visitor = SCFChromatogramFile.createNewBuilderVisitor();
+        
+		ChromatogramParser.parse(RESOURCES.getFileAsStream(SCF3_FILE),visitor);
+        assertEquals(expected, visitor.build());
+    }
+    @Test
+    public void parseAB1Stream() throws TraceDecoderException, IOException{    	
+    	InputStream ab1File = RESOURCES.getFileAsStream(AB1_FILE);
+        BasicChromatogramFile expected = new BasicChromatogramFile();
+        Ab1FileParser.parseAb1File(ab1File, expected);
+        BasicChromatogramFile actual = new BasicChromatogramFile();
+        
+		ChromatogramParser.parse(RESOURCES.getFileAsStream(AB1_FILE),actual);
         assertEquals(expected, actual);
     }
 }
