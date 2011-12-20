@@ -53,7 +53,12 @@ public final class ZTRUtil {
     }
     
     public static boolean isMagicNumber(byte[] magicNumber){
-        return Arrays.equals(ZTR_MAGIC_NUMBER, magicNumber);
+    	if(magicNumber.length < ZTR_MAGIC_NUMBER.length){
+	    	byte[] subSet = new byte[magicNumber.length];
+	    	System.arraycopy(ZTR_MAGIC_NUMBER, 0, subSet, 0, subSet.length);
+	        return Arrays.equals(subSet, magicNumber);
+    	}
+    	return Arrays.equals(ZTR_MAGIC_NUMBER, magicNumber);
     }
     /**
      * Utility method to convert a 4 byte array into

@@ -31,7 +31,7 @@ import org.jcvi.common.io.fileServer.DirectoryFileServer;
 
 /**
  * {@code SingleSangerTraceDirectoryFileDataStore} is a {@link SangerFileDataStore}
- * implemementation that contains {@link FileSangerTrace} data for all
+ * implementation that contains {@link FileSangerTrace} data for all
  * single trace files (.scf, .ztr, phd files that are not phd.balls etc)
  * in the given directory.
  * @author dkatzel
@@ -41,35 +41,24 @@ import org.jcvi.common.io.fileServer.DirectoryFileServer;
 public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<FileSangerTrace> implements SangerFileDataStore<FileSangerTrace>{
 
     private final DirectoryFileServer fileServer;
-    private final SangerTraceCodec traceCodec;
     private final String extension;
     public SingleSangerTraceDirectoryFileDataStore(DirectoryFileServer fileServer,
-            SangerTraceCodec traceCodec, String extension) {
+            String extension) {
         if(fileServer ==null){
             throw new NullPointerException("fileServer can not be null");
         }
-        if(traceCodec ==null){
-            throw new NullPointerException("SangerTraceCodec can not be null");
-        }
         this.extension=extension;
         this.fileServer = fileServer;
-        this.traceCodec = traceCodec;
         
     }
     /**
      * @param dir
      * @param traceCodec
      */
-    public SingleSangerTraceDirectoryFileDataStore(DirectoryFileServer fileServer,
-            SangerTraceCodec traceCodec) {
-       this(fileServer, traceCodec, null);
+    public SingleSangerTraceDirectoryFileDataStore(DirectoryFileServer fileServer) {
+       this(fileServer,  null);
     }
-    public SingleSangerTraceDirectoryFileDataStore(DirectoryFileServer fileServer, String extension){
-        this(fileServer, SangerTraceParser.INSTANCE,extension);
-    }
-    public SingleSangerTraceDirectoryFileDataStore(DirectoryFileServer fileServer){
-        this(fileServer, SangerTraceParser.INSTANCE);
-    }
+    
     private String addExtensionIfNeeded(String id){
         if(extension!=null){
             return id + extension;
@@ -98,7 +87,7 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
          
              try{
                  File file = fileServer.getFile(addExtensionIfNeeded(id));
-                 SangerTrace traceData= traceCodec.decode(file);
+                 SangerTrace traceData= SangerTraceParser.INSTANCE.decode(file);
                  return new DefaultFileSangerTrace(traceData,file);
              } catch (IOException e) {
                 throw new DataStoreException("could not get trace for "+id, e);
@@ -111,7 +100,7 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
       @Override
       public synchronized CloseableIterator<String> getIds() throws DataStoreException {
           super.getIds();
-          return new CloseableIterator(){
+          return new CloseableIterator<String>(){
               Iterator<File> iter = FileIterator.createNonRecursiveFileIteratorBuilder(
                       fileServer.getRootDir())
                       .build();

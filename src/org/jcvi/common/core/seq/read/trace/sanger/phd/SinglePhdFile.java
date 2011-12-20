@@ -54,8 +54,13 @@ public class SinglePhdFile implements  Phd{
     private StringBuilder currentTagValueBuilder;
     private final Phd delegatePhd;
     
-    
-    public SinglePhdFile(File singlePhdFile) throws FileNotFoundException {
+    public static Phd create(File singlePhdFile) throws FileNotFoundException{
+    	return new SinglePhdFile(singlePhdFile);
+    }
+    public static Phd create(InputStream singlePhdFileStream) throws FileNotFoundException{
+    	return new SinglePhdFile(singlePhdFileStream);
+    }
+    private SinglePhdFile(File singlePhdFile) throws FileNotFoundException {
     	PhdParser.parsePhd(singlePhdFile, new SinglePhdFileVisitor());
     	
 		this.delegatePhd = new DefaultPhd(id, 
@@ -67,7 +72,7 @@ public class SinglePhdFile implements  Phd{
 					new SangerPeak(positions),comments,
 					tags);
 	}
-    public SinglePhdFile(InputStream singlePhdStream) {
+    private SinglePhdFile(InputStream singlePhdStream) {
     	PhdParser.parsePhd(singlePhdStream, new SinglePhdFileVisitor());
     	
 		this.delegatePhd = new DefaultPhd(id, 

@@ -81,8 +81,7 @@ public class UnmatedTraceToFragConverter {
             OutputStream out = new FileOutputStream(commandLine.getOptionValue("out"));
             int distance = Integer.parseInt(commandLine.getOptionValue("distance"));
             
-            TraceDataStore<SangerTrace> traceDataStore = 
-                new SingleSangerTraceFileDataStore(traceDirectory,SangerTraceParser.INSTANCE);
+            TraceDataStore<SangerTrace> traceDataStore = new SingleSangerTraceFileDataStore(traceDirectory);
             Distance libraryDistance = Distance.buildDistance(distance, distance);
             Library library = new DefaultLibrary("0", 
             							libraryDistance, 

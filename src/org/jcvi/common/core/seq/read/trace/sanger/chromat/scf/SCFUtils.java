@@ -59,7 +59,35 @@ public final class SCFUtils {
                                                 Section.PRIVATE_DATA);
 
 
+    /**
+     * Magic number of a SCF Header that tells parser
+     * that this is indeed an SCF file.
+     * The actual values are ASCII for <code>.scf</code>.
+     */
+    private static final byte[] MAGIC_NUMBER = new byte[]{0x2E,0x73,0x63,0x66};
 
+    /**
+     * Get the magic number that all SCF encoded
+     * files need to have in its header
+     * to declare itself an SCF encoded file.
+     * @return
+     */
+    public static final byte[] getMagicNumber(){
+    	//defensive copy since java arrays are mutable even if declared final
+    	//(someone can still modify the contents just not the size)
+        byte[] ret = new byte[MAGIC_NUMBER.length];
+        System.arraycopy(MAGIC_NUMBER, 0, ret, 0, ret.length);
+        return ret;
+    }
+    /**
+     * Is the given byte array a valid SCF magic number?
+     * @param magicNumber
+     * @return {@code true} if the magic number is correct;
+     * {@code false} otherwise.
+     */
+    public static boolean isMagicNumber(byte[] magicNumber){
+        return Arrays.equals(MAGIC_NUMBER, magicNumber);
+    }
     /**
      * my own implementation of SCF's delta delta algorithm.
      * <br/>psuedo code:

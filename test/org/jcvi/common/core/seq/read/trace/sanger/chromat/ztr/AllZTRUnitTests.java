@@ -35,8 +35,7 @@ import org.junit.runners.Suite.SuiteClasses;
      TestZTRUtil.class,
      AllDataUnitTests.class,
      AllChunkUnitTests.class,
-     
-     TestZTRChromatogramParser.class,
+
      TestZTRChromatogramFile.class,
      TestIOLibZTRChromatogramWriter.class
     }

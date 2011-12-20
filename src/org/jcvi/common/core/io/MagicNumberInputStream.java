@@ -19,6 +19,8 @@
 
 package org.jcvi.common.core.io;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -52,6 +54,10 @@ public class MagicNumberInputStream extends InputStream{
      */
     public MagicNumberInputStream(InputStream in) throws IOException{
         this(in,4);
+    }
+    
+    public MagicNumberInputStream(File file) throws IOException{
+        this(new FileInputStream(file),4);
     }
     /**
      * Wraps the given {@link InputStream} and reads the 

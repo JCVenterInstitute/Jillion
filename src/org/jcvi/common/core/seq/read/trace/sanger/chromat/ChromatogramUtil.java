@@ -197,14 +197,20 @@ public  final class ChromatogramUtil {
     }
         
     public static void parseChromatogram(InputStream in, ChromatogramFileVisitor visitor) throws IOException, TraceDecoderException{
-        MagicNumberInputStream mIn = new MagicNumberInputStream(in);
-        byte[] magicNumber = mIn.peekMagicNumber();
-        if(AbiUtil.isABIMagicNumber(magicNumber)){
-            Ab1FileParser.parseAb1File(mIn, visitor);
-        }else if(ZTRUtil.isMagicNumber(magicNumber)){
-            ZTRChromatogramFileParser.parseZTRFile(mIn, visitor);
-        }else{
-            SCFChromatogramFileParser.parseSCFFile(mIn, visitor);
+        MagicNumberInputStream mIn =null;
+        try{
+        	mIn= new MagicNumberInputStream(in);
+	        
+	        byte[] magicNumber = mIn.peekMagicNumber();
+	        if(AbiUtil.isABIMagicNumber(magicNumber)){
+	            Ab1FileParser.parseAb1File(mIn, visitor);
+	        }else if(ZTRUtil.isMagicNumber(magicNumber)){
+	            ZTRChromatogramFileParser.parseZTRFile(mIn, visitor);
+	        }else{
+	            SCFChromatogramFileParser.parseSCFFile(mIn, visitor);
+	        }
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(mIn);
         }
     }
 }
