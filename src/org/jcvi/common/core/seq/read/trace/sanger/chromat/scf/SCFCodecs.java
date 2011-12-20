@@ -48,7 +48,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeaderCo
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.DefaultSectionCodecFactory;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.EncodedSection;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.Section;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionCodecFactory;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionDecoder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionDecoderException;
@@ -87,20 +86,10 @@ public enum SCFCodecs implements SCFCodec{
      * 
      */
     SCFCodecs(){
-        this(new DefaultSCFHeaderCodec(), new DefaultSectionCodecFactory());
+    	  this.headerCodec = new DefaultSCFHeaderCodec();
+          this.sectionCodecFactory = new DefaultSectionCodecFactory();
     }
-    /**
-     * Constructor.
-     * @param headerCodec instance of {@link SCFHeaderCodec} used
-     * to encode/ decode the {@link SCFHeader}.
-     * @param sectionCodecFactory instance of {@link SectionCodecFactory}
-     * which returns the version specific {@link SectionCodec}s needed
-     * to encode and decode an {@link SCFChromatogram}.
-     */
-    SCFCodecs(SCFHeaderCodec headerCodec,SectionCodecFactory sectionCodecFactory){
-        this.headerCodec = headerCodec;
-        this.sectionCodecFactory = sectionCodecFactory;
-    }
+    
 
     /**
      *
