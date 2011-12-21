@@ -30,7 +30,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -44,14 +44,15 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 /**
  * An {@code InMemoryZipDataStore} is a {@link ZipDataStore} implementation
- * that unzips the given
+ * that unzips the given zipped data and stores it in a Map with ByteBuffer
+ * keys.
  * @author dkatzel
  *
  *
  */
 public final class InMemoryZipDataStore extends AbstractDataStore<InputStream> implements ZipDataStore{
 
-    private final Map<String, ByteBuffer> contents = new HashMap<String, ByteBuffer>();
+    private final Map<String, ByteBuffer> contents = new LinkedHashMap<String, ByteBuffer>();
     /**
      * Create an {@link InMemoryZipDataStore} from the given {@link File}.
      * @param zipFile a zipFile as a {@link File}.
