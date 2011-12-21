@@ -107,6 +107,7 @@
 					<src path="${test}"/>
 					<src path="${test-internal}"/>
 					<src path="${exe}"/>
+					<src path="${exe-internal}"/>
 					<src path="${exe-test}"/>
 					<src path="${integration-test}"/>
 					<src path="${integration-test-internal}"/>		
@@ -162,6 +163,7 @@
 				<javac debug="true" destdir="${bin}"  classpathref="classpath">
 					<src path="${src-internal}"/>	
 					<src path="${exe}"/>
+					<src path="${exe-internal}"/>
 					
 			  	</javac>
 				<emma enabled="${emma.enabled}" >
