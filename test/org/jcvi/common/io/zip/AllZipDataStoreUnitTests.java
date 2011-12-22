@@ -7,7 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-    	TestDefaultZipDataStore.class,
+    	TestZipFileDataStore.class,
     	TestInMemoryZipDataStore.class,
     	TestInMemoryZipDataStoreStream.class
     }

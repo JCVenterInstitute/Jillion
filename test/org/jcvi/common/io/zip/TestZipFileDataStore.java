@@ -9,18 +9,22 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
-public class TestDefaultZipDataStore extends AbstractTestZipDataStore{
+public class TestZipFileDataStore extends AbstractTestZipDataStore{
 
 	@Override
 	protected ZipDataStore createZipDataStore(File file) throws IOException {
-		return new DefaultZipDataStore(new ZipFile(file));
+		return ZipFileDataStore.create(new ZipFile(file));
 	}
 	
 	@Test(expected = NullPointerException.class)
-	public void nullConstructorShouldThrowNPE(){
-		new DefaultZipDataStore(null);
+	public void nullZipFileConstructorShouldThrowNPE(){
+		ZipFileDataStore.create((ZipFile)null);
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void nullFileConstructorShouldThrowNPE() throws IOException{
+		ZipFileDataStore.create((File)null);
+	}
 	@Test
 	public void errorWhileGettingEntryShouldThrowException() throws IOException{
 		ZipFile mockFile = createMock(ZipFile.class);
@@ -30,7 +34,7 @@ public class TestDefaultZipDataStore extends AbstractTestZipDataStore{
 		expect(mockFile.getInputStream(mockEntry)).andThrow(expectedException);
 		replay(mockFile, mockEntry);
 		
-		DefaultZipDataStore datastore = new DefaultZipDataStore(mockFile);
+		ZipFileDataStore datastore = ZipFileDataStore.create(mockFile);
 		try {
 			datastore.get("id");
 			fail("should throw exception if zipEntry throws exception");

@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.zip.ZipFile;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -48,7 +47,7 @@ import org.jcvi.common.io.fileServer.ReadWriteFileServer;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
 import org.jcvi.common.io.idReader.StringIdParser;
-import org.jcvi.common.io.zip.DefaultZipDataStore;
+import org.jcvi.common.io.zip.ZipFileDataStore;
 import org.jcvi.common.io.zip.ZipDataStore;
 import org.jcvi.common.net.http.HttpUtil;
 import org.jcvi.trace.sanger.traceFileServer.JcviTraceFileServer.FileType;
@@ -123,7 +122,7 @@ public class DownloadTraces {
                     ReadWriteFileServer tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer();
                     tempDir.putStream("traces.zip",
                             traceFileServer.getMultipleFilesAsStream(list, requestType, fileType, ReturnFormat.ZIP));
-                    ZipDataStore zipStore = new DefaultZipDataStore(new ZipFile(tempDir.getFile("traces.zip")));
+                    ZipDataStore zipStore = ZipFileDataStore.create(tempDir.getFile("traces.zip"));
                     Iterator<String> zipIterator = zipStore.getIds();
                     while(zipIterator.hasNext()){
                         String id = zipIterator.next();

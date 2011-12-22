@@ -13,14 +13,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
 import org.jcvi.auth.BasicEncodedJCVIAuthorizer;
 import org.jcvi.auth.JCVIAuthorizer;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
-import org.jcvi.common.io.zip.DefaultZipDataStore;
+import org.jcvi.common.io.zip.ZipFileDataStore;
 import org.jcvi.common.io.zip.InMemoryZipDataStore;
 import org.jcvi.common.io.zip.ZipDataStore;
 import org.jcvi.common.net.http.HttpUtil;
@@ -135,8 +134,7 @@ public abstract class AbstractTestActualJcviTraceFileServer {
     }
     
     private void compareJars(File expectedJar, InputStream inputStreamOfActualJar) throws ZipException, IOException, DataStoreException{
-        final ZipFile zipfile = new ZipFile(expectedJar);
-        ZipDataStore expectedDataStore = new DefaultZipDataStore(zipfile);
+        ZipDataStore expectedDataStore = ZipFileDataStore.create(expectedJar);
         ZipDataStore actualDataStore = InMemoryZipDataStore.createInMemoryZipDataStoreFrom(inputStreamOfActualJar);
         Iterator<String> expectedIds =expectedDataStore.getIds();
         while(expectedIds.hasNext()){

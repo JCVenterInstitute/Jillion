@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.io.zip;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -34,14 +35,13 @@ import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
- * {@code DefaultZipDataStore} is a default implementation
- * of {@link ZipDataStore} which fetches data contained
- * inside a {@link ZipFile}.
+ * {@code ZipFileDataStore} is an implementation
+ * of {@link ZipDataStore} which wraps a {@link ZipFile}.
  * @author dkatzel
  *
  *
  */
-public final class DefaultZipDataStore implements ZipDataStore{
+public final class ZipFileDataStore implements ZipDataStore{
 
     private final ZipFile zipfile;
     private boolean isClosed=false;
@@ -50,7 +50,28 @@ public final class DefaultZipDataStore implements ZipDataStore{
      * @param zipfile the {@link ZipFile} to wrap, can not be null.
      * @throws NullPointerException if zipfile is null.
      */
-    public DefaultZipDataStore(ZipFile zipfile){
+    public static ZipFileDataStore create(ZipFile zipFile){
+    	return new ZipFileDataStore(zipFile);
+    }
+    
+    /**
+     * Construct a ZipDataStore for the given {@link File}
+     * which points to a zipped file.
+     * This is the same as calling
+     * {@link #create(ZipFile) create(new ZipFile(file))}.
+     * @param file the {@link ZipFile} to wrap, can not be null.
+     * @throws IOException if there is a problem wrapping
+     * the file with a {@link ZipFile}.
+     * @throws NullPointerException if file is null.
+     */
+    public static ZipFileDataStore create(File file) throws IOException{
+    	if(file ==null){
+    		throw new NullPointerException("file can not be null");
+    	}
+    	return new ZipFileDataStore(new ZipFile(file));
+    }
+    
+    private ZipFileDataStore(ZipFile zipfile){
         if(zipfile ==null){
             throw new NullPointerException("zip file can not be null");
         }
