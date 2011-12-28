@@ -26,10 +26,25 @@ package org.jcvi.common.core.seq.read.trace;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-
+/**
+ * {@code TraceNucleotideDataStoreAdapter} adapts a {@link TraceDataStore} into
+ * a {@link NucleotideDataStore} by delegating all the get() calls
+ * to the wrapped datastore and then returned only the {@link NucleotideSequence}
+ *  from the desired trace.
+ * @author dkatzel
+ */
 public class TraceNucleotideDataStoreAdapter <T extends Trace> extends AbstractTraceDataStoreAdapter<T,NucleotideSequence> implements NucleotideDataStore {
-
-    public TraceNucleotideDataStoreAdapter(DataStore<T> delegate) {
+	/**
+	 * Create a new {@link NucleotideDataStore} instance
+	 * by adapting the given DataStore of traces.
+	 * @param delegate the {@link DataStore} to adapt.
+	 * @return a new {@link NucleotideDataStore} instance; never null.
+	 * @throws NullPointerException if delegate is null.
+	 */
+	public static <T extends Trace> NucleotideDataStore adapt(DataStore<T> delegate){
+        return new TraceNucleotideDataStoreAdapter<T>(delegate);
+    }
+    private TraceNucleotideDataStoreAdapter(DataStore<T> delegate) {
         super(delegate);
     }
 
