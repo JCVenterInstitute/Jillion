@@ -39,6 +39,9 @@ public abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implemen
      * @param delegate
      */
     public AbstractTraceDataStoreAdapter(DataStore<D> delegate) {
+    	if(delegate==null){
+    		throw new NullPointerException("delegate datastore can not be null");
+    	}
         this.delegate = delegate;
     }
 

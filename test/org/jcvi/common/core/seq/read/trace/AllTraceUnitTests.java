@@ -30,11 +30,14 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+    	TestDefaultTraceFileNameIdGeneratorStripExtension.class,
+        TestTraceQualityDataStoreAdapter.class,
+        TestTraceNucleotideDataStoreAdapter.class,
+        
         AllNexteraUnitTests.class,
         All454UnitTests.class,
         AllSangerTraceUnitTests.class,
-        AllFrgUnitTests.class,
-        TestDefaultTraceFileNameIdGeneratorStripExtension.class
+        AllFrgUnitTests.class      
    
     }
     )
