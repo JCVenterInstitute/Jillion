@@ -417,8 +417,10 @@ public final class Range implements Placed<Range>,Iterable<Long>
         }
         return getFromCache(range);
     }
-    private static Range getFromCache(Range range) {
-       
+    private static synchronized Range getFromCache(Range range) {
+       if(range==null){
+    	   throw new NullPointerException("can not add null range to cache");
+       }
         String hashcode = createCacheKeyFor(range);
         if(CACHE.containsKey(hashcode)){
             return CACHE.get(hashcode);
