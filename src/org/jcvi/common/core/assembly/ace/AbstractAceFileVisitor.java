@@ -156,9 +156,13 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         //to find the region we are interested in
         Range qualityRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
         Range alignmentRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
-        Range gappedValidRange = qualityRange.intersection(alignmentRange)
-                    .convertRange(CoordinateSystem.RESIDUE_BASED);
-        
+        final  Range gappedValidRange;
+        try{
+	        gappedValidRange = qualityRange.intersection(alignmentRange)
+	                    .convertRange(CoordinateSystem.RESIDUE_BASED);
+       }catch(Exception e){
+    	   throw new RuntimeException("error while generating quality data for "+currentReadId,e);
+       }
         AssembledFrom assembledFrom =currentAssembledFromMap.get(currentReadId);
         if(assembledFrom ==null){
             throw new IllegalStateException("unknown read no AF record for "+ currentReadId);
