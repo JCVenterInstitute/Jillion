@@ -422,16 +422,22 @@ public final class Range implements Placed<Range>,Iterable<Long>
     	   throw new NullPointerException("can not add null range to cache");
        }
         String hashcode = createCacheKeyFor(range);
-        if(CACHE.containsKey(hashcode)){
-            return CACHE.get(hashcode);
+       
+        //contains() followed by get() is not atomic;
+        //we could gc in between - so only do a get
+        //and check if null.
+        Range cachedRange= CACHE.get(hashcode);
+        if(cachedRange !=null){
+        	return cachedRange;
         }
-        CACHE.put(hashcode, range);
-    
+        //not in cache so put it in
+        CACHE.put(hashcode,range);
         return range;
+
     }
     private static String createCacheKeyFor(Range r){
         //Range's hashcode causes too many collisions 
-        //however the toString() should be fine
+        //Range's toString() should be fine
         //to ensure uniqueness in our cache.
         return r.toString();
     }
@@ -853,8 +859,14 @@ public final class Range implements Placed<Range>,Iterable<Long>
         }
 
         try{
-            return Range.buildRange(Math.max(target.getStart(), this.start),
-                            Math.min(target.getEnd(), this.end)).convertRange(getCoordinateSystem());
+            long intersectionStart = Math.max(target.getStart(), this.start);
+			long intersectionEnd = Math.min(target.getEnd(), this.end);
+			Range zeroBasedRange = Range.buildRange(intersectionStart,
+                            intersectionEnd);
+			return zeroBasedRange.convertRange(getCoordinateSystem());
+        }
+        catch(NullPointerException npe){
+        	throw npe;
         }
         catch(IllegalArgumentException e){
             return buildEmptyRange().convertRange(getCoordinateSystem());
