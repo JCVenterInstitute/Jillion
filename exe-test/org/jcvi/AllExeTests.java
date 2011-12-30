@@ -21,6 +21,8 @@ package org.jcvi;
 
 import org.jcvi.assembly.ace.AllAceExeTests;
 import org.jcvi.assembly.cas.TestFilterFastqDataFromCas;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.TestChromatogram2Fasta;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.TestChromatogram2FastaMain;
 import org.jcvi.fasta.TestTrimFasta;
 import org.jcvi.fasta.fastq.util.TestFastQ2FastaEnd2End;
 import org.jcvi.fasta.fastq.util.TestFastQFile;
@@ -39,7 +41,8 @@ import org.junit.runners.Suite.SuiteClasses;
    TestFastQ2FastaEnd2End.class,
    TestTrimFasta.class,
    AllAceExeTests.class,
-   
+   TestChromatogram2Fasta.class,
+   TestChromatogram2FastaMain.class,
    TestFilterFastqDataFromCas.class
 }
 )
