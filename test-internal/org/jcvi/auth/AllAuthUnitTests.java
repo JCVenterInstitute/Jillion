@@ -32,8 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         AllBase64UnitTests.class,
         TestDefaultJCVIAuthorizer.class,
-        TestDefaultTigrAuthorizer.class,
-        TestDefaultTigrAuthorizerBuilder.class,
+
         TestBasicEncodedJCVIAuthorizer.class
     })
 public class AllAuthUnitTests {
