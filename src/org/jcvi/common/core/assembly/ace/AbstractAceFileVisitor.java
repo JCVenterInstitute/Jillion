@@ -156,10 +156,16 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         //to find the region we are interested in
         Range qualityRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
         Range alignmentRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
-        final  Range gappedValidRange;
+        Range gappedValidRange;
         try{
 	        gappedValidRange = qualityRange.intersection(alignmentRange)
 	                    .convertRange(CoordinateSystem.RESIDUE_BASED);
+	        if(gappedValidRange.isEmpty()){
+	        	//no intersection! 
+	        	//I've only seen this on really bad quality
+	        	//sanger data...default to alignment coords?
+	        	gappedValidRange = alignmentRange;
+	        }
        }catch(Exception e){
     	   throw new RuntimeException("error while generating quality data for "+currentReadId,e);
        }
