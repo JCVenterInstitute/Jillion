@@ -498,6 +498,9 @@ public class Cas2Consed3 {
         */
         @Override
         public TrimDataStore build() {
+        	if(delegates.isEmpty()){
+        		return TrimDataStoreUtil.EMPTY_DATASTORE;
+        	}
             TrimDataStore datastore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimDataStore.class, delegates);
             delegates = null;
             return datastore;
