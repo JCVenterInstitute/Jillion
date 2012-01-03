@@ -45,9 +45,8 @@ public final  class AsmUtil {
 	 */
     public static String computeGappedSequence(List<Nucleotide> ungappedSequence, List<Integer> asmEncodedGaps){
         NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(ungappedSequence);
-        for(int i=asmEncodedGaps.size()-1; i>=0; i--){
-            int offset = asmEncodedGaps.get(i);
-            builder.insert(offset, Nucleotide.Gap);
+        for(Integer offset : asmEncodedGaps){
+            builder.insert(offset.intValue(), Nucleotide.Gap);
         }
         
         return builder.toString();
