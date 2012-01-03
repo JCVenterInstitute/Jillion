@@ -75,6 +75,11 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
             throw new IllegalStateException("already initialized");
         }
     }
+    /**
+     * Store AF data in map.
+     * <p/>
+     * {@inheritDoc}
+     */
     @Override
     public synchronized void visitAssembledFromLine(String readId,
             Direction dir, int gappedStartOffset) {
@@ -110,7 +115,11 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         throwExceptionIfInitialized();
 
     }
-
+    /**
+     * Reset all temp data that contains contig specific information.
+     * <p/>
+     * {@inheritDoc}
+     */
     @Override
     public synchronized boolean visitContigHeader(String contigId, int numberOfBases,
             int numberOfReads, int numberOfBaseSegments,
@@ -128,20 +137,28 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     public synchronized void visitHeader(int numberOfContigs, int totalNumberOfReads) {
         throwExceptionIfInitialized();
     }
-
+    /**
+     * Uses given quality coordinates to compute
+     * the valid range of the current read.
+     * If the quality coordinates are not valid,
+     * then this read is skipped.
+     * <p/>
+     * {@inheritDoc}
+     */
     @Override
     public synchronized void visitQualityLine(int qualLeft,
             int qualRight, int alignLeft, int alignRight) {
         throwExceptionIfInitialized();  
         if(qualLeft == -1 && qualRight ==-1){
             skipCurrentRead = true;
+            visitIgnoredRead(currentReadId, "entire read is low quality");
             return;
         }
         if((qualRight-qualLeft) <0){
             //invalid converted ace file? 
             skipCurrentRead = true;
-            System.err.printf("dropping read %s because it has a negative valid range %d%n", currentReadId,
-                    (qualRight-qualLeft));
+            visitIgnoredRead(currentReadId, String.format("has a negative valid range %d%n",
+                    (qualRight-qualLeft)));
             return;
         }    
         //dkatzel 4/2011 - There have been cases when qual coords and align coords
@@ -163,8 +180,11 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 	        if(gappedValidRange.isEmpty()){
 	        	//no intersection! 
 	        	//I've only seen this on really bad quality
-	        	//sanger data...default to alignment coords?
-	        	gappedValidRange = alignmentRange;
+	        	//sanger data...skip it?
+	        	skipCurrentRead = true;
+	        	visitIgnoredRead(currentReadId, String.format("invalid QA line %s %s%n", 
+	        			qualityRange,alignmentRange ));
+	        	return;
 	        }
        }catch(Exception e){
     	   throw new RuntimeException("error while generating quality data for "+currentReadId,e);
@@ -203,7 +223,22 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         currentClearRange = ungappedValidRange;
         
     }
-    
+    /**
+     * During parsing, it might be determined that the current read
+     * getting parsed is invalid for various reasons;
+     * if that is the case, then this method is called and all further
+     * processing of this read is not performed.  Parsing will continue
+     * with the next read.
+     * <p/>
+     * By default the read name and reason are printed
+     * to STDERR; please override this method if you want
+     * to do something else.
+     * @param readId the id of the read getting ignored.
+     * @param reason the reason this read is to be ignored.
+     */
+    protected void visitIgnoredRead(String readId, String reason){
+    	System.err.printf("ignoring read %s because %s%n", readId,reason);
+    }
     
     private int computeReadOffset(AssembledFrom assembledFrom, long startPosition) {
         return assembledFrom.getStartOffset() + (int)startPosition -2;
@@ -261,7 +296,6 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     @Override
     public synchronized void visitEndOfFile() {
         throwExceptionIfInitialized();  
-      //  visitEndOfContig();
         clearTempData();
         initialized = true;
         
