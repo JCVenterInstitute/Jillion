@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.common.core.symbol.residue.ResidueSequenceBuilder;
 
 /**
  * {@code NucleotideSequenceBuilder}  is a way to
@@ -38,7 +38,7 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public final class NucleotideSequenceBuilder implements Builder<NucleotideSequence>{
+public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<Nucleotide,NucleotideSequence>{
     private static final int GAP_VALUE = Nucleotide.Gap.ordinal();
     private static final int N_VALUE = Nucleotide.Unknown.ordinal();
     private static final int A_VALUE = Nucleotide.Adenine.ordinal();
@@ -151,11 +151,17 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @param otherBuilder the {@link NucleotideSequenceBuilder} whose current
      * nucleotides are to be appended.
      * @throws NullPointerException if otherBuilder is null.
+     * @throws IllegalArgumentException if otherBuilder is not a NucleotideSequenceBuilder.
      */
-    public NucleotideSequenceBuilder append(NucleotideSequenceBuilder otherBuilder){
-        assertNotNull(otherBuilder);
-        appendArray(otherBuilder.array);
-        codecDecider.increment(otherBuilder.codecDecider);
+    public NucleotideSequenceBuilder append(ResidueSequenceBuilder<Nucleotide, NucleotideSequence> otherBuilder){
+        
+    	assertNotNull(otherBuilder);
+    	if(!(otherBuilder instanceof NucleotideSequenceBuilder)){
+        	throw new IllegalArgumentException("other builder must be NucleotideSequenceBuilder");
+        }
+    	NucleotideSequenceBuilder otherSequenceBuilder = (NucleotideSequenceBuilder)otherBuilder;
+        appendArray(otherSequenceBuilder.array);
+        codecDecider.increment(otherSequenceBuilder.codecDecider);
         return this;
     }
     
@@ -282,14 +288,14 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         return this;
     }
     
-    int getNumGaps(){
+    public int getNumGaps(){
         return codecDecider.getNumberOfGaps();
     }
     
-    int getNumNs(){
+    public int getNumNs(){
         return codecDecider.getNumberOfNs();
     }
-    int getNumAmbiguities(){
+    public int getNumAmbiguities(){
         return codecDecider.getNumberOfAmbiguities();
     }
     
@@ -353,10 +359,13 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * nucleotides are to be inserted at the given offset.
      * @return this
      * @throws NullPointerException if otherBuilder is null.
-     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     * @throws IllegalArgumentException if offset <0 or > current sequence length or if otherBuilder is not a NucleotideSequenceBuilder.
      */
-    public NucleotideSequenceBuilder insert(int offset, NucleotideSequenceBuilder otherBuilder){
+    public NucleotideSequenceBuilder insert(int offset, ResidueSequenceBuilder<Nucleotide, NucleotideSequence> otherBuilder){
         assertNotNull(otherBuilder);
+        if(!(otherBuilder instanceof NucleotideSequenceBuilder)){
+        	throw new IllegalArgumentException("otherBuilder must be a NucleotideSequenceBuilder");
+        }
         if(offset<0){
             throw new IllegalArgumentException("offset can not have negatives coordinates: "+ offset);
         }
@@ -364,8 +373,9 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
             throw new IllegalArgumentException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }   
-        insertEncodedArray(offset, otherBuilder.array);
-        codecDecider.increment(otherBuilder.codecDecider);
+        NucleotideSequenceBuilder otherSequenceBuilder = (NucleotideSequenceBuilder)otherBuilder;
+        insertEncodedArray(offset, otherSequenceBuilder.array);
+        codecDecider.increment(otherSequenceBuilder.codecDecider);
         return this;
     }
     
@@ -428,7 +438,7 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
      * @throws NullPointerException if otherBuilder is null.
      * @see #insert(int, NucleotideSequenceBuilder)
      */
-    public NucleotideSequenceBuilder prepend(NucleotideSequenceBuilder otherBuilder){
+    public NucleotideSequenceBuilder prepend(ResidueSequenceBuilder<Nucleotide, NucleotideSequence> otherBuilder){
         return insert(0, otherBuilder);
     }
     /**
@@ -486,7 +496,9 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         }
         return bases;
     }
-    
+    /**
+     * {@inheritDoc}
+     */
 	public NucleotideSequenceBuilder subSequence(Range range) {
 		byte[] subArray = new byte[(int) range.getLength()];
 		System.arraycopy(array, (int) range.getStart(), subArray, 0, subArray.length);
@@ -542,7 +554,21 @@ public final class NucleotideSequenceBuilder implements Builder<NucleotideSequen
         }
         return this;
     }
-    /**
+    
+    
+    @Override
+	public NucleotideSequenceBuilder reverse() {
+    	int currentLength = codecDecider.getCurrentLength();
+        int pivotOffset = currentLength/2;
+        for(int i=0; i<pivotOffset; i++){
+            int compOffset = currentLength-1-i;
+            byte tmp = array[i];            
+            array[i] = array[compOffset];
+            array[compOffset] =tmp;
+        }
+		return this;
+	}
+	/**
      * Remove all gaps currently present in this builder.
      * @return this.
      */

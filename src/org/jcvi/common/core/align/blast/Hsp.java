@@ -23,6 +23,8 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 
 import org.jcvi.common.core.DirectedRange;
+import org.jcvi.common.core.align.SequenceAlignment;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
@@ -30,18 +32,10 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  *
  *
  */
-public interface Hsp {
+public interface Hsp extends SequenceAlignment<Nucleotide,NucleotideSequence> {
     String getQueryId();
     
     String getSubjectId();
-    
-    double getPercentIdentity();
-    
-    int getAlignmentLength();
-    
-    int getNumberOfMismatches();
-    
-    int getNumberOfGapOpenings();
     
     DirectedRange getQueryRange();
     
@@ -74,15 +68,6 @@ public interface Hsp {
      * otherwise.
      */
     boolean hasAlignments();
-    
-    /**
-     * @return the gappedQueryAlignment
-     */
-    NucleotideSequence getGappedQueryAlignment();
-    /**
-     * @return the gappedSubjectAlignment
-     */
-    NucleotideSequence getGappedSubjectAlignment();
     
     public enum Comparators implements Comparator<Hsp>{
         BIT_SCORE{

@@ -449,4 +449,17 @@ public class TestNucleotideSequenceBuilder {
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.asList(Range.buildRange(20,100));
     }
+    
+    @Test
+    public void reverseEvenNumberOfBases(){
+    	 NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AAGG");
+    	 sut.reverse();
+    	 assertEquals(Nucleotides.parse("GGAA"),sut.asList());
+    }
+    @Test
+    public void reverseOddNumberOfBases(){
+    	 NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AATGG");
+    	 sut.reverse();
+    	 assertEquals(Nucleotides.parse("GGTAA"),sut.asList());
+    }
 }

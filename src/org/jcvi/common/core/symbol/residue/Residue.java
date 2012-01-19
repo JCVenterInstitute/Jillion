@@ -28,4 +28,5 @@ import org.jcvi.common.core.symbol.Symbol;
  */
 public interface Residue extends Symbol{
 
+	byte getOrdinalAsByte();
 }

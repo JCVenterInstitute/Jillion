@@ -30,13 +30,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractTestAminoAcidEncodedGlyphs {
-	private final List<AminoAcid> aminoAcids = AminoAcid.getGlyphsFor("ILKMFTWVVFTWILK");
+	private final List<AminoAcid> aminoAcids = AminoAcid.getGlyphsFor("ILKMF");
 	Sequence<AminoAcid> sut;
 	@Before
 	public void setup(){
 		sut = encode(aminoAcids);
 	}
-	protected abstract Sequence<AminoAcid> encode(List<AminoAcid> aminoAcids);
+	protected abstract AminoAcidSequence encode(List<AminoAcid> aminoAcids);
 	@Test
 	public void decode(){
 		assertEquals(aminoAcids,sut.asList());
@@ -52,6 +52,14 @@ public abstract class AbstractTestAminoAcidEncodedGlyphs {
 		List<AminoAcid> expected = aminoAcids.subList(2, 6);
 		assertEquals(expected, sut.asList(range));
 	}
+	
+	@Test
+	public void singleBase(){
+		List<AminoAcid> expected = AminoAcid.getGlyphsFor("L");
+		AminoAcidSequence seq = encode(expected);
+		assertEquals(expected, seq.asList());
+	}
+	
 	@Test
 	public void get(){
 		for(int i=0; i< aminoAcids.size(); i++){

@@ -57,7 +57,8 @@ public enum AminoAcid implements Residue{
     Asparagine("Asparagine","Asn",'N'),
     Aspartic_Acid("Aspartic Acid", "Asp",'D'),
     Glutamic_Acid("Glutamic Acid","Glu",'E'),
-    Unknown_Amino_Acid("Unknown Amino Acid", "Uknown", 'X')
+    Unknown_Amino_Acid("Unknown Amino Acid", "Uknown", 'X'),
+    Gap("Gap", "Gap", '-')
     ;
     
     private final Character abbreviation;
@@ -173,5 +174,18 @@ public enum AminoAcid implements Residue{
     	}
     	return result.toString();
     }
-
+	@Override
+	public byte getOrdinalAsByte() {
+		return (byte)ordinal();
+	}
+	/**
+     * Get the 1 letter abbreviation for this Amino Acid
+     * as a char.
+     * @return the 1 letter abbreviation for this Amino Acid
+     * as a char.
+     */
+	public char asChar(){
+		return abbreviation.charValue();
+	}
+    
 }
