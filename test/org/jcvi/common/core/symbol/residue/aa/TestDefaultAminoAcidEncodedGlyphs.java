@@ -21,14 +21,13 @@ package org.jcvi.common.core.symbol.residue.aa;
 
 import java.util.List;
 
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.DefaultAminoAcidEncodedGlyphs;
 
 public class TestDefaultAminoAcidEncodedGlyphs extends AbstractTestAminoAcidEncodedGlyphs{
 
 	@Override
-	protected Sequence<AminoAcid> encode(List<AminoAcid> aminoAcids) {
+	protected AminoAcidSequence encode(List<AminoAcid> aminoAcids) {
 		return new DefaultAminoAcidEncodedGlyphs(aminoAcids);
 	}
 

@@ -220,7 +220,10 @@ public enum Nucleotide implements Residue {
         this !=Cytosine && this != Guanine && this != Thymine;
     }
     
-    
+    @Override
+	public byte getOrdinalAsByte() {
+		return (byte)ordinal();
+	}
    
     
     

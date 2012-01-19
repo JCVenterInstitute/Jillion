@@ -23,79 +23,12 @@
  */
 package org.jcvi.common.core.symbol.residue.nuc;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
-import org.jcvi.common.core.Range;
+import org.jcvi.common.core.symbol.residue.AbstractResidueSequence;
 
-public abstract class AbstractNucleotideSequence implements NucleotideSequence{
+public abstract class AbstractNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements NucleotideSequence{
 
-    
-
-
-    @Override
-    public long getUngappedLength(){
-        return getLength() - getNumberOfGaps();
-    }
-    @Override
-    public int getNumberOfGapsUntil(int gappedValidRangeIndex) {
-        int numberOfGaps=0;
-        for(Integer gapIndex :getGapOffsets()){
-            if(gapIndex.intValue() <=gappedValidRangeIndex){
-                numberOfGaps++;
-            }
-        }
-        return numberOfGaps;
-    }
-    private int computeNumberOfInclusiveGapsInUngappedValidRangeUntil(int ungappedValidRangeIndex) {
-        int numberOfGaps=0;
-        for(Integer gapIndex :getGapOffsets()){
-            //need to account for extra length due to gaps being added to ungapped index
-            if(gapIndex.intValue() <=ungappedValidRangeIndex + numberOfGaps){
-                numberOfGaps++;
-            }
-        }
-        return numberOfGaps;
-    }
-
-   
-    
-    @Override
-    public List<Nucleotide> asList(Range range) {
-        if(range==null){
-            return asList();
-        }
-        List<Nucleotide> result = new ArrayList<Nucleotide>();
-        for(long index : range){
-            result.add(get((int)index));
-        }
-        return result;
-    }
-
-    @Override
-    public List<Nucleotide> asUngappedList() {
-        List<Nucleotide> withoutGaps = asList();
-        final List<Integer> gapIndexes = getGapOffsets();
-        for(int i= gapIndexes.size()-1; i>=0; i--){
-            withoutGaps.remove(gapIndexes.get(i).intValue());
-        }
-        return withoutGaps;
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getUngappedOffsetFor(int gappedIndex) {
-        return gappedIndex - getNumberOfGapsUntil(gappedIndex);
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getGappedOffsetFor(int ungappedIndex) {
-        return ungappedIndex +computeNumberOfInclusiveGapsInUngappedValidRangeUntil(ungappedIndex);
-    }
     /**
     * {@inheritDoc}
     */
