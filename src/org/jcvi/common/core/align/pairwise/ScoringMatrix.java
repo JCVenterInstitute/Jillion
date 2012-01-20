@@ -25,25 +25,10 @@ import org.jcvi.common.core.symbol.Symbol;
  * @author dkatzel
  *
  *
+ *
  */
 public interface ScoringMatrix<S extends Symbol> {
 
-    public enum Path{
-        /**
-         * The end of an alignment.
-         */
-        TERMINAL,
-        /** The path code for a horizontal 
-         * (reference gap) transition. 
-         */
-        HORIZONTAL,
-        /** The path code for a vertical 
-         * (query gap) transition. 
-         */
-        VERTICAL,
-        /** The path code for a diagonal 
-         * (sequence similarity) transition. 
-         */
-        DIAGNOL;
-    }
+    
+	float getScore(byte b, byte c);
 }

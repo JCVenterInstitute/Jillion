@@ -20,6 +20,7 @@
 package org.jcvi.common.core.align;
 
 import org.jcvi.common.core.align.blast.AllBlastUnitTests;
+import org.jcvi.common.core.align.pairwise.AllPairwiseUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -28,7 +29,11 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestAlnParser.class,
-        AllBlastUnitTests.class
+        TestNucleotideSequenceAlignmentBuilder.class,
+        
+        AllBlastUnitTests.class,
+        AllPairwiseUnitTests.class
+        
     }
     )
 public class AllAlignUnitTests {

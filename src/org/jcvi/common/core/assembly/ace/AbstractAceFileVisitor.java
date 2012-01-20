@@ -272,6 +272,9 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     /**
      * Visit an AceRead inside the current contig.  All the math and coordinate conversions
      * have already been computed from the Ace file already.
+     * <p/>
+     * This method will be called after the line that triggers the {@link #visitTraceDescriptionLine(String, String, Date)}
+     * but before the next {@link #visitLine(String)} is called.
      * @param readId the id of the read.
      * @param validBasecalls the basecalls as a string- NOTE that this has gaps as "*" instead
      * of "-". 

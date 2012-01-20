@@ -99,18 +99,29 @@ public class AceFileWriter {
                         AceFileUtil.TAG_DATE_TIME_FORMATTER.print(readTag.getCreationDate().getTime())), out);
         
     }
+    
+    public static void writeAceContigHeader(String contigId, long consensusLength, int numberOfReads,
+    		int numberOfBaseSegments, boolean isComplimented, OutputStream out) throws IOException{
+    	writeString(String.format(CONTIG_HEADER, 
+                contigId, 
+                consensusLength,
+                numberOfReads,
+                numberOfBaseSegments,
+                isComplimented? "C":"U"),
+                
+                out);
+    }
+    
     public static void writeAceContig(AceContig contig,
             PhdDataStore phdDataStore, 
             OutputStream out) throws IOException, DataStoreException{
         final NucleotideSequence consensus = contig.getConsensus();
-        
-        writeString(String.format(CONTIG_HEADER, 
+        writeAceContigHeader(
                 contig.getId(), 
                 consensus.getLength(),
                 contig.getNumberOfReads(),
                 0,
-                contig.isComplemented()? "C":"U"),
-                
+                contig.isComplemented(),
                 out);
         out.flush();
         writeString(String.format("%s%n%n%n",AceFileUtil.convertToAcePaddedBasecalls(consensus)), out);

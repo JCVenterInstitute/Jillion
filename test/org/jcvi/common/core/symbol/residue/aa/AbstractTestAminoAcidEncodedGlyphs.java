@@ -30,7 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractTestAminoAcidEncodedGlyphs {
-	private final List<AminoAcid> aminoAcids = AminoAcid.getGlyphsFor("ILKMF");
+	private final List<AminoAcid> aminoAcids = AminoAcid.getGlyphsFor("ILKMFDEX");
 	Sequence<AminoAcid> sut;
 	@Before
 	public void setup(){
