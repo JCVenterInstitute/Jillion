@@ -13,6 +13,7 @@ public interface SequenceAlignmentBuilder<R extends Residue, S extends Sequence<
 	
 	SequenceAlignmentBuilder<R,S,A> addMismatch(R query, R subject);
 	SequenceAlignmentBuilder<R,S,A> addGap(R query, R subject);
+	SequenceAlignmentBuilder<R, S,A> addGap(char query, char subject);
 	
 	SequenceAlignmentBuilder<R,S,A> reverse();
 	
