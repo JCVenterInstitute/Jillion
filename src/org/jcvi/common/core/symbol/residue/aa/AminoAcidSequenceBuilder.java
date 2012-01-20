@@ -18,7 +18,7 @@ public class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAci
 	}
 	public AminoAcidSequenceBuilder(CharSequence sequence){
 		builder = new StringBuilder(sequence.length());
-		append(AminoAcid.getGlyphsFor(sequence.toString()));
+		append(AminoAcids.parse(sequence.toString()));
 	}
 	@Override
 	public AminoAcidSequenceBuilder append(
@@ -48,14 +48,14 @@ public class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAci
 	@Override
 	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> append(
 			String sequence) {
-		return append(AminoAcid.getGlyphsFor(sequence));
+		return append(AminoAcids.parse(sequence));
 	}
 
 	@Override
 	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> insert(
 			int offset, String sequence) {
 		StringBuilder tempBuilder = new StringBuilder();
-		for(AminoAcid aa :AminoAcid.getGlyphsFor(sequence)){
+		for(AminoAcid aa :AminoAcids.parse(sequence)){
 			if(aa == AminoAcid.Gap){
 				numberOfGaps++;
 			}
@@ -73,7 +73,7 @@ public class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAci
 	@Override
 	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> replace(
 			int offset, AminoAcid replacement) {
-		if(AminoAcid.getGlyphFor(builder.charAt(offset)) == AminoAcid.Gap){
+		if(AminoAcid.parse(builder.charAt(offset)) == AminoAcid.Gap){
 			numberOfGaps--;			
 		}
 		if(replacement == AminoAcid.Gap){
@@ -151,17 +151,17 @@ public class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAci
 
 	@Override
 	public AminoAcidSequence build() {
-		return new DefaultAminoAcidEncodedGlyphs(builder.toString());
+		return new DefaultAminoAcidSequence(builder.toString());
 	}
 
 	@Override
 	public AminoAcidSequence build(Range range) {
-		return new DefaultAminoAcidEncodedGlyphs(builder.substring((int)range.getStart(), (int)range.getEnd()+1));
+		return new DefaultAminoAcidSequence(builder.substring((int)range.getStart(), (int)range.getEnd()+1));
 	}
 
 	@Override
 	public List<AminoAcid> asList(Range range) {
-		return AminoAcid.getGlyphsFor(builder.substring((int)range.getStart(), (int)range.getEnd()+1));
+		return AminoAcids.parse(builder.substring((int)range.getStart(), (int)range.getEnd()+1));
 	}
 
 	@Override
@@ -172,7 +172,7 @@ public class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAci
 
 	@Override
 	public List<AminoAcid> asList() {
-		return AminoAcid.getGlyphsFor(builder.toString());
+		return AminoAcids.parse(builder.toString());
 	}
 
 	@Override

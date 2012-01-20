@@ -3,7 +3,8 @@ package org.jcvi.common.core.seq.fastx.fasta.aa;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
-import org.jcvi.common.core.symbol.residue.aa.DefaultAminoAcidEncodedGlyphs;
+import org.jcvi.common.core.symbol.residue.aa.AminoAcids;
+import org.jcvi.common.core.symbol.residue.aa.DefaultAminoAcidSequence;
 
 public class DefaultAminoAcidSequenceFastaRecord extends AbstractAminoAcidSequenceFastaRecord {
 
@@ -65,7 +66,7 @@ public class DefaultAminoAcidSequenceFastaRecord extends AbstractAminoAcidSequen
 
 	@Override
 	protected AminoAcidSequence encodeAminoAcids(String sequence) {
-		return new DefaultAminoAcidEncodedGlyphs( AminoAcid.getGlyphsFor(sequence) );
+		return new DefaultAminoAcidSequence( AminoAcids.parse(sequence) );
 	}
 
 	

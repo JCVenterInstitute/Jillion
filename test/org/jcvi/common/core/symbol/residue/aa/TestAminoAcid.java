@@ -81,17 +81,17 @@ public class TestAminoAcid {
     
    @Test
    public void getGlyphFor(){
-       assertSame("full name",expectedAminoAcid,AminoAcid.getGlyphFor(name));
-       assertSame("full name lowercase",expectedAminoAcid,AminoAcid.getGlyphFor(name.toLowerCase()));
-       assertSame("full name uppercase",expectedAminoAcid,AminoAcid.getGlyphFor(name.toUpperCase()));
+       assertSame("full name",expectedAminoAcid,AminoAcid.parse(name));
+       assertSame("full name lowercase",expectedAminoAcid,AminoAcid.parse(name.toLowerCase()));
+       assertSame("full name uppercase",expectedAminoAcid,AminoAcid.parse(name.toUpperCase()));
        
-       assertSame("3 letter abbreviation",expectedAminoAcid,AminoAcid.getGlyphFor(threeLetterAbbreviation));
-       assertSame("3 letter abbreviation lowercase",expectedAminoAcid,AminoAcid.getGlyphFor(threeLetterAbbreviation.toLowerCase()));
-       assertSame("3 letter abbreviation uppercase",expectedAminoAcid,AminoAcid.getGlyphFor(threeLetterAbbreviation.toUpperCase()));
+       assertSame("3 letter abbreviation",expectedAminoAcid,AminoAcid.parse(threeLetterAbbreviation));
+       assertSame("3 letter abbreviation lowercase",expectedAminoAcid,AminoAcid.parse(threeLetterAbbreviation.toLowerCase()));
+       assertSame("3 letter abbreviation uppercase",expectedAminoAcid,AminoAcid.parse(threeLetterAbbreviation.toUpperCase()));
        
-       assertSame("abbreviation",expectedAminoAcid,AminoAcid.getGlyphFor(abbreviation));
-       assertSame("abbreviation lowercase",expectedAminoAcid,AminoAcid.getGlyphFor(abbreviation.toLowerCase()));
-       assertSame("abbreviation uppercase",expectedAminoAcid,AminoAcid.getGlyphFor(abbreviation.toUpperCase()));
+       assertSame("abbreviation",expectedAminoAcid,AminoAcid.parse(abbreviation));
+       assertSame("abbreviation lowercase",expectedAminoAcid,AminoAcid.parse(abbreviation.toLowerCase()));
+       assertSame("abbreviation uppercase",expectedAminoAcid,AminoAcid.parse(abbreviation.toUpperCase()));
    }
    @Test
    public void name(){

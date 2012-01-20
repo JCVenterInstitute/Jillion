@@ -8,7 +8,14 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class NucleotideSmithWatermanAligner extends AbstractSmithWatermanAligner<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment>{
 
-	public NucleotideSmithWatermanAligner(Sequence<Nucleotide> seq1,
+	public static NucleotideSequenceAlignment align(Sequence<Nucleotide> query,
+			Sequence<Nucleotide> subject, ScoringMatrix<Nucleotide> matrix,
+			float openGapPenalty, float extendGapPenalty){
+		NucleotideSmithWatermanAligner aligner = new NucleotideSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);
+		return aligner.getSequenceAlignment();
+				
+		}
+	private NucleotideSmithWatermanAligner(Sequence<Nucleotide> seq1,
 			Sequence<Nucleotide> seq2, ScoringMatrix<Nucleotide> matrix,
 			float openGapPenalty, float extendGapPenalty) {
 		super(seq1, seq2, matrix, openGapPenalty, extendGapPenalty);

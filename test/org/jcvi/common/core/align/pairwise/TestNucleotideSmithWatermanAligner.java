@@ -23,36 +23,36 @@ public class TestNucleotideSmithWatermanAligner {
 	public void oneBase(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("A").build();
 		
-		NucleotideSmithWatermanAligner aligner = new NucleotideSmithWatermanAligner(seq, seq, matrix, 0, 0);
+		NucleotideSequenceAlignment actual = NucleotideSmithWatermanAligner.align(seq, seq, matrix, 0, 0);
 		
 		NucleotideSequenceAlignment expected = new NucleotideSequenceAlignmentBuilder()
 												.addMatches(seq)
 												.build();
 		
-		assertEquals(expected, aligner.getSequenceAlignment());
+		assertEquals(expected, actual);
 	}
 	@Test
 	public void exactMatch(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
 		
-		NucleotideSmithWatermanAligner aligner = new NucleotideSmithWatermanAligner(seq, seq, matrix, 0, 0);
+		NucleotideSequenceAlignment actual = NucleotideSmithWatermanAligner.align(seq, seq, matrix, 0, 0);
 		
 		NucleotideSequenceAlignment expected = new NucleotideSequenceAlignmentBuilder()
 									.addMatches(seq)
 									.build();
-		assertEquals(expected, aligner.getSequenceAlignment());
+		assertEquals(expected, actual);
 		
 	}
 	@Test
 	public void oneSequenceLongerThanOtherShouldPickShorterLength(){
 		NucleotideSequence seq1 = new NucleotideSequenceBuilder("ACGTACGT").build();
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder("ACGTACGTNNNN").build();
-		NucleotideSmithWatermanAligner aligner = new NucleotideSmithWatermanAligner(seq1, seq2, matrix, 0, 0);
+		NucleotideSequenceAlignment actual = NucleotideSmithWatermanAligner.align(seq1, seq2, matrix, 0, 0);
 		
 		NucleotideSequenceAlignment expected = new NucleotideSequenceAlignmentBuilder()
 											.addMatches(seq1)
 											.build();
-		assertEquals(expected, aligner.getSequenceAlignment());
+		assertEquals(expected, actual);
 		
 	}
 	@Test
@@ -61,7 +61,7 @@ public class TestNucleotideSmithWatermanAligner {
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder("ACG"+"ACGT").build();
 		
 		
-		NucleotideSmithWatermanAligner aligner = new NucleotideSmithWatermanAligner(
+		NucleotideSequenceAlignment actual = NucleotideSmithWatermanAligner.align(
 				seq1, seq2, matrix, 0, 0);
 		
 		NucleotideSequenceAlignment expected = new NucleotideSequenceAlignmentBuilder()
@@ -70,7 +70,7 @@ public class TestNucleotideSmithWatermanAligner {
 							.addMatches("ACGT")
 							.build();
 		
-		assertEquals(expected, aligner.getSequenceAlignment());
+		assertEquals(expected, actual);
 		
 	}
 	
@@ -80,7 +80,7 @@ public class TestNucleotideSmithWatermanAligner {
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder("ACGACT").build();
 		
 		
-		NucleotideSmithWatermanAligner aligner = new NucleotideSmithWatermanAligner(
+		NucleotideSequenceAlignment actual = NucleotideSmithWatermanAligner.align(
 				seq1, seq2, matrix, 0, 0);
 		
 		NucleotideSequenceAlignment expected = new NucleotideSequenceAlignmentBuilder()
@@ -91,7 +91,7 @@ public class TestNucleotideSmithWatermanAligner {
 												.addMatches("T")
 												.build();
 		
-		assertEquals(expected, aligner.getSequenceAlignment());
+		assertEquals(expected, actual);
 		
 	}
 	
@@ -101,12 +101,12 @@ public class TestNucleotideSmithWatermanAligner {
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder(  "GTACG").build();
 		
 		
-		NucleotideSmithWatermanAligner aligner = new NucleotideSmithWatermanAligner(
+		NucleotideSequenceAlignment actual = NucleotideSmithWatermanAligner.align(
 				seq1, seq2, matrix, 0, 0);
 		
 		NucleotideSequenceAlignment expected = new NucleotideSequenceAlignmentBuilder()
 											.addMatches(seq2)
 											.build();
-		assertEquals(expected, aligner.getSequenceAlignment());
+		assertEquals(expected, actual);
 	}
 }

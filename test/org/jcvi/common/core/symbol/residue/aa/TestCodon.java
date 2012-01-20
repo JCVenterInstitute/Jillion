@@ -58,7 +58,7 @@ public class TestCodon {
         List<Object[]> data = new ArrayList<Object[]>();
         for(int i=0; i<aminoAcids.length(); i++){
             final char aminoAbbreviation = aminoAcids.charAt(i);
-            AminoAcid aa = aminoAbbreviation !='*'? AminoAcid.getGlyphFor(aminoAbbreviation): null;
+            AminoAcid aa = aminoAbbreviation !='*'? AminoAcid.parse(aminoAbbreviation): null;
             List<Nucleotide> codon = Nucleotides.parse(
                                             Arrays.asList(base1.charAt(i),
                                                             base2.charAt(i),
