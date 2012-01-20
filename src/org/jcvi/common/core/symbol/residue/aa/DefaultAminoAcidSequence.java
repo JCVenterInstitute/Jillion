@@ -11,25 +11,25 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.AbstractResidueSequence;
 
 /**
- * {@code DefaultAminoAcidEncodedGlyphs} is the default implementation
+ * {@code DefaultAminoAcidSequence} is the default implementation
  * of the {@link AminoAcidSequence} interface.
  *
  * @author naxelrod
  * @author dkatzel
  */
 
-public class DefaultAminoAcidEncodedGlyphs extends AbstractResidueSequence<AminoAcid> implements AminoAcidSequence {
+public class DefaultAminoAcidSequence extends AbstractResidueSequence<AminoAcid> implements AminoAcidSequence {
 
 	private final Sequence<AminoAcid> encodedAminoAcids;
 	
-	public DefaultAminoAcidEncodedGlyphs(Collection<AminoAcid> glyphs) {
+	public DefaultAminoAcidSequence(Collection<AminoAcid> glyphs) {
 		this.encodedAminoAcids = new EncodedSequence<AminoAcid>(DefaultAminoAcidGlyphCodec.getInstance(),glyphs);
 	}
-	public DefaultAminoAcidEncodedGlyphs(char[] aminoAcids) {
+	public DefaultAminoAcidSequence(char[] aminoAcids) {
 		this(new String(aminoAcids));
 	}
-	public DefaultAminoAcidEncodedGlyphs(String aminoAcids) {
-		this(AminoAcid.getGlyphsFor(aminoAcids));
+	public DefaultAminoAcidSequence(String aminoAcids) {
+		this(AminoAcids.parse(aminoAcids));
 	}
 		
 	@Override

@@ -44,18 +44,18 @@ public abstract class AbstractSmithWatermanAligner<R extends Residue, S extends 
 	private final float[][] scores;
 	private final A alignment;
 	
-	public AbstractSmithWatermanAligner(Sequence<R> seq1, Sequence<R> seq2, ScoringMatrix<R> matrix, float openGapPenalty, float extendGapPenalty){
+	public AbstractSmithWatermanAligner(Sequence<R> query, Sequence<R> subject, ScoringMatrix<R> matrix, float openGapPenalty, float extendGapPenalty){
 		
-		traceback = new byte[(int)seq1.getLength()+1][(int)seq2.getLength()+1];
-		scores = new float[(int)seq1.getLength()+1][(int)seq2.getLength()+1];
+		traceback = new byte[(int)query.getLength()+1][(int)subject.getLength()+1];
+		scores = new float[(int)query.getLength()+1][(int)subject.getLength()+1];
 		for(int i=0; i<traceback[0].length; i++){
 			traceback[0][i]=TERMINAL;
 		}
 		for(int i=0; i<traceback.length; i++){
 			traceback[i][0]=TERMINAL;
 		}
-		byte[] seq1Bytes = convertToByteArray(seq1);
-		byte[] seq2Bytes = convertToByteArray(seq2);
+		byte[] seq1Bytes = convertToByteArray(query);
+		byte[] seq2Bytes = convertToByteArray(subject);
 		
 		int lengthOfSeq1 = seq1Bytes.length;
 		int lengthOfSeq2 = seq2Bytes.length;
@@ -169,7 +169,7 @@ public abstract class AbstractSmithWatermanAligner<R extends Residue, S extends 
 		
 	}
 
-	public SequenceAlignment<R,S> getSequenceAlignment(){
+	public A getSequenceAlignment(){
 		return alignment;
 	}
 	/**

@@ -34,7 +34,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestAminoAcid.class,
         TestCodon.class,
         TestCodonCreationMethods.class,
-        TestDefaultAminoAcidEncodedGlyphs.class,
+        TestDefaultAminoAcidSequence.class,
         TestAminoAcidSequenceBuilder.class
     }
     )

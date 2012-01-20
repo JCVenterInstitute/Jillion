@@ -17,7 +17,7 @@ import org.jcvi.common.core.symbol.GlyphCodec;
  * @author dkatzel
  *
  */
-public final class DefaultAminoAcidGlyphCodec implements GlyphCodec<AminoAcid> {
+final class DefaultAminoAcidGlyphCodec implements GlyphCodec<AminoAcid> {
 
 	private static final Map<Byte, AminoAcid> BYTE_TO_GLYPH_MAP = new HashMap<Byte, AminoAcid>();
     private static final Map<AminoAcid, Byte> GLYPH_TO_BYTE_MAP = new EnumMap<AminoAcid, Byte>(AminoAcid.class);

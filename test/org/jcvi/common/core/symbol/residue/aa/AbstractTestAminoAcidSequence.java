@@ -24,14 +24,13 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.junit.Before;
 import org.junit.Test;
 
-public abstract class AbstractTestAminoAcidEncodedGlyphs {
-	private final List<AminoAcid> aminoAcids = AminoAcid.getGlyphsFor("ILKMFDEX");
-	Sequence<AminoAcid> sut;
+public abstract class AbstractTestAminoAcidSequence {
+	private final List<AminoAcid> aminoAcids = AminoAcids.parse("ILKMFDEX");
+	AminoAcidSequence sut;
 	@Before
 	public void setup(){
 		sut = encode(aminoAcids);
@@ -55,7 +54,7 @@ public abstract class AbstractTestAminoAcidEncodedGlyphs {
 	
 	@Test
 	public void singleBase(){
-		List<AminoAcid> expected = AminoAcid.getGlyphsFor("L");
+		List<AminoAcid> expected = AminoAcids.parse("L");
 		AminoAcidSequence seq = encode(expected);
 		assertEquals(expected, seq.asList());
 	}
@@ -65,5 +64,14 @@ public abstract class AbstractTestAminoAcidEncodedGlyphs {
 		for(int i=0; i< aminoAcids.size(); i++){
 			assertEquals(aminoAcids.get(i), sut.get(i));
 		}
+	}
+	
+	@Test
+	public void gappedSequence(){
+		AminoAcidSequence seq = encode(AminoAcids.parse("I-LKM-FDEX"));
+		assertEquals("I-LKM-FDEX", AminoAcids.asString(seq));
+		assertEquals(2, seq.getNumberOfGaps());
+		assertEquals(8, seq.getUngappedLength());
+		assertEquals(1, seq.getUngappedOffsetFor(2));
 	}
 }

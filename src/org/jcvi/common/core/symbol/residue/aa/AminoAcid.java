@@ -19,7 +19,6 @@
 
 package org.jcvi.common.core.symbol.residue.aa;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +29,8 @@ import org.jcvi.common.core.symbol.residue.Residue;
 /**
  * {@code AminoAcid} is a {@link Symbol} representation 
  * of the 20 Amino Acids that are encoded by genetic code.
+ * A Gap has also been included to support gapped
+ * amino acid sequences.
  * 
  * @author dkatzel, naxelrod
  *
@@ -82,16 +83,16 @@ public enum AminoAcid implements Residue{
     }
     /**
      * Get the AminoAcid which is represented by the given single character
-     * abbreviation.  This is the same as {@link #getGlyphFor(String)} getGlyphFor(aminoAcidAbbreviation.toString()
+     * abbreviation.  This is the same as {@link #parse(String)} parse(aminoAcidAbbreviation.toString()
      * @param aminoAcid the single character abbreviation of a aminoAcid.
      * @return an {@link AminoAcid} (not null).
      * @throws NullPointerException if aminoAcidAbbreviation is null.
      * @throws IllegalArgumentException if the given abbreviation is not
      * an AminoAcid.
-     * @see #getGlyphFor(String)
+     * @see #parse(String)
      */
-    public static AminoAcid getGlyphFor(Character aminoAcidAbbreviation){
-        return getGlyphFor(aminoAcidAbbreviation.toString());
+    public static AminoAcid parse(Character aminoAcidAbbreviation){
+        return parse(aminoAcidAbbreviation.toString());
     }
     /**
      * Get the single AminoAcid which is represented by the given String.
@@ -104,34 +105,14 @@ public enum AminoAcid implements Residue{
      * @throws IllegalArgumentException if the given String is not
      * an AminoAcid.
      */
-    public static AminoAcid getGlyphFor(String aminoAcid){
+    public static AminoAcid parse(String aminoAcid){
         AminoAcid result = NAME_MAP.get(aminoAcid.toUpperCase());
         if(result ==null){
             throw new IllegalArgumentException(String.format("%s is not a valid Amino Acid", aminoAcid));
         }
         return result;
     }
-    /**
-     * Convert a String of many 1 letter Amino Acid Abbreviations
-     * into a List of {@link AminoAcid}s.
-     * <p>
-     * For example:
-     * <p>
-     * {@code getGlyphsFor("ILW") => [Isoleucine, Leucine, Tryptophan]}
-     * @param aminoAcids a String where each character is a 1 letter
-     * abbreviation of an Amino Acid.
-     * @return a List of AminoAcids (not null), if the given String is empty,
-     * then an Empty List is returned.
-     * @throws NullPointerException if the given String is null.
-     * 
-     */
-    public static List<AminoAcid> getGlyphsFor(String aminoAcids){
-        List<AminoAcid> result = new ArrayList<AminoAcid>(aminoAcids.length());
-        for(int i=0; i<aminoAcids.length(); i++){
-            result.add(getGlyphFor(aminoAcids.charAt(i)));
-        }
-        return result;
-    }
+    
     /**
     * Get the full name of this Amino Acid, the name may 
     * contain spaces if the full name is more than 1 word.
