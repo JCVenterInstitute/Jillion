@@ -28,4 +28,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
  */
 public interface NucleotideScoringMatrix extends ScoringMatrix<Nucleotide>{
 
+	
+	
+	
 }
