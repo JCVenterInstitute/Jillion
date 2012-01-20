@@ -16,6 +16,14 @@ public class NucleotideSequenceAlignmentBuilder extends AbstractSequenceAlignmen
 	
 
 	@Override
+	protected Nucleotide parse(char base) {
+		return Nucleotide.parse(base);
+	}
+
+
+
+
+	@Override
 	public NucleotideSequenceAlignmentBuilder addMatch(
 			Nucleotide match) {
 		super.addMatch(match);

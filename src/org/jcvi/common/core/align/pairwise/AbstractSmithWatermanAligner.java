@@ -33,7 +33,7 @@ import org.jcvi.common.core.util.MathUtil;
  *
  *
  */
-public abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> {
+abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> {
 
 	private static final byte TERMINAL = 0;
 	private static final byte HORIZONTAL = 1;

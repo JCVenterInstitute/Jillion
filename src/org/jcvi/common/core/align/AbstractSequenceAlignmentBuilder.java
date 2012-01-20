@@ -22,6 +22,7 @@ public abstract class AbstractSequenceAlignmentBuilder
 				S queryAlignment, S subjectAlignment);
 	
 	protected abstract Iterable<R> parse(String sequence);
+	protected abstract R parse(char sequence);
 	
 	@Override
 	public SequenceAlignmentBuilder<R, S,A> addMatches(String matchedSequence) {
@@ -67,6 +68,12 @@ public abstract class AbstractSequenceAlignmentBuilder
 		return this;
 	}
 
+	@Override
+	public SequenceAlignmentBuilder<R, S,A> addGap(char query, char subject){
+		return addGap(parse(query),
+				parse(subject));
+	}
+			
 	@Override
 	public SequenceAlignmentBuilder<R, S,A> addGap(R query, R subject) {
 		numGaps++;

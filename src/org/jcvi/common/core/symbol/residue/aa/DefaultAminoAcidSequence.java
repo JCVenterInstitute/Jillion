@@ -9,6 +9,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.AbstractResidueSequence;
+import org.junit.Test;
 
 /**
  * {@code DefaultAminoAcidSequence} is the default implementation
@@ -93,5 +94,31 @@ public class DefaultAminoAcidSequence extends AbstractResidueSequence<AminoAcid>
 		return aas.get(gappedOffset) ==AminoAcid.Gap;
 	}
 
+	@Override
+	public String toString(){
+		return AminoAcids.asString(this);
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((encodedAminoAcids == null) ? 0 : encodedAminoAcids
+						.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DefaultAminoAcidSequence other = (DefaultAminoAcidSequence) obj;
+		return AminoAcids.asString(this).equals(AminoAcids.asString(other));
+	}
+	
 }
 
