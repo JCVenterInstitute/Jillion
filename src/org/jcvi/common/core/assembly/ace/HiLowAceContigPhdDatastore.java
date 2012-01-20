@@ -21,6 +21,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,6 +68,9 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
     public static HiLowAceContigPhdDatastore create(File aceContigFile) throws IOException{
         return new HiLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
+    public static HiLowAceContigPhdDatastore create(InputStream aceContigFile) throws IOException{
+        return new HiLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
+    }
     private HiLowAceContigPhdDatastore(File aceContigFile, final String contigId) throws IOException{
         this(aceContigFile,contigId,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
@@ -78,7 +82,14 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         delegate = new PhdDataStoreAdapter(new SimpleDataStore<Phd>(visitor.getPhds()));
         
     }
-    
+    private HiLowAceContigPhdDatastore(InputStream aceContigFile,
+            final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
+        FullLengthPhdParser visitor = new FullLengthPhdParser(lowQuality,highQuality);
+        
+        AceFileParser.parseAceFile(aceContigFile, visitor);
+        delegate = new PhdDataStoreAdapter(new SimpleDataStore<Phd>(visitor.getPhds()));
+        
+    }
     
     
     public HiLowAceContigPhdDatastore(File aceContigFile, 
@@ -229,9 +240,6 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         @Override
         public synchronized void visitReadHeader(String readId,
                 int gappedLength) {
-            if(readId.equals("100001375025")){
-                System.out.println("here making phd");
-            }
             if(contigOfInterest){
                 currentHiLowQualities = new ArrayList<PhredQuality>(gappedLength);
             }
