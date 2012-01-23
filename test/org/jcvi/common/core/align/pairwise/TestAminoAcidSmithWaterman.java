@@ -12,17 +12,17 @@ public class TestAminoAcidSmithWaterman {
 	@Test
 	public void exampleFromBook(){
 		AminoAcidScoringMatrix blosom50 = BlosomMatrices.getMatrix(50);
-		AminoAcidSequence query = new AminoAcidSequenceBuilder("HEAGAWGHEE")
+		AminoAcidSequence subject = new AminoAcidSequenceBuilder("HEAGAWGHEE")
 									.build();
-		AminoAcidSequence subject = new AminoAcidSequenceBuilder("PAWHEAE")
+		AminoAcidSequence query = new AminoAcidSequenceBuilder("PAWHEAE")
 										.build();
 		AminoAcidSequenceAlignment expected = new AminoAcidSequenceAlignmentBuilder()
 												.addMatches("AW")
-												.addGap('G', '-')
+												.addGap('-', 'G')
 												.addMatches("HE")
 												.build();
 		
-		AminoAcidSequenceAlignment actual = AminoAcidSmithWatermanAligner.align(query, subject, blosom50, 12, 2);
+		AminoAcidSequenceAlignment actual = AminoAcidSmithWatermanAligner.align(query, subject, blosom50, -8, -6);
 	
 		assertEquals(expected, actual);
 	}

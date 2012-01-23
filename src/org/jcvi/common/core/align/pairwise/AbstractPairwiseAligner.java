@@ -35,59 +35,80 @@ public abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequ
 		
 		int lengthOfSeq1 = seq1Bytes.length;
 		int lengthOfSeq2 = seq2Bytes.length;
-		scores[0][0]=0F;
-		short[][] sizesOfHorizonalGaps = new short[lengthOfSeq1][lengthOfSeq2];
-		short[][] sizesOfVerticalGaps = new short[lengthOfSeq1][lengthOfSeq2];
+		short[][] sizesOfHorizonalGaps = new short[lengthOfSeq1+1][lengthOfSeq2+1];
+		short[][] sizesOfVerticalGaps = new short[lengthOfSeq1+1][lengthOfSeq2+1];
 		for(int i=0; i< seq1Bytes.length; i++){
-			Arrays.fill(sizesOfHorizonalGaps[i], (short)1);
-			Arrays.fill(sizesOfVerticalGaps[i], (short)1);
+			Arrays.fill(sizesOfHorizonalGaps[i], (short)0);	
+			Arrays.fill(sizesOfVerticalGaps[i], (short)0);	
 		}		
+		for(int i=0; i< seq2Bytes.length; i++){
+			Arrays.fill(sizesOfHorizonalGaps[0], (short)0);	
+			Arrays.fill(sizesOfVerticalGaps[0], (short)0);	
+		}
 		//only need to keep array of vertical accumulated gap
 		//penalties since we are populating horizontally  we can just
-		//keep a since float for current horizontal penalty 
-		float[] verticalGapPenaltiesSoFar = new float[lengthOfSeq2];		
+		//keep a float for current horizontal penalty 
+		float[] verticalGapPenaltiesSoFar = new float[lengthOfSeq2+1];		
 		Arrays.fill(verticalGapPenaltiesSoFar, Float.NEGATIVE_INFINITY);
 		
-		float[] bestPathSoFar = new float[lengthOfSeq2];
+		float[] bestPathSoFar = new float[lengthOfSeq2+1];
 		Arrays.fill(bestPathSoFar, 0F);
 		
 		CurrentStartPoint currentStartPoint = new CurrentStartPoint();
-		for(int i=0; i<lengthOfSeq1; i++){
-			float horrizontalGapPenalty = Float.NEGATIVE_INFINITY;
-			float diagnol = bestPathSoFar[0];
-			for(int j=0; j< lengthOfSeq2; j++){
-				float verticalGapExtensionScore = verticalGapPenaltiesSoFar[j] + extendGapPenalty;
-				float verticalOpenGapScore = bestPathSoFar[j] + openGapPenalty;
-				
+		for(int i=1; i<=lengthOfSeq1; i++){
+
+			
+			float cumulativeHorizontalGapPenalty=Float.NEGATIVE_INFINITY;
+			for(int j=1; j<= lengthOfSeq2; j++){
+				float diagnol = scores[i-1][j-1];
+				float verticalGapExtensionScore = sizesOfVerticalGaps[i-1][j] >0 ? 
+							scores[i-1][j] + extendGapPenalty 
+							: Float.NEGATIVE_INFINITY	;
+				float verticalOpenGapScore = scores[i-1][j] + openGapPenalty;
 				if(verticalGapExtensionScore > verticalOpenGapScore){
 					verticalGapPenaltiesSoFar[j] = verticalGapExtensionScore;
-					sizesOfVerticalGaps[i][j] = (short)(sizesOfVerticalGaps[i][j-1] +1);
 				}else{
 					verticalGapPenaltiesSoFar[j] = verticalOpenGapScore;
 				}
 				
-				float horizontalGapExtensionScore = horrizontalGapPenalty + extendGapPenalty;
-				float horizontalGapOpenScore = horrizontalGapPenalty + openGapPenalty;
-				
-				if(horizontalGapExtensionScore > horizontalGapOpenScore){
-					horrizontalGapPenalty = horizontalGapExtensionScore;
-					sizesOfHorizonalGaps[i][j] = (short)(sizesOfHorizonalGaps[i][j-1]+1);
+				float horizontalGapExtensionScore =  sizesOfHorizonalGaps[i][j-1] >0 ?
+						scores[i][j-1]+ extendGapPenalty
+						: Float.NEGATIVE_INFINITY;
+				float horizontalGapOpenScore = scores[i][j-1] + openGapPenalty;
+				if(horizontalGapExtensionScore >= horizontalGapOpenScore){
+					cumulativeHorizontalGapPenalty = horizontalGapExtensionScore;
+					
 				}else{
-					horrizontalGapPenalty = horizontalGapOpenScore;
+					cumulativeHorizontalGapPenalty = horizontalGapOpenScore;
 				}
 				
 				//need to do -1s because 0 offset in matrix is filled with stops
 				//and actual values start at offset 1
-				float alignmentScore = diagnol + matrix.getScore(seq1Bytes[i],seq2Bytes[j]);
-				diagnol = bestPathSoFar[j];
-				
-				BestWalkBack bestWalkBack = computeBestWalkBack(alignmentScore, horrizontalGapPenalty, verticalGapPenaltiesSoFar[j]);
-				
-				bestPathSoFar[j] = bestWalkBack.getBestScore();
-				traceback[i+1][j+1]= (byte)bestWalkBack.getTracebackDirection().ordinal();
+				float alignmentScore = diagnol + matrix.getScore(seq1Bytes[i-1],seq2Bytes[j-1]);
 				
 				
-				currentStartPoint = updateCurrentStartPoint(bestPathSoFar[j], currentStartPoint, i, j);
+				BestWalkBack bestWalkBack = computeBestWalkBack(alignmentScore, cumulativeHorizontalGapPenalty, verticalGapPenaltiesSoFar[j]);
+				scores[i][j] = bestWalkBack.getBestScore();
+				if( bestPathSoFar[j] <= bestWalkBack.getBestScore()){
+					bestPathSoFar[j] = bestWalkBack.getBestScore();
+					currentStartPoint = updateCurrentStartPoint(bestPathSoFar[j], currentStartPoint, i, j);
+				}
+				switch(bestWalkBack.getTracebackDirection()){
+					case HORIZONTAL: sizesOfHorizonalGaps[i][j] = (short)(sizesOfHorizonalGaps[i][j-1]+1);
+									break;
+					case VERTICAL : sizesOfVerticalGaps[i][j] = (short)(sizesOfVerticalGaps[i-1][j] +1);
+									break;
+					case DIAGNOL: 	sizesOfHorizonalGaps[i][j]  =0;
+									sizesOfVerticalGaps[i][j] =0;
+									break;
+					default:
+								break;
+						
+				}
+				traceback[i][j]= (byte)bestWalkBack.getTracebackDirection().ordinal();
+				diagnol = traceback[i-1][j];
+				
+				//printTraceBack(query,subject);
 			}
 		}
 		//now do trace back
@@ -95,6 +116,26 @@ public abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequ
 				sizesOfVerticalGaps, currentStartPoint);
 		
 	}
+
+	private void printTraceBack(Sequence<R> query, Sequence<R> subject){
+		System.out.println(subject);
+		for(int i=0; i<traceback.length; i++){
+			if(i==0){
+				System.out.print("  : ");
+			}else{
+				System.out.printf("%s : ", query.get(i-1));
+			}
+			for(int j=0; j<traceback[0].length; j++){
+				System.out.printf("%s [%.0f] ",
+						TracebackDirection.values()[traceback[i][j]].toString().charAt(0),
+						scores[i][j]);
+			}
+			System.out.println("");
+		}
+	}
+	
+	protected abstract float getInitialRowScore(float[] bestPathSoFar, int rowNumber, float openGapPenalty,
+			float extendGapPenalty);
 
 	protected abstract CurrentStartPoint updateCurrentStartPoint(float currentBestScore,
 			CurrentStartPoint currentStartPoint, int i, int j);
@@ -113,33 +154,26 @@ public abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequ
 		R gap = getGap();
 		while(!done){
 			
-			switch(TracebackDirection.values()[traceback[x+1][y+1]]){
+			switch(TracebackDirection.values()[traceback[x][y]]){
 			case VERTICAL :
 				{
-					short numberOfGaps = sizesOfVerticalGaps[x][y];
-					for(int i=0; i< numberOfGaps; i++){
-						alignmentBuilder.addGap(getResidueFromOrdinal(seq1Bytes[x]), gap);
-						x--;
-					}
+					alignmentBuilder.addGap(getResidueFromOrdinal(seq1Bytes[x-1]), gap);
+					x--;
 				}
 					break;
 					
 			case HORIZONTAL :
 				{
-					short numberOfGaps = sizesOfHorizonalGaps[x][y];
-					for(int i=0; i< numberOfGaps; i++){
-						alignmentBuilder.addGap(gap,getResidueFromOrdinal(seq2Bytes[y]));
-						
+						alignmentBuilder.addGap(gap,getResidueFromOrdinal(seq2Bytes[y-1]));
 						y--;
-					}
 				}
 				break;
 			case DIAGNOL:
-				boolean isMatch = seq1Bytes[x] == seq2Bytes[y];
+				boolean isMatch = seq1Bytes[x-1] == seq2Bytes[y-1];
 				if(isMatch){
-					alignmentBuilder.addMatch(getResidueFromOrdinal(seq1Bytes[x]));
+					alignmentBuilder.addMatch(getResidueFromOrdinal(seq1Bytes[x-1]));
 				}else{
-					alignmentBuilder.addMismatch(getResidueFromOrdinal(seq1Bytes[x]), getResidueFromOrdinal(seq2Bytes[y]));
+					alignmentBuilder.addMismatch(getResidueFromOrdinal(seq1Bytes[x-1]), getResidueFromOrdinal(seq2Bytes[y-1]));
 				}
 				
 				x--;
@@ -193,7 +227,7 @@ public abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequ
 		public CurrentStartPoint(){
 			this(0,0,Float.NEGATIVE_INFINITY);
 		}
-		private CurrentStartPoint(int x, int y, float score) {
+		public CurrentStartPoint(int x, int y, float score) {
 			this.x = x;
 			this.y = y;
 			this.score = score;
@@ -209,10 +243,15 @@ public abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequ
 		}
 		
 		public CurrentStartPoint updateIfWorseThan(int x, int y, float score){
-			if(score > this.score){
+			if(score >= this.score){
 				return new CurrentStartPoint(x,y,score);
 			}
 			return this;
+		}
+		@Override
+		public String toString() {
+			return "CurrentStartPoint [x=" + x + ", y=" + y + ", score="
+					+ score + "]";
 		}
 		
 	}
