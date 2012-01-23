@@ -8,10 +8,11 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-    	TestNucleotideSmithWatermanAligner.class,
     	AllBlosomUnitTests.class,
+    	TestNucleotideSmithWatermanAligner.class,    	
+    	TestAminoAcidSmithWaterman.class,
     	
-    	TestAminoAcidSmithWaterman.class
+    	TestNucleotideNeedlemanWunschAligner.class
     }
     )
 public class AllPairwiseUnitTests {

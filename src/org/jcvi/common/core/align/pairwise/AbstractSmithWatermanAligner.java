@@ -57,6 +57,16 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequenc
 	@Override
 	protected CurrentStartPoint updateCurrentStartPoint(float currentBestScore,
 			CurrentStartPoint currentStartPoint, int i, int j) {
-		return currentStartPoint.updateIfWorseThan(i, j, currentBestScore);
+		if(currentBestScore > currentStartPoint.getScore()){
+			return new CurrentStartPoint(i, j, currentBestScore);
+		}
+		return currentStartPoint;
 	}
+	@Override
+	protected float getInitialRowScore(float[] bestPathSoFar, int rowNumber, float openGapPenalty,
+			float extendGapPenalty) {
+		return bestPathSoFar[0];
+	}
+	
+	
 }
