@@ -2,49 +2,128 @@ package org.jcvi.common.core.align.pairwise;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.BitSet;
 
 import org.jcvi.common.core.align.SequenceAlignment;
 import org.jcvi.common.core.align.SequenceAlignmentBuilder;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.Residue;
-
-public abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> {
+/**
+ * {@code AbstractPairwiseAligner} is an abstract 
+ * implementation of a dynamic programming
+ * pairwise alignment algorithm for any Residue
+ * type.
+ * 
+ * @author dkatzel
+ *
+ * @param <R> the type of {@link Residue} used in this aligner.
+ * @param <S> the {@link Sequence} type input into this aligner.
+ * @param <A> the {@link SequenceAlignment} type returned by this aligner.
+ */
+abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> {
+	/**
+	 * The direction to traverse to the next
+	 * cell in the traceback matrix.  The traceback
+	 * will start at the last cell in the alignment
+	 * and walk backwards towards the beginning
+	 * of the alignment.
+	 * @author dkatzel
+	 *
+	 */
 	protected enum TracebackDirection{
+		/**
+		 * Stop the traceback. This will end
+		 * the alignment and will always
+		 * be the value of the last cell
+		 * visited in the matrix.
+		 */
 		TERMINAL,
+		/**
+		 * Move to the cell horizontally
+		 * (left).  This will cause
+		 * the alignment to add a horizontal
+		 * gap to the alignment.
+		 */
 		HORIZONTAL,
+		/**
+		 * Move to the cell vertically
+		 * (up).  This will cause
+		 * the alignment to add a vertical
+		 * gap to the alignment.
+		 */
 		VERTICAL,
+		/**
+		 * Move to the cell diagonally
+		 * horizontal AND vertical
+		 * (left and up).  This will cause
+		 * the alignment to a match/mismatch
+		 * to the alignment.
+		 */
 		DIAGNOL;
 	}
+	/**
+	 * The previous row in our cache.
+	 */
+	private static final int PREVIOUS_ROW=0;
+	/**
+	 * The current row in our cache.
+	 */
+	private static final int CURRENT_ROW=1;
 	
+	
+	/**
+	 * The matrix which stores all of our traceback
+	 * values. 
+	 */
 	private final byte[][] traceback;
-	private final float[][] scores;
+	/**
+	 * The match scores of the current row computed so far
+	 * and the full previous row.
+	 */
+	private final float[][] scoreCache;
+	/**
+	 * {@link BitSet} to keep track of if at our
+	 * current position we are in a vertical gap.
+	 * This is used to compute affine gap
+	 * penalties if our scoring changes
+	 * if we are already inside of a gap
+	 * or not.  
+	 * </p>
+	 * {@link BitSet} is used
+	 * to save memory over a {@literal boolean[]}
+	 * since BitSets actually take up 1 bit
+	 * per element vs 1 byte per element in a {@literal boolean[]}.
+	 */
+	private final BitSet[] inAVerticalGapCache;
+	/**
+	 * The final alignment produced.
+	 */
 	private final A alignment;
 	
-	public AbstractPairwiseAligner(Sequence<R> query, Sequence<R> subject, ScoringMatrix<R> matrix, float openGapPenalty, float extendGapPenalty){
+	protected AbstractPairwiseAligner(Sequence<R> query, Sequence<R> subject, ScoringMatrix<R> matrix, float openGapPenalty, float extendGapPenalty){
 		
 		traceback = new byte[(int)query.getLength()+1][(int)subject.getLength()+1];
-		scores = new float[(int)query.getLength()+1][(int)subject.getLength()+1];
-		for(int i=0; i<traceback[0].length; i++){
-			traceback[0][i]=(byte)TracebackDirection.TERMINAL.ordinal();
-		}
-		for(int i=0; i<traceback.length; i++){
-			traceback[i][0]=(byte)TracebackDirection.TERMINAL.ordinal();
-		}
+		
+		scoreCache = new float[2][(int)subject.getLength()+1];
+		inAVerticalGapCache = new BitSet[2];
+		initializeTraceback();
 		byte[] seq1Bytes = convertToByteArray(query);
 		byte[] seq2Bytes = convertToByteArray(subject);
 		
+		CurrentStartPoint currentStartPoint = populateTraceback(matrix,
+				openGapPenalty, extendGapPenalty, seq1Bytes, seq2Bytes);
+		//now do trace back
+		alignment = traceBack(seq1Bytes, seq2Bytes, currentStartPoint);
+		
+	}
+	private CurrentStartPoint populateTraceback(ScoringMatrix<R> matrix,
+			float openGapPenalty, float extendGapPenalty, byte[] seq1Bytes,
+			byte[] seq2Bytes) {
 		int lengthOfSeq1 = seq1Bytes.length;
 		int lengthOfSeq2 = seq2Bytes.length;
-		short[][] sizesOfHorizonalGaps = new short[lengthOfSeq1+1][lengthOfSeq2+1];
-		short[][] sizesOfVerticalGaps = new short[lengthOfSeq1+1][lengthOfSeq2+1];
-		for(int i=0; i< seq1Bytes.length; i++){
-			Arrays.fill(sizesOfHorizonalGaps[i], (short)0);	
-			Arrays.fill(sizesOfVerticalGaps[i], (short)0);	
-		}		
-		for(int i=0; i< seq2Bytes.length; i++){
-			Arrays.fill(sizesOfHorizonalGaps[0], (short)0);	
-			Arrays.fill(sizesOfVerticalGaps[0], (short)0);	
-		}
+		
+		
+		
 		//only need to keep array of vertical accumulated gap
 		//penalties since we are populating horizontally  we can just
 		//keep a float for current horizontal penalty 
@@ -59,22 +138,23 @@ public abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequ
 
 			
 			float cumulativeHorizontalGapPenalty=Float.NEGATIVE_INFINITY;
+			BitSet inAHorizontalGap = new BitSet(lengthOfSeq2+1);
 			for(int j=1; j<= lengthOfSeq2; j++){
-				float diagnol = scores[i-1][j-1];
-				float verticalGapExtensionScore = sizesOfVerticalGaps[i-1][j] >0 ? 
-							scores[i-1][j] + extendGapPenalty 
+				float diagnol = scoreCache[PREVIOUS_ROW][j-1];
+				float verticalGapExtensionScore = inAVerticalGapCache[PREVIOUS_ROW].get(j)? 
+							scoreCache[PREVIOUS_ROW][j] + extendGapPenalty 
 							: Float.NEGATIVE_INFINITY	;
-				float verticalOpenGapScore = scores[i-1][j] + openGapPenalty;
+				float verticalOpenGapScore = scoreCache[PREVIOUS_ROW][j] + openGapPenalty;
 				if(verticalGapExtensionScore > verticalOpenGapScore){
 					verticalGapPenaltiesSoFar[j] = verticalGapExtensionScore;
 				}else{
 					verticalGapPenaltiesSoFar[j] = verticalOpenGapScore;
 				}
 				
-				float horizontalGapExtensionScore =  sizesOfHorizonalGaps[i][j-1] >0 ?
-						scores[i][j-1]+ extendGapPenalty
+				float horizontalGapExtensionScore =  inAHorizontalGap.get(j-1) ?
+						scoreCache[CURRENT_ROW][j-1]+ extendGapPenalty
 						: Float.NEGATIVE_INFINITY;
-				float horizontalGapOpenScore = scores[i][j-1] + openGapPenalty;
+				float horizontalGapOpenScore = scoreCache[CURRENT_ROW][j-1] + openGapPenalty;
 				if(horizontalGapExtensionScore >= horizontalGapOpenScore){
 					cumulativeHorizontalGapPenalty = horizontalGapExtensionScore;
 					
@@ -88,18 +168,23 @@ public abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequ
 				
 				
 				BestWalkBack bestWalkBack = computeBestWalkBack(alignmentScore, cumulativeHorizontalGapPenalty, verticalGapPenaltiesSoFar[j]);
-				scores[i][j] = bestWalkBack.getBestScore();
+				scoreCache[CURRENT_ROW][j] = bestWalkBack.getBestScore();
 				if( bestPathSoFar[j] <= bestWalkBack.getBestScore()){
 					bestPathSoFar[j] = bestWalkBack.getBestScore();
-					currentStartPoint = updateCurrentStartPoint(bestPathSoFar[j], currentStartPoint, i, j);
 				}
+				//some implementations might
+				//need to update the currentStartPoint even if it's not
+				//the best path so far
+				//so give subclasses the option to update.
+				currentStartPoint = updateCurrentStartPoint(bestPathSoFar[j], currentStartPoint, i, j);
+				
 				switch(bestWalkBack.getTracebackDirection()){
-					case HORIZONTAL: sizesOfHorizonalGaps[i][j] = (short)(sizesOfHorizonalGaps[i][j-1]+1);
+					case HORIZONTAL: inAHorizontalGap.set(j,true);
 									break;
-					case VERTICAL : sizesOfVerticalGaps[i][j] = (short)(sizesOfVerticalGaps[i-1][j] +1);
+					case VERTICAL : inAVerticalGapCache[CURRENT_ROW].set(j,true);
 									break;
-					case DIAGNOL: 	sizesOfHorizonalGaps[i][j]  =0;
-									sizesOfVerticalGaps[i][j] =0;
+					case DIAGNOL: 	inAHorizontalGap.set(j,false);
+									inAVerticalGapCache[CURRENT_ROW].set(j,false);
 									break;
 					default:
 								break;
@@ -110,10 +195,33 @@ public abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequ
 				
 				//printTraceBack(query,subject);
 			}
+			updateCaches();
 		}
-		//now do trace back
-		alignment = traceBack(seq1Bytes, seq2Bytes, sizesOfHorizonalGaps,
-				sizesOfVerticalGaps, currentStartPoint);
+		return currentStartPoint;
+	}
+	private void initializeTraceback() {
+		for(int i=0; i<traceback[0].length; i++){
+			traceback[0][i]=(byte)TracebackDirection.TERMINAL.ordinal();
+		}
+		for(int i=0; i<traceback.length; i++){
+			traceback[i][0]=(byte)TracebackDirection.TERMINAL.ordinal();
+		}
+		inAVerticalGapCache[0] = new BitSet(traceback[0].length);
+		inAVerticalGapCache[1] = new BitSet(traceback[0].length);
+	}
+	/**
+	 * Replace the contents of the previous row
+	 * with the contents of the  current row.  Since 
+	 * we only care about the previous 1 rows
+	 * we can safely forget about anything older than that.
+	 * (and save memory)
+	 */
+	private void updateCaches() {
+		for(int j=0; j< scoreCache[CURRENT_ROW].length; j++){
+			scoreCache[PREVIOUS_ROW][j] = scoreCache[CURRENT_ROW][j];
+			
+			inAVerticalGapCache[PREVIOUS_ROW].set(j,inAVerticalGapCache[CURRENT_ROW].get(j));
+		}
 		
 	}
 
@@ -128,7 +236,7 @@ public abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequ
 			for(int j=0; j<traceback[0].length; j++){
 				System.out.printf("%s [%.0f] ",
 						TracebackDirection.values()[traceback[i][j]].toString().charAt(0),
-						scores[i][j]);
+						scoreCache[i][j]);
 			}
 			System.out.println("");
 		}
@@ -143,8 +251,7 @@ public abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequ
 	protected abstract BestWalkBack computeBestWalkBack(float alignmentScore,
 			float horrizontalGapPenalty, float verticalGapPenalty);
 
-	protected A traceBack(byte[] seq1Bytes, byte[] seq2Bytes,
-			short[][] sizesOfHorizonalGaps, short[][] sizesOfVerticalGaps,
+	private A traceBack(byte[] seq1Bytes, byte[] seq2Bytes,
 			CurrentStartPoint currentStartPoint) {
 		boolean done=false;
 		int x=currentStartPoint.getX();
