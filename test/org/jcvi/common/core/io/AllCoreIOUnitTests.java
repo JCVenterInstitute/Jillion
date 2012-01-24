@@ -40,6 +40,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestIOUtil_unsignedIntToSignedInt.class,
         TestIOUtil_safeBlockingRead.class,
         TestIOUtil_getUnsignedBitAndByteCount.class,
+        TestIOUtil_bitSet.class,
+        
         TestFileUtil.class,
         TestMagicNumberInputStream.class
     }
