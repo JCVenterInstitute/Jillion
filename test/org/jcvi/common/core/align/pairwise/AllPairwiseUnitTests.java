@@ -12,7 +12,8 @@ import org.junit.runners.Suite.SuiteClasses;
     	TestNucleotideSmithWatermanAligner.class,    	
     	TestAminoAcidSmithWaterman.class,
     	
-    	TestNucleotideNeedlemanWunschAligner.class
+    	TestNucleotideNeedlemanWunschAligner.class,
+    	TestAminoAcidNeedlemanWunschAligner.class
     }
     )
 public class AllPairwiseUnitTests {

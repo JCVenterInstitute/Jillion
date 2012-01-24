@@ -37,6 +37,42 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequenc
 			float extendGapPenalty) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty);
 	}
+	/**
+	 * All initial gap scores are set to {@literal 0}.
+	 * </p>
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected float[] getInitialGapScores(int length, float openGapPenalty,
+			float extendGapPenalty) {
+		return new float[length];
+	}
+	
+	/**
+	 * Since Smith-Waterman is a local alignment all 
+	 * values in the initial row should terminate the alignment
+	 * if the query and subject don't align at that base.
+	 * 
+	 * </p>
+	 * {@inheritDoc}
+	 * @return TracebackDirection#TERMINAL
+	 */
+	@Override
+	protected TracebackDirection getInitialRowTracebackValue() {
+		return TracebackDirection.TERMINAL;
+	}
+	/**
+	 * Since Smith-Waterman is a local alignment all 
+	 * values in the initial column should terminate the alignment
+	 * if the query and subject don't align at that base.
+	 * </p>
+	 * {@inheritDoc}
+	 * @return TracebackDirection#TERMINAL
+	 */
+	@Override
+	protected TracebackDirection getInitialColTracebackValue() {
+		return TracebackDirection.TERMINAL;
+	}
 	@Override
 	protected BestWalkBack computeBestWalkBack(float alignmentScore,
 			float horrizontalGapPenalty, float verticalGapPenalty){
@@ -61,11 +97,6 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequenc
 			return new CurrentStartPoint(i, j, currentBestScore);
 		}
 		return currentStartPoint;
-	}
-	@Override
-	protected float getInitialRowScore(float[] bestPathSoFar, int rowNumber, float openGapPenalty,
-			float extendGapPenalty) {
-		return bestPathSoFar[0];
 	}
 	
 	

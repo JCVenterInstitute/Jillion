@@ -106,7 +106,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		
 		scoreCache = new float[2][(int)subject.getLength()+1];
 		inAVerticalGapCache = new BitSet[2];
-		initializeTraceback();
+		initializeFields(openGapPenalty, extendGapPenalty);
 		byte[] seq1Bytes = convertToByteArray(query);
 		byte[] seq2Bytes = convertToByteArray(subject);
 		
@@ -177,7 +177,9 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 				//the best path so far
 				//so give subclasses the option to update.
 				currentStartPoint = updateCurrentStartPoint(bestPathSoFar[j], currentStartPoint, i, j);
-				
+				if(currentStartPoint ==null){
+					throw new NullPointerException("current start point can not be set to null");
+				}
 				switch(bestWalkBack.getTracebackDirection()){
 					case HORIZONTAL: inAHorizontalGap.set(j,true);
 									break;
@@ -193,22 +195,83 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 				traceback[i][j]= (byte)bestWalkBack.getTracebackDirection().ordinal();
 				diagnol = traceback[i-1][j];
 				
-				//printTraceBack(query,subject);
+				//printTraceBack();
 			}
 			updateCaches();
 		}
 		return currentStartPoint;
 	}
-	private void initializeTraceback() {
-		for(int i=0; i<traceback[0].length; i++){
-			traceback[0][i]=(byte)TracebackDirection.TERMINAL.ordinal();
-		}
-		for(int i=0; i<traceback.length; i++){
-			traceback[i][0]=(byte)TracebackDirection.TERMINAL.ordinal();
-		}
+	/**
+	 * Initialize the values of the initial traceback cells, scorecache and inVerticalGapCache.
+	 * Some of these values are populated using returned values from
+	 * {@link #getInitialColTracebackValue()}, 
+	 * {@link #getInitialRowTracebackValue()}, 
+	 * {@link #getInitialGapScores(int, float, float)}
+	 * @param openGapPenalty
+	 * @param extendGapPenalty
+	 * @throws NullPointerException if any of the returned values from those
+	 * method calls returns null.
+	 * @throws Illegal
+	 */
+	private void initializeFields(float openGapPenalty, float extendGapPenalty) {
+		
+		initialTracebackMatrix();
+		initializeVerticalGapCache();		
+		initializeScoreCache(openGapPenalty, extendGapPenalty);
+	}
+	private void initializeScoreCache(float openGapPenalty,
+			float extendGapPenalty) {
+		scoreCache[PREVIOUS_ROW] = getInitialGapScores(traceback[0].length, openGapPenalty, extendGapPenalty );
+		scoreCache[CURRENT_ROW][1] = scoreCache[PREVIOUS_ROW][1];
+	}
+	private void initializeVerticalGapCache() {
 		inAVerticalGapCache[0] = new BitSet(traceback[0].length);
 		inAVerticalGapCache[1] = new BitSet(traceback[0].length);
 	}
+	private void initialTracebackMatrix() {
+		TracebackDirection initialRowDirection = getInitialRowTracebackValue();
+		if(initialRowDirection ==null){
+			throw new NullPointerException("initialRowDirection can not be null");
+		}
+		TracebackDirection initialColDirection = getInitialColTracebackValue();
+		if(initialColDirection ==null){
+			throw new NullPointerException("initialColDirection can not be null");
+		}
+		//the origin of the matrix is always terminal
+		traceback[0][0] = (byte)TracebackDirection.TERMINAL.ordinal();
+		//populate the first row and column using subclass values as input
+		for(int i=1; i<traceback[0].length; i++){
+			traceback[0][i]=(byte)initialRowDirection.ordinal();
+		}
+		for(int i=1; i<traceback.length; i++){
+			traceback[i][0]=(byte)initialColDirection.ordinal();
+		}
+	}
+	/**
+	 * Get the {@link TracebackDirection}
+	 * that should be used to represent when
+	 * the first base of the query does not align to the subject.
+	 * @return a {@link TracebackDirection}; can not be null.
+	 */
+	protected abstract TracebackDirection getInitialRowTracebackValue();
+	/**
+	 * Get the {@link TracebackDirection}
+	 * that should be used to represent when
+	 * the first base of the subject does not align to the query.
+	 * @return a {@link TracebackDirection}; can not be null.
+	 */
+	protected abstract TracebackDirection getInitialColTracebackValue();
+	/**
+	 * Get the gap scores that represent when 
+	 * the first base of the query does not align to the subject
+	 * and vice versa.
+	 * @param length
+	 * @param openGapPenalty
+	 * @param extendGapPenalty
+	 * @return
+	 */
+	protected abstract float[] getInitialGapScores(int length, float openGapPenalty,
+			float extendGapPenalty);
 	/**
 	 * Replace the contents of the previous row
 	 * with the contents of the  current row.  Since 
@@ -225,27 +288,34 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		
 	}
 
-	private void printTraceBack(Sequence<R> query, Sequence<R> subject){
-		System.out.println(subject);
+	private void printTraceBack(){
 		for(int i=0; i<traceback.length; i++){
-			if(i==0){
-				System.out.print("  : ");
-			}else{
-				System.out.printf("%s : ", query.get(i-1));
-			}
+			
 			for(int j=0; j<traceback[0].length; j++){
-				System.out.printf("%s [%.0f] ",
-						TracebackDirection.values()[traceback[i][j]].toString().charAt(0),
-						scoreCache[i][j]);
+				
+				System.out.printf("%s [?] ",
+							TracebackDirection.values()[traceback[i][j]].toString().charAt(0));
 			}
 			System.out.println("");
 		}
+		
+		System.out.println(Arrays.toString(scoreCache[PREVIOUS_ROW]));
+		System.out.println(Arrays.toString(scoreCache[CURRENT_ROW]));
 	}
-	
-	protected abstract float getInitialRowScore(float[] bestPathSoFar, int rowNumber, float openGapPenalty,
-			float extendGapPenalty);
 
-	protected abstract CurrentStartPoint updateCurrentStartPoint(float currentBestScore,
+	/**
+	 * Return the updated value of CurrentStartPoint
+	 * if your implementation deems it necessary.
+	 * @param newScore the new score in the current cell being computed.
+	 * @param currentStartPoint the CurrentStartPoint which might need 
+	 * to be updated.
+	 * @param i the current cell row being computed.
+	 * @param j the current cell column being computed.
+	 * @return either a new {@link CurrentStartPoint} object
+	 * or {@literal currentStartPoint} if it should not
+	 * be updated; should never return null.
+	 */
+	protected abstract CurrentStartPoint updateCurrentStartPoint(float newScore,
 			CurrentStartPoint currentStartPoint, int i, int j);
 
 	protected abstract BestWalkBack computeBestWalkBack(float alignmentScore,
