@@ -40,6 +40,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.BitSet;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -679,5 +680,50 @@ public final class IOUtil {
     public static int getUnsignedByteCount(long value){
         int numBits = getUnsignedBitCount(value);
         return numBits/8+ (numBits%8==0?0:1);
+    }
+    /**
+     * Convert the given {@link BitSet} into
+     * the corresponding byte array.
+     * For some reason {@link BitSet}
+     * Java API thru java 6 does not include methods for converting
+     * to and from a byte array.
+     * @param bitset the bitset to convert.
+     * @return a new byte array containing the smallest 
+     * number of bytes required to store the same data as
+     * the given {@link BitSet}.
+     * @throws NullPointerException if bitset is null.
+     */
+    public static byte[] toByteArray(BitSet bitset){
+    	byte[] bytes = new byte[(bitset.length() + 7) / 8];
+    	for(int i=0; i<bitset.length(); i++){
+    		if(bitset.get(i)){
+    			bytes[bytes.length-i/8-1] |= 1<< (i%8);
+    		}
+    	}
+    	return bytes;
+    }
+    /**
+     * Convert the given byte array into
+     * the corresponding {@link BitSet}.
+     * For some reason {@link BitSet}
+     * Java API thru java 6 does not include methods for converting
+     * to and from a byte array.
+     * @param bytes the byte array to convert.
+     * @return a new {@link BitSet} containing the same data as
+     * the given byte array.
+     * @throws NullPointerException if bytes is null.
+     */
+    public static BitSet toBitSet(byte[] bytes){
+    	final BitSet bits;
+    	bits = new BitSet();
+    	int maxNumberOfBits = bytes.length *8;
+    	for(int i=0; i<maxNumberOfBits; i++){
+			int value = bytes[bytes.length-i/8-1] & (1<< (i%8));
+			if(value !=0){
+    			bits.set(i);
+    		}
+    	}
+    	
+    	return bits;
     }
 }
