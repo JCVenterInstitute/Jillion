@@ -726,4 +726,16 @@ public final class IOUtil {
     	
     	return bits;
     }
+    public static BitSet toBitSet(byte singleByte){
+    	final BitSet bits;
+    	bits = new BitSet();
+    	for(int i=0; i<8; i++){
+			int value = singleByte & (1<< (i%8));
+			if(value !=0){
+    			bits.set(i);
+    		}
+    	}
+    	
+    	return bits;
+    }
 }
