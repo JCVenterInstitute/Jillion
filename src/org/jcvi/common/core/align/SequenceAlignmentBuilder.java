@@ -17,6 +17,8 @@ public interface SequenceAlignmentBuilder<R extends Residue, S extends Sequence<
 	
 	SequenceAlignmentBuilder<R,S,A> reverse();
 	
+	SequenceAlignmentBuilder<R,S,A> setStartOffsets(int queryStartOffset, int subjectStartOffset);
+	
 	
 	
 }

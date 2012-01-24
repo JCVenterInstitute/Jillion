@@ -68,6 +68,14 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * of the nucleotide sequence.
      */
     public long getLength();
+    
+    /**
+     * Get the current length of the mutable
+     * sequence not counting gaps in the sequence. 
+     * @return the current length
+     * of the nucleotide sequence.
+     */
+    public long getUngappedLength();
     /**
      * Replace the residue at the given offset with a different nucleotide.
      * @param offset the gapped offset to modify.

@@ -1,5 +1,6 @@
 package org.jcvi.common.core.align;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
@@ -59,15 +60,17 @@ public class NucleotideSequenceAlignmentBuilder extends AbstractSequenceAlignmen
 
 
 
-	private final class NucleotideSequenceAlignmentImpl extends SequenceAlignmentImpl implements NucleotideSequenceAlignment{
+	private final class NucleotideSequenceAlignmentImpl extends AbstractSequenceAlignmentImpl implements NucleotideSequenceAlignment{
 		
 
 		public NucleotideSequenceAlignmentImpl(double percentIdentity,
 				int alignmentLength, int numMismatches, int numGap,
 				NucleotideSequence queryAlignment,
-				NucleotideSequence subjectAlignment) {
+				NucleotideSequence subjectAlignment,
+				Range queryRange, Range subjectRange) {
 			super(percentIdentity, alignmentLength, numMismatches, numGap, queryAlignment,
-					subjectAlignment);
+					subjectAlignment,
+					queryRange, subjectRange);
 		}
 
 		
@@ -81,8 +84,11 @@ public class NucleotideSequenceAlignmentBuilder extends AbstractSequenceAlignmen
 	protected NucleotideSequenceAlignment createAlignment(
 			double percentIdentity, int alignmentLength, int numMismatches,
 			int numGap, NucleotideSequence queryAlignment,
-			NucleotideSequence subjectAlignment) {
-		return new NucleotideSequenceAlignmentImpl(percentIdentity, alignmentLength, numMismatches, numGap, queryAlignment, subjectAlignment);
+			NucleotideSequence subjectAlignment,
+			Range queryRange, Range subjectRange) {
+		return new NucleotideSequenceAlignmentImpl(percentIdentity, alignmentLength, 
+				numMismatches, numGap, queryAlignment, subjectAlignment,
+				queryRange,subjectRange);
 	}
 
 

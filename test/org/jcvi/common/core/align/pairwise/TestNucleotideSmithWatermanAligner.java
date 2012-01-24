@@ -97,6 +97,7 @@ public class TestNucleotideSmithWatermanAligner extends AbstractTestNucleotideAl
 				seq1, seq2, matrix, -2, 0);
 		
 		NucleotideSequenceAlignment expected = new NucleotideSequenceAlignmentBuilder()
+											.setStartOffsets(2, 0)
 											.addMatches(seq2)
 											.build();
 		assertEquals(expected, actual);
