@@ -328,6 +328,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		int y = currentStartPoint.getY();
 		
 		SequenceAlignmentBuilder<R,S,A> alignmentBuilder = createSequenceAlignmentBuilder();
+		alignmentBuilder.setStartOffsets(x-1, y-1);
 		R gap = getGap();
 		while(!done){
 			

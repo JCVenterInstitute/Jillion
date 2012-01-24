@@ -1,5 +1,6 @@
 package org.jcvi.common.core.align;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequenceBuilder;
@@ -16,10 +17,12 @@ public class AminoAcidSequenceAlignmentBuilder extends AbstractSequenceAlignment
 	protected AminoAcidSequenceAlignment createAlignment(
 			double percentIdentity, int alignmentLength, int numMismatches,
 			int numGap, AminoAcidSequence queryAlignment,
-			AminoAcidSequence subjectAlignment) {
+			AminoAcidSequence subjectAlignment,
+			Range queryRange, Range subjectRange) {
 		return new AminoAcidSequenceAlignmentImpl(
 				percentIdentity, alignmentLength, numMismatches,
-				numGap, queryAlignment, subjectAlignment);
+				numGap, queryAlignment, subjectAlignment,
+				queryRange, subjectRange);
 	}
 
 	@Override
@@ -86,15 +89,17 @@ public class AminoAcidSequenceAlignmentBuilder extends AbstractSequenceAlignment
 
 
 
-	private final class AminoAcidSequenceAlignmentImpl extends SequenceAlignmentImpl implements AminoAcidSequenceAlignment{
+	private final class AminoAcidSequenceAlignmentImpl extends AbstractSequenceAlignmentImpl implements AminoAcidSequenceAlignment{
 		
 
 		public AminoAcidSequenceAlignmentImpl(double percentIdentity,
 				int alignmentLength, int numMismatches, int numGap,
 				AminoAcidSequence queryAlignment,
-				AminoAcidSequence subjectAlignment) {
+				AminoAcidSequence subjectAlignment,
+				Range queryRange, Range subjectRange) {
 			super(percentIdentity, alignmentLength, numMismatches, numGap, queryAlignment,
-					subjectAlignment);
+					subjectAlignment,
+					queryRange, subjectRange);
 		}
 
 		

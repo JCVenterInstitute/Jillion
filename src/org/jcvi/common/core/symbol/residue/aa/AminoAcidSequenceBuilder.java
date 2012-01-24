@@ -69,7 +69,11 @@ public class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAci
 	public long getLength() {
 		return builder.length();
 	}
-
+	@Override
+	public long getUngappedLength() {
+		return builder.length() - numberOfGaps;
+	}
+	
 	@Override
 	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> replace(
 			int offset, AminoAcid replacement) {
@@ -151,12 +155,12 @@ public class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAci
 
 	@Override
 	public AminoAcidSequence build() {
-		return new DefaultAminoAcidSequence(builder.toString());
+		return new CompactAminoAcidSequence(builder.toString());
 	}
 
 	@Override
 	public AminoAcidSequence build(Range range) {
-		return new DefaultAminoAcidSequence(builder.substring((int)range.getStart(), (int)range.getEnd()+1));
+		return new CompactAminoAcidSequence(builder.substring((int)range.getStart(), (int)range.getEnd()+1));
 	}
 
 	@Override

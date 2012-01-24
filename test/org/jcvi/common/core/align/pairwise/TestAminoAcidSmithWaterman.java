@@ -20,6 +20,7 @@ public class TestAminoAcidSmithWaterman {
 												.addMatches("AW")
 												.addGap('-', 'G')
 												.addMatches("HE")
+												.setStartOffsets(1, 4)
 												.build();
 		
 		AminoAcidSequenceAlignment actual = AminoAcidSmithWatermanAligner.align(query, subject, blosom50, -8, -6);

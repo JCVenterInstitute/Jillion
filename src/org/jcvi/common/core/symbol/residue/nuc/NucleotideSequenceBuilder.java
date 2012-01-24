@@ -226,6 +226,11 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     public long getLength(){
         return codecDecider.getCurrentLength();
     }
+    
+    @Override
+	public long getUngappedLength() {
+		return codecDecider.getCurrentLength() - codecDecider.numberOfGaps;
+	}
     /**
      * Replace the Nucleotide at the given offset with a different nucleotide.
      * @param offset the gapped offset to modify.

@@ -1,26 +1,31 @@
 package org.jcvi.common.core.align;
 
+import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.Residue;
 
 public interface SequenceAlignment<R extends Residue, S extends Sequence<R>> {
 
-	public abstract double getPercentIdentity();
+	double getPercentIdentity();
 
-	public abstract int getAlignmentLength();
+	int getAlignmentLength();
 
-	public abstract int getNumberOfMismatches();
+	int getNumberOfMismatches();
 
-	public abstract int getNumberOfGapOpenings();
+	int getNumberOfGapOpenings();
 
 	/**
 	 * @return the gappedQueryAlignment
 	 */
-	public abstract S getGappedQueryAlignment();
+	S getGappedQueryAlignment();
 
 	/**
 	 * @return the gappedSubjectAlignment
 	 */
-	public abstract S getGappedSubjectAlignment();
+	S getGappedSubjectAlignment();
+	
+	DirectedRange getQueryRange();
+    
+    DirectedRange getSubjectRange();
 
 }
