@@ -36,10 +36,7 @@ public interface Hsp extends SequenceAlignment<Nucleotide,NucleotideSequence> {
     String getQueryId();
     
     String getSubjectId();
-    
-    DirectedRange getQueryRange();
-    
-    DirectedRange getSubjectRange();
+
     /**
      * Get the Expectation value of this hit.
      * The value provides a measure of statistical

@@ -83,13 +83,14 @@ public class TestNucleotideSequenceAlignmentBuilder {
 	}
 	
 	@Test
-	public void reverse(){
+	public void buildFromTraceback(){
+		sut = new NucleotideSequenceAlignmentBuilder(true);
 		sut.addMatches(Nucleotides.parse("ACGT"));
 		
 		sut.addMismatch(Nucleotide.Guanine,Nucleotide.Adenine);
 		sut.addGap(Nucleotide.Thymine,Nucleotide.Gap);
 		sut.addMatches(Nucleotides.parse("ACGT"));
-		sut.reverse();
+
 		NucleotideSequenceAlignment alignment = sut.build();
 		assertEquals(10, alignment.getAlignmentLength());
 		assertEquals(1, alignment.getNumberOfMismatches());

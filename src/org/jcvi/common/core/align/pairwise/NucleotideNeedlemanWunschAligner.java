@@ -9,7 +9,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class NucleotideNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment>{
 
-	public static NucleotideSequenceAlignment align(Sequence<Nucleotide> query,
+	public static PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> align(Sequence<Nucleotide> query,
 			Sequence<Nucleotide> subject, ScoringMatrix<Nucleotide> matrix,
 			float openGapPenalty, float extendGapPenalty){
 		NucleotideNeedlemanWunschAligner aligner = new NucleotideNeedlemanWunschAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);
@@ -34,8 +34,8 @@ public class NucleotideNeedlemanWunschAligner extends AbstractNeedlemanWunschAli
 	}
 
 	@Override
-	protected SequenceAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment> createSequenceAlignmentBuilder() {
-		return new NucleotideSequenceAlignmentBuilder();
+	protected SequenceAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment> createSequenceAlignmentBuilder(boolean builtFromTraceback) {
+		return new NucleotideSequenceAlignmentBuilder(builtFromTraceback);
 	}
 	
 	

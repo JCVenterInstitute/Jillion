@@ -91,10 +91,10 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequenc
 			return new BestWalkBack(bestScore, dir);
 	}
 	@Override
-	protected CurrentStartPoint updateCurrentStartPoint(float currentBestScore,
-			CurrentStartPoint currentStartPoint, int i, int j) {
+	protected StartPoint updateCurrentStartPoint(float currentBestScore,
+			StartPoint currentStartPoint, int i, int j) {
 		if(currentBestScore > currentStartPoint.getScore()){
-			return new CurrentStartPoint(i, j, currentBestScore);
+			return new StartPoint(i, j, currentBestScore);
 		}
 		return currentStartPoint;
 	}

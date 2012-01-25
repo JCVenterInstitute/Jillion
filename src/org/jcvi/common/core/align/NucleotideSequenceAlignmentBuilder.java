@@ -8,6 +8,20 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public class NucleotideSequenceAlignmentBuilder extends AbstractSequenceAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotideSequenceBuilder>{
 
+	public NucleotideSequenceAlignmentBuilder() {
+		super();
+	}
+
+
+
+
+	public NucleotideSequenceAlignmentBuilder(boolean builtFromTraceback) {
+		super(builtFromTraceback);
+	}
+
+
+
+
 	@Override
 	protected NucleotideSequenceBuilder createSequenceBuilder() {
 		return new NucleotideSequenceBuilder();
@@ -49,12 +63,6 @@ public class NucleotideSequenceAlignmentBuilder extends AbstractSequenceAlignmen
 	public NucleotideSequenceAlignmentBuilder addGap(
 			Nucleotide query, Nucleotide subject) {
 		super.addGap(query, subject);
-		return this;
-	}
-
-	@Override
-	public NucleotideSequenceAlignmentBuilder reverse() {
-		super.reverse();
 		return this;
 	}
 

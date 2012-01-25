@@ -5,7 +5,20 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.Residue;
 import org.jcvi.common.core.symbol.residue.ResidueSequenceBuilder;
-
+/**
+ * {@code AbstractSequenceAlignmentBuilder} is 
+ * an abstract implementation of {@link SequenceAlignmentBuilder}
+ * that handles all the dirty work of building a valid
+ * {@link SequenceAlignment}.  Subclasses only have
+ * to implement a few simple helper methods
+ * to return the correct types.
+ * @author dkatzel
+ *
+ * @param <R> the {@link Residue} type used.
+ * @param <S> the {@link Sequence} type used.
+ * @param <A> the {@link SequenceAlignment} used.
+ * @param <B> the {@link ResidueSequenceBuilder} used.
+ */
 public abstract class AbstractSequenceAlignmentBuilder
 		<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>, B extends ResidueSequenceBuilder<R, S>> implements SequenceAlignmentBuilder<R, S,A>{
 
@@ -14,29 +27,63 @@ public abstract class AbstractSequenceAlignmentBuilder
 	private int alignmentLength=0;
 	private int numGaps=0;
 	private Integer queryStart, subjectStart;
-	private boolean isReversed=false;
-	public AbstractSequenceAlignmentBuilder(){
+	private final boolean builtFromTraceback;
+	/**
+	 * Constructs a new instance of a {@link SequenceAlignmentBuilder}.
+	 * @param builtFromTraceback this alignment
+	 * will be built from data collected from some kind
+	 * of traceback algorithm.  This will change the behavior of
+	 * how the query and subject alignment ranges are computed.
+	 * @see #setAlignmentOffsets(int, int)
+	 * 
+	 */
+	public AbstractSequenceAlignmentBuilder(boolean builtFromTraceback){
 		querySequenceBuilder = createSequenceBuilder();
 		subjectSequenceBuilder = createSequenceBuilder();
-		 
+		this.builtFromTraceback = builtFromTraceback;
 	}
-	
+	public AbstractSequenceAlignmentBuilder(){
+		this(false);		 
+	}
+	/**
+	 * Create a new instance of a 
+	 * {@link ResidueSequenceBuilder} of the correct
+	 * type.
+	 * @return a new {@link ResidueSequenceBuilder};
+	 * can not be null.
+	 */
 	protected abstract B createSequenceBuilder();
+	
 	protected abstract A createAlignment(double percentIdentity,
 				int alignmentLength, int numMismatches, int numGap,
 				S queryAlignment, S subjectAlignment,
 				Range queryRange, Range subjectRange);
-	
+	/**
+	 * Parse the given string into the 
+	 * correct type of {@link Residue}.
+	 * @param sequence the sequence to parse; will never
+	 * be null.
+	 * @return a new {@link Iterable}; can not be null.
+	 */
 	protected abstract Iterable<R> parse(String sequence);
-	protected abstract R parse(char sequence);
+	/**
+	 * Parse the given char into the 
+	 * correct type of {@link Residue}.
+	 * @param residue the residue to parse.
+	 * @return a new {@link Iterable}; can not be null.
+	 */
+	protected abstract R parse(char residue);
 	
 	
-	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
-	public SequenceAlignmentBuilder<R, S, A> setStartOffsets(
-			int queryStartOffset, int subjectStartOffset) {
-		queryStart = queryStartOffset;
-		subjectStart = subjectStartOffset;
+	public SequenceAlignmentBuilder<R, S, A> setAlignmentOffsets(
+			int queryOffset, int subjectOffset) {
+		queryStart = queryOffset;
+		subjectStart = subjectOffset;
 		return this;
 	}
 
@@ -59,9 +106,15 @@ public abstract class AbstractSequenceAlignmentBuilder
 		if(subjectStart ==null){
 			subjectStart=0;
 		}
-		if(isReversed){
+		if(builtFromTraceback){
 			queryRange = Range.buildRange(queryStart-querySequenceBuilder.getUngappedLength()+1, queryStart);
 			subjectRange = Range.buildRange(subjectStart-subjectSequenceBuilder.getUngappedLength()+1, subjectStart);
+			//we built these sequence backwards
+			//since they were built from a traceback
+			//so reverse (but not compliment) the sequences
+			//to make them in the correct order.
+			querySequenceBuilder.reverse();
+			subjectSequenceBuilder.reverse();
 		}else{
 			queryRange = Range.buildRangeOfLength(queryStart, querySequenceBuilder.getUngappedLength());
 			subjectRange = Range.buildRangeOfLength(subjectStart, subjectSequenceBuilder.getUngappedLength());
@@ -110,14 +163,6 @@ public abstract class AbstractSequenceAlignmentBuilder
 	public SequenceAlignmentBuilder<R, S,A> addGap(R query, R subject) {
 		numGaps++;
 		return appendToBuilders(query,subject);
-	}
-
-	@Override
-	public SequenceAlignmentBuilder<R, S,A> reverse() {
-		querySequenceBuilder.reverse();
-		subjectSequenceBuilder.reverse();
-		isReversed = !isReversed;
-		return this;
 	}
 
 	

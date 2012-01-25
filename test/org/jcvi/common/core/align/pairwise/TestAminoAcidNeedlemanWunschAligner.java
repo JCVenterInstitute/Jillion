@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Iterator;
 
-import org.jcvi.common.core.align.AminoAcidSequenceAlignment;
 import org.jcvi.common.core.align.AminoAcidSequenceAlignmentBuilder;
 import org.jcvi.common.core.align.pairwise.blosom.BlosomMatrices;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
@@ -21,15 +20,15 @@ public class TestAminoAcidNeedlemanWunschAligner {
 									.build();
 		AminoAcidSequence query = new AminoAcidSequenceBuilder("PAWHEAE")
 										.build();
-		AminoAcidSequenceAlignment expected = createExpectedAlignment("--P-AW-HEAE","HEAGAWGHE-E");
+		PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> expected = createExpectedAlignment("--P-AW-HEAE","HEAGAWGHE-E", 1F);
 		
-		AminoAcidSequenceAlignment actual = AminoAcidNeedlemanWunschAligner.align(
+		PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> actual = AminoAcidNeedlemanWunschAligner.align(
 				query, subject, blosom50, -8, -8);
 	
 		assertEquals(expected, actual);
 	}
 	
-	protected AminoAcidSequenceAlignment createExpectedAlignment(String gappedSeq1, String gappedSeq2){
+	protected PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> createExpectedAlignment(String gappedSeq1, String gappedSeq2, float score){
 		AminoAcidSequenceAlignmentBuilder builder = new AminoAcidSequenceAlignmentBuilder();
 		AminoAcidSequence seq1 = new AminoAcidSequenceBuilder(gappedSeq1).build();
 		AminoAcidSequence seq2 = new AminoAcidSequenceBuilder(gappedSeq2).build();
@@ -50,7 +49,7 @@ public class TestAminoAcidNeedlemanWunschAligner {
 		if(seq2Iter.hasNext()){
 			throw new IllegalArgumentException("seq2 is longer than seq1");
 		}
-		return builder.build();
+		return PairwiseSequenceAlignmentWrapper.wrap(builder.build(), score);
 		
 	}
 }

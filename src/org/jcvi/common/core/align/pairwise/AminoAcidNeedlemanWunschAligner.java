@@ -7,9 +7,10 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 
+
 public class AminoAcidNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment>{
 
-	public static AminoAcidSequenceAlignment align(Sequence<AminoAcid> query,
+	public static PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> align(Sequence<AminoAcid> query,
 			Sequence<AminoAcid> subject, ScoringMatrix<AminoAcid> matrix,
 			float openGapPenalty, float extendGapPenalty){
 		AminoAcidNeedlemanWunschAligner aligner = new AminoAcidNeedlemanWunschAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);
@@ -33,8 +34,8 @@ public class AminoAcidNeedlemanWunschAligner extends AbstractNeedlemanWunschAlig
 	}
 
 	@Override
-	protected SequenceAlignmentBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment> createSequenceAlignmentBuilder() {
-		return new AminoAcidSequenceAlignmentBuilder();
+	protected SequenceAlignmentBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment> createSequenceAlignmentBuilder(boolean builtFromTraceback) {
+		return new AminoAcidSequenceAlignmentBuilder(builtFromTraceback);
 	}
 
 }
