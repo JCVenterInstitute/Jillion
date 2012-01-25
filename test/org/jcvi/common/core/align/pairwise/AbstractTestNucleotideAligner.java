@@ -19,7 +19,7 @@ public class AbstractTestNucleotideAligner {
 		}
 		matrix = builder.build();
 	}
-	protected NucleotideSequenceAlignment createExpectedAlignment(String gappedSeq1, String gappedSeq2){
+	protected PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> createExpectedAlignment(String gappedSeq1, String gappedSeq2, float score){
 		NucleotideSequenceAlignmentBuilder builder = new NucleotideSequenceAlignmentBuilder();
 		NucleotideSequence seq1 = new NucleotideSequenceBuilder(gappedSeq1).build();
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder(gappedSeq2).build();
@@ -40,7 +40,7 @@ public class AbstractTestNucleotideAligner {
 		if(seq2Iter.hasNext()){
 			throw new IllegalArgumentException("seq2 is longer than seq1");
 		}
-		return builder.build();
+		return PairwiseSequenceAlignmentWrapper.wrap(builder.build(), score);
 		
 	}
 }

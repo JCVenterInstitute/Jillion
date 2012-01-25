@@ -4,10 +4,13 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
 
+import org.jcvi.common.core.DirectedRange;
+import org.jcvi.common.core.align.NucleotideSequenceAlignment;
 import org.jcvi.common.core.align.SequenceAlignment;
 import org.jcvi.common.core.align.SequenceAlignmentBuilder;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.Residue;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
  * {@code AbstractPairwiseAligner} is an abstract 
  * implementation of a dynamic programming
@@ -18,7 +21,7 @@ import org.jcvi.common.core.symbol.residue.Residue;
  *
  * @param <R> the type of {@link Residue} used in this aligner.
  * @param <S> the {@link Sequence} type input into this aligner.
- * @param <A> the {@link SequenceAlignment} type returned by this aligner.
+ * @param <A> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
 abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> {
 	/**
@@ -98,7 +101,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	/**
 	 * The final alignment produced.
 	 */
-	private final A alignment;
+	private final PairwiseSequenceAlignment<R, S> alignment;
 	
 	protected AbstractPairwiseAligner(Sequence<R> query, Sequence<R> subject, ScoringMatrix<R> matrix, float openGapPenalty, float extendGapPenalty){
 		
@@ -110,13 +113,13 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		byte[] seq1Bytes = convertToByteArray(query);
 		byte[] seq2Bytes = convertToByteArray(subject);
 		
-		CurrentStartPoint currentStartPoint = populateTraceback(matrix,
+		StartPoint currentStartPoint = populateTraceback(matrix,
 				openGapPenalty, extendGapPenalty, seq1Bytes, seq2Bytes);
 		//now do trace back
 		alignment = traceBack(seq1Bytes, seq2Bytes, currentStartPoint);
 		
 	}
-	private CurrentStartPoint populateTraceback(ScoringMatrix<R> matrix,
+	private StartPoint populateTraceback(ScoringMatrix<R> matrix,
 			float openGapPenalty, float extendGapPenalty, byte[] seq1Bytes,
 			byte[] seq2Bytes) {
 		int lengthOfSeq1 = seq1Bytes.length;
@@ -130,10 +133,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		float[] verticalGapPenaltiesSoFar = new float[lengthOfSeq2+1];		
 		Arrays.fill(verticalGapPenaltiesSoFar, Float.NEGATIVE_INFINITY);
 		
-		float[] bestPathSoFar = new float[lengthOfSeq2+1];
-		Arrays.fill(bestPathSoFar, 0F);
-		
-		CurrentStartPoint currentStartPoint = new CurrentStartPoint();
+		StartPoint currentStartPoint = new StartPoint();
 		for(int i=1; i<=lengthOfSeq1; i++){
 
 			
@@ -169,14 +169,11 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 				
 				BestWalkBack bestWalkBack = computeBestWalkBack(alignmentScore, cumulativeHorizontalGapPenalty, verticalGapPenaltiesSoFar[j]);
 				scoreCache[CURRENT_ROW][j] = bestWalkBack.getBestScore();
-				if( bestPathSoFar[j] <= bestWalkBack.getBestScore()){
-					bestPathSoFar[j] = bestWalkBack.getBestScore();
-				}
 				//some implementations might
 				//need to update the currentStartPoint even if it's not
 				//the best path so far
 				//so give subclasses the option to update.
-				currentStartPoint = updateCurrentStartPoint(bestPathSoFar[j], currentStartPoint, i, j);
+				currentStartPoint = updateCurrentStartPoint(bestWalkBack.getBestScore(), currentStartPoint, i, j);
 				if(currentStartPoint ==null){
 					throw new NullPointerException("current start point can not be set to null");
 				}
@@ -311,62 +308,60 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	 * to be updated.
 	 * @param i the current cell row being computed.
 	 * @param j the current cell column being computed.
-	 * @return either a new {@link CurrentStartPoint} object
+	 * @return either a new {@link StartPoint} object
 	 * or {@literal currentStartPoint} if it should not
 	 * be updated; should never return null.
 	 */
-	protected abstract CurrentStartPoint updateCurrentStartPoint(float newScore,
-			CurrentStartPoint currentStartPoint, int i, int j);
+	protected abstract StartPoint updateCurrentStartPoint(float newScore,
+			StartPoint currentStartPoint, int i, int j);
 
 	protected abstract BestWalkBack computeBestWalkBack(float alignmentScore,
 			float horrizontalGapPenalty, float verticalGapPenalty);
 
-	private A traceBack(byte[] seq1Bytes, byte[] seq2Bytes,
-			CurrentStartPoint currentStartPoint) {
+	private PairwiseSequenceAlignment<R, S> traceBack(byte[] seq1Bytes, byte[] seq2Bytes,
+			StartPoint currentStartPoint) {
 		boolean done=false;
 		int x=currentStartPoint.getX();
 		int y = currentStartPoint.getY();
-		
-		SequenceAlignmentBuilder<R,S,A> alignmentBuilder = createSequenceAlignmentBuilder();
-		alignmentBuilder.setStartOffsets(x-1, y-1);
+		float score = currentStartPoint.getScore();
+		SequenceAlignmentBuilder<R,S,A> alignmentBuilder = createSequenceAlignmentBuilder(true);
+		alignmentBuilder.setAlignmentOffsets(x-1, y-1);
 		R gap = getGap();
 		while(!done){
 			
 			switch(TracebackDirection.values()[traceback[x][y]]){
-			case VERTICAL :
-				{
+				case VERTICAL :
 					alignmentBuilder.addGap(getResidueFromOrdinal(seq1Bytes[x-1]), gap);
 					x--;
-				}
 					break;
 					
-			case HORIZONTAL :
-				{
-						alignmentBuilder.addGap(gap,getResidueFromOrdinal(seq2Bytes[y-1]));
-						y--;
-				}
-				break;
-			case DIAGNOL:
-				boolean isMatch = seq1Bytes[x-1] == seq2Bytes[y-1];
-				if(isMatch){
-					alignmentBuilder.addMatch(getResidueFromOrdinal(seq1Bytes[x-1]));
-				}else{
-					alignmentBuilder.addMismatch(getResidueFromOrdinal(seq1Bytes[x-1]), getResidueFromOrdinal(seq2Bytes[y-1]));
-				}
-				
-				x--;
-				y--;
-				break;
-			case TERMINAL:
-				done = true;
-				break;
+				case HORIZONTAL :
+					alignmentBuilder.addGap(gap,getResidueFromOrdinal(seq2Bytes[y-1]));
+					y--;
+					break;
+				case DIAGNOL:
+					boolean isMatch = seq1Bytes[x-1] == seq2Bytes[y-1];
+					if(isMatch){
+						alignmentBuilder.addMatch(getResidueFromOrdinal(seq1Bytes[x-1]));
+					}else{
+						alignmentBuilder.addMismatch(getResidueFromOrdinal(seq1Bytes[x-1]), getResidueFromOrdinal(seq2Bytes[y-1]));
+					}
+					
+					x--;
+					y--;
+					break;
+				case TERMINAL:
+					done = true;
+					break;
 			}
 		}
-		alignmentBuilder.reverse();
-		return alignmentBuilder.build();
+		return PairwiseSequenceAlignmentWrapper.wrap(alignmentBuilder.build(), score);
 	}
-
-	public A getSequenceAlignment(){
+	/**
+	 * Get the completed {@link SequenceAlignment}.
+	 * @return the 
+	 */
+	public PairwiseSequenceAlignment<R, S> getSequenceAlignment(){
 		return alignment;
 	}
 	/**
@@ -374,10 +369,24 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	 * @return a {@link Residue}; never null.
 	 */
 	protected abstract R getGap();
-	
+	/**
+	 * Get the {@link Residue} that corresponds
+	 * to the given ordinal value.  
+	 * @param ordinal the oridinal value to get a {@link Residue}
+	 * for.
+	 * @return a {@link Residue}; never nulll.
+	 */
 	protected abstract R getResidueFromOrdinal(int ordinal);
-	
-	protected abstract SequenceAlignmentBuilder<R, S,A> createSequenceAlignmentBuilder();
+	/**
+	 * Create a new instance of the type of
+	 * {@link SequenceAlignmentBuilder} required by this implementation.
+	 * @param builtFromTraceback is this alignment going to be built via
+	 * a traceback method.  Currently always set to {@code true}.
+	 * @return a new {@link SequenceAlignmentBuilder} that can be built
+	 * via a traceback if specified.
+	 */
+	protected abstract SequenceAlignmentBuilder<R, S,A> createSequenceAlignmentBuilder(boolean builtFromTraceback);
+
 	
 	private byte[] convertToByteArray(Sequence<R> sequence) {
 		ByteBuffer buf = ByteBuffer.allocate((int)sequence.getLength());
@@ -387,9 +396,9 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		buf.flip();
 		return buf.array();
 	}
-	
+
 	/**
-	 * {@code CurrentStartPoint} is a class
+	 * {@code StartPoint} is a class
 	 * that points to the current location
 	 * in our traceback matrix of where the local
 	 * alignment should start.  This class
@@ -399,13 +408,13 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	 * @author dkatzel
 	 *
 	 */
-	protected static final class CurrentStartPoint{
+	protected static final class StartPoint{
 		private final int x,y;
 		private final float score;
-		public CurrentStartPoint(){
+		public StartPoint(){
 			this(0,0,Float.NEGATIVE_INFINITY);
 		}
-		public CurrentStartPoint(int x, int y, float score) {
+		public StartPoint(int x, int y, float score) {
 			this.x = x;
 			this.y = y;
 			this.score = score;
@@ -420,9 +429,9 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 			return score;
 		}
 		
-		public CurrentStartPoint updateIfWorseThan(int x, int y, float score){
+		public StartPoint updateIfWorseThan(int x, int y, float score){
 			if(score >= this.score){
-				return new CurrentStartPoint(x,y,score);
+				return new StartPoint(x,y,score);
 			}
 			return this;
 		}
@@ -433,7 +442,17 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		}
 		
 	}
-	
+	/**
+	 * {@code BestWalkBack} is a wrapper around
+	 * the a best score and the {@link TracebackDirection}
+	 * to use in the traceback for the current cell
+	 * in the traceback matrix.
+	 * This class is used internally by {@link AbstractPairwiseAligner#computeBestWalkBack(float, float, float)}
+	 * to allow subclasses to determine the which score is the best
+	 * in an implementation specific way.
+	 * @author dkatzel
+	 *
+	 */
 	protected static final class BestWalkBack{
 		private final TracebackDirection tracebackDirection;
 		private final float bestScore;

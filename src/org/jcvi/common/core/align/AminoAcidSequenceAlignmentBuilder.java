@@ -8,6 +8,14 @@ import org.jcvi.common.core.symbol.residue.aa.AminoAcids;
 
 public class AminoAcidSequenceAlignmentBuilder extends AbstractSequenceAlignmentBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment, AminoAcidSequenceBuilder>{
 
+	public AminoAcidSequenceAlignmentBuilder() {
+		super();
+	}
+
+	public AminoAcidSequenceAlignmentBuilder(boolean builtFromTraceback) {
+		super(builtFromTraceback);
+	}
+
 	@Override
 	protected AminoAcidSequenceBuilder createSequenceBuilder() {
 		return new AminoAcidSequenceBuilder();
@@ -73,11 +81,6 @@ public class AminoAcidSequenceAlignmentBuilder extends AbstractSequenceAlignment
 	public AminoAcidSequenceAlignmentBuilder addGap(
 			char query, char subject) {
 		super.addGap(query, subject);
-		return this;
-	}
-	@Override
-	public AminoAcidSequenceAlignmentBuilder reverse() {
-		super.reverse();
 		return this;
 	}
 	@Override

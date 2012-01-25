@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.jcvi.common.core.align.NucleotideSequenceAlignment;
 import org.jcvi.common.core.align.NucleotideSequenceAlignmentBuilder;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.junit.Test;
@@ -16,11 +17,13 @@ public class TestNucleotideNeedlemanWunschAligner extends AbstractTestNucleotide
 	public void oneBase(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("A").build();
 		
-		NucleotideSequenceAlignment actual = NucleotideNeedlemanWunschAligner.align(seq, seq, matrix, 0, 0);
+		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> actual = NucleotideNeedlemanWunschAligner.align(seq, seq, matrix, 0, 0);
 		
-		NucleotideSequenceAlignment expected = new NucleotideSequenceAlignmentBuilder()
+		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> expected = 
+				PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
 												.addMatches(seq)
-												.build();
+												.build(),
+												2);
 		
 		assertEquals(expected, actual);
 	}
@@ -28,11 +31,13 @@ public class TestNucleotideNeedlemanWunschAligner extends AbstractTestNucleotide
 	public void twoBases(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("AC").build();
 		
-		NucleotideSequenceAlignment actual = NucleotideNeedlemanWunschAligner.align(seq, seq, matrix, 0, 0);
+PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> actual = NucleotideNeedlemanWunschAligner.align(seq, seq, matrix, 0, 0);
 		
-		NucleotideSequenceAlignment expected = new NucleotideSequenceAlignmentBuilder()
+		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> expected = 
+				PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
 												.addMatches(seq)
-												.build();
+												.build(),
+												4);
 		
 		assertEquals(expected, actual);
 	}
@@ -40,11 +45,13 @@ public class TestNucleotideNeedlemanWunschAligner extends AbstractTestNucleotide
 	public void exactMatch(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
 		
-		NucleotideSequenceAlignment actual = NucleotideNeedlemanWunschAligner.align(seq, seq, matrix, 0, 0);
+PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> actual = NucleotideNeedlemanWunschAligner.align(seq, seq, matrix, 0, 0);
 		
-		NucleotideSequenceAlignment expected = new NucleotideSequenceAlignmentBuilder()
-									.addMatches(seq)
-									.build();
+		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> expected = 
+				PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
+												.addMatches(seq)
+												.build(),
+												16);
 		assertEquals(expected, actual);
 		
 	}
@@ -53,9 +60,10 @@ public class TestNucleotideNeedlemanWunschAligner extends AbstractTestNucleotide
 	public void oneSequenceLongerThanOtherAddGapsToShorterSeq(){
 		NucleotideSequence seq1 = new NucleotideSequenceBuilder("ACGTACGT").build();
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder("ACGTACGTNNNN").build();
-		NucleotideSequenceAlignment actual = NucleotideNeedlemanWunschAligner.align(seq1, seq2, matrix, -2, 0);
+		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> actual = NucleotideNeedlemanWunschAligner.align(seq1, seq2, matrix, -2, 0);
 		
-		NucleotideSequenceAlignment expected = this.createExpectedAlignment("ACGTACGT----", "ACGTACGTNNNN");
+	
+		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> expected = this.createExpectedAlignment("ACGTACGT----", "ACGTACGTNNNN",14);
 		assertEquals(expected, actual);
 		
 	}

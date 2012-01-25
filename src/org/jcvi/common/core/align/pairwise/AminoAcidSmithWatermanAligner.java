@@ -8,7 +8,7 @@ import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 
 public class AminoAcidSmithWatermanAligner  extends AbstractSmithWatermanAligner<AminoAcid,AminoAcidSequence, AminoAcidSequenceAlignment>{
 
-	public static AminoAcidSequenceAlignment align(Sequence<AminoAcid> query,
+	public static PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> align(Sequence<AminoAcid> query,
 			Sequence<AminoAcid> subject, ScoringMatrix<AminoAcid> matrix,
 			float openGapPenalty, float extendGapPenalty){
 		AminoAcidSmithWatermanAligner aligner = new AminoAcidSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);
@@ -31,8 +31,8 @@ public class AminoAcidSmithWatermanAligner  extends AbstractSmithWatermanAligner
 	}
 
 	@Override
-	protected AminoAcidSequenceAlignmentBuilder createSequenceAlignmentBuilder() {
-		return new AminoAcidSequenceAlignmentBuilder();
+	protected AminoAcidSequenceAlignmentBuilder createSequenceAlignmentBuilder(boolean builtFromTraceback) {
+		return new AminoAcidSequenceAlignmentBuilder(builtFromTraceback);
 	}
 
 }

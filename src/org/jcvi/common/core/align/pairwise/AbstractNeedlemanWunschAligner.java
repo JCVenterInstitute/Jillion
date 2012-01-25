@@ -77,9 +77,9 @@ abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Sequ
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected CurrentStartPoint updateCurrentStartPoint(float currentBestScore,
-			CurrentStartPoint currentStartPoint, int i, int j) {
-		return new CurrentStartPoint(i, j, currentBestScore);
+	protected StartPoint updateCurrentStartPoint(float currentBestScore,
+			StartPoint currentStartPoint, int i, int j) {
+		return new StartPoint(i, j, currentBestScore);
 	}
 	
 	
