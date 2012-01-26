@@ -30,7 +30,7 @@ import org.jcvi.common.core.util.MathUtil;
  *
  *
  */
-abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, A>{
+abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, A, P>{
 
 	protected AbstractSmithWatermanAligner(Sequence<R> query, Sequence<R> subject,
 			ScoringMatrix<R> matrix, float openGapPenalty,

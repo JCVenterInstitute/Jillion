@@ -1,9 +1,7 @@
 package org.jcvi.common.core.align.pairwise;
 
-import org.jcvi.common.core.align.AminoAcidSequenceAlignment;
 import org.jcvi.common.core.align.AminoAcidSequenceAlignmentBuilder;
 import org.jcvi.common.core.align.pairwise.blosom.BlosomMatrices;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequenceBuilder;
 import org.junit.Test;
@@ -17,16 +15,16 @@ public class TestAminoAcidSmithWaterman {
 									.build();
 		AminoAcidSequence query = new AminoAcidSequenceBuilder("PAWHEAE")
 										.build();
-		PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> expected = 
-				PairwiseSequenceAlignmentWrapper.wrap(new AminoAcidSequenceAlignmentBuilder()
+		AminoAcidPairwiseSequenceAlignment expected = 
+				new AminoAcidPairwiseSequenceAlignmentImpl(PairwiseSequenceAlignmentWrapper.wrap(new AminoAcidSequenceAlignmentBuilder()
 												.addMatches("AW")
 												.addGap('-', 'G')
 												.addMatches("HE")
 												.setAlignmentOffsets(1, 4)
 												.build(),
-												28);
+												28));
 		
-		PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> actual = AminoAcidSmithWatermanAligner.align(query, subject, blosom50, -8, -6);
+		AminoAcidPairwiseSequenceAlignment actual = AminoAcidSmithWatermanAligner.align(query, subject, blosom50, -8, -6);
 	
 		assertEquals(expected, actual);
 	}

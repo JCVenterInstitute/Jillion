@@ -6,13 +6,13 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
-public class NucleotideSmithWatermanAligner extends AbstractSmithWatermanAligner<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment>{
+public class NucleotideSmithWatermanAligner extends AbstractSmithWatermanAligner<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>{
 
-	public static PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> align(Sequence<Nucleotide> query,
+	public static NucleotidePairwiseSequenceAlignment align(Sequence<Nucleotide> query,
 			Sequence<Nucleotide> subject, ScoringMatrix<Nucleotide> matrix,
 			float openGapPenalty, float extendGapPenalty){
 		NucleotideSmithWatermanAligner aligner = new NucleotideSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);
-		return aligner.getSequenceAlignment();
+		return aligner.getPairwiseSequenceAlignment();
 				
 		}
 	private NucleotideSmithWatermanAligner(Sequence<Nucleotide> seq1,
@@ -36,7 +36,11 @@ public class NucleotideSmithWatermanAligner extends AbstractSmithWatermanAligner
 		return new NucleotideSequenceAlignmentBuilder(builtFromTraceback);
 	}
 
-	
+	@Override
+	protected NucleotidePairwiseSequenceAlignment wrapPairwiseAlignment(
+			PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> alignment) {
+		return new NucleotidePairwiseSequenceAlignmentImpl(alignment);
+	}
 
 	
 
