@@ -64,7 +64,12 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
  *
  */
 public final class AsmParser {
-
+	/**
+	 * Refactored out split Pattern since String.split() 
+	 * causes a new Pattern to be created and compiled
+	 * for each call.  This is a minor cpu optimization.
+	 */
+	private static final Pattern SPLIT_ON_SLASH = Pattern.compile("/");
     public static void parseAsm(File asmFile, AsmVisitor visitor) throws IOException{
         InputStream in =null;
         try{
@@ -717,12 +722,12 @@ public final class AsmParser {
                 int length = parseLength(parserState,visitor);
                 long variantId = parseVariantId(parserState,visitor);
                 long phasedVariantId = parsePhasedVariantId(parserState,visitor);
-                String[] contributingReadCountString = parseContributingReadcountString(parserState,visitor).split("/");
-                String[] weightString = parseWeightString(parserState,visitor).split("/");
-                String[] sequencesString = parseSequencesString(parserState,visitor).split("/");
+                String[] contributingReadCountString = SPLIT_ON_SLASH.split(parseContributingReadcountString(parserState,visitor));
+                String[] weightString = SPLIT_ON_SLASH.split(parseWeightString(parserState,visitor));
+                String[] sequencesString = SPLIT_ON_SLASH.split(parseSequencesString(parserState,visitor));
                 String supportingReadIds = parseSupportingReadsString(parserState,visitor);
                 List<Long> readIds = new ArrayList<Long>(numberOfReads);                
-                for(String id : supportingReadIds.split("/")){
+                for(String id : SPLIT_ON_SLASH.split(supportingReadIds)){
                     readIds.add(Long.parseLong(id.trim()));
                 }
                 
