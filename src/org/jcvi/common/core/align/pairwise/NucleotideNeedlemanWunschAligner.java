@@ -7,13 +7,13 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
-public class NucleotideNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment>{
+public class NucleotideNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>{
 
-	public static PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> align(Sequence<Nucleotide> query,
+	public static NucleotidePairwiseSequenceAlignment align(Sequence<Nucleotide> query,
 			Sequence<Nucleotide> subject, ScoringMatrix<Nucleotide> matrix,
 			float openGapPenalty, float extendGapPenalty){
 		NucleotideNeedlemanWunschAligner aligner = new NucleotideNeedlemanWunschAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);
-		return aligner.getSequenceAlignment();
+		return aligner.getPairwiseSequenceAlignment();
 				
 		}
 	
@@ -36,6 +36,12 @@ public class NucleotideNeedlemanWunschAligner extends AbstractNeedlemanWunschAli
 	@Override
 	protected SequenceAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment> createSequenceAlignmentBuilder(boolean builtFromTraceback) {
 		return new NucleotideSequenceAlignmentBuilder(builtFromTraceback);
+	}
+
+	@Override
+	protected NucleotidePairwiseSequenceAlignment wrapPairwiseAlignment(
+			PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> alignment) {
+		return new NucleotidePairwiseSequenceAlignmentImpl(alignment);
 	}
 	
 	

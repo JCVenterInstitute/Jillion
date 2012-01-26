@@ -2,7 +2,6 @@ package org.jcvi.common.core.align.pairwise;
 
 import java.util.Iterator;
 
-import org.jcvi.common.core.align.NucleotideSequenceAlignment;
 import org.jcvi.common.core.align.NucleotideSequenceAlignmentBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -19,7 +18,7 @@ public class AbstractTestNucleotideAligner {
 		}
 		matrix = builder.build();
 	}
-	protected PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> createExpectedAlignment(String gappedSeq1, String gappedSeq2, float score){
+	protected NucleotidePairwiseSequenceAlignment createExpectedAlignment(String gappedSeq1, String gappedSeq2, float score){
 		NucleotideSequenceAlignmentBuilder builder = new NucleotideSequenceAlignmentBuilder();
 		NucleotideSequence seq1 = new NucleotideSequenceBuilder(gappedSeq1).build();
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder(gappedSeq2).build();
@@ -40,7 +39,7 @@ public class AbstractTestNucleotideAligner {
 		if(seq2Iter.hasNext()){
 			throw new IllegalArgumentException("seq2 is longer than seq1");
 		}
-		return PairwiseSequenceAlignmentWrapper.wrap(builder.build(), score);
+		return new NucleotidePairwiseSequenceAlignmentImpl(PairwiseSequenceAlignmentWrapper.wrap(builder.build(), score));
 		
 	}
 }

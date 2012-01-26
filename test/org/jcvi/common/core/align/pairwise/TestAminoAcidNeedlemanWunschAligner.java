@@ -20,15 +20,15 @@ public class TestAminoAcidNeedlemanWunschAligner {
 									.build();
 		AminoAcidSequence query = new AminoAcidSequenceBuilder("PAWHEAE")
 										.build();
-		PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> expected = createExpectedAlignment("--P-AW-HEAE","HEAGAWGHE-E", 1F);
+		AminoAcidPairwiseSequenceAlignment expected = createExpectedAlignment("--P-AW-HEAE","HEAGAWGHE-E", 1F);
 		
-		PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> actual = AminoAcidNeedlemanWunschAligner.align(
+		AminoAcidPairwiseSequenceAlignment actual = AminoAcidNeedlemanWunschAligner.align(
 				query, subject, blosom50, -8, -8);
 	
 		assertEquals(expected, actual);
 	}
 	
-	protected PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> createExpectedAlignment(String gappedSeq1, String gappedSeq2, float score){
+	protected AminoAcidPairwiseSequenceAlignment createExpectedAlignment(String gappedSeq1, String gappedSeq2, float score){
 		AminoAcidSequenceAlignmentBuilder builder = new AminoAcidSequenceAlignmentBuilder();
 		AminoAcidSequence seq1 = new AminoAcidSequenceBuilder(gappedSeq1).build();
 		AminoAcidSequence seq2 = new AminoAcidSequenceBuilder(gappedSeq2).build();
@@ -49,7 +49,8 @@ public class TestAminoAcidNeedlemanWunschAligner {
 		if(seq2Iter.hasNext()){
 			throw new IllegalArgumentException("seq2 is longer than seq1");
 		}
-		return PairwiseSequenceAlignmentWrapper.wrap(builder.build(), score);
+		return new AminoAcidPairwiseSequenceAlignmentImpl(
+				PairwiseSequenceAlignmentWrapper.wrap(builder.build(), score));
 		
 	}
 }

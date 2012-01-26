@@ -23,7 +23,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  * @param <S> the {@link Sequence} type input into this aligner.
  * @param <A> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
-abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> {
+abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> {
 	/**
 	 * The direction to traverse to the next
 	 * cell in the traceback matrix.  The traceback
@@ -101,7 +101,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	/**
 	 * The final alignment produced.
 	 */
-	private final PairwiseSequenceAlignment<R, S> alignment;
+	private final P alignment;
 	
 	protected AbstractPairwiseAligner(Sequence<R> query, Sequence<R> subject, ScoringMatrix<R> matrix, float openGapPenalty, float extendGapPenalty){
 		
@@ -318,7 +318,9 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	protected abstract BestWalkBack computeBestWalkBack(float alignmentScore,
 			float horrizontalGapPenalty, float verticalGapPenalty);
 
-	private PairwiseSequenceAlignment<R, S> traceBack(byte[] seq1Bytes, byte[] seq2Bytes,
+	protected abstract P wrapPairwiseAlignment(PairwiseSequenceAlignment<R, S> alignment);
+	
+	private P traceBack(byte[] seq1Bytes, byte[] seq2Bytes,
 			StartPoint currentStartPoint) {
 		boolean done=false;
 		int x=currentStartPoint.getX();
@@ -355,13 +357,13 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 					break;
 			}
 		}
-		return PairwiseSequenceAlignmentWrapper.wrap(alignmentBuilder.build(), score);
+		return wrapPairwiseAlignment(PairwiseSequenceAlignmentWrapper.wrap(alignmentBuilder.build(), score));
 	}
 	/**
 	 * Get the completed {@link SequenceAlignment}.
 	 * @return the 
 	 */
-	public PairwiseSequenceAlignment<R, S> getSequenceAlignment(){
+	public P getPairwiseSequenceAlignment(){
 		return alignment;
 	}
 	/**

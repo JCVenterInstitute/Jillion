@@ -5,7 +5,7 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.Residue;
 import org.jcvi.common.core.util.MathUtil;
 
-abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, A>{
+abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, A, P>{
 
 	protected AbstractNeedlemanWunschAligner(Sequence<R> query,
 			Sequence<R> subject, ScoringMatrix<R> matrix, float openGapPenalty,

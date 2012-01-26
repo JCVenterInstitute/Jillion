@@ -1,6 +1,5 @@
 package org.jcvi.common.core.align.pairwise;
 
-import org.jcvi.common.core.align.NucleotideSequenceAlignment;
 import org.jcvi.common.core.align.NucleotideSequenceAlignmentBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -15,12 +14,12 @@ public class TestNucleotideSmithWatermanAligner extends AbstractTestNucleotideAl
 	public void oneBase(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("A").build();
 		
-		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> actual = NucleotideSmithWatermanAligner.align(seq, seq, matrix, -2, 0);
+		NucleotidePairwiseSequenceAlignment actual = NucleotideSmithWatermanAligner.align(seq, seq, matrix, -2, 0);
 		
-		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> expected =
-			PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
+		NucleotidePairwiseSequenceAlignment expected =
+			new NucleotidePairwiseSequenceAlignmentImpl(PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
 												.addMatches(seq)
-												.build(), 2);
+												.build(), 2));
 		
 		assertEquals(expected, actual);
 	}
@@ -28,11 +27,12 @@ public class TestNucleotideSmithWatermanAligner extends AbstractTestNucleotideAl
 	public void exactMatch(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
 		
-		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> actual = NucleotideSmithWatermanAligner.align(seq, seq, matrix, -2, 0);
+		NucleotidePairwiseSequenceAlignment actual = NucleotideSmithWatermanAligner.align(seq, seq, matrix, -2, 0);
 		
-		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> expected = PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
+		NucleotidePairwiseSequenceAlignment expected =
+				new NucleotidePairwiseSequenceAlignmentImpl(PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
 												.addMatches(seq)
-												.build(), 16);
+												.build(), 16));
 		assertEquals(expected, actual);
 		
 	}
@@ -42,9 +42,10 @@ public class TestNucleotideSmithWatermanAligner extends AbstractTestNucleotideAl
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder("ACGTACGTNNNN").build();
 		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> actual = NucleotideSmithWatermanAligner.align(seq1, seq2, matrix, -2, 0);
 		
-		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> expected = PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
+		NucleotidePairwiseSequenceAlignment expected =
+				new NucleotidePairwiseSequenceAlignmentImpl( PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
 											.addMatches(seq1)
-											.build(), 16);
+											.build(), 16));
 		assertEquals(expected, actual);
 		
 	}
@@ -54,15 +55,16 @@ public class TestNucleotideSmithWatermanAligner extends AbstractTestNucleotideAl
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder("ACG"+"ACGT").build();
 		
 		
-		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> actual = NucleotideSmithWatermanAligner.align(
+		NucleotidePairwiseSequenceAlignment actual = NucleotideSmithWatermanAligner.align(
 				seq1, seq2, matrix, -2, 0);
 		
-		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> expected = PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
+		NucleotidePairwiseSequenceAlignment expected =
+				new NucleotidePairwiseSequenceAlignmentImpl( PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
 							.addMatches("ACG")
 							.addGap(Nucleotide.Thymine, Nucleotide.Gap)
 							.addMatches("ACGT")
 							.build(),
-							12);
+							12));
 		
 		assertEquals(expected, actual);
 		
@@ -74,10 +76,11 @@ public class TestNucleotideSmithWatermanAligner extends AbstractTestNucleotideAl
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder("ACGACGAA").build();
 		
 		
-		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> actual = NucleotideSmithWatermanAligner.align(
+		NucleotidePairwiseSequenceAlignment actual = NucleotideSmithWatermanAligner.align(
 				seq1, seq2, matrix, -2, 0);
 		
-		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> expected = 
+		NucleotidePairwiseSequenceAlignment expected =
+				new NucleotidePairwiseSequenceAlignmentImpl(
 				PairwiseSequenceAlignmentWrapper.wrap(
 				new NucleotideSequenceAlignmentBuilder()
 												.addMatches("ACG")
@@ -86,7 +89,7 @@ public class TestNucleotideSmithWatermanAligner extends AbstractTestNucleotideAl
 												.addGap(Nucleotide.Thymine, Nucleotide.Gap)
 												.addMatches("AA")
 												.build(),
-												12);
+												12));
 		
 		assertEquals(expected, actual);
 		
@@ -98,16 +101,17 @@ public class TestNucleotideSmithWatermanAligner extends AbstractTestNucleotideAl
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder(  "GTACG").build();
 		
 		
-		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> actual = NucleotideSmithWatermanAligner.align(
+		NucleotidePairwiseSequenceAlignment actual = NucleotideSmithWatermanAligner.align(
 				seq1, seq2, matrix, -2, 0);
 		
-		PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> expected = 
+		NucleotidePairwiseSequenceAlignment expected =
+				new NucleotidePairwiseSequenceAlignmentImpl( 
 				PairwiseSequenceAlignmentWrapper.wrap(
 						new NucleotideSequenceAlignmentBuilder()
 											.setAlignmentOffsets(2, 0)
 											.addMatches(seq2)
 											.build(),
-											10);
+											10));
 		assertEquals(expected, actual);
 	}
 	
