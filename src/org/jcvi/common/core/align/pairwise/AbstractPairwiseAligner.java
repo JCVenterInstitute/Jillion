@@ -3,14 +3,12 @@ package org.jcvi.common.core.align.pairwise;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.List;
 
-import org.jcvi.common.core.DirectedRange;
-import org.jcvi.common.core.align.NucleotideSequenceAlignment;
 import org.jcvi.common.core.align.SequenceAlignment;
 import org.jcvi.common.core.align.SequenceAlignmentBuilder;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.Residue;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
  * {@code AbstractPairwiseAligner} is an abstract 
  * implementation of a dynamic programming
@@ -102,9 +100,13 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	 * The final alignment produced.
 	 */
 	private final P alignment;
+	private final ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy;
 	
-	protected AbstractPairwiseAligner(Sequence<R> query, Sequence<R> subject, ScoringMatrix<R> matrix, float openGapPenalty, float extendGapPenalty){
-		
+	protected AbstractPairwiseAligner(Sequence<R> query, Sequence<R> subject,
+			ScoringMatrix<R> matrix, float openGapPenalty, float extendGapPenalty,
+			ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy){
+		checkNotNull(query,subject,matrix);
+		this.pairwiseStrategy = pairwiseStrategy;
 		traceback = new byte[(int)query.getLength()+1][(int)subject.getLength()+1];
 		
 		scoreCache = new float[2][(int)subject.getLength()+1];
@@ -117,6 +119,19 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 				openGapPenalty, extendGapPenalty, seq1Bytes, seq2Bytes);
 		//now do trace back
 		alignment = traceBack(seq1Bytes, seq2Bytes, currentStartPoint);
+		
+	}
+	private void checkNotNull(Sequence<R> query, Sequence<R> subject,
+			ScoringMatrix<R> matrix) {
+		if(query ==null){
+			throw new NullPointerException("query sequence can not be null");
+		}
+		if(subject ==null){
+			throw new NullPointerException("subject sequence can not be null");
+		}
+		if(matrix ==null){
+			throw new NullPointerException("scoring matrix can not be null");
+		}
 		
 	}
 	private StartPoint populateTraceback(ScoringMatrix<R> matrix,
@@ -132,7 +147,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		//keep a float for current horizontal penalty 
 		float[] verticalGapPenaltiesSoFar = new float[lengthOfSeq2+1];		
 		Arrays.fill(verticalGapPenaltiesSoFar, Float.NEGATIVE_INFINITY);
-		
+		List<R> residuesByOrdinal = pairwiseStrategy.getResidueList();
 		StartPoint currentStartPoint = new StartPoint();
 		for(int i=1; i<=lengthOfSeq1; i++){
 
@@ -164,7 +179,9 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 				
 				//need to do -1s because 0 offset in matrix is filled with stops
 				//and actual values start at offset 1
-				float alignmentScore = diagnol + matrix.getScore(seq1Bytes[i-1],seq2Bytes[j-1]);
+				float alignmentScore = diagnol + matrix.getScore(
+						residuesByOrdinal.get(seq1Bytes[i-1]),
+						residuesByOrdinal.get(seq2Bytes[j-1]));
 				
 				
 				BestWalkBack bestWalkBack = computeBestWalkBack(alignmentScore, cumulativeHorizontalGapPenalty, verticalGapPenaltiesSoFar[j]);
@@ -317,8 +334,6 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 
 	protected abstract BestWalkBack computeBestWalkBack(float alignmentScore,
 			float horrizontalGapPenalty, float verticalGapPenalty);
-
-	protected abstract P wrapPairwiseAlignment(PairwiseSequenceAlignment<R, S> alignment);
 	
 	private P traceBack(byte[] seq1Bytes, byte[] seq2Bytes,
 			StartPoint currentStartPoint) {
@@ -326,27 +341,28 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		int x=currentStartPoint.getX();
 		int y = currentStartPoint.getY();
 		float score = currentStartPoint.getScore();
-		SequenceAlignmentBuilder<R,S,A> alignmentBuilder = createSequenceAlignmentBuilder(true);
+		SequenceAlignmentBuilder<R,S,A> alignmentBuilder = pairwiseStrategy.createSequenceAlignmentBuilder(true);
 		alignmentBuilder.setAlignmentOffsets(x-1, y-1);
-		R gap = getGap();
+		R gap =  pairwiseStrategy.getGap();
+		List<R> residuesByOrdinal = pairwiseStrategy.getResidueList();
 		while(!done){
 			
 			switch(TracebackDirection.values()[traceback[x][y]]){
 				case VERTICAL :
-					alignmentBuilder.addGap(getResidueFromOrdinal(seq1Bytes[x-1]), gap);
+					alignmentBuilder.addGap(residuesByOrdinal.get(seq1Bytes[x-1]), gap);
 					x--;
 					break;
 					
 				case HORIZONTAL :
-					alignmentBuilder.addGap(gap,getResidueFromOrdinal(seq2Bytes[y-1]));
+					alignmentBuilder.addGap(gap,residuesByOrdinal.get(seq2Bytes[y-1]));
 					y--;
 					break;
 				case DIAGNOL:
 					boolean isMatch = seq1Bytes[x-1] == seq2Bytes[y-1];
 					if(isMatch){
-						alignmentBuilder.addMatch(getResidueFromOrdinal(seq1Bytes[x-1]));
+						alignmentBuilder.addMatch(residuesByOrdinal.get(seq1Bytes[x-1]));
 					}else{
-						alignmentBuilder.addMismatch(getResidueFromOrdinal(seq1Bytes[x-1]), getResidueFromOrdinal(seq2Bytes[y-1]));
+						alignmentBuilder.addMismatch(residuesByOrdinal.get(seq1Bytes[x-1]), residuesByOrdinal.get(seq2Bytes[y-1]));
 					}
 					
 					x--;
@@ -357,7 +373,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 					break;
 			}
 		}
-		return wrapPairwiseAlignment(PairwiseSequenceAlignmentWrapper.wrap(alignmentBuilder.build(), score));
+		return  pairwiseStrategy.wrapPairwiseAlignment(PairwiseSequenceAlignmentWrapper.wrap(alignmentBuilder.build(), score));
 	}
 	/**
 	 * Get the completed {@link SequenceAlignment}.
@@ -366,29 +382,6 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	public P getPairwiseSequenceAlignment(){
 		return alignment;
 	}
-	/**
-	 * Get the {@link Residue} instance that represents a gap.
-	 * @return a {@link Residue}; never null.
-	 */
-	protected abstract R getGap();
-	/**
-	 * Get the {@link Residue} that corresponds
-	 * to the given ordinal value.  
-	 * @param ordinal the oridinal value to get a {@link Residue}
-	 * for.
-	 * @return a {@link Residue}; never nulll.
-	 */
-	protected abstract R getResidueFromOrdinal(int ordinal);
-	/**
-	 * Create a new instance of the type of
-	 * {@link SequenceAlignmentBuilder} required by this implementation.
-	 * @param builtFromTraceback is this alignment going to be built via
-	 * a traceback method.  Currently always set to {@code true}.
-	 * @return a new {@link SequenceAlignmentBuilder} that can be built
-	 * via a traceback if specified.
-	 */
-	protected abstract SequenceAlignmentBuilder<R, S,A> createSequenceAlignmentBuilder(boolean builtFromTraceback);
-
 	
 	private byte[] convertToByteArray(Sequence<R> sequence) {
 		ByteBuffer buf = ByteBuffer.allocate((int)sequence.getLength());

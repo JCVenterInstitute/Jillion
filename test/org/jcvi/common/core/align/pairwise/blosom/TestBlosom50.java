@@ -10,18 +10,18 @@ public class TestBlosom50 {
 	public void spotCheck(){
 		AminoAcidScoringMatrix blosom50 = BlosomMatrices.getMatrix(50);
 		assertEquals(5F,
-				blosom50.getScore(AminoAcid.Alanine.getOrdinalAsByte(), AminoAcid.Alanine.getOrdinalAsByte()),
+				blosom50.getScore(AminoAcid.Alanine, AminoAcid.Alanine),
 				0F);
 		
 		assertEquals(10F,
-				blosom50.getScore(AminoAcid.Proline.getOrdinalAsByte(), AminoAcid.Proline.getOrdinalAsByte()),
+				blosom50.getScore(AminoAcid.Proline, AminoAcid.Proline),
 				0F);
 		
 		assertEquals(-3F,
-				blosom50.getScore(AminoAcid.Proline.getOrdinalAsByte(), AminoAcid.Valine.getOrdinalAsByte()),
+				blosom50.getScore(AminoAcid.Proline, AminoAcid.Valine),
 				0F);
 		assertEquals(0F,
-				blosom50.getScore(AminoAcid.Valine.getOrdinalAsByte(), AminoAcid.Threonine.getOrdinalAsByte()),
+				blosom50.getScore(AminoAcid.Valine, AminoAcid.Threonine),
 				0F);
 	}
 }

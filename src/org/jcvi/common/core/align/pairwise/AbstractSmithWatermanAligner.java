@@ -34,8 +34,8 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequenc
 
 	protected AbstractSmithWatermanAligner(Sequence<R> query, Sequence<R> subject,
 			ScoringMatrix<R> matrix, float openGapPenalty,
-			float extendGapPenalty) {
-		super(query, subject, matrix, openGapPenalty, extendGapPenalty);
+			float extendGapPenalty, ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy) {
+		super(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy);
 	}
 	/**
 	 * All initial gap scores are set to {@literal 0}.

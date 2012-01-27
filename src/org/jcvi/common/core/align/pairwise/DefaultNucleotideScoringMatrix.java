@@ -15,7 +15,12 @@ public class DefaultNucleotideScoringMatrix implements NucleotideScoringMatrix{
 
 
 	@Override
-	public float getScore(byte ordinalOfBase1, byte ordinalOfBase2) {
+	public float getScore(Nucleotide a, Nucleotide b) {
+		return getScore(a.getOrdinalAsByte(), b.getOrdinalAsByte());
+	}
+
+	
+	private float getScore(byte ordinalOfBase1, byte ordinalOfBase2) {
 		return matrix[ordinalOfBase1][ordinalOfBase2];
 	}
 	
