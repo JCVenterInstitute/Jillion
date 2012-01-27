@@ -1,13 +1,8 @@
 package org.jcvi.common.core.align.pairwise;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Scanner;
-
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcids;
 
@@ -40,8 +35,15 @@ public class PropertyFileAminoAcidScoringMatrix implements AminoAcidScoringMatri
 		}
 		scanner.close();
 	}
+
+	
 	@Override
-	public float getScore(byte a, byte b) {
+	public float getScore(AminoAcid a, AminoAcid b) {
+		return getScore(a.getOrdinalAsByte(), b.getOrdinalAsByte());
+	}
+
+
+	private float getScore(byte a, byte b) {
 		return matrix[a][b];
 	}
 

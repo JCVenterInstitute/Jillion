@@ -19,16 +19,17 @@
 
 package org.jcvi.common.core.align.pairwise;
 
-import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.common.core.symbol.residue.Residue;
 
 /**
+ * {@code ScoringMatrix} 
+ * 
  * @author dkatzel
  *
  *
  *
  */
-public interface ScoringMatrix<S extends Symbol> {
+public interface ScoringMatrix<R extends Residue> {
 
-    
-	float getScore(byte b, byte c);
+	float getScore(R a, R b);
 }

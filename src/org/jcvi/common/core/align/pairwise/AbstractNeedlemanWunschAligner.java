@@ -9,8 +9,8 @@ abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Sequ
 
 	protected AbstractNeedlemanWunschAligner(Sequence<R> query,
 			Sequence<R> subject, ScoringMatrix<R> matrix, float openGapPenalty,
-			float extendGapPenalty) {
-		super(query, subject, matrix, openGapPenalty, extendGapPenalty);
+			float extendGapPenalty,ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy) {
+		super(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy);
 	}
 	/**
 	 * The initial gap scores of NeedlemanWunsch are the values
