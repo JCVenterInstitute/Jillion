@@ -21,23 +21,21 @@ package org.jcvi.common.core.seq.trim;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.assembly.AssemblyUtil;
+import org.jcvi.common.core.align.pairwise.DefaultNucleotideScoringMatrix;
+import org.jcvi.common.core.align.pairwise.NucleotidePairwiseSequenceAlignment;
+import org.jcvi.common.core.align.pairwise.NucleotideSmithWatermanAligner;
+import org.jcvi.common.core.align.pairwise.ScoringMatrix;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
-import org.jcvi.common.experimental.align.Aligner;
-import org.jcvi.common.experimental.align.Alignment;
-import org.jcvi.common.experimental.align.NucleotideSubstitutionMatrix;
-import org.jcvi.common.experimental.align.SequenceAlignment;
-import org.jcvi.common.experimental.align.SmithWatermanAligner;
 
 /**
  * @author dkatzel
@@ -46,42 +44,68 @@ import org.jcvi.common.experimental.align.SmithWatermanAligner;
  */
 public class DefaultPrimerTrimmer implements PrimerTrimmer{
     
-    private static final Alignment NULL_ALIGNMENT_OBJECT = new Alignment() {
-        
-        @Override
-        public double getScore() {
-            return 0;
-        }
-        
-        @Override
-        public SequenceAlignment getReferenceAlignment() {
-            return null;
-        }
-        
-        @Override
-        public SequenceAlignment getQueryAlignment() {
-            return null;
-        }
-        
-        @Override
-        public double getMatch() {
-            return 0;
-        }
-        
-        @Override
-        public double getIdentity() {
-            return 0;
-        }
+    private static final NucleotidePairwiseSequenceAlignment NULL_ALIGNMENT_OBJECT = new NucleotidePairwiseSequenceAlignment(){
+
+		@Override
+		public float getScore() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public double getPercentIdentity() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getAlignmentLength() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getNumberOfMismatches() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getNumberOfGapOpenings() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public NucleotideSequence getGappedQueryAlignment() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public NucleotideSequence getGappedSubjectAlignment() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public DirectedRange getQueryRange() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public DirectedRange getSubjectRange() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+    	
     };
-    /** The substitution matrix to use in the alignment. */
-    private final NucleotideSubstitutionMatrix matrix = new NucleotideSubstitutionMatrix.Builder("default")
-                                                        .defaultScore(-4)
-                                                        .identityScore(4)
-                                                        .gapScore(0)
-                                                        .unspecifiedMatchScore(0)
-                                                        .ambiguityScore(2)
-                                                        .build();
-    private final Aligner<Nucleotide> aligner = new SmithWatermanAligner(matrix);
+    private static final ScoringMatrix<Nucleotide> MATRIX = new DefaultNucleotideScoringMatrix.Builder(-4)
+    										.setMatch(4)
+    										.ambiguityScore(2)
+    										.build();
+
     
     private final int minLength;
     private final double minMatch;
@@ -107,47 +131,41 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
         List<Range> ranges = new ArrayList<Range>();
         for(NucleotideSequence primer : primersToTrimAgainst){
             if(primer.getLength()>=minLength){
-                Alignment forwardAlignment = aligner.alignSequence(sequence, primer);
-                final Alignment reverseAlignment;
+            	NucleotidePairwiseSequenceAlignment forwardAlignment = NucleotideSmithWatermanAligner.align(primer, sequence, 
+            					MATRIX, -2, -1);
+               
+                final NucleotidePairwiseSequenceAlignment reverseAlignment;
                 if(alsoCheckReverseCompliment){
-                    reverseAlignment = aligner.alignSequence(
-                            NucleotideSequenceFactory.create(Nucleotides.reverseCompliment(sequence.asList())),
-                            primer);
+                	NucleotideSequence reversePrimer = new NucleotideSequenceBuilder(primer)
+												.reverseCompliment()
+												.build();
+					reverseAlignment = NucleotideSmithWatermanAligner.align(
+							reversePrimer,sequence,
+                			 MATRIX, -2, -1);
                 }else{
                     reverseAlignment = NULL_ALIGNMENT_OBJECT;
                 }
-                Alignment bestAlignment;
-                if(forwardAlignment.getMatch() > minMatch || reverseAlignment.getMatch() > minMatch){
+                NucleotidePairwiseSequenceAlignment bestAlignment;
+                if(forwardAlignment.getPercentIdentity() > minMatch || reverseAlignment.getPercentIdentity() > minMatch){
                     bestAlignment= reverseAlignment.getScore() > forwardAlignment.getScore() ? reverseAlignment : forwardAlignment;
-                    SequenceAlignment sequenceAlignment =bestAlignment.getQueryAlignment();
-                    Range range = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
-                            sequenceAlignment.getStart(), sequenceAlignment.getStop());
-                    if(bestAlignment == reverseAlignment){
-                        //reverseCompliment
-                        range = AssemblyUtil.reverseComplimentValidRange(range, sequence.getLength());
-                    }
-                    ranges.add(range);
+                    ranges.add(bestAlignment.getSubjectRange().asRange());
                 }
             }
         }
         List<Range> mergedRanges = Range.mergeRanges(ranges);
         Range sequenceRange = Range.buildRangeOfLength(0, sequence.getLength()).convertRange(CoordinateSystem.RESIDUE_BASED);
-        
+
         if(mergedRanges.size() ==1){
            Range primerRange = mergedRanges.get(0);
            if(primerRange.equals(sequenceRange)){
                //the entire primer range is the same as the original sequence
                return Range.buildEmptyRange();
            }
-           Range intersection = primerRange.intersection(sequenceRange);
-           
-           Range left = Range.buildRange(sequenceRange.getStart(), intersection.getStart()-1).convertRange(CoordinateSystem.RESIDUE_BASED);
-           Range right = Range.buildRange(intersection.getEnd()+1, sequenceRange.getEnd()).convertRange(CoordinateSystem.RESIDUE_BASED);
-           
-           List<Range> candidateRanges = Arrays.asList(intersection, left, right);
-           Collections.sort(candidateRanges, Range.Comparators.LONGEST_TO_SHORTEST);
+           List<Range> rangesFreeFromPrimer = sequenceRange.compliment(primerRange);
+           Collections.sort(rangesFreeFromPrimer, Range.Comparators.LONGEST_TO_SHORTEST);
            //return the largest range
-           return candidateRanges.get(0);           
+           return rangesFreeFromPrimer.get(0).convertRange(Range.CoordinateSystem.RESIDUE_BASED);     
+              
           
         }
         return sequenceRange;

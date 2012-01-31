@@ -23,7 +23,6 @@
  */
 package org.jcvi;
 
-import org.jcvi.align.AllAlignTests;
 import org.jcvi.common.AllCommonUnitTests;
 
 import org.junit.runner.RunWith;
@@ -33,9 +32,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-
-        
-        AllAlignTests.class,
         
         
         AllCommonUnitTests.class

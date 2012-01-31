@@ -1,5 +1,7 @@
 package org.jcvi.common.core.align;
 
+import java.util.Iterator;
+
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
@@ -90,6 +92,27 @@ public abstract class AbstractSequenceAlignmentBuilder
 	@Override
 	public SequenceAlignmentBuilder<R, S,A> addMatches(String matchedSequence) {
 		return addMatches(parse(matchedSequence));
+	}
+	
+	
+	@Override
+	public SequenceAlignmentBuilder<R, S, A> addMismatches(String query,
+			String subject) {
+		if(query.length() != subject.length()){
+			throw new IllegalArgumentException(
+					String.format("query and subject have different number of residues: %d vs %d", query.length(), subject.length()));
+			
+		}
+		Iterator<R> queryBases =parse(query).iterator();
+		Iterator<R> subjectBases =parse(subject).iterator();
+		
+		while(queryBases.hasNext()){
+			R nextQuery = queryBases.next();
+			R nextSubject = subjectBases.next();
+			addMismatch(nextQuery, nextSubject);
+		}
+		
+		return this;
 	}
 	@Override
 	public A build() {

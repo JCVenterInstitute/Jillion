@@ -20,7 +20,6 @@
 package org.jcvi.common.core.seq.read.trace;
 
 import org.jcvi.common.core.seq.read.trace.frg.AllFrgUnitTests;
-import org.jcvi.common.core.seq.read.trace.nextera.AllNexteraUnitTests;
 import org.jcvi.common.core.seq.read.trace.pyro.All454UnitTests;
 import org.jcvi.common.core.seq.read.trace.sanger.AllSangerTraceUnitTests;
 import org.junit.runner.RunWith;
@@ -33,8 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
     	TestDefaultTraceFileNameIdGeneratorStripExtension.class,
         TestTraceQualityDataStoreAdapter.class,
         TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllNexteraUnitTests.class,
+
         All454UnitTests.class,
         AllSangerTraceUnitTests.class,
         AllFrgUnitTests.class      

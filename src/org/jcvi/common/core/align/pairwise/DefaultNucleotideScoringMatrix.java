@@ -3,6 +3,7 @@ package org.jcvi.common.core.align.pairwise;
 import java.util.Arrays;
 
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public class DefaultNucleotideScoringMatrix implements NucleotideScoringMatrix{
 
@@ -36,6 +37,20 @@ public class DefaultNucleotideScoringMatrix implements NucleotideScoringMatrix{
 			}
 		}
 		
+		public Builder setMatch(float matchScore){
+			for(int i=0; i< matrix.length; i++){
+				matrix[i][i] = matchScore;
+			}
+			return this;
+		}
+		public Builder ambiguityScore(float ambiguityScore){
+			for(Nucleotide g : Nucleotides.parse("ACGT")){
+				for(Nucleotide ambiguity : g.getAllPossibleAmbiguities()){
+					set(g,ambiguity, ambiguityScore);
+				}
+	        }
+			return this;
+		}
 		public Builder set(Nucleotide a, Nucleotide b, float score){
 			int aOrdinal = a.ordinal();
 			int bOrdinal = b.ordinal();
