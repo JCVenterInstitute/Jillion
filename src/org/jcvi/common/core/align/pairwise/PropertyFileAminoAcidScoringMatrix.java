@@ -3,6 +3,8 @@ package org.jcvi.common.core.align.pairwise;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Scanner;
+
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcids;
 
@@ -13,7 +15,7 @@ public class PropertyFileAminoAcidScoringMatrix implements AminoAcidScoringMatri
 	
 	public PropertyFileAminoAcidScoringMatrix(InputStream in){
 		
-		Scanner scanner = new Scanner(in);
+		Scanner scanner = new Scanner(in, IOUtil.UTF_8_NAME);
 		//first column is amino acids in matrix
 		List<AminoAcid> header = AminoAcids.parse(
 				scanner.nextLine().replaceAll("\\s+", ""));
