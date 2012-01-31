@@ -22,14 +22,23 @@ package org.jcvi.common.core.align.pairwise;
 import org.jcvi.common.core.symbol.residue.Residue;
 
 /**
- * {@code ScoringMatrix} 
+ * {@code ScoringMatrix} is a matrix 
+ * that describes a score assigned to each possible
+ * pairing of Residue.  Types of Scoring matrices might
+ * include distance matrices, subsitution matrices etc.
  * 
  * @author dkatzel
- *
- *
- *
  */
 public interface ScoringMatrix<R extends Residue> {
-
+	/**
+	 * Get the score between the given pair of 
+	 * {@link Residue}s.
+	 * @param a the first residue.
+	 * @param b the second residue.
+	 * @return the score as a float, could be positive,
+	 * negative, zero, whole numbers or fractional numbers
+	 * depending on which type of matrix is used and 
+	 * the values in that matrix.
+	 */
 	float getScore(R a, R b);
 }

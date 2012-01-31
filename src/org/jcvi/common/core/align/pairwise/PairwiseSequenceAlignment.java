@@ -4,11 +4,12 @@ import org.jcvi.common.core.align.SequenceAlignment;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.Residue;
 /**
- * {@code PairwiseSequenceAlignment} is 
+ * {@code PairwiseSequenceAlignment} is a {@link SequenceAlignment}
+ * between two {@link Sequence}s.
  * @author dkatzel
  *
- * @param <R>
- * @param <S>
+ * @param <R> the type of {@link Residue} in the sequence.
+ * @param <S> the type of {@link Sequence} in this alignment.
  */
 public interface PairwiseSequenceAlignment<R extends Residue, S extends Sequence<R>> extends SequenceAlignment<R, S> {
 	/**
