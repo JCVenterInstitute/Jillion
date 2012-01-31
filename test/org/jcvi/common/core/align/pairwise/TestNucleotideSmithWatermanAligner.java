@@ -36,6 +36,22 @@ public class TestNucleotideSmithWatermanAligner extends AbstractTestNucleotideAl
 		assertEquals(expected, actual);
 		
 	}
+	
+	@Test
+	public void withAmbiguityCodes(){
+		NucleotideSequence seq = new NucleotideSequenceBuilder(   "ACGTACGT").build();
+		NucleotideSequence ambseq = new NucleotideSequenceBuilder("ACRTACGT").build();
+		NucleotidePairwiseSequenceAlignment actual = NucleotideSmithWatermanAligner.align(seq, ambseq, matrix, -2, 0);
+		
+		NucleotidePairwiseSequenceAlignment expected =
+				new NucleotidePairwiseSequenceAlignmentImpl(PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
+												.addMatches("AC")
+												.addMismatches("G", "R")
+												.addMatches("TACGT")
+												.build(), 13));
+		assertEquals(expected, actual);
+		
+	}
 	@Test
 	public void oneSequenceLongerThanOtherShouldPickShorterLength(){
 		NucleotideSequence seq1 = new NucleotideSequenceBuilder("ACGTACGT").build();

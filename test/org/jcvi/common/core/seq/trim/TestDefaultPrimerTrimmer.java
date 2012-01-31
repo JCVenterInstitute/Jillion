@@ -64,6 +64,9 @@ public class TestDefaultPrimerTrimmer {
     }
     @Test
     public void trimLeftComplimented(){
+   /* 																	     "CGTTT"
+    																			 "CGTTT"
+    																   "AAACG" */
         NucleotideSequence sequence = NucleotideSequenceFactory.create("AAACGACGTACGTACGT");
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(NucleotideSequenceFactory.create("CGTTT"));
         

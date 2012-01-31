@@ -12,10 +12,7 @@ public class AbstractTestNucleotideAligner {
 	protected final NucleotideScoringMatrix matrix;
 	public AbstractTestNucleotideAligner(){
 		DefaultNucleotideScoringMatrix.Builder builder = new DefaultNucleotideScoringMatrix.Builder(-1F);
-		
-		for(Nucleotide n : Nucleotide.values()){
-			builder.set(n, n, 2);
-		}
+		builder.setMatch(2);
 		matrix = builder.build();
 	}
 	protected NucleotidePairwiseSequenceAlignment createExpectedAlignment(String gappedSeq1, String gappedSeq2, float score){

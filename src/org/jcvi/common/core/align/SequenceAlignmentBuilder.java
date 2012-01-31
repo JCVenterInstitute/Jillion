@@ -48,6 +48,8 @@ public interface SequenceAlignmentBuilder<R extends Residue, S extends Sequence<
 	 */
 	SequenceAlignmentBuilder<R,S,A> setAlignmentOffsets(int queryOffset, int subjectOffset);
 	
+	SequenceAlignmentBuilder<R,S,A> addMismatches(String query, String subject);
+	
 	
 	
 }
