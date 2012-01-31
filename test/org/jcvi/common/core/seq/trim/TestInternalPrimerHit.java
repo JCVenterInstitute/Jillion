@@ -35,6 +35,7 @@ public class TestInternalPrimerHit {
 
     private final DefaultPrimerTrimmer sut = new DefaultPrimerTrimmer(13, .9f);
     
+    																																																																																																																																										 //RATGGAAATMACAACRCAYTTCCAGGTCATAGCTGTTTCCTG    																																																																																																																																							
     private final NucleotideSequence sequence = NucleotideSequenceFactory.create(
             "AGGAAAAATTTTTGATTGGATGTCATCCGACTTTACTTTTCTTGAAGTTCCAGCGCAAAATGCCATAAGCACCACATTCCCATATACTGGAGATCCTCCATACAGCCATGGAACAGGAACAGGATACACCATGGACACAGTTAACAGAACACATCAATATTCAGAAAAGGGGAAATGGACAACAAACTCAGAGACTGGAGCCCCCCAACTTAACCCAATTGATGGACCACTGCCCGAGGACAATGAGCCAAGTGGATATGCACAAACGGACTGTGTCCTTGAAGCAATGGCTTTCCTTGAAGAGTCCCACCCAGGAATCTTTGAAAACTCGTGTCTTGAAACGATGGAAGTTGTCCAACAAACAAGAGTGGACAAGTTGACCCAAGGCCGTCAGACCTATGATTGGACACTAAACAGGAACCAGCCGGCTGCAACTGCATTAGCTAATACTATAGAGGTCTTCAGATCGAACGGTCTGACAGCTAATGAATCAGGGAGACTAATAGATTTTCTCAAGGATGTGATGGAATCAATGGATAAAGAGGAAATGGAAATAACAACACACTTCCAGGTCATAGCTGTTTCCTAAACA");
 
@@ -46,7 +47,7 @@ public class TestInternalPrimerHit {
     public void trim(){
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(forwardPrimer, reversePrimer);
     
-        Range expectedRange = Range.buildRange(0, 586);
+        Range expectedRange = Range.buildRange(0, 545);
         Range actualRange = sut.trim(sequence, datastore);
         assertEquals(expectedRange, actualRange);
     }
