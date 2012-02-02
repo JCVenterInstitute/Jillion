@@ -66,4 +66,23 @@ public class TestIOUtil_bitSet {
 		IOUtil.toBitSet(null);
 	}
 	
+	@Test
+	public void toBitSetByte(){
+		BitSet expected = new BitSet();
+		expected.set(5);		
+		assertEquals(expected, IOUtil.toBitSet((byte)32));
+	}
+	@Test
+	public void toBitSetShort(){
+		BitSet expected = new BitSet();
+		expected.set(10);		
+		assertEquals(expected, IOUtil.toBitSet((short)1024));
+	}
+	@Test
+	public void toBitSetByteOnlyNeeds2bits(){
+		BitSet expected = new BitSet();
+		expected.set(0);
+		expected.set(1);		
+		assertEquals(expected, IOUtil.toBitSet((byte)3));
+	}
 }

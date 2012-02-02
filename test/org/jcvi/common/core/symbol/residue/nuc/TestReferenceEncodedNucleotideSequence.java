@@ -35,7 +35,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestReferenceEncodedNucleotideSequence {
-    GlyphCodec codec = DefaultNucleotideCodec.INSTANCE;
+    GlyphCodec<Nucleotide> codec = DefaultNucleotideCodec.INSTANCE;
     String referenceAsString = "ACGTACGTACGTACGTACGTACGTACGT";
 
     

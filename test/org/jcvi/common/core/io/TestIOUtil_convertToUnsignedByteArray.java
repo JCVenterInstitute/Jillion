@@ -46,7 +46,14 @@ public class TestIOUtil_convertToUnsignedByteArray {
         int reconvertedUnsignedShort =IOUtil.readUnsignedShort(new ByteArrayInputStream(byteArray));
         assertEquals(reconvertedUnsignedShort, unsignedShort);
     }
-    
+    @Test
+    public void smallUnsignedShortAddPadding() throws IOException{
+        int unsignedShort = 3;
+        byte[] byteArray = IOUtil.convertUnsignedShortToByteArray(unsignedShort);
+        assertArrayEquals(new byte[]{0,3}, byteArray);
+        int reconvertedUnsignedShort =IOUtil.readUnsignedShort(new ByteArrayInputStream(byteArray));
+        assertEquals(reconvertedUnsignedShort, unsignedShort);
+    }
     @Test
     public void unsignedInt() throws IOException{
         long unsignedInt = Integer.MAX_VALUE+1L;
