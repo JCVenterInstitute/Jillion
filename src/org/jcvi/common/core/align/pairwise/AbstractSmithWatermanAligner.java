@@ -26,9 +26,16 @@ import org.jcvi.common.core.symbol.residue.Residue;
 import org.jcvi.common.core.util.MathUtil;
 
 /**
+ * {@code AbstractSmithWatermanAligner} 
+ * implements methods in {@link AbstractPairwiseAligner} 
+ * with  Smith-Waterman (with Gotoh improvements) specific implementations.
+ * 
  * @author dkatzel
  *
- *
+ * @param <R> the type of {@link Residue} used in this aligner.
+ * @param <S> the {@link Sequence} type input into this aligner.
+ * @param <A> the {@link SequenceAlignment} type returned by this aligner.
+ * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
 abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, A, P>{
 
@@ -73,8 +80,15 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequenc
 	protected TracebackDirection getInitialColTracebackValue() {
 		return TracebackDirection.TERMINAL;
 	}
+	/**
+	 * Returns a {@link WalkBack} using the max of the 3 input values and 
+	 * zero.  The value Zero denotes a terminal traceback so 
+	 * no chosen score can ever be less than that.
+	 * <p/>
+	 * {@inheritDoc}
+	 */
 	@Override
-	protected BestWalkBack computeBestWalkBack(float alignmentScore,
+	protected WalkBack computeBestWalkBack(float alignmentScore,
 			float horrizontalGapPenalty, float verticalGapPenalty){
 			float bestScore = MathUtil.maxOf(alignmentScore, horrizontalGapPenalty, verticalGapPenalty, 0F);
 			final TracebackDirection dir;
@@ -88,13 +102,20 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequenc
 			}else{
 				dir = TracebackDirection.VERTICAL;
 			}
-			return new BestWalkBack(bestScore, dir);
+			return new WalkBack(bestScore, dir);
 	}
+	/**
+	 * Only update the current {@link StartPoint}
+	 * if the given score is greater than the 
+	 * current starting point's score.
+	 * <p/>
+	 * {@inheritDoc}
+	 */
 	@Override
-	protected StartPoint updateCurrentStartPoint(float currentBestScore,
+	protected StartPoint updateCurrentStartPoint(float currentCellScore,
 			StartPoint currentStartPoint, int i, int j) {
-		if(currentBestScore > currentStartPoint.getScore()){
-			return new StartPoint(i, j, currentBestScore);
+		if(currentCellScore > currentStartPoint.getScore()){
+			return new StartPoint(i, j, currentCellScore);
 		}
 		return currentStartPoint;
 	}

@@ -15,19 +15,29 @@ import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-
+/**
+ * {@code ResiduePairwiseStrategy} uses the Strategy Pattern
+ * to provide {@link Residue} specific implementations
+ * of functions that are needed to generate a {@link PairwiseSequenceAlignment}.
+ * @author dkatzel
+ *
+ * * @param <R> the type of {@link Residue} used in this aligner.
+ * @param <S> the {@link Sequence} type input into this aligner.
+ * @param <A> the {@link SequenceAlignment} type returned by this aligner.
+ * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
+ */
 abstract class ResiduePairwiseStrategy<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R,S>,P extends PairwiseSequenceAlignment<R,S>> {
 
 	
 	public static ResiduePairwiseStrategy<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>
 		getNucleotideStrategy(){
-		return NucleotidePairwiseStrategy.INSTANCE;
+			return NucleotidePairwiseStrategy.INSTANCE;
 	}
 	
 	public static ResiduePairwiseStrategy<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment, AminoAcidPairwiseSequenceAlignment>
-	getAminoAcidStrategy(){
-	return AminoAcidPairwiseStrategy.INSTANCE;
-}
+		getAminoAcidStrategy(){
+			return AminoAcidPairwiseStrategy.INSTANCE;
+	}
 	/**
 	 * Get the list of {@link Residue}s
 	 * <strong>IN THE ORDINAL ORDER</strong>.

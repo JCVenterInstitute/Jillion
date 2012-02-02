@@ -5,7 +5,23 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 
-
+/**
+ * {@code AminoAcidNeedlemanWunschAligner} can perform 
+ * a pair-wise alignment of two {@link AminoAcidSequence}s
+ * using the global alignment algorithm developed
+ * by Needleman and Wunsch using improvements developed
+ * by Gotoh.
+ * @author dkatzel
+ * 
+ * @see <a href="http://dx.doi.org/10.1016/0022-2836(70)90057-4">
+ Needleman, Saul B.; and Wunsch, Christian D.
+ "A general method applicable to the search for similarities in the amino acid sequence of two proteins".
+ Journal of Molecular Biology 48:443-53.</a>
+ *   
+ * @see <a href="http://dx.doi.org/10.1016/0022-2836(82)90398-9">
+ Gotoh Osamu. An improved algorithm for matching biological sequences. 
+ Journal of Molecular Biology 162:705-708</a>
+ */
 public final class AminoAcidNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment, AminoAcidPairwiseSequenceAlignment>{
 	/**
 	 * Align the given two {@link AminoAcidSequence}s

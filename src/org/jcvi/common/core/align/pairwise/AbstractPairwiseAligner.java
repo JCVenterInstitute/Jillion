@@ -19,7 +19,8 @@ import org.jcvi.common.core.symbol.residue.Residue;
  *
  * @param <R> the type of {@link Residue} used in this aligner.
  * @param <S> the {@link Sequence} type input into this aligner.
- * @param <A> the {@link PairwiseSequenceAlignment} type returned by this aligner.
+ * @param <A> the {@link SequenceAlignment} type returned by this aligner.
+ * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
 abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> {
 	/**
@@ -184,7 +185,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 						residuesByOrdinal.get(seq2Bytes[j-1]));
 				
 				
-				BestWalkBack bestWalkBack = computeBestWalkBack(alignmentScore, cumulativeHorizontalGapPenalty, verticalGapPenaltiesSoFar[j]);
+				WalkBack bestWalkBack = computeBestWalkBack(alignmentScore, cumulativeHorizontalGapPenalty, verticalGapPenaltiesSoFar[j]);
 				scoreCache[CURRENT_ROW][j] = bestWalkBack.getBestScore();
 				//some implementations might
 				//need to update the currentStartPoint even if it's not
@@ -331,9 +332,20 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	 */
 	protected abstract StartPoint updateCurrentStartPoint(float newScore,
 			StartPoint currentStartPoint, int i, int j);
-
-	protected abstract BestWalkBack computeBestWalkBack(float alignmentScore,
-			float horrizontalGapPenalty, float verticalGapPenalty);
+	/**
+	 * Given the 3 possible input scores for the current cell,
+	 * compute the {@link WalkBack} that might
+	 * be used later during the backtracking phase.
+	 * @param alignmentScore the score of this cell if for aligning
+	 * the current two residues together.
+	 * @param horizontalGapPenalty the score of this cell if the horizontal
+	 * gap is used.
+	 * @param verticalGapPenalty the score of this cell if the vertical
+	 * gap is used.
+	 * @return a new {@link WalkBack}; never null.
+	 */
+	protected abstract WalkBack computeBestWalkBack(float alignmentScore,
+			float horizontalGapPenalty, float verticalGapPenalty);
 	
 	private P traceBack(byte[] seq1Bytes, byte[] seq2Bytes,
 			StartPoint currentStartPoint) {
@@ -438,8 +450,8 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		
 	}
 	/**
-	 * {@code BestWalkBack} is a wrapper around
-	 * the a best score and the {@link TracebackDirection}
+	 * {@code WalkBack} is a wrapper around
+	 * the a score and the {@link TracebackDirection}
 	 * to use in the traceback for the current cell
 	 * in the traceback matrix.
 	 * This class is used internally by {@link AbstractPairwiseAligner#computeBestWalkBack(float, float, float)}
@@ -448,10 +460,10 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	 * @author dkatzel
 	 *
 	 */
-	protected static final class BestWalkBack{
+	protected static final class WalkBack{
 		private final TracebackDirection tracebackDirection;
 		private final float bestScore;
-		public BestWalkBack(float bestScore,
+		public WalkBack(float bestScore,
 				TracebackDirection tracebackDirection) {
 			if(tracebackDirection ==null){
 				throw new NullPointerException("traceback direction can not be null");
@@ -483,7 +495,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
-			BestWalkBack other = (BestWalkBack) obj;
+			WalkBack other = (WalkBack) obj;
 			if (Float.floatToIntBits(bestScore) != Float
 					.floatToIntBits(other.bestScore))
 				return false;

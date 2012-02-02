@@ -4,7 +4,18 @@ import org.jcvi.common.core.align.SequenceAlignment;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.Residue;
 import org.jcvi.common.core.util.MathUtil;
-
+/**
+ * {@code AbstractNeedlemanWunschAligner} 
+ * implements methods in {@link AbstractPairwiseAligner} 
+ * with  Needleman-Wunsch (with Gotoh improvements) specific implementations.
+ * 
+ * @author dkatzel
+ *
+ * @param <R> the type of {@link Residue} used in this aligner.
+ * @param <S> the {@link Sequence} type input into this aligner.
+ * @param <A> the {@link SequenceAlignment} type returned by this aligner.
+ * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
+ */
 abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, A, P>{
 
 	protected AbstractNeedlemanWunschAligner(Sequence<R> query,
@@ -55,9 +66,13 @@ abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Sequ
 	protected TracebackDirection getInitialColTracebackValue() {
 		return TracebackDirection.VERTICAL;
 	}
-
+	/**
+	 * Returns a {@link WalkBack} using the max of the 3 input values.
+	 * <p/>
+	 * {@inheritDoc}
+	 */
 	@Override
-	protected BestWalkBack computeBestWalkBack(float alignmentScore,
+	protected WalkBack computeBestWalkBack(float alignmentScore,
 			float horrizontalGapPenalty, float verticalGapPenalty){
 			float bestScore = MathUtil.maxOf(alignmentScore, horrizontalGapPenalty, verticalGapPenalty);
 			final TracebackDirection dir;
@@ -69,7 +84,7 @@ abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Sequ
 			}else{
 				dir = TracebackDirection.VERTICAL;
 			}
-			return new BestWalkBack(bestScore, dir);
+			return new WalkBack(bestScore, dir);
 	}
 	/**
 	 * Always update the CurrentStartPointer to the given values.
