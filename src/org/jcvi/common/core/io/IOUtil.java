@@ -585,6 +585,17 @@ public final class IOUtil {
         }
         return result;
     }
+    /**
+     * Convert an unsigned short into a fully padded
+     * byte array.
+     * <p/>
+     * For Example:<br/>
+     * 3 => [0, 3]<br/>
+     * 255 => [0, 255]<br/>
+     * 256 => [1, 255]<br/>
+     * @param unsignedShort
+     * @return
+     */
     public static byte[] convertUnsignedShortToByteArray(int unsignedShort){
         byte[] result = new byte[2];
         int currentValue = unsignedShort;
@@ -704,7 +715,9 @@ public final class IOUtil {
     }
     /**
      * Convert the given byte array into
-     * the corresponding {@link BitSet}.
+     * the corresponding {@link BitSet}
+     * using the <strong>least</strong>
+     * number of bits possible.
      * For some reason {@link BitSet}
      * Java API thru java 6 does not include methods for converting
      * to and from a byte array.
@@ -726,16 +739,9 @@ public final class IOUtil {
     	
     	return bits;
     }
-    public static BitSet toBitSet(byte singleByte){
-    	final BitSet bits;
-    	bits = new BitSet();
-    	for(int i=0; i<8; i++){
-			int value = singleByte & (1<< (i%8));
-			if(value !=0){
-    			bits.set(i);
-    		}
-    	}
-    	
-    	return bits;
+    
+    
+    public static BitSet toBitSet(long singleValue){
+    	return toBitSet(BigInteger.valueOf(singleValue).toByteArray());    	
     }
 }
