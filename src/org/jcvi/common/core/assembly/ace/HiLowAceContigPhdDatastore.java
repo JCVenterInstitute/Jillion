@@ -199,7 +199,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         }
 
         @Override
-        protected void visitNewContig(String aceContigId, String consensus, boolean complimented) {
+        protected void visitNewContig(String aceContigId, String consensus, int numberOfBases, int numberOfReads, boolean complimented) {
             //no-op
         }
         
