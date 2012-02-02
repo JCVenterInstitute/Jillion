@@ -56,9 +56,11 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private String currentValidBases;
     private boolean skipCurrentRead=false;
     private String currentFullLengthBases;
+    private int numberOfBasesInCurrentContig;
+    private int numberOfReadsInCurrentContig;
     private boolean currentContigIsComplimented=false;
     private boolean initialized;
-    
+
     public synchronized boolean isInitialized() {
         return initialized;
     }
@@ -84,25 +86,31 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     public synchronized void visitAssembledFromLine(String readId,
             Direction dir, int gappedStartOffset) {
         throwExceptionIfInitialized();
-        if(readingConsensus){
-            readingConsensus=false;
-           visitNewContig(currentContigId, 
-                   ConsedUtil.convertAceGapsToContigGaps(currentBasecalls.toString()),
-                   currentContigIsComplimented);
-        }
+        fireVisitNewContigIfWeHaventAlready();
         final AssembledFrom assembledFromObj = new AssembledFrom(readId, gappedStartOffset, dir);
         currentAssembledFromMap.put(readId, assembledFromObj);
     }
+	private void fireVisitNewContigIfWeHaventAlready() {
+		if(readingConsensus){
+            readingConsensus=false;
+           visitNewContig(currentContigId, 
+                   ConsedUtil.convertAceGapsToContigGaps(currentBasecalls.toString()),
+                   numberOfBasesInCurrentContig, numberOfReadsInCurrentContig, currentContigIsComplimented);
+        }
+	}
     /**
      * Begin visiting a new contig in the ace file.  Any visit methods between
      * this call and {@link #visitEndOfContig()} pertain to this contig.
      * @param contigId the ID of the contig being visited.
      * @param consensus the basecalls as a string- NOTE that this has gaps as "*" instead
      * of "-".  
+     * @param numberOfBases the total number of bases expected in this contig if you 
+     * add the bases from all the reads up.
+     * @param numberOfReads the total number of expected reads in this contig.
      * @param isComplimented is this contig complimented
      * @see #visitEndOfContig()
      */
-    protected abstract void visitNewContig(String contigId, String consensus, boolean isComplimented);
+    protected abstract void visitNewContig(String contigId, String consensus, int numberOfBases, int numberOfReads, boolean isComplimented);
 
     @Override
     public synchronized void visitConsensusQualities() {
@@ -130,6 +138,8 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         readingConsensus = true;
         currentBasecalls = new StringBuilder();
         currentContigIsComplimented = reverseComplimented;
+        numberOfBasesInCurrentContig = numberOfBases;
+        numberOfReadsInCurrentContig = numberOfReads;
         return true;
     }
 
@@ -355,6 +365,11 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      */
      @Override
      public boolean visitEndOfContig() {
+         //if the contig has 0 reads
+         //then we don't have AF records
+         //so we need to check if we need to call
+         //visit new contig here as well.
+         fireVisitNewContigIfWeHaventAlready();
          return true;
      
      }
