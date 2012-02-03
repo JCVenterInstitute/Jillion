@@ -21,11 +21,11 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data;
+package org.jcvi.common.core.io;
 
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.io.IOUtil;
+
 /**
  * <code>ValueSizeStrategy</code> is a strategy pattern
  * implementation to abstract away the number of bytes
@@ -39,6 +39,10 @@ import org.jcvi.common.core.io.IOUtil;
 public enum ValueSizeStrategy {
 	
 	BYTE{
+		@Override
+		public int getNumberOfBytesPerValue() {
+			return 1;
+		}
 		/**
 	     * get the next (unsigned) byte from the buffer.
 	     * @param buf the buffer to read the byte from.
@@ -50,16 +54,21 @@ public enum ValueSizeStrategy {
 	    }
 	    /**
 	     * puts the given byte value into the given buffer.
-	     * @param value the value to write (must be able to be cast to a <code>byte</code>)
 	     * @param buf the Buffer to write to.
+	     * @param value the value to write (must be able to be cast to a <code>byte</code>)
 	     */
 	    @Override
-	    public void put(int value, ByteBuffer buf) {
+	    public void put(ByteBuffer buf, int value) {
 	        buf.put((byte)value);
 
 	    }    
 	},
 	SHORT{
+		
+		@Override
+		public int getNumberOfBytesPerValue() {
+			return 2;
+		}
 		/**
 	     * get the next short from the buffer.
 	     * @param buf the buffer to read the byte from.
@@ -71,16 +80,21 @@ public enum ValueSizeStrategy {
 	    }
 	    /**
 	     * puts the given short value into the given buffer.
-	     * @param value the value to write (must be able to be cast to a <code>short</code>)
 	     * @param buf the Buffer to write to.
+	     * @param value the value to write (must be able to be cast to a <code>short</code>)
 	     */
 	    @Override
-	    public void put(int value, ByteBuffer buf) {
+	    public void put(ByteBuffer buf, int value) {
 	        buf.putShort((short)value);
 
 	    }
+		
 	},
 	INTEGER{
+		@Override
+		public int getNumberOfBytesPerValue() {
+			return 4;
+		}
 		 /**
 	     * 
 	    * {@inheritDoc}
@@ -94,7 +108,7 @@ public enum ValueSizeStrategy {
 	    * {@inheritDoc}
 	     */
 	    @Override
-	    public void put(int value, ByteBuffer buf) {
+	    public void put(ByteBuffer buf, int value) {
 	        buf.putInt(value);
 	    }
 	};
@@ -103,14 +117,41 @@ public enum ValueSizeStrategy {
      * @param buf the ByteBuffer to read from.
      * @return the value read from the buffer as an int.
      */
-    abstract int getNext(ByteBuffer buf);
+	public abstract int getNext(ByteBuffer buf);
     /**
      * puts the given value into the buffer. If this
      * implementation reads/writes data smaller than an int,
      * the passed in value will be cast down to the appropriate size.
+     * @param buf the buffer to write to.
      * @param value the value to write (must not be larger than 
      * the MAX_SIZE of the implementation value size.
-     * @param buf the buffer to write to.
      */
-    abstract void put(int value, ByteBuffer buf);
+    public abstract void put(ByteBuffer buf, int value);
+    /**
+     * Get the number of bytes used to store
+     * each value in a buffer.
+     * @return the number of bytes used; never < 1.
+     */
+    public abstract int getNumberOfBytesPerValue();
+    /**
+     * Get the {@link ValueSizeStrategy} implementation
+     * given the largest possible input value.
+     * @param largestValue the largest input value 
+     * that will be written to a buffer.
+     * @return the {@link ValueSizeStrategy} implementation
+     * that can read and write up to and including
+     * the given largestValue but use the least amount
+     * of bytes to do it.
+     */
+    public static ValueSizeStrategy getStrategyFor(int largestValue){
+		 //used unsigned values for twice the storage space
+		 //since these values will always be positive.
+		 if(largestValue <= 0xFF){
+			 return BYTE;
+		 }
+		 if(largestValue <= 0xFFFF){
+			 return SHORT;
+		 }
+		 return INTEGER;
+	 }
 }

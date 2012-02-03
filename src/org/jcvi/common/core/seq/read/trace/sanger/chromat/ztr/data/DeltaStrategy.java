@@ -26,6 +26,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.jcvi.common.core.io.ValueSizeStrategy;
 /**
  * There are several different possible Delta strategies
  * that can be used to compute the delta between 2 consecutive
@@ -90,7 +92,7 @@ public enum DeltaStrategy {
         
         while(compressed.hasRemaining()){
             int value =valueSizeStrategy.getNext(compressed) + computeDelta(u1, u2, u3);
-            valueSizeStrategy.put(value, out);
+            valueSizeStrategy.put(out, value);
             //update previous values for next round
             u3 = u2;
             u2 = u1;            
@@ -103,7 +105,7 @@ public enum DeltaStrategy {
     	 while(uncompressed.hasRemaining()){
              int next = valueSizeStrategy.getNext(uncompressed);
 			int value =next - computeDelta(u1, u2, u3);
-             valueSizeStrategy.put(value, out);
+             valueSizeStrategy.put(out, value);
              //update previous values for next round
              u3 = u2;
              u2 = u1;            

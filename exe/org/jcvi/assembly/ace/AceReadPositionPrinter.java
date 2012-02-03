@@ -51,7 +51,7 @@ public class AceReadPositionPrinter {
         private String currentContigId=null;
         private NucleotideSequence consensus;
         @Override
-        protected void visitNewContig(String contigId, String consensus, boolean complimented) {
+        protected void visitNewContig(String contigId, String consensus, int numberOfBases, int numberOfReads, boolean complimented) {
             currentContigId = contigId;
             this.consensus = NucleotideSequenceFactory.create(
                         ConsedUtil.convertAceGapsToContigGaps(consensus));
