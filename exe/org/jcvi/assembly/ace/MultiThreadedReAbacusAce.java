@@ -380,7 +380,7 @@ public class MultiThreadedReAbacusAce {
         */
         @Override
         protected void visitNewContig(String contigId, String consensus,
-                boolean isComplimented) {
+                int numberOfBases, int numberOfReads, boolean isComplimented) {
             //no-op
             
         }

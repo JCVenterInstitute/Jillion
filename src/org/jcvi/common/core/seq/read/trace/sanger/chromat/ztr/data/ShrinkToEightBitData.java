@@ -27,6 +27,7 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import org.jcvi.common.core.io.ValueSizeStrategy;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
 
 /**
@@ -104,10 +105,10 @@ public enum ShrinkToEightBitData implements Data {
         while(in.hasRemaining()){
             byte value = in.get();
             if(isGuard(value)){
-                valueSizeStrategy.put(valueSizeStrategy.getNext(in), result);                
+                valueSizeStrategy.put(result, valueSizeStrategy.getNext(in));                
             }
             else{
-                valueSizeStrategy.put(value, result);   
+                valueSizeStrategy.put(result, value);   
             }
         }
         return toByteArray(result);

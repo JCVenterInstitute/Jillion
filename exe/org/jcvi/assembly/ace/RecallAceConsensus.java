@@ -181,7 +181,7 @@ public class RecallAceConsensus {
                 }
 
                 @Override
-                protected void visitNewContig(String contigId, String consensus, boolean complimented) {
+                protected void visitNewContig(String contigId, String consensus, int numberOfBases, int numberOfReads, boolean complimented) {
                     // no-op
                     
                 }

@@ -26,6 +26,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import org.jcvi.common.core.io.ValueSizeStrategy;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
 
 /**
