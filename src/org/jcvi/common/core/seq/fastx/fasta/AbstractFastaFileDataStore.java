@@ -31,7 +31,7 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
 /**
  * {@code AbstractFastaFileDataStore} is a {@link DataStore} implementation
- * of FastaRecords parsed from a Fasta file.
+ * of {@link FastaRecord}s parsed from a Fasta encoded file.
  * @author dkatzel
  *
  *

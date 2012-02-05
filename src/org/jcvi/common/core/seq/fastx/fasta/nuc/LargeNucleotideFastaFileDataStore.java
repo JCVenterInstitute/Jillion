@@ -43,13 +43,24 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * of {@link AbstractNucleotideFastaFileDataStore} which does not
  * store any Fasta record data 
  * in memory except it's size (which is lazy loaded).
- * This means that each get() or contain() requires re-parsing the fastq file
+ * This means that each get() or contain() requires re-parsing the fasta file
  * which can take some time.  It is recommended that instances are wrapped
  * in {@link CachedDataStore}.
  * @author dkatzel
  */
 public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFileDataStore{
-    private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
+	/**
+     * Construct a {@link LargeNucleotideFastaFileDataStore}
+     * for the given Fasta file.
+     * @param fastaFile the Fasta File to use, can not be null.
+     * @param fastaRecordFactory the NucleotideFastaRecordFactory implementation to use.
+     * @throws NullPointerException if fastaFile is null.
+     */
+	public static NucleotideFastaDataStore create(File fastaFile){
+		return new LargeNucleotideFastaFileDataStore(fastaFile, DefaultNucleotideFastaRecordFactory.getInstance());
+	}
+	
+	private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
     private final File fastaFile;
 
     private Integer size;
@@ -62,7 +73,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
      * @param fastaRecordFactory the NucleotideFastaRecordFactory implementation to use.
      * @throws NullPointerException if fastaFile is null.
      */
-    public LargeNucleotideFastaFileDataStore(File fastaFile,
+    private LargeNucleotideFastaFileDataStore(File fastaFile,
             NucleotideFastaRecordFactory fastaRecordFactory) {
         super(fastaRecordFactory);
         if(fastaFile ==null){
@@ -70,19 +81,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
         }
         this.fastaFile = fastaFile;
     }
-    /**
-     * Convenience constructor using the {@link DefaultNucleotideFastaRecordFactory}.
-     * This call is the same as {@link #LargeNucleotideFastaFileDataStore(File,NucleotideFastaRecordFactory)
-     * new LargeNucleotideFastaFileDataStore(fastaFile,DefaultNucleotideFastaRecordFactory.getInstance());}
-     * @see LargeNucleotideFastaFileDataStore#LargeQualityFastaFileDataStore(File, NucleotideFastaRecordFactory)
-     */
-    public LargeNucleotideFastaFileDataStore(File fastaFile) {
-        super();
-        if(fastaFile ==null){
-            throw new NullPointerException("fasta file can not be null");
-        }
-        this.fastaFile = fastaFile;
-    }
+    
     
     @Override
     public boolean visitRecord(String id, String comment, String entireBody) { 
@@ -167,7 +166,14 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
         return iter;
        
     }
-
+    /**
+     * Get the part of the large fasta file we care about.
+     * @param id the id of the fasta record we want.
+     * @return an {@link InputStream} containing <strong>only</strong>
+     * the fasta record we care about; or null if no such record exists.
+     * @throws FileNotFoundException if the fasta file is no longer
+     * available to read.
+     */
     private InputStream getRecordFor(String id) throws FileNotFoundException{
         Scanner scanner = null;
         try{
@@ -177,7 +183,7 @@ public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFi
             boolean done=false;
             //we have to do this while loop to make sure we find
             //the actual read instead of a different read which is happens
-            //to include our id as a prefix (for example a TIGR "B" read
+            //to include our id as a prefix (for example a TIGR "B" read)
             while(!done){
                 if(line.startsWith(expectedHeader)){
                     String currentId= SequenceFastaRecordUtil.parseIdentifierFromIdLine(line);

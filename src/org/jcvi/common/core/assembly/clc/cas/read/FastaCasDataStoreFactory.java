@@ -86,7 +86,7 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
     @Override
     public NucleotideDataStore getNucleotideDataStoreFor(File pathToDataStore, DataStoreFilter filter) throws CasDataStoreFactoryException {  
         return CachedDataStore.createCachedDataStore(NucleotideDataStore.class, 
-                     new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(new LargeNucleotideFastaFileDataStore(pathToDataStore))),
+                     new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(LargeNucleotideFastaFileDataStore.create(pathToDataStore))),
                      cacheSize);            
     }
     @Override

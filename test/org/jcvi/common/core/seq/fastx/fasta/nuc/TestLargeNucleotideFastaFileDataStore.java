@@ -35,7 +35,7 @@ public class TestLargeNucleotideFastaFileDataStore  extends AbstractTestSequence
     @Override
     protected DataStore<NucleotideSequenceFastaRecord> parseFile(File file)
             throws IOException {
-        return new LargeNucleotideFastaFileDataStore(file);
+        return LargeNucleotideFastaFileDataStore.create(file);
     }
 
 }
