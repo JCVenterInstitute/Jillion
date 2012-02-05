@@ -35,7 +35,7 @@ public class TestLargeSequenceFastaMapWithNoComment extends AbstractTestSequence
     @Override
     protected DataStore<NucleotideSequenceFastaRecord> buildMap(
             File file) throws IOException {
-        return new LargeNucleotideFastaFileDataStore(file);
+        return LargeNucleotideFastaFileDataStore.create(file);
     }
 
 }
