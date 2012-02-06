@@ -24,7 +24,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.trim.DefaultPrimerTrimmer;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -37,7 +37,7 @@ public class TestDefaultPrimerTrimmer {
     private final DefaultPrimerTrimmer sut = new DefaultPrimerTrimmer(5,.9f);
     @Test
     public void onlyPrimerShouldGetCompletelyTrimmedOff(){
-        NucleotideSequence sequence = NucleotideSequenceFactory.create("AAACGACGTACGTACGT");
+        NucleotideSequence sequence = new NucleotideSequenceBuilder("AAACGACGTACGTACGT").build();
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(sequence);
         
         Range expectedRange= Range.buildEmptyRange();
@@ -46,8 +46,8 @@ public class TestDefaultPrimerTrimmer {
     }
     @Test
     public void trimLeft(){
-        NucleotideSequence sequence = NucleotideSequenceFactory.create("AAACGACGTACGTACGT");
-        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(NucleotideSequenceFactory.create("AAACG"));
+        NucleotideSequence sequence = new NucleotideSequenceBuilder("AAACGACGTACGTACGT").build();
+        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("AAACG").build());
         
         Range expectedRange= Range.buildRange(5, sequence.getLength()-1);
         Range actualRange= sut.trim(sequence, datastore);
@@ -55,8 +55,8 @@ public class TestDefaultPrimerTrimmer {
     }
     @Test
     public void trimLeft_doesNotStartWithPrimer(){
-        NucleotideSequence sequence = NucleotideSequenceFactory.create("TTAAACGACGTACGTACGT");
-        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(NucleotideSequenceFactory.create("AAACG"));
+        NucleotideSequence sequence = new NucleotideSequenceBuilder("TTAAACGACGTACGTACGT").build();
+        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("AAACG").build());
         
         Range expectedRange= Range.buildRange(7, sequence.getLength()-1);
         Range actualRange= sut.trim(sequence, datastore);
@@ -64,11 +64,8 @@ public class TestDefaultPrimerTrimmer {
     }
     @Test
     public void trimLeftComplimented(){
-   /* 																	     "CGTTT"
-    																			 "CGTTT"
-    																   "AAACG" */
-        NucleotideSequence sequence = NucleotideSequenceFactory.create("AAACGACGTACGTACGT");
-        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(NucleotideSequenceFactory.create("CGTTT"));
+        NucleotideSequence sequence = new NucleotideSequenceBuilder("AAACGACGTACGTACGT").build();
+        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("CGTTT").build());
         
         Range expectedRange= Range.buildRange(5, sequence.getLength()-1);
         Range actualRange= sut.trim(sequence, datastore);
@@ -76,8 +73,8 @@ public class TestDefaultPrimerTrimmer {
     }
     @Test
     public void trimLeftComplimented_doesNotStartWithPrimer(){
-        NucleotideSequence sequence = NucleotideSequenceFactory.create("TTAAACGACGTACGTACGT");
-        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(NucleotideSequenceFactory.create("CGTTT"));
+        NucleotideSequence sequence = new NucleotideSequenceBuilder("TTAAACGACGTACGTACGT").build();
+        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("CGTTT").build());
         
         Range expectedRange= Range.buildRange(7, sequence.getLength()-1);
         Range actualRange= sut.trim(sequence, datastore);
@@ -85,8 +82,8 @@ public class TestDefaultPrimerTrimmer {
     }
     @Test
     public void trimRight(){
-        NucleotideSequence sequence = NucleotideSequenceFactory.create("ACGTACGTACGTAAACG");
-        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(NucleotideSequenceFactory.create("AAACG"));
+        NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACG").build();
+        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("AAACG").build());
         
         Range expectedRange= Range.buildRange(0, sequence.getLength()-1-5);
         Range actualRange= sut.trim(sequence, datastore);
@@ -94,8 +91,8 @@ public class TestDefaultPrimerTrimmer {
     }
     @Test
     public void trimRight_doesNotEndWithPrimer(){
-        NucleotideSequence sequence = NucleotideSequenceFactory.create("ACGTACGTACGTAAACGTT");
-        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(NucleotideSequenceFactory.create("AAACG"));
+        NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACGTT").build();
+        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("AAACG").build());
         
         Range expectedRange= Range.buildRange(0, sequence.getLength()-3-5);
         Range actualRange= sut.trim(sequence, datastore);
@@ -103,8 +100,8 @@ public class TestDefaultPrimerTrimmer {
     }
     @Test
     public void trimRightComplimented(){
-        NucleotideSequence sequence = NucleotideSequenceFactory.create("ACGTACGTACGTAAACG");
-        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(NucleotideSequenceFactory.create("CGTTT"));
+        NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACG").build();
+        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("CGTTT").build());
         
         Range expectedRange= Range.buildRange(0, sequence.getLength()-1-5);
         Range actualRange= sut.trim(sequence, datastore);
@@ -112,8 +109,8 @@ public class TestDefaultPrimerTrimmer {
     }
     @Test
     public void trimRightComplimented_doesNotEndWithPrimer(){
-        NucleotideSequence sequence = NucleotideSequenceFactory.create("ACGTACGTACGTAAACGCC");
-        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(NucleotideSequenceFactory.create("CGTTT"));
+        NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACGCC").build();
+        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("CGTTT").build());
         
         Range expectedRange= Range.buildRange(0, sequence.getLength()-3-5);
         Range actualRange= sut.trim(sequence, datastore);
@@ -121,8 +118,8 @@ public class TestDefaultPrimerTrimmer {
     }
     @Test
     public void primerTooSmallShouldNotTrim(){
-        NucleotideSequence sequence = NucleotideSequenceFactory.create("ACGTACGTACGTAAACGCC");
-        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(NucleotideSequenceFactory.create("A"));
+        NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACGCC").build();
+        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("A").build());
         
         assertEquals(Range.buildRangeOfLength(sequence.getLength()), sut.trim(sequence, datastore));
         
@@ -131,8 +128,8 @@ public class TestDefaultPrimerTrimmer {
     
     @Test
     public void primerInMiddleShouldTakeLargerSide(){
-        NucleotideSequence sequence = NucleotideSequenceFactory.create("AAATTTACGTACGTGGGAAAAAATATA");
-        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(NucleotideSequenceFactory.create("ACGTACGTG"));
+        NucleotideSequence sequence = new NucleotideSequenceBuilder("AAATTTACGTACGTGGGAAAAAATATA").build();
+        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("ACGTACGTG").build());
         
         Range expectedRange= Range.buildRange(15, sequence.getLength()-1);
         Range actualRange= sut.trim(sequence, datastore);

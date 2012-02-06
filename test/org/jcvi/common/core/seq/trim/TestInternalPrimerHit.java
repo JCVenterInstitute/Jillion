@@ -23,6 +23,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.trim.DefaultPrimerTrimmer;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -35,12 +36,12 @@ public class TestInternalPrimerHit {
 
     private final DefaultPrimerTrimmer sut = new DefaultPrimerTrimmer(13, .9f);
     
-    																																																																																																																																										 //RATGGAAATMACAACRCAYTTCCAGGTCATAGCTGTTTCCTG    																																																																																																																																							
-    private final NucleotideSequence sequence = NucleotideSequenceFactory.create(
-            "AGGAAAAATTTTTGATTGGATGTCATCCGACTTTACTTTTCTTGAAGTTCCAGCGCAAAATGCCATAAGCACCACATTCCCATATACTGGAGATCCTCCATACAGCCATGGAACAGGAACAGGATACACCATGGACACAGTTAACAGAACACATCAATATTCAGAAAAGGGGAAATGGACAACAAACTCAGAGACTGGAGCCCCCCAACTTAACCCAATTGATGGACCACTGCCCGAGGACAATGAGCCAAGTGGATATGCACAAACGGACTGTGTCCTTGAAGCAATGGCTTTCCTTGAAGAGTCCCACCCAGGAATCTTTGAAAACTCGTGTCTTGAAACGATGGAAGTTGTCCAACAAACAAGAGTGGACAAGTTGACCCAAGGCCGTCAGACCTATGATTGGACACTAAACAGGAACCAGCCGGCTGCAACTGCATTAGCTAATACTATAGAGGTCTTCAGATCGAACGGTCTGACAGCTAATGAATCAGGGAGACTAATAGATTTTCTCAAGGATGTGATGGAATCAATGGATAAAGAGGAAATGGAAATAACAACACACTTCCAGGTCATAGCTGTTTCCTAAACA");
+  																																																																																																																																							
+    private final NucleotideSequence sequence = new NucleotideSequenceBuilder(
+            "AGGAAAAATTTTTGATTGGATGTCATCCGACTTTACTTTTCTTGAAGTTCCAGCGCAAAATGCCATAAGCACCACATTCCCATATACTGGAGATCCTCCATACAGCCATGGAACAGGAACAGGATACACCATGGACACAGTTAACAGAACACATCAATATTCAGAAAAGGGGAAATGGACAACAAACTCAGAGACTGGAGCCCCCCAACTTAACCCAATTGATGGACCACTGCCCGAGGACAATGAGCCAAGTGGATATGCACAAACGGACTGTGTCCTTGAAGCAATGGCTTTCCTTGAAGAGTCCCACCCAGGAATCTTTGAAAACTCGTGTCTTGAAACGATGGAAGTTGTCCAACAAACAAGAGTGGACAAGTTGACCCAAGGCCGTCAGACCTATGATTGGACACTAAACAGGAACCAGCCGGCTGCAACTGCATTAGCTAATACTATAGAGGTCTTCAGATCGAACGGTCTGACAGCTAATGAATCAGGGAGACTAATAGATTTTCTCAAGGATGTGATGGAATCAATGGATAAAGAGGAAATGGAAATAACAACACACTTCCAGGTCATAGCTGTTTCCTAAACA").build();
 
-    private final NucleotideSequence forwardPrimer = NucleotideSequenceFactory.create("TGTAAAACGACGGCCAGTCRAAAGCAGGCAAACCAT");
-    private final NucleotideSequence reversePrimer = NucleotideSequenceFactory.create("CAGGAAACAGCTATGACCTGGAARTGYGTTGTKATTTCCATY");
+    private final NucleotideSequence forwardPrimer = new NucleotideSequenceBuilder("TGTAAAACGACGGCCAGTCRAAAGCAGGCAAACCAT").build();
+    private final NucleotideSequence reversePrimer = new NucleotideSequenceBuilder("CAGGAAACAGCTATGACCTGGAARTGYGTTGTKATTTCCATY").build();
 
 
     @Test

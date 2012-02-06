@@ -34,8 +34,6 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.After;
 import org.junit.Before;
@@ -87,7 +85,7 @@ public class TestHiLowAceContigPhdDatastore {
         
         
         Phd expected = new ArtificialPhd("K26-217c", 
-                NucleotideSequenceFactory.create("tcccCgtgagatcatcctgaAGTGGAGGGCATGGGGCTTGGCTGGGCTTA" +
+                new NucleotideSequenceBuilder("tcccCgtgagatcatcctgaAGTGGAGGGCATGGGGCTTGGCTGGGCTTA" +
                 "GAGCTAACATACACAGGATGCTGAAAAAGAACAACACAAgntGTGTGGAG" +
                 "CAAAGGAAAGGGAAATCAGCTTGAAGCTGATGTTAGTGTGCTTGGGCTGA" +
                 "GTACAGCCATGctntCAGTTGAGGCACGGTTGGCTCCCCATGGGCAAGAT" +
@@ -98,7 +96,7 @@ public class TestHiLowAceContigPhdDatastore {
                 "agccgaaggaggttttggaaacaccaaggggggtcagaccccaacgc" +
                 "cagtttccccaaaaaggggcattcaaatttttttctcagagattttcttt" +
                 "ccttttttgggccccgggaaccttttttaaaaaatgggggattgggcccc" +
-                "cttggcccccctc"),
+                "cttggcccccctc").build(),
                 
                 new EncodedQualitySequence(new DefaultEncodedPhredGlyphCodec(), expectedQualities),
                 19);

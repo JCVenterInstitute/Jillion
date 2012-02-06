@@ -29,6 +29,7 @@ import java.util.Set;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
@@ -59,7 +60,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
 
 	public static class Builder extends AbstractContigBuilder<PlacedRead, Contig<PlacedRead>>{
         public Builder(String id, String consensus){
-           this(id, NucleotideSequenceFactory.create(consensus));
+           this(id, new NucleotideSequenceBuilder(consensus).build());
         }
         public Builder(String id, NucleotideSequence consensus){
             super(id,consensus);

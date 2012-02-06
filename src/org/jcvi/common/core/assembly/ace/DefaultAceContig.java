@@ -288,7 +288,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
              built=true;
             if(numberOfReads()==0){
                 //force empty contig if no reads...
-                return new DefaultAceContig(contigId, NucleotideSequenceFactory.create(""),Collections.<AcePlacedRead>emptySet(),complimented);
+                return new DefaultAceContig(contigId, new NucleotideSequenceBuilder().build(),Collections.<AcePlacedRead>emptySet(),complimented);
             }
             Set<AcePlacedRead> placedReads = new HashSet<AcePlacedRead>(aceReadBuilderMap.size()+1,1F);
             //contig left (and right) might be beyond consensus depending on how

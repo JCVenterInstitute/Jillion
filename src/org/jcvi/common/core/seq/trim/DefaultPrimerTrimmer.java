@@ -176,7 +176,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
     */
     @Override
     public Range trim(String sequence, NucleotideDataStore primersToTrimAgainst) {
-        return trim(NucleotideSequenceFactory.create(sequence), primersToTrimAgainst);
+        return trim(new NucleotideSequenceBuilder(sequence).build(), primersToTrimAgainst);
     }
 
 }

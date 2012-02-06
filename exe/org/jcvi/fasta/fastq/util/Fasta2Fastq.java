@@ -49,7 +49,7 @@ import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastQUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
 import org.jcvi.common.io.idReader.IdReaderException;
@@ -143,7 +143,7 @@ public class Fasta2Fastq {
                                 throw new IllegalStateException("no quality values for "+ id);
                             }
                             FastQRecord fastq = new DefaultFastQRecord(id, 
-                                    NucleotideSequenceFactory.create(entireBody.replaceAll("\\s+", "")), qualities,comment);
+                                   new NucleotideSequenceBuilder(entireBody.replaceAll("\\s+", "")).build(), qualities,comment);
     
                             writer.print(FastQUtil.encode(fastq, fastqQualityCodec));
                         }

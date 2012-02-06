@@ -77,4 +77,11 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      * location in the gapped sequence.
      */
     int getGappedOffsetFor(int ungappedOffset);
+    /**
+     * Get this sequence as a single long string
+     * of characters with no whitespace.
+     * @return the full sequence as a long string.
+     */
+    @Override
+    public String toString();
 }

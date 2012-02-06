@@ -31,7 +31,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.Chunk;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -59,7 +59,7 @@ public class TestBASEChunk {
     @Test
     public void encode() throws TraceEncoderException, TraceDecoderException{
     	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
-    	NucleotideSequence basecalls = NucleotideSequenceFactory.create(decodedBases);
+    	NucleotideSequence basecalls = new NucleotideSequenceBuilder(decodedBases).build();
     	expect(mockChromatogram.getBasecalls()).andReturn(basecalls);
     	
     	replay(mockChromatogram);

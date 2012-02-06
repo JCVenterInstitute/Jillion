@@ -28,7 +28,7 @@ import java.util.List;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequenceFastaRecord{
@@ -85,17 +85,14 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
     @Override
     protected CharSequence decodeNucleotides() {
 
-        StringBuilder result = new StringBuilder();
-        for(Nucleotide glyph : getSequence().asList()){
-            result.append(glyph.getCharacter());
-        }
-        return result;
+        
+        return getSequence().toString();
     }
 
     @Override
     protected NucleotideSequence encodeNucleotides(
             CharSequence sequence) {
-        return NucleotideSequenceFactory.create(sequence);
+        return new NucleotideSequenceBuilder(sequence).build();
     }
 
 

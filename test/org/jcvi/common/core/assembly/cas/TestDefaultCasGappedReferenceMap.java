@@ -36,7 +36,7 @@ import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasMatch;
 import org.jcvi.common.core.assembly.clc.cas.read.CasNucleotideDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class TestDefaultCasGappedReferenceMap {
     DefaultCasGappedReferenceMap sut;
     long referenceId= 0;
     String referenceName = "refName";
-    NucleotideSequence referenceCalls = NucleotideSequenceFactory.create(REFERENCE_CALLS_AS_STRING);
+    NucleotideSequence referenceCalls = new NucleotideSequenceBuilder(REFERENCE_CALLS_AS_STRING).build();
     @Before
     public void setup() throws DataStoreException{
         referenceNucleotideDataStore = createMock(CasNucleotideDataStore.class);

@@ -28,6 +28,7 @@ import org.jcvi.common.core.seq.read.trace.frg.afg.DefaultAmosFragmentFileDataSt
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
@@ -48,7 +49,7 @@ public class TestDefaultAmosFragmentDataStore {
     
     AmosFragment JGBAA01T21H05PB2A2341BRB = new DefaultAmosFragment(
             "JGBAA01T21H05PB2A2341BRB", 48, 
-            NucleotideSequenceFactory.create(
+            new NucleotideSequenceBuilder(
                     "aacgggtcgtttttacattcgacattaattgatggccatccgaatccttttggtcgctgtctggctgtca" +
 "gaaattatgctagagtcccgtttccgtttcattaccaacaccacgtctccttgcccaattagcacattag" +
 "ccttttctccctttgcaagattgctcagttcattgatgctcaatgctgggccgtatctcttgtcttcttt" +
@@ -59,7 +60,7 @@ public class TestDefaultAmosFragmentDataStore {
 "tcccgcatctgctggaatagtgtcctcacgaatccactgtactgacctctggctgccttagggaccagag" +
 "actgaaatggctcgaattccatcttgttatacaaaattgtgggatcctgtgaccattgaattttcacagt" +
 "ttcccaatttctgatgatccactgataagtattgaccaacactgactcaggaccattgatctcccacatc" +
-"actggtt"),
+"actggtt").build(),
 new EncodedQualitySequence(
         RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, 
         QUALITY_CODEC.decode(

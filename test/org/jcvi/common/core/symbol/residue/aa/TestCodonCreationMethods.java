@@ -28,7 +28,7 @@ import java.util.Map.Entry;
 import org.jcvi.common.core.symbol.residue.aa.Codon;
 import org.jcvi.common.core.symbol.residue.aa.Codon.Frame;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -92,18 +92,18 @@ public class TestCodonCreationMethods {
     @Test
     public void translateMultipleCodons(){
         String basecalls = tripletBases+tripletBases;
-        assertEquals(Arrays.asList(expectedCodon,expectedCodon), Codon.getCodonsFor(NucleotideSequenceFactory.create(basecalls)));
+        assertEquals(Arrays.asList(expectedCodon,expectedCodon), Codon.getCodonsFor(new NucleotideSequenceBuilder(basecalls).build()));
     }
     @Test
     public void translateMultipleCodonsFrame1(){
         String basecalls = "N"+tripletBases+tripletBases+"N";
         assertEquals(Arrays.asList(expectedCodon,expectedCodon), 
-                Codon.getCodonsFor(NucleotideSequenceFactory.create(basecalls), Frame.ONE));
+                Codon.getCodonsFor(new NucleotideSequenceBuilder(basecalls).build(), Frame.ONE));
     }
     @Test
     public void translateMultipleCodonsFrame2(){
         String basecalls = "NN"+tripletBases+tripletBases+"NN";
         assertEquals(Arrays.asList(expectedCodon,expectedCodon), 
-                Codon.getCodonsFor(NucleotideSequenceFactory.create(basecalls), Frame.TWO));
+                Codon.getCodonsFor(new NucleotideSequenceBuilder(basecalls).build(), Frame.TWO));
     }
 }
