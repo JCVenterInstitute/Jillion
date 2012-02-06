@@ -34,7 +34,6 @@ import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 /**
  * {@code AbstractAceFileVisitor} is the main {@link AceFileVisitor}
  * implementation that will interpret the visit method calls
@@ -91,7 +90,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         final AssembledFrom assembledFromObj = new AssembledFrom(readId, gappedStartOffset, dir);
         currentAssembledFromMap.put(readId, assembledFromObj);
     }
-	private void fireVisitNewContigIfWeHaventAlready() {
+	private synchronized void fireVisitNewContigIfWeHaventAlready() {
 		if(readingConsensus){
             readingConsensus=false;
            visitNewContig(currentContigId, 

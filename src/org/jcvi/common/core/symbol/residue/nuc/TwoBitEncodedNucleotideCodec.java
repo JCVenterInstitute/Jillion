@@ -208,7 +208,10 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
         public Nucleotide decode(byte[] encodedGlyphs, int index){
         	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
             ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
-			int length =offsetStrategy.getNext(buf);
+			//need to read next offset (length)
+            //to advance pointer in buffer even though we don't care
+            //about value
+            offsetStrategy.getNext(buf);
             if(isSentinelOffset(buf,offsetStrategy,index)){
             	return sententialBase;
             }

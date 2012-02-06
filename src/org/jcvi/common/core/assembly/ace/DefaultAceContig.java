@@ -38,7 +38,6 @@ import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 /**
  * {@code DefaultAceContig} is the default implementation of {@link AceContig}.
