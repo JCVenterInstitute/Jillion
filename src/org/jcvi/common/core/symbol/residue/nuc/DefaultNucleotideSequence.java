@@ -123,11 +123,11 @@ class DefaultNucleotideSequence extends AbstractNucleotideSequence{
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof DefaultNucleotideSequence)){
+        if (!(obj instanceof NucleotideSequence)){
             return false;
         }
-        DefaultNucleotideSequence other = (DefaultNucleotideSequence) obj;
-       return encodedBasecalls.equals(other.encodedBasecalls);
+        NucleotideSequence other = (NucleotideSequence) obj;
+       return asList().equals(other.asList());
     }
     @Override
     public String toString() {

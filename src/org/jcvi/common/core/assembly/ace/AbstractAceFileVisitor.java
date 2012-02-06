@@ -33,6 +33,7 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 /**
  * {@code AbstractAceFileVisitor} is the main {@link AceFileVisitor}
@@ -206,12 +207,12 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         currentOffset = computeReadOffset(assembledFrom, gappedValidRange.getLocalStart());            
        
         currentFullLengthBases = currentBasecalls.toString();
-        NucleotideSequence gappedFullLengthSequence = NucleotideSequenceFactory.createGappy(
-                currentFullLengthBases.replaceAll("\\*", "-"));
+        NucleotideSequence gappedFullLengthSequence = new NucleotideSequenceBuilder(
+                currentFullLengthBases.replace('*', '-'))
+        			.build();
       //this will set currentValidBasecalls to only be the valid range
-        NucleotideSequence gappedValidBases = NucleotideSequenceFactory.createGappy(
-                gappedFullLengthSequence.asList(gappedValidRange));
-        currentValidBases = gappedValidBases.toString();
+        currentValidBases =  new NucleotideSequenceBuilder(gappedFullLengthSequence.asList(gappedValidRange))
+        						.toString();
         final int numberOfFullLengthGaps = gappedFullLengthSequence.getNumberOfGaps();
         currentReadUngappedFullLength = currentReadGappedFullLength - numberOfFullLengthGaps;
         //dkatzel 2011-11-18

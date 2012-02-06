@@ -20,11 +20,10 @@
 package org.jcvi.common.core.symbol.residue.nuc;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.ValueSizeStrategy;
 import org.jcvi.common.core.symbol.GlyphCodec;
 
 /**
@@ -54,66 +53,78 @@ class NoAmbiguitiesEncodedNucleotideCodec extends TwoBitEncodedNucleotideCodec{
     */
     @Override
     public List<Integer> getGapOffsets(byte[] encodedGlyphs) {
-        int[] gaps =getSentienelOffsetsFrom(encodedGlyphs);
-        List<Integer> ret = new ArrayList<Integer>(gaps.length);
-        for(int i=0; i<gaps.length; i++){
-            ret.add(Integer.valueOf(gaps[i]));
-        }
-        return ret;
+    	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+		ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+        //need to skip length since we don't care about it
+		//but need to read it to advance pointer in buffer
+		offsetStrategy.getNext(buf);
+        return getSentinelOffsetsFrom(buf, offsetStrategy);
+        
     }
     /**
     * {@inheritDoc}
     */
     @Override
     public int getNumberOfGaps(byte[] encodedGlyphs) {
-        return (int)IOUtil.readUnsignedInt(Arrays.copyOfRange(encodedGlyphs, 4, 8));
+    	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+		ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+        //need to read the next few bytes even though we
+		//don't care what the size is
+		offsetStrategy.getNext(buf);
+        ValueSizeStrategy sentinelStrategy = ValueSizeStrategy.values()[buf.get()];
+        if(sentinelStrategy == ValueSizeStrategy.NONE){
+        	return 0;
+        }
+        return sentinelStrategy.getNext(buf);
     }
     /**
     * {@inheritDoc}
     */
     @Override
     public boolean isGap(byte[] encodedGlyphs, int gappedOffset) {
-        int[] gaps =getSentienelOffsetsFrom(encodedGlyphs);
-        return Arrays.binarySearch(gaps, gappedOffset)>=0;
+    	return getGapOffsets(encodedGlyphs).contains(Integer.valueOf(gappedOffset));
     }
     /**
     * {@inheritDoc}
     */
     @Override
     public long getUngappedLength(byte[] encodedGlyphs) {
-        int gappedLength= (int)IOUtil.readUnsignedInt(Arrays.copyOfRange(encodedGlyphs, 0, 4));
-        
-        return gappedLength - getNumberOfGaps(encodedGlyphs);
+    	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+		ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+        int length =offsetStrategy.getNext(buf);
+        ValueSizeStrategy sentinelStrategy = ValueSizeStrategy.values()[buf.get()];
+        if(sentinelStrategy == ValueSizeStrategy.NONE){
+        	return 0;
+        }
+        int numGaps= sentinelStrategy.getNext(buf);
+        return length-numGaps;
     }
     /**
     * {@inheritDoc}
     */
     @Override
     public List<Nucleotide> asUngappedList(byte[] encodedGlyphs) {
-        ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-        int length = decodedLengthOf(encodedGlyphs);
-        int numberOfBytesPerGap = computeBytesPerSentinelOffset(length);
-        int[] gaps = getSentinelOffsets(buf,numberOfBytesPerGap);
-        List<Nucleotide> result = decodeNucleotidesWithSentinels(
-                encodedGlyphs, length, numberOfBytesPerGap, gaps);
-        for(int i= gaps.length-1; i>=0; i--){
-            result.remove(i);
-        }
-        return result;
+        return populateNucleotideSequenceBuilderFrom(encodedGlyphs)
+        		.ungap()
+        		.asList();
     }
     /**
     * {@inheritDoc}
     */
     @Override
     public int getNumberOfGapsUntil(byte[] encodedGlyphs, int gappedOffset) {
-        int[] gaps =getSentienelOffsetsFrom(encodedGlyphs);
-        int i=Integer.MIN_VALUE;
-        int numGaps=0;
-        while(i<gappedOffset && numGaps<gaps.length){
-            i =gaps[numGaps];
-            numGaps++;
-        }
-        return numGaps;
+    	int numGaps=0;
+    	Iterator<Integer> gapsIterator =getGapOffsets(encodedGlyphs).iterator();
+    	boolean done =false;
+    	while(!done && gapsIterator.hasNext()){
+    		int offset = gapsIterator.next();
+    		if(offset <=gappedOffset){
+    			numGaps++;
+    		}else{
+    			done=true;
+    		}
+    	}
+    	return numGaps; 
     }
     /**
     * {@inheritDoc}
@@ -128,12 +139,18 @@ class NoAmbiguitiesEncodedNucleotideCodec extends TwoBitEncodedNucleotideCodec{
     */
     @Override
     public int getGappedOffsetFor(byte[] encodedGlyphs, int ungappedOffset) {
-        int[] gaps =getSentienelOffsetsFrom(encodedGlyphs);
-        int currentOffset=ungappedOffset;
-        for(int i=0; i<gaps.length && gaps[i]>currentOffset; i++){
-            currentOffset++;
-        }
-        return currentOffset;
+    	int currentOffset=ungappedOffset;
+    	Iterator<Integer> gapsIterator =getGapOffsets(encodedGlyphs).iterator();
+    	boolean done =false;
+    	while(!done && gapsIterator.hasNext()){
+    		int gapOffset = gapsIterator.next();
+    		if(gapOffset <=ungappedOffset){
+    			currentOffset++;
+    		}else{
+    			done=true;
+    		}
+    	}
+    	return currentOffset;       
     }
     
 }

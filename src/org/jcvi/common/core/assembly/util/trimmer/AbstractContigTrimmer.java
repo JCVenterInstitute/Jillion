@@ -30,10 +30,8 @@ import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 /**
  * {@code AbstractContigTrimmer} is an abstract implementation
@@ -84,9 +82,8 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
             long newOffset = placedRead.toReferenceOffset((int)newTrimRange.getStart());
             
             final NucleotideSequence originalGappedValidBases = placedRead.getNucleotideSequence();
-            final List<Nucleotide> trimedBasecalls = originalGappedValidBases.asList(newTrimRange);
-            String trimmedBases = Nucleotides.asString(trimedBasecalls);
-            long ungappedLength = NucleotideSequenceFactory.create(trimedBasecalls).getUngappedLength();
+            NucleotideSequence trimmedSequence = new NucleotideSequenceBuilder(originalGappedValidBases.asList(newTrimRange)).build();
+			long ungappedLength = trimmedSequence.getUngappedLength();
             
             
             final Range ungappedNewValidRange;
@@ -102,7 +99,7 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
                 ungappedNewValidRange = Range.buildRange(oldValidRange.getStart()+numberOfBasesTrimmedOffRight, oldValidRange.getEnd()- numberOfBasesTrimmedOffLeft).convertRange(CoordinateSystem.RESIDUE_BASED);    
             }
             
-            trimRead(placedRead, newOffset, trimmedBases,ungappedNewValidRange);
+            trimRead(placedRead, newOffset, trimmedSequence.toString(),ungappedNewValidRange);
         }
         clearTrimmers();
         return buildNewContig();

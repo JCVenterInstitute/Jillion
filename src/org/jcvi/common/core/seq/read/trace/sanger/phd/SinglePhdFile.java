@@ -39,11 +39,11 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 public class SinglePhdFile implements  Phd{
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
-    private List<Nucleotide> bases = new ArrayList<Nucleotide>();
+    private NucleotideSequenceBuilder bases = new NucleotideSequenceBuilder();
     private List<PhredQuality> qualities = new ArrayList<PhredQuality>();
     private List<ShortSymbol> positions = new ArrayList<ShortSymbol>();
     private List<PhdTag> tags = new ArrayList<PhdTag>();
@@ -64,7 +64,7 @@ public class SinglePhdFile implements  Phd{
     	PhdParser.parsePhd(singlePhdFile, new SinglePhdFileVisitor());
     	
 		this.delegatePhd = new DefaultPhd(id, 
-				NucleotideSequenceFactory.create(bases),
+				bases.build(),
 			new EncodedQualitySequence( 
 					RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
 					qualities),
@@ -76,7 +76,7 @@ public class SinglePhdFile implements  Phd{
     	PhdParser.parsePhd(singlePhdStream, new SinglePhdFileVisitor());
     	
 		this.delegatePhd = new DefaultPhd(id, 
-				NucleotideSequenceFactory.create(bases),
+				bases.build(),
 			new EncodedQualitySequence( 
 					RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
 					qualities),
@@ -180,7 +180,7 @@ public class SinglePhdFile implements  Phd{
 	    @Override
 	    public synchronized void visitBasecall(Nucleotide base, PhredQuality quality,
 	            int tracePosition) {
-	       bases.add(base);
+	       bases.append(base);
 	       qualities.add(quality);
 	       positions.add(PEAK_FACTORY.getGlyphFor(tracePosition));            
 	    }

@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.jcvi.common.core.symbol.GlyphCodec;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideCodec;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -39,7 +38,7 @@ public class TestReferenceEncodedNucleotideSequence {
     String referenceAsString = "ACGTACGTACGTACGTACGTACGTACGT";
 
     
-    NucleotideSequence encodedReference = DefaultNucleotideSequence.create(referenceAsString);
+    NucleotideSequence encodedReference = new NucleotideSequenceBuilder(referenceAsString).build();
     @Test
     public void oneGapNoDifferences(){
         int offset=5;
@@ -88,7 +87,7 @@ public class TestReferenceEncodedNucleotideSequence {
     }
     @Test
     public void fullSequence(){
-        NucleotideSequence encodedConsensus = DefaultNucleotideSequence.create(
+        NucleotideSequence encodedConsensus = new NucleotideSequenceBuilder(
                 "GACATGGAAGTTTTATATTCATTGTCAAAAACTCTTAAAGATGCTAGGGACAAAATTGTT" +
                 "GAAGGTACACTATATTCTAATGTTAGCGATCTCATTCAACAATTCAATCAAATGATAGTA" +
                 "ACTATGAATGGAAATGACTTTCAAACTGGAGGAATTGGTAATTTGCCTATCAGAAACTGG" +
@@ -110,7 +109,8 @@ public class TestReferenceEncodedNucleotideSequence {
                 "CAGTATTTCCACCAGGCATGAATTGGACTGAATTAATTACTAATTACTCACCATCTAGAG" + 
                 "AAGATAATTTACAACGTGTTTTTACAGTAGCTTCTATTAGAAGCATGTTGATTAAGTGAG" + 
                 "GACCAGACTAACTATCTGGTATCCAATCTTAGTTGGCATGTAGCTATATCAAGTCATTCA" + 
-                "GACTCTTCAAGTAAGGACATGTTTTCATGTTCGCTACGTAGAGTAACTGTCTGAATGATA");
+                "GACTCTTCAAGTAAGGACATGTTTTCATGTTCGCTACGTAGAGTAACTGTCTGAATGATA")
+        		.build();
         
         String sequence = 
                 "ACAACTGTACTGTGATTATAATTTGGTATTAATGAAGTATGACGCTACATTGCAATTAGA" +

@@ -123,7 +123,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         }
         public Builder(String contigId, List<Nucleotide> fullConsensus){
             this(contigId,
-                    NucleotideSequenceFactory.create(fullConsensus)
+            		new NucleotideSequenceBuilder(fullConsensus).build()
              );
          }
         public Builder(String contigId, NucleotideSequence fullConsensus){
@@ -299,7 +299,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             contigRight = Math.min(contigRight,(int)mutableConsensus.getLength()-1);
             //here only include the gapped valid range consensus bases
             //throw away the rest            
-            NucleotideSequence validConsensus = NucleotideSequenceFactory.create(mutableConsensus.asList(Range.buildRange(contigLeft, contigRight)));
+            NucleotideSequence validConsensus = mutableConsensus.build(Range.buildRange(contigLeft, contigRight));
             for(AcePlacedReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
                 int newOffset = (int)aceReadBuilder.getStart() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);

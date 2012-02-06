@@ -38,8 +38,7 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 
 public final class SFFUtil {
@@ -75,9 +74,9 @@ private SFFUtil(){}
      * @param sequence
      */
     private Linkers(String sequence) {
-        this.forwardSequence = NucleotideSequenceFactory.create(sequence);
-        this.reverseSequence = NucleotideSequenceFactory.create(Nucleotides.reverseCompliment(
-                forwardSequence.asList()));
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(sequence);
+        this.forwardSequence = builder.build();
+        this.reverseSequence = builder.reverseCompliment().build();
     }
 
     public NucleotideSequence getForwardSequence() {
@@ -239,8 +238,7 @@ private SFFUtil(){}
             SFFReadData readData) {
         return new SFFFlowgram(
                 readHeader.getName(),
-                NucleotideSequenceFactory.create(
-                        Nucleotides.parse(readData.getBasecalls())),
+                new NucleotideSequenceBuilder(readData.getBasecalls()).build(),
                         new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                                 PhredQuality.valueOf(readData.getQualities())),
                 SFFUtil.computeValues(readData),

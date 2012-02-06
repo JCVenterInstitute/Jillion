@@ -37,7 +37,43 @@ import java.nio.ByteBuffer;
  *
  */
 public enum ValueSizeStrategy {
-	
+	/**
+	 * No values can be read or written.  Takes up zero bytes.
+	 * Will throw {@link IllegalArgumentException}s
+	 * if {@link #getNext(ByteBuffer)} or {@link #put(ByteBuffer, int)}
+	 * are called.
+	 */
+	NONE{
+		/**
+		 * Not allowed, will throw {@link IllegalArgumentException}
+		 * if called.
+		 * <p/>
+		 * {@inheritDoc}
+		 * @throws IllegalArgumentException always
+		 */
+		@Override
+		public int getNext(ByteBuffer buf) {
+			throw new IllegalArgumentException("can not call getNext()");
+		}
+		/**
+		 * Not allowed, will throw {@link IllegalArgumentException}
+		 * if called.
+		 * <p/>
+		 * {@inheritDoc}
+		 * @throws IllegalArgumentException always
+		 */
+		@Override
+		public void put(ByteBuffer buf, int value) {
+			throw new IllegalArgumentException("can not call put()");
+			
+		}
+
+		@Override
+		public int getNumberOfBytesPerValue() {
+			return 0;
+		}
+		
+	},
 	BYTE{
 		@Override
 		public int getNumberOfBytesPerValue() {

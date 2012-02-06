@@ -524,7 +524,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * but may be empty.
      */
     public NucleotideSequence build(Range range) {
-        return NucleotideSequenceFactory.create(asList(range));
+        return DefaultNucleotideSequence.create(asList(range),codecDecider.getOptimalCodec());
     }
     /**
      * Get a sublist of the current nucleotide sequence as a list
@@ -709,10 +709,19 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         
         
         NucleotideCodec getOptimalCodec() {
-            if(numberOfAmbiguities>0){
+            if(numberOfAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){
                 return DefaultNucleotideCodec.INSTANCE;
             }
-            return NucleotideCodecs.getCodecForGappedSequence(numberOfGaps, numberOfNs, currentLength);
+            int fourBitBufferSize =currentLength/2;
+            int twoBitBufferSize = TwoBitEncodedNucleotideCodec.getNumberOfEncodedBytesFor(currentLength,
+            		Math.max(numberOfGaps, numberOfNs));
+            if(fourBitBufferSize < twoBitBufferSize){
+            	return DefaultNucleotideCodec.INSTANCE;
+            }
+            if(numberOfGaps==0 ){
+            	return ACGTNNucloetideCodec.INSTANCE;
+            }
+            return NoAmbiguitiesEncodedNucleotideCodec.INSTANCE;
         }
         
         public void increment(NewValues newValues) {

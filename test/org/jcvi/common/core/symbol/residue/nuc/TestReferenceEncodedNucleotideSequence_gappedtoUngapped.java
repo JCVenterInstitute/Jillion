@@ -24,7 +24,6 @@
 package org.jcvi.common.core.symbol.residue.nuc;
 
 import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideCodec;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.junit.Test;
@@ -35,7 +34,7 @@ public class TestReferenceEncodedNucleotideSequence_gappedtoUngapped {
     String gappedBasecalls = "ACGTACGT-ACGTACG-T";
     String ungappedBasecalls = "ACGTACGTACGTACGT";
     DefaultNucleotideCodec codec = DefaultNucleotideCodec.INSTANCE;
-    NucleotideSequence encodedReference = DefaultNucleotideSequence.create(reference);
+    NucleotideSequence encodedReference = new NucleotideSequenceBuilder(reference).build();
     DefaultReferenceEncodedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference, gappedBasecalls,0);
     
     
