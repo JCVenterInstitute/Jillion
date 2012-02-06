@@ -462,4 +462,23 @@ public class TestNucleotideSequenceBuilder {
     	 sut.reverse();
     	 assertEquals(Nucleotides.parse("GGTAA"),sut.asList());
     }
+    
+    @Test
+    public void buildWithReference(){
+    	 NucleotideSequence reference = new NucleotideSequenceBuilder( "AAACCCGGGTTT").build();
+    	 NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder(  "ACCCG")
+    	 									.setReferenceHint(reference, 2);
+    	 NucleotideSequence builtSequence = sut.build();
+		assertEquals("ACCCG",builtSequence.toString());
+		assertTrue(builtSequence instanceof ReferenceEncodedNucleotideSequence);
+    }
+    @Test
+    public void buildSubRangeWithReference(){
+    	 NucleotideSequence reference = new NucleotideSequenceBuilder( "AAACCCGGGTTT").build();
+    	 NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder(  "ACCCG")
+    	 									.setReferenceHint(reference, 2);
+    	 NucleotideSequence builtSequence = sut.build(Range.buildRange(2, 4));
+		assertEquals("CCG",builtSequence.toString());
+		assertTrue(builtSequence instanceof ReferenceEncodedNucleotideSequence);
+    }
 }

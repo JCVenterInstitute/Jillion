@@ -6,7 +6,6 @@ import java.util.List;
 import org.jcvi.common.annotation.hmm.ViterbiPathDecoder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

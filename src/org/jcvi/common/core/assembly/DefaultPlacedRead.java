@@ -36,7 +36,6 @@ import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
 
@@ -332,9 +331,10 @@ public class DefaultPlacedRead implements PlacedRead {
         */
         @Override
         public PlacedRead build(){
-            ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = NucleotideSequenceFactory.createReferenceEncoded(
-                        reference,
-                        currentBasecallsAsString(),offset);
+        	
+            ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = new NucleotideSequenceBuilder(currentBasecallsAsString())
+            																.setReferenceHint(reference, offset)
+            																.buildReferenceEncodedNucleotideSequence();
             Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead<ReferenceEncodedNucleotideSequence>(readId, updatedEncodedBasecalls);
             return new DefaultPlacedRead(read, offset, dir, ungappedFullLength,clearRange);
         }

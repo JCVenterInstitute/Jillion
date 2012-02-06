@@ -294,36 +294,45 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             throw new NullPointerException("range can not be null");
         }
         if(!range.isEmpty()){
-            int start = (int)range.getStart();
-            if(start<0){
-                throw new IllegalArgumentException("range can not have negatives coordinates: "+ start);
-            }
-            if(start> getLength()){
-                throw new IllegalArgumentException(
-                        String.format("range can not start beyond current length (%d) : %d", getLength(),start));
-            }   
-            int bitOffsetOfStart = start*NUM_BITS_PER_VALUE;
-            int maxEnd = Math.min((tail-1)/NUM_BITS_PER_VALUE, (int)range.getEnd());
-            int deleteLength = (maxEnd-start+1)*NUM_BITS_PER_VALUE;
-            int bitOffsetOfEnd = bitOffsetOfStart+deleteLength;
-            
-            int numberOfDeletedBits = bitOffsetOfEnd-bitOffsetOfStart;
-			BitSet subBits = bits.get(bitOffsetOfStart, bitOffsetOfEnd);
+            Range bitRange = convertBaseRangeIntoBitRange(range);
+            int numberOfDeletedBits = (int)bitRange.getLength()-1;
+			BitSet subBits = bits.get((int)bitRange.getStart(), (int)bitRange.getEnd()+1);
 			NewValues newValues = new NewValues(subBits, numberOfDeletedBits);
-            delete(bitOffsetOfStart, bitOffsetOfEnd, numberOfDeletedBits, newValues);
+            delete(bitRange, numberOfDeletedBits, newValues);
               
         }
         return this;
     }
-	private void delete(int bitOffsetOfStart, int bitOffsetOfEnd,
+	private Range convertBaseRangeIntoBitRange(Range range) {
+		int start = (int)range.getStart();
+		assertStartCoordinateIsValid(start);   
+		int bitOffsetOfStart = start*NUM_BITS_PER_VALUE;
+		int maxEnd = Math.min((tail-1)/NUM_BITS_PER_VALUE, (int)range.getEnd());
+		int deleteLength = (maxEnd-start+1)*NUM_BITS_PER_VALUE;
+		int bitOffsetOfEnd = bitOffsetOfStart+deleteLength;
+		
+		Range bitRange = Range.buildRange(bitOffsetOfStart,bitOffsetOfEnd);
+		return bitRange;
+	}
+	private void assertStartCoordinateIsValid(int start) {
+		if(start<0){
+		    throw new IllegalArgumentException("range can not have negatives coordinates: "+ start);
+		}
+		if(start> getLength()){
+		    throw new IllegalArgumentException(
+		            String.format("range can not start beyond current length (%d) : %d", getLength(),start));
+		}
+	}
+	private void delete(Range bitRange,
 			int numberOfDeletedBits, NewValues newValues) {
 		BitSet shrunkBits = new BitSet(tail-numberOfDeletedBits);
+		int bitOffsetOfStart = (int) bitRange.getStart();
 		for(int i=0; i<bitOffsetOfStart; i++){
 			if(bits.get(i)){
 				shrunkBits.set(i);
 			}
 		}
-		for(int i=bitOffsetOfEnd, j=0; i<tail; i++, j++){
+		for(int i=(int)bitRange.getEnd(), j=0; i<tail; i++, j++){
 			if(bits.get(i)){
 				shrunkBits.set(bitOffsetOfStart + j);
 			}
@@ -512,9 +521,82 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     */
     @Override
     public NucleotideSequence build() {    
-        return DefaultNucleotideSequence.create(asList(),codecDecider.getOptimalCodec());
+        return codecDecider.encodeSequence();
     }
-    
+    /**
+     * Return the built {@link NucleotideSequence} as {@link ReferenceEncodedNucleotideSequence} 
+     * assuming {@link #setReferenceHint(NucleotideSequence, int)} has been set.
+     * This is the same as {@code (ReferenceEncodedNucleotideSequence) build()}
+     * @return the built NucleotideSequence as a {@link ReferenceEncodedNucleotideSequence}.
+     * @throws IllegalStateException if a reference
+     * has not been provided via the {@link #setReferenceHint(NucleotideSequence, int)}
+     */
+    public ReferenceEncodedNucleotideSequence buildReferenceEncodedNucleotideSequence() {    
+    	if(codecDecider.alignedReference ==null){
+    		throw new IllegalStateException("must provide reference");
+    	}
+        return (ReferenceEncodedNucleotideSequence)build();
+    }
+    /**
+     * Return the built {@link NucleotideSequence} using only
+     * the given nucleotides as a {@link ReferenceEncodedNucleotideSequence} 
+     * assuming {@link #setReferenceHint(NucleotideSequence, int)} has been set.
+     * This is the same as {@code (ReferenceEncodedNucleotideSequence) build(range)}.
+     * If the given range is a subrange this will be treated as if 
+     * {@link #setReferenceHint(NucleotideSequence, int)} was called using 
+     * {@literal gappedStartOffset + range.getstart() }.
+     * @param range the range of nucleotides to build (gapped).
+     * @return the built NucleotideSequence as a {@link ReferenceEncodedNucleotideSequence}.
+     * @throws IllegalStateException if a reference
+     * has not been provided via the {@link #setReferenceHint(NucleotideSequence, int)}
+     */
+    public ReferenceEncodedNucleotideSequence buildReferenceEncodedNucleotideSequence(Range range) {    
+    	if(codecDecider.alignedReference ==null){
+    		throw new IllegalStateException("must provide reference");
+    	}
+        return (ReferenceEncodedNucleotideSequence)build(range);
+    }
+    /**
+     * Provide another {@link NucleotideSequence} and a start coordinate
+     * that can be used as a reference alignment for this sequence to be built.
+     * This information may or may not be actually used during {@link #build()}
+     * or {@link #build(Range)} to construct a more memory efficient
+     * {@link NucleotideSequence} implementation.  The given sequence and start coordinate
+     * provided should be the coordinates used in the final fully built sequence.
+     * <br/>
+     * For example:
+     * <pre>
+     * 
+     * NucleotideSequence reference = ... //reference = A-GCCGTT
+     * 
+     *  new NucleotideSequenceBuilder("CGGC")
+     *  		.setReference(reference, 2)
+                .reverseCompliment()
+                .append("N");     
+     * </pre>
+     * might use the part of the reference "GCCGT"
+     * that aligns to this sequence being built with only one SNP (T ->N )
+     * to save memory. 
+     * 
+     * @param referenceSequence the reference sequence 
+     * that aligns well to this sequence and that may be used
+     * to improve memory performance.  A reference
+     * can be a contig or scaffold consensus or anything else
+     * that will have a high percent identity for the length 
+     * of this sequence being built. This sequence and the reference
+     * sequence must be in the same orientation to align well.  Can not be null.
+     * @param gappedStartOffset the <strong>gapped</strong> offset into
+     * this reference where the final version of this built sequence will
+     * start to align. Can not be negative or start beyond
+     * the length of this reference.
+     * @return this.
+     * @throws NullPointerException if referenceSequence is null.
+     * @throws IllegalArgumentException if gappedStartOffset is <0 or beyond the reference.
+     */
+    public NucleotideSequenceBuilder setReferenceHint(NucleotideSequence referenceSequence, int gappedStartOffset){
+    	codecDecider.alignedReference = new AlignedReference(referenceSequence, gappedStartOffset);
+    	return this;
+    }
     /**
      * Create a new NucleotideSequence instance
      * from containing only current mutable nucleotides
@@ -524,7 +606,14 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * but may be empty.
      */
     public NucleotideSequence build(Range range) {
-        return DefaultNucleotideSequence.create(asList(range),codecDecider.getOptimalCodec());
+    	Range bitRange = convertBaseRangeIntoBitRange(range);
+        int numberOfDeletedBits = (int)bitRange.getLength()-1;
+		BitSet subBits = bits.get((int)bitRange.getStart(), (int)bitRange.getEnd()+1);
+		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(subBits,numberOfDeletedBits);
+		if(codecDecider.alignedReference !=null){
+			builder.setReferenceHint(codecDecider.alignedReference.reference, codecDecider.alignedReference.offset+ (int)range.getStart());
+		}
+		return builder.build();
     }
     /**
      * Get a sublist of the current nucleotide sequence as a list
@@ -706,9 +795,18 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         private int numberOfAmbiguities=0;
         private int numberOfNs=0;
         private int currentLength=0;
+        private AlignedReference alignedReference=null;
         
+        NucleotideSequence encodeSequence(){
+        	if(alignedReference !=null){
+        		return new DefaultReferenceEncodedNucleotideSequence(
+        				alignedReference.reference, NucleotideSequenceBuilder.this.toString(), alignedReference.offset);
+        	}
+        	return DefaultNucleotideSequence.create(asList(),codecDecider.getOptimalCodec());
+        }
         
         NucleotideCodec getOptimalCodec() {
+        	
             if(numberOfAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){
                 return DefaultNucleotideCodec.INSTANCE;
             }
@@ -816,6 +914,22 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         }
         
         
+    }
+    
+    
+    private static class AlignedReference{
+    	private final NucleotideSequence reference;
+    	private final int offset;
+		public AlignedReference(NucleotideSequence reference, int offset) {
+			long length = reference.getLength();
+			if(offset > length){
+				throw new IllegalArgumentException(
+						String.format("invalid offset %d is beyond reference length %d", offset, length));
+			}
+			this.reference = reference;
+			this.offset = offset;
+		}
+    	
     }
     
     private class NewValues{
