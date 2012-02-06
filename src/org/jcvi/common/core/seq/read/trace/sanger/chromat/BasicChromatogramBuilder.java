@@ -37,7 +37,7 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public final class BasicChromatogramBuilder {
@@ -232,7 +232,7 @@ public final class BasicChromatogramBuilder {
                     new Channel(tConfidence(),tPositions()));
             
             return new BasicChromatogram(
-                    NucleotideSequenceFactory.create(basecalls()),
+                    new NucleotideSequenceBuilder(basecalls()).build(),
                     generateQualities(channelGroup),                        
                         new SangerPeak(peaks()),
                                                 channelGroup,

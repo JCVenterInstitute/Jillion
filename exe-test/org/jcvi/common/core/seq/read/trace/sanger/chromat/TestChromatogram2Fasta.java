@@ -27,8 +27,7 @@ import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.trace.sanger.chromatogram.Chromatogram2fasta;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +44,7 @@ public class TestChromatogram2Fasta {
 	@Before
 	public void setup(){
 		chromo = createMock(Chromatogram.class);
-		expect(chromo.getBasecalls()).andStubReturn(NucleotideSequenceFactory.create(basecalls));
+		expect(chromo.getBasecalls()).andStubReturn(new NucleotideSequenceBuilder(basecalls).build());
 		expect(chromo.getQualities()).andStubReturn(new EncodedQualitySequence(
 				RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, PhredQuality.valueOf(quals)));
 		expect(chromo.getPeaks()).andStubReturn(new SangerPeak(peaks));

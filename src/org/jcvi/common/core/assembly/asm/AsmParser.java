@@ -739,7 +739,7 @@ public final class AsmParser {
                 for(int i=0; i < numberOfVariants; i++){
                     int numContributingReads = Integer.parseInt(contributingReadCountString[i].trim());
                     int weight = Integer.parseInt(weightString[i].trim());
-                    NucleotideSequence seq = NucleotideSequenceFactory.create(sequencesString[i].trim());
+                    NucleotideSequence seq = new NucleotideSequenceBuilder(sequencesString[i]).build();
                     List<Long> reads = readIds.subList(readCounter, readCounter+numContributingReads);
                     variantRecords.add(new VariantRecordImpl(reads, seq, weight));
                     readCounter+=numContributingReads;

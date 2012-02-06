@@ -121,7 +121,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @param sequence the initial nucleotide sequence.
      * @throws NullPointerException if sequence is null.
      */
-    public NucleotideSequenceBuilder(String sequence){
+    public NucleotideSequenceBuilder(CharSequence sequence){
         this(Nucleotides.parse(sequence));        
     }
 

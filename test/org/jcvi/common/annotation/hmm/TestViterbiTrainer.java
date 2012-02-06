@@ -7,19 +7,19 @@ import java.util.Random;
 
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestViterbiTrainer {
 
 	private final List<NucleotideSequence> sequences = Arrays.asList(
-			NucleotideSequenceFactory.create("TAGCTGATCGT"),
-			NucleotideSequenceFactory.create("ATCGTA"),
-			NucleotideSequenceFactory.create("CGATTCGC"),
-			NucleotideSequenceFactory.create("GCATCGGATC"),
+			new NucleotideSequenceBuilder("TAGCTGATCGT").build(),
+			new NucleotideSequenceBuilder("ATCGTA").build(),
+			new NucleotideSequenceBuilder("CGATTCGC").build(),
+			new NucleotideSequenceBuilder("GCATCGGATC").build(),
 			//added made up sequence will probably throw off model
-			NucleotideSequenceFactory.create("ATTCGTACTAGGGA")
+			new NucleotideSequenceBuilder("ATTCGTACTAGGGA").build()
 			);
 	
 	@Test

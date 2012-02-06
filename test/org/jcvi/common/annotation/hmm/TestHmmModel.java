@@ -6,6 +6,7 @@ import java.util.List;
 import org.jcvi.common.annotation.Gene;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -13,8 +14,7 @@ public class TestHmmModel {
 
 	@Test
 	public void h3(){
-		NucleotideSequence sequence = NucleotideSequenceFactory
-							.create("AATCGGGATTAGCTACGTAGCTACTTATCGATCG");
+		NucleotideSequence sequence = new NucleotideSequenceBuilder("AATCGGGATTAGCTACGTAGCTACTTATCGATCG").build();
 		List<Gene> genes = Arrays.asList(
 								new Gene("gene 1", Range.buildRange(6,12)),
 								new Gene("gene 2", Range.buildRange(20,25)));
@@ -29,8 +29,7 @@ public class TestHmmModel {
 	
 	@Test
 	public void h5_oneExon(){
-		NucleotideSequence sequence = NucleotideSequenceFactory
-			.create("AATCATGGGGATTAGCTACGTATAGACTTATCGA");
+		NucleotideSequence sequence = new NucleotideSequenceBuilder("AATCATGGGGATTAGCTACGTATAGACTTATCGA").build();
 		List<Gene> genes = Arrays.asList(
 					new Gene("gene 1", Range.buildRange(4,24)));
 		int[] expected = new int[]{
@@ -44,8 +43,7 @@ public class TestHmmModel {
 	
 	@Test
 	public void h5_oneIntron(){
-		NucleotideSequence sequence = NucleotideSequenceFactory
-			.create("CATGGCGTGCAGCCCATTAGTTACTGTACCTAGT");
+		NucleotideSequence sequence = new NucleotideSequenceBuilder("CATGGCGTGCAGCCCATTAGTTACTGTACCTAGT").build();
 		List<Gene> genes = Arrays.asList(
 					new Gene("gene 1", Range.buildRange(1,5), Range.buildRange(20,32)));
 		int[] expected = new int[]{
@@ -58,8 +56,7 @@ public class TestHmmModel {
 	}
 	@Test
 	public void h5_manyIntrons(){
-		NucleotideSequence sequence = NucleotideSequenceFactory
-			.create("GCATGGTCTTAGGTGTATCGACAGTGTAGTAATC");
+		NucleotideSequence sequence = new NucleotideSequenceBuilder("GCATGGTCTTAGGTGTATCGACAGTGTAGTAATC").build();
 		List<Gene> genes = Arrays.asList(
 					new Gene("gene 1", 
 							Range.buildRange(2,4),
@@ -78,8 +75,7 @@ public class TestHmmModel {
 	
 	@Test
 	public void h27_oneExon(){
-		NucleotideSequence sequence = NucleotideSequenceFactory
-			.create("AATCATGGGGATTAGCTACGTATAGACTTATCGA");
+		NucleotideSequence sequence = new NucleotideSequenceBuilder("AATCATGGGGATTAGCTACGTATAGACTTATCGA").build();
 		List<Gene> genes = Arrays.asList(
 					new Gene("gene 1", Range.buildRange(4,24)));
 		int[] expected = new int[]{
@@ -93,8 +89,7 @@ public class TestHmmModel {
 	
 	@Test
 	public void h27_oneIntron(){
-		NucleotideSequence sequence = NucleotideSequenceFactory
-			.create("CATGGCGTGCAGCCCATTAGTTACTGTACCTAGT");
+		NucleotideSequence sequence = new NucleotideSequenceBuilder("CATGGCGTGCAGCCCATTAGTTACTGTACCTAGT").build();
 		List<Gene> genes = Arrays.asList(
 					new Gene("gene 1", Range.buildRange(1,5), Range.buildRange(20,32)));
 		int[] expected = new int[]{
@@ -109,8 +104,7 @@ public class TestHmmModel {
 	}
 	@Test
 	public void h27_manyIntrons(){
-		NucleotideSequence sequence = NucleotideSequenceFactory
-			.create("GCATGGTCTTAGGTGTATCGACAGTGTAGTAATC");
+		NucleotideSequence sequence = new NucleotideSequenceBuilder("GCATGGTCTTAGGTGTATCGACAGTGTAGTAATC").build();
 		List<Gene> genes = Arrays.asList(
 					new Gene("gene 1", 
 							Range.buildRange(2,4),

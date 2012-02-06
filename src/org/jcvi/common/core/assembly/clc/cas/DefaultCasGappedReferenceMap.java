@@ -37,6 +37,7 @@ import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegionType;
 import org.jcvi.common.core.assembly.clc.cas.read.CasNucleotideDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.util.MathUtil;
 
@@ -132,7 +133,7 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
                 try {
     
                     String gappedBasecalls = buildGappedReferenceAsString(contigName, gapsByReferenceId.get(i));
-                    gappedReferences.put(i, NucleotideSequenceFactory.create(gappedBasecalls));
+                    gappedReferences.put(i, new NucleotideSequenceBuilder(gappedBasecalls).build());
                     
                 } catch (DataStoreException e) {
                     throw new IllegalStateException("could not generate gapped reference for reference " + i,e);

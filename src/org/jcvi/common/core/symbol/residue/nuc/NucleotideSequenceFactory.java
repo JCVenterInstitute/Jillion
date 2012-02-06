@@ -30,10 +30,6 @@ public final class NucleotideSequenceFactory {
     private NucleotideSequenceFactory(){
         throw new IllegalStateException("not instantiable");
     }
-    
-    public static NucleotideSequence create(CharSequence nucleotides){
-        return DefaultNucleotideSequence.create(nucleotides);
-    }
 
     public static ReferenceEncodedNucleotideSequence createReferenceEncoded(NucleotideSequence reference,
             String toBeEncoded, int startOffset){

@@ -236,7 +236,7 @@ public class DefaultPlacedRead implements PlacedRead {
             this.dir =dir;
             this.clearRange = clearRange;
             this.offset = offset;
-            this.originalSequence = NucleotideSequenceFactory.create(validBases);
+            this.originalSequence = new NucleotideSequenceBuilder(validBases).build();
             this.basesBuilder =null;
             if(offset + validBases.length() > reference.getLength()){
                 throw new IllegalArgumentException("read goes beyond the reference");
@@ -335,7 +335,7 @@ public class DefaultPlacedRead implements PlacedRead {
             ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = NucleotideSequenceFactory.createReferenceEncoded(
                         reference,
                         currentBasecallsAsString(),offset);
-            Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead(readId, updatedEncodedBasecalls);
+            Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead<ReferenceEncodedNucleotideSequence>(readId, updatedEncodedBasecalls);
             return new DefaultPlacedRead(read, offset, dir, ungappedFullLength,clearRange);
         }
         /**

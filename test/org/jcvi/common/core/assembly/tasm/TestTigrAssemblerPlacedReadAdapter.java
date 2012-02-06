@@ -31,6 +31,7 @@ import org.jcvi.common.core.assembly.tasm.TigrAssemblerReadAttribute;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
@@ -45,7 +46,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	int offset = 5;
 	String readSequence = "ACGT-ACGT";
 	int ungappedLength = 500;
-	NucleotideSequence consensus = NucleotideSequenceFactory.create("NNNNNACGT-ACGT");
+	NucleotideSequence consensus = new NucleotideSequenceBuilder("NNNNNACGT-ACGT").build();
 	ReferenceEncodedNucleotideSequence gappedBasecalls = NucleotideSequenceFactory.createReferenceEncoded(
 	        consensus ,readSequence,5);
 	Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead<ReferenceEncodedNucleotideSequence>(id, gappedBasecalls);

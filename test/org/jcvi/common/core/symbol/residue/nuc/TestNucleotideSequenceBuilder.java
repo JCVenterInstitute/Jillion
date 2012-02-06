@@ -60,7 +60,7 @@ public class TestNucleotideSequenceBuilder {
         assertEquals(expected, Nucleotides.asString(builder.build()));
     }
     private NucleotideSequence createSequence(String seq){
-       return  NucleotideSequenceFactory.create(seq);
+       return  new NucleotideSequenceBuilder(seq).build();
     }
     @Test
     public void singleSequenceInConstructor(){
