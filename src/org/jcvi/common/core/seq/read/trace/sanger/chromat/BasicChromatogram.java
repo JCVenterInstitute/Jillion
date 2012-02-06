@@ -32,8 +32,7 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.CommonUtil;
 
 
@@ -74,7 +73,7 @@ public class BasicChromatogram implements Chromatogram {
     public BasicChromatogram(String basecalls, byte[] qualities,SangerPeak peaks,
             ChannelGroup channelGroup,
             Map<String,String> comments){
-        this(NucleotideSequenceFactory.create( Nucleotides.parse(basecalls)),
+        this(new NucleotideSequenceBuilder(basecalls).build(),
                 new EncodedQualitySequence(RUN_LENGTH_CODEC,PhredQuality.valueOf(qualities)),
                 peaks,
                      channelGroup, comments);

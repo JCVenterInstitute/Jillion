@@ -38,6 +38,7 @@ import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -56,8 +57,7 @@ public abstract class  AbstractTestFragmentDataStore {
     
     Fragment fragEndingIn78 = new DefaultFragment(
             "334369678",
-            NucleotideSequenceFactory.create(
-                    Nucleotides.parse(
+            new NucleotideSequenceBuilder(
                             "ATGATCGGCAGTGAATTGTATACGACTCACTATAGGGCGAATTGGAGCTCCACGCGGTGGCGGCCGCTCTAGAACTAGTGGATCCCCCGGGCTGCAGGAA" +
                             "TTCGATTAGGTGGAGGCCACGCTGCGCGACCCCAGCGCCCAGTCCGTAACGCACGTGCTGCAGGCAGGTGCCGGTCAGTGTGTGTGTGGTGGGGGCGGCG" +
                             "GCAGGGGGGTTGCGTACAGCATGGTGCTTGAAATTGGAAAGGAAGGAAGTCAGCCGTCAATGGAAGACACGAGTTAGTGCGGGCTTGCCCACATCATTGG" +
@@ -66,7 +66,7 @@ public abstract class  AbstractTestFragmentDataStore {
                             "GGACGTCAGCTCGCTCAAGCGCCAGCTGGGGGAGCGCGACAAGCAGGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGC" +
                             "GTGTGCGTGCGTGTGTGTGCGTGTGCGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGCGTGAGACGGAAAGAGCCAAG" +
                             "AAGAGCGCGAACTAAAGGAACAACATGGAAATAGGCGCGGCACCAAAGGTGAACCCTGGGCAACCCCATGGAATCCACAGGGAATCCCGTGTAAACCAAG" +
-                            "GGACCTGAGGAGAGCACCAACAAGATCAGACGANNA")), 
+                            "GGACCTGAGGAGAGCACCAACAAGATCAGACGANNA").build(), 
             new EncodedQualitySequence(RUN_LENGTH_CODEC,
                     QUALITY_CODEC.decode(
                             (
@@ -85,15 +85,14 @@ public abstract class  AbstractTestFragmentDataStore {
         );
     Fragment fragEndingIn61 = new DefaultFragment(
             "334370061",
-            NucleotideSequenceFactory.create(
-                    Nucleotides.parse(
+            new NucleotideSequenceBuilder(
                             "ACTCAGCCTAAATACCTCACTAAGGGAACAAAGCTGGTACGGGCCCCCCCTCGAGGTCGACGGTATCGATAAGCTTGATCGGCTGGTCCCATTCGCCTTC" +
                             "CCATTCCAATTCCCGTATTCCCATCCCCACTCCGATCCCCATTCGCAGATTCCCATTCCCATATTCACCATTCCCAGCCCCAGGCCACGCACCAGCGAGC" +
                             "CCGAGAGCTCCGGCAGCAGCAGCGCAGCGGAGCCGCTCGGCGACATCCCCGCCGCCGCCCCGCCCAGCAGCTGCGACTGCGACGGCTGCGAGCCCGAGCT" +
                             "CGAGCCCGTGAAGCCGCCTCCCGCCGCCGCAGCCGCGCCCCGCCCGCCTCCTCCGCCTCCGCCTGCGCCTCCGCCGGTGGCGTGCGTGGCTGCTGCTGTG" +
                             "GCGAGATGCTCCTCCAGCTGCGCCACCAGCTGTGCCCGGTGCGCCAGGTCCGACTCCAGCGCCCGGATCTTGGAGCCCAGCTCGCCGATCTGCGGCGTGG" +
                             "AGCCGTGGGTTGGTTGCGCGGTCCTCAGGGTCCCGTGGGGGTGATCAGTTGCATACCCGTGGGGATGCCATGGGGGATGGCGCAGGGTTCGACCGTGTGG" +
-                            "AGGGCGGGCGCAGAACCAGGGCGCAGGCACTAAGGCGCGCGCATCATGGGN")), 
+                            "AGGGCGGGCGCAGAACCAGGGCGCAGGCACTAAGGCGCGCGCATCATGGGN").build(), 
             new EncodedQualitySequence(RUN_LENGTH_CODEC,
                     QUALITY_CODEC.decode(
                             (

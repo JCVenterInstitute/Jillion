@@ -34,6 +34,7 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -47,7 +48,7 @@ public abstract class TestContigFileParser {
     int numberOfReads= 210;
     ResourceFileServer RESOURCES = new ResourceFileServer(TestContigFileParser.class);
 
-                        NucleotideSequence contigConsensus = NucleotideSequenceFactory.createGappy(
+                        NucleotideSequence contigConsensus = new NucleotideSequenceBuilder(
         "TAAAGTGGCCACTAAATATGTTAAGAAGGTTACTGGCAAACTAGCCGTGCGCTTTAAGGC" +
         "GTTAGGTGTAGTCGTTGTCAGGAAAATTACTGAATGGTTTGATTTAGCCGTGGACATTGC" +
         "TGCTAGTGCCGCTGGATGGCTTTGCTACCAGCTGGTAAATGGCTTATTCGCAGTGGCCAA" +
@@ -402,7 +403,7 @@ public abstract class TestContigFileParser {
         "CCCACCTTCATTTCGAAGGAGTCCAATCATGTTGATTATTACTATGAGAGTGAGGCTAAT" +
         "TTCACACTACAAGGTTGTGATGAATTTATAGTACCGCTCTGCGTTTTTAATGGCCGTTCC" +
         "AAGGGCAGCTCTTCGGACCCTGCCAATAAATATTATACAGACTCTCAGAGTTACTATAAT" +
-        "ATTGATACT");
+        "ATTGATACT").build();
                         
     PlacedRead CVGWB15T06B037761RM = DefaultPlacedRead.createBuilder(contigConsensus, "CVGWB15T06B037761RM", 
             "AAGTTTAATACTGATAATAAGGTTATATACACCACAGAAGTGGCTTCAAAGCTTAATTTT" +

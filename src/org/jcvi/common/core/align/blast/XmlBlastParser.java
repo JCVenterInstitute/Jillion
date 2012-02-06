@@ -31,6 +31,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -154,10 +155,10 @@ public final class XmlBlastParser {
                 subjectEnd = Integer.parseInt(tempVal);
             }else if(QUERY_SEQUENCE.equals(qName)){
                 numberOfGapOpenings +=parseNumberOfGapOpenings(tempVal);
-                querySequence = NucleotideSequenceFactory.createGappy(tempVal);
+                querySequence = new NucleotideSequenceBuilder(tempVal).build();
             }else if(SUBJECT_SEQUENCE.endsWith(qName)){
                 numberOfGapOpenings +=parseNumberOfGapOpenings(tempVal);
-                subjectSequence = NucleotideSequenceFactory.createGappy(tempVal);
+                subjectSequence = new NucleotideSequenceBuilder(tempVal).build();
             }else if(MIDLINE.equals(qName)){
                 int totalMisMatches= parseNumberOfMismatches(tempVal);
                 misMatches = totalMisMatches- numberOfGapOpenings;

@@ -37,7 +37,7 @@ import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.util.Builder;
 
@@ -137,7 +137,6 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         if(type != CasAlignmentRegionType.DELETION){
             currentOffset+=region.getLength();
         }
-        //referenceOffset +=region.getLength();
     }
   
     public String validBases(){
@@ -149,8 +148,8 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplimentValidRange(validRange, fullUngappedLength);
         }
-        Read<NucleotideSequence> read = new DefaultRead(readId,
-                NucleotideSequenceFactory.create(validBases));
+        Read<NucleotideSequence> read = new DefaultRead<NucleotideSequence>(readId,
+        		new NucleotideSequenceBuilder(validBases).build());
         return new DefaultCasPlacedRead(read, startOffset, validRange, dir,(int)fullUngappedLength);
     }
 

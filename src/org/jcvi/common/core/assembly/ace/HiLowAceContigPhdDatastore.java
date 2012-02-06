@@ -41,9 +41,7 @@ import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
@@ -279,13 +277,12 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
                 PhdInfo phdInfo, int ungappedFullLength) {
             if(contigOfInterest){
                 String currentFullLengthBasecalls = getCurrentFullLengthBasecalls();
-                NucleotideSequence fullLengthBasecalls = NucleotideSequenceFactory.create(
-                                        ConsedUtil.convertAceGapsToContigGaps(currentFullLengthBasecalls)
-                                                            .replaceAll("-", ""));
-                
+                NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(ConsedUtil.convertAceGapsToContigGaps(currentFullLengthBasecalls))
+                									.ungap();
+               
                 if(dir==Direction.REVERSE){
                     Collections.reverse(currentHiLowQualities);
-                    fullLengthBasecalls = NucleotideSequenceFactory.create(Nucleotides.reverseCompliment(fullLengthBasecalls.asList()));
+                    builder.reverseCompliment();
                 }
                 QualitySequence qualities = new EncodedQualitySequence(
                                             RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
@@ -293,7 +290,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
                 
                  
                  Phd phd = new ArtificialPhd(readId, 
-                         fullLengthBasecalls,
+                		 builder.build(),
                                      qualities,19);
                  phds.put(readId,phd);
                  currentHiLowQualities=null;

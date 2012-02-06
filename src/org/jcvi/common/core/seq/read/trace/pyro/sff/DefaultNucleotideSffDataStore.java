@@ -30,7 +30,7 @@ import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public class DefaultNucleotideSffDataStore implements NucleotideDataStore{
@@ -73,13 +73,12 @@ public class DefaultNucleotideSffDataStore implements NucleotideDataStore{
     @Override
     public NucleotideSequence get(String id) throws DataStoreException {
         final Flowgram flowgram = flowgramDataStore.get(id);
-        NucleotideSequence fullRange= flowgram.getBasecalls();
+        NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(flowgram.getBasecalls());
+       
         if(trim){
-           
-            return NucleotideSequenceFactory.create(
-                    fullRange.asList(SFFUtil.getTrimRangeFor(flowgram)));
+           return builder.build(SFFUtil.getTrimRangeFor(flowgram));
         }
-        return fullRange;
+        return builder.build();
     }
 
     @Override

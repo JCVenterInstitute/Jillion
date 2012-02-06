@@ -22,9 +22,7 @@ package org.jcvi.common.core.seq.fastx.fastq;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
@@ -34,9 +32,8 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 /**
  * @author dkatzel
@@ -109,10 +106,10 @@ public class RemoveRedundantMatePairs {
             while(mate1Iterator.hasNext()){
                 FastQRecord forward = mate1Iterator.next();
                 FastQRecord reverse = mate2Iterator.next();
-                List<Nucleotide> combinedList = new ArrayList<Nucleotide>(comparisonRangeLength*2);
-                combinedList.addAll(forward.getSequence().asList(comparisonRange));
-                combinedList.addAll(reverse.getSequence().asList(comparisonRange));
-                NucleotideSequence seq =NucleotideSequenceFactory.createACGTN(combinedList);
+                NucleotideSequenceBuilder builder =new NucleotideSequenceBuilder(comparisonRangeLength*2);
+                builder.append(forward.getSequence().asList(comparisonRange));
+                builder.append(reverse.getSequence().asList(comparisonRange));
+                NucleotideSequence seq =builder.build();
                 if(!nonRedundantSet.contains(seq)){
                     out1.write(FastQUtil.encode(forward, qualityCodec).getBytes());
                     out2.write(FastQUtil.encode(reverse, qualityCodec).getBytes());

@@ -129,9 +129,12 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
 			numSnpsStrategy.put(buffer, numSnps);
 	        
 	        buffer.put((byte)snpSizeStrategy.ordinal());
-	        
-	        for(Integer offset : differentGlyphMap.keySet()){
-	        	snpSizeStrategy.put(buffer, offset.intValue());
+	        try{
+		        for(Integer offset : differentGlyphMap.keySet()){
+		        	snpSizeStrategy.put(buffer, offset.intValue());
+		        }
+	        }catch(Exception e){
+	        	throw new RuntimeException(e);
 	        }
 	        BitSet bits = new BitSet(BITS_PER_SNP_VALUE*numSnps);
 	        int i=0;
@@ -214,7 +217,8 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
         if(lastOffsetOfSequence > reference.getLength()){
             int overhang = (int)(toBeEncoded.length()+startOffset - reference.getLength());
             overhangOffset = toBeEncoded.length()-overhang;
-            afterValues = DefaultNucleotideSequence.create(toBeEncoded.substring(overhangOffset));
+            afterValues = new NucleotideSequenceBuilder(toBeEncoded.substring(overhangOffset))
+            					.build();
         }
     }
 
@@ -222,7 +226,8 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
     private void handleBeforeReference(String toBeEncoded, int startOffset) {
         if(startOffset<0){
             //handle before values
-            beforeValues = DefaultNucleotideSequence.create(toBeEncoded.substring(0, Math.abs(startOffset)));
+            beforeValues = new NucleotideSequenceBuilder(toBeEncoded.substring(0, Math.abs(startOffset)))
+            				.build();
         }
     }
 

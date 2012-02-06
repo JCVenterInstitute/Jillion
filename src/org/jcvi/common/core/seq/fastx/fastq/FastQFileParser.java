@@ -35,8 +35,7 @@ import java.util.regex.Matcher;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 /**
  * {@code FastQFileParser} parses FASTQ encoded files
  * regardless of how the qualities are encoded.
@@ -84,7 +83,7 @@ public class FastQFileParser {
 	            visitCurrentBlock = visitor.visitBeginBlock(id, optionalComment);
 	            if(visitCurrentBlock){
 	                visitor.visitLine(basecalls);
-	                NucleotideSequence encodedNucleotides = NucleotideSequenceFactory.createACGTN(Nucleotides.parse(basecalls.substring(0, basecalls.length()-1)));
+	                NucleotideSequence encodedNucleotides = new NucleotideSequenceBuilder(basecalls.substring(0, basecalls.length()-1)).build();
 	                visitor.visitNucleotides(encodedNucleotides);
 	                visitor.visitLine(qualLine);
 	                Matcher beginQualityMatcher =FastQUtil.QUAL_DEFLINE_PATTERN.matcher(qualLine);

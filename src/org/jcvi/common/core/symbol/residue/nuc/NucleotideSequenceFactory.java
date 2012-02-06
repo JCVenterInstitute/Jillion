@@ -19,7 +19,6 @@
 
 package org.jcvi.common.core.symbol.residue.nuc;
 
-import java.util.Collection;
 
 /**
  * @author dkatzel
@@ -35,25 +34,7 @@ public final class NucleotideSequenceFactory {
     public static NucleotideSequence create(CharSequence nucleotides){
         return DefaultNucleotideSequence.create(nucleotides);
     }
-    public static NucleotideSequence create(char[] nucleotides){
-        return DefaultNucleotideSequence.create(Nucleotides.parse(nucleotides));
-    }
-    
-    public static NucleotideSequence create(Collection<Nucleotide> nucleotides){
-        return DefaultNucleotideSequence.create(nucleotides);
-    }
-    public static NucleotideSequence createNoAmbiguities(Collection<Nucleotide> nucleotides){
-        return DefaultNucleotideSequence.createNoAmbiguities(nucleotides);
-    }
-    public static NucleotideSequence createACGTN(Collection<Nucleotide> nucleotides){
-        return DefaultNucleotideSequence.createACGTN(nucleotides);
-    }
-    public static NucleotideSequence createGappy(Collection<Nucleotide> nucleotides){
-        return DefaultNucleotideSequence.createGappy(nucleotides);
-    }
-    public static NucleotideSequence createGappy(CharSequence nucleotides){
-        return DefaultNucleotideSequence.createGappy(nucleotides);
-    }
+
     public static ReferenceEncodedNucleotideSequence createReferenceEncoded(NucleotideSequence reference,
             String toBeEncoded, int startOffset){
         return new DefaultReferenceEncodedNucleotideSequence(reference, toBeEncoded, startOffset);

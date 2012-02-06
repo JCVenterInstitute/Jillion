@@ -38,7 +38,8 @@ public final class EmptyIterator<E> implements Iterator<E> {
      * Singleton instance of Empty iterator that can be shared 
      * by all.
      */
-    private static final EmptyIterator INSTANCE  = new EmptyIterator();
+    @SuppressWarnings("rawtypes")
+	private static final EmptyIterator INSTANCE  = new EmptyIterator();
     /**
      * Creates an {@link EmptyIterator} of Type E.
      * @param <E> the type of element to be iterated over.

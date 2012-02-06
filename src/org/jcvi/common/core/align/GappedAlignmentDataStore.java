@@ -31,6 +31,7 @@ import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.iter.CloseableIterator;
@@ -121,7 +122,7 @@ public class GappedAlignmentDataStore implements NucleotideDataStore{
         public GappedAlignmentDataStore build() {
             Map<String, NucleotideSequence> map = new LinkedHashMap<String, NucleotideSequence>(builders.size());
             for(Entry<String, StringBuilder> entry : builders.entrySet()){
-                map.put(entry.getKey(), NucleotideSequenceFactory.createGappy(entry.getValue().toString()));
+                map.put(entry.getKey(), new NucleotideSequenceBuilder(entry.getValue().toString()).build());
             }
             builders.clear();
             return new GappedAlignmentDataStore(

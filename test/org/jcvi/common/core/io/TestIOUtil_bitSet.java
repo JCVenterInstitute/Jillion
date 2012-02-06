@@ -63,7 +63,7 @@ public class TestIOUtil_bitSet {
 	
 	@Test(expected = NullPointerException.class)
 	public void toBitSetShouldThrowNPEIfArrayIsNull(){
-		IOUtil.toBitSet(null);
+		IOUtil.toBitSet((byte[])null);
 	}
 	
 	@Test

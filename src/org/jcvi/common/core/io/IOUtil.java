@@ -739,7 +739,37 @@ public final class IOUtil {
     	
     	return bits;
     }
-    
+    /**
+     * Convert the given byte array into
+     * the corresponding {@link BitSet}
+     * using the <strong>least</strong>
+     * number of bits possible.
+     * For some reason {@link BitSet}
+     * Java API thru java 6 does not include methods for converting
+     * to and from a byte array.
+     * @param bytes the byte array to convert.
+     * @return a new {@link BitSet} containing the same data as
+     * the given byte array.
+     * @throws NullPointerException if bytes is null.
+     */
+    public static BitSet toBitSet(ByteBuffer buffer){
+    	final BitSet bits;
+    	bits = new BitSet();
+    	int j=0;
+    	while(buffer.remaining() >0){
+    		byte value = buffer.get();
+    		for(int i=0; i<8; i++){
+    			int bit = value & (1<< i);
+    			if(bit !=0){
+        			bits.set(j+i);
+        		}
+    		}
+    		j+=8;
+    	}
+    	
+    	
+    	return bits;
+    }
     
     public static BitSet toBitSet(long singleValue){
     	return toBitSet(BigInteger.valueOf(singleValue).toByteArray());    	

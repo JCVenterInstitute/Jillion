@@ -141,7 +141,7 @@ public class ConsedUtil {
         List<Range> coveredRegions = new ArrayList<Range>();
         NucleotideSequence consensus = contigBuilder.getConsensusBuilder().build();
         CoverageMap<CoverageRegion<AcePlacedReadBuilder>> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllPlacedReadBuilders());
-        for(CoverageRegion region : coverageMap){
+        for(CoverageRegion<AcePlacedReadBuilder> region : coverageMap){
             if(region.getCoverage()>0){
                 
                 final Range contigRange = Range.buildRange(region.getStart(), region.getEnd())

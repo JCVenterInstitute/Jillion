@@ -69,7 +69,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceFactory;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.MultipleWrapper;
 
 /**
@@ -211,7 +211,7 @@ public class RecallAceConsensus {
                   
                     recalledConsensus.add(result.getConsensus());
                 }
-                final NucleotideSequence gappedRecalledConsensus = NucleotideSequenceFactory.create(recalledConsensus);
+                final NucleotideSequence gappedRecalledConsensus = new NucleotideSequenceBuilder(recalledConsensus).build();
                 if(fastaOut !=null){
                     fastaOut.print(new DefaultNucleotideSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.asUngappedList()));
                 }
