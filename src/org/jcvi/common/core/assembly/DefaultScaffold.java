@@ -206,9 +206,12 @@ public class DefaultScaffold implements Scaffold {
             this.id =id;
             contigs = new TreeSet<PlacedContig>();
         }
-        public Builder add(String contigId, Range contigRange, Direction contigDirection){
-            contigs.add(new DefaultPlacedContig(contigId, contigRange,contigDirection));
+        public Builder add(PlacedContig placedContig){
+            contigs.add(placedContig);
             return this;
+        }
+        public Builder add(String contigId, Range contigRange, Direction contigDirection){
+           return add(new DefaultPlacedContig(contigId, contigRange,contigDirection));
         }
         public Builder add(String contigId, Range contigRange){
             return add(contigId, contigRange, Direction.FORWARD);

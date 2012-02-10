@@ -181,20 +181,14 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         protected void backgroundThreadRunMethod() {
             AbstractAceContigBuilder builder = new AbstractAceContigBuilder() {
 
-                /**
-                * {@inheritDoc}
-                */
                 @Override
-                public synchronized boolean visitContigHeader(String contigId,
-                        int numberOfBases, int numberOfReads,
-                        int numberOfBaseSegments, boolean reverseComplimented) {
-                    //only parse contigs we care about
-                    if(indexFileRange.contains(contigId)){
-                        return super.visitContigHeader(contigId, numberOfBases, numberOfReads,
-                                numberOfBaseSegments, reverseComplimented);
-                    }
-                    return false;
-                }
+				public synchronized boolean shouldVisitContig(String contigId,
+						int numberOfBases, int numberOfReads,
+						int numberOfBaseSegments, boolean reverseComplimented) {
+					return indexFileRange.contains(contigId);
+				}
+
+			
 
                 @Override
                 protected void visitContig(AceContig contig) {
@@ -253,18 +247,18 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         }
         
         @Override
-        public synchronized boolean visitContigHeader(String contigId, int numberOfBases,
-                int numberOfReads, int numberOfBaseSegments,
-                boolean reverseComplimented) {
-            if(!firstContig){
-                
+		public synchronized boolean shouldVisitContig(String contigId, int numberOfBases,
+				int numberOfReads, int numberOfBaseSegments,
+				boolean reverseComplimented) {
+        	if(!firstContig){                
                 visitContig();
             }
             currentContigId = contigId;
             currentStartOffset=currentFileOffset-currentLineLength;
             firstContig=false;
             return false;
-        }
+		}
+
         protected synchronized void visitContig() {
             indexFileRange.put(currentContigId, Range.buildRange(currentStartOffset, 
                     currentFileOffset-currentLineLength-1));
@@ -312,8 +306,16 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         }
 
      
-
         /**
+         * {@inheritDoc}
+         */
+        @Override
+		public void visitBeginContig(String contigId, int numberOfBases,
+				int numberOfReads, int numberOfBaseSegments,
+				boolean reverseComplimented) {
+			
+		}
+		/**
         * {@inheritDoc}
         */
         @Override

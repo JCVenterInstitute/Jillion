@@ -48,6 +48,7 @@ import org.jcvi.common.core.assembly.clc.cas.consed.AbstractAcePlacedReadCasRead
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 
@@ -181,7 +182,7 @@ public class FilterFastqDataFromCas {
             int maxSolexaCoverageDepth = Integer.parseInt(commandLine.getOptionValue("d"));
             File outputFile = new File(commandLine.getOptionValue("o"));
             //create dirs if needed
-            outputFile.getParentFile().mkdirs();
+            IOUtil.mkdirs(outputFile.getParentFile());
             PrintWriter out = new PrintWriter(outputFile);
             //don't need to worry about trim points etc because
             //I don't actually care about the sequence...

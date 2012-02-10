@@ -46,7 +46,7 @@ public class TestDefaultAceTagsFromAceFile {
     WholeAssemblyAceTag expectedWholeAssemblyTag = new DefaultWholeAssemblyAceTag(
             "phrap_params", "phrap", 
             new DateTime(1999, 6, 21,16, 19, 47, 0).toDate(), 
-            "/usr/local/genome/bin/phrap standard.fasta.screen -new_ace -view \nphrap version 0.990319\n");
+            "/usr/local/genome/bin/phrap standard.fasta.screen -new_ace -view \nphrap version 0.990319");
     
     ConsensusAceTag consensusTag0 = new DefaultConsensusAceTag.Builder(
                                             "Contig1", "repeat", "consed",

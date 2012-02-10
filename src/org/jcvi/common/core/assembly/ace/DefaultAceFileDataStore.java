@@ -178,20 +178,13 @@ public final class DefaultAceFileDataStore implements AceContigDataStore{
             contigMap = new LinkedHashMap<String, AceContig>(numberOfContigs+1,1F);
         }
 
-        /**
-        * {@inheritDoc}
-        */
         @Override
-        public synchronized boolean visitContigHeader(String contigId,
-                int numberOfBases, int numberOfReads, int numberOfBaseSegments,
-                boolean reverseComplimented) {
-            if(filter.accept(contigId)){
-                super.visitContigHeader(contigId, numberOfBases, numberOfReads,
-                        numberOfBaseSegments, reverseComplimented);
-                return true;
-            }
-            return false;
-        }
+		public boolean shouldVisitContig(String contigId, int numberOfBases,
+				int numberOfReads, int numberOfBaseSegments,
+				boolean reverseComplimented) {
+			return filter.accept(contigId);
+		}
+		
         /**
         * {@inheritDoc}
         */

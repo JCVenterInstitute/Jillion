@@ -37,5 +37,22 @@ import org.jcvi.common.core.symbol.residue.ResidueSequence;
  * @author dkatzel
  */
 public interface NucleotideSequence extends ResidueSequence<Nucleotide>{
-   
+	   /**
+     * Two {@link NucleotideSequence}s are equal
+     * if they contain the same {@link Nucleotide}s 
+     * in the same order.  This should
+     * return the same value 
+     * (but possibly a more optimized computation)
+     * as {@code this.asList().equals(o.asList())};
+     * <p/>
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o);
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode();
 }
