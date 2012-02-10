@@ -215,22 +215,20 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
             return !contigOfInterest;
         }
 
-        /**
-        * {@inheritDoc}
-        */
         @Override
-        public synchronized boolean visitContigHeader(String aceContigId,
-                int numberOfBases, int numberOfReads,
-                int numberOfBaseSegments, boolean reverseComplimented) {
-            if(contigId !=null){
+		public synchronized boolean shouldVisitContig(String aceContigId, int numberOfBases,
+				int numberOfReads, int numberOfBaseSegments,
+				boolean reverseComplimented) {
+        	if(contigId !=null){
                 contigOfInterest =aceContigId.equals(contigId);
                 if(contigOfInterest){
-                    phds = new HashMap<String, Phd>(numberOfReads+1, 1F);
+                    phds = new HashMap<String, Phd>(numberOfReads+1, 1F);                    
                 }
+                return contigOfInterest;
             }
-            return super.visitContigHeader(aceContigId, numberOfBases, numberOfReads,
-                    numberOfBaseSegments, reverseComplimented);
-        }
+			return true;
+		}
+		
 
         /**
         * {@inheritDoc}
