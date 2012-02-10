@@ -84,4 +84,23 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      */
     @Override
     public String toString();
+    /**
+     * Two {@link ResidueSequence}s are equal
+     * if they contain the same residues 
+     * in the same order.  This should
+     * return the same value 
+     * (but possibly a more optimized computation)
+     * as {@code this.asList().equals(o.asList())};
+     * <p/>
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o);
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode();
+
 }

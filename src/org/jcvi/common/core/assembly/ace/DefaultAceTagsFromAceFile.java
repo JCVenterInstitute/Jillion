@@ -122,7 +122,7 @@ public final class DefaultAceTagsFromAceFile {
     public void visitWholeAssemblyTag(String type, String creator,
             Date creationDate, String data) {
         super.visitWholeAssemblyTag(type, creator, creationDate, data);
-        aceTagsBuilder.addWholeAssemblyTag(new DefaultWholeAssemblyAceTag(type, creator, creationDate, data));
+        aceTagsBuilder.addWholeAssemblyTag(new DefaultWholeAssemblyAceTag(type, creator, creationDate, data.trim()));
     }
     
 

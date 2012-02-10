@@ -124,12 +124,24 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 
     }
     /**
+     * By default this method will always return true.  Please override
+     * if your implementation requires only visiting contigs
+     * under certain conditions.
+     * {@inheritDoc}
+     */
+    @Override
+	public boolean shouldVisitContig(String contigId, int numberOfBases,
+			int numberOfReads, int numberOfBaseSegments,
+			boolean reverseComplimented) {
+		return true;
+	}
+	/**
      * Reset all temp data that contains contig specific information.
      * <p/>
      * {@inheritDoc}
      */
     @Override
-    public synchronized boolean visitContigHeader(String contigId, int numberOfBases,
+    public synchronized void visitBeginContig(String contigId, int numberOfBases,
             int numberOfReads, int numberOfBaseSegments,
             boolean reverseComplimented) {
         throwExceptionIfInitialized();
@@ -140,7 +152,6 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         currentContigIsComplimented = reverseComplimented;
         numberOfBasesInCurrentContig = numberOfBases;
         numberOfReadsInCurrentContig = numberOfReads;
-        return true;
     }
 
     @Override

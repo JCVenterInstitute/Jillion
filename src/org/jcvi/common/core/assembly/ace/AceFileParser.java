@@ -78,6 +78,7 @@ public final class AceFileParser {
         if(visitor ==null){
             throw new NullPointerException("visitor can not be null");
         }
+        visitor.visitFile();
         ParserState parserState = new ParserState(visitor, inputStream);
         while(!parserState.done()){
             parserState = parserState.parseNextSection();
@@ -86,6 +87,15 @@ public final class AceFileParser {
         visitor.visitEndOfFile();
         
     }
+    /**
+     * This method figures out if we need
+     * to call {@link AceFileVisitor#visitEndOfContig()}
+     * or not and might also close the {@link ParserState}
+     * (which should close the stream)
+     * 
+     * @param visitor
+     * @param parserState
+     */
     private static void handleEndOfParsing(AceFileVisitor visitor,
             ParserState parserState) {
         if(!parserState.stopParsing && parserState.inAContig){        
@@ -97,6 +107,17 @@ public final class AceFileParser {
             IOUtil.closeAndIgnoreErrors(parserState);
         }
     }
+    /**
+     * {@code ParserState} keeps track of the where
+     * we are in an ace file (in the first contig, 
+     * what read number we are on etc...) as well
+     * which parts of the  ace file the 
+     * {@link AceFileVisitor} implementation
+     * wants to visit.
+     * 
+     * @author dkatzel
+     *
+     */
     private static class ParserState implements Closeable{
         final boolean isFirstContigInFile;
         final AceFileVisitor visitor;
@@ -242,8 +263,6 @@ public final class AceFileParser {
                 if(!struct.isFirstContigInFile && !ret.visitor.visitEndOfContig()){
                     ret= ret.stopParsing();
                 }
-               
-                //ret = ret.updateContigBeingVisited();
                 String contigId = contigMatcher.group(1);
                 int numberOfBases = Integer.parseInt(contigMatcher.group(2));
                 int numberOfReads = Integer.parseInt(contigMatcher.group(3));
@@ -251,8 +270,10 @@ public final class AceFileParser {
                 boolean reverseComplimented = isComplimented(contigMatcher.group(5));
                 
                 ret= ret.inAContig(numberOfReads);
-                boolean parseCurrentContig =ret.visitor.visitContigHeader(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
-                if(!parseCurrentContig){
+                boolean parseCurrentContig = ret.visitor.shouldVisitContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
+                if(parseCurrentContig){
+                	ret.visitor.visitBeginContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
+                }else{
                     ret = ret.dontParseCurrentContig();
                 }
                 return ret;

@@ -325,19 +325,12 @@ public class ReAbacusAceContigWorker {
         }
 
         
-        /**
-        * {@inheritDoc}
-        */
         @Override
-        public synchronized boolean visitContigHeader(String contigId,
-                int numberOfBases, int numberOfReads, int numberOfBaseSegments,
-                boolean reverseComplimented) {
-           if(this.contigId.equals(contigId) && abacusProblemRanges.containsKey(contigId)){
-            return super.visitContigHeader(contigId, numberOfBases, numberOfReads,
-                    numberOfBaseSegments, reverseComplimented);
-           }
-           return false;
-        }
+		public boolean shouldVisitContig(String contigId, int numberOfBases,
+				int numberOfReads, int numberOfBaseSegments,
+				boolean reverseComplimented) {
+        	return this.contigId.equals(contigId) && abacusProblemRanges.containsKey(contigId);
+		}
 
 
         /**
