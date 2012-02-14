@@ -34,6 +34,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+    	TestSequenceFastaRecordUtil.class,
         TestFastaParser.class,
         
         AllFastaPositionTests.class,
