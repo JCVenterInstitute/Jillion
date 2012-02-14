@@ -71,9 +71,27 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * gapped index.
      */
     int getNumberOfGapsUntil(byte[] encodedGlyphs,int gappedOffset);
-    
+    /**
+     * Get the ungapped offset equivalent of the 
+     * given gapped offset.
+     * @param encodedGlyphs the encoded bytes which contain
+     * all the nucleotides.
+     * @param gappedOffset the gapped offset to use 
+     * to compute the ungapped offset.
+     * @return an int representing the ungapped
+     * offset; will always be >=0.
+     */
     int getUngappedOffsetFor(byte[] encodedGlyphs,int gappedOffset);
-    
+    /**
+     * Get the gapped offset equivalent of the 
+     * given ungapped offset.
+     * @param encodedGlyphs the encoded bytes which contain
+     * all the nucleotides.
+     * @param ungappedOffset the ungapped offset to use 
+     * to compute the gapped offset.
+     * @return an int representing the gapped
+     * offset; will always be >=0.
+     */
     int getGappedOffsetFor(byte[] encodedGlyphs,int ungappedOffset);
     
     /**
