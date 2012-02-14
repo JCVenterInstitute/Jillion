@@ -36,7 +36,10 @@ public final class SequenceFastaRecordUtil {
     public static String parseCommentFromIdLine(String line) {
         final Matcher idMatcher = ID_LINE_PATTERN.matcher(line);
         if (idMatcher.find()){
-            return idMatcher.group(3);
+        	String comment= idMatcher.group(3);
+            if(!comment.isEmpty()){
+            	return comment;
+            }
         }
         return null;
     }
@@ -44,13 +47,8 @@ public final class SequenceFastaRecordUtil {
     public static String parseIdentifierFromIdLine(String line) {
         final Matcher idMatcher = ID_LINE_PATTERN.matcher(line);
         if (idMatcher.find()){
-            return idMatcher.group(1);
+            return idMatcher.group(1);           
         }
         return null;
-    }
-    
-    public static String removeWhitespace(CharSequence sequence) {
-        String sequenceWithoutWhitespace = sequence.toString().replaceAll("\\s+", "");
-        return sequenceWithoutWhitespace;
     }
 }
