@@ -204,14 +204,14 @@ public class RecallAceConsensus {
                 SliceMap sliceMap = CompactedSliceMap.create(contig, qualityDataStore, 
                         GapQualityValueStrategies.LOWEST_FLANKING);
                 NucleotideSequence originalConsensus = contig.getConsensus();
-                List<Nucleotide> recalledConsensus = new ArrayList<Nucleotide>((int)originalConsensus.getLength());
+                NucleotideSequenceBuilder recalledConsensusBuilder = new NucleotideSequenceBuilder((int)originalConsensus.getLength());
                 for(int i=0; i<originalConsensus.getLength();i++){
                     Slice slice =sliceMap.getSlice(i);
                     ConsensusResult result =consensusCaller.callConsensus(slice);
                   
-                    recalledConsensus.add(result.getConsensus());
+                    recalledConsensusBuilder.append(result.getConsensus());
                 }
-                final NucleotideSequence gappedRecalledConsensus = new NucleotideSequenceBuilder(recalledConsensus).build();
+                final NucleotideSequence gappedRecalledConsensus = recalledConsensusBuilder.build();
                 if(fastaOut !=null){
                     fastaOut.print(new DefaultNucleotideSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.asUngappedList()));
                 }

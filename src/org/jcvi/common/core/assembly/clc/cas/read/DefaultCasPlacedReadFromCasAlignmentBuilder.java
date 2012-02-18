@@ -23,7 +23,6 @@
  */
 package org.jcvi.common.core.assembly.clc.cas.read;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.common.core.Direction;
@@ -48,7 +47,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     private long currentOffset=0;
     private boolean outsideValidRange=true;
     private final List<Nucleotide> allBases;
-    private List<Nucleotide> validBases = new ArrayList<Nucleotide>();
+    private NucleotideSequenceBuilder validBases = new NucleotideSequenceBuilder();
     private final Direction dir;
     private int numberOfGaps=0;
     private long referenceOffset;
@@ -117,18 +116,18 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
             if(type != CasAlignmentRegionType.INSERT){
                 
                 while(referenceOffset < referenceBases.getLength() && referenceBases.get((int)(referenceOffset)).isGap()){
-                    validBases.add(Nucleotide.Gap);
+                    validBases.append(Nucleotide.Gap);
                     referenceOffset++;
                     numberOfGaps++;
                 }
             }
             if(type == CasAlignmentRegionType.DELETION){
-                validBases.add(Nucleotide.Gap);
+                validBases.append(Nucleotide.Gap);
                 numberOfGaps++;
                 referenceOffset++;
             }
             else{      
-                validBases.add(allBases.get((int)(currentOffset+i)));
+                validBases.append(allBases.get((int)(currentOffset+i)));
                 
                 referenceOffset++;
             }
@@ -140,16 +139,16 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     }
   
     public String validBases(){
-        return Nucleotides.asString(validBases);
+        return validBases.toString();
     }
     @Override
     public DefaultCasPlacedRead build() {
-        Range validRange = Range.buildRangeOfLength(0, validBases.size()-numberOfGaps).shiftRight(validRangeStart).convertRange(CoordinateSystem.RESIDUE_BASED);
+        Range validRange = Range.buildRangeOfLength(0, validBases.getLength()-numberOfGaps).shiftRight(validRangeStart).convertRange(CoordinateSystem.RESIDUE_BASED);
         if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplimentValidRange(validRange, fullUngappedLength);
         }
         Read<NucleotideSequence> read = new DefaultRead<NucleotideSequence>(readId,
-        		new NucleotideSequenceBuilder(validBases).build());
+        		validBases.build());
         return new DefaultCasPlacedRead(read, startOffset, validRange, dir,(int)fullUngappedLength);
     }
 

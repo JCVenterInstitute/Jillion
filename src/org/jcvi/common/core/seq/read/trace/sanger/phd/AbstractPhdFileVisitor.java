@@ -33,6 +33,7 @@ import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 /**
  * {@code AbstractPhdFileVisitor} is a {@link PhdFileVisitor}
  * implementation that will keep track of all
@@ -48,7 +49,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
 
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
-    private List<Nucleotide> currentBases = new ArrayList<Nucleotide>();
+    private NucleotideSequenceBuilder currentBases = new NucleotideSequenceBuilder();
     private List<PhredQuality> currentQualities = new ArrayList<PhredQuality>();
     private List<ShortSymbol> currentPositions = new ArrayList<ShortSymbol>();
     private List<PhdTag> tags = new ArrayList<PhdTag>();
@@ -105,13 +106,13 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
     @Override
     public synchronized void visitBasecall(Nucleotide base, PhredQuality quality,
             int tracePosition) {
-        currentBases.add(base);
+        currentBases.append(base);
        currentQualities.add(quality);
        currentPositions.add(PEAK_FACTORY.getGlyphFor(tracePosition));            
     }
 
     private void resetCurrentValues(){
-        currentBases= new ArrayList<Nucleotide>();
+        currentBases= new NucleotideSequenceBuilder();
         currentQualities= new ArrayList<PhredQuality>();
         currentPositions= new ArrayList<ShortSymbol>();
         tags = new ArrayList<PhdTag>();
@@ -167,7 +168,7 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
     public synchronized boolean visitEndPhd() {
         boolean keepParsing=true;
         if(filter.accept(currentId)){
-            keepParsing= visitPhd(currentId, currentBases, currentQualities, currentPositions, currentComments,tags);
+            keepParsing= visitPhd(currentId, currentBases.asList(), currentQualities, currentPositions, currentComments,tags);
         }
         resetCurrentValues();
         return keepParsing;
