@@ -36,12 +36,13 @@ import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileVisitor{
 
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
-    private List<Nucleotide> currentBases = new ArrayList<Nucleotide>();
+    private NucleotideSequenceBuilder currentBases = new NucleotideSequenceBuilder();
     private List<PhredQuality> currentQualities = new ArrayList<PhredQuality>();
     private List<ShortSymbol> currentPositions = new ArrayList<ShortSymbol>();
     private List<PhdTag> tags = new ArrayList<PhdTag>();
@@ -92,13 +93,13 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     public synchronized void visitBasecall(Nucleotide base, PhredQuality quality,
             int tracePosition) {
         checkNotYetInitialized();
-        currentBases.add(base);
+        currentBases.append(base);
        currentQualities.add(quality);
        currentPositions.add(PEAK_FACTORY.getGlyphFor(tracePosition));            
     }
 
     protected void resetCurrentValues(){
-        currentBases= new ArrayList<Nucleotide>();
+        currentBases= new NucleotideSequenceBuilder();
         currentQualities= new ArrayList<PhredQuality>();
         currentPositions= new ArrayList<ShortSymbol>();
         tags = new ArrayList<PhdTag>();
@@ -127,7 +128,7 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     public synchronized void visitBeginSequence(String id) {
         checkNotYetInitialized();
         if(currentId !=null && filter.accept(currentId)){
-                visitPhd(currentId, currentBases, currentQualities, currentPositions, currentComments,tags);
+                visitPhd(currentId, currentBases.asList(), currentQualities, currentPositions, currentComments,tags);
         }
         this.currentId = id;
         resetCurrentValues();
@@ -185,7 +186,7 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
     public synchronized void visitEndOfFile() {
         checkNotYetInitialized();
         if(currentId !=null){
-            visitPhd(currentId, currentBases, currentQualities, currentPositions, currentComments,tags);
+            visitPhd(currentId, currentBases.asList(), currentQualities, currentPositions, currentComments,tags);
         }
         resetCurrentValues();
         initialized=true;
