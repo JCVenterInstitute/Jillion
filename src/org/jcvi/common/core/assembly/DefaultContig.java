@@ -112,7 +112,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
             return DefaultPlacedRead.createBuilder(
                     getConsensusBuilder().build(), 
                     read.getId(), 
-                    Nucleotides.asString(read.getNucleotideSequence().asList()), 
+                    read.getNucleotideSequence().toString(), 
                     (int)read.getStart(), 
                     read.getDirection(), 
                     read.getValidRange(),

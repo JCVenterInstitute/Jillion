@@ -37,9 +37,8 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.read.trace.frg.FragmentDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
@@ -113,12 +112,12 @@ public final class DefaultUnitigDataStore{
                         throw new IllegalStateException("do not have clear range information for read "+ externalReadId);
                     }
                    
-                    List<Nucleotide> validBases = fullLengthSequence.asList(clearRange);
+                    NucleotideSequenceBuilder validBases = new NucleotideSequenceBuilder(fullLengthSequence.asList(clearRange));
                     if(readRange.getDirection() == Direction.REVERSE){
-                        validBases = Nucleotides.reverseCompliment(validBases);
+                        validBases.reverseCompliment();
                     }
                     String gappedValidBases = AsmUtil.computeGappedSequence(
-                            validBases, gapOffsets);
+                            validBases.asList(), gapOffsets);
                     
                     currentBuilder.addRead(externalReadId, (int)readRange.getStart(),
                             clearRange, gappedValidBases, readRange.getDirection(),

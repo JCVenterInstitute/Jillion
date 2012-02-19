@@ -481,4 +481,28 @@ public class TestNucleotideSequenceBuilder {
 		assertEquals("CCG",builtSequence.toString());
 		assertTrue(builtSequence instanceof ReferenceEncodedNucleotideSequence);
     }
+    
+    @Test
+    public void asUngappedListWithNoGaps(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AATGG");
+    	assertEquals(Nucleotides.parse("AATGG"),sut.asUngappedList());
+    }
+    
+    @Test
+    public void asUngappedListWithGaps(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("A-ATG-G");
+    	assertEquals(Nucleotides.parse("AATGG"),sut.asUngappedList());
+    }
+    
+    @Test
+    public void asUngappedListSubrangeWithNoGaps(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AATGG");
+    	assertEquals(Nucleotides.parse("TG"),sut.asUngappedList(Range.buildRange(2,3)));
+    }
+    
+    @Test
+    public void asUngappedListSubrangeWithGaps(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("A-ATG-G");
+    	assertEquals(Nucleotides.parse("ATGG"),sut.asUngappedList(Range.buildRange(2,6)));
+    }
 }

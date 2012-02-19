@@ -39,6 +39,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nuc.AbstractNucleotideFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 /**
@@ -78,8 +79,9 @@ public class ReverseComplimentFasta {
                 @Override
                 protected boolean visitFastaRecord(
                         NucleotideSequenceFastaRecord fastaRecord) {
-                    List<Nucleotide> revcompliment =Nucleotides.reverseCompliment(
-                            fastaRecord.getSequence().asList());
+                    List<Nucleotide> revcompliment = new NucleotideSequenceBuilder(fastaRecord.getSequence())
+                    									.reverseCompliment()
+                    									.asList();
                     try {
                         out.write(new DefaultNucleotideSequenceFastaRecord(
                                 fastaRecord.getId(),
