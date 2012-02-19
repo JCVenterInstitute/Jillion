@@ -127,9 +127,6 @@ public class DefaultPlacedRead implements PlacedRead {
         		return false;
         	}
         	if(!read.getNucleotideSequence().asList().equals(other.getNucleotideSequence().asList())){
-        		System.out.println(Nucleotides.asString(read.getNucleotideSequence().asList()));
-        		System.out.println(Nucleotides.asString(other.getNucleotideSequence().asList()));
-        		System.out.println();
         		return false;
         	}
         	
@@ -417,7 +414,7 @@ public class DefaultPlacedRead implements PlacedRead {
         }
         private synchronized String currentBasecallsAsString(){
             if(originalSequence !=null){
-                return Nucleotides.asString(originalSequence);
+                return originalSequence.toString();
             }
             return basesBuilder.toString();
         }

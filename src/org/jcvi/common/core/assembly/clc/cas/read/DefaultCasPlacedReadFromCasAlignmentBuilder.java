@@ -37,7 +37,6 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.util.Builder;
 
 public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<DefaultCasPlacedRead>{
@@ -46,7 +45,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     private long validRangeStart;
     private long currentOffset=0;
     private boolean outsideValidRange=true;
-    private final List<Nucleotide> allBases;
+    private final NucleotideSequence allBases;
     private NucleotideSequenceBuilder validBases = new NucleotideSequenceBuilder();
     private final Direction dir;
     private int numberOfGaps=0;
@@ -65,15 +64,15 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         this.startOffset = startOffset;
         this.referenceOffset = startOffset;
         this.fullUngappedLength = fullRangeSequence.getUngappedLength();
-        
+        NucleotideSequenceBuilder allBasesBuilder = new NucleotideSequenceBuilder(fullRangeSequence.asList(traceTrimRange));
         if(isReversed){
-            allBases = Nucleotides.reverseCompliment(fullRangeSequence.asList(traceTrimRange));
+        	allBasesBuilder.reverseCompliment();
             validRangeStart = traceTrimRange ==null?0:AssemblyUtil.reverseComplimentValidRange(traceTrimRange, fullUngappedLength).getStart();
         }
         else{
-            allBases = fullRangeSequence.asList(traceTrimRange);
             validRangeStart = traceTrimRange ==null?0:traceTrimRange.getStart();
         }
+        allBases = allBasesBuilder.build();
         dir = isReversed? Direction.REVERSE: Direction.FORWARD;
     }catch(Exception e){
         throw new IllegalStateException("error building alignment for read "+ readId,e);

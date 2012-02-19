@@ -625,7 +625,23 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * sequence.
      */
     public List<Nucleotide> asList(Range range){
-        if(range==null){
+    	return asList(range,true);
+    }
+    
+    /**
+     * Get a sublist of the current <strong>ungapped</strong> nucleotide sequence as a list
+     * of Nucleotide objects.
+     * @param range the  range of the sublist to generate.
+     * @return a new List of Nucleotides.
+     * @throws NullPointerException if range is null.
+     * @throws IllegalArgumentException if range is not a sublist of the current
+     * sequence.
+     */
+    public List<Nucleotide> asUngappedList(Range range){
+        return asList(range,false);
+    }
+	private List<Nucleotide> asList(Range range, boolean includeGaps) {
+		if(range==null){
             throw new NullPointerException("range can not be null");
         }
     	Range currentRange = Range.buildRangeOfLength(getLength());
@@ -639,10 +655,13 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         
         
         for(int i=start; i<end; i+=NUM_BITS_PER_VALUE){
-        	bases.add(getNucleotideFor(i));
+        	Nucleotide base = getNucleotideFor(i);
+        	if(includeGaps || (!includeGaps && !base.isGap())){
+        		bases.add(base);
+        	}
         }
         return bases;
-    }
+	}
 	private Nucleotide getNucleotideFor(int bitStartOffset) {
 		int ordinal = getNucleotideOrdinalFor(bitStartOffset);
 		return values[ordinal];
@@ -678,7 +697,14 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     public List<Nucleotide> asList(){
         return asList(Range.buildRangeOfLength(getLength()));
     }
-    
+    /**
+     * Get the entire current <strong>ungapped</strong> nucleotide sequence as a list
+     * of Nucleotide objects.
+     * @return a new List of Nucleotides.
+     */
+    public List<Nucleotide> asUngappedList(){
+        return asUngappedList(Range.buildRangeOfLength(getLength()));
+    }
     /**
      * Get the current Nucleotides as a String
      * this will return the same string 
@@ -742,7 +768,11 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		}
 	}
     
-    
+    /**
+     * {@inheritDoc}
+     * 
+     * @see #reverseCompliment()
+     */
     @Override
 	public NucleotideSequenceBuilder reverse() {
     	int currentLength = codecDecider.getCurrentLength();
@@ -998,10 +1028,6 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 
 		public int getNumberOfGaps() {
 			return numberOfGaps;
-		}
-
-		public int getNumberOfACGTs() {
-			return numberOfACGTs;
 		}
 
 		public int getNumberOfNs() {
