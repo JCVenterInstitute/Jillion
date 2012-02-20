@@ -76,6 +76,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdWriter;
 import org.jcvi.common.core.seq.trim.DefaultTrimFileDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
@@ -215,7 +216,7 @@ public class Cas2Consed3 {
              PrintStream consensusOut = new PrintStream(consensusFile);
              Iterator<UpdateConsensusAceContigBuilder> builderIterator = builders.values().iterator();
              while(builderIterator.hasNext()){
-                 UpdateConsensusAceContigBuilder builder = builderIterator.next();
+                 UpdateConsensusAceContigBuilder builder = builderIterator.next();                
                  builder.updateConsensus();
                  NucleotideSequence fullConsensus =builder.getConsensusBuilder().build();
                  long ungappedLength = fullConsensus.getUngappedLength();

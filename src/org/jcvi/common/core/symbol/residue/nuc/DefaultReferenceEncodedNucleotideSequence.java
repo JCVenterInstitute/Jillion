@@ -136,7 +136,8 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
 	        }catch(Exception e){
 	        	throw new RuntimeException(e);
 	        }
-	        BitSet bits = new BitSet(BITS_PER_SNP_VALUE*numSnps);
+	        int nbits = BITS_PER_SNP_VALUE*numSnps;
+			BitSet bits = new BitSet(nbits);
 	        int i=0;
 	        for(Nucleotide n : differentGlyphMap.values()){
 	        	
@@ -151,7 +152,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
 	        	i+=BITS_PER_SNP_VALUE;
 	            
 	        }
-	        byte[] byteArray = IOUtil.toByteArray(bits);
+	        byte[] byteArray = IOUtil.toByteArray(bits,nbits);
 	        try{
 			buffer.put(byteArray);
 	        }catch(Exception e){
@@ -276,15 +277,8 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
 
 	private Nucleotide getSnpValueFrom(BitSet bits, int offset) {
 		int i = offset*BITS_PER_SNP_VALUE;
-		byte[] byteArray = IOUtil.toByteArray(bits.get(i, i+BITS_PER_SNP_VALUE));
-		final int ordinal;
-		if(byteArray.length==0){
-			ordinal=0; 
-		}else{
-			ordinal =new BigInteger(byteArray).intValue();
-		}
-		
-		
+		byte[] byteArray = IOUtil.toByteArray(bits.get(i, i+BITS_PER_SNP_VALUE),8);
+		final int ordinal =new BigInteger(byteArray).intValue();
 		return Nucleotide.values()[ordinal];
 	}
 

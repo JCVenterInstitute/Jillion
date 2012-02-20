@@ -139,7 +139,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 			if(bitset.isEmpty()){
 				nextBase =getGlyphFor((byte)0);            			
 			}else{
-				byte[] byteArray = IOUtil.toByteArray(bitset);
+				byte[] byteArray = IOUtil.toByteArray(bitset,2);
 				
 				byte byteValue = new BigInteger(byteArray).byteValue();
 				nextBase = getGlyphFor(byteValue);
