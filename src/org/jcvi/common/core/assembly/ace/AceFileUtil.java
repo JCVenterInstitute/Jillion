@@ -114,7 +114,7 @@ public class AceFileUtil {
                          throw new IllegalArgumentException(
                                  String.format("not enough ungapped qualities for input basecalls found only %d qualities",offset));
                      }
-                     PhredQuality quality =optionalQualities.get(i-numberOfGapsSoFar);
+                     PhredQuality quality =optionalQualities.get(offset);
                      if(quality.compareTo(ACE_DEFAULT_HIGH_QUALITY_THRESHOLD)<0){
                          result.append(base.toString().toLowerCase(Locale.ENGLISH));
                      }
@@ -171,7 +171,8 @@ public class AceFileUtil {
     }
     public static String createAcePlacedReadRecord(String readId, PlacedRead placedRead, Phd phd, PhdInfo phdInfo){
         
-        final NucleotideSequence gappedValidBasecalls = placedRead.getNucleotideSequence(); 
+        NucleotideSequence nucleotideSequence = placedRead.getNucleotideSequence();
+		final NucleotideSequence gappedValidBasecalls = nucleotideSequence; 
         final Range ungappedValidRange = placedRead.getValidRange();
         final Direction dir = placedRead.getDirection(); 
         final NucleotideSequence fullBasecalls = phd.getBasecalls();

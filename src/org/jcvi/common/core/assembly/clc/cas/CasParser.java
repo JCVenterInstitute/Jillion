@@ -71,11 +71,9 @@ public class CasParser {
             long totalNumberOfMatches=hasMatch?1:0, numberOfReportedAlignments=hasMatch?1:0;
             if(hasMultipleMatches){                
                 totalNumberOfMatches = CasUtil.parseByteCountFrom(dataIn) +2;
-            //    System.out.println("has multiple matches "+ totalNumberOfMatches);
             }
             if(hasMultipleAlignments){
                 numberOfReportedAlignments = CasUtil.parseByteCountFrom(dataIn) +2;
-             //   System.out.println("#alignments "+ numberOfReportedAlignments);
             }
             
             int score=0;

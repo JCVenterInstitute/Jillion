@@ -696,6 +696,7 @@ public final class IOUtil {
         int numBits = getUnsignedBitCount(value);
         return numBits/8+ (numBits%8==0?0:1);
     }
+    
     /**
      * Convert the given {@link BitSet} into
      * the corresponding byte array.
@@ -703,14 +704,26 @@ public final class IOUtil {
      * Java API thru java 6 does not include methods for converting
      * to and from a byte array.
      * @param bitset the bitset to convert.
+     * @param bitLength the number of bits that need to be present
+     * in the byte array.  This needs to be specified because
+     * a {@link BitSet} may have trailing 0's
+     * which would get truncated otherwise.
      * @return a new byte array containing the smallest 
      * number of bytes required to store the same data as
      * the given {@link BitSet}.
      * @throws NullPointerException if bitset is null.
+     * @throws IllegalArgumentException if bitLength <0.
      */
-    public static byte[] toByteArray(BitSet bitset){
-    	byte[] bytes = new byte[(bitset.length() + 7) / 8];
-    	for(int i=0; i<bitset.length(); i++){
+    public static byte[] toByteArray(BitSet bitset, int bitLength){
+    	if(bitset ==null){
+    		throw new NullPointerException("bitset can not be null");
+    	}
+    	if(bitLength<0){
+    		throw new IllegalArgumentException("bitLength must be >=0");
+    	}
+    	
+    	byte[] bytes = new byte[(bitLength + 7) / 8];
+    	for(int i=0; i<bitLength; i++){
     		if(bitset.get(i)){
     			bytes[bytes.length-i/8-1] |= 1<< (i%8);
     		}

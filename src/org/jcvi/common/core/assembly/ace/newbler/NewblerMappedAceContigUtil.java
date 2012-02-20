@@ -98,7 +98,6 @@ public class NewblerMappedAceContigUtil {
             Matcher matcher = ACTUAL_CONSENSUS_ID_PATTERN.matcher(id);
             Range readRange = Range.buildRange(read.getStart(), read.getEnd());
             if(!matcher.matches() && phdDataStore.contains(read.getId()) && readRange.isSubRangeOf(contigRange) ){
-              //  System.out.println(read.getId());
                 final int newOffset = (int)(read.getStart() -consensusRead.getStart());
                 builder.addRead(read.getId(), 
                         Nucleotides.asString(read.getNucleotideSequence().asList()),

@@ -46,7 +46,7 @@ public enum CompactAminoAcidSequenceCodec implements GlyphCodec<AminoAcid> {
 				offset++;
 			}
 		}
-		byte[] encodedData = IOUtil.toByteArray(bits);
+		byte[] encodedData = IOUtil.toByteArray(bits,numBits);
 		ByteBuffer buf = ByteBuffer.allocate(4 + encodedData.length);
 		buf.putInt(numberOfAminoAcids);
 		buf.put(encodedData);
@@ -76,7 +76,7 @@ public enum CompactAminoAcidSequenceCodec implements GlyphCodec<AminoAcid> {
 		if(subSet.isEmpty()){
 			aa =AminoAcid.values()[0];
 		}else{
-			aa =AminoAcid.values()[new BigInteger(IOUtil.toByteArray(subSet)).intValue()];
+			aa =AminoAcid.values()[new BigInteger(IOUtil.toByteArray(subSet,BITS_PER_AA)).intValue()];
 		}
 		return aa;
 	}

@@ -113,7 +113,10 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         
         for(long i=0; i< region.getLength();i++){
             if(type != CasAlignmentRegionType.INSERT){
-                
+                //add any extra gaps we added to the reference
+            	//reference should not have any initial
+            	//gaps so any gaps we see we put there during
+            	//the 1st pass to build a gapped alignment.
                 while(referenceOffset < referenceBases.getLength() && referenceBases.get((int)(referenceOffset)).isGap()){
                     validBases.append(Nucleotide.Gap);
                     referenceOffset++;
