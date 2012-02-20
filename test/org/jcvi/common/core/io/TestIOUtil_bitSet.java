@@ -11,7 +11,7 @@ public class TestIOUtil_bitSet {
 	public void noBytes(){
 		BitSet bits= new BitSet();
 		
-		byte[] actualBytes = IOUtil.toByteArray(bits);
+		byte[] actualBytes = IOUtil.toByteArray(bits,0);
 		assertArrayEquals(new byte[0], actualBytes);
 	}
 	
@@ -20,7 +20,7 @@ public class TestIOUtil_bitSet {
 		BitSet bits= new BitSet();
 		
 		bits.set(0);
-		byte[] actualBytes = IOUtil.toByteArray(bits);
+		byte[] actualBytes = IOUtil.toByteArray(bits,1);
 		byte[] expected = new byte[1];
 		expected[0] = 1;
 		assertArrayEquals(expected, actualBytes);
@@ -33,7 +33,7 @@ public class TestIOUtil_bitSet {
 	public void oneByte(){
 		BitSet bits= new BitSet();
 		bits.set(1,8); // 11111110 = 254
-		byte[] actualBytes = IOUtil.toByteArray(bits);
+		byte[] actualBytes = IOUtil.toByteArray(bits,8);
 		byte[] expected = new byte[1];
 		expected[0] = (byte)254;
 		assertEquals(new BigInteger(expected), new BigInteger(actualBytes));
@@ -50,7 +50,7 @@ public class TestIOUtil_bitSet {
 		expected[1] = (byte)254;
 		expected[0] = (byte)-128;
 		
-		byte[] actualBytes = IOUtil.toByteArray(bits);
+		byte[] actualBytes = IOUtil.toByteArray(bits,16);
 		assertArrayEquals(expected, actualBytes);
 		assertEquals(new BigInteger(expected), new BigInteger(actualBytes));
 		assertEquals(bits, IOUtil.toBitSet(actualBytes));
@@ -58,9 +58,12 @@ public class TestIOUtil_bitSet {
 	
 	@Test(expected = NullPointerException.class)
 	public void toByteArrayShouldThrowNPEIfBitSetIsNull(){
-		IOUtil.toByteArray(null);
+		IOUtil.toByteArray(null,0);
 	}
-	
+	@Test(expected = IllegalArgumentException.class)
+	public void toByteArrayNegativeBitLengthShouldThrowException(){
+		IOUtil.toByteArray(new BitSet(),-1);
+	}
 	@Test(expected = NullPointerException.class)
 	public void toBitSetShouldThrowNPEIfArrayIsNull(){
 		IOUtil.toBitSet((byte[])null);
