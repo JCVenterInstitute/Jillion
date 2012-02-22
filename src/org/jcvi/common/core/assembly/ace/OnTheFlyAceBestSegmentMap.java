@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.util.slice.Slice;
-import org.jcvi.common.core.assembly.util.slice.SliceElement;
+import org.jcvi.common.core.assembly.util.slice.IdedSlice;
+import org.jcvi.common.core.assembly.util.slice.IdedSliceElement;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -136,7 +136,7 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
             int end=i;
             Range previouslyEnteredRange=null;
             while(i<maxStart){
-                Slice slice = sliceMap.getSlice(i);
+                IdedSlice slice = sliceMap.getSlice(i);
                 Nucleotide consensusCall = consensus.get(i);
                 
                 //slice is null there is no real best segment...
@@ -155,7 +155,7 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
                 }
                 if(slice.getCoverageDepth()>0){
                     
-                    for(SliceElement element : slice){
+                    for(IdedSliceElement element : slice){
                         if(element.getBase().equals(consensusCall)){
                             //we can only get here if element is 
                             //different than currentElement so 

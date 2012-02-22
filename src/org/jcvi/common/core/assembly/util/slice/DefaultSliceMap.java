@@ -46,7 +46,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
     public static <PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> DefaultSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy){
         return new DefaultSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
-    private Map<Long, Slice> sliceMap = new HashMap<Long, Slice>();
+    private Map<Long, IdedSlice> sliceMap = new HashMap<Long, IdedSlice>();
     private long size;
     protected PhredQuality defaultQuality;
     public DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
@@ -61,7 +61,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
         this.size = coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()+1;
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
             for(long i=region.getStart(); i<=region.getEnd(); i++ ){
-                List<SliceElement> sliceElements = createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy);
+                List<IdedSliceElement> sliceElements = createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy);
                 sliceMap.put(Long.valueOf(i),new DefaultSlice.Builder()
                                             .addAll(sliceElements)
                                             .build());
@@ -79,14 +79,14 @@ public class DefaultSliceMap extends AbstractSliceMap{
         return defaultQuality;
     }
 
-    public DefaultSliceMap(List<Slice> slices){
+    public DefaultSliceMap(List<IdedSlice> slices){
         size = slices.size();
         for(int i=0; i< size; i++){
             sliceMap.put(Long.valueOf(i), slices.get(i));
         }
     }
     @Override
-    public Slice getSlice(long offset) {
+    public IdedSlice getSlice(long offset) {
         return sliceMap.get(Long.valueOf(offset));
     }
     @Override
@@ -94,7 +94,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
         return size;
     }
     @Override
-    public Iterator<Slice> iterator() {
+    public Iterator<IdedSlice> iterator() {
         return new SliceIterator(sliceMap.keySet().iterator(), this);
     }
 

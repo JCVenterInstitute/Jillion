@@ -21,7 +21,6 @@ package org.jcvi.common.core.assembly.util.slice;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.util.slice.CompactedSliceElement;
-import org.jcvi.common.core.assembly.util.slice.SliceElement;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
@@ -30,13 +29,13 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
  *
  *
  */
-public class TestCompactedSliceElement extends AbstractTestSliceElement{
+public class TestCompactedSliceElement extends AbstractTestIdedSliceElement{
 
     /**
     * {@inheritDoc}
     */
     @Override
-    protected SliceElement create(String id, Nucleotide base,
+    protected IdedSliceElement create(String id, Nucleotide base,
             PhredQuality qual, Direction dir) {
         return new CompactedSliceElement(id, base, qual, dir);
     }

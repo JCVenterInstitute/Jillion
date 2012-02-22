@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.assembly.util.slice.IdedSlice;
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusResult;
@@ -37,7 +38,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 public class TestNoAmbiguityConsensusCaller extends AbstractTestConsensusCaller{
    
-    public TestNoAmbiguityConsensusCaller(List<Slice> slices,
+    public TestNoAmbiguityConsensusCaller(List<Slice<?>> slices,
             List<ConsensusResult> expectedConsensus) {
         super(slices, expectedConsensus);
     }
@@ -45,7 +46,7 @@ public class TestNoAmbiguityConsensusCaller extends AbstractTestConsensusCaller{
     @Parameters
     public static Collection<?> data(){
        List<Object[]> data = new ArrayList<Object[]>();
-       for(Entry<List<Slice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateNoAmbiguityData().entrySet()){
+       for(Entry<List<IdedSlice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateNoAmbiguityData().entrySet()){
            data.add(new Object[]{entry.getKey(), entry.getValue()});
        }
         

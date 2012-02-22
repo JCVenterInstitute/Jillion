@@ -28,7 +28,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.util.CommonUtil;
 
-public class DefaultSliceElement implements SliceElement {
+public class DefaultSliceElement implements IdedSliceElement {
     private final Nucleotide base;
     private final PhredQuality quality;
     private final Direction direction;
@@ -68,10 +68,10 @@ public class DefaultSliceElement implements SliceElement {
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof SliceElement)){
+        if (!(obj instanceof IdedSliceElement)){
             return false;
         }
-        SliceElement other = (SliceElement) obj;
+        IdedSliceElement other = (IdedSliceElement) obj;
         return 
         CommonUtil.similarTo(getId(), other.getId()) &&
         CommonUtil.similarTo(getBase(), other.getBase()) &&

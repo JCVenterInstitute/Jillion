@@ -22,8 +22,6 @@ package org.jcvi.common.core.assembly.util.slice;
 import java.util.List;
 
 import org.jcvi.common.core.assembly.util.slice.DefaultSlice;
-import org.jcvi.common.core.assembly.util.slice.Slice;
-import org.jcvi.common.core.assembly.util.slice.SliceElement;
 
 /**
  * @author dkatzel
@@ -36,7 +34,7 @@ public class TestDefaultSlice extends AbstractTestSlice{
     * {@inheritDoc}
     */
     @Override
-    protected Slice createNew(List<SliceElement> elements) {
+    protected IdedSlice createNew(List<IdedSliceElement> elements) {
         return new DefaultSlice.Builder().addAll(elements).build();
     }
 

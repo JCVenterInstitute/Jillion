@@ -38,6 +38,7 @@ import org.jcvi.common.core.assembly.ace.AceBestSegmentMap;
 import org.jcvi.common.core.assembly.ace.DefaultAceBestSegment;
 import org.jcvi.common.core.assembly.ace.DefaultAceBestSegmentMap;
 import org.jcvi.common.core.assembly.util.slice.DefaultSliceMap;
+import org.jcvi.common.core.assembly.util.slice.IdedSlice;
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.assembly.util.slice.TestSliceUtil;
@@ -62,7 +63,7 @@ public abstract class AbstractTestAceBestSegmentMap {
     
     @Test
     public void oneReadProvidesEntireBestSegment(){
-        List<Slice> slices =TestSliceUtil.createSlicesFrom(
+        List<IdedSlice> slices =TestSliceUtil.createSlicesFrom(
                 Arrays.asList("ACGT"), 
                 new byte[][]{new byte[]{30,30,30,30}},            
                 Arrays.asList(Direction.FORWARD));
@@ -82,7 +83,7 @@ public abstract class AbstractTestAceBestSegmentMap {
     }
     @Test
     public void twoBestSegments(){
-        List<Slice> slices =TestSliceUtil.createSlicesFrom(
+        List<IdedSlice> slices =TestSliceUtil.createSlicesFrom(
                 Arrays.asList("ACGN", "NNNT"), 
                 new byte[][]{new byte[]{30,30,30,30},new byte[]{30,30,30,30}},            
                 Arrays.asList(Direction.FORWARD,Direction.FORWARD));
@@ -106,7 +107,7 @@ public abstract class AbstractTestAceBestSegmentMap {
     }
     @Test
     public void threeBestSegments(){
-        List<Slice> slices =TestSliceUtil.createSlicesFrom(
+        List<IdedSlice> slices =TestSliceUtil.createSlicesFrom(
                 Arrays.asList("ACNT", "NNGN"), 
                 new byte[][]{new byte[]{30,30,30,30},new byte[]{30,30,30,30}},            
                 Arrays.asList(Direction.FORWARD,Direction.FORWARD));
@@ -134,7 +135,7 @@ public abstract class AbstractTestAceBestSegmentMap {
     }
     @Test
     public void keepExtendingBestSegments(){
-        List<Slice> slices =TestSliceUtil.createSlicesFrom(
+        List<IdedSlice> slices =TestSliceUtil.createSlicesFrom(
                 Arrays.asList("ACNT", "NNGT"), 
                 new byte[][]{new byte[]{30,30,30,30},new byte[]{30,30,30,30}},            
                 Arrays.asList(Direction.FORWARD,Direction.FORWARD));

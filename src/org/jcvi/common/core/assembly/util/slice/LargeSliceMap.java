@@ -48,7 +48,7 @@ public class LargeSliceMap extends AbstractSliceMap{
     private final        DataStore<? extends Sequence<PhredQuality>> qualityDataStore;
     private final        QualityValueStrategy qualityValueStrategy;
     private final Range range;
-    private final Map<Long, Slice> cache;
+    private final Map<Long, IdedSlice> cache;
 
     public static <PR extends PlacedRead,C extends Contig<PR>> LargeSliceMap  createFromContig(C contig,  QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, int cacheSize){
@@ -103,7 +103,7 @@ public class LargeSliceMap extends AbstractSliceMap{
     }
 
     @Override
-    public synchronized Slice getSlice(long offset) {
+    public synchronized IdedSlice getSlice(long offset) {
         if(cache.containsKey(offset)){
             return cache.get(offset);
         }
@@ -111,9 +111,9 @@ public class LargeSliceMap extends AbstractSliceMap{
         if(region ==null){
             return null;
         }
-        Slice result=null;
+        IdedSlice result=null;
         for(long i= region.getStart(); i<=region.getEnd(); i++){
-            Slice s =new DefaultSlice.Builder()
+        	IdedSlice s =new DefaultSlice.Builder()
                     .addAll(createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy))
                     .build();
             if(i==offset){
@@ -126,7 +126,7 @@ public class LargeSliceMap extends AbstractSliceMap{
     }
 
     @Override
-    public Iterator<Slice> iterator() {
+    public Iterator<IdedSlice> iterator() {
         return new SliceIterator(range.iterator(), this);
     }
 

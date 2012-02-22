@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.assembly.util.slice.IdedSlice;
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusResult;
@@ -32,7 +33,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 public class TestMostFrequentBasecallConsensusCaller extends AbstractTestConsensusCaller{
 
-	public TestMostFrequentBasecallConsensusCaller(List<Slice> slices,
+	public TestMostFrequentBasecallConsensusCaller(List<Slice<?>> slices,
 			List<ConsensusResult> expectedConsensus) {
 		super(slices, expectedConsensus);
 	}
@@ -44,7 +45,7 @@ public class TestMostFrequentBasecallConsensusCaller extends AbstractTestConsens
 	@Parameters
     public static Collection<?> data(){
        List<Object[]> data = new ArrayList<Object[]>();
-       for(Entry<List<Slice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateMostCommonBasecallData().entrySet()){
+       for(Entry<List<IdedSlice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateMostCommonBasecallData().entrySet()){
            data.add(new Object[]{entry.getKey(), entry.getValue()});
        }
         

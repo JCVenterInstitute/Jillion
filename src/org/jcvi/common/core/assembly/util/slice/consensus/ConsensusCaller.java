@@ -40,5 +40,5 @@ public interface ConsensusCaller {
      * @return a {@link ConsensusResult} will never be <code>null</code>
      * @throws NullPointerException if slice is null.
      */
-    ConsensusResult callConsensus(Slice slice);
+    ConsensusResult callConsensus(Slice<?> slice);
 }

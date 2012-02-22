@@ -197,7 +197,7 @@ public enum QualityClass implements Symbol, Comparable<QualityClass>{
             this.highQualitythreshold = highQualitythreshold;
             createAndInitializeMaps();            
         }
-        public Builder(Nucleotide consensus, PhredQuality highQualitythreshold, Slice slice){
+        public Builder(Nucleotide consensus, PhredQuality highQualitythreshold, Slice<?> slice){
             this(consensus,highQualitythreshold);
             for(SliceElement sliceElement : slice){
                 if(isHighQuality(sliceElement.getQuality())){
