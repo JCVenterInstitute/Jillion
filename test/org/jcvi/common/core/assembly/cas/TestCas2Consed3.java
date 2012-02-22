@@ -59,7 +59,7 @@ public class TestCas2Consed3 {
 	    public void parseCas() throws IOException, DataStoreException{
 	        File casFile = RESOURCES.getFile("files/flu.cas");
 	      Cas2Consed3 cas2consed3 = new Cas2Consed3(casFile, tempDir,prefix,true,false);
-	      cas2consed3.convert(TrimDataStoreUtil.EMPTY_DATASTORE,new UnTrimmedExtensionTrimMap(),FastQQualityCodec.ILLUMINA);
+	      cas2consed3.convert(TrimDataStoreUtil.EMPTY_DATASTORE,new UnTrimmedExtensionTrimMap(),FastQQualityCodec.ILLUMINA, false,false);
 	      
 	      File aceFile = tempDir.getFile("edit_dir/"+prefix+".ace.1");
 	      AceContigDataStore dataStore = DefaultAceFileDataStore.create(aceFile);
@@ -67,8 +67,8 @@ public class TestCas2Consed3 {
 	      
 	      for(AceContig contig : dataStore){
 	    	  Contig<PlacedRead> expectedContig= getExpectedContig(contig.getId());
-	    	  assertEquals("consensus", expectedContig.getConsensus().asList(),
-	    			  contig.getConsensus().asList());
+	    	  assertEquals("consensus", expectedContig.getConsensus(),
+	    			  contig.getConsensus());
 	    	  assertEquals("# reads", expectedContig.getNumberOfReads(), contig.getNumberOfReads());
 	    	  for(AcePlacedRead actualRead : contig.getPlacedReads()){
 	    		  String readId =actualRead.getId();

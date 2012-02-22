@@ -23,7 +23,7 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.SortedMap;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
@@ -176,7 +176,7 @@ public class TestConsedUtil_Split0x {
                 Range.buildRange(0, 11).convertRange(CoordinateSystem.RESIDUE_BASED), 
                 createMock(PhdInfo.class));
         
-        final List<AceContig> actualcontigs = ConsedUtil.split0xContig(contigBuilder, false);
+        final SortedMap<Range,AceContig> actualcontigs = ConsedUtil.split0xContig(contigBuilder, false);
         assertEquals(1,actualcontigs.size());
         AceContig expected = new TestAceBuilder(originalId,referenceConsensus)
                                 .addRead("read1", referenceConsensus.substring(0, 11), 0, 
@@ -188,8 +188,9 @@ public class TestConsedUtil_Split0x {
                                         Range.buildRange(0, 11).convertRange(CoordinateSystem.RESIDUE_BASED), 
                                         createMock(PhdInfo.class))
                                         .build();
-        
-        AceContigTestUtil.assertContigsEqual(expected, actualcontigs.get(0));
+        Range expectedRange = Range.buildRange(0,20);
+        assertEquals(expectedRange, actualcontigs.firstKey());
+        AceContigTestUtil.assertContigsEqual(expected, actualcontigs.get(expectedRange));
     }
     
     @Test
@@ -208,7 +209,7 @@ public class TestConsedUtil_Split0x {
 		                read2Phd);
 		       
     
-        List<AceContig> splitContigs = ConsedUtil.split0xContig(contig,  false);
+        SortedMap<Range,AceContig> splitContigs = ConsedUtil.split0xContig(contig,  false);
         assertEquals("# of split contigs", 2, splitContigs.size());
         
         AceContig expectedFirstContig = new TestAceBuilder(
@@ -225,12 +226,12 @@ public class TestConsedUtil_Split0x {
                                 Range.buildRange(0, 9).convertRange(CoordinateSystem.RESIDUE_BASED), 
                                 read2Phd)
                                     .build();
-        assertContigsEqual(expectedFirstContig, splitContigs.get(0));
-        assertContigsEqual(expectedSecondContig, splitContigs.get(1));
+        assertContigsEqual(expectedFirstContig, splitContigs.get(Range.buildRange(0,10)));
+        assertContigsEqual(expectedSecondContig, splitContigs.get(Range.buildRange(12,20)));
     }
     
     @Test
-    public void contigIdAlreadyHasCoordinatesAtTheEnd_ShouldmodifyThoseCoordinates(){
+    public void contigIdAlreadyHasCoordinatesAtTheEnd_ShouldModifyThoseCoordinates(){
 
         final PhdInfo read1Phd = createMock(PhdInfo.class);
         final PhdInfo read2Phd = createMock(PhdInfo.class);
@@ -244,7 +245,7 @@ public class TestConsedUtil_Split0x {
 		                Direction.FORWARD, 
 		                Range.buildRange(0, 9).convertRange(CoordinateSystem.RESIDUE_BASED), 
 		                read2Phd);
-        List<AceContig> splitContigs = ConsedUtil.split0xContig(contig, true);
+        SortedMap<Range,AceContig> splitContigs = ConsedUtil.split0xContig(contig, true);
         
         assertEquals("# of split contigs", 2, splitContigs.size());
         
@@ -262,8 +263,8 @@ public class TestConsedUtil_Split0x {
                                 Range.buildRange(0, 9).convertRange(CoordinateSystem.RESIDUE_BASED), 
                                 read2Phd)
                                     .build();
-        assertContigsEqual(expectedFirstContig, splitContigs.get(0));
-        assertContigsEqual(expectedSecondContig, splitContigs.get(1));
+        assertContigsEqual(expectedFirstContig, splitContigs.get(Range.buildRange(0,10)));
+        assertContigsEqual(expectedSecondContig, splitContigs.get(Range.buildRange(12,20)));
     }
     
     private void assertContigsEqual(AceContig expected, AceContig actual){

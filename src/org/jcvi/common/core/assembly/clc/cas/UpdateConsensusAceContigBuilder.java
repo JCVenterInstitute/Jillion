@@ -34,6 +34,11 @@ import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
+import org.jcvi.common.core.assembly.util.slice.CompactedSlice;
+import org.jcvi.common.core.assembly.util.slice.Slice;
+import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
+import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
@@ -54,6 +59,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
 
     private final Map<Long, Map<Nucleotide, Integer>> consensusMap;
     private final AceContigBuilder builder;
+    private ConsensusCaller consensuCaller = MostFrequentBasecallConsensusCaller.INSTANCE;
     /**
      * @param contigId
      * @param fullConsensus
@@ -64,27 +70,35 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
         consensusMap = new HashMap<Long,Map<Nucleotide,Integer>>((int)fullConsensus.getLength()+1, 1F);
         
     }
-
-    public void updateConsensus() {
+    public UpdateConsensusAceContigBuilder consensusCaller(ConsensusCaller consensusCaller){
+    	if(consensusCaller ==null){
+    		throw new NullPointerException("consensus caller can not be null");
+    	}
+    	this.consensuCaller = consensusCaller;
+    	return this;
+    }
+    public synchronized void updateConsensus() {
     	if(consensusMap.isEmpty()){
     		return;
     	}
         NucleotideSequenceBuilder consensusBuilder = builder.getConsensusBuilder();
         for(int i=0; i<consensusBuilder.getLength(); i++ )   {
             final Map<Nucleotide, Integer> histogramMap = consensusMap.get(Long.valueOf(i));
-            consensusBuilder.replace(i,findMostOccuringBase(histogramMap));
+            Slice slice = createSliceFor(histogramMap);
+            
+            consensusBuilder.replace(i,consensuCaller.callConsensus(slice).getConsensus());
         }
         consensusMap.clear();
     }
 
     @Override
-    public UpdateConsensusAceContigBuilder addRead(AcePlacedRead acePlacedRead) {
+    public synchronized UpdateConsensusAceContigBuilder addRead(AcePlacedRead acePlacedRead) {
         addReadToConsensusMap(acePlacedRead);
         builder.addRead(acePlacedRead);
         return this;
     }
 
-    private void addReadToConsensusMap(PlacedRead casPlacedRead) {
+    private synchronized void addReadToConsensusMap(PlacedRead casPlacedRead) {
         long startOffset = casPlacedRead.getStart();
         int i=0;
         for(Nucleotide base : casPlacedRead.getNucleotideSequence().asList()){
@@ -92,6 +106,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
             if(!consensusMap.containsKey(index)){
                 consensusMap.put(index, new EnumMap<Nucleotide, Integer>(Nucleotide.class));
             }
+           
             Map<Nucleotide, Integer> histogram =consensusMap.get(index);
             if(!histogram.containsKey(base)){
                 histogram.put(base, Integer.valueOf(1));
@@ -101,20 +116,25 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
             i++;
         }
     }
-    private Nucleotide findMostOccuringBase(Map<Nucleotide, Integer> histogramMap){
-        int max=-1;
-        Nucleotide mostOccuringBase = Nucleotide.Unknown;
-        if(histogramMap !=null){
-            for(Entry<Nucleotide, Integer> entry : histogramMap.entrySet()){
-                int value = entry.getValue();
-                if(value > max){
-                    max = value;
-                    mostOccuringBase = entry.getKey();
-                }
-            }
-        }
-        return mostOccuringBase;
+    
+    private Slice createSliceFor(Map<Nucleotide, Integer> histogram){
+    	CompactedSlice.Builder builder = new CompactedSlice.Builder();
+    	PhredQuality qual = PhredQuality.valueOf(30);
+    	if(histogram !=null){
+	    	int count=0;
+	    	for(Entry<Nucleotide, Integer> entry : histogram.entrySet()){
+	    		Nucleotide base = entry.getKey();
+	    		int max=entry.getValue();
+	    		for(int i=0; i<max; i++){
+		    		String id = Integer.toString(count);
+		    		builder.addSliceElement(id, base, qual , Direction.FORWARD);
+		    		count++;    
+	    		}
+	    	}
+    	}
+    	return builder.build();
     }
+    
 
     /**
     * {@inheritDoc}

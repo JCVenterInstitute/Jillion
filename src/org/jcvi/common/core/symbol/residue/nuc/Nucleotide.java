@@ -53,11 +53,12 @@ public enum Nucleotide implements Residue {
     Strong(Character.valueOf('S')),  
     Pyrimidine(Character.valueOf('Y')),   
     Keto(Character.valueOf('K')),    
+    Gap(Character.valueOf('-')),
     Adenine(Character.valueOf('A')),
     Cytosine(Character.valueOf('C')),
     Guanine(Character.valueOf('G')),
     Thymine(Character.valueOf('T')),
-    Gap(Character.valueOf('-')),
+    
     ;
     
     private static final Map<Nucleotide,Nucleotide> COMPLIMENT_MAP;

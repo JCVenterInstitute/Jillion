@@ -26,17 +26,19 @@ package org.jcvi.common.core.assembly.ace.consed;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
@@ -133,11 +135,13 @@ public class ConsedUtil {
      * @param contigBuilder an {@link AceContig} that may have 0x regions.  Can not be null.
      * @param adjustIdCoordinates this contig id already has coordinates appended to the end
      * of the id, adjust these coordinates instead of appending new ones...
-     * @return a list of (possibly new) AceContigs of the broken given contig.  
-     * If there are no 0x regions in the given contig, then a list containing
-     * only the reference of the given contig is returned.
+     * @return a {@link SortedMap} of (possibly new) AceContigs of the broken given contig.
+     * The keys of the map are the Ranges into the original contig where these contigs
+     * are placed and the values of the  map are the (possibly new) AceContigs.
+     * If there are no 0x regions in the given contig, then a Map containing
+     * one entry containing the Range covered and the reference of the given contig is returned.
      */
-    public static List<AceContig> split0xContig(AceContigBuilder contigBuilder, boolean adjustIdCoordinates){
+    public static SortedMap<Range,AceContig> split0xContig(AceContigBuilder contigBuilder, boolean adjustIdCoordinates){
         List<Range> coveredRegions = new ArrayList<Range>();
         NucleotideSequence consensus = contigBuilder.getConsensusBuilder().build();
         CoverageMap<CoverageRegion<AcePlacedReadBuilder>> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllPlacedReadBuilders());
@@ -151,11 +155,12 @@ public class ConsedUtil {
         }
         
         List<Range> contigRanges =Range.mergeRanges(coveredRegions);
+        SortedMap<Range, AceContig> map = new TreeMap<Range, AceContig>();
         if(contigRanges.size()==1){
-            //no 0x region
-            return Arrays.asList(contigBuilder.build());
+            //no 0x region        	
+        	map.put(AssemblyUtil.toUngappedRange(consensus, contigRanges.get(0)), contigBuilder.build());
+            return map;
         }
-        List<AceContig> newContigs = new ArrayList<AceContig>(contigRanges.size());
         String originalContigId= contigBuilder.getContigId();
         int oldStart=1;
         if(adjustIdCoordinates){
@@ -169,9 +174,10 @@ public class ConsedUtil {
             AceContig splitContig = createSplitContig(contigBuilder,
                     coverageMap, consensus, originalContigId, oldStart,
                     contigRange);
-            newContigs.add(splitContig);
+            Range ungappedRange = AssemblyUtil.toUngappedRange(consensus, contigRange);
+            map.put(ungappedRange, splitContig);
         }
-        return newContigs;
+        return map;
     }
     private static AceContig createSplitContig(AceContigBuilder builderToSplit,
             CoverageMap<CoverageRegion<AcePlacedReadBuilder>> coverageMap,
