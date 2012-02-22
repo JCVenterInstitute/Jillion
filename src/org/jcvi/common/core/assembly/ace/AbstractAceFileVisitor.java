@@ -141,7 +141,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * {@inheritDoc}
      */
     @Override
-    public synchronized void visitBeginContig(String contigId, int numberOfBases,
+    public final synchronized void visitBeginContig(String contigId, int numberOfBases,
             int numberOfReads, int numberOfBaseSegments,
             boolean reverseComplimented) {
         throwExceptionIfInitialized();

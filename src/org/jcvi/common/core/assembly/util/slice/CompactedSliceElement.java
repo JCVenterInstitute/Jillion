@@ -34,7 +34,7 @@ public class CompactedSliceElement implements IdedSliceElement{
 
     private String id;
     private byte[] encodedData = new byte[2];
-    public CompactedSliceElement(String id, byte[] encodedData){
+    CompactedSliceElement(String id, byte[] encodedData){
         if(id ==null){
             throw new NullPointerException("fields can not be null");
         }

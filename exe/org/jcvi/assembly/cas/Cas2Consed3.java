@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -42,6 +43,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
@@ -63,6 +65,7 @@ import org.jcvi.common.core.assembly.clc.cas.ReadFileType;
 import org.jcvi.common.core.assembly.clc.cas.UnTrimmedExtensionTrimMap;
 import org.jcvi.common.core.assembly.clc.cas.UpdateConsensusAceContigBuilder;
 import org.jcvi.common.core.assembly.clc.cas.consed.AbstractAcePlacedReadCasReadVisitor;
+import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
@@ -75,8 +78,10 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdWriter;
 import org.jcvi.common.core.seq.trim.DefaultTrimFileDataStore;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
@@ -139,7 +144,10 @@ public class Cas2Consed3 {
         }
         return chromatDir;
     }
-	public void convert(TrimDataStore trimDatastore,CasTrimMap trimToUntrimmedMap ,FastQQualityCodec fastqQualityCodec) throws IOException{
+	public void convert(TrimDataStore trimDatastore,CasTrimMap trimToUntrimmedMap ,
+			FastQQualityCodec fastqQualityCodec, 
+			final boolean useConic,
+			final boolean createPseduoMoleculeFasta) throws IOException{
 	    final File casWorkingDirectory = casFile.getParentFile();
 	    final File editDir =getEditDir();
 	    File chromatDir = consedOutputDir.contains("chromat_dir")?
@@ -180,6 +188,10 @@ public class Cas2Consed3 {
                                         
                                         casInfo.getReferenceIdLookup().getLookupIdFor(casReferenceId), 
                                         getGappedReference(casReferenceId));
+                                if(useConic){
+                                	builder.consensusCaller(new ConicConsensusCaller(PhredQuality.valueOf(30)));
+                                }
+                                //
                                 builders.put(refKey, builder);
                             }
                             try {
@@ -214,6 +226,13 @@ public class Cas2Consed3 {
              File consensusFile = consedOutputDir.createNewFile(prefix+ ".ace.1.consensus.fasta");
              OutputStream tempOut = new FileOutputStream(tempAce);
              PrintStream consensusOut = new PrintStream(consensusFile);
+             final PrintStream pseduoMoleculeOut;
+             if(createPseduoMoleculeFasta){
+            	 File pseduomoleculeFile = consedOutputDir.createNewFile(prefix+ ".ace.1.pseduomolecule.fasta");
+            	 pseduoMoleculeOut = new PrintStream(pseduomoleculeFile);
+             }else{
+            	 pseduoMoleculeOut=null;
+             }
              Iterator<UpdateConsensusAceContigBuilder> builderIterator = builders.values().iterator();
              while(builderIterator.hasNext()){
                  UpdateConsensusAceContigBuilder builder = builderIterator.next();                
@@ -229,23 +248,42 @@ public class Cas2Consed3 {
                  }
                  long ungappedStart = fullConsensus.getUngappedOffsetFor((int)firstReadStart);
                  //update contig id to append mapped coordinates 1- ungapped length
+                 String referenceId = builder.getContigId();
                  String newContigId = String.format("%s_%d_%d",builder.getContigId(),
                                      ungappedStart+1,
                                          ungappedLength);
                  builder.setContigId(newContigId);
-                 for(AceContig splitContig : ConsedUtil.split0xContig(builder,true)){
+                 NucleotideSequenceBuilder pseduoMoleculeBuilder = new NucleotideSequenceBuilder((int)ungappedLength);
+                 long previousPseduoMoleculeOffset=0;
+                 for(Entry<Range,AceContig> entry : ConsedUtil.split0xContig(builder,true).entrySet()){
                      numberOfContigs++;
+                     AceContig splitContig = entry.getValue();
                      numberOfReads+= splitContig.getNumberOfReads();
-                     consensusOut.print(
+                     Range contigRange = entry.getKey();
+                     int numberOfUpstreamNs = (int)(contigRange.getStart() - previousPseduoMoleculeOffset);
+                	 appendNsIfNeeded(pseduoMoleculeBuilder, numberOfUpstreamNs);
+                    
+                     List<Nucleotide> ungappedConsensus = splitContig.getConsensus().asUngappedList();
+                     pseduoMoleculeBuilder.append(ungappedConsensus);
+                     
+					consensusOut.print(
                              new DefaultNucleotideSequenceFastaRecord(
                                      splitContig.getId(), 
-                                     splitContig.getConsensus().asUngappedList())
+                                     ungappedConsensus)
                              .toFormattedString());
                      AceFileWriter.writeAceContig(splitContig, phdDataStore, tempOut);
+                     previousPseduoMoleculeOffset = contigRange.getEnd();
+                 }
+                 int numberOfDownstreamNs = (int)(ungappedLength-1 - previousPseduoMoleculeOffset);
+                 appendNsIfNeeded(pseduoMoleculeBuilder, numberOfDownstreamNs);
+                 if(createPseduoMoleculeFasta){
+                	 pseduoMoleculeOut.print(new DefaultNucleotideSequenceFastaRecord(
+                			 referenceId,
+                			 pseduoMoleculeBuilder.build()));
                  }
                  builderIterator.remove();
              }
-             IOUtil.closeAndIgnoreErrors(tempOut,consensusOut);
+             IOUtil.closeAndIgnoreErrors(tempOut,consensusOut,pseduoMoleculeOut);
              File ace = new File(editDir, prefix+".ace.1");
              OutputStream out = new FileOutputStream(ace);
              out.write(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads).getBytes());
@@ -273,6 +311,18 @@ public class Cas2Consed3 {
         }finally{
             IOUtil.closeAndIgnoreErrors(logOut);
         }
+	}
+	/**
+	 * Appends the given number of N's if that value >0; otherwise do nothing.
+	 * @param pseduoMoleculeBuilder
+	 * @param numberOfUpstreamNs
+	 */
+	private void appendNsIfNeeded(NucleotideSequenceBuilder pseduoMoleculeBuilder,
+			int numberOfUpstreamNs) {
+		if(numberOfUpstreamNs >0){
+			String ns = new String(new char[numberOfUpstreamNs]).replace('\0', 'N');
+			 pseduoMoleculeBuilder.append(ns);
+		}
 	}
 	
 	
@@ -370,6 +420,14 @@ public class Cas2Consed3 {
 	        		"This also requires untrimmed .qual and .pos files.")                                
             .isFlag(true)
             .build());
+            
+            options.addOption(new CommandLineOptionBuilder("use_conic", "Use conic ambiguity caller instead of most frequent")                                
+            .isFlag(true)
+            .build());
+            
+            options.addOption(new CommandLineOptionBuilder("pseduomolecule_fasta", "Create a multi fasta file of the pseduomolecules of this assembly called <prefix>.ace.1.pseduomolecule.fasta.  Each record will have the id of the reference used, along with any basecall changes from the actual assembly.  Any areas of the pseduomolecule that are not covered by this assembly will get Ns.")                                
+	        .isFlag(true)    
+            .build());
 	        
 	        if(CommandLineUtils.helpRequested(args)){
 	        	printHelp(options);
@@ -423,10 +481,11 @@ public class Cas2Consed3 {
 	            }
 	            boolean makePhdBall = !commandLine.hasOption("no_phdball");
 	            boolean hasEdits = commandLine.hasOption("preserve_edits");
-	            
+	            boolean useConic  = commandLine.hasOption("use_conic");
+	            boolean createPseduoMoleculeFasta = commandLine.hasOption("pseduomolecule_fasta");
 	            Cas2Consed3 cas2consed = new Cas2Consed3(casFile, outputDir, prefix,makePhdBall,hasEdits);
 	            
-	            cas2consed.convert(trimDatastore, trimToUntrimmedMap, qualityCodec);
+	            cas2consed.convert(trimDatastore, trimToUntrimmedMap, qualityCodec, useConic,createPseduoMoleculeFasta);
 	            
 	        } catch (ParseException e) {
 				e.printStackTrace();
