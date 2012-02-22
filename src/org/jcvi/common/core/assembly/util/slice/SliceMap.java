@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.assembly.util.slice;
 
-public interface SliceMap extends Iterable<Slice>{
+public interface SliceMap extends Iterable<IdedSlice>{
 
-    Slice getSlice(long offset);
+	IdedSlice getSlice(long offset);
     long getSize();
 }

@@ -69,15 +69,15 @@ public class DefaultQualityCompactedSliceMap extends AbstractCompactedSliceMap{
      * {@inheritDoc}
      */
      @Override
-     public Iterator<Slice> iterator() {
-         return new ArrayIterator<Slice>(slices);
+     public Iterator<IdedSlice> iterator() {
+         return new ArrayIterator<IdedSlice>(slices);
      }
 
      /**
      * {@inheritDoc}
      */
      @Override
-     public Slice getSlice(long offset) {
+     public IdedSlice getSlice(long offset) {
          return slices[(int)offset];
      }
 

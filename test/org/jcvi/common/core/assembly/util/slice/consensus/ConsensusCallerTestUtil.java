@@ -33,7 +33,8 @@ import java.util.Map;
 import java.util.SortedMap;
 
 import org.jcvi.common.core.assembly.util.slice.DefaultSlice;
-import org.jcvi.common.core.assembly.util.slice.Slice;
+import org.jcvi.common.core.assembly.util.slice.IdedSlice;
+import org.jcvi.common.core.assembly.util.slice.IdedSliceElement;
 import org.jcvi.common.core.assembly.util.slice.SliceElement;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusResult;
 import org.jcvi.common.core.assembly.util.slice.consensus.DefaultConsensusResult;
@@ -48,455 +49,455 @@ public final class ConsensusCallerTestUtil {
 
     
     
-    private static List<Slice> createSlicesForContextCase1(){
+    private static List<IdedSlice> createSlicesForContextCase1(){
         return createSlicesFrom(Arrays.asList("AAG","AGG"),
                     new byte[][]{new byte[]{30,30,35},new byte[]{35,30,28}},
                     Arrays.asList(FORWARD,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase2(){
+    private static List<IdedSlice> createSlicesForContextCase2(){
         return createSlicesFrom(Arrays.asList("TTG","TCG"),
                     new byte[][]{new byte[]{30,20,30},new byte[]{30,40,30}},
                     Arrays.asList(FORWARD,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase3(){
+    private static List<IdedSlice> createSlicesForContextCase3(){
         return createSlicesFrom(Arrays.asList("AGG","AAG"),
                     new byte[][]{new byte[]{30,46,30},new byte[]{30,15,30}},
                     Arrays.asList(FORWARD,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase4(){
+    private static List<IdedSlice> createSlicesForContextCase4(){
         return createSlicesFrom(Arrays.asList("ACG","A-G"),
                     new byte[][]{new byte[]{40,20,15},new byte[]{36,36,40}},
                     Arrays.asList(FORWARD,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase5(){
+    private static List<IdedSlice> createSlicesForContextCase5(){
         return createSlicesFrom(Arrays.asList("C-T","CTT"),
                     new byte[][]{new byte[]{20,20,24},new byte[]{35,44,38}},
                     Arrays.asList(FORWARD,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase6(){
+    private static List<IdedSlice> createSlicesForContextCase6(){
         return createSlicesFrom(Arrays.asList("TTC","TCC","TCC"),
                     new byte[][]{new byte[]{30,30,25},new byte[]{34,30,20},new byte[]{25,30,25}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase7(){
+    private static List<IdedSlice> createSlicesForContextCase7(){
         return createSlicesFrom(Arrays.asList("CAA","CGA","CGA"),
                     new byte[][]{new byte[]{40,15,30},new byte[]{22,35,35},new byte[]{25,32,40}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase8(){
+    private static List<IdedSlice> createSlicesForContextCase8(){
         return createSlicesFrom(Arrays.asList("TCG","TTG","TTG"),
                     new byte[][]{new byte[]{25,45,35},new byte[]{30,20,25},new byte[]{35,15,22}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase9(){
+    private static List<IdedSlice> createSlicesForContextCase9(){
         return createSlicesFrom(Arrays.asList("CCG","CCG","C-G"),
                     new byte[][]{new byte[]{20,15,22},new byte[]{15,20,20},new byte[]{45,40,40}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase10(){
+    private static List<IdedSlice> createSlicesForContextCase10(){
         return createSlicesFrom(Arrays.asList("A-T","A-T","AAT"),
                     new byte[][]{new byte[]{40,40,45},new byte[]{40,40,42},new byte[]{45,40,35}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase11(){
+    private static List<IdedSlice> createSlicesForContextCase11(){
         return createSlicesFrom(Arrays.asList("CGG","CGG","CAG","CGG"),
                     new byte[][]{new byte[]{35,30,39},new byte[]{30,30,30},new byte[]{32,30,35},new byte[]{20,30,25}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase12(){
+    private static List<IdedSlice> createSlicesForContextCase12(){
         return createSlicesFrom(Arrays.asList("GTA","GCA","GCA","GCA"),
                     new byte[][]{new byte[]{20,15,15},new byte[]{40,40,40},new byte[]{35,35,38},new byte[]{35,30,29}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,REVERSE));
     }
 
-    private static List<Slice> createSlicesForContextCase13(){
+    private static List<IdedSlice> createSlicesForContextCase13(){
         return createSlicesFrom(Arrays.asList("CAA","CGA","CGA","CGA"),
                     new byte[][]{new byte[]{40,45,45},new byte[]{15,20,22},new byte[]{18,15,20},new byte[]{20,22,15}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,REVERSE));
     }
 
-    private static List<Slice> createSlicesForContextCase14(){
+    private static List<IdedSlice> createSlicesForContextCase14(){
         return createSlicesFrom(Arrays.asList("GAT","GCT","GAT","GCT"),
                     new byte[][]{new byte[]{40,45,42},new byte[]{40,40,38},new byte[]{30,25,28},new byte[]{32,35,30}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,REVERSE));
     }
 
-    private static List<Slice> createSlicesForContextCase15(){
+    private static List<IdedSlice> createSlicesForContextCase15(){
         return createSlicesFrom(Arrays.asList("G-C","GGC","GGC","G-C"),
                     new byte[][]{new byte[]{40,35,35},new byte[]{25,20,24},new byte[]{22,25,20},new byte[]{35,35,40}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,REVERSE));
     }
 
-    private static List<Slice> createSlicesForContextCase16(){
+    private static List<IdedSlice> createSlicesForContextCase16(){
         return createSlicesFrom(Arrays.asList("GAT","GAT","GCT","GAT","GAT"),
                     new byte[][]{new byte[]{35,30,30},new byte[]{30,30,25},new byte[]{30,30,35},new byte[]{25,30,20},new byte[]{20,30,25}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,REVERSE,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase17(){
+    private static List<IdedSlice> createSlicesForContextCase17(){
         return createSlicesFrom(Arrays.asList("ATC","AGC","AGC","AGC","AGC"),
                     new byte[][]{new byte[]{18,15,20},new byte[]{35,40,36},new byte[]{40,38,38},new byte[]{38,32,40},new byte[]{36,25,38}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,REVERSE,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase18(){
+    private static List<IdedSlice> createSlicesForContextCase18(){
         return createSlicesFrom(Arrays.asList("CCC","CTC","CTC","CTC","CTC"),
                     new byte[][]{new byte[]{45,45,40},new byte[]{15,20,18},new byte[]{20,15,19},new byte[]{24,22,20},new byte[]{15,17,20}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,REVERSE,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase19(){
+    private static List<IdedSlice> createSlicesForContextCase19(){
         return createSlicesFrom(Arrays.asList("TTA","TTA","TCA","TCA","TTA"),
                     new byte[][]{new byte[]{30,30,30},new byte[]{32,30,39},new byte[]{25,30,37},new byte[]{35,30,32},new byte[]{30,32,17}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,REVERSE,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase20(){
+    private static List<IdedSlice> createSlicesForContextCase20(){
         return createSlicesFrom(Arrays.asList("AGT","AGT","AGT","AAT","AAT"),
                     new byte[][]{new byte[]{38,35,25},new byte[]{40,40,30},new byte[]{40,45,20},new byte[]{20,15,25},new byte[]{35,20,40}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase21(){
+    private static List<IdedSlice> createSlicesForContextCase21(){
         return createSlicesFrom(Arrays.asList("ATC","ACC","ATC","ACC","ACC"),
                     new byte[][]{new byte[]{40,45,40},new byte[]{18,15,25},new byte[]{30,40,35},new byte[]{20,18,15},new byte[]{35,20,35}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD));
     }
 
-    private static List<Slice> createSlicesForContextCase22(){
+    private static List<IdedSlice> createSlicesForContextCase22(){
         return createSlicesFrom(Arrays.asList("T-G","TTG","TTG","T-G","TTG"),
                     new byte[][]{new byte[]{20,20,25},new byte[]{40,40,35},new byte[]{40,38,40},new byte[]{20,15,15},new byte[]{30,35,35}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase23(){
+	private static List<IdedSlice> createSlicesForContextCase23(){
         return createSlicesFrom(Arrays.asList("G-A","GGA","G-A","GGA","G-A"),
                     new byte[][]{new byte[]{45,38,38},new byte[]{35,20,30},new byte[]{40,30,30},new byte[]{30,25,35},new byte[]{42,35,35}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase24(){
+	private static List<IdedSlice> createSlicesForContextCase24(){
         return createSlicesFrom(Arrays.asList("C-C","C-C","C-C","CCC","CCC"),
                     new byte[][]{new byte[]{20,20,20},new byte[]{25,25,25},new byte[]{22,22,28},new byte[]{45,40,29},new byte[]{40,39,25}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase25(){
+	private static List<IdedSlice> createSlicesForContextCase25(){
         return createSlicesFrom(Arrays.asList("AGG","AGG","A-G","A-G","AGG"),
                     new byte[][]{new byte[]{30,35,32},new byte[]{33,30,35},new byte[]{15,15,20},new byte[]{20,20,25},new byte[]{40,45,33}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase26(){
+	private static List<IdedSlice> createSlicesForContextCase26(){
         return createSlicesFrom(Arrays.asList("CAG","CAG","CAG","CAG","CAG","CCG"),
                     new byte[][]{new byte[]{30,30,30},new byte[]{35,30,35},new byte[]{30,30,32},new byte[]{32,30,33},new byte[]{26,30,25},new byte[]{35,32,30}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase27(){
+	private static List<IdedSlice> createSlicesForContextCase27(){
         return createSlicesFrom(Arrays.asList("AGG","AGG","ATG","AGG","AGG","AGG"),
                     new byte[][]{new byte[]{15,20,18},new byte[]{20,15,18},new byte[]{40,45,44},new byte[]{19,20,25},new byte[]{17,20,25},new byte[]{15,18,30}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase28(){
+	private static List<IdedSlice> createSlicesForContextCase28(){
         return createSlicesFrom(Arrays.asList("CCC","CCC","CCC","CCC","CCC","CGC"),
                     new byte[][]{new byte[]{44,45,40},new byte[]{33,35,38},new byte[]{33,25,36},new byte[]{32,32,33},new byte[]{44,40,38},new byte[]{18,19,22}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase29(){
+	private static List<IdedSlice> createSlicesForContextCase29(){
         return createSlicesFrom(Arrays.asList("TAG","TTG","TTG","TTG","TTG","TAG"),
                     new byte[][]{new byte[]{29,30,35},new byte[]{29,25,20},new byte[]{28,30,25},new byte[]{25,30,33},new byte[]{30,35,36},new byte[]{30,35,33}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase30(){
+	private static List<IdedSlice> createSlicesForContextCase30(){
         return createSlicesFrom(Arrays.asList("GAT","GCT","GCT","GCT","GCT","GAT"),
                     new byte[][]{new byte[]{44,45,46},new byte[]{30,30,36},new byte[]{23,22,39},new byte[]{30,30,30},new byte[]{21,21,31},new byte[]{46,48,45}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase31(){
+	private static List<IdedSlice> createSlicesForContextCase31(){
         return createSlicesFrom(Arrays.asList("CAA","CAA","CAA","CAA","CCA","CCA"),
                     new byte[][]{new byte[]{35,30,25},new byte[]{25,30,32},new byte[]{28,30,32},new byte[]{39,30,33},new byte[]{15,20,20},new byte[]{20,15,15}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase32(){
+	private static List<IdedSlice> createSlicesForContextCase32(){
         return createSlicesFrom(Arrays.asList("GCA","GCA","GCA","GTA","GTA","GTA"),
                     new byte[][]{new byte[]{35,30,25},new byte[]{25,30,32},new byte[]{28,30,32},new byte[]{39,30,33},new byte[]{15,20,20},new byte[]{20,15,15}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase33(){
+	private static List<IdedSlice> createSlicesForContextCase33(){
         return createSlicesFrom(Arrays.asList("TAC","TGC","TGC","TGC","TAC","TAC"),
                     new byte[][]{new byte[]{39,40,38},new byte[]{44,45,46},new byte[]{40,42,41},new byte[]{40,40,40},new byte[]{15,20,20},new byte[]{15,15,15}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase34(){
+	private static List<IdedSlice> createSlicesForContextCase34(){
         return createSlicesFrom(Arrays.asList("TAT","T-T","T-T","TAT","TAT","T-T"),
                     new byte[][]{new byte[]{20,20,22},new byte[]{40,40,45},new byte[]{35,35,40},new byte[]{18,15,20},new byte[]{22,25,20},new byte[]{36,36,38}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase35(){
+	private static List<IdedSlice> createSlicesForContextCase35(){
         return createSlicesFrom(Arrays.asList("C-T","CGT","C-T","CGT","C-T","C-T"),
                     new byte[][]{new byte[]{29,29,35},new byte[]{33,35,33},new byte[]{25,25,30},new byte[]{22,20,34},new byte[]{45,45,45},new byte[]{40,40,42}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase36(){
+	private static List<IdedSlice> createSlicesForContextCase36(){
         return createSlicesFrom(Arrays.asList("ACC","ACC","ACC","AGC","ACC","ACC","ACC"),
                     new byte[][]{new byte[]{30,30,30},new byte[]{30,32,33},new byte[]{33,35,34},new byte[]{34,35,40},new byte[]{25,28,32},new byte[]{30,30,35},new byte[]{30,28,30}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase37(){
+	private static List<IdedSlice> createSlicesForContextCase37(){
         return createSlicesFrom(Arrays.asList("AAT","AAT","AAT","ACT","AAT","AAT","AAT"),
                     new byte[][]{new byte[]{38,40,35},new byte[]{35,35,30},new byte[]{40,38,35},new byte[]{35,20,25},new byte[]{40,45,44},new byte[]{41,40,45},new byte[]{35,38,35}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase38(){
+	private static List<IdedSlice> createSlicesForContextCase38(){
         return createSlicesFrom(Arrays.asList("TTT","TTT","TTT","TTT","TTT","TGT","TTT"),
                     new byte[][]{new byte[]{19,20,21},new byte[]{29,30,31},new byte[]{24,25,22},new byte[]{22,20,20},new byte[]{22,20,20},new byte[]{44,45,45},new byte[]{18,15,20}},
                     Arrays.asList(FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase39(){
+	private static List<IdedSlice> createSlicesForContextCase39(){
         return createSlicesFrom(Arrays.asList("CGA","CGA","CGA","CCA","CCA","CGA","CGA"),
                     new byte[][]{new byte[]{28,30,31},new byte[]{33,35,30},new byte[]{28,25,22},new byte[]{28,28,27},new byte[]{44,45,46},new byte[]{30,32,29},new byte[]{29,31,29}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase40(){
+	private static List<IdedSlice> createSlicesForContextCase40(){
         return createSlicesFrom(Arrays.asList("TGC","TCC","TCC","TGC","TCC","TCC","TCC"),
                     new byte[][]{new byte[]{26,25,28},new byte[]{43,40,42},new byte[]{40,37,42},new byte[]{19,20,23},new byte[]{32,30,33},new byte[]{33,34,32},new byte[]{36,37,33}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase41(){
+	private static List<IdedSlice> createSlicesForContextCase41(){
         return createSlicesFrom(Arrays.asList("ACT","ACT","ACT","ACT","ATT","ATT","ACT"),
                     new byte[][]{new byte[]{35,30,28},new byte[]{25,29,33},new byte[]{15,20,30},new byte[]{17,22,25},new byte[]{45,45,45},new byte[]{40,44,44},new byte[]{25,20,20}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase42(){
+	private static List<IdedSlice> createSlicesForContextCase42(){
         return createSlicesFrom(Arrays.asList("GCT","GCT","GCT","GGT","GGT","GGT","GCT"),
                     new byte[][]{new byte[]{33,30,29},new byte[]{32,25,28},new byte[]{27,22,25},new byte[]{34,35,36},new byte[]{22,20,20},new byte[]{37,35,35},new byte[]{18,15,20}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase43(){
+	private static List<IdedSlice> createSlicesForContextCase43(){
         return createSlicesFrom(Arrays.asList("CAT","CAT","CAT","CAT","CTT","CTT","CTT"),
                     new byte[][]{new byte[]{39,45,46},new byte[]{44,45,43},new byte[]{35,40,41},new byte[]{44,38,40},new byte[]{22,20,19},new byte[]{14,15,15},new byte[]{13,18,20}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase44(){
+	private static List<IdedSlice> createSlicesForContextCase44(){
         return createSlicesFrom(Arrays.asList("GTA","GTA","GAA","GAA","GTA","GAA","GAA"),
                     new byte[][]{new byte[]{29,30,33},new byte[]{33,35,32},new byte[]{18,20,21},new byte[]{16,15,10},new byte[]{40,45,44},new byte[]{21,18,19},new byte[]{23,19,18}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase45(){
+	private static List<IdedSlice> createSlicesForContextCase45(){
         return createSlicesFrom(Arrays.asList("C-C","C-C","CGC","CGC","C-C","C-C","CGC"),
                     new byte[][]{new byte[]{30,30,40},new byte[]{35,30,30},new byte[]{18,15,20},new byte[]{22,20,28},new byte[]{26,26,45},new byte[]{30,30,40},new byte[]{23,18,25}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,REVERSE,FORWARD,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase46(){
+	private static List<IdedSlice> createSlicesForContextCase46(){
         return createSlicesFrom(Arrays.asList("A-C","A-C","A-C","A-C","AAC","AAC","AAC"),
                     new byte[][]{new byte[]{20,20,20},new byte[]{15,15,25},new byte[]{10,10,22},new byte[]{25,20,20},new byte[]{40,45,48},new byte[]{30,40,35},new byte[]{35,38,40}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,REVERSE,FORWARD,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase47(){
+	private static List<IdedSlice> createSlicesForContextCase47(){
         return createSlicesFrom(Arrays.asList("G-T","G-T","GCT","G-T","G-T","G-T","GCT"),
                     new byte[][]{new byte[]{20,20,25},new byte[]{20,20,25},new byte[]{40,42,40},new byte[]{24,24,28},new byte[]{22,22,30},new byte[]{20,20,30},new byte[]{40,45,40}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,REVERSE,FORWARD,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase48(){
+	private static List<IdedSlice> createSlicesForContextCase48(){
         return createSlicesFrom(Arrays.asList("T-T","T-T","T-T","TTT","TTT","T-T","T-T"),
                     new byte[][]{new byte[]{40,35,35},new byte[]{45,40,40},new byte[]{30,25,25},new byte[]{20,15,20},new byte[]{20,20,30},new byte[]{35,30,30},new byte[]{35,35,40}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,REVERSE,FORWARD,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase49(){
+	private static List<IdedSlice> createSlicesForContextCase49(){
         return createSlicesFrom(Arrays.asList("C-A","C-A","C-A","C-A","CGA","C-A","C-A"),
                     new byte[][]{new byte[]{20,20,25},new byte[]{15,15,20},new byte[]{30,30,35},new byte[]{30,30,35},new byte[]{35,40,40},new byte[]{38,38,42},new byte[]{38,38,44}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,REVERSE,FORWARD,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase50(){
+	private static List<IdedSlice> createSlicesForContextCase50(){
         return createSlicesFrom(Arrays.asList("TTA","T-A","T-A","T-A","T-A","T-A","T-A"),
                     new byte[][]{new byte[]{35,30,30},new byte[]{45,40,40},new byte[]{40,40,40},new byte[]{20,20,25},new byte[]{25,25,30},new byte[]{35,35,40},new byte[]{30,30,35}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,REVERSE,FORWARD,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase51(){
+	private static List<IdedSlice> createSlicesForContextCase51(){
         return createSlicesFrom(Arrays.asList("A--A","A--A","A--A","A--A","A--A","ACCA","ACCA"),
                     new byte[][]{new byte[]{40,40,40,40},new byte[]{40,40,40,40},new byte[]{39,39,39,45},new byte[]{35,35,35,45},new byte[]{35,35,35,40},new byte[]{25,35,20,20},new byte[]{25,35,25,20}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase52(){
+	private static List<IdedSlice> createSlicesForContextCase52(){
         return createSlicesFrom(Arrays.asList("CAGT","CCGT","CCGT","CAGT","CAGT","CATT","CATT"),
                     new byte[][]{new byte[]{25,30,35,30},new byte[]{25,30,35,35},new byte[]{30,35,35,35},new byte[]{30,30,35,30},new byte[]{30,30,35,30},new byte[]{40,45,40,40},new byte[]{40,45,43,40}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase53(){
+	private static List<IdedSlice> createSlicesForContextCase53(){
         return createSlicesFrom(Arrays.asList("A-GT","A-GT","A-GT","AA-T","AA-T","AAGT","AAGT"),
                     new byte[][]{new byte[]{45,35,35,35},new byte[]{40,40,40,40},new byte[]{40,40,45,45},new byte[]{30,30,30,35},new byte[]{35,30,30,33},new byte[]{32,30,40,44},new byte[]{33,35,45,40}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase54(){
+	private static List<IdedSlice> createSlicesForContextCase54(){
         return createSlicesFrom(Arrays.asList("G--A","G--A","G--A","GCAA","GCAA","GCAA","GCAA"),
                     new byte[][]{new byte[]{45,45,45,45},new byte[]{40,40,40,40},new byte[]{41,35,35,35},new byte[]{20,30,25,20},new byte[]{20,35,20,25},new byte[]{20,30,30,30},new byte[]{30,25,25,34}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase55(){
+	private static List<IdedSlice> createSlicesForContextCase55(){
         return createSlicesFrom(Arrays.asList("ACG","ACG","ACG","ACG","AGG","AGG","AGG"),
                     new byte[][]{new byte[]{15,17,19},new byte[]{16,16,18},new byte[]{15,14,17},new byte[]{14,12,16},new byte[]{14,17,15},new byte[]{13,19,14},new byte[]{12,20,12}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase56(){
+	private static List<IdedSlice> createSlicesForContextCase56(){
         return createSlicesFrom(Arrays.asList("TAGC","TATC","TAGC","TCTC","TCTC","TCTC","TAGC","TCGC"),
                     new byte[][]{new byte[]{30,30,30,30},new byte[]{30,30,30,31},new byte[]{29,30,28,27},new byte[]{38,30,29,26},new byte[]{33,30,31,29},new byte[]{33,33,33,30},new byte[]{35,35,33,31},new byte[]{39,40,41,48}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase57(){
+	private static List<IdedSlice> createSlicesForContextCase57(){
         return createSlicesFrom(Arrays.asList("CATT","CATT","CATT","CTTT","CAAT","CATT","CATT","CATT"),
                     new byte[][]{new byte[]{33,32,40,38},new byte[]{32,30,38,37},new byte[]{35,33,42,39},new byte[]{40,45,43,40},new byte[]{20,20,20,21},new byte[]{29,25,33,33},new byte[]{28,29,32,30},new byte[]{28,25,33,30}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase58(){
+	private static List<IdedSlice> createSlicesForContextCase58(){
         return createSlicesFrom(Arrays.asList("GGTA","GGTA","GGGA","GGGA","GATA","GATA","GGTA","GGTA"),
                     new byte[][]{new byte[]{34,33,38,35},new byte[]{35,33,39,35},new byte[]{22,25,20,20},new byte[]{26,28,22,21},new byte[]{37,36,39,37},new byte[]{38,37,40,36},new byte[]{38,39,40,39},new byte[]{35,37,41,40}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase59(){
+	private static List<IdedSlice> createSlicesForContextCase59(){
         return createSlicesFrom(Arrays.asList("A--T","A-AT","A-AT","AA-T","AA-T","AA-T","AA-T","AAAT"),
                     new byte[][]{new byte[]{35,33,33,33},new byte[]{30,30,30,32},new byte[]{33,30,30,30},new byte[]{32,30,30,35},new byte[]{33,34,34,34},new byte[]{30,34,34,35},new byte[]{30,34,33,33},new byte[]{41,45,40,41}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase60(){
+	private static List<IdedSlice> createSlicesForContextCase60(){
         return createSlicesFrom(Arrays.asList("CGA","CCA","CGA","CGA","CGA","CCA","CCA","CGG"),
                     new byte[][]{new byte[]{21,22,25},new byte[]{44,45,44},new byte[]{22,25,23},new byte[]{20,20,21},new byte[]{20,20,23},new byte[]{41,44,43},new byte[]{41,44,42},new byte[]{22,20,21}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase61(){
+	private static List<IdedSlice> createSlicesForContextCase61(){
         return createSlicesFrom(Arrays.asList("G-T","G-T","G-T","GTT","G-T","G-T","G-T"),
                     new byte[][]{new byte[]{44,38,38},new byte[]{28,28,28},new byte[]{36,29,29},new byte[]{47,47,47},new byte[]{40,35,35},new byte[]{33,33,35},new byte[]{35,23,23}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase62(){
+	private static List<IdedSlice> createSlicesForContextCase62(){
         return createSlicesFrom(Arrays.asList("TATC","TATC","TATC","TATC","TATC","TATC","TCAC","TATC","TATC"),
                     new byte[][]{new byte[]{44,35,35,35},new byte[]{31,32,32,29},new byte[]{47,47,35,38},new byte[]{36,47,36,47},new byte[]{40,35,40,34},new byte[]{47,47,47,47},new byte[]{36,45,38,40},new byte[]{34,35,35,35},new byte[]{35,35,33,33}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase63(){
+	private static List<IdedSlice> createSlicesForContextCase63(){
         return createSlicesFrom(Arrays.asList("T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","TAA","T-A","T-A","T-A"),
                     new byte[][]{new byte[]{47,47,47},new byte[]{44,44,45},new byte[]{44,44,45},new byte[]{45,40,40},new byte[]{47,44,44},new byte[]{35,35,35},new byte[]{39,32,32},new byte[]{45,40,40},new byte[]{45,45,47},new byte[]{47,47,47},new byte[]{44,40,40},new byte[]{47,44,44},new byte[]{23,23,29}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase64(){
+	private static List<IdedSlice> createSlicesForContextCase64(){
         return createSlicesFrom(Arrays.asList("CGA","CAA","CGA","CGA","CAA","CGA","CAA","CGA","CGA","CGA","CAA","CAA","CAA","CGA","CGA","CGA","CGA"),
                     new byte[][]{new byte[]{24,30,31},new byte[]{32,40,16},new byte[]{44,44,45},new byte[]{40,44,44},new byte[]{32,34,36},new byte[]{33,29,14},new byte[]{31,34,31},new byte[]{47,49,49},new byte[]{47,47,47},new byte[]{47,49,47},new byte[]{41,41,47},new byte[]{38,34,35},new byte[]{39,49,28},new byte[]{40,47,47},new byte[]{40,44,40},new byte[]{34,40,40},new byte[]{19,23,33}},
                     Arrays.asList(FORWARD,REVERSE,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase65(){
+	private static List<IdedSlice> createSlicesForContextCase65(){
         return createSlicesFrom(Arrays.asList("TAA","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A","T-A"),
                     new byte[][]{new byte[]{35,40,44},new byte[]{45,40,40},new byte[]{33,31,31},new byte[]{44,40,40},new byte[]{44,44,45},new byte[]{47,47,47},new byte[]{47,44,44},new byte[]{44,35,35},new byte[]{47,47,47},new byte[]{35,35,38},new byte[]{45,45,47},new byte[]{44,36,36},new byte[]{47,47,47},new byte[]{34,34,35},new byte[]{40,40,40},new byte[]{47,47,47},new byte[]{45,36,36},new byte[]{40,30,30},new byte[]{47,34,34},new byte[]{35,35,44}},
                     Arrays.asList(FORWARD,FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,REVERSE,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase66(){
+	private static List<IdedSlice> createSlicesForContextCase66(){
         return createSlicesFrom(Arrays.asList("AAG","ATG","ATG","ATG","AAG","AAG"),
                     new byte[][]{new byte[]{14,16,13},new byte[]{21,20,22},new byte[]{47,47,47},new byte[]{39,27,27},new byte[]{17,42,35},new byte[]{35,35,35}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,FORWARD,REVERSE,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase67(){
+	private static List<IdedSlice> createSlicesForContextCase67(){
         return createSlicesFrom(Arrays.asList("T-G","TTG","T-G"),
                     new byte[][]{new byte[]{9,9,9},new byte[]{40,44,44},new byte[]{16,16,19}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase68(){
+	private static List<IdedSlice> createSlicesForContextCase68(){
         return createSlicesFrom(Arrays.asList("GTG","GTG","GAG"),
                     new byte[][]{new byte[]{47,47,47},new byte[]{45,40,44},new byte[]{28,47,41}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD));
     }
 
-	private static List<Slice> createSlicesForContextCase69(){
+	private static List<IdedSlice> createSlicesForContextCase69(){
         return createSlicesFrom(Arrays.asList("TTC","TTC","T-C","T-C"),
                     new byte[][]{new byte[]{27,20,20},new byte[]{45,47,47},new byte[]{12,12,14},new byte[]{17,17,17}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,REVERSE));
     }
 
-	private static List<Slice> createSlicesForContextCase70(){
+	private static List<IdedSlice> createSlicesForContextCase70(){
         return createSlicesFrom(Arrays.asList("C-A","C-A","C-A","CAA","C-A","C-A","C-A"),
                     new byte[][]{new byte[]{44,44,47},new byte[]{31,31,35},new byte[]{35,35,44},new byte[]{40,44,44},new byte[]{40,40,44},new byte[]{36,32,32},new byte[]{27,27,34}},
                     Arrays.asList(FORWARD,REVERSE,FORWARD,REVERSE,FORWARD,REVERSE,FORWARD));
     }
 
-	private static List<Slice> createSlicesForisolatedCase1(){
+	private static List<IdedSlice> createSlicesForisolatedCase1(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "AAAAAAAAAAGGGGG",
             21,34,44,44,47,47,47,49,49,49,23,27,28,35,47
         ));
 	}
-	private static List<Slice> createSlicesForisolatedCase2(){
+	private static List<IdedSlice> createSlicesForisolatedCase2(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "CCCCCCCCCCCTTTTTTT",
             20,28,29,34,40,44,45,47,47,47,47,29,35,39,41,42,47,47
     	));
 	}
-	private static List<Slice> createSlicesForisolatedCase3(){
+	private static List<IdedSlice> createSlicesForisolatedCase3(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "AAAAAAACCCCCCCCCCC",
             17,29,35,45,44,47,50,19,30,35,41,41,44,47,47,47,47,47
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase4(){
+	private static List<IdedSlice> createSlicesForisolatedCase4(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "-------GGGGGGGGG",
             35,47,47,40,36,32,30,29,44,44,47,47,47,47,47,49
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase5(){
+	private static List<IdedSlice> createSlicesForisolatedCase5(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "-------GGGGGGGGG",
@@ -504,98 +505,98 @@ public final class ConsensusCallerTestUtil {
     ));
 }
 
-	private static List<Slice> createSlicesForisolatedCase6(){
+	private static List<IdedSlice> createSlicesForisolatedCase6(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "AAAAAAAAGGGGGGGGG",
             28,30,32,40,47,47,48,56,37,41,44,47,47,47,47,47,47
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase7(){
+	private static List<IdedSlice> createSlicesForisolatedCase7(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "-------TTTTTTTT",
             47,47,47,44,44,40,33,21,33,35,35,37,44,47,50
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase8(){
+	private static List<IdedSlice> createSlicesForisolatedCase8(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "-------TTTTTTTT",
             47,47,47,44,44,40,33,23,23,35,37,37,44,44,44
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase9(){
+	private static List<IdedSlice> createSlicesForisolatedCase9(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "-------GGGGGGGG",
             47,47,47,44,44,40,33,23,28,34,40,42,44,47,47
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase10(){
+	private static List<IdedSlice> createSlicesForisolatedCase10(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "CCCCCCCTTTTTTT",
             26,34,40,40,45,49,51,40,40,44,44,44,47,49
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase11(){
+	private static List<IdedSlice> createSlicesForisolatedCase11(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "AAAAAAGGGGGGG",
             35,36,40,40,44,47,22,32,34,35,36,36,40
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase12(){
+	private static List<IdedSlice> createSlicesForisolatedCase12(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "GGGGGGGGGTTTTTT",
             13,24,33,36,36,44,45,45,47,33,35,38,44,44,47
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase13(){
+	private static List<IdedSlice> createSlicesForisolatedCase13(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "CCCCCCCCCCCCTTT",
             14,19,20,20,23,27,31,34,36,44,47,56,40,47,49
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase14(){
+	private static List<IdedSlice> createSlicesForisolatedCase14(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "CCTTTT",
             30,35,13,27,44,44
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase15(){
+	private static List<IdedSlice> createSlicesForisolatedCase15(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "CCCCGGGGG",
             41,41,47,47,12,32,35,40,47
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase16(){
+	private static List<IdedSlice> createSlicesForisolatedCase16(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "AAAAAAAGGGGGGGG",
             36,41,45,45,47,47,47,19,25,28,30,35,45,49,56
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase17(){
+	private static List<IdedSlice> createSlicesForisolatedCase17(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "AAAAAAACCCCCCCCC",
             34,40,40,41,47,47,49,35,35,45,47,47,47,47,47,47
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase18(){
+	private static List<IdedSlice> createSlicesForisolatedCase18(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "CCCCCCTTTTTTTT",
             30,32,36,45,45,47,34,34,44,44,47,47,47,49
     ));
 }
-	private static List<Slice> createSlicesForisolatedCase19(){
+	private static List<IdedSlice> createSlicesForisolatedCase19(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "AAAAAAAAGGGGGG",
@@ -603,7 +604,7 @@ public final class ConsensusCallerTestUtil {
     ));
 }
 
-	private static List<Slice> createSlicesForisolatedCase20(){
+	private static List<IdedSlice> createSlicesForisolatedCase20(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "AGGGAAGGGAGAAGAG",
@@ -611,7 +612,7 @@ public final class ConsensusCallerTestUtil {
     ));
 }
 
-	private static List<Slice> createSlicesForisolatedCase21(){
+	private static List<IdedSlice> createSlicesForisolatedCase21(){
     
     return Arrays.asList(createIsolatedSliceFrom(
             "AAAAAAA-AAAAAA-AAAAAAAAAAAAAAAAA",
@@ -619,8 +620,8 @@ public final class ConsensusCallerTestUtil {
     ));
 }
 
-	private static List<Slice> createEmptySlice(){
-    return Arrays.<Slice>asList(new DefaultSlice.Builder().build());
+	private static List<IdedSlice> createEmptySlice(){
+    return Arrays.<IdedSlice>asList(new DefaultSlice.Builder().build());
 }
 private static List<ConsensusResult> createConsensusResults(String basecalls, int... consensusQualities){
     List<ConsensusResult> result = new ArrayList<ConsensusResult>();
@@ -630,13 +631,13 @@ private static List<ConsensusResult> createConsensusResults(String basecalls, in
     return result;
 }
 
-public static Map<List<Slice>, List<ConsensusResult>> generateMostCommonBasecallData(){
-    Map<List<Slice>, List<ConsensusResult>> map = generateConicData();
-    Map<List<Slice>, List<ConsensusResult>> ret = new LinkedHashMap<List<Slice>, List<ConsensusResult>>(map.size());
-    for(List<Slice> key : map.keySet()){
+public static Map<List<IdedSlice>, List<ConsensusResult>> generateMostCommonBasecallData(){
+    Map<List<IdedSlice>, List<ConsensusResult>> map = generateConicData();
+    Map<List<IdedSlice>, List<ConsensusResult>> ret = new LinkedHashMap<List<IdedSlice>, List<ConsensusResult>>(map.size());
+    for(List<IdedSlice> key : map.keySet()){
     	List<ConsensusResult> consensusResults = new ArrayList<ConsensusResult>();
     	
-    	for(Slice s : key){
+    	for(IdedSlice s : key){
     		if(s.getCoverageDepth()==0){
     			consensusResults.add(new DefaultConsensusResult(Nucleotide.Unknown, 0));
     			continue;
@@ -645,7 +646,7 @@ public static Map<List<Slice>, List<ConsensusResult>> generateMostCommonBasecall
     		for(Nucleotide bases : Nucleotides.parse("ACGT-")){
     			histogram.put(bases, Integer.valueOf(0));
     		}
-    		for(SliceElement e : s){
+    		for(IdedSliceElement e : s){
     			histogram.put(e.getBase(),histogram.get(e.getBase()) +1);
     		}
     		SortedMap<Nucleotide, Integer> sortedMap = MapValueComparator.sortDescending(histogram);
@@ -668,8 +669,8 @@ public static Map<List<Slice>, List<ConsensusResult>> generateMostCommonBasecall
     
 }
 
-public static Map<List<Slice>, List<ConsensusResult>> generateConicData(){
-    Map<List<Slice>, List<ConsensusResult>> map = new LinkedHashMap<List<Slice>, List<ConsensusResult>>();
+public static Map<List<IdedSlice>, List<ConsensusResult>> generateConicData(){
+    Map<List<IdedSlice>, List<ConsensusResult>> map = new LinkedHashMap<List<IdedSlice>, List<ConsensusResult>>();
     map.put(createEmptySlice(), createConsensusResults("-",0));
     map.put(createSlicesForContextCase1(),createConsensusResults("ARG",65,3,63));
     map.put(createSlicesForContextCase2(),createConsensusResults("TYG",60,20,60));
@@ -767,8 +768,8 @@ public static Map<List<Slice>, List<ConsensusResult>> generateConicData(){
 
 }
 
-public static Map<List<Slice>, List<ConsensusResult>> generateChurchillWatermanData(){
-    Map<List<Slice>, List<ConsensusResult>> map = generateConicData();
+public static Map<List<IdedSlice>, List<ConsensusResult>> generateChurchillWatermanData(){
+    Map<List<IdedSlice>, List<ConsensusResult>> map = generateConicData();
     map.put(createSlicesForContextCase5(),createConsensusResults("CTT",55,24,62));
     map.put(createSlicesForContextCase6(),createConsensusResults("TCC",89,30,70));
     map.put(createSlicesForContextCase10(),createConsensusResults("A-T",125,40,122));
@@ -795,8 +796,8 @@ public static Map<List<Slice>, List<ConsensusResult>> generateChurchillWatermanD
     map.put(createSlicesForisolatedCase20(),createConsensusResults("G",104));
     return map;
 }
-public static Map<List<Slice>, List<ConsensusResult>> generateAnnotationData(){
-    Map<List<Slice>, List<ConsensusResult>> map = generateConicData();
+public static Map<List<IdedSlice>, List<ConsensusResult>> generateAnnotationData(){
+    Map<List<IdedSlice>, List<ConsensusResult>> map = generateConicData();
     map.put(createSlicesForContextCase5(),createConsensusResults("CTT",55,24,62));
     map.put(createSlicesForContextCase11(),createConsensusResults("CRG",117,60,129));
     map.put(createSlicesForContextCase16(),createConsensusResults("GMT",140,90,135));
@@ -828,8 +829,8 @@ public static Map<List<Slice>, List<ConsensusResult>> generateAnnotationData(){
     
     return map;
 }
-public static Map<List<Slice>, List<ConsensusResult>> generateNoAmbiguityData(){
-    Map<List<Slice>, List<ConsensusResult>> map = new LinkedHashMap<List<Slice>, List<ConsensusResult>>();
+public static Map<List<IdedSlice>, List<ConsensusResult>> generateNoAmbiguityData(){
+    Map<List<IdedSlice>, List<ConsensusResult>> map = new LinkedHashMap<List<IdedSlice>, List<ConsensusResult>>();
     map.put(createEmptySlice(), createConsensusResults("-",0));
     map.put(createSlicesForContextCase1(),createConsensusResults("AAG",65,3,63));
     map.put(createSlicesForContextCase2(),createConsensusResults("TCG",60,20,60));

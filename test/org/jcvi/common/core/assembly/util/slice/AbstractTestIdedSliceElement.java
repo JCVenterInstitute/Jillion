@@ -32,14 +32,14 @@ import static org.junit.Assert.*;
  *
  *
  */
-public abstract class AbstractTestSliceElement {
+public abstract class AbstractTestIdedSliceElement {
 
     String id = "id";
     Nucleotide base = Nucleotide.Adenine;
     PhredQuality quality = PhredQuality.valueOf(50);
     Direction dir = Direction.FORWARD;
-    SliceElement sut;
-    protected abstract SliceElement create(String id, Nucleotide base, PhredQuality qual,Direction dir);
+    IdedSliceElement sut;
+    protected abstract IdedSliceElement create(String id, Nucleotide base, PhredQuality qual,Direction dir);
     
     @Before
     public void setup(){

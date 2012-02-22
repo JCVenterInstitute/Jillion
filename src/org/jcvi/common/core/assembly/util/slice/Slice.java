@@ -29,7 +29,7 @@ package org.jcvi.common.core.assembly.util.slice;
  *
  *
  */
-public interface Slice extends Iterable<SliceElement>{
+public interface Slice<T extends SliceElement> extends Iterable<T>{
     /**
      * Get the coverage depth of this Slice.  this 
      * should be the same as the size of the
@@ -38,19 +38,5 @@ public interface Slice extends Iterable<SliceElement>{
      * always be {@code >= 0}.
      */
     int getCoverageDepth();
-    /**
-     * Does this {@link Slice} contain a 
-     * {@link SliceElement} with the given id.
-     * @param elementId the id of the SliceElement being queried.
-     * @return {@code true} if this Slice does contain
-     * a SliceElement with the given id; {@code false} otherwise.
-     */
-    boolean containsElement(String elementId);
-    /**
-     * Get the SliceElement by id.
-     * @param elementId the id of the SliceElement to get.
-     * @return the {@link SliceElement} if exists; or {@code null}
-     * if there is no SliceElement for this Slice with that id.
-     */
-    SliceElement getSliceElement(String elementId);
+   
 }

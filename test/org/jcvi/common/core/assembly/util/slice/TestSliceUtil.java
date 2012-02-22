@@ -30,7 +30,6 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.util.slice.DefaultSlice;
-import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
@@ -38,28 +37,28 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 public final class TestSliceUtil {
     private TestSliceUtil(){}
     
-    public static Slice createIsolatedSliceFrom(String bases, int... qualities){
+    public static IdedSlice createIsolatedSliceFrom(String bases, int... qualities){
         DefaultSlice.Builder builder = new DefaultSlice.Builder();
         for(int i =0; i< qualities.length; i++){
             builder.add("read_"+i,Nucleotide.parse(bases.charAt(i)), PhredQuality.valueOf(qualities[i]), FORWARD);
         }
         return builder.build();
     }
-    public static Slice createSliceFrom(List<Nucleotide> nucleotides, List<PhredQuality> qualities, List<Direction> directions){
+    public static IdedSlice createSliceFrom(List<Nucleotide> nucleotides, List<PhredQuality> qualities, List<Direction> directions){
         DefaultSlice.Builder builder = new DefaultSlice.Builder();
         for(int i=0; i<nucleotides.size(); i++){
             builder.add("read_"+i,nucleotides.get(i), qualities.get(i), directions.get(i));
         }
         return builder.build();
     }
-    public static Slice createSliceFrom(String nucleotides, byte[] qualities, List<Direction> directions){
+    public static IdedSlice createSliceFrom(String nucleotides, byte[] qualities, List<Direction> directions){
         
         return createSliceFrom(Nucleotides.parse(nucleotides),
                 PhredQuality.valueOf(qualities), directions);
     }
     
-    public static List<Slice> createSlicesFrom(List<String> nucleotides, byte[][] qualities, List<Direction> directions){
-        List<Slice> slices = new ArrayList<Slice>();
+    public static List<IdedSlice> createSlicesFrom(List<String> nucleotides, byte[][] qualities, List<Direction> directions){
+        List<IdedSlice> slices = new ArrayList<IdedSlice>();
         for(int j=0; j< nucleotides.get(0).length(); j++){
             StringBuilder sliceBases = new StringBuilder();
             byte[] sliceQualities = new byte[nucleotides.size()];

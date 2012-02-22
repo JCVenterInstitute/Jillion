@@ -35,7 +35,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
  *
  *
  */
-public class CompactedSlice implements Slice{
+public class CompactedSlice implements IdedSlice{
 
     private final byte[] elements;
     private final List<String> ids;
@@ -54,8 +54,8 @@ public class CompactedSlice implements Slice{
     * {@inheritDoc}
     */
     @Override
-    public Iterator<SliceElement> iterator() {
-        return new Iterator<SliceElement>(){
+    public Iterator<IdedSliceElement> iterator() {
+        return new Iterator<IdedSliceElement>(){
             Iterator<String> idIter = ids.iterator();
             @Override
             public boolean hasNext() {
@@ -63,7 +63,7 @@ public class CompactedSlice implements Slice{
             }
 
             @Override
-            public SliceElement next() {
+            public IdedSliceElement next() {
                 String id= idIter.next();
                 return getSliceElement(id);
             }
@@ -107,7 +107,7 @@ public class CompactedSlice implements Slice{
     * {@inheritDoc}
     */
     @Override
-    public SliceElement getSliceElement(String elementId) {
+    public IdedSliceElement getSliceElement(String elementId) {
         int index= ids.indexOf(elementId);
         if(index<0){
             throw new IllegalArgumentException(elementId + " not in slice");
@@ -123,11 +123,11 @@ public class CompactedSlice implements Slice{
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         List<String> ids = new ArrayList<String>();
-        public Builder addSliceElement(SliceElement element){            
+        public Builder addSliceElement(IdedSliceElement element){            
             return addSliceElement(element.getId(),element.getBase(), element.getQuality(), element.getSequenceDirection());
         }
-        public Builder addSliceElements(Iterable<? extends SliceElement> elements){
-            for(SliceElement e : elements){
+        public Builder addSliceElements(Iterable<? extends IdedSliceElement> elements){
+            for(IdedSliceElement e : elements){
                 addSliceElement(e);
             }
             return this;

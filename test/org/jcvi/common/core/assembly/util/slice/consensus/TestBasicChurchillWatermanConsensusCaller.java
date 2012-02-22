@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.assembly.util.slice.IdedSlice;
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.assembly.util.slice.consensus.BasicChurchillWatermanConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
@@ -38,7 +39,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestBasicChurchillWatermanConsensusCaller extends
         TestConicConsensusCaller {
 
-    public TestBasicChurchillWatermanConsensusCaller(List<Slice> slices,
+    public TestBasicChurchillWatermanConsensusCaller(List<Slice<?>> slices,
             List<ConsensusResult> expectedConsensus) {
         super(slices, expectedConsensus);
     }
@@ -51,7 +52,7 @@ public class TestBasicChurchillWatermanConsensusCaller extends
     @Parameters
     public static Collection<?> data(){
        List<Object[]> data = new ArrayList<Object[]>();
-       for(Entry<List<Slice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateChurchillWatermanData().entrySet()){
+       for(Entry<List<IdedSlice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateChurchillWatermanData().entrySet()){
            data.add(new Object[]{entry.getKey(), entry.getValue()});
        }
         

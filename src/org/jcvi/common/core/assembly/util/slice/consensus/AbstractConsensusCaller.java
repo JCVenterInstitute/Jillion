@@ -50,7 +50,7 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
     
     
     @Override
-    public ConsensusResult callConsensus(Slice slice) {
+    public ConsensusResult callConsensus(Slice<?> slice) {
         if(slice.getCoverageDepth() ==0){
             //by definition, an empty slice is a Gap
             return new DefaultConsensusResult(Nucleotide.Gap,0);
@@ -59,11 +59,11 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
     }
 
 
-    protected abstract ConsensusResult callConsensusWithCoverage(Slice slice);
+    protected abstract ConsensusResult callConsensusWithCoverage(Slice<?> slice);
 
 
     protected final Map<Nucleotide, Integer> generateBasecallHistogramMap(
-            Slice slice) {
+            Slice<?> slice) {
         Map<Nucleotide, Integer> histogramMap = initalizeNucleotideMap();
         for(SliceElement sliceElement : slice){
             Nucleotide basecall =sliceElement.getBase();
@@ -85,7 +85,7 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
         }
     }
     
-    protected final Map<Nucleotide, Integer> generateQualityValueSumMap(Slice slice) {
+    protected final Map<Nucleotide, Integer> generateQualityValueSumMap(Slice<?> slice) {
         Map<Nucleotide, Integer> qualityValueSumMap = initalizeNucleotideMap();
         for(SliceElement sliceElement : slice){
             Nucleotide basecall =sliceElement.getBase();

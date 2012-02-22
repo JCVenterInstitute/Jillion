@@ -22,8 +22,6 @@ package org.jcvi.common.core.assembly.util.slice;
 import java.util.List;
 
 import org.jcvi.common.core.assembly.util.slice.CompactedSlice;
-import org.jcvi.common.core.assembly.util.slice.Slice;
-import org.jcvi.common.core.assembly.util.slice.SliceElement;
 
 /**
  * @author dkatzel
@@ -33,9 +31,9 @@ import org.jcvi.common.core.assembly.util.slice.SliceElement;
 public class TestCompactedSlice extends AbstractTestSlice{
 
     @Override
-    protected Slice createNew(List<SliceElement> elements) {
+    protected IdedSlice createNew(List<IdedSliceElement> elements) {
         CompactedSlice.Builder builder = new CompactedSlice.Builder();
-        for(SliceElement element : elements){
+        for(IdedSliceElement element : elements){
             builder.addSliceElement(element);
         }
         return builder.build();

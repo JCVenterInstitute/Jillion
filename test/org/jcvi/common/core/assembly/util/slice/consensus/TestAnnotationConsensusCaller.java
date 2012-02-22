@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.assembly.util.slice.IdedSlice;
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.assembly.util.slice.consensus.AnnotationConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
@@ -37,7 +38,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 public class TestAnnotationConsensusCaller extends AbstractTestConsensusCaller{
    
-    public TestAnnotationConsensusCaller(List<Slice> slices,
+    public TestAnnotationConsensusCaller(List<Slice<?>> slices,
             List<ConsensusResult> expectedConsensus) {
         super(slices, expectedConsensus);
     }
@@ -45,7 +46,7 @@ public class TestAnnotationConsensusCaller extends AbstractTestConsensusCaller{
     @Parameters
     public static Collection<?> data(){
        List<Object[]> data = new ArrayList<Object[]>();
-       for(Entry<List<Slice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateAnnotationData().entrySet()){
+       for(Entry<List<IdedSlice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateAnnotationData().entrySet()){
            data.add(new Object[]{entry.getKey(), entry.getValue()});
        }
         

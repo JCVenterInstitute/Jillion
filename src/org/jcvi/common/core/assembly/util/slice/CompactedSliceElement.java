@@ -30,7 +30,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
  *
  *
  */
-public class CompactedSliceElement implements SliceElement{
+public class CompactedSliceElement implements IdedSliceElement{
 
     private String id;
     private byte[] encodedData = new byte[2];
@@ -100,10 +100,10 @@ public class CompactedSliceElement implements SliceElement{
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof SliceElement)) {
+        if (!(obj instanceof IdedSliceElement)) {
             return false;
         }
-        SliceElement other = (SliceElement) obj;
+        IdedSliceElement other = (IdedSliceElement) obj;
         if (!id.equals(other.getId())) {
             return false;
         }

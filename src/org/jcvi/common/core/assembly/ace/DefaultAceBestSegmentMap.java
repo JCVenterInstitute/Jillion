@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.util.slice.Slice;
-import org.jcvi.common.core.assembly.util.slice.SliceElement;
+import org.jcvi.common.core.assembly.util.slice.IdedSlice;
+import org.jcvi.common.core.assembly.util.slice.IdedSliceElement;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -51,7 +51,7 @@ public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
         int end=0;
         Range previouslyEnteredRange=null;
         for(int i=0; i<consensus.getLength(); i++){
-            Slice slice = sliceMap.getSlice(i);
+            IdedSlice slice = sliceMap.getSlice(i);
             Nucleotide consensusCall = consensus.get(i);
             
             //short circuit to try our currentElement first
@@ -62,7 +62,7 @@ public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
                 continue;
             }
             boolean foundMatch=false;
-            for(SliceElement element : slice){
+            for(IdedSliceElement element : slice){
                 if(element.getBase().equals(consensusCall)){
                     //we can only get here if element is 
                     //different than currentElement so 
