@@ -196,8 +196,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         Range alignmentRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
         Range gappedValidRange;
         try{
-	        gappedValidRange = qualityRange.intersection(alignmentRange)
-	                    .convertRange(CoordinateSystem.RESIDUE_BASED);
+	        gappedValidRange = qualityRange.intersection(alignmentRange);
 	        if(gappedValidRange.isEmpty()){
 	        	//no intersection! 
 	        	//I've only seen this on really bad quality
@@ -214,7 +213,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         if(assembledFrom ==null){
             throw new IllegalStateException("unknown read no AF record for "+ currentReadId);
         }
-        currentOffset = computeReadOffset(assembledFrom, gappedValidRange.getLocalStart());            
+        currentOffset = computeReadOffset(assembledFrom, gappedValidRange.getStart(CoordinateSystem.RESIDUE_BASED));            
        
         currentFullLengthBases = currentBasecalls.toString();
         NucleotideSequence gappedFullLengthSequence = new NucleotideSequenceBuilder(

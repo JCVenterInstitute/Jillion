@@ -19,6 +19,7 @@
 
 package org.jcvi.common.core.symbol.residue.nuc;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,7 +34,8 @@ public class TestDefaultNucleotideSequence {
 
     private String gappedBasecalls = "ACGTACGT-ACGTACG-T";
     
-    NucleotideSequence sut = DefaultNucleotideSequence.createGappy(gappedBasecalls);
+    NucleotideSequence sut = new NucleotideSequenceBuilder(gappedBasecalls)
+    								.build();
     
     @Test
     public void decode(){
@@ -51,7 +53,37 @@ public class TestDefaultNucleotideSequence {
         assertEquals("before any gaps", 0, sut.getNumberOfGapsUntil(5));
         assertEquals("on the gap", 1, sut.getNumberOfGapsUntil(8));
         assertEquals("after 1 gap", 1, sut.getNumberOfGapsUntil(9));
-        assertEquals("after all gaps gap", 2, sut.getNumberOfGapsUntil((int)sut.getLength()-1));
+        assertEquals("after all gaps", 2, sut.getNumberOfGapsUntil((int)sut.getLength()-1));
+    }
+    
+    @Test
+    public void getGapOffsets(){
+    	assertEquals(Arrays.asList(8, 16), sut.getGapOffsets());
+    }
+    
+    @Test
+    public void getLength(){
+    	assertEquals(18, sut.getLength());
+    }
+    
+    @Test
+    public void getUngappedLength(){
+    	assertEquals(16, sut.getUngappedLength());
+    }
+    
+    @Test
+    public void getUngappedOffsetFor(){
+        assertEquals("before any gaps", 5, sut.getUngappedOffsetFor(5));
+        assertEquals("on the gap", 7, sut.getUngappedOffsetFor(8));
+        assertEquals("after 1 gap", 8, sut.getUngappedOffsetFor(9));
+        assertEquals("after all gaps", sut.getLength()-3, sut.getUngappedOffsetFor((int)sut.getLength()-1));
+    }
+    
+    @Test
+    public void getGappedOffsetFor(){
+        assertEquals("before any gaps", 5, sut.getGappedOffsetFor(5));
+        assertEquals("after 1 gap", 9, sut.getGappedOffsetFor(8));
+        assertEquals("after all gaps", 17, sut.getGappedOffsetFor(15));
     }
     
     @Test

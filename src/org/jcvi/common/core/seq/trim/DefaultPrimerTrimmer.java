@@ -152,7 +152,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
             }
         }
         List<Range> mergedRanges = Range.mergeRanges(ranges);
-        Range sequenceRange = Range.buildRangeOfLength(0, sequence.getLength()).convertRange(CoordinateSystem.RESIDUE_BASED);
+        Range sequenceRange = Range.buildRangeOfLength(0, sequence.getLength());
 
         if(mergedRanges.size() ==1){
            Range primerRange = mergedRanges.get(0);
@@ -163,7 +163,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
            List<Range> rangesFreeFromPrimer = sequenceRange.compliment(primerRange);
            Collections.sort(rangesFreeFromPrimer, Range.Comparators.LONGEST_TO_SHORTEST);
            //return the largest range
-           return rangesFreeFromPrimer.get(0).convertRange(Range.CoordinateSystem.RESIDUE_BASED);     
+           return rangesFreeFromPrimer.get(0);     
               
           
         }

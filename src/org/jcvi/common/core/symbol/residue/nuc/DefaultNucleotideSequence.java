@@ -62,9 +62,6 @@ class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     public static NucleotideSequence createGappy(Collection<Nucleotide> nucleotides){
         return new DefaultNucleotideSequence(nucleotides, DefaultNucleotideCodec.INSTANCE);
     }
-    public static NucleotideSequence createGappy(CharSequence nucleotides){
-        return new DefaultNucleotideSequence(Nucleotides.parse(nucleotides), DefaultNucleotideCodec.INSTANCE);
-    }
     static NucleotideSequence create(Collection<Nucleotide> nucleotides,NucleotideCodec codec){
         if(codec ==null){
             throw new NullPointerException("codec can not be null");

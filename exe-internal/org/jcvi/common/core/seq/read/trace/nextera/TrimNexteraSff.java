@@ -124,7 +124,7 @@ public class TrimNexteraSff {
             final Range clearRange;
             if(reverseClearRange.isSubRangeOf(forwardClearRange)){
                 clearRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
-                        forwardClearRange.getLocalStart(), reverseClearRange.getLocalEnd());
+                        forwardClearRange.getStart(CoordinateSystem.RESIDUE_BASED), reverseClearRange.getEnd(CoordinateSystem.RESIDUE_BASED));
             }else{
                 clearRange = forwardClearRange.intersection(reverseClearRange);
             }

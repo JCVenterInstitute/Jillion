@@ -37,7 +37,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
@@ -148,8 +147,7 @@ public class ConsedUtil {
         for(CoverageRegion<AcePlacedReadBuilder> region : coverageMap){
             if(region.getCoverage()>0){
                 
-                final Range contigRange = Range.buildRange(region.getStart(), region.getEnd())
-                                            .convertRange(CoordinateSystem.RESIDUE_BASED);
+                final Range contigRange = Range.buildRange(region.getStart(), region.getEnd());
                 coveredRegions.add(contigRange);
             }
         }

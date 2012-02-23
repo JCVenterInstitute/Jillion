@@ -76,7 +76,7 @@ public class TestConsedNavigationWriter {
 		.append(String.format("TYPE: %s\n",Type.READ))
 		.append(String.format("READ: %s\n",element.getTargetId()))
 		.append(String.format("UNPADDED_READ_POS: %d %d\n",
-				range.getLocalStart(), range.getLocalEnd()))
+				range.getStart(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)))
 		.append(String.format("COMMENT: %s\n",element.getComment()))
 		.append("END_REGION\n");
 		assertEquals(expectedOutput.toString(), new String(out.toByteArray()));
@@ -95,7 +95,7 @@ public class TestConsedNavigationWriter {
 		.append(String.format("TYPE: %s\n",Type.READ))
 		.append(String.format("READ: %s\n",element.getTargetId()))
 		.append(String.format("UNPADDED_READ_POS: %d %d\n",
-				range.getLocalStart(), range.getLocalEnd()))
+				range.getStart(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)))
 		.append("COMMENT: \n")
 		.append("END_REGION\n");
 		assertEquals(expectedOutput.toString(), new String(out.toByteArray()));
@@ -116,7 +116,7 @@ public class TestConsedNavigationWriter {
 		.append(String.format("TYPE: %s\n",Type.CONSENSUS))
 		.append(String.format("CONTIG: %s\n",element.getTargetId()))
 		.append(String.format("UNPADDED_CONS_POS: %d %d\n",
-				range.getLocalStart(), range.getLocalEnd()))
+				range.getStart(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)))
 		.append(String.format("COMMENT: %s\n",element.getComment()))
 		.append("END_REGION\n");
 		assertEquals(expectedOutput.toString(), new String(out.toByteArray()));
@@ -136,7 +136,7 @@ public class TestConsedNavigationWriter {
 		.append(String.format("TYPE: %s\n",Type.CONSENSUS))
 		.append(String.format("CONTIG: %s\n",element.getTargetId()))
 		.append(String.format("UNPADDED_CONS_POS: %d %d\n",
-				range.getLocalStart(), range.getLocalEnd()))
+				range.getStart(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)))
 		.append("COMMENT: \n")
 		.append("END_REGION\n");
 		assertEquals(expectedOutput.toString(), new String(out.toByteArray()));
@@ -158,14 +158,14 @@ public class TestConsedNavigationWriter {
 		.append(String.format("TYPE: %s\n",Type.CONSENSUS))
 		.append(String.format("CONTIG: %s\n",element.getTargetId()))
 		.append(String.format("UNPADDED_CONS_POS: %d %d\n",
-				range.getLocalStart(), range.getLocalEnd()))
+				range.getStart(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)))
 		.append("COMMENT: \n")
 		.append("END_REGION\n")
 		.append("BEGIN_REGION\n")
 		.append(String.format("TYPE: %s\n",Type.READ))
 		.append(String.format("READ: another%s\n",element.getTargetId()))
 		.append(String.format("UNPADDED_READ_POS: %d %d\n",
-				range.getLocalStart()-3, range.getLocalEnd()-3))
+				range.getStart(CoordinateSystem.RESIDUE_BASED)-3, range.getEnd(CoordinateSystem.RESIDUE_BASED)-3))
 		.append("COMMENT: \n")
 		.append("END_REGION\n");
 		assertEquals(expectedOutput.toString(), new String(out.toByteArray()));

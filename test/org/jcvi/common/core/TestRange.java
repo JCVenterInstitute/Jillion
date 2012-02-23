@@ -72,7 +72,6 @@ public class TestRange{
         final Range range2 = Range.buildRange(Range.CoordinateSystem.RESIDUE_BASED,range.getStart()+1,range.getEnd()+1);
         assertEquals(range,range2);
         assertEquals(range.hashCode(),range2.hashCode());
-        assertNotSame(range,range2);
     }
 
     @Test public void testEquals_differentLeftDifferentRightDiffSystem_notEqual(){
@@ -91,7 +90,6 @@ public class TestRange{
         final Range range2 = Range.buildRange(Range.CoordinateSystem.SPACE_BASED,range.getStart(),range.getEnd()+1);
         assertEquals(range,range2);
         assertEquals(range.hashCode(),range2.hashCode());
-        assertNotSame(range,range2);
     }
 
     @Test public void testEquals_sameLeftDifferentRightDiffSystem_notEqual(){
@@ -143,7 +141,7 @@ public class TestRange{
 
         Range sut = Range.buildRangeOfLength(Range.CoordinateSystem.SPACE_BASED,left,length);
         assertEquals(left,sut.getStart());
-        assertEquals(left+length, sut.getLocalEnd());
+        assertEquals(left+length, sut.getEnd(CoordinateSystem.SPACE_BASED));
         assertEquals(left+length-1, sut.getEnd());
     }
 
@@ -154,9 +152,9 @@ public class TestRange{
 
         Range sut = Range.buildRangeOfLength(Range.CoordinateSystem.RESIDUE_BASED,left,length);
         assertEquals(left-1,sut.getStart());
-        assertEquals(left,sut.getLocalStart());
+        assertEquals(left,sut.getStart(CoordinateSystem.RESIDUE_BASED));
         assertEquals(left+length-1-1, sut.getEnd());
-        assertEquals(left+length-1, sut.getLocalEnd());
+        assertEquals(left+length-1, sut.getEnd(CoordinateSystem.RESIDUE_BASED));
     }
 
     
@@ -196,7 +194,7 @@ public class TestRange{
         Range sut = Range.buildRangeOfLengthFromEndCoordinate(Range.CoordinateSystem.SPACE_BASED,right,length);
         assertEquals(length,sut.getLength());
         assertEquals(right-1, sut.getEnd());
-        assertEquals(right, sut.getLocalEnd());
+        assertEquals(right, sut.getEnd(CoordinateSystem.RESIDUE_BASED));
     }
 
     @Test
@@ -207,7 +205,7 @@ public class TestRange{
         Range sut = Range.buildRangeOfLengthFromEndCoordinate(Range.CoordinateSystem.RESIDUE_BASED,right,length);
         assertEquals(length,sut.getLength());
         assertEquals(right-1, sut.getEnd());
-        assertEquals(right, sut.getLocalEnd());
+        assertEquals(right, sut.getEnd(CoordinateSystem.RESIDUE_BASED));
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -223,8 +221,8 @@ public class TestRange{
         int right =20;
 
         Range sut = Range.buildRange(Range.CoordinateSystem.ZERO_BASED,left,right);
-        assertEquals(left,sut.getLocalStart());
-        assertEquals(right, sut.getLocalEnd());
+        assertEquals(left,sut.getStart(CoordinateSystem.ZERO_BASED));
+        assertEquals(right, sut.getEnd(CoordinateSystem.ZERO_BASED));
         assertEquals(left,sut.getStart());
         assertEquals(right, sut.getEnd());
     }
@@ -234,8 +232,8 @@ public class TestRange{
         int right =20;
 
         Range sut = Range.buildRange(Range.CoordinateSystem.SPACE_BASED,left,right);
-        assertEquals(left,sut.getLocalStart());
-        assertEquals(right, sut.getLocalEnd());
+        assertEquals(left,sut.getStart(CoordinateSystem.SPACE_BASED));
+        assertEquals(right, sut.getEnd(CoordinateSystem.SPACE_BASED));
         assertEquals(left,sut.getStart());
         assertEquals(right, sut.getEnd()+1);
     }
@@ -245,8 +243,8 @@ public class TestRange{
         int right =20;
 
         Range sut = Range.buildRange(Range.CoordinateSystem.RESIDUE_BASED,left,right);
-        assertEquals(left,sut.getLocalStart());
-        assertEquals(right, sut.getLocalEnd());
+        assertEquals(left,sut.getStart(CoordinateSystem.RESIDUE_BASED));
+        assertEquals(right, sut.getEnd(CoordinateSystem.RESIDUE_BASED));
         assertEquals(left,sut.getStart()+1);
         assertEquals(right, sut.getEnd()+1);
     }
@@ -268,7 +266,6 @@ public class TestRange{
         assertTrue(sut.isEmpty());
         assertEquals(sut,emptyRange);
         assertEquals(sut.hashCode(),emptyRange.hashCode());
-        assertNotSame(sut,emptyRange);
     }
 
     @Test public void testDefaultBuildEmptyRangeConstruction(){
@@ -300,8 +297,8 @@ public class TestRange{
         int zeroRangeLocation = 7;
         Range sut = Range.buildEmptyRange(Range.CoordinateSystem.SPACE_BASED,zeroRangeLocation);
         assertTrue(sut.isEmpty());
-        assertEquals(sut.getLocalStart(),zeroRangeLocation);
-        assertEquals(sut.getLocalEnd(),zeroRangeLocation);
+        assertEquals(sut.getStart(CoordinateSystem.SPACE_BASED),zeroRangeLocation);
+        assertEquals(sut.getEnd(CoordinateSystem.SPACE_BASED),zeroRangeLocation);
         assertFalse(sut.equals(emptyRange));
     }
 
@@ -318,68 +315,25 @@ public class TestRange{
         Range.buildRange(10,0);
     }
 
-    @Test public void testConvertRange_sameCoordinateSystemShouldReturnSame(){
+    
+
+    @Test public void testzeroToSpaceCoordinateSystem(){
         long rangeStart = 5;
         long rangeEnd = 15;
         Range range = Range.buildRange(Range.CoordinateSystem.ZERO_BASED,rangeStart,rangeEnd);
-        Range convertedRange = range.convertRange(range.getCoordinateSystem());
-        assertEquals(range,convertedRange);
-        assertEquals(range.getStart(),convertedRange.getStart());
-        assertEquals(range.getEnd(),convertedRange.getEnd());
-        assertEquals(convertedRange.getLocalStart(),rangeStart);
-        assertEquals(convertedRange.getLocalEnd(),rangeEnd);
-        assertSame(range,convertedRange);
+        assertEquals(range.getStart(CoordinateSystem.SPACE_BASED),rangeStart);
+        assertEquals(range.getEnd(CoordinateSystem.SPACE_BASED),rangeEnd+1);
     }
 
-    @Test public void testConvertRange_zeroToSpaceCoordinateSystem(){
+    @Test public void testzeroToResidueCoordinateSystem(){
         long rangeStart = 5;
         long rangeEnd = 15;
         Range range = Range.buildRange(Range.CoordinateSystem.ZERO_BASED,rangeStart,rangeEnd);
-        Range convertedRange = range.convertRange(Range.CoordinateSystem.SPACE_BASED);
-        assertEquals(range,convertedRange);
-        assertEquals(range.getStart(),convertedRange.getStart());
-        assertEquals(range.getEnd(),convertedRange.getEnd());
-        assertEquals(convertedRange.getLocalStart(),rangeStart);
-        assertEquals(convertedRange.getLocalEnd(),rangeEnd+1);
-        assertNotSame(range,convertedRange);
+        assertEquals(range.getStart(CoordinateSystem.RESIDUE_BASED),rangeStart+1);
+        assertEquals(range.getEnd(CoordinateSystem.RESIDUE_BASED),rangeEnd+1);
     }
 
-    @Test public void testConvertRange_zeroToResidueCoordinateSystem(){
-        long rangeStart = 5;
-        long rangeEnd = 15;
-        Range range = Range.buildRange(Range.CoordinateSystem.ZERO_BASED,rangeStart,rangeEnd);
-        Range convertedRange = range.convertRange(Range.CoordinateSystem.RESIDUE_BASED);
-        assertEquals(range,convertedRange);
-        assertEquals(range.getStart(),convertedRange.getStart());
-        assertEquals(range.getEnd(),convertedRange.getEnd());
-        assertEquals(convertedRange.getLocalStart(),rangeStart+1);
-        assertEquals(convertedRange.getLocalEnd(),rangeEnd+1);
-        assertNotSame(range,convertedRange);
-    }
-    @Test public void testConvertRange_spaceToResidueCoordinateSystem(){
-        long rangeStart = 5;
-        long rangeEnd = 15;
-        Range range = Range.buildRange(Range.CoordinateSystem.SPACE_BASED,rangeStart,rangeEnd);
-        Range convertedRange = range.convertRange(Range.CoordinateSystem.RESIDUE_BASED);
-        assertEquals(range,convertedRange);
-        assertEquals(range.getStart(),convertedRange.getStart());
-        assertEquals(range.getEnd(),convertedRange.getEnd());
-        assertEquals(convertedRange.getLocalStart(),rangeStart+1);
-        assertEquals(convertedRange.getLocalEnd(),rangeEnd);
-        assertNotSame(range,convertedRange);
-    }
-
-    @Test public void testConvertEmptyRange_zeroToResidueCoordinateSystem(){
-        long rangeStart = 0;
-        Range range = Range.buildEmptyRange(Range.CoordinateSystem.ZERO_BASED,0);
-        Range convertedRange = range.convertRange(Range.CoordinateSystem.RESIDUE_BASED);
-        assertEquals(range,convertedRange);
-        assertEquals(range.getStart(),convertedRange.getStart());
-        assertEquals(range.getEnd(),convertedRange.getEnd());
-        assertEquals(convertedRange.getLocalStart(),rangeStart+1);
-        assertEquals(convertedRange.getLocalEnd(),rangeStart);
-        assertNotSame(range,convertedRange);
-    }
+   
 
     @Test public void testSubRangeOf_nullRange_isNotSubRange(){
         assertFalse(range.isSubRangeOf(null));
@@ -1043,18 +997,7 @@ public class TestRange{
         Range expected = Range.buildRange(6, 5);
         assertEquals(expected, range.shrink(5, 5));
     }
-    
-    @Test
-    public void convertCoordinateSystem(){
-        Range convertedRange = range.convertRange(CoordinateSystem.RESIDUE_BASED);
-        assertEquals(range.getStart()+1, convertedRange.getLocalStart());
-        assertEquals(range.getEnd()+1, convertedRange.getLocalEnd());
-        assertEquals(range.getLength(), convertedRange.getLength());
-    }
-    @Test(expected = NullPointerException.class)
-    public void convertNullCoordinateSystemShouldThrowNPE(){
-        range.convertRange(null);
-    }
+  
     
     @Test
     public void iterator(){

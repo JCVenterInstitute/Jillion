@@ -24,7 +24,6 @@
 package org.jcvi.common.core.assembly.util;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -45,12 +44,6 @@ public class TestAssemblyUtil_reverseComplimentRange {
     @Test(expected = IllegalArgumentException.class)
     public void fullLengthSmallerThanValidRangeShouldThrowIllegalArgumentException(){
         AssemblyUtil.reverseComplimentValidRange(range, range.size()-1);
-    }
-    
-    @Test
-    public void keepCoordinateSystem(){
-        Range spacedBasedRange = range.convertRange(CoordinateSystem.SPACE_BASED);
-        assertEquals(spacedBasedRange, AssemblyUtil.reverseComplimentValidRange(spacedBasedRange, range.size()));
     }
     
     @Test

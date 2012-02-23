@@ -67,16 +67,16 @@ public class AceReadPositionPrinter {
         protected void visitAceRead(String readId, String validBasecalls,
                 int offset, Direction dir, Range validRange, PhdInfo phdInfo,
                 int ungappedFullLength) {
-            Range gappedOneBasedRange = Range.buildRangeOfLength(offset, validBasecalls.length()).convertRange(CoordinateSystem.RESIDUE_BASED);
+            Range gappedOneBasedRange = Range.buildRangeOfLength(offset, validBasecalls.length());
             int nonGapStartPosition = AssemblyUtil.getRightFlankingNonGapIndex(consensus, (int)gappedOneBasedRange.getStart());
             
             int nonGapEndPosition = AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)gappedOneBasedRange.getEnd());
             Range unGappedOneBasesRange = Range.buildRange(
                     consensus.getUngappedOffsetFor(nonGapStartPosition),
-                    consensus.getUngappedOffsetFor(nonGapEndPosition)).convertRange(CoordinateSystem.RESIDUE_BASED);
+                    consensus.getUngappedOffsetFor(nonGapEndPosition));
             System.out.printf("%s\t%s\t%d\t%d\t%d\t%d\t%s%n", currentContigId, readId, 
-                    unGappedOneBasesRange.getLocalStart(), unGappedOneBasesRange.getLocalEnd(),
-                    gappedOneBasedRange.getLocalStart(), gappedOneBasedRange.getLocalEnd(),
+                    unGappedOneBasesRange.getStart(CoordinateSystem.RESIDUE_BASED), unGappedOneBasesRange.getEnd(CoordinateSystem.RESIDUE_BASED),
+                    gappedOneBasedRange.getStart(CoordinateSystem.RESIDUE_BASED), gappedOneBasedRange.getEnd(CoordinateSystem.RESIDUE_BASED),
                     dir.getCode());
             
         }
