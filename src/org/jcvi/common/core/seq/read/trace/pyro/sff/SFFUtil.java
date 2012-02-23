@@ -212,11 +212,11 @@ private SFFUtil(){}
         Range adapterClip = flowgram.getAdapterClip();
         long numberOfBases = flowgram.getBasecalls().getLength();
         long firstBaseOfInsert = Math.max(1,
-                        Math.max(qualityClip.getLocalStart(), 
-                                adapterClip.getLocalStart()));
+                        Math.max(qualityClip.getStart(CoordinateSystem.RESIDUE_BASED), 
+                                adapterClip.getStart(CoordinateSystem.RESIDUE_BASED)));
         long lastBaseOfInsert = Math.min(
-                qualityClip.getLocalEnd()==0?numberOfBases:qualityClip.getLocalEnd(), 
-                        adapterClip.getLocalEnd()==0?numberOfBases:adapterClip.getLocalEnd());
+                qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED), 
+                        adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED));
         
         return Range.buildRange(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
     }
@@ -225,11 +225,11 @@ private SFFUtil(){}
         Range adapterClip = readHeader.getAdapterClip();
         long numberOfBases = readHeader.getNumberOfBases();
         long firstBaseOfInsert = Math.max(1,
-                        Math.max(qualityClip.getLocalStart(), 
-                                adapterClip.getLocalStart()));
+                        Math.max(qualityClip.getStart(CoordinateSystem.RESIDUE_BASED), 
+                                adapterClip.getStart(CoordinateSystem.RESIDUE_BASED)));
         long lastBaseOfInsert = Math.min(
-                qualityClip.getLocalEnd()==0?numberOfBases:qualityClip.getLocalEnd(), 
-                        adapterClip.getLocalEnd()==0?numberOfBases:adapterClip.getLocalEnd());
+                qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED), 
+                        adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED));
         
         return Range.buildRange(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
     }

@@ -171,16 +171,16 @@ public class Frg2Writer {
         
     }
     private void writeFrag(Fragment frag, OutputStream out) throws IOException {
-        Range clearRange = frag.getValidRange().convertRange(CoordinateSystem.SPACE_BASED);
-        Range vectorClearRange = frag.getVectorClearRange().convertRange(CoordinateSystem.SPACE_BASED);
+        Range clearRange = frag.getValidRange();
+        Range vectorClearRange = frag.getVectorClearRange();
         Library library = frag.getLibrary();
        out.write(String.format(FRG_2_FORMAT, frag.getId(),
                library.getId(),
                writeSourceComment(frag),
                Nucleotides.asString(frag.getBasecalls().asList()),
                new String(QUALITY_CODEC.encode(frag.getQualities().asList()),IOUtil.UTF_8),
-               vectorClearRange.getLocalStart(),vectorClearRange.getLocalEnd(),
-               clearRange.getLocalStart(),clearRange.getLocalEnd()
+               vectorClearRange.getStart(CoordinateSystem.SPACE_BASED),vectorClearRange.getEnd(CoordinateSystem.SPACE_BASED),
+               clearRange.getStart(CoordinateSystem.SPACE_BASED),clearRange.getEnd(CoordinateSystem.SPACE_BASED)
                ).getBytes(IOUtil.UTF_8));
         
     }

@@ -154,8 +154,8 @@ public class AceFileUtil {
 
         
        return String.format("QA %d %d %d %d",
-                gappedValidRange.getLocalStart(), gappedValidRange.getLocalEnd(),
-                gappedValidRange.getLocalStart(), gappedValidRange.getLocalEnd()
+                gappedValidRange.getStart(CoordinateSystem.RESIDUE_BASED), gappedValidRange.getEnd(CoordinateSystem.RESIDUE_BASED),
+                gappedValidRange.getStart(CoordinateSystem.RESIDUE_BASED), gappedValidRange.getEnd(CoordinateSystem.RESIDUE_BASED)
                 );
     }
     private static Range buildGappedValidRangeFor(Range ungappedValidRange, int numberOfGaps,Direction dir, long ungappedFullLength){
@@ -167,7 +167,7 @@ public class AceFileUtil {
             gappedValidRange = AssemblyUtil.reverseComplimentValidRange(gappedValidRange, ungappedFullLength+numberOfGaps);
            
         }
-        return gappedValidRange.convertRange(CoordinateSystem.RESIDUE_BASED);
+        return gappedValidRange;
     }
     public static String createAcePlacedReadRecord(String readId, PlacedRead placedRead, Phd phd, PhdInfo phdInfo){
         

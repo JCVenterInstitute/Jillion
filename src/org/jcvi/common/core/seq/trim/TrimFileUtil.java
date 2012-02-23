@@ -159,9 +159,10 @@ public final class TrimFileUtil {
         while(iter.hasNext()){
             final String id = iter.next();
             //force residue based
-            Range trimRange = datastore.get(id)
-                        .convertRange(CoordinateSystem.RESIDUE_BASED);
-            out.write(String.format("%s\t%d\t%d%n",id,trimRange.getLocalStart(), trimRange.getLocalEnd()).getBytes(IOUtil.UTF_8));
+            Range trimRange = datastore.get(id);
+            out.write(String.format("%s\t%d\t%d%n",id,
+            		trimRange.getStart(CoordinateSystem.RESIDUE_BASED), 
+            		trimRange.getEnd(CoordinateSystem.RESIDUE_BASED)).getBytes(IOUtil.UTF_8));
         }
     }
 }

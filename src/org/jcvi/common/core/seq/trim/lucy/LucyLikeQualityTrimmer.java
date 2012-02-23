@@ -103,7 +103,7 @@ public class LucyLikeQualityTrimmer {
         if(largestRange.size() < minGoodLength){
             return Range.buildEmptyRange(CoordinateSystem.RESIDUE_BASED,1);
         }
-        return largestRange.shiftRight(bracketedRegion.getStart()).convertRange(CoordinateSystem.RESIDUE_BASED);
+        return largestRange.shiftRight(bracketedRegion.getStart());
     }
 
 

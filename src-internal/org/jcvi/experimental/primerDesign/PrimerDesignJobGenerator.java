@@ -230,11 +230,11 @@ public class PrimerDesignJobGenerator {
         try {
             writer = new PrintWriter(featuresFile);
             for ( PrimerDesignTarget target : targets ) {
-                Range targetRange = target.getRange().convertRange(FEATURE_FILE_COORDINATE_SYSTEM);
+                Range targetRange = target.getRange();
                 writer.format("%s\t%d\t%d\n",
                         target.getID(),
-                        targetRange.getLocalStart(),
-                        targetRange.getLocalEnd());
+                        targetRange.getStart(FEATURE_FILE_COORDINATE_SYSTEM),
+                        targetRange.getEnd(FEATURE_FILE_COORDINATE_SYSTEM));
             }
             writer.flush();
         } catch (Exception e) {

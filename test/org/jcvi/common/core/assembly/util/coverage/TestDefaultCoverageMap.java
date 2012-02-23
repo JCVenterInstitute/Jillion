@@ -302,28 +302,5 @@ public class TestDefaultCoverageMap {
 
     }
     
-    @Test
-    public void checkAlternateCoordinateSystemRanges()
-    {
-        long residueStart = 1;
-        long residueStop = 100;
-        Range residueRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, residueStart, residueStop);
-        Range zeroRange = residueRange.convertRange(CoordinateSystem.ZERO_BASED);
-        
-        CoverageMap<CoverageRegion<Placed>> map = new DefaultCoverageMap.Builder<Placed>(
-                Arrays.asList((Placed)zeroRange)).build();
-        
-        List<CoverageRegion<Placed>> regions = map.getRegions();
-        assertEquals(1, regions.size());
-        assertEquals(0, regions.get(0).getStart());
-        assertEquals(99, regions.get(0).getEnd());
-        
-        CoverageMap<CoverageRegion<Placed>> residueMap = new DefaultCoverageMap.Builder<Placed>(
-                Arrays.asList((Placed)residueRange)).build();
-        
-        List<CoverageRegion<Placed>> residueRegions = residueMap.getRegions();
-        assertEquals(1, residueRegions.size());
-        assertEquals(0, residueRegions.get(0).getStart());
-        assertEquals(99, residueRegions.get(0).getEnd());
-    }
+    
 }

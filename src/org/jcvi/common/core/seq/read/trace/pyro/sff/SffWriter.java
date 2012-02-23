@@ -107,10 +107,9 @@ public class SffWriter {
             out.write(SFFUtil.EMPTY_CLIP_BYTES);
          }
          else{
-             Range oneBasedClip = clip.convertRange(CoordinateSystem.RESIDUE_BASED);
         
-            out.write(IOUtil.convertUnsignedShortToByteArray((int)oneBasedClip.getLocalStart()));
-            out.write(IOUtil.convertUnsignedShortToByteArray((int)oneBasedClip.getLocalEnd()));
+            out.write(IOUtil.convertUnsignedShortToByteArray((int)clip.getStart(CoordinateSystem.RESIDUE_BASED)));
+            out.write(IOUtil.convertUnsignedShortToByteArray((int)clip.getEnd(CoordinateSystem.RESIDUE_BASED)));
         }
         
     }

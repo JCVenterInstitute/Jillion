@@ -441,26 +441,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
         //to ensure uniqueness in our cache.
         return r.toString();
     }
-    /**
-     * Create a new Range object which represents
-     * the range values but converted into a different
-     * coordinate system
-     * @param coordinateSystem the coordinate system to convert to.
-     * @return a new Range with the same start and end but converted
-     * to the new coordinate system.
-     * @throws NullPointerException if the coordinateSystem is null.
-     */
-    public Range convertRange(CoordinateSystem coordinateSystem) {
-        if ( coordinateSystem == null ) {
-            throw new NullPointerException("Cannot convert to a null range coordinate system");
-        }
-        if(coordinateSystem.equals(this.coordinateSystem)){
-            return this;
-        }
-        Range range = new Range(getStart(), getEnd(), coordinateSystem);
-        return getFromCache(range);
-        //return Range.buildRange(coordinateSystem, coordinateSystem.getLocalStart(getStart()),coordinateSystem.getLocalEnd(getEnd()));
-    }
+   
     /**
      * Build and empty range in the zero-based coordinate system
      * at coordinate 0.
@@ -530,16 +511,14 @@ public final class Range implements Placed<Range>,Iterable<Long>
             throw new NullPointerException("Cannot build null coordinate system range");
         }
     	long zeroBasedStart = coordinateSystem.getStart(localStart);
-        Range zeroBasedRange = buildRange(CoordinateSystem.ZERO_BASED,zeroBasedStart,zeroBasedStart+length-1);
-        return zeroBasedRange.convertRange(coordinateSystem);
+        return buildRange(CoordinateSystem.ZERO_BASED,zeroBasedStart,zeroBasedStart+length-1);
     }
     public static Range buildRangeOfLengthFromEndCoordinate(long end, long rangeSize){
         return buildRangeOfLengthFromEndCoordinate(CoordinateSystem.ZERO_BASED,end,rangeSize);
     }
     public static Range buildRangeOfLengthFromEndCoordinate(CoordinateSystem system,long end, long rangeSize){
         long zeroBasedEnd = system.getEnd(end);
-        Range zeroBasedRange = buildRange(CoordinateSystem.ZERO_BASED,zeroBasedEnd-rangeSize+1,zeroBasedEnd);
-        return zeroBasedRange.convertRange(system);
+        return buildRange(CoordinateSystem.ZERO_BASED,zeroBasedEnd-rangeSize+1,zeroBasedEnd);
     }
     /**
      * Return a single
@@ -655,12 +634,6 @@ public final class Range implements Placed<Range>,Iterable<Long>
     
     private final boolean isEmpty;
 
-    /**
-     * Object used to convert zero base coordinate system values to
-     * the appropriate coordinate system values
-     */
-    private final CoordinateSystem coordinateSystem;
-
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -700,17 +673,28 @@ public final class Range implements Placed<Range>,Iterable<Long>
         this.start = start;
         this.end = end;
         this.isEmpty = end-start==-1;
-        this.coordinateSystem = rangeCoordinateSystem;
+    }
+    /**
+     * Fetch the left (start) coordinate using the given 
+     * {@link CoordinateSystem}.
+     *
+     * @return The left-hand (starting) coordinate.
+     * @throws NullPointerException if the given {@link CoordinateSystem} is null.
+     */
+    public long getStart() {
+        return start;
     }
     /**
      * Fetch the left (start) coordinate.
      *
      * @return The left-hand (starting) coordinate.
      */
-    public long getStart() {
-        return start;
+    public long getStart(CoordinateSystem cs) {
+    	if(cs==null){
+    		throw new NullPointerException("CoordinateSystem can not be null");
+    	}
+        return cs.getLocalStart(start);
     }
-
     /**
      * Fetch the right (end) coordinate.
      *
@@ -719,18 +703,18 @@ public final class Range implements Placed<Range>,Iterable<Long>
     public long getEnd() {
         return end;
     }
-
-    public CoordinateSystem getCoordinateSystem() {
-        return coordinateSystem;
-    }
-
-
-    public long getLocalStart() {
-        return coordinateSystem.getLocalStart(start);
-    }
-
-    public long getLocalEnd() {
-        return coordinateSystem.getLocalEnd(end);
+    /**
+     * Fetch the right (end) coordinate using the given 
+     * {@link CoordinateSystem}.
+     *
+     * @return The right-hand (ending) coordinate.
+     * @throws NullPointerException if the given {@link CoordinateSystem} is null.
+     */
+    public long getEnd(CoordinateSystem cs) {
+    	if(cs==null){
+    		throw new NullPointerException("CoordinateSystem can not be null");
+    	}
+        return cs.getLocalEnd(end);
     }
 
     /**
@@ -750,8 +734,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @return a new Range (not null)
      */
     public Range shiftLeft(long units){
-        return Range.buildRangeOfLength(this.start-units, this.size())
-                .convertRange(coordinateSystem);
+        return Range.buildRangeOfLength(this.start-units, this.size());
     }
     /**
      * Create a new Range of the same size
@@ -760,8 +743,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @return a new Range (not null)
      */
     public Range shiftRight(long units){
-        return Range.buildRangeOfLength(this.start+units, this.size())
-            .convertRange(coordinateSystem);
+        return Range.buildRangeOfLength(this.start+units, this.size());
     }
     /**
      * Checks if this range is empty.
@@ -861,15 +843,14 @@ public final class Range implements Placed<Range>,Iterable<Long>
         try{
             long intersectionStart = Math.max(target.getStart(), this.start);
 			long intersectionEnd = Math.min(target.getEnd(), this.end);
-			Range zeroBasedRange = Range.buildRange(intersectionStart,
+			return  Range.buildRange(intersectionStart,
                             intersectionEnd);
-			return zeroBasedRange.convertRange(getCoordinateSystem());
         }
         catch(NullPointerException npe){
         	throw npe;
         }
         catch(IllegalArgumentException e){
-            return buildEmptyRange().convertRange(getCoordinateSystem());
+            return buildEmptyRange();
         }
 
     }
@@ -1005,7 +986,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      */
     public Range grow(long fromStart, long fromEnd)
     {
-        return Range.buildRange(this.getCoordinateSystem(), this.getStart() - fromStart, this.getEnd() + fromEnd);
+        return Range.buildRange(this.getStart() - fromStart, this.getEnd() + fromEnd);
     }
     
     /**
@@ -1050,18 +1031,32 @@ public final class Range implements Placed<Range>,Iterable<Long>
     }
 
     /**
-     * Returns a String represenatation of this Range in local coordinates.
-     * The actual format is {@code [localStart - localEnd]/systemAbbreviatedName}
+     * Convenience method that delegates to
+     * {@link #toString(CoordinateSystem)} using {@link CoordinateSystem#ZERO_BASED}.
+     * 
+     * @see #toString(CoordinateSystem)
+     * 
      */
     @Override
     public String toString()
     {
-        return String.format("[ %d - %d ]/%s", 
-                this.getLocalStart() ,this.getLocalEnd() ,
-            getCoordinateSystem().getAbbreviatedName());
+        return toString(CoordinateSystem.ZERO_BASED);
     }
-  
-    
+    /**
+     * Returns a String representation of this Range in given coordinate system.
+     * The actual format is {@code [localStart - localEnd]/systemAbbreviatedName}
+     * @throws NullPointerException if coordinateSystem is null.
+     */
+    public String toString(CoordinateSystem coordinateSystem)
+    {
+    	if(coordinateSystem ==null){
+    		throw new NullPointerException("coordinateSystem can not be null");
+    	}
+        return String.format("[ %d - %d ]/%s", 
+        		coordinateSystem.getLocalStart(start) ,
+        		coordinateSystem.getLocalEnd(end),
+                coordinateSystem.getAbbreviatedName());
+    }
    
 
     @Override
@@ -1167,51 +1162,35 @@ public final class Range implements Placed<Range>,Iterable<Long>
         }
         List<Range> sortedSplitCopy = new ArrayList<Range>();
         for(Range range : rangesToMerge){
-            sortedSplitCopy.addAll(range.split(maxClusterDistance,coordinateSystem));
+            sortedSplitCopy.addAll(range.split(maxClusterDistance));
         }        
         
-        privateMergeAnyRangesThatCanBeClustered(sortedSplitCopy, maxClusterDistance,coordinateSystem);
+        privateMergeAnyRangesThatCanBeClustered(sortedSplitCopy, maxClusterDistance);
         return sortedSplitCopy;
     }
+   
     /**
      * Splits a Range into a List of possibly several adjacent Range objects
-     * where each of the returned ranges has a max length specified in the current
-     * coordinate system.
+     * where each of the returned ranges has a max length specified.
      * @param maxSplitLength the max length any of the returned split ranges can be.
      * @return a List of split Ranges; never null or empty but may
      * just be a single element if this Range is smaller than the max length
      * specified.
      */
     public List<Range> split(long maxSplitLength){
-        return split(maxSplitLength, getCoordinateSystem());
-    }
-    /**
-     * Splits a Range into a List of possibly several adjacent Range objects
-     * where each of the returned ranges has a max length specified in the specified
-     * coordinate system.
-     * @param maxSplitLength the max length any of the returned split ranges can be.
-     * @param coordinateSystem the coordinate system each of the returned
-     * split ranges should be in.
-     * @return a List of split Ranges; never null or empty but may
-     * just be a single element if this Range is smaller than the max length
-     * specified.
-     */
-    public List<Range> split(long maxSplitLength, CoordinateSystem coordinateSystem){
         if(size()<maxSplitLength){
-            return Collections.singletonList(this.convertRange(coordinateSystem));
+            return Collections.singletonList(this);
         }
         long currentStart=getStart();
         List<Range> list = new ArrayList<Range>();
         while(currentStart<=getEnd()){
             long endCoordinate = Math.min(getEnd(), currentStart+maxSplitLength-1);
-            list.add(Range.buildRange(currentStart, endCoordinate)
-                        .convertRange(coordinateSystem));
+            list.add(Range.buildRange(currentStart, endCoordinate));
             currentStart = currentStart+maxSplitLength;
         }
         return list;
     }
-    private static void privateMergeAnyRangesThatCanBeClustered(List<Range> rangesToMerge, int maxClusterDistance,
-            CoordinateSystem coordinateSystem) {
+    private static void privateMergeAnyRangesThatCanBeClustered(List<Range> rangesToMerge, int maxClusterDistance) {
         boolean merged;
         do{
             merged = false;
@@ -1221,7 +1200,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
                 final Range combinedRange = Range.buildInclusiveRange(range,nextRange);
                 if(combinedRange.size()<= maxClusterDistance){
                     //can be combined
-                    replaceWithCombined(rangesToMerge,range, nextRange,coordinateSystem);
+                    replaceWithCombined(rangesToMerge,range, nextRange);
                     merged= true;
                     break;
                 }                
@@ -1238,15 +1217,15 @@ public final class Range implements Placed<Range>,Iterable<Long>
                 Range clusteredRange = Range.buildRange(range.getStart()-clusterDistance, range.getEnd()+clusterDistance);
                 Range nextRange = rangesToMerge.get(i+1);
                 if(clusteredRange.intersects(nextRange) || clusteredRange.shiftRight(1).intersects(nextRange)){
-                    replaceWithCombined(rangesToMerge,range, nextRange,coordinateSystem);
+                    replaceWithCombined(rangesToMerge,range, nextRange);
                     merged= true;
                     break;
                 }
             }
         }while(merged);
     }
-    private static void replaceWithCombined(List<Range> rangeList, Range range, Range nextRange,CoordinateSystem coordinateSystem) {
-        final Range combinedRange = Range.buildInclusiveRange(range,nextRange).convertRange(coordinateSystem);
+    private static void replaceWithCombined(List<Range> rangeList, Range range, Range nextRange) {
+        final Range combinedRange = Range.buildInclusiveRange(range,nextRange);
         int index =rangeList.indexOf(range);
         rangeList.remove(range);
         rangeList.remove(nextRange);

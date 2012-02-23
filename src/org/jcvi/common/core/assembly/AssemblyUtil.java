@@ -124,7 +124,7 @@ public final class AssemblyUtil {
         }
         long newStart = fullLength - validRange.getEnd()-1;
         long newEnd = fullLength - validRange.getStart()-1;
-        return Range.buildRange(newStart, newEnd).convertRange(validRange.getCoordinateSystem());
+        return Range.buildRange(newStart, newEnd);
     }
     /**
      * Convert the given gapped valid range offset of a given read into its
@@ -221,7 +221,7 @@ public final class AssemblyUtil {
         return Range.buildRange(
                 gappedSequence.getUngappedOffsetFor((int)gappedRange.getStart()),
                 gappedSequence.getUngappedOffsetFor((int)gappedRange.getEnd())
-                ).convertRange(gappedRange.getCoordinateSystem());
+                );
         
     }
     /**

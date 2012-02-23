@@ -97,18 +97,16 @@ public class TestSffWriter {
             buf.put(SFFUtil.EMPTY_CLIP_BYTES);
         }
         else{
-            Range residueConverted = qClip.convertRange(CoordinateSystem.RESIDUE_BASED);
-            buf.putShort((short)residueConverted.getLocalStart());
-            buf.putShort((short)residueConverted.getLocalEnd());
+            buf.putShort((short)qClip.getStart(CoordinateSystem.RESIDUE_BASED));
+            buf.putShort((short)qClip.getEnd(CoordinateSystem.RESIDUE_BASED));
         }
         final Range aClip = readHeader.getAdapterClip();
         if(aClip==null){
             buf.put(SFFUtil.EMPTY_CLIP_BYTES);
         }
         else{
-            Range residueConverted = aClip.convertRange(CoordinateSystem.RESIDUE_BASED);
-            buf.putShort((short)residueConverted.getLocalStart());
-            buf.putShort((short)residueConverted.getLocalEnd());
+            buf.putShort((short)aClip.getStart(CoordinateSystem.RESIDUE_BASED));
+            buf.putShort((short)aClip.getEnd(CoordinateSystem.RESIDUE_BASED));
         }
         buf.put(readHeader.getName().getBytes());
         return buf.array();

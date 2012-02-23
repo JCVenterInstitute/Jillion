@@ -89,8 +89,8 @@ public class ConsedNavigationWriter implements Closeable{
         StringBuilder builder = new StringBuilder("BEGIN_REGION\n");
         builder.append(String.format("TYPE: %s\n",element.getType()));
         builder.append(String.format("READ: %s\n",element.getTargetId()));
-        Range range = element.getUngappedPositionRange().convertRange(CoordinateSystem.RESIDUE_BASED);
-        builder.append(String.format("UNPADDED_READ_POS: %d %d\n",range.getLocalStart(), range.getLocalEnd()));
+        Range range = element.getUngappedPositionRange();
+        builder.append(String.format("UNPADDED_READ_POS: %d %d\n",range.getStart(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)));
         String comment = element.getComment();
         //consed requires a comment line even if it is empty
         builder.append(String.format("COMMENT: %s\n",comment==null? "": comment));
@@ -103,8 +103,8 @@ public class ConsedNavigationWriter implements Closeable{
         StringBuilder builder = new StringBuilder("BEGIN_REGION\n");
         builder.append(String.format("TYPE: %s\n",element.getType()));
         builder.append(String.format("CONTIG: %s\n",element.getTargetId()));
-        Range range = element.getUngappedPositionRange().convertRange(CoordinateSystem.RESIDUE_BASED);
-        builder.append(String.format("UNPADDED_CONS_POS: %d %d\n",range.getLocalStart(), range.getLocalEnd()));
+        Range range = element.getUngappedPositionRange();
+        builder.append(String.format("UNPADDED_CONS_POS: %d %d\n",range.getStart(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)));
         String comment = element.getComment();
         //consed requires a comment line even if it is empty
         builder.append(String.format("COMMENT: %s\n",comment==null? "": comment));

@@ -139,7 +139,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
         for (Entry<R, Range> entry : trimmedReads.entrySet()) {
             trims.add(new DefaultTrimmedPlacedRead<R>(
                     entry.getKey(), 
-                    entry.getValue().convertRange(CoordinateSystem.RESIDUE_BASED)));
+                    entry.getValue()));
         }
         return trims;
     }
@@ -267,25 +267,22 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
                 allChangedReads.addAll(trims);
                 for (TrimmedPlacedRead<PlacedRead> trim : allChangedReads) {
                     // force it to be residue based
-                    Range newtrimmedRange = trim.getNewTrimRange()
-                            .convertRange(CoordinateSystem.RESIDUE_BASED);
-                    Range oldTrimmedRange = trim.getRead().getValidRange()
-                            .convertRange(CoordinateSystem.RESIDUE_BASED);
+                    Range newtrimmedRange = trim.getNewTrimRange();
+                    Range oldTrimmedRange = trim.getRead().getValidRange();
                     String readId = trim.getRead().getId();
-                    long rightDelta = newtrimmedRange.getLocalEnd() - oldTrimmedRange.getLocalEnd();
+                    long rightDelta = newtrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED) - oldTrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED);
                     long displayRight;
                     if (rightDelta == 0) {
                         displayRight = trimMap.getReadTrimFor(readId)
-                                .getTrimRange(TrimType.CLB).convertRange(
-                                        CoordinateSystem.RESIDUE_BASED)
-                                .getLocalEnd();
+                                .getTrimRange(TrimType.CLB)
+                                .getEnd(CoordinateSystem.RESIDUE_BASED);
                     } else {
-                        displayRight = newtrimmedRange.getLocalEnd();
+                        displayRight = newtrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED);
                     }
                     System.out.println(String.format("%s\t%d\t%d\t%d\t%d",
-                            readId, newtrimmedRange.getLocalStart(), displayRight,
-                            newtrimmedRange.getLocalStart()
-                                    - oldTrimmedRange.getLocalStart(), rightDelta));
+                            readId, newtrimmedRange.getStart(CoordinateSystem.RESIDUE_BASED), displayRight,
+                            newtrimmedRange.getStart(CoordinateSystem.RESIDUE_BASED)
+                                    - oldTrimmedRange.getStart(CoordinateSystem.RESIDUE_BASED), rightDelta));
                 }
                 
             }

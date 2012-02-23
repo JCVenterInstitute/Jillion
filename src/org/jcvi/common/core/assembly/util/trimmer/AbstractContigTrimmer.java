@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
@@ -89,14 +88,14 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
             final Range ungappedNewValidRange;
             if(placedRead.getDirection()==Direction.FORWARD){
                 int numberOfGapsTrimmedOff= originalGappedValidBases.getNumberOfGapsUntil((int)newTrimRange.getStart());
-                ungappedNewValidRange = Range.buildRangeOfLength(oldValidRange.getStart()+ newTrimRange.getStart()-numberOfGapsTrimmedOff, ungappedLength).convertRange(CoordinateSystem.RESIDUE_BASED);
+                ungappedNewValidRange = Range.buildRangeOfLength(oldValidRange.getStart()+ newTrimRange.getStart()-numberOfGapsTrimmedOff, ungappedLength);
                 
             }else{
                 int numberOfGapsTrimmedOffLeft = originalGappedValidBases.getNumberOfGapsUntil((int)newTrimRange.getStart());
                 long numberOfBasesTrimmedOffLeft = newTrimRange.getStart()-numberOfGapsTrimmedOffLeft;
                 
                 long numberOfBasesTrimmedOffRight = originalGappedValidBases.getUngappedLength() -ungappedLength-numberOfBasesTrimmedOffLeft;
-                ungappedNewValidRange = Range.buildRange(oldValidRange.getStart()+numberOfBasesTrimmedOffRight, oldValidRange.getEnd()- numberOfBasesTrimmedOffLeft).convertRange(CoordinateSystem.RESIDUE_BASED);    
+                ungappedNewValidRange = Range.buildRange(oldValidRange.getStart()+numberOfBasesTrimmedOffRight, oldValidRange.getEnd()- numberOfBasesTrimmedOffLeft);    
             }
             
             trimRead(placedRead, newOffset, trimmedSequence.toString(),ungappedNewValidRange);

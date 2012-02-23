@@ -136,7 +136,7 @@ public class DetectAbacusErrorsContigWorker {
        
         out.println("found "+ errorRanges.size() + " abacus errors");
         for(Range errorRange : errorRanges){
-            Range residueBasedRange = errorRange.convertRange(CoordinateSystem.RESIDUE_BASED);
+            Range residueBasedRange = errorRange;
             if(consedNavigationWriter !=null){
                 consedNavigationWriter.writeNavigationElement(new ConsensusNavigationElement(contigId, errorRange, "CA abacus error"));
             }

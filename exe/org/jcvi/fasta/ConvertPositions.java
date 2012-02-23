@@ -142,8 +142,8 @@ public class ConvertPositions {
                 }else{
                     coordinateRange = Range.parseRange(range,CoordinateSystem.ZERO_BASED);
                 }
-                int delta = (int)(coordinateRange.getLocalStart() - coordinateRange.getStart());
-                for(long coordinate = coordinateRange.getLocalStart(); coordinate <=coordinateRange.getLocalEnd(); coordinate ++){
+                int delta = (int)(coordinateRange.getStart(CoordinateSystem.RESIDUE_BASED) - coordinateRange.getStart());
+                for(long coordinate = coordinateRange.getStart(CoordinateSystem.RESIDUE_BASED); coordinate <=coordinateRange.getEnd(CoordinateSystem.RESIDUE_BASED); coordinate ++){
     
                     final int convertedCoordinate;
                     int deltaCoordinate = (int)coordinate+delta;

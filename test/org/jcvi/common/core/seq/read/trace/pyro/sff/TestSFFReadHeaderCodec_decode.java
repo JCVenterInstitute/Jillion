@@ -29,6 +29,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
@@ -91,10 +92,10 @@ public class TestSFFReadHeaderCodec_decode extends AbstractTestSFFReadHeaderCode
         putShort(mockInputStream,(short)(padds+unpaddedLength));
         putShort(mockInputStream,(short)nameLength);
         putInt(mockInputStream,readHeader.getNumberOfBases());
-        putShort(mockInputStream,(short)readHeader.getQualityClip().getLocalStart());
-        putShort(mockInputStream,(short)readHeader.getQualityClip().getLocalEnd());
-        putShort(mockInputStream,(short)readHeader.getAdapterClip().getLocalStart());
-        putShort(mockInputStream,(short)readHeader.getAdapterClip().getLocalEnd());
+        putShort(mockInputStream,(short)readHeader.getQualityClip().getStart(CoordinateSystem.RESIDUE_BASED));
+        putShort(mockInputStream,(short)readHeader.getQualityClip().getEnd(CoordinateSystem.RESIDUE_BASED));
+        putShort(mockInputStream,(short)readHeader.getAdapterClip().getStart(CoordinateSystem.RESIDUE_BASED));
+        putShort(mockInputStream,(short)readHeader.getAdapterClip().getEnd(CoordinateSystem.RESIDUE_BASED));
         expect(mockInputStream.read(isA(byte[].class), eq(0),eq(nameLength)))
             .andAnswer(EasyMockUtil.writeArrayToInputStream(seqName.getBytes()));
         
