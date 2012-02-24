@@ -624,11 +624,11 @@ public class TestRange{
     }
     @Test public void testToStringSpacedBasedCoordinate()
     {
-        assertEquals("[ 1 - 11 ]/RB", this.range.toString(CoordinateSystem.SPACE_BASED));
+        assertEquals("[ 1 - 11 ]/SB", this.range.toString(CoordinateSystem.SPACE_BASED));
     }
     @Test public void testToStringZeroBased()
     {
-        assertEquals("[ 1 - 10 ]/0B", this.range.toString(CoordinateSystem.SPACE_BASED));
+        assertEquals("[ 1 - 10 ]/0B", this.range.toString(CoordinateSystem.ZERO_BASED));
     }
     private String convertIntoString(Object left, Object right, String seperator){
         StringBuilder result = new StringBuilder();
