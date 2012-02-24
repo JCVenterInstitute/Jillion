@@ -673,28 +673,33 @@ public final class Range implements Placed<Range>,Iterable<Long>
         this.isEmpty = end-start==-1;
     }
     /**
-     * Fetch the left (start) coordinate using the given 
-     * {@link CoordinateSystem}.
+     * Fetch the left (start) coordinate This is the same as 
+     * {@link #getStart(CoordinateSystem)
+     * getStart(ZERO_BASED)}.
      *
      * @return The left-hand (starting) coordinate.
-     * @throws NullPointerException if the given {@link CoordinateSystem} is null.
+     * 
      */
     public long getStart() {
         return start;
     }
     /**
-     * Fetch the left (start) coordinate.
+     * Fetch the left (start) coordinate using the given 
+     * {@link CoordinateSystem}.  
      *
      * @return The left-hand (starting) coordinate.
+     * @throws NullPointerException if the given {@link CoordinateSystem} is null.
      */
-    public long getStart(CoordinateSystem cs) {
-    	if(cs==null){
+    public long getStart(CoordinateSystem coordinateSystem) {
+    	if(coordinateSystem==null){
     		throw new NullPointerException("CoordinateSystem can not be null");
     	}
-        return cs.getLocalStart(start);
+        return coordinateSystem.getLocalStart(start);
     }
     /**
-     * Fetch the right (end) coordinate.
+     * Fetch the 0-based right (end) coordinate.
+     * This is the same as {@link #getEnd(CoordinateSystem)
+     * getEnd(ZERO_BASED)}.
      *
      * @return The right-hand (ending) coordinate.
      */
@@ -708,11 +713,11 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @return The right-hand (ending) coordinate.
      * @throws NullPointerException if the given {@link CoordinateSystem} is null.
      */
-    public long getEnd(CoordinateSystem cs) {
-    	if(cs==null){
+    public long getEnd(CoordinateSystem coordinateSystem) {
+    	if(coordinateSystem==null){
     		throw new NullPointerException("CoordinateSystem can not be null");
     	}
-        return cs.getLocalEnd(end);
+        return coordinateSystem.getLocalEnd(end);
     }
 
     /**
