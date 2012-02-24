@@ -59,10 +59,9 @@ import org.jcvi.common.core.util.Caches;
  * </p>
  * Ranges can also use a different {@link CoordinateSystem} which may not follow these
  * guidelines.  This other coordinate system start and end values can be queried
- * via the {@link #getLocalStart()} and {@link #getLocalEnd()} methods.  
- * {@link CoordinateSystem}s can be specified either via the factory methods or a range 
- * can be converted into a different coordinate system via the {@link #convertRange(CoordinateSystem)}
- * method.
+ * via the {@link #getStart(CoordinateSystem)} and {@link #getEnd(CoordinateSystem)} methods.  
+ * {@link CoordinateSystem}s can be also be specified either via the factory methods
+ * during object construction.
  * 
  * <p/>
  * <strong>PLEASE NOTE</strong> Range objects should not be used
@@ -76,7 +75,7 @@ import org.jcvi.common.core.util.Caches;
  * ...
  * </pre>
  * @author dkatzel
- * @author jsitz
+ * @author jsitz@jcvi.org
  * 
  */
 public final class Range implements Placed<Range>,Iterable<Long>
@@ -930,45 +929,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
         return this.getEnd() < target.getStart();
     }
 
-    /**
-     * Constructs the union of two <code>Range</code>s.  If the {@link Range}s
-     * are disjoint (<code>this.{@link #intersects(Range)}</code> is
-     * <code>false</code>), then the result cannot be contained in a single
-     * <code>Range</code>.
-     *
-     * @param target The <code>Range</code> to union with this one.
-     * @return An array of <code>Range</code>s containing a {@link Range} to
-     * cover all values covered by either this or the comparison {@link Range}.
-     * <code>Range</code>s which intersect will have a union array with a
-     * single element, while disjoint <code>Range</code>s will have a union
-     * array of two elements.
-     */
-    public Range[] union(Range target)
-    {
-        
-        if (target == null)
-        {
-            throw new IllegalArgumentException("Null Range used in union operation.");
-        }
-        if(isEmpty()){
-            return new Range[]{target};
-        }
-        if (target.isEmpty())
-        {
-            /*
-             * Instead of defining empty set semantics here, we do it in the
-             * EmptyRange class
-             * -jsitz
-             */
-            return target.union(this);
-        }
-        if (this.intersects(target))
-        {
-            return handleUnionIntersection(target);
-        }
-        
-        return handleDisjointUnion(target);   
-    }
+    
     
     /**
      * Modifies the extent of a range by simultaneously adjusting its coordinates by specified
@@ -1008,27 +969,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
         return this.grow(-fromStart, -fromEnd);
     }
     
-    private Range[] handleDisjointUnion(Range target) {
-        Range[] ranges = new Range[2];
-
-        if (this.startsBefore(target))
-        {
-            ranges[0] = this;
-            ranges[1] = target;
-        }
-        else
-        {
-            ranges[0] = target;
-            ranges[1] = this;
-        }
-        return ranges;
-    }
-    private Range[] handleUnionIntersection(Range target) {
-        return new Range[]{Range.buildRange(
-                Math.min(this.getStart(), target.getStart()),
-               Math.max(this.getEnd(), target.getEnd())),};
-    }
-
+   
     /**
      * Convenience method that delegates to
      * {@link #toString(CoordinateSystem)} using {@link CoordinateSystem#ZERO_BASED}.
