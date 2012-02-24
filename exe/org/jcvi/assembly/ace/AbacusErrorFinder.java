@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.analysis.contig;
+package org.jcvi.assembly.ace;
 
 import java.util.ArrayList;
 import java.util.HashSet;
