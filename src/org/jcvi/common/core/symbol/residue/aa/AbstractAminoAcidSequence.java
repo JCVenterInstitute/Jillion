@@ -69,7 +69,7 @@ public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<
 		int count=0;
 		for(int i=0; i< aas.size(); i++){
 			if(aas.get(i) == AminoAcid.Gap){
-			count++;
+				count++;
 			}
 		}
 		return count;
