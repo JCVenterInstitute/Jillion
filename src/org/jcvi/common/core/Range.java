@@ -408,9 +408,9 @@ public final class Range implements Placed<Range>,Iterable<Long>
         long zeroBasedEnd = coordinateSystem.getEnd(localEnd);
         final Range range;
         if(zeroBasedEnd >= zeroBasedStart) {
-            range= new Range(zeroBasedStart,zeroBasedEnd,coordinateSystem);            
+            range= new Range(zeroBasedStart,zeroBasedEnd);            
         } else if (zeroBasedEnd == zeroBasedStart-1) {
-            range = buildEmptyRange(zeroBasedStart,zeroBasedEnd,coordinateSystem);
+            range = buildEmptyRange(zeroBasedStart,zeroBasedEnd);
         } else {
             throw new IllegalArgumentException("Range coordinates" + localStart + "," + localEnd
                 + " are not valid " + coordinateSystem + " coordinates");
@@ -436,7 +436,6 @@ public final class Range implements Placed<Range>,Iterable<Long>
 
     }
     private static String createCacheKeyFor(Range r){
-        //Range's hashcode causes too many collisions 
         //Range's toString() should be fine
         //to ensure uniqueness in our cache.
         return r.toString();
@@ -473,10 +472,10 @@ public final class Range implements Placed<Range>,Iterable<Long>
         
         long zeroBasedStart = coordinateSystem.getStart(coordinate);
 
-        return buildEmptyRange(zeroBasedStart,zeroBasedStart-1,coordinateSystem);
+        return buildEmptyRange(zeroBasedStart,zeroBasedStart-1);
     }
-    private static Range buildEmptyRange(long start,long end,CoordinateSystem coordinateSystem) {
-        return new Range(start,end,coordinateSystem);
+    private static Range buildEmptyRange(long start,long end) {
+        return new Range(start,end);
     }
     /**
      * Build a new Range object of in the Zero based coordinate
@@ -669,7 +668,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @param start The inclusive start coordinate.
      * @param end The inclusive end coordinate.
      */
-    private Range(long start, long end, CoordinateSystem rangeCoordinateSystem) {
+    private Range(long start, long end) {
         this.start = start;
         this.end = end;
         this.isEmpty = end-start==-1;
