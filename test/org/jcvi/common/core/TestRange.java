@@ -37,7 +37,6 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.junit.Test;
 
 public class TestRange{
-
     private Range range = Range.buildRange(1,10);
     private Range emptyRange = Range.buildRange(0, -1);
     @Test
@@ -613,86 +612,23 @@ public class TestRange{
         }
     }
 
-    private void assertRangesEqual(Range[] expected, Range[] actual)
-    {
-        assertEquals("Range array lengths don't match.", expected.length, actual.length);
-        for (int i = 0; i < expected.length; i++)
-        {
-            assertEquals(expected[i], actual[i]);
-        }
-    }
-
-    private Range[] rangeArray(Range ... ranges)
-    {
-        return ranges;
-    }
-
-    @Test public void testUnion()
-    {
-        Range add = Range.buildRange(5, 15);
-        assertRangesEqual(rangeArray(Range.buildRange(1, 15)), this.range.union(add));
-    }
-    @Test public void testUnion_startsAfterTarget(){
-        Range target= Range.buildRange(this.range.getStart()-30,this.range.getStart()-10 );
-        assertRangesEqual(rangeArray(target,this.range), this.range.union(target));
-    }
-
-    @Test public void testUnion_disjoint()
-    {
-        Range add = Range.buildRange(15, 25);
-        assertRangesEqual(rangeArray(this.range, add), this.range.union(add));
-    }
-
-    @Test public void testUnion_subrange()
-    {
-        Range add = Range.buildRange(4, 8);
-        assertRangesEqual(rangeArray(this.range), this.range.union(add));
-    }
-
-    @Test public void testUnion_superrange()
-    {
-        Range add = Range.buildRange(-4, 18);
-        assertRangesEqual(rangeArray(add), this.range.union(add));
-    }
-
-    @Test public void testUnion_sizeOneBeginning()
-    {
-        Range add = Range.buildRange(1, 1);
-        assertRangesEqual(rangeArray(this.range), this.range.union(add));
-    }
-
-    @Test public void testUnion_sizeOneEnd()
-    {
-        Range add = Range.buildRange(10, 10);
-        assertRangesEqual(rangeArray(this.range), this.range.union(add));
-    }
-
-    @Test public void testUnion_empty()
-    {
-        assertRangesEqual(rangeArray(this.range), this.range.union(emptyRange));
-    }
-
-    @Test public void testUnion_self()
-    {
-        assertRangesEqual(rangeArray(this.range), this.range.union(this.range));
-    }
-
-    @Test public void testUnion_null()
-    {
-        try
-        {
-            this.range.union(null);
-            fail();
-        }
-        catch (IllegalArgumentException e)
-        {
-            // We expect this.
-        }
-    }
+   
 
     @Test public void testToString()
     {
         assertEquals("[ 1 - 10 ]/0B", this.range.toString());
+    }
+    @Test public void testToStringResidueBasedCoordinate()
+    {
+        assertEquals("[ 2 - 11 ]/RB", this.range.toString(CoordinateSystem.RESIDUE_BASED));
+    }
+    @Test public void testToStringSpacedBasedCoordinate()
+    {
+        assertEquals("[ 1 - 11 ]/RB", this.range.toString(CoordinateSystem.SPACE_BASED));
+    }
+    @Test public void testToStringZeroBased()
+    {
+        assertEquals("[ 1 - 10 ]/0B", this.range.toString(CoordinateSystem.SPACE_BASED));
     }
     private String convertIntoString(Object left, Object right, String seperator){
         StringBuilder result = new StringBuilder();

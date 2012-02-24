@@ -64,10 +64,5 @@ public class TestEmptyRange{
     public void testStartsBefore(){
         assertTrue(emptyRange.startsBefore(nonEmptyRange));
     }
-    @Test
-    public void testUnion(){
-        Range[] unionRanges = emptyRange.union(nonEmptyRange);
-        assertEquals(1,unionRanges.length);
-        assertSame(nonEmptyRange, unionRanges[0]);
-    }
+    
 }
