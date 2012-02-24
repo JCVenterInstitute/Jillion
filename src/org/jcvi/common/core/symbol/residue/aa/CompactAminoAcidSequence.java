@@ -10,7 +10,7 @@ import java.util.Collection;
  * @author dkatzel
  *
  */
-public class CompactAminoAcidSequence extends AbstractAminoAcidSequence {
+class CompactAminoAcidSequence extends AbstractAminoAcidSequence {
 
 	public CompactAminoAcidSequence(Collection<AminoAcid> glyphs) {
 		super(glyphs, CompactAminoAcidSequenceCodec.INSTANCE);

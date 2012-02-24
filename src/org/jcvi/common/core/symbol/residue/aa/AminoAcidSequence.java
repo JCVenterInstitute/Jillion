@@ -5,7 +5,7 @@ import org.jcvi.common.core.symbol.residue.ResidueSequence;
 
 /**
  * An {@code AminoAcidSequence} is a marker interface for
- * {@link Sequence}s that contain AminoAcids
+ * {@link Sequence}s that contain {@link AminoAcid}s
  *
  * @author dkatzel
  */

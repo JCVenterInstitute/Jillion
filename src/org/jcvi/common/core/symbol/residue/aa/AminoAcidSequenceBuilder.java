@@ -155,14 +155,24 @@ public class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAci
 
 	@Override
 	public AminoAcidSequence build() {
-		return new CompactAminoAcidSequence(builder.toString());
+		if(numberOfGaps>0){
+			return new CompactAminoAcidSequence(builder.toString());
+		}
+		return new UngappedAminoAcidSequence(builder.toString());
 	}
 
 	@Override
 	public AminoAcidSequence build(Range range) {
-		return new CompactAminoAcidSequence(builder.substring((int)range.getStart(), (int)range.getEnd()+1));
+		return build(builder.substring((int)range.getStart(), (int)range.getEnd()+1));
 	}
 
+	private AminoAcidSequence build(String seqToBuild){
+		if(numberOfGaps>0 && seqToBuild.indexOf('-')>0){
+			return new CompactAminoAcidSequence(seqToBuild);
+		}
+		//no gaps
+		return new UngappedAminoAcidSequence(seqToBuild);
+	}
 	@Override
 	public List<AminoAcid> asList(Range range) {
 		return AminoAcids.parse(builder.substring((int)range.getStart(), (int)range.getEnd()+1));
