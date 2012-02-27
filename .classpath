@@ -13,12 +13,6 @@
 	<classpathentry kind="src" path="primerDesign-src"/>
 	<classpathentry kind="src" path="primerDesign-test"/>
 	<classpathentry kind="src" path="examples"/>
-	<classpathentry exported="true" kind="lib" path="lib/cglib-nodep.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-cli-1.2.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://commons.apache.org/cli/api-release"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/commons-collections-3.2.1.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://commons.apache.org/collections/api"/>
@@ -31,33 +25,20 @@
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/finj-1.1.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.15.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib-internal/ChromatogramArchiver_client.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib-internal/EUIDService.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/activation.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://java.sun.com/javase/technologies/desktop/javabeans/glasgow/javadocs/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/mail.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://java.sun.com/products/javamail/javadocs/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/drmaa.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://gridscheduler.sourceforge.net/javadocs"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/JSAP-2.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="lib/objenesis-1.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/junit-4.8.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/joda-time-2.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/easymock-3.1.jar">
+	<classpathentry exported="true" kind="lib" path="test-lib/cglib-nodep.jar"/>
+	<classpathentry exported="true" kind="lib" path="test-lib/easymock-3.1.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://easymock.org/api/easymock/3.1"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="test-lib/junit-4.8.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="test-lib/objenesis-1.2.jar"/>
+	<classpathentry kind="lib" path="lib-internal/JSAP-2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="command-lib/commons-cli-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="command-lib/drmaa.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
