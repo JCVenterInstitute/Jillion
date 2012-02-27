@@ -10,10 +10,12 @@
 	<property name="test" value ="test"/>
 	<property name="test-internal" value ="test-internal"/>
 	<property name ="lib" value="lib"/>
+	<property name ="test-lib" value="test-lib"/>
 	<property name ="lib-internal" value="lib-internal"/>
 	<property name ="exe" value="exe"/>
 	<property name ="exe-internal" value="exe-internal"/>
 	<property name ="exe-test" value="exe-test"/>
+	<property name ="command-lib" value="command-lib"/>
 	
 	<!-- non-core packages -->
 	
@@ -84,11 +86,14 @@
     <path id="classpath">
         <fileset dir="${lib}" includes="**/*.jar"/>
     	<fileset dir="${lib-internal}" includes="**/*.jar"/>
+    	<fileset dir="${command-lib}" includes="**/*.jar"/>
     </path>
 	<path id ="test.classpath">
 		<fileset dir="${lib}" includes="**/*.jar"/>
-		<fileset dir="${lib-internal}" includes="**/*.jar"/>
+		<fileset dir="${test-lib}" includes="**/*.jar"/>
+		<fileset dir="${lib-internal}" includes="**/*.jar"/>		
 		<fileset dir="${analysis}" includes="**/*.jar"/>
+		<fileset dir="${command-lib}" includes="**/*.jar"/>
 		<pathelement path= "${bin}"/>
 		</path>
 
@@ -103,7 +108,7 @@
 	<target name="bin"
 	         description="Compile Java source and test files" depends="internal.source.only.bin">
 		<!-- source already compiled so only compile tests -->
-		<javac debug="true" destdir="${bin}"  classpathref="classpath">
+		<javac debug="true" destdir="${bin}"  classpathref="test.classpath">
 					<src path="${test}"/>
 					<src path="${test-internal}"/>
 					<src path="${exe}"/>
@@ -337,22 +342,21 @@
 		
 		    <jarjar jarfile="${project-name}-${version}-r${revision}.jar">
 		        <fileset dir="${bin}"/>
-		        
-		    	<zipfileset src="${lib}/easymock-3.1.jar"/>
-		    	<zipfileset src="${lib}/objenesis-1.2.jar"/>		    	
-		    	<zipfileset src="${lib}/cglib-nodep.jar"/>		    	
 		    	<zipfileset src="${lib}/log4j-1.2.15.jar"/>
 		    	<zipfileset src="${lib}/joda-time-2.0.jar"/>
-		    	<zipfileset src="${lib}/junit-4.8.2.jar"/>
-		    	
-		    	
 		    	<zipfileset src="${lib}/finj-1.1.5.jar"/>
 		    	
-		    	<zipfileset src="${lib}/commons-cli-1.2.jar"/>
 		    	<zipfileset src="${lib}/commons-collections-3.2.1.jar"/>
-		    	<zipfileset src="${lib}/commons-io-1.4.jar"/>
+		    	<zipfileset src="${lib}/commons-io-1.4.jar"/>		    	
 		    	
-		    	<zipfileset src="${lib}/drmaa.jar"/>
+		    	
+		    	<zipfileset src="${command-lib}/commons-cli-1.2.jar"/>
+		    	<zipfileset src="${command-lib}/drmaa.jar"/>
+		    	
+		    	<zipfileset src="${test-lib}/easymock-3.1.jar"/>
+		    	<zipfileset src="${test-lib}/objenesis-1.2.jar"/>		    	
+		    	<zipfileset src="${test-lib}/cglib-nodep.jar"/>	
+		    	<zipfileset src="${test-lib}/junit-4.8.2.jar"/>
 		    	
 		    	<zipfileset src="${lib-internal}/EUIDService.jar"/>
 		    	<zipfileset src="${lib-internal}/ChromatogramArchiver_client.jar"/>
