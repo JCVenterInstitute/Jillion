@@ -36,6 +36,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -819,25 +820,43 @@ public final class IOUtil {
     	}
     	return numBytesCopied;
     }
-    
+    /**
+     * Read the contents of the given {@link InputStream}
+     * using the default character encoding
+     * and return the entire contents of the stream
+     * as a String.  This method will not close the stream
+     * when it is done.  There is no need to buffer the {@link InputStream}
+     * since this method will buffer internally.
+     * @param in the inputStream to read as a String; can not be null.
+     * @return a String representing the contents of the given
+     * String using the default character encoding.
+     * @throws IOException if there is a problem reading the Stream.
+     * @throws NullPointerException if inputStream is null.
+     */
     public static String toString(InputStream in) throws IOException{
-    	StringWriter writer = new StringWriter();
-    	Reader reader = new InputStreamReader(in);
-    	char[] buf = new char[1024];
-    	while(in.available()>0){
-    		int numBytesRead =reader.read(buf);
-    		if(numBytesRead ==-1){
-    			break;
-    		}
-    		writer.write(buf, 0, numBytesRead);
-    	}
-    	return writer.toString();
+    	return toString(in,null);
     }
+    /**
+     * Read the contents of the given {@link InputStream}
+     * using the default character encoding
+     * and return the entire contents of the stream
+     * as a String.  This method will not close the stream
+     * when it is done.  There is no need to buffer the {@link InputStream}
+     * since this method will buffer internally.
+     * @param in the inputStream to read as a String; can not be null.
+     * @param encoding the name of the {@link Charset} encoding to use; if this value
+     * is null, then use the default as defined by {@link Charset#defaultCharset()}.
+     * @return a String representing the contents of the given
+     * String using the default character encoding.
+     * @throws IOException if there is a problem reading the Stream.
+     * @throws NullPointerException if inputStream is null.
+     * @throws UnsupportedEncodingException if the encoding name is not supported.
+     */
     public static String toString(InputStream in, String encoding) throws IOException{
     	StringWriter writer = new StringWriter();
     	final Reader reader;
     	if(encoding ==null){
-    		reader= new InputStreamReader(in);
+    		reader= new InputStreamReader(in,Charset.defaultCharset());
     	}else{
     		reader = new InputStreamReader(in,encoding);
     	}
@@ -854,9 +873,11 @@ public final class IOUtil {
     /**
      * Copy the contents of the given {@link InputStream}
      * and return it as a byte[].
-     * @param input
-     * @return
-     * @throws IOException
+     * @param input the inputStream to convert into a byte[].  
+     * This stream is not closed when the method finishes.
+     * @return a new byte array instance containing all the bytes
+     * from the given inputStream.
+     * @throws IOException if there is a problem reading the Stream.
      */
 	public static byte[] toByteArray(InputStream input) throws IOException {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
