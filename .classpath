@@ -13,11 +13,6 @@
 	<classpathentry kind="src" path="primerDesign-src"/>
 	<classpathentry kind="src" path="primerDesign-test"/>
 	<classpathentry kind="src" path="examples"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-collections-3.2.1.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://commons.apache.org/collections/api"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/finj-1.1.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib-internal/ChromatogramArchiver_client.jar"/>
