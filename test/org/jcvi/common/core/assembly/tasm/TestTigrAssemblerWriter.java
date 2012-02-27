@@ -21,11 +21,11 @@ package org.jcvi.common.core.assembly.tasm;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.apache.commons.io.IOUtils;
 import org.jcvi.common.core.assembly.tasm.DefaultTigrAssemblerFileContigDataStore;
 import org.jcvi.common.core.assembly.tasm.TigrAssemblerContigDataStore;
 import org.jcvi.common.core.assembly.tasm.TigrAssemblerWriter;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.io.fileServer.FileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -72,7 +72,7 @@ public class TestTigrAssemblerWriter {
     public void rewrittenTasmShouldMatchOriginalByteForByte() throws IOException{
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
     	TigrAssemblerWriter.write(tasmDataStore,out);
-    	byte[] expected = IOUtils.toByteArray(RESOURCES.getFileAsStream("files/giv-15050.tasm"));
+    	byte[] expected = IOUtil.toByteArray(RESOURCES.getFileAsStream("files/giv-15050.tasm"));
     	assertArrayEquals(expected, out.toByteArray());
     }
 }

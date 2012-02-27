@@ -23,9 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import org.apache.commons.io.FilenameUtils;
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDataStore;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
@@ -40,7 +40,7 @@ public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrac
     private final SangerTrace trace;
 
     public SingleSangerTraceFileDataStore(File traceFile) throws IOException{
-        this.id = FilenameUtils.getBaseName(traceFile.getName());
+        this.id = FileUtil.getBaseName(traceFile);
         this.trace =SangerTraceParser.INSTANCE.decode(traceFile);
     }
     /**

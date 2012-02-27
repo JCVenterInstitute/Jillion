@@ -42,7 +42,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.IOUtils;
 import org.jcvi.assembly.ace.ReAbacusAceContigWorker.AbacusFixerBuilder;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
@@ -183,12 +182,12 @@ public class MultiThreadedReAbacusAce {
                     String contigId = contigIdIter.next();
                     File tempFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);
                     InputStream in = new FileInputStream(tempFile);
-                    IOUtils.copy(in, out);
+                    IOUtil.copy(in, out);
                     IOUtil.closeAndIgnoreErrors(in);
                     tempFile.delete();
                 }
                 InputStream in = new ByteArrayInputStream(tagWriter.getTagOutputStream().toByteArray());
-                IOUtils.copy(in, out);
+                IOUtil.copy(in, out);
                 IOUtil.closeAndIgnoreErrors(in);
             }
         }catch(ParseException e){
@@ -237,7 +236,7 @@ public class MultiThreadedReAbacusAce {
         public Void call() throws Exception {
             OutputStream out = new FileOutputStream(outFile);
             InputStream inputStream = IOUtil.createInputStreamFromFile(inputAceFile,range);
-            IOUtils.copy(inputStream, out);
+            IOUtil.copy(inputStream, out);
             IOUtil.closeAndIgnoreErrors(inputStream,out);
             return null;
         }

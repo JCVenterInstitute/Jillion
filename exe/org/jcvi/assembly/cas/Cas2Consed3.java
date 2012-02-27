@@ -39,8 +39,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
@@ -287,7 +285,7 @@ public class Cas2Consed3 {
              File ace = new File(editDir, prefix+".ace.1");
              OutputStream out = new FileOutputStream(ace);
              out.write(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads).getBytes());
-             IOUtils.copyLarge(new FileInputStream(tempAce), out);
+             IOUtil.copy(new FileInputStream(tempAce), out);
              
              IOUtil.deleteIgnoreError(tempAce);
              if(!makePhdBall){
@@ -470,12 +468,12 @@ public class Cas2Consed3 {
 	            	    if(oldChromatogram.isHidden()){
 	            	        continue;
 	            	    }
-	            	    String newChromatName = FilenameUtils.getBaseName(oldChromatogram.getName());	            	    
+	            	    String newChromatName = FileUtil.getBaseName(oldChromatogram);	            	    
 	            	   
 	            		File newChromatogram = outputDir.createNewFile("chromat_dir/"+newChromatName);
 	            		InputStream in = new FileInputStream(oldChromatogram);
 	            		OutputStream out = new FileOutputStream(newChromatogram);
-	            		IOUtils.copy(in, out);
+	            		IOUtil.copy(in, out);
 	            		IOUtil.closeAndIgnoreErrors(in,out);
 	            	}
 	            }

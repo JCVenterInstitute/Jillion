@@ -24,8 +24,8 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.apache.commons.io.FilenameUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
@@ -77,7 +77,7 @@ public class PhdDirQualityDataStore implements PhdDataStore{
         int latestVersion= Integer.MIN_VALUE;
         File latestFile=null;
         for(File phd : phdDir.listFiles(new ReadPhdFileFilter(readId))){
-            int version = Integer.parseInt(FilenameUtils.getExtension(phd.getName()));
+            int version = Integer.parseInt(FileUtil.getExtension(phd.getName()));
             if(version>latestVersion){
                 latestVersion = version;
                 latestFile=phd;

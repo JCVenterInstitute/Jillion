@@ -32,7 +32,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignment;
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegion;
@@ -45,6 +44,7 @@ import org.jcvi.common.core.assembly.clc.cas.read.ReferenceCasFileNucleotideData
 import org.jcvi.common.core.assembly.trim.SffTrimDataStoreBuilder;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
+import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.IOUtil.ENDIAN;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
@@ -324,7 +324,7 @@ public final class CasUtil {
                public synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
                    super.visitReadFileInfo(readFileInfo);
                    for(String readFilename : readFileInfo.getFileNames()){
-                           String extension =FilenameUtils.getExtension(readFilename);
+                           String extension =FileUtil.getExtension(readFilename);
                            if("sff".equals(extension)){
                                try {
                                    SffParser.parseSFF(new File(casWorkingDirectory,readFilename), sffTrimDatastoreBuilder);

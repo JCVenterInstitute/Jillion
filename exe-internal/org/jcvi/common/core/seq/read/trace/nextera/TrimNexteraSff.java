@@ -27,8 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.SimpleDataStore;
@@ -102,7 +100,7 @@ public class TrimNexteraSff {
         InputStream in = null;
         try{
             in= new FileInputStream(tempReadDataFile);
-            IOUtils.copyLarge(in, out);
+            IOUtil.copy(in, out);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }

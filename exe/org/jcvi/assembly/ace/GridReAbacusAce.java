@@ -40,7 +40,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.IOUtils;
 import org.ggf.drmaa.DrmaaException;
 import org.ggf.drmaa.JobInfo;
 import org.ggf.drmaa.Session;
@@ -162,11 +161,11 @@ public class GridReAbacusAce {
             for(String contigId : visitor.getContigIds()){
                 File tempFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);
                 InputStream in = new FileInputStream(tempFile);
-                IOUtils.copy(in, out);
+                IOUtil.copy(in, out);
                 IOUtil.closeAndIgnoreErrors(in);
                 tempFile.delete();
             }
-            IOUtils.copy(new ByteArrayInputStream(visitor.getTagOutputStream().toByteArray()), out);
+            IOUtil.copy(new ByteArrayInputStream(visitor.getTagOutputStream().toByteArray()), out);
             
         }catch(ParseException e){
             System.err.println(e.getMessage());

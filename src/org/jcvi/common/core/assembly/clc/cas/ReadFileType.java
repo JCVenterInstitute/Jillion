@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.clc.cas;
 
 import java.io.File;
 
-import org.apache.commons.io.FilenameUtils;
+import org.jcvi.common.core.io.FileUtil;
 
 /**
  * @author dkatzel
@@ -39,7 +39,7 @@ public enum ReadFileType {
         return getTypeFromFile(readFile.getName());
     }
     public static ReadFileType getTypeFromFile(String readFileName){
-        String extension =FilenameUtils.getExtension(readFileName);
+        String extension =FileUtil.getExtension(readFileName);
         if("fastq".equals(extension) || readFileName.matches("\\S*/?s_+\\d+_sequence\\.txt")){
            return ILLUMINA;
         }if("sff".equals(extension)){

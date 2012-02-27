@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.io;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -31,7 +32,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -422,20 +426,7 @@ public final class IOUtil {
             buf.put((byte)array[i]);
         }
     }
-    /**
-     * Read the entire {@link InputStream} in and
-     * return it as a String, this does not close the stream
-     * @param in
-     * @return
-     * @throws IOException
-     */
-    public static String readStream(InputStream in)
-                                        throws IOException {
-        final ByteArrayOutputStream expectedOutStream = new ByteArrayOutputStream();
-        OutputStreamReader reader = new OutputStreamReader(expectedOutStream);
-        reader.read(in);
-        return expectedOutStream.toString(UTF_8_NAME);
-    }
+    
     public static byte[] readStreamAsBytes(InputStream in) throws IOException {
         final ByteArrayOutputStream expectedOutStream = new ByteArrayOutputStream();
         OutputStreamReader reader = new OutputStreamReader(expectedOutStream);
@@ -787,8 +778,91 @@ public final class IOUtil {
     	
     	return bits;
     }
-    
+    /**
+     * Convert the given single value into
+     * the corresponding {@link BitSet}
+     * using the <strong>least</strong>
+     * number of bits possible.
+     * For some reason {@link BitSet}
+     * Java API thru java 6 does not include methods for converting
+     * to and from a byte array.
+     * @param singleValue the value to convert.
+     * @return a new {@link BitSet} containing the same data as
+     * the given byte array.
+     */
     public static BitSet toBitSet(long singleValue){
     	return toBitSet(BigInteger.valueOf(singleValue).toByteArray());    	
     }
+    /**
+     * Copy the contents of the given inputStream to the given
+     * outputStream.  This method buffers internally so there is no
+     * need to use a {@link BufferedInputStream}.  This method 
+     * <strong>does not</strong> close either stream
+     * after processing.
+     * @param in the inputStream to read.
+     * @param out the outputStream to write to.
+     * @return the number of bytes that were copied.
+     * @throws IOException if there is a problem reading or writing
+     * the streams.
+     * @throws NullPointerException if either stream is null.
+     */
+    public static long copy(InputStream in, OutputStream out) throws IOException{
+    	byte[] buf = new byte[2048];
+    	long numBytesCopied=0;
+    	while(in.available()>0){
+    		int numBytesRead =in.read(buf);
+    		if(numBytesRead ==-1){
+    			break;
+    		}
+    		numBytesCopied+=numBytesRead;
+    		out.write(buf, 0, numBytesRead);
+    	}
+    	return numBytesCopied;
+    }
+    
+    public static String toString(InputStream in) throws IOException{
+    	StringWriter writer = new StringWriter();
+    	Reader reader = new InputStreamReader(in);
+    	char[] buf = new char[1024];
+    	while(in.available()>0){
+    		int numBytesRead =reader.read(buf);
+    		if(numBytesRead ==-1){
+    			break;
+    		}
+    		writer.write(buf, 0, numBytesRead);
+    	}
+    	return writer.toString();
+    }
+    public static String toString(InputStream in, String encoding) throws IOException{
+    	StringWriter writer = new StringWriter();
+    	final Reader reader;
+    	if(encoding ==null){
+    		reader= new InputStreamReader(in);
+    	}else{
+    		reader = new InputStreamReader(in,encoding);
+    	}
+    	char[] buf = new char[1024];
+    	while(in.available()>0){
+    		int numBytesRead =reader.read(buf);
+    		if(numBytesRead ==-1){
+    			break;
+    		}
+    		writer.write(buf, 0, numBytesRead);
+    	}
+    	return writer.toString();
+    }
+    /**
+     * Copy the contents of the given {@link InputStream}
+     * and return it as a byte[].
+     * @param input
+     * @return
+     * @throws IOException
+     */
+	public static byte[] toByteArray(InputStream input) throws IOException {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+        copy(input, output);
+        return output.toByteArray();
+	}
+	
+	
 }

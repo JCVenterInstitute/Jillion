@@ -21,9 +21,10 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.jcvi.assembly.ace.Ace2Contig;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.PlacedRead;
@@ -84,7 +85,20 @@ public class TestAce2Contig {
           assertEquals(expectedRead.getNucleotideSequence().asList(),actualRead.getNucleotideSequence().asList());
           assertEquals(expectedRead.asRange(), actualRead.asRange());
       }
-      assertTrue( FileUtils.contentEquals(expectedContigFile, actualContigFile));
+      assertContentEquals(expectedContigFile, actualContigFile);
     }
+
+
+	private void assertContentEquals(File expected,
+			File actual) throws IOException {
+		assertEquals(expected.length(), actual.length());
+		InputStream expectedStream = new FileInputStream(expected);
+		InputStream actualStream = new FileInputStream(actual);
+		try{
+			assertArrayEquals(IOUtil.toByteArray(expectedStream), IOUtil.toByteArray(actualStream));
+		}finally{
+			IOUtil.closeAndIgnoreErrors(expectedStream,actualStream);
+		}
+	}
    
 }
