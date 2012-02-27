@@ -35,7 +35,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FilenameUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.ace.AceContig;
@@ -48,6 +47,7 @@ import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.joda.time.DateTime;
@@ -107,7 +107,7 @@ public class ConsedUtil {
 			Date phdDate) {
 		final String id;
         if(traceFile !=null){
-            final String extension = FilenameUtils.getExtension(traceFile.getName());
+            final String extension = FileUtil.getExtension(traceFile.getName());
             if("sff".equals(extension)){        
                 id="sff:"+traceFile.getName()+":"+readId;
             }

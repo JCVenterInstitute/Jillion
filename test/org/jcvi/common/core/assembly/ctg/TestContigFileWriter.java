@@ -63,7 +63,7 @@ public class TestContigFileWriter {
         InputStream inputStream=null;
         try{
 	        inputStream= RESOURCES.getFileAsStream(pathToFile);
-			byte[] expected =IOUtil.readStream(inputStream).getBytes();
+			byte[] expected =IOUtil.toByteArray(inputStream);
 	        ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
 	        fileOut.write(out.toByteArray());
 	        assertEquals(new String(expected), new String(out.toByteArray()));

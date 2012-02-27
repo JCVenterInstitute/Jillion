@@ -28,9 +28,9 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FilenameUtils;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
+import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaRecord;
@@ -156,7 +156,7 @@ public class Chromatogram2fasta {
                 }
                 File chromatogramFile = new File(chromatogramFilePath);
                 
-                String id = FilenameUtils.getBaseName(chromatogramFile.getName());
+                String id = FileUtil.getBaseName(chromatogramFile);
                 BasicChromatogramBuilderVisitor builder = new BasicChromatogramBuilderVisitor();
                 ChromatogramParser.parse(chromatogramFile, builder);
                 

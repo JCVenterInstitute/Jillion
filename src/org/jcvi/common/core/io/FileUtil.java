@@ -6,6 +6,15 @@ import java.io.IOException;
 import org.jcvi.common.core.util.LIFOQueue;
 
 public class FileUtil {
+	/**
+     * The Unix separator character.
+     */
+    private static final char UNIX_SEPARATOR = '/';
+
+    /**
+     * The Windows separator character.
+     */
+    private static final char WINDOWS_SEPARATOR = '\\';
     
 	public static String createRelavitePathFrom(File root, File otherFile) throws IOException{
 		return createRelavitePathFrom(root, otherFile, File.separatorChar);
@@ -54,7 +63,54 @@ public class FileUtil {
 			}
 			
 		return stack;
-			
-
+	}
+	
+	private static int indexOfLastSeparator(String filename) {
+        int lastUnixPos = filename.lastIndexOf(UNIX_SEPARATOR);
+        int lastWindowsPos = filename.lastIndexOf(WINDOWS_SEPARATOR);
+        return Math.max(lastUnixPos, lastWindowsPos);
+    }
+	private static int indexOfExtension(String filename) {
+        int extensionPos = filename.lastIndexOf('.');
+        int lastSeparator = indexOfLastSeparator(filename);
+        return (lastSeparator > extensionPos ? -1 : extensionPos);
+    }
+	public static String getExtension(File file){
+		if(file ==null){
+			return null;
+		}
+		String filename = file.getName();
+		return getExtension(filename);
+	}
+	public static String getExtension(String filename) {
+		if(filename ==null){
+			return null;
+		}
+		int extensionIndex = indexOfExtension(filename);
+		if (extensionIndex == -1) {
+            return "";
+        } else {
+            return filename.substring(extensionIndex + 1);
+        }
+	}
+	
+	public static String getBaseName(File file){
+		if(file ==null){
+			return null;
+		}
+		return getBaseName(file.getName());
+	}
+	public static String getBaseName(String filename) {
+		if(filename ==null){
+			return null;
+		}
+		int lastSeparatorIndex = indexOfLastSeparator(filename);		
+		int extensionIndex = indexOfExtension(filename);
+		
+		if (extensionIndex == -1) {
+            return filename.substring(lastSeparatorIndex+1);
+        } else {
+            return filename.substring(lastSeparatorIndex+1,extensionIndex);
+        }
 	}
 }

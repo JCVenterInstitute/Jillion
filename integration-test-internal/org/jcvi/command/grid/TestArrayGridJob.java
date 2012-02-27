@@ -106,7 +106,7 @@ public class TestArrayGridJob extends TestGridJob {
         FileInputStream stream  = null;
         try {
             stream = new FileInputStream(filename);
-            String result = IOUtil.readStream(stream);
+            String result = IOUtil.toString(stream);
             return result.substring(0,result.length()-1);
         } finally {
             IOUtil.closeAndIgnoreErrors(stream);

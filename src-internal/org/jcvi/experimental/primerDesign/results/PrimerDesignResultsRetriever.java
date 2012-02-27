@@ -1,14 +1,12 @@
 package org.jcvi.experimental.primerDesign.results;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.NameFileFilter;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.experimental.primerDesign.domain.DefaultPrimerDesignTarget;
 import org.jcvi.experimental.primerDesign.domain.PrimerDesignTarget;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -24,16 +22,15 @@ import java.util.Scanner;
  * To change this template use File | Settings | File Templates.
  */
 public class PrimerDesignResultsRetriever {
-
+	//dkatzel - changed to use standard JDK filter instead of 
+	//apache commons io code to remove apache dependencies.
+	
     public static Map<PrimerDesignTarget,Collection<PrimerDesignResult>> retrievePrimerDesignResults(File rootDirectory) {
         Map<PrimerDesignTarget,Collection<PrimerDesignResult>> results =
             new Hashtable<PrimerDesignTarget,Collection<PrimerDesignResult>>();
-
-        Collection files = FileUtils.listFiles(rootDirectory,
-                                               new NameFileFilter("targets.simple"),
-                                               DirectoryFileFilter.DIRECTORY);
-        for ( Object o : files ) {
-            File targetFile = (File) o;
+        
+        Collection<File> files = getMatchingFilesRecursively(rootDirectory);
+        for ( File targetFile: files ) {
             PrimerDesignTarget target =
                 new DefaultPrimerDesignTarget(getParentId(targetFile),getTargetRange(targetFile));
             results.put(target,getPrimerDesigns(targetFile));
@@ -41,7 +38,21 @@ public class PrimerDesignResultsRetriever {
 
         return results;
     }
-
+    
+	private static Collection<File> getMatchingFilesRecursively(File root){
+		Collection<File> matchingFiles = new ArrayList<File>();
+		for(File f :root.listFiles()){
+			if(f.isDirectory()){
+				matchingFiles.addAll(getMatchingFilesRecursively(f));
+			}else{
+				if(f.getName().equals("targets.simple")){
+					matchingFiles.add(f);
+				}
+			}
+			
+		}
+		return matchingFiles;
+	}
     private static String getParentId(File targetFile) {
         try {
             return targetFile.getParentFile().getParentFile().getName();

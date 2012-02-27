@@ -33,7 +33,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.IOUtils;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.assembly.ace.AceContig;
@@ -105,7 +104,7 @@ public class RemoveReferenceFromNewblerMappedAce {
             IOUtil.closeAndIgnoreErrors(tempOut);
             AceFileWriter.writeAceFileHeader(numberOfContigs, numberOfReads, aceOutStream);
             InputStream in = new FileInputStream(tempAce);
-            IOUtils.copy(in, aceOutStream);
+            IOUtil.copy(in, aceOutStream);
             AceTags aceTags = aceTagsBuilder.build();
             AceFileWriter.writeAceTags(aceTags, aceOutStream);
             IOUtil.closeAndIgnoreErrors(in,aceOutStream);

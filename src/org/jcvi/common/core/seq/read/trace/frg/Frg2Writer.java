@@ -40,8 +40,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.io.IOUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
@@ -144,7 +142,7 @@ public class Frg2Writer {
         InputStream in = null;
         try{
             in = new FileInputStream(temp);
-            IOUtils.copy(in, out);
+            IOUtil.copy(in, out);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
