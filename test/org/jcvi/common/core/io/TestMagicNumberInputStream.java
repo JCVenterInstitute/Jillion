@@ -46,28 +46,28 @@ public class TestMagicNumberInputStream {
     public void read() throws IOException{
         ByteArrayInputStream bin = new ByteArrayInputStream(data);
         MagicNumberInputStream sut = new MagicNumberInputStream(bin);
-        assertTrue(Arrays.equals(data, IOUtil.readByteArray(sut, data.length)));
+        assertTrue(Arrays.equals(data, IOUtil.toByteArray(sut, data.length)));
     }
     @Test
     public void peakThenRead() throws IOException{
         ByteArrayInputStream bin = new ByteArrayInputStream(data);
         MagicNumberInputStream sut = new MagicNumberInputStream(bin);
         assertEquals("@MAG", new String(sut.peekMagicNumber()));
-        assertTrue(Arrays.equals(data, IOUtil.readByteArray(sut, data.length)));
+        assertTrue(Arrays.equals(data, IOUtil.toByteArray(sut, data.length)));
     }
     
     @Test
     public void readThenPeak() throws IOException{
         ByteArrayInputStream bin = new ByteArrayInputStream(data);
         MagicNumberInputStream sut = new MagicNumberInputStream(bin);
-        assertTrue(Arrays.equals(data, IOUtil.readByteArray(sut, data.length)));
+        assertTrue(Arrays.equals(data, IOUtil.toByteArray(sut, data.length)));
         assertEquals("@MAG", new String(sut.peekMagicNumber()));
     }
     @Test
     public void differentLengthMagicNumber() throws IOException{
         ByteArrayInputStream bin = new ByteArrayInputStream(data);
         MagicNumberInputStream sut = new MagicNumberInputStream(bin,2);
-        assertTrue(Arrays.equals(data, IOUtil.readByteArray(sut, data.length)));
+        assertTrue(Arrays.equals(data, IOUtil.toByteArray(sut, data.length)));
         assertEquals("@M", new String(sut.peekMagicNumber()));
     }
     

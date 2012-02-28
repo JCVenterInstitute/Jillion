@@ -91,11 +91,11 @@ AbstractTestDirectoryFileServer {
         ReadWriteFileServer sut =DirectoryFileServer.createReadWriteDirectoryFileServer(new File(TEST_DIR_CREATION_PATH));
         sut.putFile("README_copy.txt", expectedFile);
         ByteArrayOutputStream expected = new ByteArrayOutputStream();
-        IOUtil.writeToOutputStream(new FileInputStream(expectedFile), expected);
+        IOUtil.copy(new FileInputStream(expectedFile), expected);
         
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
         final InputStream fileAsStream = sut.getFileAsStream("README_copy.txt");
-        IOUtil.writeToOutputStream(fileAsStream, actual);
+        IOUtil.copy(fileAsStream, actual);
         IOUtil.closeAndIgnoreErrors(fileAsStream);
         assertArrayEquals(expected.toByteArray(), actual.toByteArray());
     }
@@ -106,11 +106,11 @@ AbstractTestDirectoryFileServer {
         ReadWriteFileServer sut =DirectoryFileServer.createReadWriteDirectoryFileServer(new File(TEST_DIR_CREATION_PATH));
         sut.putStream("README_copy.txt", readOnlyDir.getFileAsStream("README.txt"));
         ByteArrayOutputStream expected = new ByteArrayOutputStream();
-        IOUtil.writeToOutputStream(new FileInputStream(expectedFile), expected);
+        IOUtil.copy(new FileInputStream(expectedFile), expected);
         
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
         final InputStream fileAsStream = sut.getFileAsStream("README_copy.txt");
-        IOUtil.writeToOutputStream(fileAsStream, actual);
+        IOUtil.copy(fileAsStream, actual);
         IOUtil.closeAndIgnoreErrors(fileAsStream);
         assertArrayEquals(expected.toByteArray(), actual.toByteArray());
     }

@@ -116,7 +116,7 @@ public final class InMemoryZipDataStore extends AbstractDataStore<InputStream> i
             //we might not know file size so entry.getSize() will return -1
             //therefore must use byteArrayoutputStream.
             ByteArrayOutputStream output = new ByteArrayOutputStream();
-            IOUtil.writeToOutputStream(inputStream, output);
+            IOUtil.copy(inputStream, output);
             addRecord(name, output.toByteArray());  
             entry = inputStream.getNextEntry();
         }

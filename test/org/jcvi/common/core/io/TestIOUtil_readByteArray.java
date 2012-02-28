@@ -39,7 +39,7 @@ public class TestIOUtil_readByteArray {
     @Test
     public void valid() throws IOException{
         InputStream in = new ByteArrayInputStream(array);
-        byte[] actualArray = IOUtil.readByteArray(in, array.length);
+        byte[] actualArray = IOUtil.toByteArray(in, array.length);
         assertTrue(Arrays.equals(array, actualArray));
     }
     @Test
@@ -49,7 +49,7 @@ public class TestIOUtil_readByteArray {
         expect(mockInputStream.read(isA(byte[].class), eq(array.length), eq(1))).andReturn(-1);
         replay(mockInputStream);
         try {
-            IOUtil.readByteArray(mockInputStream, array.length+1);
+            IOUtil.toByteArray(mockInputStream, array.length+1);
             fail("if did not read exected length should throw IOException");
         } catch (IOException e) {
             String expectedMessage = "end of file after only "

@@ -58,7 +58,7 @@ public class TestIOUtil_bitSet {
 	
 	@Test(expected = NullPointerException.class)
 	public void toByteArrayShouldThrowNPEIfBitSetIsNull(){
-		IOUtil.toByteArray(null,0);
+		IOUtil.toByteArray((BitSet)null,0);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void toByteArrayNegativeBitLengthShouldThrowException(){

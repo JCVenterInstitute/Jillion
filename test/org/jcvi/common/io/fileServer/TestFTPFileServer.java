@@ -206,7 +206,7 @@ public class TestFTPFileServer {
         String path = "files/README.txt";
         ByteArrayOutputStream expected = new ByteArrayOutputStream();
         File expectedFile = resourceFileServer.getFile(path);
-        IOUtil.writeToOutputStream(new FileInputStream(expectedFile), expected);
+        IOUtil.copy(new FileInputStream(expectedFile), expected);
         mockClient.open(server);
         mockClient.login(username, pass);
         mockClient.getFile(isA(OutputStream.class), eq(path));
@@ -216,14 +216,14 @@ public class TestFTPFileServer {
             public Object answer() throws Throwable {
                 OutputStream out =(OutputStream)getCurrentArguments()[0];
                 String path = (String)getCurrentArguments()[1];
-                IOUtil.writeToOutputStream(resourceFileServer.getFileAsStream(path), out);
+                IOUtil.copy(resourceFileServer.getFileAsStream(path), out);
                 return null;
             }
         });
         replay(mockClient);
         FTPFileServer sut = new FTPFileServer(mockClient,server, username, pass);
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
-        IOUtil.writeToOutputStream(sut.getFileAsStream(path), actual);
+        IOUtil.copy(sut.getFileAsStream(path), actual);
         assertArrayEquals(expected.toByteArray(), actual.toByteArray());
         verify(mockClient);
     }

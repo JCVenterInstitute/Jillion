@@ -630,7 +630,7 @@ public final class Ab1FileParser {
 		boolean isAb1ChromatogramVisitor = visitor instanceof AbiChromatogramFileVisitor;
 		try{
 			for(long i=0; i<numberOfTaggedRecords; i++){
-				String rawTagName = new String(IOUtil.readByteArray(in, 4),"UTF-8");
+				String rawTagName = new String(IOUtil.toByteArray(in, 4),"UTF-8");
 				
 				TaggedDataName tagName = TaggedDataName.parseTaggedDataName(rawTagName);
 				
@@ -668,7 +668,7 @@ public final class Ab1FileParser {
 	private static byte[] parseTraceDataBlock(InputStream in, int lengthOfDataBlock) throws TraceDecoderException{
 		
 		try {
-			return IOUtil.readByteArray(in, lengthOfDataBlock);
+			return IOUtil.toByteArray(in, lengthOfDataBlock);
 		} catch (IOException e) {
 			throw new TraceDecoderException("could not parse trace data block", e);
 		}
@@ -693,7 +693,7 @@ public final class Ab1FileParser {
 
 	private static void verifyMagicNumber(InputStream in) throws TraceDecoderException {
 		try {
-			byte[] magicNumber = IOUtil.readByteArray(in, 4);
+			byte[] magicNumber = IOUtil.toByteArray(in, 4);
 			if(!AbiUtil.isABIMagicNumber(magicNumber)){
 				throw new TraceDecoderException("magic number does not match AB1 format "+ Arrays.toString(magicNumber));
 			}

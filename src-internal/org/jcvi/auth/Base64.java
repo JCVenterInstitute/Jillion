@@ -26,8 +26,6 @@ package org.jcvi.auth;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.jcvi.common.core.io.IOUtil;
-
 /**
  * Java Implementation of "base64" as defined in the MIME Spec (RFC 2045).
  * There is currently no standard Base 64 encoder/decoder
@@ -116,7 +114,7 @@ public final class Base64 {
             currentValue >>=6;
         }
         //result is now backwards
-        return IOUtil.reverse(result.array());
+        return reverse(result.array());
     }
 
     static int readTriplet(byte[] toBeEncoded, int position) {
@@ -129,6 +127,14 @@ public final class Base64 {
         result +=toBeEncoded[position+2] &0xff;
         return result;
     }
-
+    static byte[] reverse(byte[] input){
+    	//use byteBuffer for efficiency
+    	//since byteBuffers don't initialize to 0s
+        ByteBuffer result = ByteBuffer.allocate(input.length);
+        for(int i=input.length-1; i>=0; i--){
+            result.put(input[i]);
+        }
+        return result.array();
+    }
     
 }

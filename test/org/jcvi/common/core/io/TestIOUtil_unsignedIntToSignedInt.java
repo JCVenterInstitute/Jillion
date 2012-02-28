@@ -68,6 +68,6 @@ public class TestIOUtil_unsignedIntToSignedInt {
     
     @Test
     public void convertUnsignedToSigned(){
-        assertEquals(IOUtil.convertUnsignedIntToSignedInt(unsigned), signed);
+        assertEquals(IOUtil.toSignedInt(unsigned), signed);
     }
 }

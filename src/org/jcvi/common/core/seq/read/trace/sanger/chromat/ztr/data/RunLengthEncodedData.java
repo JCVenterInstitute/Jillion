@@ -135,7 +135,7 @@ public enum RunLengthEncodedData implements Data {
     }
 
     private int getCount(ByteBuffer in) {
-        return IOUtil.convertToUnsignedByte(in.get());
+        return IOUtil.toUnsignedByte(in.get());
     }
     /**
      * Same as {@link #encodeData(byte[], byte) encodeData(data, DEFAULT_GUARD)}

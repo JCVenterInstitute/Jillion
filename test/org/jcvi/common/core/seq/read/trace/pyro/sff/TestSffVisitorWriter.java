@@ -45,7 +45,7 @@ public class TestSffVisitorWriter {
     @Test
     public void write() throws IOException, SFFDecoderException{
         InputStream in = resources.getFileAsStream("files/5readExample.sff");
-        byte[] expectedBytes =IOUtil.readStreamAsBytes(in);
+        byte[] expectedBytes =IOUtil.toByteArray(in);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         
         SffFileVisitor sut = new SffVisitorWriter(out);

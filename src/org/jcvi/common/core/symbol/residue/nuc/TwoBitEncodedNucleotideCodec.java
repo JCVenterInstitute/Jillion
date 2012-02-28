@@ -192,9 +192,9 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             
             for(int i=0; i<sentinels.length; i++){
                 switch(bytesPerOffset){
-                    case 1 : sentinels[i] =IOUtil.convertToUnsignedByte(buf.get());
+                    case 1 : sentinels[i] =IOUtil.toUnsignedByte(buf.get());
                             break;
-                    case 2 : sentinels[i] =IOUtil.convertToUnsignedShort(buf.getShort());
+                    case 2 : sentinels[i] =IOUtil.toUnsignedShort(buf.getShort());
                             break; 
                     default : sentinels[i] =buf.getInt();
                             break;

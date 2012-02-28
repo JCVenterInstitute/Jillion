@@ -67,6 +67,6 @@ public class TestIOUtil_unsignedShortToSignedShort {
     
     @Test
     public void convertUnsignedToSigned(){
-        assertEquals(IOUtil.convertUnsignedShortToSignedShort(unsigned), signed);
+        assertEquals(IOUtil.toSignedShort(unsigned), signed);
     }
 }

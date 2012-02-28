@@ -60,10 +60,10 @@ public enum FollowData implements Data {
         ByteBuffer compressedData = getCompressedData(data, uncompressedLength);
         ByteBuffer uncompressedData = ByteBuffer.allocate(uncompressedLength);
         //prev is kept as an int to avoid java signed byte issues
-        int prev = IOUtil.convertToUnsignedByte(compressedData.get());
+        int prev = IOUtil.toUnsignedByte(compressedData.get());
         uncompressedData.put((byte)prev);
         while(compressedData.hasRemaining()){
-            prev = IOUtil.convertToUnsignedByte((byte)(follow[prev] - compressedData.get()));
+            prev = IOUtil.toUnsignedByte((byte)(follow[prev] - compressedData.get()));
             uncompressedData.put((byte)prev);   
             
         }
@@ -103,10 +103,10 @@ public enum FollowData implements Data {
 		result.put(data[0]);
 		//follow encode the rest
 		for(int i=1; i<data.length; i++){
-			int value = IOUtil.convertToUnsignedByte(followArray[
-			                         IOUtil.convertToUnsignedByte(data[i-1])]) -
-							IOUtil.convertToUnsignedByte(data[i]);
-			result.put(IOUtil.convertUnsignedByteToSignedByte(value));
+			int value = IOUtil.toUnsignedByte(followArray[
+			                         IOUtil.toUnsignedByte(data[i-1])]) -
+							IOUtil.toUnsignedByte(data[i]);
+			result.put(IOUtil.toSignedByte(value));
 		}
 		result.flip();
 		return result.array();
@@ -118,12 +118,12 @@ public enum FollowData implements Data {
 		byte[] followArray = new byte[256];
 		
 		for(int i=0; i< data.length-1; i++){
-			int current = IOUtil.convertToUnsignedByte(data[i]);
-			int next = IOUtil.convertToUnsignedByte(data[i+1]);
+			int current = IOUtil.toUnsignedByte(data[i]);
+			int next = IOUtil.toUnsignedByte(data[i+1]);
 			int frequencyCount = ++frequencyMatrix[current][next];
 			if(frequencyCount > countsArray[current]){
 				countsArray[current]=frequencyCount;
-				followArray[current]=IOUtil.convertUnsignedByteToSignedByte(next);
+				followArray[current]=IOUtil.toSignedByte(next);
 			}
 		}
 		return followArray;

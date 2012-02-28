@@ -11,7 +11,7 @@ import org.jcvi.common.core.util.LIFOQueue;
  * @author dkatzel
  *
  */
-public class FileUtil {
+public final class FileUtil {
 	/**
      * The Unix separator character.  We need to explicitly hardcode
      * this value since we need to check against unix and windows

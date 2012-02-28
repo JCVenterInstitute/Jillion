@@ -83,10 +83,10 @@ public abstract class  AbstractTestFileServer {
     public void getFileAsStream() throws FileNotFoundException, IOException{
         ByteArrayOutputStream expected = new ByteArrayOutputStream();
         File expectedFile = new File(PATH_TO_ROOT_DIR + File.separator + "README.txt");
-        IOUtil.writeToOutputStream(new FileInputStream(expectedFile), expected);
+        IOUtil.copy(new FileInputStream(expectedFile), expected);
         
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
-        IOUtil.writeToOutputStream(sut.getFileAsStream("README.txt"), actual);
+        IOUtil.copy(sut.getFileAsStream("README.txt"), actual);
         assertArrayEquals(expected.toByteArray(), actual.toByteArray());
     }
 }
