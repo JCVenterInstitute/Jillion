@@ -853,7 +853,7 @@ public final class IOUtil {
     		reader = new InputStreamReader(in,encoding);
     	}
     	char[] buf = new char[1024];
-    	while(in.available()>0){
+    	while(true){
     		int numBytesRead =reader.read(buf);
     		if(numBytesRead ==-1){
     			break;
