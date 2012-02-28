@@ -122,9 +122,11 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
         if(numSnps >0){
        
         	ValueSizeStrategy snpSizeStrategy = ValueSizeStrategy.getStrategyFor(differentGlyphMap.lastKey().intValue());
-	        int bufferSize = computeSnpBufferSize(numSnps,snpSizeStrategy);
+	        int length = computeNumberOfBytesToStore(numSnps,snpSizeStrategy);
+	        ValueSizeStrategy numSnpsStrategy = ValueSizeStrategy.getStrategyFor(length);
+	        int bufferSize = numSnpsStrategy.getNumberOfBytesPerValue()+ length;
 	        ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-	        ValueSizeStrategy numSnpsStrategy = ValueSizeStrategy.getStrategyFor(bufferSize);
+	        
 	        buffer.put((byte)numSnpsStrategy.ordinal());
 			numSnpsStrategy.put(buffer, numSnps);
 	        
@@ -167,17 +169,13 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
     }
     
     
-    private int computeSnpBufferSize(int numSnps,ValueSizeStrategy snpSizeStrategy) {
+    private int computeNumberOfBytesToStore(int numSnps,ValueSizeStrategy snpSizeStrategy) {
     	int numBytesPerSnpIndex = snpSizeStrategy.getNumberOfBytesPerValue();
-    	int numBitsRequiredToStoreSnp = (numSnps+1)/2;
+    	int numBytesRequiredToStoreSnps = (numSnps+1)/2;
     	int numberOfBytesToStoreSnpOffsets=numBytesPerSnpIndex*numSnps;
-    	int numBytesForLength=getNumberOfBytesFor(numSnps);
-    	return numBytesForLength+2+numberOfBytesToStoreSnpOffsets + numBitsRequiredToStoreSnp;
+    	return 2+numberOfBytesToStoreSnpOffsets + numBytesRequiredToStoreSnps;
 	}
 
-	private int getNumberOfBytesFor(int numSnps) {
-		return ValueSizeStrategy.getStrategyFor(numSnps).getNumberOfBytesPerValue();
-	}
 
 	private TreeMap<Integer, Nucleotide> populateFields(Sequence<Nucleotide> reference,
             String toBeEncoded, int startOffset, List<Integer> tempGapList) {
