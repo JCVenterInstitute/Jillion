@@ -801,7 +801,7 @@ public final class IOUtil {
     public static long copy(InputStream in, OutputStream out) throws IOException{
     	byte[] buf = new byte[2048];
     	long numBytesCopied=0;
-    	while(in.available()>0){
+    	while(true){
     		int numBytesRead =in.read(buf);
     		if(numBytesRead ==-1){
     			break;
