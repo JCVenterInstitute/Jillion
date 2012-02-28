@@ -43,6 +43,9 @@ public class TestIOUtil_copy {
 		out.write(isA(byte[].class), anyInt(), anyInt());
 		expectLastCall().anyTimes();
 		
+		out.flush();
+		expectLastCall().anyTimes();
+		
 		final LargeCopyHelper helper = new LargeCopyHelper();
 		expect(in.available()).andStubAnswer(new IAnswer<Integer>() {
 
