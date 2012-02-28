@@ -86,7 +86,7 @@ public enum ValueSizeStrategy {
 	     */
 	    @Override
 	    public int getNext(ByteBuffer buf) {
-	        return IOUtil.convertToUnsignedByte(buf.get());
+	        return IOUtil.toUnsignedByte(buf.get());
 	    }
 	    /**
 	     * puts the given byte value into the given buffer.
@@ -112,7 +112,7 @@ public enum ValueSizeStrategy {
 	     */
 	    @Override
 	    public int getNext(ByteBuffer buf) {
-	        return IOUtil.convertToUnsignedShort(buf.getShort());
+	        return IOUtil.toUnsignedShort(buf.getShort());
 	    }
 	    /**
 	     * puts the given short value into the given buffer.

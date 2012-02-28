@@ -46,7 +46,7 @@ import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.IOUtil.ENDIAN;
+import org.jcvi.common.core.io.IOUtil.Endian;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -116,7 +116,7 @@ public final class CasUtil {
     public static String parseCasStringFrom(InputStream in) throws IOException{
         int length = (int)parseByteCountFrom(in);
        
-        byte bytes[] = IOUtil.readByteArray(in, length);
+        byte bytes[] = IOUtil.toByteArray(in, length);
         
         return new String(bytes, UTF_8);
         
@@ -130,7 +130,7 @@ public final class CasUtil {
      */
     public static short readCasUnsignedByte(InputStream in) throws IOException{
         return new BigInteger(1,
-                 IOUtil.readByteArray(in, 1, ENDIAN.LITTLE)).shortValue();
+                 IOUtil.toByteArray(in, 1, Endian.LITTLE)).shortValue();
      }
     /**
      * Read the next unsigned short in the given inputStream.
@@ -141,7 +141,7 @@ public final class CasUtil {
      */
     public static int readCasUnsignedShort(InputStream in) throws IOException{
         return new BigInteger(1,
-                 IOUtil.readByteArray(in, 2, ENDIAN.LITTLE)).intValue();
+                 IOUtil.toByteArray(in, 2, Endian.LITTLE)).intValue();
      }
     /**
      * Read the next unsigned int in the given inputStream.
@@ -167,7 +167,7 @@ public final class CasUtil {
      */
     public static long readCasUnsignedInt(InputStream in, int numberOfBytesInNumber) throws IOException{
         return new BigInteger(1,
-                 IOUtil.readByteArray(in, numberOfBytesInNumber, ENDIAN.LITTLE)).longValue();
+                 IOUtil.toByteArray(in, numberOfBytesInNumber, Endian.LITTLE)).longValue();
      }
     /**
      * Read the next unsigned long in the given inputStream.
@@ -178,7 +178,7 @@ public final class CasUtil {
      */
     public static BigInteger readCasUnsignedLong(InputStream in) throws IOException{
         return new BigInteger(1,
-                 IOUtil.readByteArray(in, 8, ENDIAN.LITTLE));
+                 IOUtil.toByteArray(in, 8, Endian.LITTLE));
      }
     
     

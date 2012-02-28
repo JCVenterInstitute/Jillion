@@ -301,7 +301,7 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
                 
                 File newFile = createNewFile(fileId);
                 out = new FileOutputStream(newFile);
-                IOUtil.writeToOutputStream(inputStream, out);
+                IOUtil.copy(inputStream, out);
             }
             finally{
                 IOUtil.closeAndIgnoreErrors(out);

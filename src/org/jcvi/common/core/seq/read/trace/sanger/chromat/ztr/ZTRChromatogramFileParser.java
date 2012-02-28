@@ -157,7 +157,7 @@ public class ZTRChromatogramFileParser {
 
     private static byte[] readZTRMagicNumber(InputStream inputStream) throws TraceDecoderException {
        try{
-           return IOUtil.readByteArray(inputStream, 8);
+           return IOUtil.toByteArray(inputStream, 8);
        }catch(IOException e){
            throw new TraceDecoderException("invalid ZTR header",e);
        }

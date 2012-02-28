@@ -50,7 +50,13 @@ import java.util.Properties;
 import java.util.Scanner;
 
 import org.jcvi.common.core.Range;
-
+/**
+ * {@code IOUtil} is a collection of static utility
+ * methods that make working
+ * with Input and Output easier.
+ * @author dkatzel
+ *
+ */
 public final class IOUtil {
     /**
      * Some methods need to use Log base 2
@@ -67,9 +73,22 @@ public final class IOUtil {
      */
     public static final Charset UTF_8 = Charset.forName(UTF_8_NAME);
     
-    
-    public enum ENDIAN{
+    /**
+     * {@code Endian} is a way to specify how the ordering of bytes
+     * is read from a byte array.
+     * @author dkatzel
+     *
+     */
+    public enum Endian{
+    	/**
+    	 * Big Endian format has the most significant
+    	 * byte as the first byte.
+    	 */
         BIG,
+        /**
+         * Little Endian format has the most significant
+         * byte as the last byte.
+         */
         LITTLE
     }
     private IOUtil(){}
@@ -101,14 +120,29 @@ public final class IOUtil {
      * throwing an exception.
      * @param file the file to be deleted.
      * @throws IOException if there is a problem deleting the file.
+     * @throws NullPointerException if file is null.
+     * @see #deleteIgnoreError(File)
      */
     public static void delete(File file) throws IOException{
         if(!file.delete()){
             throw new IOException("unable to delete "+ file);
         }
     }
-    
+    /**
+     * Tries to delete the given File but doesn't
+     * check to see if the delete was successful.
+     * This is the same as calling {@link File#delete()}
+     * without checking the return value.
+     * @param file the file to delete.
+     * @throws NullPointerException if file is null.
+     */
     public static void deleteIgnoreError(File file){
+    	//This method exists solely so we don't
+    	//have file.delete()s without checking return
+    	//values littered throughout the codebase. 
+    	//programs like FindBugs will flag these
+    	//statements as bad code since we don't check return value
+    	//so I would rather have only 1 such warning instead of dozens.
         file.delete();
     }
     
@@ -118,7 +152,7 @@ public final class IOUtil {
      * in preference over {@link File#mkdirs()} since that method returns a boolean
      * result to indicate success or failure instead of 
      * throwing an exception.
-     * @param dir the directory to be created. if dir is null
+     * @param dir the directory to be created; if dir is null
      * then this method does not do anything.
      * @throws IOException if there is a problem making the directories.
      */
@@ -138,58 +172,20 @@ public final class IOUtil {
      * in preference over {@link File#mkdir()} since that method returns a boolean
      * result to indicate success or failure instead of 
      * throwing an exception.
-     * @param dir the directory to be created.
+     * @param dir the directory to be created; if dir is null
+     * then this method does not do anything. 
      * @throws IOException if there is a problem making the directory.
      */
     public static void mkdir(File dir) throws IOException{
+    	if(dir==null){
+    		return;
+    	}
         if(dir.exists()){
             return;
         }
         if(!dir.mkdir()){
             throw new IOException("unable to mkdir for "+ dir);
         }
-    }
-    /**
-     * Convenience method for {@link #writeToOutputStream(InputStream, OutputStream)}
-     * with a default block size of {@code 1024}.
-     * <p>
-     * Calling this method is the same as calling
-     * {@code writeToOutputStream(in, out, 1024);}
-     * </p>
-     * @param in the inputStream where the bytes to write
-     * are stored.
-     * @param out the outputStream where the bytes will be written.
-     * @param bufferSize the size of the buffer used to read and write blocks of
-     * bytes.
-     * @throws IOException if there is a problem reading or writing data.
-     * @throws IllegalArgumentException if {@code bufferSize < 1}.
-     * @see #writeToOutputStream(InputStream, OutputStream, int)
-     */
-    public static void writeToOutputStream(InputStream in, OutputStream out) throws IOException{
-        writeToOutputStream(in, out, 1024);
-    }
-    /**
-     * Writes the contents of the given inputStream to the 
-     * given output stream.
-     * @param in the inputStream where the bytes to write
-     * are stored.
-     * @param out the outputStream where the bytes will be written.
-     * @param bufferSize the size of the buffer used to read and write blocks of
-     * bytes.
-     * @throws IOException if there is a problem reading or writing data.
-     * @throws IllegalArgumentException if {@code bufferSize < 1}.
-     */
-    public static void writeToOutputStream(InputStream in, OutputStream out, int bufferSize) throws IOException{
-        if(bufferSize <1){
-            throw new IllegalArgumentException("can not have a 0 or negative bufferSize");
-        }
-        byte[] buf = new byte[bufferSize];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-            out.flush();
-        }
-        
     }
     /**
      * Close the given Closeable and ignore any exceptions
@@ -206,7 +202,7 @@ public final class IOUtil {
         }
     }
     /**
-     * Conveience method for closing multiple
+     * Convenience method for closing multiple
      * {@link Closeable}s at the same time, this
      * method is the same as calling {@link #closeAndIgnoreErrors(Closeable)}
      * on each parameter.
@@ -271,7 +267,7 @@ public final class IOUtil {
     }
     /**
      * Skip <code>numberOfBytes</code> in the input stream 
-     * and block until those bytes have been skipped. {@link InputStream#skip(long))
+     * and block until those bytes have been skipped. {@link InputStream#skip(long)}
      * will only skip as many bytes as it can without blocking.
      * @param in InputStream to skip.
      * @param numberOfBytes number of bytes to skip.
@@ -291,15 +287,33 @@ public final class IOUtil {
      * Reads up to length number of bytes of the given inputStream and
      * puts them into the given byte array starting at the given offset.
      * Will keep reading until length number of bytes have been read (possibly blocking). 
-     * @param in
-     * @param buf
-     * @param offset
-     * @param length
-     * @return
+     * @param in the inputStream to read; can not be null.
+     * @param buf the byte array to write the data from the stream to; can not be null.
+     * @param offset the offset into the byte array to begin writing 
+     * bytes to must be {@code >= 0}.
+     * @param length the maximum number of bytes to read, must be {@code >= 0}.
+     * This number of bytes will be read unless the inputStream ends prematurely
+     * (which will throw an IOException). 
+     * @return the number of bytes read which will equal the given length of bytes to read.
      * @throws IOException if EOF is unexpectedly reached.
+     * @throws NullPointerException if either inputStream  or buf are null.
+     * @throws IllegalArgumentException if either offset  or length are negative.
+     * @see #safeBlockingRead(InputStream, byte[], int, int)
      */
     public static int blockingRead(InputStream in, byte[] buf, int offset, int length) throws IOException{
-        int currentBytesRead=0;
+        if(buf ==null){
+        	throw new NullPointerException("byte array can not be null");
+        }
+        if(in ==null){
+        	throw new NullPointerException("inputstream can not be null");
+        }
+        if(offset <0){
+        	throw new IllegalArgumentException("offset must be >= 0");
+        }
+        if(length <0){
+        	throw new IllegalArgumentException("length must be >= 0");
+        }
+    	int currentBytesRead=0;
         int totalBytesRead=0;
         while((currentBytesRead =in.read(buf, offset+totalBytesRead, length-totalBytesRead))>0){
             totalBytesRead+=currentBytesRead;
@@ -387,20 +401,7 @@ public final class IOUtil {
         
     }
     
-    public static byte[] readByteArray(InputStream in, int expectedLength) throws IOException {
-       return readByteArray(in, expectedLength, ENDIAN.BIG);
-    }
-    public static byte[] readByteArray(InputStream in, int expectedLength, ENDIAN endian) throws IOException {
-        byte[] array = new byte[expectedLength];
-        int bytesRead = blockingRead(in,array,0,expectedLength);
-        if(bytesRead != expectedLength){
-            throw new IOException("only was able to read "+ bytesRead + "expected "+ expectedLength);
-        }
-        if(endian == ENDIAN.LITTLE){
-            return IOUtil.switchEndian(array);
-        }
-        return array;
-    }
+   
     public static short[] readUnsignedByteArray(InputStream in, int expectedLength) throws IOException {
         short[] array = new short[expectedLength];
         for(int i=0; i<expectedLength; i++){
@@ -427,37 +428,33 @@ public final class IOUtil {
             buf.put((byte)array[i]);
         }
     }
-    
-    public static byte[] readStreamAsBytes(InputStream in) throws IOException {
-        final ByteArrayOutputStream expectedOutStream = new ByteArrayOutputStream();
-        OutputStreamReader reader = new OutputStreamReader(expectedOutStream);
-        reader.read(in);
-        return expectedOutStream.toByteArray();
-        
-    }
     /**
      * Converts signed java byte value into an unsigned value.
      * @param value the signed value to convert.
      * @return the unsigned value as an int.
      */
-    public static int convertToUnsignedByte(byte value){
+    public static int toUnsignedByte(byte value){
        return value & 0xFF;
     }
-    
-    public static byte convertUnsignedByteToSignedByte(long unsignedByte){
+    /**
+     * Converts an unsigned signed byte value into a signed value.
+     * @param unsignedByte the unsigned value to convert.
+     * @return the signed value as a byte.
+     */
+    public static byte toSignedByte(int unsignedByte){
     	if(unsignedByte>127){
     		return (byte)(unsignedByte-256);
     	}
     	return (byte)unsignedByte;
     }
 
-    public static short convertUnsignedShortToSignedShort(long unsignedShort){
+    public static short toSignedShort(int unsignedShort){
         if(unsignedShort > Short.MAX_VALUE){
             return (short)(unsignedShort -(2*(Short.MAX_VALUE+1)));
         }
         return (short)unsignedShort;
     }
-    public static int convertUnsignedIntToSignedInt(long unsignedInt){
+    public static int toSignedInt(long unsignedInt){
         if(unsignedInt > Integer.MAX_VALUE){
             return (int)(unsignedInt -(2*(Integer.MAX_VALUE+1)));
         }
@@ -468,7 +465,7 @@ public final class IOUtil {
      * @param value the signed value to convert.
      * @return the unsigned value as an int.
      */
-    public static int convertToUnsignedShort(short value){
+    public static int toUnsignedShort(short value){
         return value & 0xFFFF;
     }
     
@@ -478,17 +475,11 @@ public final class IOUtil {
      * @param value the signed value to convert.
      * @return the unsigned value as an long.
      */
-    public static long convertToUnsignedInt(int value){
+    public static long toUnsignedInt(int value){
         return value & 0xFFFFFFFFL;
     }
     
-    public static byte[] reverse(byte[] input){
-        ByteBuffer result = ByteBuffer.allocate(input.length);
-        for(int i=input.length-1; i>=0; i--){
-            result.put(input[i]);
-        }
-        return result.array();
-    }
+    
     public static Properties readPropertiesFromFile(File propertiesFile) throws IOException{
         return readPropertiesFromFile(propertiesFile, new Properties());
      }
@@ -531,13 +522,13 @@ public final class IOUtil {
 
     }
     
-    public static BigInteger readUnsignedLong(InputStream in, ENDIAN endian) throws IOException{
+    public static BigInteger readUnsignedLong(InputStream in, Endian endian) throws IOException{
         return new BigInteger(1,
-                 IOUtil.readByteArray(in, 8, endian));
+                 IOUtil.toByteArray(in, 8, endian));
      }
-    public static long readUnsignedInt(InputStream in, ENDIAN endian) throws IOException{
+    public static long readUnsignedInt(InputStream in, Endian endian) throws IOException{
         return new BigInteger(1,
-                 IOUtil.readByteArray(in, 4, endian)).longValue();
+                 IOUtil.toByteArray(in, 4, endian)).longValue();
      }
     public static long readUnsignedInt(byte[] array){
         return new BigInteger(1,
@@ -551,25 +542,25 @@ public final class IOUtil {
         return new BigInteger(1,
                  array).shortValue();
      }
-    public static int readUnsignedShort(InputStream in, ENDIAN endian) throws IOException{
+    public static int readUnsignedShort(InputStream in, Endian endian) throws IOException{
         return new BigInteger(1,
-                 IOUtil.readByteArray(in, 2, endian)).intValue();
+                 IOUtil.toByteArray(in, 2, endian)).intValue();
      }
-    public static short readUnsignedByte(InputStream in, ENDIAN endian) throws IOException{
+    public static short readUnsignedByte(InputStream in, Endian endian) throws IOException{
         return new BigInteger(1,
-                 IOUtil.readByteArray(in, 1, endian)).shortValue();
+                 IOUtil.toByteArray(in, 1, endian)).shortValue();
      }
     public static BigInteger readUnsignedLong(InputStream in) throws IOException{
-       return readUnsignedLong(in, ENDIAN.BIG);
+       return readUnsignedLong(in, Endian.BIG);
      }
     public static long readUnsignedInt(InputStream in) throws IOException{
-        return readUnsignedInt(in, ENDIAN.BIG);
+        return readUnsignedInt(in, Endian.BIG);
       }
     public static int readUnsignedShort(InputStream in) throws IOException{
-        return readUnsignedShort(in, ENDIAN.BIG);
+        return readUnsignedShort(in, Endian.BIG);
       }
     public static short readUnsignedByte(InputStream in) throws IOException{
-        return readUnsignedByte(in, ENDIAN.BIG);
+        return readUnsignedByte(in, Endian.BIG);
       }
     
     public static byte[] convertUnsignedIntToByteArray(long unsignedInt){
@@ -686,7 +677,7 @@ public final class IOUtil {
      */
     public static int getUnsignedByteCount(long value){
         int numBits = getUnsignedBitCount(value);
-        return numBits/8+ (numBits%8==0?0:1);
+        return (numBits+7)/8;
     }
     
     /**
@@ -817,6 +808,7 @@ public final class IOUtil {
     		}
     		numBytesCopied+=numBytesRead;
     		out.write(buf, 0, numBytesRead);
+    		out.flush();
     	}
     	return numBytesCopied;
     }
@@ -880,10 +872,63 @@ public final class IOUtil {
      * @throws IOException if there is a problem reading the Stream.
      */
 	public static byte[] toByteArray(InputStream input) throws IOException {
+		return toByteArray(input, Endian.BIG);
+	}
+	/**
+     * Copy the contents of the given {@link InputStream}
+     * and return it as a byte[] using the given {@link Endian}
+     * order.
+     * @param input the inputStream to convert into a byte[].  
+     * This stream is not closed when the method finishes.
+     * @param endian the {@link Endian} to use; null is considered
+     * {@link Endian#BIG} (the default).
+     * @return a new byte array instance containing all the bytes
+     * from the given inputStream.
+     * @throws IOException if there is a problem reading the Stream.
+     */
+	public static byte[] toByteArray(InputStream input,Endian endian) throws IOException {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
         copy(input, output);
+        if(endian ==Endian.LITTLE){
+        	return switchEndian(output.toByteArray());
+        }
         return output.toByteArray();
 	}
-	
-	
+	 /**
+     * Copy the numberOfBytesToRead of the given {@link InputStream}
+     * and return it as a byte[].  This is the same
+     * as {@link #toByteArray(InputStream, int, Endian)
+     * toByteArray(in,numberOfBytesToRead,Endian.BIG)}
+     */
+	 public static byte[] toByteArray(InputStream in, int numberOfBytesToRead) throws IOException {
+	       return toByteArray(in, numberOfBytesToRead, Endian.BIG);
+	 }
+	 /**
+     * Copy the numberOfBytesToRead of the given {@link InputStream}
+     * and return it as a byte[] using the given {@link Endian}
+     * order.
+     * @param input the inputStream to convert into a byte[].  
+     * This stream is not closed when the method finishes.
+     * @param numberOfBytesToRead the number of bytes to read from the stream;
+     * if there aren't enough bytes, then this method will block until
+     * more bytes are available or until the stream reaches end of file
+     * (which will cause an IOException to be thrown).
+     * @param endian the {@link Endian} to use; null is considered
+     * {@link Endian#BIG} (the default).
+     * @return a new byte array instance containing all the bytes
+     * from the given inputStream.
+     * @throws IOException if there is a problem reading the numberOfBytesToRead 
+     * from the inputStream.
+     */
+    public static byte[] toByteArray(InputStream in, int numberOfBytesToRead, Endian endian) throws IOException {
+        byte[] array = new byte[numberOfBytesToRead];
+        int bytesRead = blockingRead(in,array,0,numberOfBytesToRead);
+        if(bytesRead != numberOfBytesToRead){
+            throw new IOException("only was able to read "+ bytesRead + "expected "+ numberOfBytesToRead);
+        }
+        if(endian == Endian.LITTLE){
+            return IOUtil.switchEndian(array);
+        }
+        return array;
+    }
 }

@@ -70,7 +70,7 @@ public class MagicNumberInputStream extends InputStream{
      * the inputStream for {@code sizeOfMagicNumber} bytes.
      */
     public MagicNumberInputStream(InputStream in,int sizeOfMagicNumber) throws IOException {
-        magicNumber =IOUtil.readByteArray(in, sizeOfMagicNumber);
+        magicNumber =IOUtil.toByteArray(in, sizeOfMagicNumber);
         this.in = in;
     }
     /**

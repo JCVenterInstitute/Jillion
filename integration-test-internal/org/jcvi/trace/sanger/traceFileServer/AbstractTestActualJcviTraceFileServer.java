@@ -126,8 +126,8 @@ public abstract class AbstractTestActualJcviTraceFileServer {
     private void compareInputStreams(InputStream expected, InputStream actual) throws IOException{
         ByteArrayOutputStream expectedOut = new ByteArrayOutputStream();
         ByteArrayOutputStream actualOut = new ByteArrayOutputStream();
-        IOUtil.writeToOutputStream(expected, expectedOut);
-        IOUtil.writeToOutputStream(actual, actualOut);
+        IOUtil.copy(expected, expectedOut);
+        IOUtil.copy(actual, actualOut);
         
         assertTrue("expected " + new String(expectedOut.toByteArray()) + " but got " + new String(actualOut.toByteArray()),
                 Arrays.equals(expectedOut.toByteArray(), actualOut.toByteArray()));

@@ -147,7 +147,7 @@ private SFFUtil(){}
 
         while( i < indexes.length){
             if(indexes[i] != 0){
-                position+=IOUtil.convertToUnsignedByte(indexes[i]);
+                position+=IOUtil.toUnsignedByte(indexes[i]);
                 calledIndexes.add(Integer.valueOf(position));
             }
             i++;
@@ -170,7 +170,7 @@ private SFFUtil(){}
 
         while( i < indexes.length){
             if(indexes[i] != 0){
-                position+=IOUtil.convertToUnsignedByte(indexes[i]);
+                position+=IOUtil.toUnsignedByte(indexes[i]);
                 values.add(encodedValues[position]);
             }
             i++;

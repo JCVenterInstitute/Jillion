@@ -64,7 +64,7 @@ public class TestIOUtil_unsignedByteToSignedByte {
     
     @Test
     public void convertUnsignedToSigned(){
-        assertEquals(IOUtil.convertUnsignedByteToSignedByte(unsigned), signed);
+        assertEquals(IOUtil.toSignedByte(unsigned), signed);
     }
     
 }

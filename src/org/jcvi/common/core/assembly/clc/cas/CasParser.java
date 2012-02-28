@@ -119,7 +119,7 @@ public class CasParser {
     private void parseMetaData(File file, CasFileVisitor visitor) throws IOException {
         DataInputStream dataIn = new DataInputStream(new FileInputStream(file));
         try{
-            byte[] magicNumber = IOUtil.readByteArray(dataIn, 8);
+            byte[] magicNumber = IOUtil.toByteArray(dataIn, 8);
             if(!Arrays.equals(CAS_MAGIC_NUMBER, magicNumber)){
                 throw new IllegalArgumentException("input stream not a valid cas file wrong magic number");
             }
