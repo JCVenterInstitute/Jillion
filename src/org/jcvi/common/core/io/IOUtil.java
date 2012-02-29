@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -46,7 +47,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.BitSet;
-import java.util.Properties;
 import java.util.Scanner;
 
 import org.jcvi.common.core.Range;
@@ -60,7 +60,7 @@ import org.jcvi.common.core.Range;
 public final class IOUtil {
     /**
      * Some methods need to use Log base 2
-     * alot so it's easier to factor this out as a constant.
+     * a lot so it's easier to factor this out as a constant.
      */
     private static final double LOG_2 = Math.log(2);
     /**
@@ -147,7 +147,7 @@ public final class IOUtil {
     }
     
     /**
-     * Make the given directory and any non-existence 
+     * Make the given directory and any non-existent 
      * parent directory as well.  This method should be used
      * in preference over {@link File#mkdirs()} since that method returns a boolean
      * result to indicate success or failure instead of 
@@ -282,7 +282,23 @@ public final class IOUtil {
         }
 
     }
-
+    /**
+     * Reads {@code buf.length} bytes of the given inputStream and
+     * puts them into the given byte array starting at the given offset.
+     * Will keep reading until length number of bytes have been read (possibly blocking). 
+     * This is the same as {@link #blockingRead(InputStream, byte[], int, int) blockingRead(in,buf,0, buf.length)}
+     * @param in the inputStream to read; can not be null.
+     * @param buf the byte array to write the data from the stream to; can not be null.
+     * @return the number of bytes read which will equal the given length of bytes to read.
+     * @throws EOFException if EOF is unexpectedly reached.
+     * @throws IOException if there is a problem reading the stream.
+     * @throws NullPointerException if either inputStream  or buf are null.
+     * @throws IllegalArgumentException if either offset  or length are negative.
+     * @see #blockingRead(InputStream, byte[], int, int)
+     */
+    public static int blockingRead(InputStream in, byte[] buf) throws IOException{
+    	return blockingRead(in, buf, 0, buf.length);
+    }
     /**
      * Reads up to length number of bytes of the given inputStream and
      * puts them into the given byte array starting at the given offset.
@@ -295,10 +311,10 @@ public final class IOUtil {
      * This number of bytes will be read unless the inputStream ends prematurely
      * (which will throw an IOException). 
      * @return the number of bytes read which will equal the given length of bytes to read.
-     * @throws IOException if EOF is unexpectedly reached.
+     * @throws EOFException if EOF is unexpectedly reached.
+     * @throws IOException if there is a problem reading the stream.
      * @throws NullPointerException if either inputStream  or buf are null.
      * @throws IllegalArgumentException if either offset  or length are negative.
-     * @see #safeBlockingRead(InputStream, byte[], int, int)
      */
     public static int blockingRead(InputStream in, byte[] buf, int offset, int length) throws IOException{
         if(buf ==null){
@@ -322,85 +338,11 @@ public final class IOUtil {
             }
         }
         if(currentBytesRead ==-1){
-            throw new IOException(String.format("end of file after only %d bytes read (expected %d)",totalBytesRead,length));
+            throw new EOFException(String.format("end of file after only %d bytes read (expected %d)",totalBytesRead,length));
         }
         return totalBytesRead;
     }
-    /**
-     * Convenience method for safeBlockingRead where the entire given byte array should
-     * be populated.  Calling this method is the same as {@link #safeBlockingRead(InputStream, byte[], int, int) safeBlockingRead(in,buf,0, buf.length)}
-     * 
-     * @param in inputStream to read from
-     * @param buf byte array to put read data into
-     * @return a {@link ReadResults} which will explain if EOF
-     * was reached and how many bytes were read.  If EOF was not reached,
-     * then the number of bytes read should equal the given length.
-     * @throws IOException if reading from the inputstream throws an IOException.
-     * @see #safeBlockingRead(InputStream, byte[], int, int)
-     */
-    public static ReadResults safeBlockingRead(InputStream in, byte[] buf) throws IOException{
-       return safeBlockingRead(in, buf, 0, buf.length);
-    }
-    /**
-     * Reads up to length number of bytes of the given inputStream 
-     * (which might cause blocking) and
-     * puts them into the given byte array starting at the given offset
-     * BUT will not throw an exception if EOF is reached.  This method
-     * should be used in preference to {@link #blockingRead(InputStream, byte[], int, int)}
-     * if the caller doesn't want an exception immediately thrown if EOF is reached.
-     * This method will keep reading until length number of bytes have been read (possibly blocking). 
-     * @param in inputStream to read from
-     * @param buf byte array to put read data into
-     * @param offset the start offset where to start putting data into the buffer
-     * @param length the total length of bytes to read from the input stream.
-     * @return a {@link ReadResults} which will explain if EOF
-     * was reached and how many bytes were read.  If EOF was not reached,
-     * then the number of bytes read should equal the given length.
-     * @throws IOException if reading from the inputstream throws an IOException.
-     */
-    public static ReadResults safeBlockingRead(InputStream in, byte[] buf, int offset, int length) throws IOException{
-        int currentBytesRead=0;
-        int totalBytesRead=0;
-        while((currentBytesRead =in.read(buf, offset+totalBytesRead, length-totalBytesRead))>0){
-            totalBytesRead+=currentBytesRead;
-            if(totalBytesRead == length){
-                break;
-            }
-        }
-        boolean endOfFile = currentBytesRead ==-1;
-       return new ReadResults(totalBytesRead,endOfFile);
-    }
-    /**
-     * {@code ReadResults} contains how information
-     * collected during a InputStream read operation.
-     * @author dkatzel
-     */
-    public static final class ReadResults{
-        private final boolean endOfFileReached;
-        private final int numberOfBytesRead;
-        private ReadResults(int numberOfBytesRead,boolean endOfFileReached) {
-            this.endOfFileReached = endOfFileReached;
-            this.numberOfBytesRead = numberOfBytesRead;
-        }
-        /**
-         * Did the read hit the EOF.
-         * @return {@code true} if EOF was reached; 
-         * {@code false} otherwise.
-         */
-        public boolean isEndOfFileReached() {
-            return endOfFileReached;
-        }
-        /**
-         * Get the number of bytes read from the stream.
-         * @return the numberOfBytesRead will always be {@code >=0}.
-         */
-        public int getNumberOfBytesRead() {
-            return numberOfBytesRead;
-        }
-        
-        
-    }
-    
+
    
     public static short[] readUnsignedByteArray(InputStream in, int expectedLength) throws IOException {
         short[] array = new short[expectedLength];
@@ -477,25 +419,6 @@ public final class IOUtil {
      */
     public static long toUnsignedInt(int value){
         return value & 0xFFFFFFFFL;
-    }
-    
-    
-    public static Properties readPropertiesFromFile(File propertiesFile) throws IOException{
-        return readPropertiesFromFile(propertiesFile, new Properties());
-     }
-    public static Properties readPropertiesFromFile(File propertiesFile, Properties properties) throws IOException{
-        return readPropertiesFromStream(new FileInputStream(propertiesFile), properties);
-     }
-    public static Properties readPropertiesFromStream(InputStream inputStream) throws IOException{
-       return readPropertiesFromStream(inputStream, new Properties());
-    }
-    public static Properties readPropertiesFromStream(InputStream inputStream, Properties props) throws IOException{
-        try{
-            props.load(inputStream);
-            return props;
-        }finally{
-            closeAndIgnoreErrors(inputStream);
-        }
     }
     
     /**

@@ -90,7 +90,7 @@ public class TestChunk {
             assertEquals("error reading chunk length", e.getMessage());
             TraceDecoderException cause = (TraceDecoderException)e.getCause();
            
-            assertEquals("invalid metaData length record only has 3 bytes", cause.getMessage());
+            assertEquals("invalid metaData length", cause.getMessage());
         }
         verify(mockInputStream);
     }
