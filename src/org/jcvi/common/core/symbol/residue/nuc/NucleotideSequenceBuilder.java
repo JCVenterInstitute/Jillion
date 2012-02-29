@@ -258,7 +258,18 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         if(replacement ==null){
             throw new NullPointerException("replacement base can not be null");
         }
-        byte value = (byte)replacement.ordinal();
+        return privateReplace(offset, replacement);
+    }
+    /**
+     * Method that actually performs the replace which assumes all
+     * of the input values are valid.
+     * @param offset
+     * @param replacement
+     * @return
+     */
+	private NucleotideSequenceBuilder privateReplace(int offset,
+			Nucleotide replacement) {
+		byte value = (byte)replacement.ordinal();
         int bitStartOffset = offset*NUM_BITS_PER_VALUE;
         int bitEndOffset = bitStartOffset+NUM_BITS_PER_VALUE;
 		BitSet subBits = bits.get(bitStartOffset, bitEndOffset);
@@ -275,7 +286,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
              }
         }      
         return this;
-    }
+	}
     /**
      * Deletes the nucleotides from the given range of this 
      * partially constructed NucleotideSequence.  If the given
