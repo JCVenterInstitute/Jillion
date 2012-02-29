@@ -49,7 +49,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private int currentReadUngappedFullLength;
     private Map<String, AssembledFrom> currentAssembledFromMap;
     private boolean readingConsensus=true;
-    private StringBuilder currentBasecalls = new StringBuilder();
+    private NucleotideSequenceBuilder currentBasecalls = new NucleotideSequenceBuilder();
     private PhdInfo currentPhdInfo;
     private Range currentClearRange;
     private int currentOffset;
@@ -94,7 +94,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 		if(readingConsensus){
             readingConsensus=false;
            visitNewContig(currentContigId, 
-                   ConsedUtil.convertAceGapsToContigGaps(currentBasecalls.toString()),
+                   currentBasecalls.build(),
                    numberOfBasesInCurrentContig, numberOfReadsInCurrentContig, currentContigIsComplimented);
         }
 	}
@@ -102,15 +102,14 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * Begin visiting a new contig in the ace file.  Any visit methods between
      * this call and {@link #visitEndOfContig()} pertain to this contig.
      * @param contigId the ID of the contig being visited.
-     * @param consensus the basecalls as a string- NOTE that this has gaps as "*" instead
-     * of "-".  
+     * @param consensus the basecalls of the consensus as a NucleotideSequence.
      * @param numberOfBases the total number of bases expected in this contig if you 
      * add the bases from all the reads up.
      * @param numberOfReads the total number of expected reads in this contig.
      * @param isComplimented is this contig complimented
      * @see #visitEndOfContig()
      */
-    protected abstract void visitNewContig(String contigId, String consensus, int numberOfBases, int numberOfReads, boolean isComplimented);
+    protected abstract void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean isComplimented);
 
     @Override
     public synchronized void visitConsensusQualities() {
@@ -148,7 +147,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         currentContigId = contigId;
         currentAssembledFromMap = new HashMap<String, AssembledFrom>();
         readingConsensus = true;
-        currentBasecalls = new StringBuilder();
+        currentBasecalls = new NucleotideSequenceBuilder();
         currentContigIsComplimented = reverseComplimented;
         numberOfBasesInCurrentContig = numberOfBases;
         numberOfReadsInCurrentContig = numberOfReads;
@@ -216,11 +215,9 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         currentOffset = computeReadOffset(assembledFrom, gappedValidRange.getStart(CoordinateSystem.RESIDUE_BASED));            
        
         currentFullLengthBases = currentBasecalls.toString();
-        NucleotideSequence gappedFullLengthSequence = new NucleotideSequenceBuilder(
-                currentFullLengthBases.replace('*', '-'))
-        			.build();
+        NucleotideSequence gappedFullLengthSequence = currentBasecalls.build();
       //this will set currentValidBasecalls to only be the valid range
-        currentValidBases =  new NucleotideSequenceBuilder(gappedFullLengthSequence.asList(gappedValidRange))
+        currentValidBases =  currentBasecalls.subSequence(gappedValidRange)
         						.toString();
         final int numberOfFullLengthGaps = gappedFullLengthSequence.getNumberOfGaps();
         currentReadUngappedFullLength = currentReadGappedFullLength - numberOfFullLengthGaps;
@@ -274,7 +271,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         throwExceptionIfInitialized();
         currentReadId = readId;
         currentReadGappedFullLength = gappedLength;
-        currentBasecalls = new StringBuilder();
+        currentBasecalls = new NucleotideSequenceBuilder();
     }
 
     @Override

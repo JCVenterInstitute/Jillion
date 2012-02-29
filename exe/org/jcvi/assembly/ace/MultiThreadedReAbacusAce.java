@@ -69,6 +69,7 @@ import org.jcvi.common.core.assembly.ace.consed.ReadNavigationElement;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.MultipleWrapper;
@@ -378,7 +379,7 @@ public class MultiThreadedReAbacusAce {
         * {@inheritDoc}
         */
         @Override
-        protected void visitNewContig(String contigId, String consensus,
+        protected void visitNewContig(String contigId, NucleotideSequence consensus,
                 int numberOfBases, int numberOfReads, boolean isComplimented) {
             //no-op
             
