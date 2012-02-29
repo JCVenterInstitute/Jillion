@@ -25,6 +25,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
@@ -50,9 +51,10 @@ public class CommentSectionCodec implements SectionCodec {
         try {
             IOUtil.blockingSkip(in,bytesToSkip);
             byte[] comments = new byte[header.getCommentSize()];
-            int bytesRead = IOUtil.blockingRead(in,comments, 0, comments.length);
-            if(bytesRead != comments.length){
-                throw new SectionDecoderException("could not read entire comment section");
+            try{
+            	IOUtil.blockingRead(in,comments, 0, comments.length);
+            }catch(EOFException e){
+            	throw new SectionDecoderException("could not read entire comment section");
             }
             Properties props = new Properties();
             props.load(new InputStreamReader(
@@ -106,10 +108,12 @@ public class CommentSectionCodec implements SectionCodec {
         try {
             IOUtil.blockingSkip(in,bytesToSkip);
             byte[] comments = new byte[header.getCommentSize()];
-            int bytesRead = IOUtil.blockingRead(in,comments, 0, comments.length);
-            if(bytesRead != comments.length){
-                throw new SectionDecoderException("could not read entire comment section");
+            try{
+            	IOUtil.blockingRead(in,comments, 0, comments.length);
+            }catch(EOFException e){
+            	throw new SectionDecoderException("could not read entire comment section");
             }
+            
             Properties props = new Properties();
             props.load(new InputStreamReader(
                         new ByteArrayInputStream(comments),

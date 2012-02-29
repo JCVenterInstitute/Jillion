@@ -289,15 +289,14 @@ public final class IOUtil {
      * This is the same as {@link #blockingRead(InputStream, byte[], int, int) blockingRead(in,buf,0, buf.length)}
      * @param in the inputStream to read; can not be null.
      * @param buf the byte array to write the data from the stream to; can not be null.
-     * @return the number of bytes read which will equal the given length of bytes to read.
      * @throws EOFException if EOF is unexpectedly reached.
      * @throws IOException if there is a problem reading the stream.
      * @throws NullPointerException if either inputStream  or buf are null.
      * @throws IllegalArgumentException if either offset  or length are negative.
      * @see #blockingRead(InputStream, byte[], int, int)
      */
-    public static int blockingRead(InputStream in, byte[] buf) throws IOException{
-    	return blockingRead(in, buf, 0, buf.length);
+    public static void blockingRead(InputStream in, byte[] buf) throws IOException{
+    	blockingRead(in, buf, 0, buf.length);
     }
     /**
      * Reads up to length number of bytes of the given inputStream and
@@ -310,25 +309,13 @@ public final class IOUtil {
      * @param length the maximum number of bytes to read, must be {@code >= 0}.
      * This number of bytes will be read unless the inputStream ends prematurely
      * (which will throw an IOException). 
-     * @return the number of bytes read which will equal the given length of bytes to read.
      * @throws EOFException if EOF is unexpectedly reached.
      * @throws IOException if there is a problem reading the stream.
      * @throws NullPointerException if either inputStream  or buf are null.
      * @throws IllegalArgumentException if either offset  or length are negative.
      */
-    public static int blockingRead(InputStream in, byte[] buf, int offset, int length) throws IOException{
-        if(buf ==null){
-        	throw new NullPointerException("byte array can not be null");
-        }
-        if(in ==null){
-        	throw new NullPointerException("inputstream can not be null");
-        }
-        if(offset <0){
-        	throw new IllegalArgumentException("offset must be >= 0");
-        }
-        if(length <0){
-        	throw new IllegalArgumentException("length must be >= 0");
-        }
+    public static void blockingRead(InputStream in, byte[] buf, int offset, int length) throws IOException{
+        checkBlockingReadInputsAreOK(in, buf, offset, length);
     	int currentBytesRead=0;
         int totalBytesRead=0;
         while((currentBytesRead =in.read(buf, offset+totalBytesRead, length-totalBytesRead))>0){
@@ -340,8 +327,22 @@ public final class IOUtil {
         if(currentBytesRead ==-1){
             throw new EOFException(String.format("end of file after only %d bytes read (expected %d)",totalBytesRead,length));
         }
-        return totalBytesRead;
     }
+	private static void checkBlockingReadInputsAreOK(InputStream in,
+			byte[] buf, int offset, int length) {
+		if(buf ==null){
+        	throw new NullPointerException("byte array can not be null");
+        }
+        if(in ==null){
+        	throw new NullPointerException("inputstream can not be null");
+        }
+        if(offset <0){
+        	throw new IllegalArgumentException("offset must be >= 0");
+        }
+        if(length <0){
+        	throw new IllegalArgumentException("length must be >= 0");
+        }
+	}
 
    
     public static short[] readUnsignedByteArray(InputStream in, int expectedLength) throws IOException {
@@ -840,15 +841,13 @@ public final class IOUtil {
      * {@link Endian#BIG} (the default).
      * @return a new byte array instance containing all the bytes
      * from the given inputStream.
-     * @throws IOException if there is a problem reading the numberOfBytesToRead 
-     * from the inputStream.
+     * @throws EOFException if the end of the file is reached before
+     * the given number of bytes.
+     * @throws IOException if there is a problem reading the inputStream.
      */
     public static byte[] toByteArray(InputStream in, int numberOfBytesToRead, Endian endian) throws IOException {
         byte[] array = new byte[numberOfBytesToRead];
-        int bytesRead = blockingRead(in,array,0,numberOfBytesToRead);
-        if(bytesRead != numberOfBytesToRead){
-            throw new IOException("only was able to read "+ bytesRead + "expected "+ numberOfBytesToRead);
-        }
+        blockingRead(in,array,0,numberOfBytesToRead);        
         if(endian == Endian.LITTLE){
             return IOUtil.switchEndian(array);
         }

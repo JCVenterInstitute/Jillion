@@ -24,6 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -81,10 +82,12 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     private ByteBuffer parseSpareConfidence(DataInputStream in,
             int numberOfBases) throws IOException {
         byte[] spare = new byte[numberOfBases];
-        int bytesRead = IOUtil.blockingRead(in, spare, 0, numberOfBases);
-        if(bytesRead != numberOfBases){
-            throw new IOException("could not read all the spare confidences");
+        try{
+        	IOUtil.blockingRead(in, spare, 0, numberOfBases);
+        }catch(EOFException e){
+        	throw new IOException("could not read all the spare confidences", e);
         }
+        
         return ByteBuffer.wrap(spare);
     }
 
@@ -102,10 +105,12 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
         byte[][] probability = new byte[4][numberOfBases];
        
         for(int i=0; i<4; i++){          
-           int bytesRead =IOUtil.blockingRead(in, probability[i], 0, numberOfBases);
-           if(bytesRead != numberOfBases){
-               throw new IOException("could not read all the confidences");
+           try{
+        	IOUtil.blockingRead(in, probability[i], 0, numberOfBases);
+           }catch(EOFException e){
+        	   throw new IOException("could not read all the confidences for channel "+ i, e);
            }
+          
         }
         return probability;
     }
@@ -114,11 +119,12 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     private String parseBasecalls(DataInputStream in,
             int numberOfBases) throws IOException {
         byte[] bases = new byte[numberOfBases];
-        int bytesRead = IOUtil.blockingRead(in, bases, 0, numberOfBases);
-        if(bytesRead != numberOfBases){
-            throw new IOException(String.format(
-                    "could not read all the bases %d out of %d", bytesRead, numberOfBases));
-        }
+        try{
+        	IOUtil.blockingRead(in, bases, 0, numberOfBases);
+        }catch(EOFException e){
+        	throw new IOException(
+                    "could not read all the bases", e);
+        }        
         for(int i=0; i< numberOfBases; i++){
             if(bases[i]==0){
                 bases[i] = (byte)'N';
