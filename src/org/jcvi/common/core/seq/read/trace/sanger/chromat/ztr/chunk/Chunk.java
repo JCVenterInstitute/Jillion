@@ -26,6 +26,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -45,7 +46,6 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.IOUtil.ReadResults;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
@@ -704,11 +704,11 @@ public enum Chunk {
     private byte[] readLengthFromInputStream(InputStream inputStream)
             throws IOException, TraceDecoderException {
         byte[] lengthArray = new byte[4];
-        ReadResults results = IOUtil.safeBlockingRead(inputStream, lengthArray);
-        if(results.getNumberOfBytesRead()<4){
-            String message ="invalid metaData length record only has " +results.getNumberOfBytesRead() + " bytes";
-            throw new TraceDecoderException(message);
-        }
+        try{
+        	IOUtil.blockingRead(inputStream, lengthArray);
+        }catch(EOFException e){
+             throw new TraceDecoderException("invalid metaData length", e);
+        }        
         return lengthArray;
     }
 
@@ -783,11 +783,12 @@ public enum Chunk {
     private byte[] readData(InputStream inputStream, int datalength) throws IOException,
             TraceDecoderException {
         byte[] data = new byte[datalength];
-        ReadResults results = IOUtil.safeBlockingRead(inputStream, data);
-        if(results.getNumberOfBytesRead()< datalength){
-            String message = "invalid datalength field, length specified was " + datalength + " only " + results.getNumberOfBytesRead();
-            throw new TraceDecoderException(message);
-        }      
+        try{
+        	IOUtil.blockingRead(inputStream, data);
+        }catch(EOFException e){
+        	 throw new TraceDecoderException("invalid datalength field", e);
+        }
+            
         return data;
     }
 }

@@ -38,7 +38,6 @@ import org.junit.runners.Suite.SuiteClasses;
         TestIOUtil_unsignedByteToSignedByte.class,
         TestIOUtil_unsignedShortToSignedShort.class,
         TestIOUtil_unsignedIntToSignedInt.class,
-        TestIOUtil_safeBlockingRead.class,
         TestIOUtil_getUnsignedBitAndByteCount.class,
         TestIOUtil_bitSet.class,
         TestIOUtil_copy.class,

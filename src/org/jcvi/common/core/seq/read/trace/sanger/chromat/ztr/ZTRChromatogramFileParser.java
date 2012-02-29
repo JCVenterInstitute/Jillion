@@ -19,6 +19,7 @@
 
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.IOUtil.ReadResults;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.Chunk;
@@ -170,10 +170,11 @@ public class ZTRChromatogramFileParser {
     private static Chunk parseNextChunk(InputStream inputStream) throws TraceDecoderException{
         try{
             byte[] chunkType = new byte[4];
-            ReadResults results = IOUtil.safeBlockingRead(inputStream, chunkType);
-            if(results.isEndOfFileReached()){
-                return null;
-            }            
+            try{
+            	IOUtil.blockingRead(inputStream, chunkType);
+            }catch(EOFException e){
+            	return null;
+            }                      
             return Chunk.getChunk(new String(chunkType,IOUtil.UTF_8));
         }
         catch(Exception e)
