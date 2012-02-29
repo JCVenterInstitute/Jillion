@@ -36,9 +36,7 @@ import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
-import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 /**
  * @author dkatzel
@@ -51,10 +49,9 @@ public class AceReadPositionPrinter {
         private String currentContigId=null;
         private NucleotideSequence consensus;
         @Override
-        protected void visitNewContig(String contigId, String consensus, int numberOfBases, int numberOfReads, boolean complimented) {
+        protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complimented) {
             currentContigId = contigId;
-            this.consensus = new NucleotideSequenceBuilder(
-                        ConsedUtil.convertAceGapsToContigGaps(consensus)).build();
+            this.consensus = consensus;
         }
         
         @Override

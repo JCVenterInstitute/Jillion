@@ -29,6 +29,7 @@ import java.util.Date;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
  * {@code DefaultAceTagsFromAceFile} is a class
  * that can create {@link AceTags} instances
@@ -174,7 +175,7 @@ public final class DefaultAceTagsFromAceFile {
      * {@inheritDoc}
      */
      @Override
-     protected void visitNewContig(String contigId, String consensus, int numberOfBases, int numberOfReads, boolean complimented) {
+     protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complimented) {
          
      }
        

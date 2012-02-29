@@ -25,6 +25,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
  * {@code AbstractAceContigBuilder} is an abstract
  * implementation of {@link AceFileVisitor}
@@ -68,7 +69,7 @@ public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
     
     
     @Override
-    protected void visitNewContig(String contigId, String consensus, int numberOfBases, int numberOfReads, boolean complimented) {
+    protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complimented) {
         contigBuilder= DefaultAceContig.createBuilder(contigId, consensus);
         contigBuilder.setComplimented(complimented);
         

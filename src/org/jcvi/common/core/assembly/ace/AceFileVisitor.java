@@ -134,10 +134,14 @@ public interface AceFileVisitor extends TextFileVisitor{
     void visitTraceDescriptionLine(String traceName, String phdName, Date date);
     /**
      * Visit a line of basecalls of currently visited read. A read 
-     * probably has several lines of basecalls.  This method will only
+     * probably has several lines of basecalls.  The characters in the bases
+     * could be mixed case.  Consed differentiates high quality basecalls
+     * vs low quality basecalls by using upper and lowercase letters respectively.
+     * This method will only
      * get called if the current contig is being parsed which is determined
      * by the return value of {@link #visitBeginContig(String, int, int, int, boolean)}.
      * @param bases (some of) the basecalls of the currently visited read.
+     * 
      */
     void visitBasesLine(String bases);
     /**

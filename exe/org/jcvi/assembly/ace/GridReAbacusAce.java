@@ -66,6 +66,7 @@ import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.ReadAceTag;
 import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.internal.command.grid.JcviQueue;
 
 /**
@@ -329,7 +330,7 @@ public class GridReAbacusAce {
         }
 
         @Override
-         protected void visitNewContig(final String contigId, String consensus, int numberOfBases, int numberOfReads, boolean complimented) {
+         protected void visitNewContig(final String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complimented) {
              Command findAbacusErrorWorker = new Command(ABACUS_WORKER_EXE);
              contigIds.add(contigId);
              File tempOutputFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);
