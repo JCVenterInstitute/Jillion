@@ -64,7 +64,7 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     * {@inheritDoc}
     */
     @Override
-    public void visitBasecalls(String basecalls) {
+    public void visitBasecalls(NucleotideSequence basecalls) {
         builder.basecalls(basecalls);
         
     }

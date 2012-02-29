@@ -34,6 +34,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.UserDefinedTag
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRate;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
@@ -57,7 +58,7 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
 	}
 
 	@Override
-	public void visitOriginalBasecalls(String originalBasecalls) {
+	public void visitOriginalBasecalls(NucleotideSequence originalBasecalls) {
 		out.printf("original basecalls = %s%n",originalBasecalls);
 		
 	}
@@ -77,7 +78,7 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
 	}
 
 	@Override
-	public void visitBasecalls(String basecalls) {
+	public void visitBasecalls(NucleotideSequence basecalls) {
 		out.printf("current basecalls = %s%n",basecalls);
 		
 	}

@@ -83,7 +83,7 @@ public class TestCNF4Chunk {
     @Test
     public void parse() throws TraceDecoderException{
         ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder();
-        struct.basecalls(bases);
+        struct.basecalls(new NucleotideSequenceBuilder(bases).build());
         
         sut.parseData(encodedBytes, struct);
         

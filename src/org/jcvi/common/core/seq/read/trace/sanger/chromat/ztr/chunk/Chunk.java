@@ -60,6 +60,8 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.DataFactory;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.RawData;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 /**
@@ -85,19 +87,21 @@ public enum Chunk {
             final int numberOfBases = unEncodedData.length -1;
             ByteBuffer buf = ByteBuffer.allocate(numberOfBases);
             buf.put(unEncodedData, 1, numberOfBases);
-            builder.basecalls(new String(buf.array(),IOUtil.UTF_8));
+            builder.basecalls(new NucleotideSequenceBuilder(
+            		new String(buf.array(),IOUtil.UTF_8))
+            			.build());
 
         }
 
         @Override
-        protected String parseData(byte[] unEncodedData,
-                ChromatogramFileVisitor visitor,String ignored) throws TraceDecoderException {
+        protected NucleotideSequence parseData(byte[] unEncodedData,
+                ChromatogramFileVisitor visitor,NucleotideSequence ignored) throws TraceDecoderException {
           //first byte is padding
             final int numberOfBases = unEncodedData.length -1;
             ByteBuffer buf = ByteBuffer.allocate(numberOfBases);
             buf.put(unEncodedData, 1, numberOfBases);
             
-            final String basecalls = new String(buf.array(),IOUtil.UTF_8);
+            final NucleotideSequence basecalls = new NucleotideSequenceBuilder(new String(buf.array(),IOUtil.UTF_8)).build();
             visitor.visitBasecalls(basecalls);
             return basecalls;
             
@@ -145,8 +149,8 @@ public enum Chunk {
         }
 
         @Override
-        protected String parseData(byte[] unEncodedData,
-                ChromatogramFileVisitor visitor,String basecalls) throws TraceDecoderException {
+        protected NucleotideSequence parseData(byte[] unEncodedData,
+                ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws TraceDecoderException {
             final int numberOfBases = (unEncodedData.length -1)/4;
             ShortBuffer peaks = ShortBuffer.allocate(numberOfBases);
             ByteBuffer input = ByteBuffer.wrap(unEncodedData);
@@ -197,8 +201,8 @@ public enum Chunk {
         }
 
         @Override
-        protected String parseData(byte[] unEncodedData,
-                ChromatogramFileVisitor visitor,String basecalls) throws TraceDecoderException {
+        protected NucleotideSequence parseData(byte[] unEncodedData,
+                ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws TraceDecoderException {
             if(unEncodedData.length !=9){
                 throw new TraceDecoderException("Invalid DefaultClip size, num of bytes = " +unEncodedData.length );
             }
@@ -280,8 +284,8 @@ public enum Chunk {
         @Override
         protected void parseData(byte[] unEncodedData, ZTRChromatogramBuilder builder)
                 throws TraceDecoderException {
-            String basecalls = builder.basecalls();
-            int numberOfBases = basecalls.length();
+            NucleotideSequence basecalls = new NucleotideSequenceBuilder(builder.basecalls()).build();
+            int numberOfBases = (int)basecalls.getLength();
                
             ByteBuffer aConfidence = ByteBuffer.allocate(numberOfBases);
             ByteBuffer cConfidence = ByteBuffer.allocate(numberOfBases);
@@ -303,12 +307,13 @@ public enum Chunk {
 
         }
 
-        private void populateConfidenceBuffers(String basecalls,
+        private void populateConfidenceBuffers(NucleotideSequence basecalls,
                 ByteBuffer aConfidence, ByteBuffer cConfidence,
                 ByteBuffer gConfidence, ByteBuffer tConfidence,
                 ByteBuffer calledConfidence, ByteBuffer unCalledConfidence) {
-            for (int i = 0; i < basecalls.length(); i++) {
-                char currentChar = basecalls.charAt(i);
+        	int length = (int) basecalls.getLength();
+            for (int i = 0; i < length; i++) {
+                char currentChar = basecalls.get(i).getCharacter().charValue();
                 populateConfidenceBuffers(currentChar, aConfidence, cConfidence,
                         gConfidence, tConfidence, calledConfidence,
                         unCalledConfidence);
@@ -355,10 +360,10 @@ public enum Chunk {
         * {@inheritDoc}
         */
         @Override
-        protected String parseData(byte[] unEncodedData,
-                ChromatogramFileVisitor visitor,String basecalls)throws TraceDecoderException {
+        protected NucleotideSequence parseData(byte[] unEncodedData,
+                ChromatogramFileVisitor visitor,NucleotideSequence basecalls)throws TraceDecoderException {
            
-            int numberOfBases = basecalls.length();
+            int numberOfBases = (int) basecalls.getLength();
             ByteBuffer aConfidence = ByteBuffer.allocate(numberOfBases);
             ByteBuffer cConfidence = ByteBuffer.allocate(numberOfBases);
             ByteBuffer gConfidence = ByteBuffer.allocate(numberOfBases);
@@ -457,8 +462,8 @@ public enum Chunk {
         * {@inheritDoc}
         */
         @Override
-        protected String parseData(byte[] unEncodedData,
-                ChromatogramFileVisitor visitor, String basecalls) throws TraceDecoderException {
+        protected NucleotideSequence parseData(byte[] unEncodedData,
+                ChromatogramFileVisitor visitor, NucleotideSequence basecalls) throws TraceDecoderException {
        //read first 2 byte is padded bytes?
             
             ShortBuffer buf = ByteBuffer.wrap(unEncodedData).asShortBuffer();
@@ -571,8 +576,8 @@ public enum Chunk {
         * {@inheritDoc}
         */
         @Override
-        protected String parseData(byte[] decodedData,
-                ChromatogramFileVisitor visitor,String basecalls) throws TraceDecoderException {
+        protected NucleotideSequence parseData(byte[] decodedData,
+                ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws TraceDecoderException {
             InputStream in = new ByteArrayInputStream(decodedData);
             final Map<String,String> comments = parseText(in);
             visitor.visitComments(comments);
@@ -650,7 +655,7 @@ public enum Chunk {
         readMetaData(inputStream);
         readData(builder,inputStream);
     }
-    public String parseChunk(InputStream inputStream, ChromatogramFileVisitor visitor,String basecalls) throws TraceDecoderException{
+    public NucleotideSequence parseChunk(InputStream inputStream, ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws TraceDecoderException{
         if(inputStream ==null){
             throw new TraceDecoderException("inputStream can not be null");
         }
@@ -731,7 +736,7 @@ public enum Chunk {
      * This method calls parseData to interpret
      * the data and returns the result.
      */
-    private String readData(InputStream inputStream,ChromatogramFileVisitor visitor, String basecalls)throws TraceDecoderException{
+    private NucleotideSequence readData(InputStream inputStream,ChromatogramFileVisitor visitor, NucleotideSequence basecalls)throws TraceDecoderException{
         int length = readLength(inputStream);
 
         //the data may be encoded
@@ -749,7 +754,7 @@ public enum Chunk {
      * @throws TraceDecoderException if there are any problems parsing the data.
      */
     protected abstract void parseData(byte[] unEncodedData, ZTRChromatogramBuilder builder) throws TraceDecoderException;
-    protected abstract String parseData(byte[] unEncodedData, ChromatogramFileVisitor visitor, String basecalls) throws TraceDecoderException;
+    protected abstract NucleotideSequence parseData(byte[] unEncodedData, ChromatogramFileVisitor visitor, NucleotideSequence basecalls) throws TraceDecoderException;
 
     public abstract byte[] encodeChunk(Chromatogram ztrChromatogram) throws TraceEncoderException;
 

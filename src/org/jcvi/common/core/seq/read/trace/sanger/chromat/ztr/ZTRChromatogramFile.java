@@ -27,6 +27,7 @@ import java.util.Map;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 
 /**
@@ -118,7 +119,7 @@ public final class ZTRChromatogramFile{
           * {@inheritDoc}
           */
           @Override
-          public void visitBasecalls(String basecalls) {
+          public void visitBasecalls(NucleotideSequence basecalls) {
               checkNotYetBuilt();
               builder.basecalls(basecalls);              
           }

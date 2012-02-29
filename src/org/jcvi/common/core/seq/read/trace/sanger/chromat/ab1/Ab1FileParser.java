@@ -55,6 +55,8 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.UserDefinedTag
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateUtils;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -140,7 +142,7 @@ public final class Ab1FileParser {
 	
 			List<Nucleotide> channelOrder =parseChannelOrder(groupedDataRecordMap);
 			visitChannelOrderIfAble(visitor, channelOrder);			
-			List<String> basecalls =parseBasecallsFrom(groupedDataRecordMap,traceData,visitor);	
+			List<NucleotideSequence> basecalls =parseBasecallsFrom(groupedDataRecordMap,traceData,visitor);	
 			String signalScale =parseSignalScalingFactor(groupedDataRecordMap, channelOrder, traceData,visitor);
 			Map<String,String> comments =parseDataChannels(groupedDataRecordMap,channelOrder,traceData,visitor);
 			parsePeakData(groupedDataRecordMap,traceData,visitor);
@@ -177,13 +179,13 @@ public final class Ab1FileParser {
 
 	private static void parseQualityData(
 			GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
-			List<String> basecallsList,
+			List<NucleotideSequence> basecallsList,
 			ChromatogramFileVisitor visitor) {
 		
 		List<ByteArrayTaggedDataRecord> qualityRecords =groupedDataRecordMap.byteArrayRecords.get(TaggedDataName.JTC_QUALITY_VALUES);
 		for(int i=0; i<qualityRecords.size(); i++){
 		    ByteArrayTaggedDataRecord qualityRecord = qualityRecords.get(i);
-			List<Nucleotide> basecalls = Nucleotides.parse(basecallsList.get(i));
+		    NucleotideSequence basecalls = basecallsList.get(i);
 			byte[][] qualities = splitQualityDataByChannel(basecalls, qualityRecord.parseDataRecordFrom(traceData));
 			if(i == ORIGINAL_VERSION && visitor instanceof AbiChromatogramFileVisitor){
 				AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor)visitor;
@@ -220,16 +222,16 @@ public final class Ab1FileParser {
 	 * @return a byte matrix containing the quality channel
 	 * data for A,C,G,T in that order.
 	 */
-	private static byte[][] splitQualityDataByChannel(List<Nucleotide> basecalls,byte[] qualities ){
+	private static byte[][] splitQualityDataByChannel(NucleotideSequence basecalls,byte[] qualities ){
 		//The channel of the given basecall gets that
 		// quality value, the other channels get zero
-		int size = basecalls.size();
+		int size = (int)basecalls.getLength();
 		ByteBuffer aQualities = ByteBuffer.allocate(size);
 		ByteBuffer cQualities = ByteBuffer.allocate(size);
 		ByteBuffer gQualities = ByteBuffer.allocate(size);
 		ByteBuffer tQualities = ByteBuffer.allocate(size);
 		
-		populateQualities(basecalls, qualities, aQualities, cQualities, gQualities, tQualities);
+		populateQualities(basecalls.asList(), qualities, aQualities, cQualities, gQualities, tQualities);
 		return new byte[][]{aQualities.array(),cQualities.array(),gQualities.array(),tQualities.array()};
 	}
     private static void populateQualities(List<Nucleotide> basecalls,
@@ -373,7 +375,7 @@ public final class Ab1FileParser {
 	        Map<String,String> props,
 			GroupedTaggedRecords groupedDataRecordMap, 
 			List<Nucleotide> channelOrder,byte[] traceData,
-			String signalScale, List<String> basecalls,
+			String signalScale, List<NucleotideSequence> basecalls,
 			ChromatogramFileVisitor visitor) {
 		props.put("SIGN", signalScale);
 		props = addStringComments(groupedDataRecordMap, traceData, props);
@@ -415,9 +417,9 @@ public final class Ab1FileParser {
      * @return
      */
     private static Map<String,String> addNumberOfBases(
-            List<String> basecalls,
+            List<NucleotideSequence> basecalls,
             Map<String,String> props) {
-        props.put("NBAS", ""+basecalls.get(ORIGINAL_VERSION).length());
+        props.put("NBAS", ""+basecalls.get(ORIGINAL_VERSION).getLength());
         return props;
     }
 
@@ -595,12 +597,13 @@ public final class Ab1FileParser {
     }
 
 	
-	private static List<String> parseBasecallsFrom(
+	private static List<NucleotideSequence> parseBasecallsFrom(
 			GroupedTaggedRecords groupedDataRecordMap, byte[] ab1DataBlock,
 			ChromatogramFileVisitor visitor) {
-		List<String> basecallsList = new ArrayList<String>(2);
+		List<NucleotideSequence> basecallsList = new ArrayList<NucleotideSequence>(2);
 		for(AsciiTaggedDataRecord basecallRecord : groupedDataRecordMap.asciiDataRecords.get(TaggedDataName.BASECALLS)){
-			String basecalls = basecallRecord.parseDataRecordFrom(ab1DataBlock);
+			NucleotideSequence basecalls = new NucleotideSequenceBuilder( basecallRecord.parseDataRecordFrom(ab1DataBlock))
+											.build();
 			basecallsList.add(basecalls);
 			if(basecallRecord.getTagNumber()==CURRENT_VERSION){
 				visitor.visitBasecalls(basecalls);
