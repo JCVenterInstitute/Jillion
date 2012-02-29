@@ -138,7 +138,9 @@ public enum Nucleotide implements Residue {
     public static String getAllCharacters(){
         StringBuilder builder = new StringBuilder();
         for(Character c : CHARACTER_MAP.keySet()){
-            builder.append(c);
+        	if(c.charValue()!= '*'){
+        		builder.append(c);
+        	}
         }
         return builder.toString();
     }
