@@ -31,6 +31,7 @@ import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.Chunk;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.ChunkException;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * {@code ZTRChromatogramFileParser} is a utility class 
@@ -84,7 +85,7 @@ public class ZTRChromatogramFileParser {
         parseHeader(ztrStream);
         visitor.visitNewTrace();
         Chunk currentChunk = parseNextChunk(ztrStream);
-        String basecalls = null;
+        NucleotideSequence basecalls = null;
         while(currentChunk !=null){
              basecalls =currentChunk.parseChunk(ztrStream, visitor,basecalls);
 

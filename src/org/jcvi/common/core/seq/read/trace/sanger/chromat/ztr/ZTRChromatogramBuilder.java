@@ -29,6 +29,7 @@ import java.util.Map;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 
 /**
@@ -94,11 +95,11 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
         return this;
     }
 
-    public final String basecalls() {
+    public final NucleotideSequence basecalls() {
         return basicBuilder.basecalls();
     }
 
-    public ZTRChromatogramBuilder basecalls(String basecalls) {
+    public ZTRChromatogramBuilder basecalls(NucleotideSequence basecalls) {
         basicBuilder.basecalls(basecalls);
         return this;
     }

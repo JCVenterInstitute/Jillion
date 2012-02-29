@@ -84,27 +84,6 @@ public abstract class AbstractBasesSectionCodec implements SectionCodec{
             .tConfidence(probability[3]);
     }
 
-    protected static void setBaseCalls(SCFChromatogramBuilder c, String basecalls){
-        c.basecalls(basecalls);
-    }
-
-    protected static void setPeaks(SCFChromatogramBuilder c, short[] peaks){
-        c.peaks(peaks);
-    }
-
-    protected static void setSubsitutionConfidence(SCFChromatogramBuilder c,
-            ByteBuffer substitutionConfidence) {
-       c.substitutionConfidence(substitutionConfidence.array());
-    }
-    protected static void setInsertionConfidence(SCFChromatogramBuilder c,
-            ByteBuffer insertionConfidence) {
-       c.insertionConfidence(insertionConfidence.array());
-    }
-    protected static void setDeletionConfidence(SCFChromatogramBuilder c,
-            ByteBuffer deletionConfidence) {
-       c.deletionConfidence(deletionConfidence.array());
-    }
-
     @Override
     public EncodedSection encode(SCFChromatogram c, SCFHeader header)
             throws IOException {

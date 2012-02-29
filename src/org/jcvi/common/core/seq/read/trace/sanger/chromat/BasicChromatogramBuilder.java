@@ -37,15 +37,15 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 public final class BasicChromatogramBuilder {
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
 
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[]{};
         private short[] peaks;
-        private String basecalls;
+        private NucleotideSequence basecalls;
         //default to empty confidences (which may happen if read is really
         //trashy
         private byte[] aConfidence=EMPTY_BYTE_ARRAY;
@@ -71,7 +71,7 @@ public final class BasicChromatogramBuilder {
          *  position and confidence data on all 4 channels can not be null.
          * @param properties the properties may be null.
          */
-        public BasicChromatogramBuilder(String basecalls, short[] peaks, ChannelGroup channelGroup, Map<String,String> properties){
+        public BasicChromatogramBuilder(NucleotideSequence basecalls, short[] peaks, ChannelGroup channelGroup, Map<String,String> properties){
             basecalls(basecalls);
             peaks(peaks);
             aConfidence(channelGroup.getAChannel().getConfidence().getData());
@@ -84,8 +84,10 @@ public final class BasicChromatogramBuilder {
             tPositions(channelGroup.getTChannel().getPositions().array());
             properties(properties);
         }
+        
+        
         public BasicChromatogramBuilder(Chromatogram copy){
-       this(Nucleotides.asString(copy.getBasecalls().asList()),
+       this(copy.getBasecalls(),
        ShortSymbol.toArray(copy.getPeaks().getData().asList()),
        copy.getChannelGroup(),
        copy.getComments()
@@ -101,11 +103,11 @@ public final class BasicChromatogramBuilder {
             return this;
         }
 
-        public final String basecalls() {
+        public final NucleotideSequence basecalls() {
             return basecalls;
         }
 
-        public BasicChromatogramBuilder basecalls(String basecalls) {
+        public BasicChromatogramBuilder basecalls(NucleotideSequence basecalls) {
             this.basecalls = basecalls;
             return this;
         }
@@ -209,11 +211,12 @@ public final class BasicChromatogramBuilder {
         }
 
         private QualitySequence generateQualities(ChannelGroup channelGroup) {
-            List<PhredQuality> qualities = new ArrayList<PhredQuality>(basecalls.length());
+        	int length = (int)basecalls.getLength();
+            List<PhredQuality> qualities = new ArrayList<PhredQuality>(length);
             
             
-            for(int i=0; i< basecalls.length(); i++){
-                Nucleotide base = Nucleotide.parse(basecalls.charAt(i));
+            for(int i=0; i< length; i++){
+                Nucleotide base = basecalls.get(i);
                 final byte[] data = channelGroup.getChannel(base).getConfidence().getData();
                 //only read as many qualities as we have...
                 if(i == data.length){

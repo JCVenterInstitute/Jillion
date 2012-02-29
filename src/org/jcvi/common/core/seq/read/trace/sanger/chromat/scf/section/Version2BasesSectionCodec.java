@@ -38,6 +38,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
 
@@ -50,7 +51,7 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
         ByteBuffer insertionConfidence = ByteBuffer.allocate(numberOfBases);
         ByteBuffer deletionConfidence = ByteBuffer.allocate(numberOfBases);
 
-        StringBuilder bases = new StringBuilder();
+        NucleotideSequenceBuilder bases = new NucleotideSequenceBuilder();
         populateFields(in, numberOfBases, peaks, probability,
                 substitutionConfidence, insertionConfidence,
                 deletionConfidence, bases);
@@ -59,7 +60,7 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
         .insertionConfidence(insertionConfidence.array())
         .deletionConfidence(deletionConfidence.array())
         .peaks(peaks.array())
-        .basecalls(bases.toString());
+        .basecalls(bases.build());
 
 
     }
@@ -67,14 +68,14 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
     private void populateFields(DataInputStream in, int numberOfBases,
             ShortBuffer peaks, byte[][] probability,
             ByteBuffer substitutionConfidence, ByteBuffer insertionConfidence,
-            ByteBuffer deletionConfidence, StringBuilder bases)
+            ByteBuffer deletionConfidence, NucleotideSequenceBuilder bases)
             throws IOException {
         for(int i=0; i<numberOfBases; i++){
             peaks.put((short)in.readInt());
             for(int channel =0; channel<4; channel++){
                 probability[channel][i]=(byte)(in.readUnsignedByte());
             }
-            bases.append((char)in.readUnsignedByte());
+            bases.append(Nucleotide.parse((char)in.readUnsignedByte()));
             substitutionConfidence.put((byte)(in.readUnsignedByte()));
             insertionConfidence.put((byte)(in.readUnsignedByte()));
             deletionConfidence.put((byte)(in.readUnsignedByte()));
@@ -159,7 +160,7 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
         ByteBuffer insertionConfidence = ByteBuffer.allocate(numberOfBases);
         ByteBuffer deletionConfidence = ByteBuffer.allocate(numberOfBases);
 
-        StringBuilder bases = new StringBuilder();
+        NucleotideSequenceBuilder bases = new NucleotideSequenceBuilder();
         populateFields(in, numberOfBases, peaks, probability,
                 substitutionConfidence, insertionConfidence,
                 deletionConfidence, bases);
@@ -169,7 +170,7 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
         visitor.visitTConfidence(probability[3]);
 
         visitor.visitPeaks(peaks.array());
-        visitor.visitBasecalls(bases.toString());
+        visitor.visitBasecalls(bases.build());
         if(visitor instanceof SCFChromatogramFileVisitor){
             SCFChromatogramFileVisitor scfVisitor = (SCFChromatogramFileVisitor) visitor;
             scfVisitor.visitSubstitutionConfidence(substitutionConfidence.array());

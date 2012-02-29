@@ -139,7 +139,7 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
     * {@inheritDoc}
     */
     @Override
-    public void visitBasecalls(String basecalls) {
+    public void visitBasecalls(NucleotideSequence basecalls) {
        currentBuilder.basecalls(basecalls);        
     }
 
@@ -181,7 +181,7 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
     * {@inheritDoc}
     */
     @Override
-    public void visitOriginalBasecalls(String originalBasecalls) {
+    public void visitOriginalBasecalls(NucleotideSequence originalBasecalls) {
         originalBuilder.basecalls(originalBasecalls);     
     }
 

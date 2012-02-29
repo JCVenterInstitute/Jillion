@@ -22,6 +22,7 @@ package org.jcvi.common.core.seq.read.trace.sanger;
 import java.util.Map;
 
 import org.jcvi.common.core.io.FileVisitor;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * @author dkatzel
@@ -36,11 +37,11 @@ public interface SangerTraceFileVisitor extends FileVisitor{
     /**
      * Visit the basecalls in the chromatogram file
      * being visited.
-     * @param string the basecalls as a string,
+     * @param basecalls the basecalls as a {@link NucleotideSequence},
      * although unlikely, it is possible there are 
      * gaps.
      */
-    void visitBasecalls(String basecalls);
+    void visitBasecalls(NucleotideSequence basecalls);
 
     /**
      * Visit the raw peak values of the

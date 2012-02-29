@@ -38,6 +38,8 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFil
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
 
@@ -116,7 +118,7 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     }
 
     
-    private String parseBasecalls(DataInputStream in,
+    private NucleotideSequence parseBasecalls(DataInputStream in,
             int numberOfBases) throws IOException {
         byte[] bases = new byte[numberOfBases];
         try{
@@ -130,7 +132,8 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
                 bases[i] = (byte)'N';
             }
         }
-        return new String(bases,IOUtil.UTF_8);
+        return new NucleotideSequenceBuilder(new String(bases,IOUtil.UTF_8))
+        				.build();
 
     }
 

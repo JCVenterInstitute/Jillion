@@ -53,7 +53,7 @@ public class TestBASEChunk {
        
         ZTRChromatogramBuilder builder = new ZTRChromatogramBuilder();
         sut.parseData(encodedBases, builder);        
-        assertEquals(decodedBases, builder.basecalls());
+        assertEquals(decodedBases, builder.basecalls().toString());
     }
     
     @Test

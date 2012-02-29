@@ -32,6 +32,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.UserDefinedTag
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRate;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 /**
@@ -47,7 +48,7 @@ public interface AbiChromatogramFileVisitor extends ChromatogramFileVisitor{
 	 * that were called off the sequencer.
 	 * @param originalBasecalls the original basecalls (not null).
 	 */
-	void visitOriginalBasecalls(String originalBasecalls);
+	void visitOriginalBasecalls(NucleotideSequence originalBasecalls);
 	/**
 	 * Visit the order of the A,C,G and T channels
 	 * can vary depending on the machine setup;
