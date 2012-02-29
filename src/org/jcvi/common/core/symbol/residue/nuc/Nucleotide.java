@@ -90,6 +90,8 @@ public enum Nucleotide implements Residue {
         }
         //add support for X which some systems use instead of N
         CHARACTER_MAP.put(Character.valueOf('X'), Unknown);
+      //add support for * which consed uses instead of -
+        CHARACTER_MAP.put(Character.valueOf('*'), Gap);
         AMBIGUITY_TO_CONSTIUENT = new EnumMap<Nucleotide, Set<Nucleotide>>(Nucleotide.class);
        
         AMBIGUITY_TO_CONSTIUENT.put(Unknown, EnumSet.of(Adenine,Cytosine,Guanine,Thymine));
