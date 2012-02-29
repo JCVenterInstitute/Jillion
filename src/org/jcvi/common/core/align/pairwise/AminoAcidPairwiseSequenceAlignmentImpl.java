@@ -17,4 +17,14 @@ class AminoAcidPairwiseSequenceAlignmentImpl extends AbstractPairwiseSequenceAli
 		}
 		return false;
 	}
+
+	@Override
+	public int hashCode() {
+		//override hashcode 
+		//to make programs like PMD happy that I override
+		//equals and hashcode
+		return super.hashCode();
+	}
+	
+	
 }

@@ -31,7 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.ggf.drmaa.DrmaaException;
 import org.ggf.drmaa.ExitTimeoutException;
-import org.ggf.drmaa.InvalidJobException;
 import org.ggf.drmaa.JobInfo;
 import org.ggf.drmaa.JobTemplate;
 import org.ggf.drmaa.Session;
@@ -284,12 +283,9 @@ public final class GridJobBuilders {
         protected final void updateGridJobStatusMap() throws DrmaaException {
             for ( String jobID : jobIDList ) {
                 if ( !jobInfoMap.containsKey(jobID) ) {
-                    try{
-                       // gridSession.getJobProgramStatus(jobId)
-                        jobInfoMap.put(jobID,this.gridSession.wait(jobID,1));
-                    }catch(InvalidJobException e){
-                        //ignore?
-                    }
+                   // gridSession.getJobProgramStatus(jobId)
+                    jobInfoMap.put(jobID,this.gridSession.wait(jobID,1));
+                    
                 }
             }
         }
