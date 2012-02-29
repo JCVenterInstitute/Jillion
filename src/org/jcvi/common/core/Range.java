@@ -1016,17 +1016,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @see #mergeRanges(List, int)
      */
     public static List<Range> mergeRanges(List<Range> rangesToMerge){
-        return mergeRanges(rangesToMerge,CoordinateSystem.ZERO_BASED);
-    }
-    /**
-     * Combine the given Ranges into fewer ranges that cover the same region.
-     * This is the same as {@link #mergeRanges(List, int,CoordinateSystem) mergeRanges(rangesToMerge,0,coordinateSystem)} 
-     * @param rangesToMerge
-     * @return a new list of merged Ranges.
-     * @see #mergeRanges(List, int)
-     */
-    public static List<Range> mergeRanges(List<Range> rangesToMerge, CoordinateSystem coordinateSystem){
-        return mergeRanges(rangesToMerge,0,coordinateSystem);
+        return mergeRanges(rangesToMerge,0);
     }
     /**
      * Combine the given Ranges into fewer ranges that cover the same region.
@@ -1040,46 +1030,14 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @throws IllegalArgumentException if clusterDistance <0.
      */
     public static List<Range> mergeRanges(List<Range> rangesToMerge, int maxDistanceBetweenAdjacentRanges){
-        return mergeRanges(rangesToMerge,maxDistanceBetweenAdjacentRanges,CoordinateSystem.ZERO_BASED);
-    }
-    /**
-     * Combine the given Ranges into fewer ranges that cover the same region.
-     * For example 2 ranges [0-2] and [1-4] could be merged into a single
-     * range [0-4].
-     * @param rangesToMerge the ranges to be merged together.
-     * @param maxDistanceBetweenAdjacentRanges the maximum distance between the end of one range
-     * and the start of another inorder
-     * to be merged.
-     * @return a new list of merged Ranges.
-     * @throws IllegalArgumentException if clusterDistance <0.
-     */
-    public static List<Range> mergeRanges(List<Range> rangesToMerge, int maxDistanceBetweenAdjacentRanges,CoordinateSystem coordinateSystem){
         if(maxDistanceBetweenAdjacentRanges <0){
             throw new IllegalArgumentException("cluster distance can not be negative");
         }
         List<Range> sortedCopy = new ArrayList<Range>(rangesToMerge);
         Collections.sort(sortedCopy);
 
-        mergeAnyRangesThatCanBeCombined(sortedCopy, maxDistanceBetweenAdjacentRanges,coordinateSystem);
+        mergeAnyRangesThatCanBeCombined(sortedCopy, maxDistanceBetweenAdjacentRanges);
         return sortedCopy;
-    }
-    
-    /**
-     * Convenience method for merging ranges into Clusters in the {@link CoordinateSystem#ZERO_BASED}
-     * Coordinate system. This is the same as
-     * {@link #mergeRangesIntoClusters(List, int, CoordinateSystem)
-     * mergeRangesIntoClusters(rangesToMerge,clusterDistance, CoordinateSystem.ZERO_BASED)}
-     * @param rangesToMerge the ranges to be merged together.
-     * @param maxClusterDistance the maximum distance between the end of one range
-     * and the start of another in order
-     * to be merged.
-     * @return a new list of merged Ranges.
-     * @throws IllegalArgumentException if clusterDistance <0.
-     * @see #mergeRangesIntoClusters(List, int, CoordinateSystem)
-     */
-    public static List<Range> mergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance){
-        return mergeRangesIntoClusters(rangesToMerge, maxClusterDistance, CoordinateSystem.ZERO_BASED);
-
     }
     /**
      * Combine the given Ranges into fewer ranges that cover the same region.
@@ -1089,19 +1047,15 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @param clusterDistance the maximum distance between the end of one range
      * and the start of another in order
      * to be merged.
-     * @param coordinateSystem the coordinate system the merged
-     * ranges should be in.
      * @return a new list of merged Ranges.
      * @throws IllegalArgumentException if clusterDistance <0.
      */
-    public static List<Range> mergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance,
-            CoordinateSystem coordinateSystem){
-        List<Range> tempRanges = Range.mergeRanges(rangesToMerge,coordinateSystem);
-        return privateMergeRangesIntoClusters(tempRanges,maxClusterDistance,coordinateSystem);
+    public static List<Range> mergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance){
+        List<Range> tempRanges = Range.mergeRanges(rangesToMerge);
+        return privateMergeRangesIntoClusters(tempRanges,maxClusterDistance);
 
     }
-    private static List<Range> privateMergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance,
-            CoordinateSystem coordinateSystem){
+    private static List<Range> privateMergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance){
         if(maxClusterDistance <0){
             throw new IllegalArgumentException("max cluster distance can not be negative");
         }
@@ -1153,7 +1107,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
         }while(merged);
     }
     
-    private static void mergeAnyRangesThatCanBeCombined(List<Range> rangesToMerge, int clusterDistance,CoordinateSystem coordinateSystem) {
+    private static void mergeAnyRangesThatCanBeCombined(List<Range> rangesToMerge, int clusterDistance) {
         boolean merged;
         do{
             merged = false;

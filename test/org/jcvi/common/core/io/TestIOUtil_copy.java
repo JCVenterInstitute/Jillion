@@ -47,14 +47,7 @@ public class TestIOUtil_copy {
 		expectLastCall().anyTimes();
 		
 		final LargeCopyHelper helper = new LargeCopyHelper();
-		expect(in.available()).andStubAnswer(new IAnswer<Integer>() {
-
-			@Override
-			public Integer answer() throws Throwable {
-				return helper.available();
-			}
-			
-		});
+		
 		
 		expect(in.read(isA(byte[].class))).andStubAnswer(new IAnswer<Integer>() {
 
@@ -76,13 +69,7 @@ public class TestIOUtil_copy {
 		public static  long actualNumberOfBytes = ((long)Integer.MAX_VALUE)+1;
 		
 		private long numberOfBytesLeft= actualNumberOfBytes;
-		public int available(){
-			if( numberOfBytesLeft >0){
-				return (int) Math.min(Integer.MAX_VALUE, numberOfBytesLeft);
-			}else{
-				return 0;
-			}
-		}
+		
 		
 		public int read(byte[] array){
 			int arrayLength = array.length;
@@ -91,7 +78,8 @@ public class TestIOUtil_copy {
 				return arrayLength;
 			}
 			int returnValue = (int)numberOfBytesLeft;
-			numberOfBytesLeft=0;
+			//need to return -1 to say we are at EOF
+			numberOfBytesLeft=-1;
 			return returnValue;
 		}
 	}

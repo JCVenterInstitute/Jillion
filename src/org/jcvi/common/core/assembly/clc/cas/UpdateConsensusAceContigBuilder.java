@@ -70,7 +70,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
         consensusMap = new HashMap<Long,Map<Nucleotide,Integer>>((int)fullConsensus.getLength()+1, 1F);
         
     }
-    public UpdateConsensusAceContigBuilder consensusCaller(ConsensusCaller consensusCaller){
+    public synchronized UpdateConsensusAceContigBuilder consensusCaller(ConsensusCaller consensusCaller){
     	if(consensusCaller ==null){
     		throw new NullPointerException("consensus caller can not be null");
     	}
@@ -84,7 +84,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
         NucleotideSequenceBuilder consensusBuilder = builder.getConsensusBuilder();
         for(int i=0; i<consensusBuilder.getLength(); i++ )   {
             final Map<Nucleotide, Integer> histogramMap = consensusMap.get(Long.valueOf(i));
-            Slice slice = createSliceFor(histogramMap);
+            Slice<?> slice = createSliceFor(histogramMap);
             
             consensusBuilder.replace(i,consensuCaller.callConsensus(slice).getConsensus());
         }
@@ -117,7 +117,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
         }
     }
     
-    private Slice createSliceFor(Map<Nucleotide, Integer> histogram){
+    private Slice<?> createSliceFor(Map<Nucleotide, Integer> histogram){
     	CompactedSlice.Builder builder = new CompactedSlice.Builder();
     	PhredQuality qual = PhredQuality.valueOf(30);
     	if(histogram !=null){

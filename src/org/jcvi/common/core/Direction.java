@@ -18,6 +18,9 @@
  ******************************************************************************/
 package org.jcvi.common.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The <code>Direction</code> is a declaration of expected
  * directionality for some sequence of bases.  Theoretically, the idea of
@@ -55,6 +58,36 @@ public enum Direction
      * but it is currently not known.
      */
     UNKNOWN;
+    
+    
+    private static Map<String, Direction> PARSED_DIRECTIONS;
+    
+    static{
+    	PARSED_DIRECTIONS = new HashMap<String, Direction>();
+    	PARSED_DIRECTIONS.put("-", Direction.REVERSE);
+    	PARSED_DIRECTIONS.put("R", Direction.REVERSE);
+    	PARSED_DIRECTIONS.put("r", Direction.REVERSE);
+    	PARSED_DIRECTIONS.put("TR", Direction.REVERSE);
+    	PARSED_DIRECTIONS.put("Tr", Direction.REVERSE);
+    	PARSED_DIRECTIONS.put("tr", Direction.REVERSE);
+    	PARSED_DIRECTIONS.put("tR", Direction.REVERSE);
+    	PARSED_DIRECTIONS.put("1", Direction.REVERSE);
+    	
+    	PARSED_DIRECTIONS.put("+", Direction.FORWARD);
+    	PARSED_DIRECTIONS.put("F", Direction.FORWARD);
+    	PARSED_DIRECTIONS.put("f", Direction.FORWARD);
+    	PARSED_DIRECTIONS.put("TF", Direction.FORWARD);
+    	PARSED_DIRECTIONS.put("Tf", Direction.FORWARD);
+    	PARSED_DIRECTIONS.put("tF", Direction.FORWARD);
+    	PARSED_DIRECTIONS.put("tf", Direction.FORWARD);
+    	PARSED_DIRECTIONS.put("0", Direction.FORWARD);
+    	
+    	PARSED_DIRECTIONS.put("n", Direction.NONE);
+    	PARSED_DIRECTIONS.put("N", Direction.NONE);
+    	
+    	PARSED_DIRECTIONS.put("U", Direction.UNKNOWN);
+    	PARSED_DIRECTIONS.put("u", Direction.UNKNOWN);
+    }
     /**
      * Parse a string to determine the {@link Direction}.
      * A direction is considered to be {@link #FORWARD} if:
@@ -78,33 +111,13 @@ public enum Direction
      * @return
      */
     public static Direction parseSequenceDirection(String dirString){
-        if("-".equals(dirString)){
-            return Direction.REVERSE;
-        }
-        if("+".equals(dirString)){
-            return Direction.FORWARD;
-        }
-        
-        for (Direction dir : Direction.values())
-        {
-            if (dir.name().equalsIgnoreCase(dirString) ||
-                dir.name().substring(0, 1).equalsIgnoreCase(dirString))
-            {
-                return dir;
-            }
-        }
-        if("TF".equalsIgnoreCase(dirString)){
-            return Direction.FORWARD;
-        }
-        if("TR".equalsIgnoreCase(dirString)){
-            return Direction.REVERSE;
-        }
-        if("1".equals(dirString)){
-            return Direction.REVERSE;
-        }
-        if("0".equals(dirString)){
-            return Direction.FORWARD;
-        }
+        if(PARSED_DIRECTIONS.containsKey(dirString)){
+        	return PARSED_DIRECTIONS.get(dirString);
+        }  
+        String firstLetter = dirString.trim().substring(0,1);
+        if(PARSED_DIRECTIONS.containsKey(firstLetter)){
+        	return PARSED_DIRECTIONS.get(firstLetter);
+        } 
         return Direction.UNKNOWN;
         
         
