@@ -359,7 +359,8 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		List<R> residuesByOrdinal = pairwiseStrategy.getResidueList();
 		while(!done){
 			
-			switch(TracebackDirection.values()[traceback[x][y]]){
+			TracebackDirection tracebackDirection = TracebackDirection.values()[traceback[x][y]];
+			switch(tracebackDirection){
 				case VERTICAL :
 					alignmentBuilder.addGap(residuesByOrdinal.get(seq1Bytes[x-1]), gap);
 					x--;
@@ -383,6 +384,9 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 				case TERMINAL:
 					done = true;
 					break;
+				default:
+					//will never happen 
+					throw new IllegalStateException("invalid Traceback direction "+ tracebackDirection);
 			}
 		}
 		return  pairwiseStrategy.wrapPairwiseAlignment(PairwiseSequenceAlignmentWrapper.wrap(alignmentBuilder.build(), score));

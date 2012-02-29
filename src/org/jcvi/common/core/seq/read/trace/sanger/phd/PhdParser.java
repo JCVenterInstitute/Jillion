@@ -177,10 +177,8 @@ public class PhdParser {
                     }
                     else{
                         Matcher tagMatcher = BEGIN_TAG_PATTERN.matcher(line);
-                        if(tagMatcher.find()){
-                            if(parseCurrentPhd){
+                        if(tagMatcher.find() && parseCurrentPhd){
                                 visitor.visitBeginTag(tagMatcher.group(1));
-                            }
                         }
                     }
                 }

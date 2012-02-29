@@ -48,7 +48,10 @@ public abstract class  AbstractSliceMap implements SliceMap{
             try {
                 final String id = read.getId();
                 
-                qualities = qualityDataStore==null?null:qualityDataStore.get(id);
+                qualities=null;
+                if(qualityDataStore !=null && qualityDataStore.contains(id)){
+                	qualities =qualityDataStore.get(id);
+                }
                 
                 int indexIntoRead = (int) (offset - read.getStart());
                 final IdedSliceElement sliceElement = createSliceElementFor(
