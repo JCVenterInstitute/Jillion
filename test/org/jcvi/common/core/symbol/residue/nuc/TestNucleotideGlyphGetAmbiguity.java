@@ -147,7 +147,11 @@ public class TestNucleotideGlyphGetAmbiguity {
         assertEquals(Nucleotide.parse('-'), 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Gap)));
     }
-    
+    @Test
+    public void consedGap(){
+        assertEquals(Nucleotide.parse('*'), 
+                Nucleotide.getAmbiguityFor(Arrays.asList(Gap)));
+    }
     @Test
     public void extendedAShouldReturnA(){
         assertEquals(Nucleotide.parse('A'), 
