@@ -25,7 +25,7 @@ import org.jcvi.common.core.symbol.residue.Residue;
  * {@code ScoringMatrix} is a matrix 
  * that describes a score assigned to each possible
  * pairing of Residue.  Types of Scoring matrices might
- * include distance matrices, subsitution matrices etc.
+ * include distance matrices, substitution matrices etc.
  * 
  * @author dkatzel
  */
