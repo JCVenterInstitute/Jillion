@@ -7,7 +7,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     { 
-     TestAsmUtil.class	
+     TestAsmUtil.class	,
+     TestDefaultAsmContigDataStore.class,
+     TestIndexedAsmContigDataStore.class
     }
     )
 public class AllAsmUnitTests {
