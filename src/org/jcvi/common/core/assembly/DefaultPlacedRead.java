@@ -50,11 +50,19 @@ public class DefaultPlacedRead implements PlacedRead {
     
     
     public static final PlacedReadBuilder<PlacedRead> createBuilder(NucleotideSequence reference, 
-            String readId,String validBases,
+            String readId,NucleotideSequence validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength){
         return new Builder(reference, readId, validBases, offset, dir, 
                 clearRange, ungappedFullLength);
+    }
+    
+    public static final PlacedReadBuilder<PlacedRead> createBuilder(NucleotideSequence reference, 
+            String readId,String validBases,
+            int offset, Direction dir, Range clearRange,
+            int ungappedFullLength){
+    	 return createBuilder(reference, readId, new NucleotideSequenceBuilder(validBases).build(), offset, dir, 
+                 clearRange, ungappedFullLength);
     }
     
     DefaultPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
@@ -225,16 +233,16 @@ public class DefaultPlacedRead implements PlacedRead {
         private final Direction dir;
         private final int ungappedFullLength;
         
-        public Builder(NucleotideSequence reference, String readId,String validBases,
+        public Builder(NucleotideSequence reference, String readId, NucleotideSequence validBases,
                             int offset, Direction dir, Range clearRange,
                             int ungappedFullLength){
             this.readId = readId;
             this.dir =dir;
             this.clearRange = clearRange;
             this.offset = offset;
-            this.originalSequence = new NucleotideSequenceBuilder(validBases).build();
+            this.originalSequence = validBases;
             this.basesBuilder =null;
-            if(offset + validBases.length() > reference.getLength()){
+            if(offset + validBases.getLength() > reference.getLength()){
                 throw new IllegalArgumentException("read goes beyond the reference");
             }
             if(offset <0){

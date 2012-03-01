@@ -33,6 +33,7 @@ import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.util.trimmer.MinimumEndCoverageTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.PlacedReadTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.TrimmerException;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,7 +60,7 @@ public class TestAceContigTrimmer {
     		builder = DefaultAceContig.createBuilder(id,consensus);
     	}
     	TestAceBuilder addRead(String readId, String gappedBasecalls,int offset, Direction dir, Range validRange){
-    		builder.addRead(readId, gappedBasecalls,offset,dir,validRange,null,offset+gappedBasecalls.length());
+    		builder.addRead(readId, new NucleotideSequenceBuilder(gappedBasecalls).build(),offset,dir,validRange,null,offset+gappedBasecalls.length());
     		return this;
     	}
     	AceContig build(){

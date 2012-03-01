@@ -100,7 +100,7 @@ public class NewblerMappedAceContigUtil {
             if(!matcher.matches() && phdDataStore.contains(read.getId()) && readRange.isSubRangeOf(contigRange) ){
                 final int newOffset = (int)(read.getStart() -consensusRead.getStart());
                 builder.addRead(read.getId(), 
-                        Nucleotides.asString(read.getNucleotideSequence().asList()),
+                        read.getNucleotideSequence(),
                         newOffset,
                         read.getDirection(),
                         read.getValidRange(), read.getPhdInfo(),

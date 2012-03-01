@@ -201,7 +201,7 @@ public class ConsedUtil {
                 throw new NullPointerException("got a null read for id " + readId);
             }
             builder.addRead(readId, 
-                    read.getBasesBuilder().toString(), 
+                    read.getBasesBuilder().build(), 
                     (int)(read.getStart() - contigRange.getStart()), 
                     read.getDirection(), read.getClearRange(), read.getPhdInfo(),
                     read.getUngappedFullLength());

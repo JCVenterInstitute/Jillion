@@ -41,7 +41,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
     private final PlacedRead placedRead;
     
     
-    public static AcePlacedReadBuilder createBuilder(NucleotideSequence reference, String readId,String validBases,
+    public static AcePlacedReadBuilder createBuilder(NucleotideSequence reference, String readId,NucleotideSequence validBases,
             int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
             int ungappedFullLength){
         return new Builder(reference, readId, validBases, 
@@ -210,7 +210,7 @@ public class DefaultAcePlacedRead implements AcePlacedRead {
         private final PlacedReadBuilder<PlacedRead> delegateBuilder;
         
         
-        public Builder(NucleotideSequence reference, String readId,String validBases,
+        public Builder(NucleotideSequence reference, String readId,NucleotideSequence validBases,
                             int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
                             int ungappedFullLength){
             this.delegateBuilder = DefaultPlacedRead.createBuilder(

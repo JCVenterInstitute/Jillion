@@ -203,7 +203,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     * {@inheritDoc}
     */
     @Override
-    public UpdateConsensusAceContigBuilder addRead(String readId, String validBases,
+    public UpdateConsensusAceContigBuilder addRead(String readId, NucleotideSequence validBases,
             int offset, Direction dir, Range clearRange, PhdInfo phdInfo,
             int ungappedFullLength) {
         builder.addRead(readId, validBases, offset, dir, clearRange, phdInfo, ungappedFullLength);

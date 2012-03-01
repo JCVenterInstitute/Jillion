@@ -140,10 +140,12 @@ public interface AceFileVisitor extends TextFileVisitor{
      * This method will only
      * get called if the current contig is being parsed which is determined
      * by the return value of {@link #visitBeginContig(String, int, int, int, boolean)}.
-     * @param bases (some of) the basecalls of the currently visited read.
+     * @param mixedCaseBasecalls (some of) the basecalls of the currently visited read
+     * or consensus which might have both upper and lower case letters to denote
+     * high vs low quality.
      * 
      */
-    void visitBasesLine(String bases);
+    void visitBasesLine(String mixedCaseBasecalls);
     /**
      * Visit a tag that refers to data concerning a single read in the assembly.
      * @param id the read id.
