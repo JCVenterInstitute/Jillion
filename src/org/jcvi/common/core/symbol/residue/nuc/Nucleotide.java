@@ -135,15 +135,6 @@ public enum Nucleotide implements Residue {
     private Nucleotide(Character c){
         this.c = c;
     }
-    public static String getAllCharacters(){
-        StringBuilder builder = new StringBuilder();
-        for(Character c : CHARACTER_MAP.keySet()){
-        	if(c.charValue()!= '*'){
-        		builder.append(c);
-        	}
-        }
-        return builder.toString();
-    }
     /**
      * Return the Character equivalent of this
      * {@link Nucleotide}.  For example

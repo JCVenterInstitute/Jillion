@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
 import org.jcvi.common.core.align.AlnVisitor.ConservationInfo;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
 /**
  * @author dkatzel
@@ -43,7 +42,7 @@ public class AlnParser {
     /**
      * 
      */
-    private static final String REGEX = "^([^*\\s]+)\\s+(["+Nucleotide.getAllCharacters()+"]+)";
+    private static final String REGEX = "^([^*\\s]+)\\s+([\\-ACGTNVHDBWMRSYK]+)";
     private static final Pattern ALIGNMENT_PATTERN = Pattern.compile(REGEX);
     private static final Pattern CONSERVATION_PATTERN = Pattern.compile("\\s+([-:\\. \\*]+)$");
     public static void parse(File alnFile, AlnVisitor visitor) throws IOException{
