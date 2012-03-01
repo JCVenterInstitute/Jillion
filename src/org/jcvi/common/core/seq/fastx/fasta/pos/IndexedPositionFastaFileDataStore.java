@@ -115,7 +115,7 @@ public final class IndexedPositionFastaFileDataStore implements PositionFastaDat
 		return LargePositionFastaRecordIterator.createNewIteratorFor(fastaFile);
 	}
 	
-	private static class IndexedPositionFastaDataStoreBuilderVisitor 
+	private static final class IndexedPositionFastaDataStoreBuilderVisitor 
 	extends AbstractIndexedFastaDataStoreBuilderVisitor<ShortSymbol, Sequence<ShortSymbol>, PositionFastaRecord<Sequence<ShortSymbol>>, PositionFastaDataStore>
 			implements	PositionFastaDataStoreBuilderVisitor{
 

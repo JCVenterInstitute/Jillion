@@ -44,7 +44,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * 
  * 
  */
-public class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> implements SliceMap {
+public final class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> implements SliceMap {
     private final CompactedSlice[] slices;
 
     public static <PR extends PlacedRead, C extends Contig<PR>> CompactedSliceMap create(C contig,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{

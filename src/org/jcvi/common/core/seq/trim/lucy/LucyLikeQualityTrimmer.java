@@ -59,7 +59,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
  * Finally, the candidate good quality regions are further trimmed to meet overall
  * error rates and the ends of the region (currently first and last 2 bases)
  * must also meet a specific error rate threshold.  Each candidate region is trimmed
- * until each end and the total overall error rate meet these thesholds at the same time. 
+ * until each end and the total overall error rate meet these thresholds at the same time. 
  * </li>
  * 
  * The largest of the ranges after all these steps is the final trim range.
@@ -68,7 +68,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
  *
  * @see <a href ="http://www.ncbi.nlm.nih.gov/pubmed/11751217">Chou HH, Holmes MH. DNA sequence quality trimming and vector removal. Bioinformatics. 2001;17:1093-1104. doi: 10.1093/bioinformatics/17.12.1093.<a>
  */
-public class LucyLikeQualityTrimmer {
+public final class LucyLikeQualityTrimmer {
     private static final int SIZE_OF_ENDS =2;
     private final int minGoodLength;
     private final Window bracketWindow;
