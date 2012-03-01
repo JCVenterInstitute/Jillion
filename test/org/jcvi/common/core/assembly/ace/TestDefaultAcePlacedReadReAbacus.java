@@ -48,7 +48,7 @@ public class TestDefaultAcePlacedReadReAbacus {
     
     int originalStartOffset=5;
     NucleotideSequence consensus = new NucleotideSequenceBuilder("NNNNACGTTACGTTT").build();
-    String originalSequence =   "ACGT-ACG-T";
+    NucleotideSequence originalSequence =   new NucleotideSequenceBuilder("ACGT-ACG-T").build();
     AcePlacedReadBuilder sut = DefaultAcePlacedRead.createBuilder(
             consensus, readId, 
             originalSequence, 
@@ -68,7 +68,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         assertEquals(dir, sut.getDirection());
         assertEquals(phdInfo, sut.getPhdInfo());
         assertEquals(ungappedFullLength, sut.getUngappedFullLength());
-        assertEquals(originalSequence, sut.getBasesBuilder().toString());
+        assertEquals(originalSequence, sut.getBasesBuilder().build());
         assertEquals(validRange, sut.getClearRange());
     }
     
@@ -81,7 +81,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         assertEquals(dir, sut.getDirection());
         assertEquals(phdInfo, sut.getPhdInfo());
         assertEquals(ungappedFullLength, sut.getUngappedFullLength());
-        assertEquals(originalSequence, sut.getBasesBuilder().toString());
+        assertEquals(originalSequence, sut.getBasesBuilder().build());
         assertEquals(validRange, sut.getClearRange());
     }
     

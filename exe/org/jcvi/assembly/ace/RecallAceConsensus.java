@@ -184,7 +184,7 @@ public class RecallAceConsensus {
                 }
                 
                 @Override
-                protected void visitAceRead(String readId, String validBasecalls,
+                protected void visitAceRead(String readId, NucleotideSequence validBasecalls,
                         int offset, Direction dir, Range validRange,
                         PhdInfo phdInfo, int ungappedFullLength) {
                     // no-op

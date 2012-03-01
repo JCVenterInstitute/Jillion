@@ -28,6 +28,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,7 +68,7 @@ public class TestAceContigBuilderInvalidRead {
     }
     
     private void addReadToBuilder(String id,String validBases,int offset,Direction dir, Range validRange, PhdInfo phdInfo){
-    	sut.addRead(id, validBases, offset, dir, 
+    	sut.addRead(id, new NucleotideSequenceBuilder(validBases).build(), offset, dir, 
     			validRange, phdInfo,validBases.length());
         
     }

@@ -27,7 +27,6 @@ import java.util.SortedMap;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.ContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
@@ -37,6 +36,7 @@ import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.junit.Test;
 /**
@@ -54,12 +54,11 @@ public class TestConsedUtil_Split0x {
     	TestAceBuilder(String id, String consensus){
     		builder = DefaultAceContig.createBuilder(id,consensus);
     	}
-    	
+
     	TestAceBuilder addRead(String readId, String gappedBasecalls,int offset, Direction dir, Range validRange, PhdInfo phdInfo){
-    	    builder.addRead(readId, gappedBasecalls,offset,dir,validRange,phdInfo,offset+gappedBasecalls.length());
+    	    builder.addRead(readId, new NucleotideSequenceBuilder(gappedBasecalls).build(),offset,dir,validRange,phdInfo,offset+gappedBasecalls.length());
     		return this;
     	}
-
         /**
         * {@inheritDoc}
         */
@@ -131,7 +130,7 @@ public class TestConsedUtil_Split0x {
         * {@inheritDoc}
         */
         @Override
-        public AceContigBuilder addRead(String readId, String validBases,
+        public AceContigBuilder addRead(String readId, NucleotideSequence validBases,
                 int offset, Direction dir, Range clearRange, PhdInfo phdInfo,
                 int ungappedFullLength) {
             return builder.addRead(readId, validBases, offset, dir, clearRange, phdInfo, ungappedFullLength);

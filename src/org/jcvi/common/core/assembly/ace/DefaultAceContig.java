@@ -178,7 +178,7 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
         @Override
         public Builder addRead(AcePlacedRead acePlacedRead) {
          return addRead(acePlacedRead.getId(),
-        		 acePlacedRead.getNucleotideSequence().toString(),
+        		 acePlacedRead.getNucleotideSequence(),
         		 (int)acePlacedRead.getStart(),
         		 acePlacedRead.getDirection(),
         		 acePlacedRead.getValidRange(),
@@ -223,11 +223,12 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             aceReadBuilderMap.remove(readId);
             
         }
+        
         /**
         * {@inheritDoc}
         */
         @Override
-        public Builder addRead(String readId, String validBases, int offset,
+        public Builder addRead(String readId, NucleotideSequence validBases, int offset,
                 Direction dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
             //contig left (and right) might be beyond consensus depending on how
             //trimmed the data is and what assembly/consensus caller is used.
@@ -244,19 +245,19 @@ public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements 
             return this;
         }
         private AcePlacedReadBuilder createNewAceReadBuilder(
-                String readId, String validBases, int offset,
+                String readId, NucleotideSequence validBases, int offset,
                 Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength) {
             return DefaultAcePlacedRead.createBuilder(
                     fullConsensus,readId,
-                    ConsedUtil.convertAceGapsToContigGaps(validBases),
+                    validBases,
                     offset,dir,clearRange,phdInfo,ungappedFullLength);
         }
-        private synchronized void adjustContigLeftAndRight(String validBases, int offset) {
+        private synchronized void adjustContigLeftAndRight(NucleotideSequence validBases, int offset) {
             adjustContigLeft(offset);
             adjustContigRight(validBases, offset);
         }
-        private synchronized void adjustContigRight(String validBases, int offset) {
-            final int endOfNewRead = offset+ validBases.length()-1;
+        private synchronized void adjustContigRight(NucleotideSequence validBases, int offset) {
+            final int endOfNewRead = offset+ (int)validBases.getLength()-1;
             if(endOfNewRead <= fullConsensus.getLength() && (contigRight ==-1 || endOfNewRead > contigRight)){
                 contigRight = endOfNewRead ;
             }

@@ -31,6 +31,7 @@ import org.jcvi.common.core.assembly.ctg.AbstractContigFileVisitor;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.FastXRecord;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 
 public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractContigFileVisitor{
@@ -64,7 +65,7 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
         
         PhdInfo info =new DefaultPhdInfo(readId, readId+".phd.1", phdDate);
         try {
-            contigBuilder.addRead(readId, basecalls ,offset, dir, 
+            contigBuilder.addRead(readId, new NucleotideSequenceBuilder(basecalls).build() ,offset, dir, 
                     validRange ,info,
                     (int)(fullLengthFastXDataStore.get(readId).getSequence().getLength()));
         } catch (DataStoreException e) {

@@ -24,6 +24,7 @@ import java.util.Collection;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ContigBuilder;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 
 /**
@@ -62,7 +63,7 @@ public interface AceContigBuilder extends ContigBuilder<AcePlacedRead,AceContig>
      * read from the sequence machine.
      * @return this.
      */
-    AceContigBuilder addRead(String readId, String validBases, int offset,
+    AceContigBuilder addRead(String readId, NucleotideSequence validBases, int offset,
             Direction dir, Range clearRange, PhdInfo phdInfo,
             int ungappedFullLength);
     /**

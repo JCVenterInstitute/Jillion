@@ -31,7 +31,6 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 /**
@@ -53,7 +52,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private PhdInfo currentPhdInfo;
     private Range currentClearRange;
     private int currentOffset;
-    private String currentValidBases;
+    private NucleotideSequence currentValidBases;
     private boolean skipCurrentRead=false;
     private String currentFullLengthBases;
     private int numberOfBasesInCurrentContig;
@@ -218,7 +217,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         NucleotideSequence gappedFullLengthSequence = currentBasecalls.build();
       //this will set currentValidBasecalls to only be the valid range
         currentValidBases =  currentBasecalls.subSequence(gappedValidRange)
-        						.toString();
+        						.build();
         final int numberOfFullLengthGaps = gappedFullLengthSequence.getNumberOfGaps();
         currentReadUngappedFullLength = currentReadGappedFullLength - numberOfFullLengthGaps;
         //dkatzel 2011-11-18
@@ -293,8 +292,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * This method will be called after the line that triggers the {@link #visitTraceDescriptionLine(String, String, Date)}
      * but before the next {@link #visitLine(String)} is called.
      * @param readId the id of the read.
-     * @param validBasecalls the basecalls as a string- NOTE that this has gaps as "*" instead
-     * of "-". 
+     * @param validBasecalls the trimmed gapped basecalls of this read.
      * @param offset the 0-based start offset of this read into the contig.
      * @param dir the direction of this read.
      * @param validRange the validRange coordinates of this read's basecalls.
@@ -302,7 +300,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * @param ungappedFullLength the full Length (including invalid range)
      * of the basecalls.
      */
-    protected abstract void visitAceRead(String readId, String validBasecalls, 
+    protected abstract void visitAceRead(String readId, NucleotideSequence validBasecalls, 
             int offset, Direction dir, Range validRange, PhdInfo phdInfo,
             int ungappedFullLength);
     

@@ -27,6 +27,7 @@ import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.util.trimmer.AbstractContigTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.PlacedReadTrimmer;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
 /**
  * {@code AceContigTrimmer} is an Ace implementation of
@@ -97,7 +98,7 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
     @Override
     protected void trimRead(AcePlacedRead placedRead, long trimmedOffset,
             String trimmedBasecalls, Range newValidRange) {
-        builder.addRead(placedRead.getId(), trimmedBasecalls, (int)trimmedOffset, 
+        builder.addRead(placedRead.getId(), new NucleotideSequenceBuilder(trimmedBasecalls).build(), (int)trimmedOffset, 
                 placedRead.getDirection(), newValidRange, placedRead.getPhdInfo(),
                 placedRead.getUngappedFullLength());
         final Range sequenceRange = Range.buildRangeOfLength(trimmedOffset,trimmedBasecalls.length());

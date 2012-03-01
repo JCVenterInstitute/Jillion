@@ -19,13 +19,18 @@
 
 package org.jcvi.common.core.assembly.ace;
 
+import java.util.Collection;
+
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.ContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
@@ -36,9 +41,11 @@ import static org.junit.Assert.*;
  */
 public class TestDefaultAceContigBuilderReAbacus {
     PhdInfo read1PhdInfo = createMock(PhdInfo.class);
+   
+    
     @Test
     public void abacus(){
-        AceContigBuilder sut =  DefaultAceContig.createBuilder("id",
+        AceContigBuilderTestDouble sut =  new AceContigBuilderTestDouble("id",
                           "ACGT-----ACGT")
         
         .addRead("read1",   "GT-T---ACG", 2, Direction.FORWARD, Range.buildRange(2,7), read1PhdInfo, 10)
@@ -67,7 +74,7 @@ public class TestDefaultAceContigBuilderReAbacus {
     
     @Test
     public void abacusAndShiftDownstreamReads(){
-        AceContigBuilder sut =  DefaultAceContig.createBuilder("id",
+    	AceContigBuilderTestDouble sut =  new AceContigBuilderTestDouble("id",
                           "ACGT-----ACGT")
         
         .addRead("read1",   "GT-T---ACG", 2, Direction.FORWARD, Range.buildRange(2,7), read1PhdInfo, 10)
@@ -99,5 +106,88 @@ public class TestDefaultAceContigBuilderReAbacus {
         assertEquals("ACGT", read4.getNucleotideSequence().toString());
         assertEquals(5, read4.getStart());
         assertEquals(8, read4.getEnd());
+    }
+    
+ private static class AceContigBuilderTestDouble implements AceContigBuilder{
+	 private final AceContigBuilder delegate;
+	 
+	 public AceContigBuilderTestDouble(String id, String consensus){
+		 delegate =DefaultAceContig.createBuilder("id",
+                 "ACGT-----ACGT");
+	 }
+	@Override
+	public ContigBuilder<AcePlacedRead, AceContig> setContigId(String contigId) {
+		delegate.setContigId(contigId);
+		return this;
+	}
+
+	@Override
+	public String getContigId() {
+		return delegate.getContigId();
+	}
+
+	@Override
+	public int numberOfReads() {
+		return delegate.numberOfReads();
+	}
+
+	@Override
+	public ContigBuilder<AcePlacedRead, AceContig> addRead(
+			AcePlacedRead placedRead) {
+		delegate.addRead(placedRead);
+		return this;
+	}
+
+	@Override
+	public ContigBuilder<AcePlacedRead, AceContig> addAllReads(
+			Iterable<AcePlacedRead> reads) {
+		delegate.addAllReads(reads);
+		return this;
+	}
+
+	@Override
+	public void removeRead(String readId) {
+		delegate.removeRead(readId);
+		
+	}
+
+	@Override
+	public NucleotideSequenceBuilder getConsensusBuilder() {
+		return delegate.getConsensusBuilder();
+	}
+
+	@Override
+	public AceContig build() {
+		return delegate.build();
+	}
+
+	@Override
+	public AceContigBuilderTestDouble addRead(String readId,
+			NucleotideSequence validBases, int offset, Direction dir,
+			Range clearRange, PhdInfo phdInfo, int ungappedFullLength) {
+		delegate.addRead(readId, validBases, offset, dir, clearRange, phdInfo, ungappedFullLength);
+		return this;
+	}
+	public AceContigBuilderTestDouble addRead(String readId,
+			String validBases, int offset, Direction dir,
+			Range clearRange, PhdInfo phdInfo, int ungappedFullLength) {
+		return addRead(readId, new NucleotideSequenceBuilder(validBases).build(), offset, dir, clearRange, phdInfo, ungappedFullLength);
+	}
+	@Override
+	public AcePlacedReadBuilder getPlacedReadBuilder(String readId) {
+		return delegate.getPlacedReadBuilder(readId);
+	}
+
+	@Override
+	public Collection<AcePlacedReadBuilder> getAllPlacedReadBuilders() {
+		return delegate.getAllPlacedReadBuilders();
+	}
+
+	@Override
+	public AceContigBuilder setComplimented(boolean complimented) {
+		delegate.setComplimented(complimented);
+		return this;
+	}
+    	
     }
 }

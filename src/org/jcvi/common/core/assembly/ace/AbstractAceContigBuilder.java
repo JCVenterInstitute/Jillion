@@ -30,7 +30,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  * {@code AbstractAceContigBuilder} is an abstract
  * implementation of {@link AceFileVisitor}
  * that does all the computations required
- * to parse a build AceContigs.
+ * to populate instances of {@link AceContigBuilder}.
  * @author dkatzel
  *
  *
@@ -75,7 +75,7 @@ public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
         
     }
     @Override
-    protected void visitAceRead(String readId, String validBasecalls, int offset, Direction dir, Range validRange, PhdInfo phdInfo,
+    protected void visitAceRead(String readId, NucleotideSequence validBasecalls, int offset, Direction dir, Range validRange, PhdInfo phdInfo,
             int ungappedFullLength){
         contigBuilder.addRead(readId, validBasecalls ,offset, dir, 
                 validRange ,phdInfo,ungappedFullLength);

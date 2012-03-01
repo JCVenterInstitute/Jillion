@@ -270,8 +270,14 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
             }
             return qualities;
         }
+        /**
+         * If this is a read we care about, get the full length
+         * mixed-case basecalls via {@link #getCurrentFullLengthBasecalls()}
+         * and use those to figure out high vs low quality.
+         * {@inheritDoc}
+         */
         @Override
-        protected synchronized void visitAceRead(String readId, String validBasecalls,
+        protected synchronized void visitAceRead(String readId, NucleotideSequence ignored,
                 int offset, Direction dir, Range validRange,
                 PhdInfo phdInfo, int ungappedFullLength) {
             if(contigOfInterest){
