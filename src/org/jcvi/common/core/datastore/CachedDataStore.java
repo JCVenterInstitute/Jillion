@@ -39,7 +39,7 @@ import org.jcvi.common.core.util.Caches;
  *
  *
  */
-public final class CachedDataStore <D extends DataStore<?>> implements InvocationHandler{
+public final class CachedDataStore <D extends DataStore> implements InvocationHandler{
 
     private final D delegate;
     private final Map<String, Object> cache;
