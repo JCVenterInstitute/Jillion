@@ -42,6 +42,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
@@ -63,6 +64,7 @@ import org.jcvi.common.core.assembly.clc.cas.ReadFileType;
 import org.jcvi.common.core.assembly.clc.cas.UnTrimmedExtensionTrimMap;
 import org.jcvi.common.core.assembly.clc.cas.UpdateConsensusAceContigBuilder;
 import org.jcvi.common.core.assembly.clc.cas.consed.AbstractAcePlacedReadCasReadVisitor;
+import org.jcvi.common.core.assembly.scaffold.agp.AgpWriter;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
@@ -145,7 +147,8 @@ public class Cas2Consed3 {
 	public void convert(TrimDataStore trimDatastore,CasTrimMap trimToUntrimmedMap ,
 			FastQQualityCodec fastqQualityCodec, 
 			final boolean useConic,
-			final boolean createPseduoMoleculeFasta) throws IOException{
+			final boolean createPseduoMoleculeFasta,
+			final boolean createAgp) throws IOException{
 	    final File casWorkingDirectory = casFile.getParentFile();
 	    final File editDir =getEditDir();
 	    File chromatDir = consedOutputDir.contains("chromat_dir")?
@@ -225,11 +228,20 @@ public class Cas2Consed3 {
              OutputStream tempOut = new FileOutputStream(tempAce);
              PrintStream consensusOut = new PrintStream(consensusFile);
              final PrintStream pseduoMoleculeOut;
+             final PrintStream agpOut;
              if(createPseduoMoleculeFasta){
             	 File pseduomoleculeFile = consedOutputDir.createNewFile(prefix+ ".ace.1.pseduomolecule.fasta");
             	 pseduoMoleculeOut = new PrintStream(pseduomoleculeFile);
+            	 
              }else{
-            	 pseduoMoleculeOut=null;
+            	 pseduoMoleculeOut=null;            	
+             }
+             
+             if(createAgp){
+            	 File agpFile = consedOutputDir.createNewFile(prefix+ ".ace.1.agp");
+            	 agpOut = new PrintStream(agpFile);
+             }else{
+            	 agpOut=null;
              }
              Iterator<UpdateConsensusAceContigBuilder> builderIterator = builders.values().iterator();
              while(builderIterator.hasNext()){
@@ -253,16 +265,23 @@ public class Cas2Consed3 {
                  builder.setContigId(newContigId);
                  NucleotideSequenceBuilder pseduoMoleculeBuilder = new NucleotideSequenceBuilder((int)ungappedLength);
                  long previousPseduoMoleculeOffset=0;
+                 DefaultScaffold.Builder scaffoldBuilder = new DefaultScaffold.Builder(referenceId);
                  for(Entry<Range,AceContig> entry : ConsedUtil.split0xContig(builder,true).entrySet()){
                      numberOfContigs++;
-                     AceContig splitContig = entry.getValue();
-                     numberOfReads+= splitContig.getNumberOfReads();
+                     AceContig splitContig = entry.getValue();                     
                      Range contigRange = entry.getKey();
+                     //add split contig to current scaffold
+                     scaffoldBuilder.add(splitContig.getId(), contigRange);
+                     //add split contig reads to total # reads
+                     numberOfReads+= splitContig.getNumberOfReads();
+                     
                      int numberOfUpstreamNs = (int)(contigRange.getStart() - previousPseduoMoleculeOffset);
                 	 appendNsIfNeeded(pseduoMoleculeBuilder, numberOfUpstreamNs);
                     
                      List<Nucleotide> ungappedConsensus = splitContig.getConsensus().asUngappedList();
                      pseduoMoleculeBuilder.append(ungappedConsensus);
+                     
+                     
                      
 					consensusOut.print(
                              new DefaultNucleotideSequenceFastaRecord(
@@ -279,9 +298,12 @@ public class Cas2Consed3 {
                 			 referenceId,
                 			 pseduoMoleculeBuilder.build()));
                  }
+                 if(createAgp){
+                	 AgpWriter.writeScaffold(scaffoldBuilder.build(), agpOut);
+                 }
                  builderIterator.remove();
              }
-             IOUtil.closeAndIgnoreErrors(tempOut,consensusOut,pseduoMoleculeOut);
+             IOUtil.closeAndIgnoreErrors(tempOut,consensusOut,pseduoMoleculeOut,agpOut);
              File ace = new File(editDir, prefix+".ace.1");
              OutputStream out = new FileOutputStream(ace);
              out.write(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads).getBytes());
@@ -426,7 +448,10 @@ public class Cas2Consed3 {
             options.addOption(new CommandLineOptionBuilder("pseduomolecule_fasta", "Create a multi fasta file of the pseduomolecules of this assembly called <prefix>.ace.1.pseduomolecule.fasta.  Each record will have the id of the reference used, along with any basecall changes from the actual assembly.  Any areas of the pseduomolecule that are not covered by this assembly will get Ns.")                                
 	        .isFlag(true)    
             .build());
-	        
+            options.addOption(new CommandLineOptionBuilder("agp", "Create an agp file of the scaffolds of this assembly called <prefix>.ace.1.agp. " +
+            		" Each scafold will have the id of the reference used, along contig sizes and locations from the actual assembly.")                                
+	        .isFlag(true)    
+            .build());
 	        if(CommandLineUtils.helpRequested(args)){
 	        	printHelp(options);
 	        	System.exit(0);
@@ -481,9 +506,10 @@ public class Cas2Consed3 {
 	            boolean hasEdits = commandLine.hasOption("preserve_edits");
 	            boolean useConic  = commandLine.hasOption("use_conic");
 	            boolean createPseduoMoleculeFasta = commandLine.hasOption("pseduomolecule_fasta");
+	            boolean createAgp = commandLine.hasOption("agp");
 	            Cas2Consed3 cas2consed = new Cas2Consed3(casFile, outputDir, prefix,makePhdBall,hasEdits);
 	            
-	            cas2consed.convert(trimDatastore, trimToUntrimmedMap, qualityCodec, useConic,createPseduoMoleculeFasta);
+	            cas2consed.convert(trimDatastore, trimToUntrimmedMap, qualityCodec, useConic,createPseduoMoleculeFasta,createAgp);
 	            
 	        } catch (ParseException e) {
 				e.printStackTrace();
