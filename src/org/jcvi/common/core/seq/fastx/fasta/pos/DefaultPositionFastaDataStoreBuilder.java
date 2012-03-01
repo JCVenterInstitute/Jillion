@@ -36,7 +36,7 @@ public final class DefaultPositionFastaDataStoreBuilder implements PositionFasta
 		return this;
 	}
 	
-	private static class PositionFastaDataStoreImpl implements PositionFastaDataStore{
+	private static final class PositionFastaDataStoreImpl implements PositionFastaDataStore{
 		private final DataStore<PositionFastaRecord<Sequence<ShortSymbol>>> delegate;
 		private PositionFastaDataStoreImpl(Map<String, PositionFastaRecord<Sequence<ShortSymbol>>> map){
 			delegate = new SimpleDataStore<PositionFastaRecord<Sequence<ShortSymbol>>>(map);

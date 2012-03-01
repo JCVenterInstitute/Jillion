@@ -34,7 +34,7 @@ public final class DefaultNucleotideFastaDataStoreBuilder implements NucleotideF
 		return this;
 	}
 	
-	private static class NucleotideFastaDataStoreImpl implements NucleotideFastaDataStore{
+	private static final class NucleotideFastaDataStoreImpl implements NucleotideFastaDataStore{
 		private final DataStore<NucleotideSequenceFastaRecord> delegate;
 		private NucleotideFastaDataStoreImpl(Map<String, NucleotideSequenceFastaRecord> map){
 			delegate = new SimpleDataStore<NucleotideSequenceFastaRecord>(map);
