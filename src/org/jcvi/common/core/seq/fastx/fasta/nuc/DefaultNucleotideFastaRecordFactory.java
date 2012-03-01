@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.fastx.fasta.nuc;
 
 
-class DefaultNucleotideFastaRecordFactory implements NucleotideFastaRecordFactory{
+final class DefaultNucleotideFastaRecordFactory implements NucleotideFastaRecordFactory{
 
     private static final DefaultNucleotideFastaRecordFactory INSTANCE = new DefaultNucleotideFastaRecordFactory();
     

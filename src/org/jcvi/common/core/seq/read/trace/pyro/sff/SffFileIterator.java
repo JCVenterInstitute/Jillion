@@ -32,7 +32,7 @@ import org.jcvi.common.core.util.iter.CloseableIterable;
  * @author dkatzel
  *
  */
-public class SffFileIterator extends AbstractBlockingCloseableIterator<SFFFlowgram>{
+public final class SffFileIterator extends AbstractBlockingCloseableIterator<SFFFlowgram>{
 
 	private final File sffFile;
 	

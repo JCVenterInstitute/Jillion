@@ -24,7 +24,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate;
  *
  *
  */
-public class DefaultScanRate implements ScanRate{
+public final class DefaultScanRate implements ScanRate{
 
     private final int time, period, line;
     

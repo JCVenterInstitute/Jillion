@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 
 
-public class DefaultQualityFastaRecordFactory implements QualityFastaRecordFactory{
+public final class DefaultQualityFastaRecordFactory implements QualityFastaRecordFactory{
     private static final DefaultQualityFastaRecordFactory INSTANCE = new DefaultQualityFastaRecordFactory();
     
     private DefaultQualityFastaRecordFactory(){}

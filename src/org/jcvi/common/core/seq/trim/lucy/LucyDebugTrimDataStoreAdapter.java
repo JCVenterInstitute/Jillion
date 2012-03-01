@@ -31,7 +31,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class LucyDebugTrimDataStoreAdapter implements TrimDataStore{
+public final class LucyDebugTrimDataStoreAdapter implements TrimDataStore{
 
     public static TrimDataStore adapt(LucyDebugTrimRecordDataStore datastore){
         return new LucyDebugTrimDataStoreAdapter(datastore);

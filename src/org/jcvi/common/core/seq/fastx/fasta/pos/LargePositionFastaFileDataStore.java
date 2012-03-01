@@ -43,7 +43,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * in {@link CachedDataStore}.
  * @author dkatzel
  */
-public class LargePositionFastaFileDataStore extends AbstractPositionFastaFileDataStore{
+public final class LargePositionFastaFileDataStore extends AbstractPositionFastaFileDataStore{
 
 	private final File fastaFile;
 	

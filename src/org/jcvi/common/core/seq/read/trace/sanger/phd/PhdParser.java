@@ -43,7 +43,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
  *
  *
  */
-public class PhdParser {
+public final class PhdParser {
     private static final String BEGIN_COMMENT = "BEGIN_COMMENT";
     private static final String END_SEQUENCE = "END_SEQUENCE";
     private static final String END_COMMENT = "END_COMMENT";

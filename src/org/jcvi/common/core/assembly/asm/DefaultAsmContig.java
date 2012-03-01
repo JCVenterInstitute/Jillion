@@ -38,7 +38,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
  *
  *
  */
-public class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implements AsmContig{
+public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implements AsmContig{
 
     private final boolean isDegenerate;
     

@@ -86,37 +86,49 @@ abstract class AbstractPairwiseSequenceAlignment<R extends Residue, S extends Se
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj){
 			return true;
-		if (obj == null)
+		}
+		if (obj == null){
 			return false;
+		}
 		if (!(obj instanceof PairwiseSequenceAlignment)){	
 			return false;
 		}
 		PairwiseSequenceAlignment<?,?> other = (PairwiseSequenceAlignment<?,?>) obj;
-		if (Float.floatToIntBits(getScore()) != Float.floatToIntBits(other.getScore()))
+		if (Float.floatToIntBits(getScore()) != Float.floatToIntBits(other.getScore())){
 			return false;
+		}
 		
-		if (getAlignmentLength() != other.getAlignmentLength())
+		if (getAlignmentLength() != other.getAlignmentLength()){
 			return false;
-		if (getNumberOfGapOpenings() != other.getNumberOfGapOpenings())
+		}
+		if (getNumberOfGapOpenings() != other.getNumberOfGapOpenings()){
 			return false;
-		if (getNumberOfMismatches() != other.getNumberOfMismatches())
+		}
+		if (getNumberOfMismatches() != other.getNumberOfMismatches()){
 			return false;
+		}
 		if (Double.doubleToLongBits(getPercentIdentity()) != Double
-				.doubleToLongBits(other.getPercentIdentity()))
+				.doubleToLongBits(other.getPercentIdentity())){
 			return false;
+		}
 		if (getGappedQueryAlignment() == null) {
-			if (other.getGappedQueryAlignment() != null)
+			if (other.getGappedQueryAlignment() != null){
 				return false;
-		} else if (!getGappedQueryAlignment().equals(other.getGappedQueryAlignment()))
+			}
+		} else if (!getGappedQueryAlignment().equals(other.getGappedQueryAlignment())){
 			return false;
-		if(!getQueryRange().equals(other.getQueryRange()))
+		}
+		if(!getQueryRange().equals(other.getQueryRange())){
 			return false;
-		if (!getGappedSubjectAlignment().equals(other.getGappedSubjectAlignment()))
+		}
+		if (!getGappedSubjectAlignment().equals(other.getGappedSubjectAlignment())){
 			return false;
-		if (!getSubjectRange().equals(other.getSubjectRange()))
+		}
+		if (!getSubjectRange().equals(other.getSubjectRange())){
 			return false;
+		}
 		return true;
 	}
 }

@@ -42,7 +42,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class LargePhdDataStore implements PhdDataStore{
+public final class LargePhdDataStore implements PhdDataStore{
 
     static final Pattern BEGIN_SEQUENCE_PATTERN = Pattern.compile("BEGIN_SEQUENCE\\s+(\\S+)");
     private final File phdFile;
@@ -128,7 +128,7 @@ public class LargePhdDataStore implements PhdDataStore{
     }
 
     
-    private class PhdIdIterator implements CloseableIterator<String>{
+    private final class PhdIdIterator implements CloseableIterator<String>{
 
         private final CloseableIterator<Phd> phdIter;
         

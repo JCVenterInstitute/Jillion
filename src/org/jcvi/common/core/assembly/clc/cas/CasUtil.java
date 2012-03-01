@@ -239,7 +239,7 @@ public final class CasUtil {
         return new CasInfoBuilder(casFile);
     }
     
-    public final static class CasInfoBuilder implements Builder<CasInfo>{
+    public static final class CasInfoBuilder implements Builder<CasInfo>{
         private final File casFile;
         private FastQQualityCodec fastqQualityCodec = FastQQualityCodec.SANGER;
         private ExternalTrimInfo externalTrimInfo = ExternalTrimInfo.createEmptyInfo();
@@ -290,7 +290,7 @@ public final class CasUtil {
         
     }
     
-    private static class CasInfoImpl implements CasInfo{
+    private static final class CasInfoImpl implements CasInfo{
 
         private final TrimDataStore multiTrimDataStore;
         private final TraceDetails traceDetails;

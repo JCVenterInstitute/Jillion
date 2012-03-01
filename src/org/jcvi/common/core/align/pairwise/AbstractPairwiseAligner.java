@@ -493,18 +493,23 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		}
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj){
 				return true;
-			if (obj == null)
+			}
+			if (obj == null){
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()){
 				return false;
+			}
 			WalkBack other = (WalkBack) obj;
 			if (Float.floatToIntBits(bestScore) != Float
-					.floatToIntBits(other.bestScore))
+					.floatToIntBits(other.bestScore)){
 				return false;
-			if (tracebackDirection != other.tracebackDirection)
+			}
+			if (tracebackDirection != other.tracebackDirection){
 				return false;
+			}
 			return true;
 		}
 		

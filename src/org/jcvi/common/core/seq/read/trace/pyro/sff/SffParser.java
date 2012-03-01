@@ -32,7 +32,7 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
 
-public class SffParser {
+public final class SffParser {
     private static final SFFCommonHeaderCodec COMMON_HEADER_CODEC = new DefaultSFFCommonHeaderCodec();
     private static final SFFReadHeaderCodec READ_HEADER_CODEC =new DefaultSFFReadHeaderCodec();
     private static final SFFReadDataCodec READ_DATA_CODEC =new DefaultSFFReadDataCodec();

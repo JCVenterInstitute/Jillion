@@ -37,7 +37,7 @@ import org.jcvi.common.core.util.iter.ArrayIterable;
  * call to the wrapper.
  * @author dkatzel
  */
-public class  MultipleWrapper<T> implements InvocationHandler{
+public final class  MultipleWrapper<T> implements InvocationHandler{
     /**
      * Since methods can only return a single
      * return value, only one of the wrapped

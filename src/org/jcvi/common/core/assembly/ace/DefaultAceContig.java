@@ -45,7 +45,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
  *
  *
  */
-public class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
+public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
 
     private final boolean complimented;
 

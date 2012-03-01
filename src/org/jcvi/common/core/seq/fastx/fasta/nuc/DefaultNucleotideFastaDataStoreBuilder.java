@@ -16,7 +16,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * @author dkatzel
  *
  */
-public class DefaultNucleotideFastaDataStoreBuilder implements NucleotideFastaDataStoreBuilder{
+public final class DefaultNucleotideFastaDataStoreBuilder implements NucleotideFastaDataStoreBuilder{
 
 	private final Map<String, NucleotideSequenceFastaRecord> map = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
 	@Override

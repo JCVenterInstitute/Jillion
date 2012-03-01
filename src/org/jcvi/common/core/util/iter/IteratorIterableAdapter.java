@@ -30,7 +30,7 @@ import java.util.Iterator;
  *
  *
  */
-public class IteratorIterableAdapter<T> implements Iterable<T> {
+public final class IteratorIterableAdapter<T> implements Iterable<T> {
     /**
      * Builder method that handles the generic type
      * information for you so client code is less cluttered.

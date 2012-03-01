@@ -35,7 +35,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class TrimDataStoreAdatper implements TrimDataStore{
+public final class TrimDataStoreAdatper implements TrimDataStore{
 
     private final DataStore<Range> delegate;
     /**

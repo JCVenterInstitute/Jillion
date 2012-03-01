@@ -29,7 +29,7 @@ import java.io.File;
  *
  *
  */
-public class EmptyCasTrimMap implements CasTrimMap{
+public final class EmptyCasTrimMap implements CasTrimMap{
 
     private static EmptyCasTrimMap INSTANCE = new EmptyCasTrimMap();
     

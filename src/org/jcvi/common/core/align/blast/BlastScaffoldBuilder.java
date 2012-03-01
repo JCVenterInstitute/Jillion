@@ -32,7 +32,7 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public class BlastScaffoldBuilder implements BlastVisitor, Builder<Scaffold>{
+public final class BlastScaffoldBuilder implements BlastVisitor, Builder<Scaffold>{
     
     
     public static Scaffold createFromTabularBlastOutput(File tabularBlast, String referenceId) throws IOException{

@@ -35,7 +35,7 @@ import java.util.List;
  *
  *
  */
-public class DefaultAceTags implements AceTags{
+public final class DefaultAceTags implements AceTags{
 
     private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
     private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();

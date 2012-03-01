@@ -5,7 +5,7 @@ import org.jcvi.common.core.align.SequenceAlignment;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.Residue;
 
-public class PairwiseSequenceAlignmentWrapper<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> implements PairwiseSequenceAlignment<R, S>{
+public final class PairwiseSequenceAlignmentWrapper<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> implements PairwiseSequenceAlignment<R, S>{
 	
 	public static <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> 
 	PairwiseSequenceAlignment<R, S> wrap(A alignment, float score){
@@ -79,20 +79,26 @@ public class PairwiseSequenceAlignmentWrapper<R extends Residue, S extends Seque
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj){
 			return true;
-		if (obj == null)
+		}
+		if (obj == null){
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()){
 			return false;
+		}
 		PairwiseSequenceAlignmentWrapper other = (PairwiseSequenceAlignmentWrapper) obj;
 		if (delegate == null) {
-			if (other.delegate != null)
+			if (other.delegate != null){
 				return false;
-		} else if (!delegate.equals(other.delegate))
+			}
+		} else if (!delegate.equals(other.delegate)){
 			return false;
-		if (Float.floatToIntBits(score) != Float.floatToIntBits(other.score))
+		}
+		if (Float.floatToIntBits(score) != Float.floatToIntBits(other.score)){
 			return false;
+		}
 		return true;
 	}
 

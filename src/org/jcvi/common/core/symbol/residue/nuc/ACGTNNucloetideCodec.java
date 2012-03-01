@@ -30,7 +30,7 @@ import org.jcvi.common.core.io.IOUtil;
  *
  *
  */
-class ACGTNNucloetideCodec extends TwoBitEncodedNucleotideCodec{
+final class ACGTNNucloetideCodec extends TwoBitEncodedNucleotideCodec{
 
     public static final ACGTNNucloetideCodec INSTANCE = new ACGTNNucloetideCodec();
     /**

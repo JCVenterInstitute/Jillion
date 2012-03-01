@@ -45,7 +45,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class DefaultAsmContigDataStore implements AsmContigDataStore{
+public final class DefaultAsmContigDataStore implements AsmContigDataStore{
     private final DataStore<AsmContig> delegate;
     
     public static AsmContigDataStoreBuilder createBuilder(FragmentDataStore frgDataStore){
