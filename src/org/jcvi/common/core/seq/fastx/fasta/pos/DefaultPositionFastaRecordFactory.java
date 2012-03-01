@@ -33,7 +33,7 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.ShortSymbol;
 
-class DefaultPositionFastaRecordFactory implements PositionFastaRecordFactory{
+final class DefaultPositionFastaRecordFactory implements PositionFastaRecordFactory{
  private static final DefaultPositionFastaRecordFactory INSTANCE = new DefaultPositionFastaRecordFactory();
     
     private DefaultPositionFastaRecordFactory(){}

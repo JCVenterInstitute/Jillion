@@ -25,7 +25,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-public class IndexedPositionFastaFileDataStore implements PositionFastaDataStore{
+public final class IndexedPositionFastaFileDataStore implements PositionFastaDataStore{
 	/**
 	 * Creates a new {@link IndexedPositionFastaFileDataStore}
 	 * instance using the given fastaFile.

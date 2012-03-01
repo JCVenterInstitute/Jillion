@@ -287,13 +287,13 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
         }
     
         @Override
-        public synchronized final void putFile(String fileId, File fileToPut) throws IOException {
+        public final synchronized void putFile(String fileId, File fileToPut) throws IOException {
             InputStream in = new FileInputStream(fileToPut);
             putStream(fileId, in);
         }
     
         @Override
-        public synchronized final void putStream(String fileId, InputStream inputStream)
+        public final synchronized void putStream(String fileId, InputStream inputStream)
                 throws IOException {
             FileOutputStream out=null;
             try{
@@ -409,7 +409,7 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
      * @author dkatzel
      *
      */
-    public static class ReadOnlyDirectoryFileServer extends DirectoryFileServer{
+    public static final class ReadOnlyDirectoryFileServer extends DirectoryFileServer{
 
         private ReadOnlyDirectoryFileServer(File rootDir) {
             super(rootDir);

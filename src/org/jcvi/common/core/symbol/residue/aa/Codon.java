@@ -37,7 +37,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
  * @author dkatzel
  * @author jsitz@jcvi.org
  */
-public class Codon
+public final class Codon
 {
     public enum Frame{
         ZERO(0),

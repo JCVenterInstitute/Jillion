@@ -289,42 +289,57 @@ public abstract class AbstractSequenceAlignmentBuilder
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj){
 				return true;
-			if (obj == null)
+			}
+			if (obj == null){
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()){
 				return false;
+			}
 			AbstractSequenceAlignmentImpl other = (AbstractSequenceAlignmentImpl) obj;
-			if (alignmentLength != other.alignmentLength)
+			if (alignmentLength != other.alignmentLength){
 				return false;
-			if (numGap != other.numGap)
+			}
+			if (numGap != other.numGap){
 				return false;
-			if (numMismatches != other.numMismatches)
+			}
+			if (numMismatches != other.numMismatches){
 				return false;
+			}
 			if (Double.doubleToLongBits(percentIdentity) != Double
-					.doubleToLongBits(other.percentIdentity))
+					.doubleToLongBits(other.percentIdentity)){
 				return false;
+			}
 			if (queryAlignment == null) {
-				if (other.queryAlignment != null)
+				if (other.queryAlignment != null){
 					return false;
-			} else if (!queryAlignment.equals(other.queryAlignment))
+				}
+			} else if (!queryAlignment.equals(other.queryAlignment)){
 				return false;
+			}
 			if (queryRange == null) {
-				if (other.queryRange != null)
+				if (other.queryRange != null){
 					return false;
-			} else if (!queryRange.equals(other.queryRange))
+				}
+			} else if (!queryRange.equals(other.queryRange)){
 				return false;
+			}
 			if (subjectAlignment == null) {
-				if (other.subjectAlignment != null)
+				if (other.subjectAlignment != null){
 					return false;
-			} else if (!subjectAlignment.equals(other.subjectAlignment))
+				}
+			} else if (!subjectAlignment.equals(other.subjectAlignment)){
 				return false;
+			}
 			if (subjectRange == null) {
-				if (other.subjectRange != null)
+				if (other.subjectRange != null){
 					return false;
-			} else if (!subjectRange.equals(other.subjectRange))
+				}
+			} else if (!subjectRange.equals(other.subjectRange)){
 				return false;
+			}
 			return true;
 		}
 

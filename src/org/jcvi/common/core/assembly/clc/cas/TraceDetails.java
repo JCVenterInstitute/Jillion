@@ -30,7 +30,7 @@ import org.joda.time.DateTimeUtils;
  *
  *
  */
-public class TraceDetails {
+public final class TraceDetails {
     private final boolean hasFastaEdits;
     private final File chromatDir;
     private final DateTime phdDate;

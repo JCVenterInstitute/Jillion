@@ -74,7 +74,7 @@ public final class GridJobBuilders {
      * @author dkatzel
      * @author jsitz@jcvi.org
      */
-     private static abstract class AbstractGridJob implements GridJob {
+     private abstract static class AbstractGridJob implements GridJob {
          /**
           * Native Spec options to potentially
           * alter which machines on the grid
@@ -417,7 +417,7 @@ public final class GridJobBuilders {
             }
         }
 
-        static abstract class AbstractBuilder<J extends GridJob> implements GridJobBuilder<J>{
+        abstract static class AbstractBuilder<J extends GridJob> implements GridJobBuilder<J>{
             private static final int SECONDS_PER_MINUTE = 60;
 
             protected Session gridSession;

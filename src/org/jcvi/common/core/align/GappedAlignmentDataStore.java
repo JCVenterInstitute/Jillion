@@ -40,7 +40,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class GappedAlignmentDataStore implements NucleotideDataStore{
+public final class GappedAlignmentDataStore implements NucleotideDataStore{
 
     public static GappedAlignmentDataStore createFromAlnFile(File alnFile) throws IOException{
         GappedAlignmentDataStoreBuilder builder = new GappedAlignmentDataStoreBuilder();

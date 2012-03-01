@@ -36,14 +36,14 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  *
  *
  */
-public class NucleotideFastaRecordDataStoreAdatper<F extends NucleotideSequenceFastaRecord> extends FastaRecordDataStoreAdapter<Nucleotide,NucleotideSequence,F> implements NucleotideDataStore{
+public final class NucleotideFastaRecordDataStoreAdatper<F extends NucleotideSequenceFastaRecord> extends FastaRecordDataStoreAdapter<Nucleotide,NucleotideSequence,F> implements NucleotideDataStore{
     /**
      * Convert of {@code DataStore<F>} into a DataStore{@code DataStore<T>}
      * @param <F> a {@code FastaRecord<Nucleotide>}.
      * @param datastoreOfFastaRecords the DataStore of F to wrap.
-     * @return a new {@code DataStore<T>} which wraps the given datastore. 
+     * @return a new {@code NucleotideDataStore} which wraps the given datastore. 
      */
-    public static <F extends NucleotideSequenceFastaRecord> NucleotideFastaRecordDataStoreAdatper adapt(DataStore<F> datastoreOfFastaRecords){
+    public static <F extends NucleotideSequenceFastaRecord> NucleotideDataStore adapt(DataStore<F> datastoreOfFastaRecords){
         return new NucleotideFastaRecordDataStoreAdatper<F>(datastoreOfFastaRecords);
     }
     private NucleotideFastaRecordDataStoreAdatper(

@@ -66,7 +66,7 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideFast
 		return new IndexedNucleotideFastaDataStoreBuilderVisitor(fastaFile);
 	}
 	
-	private static class IndexedNucleotideFastaDataStoreBuilderVisitor 
+	private static final class IndexedNucleotideFastaDataStoreBuilderVisitor 
 					extends AbstractIndexedFastaDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideFastaDataStore>
 							implements	NucleotideFastaDataStoreBuilderVisitor{
 

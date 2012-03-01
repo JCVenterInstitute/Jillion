@@ -32,7 +32,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
  * to the wrapped datastore and then returned only the qualities from the desired trace.
  * @author dkatzel
  */
-public class TraceQualityDataStoreAdapter<T extends Trace> extends AbstractTraceDataStoreAdapter<T,QualitySequence> implements QualityDataStore{
+public final class TraceQualityDataStoreAdapter<T extends Trace> extends AbstractTraceDataStoreAdapter<T,QualitySequence> implements QualityDataStore{
 	/**
 	 * Create a new {@link QualityDataStore} instance
 	 * by adapting the given DataStore of traces.

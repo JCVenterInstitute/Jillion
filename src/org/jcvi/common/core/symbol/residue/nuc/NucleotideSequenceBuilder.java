@@ -80,7 +80,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * Cache of the nucleotides in ordinal order
      * for quick lookups.
      */
-    private static Nucleotide[] values = Nucleotide.values();
+    private static Nucleotide[] NUCLEOTIDE_VALUES = Nucleotide.values();
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains no nucleotides.
@@ -675,7 +675,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 	}
 	private Nucleotide getNucleotideFor(int bitStartOffset) {
 		int ordinal = getNucleotideOrdinalFor(bitStartOffset);
-		return values[ordinal];
+		return NUCLEOTIDE_VALUES[ordinal];
 	}
 	private byte getNucleotideOrdinalFor(BitSet bits, int bitStartOffset) {
 		int bit3 =bits.get(bitStartOffset)?1:0; 

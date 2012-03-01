@@ -41,7 +41,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
-public class SinglePhdFile implements  Phd{
+public final class SinglePhdFile implements  Phd{
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
     private NucleotideSequenceBuilder bases = new NucleotideSequenceBuilder();
     private List<PhredQuality> qualities = new ArrayList<PhredQuality>();

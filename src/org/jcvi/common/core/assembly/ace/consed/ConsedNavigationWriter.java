@@ -36,7 +36,7 @@ import org.jcvi.common.core.Range.CoordinateSystem;
  *
  *
  */
-public class ConsedNavigationWriter implements Closeable{
+public final class ConsedNavigationWriter implements Closeable{
 
     private final OutputStream out;
     

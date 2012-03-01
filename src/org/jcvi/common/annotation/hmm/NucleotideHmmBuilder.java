@@ -190,13 +190,19 @@ public class NucleotideHmmBuilder implements Builder<Hmm<Nucleotide>>{
 			}
 			//initial/final state doesn't need to have probabilities
 			//double isn't exact so give range of +/- 0.00000001
-			if(index !=0 && total <=.9999999D && total <= 1.0000001D){
+			
+			if(index !=0 && total <=LOWER_FUZZY_1 && total <= UPPER_FUZZY_1){
 				throw new IllegalStateException(
 						String.format("basecall probabilities for state %d must total 100%% : %.2f%%",index, total*100));
 			}
 			return new NucleotideHmmState(index,probabilities);
 		}
-		
+		/**
+		 * {@value}
+		 */
+		private static final double EPSILON = 0.00000001; 
+		private static final double LOWER_FUZZY_1 = (double)1 - EPSILON;
+		private static final double UPPER_FUZZY_1 = (double)1 +EPSILON;
 	}
 	
 	private static final class NucleotideHmm implements Hmm<Nucleotide>{

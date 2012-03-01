@@ -198,10 +198,30 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 	        if(gappedValidRange.isEmpty()){
 	        	//no intersection! 
 	        	//I've only seen this on really bad quality
-	        	//sanger data...skip it?
+	        	//////////////////////////////////////////////////////////
+	        	//2012-01-26
+	        	//email response from David Gordon (author of consed)
+	        	//regarding what to do if these ranges don't overlap
+	        	//From David Gordon:
+	        	//the first 2 numbers indicate the high quality segment
+	        	//(roughly corresponding to that above quality 13).
+	        	//The last 2 numbers indicates the portion of the read aligned
+	        	//to the consensus sequence.
+	        	//
+	        	//Hence there is a very short high quality segment 
+	        	//634-649 (only 16 bases).  And the portion of the 
+	        	//read aligned to the consensus is 851-1758 is very low quality.
+	        	//
+	        	//Consed treats these reads like any others.  
+	        	//The "dim" menu on the Aligned Reads Window 
+	        	//indicates what portion of the read to dim.  
+	        	//If you set it on dim both low quality and unaligned, 
+	        	//this entire read would be dimmed.
+	        	/////////////////////////////////////////////////////////
+	        	//dkatzel -therefore if consed dims the entire read
+	        	//that's enough justification for me to throw the read out
 	        	skipCurrentRead = true;
-	        	visitIgnoredRead(currentReadId, String.format("invalid QA line %s %s%n", 
-	        			qualityRange,alignmentRange ));
+	        	visitIgnoredRead(currentReadId,"read does not have a high quality aligned range");
 	        	return;
 	        }
        }catch(Exception e){

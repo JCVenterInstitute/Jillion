@@ -48,7 +48,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * in {@link CachedDataStore}.
  * @author dkatzel
  */
-public class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFileDataStore{
+public final class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFileDataStore{
 	/**
      * Construct a {@link LargeNucleotideFastaFileDataStore}
      * for the given Fasta file.

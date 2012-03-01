@@ -27,7 +27,7 @@ import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
  *
  *
  */
-public class ExternalTrimInfo {
+public final class ExternalTrimInfo {
 
     private static final ExternalTrimInfo EMPTY = new ExternalTrimInfo(
             EmptyCasTrimMap.getInstance(),

@@ -31,7 +31,9 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  */
 public final class HspBuilder implements org.jcvi.common.core.util.Builder<Hsp>{
 
-    public static HspBuilder create(String queryId){
+    private static final double ONE_HUNDRED = 100.0D;
+
+	public static HspBuilder create(String queryId){
         return new HspBuilder(queryId);
     }
     public static HspBuilder copy(Hsp copy){
@@ -100,7 +102,7 @@ public final class HspBuilder implements org.jcvi.common.core.util.Builder<Hsp>{
             if(percentIdentity <0){
                 throw new IllegalArgumentException("percentIdentity score must be positive: " + percentIdentity);
             }
-            if(percentIdentity >100.0D){
+            if(percentIdentity >ONE_HUNDRED){
                 throw new IllegalArgumentException("percentIdentity score must be <= 100: " + percentIdentity);
             }
             this.percentIdentity = percentIdentity;
@@ -213,7 +215,7 @@ public final class HspBuilder implements org.jcvi.common.core.util.Builder<Hsp>{
         
     
 
-    private static class BlastHitImpl implements Hsp{
+    private static final class BlastHitImpl implements Hsp{
         
     private final String queryId,subjectId;
     private final double percentIdentity;

@@ -18,7 +18,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * @author dkatzel
  *
  */
-public class DefaultPositionFastaDataStoreBuilder implements PositionFastaDataStoreBuilder{
+public final class DefaultPositionFastaDataStoreBuilder implements PositionFastaDataStoreBuilder{
 
 	private final Map<String, PositionFastaRecord<Sequence<ShortSymbol>>> map = new LinkedHashMap<String, PositionFastaRecord<Sequence<ShortSymbol>>>();
 	@Override

@@ -1108,7 +1108,7 @@ public final class AsmParser {
                 AsmVisitor visitor) throws IOException {
             
             String line = "";
-            while(!line.equals(".\n")){
+            while(!".\n".equals(line)){
                 line = parserState.getNextLine();
                 visitor.visitLine(line);
             }

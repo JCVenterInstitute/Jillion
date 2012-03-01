@@ -42,7 +42,7 @@ import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
  * @author dkatzel
  *
  */
-public class LargePhdIterator extends AbstractBlockingCloseableIterator<Phd>{
+public final class LargePhdIterator extends AbstractBlockingCloseableIterator<Phd>{
     private static final QualitySymbolCodec QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
     private final File phdFile;
         

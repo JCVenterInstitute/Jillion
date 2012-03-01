@@ -103,29 +103,29 @@ public class TigrAssemblyFileParser {
                     if(isTigrAssemblyVisitor){
                         ((TigrAssemblyFileVisitor)visitor).visitContigAttribute(key, value);
                     }
-                    if(key.equals("asmbl_id")){
+                    if("asmbl_id".equals(key)){
                         currentContigId =value;
                     }
-                    else if(key.equals("lsequence")){
+                    else if("lsequence".equals(key)){
                         currentContigConsensus = value;
                     }
                 }else{
                     if(isTigrAssemblyVisitor){
                         ((TigrAssemblyFileVisitor)visitor).visitReadAttribute(key, value);
                     }
-                    if(key.equals("lsequence")){
+                    if("lsequence".equals(key)){
                         currentBases =value;
                     }
-                    else if(key.equals("seq_lend")){
+                    else if("seq_lend".equals(key)){
                         currentSequenceLeftEnd =Integer.parseInt(value);
                     }
-                    else if(key.equals("seq_rend")){
+                    else if("seq_rend".equals(key)){
                         currentSequenceRightEnd =Integer.parseInt(value);
                     }
-                    else if(key.equals("offset")){
+                    else if("offset".equals(key)){
                         currentOffset =Integer.parseInt(value);
                     }
-                    else if(key.equals("seq_name")){
+                    else if("seq_name".equals(key)){
                        currentSequenceName = value;
                     }
                 }

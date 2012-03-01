@@ -43,7 +43,7 @@ import org.joda.time.format.DateTimeFormatter;
  * @author dkatzel
  *
  */
-public class TigrAssemblerContigAdapter implements TigrAssemblerContig{
+public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 
 	private final Contig<? extends PlacedRead> delegate;
 	private final Map<String, TigrAssemblerPlacedRead> adaptedReads = new LinkedHashMap<String, TigrAssemblerPlacedRead>();

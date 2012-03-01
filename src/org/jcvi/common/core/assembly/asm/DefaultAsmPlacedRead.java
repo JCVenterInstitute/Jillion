@@ -37,7 +37,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
  *
  *
  */
-public class DefaultAsmPlacedRead implements AsmPlacedRead{
+public final class DefaultAsmPlacedRead implements AsmPlacedRead{
     private final boolean isSurrogate;
     private final PlacedRead placedRead;
     

@@ -57,7 +57,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * @author dkatzel
  *
  */
-public class IndexedPhdFileDataStore implements PhdDataStore{
+public final class IndexedPhdFileDataStore implements PhdDataStore{
     private final IndexedFileRange recordLocations;   
     private final File phdBall;
     /**
@@ -216,7 +216,7 @@ public class IndexedPhdFileDataStore implements PhdDataStore{
         this.phdBall = phdBall;        
     }
     
-    private static class IndexedPhdDataStoreBuilder extends AbstractPhdDataStoreBuilder{
+    private static final class IndexedPhdDataStoreBuilder extends AbstractPhdDataStoreBuilder{
         private final IndexedFileRange recordLocations;
         private long currentStartOffset=0;
         private long currentOffset=currentStartOffset;

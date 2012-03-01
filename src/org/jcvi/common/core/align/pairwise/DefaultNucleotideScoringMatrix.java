@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
-public class DefaultNucleotideScoringMatrix implements NucleotideScoringMatrix{
+public final class DefaultNucleotideScoringMatrix implements NucleotideScoringMatrix{
 
 	private final float[][] matrix;
 	

@@ -34,7 +34,7 @@ import java.util.List;
  *
  *
  */
-class DefaultNucleotideSequence extends AbstractNucleotideSequence{
+final class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     
    
     

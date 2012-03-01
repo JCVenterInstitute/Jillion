@@ -25,7 +25,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-public class IndexedQualityFastaFileDataStore implements QualityFastaDataStore{
+public final class IndexedQualityFastaFileDataStore implements QualityFastaDataStore{
 
 	/**
 	 * Creates a new {@link IndexedQualityFastaFileDataStore}
@@ -116,7 +116,7 @@ public class IndexedQualityFastaFileDataStore implements QualityFastaDataStore{
 		return LargeQualityFastaIterator.createNewIteratorFor(fastaFile);
 	}
 	
-	private static class IndexedQualityFastaDataStoreBuilderVisitor 
+	private static final class IndexedQualityFastaDataStoreBuilderVisitor 
 	extends AbstractIndexedFastaDataStoreBuilderVisitor<PhredQuality, QualitySequence, QualityFastaRecord, QualityFastaDataStore>
 			implements	QualityFastaDataStoreBuilderVisitor{
 

@@ -34,7 +34,7 @@ import org.jcvi.common.core.symbol.GlyphCodec;
  * greatly reduce the memory footprint of most kinds of read data.
  * @author dkatzel
  */
-class NoAmbiguitiesEncodedNucleotideCodec extends TwoBitEncodedNucleotideCodec{
+final class NoAmbiguitiesEncodedNucleotideCodec extends TwoBitEncodedNucleotideCodec{
     public static final NoAmbiguitiesEncodedNucleotideCodec INSTANCE = new NoAmbiguitiesEncodedNucleotideCodec();
     
     static boolean canEncode(Iterable<Nucleotide> nucleotides){

@@ -113,7 +113,7 @@ public final class DefaultPhdFileDataStore{
      *
      *
      */
-    private static class DefaultPhdDataStoreBuilder extends AbstractPhdDataStoreBuilder{
+    private static final class DefaultPhdDataStoreBuilder extends AbstractPhdDataStoreBuilder{
         private static final QualitySymbolCodec QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
         //linked map to preserve iteration order
         private final Map<String, Phd> map = new LinkedHashMap<String, Phd>();

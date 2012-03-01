@@ -33,7 +33,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  *  from the desired trace.
  * @author dkatzel
  */
-public class TraceNucleotideDataStoreAdapter <T extends Trace> extends AbstractTraceDataStoreAdapter<T,NucleotideSequence> implements NucleotideDataStore {
+public final class TraceNucleotideDataStoreAdapter <T extends Trace> extends AbstractTraceDataStoreAdapter<T,NucleotideSequence> implements NucleotideDataStore {
 	/**
 	 * Create a new {@link NucleotideDataStore} instance
 	 * by adapting the given DataStore of traces.

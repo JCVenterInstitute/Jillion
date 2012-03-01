@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.jcvi.common.core.Placed;
 
-public class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag implements ConsensusAceTag{
+public final class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag implements ConsensusAceTag{
     private final List<String> comments;
     
     private DefaultConsensusAceTag(String id, String type, String creator,

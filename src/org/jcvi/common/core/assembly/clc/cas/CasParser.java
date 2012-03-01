@@ -44,7 +44,7 @@ import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasMatch;
 import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasScoringScheme;
 import org.jcvi.common.core.io.IOUtil;
 
-public class CasParser {
+public final class CasParser {
     private BigInteger offset;
     private  int numberOfBytesForContigPosition,numberOfBytesForContigNumber;
     private  long numberOfReads;

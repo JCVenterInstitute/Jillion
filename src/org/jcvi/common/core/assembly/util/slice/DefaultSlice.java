@@ -32,7 +32,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 
-public class DefaultSlice implements IdedSlice{
+public final class DefaultSlice implements IdedSlice{
     private final Map<String,IdedSliceElement> elements;
     
     private DefaultSlice(Map<String,IdedSliceElement> elements){

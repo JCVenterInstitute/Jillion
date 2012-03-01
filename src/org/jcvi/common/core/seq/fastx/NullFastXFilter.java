@@ -27,7 +27,7 @@ package org.jcvi.common.core.seq.fastx;
  *
  *
  */
-public class NullFastXFilter implements FastXFilter{
+public final class NullFastXFilter implements FastXFilter{
     /**
      * Singleton instance of NullFastQFilter.
      */

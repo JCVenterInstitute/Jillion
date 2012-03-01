@@ -35,7 +35,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
  *
  *
  */
-public class CompactedSlice implements IdedSlice{
+public final class CompactedSlice implements IdedSlice{
 
     private final byte[] elements;
     private final List<String> ids;

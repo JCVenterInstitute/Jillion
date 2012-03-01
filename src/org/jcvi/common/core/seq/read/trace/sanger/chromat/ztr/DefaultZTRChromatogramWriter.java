@@ -46,7 +46,7 @@ import org.jcvi.common.core.util.Builder;
  * @author dkatzel
  * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR 1.2 Spec</a>
  */
-public class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
+public final class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
 	
 	/**
 	 * Specifies that this is chromatogram
@@ -112,7 +112,7 @@ public class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
 		
 	}
 
-	private static class DataEncoder{
+	private static final class DataEncoder{
 		private Data data;
 		private byte optionalParameter;
 		
@@ -133,7 +133,7 @@ public class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
 		}
 	}
 	
-	private static class ChunkEncoder{
+	private static final class ChunkEncoder{
 		private ChunkType type;
 		private Chunk chunk;
 		private List<DataEncoder> dataEncoders;

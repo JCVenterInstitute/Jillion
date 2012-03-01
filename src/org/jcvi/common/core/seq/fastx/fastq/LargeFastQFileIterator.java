@@ -34,7 +34,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class LargeFastQFileIterator extends AbstractBlockingCloseableIterator<FastQRecord> implements CloseableIterator<FastQRecord>{
+public final class LargeFastQFileIterator extends AbstractBlockingCloseableIterator<FastQRecord> implements CloseableIterator<FastQRecord>{
 
    
     private final File fastQFile;

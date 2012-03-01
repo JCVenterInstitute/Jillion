@@ -32,7 +32,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
-public class DefaultFastQDataStore<T extends FastQRecord> implements FastQDataStore<T> {
+public final class DefaultFastQDataStore<T extends FastQRecord> implements FastQDataStore<T> {
 
     private final Map<String, T> map;
     private boolean closed = false;
@@ -99,22 +99,22 @@ public class DefaultFastQDataStore<T extends FastQRecord> implements FastQDataSt
         public Builder(int numberOfRecords){
             map = new LinkedHashMap<String, T>(numberOfRecords);
         }
-        public Builder put(T fastQRecord){
+        public Builder<T> put(T fastQRecord){
             map.put(fastQRecord.getId(), fastQRecord);
             return this;
         }
-        public Builder remove(T fastQRecord){
+        public Builder<T> remove(T fastQRecord){
             map.remove(fastQRecord.getId());
             return this;
         }
-        public Builder putAll(Collection<T> fastQRecords){
+        public Builder<T> putAll(Collection<T> fastQRecords){
             for(T fastQRecord : fastQRecords){
                 put(fastQRecord);
             }           
             return this;
         }
         
-        public Builder removeAll(Collection<T> fastQRecords){
+        public Builder<T> removeAll(Collection<T> fastQRecords){
             for(T fastQRecord : fastQRecords){
                 remove(fastQRecord);
             }           

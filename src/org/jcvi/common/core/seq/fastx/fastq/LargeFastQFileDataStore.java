@@ -41,7 +41,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class LargeFastQFileDataStore implements FastQDataStore<FastQRecord> {
+public final class LargeFastQFileDataStore implements FastQDataStore<FastQRecord> {
     private final FastQQualityCodec qualityCodec;
     private final File fastQFile;
     private Integer size=null;
@@ -131,7 +131,7 @@ public class LargeFastQFileDataStore implements FastQDataStore<FastQRecord> {
     }
     
     
-    private class FastQIdIterator implements CloseableIterator<String>{
+    private final class FastQIdIterator implements CloseableIterator<String>{
         private final CloseableIterator<FastQRecord> iter;
         private FastQIdIterator(){
                 iter = iterator();

@@ -33,7 +33,7 @@ import java.util.NoSuchElementException;
  *
  *
  */
-public class ChainedIterator<T> implements Iterator<T>{
+public final class ChainedIterator<T> implements Iterator<T>{
     /**
      * Create a new ChainedIterator instance.
      * @param <T> the type of objects being iterated over.
@@ -99,7 +99,8 @@ public class ChainedIterator<T> implements Iterator<T>{
         if(!hasNext()){
             throw new NoSuchElementException("no more elements in chain");
         }
-        T ret= (T)next;
+        @SuppressWarnings("unchecked")
+		T ret= (T)next;
         next= needToGetNext;
         return ret;
     }
