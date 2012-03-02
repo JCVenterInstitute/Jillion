@@ -20,13 +20,12 @@
 package org.jcvi.common.core.assembly.asm;
 
 import org.jcvi.common.core.Placed;
-import org.jcvi.common.core.assembly.PlacedRead;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface PlacedUnitig<R extends PlacedRead, U extends Unitig<R>> extends Placed<PlacedUnitig<R,U>> {
+public interface PlacedUnitig<U extends AsmUnitig> extends Placed<PlacedUnitig<U>> {
 
 }

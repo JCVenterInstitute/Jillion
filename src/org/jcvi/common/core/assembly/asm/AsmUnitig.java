@@ -20,13 +20,12 @@
 package org.jcvi.common.core.assembly.asm;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface Unitig<R extends PlacedRead> extends Contig<R>{
+public interface AsmUnitig extends Contig<AsmPlacedRead>{
 
 }

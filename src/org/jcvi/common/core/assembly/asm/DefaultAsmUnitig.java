@@ -22,7 +22,6 @@ package org.jcvi.common.core.assembly.asm;
 import java.util.Set;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
@@ -30,11 +29,11 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  *
  *
  */
-public class DefaultUnitig<R extends PlacedRead> implements Unitig<R>{
+public class DefaultAsmUnitig implements AsmUnitig{
 
-    private final Contig<R> delegate;
+    private final Contig<AsmPlacedRead> delegate;
 
-    public DefaultUnitig(Contig<R> delegate) {
+    public DefaultAsmUnitig(Contig<AsmPlacedRead> delegate) {
         this.delegate = delegate;
     }
 
@@ -58,7 +57,7 @@ public class DefaultUnitig<R extends PlacedRead> implements Unitig<R>{
     * {@inheritDoc}
     */
     @Override
-    public Set<R> getPlacedReads() {
+    public Set<AsmPlacedRead> getPlacedReads() {
         return delegate.getPlacedReads();
     }
 
@@ -74,7 +73,7 @@ public class DefaultUnitig<R extends PlacedRead> implements Unitig<R>{
     * {@inheritDoc}
     */
     @Override
-    public R getPlacedReadById(String id) {
+    public AsmPlacedRead getPlacedReadById(String id) {
         return delegate.getPlacedReadById(id);
     }
 

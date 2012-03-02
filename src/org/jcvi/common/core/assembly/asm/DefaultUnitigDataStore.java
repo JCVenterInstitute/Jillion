@@ -28,10 +28,6 @@ import java.util.Map;
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.AbstractContigBuilder;
-import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.DefaultContig;
-import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
@@ -57,9 +53,9 @@ public final class DefaultUnitigDataStore{
     
     
     private static class UnitigDataStoreBuilder extends AbstractAsmVisitor implements Builder<UnitigDataStore>{
-        private AbstractContigBuilder<PlacedRead, Contig<PlacedRead>> currentBuilder=null;
+        private AsmContigBuilder currentBuilder=null;
         private final FragmentDataStore frgDataStore;
-        private final Map<String, Unitig<PlacedRead>> unitigMap = new HashMap<String, Unitig<PlacedRead>>();
+        private final Map<String, AsmUnitig> unitigMap = new HashMap<String, AsmUnitig>();
         private final Map<String, Range> clearRanges = new HashMap<String, Range>();
         
         public UnitigDataStoreBuilder(FragmentDataStore frgDataStore) {
@@ -84,7 +80,7 @@ public final class DefaultUnitigDataStore{
                 NucleotideSequence consensusSequence,
                 QualitySequence consensusQualities, int numberOfReads) {
             
-            currentBuilder =  new DefaultContig.Builder(externalId, consensusSequence);
+            currentBuilder =  DefaultAsmContig.createBuilder(externalId, consensusSequence);
             return true;
         }
 
@@ -93,7 +89,7 @@ public final class DefaultUnitigDataStore{
         */
         @Override
         public void visitEndOfUnitig() {
-            unitigMap.put(currentBuilder.getContigId(),new DefaultUnitig(currentBuilder.build()));
+            unitigMap.put(currentBuilder.getContigId(),new DefaultAsmUnitig(currentBuilder.build()));
             currentBuilder=null;
         }
 
@@ -119,9 +115,11 @@ public final class DefaultUnitigDataStore{
                     String gappedValidBases = AsmUtil.computeGappedSequence(
                             validBases.asList(), gapOffsets);
                     
-                    currentBuilder.addRead(externalReadId, (int)readRange.getStart(),
-                            clearRange, gappedValidBases, readRange.getDirection(),
-                            (int)fullLengthSequence.getLength());
+                    currentBuilder.addRead(externalReadId, gappedValidBases,
+                            (int)readRange.getStart(),readRange.getDirection(),
+                            clearRange, 
+                            (int)fullLengthSequence.getLength(),
+                            false);
                 } catch (DataStoreException e) {
                     throw new IllegalStateException("error getting read id "+ externalReadId +
                             " from frg file",e);
@@ -131,14 +129,14 @@ public final class DefaultUnitigDataStore{
         @Override
         public UnitigDataStore build(){
             clearRanges.clear();
-            SimpleDataStore<Unitig<PlacedRead>> datastore = new SimpleDataStore<Unitig<PlacedRead>>(unitigMap);
+            SimpleDataStore<AsmUnitig> datastore = new SimpleDataStore<AsmUnitig>(unitigMap);
             return new UnitigDataStoreImpl(datastore);
         }
         
         private static class UnitigDataStoreImpl implements UnitigDataStore{
-            private final DataStore<Unitig<PlacedRead>> delegate;
+            private final DataStore<AsmUnitig> delegate;
 
-            public UnitigDataStoreImpl(DataStore<Unitig<PlacedRead>> delegate) {
+            public UnitigDataStoreImpl(DataStore<AsmUnitig> delegate) {
                 this.delegate = delegate;
             }
 
@@ -146,7 +144,7 @@ public final class DefaultUnitigDataStore{
             * {@inheritDoc}
             */
             @Override
-            public CloseableIterator getIds() throws DataStoreException {
+            public CloseableIterator<String> getIds() throws DataStoreException {
                 return delegate.getIds();
             }
 
@@ -154,7 +152,7 @@ public final class DefaultUnitigDataStore{
             * {@inheritDoc}
             */
             @Override
-            public Unitig<PlacedRead> get(String id) throws DataStoreException {
+            public AsmUnitig get(String id) throws DataStoreException {
                 return delegate.get(id);
             }
 
@@ -195,7 +193,7 @@ public final class DefaultUnitigDataStore{
             * {@inheritDoc}
             */
             @Override
-            public CloseableIterator iterator() {
+            public CloseableIterator<AsmUnitig> iterator() {
                 return delegate.iterator();
             }
             
