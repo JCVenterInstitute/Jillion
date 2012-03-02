@@ -56,7 +56,7 @@ public class TestDefaultScaffold {
         scaffoldLength = 707-28+1;
 
 
-        DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
+        ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         for ( PlacedContig contig : placedContigs ) {
             builder.add(contig.getContigId(),contig.getValidRange(), contig.getDirection());
         }
@@ -84,15 +84,11 @@ public class TestDefaultScaffold {
         assertEquals(scaffold.getNumberOfContigs(),placedContigs.size());
     }
 
-    /* todo: need to add a useful coverage map test
-    @Test
-    public void testGetContigMap {
-    }
-    */
+
 
     @Test(expected= NoSuchElementException.class)
     public void testUnkonwnContigCoordinateConversionTest() {
-        DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
+        ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         DefaultScaffold scaffold = builder.build();
         
         scaffold.convertContigRangeToScaffoldRange("nonexistantContig",Range.buildRange(10,48));
@@ -100,7 +96,7 @@ public class TestDefaultScaffold {
 
     @Test(expected= IllegalArgumentException.class)
     public void testInvalidContigRangeCoordinateConversionTest() {
-        DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
+        ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.buildRange(0,100), Direction.FORWARD);
         DefaultScaffold scaffold = builder.build();
 
@@ -109,7 +105,7 @@ public class TestDefaultScaffold {
 
     @Test(expected= IllegalArgumentException.class)
     public void testInvalidContigDirectionCoordinateConversionTest() {
-        DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
+        ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.buildRange(0,100), Direction.UNKNOWN);
         DefaultScaffold scaffold = builder.build();
 
@@ -118,7 +114,7 @@ public class TestDefaultScaffold {
 
     @Test(expected= IllegalArgumentException.class)
     public void testInvalidContigDirectionCoordinateConversionTest2() {
-        DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
+        ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.buildRange(0,100), Direction.NONE);
         DefaultScaffold scaffold = builder.build();
 
@@ -127,7 +123,7 @@ public class TestDefaultScaffold {
     
     @Test
     public void testSingleForwardContigCoordinateConversionTest() {
-        DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
+        ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.buildRange(37,164), Direction.FORWARD);
         DefaultScaffold scaffold = builder.build();
 
@@ -140,7 +136,7 @@ public class TestDefaultScaffold {
 
     @Test
     public void testSingleReverseContigCoordinateConversionTest() {
-        DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
+        ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.buildRange(37,164), Direction.REVERSE);
         DefaultScaffold scaffold = builder.build();
 
@@ -153,7 +149,7 @@ public class TestDefaultScaffold {
 
     @Test
     public void testMultipleForwardContigCoordinateConversionTest() {
-        DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
+        ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.buildRange(37,164), Direction.FORWARD);
         builder.add("contig2", Range.buildRange(293,568), Direction.FORWARD);
         DefaultScaffold scaffold = builder.build();
@@ -167,7 +163,7 @@ public class TestDefaultScaffold {
 
     @Test
     public void testMultipleReverseContigCoordinateConversionTest() {
-        DefaultScaffold.Builder builder = new DefaultScaffold.Builder("testScaffold");
+        ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.buildRange(37,164), Direction.FORWARD);
         builder.add("contig2", Range.buildRange(293,568), Direction.REVERSE);
         DefaultScaffold scaffold = builder.build();

@@ -38,13 +38,19 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 
-public class DefaultScaffold implements Scaffold {
+public final class DefaultScaffold  implements Scaffold{
+	
+	public static ScaffoldBuilder createBuilder(String id){
+		return new Builder(id);
+	}
+	
     private final String id;
     private final Set<PlacedContig> placedContigs;
     private final Map<String, PlacedContig> contigbyId;
     CoverageMap<CoverageRegion<PlacedContig>> contigMap;
     private final long length;
-    protected DefaultScaffold(String id, Set<PlacedContig> placedContigs){
+    
+    private  DefaultScaffold(String id, Set<PlacedContig> placedContigs){
         this.id = id;
         this.placedContigs = placedContigs;
         contigbyId = new HashMap<String, PlacedContig>();
@@ -198,35 +204,49 @@ public class DefaultScaffold implements Scaffold {
     }
 
 
-    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultScaffold>{
+    private static final class Builder implements ScaffoldBuilder{
         private final String id;
         private Set<PlacedContig> contigs;
         private boolean shiftContigs=false;
-        public Builder(String id){
+        private Builder(String id){
             this.id =id;
             contigs = new TreeSet<PlacedContig>();
         }
-        public Builder add(PlacedContig placedContig){
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public Builder add(PlacedContig placedContig){
             contigs.add(placedContig);
             return this;
         }
-        public Builder add(String contigId, Range contigRange, Direction contigDirection){
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public Builder add(String contigId, Range contigRange, Direction contigDirection){
            return add(new DefaultPlacedContig(contigId, contigRange,contigDirection));
         }
-        public Builder add(String contigId, Range contigRange){
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public Builder add(String contigId, Range contigRange){
             return add(contigId, contigRange, Direction.FORWARD);
         }
         /**
-         * Shift all contigs in the scaffold so that the first
-         * contig will start at scaffold position 1.
-         * @param shiftContigs
-         * @return this
-         */
-        public Builder shiftContigs(boolean shiftContigs){
+		 * {@inheritDoc}
+		 */
+        @Override
+		public ScaffoldBuilder shiftContigs(boolean shiftContigs){
             this.shiftContigs = shiftContigs;
             return this;
         }
-        public DefaultScaffold build(){
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public DefaultScaffold build(){
             if(shiftContigs && !contigs.isEmpty()){
                 Set<PlacedContig> shiftedContigs = new TreeSet<PlacedContig>();
                 PlacedContig firstContig = contigs.iterator().next();

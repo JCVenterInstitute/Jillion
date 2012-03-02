@@ -18,71 +18,59 @@
  ******************************************************************************/
 package org.jcvi.common.core.assembly.scaffold.agp;
 
+import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.DefaultScaffold;
+import org.jcvi.common.core.assembly.DefaultScaffoldDataStore;
+import org.jcvi.common.core.assembly.Scaffold;
 import org.jcvi.common.core.assembly.ScaffoldDataStore;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.Set;
-
-/**
- * User: aresnick
- * Date: Sep 9, 2009
- * Time: 2:45:50 PM
- * <p/>
- * $HeadURL$
- * $LastChangedRevision$
- * $LastChangedBy$
- * $LastChangedDate$
- * <p/>
- * Description:
- */
-public class DefaultAgpScaffoldDataStore implements ScaffoldDataStore, AgpFileVisitor {
-    private Map<String, DefaultScaffold.Builder> builderMap;
-    private Map<String, DefaultScaffold> scaffolds;
-
-    public DefaultAgpScaffoldDataStore() {
-        builderMap = new LinkedHashMap<String, DefaultScaffold.Builder>();
-    }
-
-    public void visitContigEntry(String scaffoldId, Range contigRange, String contigId, Direction dir) {
-        if(!builderMap.containsKey(scaffoldId)){
-            builderMap.put(scaffoldId, new DefaultScaffold.Builder(scaffoldId));
-        }
-        DefaultScaffold.Builder builder = builderMap.get(scaffoldId);
-        builder.add(contigId, contigRange, dir);
-    }
-
-    public void visitLine(String line) {
-        // do nothing for this visit method
-    }
-
-    public void visitEndOfFile() {
-        scaffolds = new LinkedHashMap<String, DefaultScaffold>(builderMap.size());
-        for(Map.Entry<String, DefaultScaffold.Builder> entry : builderMap.entrySet()){
-            scaffolds.put(entry.getKey(), entry.getValue().build());
-        }
-    }
+import org.jcvi.common.core.assembly.ScaffoldDataStoreBuilder;
 
 
-    public Set<String> getScaffoldIds() {
-        return scaffolds.keySet();
-    }
 
-    public Iterator<DefaultScaffold> getScaffolds() {
-        return scaffolds.values().iterator();
-    }
-
-    public DefaultScaffold getScaffold(String id) {
-        return scaffolds.get(id);
-    }
-
-    @Override
-    public void visitFile() {
-        // TODO Auto-generated method stub
-        
-    }
+public final class DefaultAgpScaffoldDataStore {
+    
+	public static ScaffoldDataStoreBuilderAgpVisitor createBuilder(){
+		return new Builder();
+	}
+	
+	private static final class Builder implements ScaffoldDataStoreBuilderAgpVisitor{
+		ScaffoldDataStoreBuilder builder = DefaultScaffoldDataStore.createBuilder();
+	
+	    public void visitContigEntry(String scaffoldId, Range contigRange, String contigId, Direction dir) {
+	       builder.addPlacedContig(scaffoldId, contigId, DirectedRange.create(contigRange, dir));
+	    }
+	
+	    public void visitLine(String line) {
+	        // do nothing for this visit method
+	    }
+	
+	    public void visitEndOfFile() {
+	       
+	    }
+	
+	    @Override
+	    public void visitFile() {
+	        // TODO Auto-generated method stub
+	        
+	    }
+	
+		@Override
+		public ScaffoldDataStoreBuilder addScaffold(Scaffold scaffold) {
+			builder.addScaffold(scaffold);
+			return this;
+		}
+	
+		@Override
+		public ScaffoldDataStoreBuilder addPlacedContig(String scaffoldId,
+				String contigId, DirectedRange directedRange) {
+			builder.addPlacedContig(scaffoldId, contigId, directedRange);
+			return this;
+		}
+	
+		@Override
+		public ScaffoldDataStore build() {
+			return builder.build();
+		}
+	}
 }

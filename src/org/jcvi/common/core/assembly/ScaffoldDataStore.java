@@ -19,23 +19,9 @@
 package org.jcvi.common.core.assembly;
 
 
-import java.util.Iterator;
-import java.util.Set;
+import org.jcvi.common.core.datastore.DataStore;
 
-/**
- * User: aresnick
- * Date: Sep 9, 2009
- * Time: 2:55:11 PM
- * <p/>
- * $HeadURL$
- * $LastChangedRevision$
- * $LastChangedBy$
- * $LastChangedDate$
- * <p/>
- * Description:
- */
-public interface ScaffoldDataStore<T extends Scaffold> {
-    Set<String> getScaffoldIds();
-    Iterator<T> getScaffolds();
-    Scaffold getScaffold(String id);
+
+public interface ScaffoldDataStore extends DataStore<Scaffold> {
+
 }
