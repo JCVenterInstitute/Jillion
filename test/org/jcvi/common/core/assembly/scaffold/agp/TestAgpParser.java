@@ -29,7 +29,9 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.Scaffold;
+import org.jcvi.common.core.assembly.ScaffoldDataStore;
 import org.jcvi.common.core.assembly.scaffold.agp.AgpParser;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -37,11 +39,12 @@ public class TestAgpParser {
 
     ResourceFileServer resourceFS = new ResourceFileServer(TestAgpParser.class);
     @Test
-    public void parseScaffold() throws IOException{
-        DefaultAgpScaffoldDataStore scaffolds = new DefaultAgpScaffoldDataStore();
-        AgpParser.parseAgpFile(resourceFS.getFileAsStream("files/example.agp"),scaffolds);
-        Scaffold actualScaffold = scaffolds.getScaffold("chrY");
-        Scaffold expectedScaffold = new DefaultScaffold.Builder("chrY")
+    public void parseScaffold() throws IOException, DataStoreException{
+        ScaffoldDataStoreBuilderAgpVisitor builderVisitor = DefaultAgpScaffoldDataStore.createBuilder();
+        AgpParser.parseAgpFile(resourceFS.getFileAsStream("files/example.agp"),builderVisitor);
+        ScaffoldDataStore datastore = builderVisitor.build();
+        Scaffold actualScaffold = datastore.get("chrY");
+        Scaffold expectedScaffold = DefaultScaffold.createBuilder("chrY")
         .add("AADB02037640.1",Range.buildRange(10503427,10507045),Direction.REVERSE)
                          .add("AADB02037624.1",Range.buildRange(9332432,9358222),Direction.FORWARD)
                          .add("AADB02037629.1",Range.buildRange(9424834,9431854),Direction.FORWARD)

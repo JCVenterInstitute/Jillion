@@ -25,6 +25,7 @@ import java.io.IOException;
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.Scaffold;
+import org.jcvi.common.core.assembly.ScaffoldBuilder;
 import org.jcvi.common.core.util.Builder;
 
 /**
@@ -45,12 +46,12 @@ public final class BlastScaffoldBuilder implements BlastVisitor, Builder<Scaffol
         XmlBlastParser.parse(xmlBlast, builder);
         return builder.build();
     }
-    private final DefaultScaffold.Builder scaffoldBuilder;
+    private final ScaffoldBuilder scaffoldBuilder;
     private final String subjectId;
 
     private BlastScaffoldBuilder(String subjectId) {
         this.subjectId = subjectId;
-        this.scaffoldBuilder = new DefaultScaffold.Builder(subjectId);
+        this.scaffoldBuilder = DefaultScaffold.createBuilder(subjectId);
     }
 
     /**
