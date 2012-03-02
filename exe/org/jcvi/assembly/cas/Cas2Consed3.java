@@ -43,6 +43,7 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultScaffold;
+import org.jcvi.common.core.assembly.ScaffoldBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
@@ -265,7 +266,7 @@ public class Cas2Consed3 {
                  builder.setContigId(newContigId);
                  NucleotideSequenceBuilder pseduoMoleculeBuilder = new NucleotideSequenceBuilder((int)ungappedLength);
                  long previousPseduoMoleculeOffset=0;
-                 DefaultScaffold.Builder scaffoldBuilder = new DefaultScaffold.Builder(referenceId);
+                 ScaffoldBuilder scaffoldBuilder = DefaultScaffold.createBuilder(referenceId);
                  for(Entry<Range,AceContig> entry : ConsedUtil.split0xContig(builder,true).entrySet()){
                      numberOfContigs++;
                      AceContig splitContig = entry.getValue();                     
