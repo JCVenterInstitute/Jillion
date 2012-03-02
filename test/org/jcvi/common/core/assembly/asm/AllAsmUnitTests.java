@@ -9,7 +9,10 @@ import org.junit.runners.Suite.SuiteClasses;
     { 
      TestAsmUtil.class	,
      TestDefaultAsmContigDataStore.class,
-     TestIndexedAsmContigDataStore.class
+     TestIndexedAsmContigDataStore.class,
+     
+     TestDefaultUnitigDataStore.class,
+     TestIndexedUnitigDataStore.class
     }
     )
 public class AllAsmUnitTests {

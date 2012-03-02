@@ -19,7 +19,6 @@
 
 package org.jcvi.common.core.assembly.asm;
 
-import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.datastore.DataStore;
 
 /**
@@ -27,6 +26,6 @@ import org.jcvi.common.core.datastore.DataStore;
  *
  *
  */
-public interface UnitigDataStore extends DataStore<Unitig<PlacedRead>>{
+public interface UnitigDataStore extends DataStore<AsmUnitig>{
 
 }
