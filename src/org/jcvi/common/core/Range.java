@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.util.CommonUtil;
 import org.jcvi.common.core.util.Caches;
 
 
@@ -58,14 +57,19 @@ import org.jcvi.common.core.util.Caches;
  * you need to explicitly use an empty range.
  * </p>
  * Ranges can also use a different {@link CoordinateSystem} which may not follow these
- * guidelines.  This other coordinate system start and end values can be queried
+ * guidelines.  The other coordinate system start and end values can be queried
  * via the {@link #getStart(CoordinateSystem)} and {@link #getEnd(CoordinateSystem)} methods.  
- * {@link CoordinateSystem}s can be also be specified either via the factory methods
- * during object construction.
- * 
+ * A different coordinate {@link CoordinateSystem} can be also be specified at construction time
+ * via the {@link Range#buildRange(CoordinateSystem, long, long)} method.  If this method is used,
+ * the input values will automatically get converted for you.
  * <p/>
- * <strong>PLEASE NOTE</strong> Range objects should not be used
- * for synchronization locks.  Range objects are cached and shared, synchronizing
+ * Ranges can be constructed using the various Range.buildRange(...) methods
+ * which might return different Range implementations based on 
+ * what the input values.  In addition, since Ranges are immutable,
+ * it is not guaranteed that the Range object returned by the build methods
+ * is a new object since Ranges are often cached.  Therefore;
+ * <strong> Range objects should not be used
+ * for synchronization locks.</strong>  Range objects are cached and shared, synchronizing
  * on the same object as other, unrelated code can cause deadlock.
  * <pre> 
  * &#047;&#047;don't do this
@@ -78,7 +82,7 @@ import org.jcvi.common.core.util.Caches;
  * @author jsitz@jcvi.org
  * 
  */
-public final class Range implements Placed<Range>,Iterable<Long>
+public abstract class Range implements Placed<Range>,Iterable<Long>
 {
     /**
      * {@code Comparators} is an enum of common Range
@@ -407,7 +411,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
         long zeroBasedEnd = coordinateSystem.getEnd(localEnd);
         final Range range;
         if(zeroBasedEnd >= zeroBasedStart) {
-            range= new Range(zeroBasedStart,zeroBasedEnd);            
+            range= buildNewRange(zeroBasedStart,zeroBasedEnd);            
         } else if (zeroBasedEnd == zeroBasedStart-1) {
             range = buildEmptyRange(zeroBasedStart,zeroBasedEnd);
         } else {
@@ -415,6 +419,31 @@ public final class Range implements Placed<Range>,Iterable<Long>
                 + " are not valid " + coordinateSystem + " coordinates");
         }
         return getFromCache(range);
+    }
+    /**
+     * Builds a new Range instance whose implementation depends
+     * on the input start and end coordinates.  The implementation
+     * that can take up the fewest number of bytes is chosen.
+     * @param zeroBasedStart
+     * @param zeroBasedEnd
+     * @return
+     */
+    private static Range buildNewRange(long zeroBasedStart, long zeroBasedEnd){
+    	if(zeroBasedStart <= Byte.MAX_VALUE && zeroBasedStart >=Byte.MIN_VALUE
+    			&& zeroBasedEnd <= Byte.MAX_VALUE && zeroBasedEnd >=Byte.MIN_VALUE
+    			){
+    		return new ByteRange((byte)zeroBasedStart, (byte)zeroBasedEnd);
+    	}else if(zeroBasedStart <= Short.MAX_VALUE && zeroBasedStart >=Short.MIN_VALUE
+    			&& zeroBasedEnd <= Short.MAX_VALUE && zeroBasedEnd >=Short.MIN_VALUE
+    			){
+    		return new ShortRange((short)zeroBasedStart, (short)zeroBasedEnd);
+    	}else if(zeroBasedStart <= Integer.MAX_VALUE && zeroBasedStart >=Integer.MIN_VALUE
+    			&& zeroBasedEnd <= Integer.MAX_VALUE && zeroBasedEnd >=Integer.MIN_VALUE
+    			){
+    		return new IntRange((int)zeroBasedStart, (int)zeroBasedEnd);
+    	}
+    	
+    	return new LongRange(zeroBasedStart, zeroBasedEnd);
     }
     private static synchronized Range getFromCache(Range range) {
        if(range==null){
@@ -474,7 +503,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
         return buildEmptyRange(zeroBasedStart,zeroBasedStart-1);
     }
     private static Range buildEmptyRange(long start,long end) {
-        return new Range(start,end);
+        return buildNewRange(start,end);
     }
     /**
      * Build a new Range object of in the Zero based coordinate
@@ -618,60 +647,12 @@ public final class Range implements Placed<Range>,Iterable<Long>
                 Long.parseLong(dashMatcher.group(2))
                 );
     }
-    /**
-     * The start coordinate.
-     * This coordinate stored relative to the zero base coordinate system
-     */
-    private final long start;
 
-    /**
-     * The end coordinate.
-     * This coordinate stored relative to the zero base coordinate system
-     */
-    private final  long end;
-    
-    private final boolean isEmpty;
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (start ^ (start >>> 32));
-        result = prime * result + (int) (end ^ (end >>> 32));       
-        return result;
-    }
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj){
-            return true;
-        }
-
-        if (!(obj instanceof Range)){
-            return false;
-        }
-        final Range other = (Range) obj;
-        return CommonUtil.similarTo(getStart(), other.getStart())
-        && CommonUtil.similarTo(getEnd(), other.getEnd());
-        
+    private Range(){
+    	//can not instantiate
     }
 
-    /**
-     * Creates a new <code>Range</code> with the given coordinates.
-     *
-     * @param start The inclusive start coordinate.
-     * @param end The inclusive end coordinate.
-     */
-    private Range(long start, long end) {
-        this.start = start;
-        this.end = end;
-        this.isEmpty = end-start==-1;
-    }
     /**
      * Fetch the left (start) coordinate This is the same as 
      * {@link #getStart(CoordinateSystem)
@@ -680,9 +661,8 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @return The left-hand (starting) coordinate.
      * 
      */
-    public long getStart() {
-        return start;
-    }
+    @Override
+    public abstract long getStart();
     /**
      * Fetch the left (start) coordinate using the given 
      * {@link CoordinateSystem}.  
@@ -694,7 +674,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
     	if(coordinateSystem==null){
     		throw new NullPointerException("CoordinateSystem can not be null");
     	}
-        return coordinateSystem.getLocalStart(start);
+        return coordinateSystem.getLocalStart(getStart());
     }
     /**
      * Fetch the 0-based right (end) coordinate.
@@ -703,9 +683,8 @@ public final class Range implements Placed<Range>,Iterable<Long>
      *
      * @return The right-hand (ending) coordinate.
      */
-    public long getEnd() {
-        return end;
-    }
+    @Override
+    public abstract long getEnd();
     /**
      * Fetch the right (end) coordinate using the given 
      * {@link CoordinateSystem}.
@@ -717,7 +696,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
     	if(coordinateSystem==null){
     		throw new NullPointerException("CoordinateSystem can not be null");
     	}
-        return coordinateSystem.getLocalEnd(end);
+        return coordinateSystem.getLocalEnd(getEnd());
     }
 
     /**
@@ -728,7 +707,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * coordinates.
      */
     public long size() {
-        return end - start + 1;
+        return getEnd() - getStart() + 1;
     }
     /**
      * Create a new Range of the same size
@@ -737,7 +716,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @return a new Range (not null)
      */
     public Range shiftLeft(long units){
-        return Range.buildRangeOfLength(this.start-units, this.size());
+        return Range.buildRangeOfLength(this.getStart()-units, this.size());
     }
     /**
      * Create a new Range of the same size
@@ -746,7 +725,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @return a new Range (not null)
      */
     public Range shiftRight(long units){
-        return Range.buildRangeOfLength(this.start+units, this.size());
+        return Range.buildRangeOfLength(this.getStart()+units, this.size());
     }
     /**
      * Checks if this range is empty.
@@ -754,11 +733,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
      * @return <code>true</code> if the range is empty, <code>false</code>
      * otherwise.
      */
-    public boolean isEmpty()
-    {
-        return isEmpty;
-    }
-
+    public abstract boolean isEmpty();
     /**
      * Checks to see if the given target <code>Range</code> is contained within
      * this <code>Range</code>.  This does not require this <code>Range</code>
@@ -783,9 +758,14 @@ public final class Range implements Placed<Range>,Iterable<Long>
        
     }
     private boolean isCompletelyInsideOf(Range range) {
-        return (start>range.start && end<range.end) ||
-           (start==range.start && end<range.end) ||
-           (start>range.start && end==range.end);
+    	long start = getStart();
+    	long end = getEnd();
+    	long otherStart = range.getStart();
+    	long otherEnd = range.getEnd();
+    	
+        return (start>otherStart && end<otherEnd) ||
+           (start==otherStart && end<otherEnd) ||
+           (start>otherStart && end==otherEnd);
     }
 
     /**
@@ -814,10 +794,10 @@ public final class Range implements Placed<Range>,Iterable<Long>
             return target.intersects(this);
         }
 
-        return !(this.start > target.end || this.end < target.start);
+        return !(this.getStart() > target.getEnd() || this.getEnd() < target.getStart());
     }
     public boolean intersects(long coordinate){
-        return coordinate >= this.start && coordinate <=this.end;
+        return coordinate >= this.getStart() && coordinate <=this.getEnd();
     }
     /**
      * Calculates the intersection of this {@link Range} and a second one.
@@ -844,8 +824,8 @@ public final class Range implements Placed<Range>,Iterable<Long>
         }
 
         try{
-            long intersectionStart = Math.max(target.getStart(), this.start);
-			long intersectionEnd = Math.min(target.getEnd(), this.end);
+            long intersectionStart = Math.max(target.getStart(), this.getStart());
+			long intersectionEnd = Math.min(target.getEnd(), this.getEnd());
 			return  Range.buildRange(intersectionStart,
                             intersectionEnd);
         }
@@ -926,7 +906,7 @@ public final class Range implements Placed<Range>,Iterable<Long>
         {
             throw new IllegalArgumentException("Null Range used in range comparison operation.");
         }
-        if (isEmpty || target.isEmpty())
+        if (isEmpty() || target.isEmpty())
         {
             return false;
         }
@@ -998,8 +978,8 @@ public final class Range implements Placed<Range>,Iterable<Long>
     		throw new NullPointerException("coordinateSystem can not be null");
     	}
         return String.format("[ %d - %d ]/%s", 
-        		coordinateSystem.getLocalStart(start) ,
-        		coordinateSystem.getLocalEnd(end),
+        		coordinateSystem.getLocalStart(getStart()) ,
+        		coordinateSystem.getLocalEnd(getEnd()),
                 coordinateSystem.getAbbreviatedName());
     }
    
@@ -1178,5 +1158,346 @@ public final class Range implements Placed<Range>,Iterable<Long>
             
         }
         
+    }
+    /**
+     * Range implementation that stores the 
+     * start and end coordinates as longs.
+     * @author dkatzel
+     *
+     */
+    private static final class LongRange extends Range{
+        /**
+         * The start coordinate.
+         * This coordinate stored relative to the zero base coordinate system
+         */
+        private final long start;
+
+        /**
+         * The end coordinate.
+         * This coordinate stored relative to the zero base coordinate system
+         */
+        private final  long end;
+        
+        private final boolean isEmpty;
+        
+    	private LongRange(long start, long end){
+    		 this.start = start;
+	        this.end = end;
+	        this.isEmpty = end-start==-1;
+    	}
+    	
+    	/**
+         * Fetch the left (start) coordinate This is the same as 
+         * {@link #getStart(CoordinateSystem)
+         * getStart(ZERO_BASED)}.
+         *
+         * @return The left-hand (starting) coordinate.
+         * 
+         */
+    	@Override
+        public long getStart() {
+            return start;
+        }
+    	 /**
+         * Fetch the 0-based right (end) coordinate.
+         * This is the same as {@link #getEnd(CoordinateSystem)
+         * getEnd(ZERO_BASED)}.
+         *
+         * @return The right-hand (ending) coordinate.
+         */
+    	@Override
+        public long getEnd() {
+            return end;
+        }
+    	/**
+         * Checks if this range is empty.
+         *
+         * @return <code>true</code> if the range is empty, <code>false</code>
+         * otherwise.
+         */
+    	@Override
+        public boolean isEmpty()
+        {
+            return isEmpty;
+        }
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (int) (end ^ (end >>> 32));
+			result = prime * result + (isEmpty ? 1231 : 1237);
+			result = prime * result + (int) (start ^ (start >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj){
+				return true;
+			}
+			if (obj == null){
+				return false;
+			}
+			if (getClass() != obj.getClass()){
+				return false;
+			}
+			LongRange other = (LongRange) obj;
+			if (end != other.end){
+				return false;
+			}
+			if (start != other.start){
+				return false;
+			}
+			return true;
+		}
+    	
+    	
+    }
+    /**
+     * Range implementation that stores the 
+     * start and end coordinates as ints.
+     * @author dkatzel
+     *
+     */
+    private static final class IntRange extends Range{
+        /**
+         * The start coordinate.
+         * This coordinate stored relative to the zero base coordinate system
+         */
+        private final int start;
+
+        /**
+         * The end coordinate.
+         * This coordinate stored relative to the zero base coordinate system
+         */
+        private final  int end;
+        
+        private final boolean isEmpty;
+        
+    	private IntRange(int start, int end){
+    		 this.start = start;
+	        this.end = end;
+	        this.isEmpty = end-start==-1;
+    	}
+    	
+    	/**
+         * Fetch the left (start) coordinate This is the same as 
+         * {@link #getStart(CoordinateSystem)
+         * getStart(ZERO_BASED)}.
+         *
+         * @return The left-hand (starting) coordinate.
+         * 
+         */
+    	@Override
+        public long getStart() {
+            return start;
+        }
+    	 /**
+         * Fetch the 0-based right (end) coordinate.
+         * This is the same as {@link #getEnd(CoordinateSystem)
+         * getEnd(ZERO_BASED)}.
+         *
+         * @return The right-hand (ending) coordinate.
+         */
+    	@Override
+        public long getEnd() {
+            return end;
+        }
+    	/**
+         * Checks if this range is empty.
+         *
+         * @return <code>true</code> if the range is empty, <code>false</code>
+         * otherwise.
+         */
+    	@Override
+        public boolean isEmpty()
+        {
+            return isEmpty;
+        }
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + end;
+			result = prime * result + start;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj){
+				return true;
+			}
+			if (obj == null){
+				return false;
+			}
+			if (getClass() != obj.getClass()){
+				return false;
+			}
+			IntRange other = (IntRange) obj;
+			if (end != other.end){
+				return false;
+			}
+			if (start != other.start){
+				return false;
+			}
+			return true;
+		}
+    }
+    /**
+     * Range implementation that stores the 
+     * start and end coordinates as shorts.
+     * @author dkatzel
+     *
+     */
+    private static final class ShortRange extends Range{
+        /**
+         * The start coordinate.
+         * This coordinate stored relative to the zero base coordinate system
+         */
+        private final short start;
+
+        /**
+         * The end coordinate.
+         * This coordinate stored relative to the zero base coordinate system
+         */
+        private final  short end;
+        
+        private final boolean isEmpty;
+        
+    	private ShortRange(short start, short end){
+    		 this.start = start;
+	        this.end = end;
+	        this.isEmpty = end-start==-1;
+    	}
+    	
+    	/**
+         * Fetch the left (start) coordinate This is the same as 
+         * {@link #getStart(CoordinateSystem)
+         * getStart(ZERO_BASED)}.
+         *
+         * @return The left-hand (starting) coordinate.
+         * 
+         */
+    	@Override
+        public long getStart() {
+            return start;
+        }
+    	 /**
+         * Fetch the 0-based right (end) coordinate.
+         * This is the same as {@link #getEnd(CoordinateSystem)
+         * getEnd(ZERO_BASED)}.
+         *
+         * @return The right-hand (ending) coordinate.
+         */
+    	@Override
+        public long getEnd() {
+            return end;
+        }
+    	/**
+         * Checks if this range is empty.
+         *
+         * @return <code>true</code> if the range is empty, <code>false</code>
+         * otherwise.
+         */
+    	@Override
+        public boolean isEmpty()
+        {
+            return isEmpty;
+        }
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + end;
+			result = prime * result + start;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			ShortRange other = (ShortRange) obj;
+			if (end != other.end) {
+				return false;
+			}
+			if (start != other.start) {
+				return false;
+			}
+			return true;
+		}
+    }
+    /**
+     * Range implementation that stores the 
+     * start and end coordinates as bytes.
+     * @author dkatzel
+     *
+     */
+    private static final class ByteRange extends Range{
+        /**
+         * The start coordinate.
+         * This coordinate stored relative to the zero base coordinate system
+         */
+        private final byte start;
+
+        /**
+         * The end coordinate.
+         * This coordinate stored relative to the zero base coordinate system
+         */
+        private final  byte end;
+        
+        private final boolean isEmpty;
+        
+    	private ByteRange(byte start, byte end){
+    		 this.start = start;
+	        this.end = end;
+	        this.isEmpty = end-start==-1;
+    	}
+    	
+    	/**
+         * Fetch the left (start) coordinate This is the same as 
+         * {@link #getStart(CoordinateSystem)
+         * getStart(ZERO_BASED)}.
+         *
+         * @return The left-hand (starting) coordinate.
+         * 
+         */
+    	@Override
+        public long getStart() {
+            return start;
+        }
+    	 /**
+         * Fetch the 0-based right (end) coordinate.
+         * This is the same as {@link #getEnd(CoordinateSystem)
+         * getEnd(ZERO_BASED)}.
+         *
+         * @return The right-hand (ending) coordinate.
+         */
+    	@Override
+        public long getEnd() {
+            return end;
+        }
+    	/**
+         * Checks if this range is empty.
+         *
+         * @return <code>true</code> if the range is empty, <code>false</code>
+         * otherwise.
+         */
+    	@Override
+        public boolean isEmpty()
+        {
+            return isEmpty;
+        }
+
     }
 }
