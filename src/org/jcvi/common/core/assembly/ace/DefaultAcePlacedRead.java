@@ -63,7 +63,12 @@ public final class DefaultAcePlacedRead implements AcePlacedRead {
     }
 
 
-    /**
+    @Override
+	public String toString() {
+		return "DefaultAcePlacedRead [placedRead=" + placedRead + ", phdInfo="
+				+ phdInfo + "]";
+	}
+	/**
     * {@inheritDoc}
     */
     @Override

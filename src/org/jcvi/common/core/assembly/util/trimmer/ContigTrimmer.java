@@ -43,5 +43,5 @@ public interface ContigTrimmer<P extends PlacedRead, C extends Contig<P>> {
      * was trimmed off so there are no longer any underlying reads.
      * @throws TrimmerException if there is a problem during trimming.
      */
-     C trimContig(C contig) throws TrimmerException;
+	ContigTrimmerResult<P,C> trimContig(C contig) throws TrimmerException;
 }
