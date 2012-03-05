@@ -1070,4 +1070,326 @@ public class TestRange{
         assertEquals(expectedList, Range.mergeRangesIntoClusters(inputList, maxClusterDistance));
     }
    
+    @Test
+    public void byteRangeWithByteLength(){
+    	Range r = Range.buildRange(12,123);
+    	assertEquals(12, r.getStart());
+    	assertEquals(123, r.getEnd());
+    	assertEquals(112, r.getLength());
+    }
+    @Test
+    public void byteRangeWithUnsignedByteLength(){
+    	Range r = Range.buildRange(12,223);
+    	assertEquals(12, r.getStart());
+    	assertEquals(223, r.getEnd());
+    	assertEquals(212, r.getLength());
+    }
+    @Test
+    public void byteRangeWithShortLength(){
+    	Range r = Range.buildRange(0,499);
+    	assertEquals(0, r.getStart());
+    	assertEquals(499, r.getEnd());
+    	assertEquals(500, r.getLength());
+    }
+    @Test
+    public void byteRangeWithUnsignedShortLength(){
+    	Range r = Range.buildRange(0,59999);
+    	assertEquals(0, r.getStart());
+    	assertEquals(59999, r.getEnd());
+    	assertEquals(60000, r.getLength());
+    }
+    
+    @Test
+    public void byteRangeWithIntLength(){
+    	Range r = Range.buildRange(0,99999);
+    	assertEquals(0, r.getStart());
+    	assertEquals(99999, r.getEnd());
+    	assertEquals(100000, r.getLength());
+    }
+    @Test
+    public void byteRangeWithUnsignedIntLength(){
+    	long end = Integer.MAX_VALUE+1L;
+    	Range r = Range.buildRange(0,end);
+    	assertEquals(0, r.getStart());
+    	assertEquals(end, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE+2L, r.getLength());
+    }
+    @Test
+    public void byteRangeWithLongLength(){
+    	long end = Long.MAX_VALUE-1L;
+    	Range r = Range.buildRange(0,end);
+    	assertEquals(0, r.getStart());
+    	assertEquals(end, r.getEnd());
+    	assertEquals(Long.MAX_VALUE, r.getLength());
+    }
+    
+    @Test
+    public void unsignedByteWithShortLength(){
+    	Range r = Range.buildRangeOfLength(Byte.MAX_VALUE+1,500);
+    	assertEquals(Byte.MAX_VALUE+1, r.getStart());
+    	assertEquals(Byte.MAX_VALUE+500, r.getEnd());
+    	assertEquals(500, r.getLength());
+    }
+    
+    @Test
+    public void unsignedByteWithUnsignedShortLength(){
+    	Range r = Range.buildRangeOfLength(Byte.MAX_VALUE+1,Short.MAX_VALUE+1);
+    	assertEquals(Byte.MAX_VALUE+1, r.getStart());
+    	assertEquals(Byte.MAX_VALUE+Short.MAX_VALUE+1, r.getEnd());
+    	assertEquals(Short.MAX_VALUE+1, r.getLength());
+    }
+    
+    @Test
+    public void unsignedByteWithIntLength(){
+    	Range r = Range.buildRangeOfLength(Byte.MAX_VALUE+1,Integer.MAX_VALUE);
+    	assertEquals(Byte.MAX_VALUE+1, r.getStart());
+    	assertEquals(Byte.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE, r.getLength());
+    }
+    @Test
+    public void unsignedByteWithUnsignedIntLength(){
+    	Range r = Range.buildRangeOfLength(Byte.MAX_VALUE+1,Integer.MAX_VALUE+1L);
+    	assertEquals(Byte.MAX_VALUE+1, r.getStart());
+    	assertEquals(Byte.MAX_VALUE+(long)Integer.MAX_VALUE+1L, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
+    }
+    @Test
+    public void unsignedByteWithLongLength(){
+    	Range r = Range.buildRangeOfLength(Byte.MAX_VALUE+1,0x100000000L);
+    	assertEquals(Byte.MAX_VALUE+1, r.getStart());
+    	assertEquals(4294967423L, r.getEnd());
+    	assertEquals(4294967296L, r.getLength());
+    }
+    //////////////////////////
+    @Test
+    public void shortWithShortLength(){
+    	Range r = Range.buildRangeOfLength(Short.MAX_VALUE,500);
+    	assertEquals(Short.MAX_VALUE, r.getStart());
+    	assertEquals(Short.MAX_VALUE+499, r.getEnd());
+    	assertEquals(500, r.getLength());
+    }
+    
+    @Test
+    public void shortWithUnsignedShortLength(){
+    	Range r = Range.buildRangeOfLength(Short.MAX_VALUE,Short.MAX_VALUE+1);
+    	assertEquals(Short.MAX_VALUE, r.getStart());
+    	assertEquals(Short.MAX_VALUE+Short.MAX_VALUE, r.getEnd());
+    	assertEquals(Short.MAX_VALUE+1, r.getLength());
+    }
+    
+    @Test
+    public void shortWithIntLength(){
+    	Range r = Range.buildRangeOfLength(Short.MAX_VALUE,Integer.MAX_VALUE);
+    	assertEquals(Short.MAX_VALUE, r.getStart());
+    	assertEquals(Short.MAX_VALUE+(long)Integer.MAX_VALUE-1, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE, r.getLength());
+    }
+    @Test
+    public void shortWithUnsignedIntLength(){
+    	Range r = Range.buildRangeOfLength(Short.MAX_VALUE,Integer.MAX_VALUE+1L);
+    	assertEquals(Short.MAX_VALUE, r.getStart());
+    	assertEquals(Short.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
+    }
+    @Test
+    public void shortWithLongLength(){
+    	Range r = Range.buildRangeOfLength(Short.MAX_VALUE,0x100000000L);
+    	assertEquals(Short.MAX_VALUE, r.getStart());
+    	assertEquals(4295000062L, r.getEnd());
+    	assertEquals(4294967296L, r.getLength());
+    }
+    /////////////////////////////////
+    @Test
+    public void intWithShortLength(){
+    	Range r = Range.buildRangeOfLength(Integer.MAX_VALUE,500);
+    	assertEquals(Integer.MAX_VALUE, r.getStart());
+    	assertEquals(Integer.MAX_VALUE+499L, r.getEnd());
+    	assertEquals(500, r.getLength());
+    }
+    
+    @Test
+    public void intWithUnsignedShortLength(){
+    	Range r = Range.buildRangeOfLength(Integer.MAX_VALUE,Short.MAX_VALUE+1);
+    	assertEquals(Integer.MAX_VALUE, r.getStart());
+    	assertEquals(Integer.MAX_VALUE+(long)Short.MAX_VALUE, r.getEnd());
+    	assertEquals(Short.MAX_VALUE+1, r.getLength());
+    }
+    
+    @Test
+    public void intWithIntLength(){
+    	Range r = Range.buildRangeOfLength(Integer.MAX_VALUE,Integer.MAX_VALUE);
+    	assertEquals(Integer.MAX_VALUE, r.getStart());
+    	assertEquals(Integer.MAX_VALUE+(long)Integer.MAX_VALUE-1, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE, r.getLength());
+    }
+    @Test
+    public void intWithUnsignedIntLength(){
+    	Range r = Range.buildRangeOfLength(Integer.MAX_VALUE,Integer.MAX_VALUE+1L);
+    	assertEquals(Integer.MAX_VALUE, r.getStart());
+    	assertEquals(Integer.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
+    }
+    @Test
+    public void intWithLongLength(){
+    	Range r = Range.buildRangeOfLength(Integer.MAX_VALUE,0x100000000L);
+    	assertEquals(Integer.MAX_VALUE, r.getStart());
+    	assertEquals(6442450942L, r.getEnd());
+    	assertEquals(4294967296L, r.getLength());
+    }
+    ////////////////////////////////
+    @Test
+    public void unsignedShortWithShortLength(){
+    	Range r = Range.buildRangeOfLength(Short.MAX_VALUE+1,500);
+    	assertEquals(Short.MAX_VALUE+1, r.getStart());
+    	assertEquals(Short.MAX_VALUE+1+499, r.getEnd());
+    	assertEquals(500, r.getLength());
+    }
+    
+    @Test
+    public void unsignedShortWithUnsignedShortLength(){
+    	Range r = Range.buildRangeOfLength(Short.MAX_VALUE+1,Short.MAX_VALUE+1);
+    	assertEquals(Short.MAX_VALUE+1, r.getStart());
+    	assertEquals(Short.MAX_VALUE+1+Short.MAX_VALUE, r.getEnd());
+    	assertEquals(Short.MAX_VALUE+1, r.getLength());
+    }
+    
+    @Test
+    public void unsignedShortWithIntLength(){
+    	Range r = Range.buildRangeOfLength(Short.MAX_VALUE+1,Integer.MAX_VALUE);
+    	assertEquals(Short.MAX_VALUE+1, r.getStart());
+    	assertEquals(Short.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE, r.getLength());
+    }
+    @Test
+    public void unsignedShortWithUnsignedIntLength(){
+    	Range r = Range.buildRangeOfLength(Short.MAX_VALUE+1,Integer.MAX_VALUE+1L);
+    	assertEquals(Short.MAX_VALUE+1, r.getStart());
+    	assertEquals(Short.MAX_VALUE+(long)Integer.MAX_VALUE+1, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
+    }
+    @Test
+    public void unsignedShortWithLongLength(){
+    	Range r = Range.buildRangeOfLength(Short.MAX_VALUE+1,0x100000000L);
+    	assertEquals(Short.MAX_VALUE+1, r.getStart());
+    	assertEquals(4295000063L, r.getEnd());
+    	assertEquals(4294967296L, r.getLength());
+    }
+    ///////////////////////
+    @Test
+    public void unsignedIntWithShortLength(){
+    	Range r = Range.buildRangeOfLength(Integer.MAX_VALUE+1L,500);
+    	assertEquals(Integer.MAX_VALUE+1L, r.getStart());
+    	assertEquals(Integer.MAX_VALUE+1L+499L, r.getEnd());
+    	assertEquals(500, r.getLength());
+    }
+    
+    @Test
+    public void unsignedIntWithUnsignedShortLength(){
+    	Range r = Range.buildRangeOfLength(Integer.MAX_VALUE+1L,Short.MAX_VALUE+1);
+    	assertEquals(Integer.MAX_VALUE+1L, r.getStart());
+    	assertEquals(Integer.MAX_VALUE+1L+(long)Short.MAX_VALUE, r.getEnd());
+    	assertEquals(Short.MAX_VALUE+1, r.getLength());
+    }
+    
+    @Test
+    public void unsignedIntWithIntLength(){
+    	Range r = Range.buildRangeOfLength(Integer.MAX_VALUE+1L,Integer.MAX_VALUE);
+    	assertEquals(Integer.MAX_VALUE+1L, r.getStart());
+    	assertEquals(Integer.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE, r.getLength());
+    }
+    @Test
+    public void unsignedIntWithUnsignedIntLength(){
+    	Range r = Range.buildRangeOfLength(Integer.MAX_VALUE+1L,Integer.MAX_VALUE+1L);
+    	assertEquals(Integer.MAX_VALUE+1L, r.getStart());
+    	assertEquals(Integer.MAX_VALUE+(long)Integer.MAX_VALUE+1L, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
+    }   
+    @Test
+    public void unsignedIntWithLongLength(){
+    	Range r = Range.buildRangeOfLength(Integer.MAX_VALUE+1L,0x100000000L);
+    	assertEquals(Integer.MAX_VALUE+1L, r.getStart());
+    	assertEquals(6442450943L, r.getEnd());
+    	assertEquals(4294967296L, r.getLength());
+    }
+    
+    /////////////////////////////////
+    
+	@Test
+	public void longWithShortLength() {
+		Range r = Range.buildRangeOfLength(0x100000000L, 500);
+		assertEquals(0x100000000L, r.getStart());
+		assertEquals(4294967795L, r.getEnd());
+		assertEquals(500, r.getLength());
+	}
+
+	@Test
+	public void longWithUnsignedShortLength() {
+		Range r = Range.buildRangeOfLength(0x100000000L, Short.MAX_VALUE + 1);
+		assertEquals(0x100000000L, r.getStart());
+		assertEquals(4295000063L, r.getEnd());
+		assertEquals(Short.MAX_VALUE + 1, r.getLength());
+	}
+
+	@Test
+	public void longWithIntLength() {
+		Range r = Range
+				.buildRangeOfLength(0x100000000L, Integer.MAX_VALUE);
+		assertEquals(0x100000000L, r.getStart());
+		assertEquals(6442450942L, r.getEnd());
+		assertEquals(Integer.MAX_VALUE, r.getLength());
+	}
+
+	@Test
+	public void longWithUnsignedIntLength() {
+		Range r = Range.buildRangeOfLength(0x100000000L,
+				Integer.MAX_VALUE + 1L);
+		assertEquals(0x100000000L, r.getStart());
+		assertEquals(6442450943L, r.getEnd());
+		assertEquals(Integer.MAX_VALUE + 1L, r.getLength());
+	}
+
+    @Test
+    public void emptyRangeWithNegativeCoordinate(){
+    	Range r = Range.buildEmptyRange(-1);
+    	assertEquals(-1, r.getStart());
+    	assertTrue(r.isEmpty());
+    	assertEquals(-2, r.getEnd());
+    }
+    @Test
+    public void emptyRangeWithNegativeShortValueCoordinate(){
+    	Range r = Range.buildEmptyRange(Short.MIN_VALUE);
+    	assertEquals(Short.MIN_VALUE, r.getStart());
+    	assertTrue(r.isEmpty());
+    	assertEquals(Short.MIN_VALUE -1, r.getEnd());
+    }
+    @Test
+    public void emptyRangeWithNegativeIntValueCoordinate(){
+    	Range r = Range.buildEmptyRange(Integer.MIN_VALUE);
+    	assertEquals(Integer.MIN_VALUE, r.getStart());
+    	assertTrue(r.isEmpty());
+    	assertEquals(Integer.MIN_VALUE -1L, r.getEnd());
+    }
+    @Test
+    public void emptyRangeWithShortValueCoordinate(){
+    	Range r = Range.buildEmptyRange(Short.MAX_VALUE);
+    	assertEquals(Short.MAX_VALUE, r.getStart());
+    	assertTrue(r.isEmpty());
+    	assertEquals(Short.MAX_VALUE -1, r.getEnd());
+    }
+    @Test
+    public void emptyRangeWithIntValueCoordinate(){
+    	Range r = Range.buildEmptyRange(Integer.MAX_VALUE);
+    	assertEquals(Integer.MAX_VALUE, r.getStart());
+    	assertTrue(r.isEmpty());
+    	assertEquals(Integer.MAX_VALUE -1L, r.getEnd());
+    }
+    @Test
+    public void emptyRangeWithLongValueCoordinate(){
+    	Range r = Range.buildEmptyRange(Long.MAX_VALUE);
+    	assertEquals(Long.MAX_VALUE, r.getStart());
+    	assertTrue(r.isEmpty());
+    	assertEquals(Long.MAX_VALUE -1L, r.getEnd());
+    }
+    
 }
