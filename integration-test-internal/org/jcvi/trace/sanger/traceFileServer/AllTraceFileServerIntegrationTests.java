@@ -12,8 +12,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestTigrTraceFileServer.class,
-        TestTraceFileServerSecure.class
+      //  TestTigrTraceFileServer.class,
+        //TestTraceFileServerSecure.class
     }
     )
 public class AllTraceFileServerIntegrationTests {
