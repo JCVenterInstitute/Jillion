@@ -62,11 +62,11 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
     }
 
     @Override
-    public C trimContig(C contig) throws TrimmerException {
+    public ContigTrimmerResult<P,C> trimContig(C contig) throws TrimmerException {
         return trimContig(contig, DefaultCoverageMap.buildCoverageMap(contig));
     }
 
-    protected C trimContig(C contig,CoverageMap<CoverageRegion<P>> coverageMap){
+    protected ContigTrimmerResult<P,C> trimContig(C contig,CoverageMap<CoverageRegion<P>> coverageMap){
         
         initializeTrimmers(contig,coverageMap);
         beginTrimmingContig(contig);
@@ -129,10 +129,10 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
     /**
      * Trimming has completed, construct a new Contig instance
      * of the contig with the new trim data.
-     * @return a new instance of contig with the new trimming data;
+     * @return a new instance of ContigTrimmerResult;
      * or null if the entire contig was trimmed off.
      */
-    protected abstract  C buildNewContig();
+    protected abstract  ContigTrimmerResult<P,C> buildNewContig();
 
     /**
      * Trim the given PlacedRead with the given current trimmed

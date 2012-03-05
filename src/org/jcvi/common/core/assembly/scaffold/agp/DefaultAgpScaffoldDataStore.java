@@ -18,6 +18,9 @@
  ******************************************************************************/
 package org.jcvi.common.core.assembly.scaffold.agp;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
@@ -32,6 +35,12 @@ public final class DefaultAgpScaffoldDataStore {
     
 	public static ScaffoldDataStoreBuilderAgpVisitor createBuilder(){
 		return new Builder();
+	}
+	
+	public static ScaffoldDataStore create(File agpFile) throws FileNotFoundException{
+		ScaffoldDataStoreBuilderAgpVisitor builder = createBuilder();
+		AgpParser.parseAgpFile(agpFile, builder);
+		return builder.build();
 	}
 	
 	private static final class Builder implements ScaffoldDataStoreBuilderAgpVisitor{

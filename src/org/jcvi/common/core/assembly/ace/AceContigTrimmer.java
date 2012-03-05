@@ -25,6 +25,7 @@ import java.util.List;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.util.trimmer.AbstractContigTrimmer;
+import org.jcvi.common.core.assembly.util.trimmer.ContigTrimmerResult;
 import org.jcvi.common.core.assembly.util.trimmer.PlacedReadTrimmer;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
@@ -65,7 +66,7 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
     * {@inheritDoc}
     */
     @Override
-    protected AceContig buildNewContig() {
+    protected ContigTrimmerResult<AcePlacedRead, AceContig> buildNewContig() {
         //currentRanges should now only be 1 range
         if(currentRanges ==null || currentRanges.isEmpty()){
            // throw new IllegalStateException(String.format("contig %s is empty after trimming", builder.getContigId()));
@@ -76,7 +77,9 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
         }
         Range contigRange = currentRanges.get(0);
         builder.setContigId(createNewContigId(builder.getContigId(),oldConsensus,contigRange));
-        return builder.build();
+        return ContigTrimmerResult.createTrimmedResult(builder.build(), 
+        		(int)contigRange.getStart(),
+        		(int)(oldConsensus.getLength() - contigRange.getEnd()));
     }
 
     protected String createNewContigId(String oldContigId, NucleotideSequence oldConsensus, Range newContigRange){

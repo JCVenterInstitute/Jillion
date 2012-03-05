@@ -30,6 +30,7 @@ import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContigTrimmer;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
+import org.jcvi.common.core.assembly.util.trimmer.ContigTrimmerResult;
 import org.jcvi.common.core.assembly.util.trimmer.MinimumEndCoverageTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.PlacedReadTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.TrimmerException;
@@ -82,7 +83,8 @@ public class TestAceContigTrimmer {
                                    .addRead("read3", "GTACGTAC", 0, Direction.FORWARD, Range.buildRangeOfLength(20,8))
                                    
                                    .build();
-       AceContig actualContig =sut.trimContig(originalContig);
+       ContigTrimmerResult<AcePlacedRead, AceContig> trimContigResults = sut.trimContig(originalContig);
+	AceContig actualContig =trimContigResults.getTrimmedContig();
         
        assertEquals("trimmed id", expectedContig.getId(), actualContig.getId());
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
@@ -107,7 +109,8 @@ public class TestAceContigTrimmer {
                                    .addRead("read3", "GTACGTAC", 0, Direction.REVERSE, Range.buildRangeOfLength(20,8))
                                    
                                    .build();
-       AceContig actualContig =sut.trimContig(originalContig);
+       ContigTrimmerResult<AcePlacedRead, AceContig> trimContigResults = sut.trimContig(originalContig);
+	AceContig actualContig =trimContigResults.getTrimmedContig();
         
        assertEquals("trimmed id", expectedContig.getId(), actualContig.getId());
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
@@ -133,7 +136,8 @@ public class TestAceContigTrimmer {
                                    .addRead("read3", "GT-ACGTAC", 0, Direction.FORWARD, Range.buildRangeOfLength(20,8))
                                    
                                    .build();
-       AceContig actualContig =sut.trimContig(originalContig);
+       ContigTrimmerResult<AcePlacedRead, AceContig> trimContigResults = sut.trimContig(originalContig);
+	AceContig actualContig =trimContigResults.getTrimmedContig();
         
        assertEquals("trimmed id", expectedContig.getId(), actualContig.getId());
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
@@ -158,7 +162,8 @@ public class TestAceContigTrimmer {
                                    .addRead("read3", "GT-ACGTAC", 0, Direction.REVERSE, Range.buildRangeOfLength(20,8))
                                    
                                    .build();
-       AceContig actualContig =sut.trimContig(originalContig);
+       ContigTrimmerResult<AcePlacedRead, AceContig> trimContigResults = sut.trimContig(originalContig);
+	AceContig actualContig =trimContigResults.getTrimmedContig();
         
        assertEquals("trimmed id", expectedContig.getId(), actualContig.getId());
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
