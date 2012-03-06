@@ -1392,4 +1392,12 @@ public class TestRange{
     	assertEquals(Long.MAX_VALUE -1L, r.getEnd());
     }
     
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void createRangeWithLengthThatIsTooBigShouldThrowException(){
+    	Range.buildRangeOfLength(Long.MAX_VALUE, 400);
+    }
+    @Test(expected = IllegalArgumentException.class)
+    public void createRangeWithNegativeLengthShouldThrowException(){
+    	Range.buildRangeOfLength(20, -40);
+    }
 }
