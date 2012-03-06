@@ -50,13 +50,14 @@ import org.jcvi.common.core.util.Caches;
  * <code>Range</code>s in are always inclusive.  Thus, a <code>Range</code>
  * of 20 to 30 has a size of 11, not 10, and a <code>Range</code> of 42 to 42
  * will have a size of 1 not 0.  This is done to conform with the overwhelming
- * majority use of inclusive ranges in Bioinformatics.
- * <p>
- * The implications of this are particularly important when thinking about the
+ * majority use of inclusive ranges in Bioinformatics. The implications of this are particularly important when thinking about the
  * desire to represent no range at all.  A <code>Range</code> of 0 to 0 still
  * has a size of 1.  In order to represent a <code>Range</code> with size 0,
- * you need to explicitly use an empty range.
- * </p>
+ * you need to explicitly use an empty range. The minimum start
+ * value of a Range is {@link Long#MIN_VALUE}  and the max end
+ * value of a Range is {@link Long#MAX_VALUE}.  Any attempt to build Ranges beyond
+ * those values will throw Exceptions.
+ * <p>
  * Ranges can also use a different {@link CoordinateSystem} which may not follow these
  * guidelines.  The other coordinate system start and end values can be queried
  * via the {@link #getStart(CoordinateSystem)} and {@link #getEnd(CoordinateSystem)} methods.  
@@ -408,28 +409,30 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * Factory method to build a {@link Range} object.
      * with the following local start and end
      * coordinates in  
-     * the given coordinate system.
+     * the given coordinate system. If the end = begin -1, then
+     * the returned range is equivalent to an empty range
+     * with the begin coordinate.
      * @param coordinateSystem the {@link CoordinateSystem} to use.
-     * @param localStart the start coordinate in the given coordinateSystem.
-     * @param localEnd the end coordinate in the given coordinateSystem.
+     * @param begin the start coordinate in the given coordinateSystem.
+     * @param end the end coordinate in the given coordinateSystem.
      * @return a {@link Range}.
      * @throws NullPointerException if the coordinateSystem is null.
-     * @throws IllegalArgumentException if localEnd < localStart -1.
+     * @throws IllegalArgumentException if end < begin -1.
      */
-    public static synchronized Range buildRange(CoordinateSystem coordinateSystem,long localStart, long localEnd){
+    public static synchronized Range buildRange(CoordinateSystem coordinateSystem,long begin, long end){
         if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot build null coordinate system range");
         }
 
-        long zeroBasedStart = coordinateSystem.getStart(localStart);
-        long zeroBasedEnd = coordinateSystem.getEnd(localEnd);
+        long zeroBasedStart = coordinateSystem.getStart(begin);
+        long zeroBasedEnd = coordinateSystem.getEnd(end);
         final Range range;
         if(zeroBasedEnd >= zeroBasedStart) {
             range= buildNewRange(zeroBasedStart,zeroBasedEnd);            
         } else if (zeroBasedEnd == zeroBasedStart-1) {
-            range = buildEmptyRange(zeroBasedStart,zeroBasedEnd);
+            range = buildNewEmptyRange(zeroBasedStart);
         } else {
-            throw new IllegalArgumentException("Range coordinates" + localStart + "," + localEnd
+            throw new IllegalArgumentException("Range coordinates" + begin + "," + end
                 + " are not valid " + coordinateSystem + " coordinates");
         }
         return getFromCache(range);
@@ -580,11 +583,9 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
         
         long zeroBasedStart = coordinateSystem.getStart(coordinate);
 
-        return buildEmptyRange(zeroBasedStart,zeroBasedStart-1);
+        return buildNewEmptyRange(zeroBasedStart);
     }
-    private static Range buildEmptyRange(long start,long end) {
-        return buildNewEmptyRange(start);
-    }
+
     /**
      * Build a new Range object of in the Zero based coordinate
      * system starting at 0 and with the given length.
@@ -600,8 +601,23 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * @param start the start coordinate of this new range.
      * @param length the length of this range.
      * @return a new Range.
+     * @throws IllegalArgumentException if length is negative
+     * @throws IndexOutOfBoundsException if the combination 
+     * of start and length values would cause the Range to extend
+     * beyond {@link Long#MAX_VALUE}.
      */
     public static Range buildRangeOfLength(long start, long length){
+    	if(length < 0){
+    		throw new IllegalArgumentException("length can not be negative");
+    	}
+    	if(start >0){
+    		long maxLength = Long.MAX_VALUE - start;
+    		if(maxLength < length){
+    			throw new IndexOutOfBoundsException(
+    					String.format("given length %d would make range [%d - ? ] beyond max allowed end offset",
+    							length, start));
+    		}
+    	}
         return buildRangeOfLength(CoordinateSystem.ZERO_BASED, start, length);
     }
     /**
