@@ -50,7 +50,6 @@ import org.jcvi.common.core.seq.read.trace.frg.Frg2Writer;
 import org.jcvi.common.core.seq.read.trace.frg.Library;
 import org.jcvi.common.core.seq.read.trace.frg.MateOrientation;
 import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
-import org.jcvi.common.core.seq.read.trace.sanger.SangerTraceParser;
 import org.jcvi.common.core.seq.read.trace.sanger.SingleSangerTraceFileDataStore;
 
 public class UnmatedTraceToFragConverter {

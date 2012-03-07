@@ -39,7 +39,6 @@ import org.jcvi.common.core.assembly.ace.DefaultAceBestSegment;
 import org.jcvi.common.core.assembly.ace.DefaultAceBestSegmentMap;
 import org.jcvi.common.core.assembly.util.slice.DefaultSliceMap;
 import org.jcvi.common.core.assembly.util.slice.IdedSlice;
-import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.assembly.util.slice.TestSliceUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;

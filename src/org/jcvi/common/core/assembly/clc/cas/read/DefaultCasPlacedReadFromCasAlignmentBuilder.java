@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegion;
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegionType;
