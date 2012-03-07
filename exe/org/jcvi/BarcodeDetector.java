@@ -3,17 +3,14 @@ package org.jcvi;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.jcvi.common.core.align.NucleotideSequenceAlignment;
 import org.jcvi.common.core.align.pairwise.DefaultNucleotideScoringMatrix;
 import org.jcvi.common.core.align.pairwise.NucleotideScoringMatrix;
 import org.jcvi.common.core.align.pairwise.NucleotideSmithWatermanAligner;

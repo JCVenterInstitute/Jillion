@@ -30,7 +30,6 @@ import java.util.List;
 
 import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;

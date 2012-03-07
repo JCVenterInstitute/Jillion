@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.align.pairwise.DefaultNucleotideScoringMatrix;
 import org.jcvi.common.core.align.pairwise.NucleotidePairwiseSequenceAlignment;
 import org.jcvi.common.core.align.pairwise.NucleotideSmithWatermanAligner;

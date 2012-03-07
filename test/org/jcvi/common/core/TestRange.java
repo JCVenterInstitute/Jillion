@@ -426,6 +426,7 @@ public class TestRange{
     }
     @Test public void testIntersects()
     {
+    	
         Range target = Range.buildRange(5, 15);
         assertTrue(this.range.intersects(target));
     }
