@@ -65,7 +65,9 @@ public final class CachedDataStore <D extends DataStore> implements InvocationHa
      * object is similar to the wrapped dataStore except it also
      * implements an additional interface {@link Cacheable}
      * AND all {@link DataStore#get(String)} results are cached
-     * in an LRU cache of the specified size.
+     * in an Least Recently Used (LRU) SoftReference cache of the specified size.  This will
+     * keep the Most recent X records in memory as long as the JVM doesn't
+     * need the memory for other things.
      * @param <D> interface of DataStore to proxy
      * @param c class object of D
      * @param delegate instance of DataStore
@@ -75,7 +77,7 @@ public final class CachedDataStore <D extends DataStore> implements InvocationHa
      * implements Cacheable.
      */
     @SuppressWarnings("unchecked")
-    public static <D extends DataStore> D createCachedDataStore(Class<? super D> c,D delegate, int cacheSize){
+    public static <D extends DataStore> D create(Class<? super D> c,D delegate, int cacheSize){
         try {
             c.getMethod("get", GET_PARAMETERS).getReturnType();
         } catch (Exception e) {
@@ -88,7 +90,7 @@ public final class CachedDataStore <D extends DataStore> implements InvocationHa
    
     private CachedDataStore(D delegate, int cacheSize){
         this.delegate = delegate;
-        cache= Caches.createLRUCache(cacheSize);
+        cache= Caches.createSoftReferencedValueLRUCache(cacheSize);
     }
    
     @Override
@@ -104,8 +106,9 @@ public final class CachedDataStore <D extends DataStore> implements InvocationHa
         }
         else if("get".equals(methodName) && Arrays.equals(GET_PARAMETERS,method.getParameterTypes())){
             String id = (String)args[0];
-            if(cache.containsKey(id)){
-                return cache.get(id);
+            Object result =cache.get(id);
+            if(result !=null){
+                return result;
             }
             
             Object obj =method.invoke(delegate, args);
