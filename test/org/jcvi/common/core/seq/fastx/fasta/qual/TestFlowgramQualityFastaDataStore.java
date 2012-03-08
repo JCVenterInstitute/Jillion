@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecordDataStoreAdap
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.QualitySffDataStore;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDataStore;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
@@ -54,10 +54,8 @@ public class TestFlowgramQualityFastaDataStore {
         expected = QualityFastaRecordDataStoreAdapter.adapt(
         		DefaultQualityFastaFileDataStore.create(
                 		RESOURCES.getFile(QUAL_EXPECTED)));
-        DefaultSffFileDataStore datastore = new DefaultSffFileDataStore();
-        SffParser.parseSFF(
-        		RESOURCES.getFileAsStream(QUAL_ACTUAL), datastore);
-        
+        SffDataStore datastore = DefaultSffFileDataStore.create(RESOURCES.getFile(QUAL_ACTUAL));
+      
         actual = new QualitySffDataStore(datastore);
         
     }

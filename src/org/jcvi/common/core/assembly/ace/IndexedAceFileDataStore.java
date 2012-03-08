@@ -39,9 +39,9 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code IndexedAceFileDataStore} is an implementation of 
  * {@link AceContigDataStore} that only stores an index containing
- * file offsets to the various contigs contained
+ * byte offsets to the various contigs contained
  * inside the ace file.  This allows large files to provide random 
- * access without taking up much memory.  The downside is each contig
+ * access without taking up much memory.  The down side is each contig
  * must be re-parsed each time and the ace file must exist and not
  * get altered during the entire lifetime of this object.
  * @author dkatzel

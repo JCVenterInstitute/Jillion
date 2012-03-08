@@ -24,7 +24,8 @@
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import org.jcvi.common.core.seq.read.trace.TraceDataStore;
+import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 
-public interface SffDataStore extends TraceDataStore<SFFFlowgram>{
+public interface SffDataStore extends TraceDataStore<Flowgram>{
 
 }

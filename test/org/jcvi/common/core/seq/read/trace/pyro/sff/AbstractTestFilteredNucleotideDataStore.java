@@ -30,7 +30,6 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
 import org.junit.After;
@@ -44,16 +43,7 @@ import static org.junit.Assert.*;
  */
 public abstract class AbstractTestFilteredNucleotideDataStore<G extends Symbol> extends AbstractTestExampleSffFile{
 
-private final DefaultSffFileDataStore dataStore;
-    
-    {
-        dataStore = new DefaultSffFileDataStore();
-        try {
-            SffParser.parseSFF(SFF_FILE, dataStore);
-        } catch (Exception e) {
-            throw new IllegalStateException("could not parse sff file");
-        } 
-    }
+
     private DataStoreFilter filter = new DefaultIncludeDataStoreFilter(
             Arrays.asList("FF585OX02HCMO2", "FF585OX02FHO5X"));
     private DataStore<? extends Sequence<G>> sut;

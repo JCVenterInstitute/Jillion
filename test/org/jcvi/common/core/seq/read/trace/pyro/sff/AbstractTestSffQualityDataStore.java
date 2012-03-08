@@ -29,18 +29,17 @@ import java.io.File;
 import java.util.Iterator;
 
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.junit.Test;
 
 public abstract class AbstractTestSffQualityDataStore extends AbstractTestExampleSffFile{
 
-    private final DefaultSffFileDataStore dataStore;
+    private final SffDataStore dataStore;
     
     {
-        dataStore = new DefaultSffFileDataStore();
+        
         try {
-            SffParser.parseSFF(SFF_FILE, dataStore);
+        	dataStore = DefaultSffFileDataStore.create(SFF_FILE);
         } catch (Exception e) {
             throw new IllegalStateException("could not parse sff file");
         } 

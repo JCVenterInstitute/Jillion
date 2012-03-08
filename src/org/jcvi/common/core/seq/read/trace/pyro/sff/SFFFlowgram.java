@@ -143,18 +143,27 @@ public class SFFFlowgram implements Flowgram {
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof SFFFlowgram)){
+        if (!(obj instanceof Flowgram)){
             return false;
         }
-        SFFFlowgram other = (SFFFlowgram) obj;
+        Flowgram other = (Flowgram) obj;
         
-        return
+        boolean nonValuesEqual=
         CommonUtil.similarTo(id, other.getId()) &&
-        CommonUtil.similarTo(basecalls.asList(), other.basecalls.asList()) &&
-        CommonUtil.similarTo(qualities.asList(), other.qualities.asList()) &&
-        CommonUtil.similarTo(qualitiesClip, other.qualitiesClip) &&
-        CommonUtil.similarTo(adapterClip, other.adapterClip) &&
-        Arrays.equals(values, other.values);
+        CommonUtil.similarTo(basecalls.asList(), other.getBasecalls().asList()) &&
+        CommonUtil.similarTo(qualities.asList(), other.getQualities().asList()) &&
+        CommonUtil.similarTo(qualitiesClip, other.getQualitiesClip()) &&
+        CommonUtil.similarTo(adapterClip, other.getAdapterClip()) &&
+        CommonUtil.similarTo(getSize(), other.getSize());
+        if(!nonValuesEqual){
+        	return false;
+        }
+        for(int i=0; i<values.length; i++){
+        	if(getValueAt(i) != other.getValueAt(i)){
+        		return false;
+        	}
+        }
+        return true;
         
        
         

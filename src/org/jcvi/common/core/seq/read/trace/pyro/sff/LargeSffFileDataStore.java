@@ -33,19 +33,35 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.datastore.AbstractDataStore;
+import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.util.iter.CloseableIterator;
-
-public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implements SffDataStore{
+/**
+ * {@code LargeSffFileDataStore} is a {@link SffDataStore}
+ * implementation that doesn't store any read information in memory.
+ *  No data contained in this
+ * sff file is stored in memory except it's size (which is lazy loaded).
+ * This means that each get() or contain() requires re-parsing the sff file
+ * which can take some time.  It is recommended that instances of 
+ * {@link LargeSffFileDataStore} are wrapped by {@link CachedDataStore}
+ * @author dkatzel
+ *
+ */
+public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements SffDataStore{
 
     private final File sffFile;
     private Integer size=null;
     
+    
+    public static SffDataStore create(File sffFile){
+    	return new LargeSffFileDataStore(sffFile);
+    }
     /**
      * @param sffFile
      */
-    public LargeSffFileDataStore(File sffFile) {
+    private LargeSffFileDataStore(File sffFile) {
         this.sffFile = sffFile;
     }
 
@@ -56,26 +72,19 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
     }
 
     @Override
-    public synchronized SFFFlowgram get(String id) throws DataStoreException {
-        super.get(id);
-        SingleSffGetter datastore= new SingleSffGetter(id);
-        InputStream in = null;
+    public synchronized Flowgram get(String id) throws DataStoreException {
+        super.get(id);        
         try{
-            in =new FileInputStream(sffFile);
-            SffParser.parseSFF(in , datastore);
+        	SffDataStore datastore= DefaultSffFileDataStore.createDataStoreOfSingleRead(sffFile,id);
             return datastore.get(id);
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new DataStoreException("could not read sffFile ",e);
-        } catch (SFFDecoderException e) {
-            throw new DataStoreException("could not parse sffFile ",e);
         }
-        finally{
-            IOUtil.closeAndIgnoreErrors(in);
-        }
+       
     }
 
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
         SffIdIterator iter = new SffIdIterator();
         InputStream in = null;
@@ -119,7 +128,7 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
    
 
     @Override
-    public synchronized CloseableIterator<SFFFlowgram> iterator() {
+    public synchronized CloseableIterator<Flowgram> iterator() {
         super.iterator();
       return SffFileIterator.createNewIteratorFor(sffFile);
     }
@@ -193,36 +202,5 @@ public class LargeSffFileDataStore extends AbstractDataStore<SFFFlowgram> implem
         
         
     }
-    private static final class SingleSffGetter extends DefaultSffFileDataStore{
-
-        private final String idToFetch;
-        private boolean foundRecord =false;
-        /**
-         * @param idToFetch
-         */
-        public SingleSffGetter(String idToFetch) {
-            super();
-            this.idToFetch = idToFetch;
-            
-        }
-        @Override
-        public boolean visitReadData(SFFReadData readData) {
-            //if we get here this is the record we wanted
-            super.visitReadData(readData);
-            //return false to stop parsing.
-            return false;
-        }
-        @Override
-        public boolean visitReadHeader(SFFReadHeader readHeader) { 
-            if(idToFetch.equals(readHeader.getName())){
-                foundRecord=true;
-                super.visitReadHeader(readHeader);
-            }
-            //skip read if this isn't the record we want.
-            return foundRecord;
-        }
-
-       
-        
-    }
+    
 }
