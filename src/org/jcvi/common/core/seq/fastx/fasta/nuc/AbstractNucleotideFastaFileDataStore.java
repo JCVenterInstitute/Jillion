@@ -34,23 +34,23 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  *
  *
  */
-public abstract class AbstractNucleotideFastaFileDataStore extends AbstractFastaFileDataStore<Nucleotide, NucleotideSequence,NucleotideSequenceFastaRecord> implements NucleotideFastaDataStore{
+abstract class AbstractNucleotideFastaFileDataStore extends AbstractFastaFileDataStore<Nucleotide, NucleotideSequence,NucleotideSequenceFastaRecord> implements NucleotideSequenceFastaDataStore{
 
-    private final NucleotideFastaRecordFactory fastaRecordFactory;
+    private final NucleotideSequenceFastaRecordFactory fastaRecordFactory;
 
     /**
      * @param fastaRecordFactory
      */
     public AbstractNucleotideFastaFileDataStore(
-            NucleotideFastaRecordFactory fastaRecordFactory) {
+            NucleotideSequenceFastaRecordFactory fastaRecordFactory) {
         this.fastaRecordFactory = fastaRecordFactory;
     }
     
     public AbstractNucleotideFastaFileDataStore(){
-        this(DefaultNucleotideFastaRecordFactory.getInstance());
+        this(DefaultNucleotideSequenceFastaRecordFactory.getInstance());
     }
 
-    protected final NucleotideFastaRecordFactory getFastaRecordFactory() {
+    protected final NucleotideSequenceFastaRecordFactory getFastaRecordFactory() {
         return fastaRecordFactory;
     }
 

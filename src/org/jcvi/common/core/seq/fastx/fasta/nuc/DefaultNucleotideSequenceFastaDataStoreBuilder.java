@@ -9,23 +9,23 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
- * {@code DefaultNucleotideFastaDataStoreBuilder} is a {@link NucleotideFastaDataStoreBuilder}
+ * {@code DefaultNucleotideFastaDataStoreBuilder} is a {@link NucleotideSequenceFastaDataStoreBuilder}
  * that stores all {@link NucleotideSequenceFastaRecord} added to it via the {@link #addFastaRecord(NucleotideSequenceFastaRecord)}
  * in  a Map.  All fastas are stored in memory so if too many records are added, this object could
  * take up considerable memory and could cause an {@link OutOfMemoryError}.
  * @author dkatzel
  *
  */
-public final class DefaultNucleotideFastaDataStoreBuilder implements NucleotideFastaDataStoreBuilder{
+public final class DefaultNucleotideSequenceFastaDataStoreBuilder implements NucleotideSequenceFastaDataStoreBuilder{
 
 	private final Map<String, NucleotideSequenceFastaRecord> map = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
 	@Override
-	public NucleotideFastaDataStore build() {
+	public NucleotideSequenceFastaDataStore build() {
 		return new NucleotideFastaDataStoreImpl(map);
 	}
 
 	@Override
-	public DefaultNucleotideFastaDataStoreBuilder addFastaRecord(
+	public DefaultNucleotideSequenceFastaDataStoreBuilder addFastaRecord(
 			NucleotideSequenceFastaRecord fastaRecord) {
 		if(fastaRecord ==null){
 			throw new NullPointerException("fasta record can not be null");
@@ -34,7 +34,7 @@ public final class DefaultNucleotideFastaDataStoreBuilder implements NucleotideF
 		return this;
 	}
 	
-	private static final class NucleotideFastaDataStoreImpl implements NucleotideFastaDataStore{
+	private static final class NucleotideFastaDataStoreImpl implements NucleotideSequenceFastaDataStore{
 		private final DataStore<NucleotideSequenceFastaRecord> delegate;
 		private NucleotideFastaDataStoreImpl(Map<String, NucleotideSequenceFastaRecord> map){
 			delegate = new SimpleDataStore<NucleotideSequenceFastaRecord>(map);

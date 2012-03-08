@@ -29,7 +29,7 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStoreAdapter;
@@ -40,7 +40,7 @@ public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFas
     @Override
     protected DataStore<NucleotideSequenceFastaRecord> buildMap(
             File file) throws IOException {
-        return DefaultNucleotideFastaFileDataStore.create(file);
+        return DefaultNucleotideSequenceFastaFileDataStore.create(file);
     }
 
     @Test

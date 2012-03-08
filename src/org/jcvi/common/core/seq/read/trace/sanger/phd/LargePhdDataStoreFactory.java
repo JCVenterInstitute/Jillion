@@ -48,6 +48,6 @@ public class LargePhdDataStoreFactory implements PhdDataStoreFactory{
             throws DataStoreException {
         LargePhdDataStore datastore = new LargePhdDataStore(phdBall);
         
-        return CachedDataStore.createCachedDataStore(PhdDataStore.class, datastore, cacheSize);
+        return CachedDataStore.create(PhdDataStore.class, datastore, cacheSize);
     }
 }

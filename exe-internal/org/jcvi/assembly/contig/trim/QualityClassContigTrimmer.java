@@ -250,7 +250,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
             ContigDataStore<PlacedRead, Contig<PlacedRead>> contigDataStore = new DefaultContigFileDataStore(
                     contigFile);
             QualityDataStore qualityFastaMap = 
-                CachedDataStore.createCachedDataStore(QualityDataStore.class, 
+                CachedDataStore.create(QualityDataStore.class, 
                         QualityFastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(qualFastaFile)),
                         100);
          

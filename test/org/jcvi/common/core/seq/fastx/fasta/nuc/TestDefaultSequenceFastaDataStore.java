@@ -26,16 +26,16 @@ package org.jcvi.common.core.seq.fastx.fasta.nuc;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFileDataStore;
 
 public class TestDefaultSequenceFastaDataStore extends AbstractTestSequenceFastaDataStore {
 
     
 
     @Override
-    protected NucleotideFastaDataStore parseFile(File file)
+    protected NucleotideSequenceFastaDataStore parseFile(File file)
             throws IOException {
-        return DefaultNucleotideFastaFileDataStore.create(file);
+        return DefaultNucleotideSequenceFastaFileDataStore.create(file);
     }
     
 }

@@ -1,13 +1,13 @@
 package org.jcvi.common.core.seq.fastx.fasta.pos;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 
 /**
  * {@code PositionFastaDataStoreBuilder} is a {@link FastaDataStoreBuilder}
- * that builds a {@link NucleotideFastaDataStore}.
+ * that builds a {@link NucleotideSequenceFastaDataStore}.
  * @author dkatzel
  *
  */

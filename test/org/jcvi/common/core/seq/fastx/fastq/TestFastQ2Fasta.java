@@ -28,8 +28,8 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.NullFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaDataStore;
@@ -69,11 +69,11 @@ public class TestFastQ2Fasta {
         DefaultFastQFileDataStore fastqDataStore = new DefaultFastQFileDataStore(codec);
         FastQFileParser.parse(fastqFile, fastqDataStore);
         
-        NucleotideFastaDataStoreBuilderVisitor seqFastaDataStoreVisitor = DefaultNucleotideFastaFileDataStore.createBuilder();
+        NucleotideFastaDataStoreBuilderVisitor seqFastaDataStoreVisitor = DefaultNucleotideSequenceFastaFileDataStore.createBuilder();
         FastaParser.parseFasta(new ByteArrayInputStream(seqOut.toByteArray()), seqFastaDataStoreVisitor);
     
         QualityFastaDataStore qualFastaDataStore = DefaultQualityFastaFileDataStore.create(new ByteArrayInputStream(qualOut.toByteArray()));
-        NucleotideFastaDataStore seqFastaDataStore = seqFastaDataStoreVisitor.build();
+        NucleotideSequenceFastaDataStore seqFastaDataStore = seqFastaDataStoreVisitor.build();
         for(FastQRecord fastQRecord : fastqDataStore){
             String id = fastQRecord.getId();
             assertEquals("qualities",fastQRecord.getQualities().asList(), qualFastaDataStore.get(id).getSequence().asList());

@@ -30,7 +30,7 @@ import org.jcvi.common.core.assembly.clc.cas.EmptyCasTrimMap;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
@@ -85,14 +85,14 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
     }
     @Override
     public NucleotideDataStore getNucleotideDataStoreFor(File pathToDataStore, DataStoreFilter filter) throws CasDataStoreFactoryException {  
-        return CachedDataStore.createCachedDataStore(NucleotideDataStore.class, 
-                     new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(LargeNucleotideFastaFileDataStore.create(pathToDataStore))),
+        return CachedDataStore.create(NucleotideDataStore.class, 
+                     new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(LargeNucleotideSequenceFastaFileDataStore.create(pathToDataStore))),
                      cacheSize);            
     }
     @Override
     public QualityDataStore getQualityDataStoreFor(
             File fastaFile,DataStoreFilter filter) throws CasDataStoreFactoryException { 
-        return CachedDataStore.createCachedDataStore(QualityDataStore.class, 
+        return CachedDataStore.create(QualityDataStore.class, 
                 QualityFastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(fastaFile)),
                 cacheSize);  
         

@@ -19,17 +19,31 @@
 
 package org.jcvi.common.core.seq.fastx.fasta.nuc;
 
-import org.jcvi.common.core.seq.fastx.fasta.FastaDataStore;
+import java.io.File;
+
+import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaRecordIterator;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
- * {@code NucleotideFastaDataStore} is a FastaDataStore
- * for storing {@link Nucleotide}s.
  * @author dkatzel
  *
  *
  */
-public interface NucleotideFastaDataStore extends FastaDataStore<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord>{
+public class LargeNucleotideSequenceFastaIterator extends AbstractLargeFastaRecordIterator<Nucleotide,NucleotideSequence, NucleotideSequenceFastaRecord>{
+
+	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile){
+		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(fastaFile);
+				                                iter.start();			
+	    	
+	    	return iter;
+	    }
+    /**
+     * @param fastaFile
+     * @param recordFactory
+     */
+    protected LargeNucleotideSequenceFastaIterator(File fastaFile) {
+        super(fastaFile, DefaultNucleotideSequenceFastaRecordFactory.getInstance());
+    }
 
 }

@@ -24,8 +24,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
@@ -66,7 +66,7 @@ public class TestTrimFasta {
                 "-o", outputFile.getAbsolutePath()
         });
         
-        NucleotideFastaDataStore actualDataStore = DefaultNucleotideFastaFileDataStore.create(outputFile);
+        NucleotideSequenceFastaDataStore actualDataStore = DefaultNucleotideSequenceFastaFileDataStore.create(outputFile);
         assertEquals(Nucleotides.asString(
                     actualDataStore.get("read1").getSequence().asList()),
                     "CCCTTT");

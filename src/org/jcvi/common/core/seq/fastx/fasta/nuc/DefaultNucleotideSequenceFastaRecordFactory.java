@@ -16,34 +16,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
+/*
+ * Created on Jan 11, 2010
+ *
+ * @author dkatzel
+ */
 package org.jcvi.common.core.seq.fastx.fasta.nuc;
 
-import java.io.File;
 
-import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaRecordIterator;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+final class DefaultNucleotideSequenceFastaRecordFactory implements NucleotideSequenceFastaRecordFactory{
 
-/**
- * @author dkatzel
- *
- *
- */
-public class LargeNucleotideFastaIterator extends AbstractLargeFastaRecordIterator<Nucleotide,NucleotideSequence, NucleotideSequenceFastaRecord>{
+    private static final DefaultNucleotideSequenceFastaRecordFactory INSTANCE = new DefaultNucleotideSequenceFastaRecordFactory();
+    
+    private DefaultNucleotideSequenceFastaRecordFactory(){}
+    
+    public static DefaultNucleotideSequenceFastaRecordFactory getInstance(){
+        return INSTANCE;
+    }
+    @Override
+    public NucleotideSequenceFastaRecord createFastaRecord(
+            String id, String comments, String recordBody) {
+        return new DefaultNucleotideSequenceFastaRecord(id,comments, recordBody.replace("\\s+", ""));
+    }
 
-	 public static LargeNucleotideFastaIterator createNewIteratorFor(File fastaFile){
-		 LargeNucleotideFastaIterator iter = new LargeNucleotideFastaIterator(fastaFile);
-				                                iter.start();			
-	    	
-	    	return iter;
-	    }
-    /**
-     * @param fastaFile
-     * @param recordFactory
-     */
-    protected LargeNucleotideFastaIterator(File fastaFile) {
-        super(fastaFile, DefaultNucleotideFastaRecordFactory.getInstance());
+    @Override
+    public NucleotideSequenceFastaRecord createFastaRecord(
+            String id, String recordBody) {
+        return createFastaRecord(id, null,recordBody);
     }
 
 }

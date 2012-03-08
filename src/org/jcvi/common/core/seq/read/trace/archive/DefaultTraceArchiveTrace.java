@@ -28,8 +28,8 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionFastaDataStore;
@@ -61,8 +61,8 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     @Override
     public NucleotideSequence getBasecalls() {
         InputStream in=null;
-        NucleotideFastaDataStore datastore=null;
-        NucleotideFastaDataStoreBuilderVisitor visitor= DefaultNucleotideFastaFileDataStore.createBuilder();
+        NucleotideSequenceFastaDataStore datastore=null;
+        NucleotideFastaDataStoreBuilderVisitor visitor= DefaultNucleotideSequenceFastaFileDataStore.createBuilder();
         try{
             in = getInputStreamFor(TraceInfoField.BASE_FILE);
             FastaParser.parseFasta(in, visitor);

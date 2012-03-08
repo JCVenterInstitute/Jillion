@@ -17,7 +17,7 @@ import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code IndexedNucleotideFastaFileDataStore} is an implementation of 
- * {@link NucleotideFastaDataStore} that only stores an index containing
+ * {@link NucleotideSequenceFastaDataStore} that only stores an index containing
  * file offsets to the various {@link FastaRecord}s contained
  * inside the fasta file.  This implementation provides random access
  * to large files taking up much memory.  The downside is each fasta record
@@ -25,7 +25,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-public final class IndexedNucleotideFastaFileDataStore implements NucleotideFastaDataStore{
+public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequenceFastaDataStore{
 	/**
 	 * Creates a new {@link IndexedNucleotideFastaFileDataStore}
 	 * instance using the given fastaFile.
@@ -36,7 +36,7 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideFast
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static NucleotideFastaDataStore create(File fastaFile) throws FileNotFoundException{
+	public static NucleotideSequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
 		NucleotideFastaDataStoreBuilderVisitor builder = createBuilder(fastaFile);
 		FastaParser.parseFasta(fastaFile, builder);
 		return builder.build();
@@ -67,14 +67,14 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideFast
 	}
 	
 	private static final class IndexedNucleotideFastaDataStoreBuilderVisitor 
-					extends AbstractIndexedFastaDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideFastaDataStore>
+					extends AbstractIndexedFastaDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>
 							implements	NucleotideFastaDataStoreBuilderVisitor{
 
 		private IndexedNucleotideFastaDataStoreBuilderVisitor(File fastaFile){
 			super(fastaFile);
 		}
 		@Override
-		protected NucleotideFastaDataStore createDataStore(
+		protected NucleotideSequenceFastaDataStore createDataStore(
 				IndexedFileRange index, File fastaFile) {
 			return new IndexedNucleotideFastaFileDataStore(index, fastaFile);
 		}
@@ -103,7 +103,7 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideFast
 		InputStream in = null;
 		try{
 			in = IOUtil.createInputStreamFromFile(fastaFile, index.getRangeFor(id));
-			NucleotideFastaDataStore datastore = DefaultNucleotideFastaFileDataStore.create(in);
+			NucleotideSequenceFastaDataStore datastore = DefaultNucleotideSequenceFastaFileDataStore.create(in);
 			return datastore.get(id);
 		} catch (IOException e) {
 			throw new DataStoreException("error reading fasta file",e);
@@ -135,6 +135,6 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideFast
 
 	@Override
 	public CloseableIterator<NucleotideSequenceFastaRecord> iterator() {
-		return LargeNucleotideFastaIterator.createNewIteratorFor(fastaFile);
+		return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile);
 	}
 }

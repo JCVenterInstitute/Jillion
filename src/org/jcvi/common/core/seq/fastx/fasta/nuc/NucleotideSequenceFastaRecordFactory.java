@@ -35,6 +35,6 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  *
  *
  */
-interface NucleotideFastaRecordFactory extends FastaRecordFactory<Nucleotide, NucleotideSequence,NucleotideSequenceFastaRecord>{
+interface NucleotideSequenceFastaRecordFactory extends FastaRecordFactory<Nucleotide, NucleotideSequence,NucleotideSequenceFastaRecord>{
 
 }

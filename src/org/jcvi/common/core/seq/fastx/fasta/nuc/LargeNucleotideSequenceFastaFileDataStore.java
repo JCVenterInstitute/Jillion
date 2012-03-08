@@ -39,8 +39,8 @@ import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
 import org.jcvi.common.core.seq.fastx.fasta.SequenceFastaRecordUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
- * {@code LargeNucleotideFastaFileDataStore} is an implementation
- * of {@link AbstractNucleotideFastaFileDataStore} which does not
+ * {@code LargeNucleotideSequenceFastaFileDataStore} is an implementation
+ * of {@link NucleotideSequenceFastaDataStore} which does not
  * store any Fasta record data 
  * in memory except it's size (which is lazy loaded).
  * This means that each get() or contain() requires re-parsing the fasta file
@@ -48,16 +48,16 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * in {@link CachedDataStore}.
  * @author dkatzel
  */
-public final class LargeNucleotideFastaFileDataStore extends AbstractNucleotideFastaFileDataStore{
+public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNucleotideFastaFileDataStore{
 	/**
-     * Construct a {@link LargeNucleotideFastaFileDataStore}
+     * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
      * for the given Fasta file.
      * @param fastaFile the Fasta File to use, can not be null.
      * @param fastaRecordFactory the NucleotideFastaRecordFactory implementation to use.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static NucleotideFastaDataStore create(File fastaFile){
-		return new LargeNucleotideFastaFileDataStore(fastaFile, DefaultNucleotideFastaRecordFactory.getInstance());
+	public static NucleotideSequenceFastaDataStore create(File fastaFile){
+		return new LargeNucleotideSequenceFastaFileDataStore(fastaFile, DefaultNucleotideSequenceFastaRecordFactory.getInstance());
 	}
 	
 	private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
@@ -67,14 +67,14 @@ public final class LargeNucleotideFastaFileDataStore extends AbstractNucleotideF
     
    
     /**
-     * Construct a {@link LargeNucleotideFastaFileDataStore}
-     * for the given Fasta file and the given {@link NucleotideFastaRecordFactory}.
+     * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
+     * for the given Fasta file and the given {@link NucleotideSequenceFastaRecordFactory}.
      * @param fastaFile the Fasta File to use, can not be null.
      * @param fastaRecordFactory the NucleotideFastaRecordFactory implementation to use.
      * @throws NullPointerException if fastaFile is null.
      */
-    private LargeNucleotideFastaFileDataStore(File fastaFile,
-            NucleotideFastaRecordFactory fastaRecordFactory) {
+    private LargeNucleotideSequenceFastaFileDataStore(File fastaFile,
+            NucleotideSequenceFastaRecordFactory fastaRecordFactory) {
         super(fastaRecordFactory);
         if(fastaFile ==null){
             throw new NullPointerException("fasta file can not be null");
@@ -107,7 +107,7 @@ public final class LargeNucleotideFastaFileDataStore extends AbstractNucleotideF
             throws DataStoreException {
         checkNotYetClosed();
         InputStream in=null;
-        NucleotideFastaDataStore datastore=null;
+        NucleotideSequenceFastaDataStore datastore=null;
         try {
             in = getRecordFor(id);
         
@@ -115,7 +115,7 @@ public final class LargeNucleotideFastaFileDataStore extends AbstractNucleotideF
                 return null;
             }
       
-            NucleotideFastaDataStoreBuilderVisitor builder= DefaultNucleotideFastaFileDataStore.createBuilder();
+            NucleotideFastaDataStoreBuilderVisitor builder= DefaultNucleotideSequenceFastaFileDataStore.createBuilder();
             FastaParser.parseFasta(in, builder);
             datastore = builder.build();
             return datastore.get(id);
@@ -161,7 +161,7 @@ public final class LargeNucleotideFastaFileDataStore extends AbstractNucleotideF
     @Override
     public synchronized CloseableIterator<NucleotideSequenceFastaRecord> iterator() {
         checkNotYetClosed();
-        LargeNucleotideFastaIterator iter = new LargeNucleotideFastaIterator(fastaFile);
+        LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(fastaFile);
         iter.start();
         return iter;
        

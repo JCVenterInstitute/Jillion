@@ -24,8 +24,8 @@ import java.io.IOException;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaRecordDataStoreAdatper;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecordDataStoreAdatper;
 import org.jcvi.common.core.seq.trim.DefaultPrimerTrimmer;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -51,10 +51,10 @@ public class TestDefaultPrimerTrimmer_ActualData {
     public void setup() throws IOException, DataStoreException{
         primerDataStore = 
         
-            NucleotideFastaRecordDataStoreAdatper.adapt(
-                    DefaultNucleotideFastaFileDataStore.create(
+            NucleotideSequenceFastaRecordDataStoreAdatper.adapt(
+                    DefaultNucleotideSequenceFastaFileDataStore.create(
                         RESOURCES.getFile("files/primers.fasta")));
-        sequence = DefaultNucleotideFastaFileDataStore.create(
+        sequence = DefaultNucleotideSequenceFastaFileDataStore.create(
                                 RESOURCES.getFile("files/fullLength.fasta"))
                         .get("SAJJA07T27G07MP1F").getSequence();
     }
