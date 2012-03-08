@@ -54,8 +54,20 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
     private final File sffFile;
     private Integer size=null;
     
-    
-    public static SffDataStore create(File sffFile){
+    /**
+     * Create a new instance of {@link LargeSffFileDataStore}.
+     * @param sffFile the sff file to parse.
+     * @return a new SffDataStore; never null.
+     * @throws NullPointerException if sffFile is null.
+     * @throws FileNotFoundException if sffFile does not exist.
+     */
+    public static SffDataStore create(File sffFile) throws FileNotFoundException{
+    	if(sffFile ==null){
+    		throw new NullPointerException("file can not be null");
+    	}
+    	if(!sffFile.exists()){
+    		throw new FileNotFoundException("sff file does not exist");
+    	}
     	return new LargeSffFileDataStore(sffFile);
     }
     /**
