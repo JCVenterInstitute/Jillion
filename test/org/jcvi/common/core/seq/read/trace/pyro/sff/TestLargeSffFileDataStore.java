@@ -34,7 +34,7 @@ public class TestLargeSffFileDataStore extends AbstractTestSffFileDataStore{
     @Override
     protected SffDataStore parseDataStore(File in) throws Exception {
         
-        return new LargeSffFileDataStore( in);
+        return LargeSffFileDataStore.create(in);
     }
 
 }

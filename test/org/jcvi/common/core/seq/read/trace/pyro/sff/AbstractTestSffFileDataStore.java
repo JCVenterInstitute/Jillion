@@ -31,7 +31,6 @@ import java.util.NoSuchElementException;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFFlowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDataStore;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.junit.Test;
@@ -68,7 +67,7 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
     
     @Test
     public void iterator(){
-        Iterator<SFFFlowgram> iter = dataStore.iterator();
+        Iterator<Flowgram> iter = dataStore.iterator();
         assertTrue(iter.hasNext());
         boolean foundFF585OX02HCMO2 =false;
         boolean foundFF585OX02HCD8G =false;
@@ -76,7 +75,7 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
         boolean foundFF585OX02GMGGN =false;
         boolean foundFF585OX02FHO5X =false;
         while(iter.hasNext()){
-            SFFFlowgram flow =iter.next();
+        	Flowgram flow =iter.next();
             if(!foundFF585OX02HCMO2 && FF585OX02HCMO2.equals(flow)){
                 foundFF585OX02HCMO2=true;
             }else if(!foundFF585OX02HCD8G && FF585OX02HCD8G.equals(flow)){
@@ -98,7 +97,7 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
     
     @Test
     public void closeIteratorEarly() throws IOException{
-        CloseableIterator<SFFFlowgram> iter = dataStore.iterator();
+        CloseableIterator<Flowgram> iter = dataStore.iterator();
         assertTrue(iter.hasNext());
         iter.next();
         iter.close();

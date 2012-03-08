@@ -39,10 +39,11 @@ public class SffWriter {
      * Writes the given SffCommonHeader to the given outputStream.
      * @param header the header to write.
      * @param out the {@link OutputStream} to write to.
+     * @return the number of bytes written
      * @throws IOException if there is a problem writing to the {@link OutputStream}.
      * @throws NullPointerException if either parameter is null.
      */
-    public static void writeCommonHeader(SFFCommonHeader header, OutputStream out) throws IOException{
+    public static int writeCommonHeader(SFFCommonHeader header, OutputStream out) throws IOException{
         int keyLength = header.getKeySequence().length();
         int size = 31+header.getNumberOfFlowsPerRead()+ keyLength;
         int padding =SFFUtil.caclulatePaddedBytes(size);
@@ -59,22 +60,26 @@ public class SffWriter {
         out.write(header.getKeySequence().getBytes(IOUtil.UTF_8));
         out.write(new byte[padding]);
         out.flush();
+        
+        return headerLength;
     }
     /**
      * Writes the given {@link SFFReadHeader} to the given {@link OutputStream}.
      * @param readHeader the readHeader to write.
      * @param out the {@link OutputStream} to write to.
+     * @return the number of bytes written to output stream.
      * @throws IOException if there is a problem writing the data
      * to the {@link OutputStream}.
      * @throws NullPointerException if either parameter is null.
      */
-    public static void writeReadHeader(SFFReadHeader readHeader, OutputStream out) throws IOException{
+    public static int writeReadHeader(SFFReadHeader readHeader, OutputStream out) throws IOException{
         String name =readHeader.getName();
         final int nameLength = name.length();
         
         int unpaddedHeaderLength = 16+nameLength;
         int padding = SFFUtil.caclulatePaddedBytes(unpaddedHeaderLength);
-        out.write(IOUtil.convertUnsignedShortToByteArray(unpaddedHeaderLength+padding));
+        int paddedHeaderLength = unpaddedHeaderLength+padding;
+        out.write(IOUtil.convertUnsignedShortToByteArray(paddedHeaderLength));
        
         out.write(IOUtil.convertUnsignedShortToByteArray(nameLength));
         out.write(IOUtil.convertUnsignedIntToByteArray(readHeader.getNumberOfBases()));
@@ -83,9 +88,10 @@ public class SffWriter {
         out.write(name.getBytes(IOUtil.UTF_8));
         out.write(new byte[padding]);
         out.flush();
+        return paddedHeaderLength;
     }
     
-    public static void writeReadData(SFFReadData readData, OutputStream out) throws IOException{
+    public static int writeReadData(SFFReadData readData, OutputStream out) throws IOException{
         final short[] flowgramValues = readData.getFlowgramValues();
         ByteBuffer flowValues= ByteBuffer.allocate(flowgramValues.length*2);
         for(int i=0; i<flowgramValues.length; i++){
@@ -100,6 +106,7 @@ public class SffWriter {
         int padding =SFFUtil.caclulatePaddedBytes(readDataLength);
         out.write(new byte[padding]);
         out.flush();
+        return readDataLength+padding;
     }
     
     private static void writeClip(Range clip, OutputStream out) throws IOException{

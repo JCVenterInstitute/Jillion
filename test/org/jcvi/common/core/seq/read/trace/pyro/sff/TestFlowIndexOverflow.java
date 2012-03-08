@@ -25,18 +25,15 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFFlowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -74,11 +71,7 @@ public class TestFlowIndexOverflow{
     
     @Test
     public void validDecode() throws TraceDecoderException, DataStoreException, IOException{
-        InputStream in = RESOURCES.getFileAsStream(FILE);
-        DefaultSffFileDataStore dataStore = new DefaultSffFileDataStore();
-        SffParser.parseSFF(in, dataStore);
-
-        IOUtil.closeAndIgnoreErrors(in);
+        SffDataStore dataStore = DefaultSffFileDataStore.create(RESOURCES.getFile(FILE));
         assertEquals(1, dataStore.size());
         
         Flowgram actual =dataStore.get("FCPRO0N01A48YO");

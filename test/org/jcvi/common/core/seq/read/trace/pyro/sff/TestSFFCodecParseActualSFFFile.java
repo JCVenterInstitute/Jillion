@@ -24,16 +24,14 @@
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDataStore;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
-import static org.junit.Assert.*;
+
 public class TestSFFCodecParseActualSFFFile extends AbstractTestSffFileDataStore{
 
     @Override
@@ -41,13 +39,9 @@ public class TestSFFCodecParseActualSFFFile extends AbstractTestSffFileDataStore
         
         InputStream in=null;
         try {
-            in = new FileInputStream(file);
             
-            DefaultSffFileDataStore dataStore = new DefaultSffFileDataStore();
-            SffParser.parseSFF(in, dataStore);
-            return dataStore;
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
+            return DefaultSffFileDataStore.create(file);
+        } catch (IOException e) {
             throw new RuntimeException("could not open file ",e);
          }
         finally{

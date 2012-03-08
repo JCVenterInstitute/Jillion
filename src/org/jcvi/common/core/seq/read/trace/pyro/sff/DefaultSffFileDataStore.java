@@ -24,141 +24,116 @@
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 
-public class DefaultSffFileDataStore implements SffDataStore, SffFileVisitor{
+public final class DefaultSffFileDataStore {
 
-    private final Map<String, SFFFlowgram> map = new HashMap<String, SFFFlowgram>();
-    private boolean initialized=false;
-    private boolean closed = false;
+	
+	public static SffDataStore create(File sffFile) throws IOException{
+		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder();
+		SffParser.parseSFF(sffFile, builder);
+		return builder.build();
+	}
+	public static SffDataStore createDataStoreOfSingleRead(File sffFile, String readId) throws IOException{
+		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder(readId);
+		SffParser.parseSFF(sffFile, builder);
+		return builder.build();
+	}
+	public static SffDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
+		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder(filter);
+		SffParser.parseSFF(sffFile, builder);
+		return builder.build();
+	}
+	public static SffFileVisitorDataStoreBuilder createVisitorBuilder() {
+		return new DefaultSffFileVisitorDataStoreBuilder(EmptyDataStoreFilter.INSTANCE);
+	}
+	public static SffFileVisitorDataStoreBuilder createVisitorBuilder(String singleReadId) {
+		return new DefaultSffFileVisitorDataStoreBuilder(singleReadId);
+	}
+	public static SffFileVisitorDataStoreBuilder createVisitorBuilder(DataStoreFilter filter) {
+		if(filter==null){
+			throw new NullPointerException("filter can not be null");
+		}
+		return new DefaultSffFileVisitorDataStoreBuilder(filter);
+	}
+	
+ 
+    private static final class DefaultSffFileVisitorDataStoreBuilder implements SffFileVisitorDataStoreBuilder{
 
-    private final DataStoreFilter filter;
-    
-    private SFFReadHeader currentReadHeader;
-    /**
-     * @param phredQualityGlyphCodec
-     */
-    public DefaultSffFileDataStore() {
-        this(EmptyDataStoreFilter.INSTANCE);
-    }
-    public DefaultSffFileDataStore(DataStoreFilter filter) {
-        if(filter ==null){
-            throw new NullPointerException("filter can not be null");
-        }
-        this.filter = filter;
-    }
-    public DefaultSffFileDataStore(File sffFile) throws SFFDecoderException, FileNotFoundException {
-        this(sffFile, EmptyDataStoreFilter.INSTANCE);
-    }
-    public DefaultSffFileDataStore(File sffFile,
-            DataStoreFilter filter) throws SFFDecoderException, FileNotFoundException {
-        this(filter);
-        SffParser.parseSFF(sffFile, this);
-    }
-    private void throwExceptionIfNotInitialized(){
-        if(!initialized){
-            throw new IllegalStateException("Not initialized");
-        }
-    }
-    private void throwExceptionIfInitialized(){
-        if(initialized){
-            throw new IllegalStateException("Not initialized");
-        }
-    }
-    private void throwExceptionIfClosed(){
-        if(closed){
-            throw new IllegalStateException("is closed");
-        }
-    }
-    private void throwExceptionIfNotInitializedOrClosed(){
-        throwExceptionIfClosed();
-        throwExceptionIfNotInitialized();
-    }
-    @Override
-    public boolean contains(String id) throws DataStoreException {
-        throwExceptionIfNotInitializedOrClosed();
-        return map.containsKey(id);
-    }
+    	private boolean initialized=false;
+    	private final DefaultSffDataStoreBuilder builder = new DefaultSffDataStoreBuilder();
+    	private SFFReadHeader currentReadHeader;
+    	private final DataStoreFilter filter;
+    	private boolean keepParsingFile=true;
+    	private final boolean onlyOneReadToParse;
+    	private DefaultSffFileVisitorDataStoreBuilder(String singleReadId){
+    		this.filter=new DefaultIncludeDataStoreFilter(Collections.singleton(singleReadId));
+    		onlyOneReadToParse=true;
+    	}
+    	private DefaultSffFileVisitorDataStoreBuilder(DataStoreFilter filter){
+    		this.filter=filter;
+    		onlyOneReadToParse=false;
+    	}
+    	private synchronized void checkNotYetInitialized(){
+    		if(initialized){
+    			throw new IllegalStateException("datastore already initialized");
+    		}
+    	}
+		@Override
+		public SffFileVisitorDataStoreBuilder addFlowgram(Flowgram flowgram) {
+			checkNotYetInitialized();
+			builder.addFlowgram(flowgram);
+			return this;
+		}
 
-    @Override
-    public SFFFlowgram get(String id) throws DataStoreException {
-        throwExceptionIfNotInitializedOrClosed();       
-        return map.get(id);
-    }
+		@Override
+		public synchronized SffDataStore build() {
+			checkNotYetInitialized();
+			initialized=true;
+			return builder.build();
+		}
 
-    @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        throwExceptionIfNotInitializedOrClosed();
-        return CloseableIteratorAdapter.adapt(map.keySet().iterator());
-    }
+		@Override
+		public synchronized boolean visitCommonHeader(SFFCommonHeader commonHeader) {
+			checkNotYetInitialized();
+			return true;
+		}
 
-    @Override
-    public int size() throws DataStoreException {
-        throwExceptionIfNotInitializedOrClosed();
-        return map.size();
-    }
+		@Override
+		public synchronized boolean visitReadHeader(SFFReadHeader readHeader) {
+			checkNotYetInitialized();
+			this.currentReadHeader = readHeader;
+	        boolean accept= filter.accept(readHeader.getName());
+	        if(onlyOneReadToParse && accept){
+	        	keepParsingFile=false;
+	        }
+	        return accept;
+		}
 
-    @Override
-    public void close() throws IOException {        
-        closed = true;
-        map.clear();
-    }
+		@Override
+		public boolean visitReadData(SFFReadData readData) {
+			checkNotYetInitialized();
+			 builder.addFlowgram(SFFUtil.buildSFFFlowgramFrom(currentReadHeader, readData));
+		     currentReadHeader=null;
+			return keepParsingFile;
+		}
 
-    @Override
-    public CloseableIterator<SFFFlowgram> iterator() {
-        throwExceptionIfNotInitializedOrClosed();
-        return new DataStoreIterator<SFFFlowgram>(this);
-    }
+		@Override
+		public void visitFile() {
+			
+		}
 
-    @Override
-    public boolean visitCommonHeader(SFFCommonHeader commonHeader) {
-        throwExceptionIfInitialized();
-        return true;
-    }
-
-    @Override
-    public boolean visitReadData(SFFReadData readData) {
-       throwExceptionIfInitialized();
-       map.put(currentReadHeader.getName(), SFFUtil.buildSFFFlowgramFrom(currentReadHeader, readData));
-       currentReadHeader=null;
-       return true;
-    }
-
-    @Override
-    public boolean visitReadHeader(SFFReadHeader readHeader) {
-        throwExceptionIfInitialized();
-        currentReadHeader = readHeader;
-        String id = readHeader.getName();
-        return filter.accept(id);
-    }
-
-    @Override
-    public void visitEndOfFile() {
-       throwExceptionIfInitialized();
-       initialized=true;        
-    }
-
-    @Override
-    public void visitFile() {
-        throwExceptionIfInitialized();
-        
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public boolean isClosed() throws DataStoreException {
-        return closed;
+		@Override
+		public void visitEndOfFile() {
+			
+			
+		}
+    	
     }
 }

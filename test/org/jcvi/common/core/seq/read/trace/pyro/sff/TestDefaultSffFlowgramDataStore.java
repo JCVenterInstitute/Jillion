@@ -24,16 +24,12 @@
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.File;
-import java.io.FileInputStream;
-
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 
 public class TestDefaultSffFlowgramDataStore extends TestReadExampleSffFile{
 
-    private DefaultSffFileDataStore dataStore;
+    private SffDataStore dataStore;
     @Override
     protected Flowgram getFlowgram(String id) throws Exception {
         return dataStore.get(id);
@@ -46,16 +42,7 @@ public class TestDefaultSffFlowgramDataStore extends TestReadExampleSffFile{
 
     @Override
     protected void parseSff(File f) throws Exception {
-       
-        dataStore = new DefaultSffFileDataStore();
-        final FileInputStream in = new FileInputStream(f);
-        try{
-            SffParser.parseSFF(in, dataStore);
-        }
-        finally{
-            IOUtil.closeAndIgnoreErrors(in);
-        }
-        
+    	dataStore = DefaultSffFileDataStore.create(f);
     }
 
 }
