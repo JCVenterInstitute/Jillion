@@ -3,6 +3,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -43,6 +44,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 	 * to create a valid {@link IndexedSffFileDataStore}; {@code false}
 	 * otherwise.
 	 * @throws IOException if there is a problem parsing the sff file.
+	 * 
 	 */
 	public static boolean canCreateIndexedDataStore(File sffFile) throws IOException{
 		NumberOfReadChecker numReadChecker = new NumberOfReadChecker();
@@ -66,10 +68,11 @@ public final class IndexedSffFileDataStore implements SffDataStore{
      * will only store a reference to this file for future
      * use when it needs to re-parse after indexing has occurred.
      * @return a new SffFileVisitorDataStoreBuilder, never null.
-     * throws NullPointerException if sffFile is null.
+	 * @throws FileNotFoundException if sffFile does not exist.
+     * @throws NullPointerException if sffFile is null.
      * @see #canCreateIndexedDataStore(File)
      */
-	public static SffFileVisitorDataStoreBuilder createVisitorBuilder(File sffFile){
+	public static SffFileVisitorDataStoreBuilder createVisitorBuilder(File sffFile) throws FileNotFoundException{
 		return new IndexedSffVisitorBuilder(sffFile);
 	}
 	/**
@@ -81,6 +84,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 	 * @throws IllegalArgumentException if the given sffFile
 	 * has more than {@link Integer#MAX_VALUE} reads.
 	 * @throws NullPointerException if sffFile is null.
+	 * @throws IllegalArgumentException if sffFile does not exist.
 	 * @see #canCreateIndexedDataStore(File)
 	 */
 	public static SffDataStore create(File sffFile) throws IOException{
@@ -91,16 +95,10 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 	private static final class NumberOfReadChecker implements SffFileVisitor{
 		private long numberOfReads=Long.MAX_VALUE;
 		@Override
-		public void visitFile() {
-			// TODO Auto-generated method stub
-			
-		}
+		public void visitFile() {}
 
 		@Override
-		public void visitEndOfFile() {
-			// TODO Auto-generated method stub
-			
-		}
+		public void visitEndOfFile() {}
 
 		@Override
 		public boolean visitCommonHeader(SFFCommonHeader commonHeader) {
@@ -110,13 +108,11 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 
 		@Override
 		public boolean visitReadHeader(SFFReadHeader readHeader) {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
 		public boolean visitReadData(SFFReadData readData) {
-			// TODO Auto-generated method stub
 			return false;
 		}
 		
@@ -140,10 +136,13 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 	  private String currentReadId;
 	  private final File sffFile;
 	  
-	  private IndexedSffVisitorBuilder(File sffFile){
+	  private IndexedSffVisitorBuilder(File sffFile) throws FileNotFoundException{
 		  if(sffFile==null){
 			  throw new NullPointerException("sff file can not be null");
 		  }
+		  if(!sffFile.exists()){
+	    		throw new FileNotFoundException("sff file does not exist");
+	    	}
 		  this.sffFile = sffFile;
 	  }
 	  @Override
@@ -219,7 +218,11 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 
 	@Override
 	public CloseableIterator<String> getIds() throws DataStoreException {
-		return LargeSffFileDataStore.create(sffFile).getIds();
+		try {
+			return LargeSffFileDataStore.create(sffFile).getIds();
+		} catch (FileNotFoundException e) {
+			throw new DataStoreException("error creating id iterator",e);
+		}
 	}
 
 	@Override
@@ -266,7 +269,11 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 
 	@Override
 	public CloseableIterator<Flowgram> iterator() {
-		return LargeSffFileDataStore.create(sffFile).iterator();
+		try {
+			return LargeSffFileDataStore.create(sffFile).iterator();
+		} catch (FileNotFoundException e) {
+			throw new IllegalStateException("error creating iterator",e);
+		}
 	}
 	
 	
