@@ -16,33 +16,20 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Jan 11, 2010
- *
- * @author dkatzel
- */
+
 package org.jcvi.common.core.seq.fastx.fasta.nuc;
 
+import org.jcvi.common.core.seq.fastx.fasta.FastaDataStore;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
-final class DefaultNucleotideFastaRecordFactory implements NucleotideFastaRecordFactory{
-
-    private static final DefaultNucleotideFastaRecordFactory INSTANCE = new DefaultNucleotideFastaRecordFactory();
-    
-    private DefaultNucleotideFastaRecordFactory(){}
-    
-    public static DefaultNucleotideFastaRecordFactory getInstance(){
-        return INSTANCE;
-    }
-    @Override
-    public NucleotideSequenceFastaRecord createFastaRecord(
-            String id, String comments, String recordBody) {
-        return new DefaultNucleotideSequenceFastaRecord(id,comments, recordBody.replace("\\s+", ""));
-    }
-
-    @Override
-    public NucleotideSequenceFastaRecord createFastaRecord(
-            String id, String recordBody) {
-        return createFastaRecord(id, null,recordBody);
-    }
+/**
+ * {@code NucleotideFastaDataStore} is a FastaDataStore
+ * for storing {@link Nucleotide}s.
+ * @author dkatzel
+ *
+ *
+ */
+public interface NucleotideSequenceFastaDataStore extends FastaDataStore<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord>{
 
 }

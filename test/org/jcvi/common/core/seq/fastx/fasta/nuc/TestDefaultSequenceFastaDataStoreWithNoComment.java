@@ -26,15 +26,15 @@ package org.jcvi.common.core.seq.fastx.fasta.nuc;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFileDataStore;
 
 
 public class TestDefaultSequenceFastaDataStoreWithNoComment extends AbstractTestSequenceFastaMapWithNoComment{
 
     @Override
-    protected NucleotideFastaDataStore buildMap(
+    protected NucleotideSequenceFastaDataStore buildMap(
             File file) throws IOException {
-        return DefaultNucleotideFastaFileDataStore.create(file);
+        return DefaultNucleotideSequenceFastaFileDataStore.create(file);
     }
     
 

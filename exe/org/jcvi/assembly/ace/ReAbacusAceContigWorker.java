@@ -67,9 +67,9 @@ import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -450,7 +450,7 @@ public class ReAbacusAceContigWorker {
                             throw new IllegalStateException("error with muscle call for abacus range "+ ungappedProblemRange);
                         }
                         System.out.println(exitCode);
-                        NucleotideFastaDataStore gappedFastaDataStore = DefaultNucleotideFastaFileDataStore.create(gappedFastaFile);
+                        NucleotideSequenceFastaDataStore gappedFastaDataStore = DefaultNucleotideSequenceFastaFileDataStore.create(gappedFastaFile);
                         int consensusSize =(int)gappedFastaDataStore.iterator().next().getSequence().getLength();
                         CompactedSlice.Builder[] sliceBuilders = new CompactedSlice.Builder[consensusSize];
                         for(int i=0; i< sliceBuilders.length; i++){

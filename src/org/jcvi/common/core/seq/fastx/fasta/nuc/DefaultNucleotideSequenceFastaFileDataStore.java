@@ -39,10 +39,10 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  * all fasta records in memory.  This is only recommended for small fasta
  * files that won't take up too much memory.
  * @author dkatzel
- * @see LargeNucleotideFastaFileDataStore
+ * @see LargeNucleotideSequenceFastaFileDataStore
  *
  */
-public class DefaultNucleotideFastaFileDataStore{
+public class DefaultNucleotideSequenceFastaFileDataStore{
 	
 	public static NucleotideFastaDataStoreBuilderVisitor createBuilder(){
 		return createBuilder(null);
@@ -51,19 +51,19 @@ public class DefaultNucleotideFastaFileDataStore{
 		return new NucleotideFastaDataStoreBuilderVisitorImpl(filter);
 	}
 	
-	public static NucleotideFastaDataStore create(File fastaFile) throws FileNotFoundException{
+	public static NucleotideSequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
 		return create(fastaFile,null);
 	}
-	public static NucleotideFastaDataStore create(File fastaFile, FastXFilter filter) throws FileNotFoundException{
+	public static NucleotideSequenceFastaDataStore create(File fastaFile, FastXFilter filter) throws FileNotFoundException{
 		NucleotideFastaDataStoreBuilderVisitor builder = createBuilder(filter);
 		FastaParser.parseFasta(fastaFile, builder);
 		return builder.build();
 	}
 	
-	public static NucleotideFastaDataStore create(InputStream in) throws FileNotFoundException{
+	public static NucleotideSequenceFastaDataStore create(InputStream in) throws FileNotFoundException{
 		return create(in,null);
 	}
-	public static NucleotideFastaDataStore create(InputStream in, FastXFilter filter) throws FileNotFoundException{
+	public static NucleotideSequenceFastaDataStore create(InputStream in, FastXFilter filter) throws FileNotFoundException{
 		try{
 			NucleotideFastaDataStoreBuilderVisitor builder = createBuilder(filter);
 			FastaParser.parseFasta(in, builder);
@@ -74,7 +74,7 @@ public class DefaultNucleotideFastaFileDataStore{
 	}
     
 
-    private static class NucleotideFastaDataStoreBuilderVisitorImpl extends AbstractFastaFileDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideFastaDataStore>implements NucleotideFastaDataStoreBuilderVisitor{
+    private static class NucleotideFastaDataStoreBuilderVisitorImpl extends AbstractFastaFileDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>implements NucleotideFastaDataStoreBuilderVisitor{
 
 		@Override
 		public NucleotideFastaDataStoreBuilderVisitor addFastaRecord(
@@ -84,16 +84,16 @@ public class DefaultNucleotideFastaFileDataStore{
 		}
 
 		public NucleotideFastaDataStoreBuilderVisitorImpl() {
-			super(new DefaultNucleotideFastaDataStoreBuilder());
+			super(new DefaultNucleotideSequenceFastaDataStoreBuilder());
 		}
 		public NucleotideFastaDataStoreBuilderVisitorImpl(FastXFilter filter) {
-			super(new DefaultNucleotideFastaDataStoreBuilder(), filter);
+			super(new DefaultNucleotideSequenceFastaDataStoreBuilder(), filter);
 		}
 
 		@Override
 		protected NucleotideSequenceFastaRecord createFastaRecord(String id,
 				String comment, String entireBody) {
-			return DefaultNucleotideFastaRecordFactory.getInstance().createFastaRecord(id, comment, entireBody);
+			return DefaultNucleotideSequenceFastaRecordFactory.getInstance().createFastaRecord(id, comment, entireBody);
 		}
     	
     }

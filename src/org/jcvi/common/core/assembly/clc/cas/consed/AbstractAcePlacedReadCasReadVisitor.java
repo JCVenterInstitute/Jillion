@@ -28,7 +28,7 @@ import org.jcvi.common.core.assembly.clc.cas.CasInfo;
 import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 import org.jcvi.common.core.assembly.clc.cas.TraceDetails;
 import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaIterator;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideSequenceFastaIterator;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastQFileIterator;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileIterator;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -78,7 +78,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     public CloseableIterator<PhdReadRecord> createFastaIterator(File fastaFile,
             TraceDetails traceDetails) {
         return new FastaConsedPhdAdaptedIterator(
-                LargeNucleotideFastaIterator.createNewIteratorFor(fastaFile),
+                LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile),
                 fastaFile,
                 traceDetails.getPhdDate(), PhredQuality.valueOf(30));
     }
@@ -91,14 +91,14 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
             File chromatogramFile, TraceDetails traceDetails) {
         if(traceDetails.hasFastaEdits()){
             return new EditedFastaChromatDirPhdAdapterIterator(
-                    LargeNucleotideFastaIterator.createNewIteratorFor(chromatogramFile),
+                    LargeNucleotideSequenceFastaIterator.createNewIteratorFor(chromatogramFile),
                     chromatogramFile, 
                     traceDetails.getPhdDate(), 
                     PhredQuality.valueOf(30), 
                     traceDetails.getChromatDir());
         }
         return new ChromatDirFastaConsedPhdAdaptedIterator(
-                LargeNucleotideFastaIterator.createNewIteratorFor(chromatogramFile),
+                LargeNucleotideSequenceFastaIterator.createNewIteratorFor(chromatogramFile),
                 chromatogramFile,
                 traceDetails.getPhdDate(), PhredQuality.valueOf(30),
                 traceDetails.getChromatDir());

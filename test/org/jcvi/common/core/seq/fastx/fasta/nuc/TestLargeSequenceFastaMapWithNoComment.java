@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 
 public class TestLargeSequenceFastaMapWithNoComment extends AbstractTestSequenceFastaMapWithNoComment{
@@ -35,7 +35,7 @@ public class TestLargeSequenceFastaMapWithNoComment extends AbstractTestSequence
     @Override
     protected DataStore<NucleotideSequenceFastaRecord> buildMap(
             File file) throws IOException {
-        return LargeNucleotideFastaFileDataStore.create(file);
+        return LargeNucleotideSequenceFastaFileDataStore.create(file);
     }
 
 }

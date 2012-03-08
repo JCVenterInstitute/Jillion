@@ -8,8 +8,8 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
  * A {@code NucleotideFastaDataStoreBuilderVisitor} is a 
- * {@link NucleotideFastaDataStoreBuilder} that also implements
- * {@link FastaVisitor}.  This allows {@link NucleotideFastaDataStore}s
+ * {@link NucleotideSequenceFastaDataStoreBuilder} that also implements
+ * {@link FastaVisitor}.  This allows {@link NucleotideSequenceFastaDataStore}s
  * to be built by either manually adding records via
  * {@link #addFastaRecord(NucleotideSequenceFastaRecord)}
  * or by passing an instance of this class to {@link FastaParser}'s parse methods
@@ -18,6 +18,6 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  * @author dkatzel
  *
  */
-public interface NucleotideFastaDataStoreBuilderVisitor extends FastaFileDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideFastaDataStore>{
+public interface NucleotideFastaDataStoreBuilderVisitor extends FastaFileDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>{
 
 }

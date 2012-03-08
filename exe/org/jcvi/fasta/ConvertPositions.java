@@ -40,8 +40,8 @@ import org.jcvi.common.core.assembly.ace.AceContigDataStore;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.assembly.ctg.IndexedContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideSequenceFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public class ConvertPositions {
@@ -115,7 +115,7 @@ public class ConvertPositions {
             final NucleotideSequence values;
             if(commandLine.hasOption("f")){
                 File fastaFile = new File(commandLine.getOptionValue("f"));
-                NucleotideFastaDataStore datastore = LargeNucleotideFastaFileDataStore.create(fastaFile);
+                NucleotideSequenceFastaDataStore datastore = LargeNucleotideSequenceFastaFileDataStore.create(fastaFile);
                 values= datastore.get(id).getSequence();
             }else if(commandLine.hasOption("c")){
                 File contigFile = new File(commandLine.getOptionValue("c"));
