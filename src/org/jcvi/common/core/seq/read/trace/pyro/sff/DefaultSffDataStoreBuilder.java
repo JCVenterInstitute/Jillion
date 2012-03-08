@@ -10,9 +10,15 @@ import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
-public class DefaultSffDataStoreBuilder implements SffDataStoreBuilder{
+public final class DefaultSffDataStoreBuilder implements SffDataStoreBuilder{
 
-	private final Map<String, Flowgram> map = new LinkedHashMap<String, Flowgram>();
+	
+	private final Map<String, Flowgram> map;
+	
+	public DefaultSffDataStoreBuilder(){
+		map = new LinkedHashMap<String, Flowgram>();
+	}
+	
 	@Override
 	public SffDataStore build() {
 		return new DefaultSffDataStoreImpl(new SimpleDataStore<Flowgram>(map));
@@ -24,7 +30,7 @@ public class DefaultSffDataStoreBuilder implements SffDataStoreBuilder{
 		return this;
 	}
 	
-	private final class DefaultSffDataStoreImpl implements SffDataStore{
+	private static final class DefaultSffDataStoreImpl implements SffDataStore{
 
 		private final DataStore<Flowgram> delegate;
 		
