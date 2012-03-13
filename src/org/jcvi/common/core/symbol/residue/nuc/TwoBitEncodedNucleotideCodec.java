@@ -206,12 +206,18 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
        
         @Override
         public Nucleotide decode(byte[] encodedGlyphs, int index){
+        	if(index <0){
+        		throw new IndexOutOfBoundsException(String.format("offset can not be negative ", index));
+        	}
         	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
             ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
 			//need to read next offset (length)
             //to advance pointer in buffer even though we don't care
             //about value
             int length=offsetStrategy.getNext(buf);
+            if(index >=length){
+            	throw new IndexOutOfBoundsException(String.format("offset %d is >= length (%d)", index,length));
+            }
             if(isSentinelOffset(buf,offsetStrategy,index)){
             	return sententialBase;
             }

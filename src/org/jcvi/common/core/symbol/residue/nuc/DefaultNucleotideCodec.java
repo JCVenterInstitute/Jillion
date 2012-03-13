@@ -146,7 +146,7 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
     }
     private int computeEncodedIndexForGlyph(int index) {
         if(index<0){
-            throw new IllegalArgumentException("index can not be negative: "+index);
+            throw new ArrayIndexOutOfBoundsException("index can not be negative: "+index);
         }
         final int encodedIndexForGlyph = HEADER_LENGTH+index/2;
         return encodedIndexForGlyph;
