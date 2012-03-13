@@ -200,7 +200,7 @@
 	
 
 	<target name="pmd" description ="runs pmd on source code">
-	      <pmd rulesetfiles="rulesets/favorites.xml">
+	      <pmd rulesetfiles="jcvi-javaCommon-pmd-ruleset.xml">
 	          <formatter type="xml" toFile="pmd.xml"/>
 	          <fileset dir="${src}">
 	              <include name="**/*.java"/>
