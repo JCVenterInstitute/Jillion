@@ -29,7 +29,7 @@ import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 
-public class DefaultQualityFastaRecord extends AbstractFastaRecord<PhredQuality,QualitySequence> implements QualityFastaRecord{
+public class DefaultQualityFastaRecord extends AbstractFastaRecord<PhredQuality,QualitySequence> implements QualitySequenceFastaRecord{
     private final QualitySequence qualities;
     public DefaultQualityFastaRecord(String id, QualitySequence qualities){
         this(id, null, qualities);

@@ -17,7 +17,7 @@ import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code IndexedQualityFastaFileDataStore} is an implementation of 
- * {@link QualityFastaDataStore} that only stores an index containing
+ * {@link QualitySequenceFastaDataStore} that only stores an index containing
  * file offsets to the various {@link FastaRecord}s contained
  * inside the fasta file.  This implementation provides random access
  * to large files taking up much memory.  The downside is each fasta record
@@ -25,7 +25,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-public final class IndexedQualityFastaFileDataStore implements QualityFastaDataStore{
+public final class IndexedQualityFastaFileDataStore implements QualitySequenceFastaDataStore{
 
 	/**
 	 * Creates a new {@link IndexedQualityFastaFileDataStore}
@@ -37,7 +37,7 @@ public final class IndexedQualityFastaFileDataStore implements QualityFastaDataS
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static QualityFastaDataStore create(File fastaFile) throws FileNotFoundException{
+	public static QualitySequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
 		QualityFastaDataStoreBuilderVisitor builder = createBuilder(fastaFile);
 		FastaParser.parseFasta(fastaFile, builder);
 		return builder.build();
@@ -47,7 +47,7 @@ public final class IndexedQualityFastaFileDataStore implements QualityFastaDataS
 	 * instance that will build an {@link IndexedQualityFastaFileDataStore}
 	 * using the given fastaFile.  This implementation of {@link QualityFastaDataStoreBuilderVisitor}
 	 * can only be used to parse a single fasta file (the one given) and does not support
-	 * {@link QualityFastaDataStoreBuilderVisitor#addFastaRecord(QualityFastaRecord)}.
+	 * {@link QualityFastaDataStoreBuilderVisitor#addFastaRecord(QualitySequenceFastaRecord)}.
 	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaVisitor}
 	 * interface.
 	 * @param fastaFile the fasta to create an {@link IndexedQualityFastaFileDataStore}
@@ -73,7 +73,7 @@ public final class IndexedQualityFastaFileDataStore implements QualityFastaDataS
 	}
 
 	@Override
-	public QualityFastaRecord get(String id)
+	public QualitySequenceFastaRecord get(String id)
 			throws DataStoreException {
 		if(!contains(id)){
 			return null;
@@ -81,7 +81,7 @@ public final class IndexedQualityFastaFileDataStore implements QualityFastaDataS
 		InputStream in = null;
 		try{
 			in = IOUtil.createInputStreamFromFile(fastaFile, index.getRangeFor(id));
-			QualityFastaDataStore datastore = DefaultQualityFastaFileDataStore.create(in);
+			QualitySequenceFastaDataStore datastore = DefaultQualityFastaFileDataStore.create(in);
 			return datastore.get(id);
 		} catch (IOException e) {
 			throw new DataStoreException("error reading fasta file",e);
@@ -112,19 +112,19 @@ public final class IndexedQualityFastaFileDataStore implements QualityFastaDataS
 	}
 
 	@Override
-	public CloseableIterator<QualityFastaRecord> iterator() {
+	public CloseableIterator<QualitySequenceFastaRecord> iterator() {
 		return LargeQualityFastaIterator.createNewIteratorFor(fastaFile);
 	}
 	
 	private static final class IndexedQualityFastaDataStoreBuilderVisitor 
-	extends AbstractIndexedFastaDataStoreBuilderVisitor<PhredQuality, QualitySequence, QualityFastaRecord, QualityFastaDataStore>
+	extends AbstractIndexedFastaDataStoreBuilderVisitor<PhredQuality, QualitySequence, QualitySequenceFastaRecord, QualitySequenceFastaDataStore>
 			implements	QualityFastaDataStoreBuilderVisitor{
 
 			private IndexedQualityFastaDataStoreBuilderVisitor(File fastaFile){
 				super(fastaFile);
 			}
 			@Override
-			protected QualityFastaDataStore createDataStore(
+			protected QualitySequenceFastaDataStore createDataStore(
 				IndexedFileRange index, File fastaFile) {
 				return new IndexedQualityFastaFileDataStore(index, fastaFile);
 			}

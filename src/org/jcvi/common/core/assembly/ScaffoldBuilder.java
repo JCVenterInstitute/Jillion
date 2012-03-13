@@ -6,12 +6,12 @@ import org.jcvi.common.core.util.Builder;
 
 public interface ScaffoldBuilder extends Builder<DefaultScaffold> {
 
-	public abstract ScaffoldBuilder add(PlacedContig placedContig);
+	ScaffoldBuilder add(PlacedContig placedContig);
 
-	public abstract ScaffoldBuilder add(String contigId, Range contigRange,
+	ScaffoldBuilder add(String contigId, Range contigRange,
 			Direction contigDirection);
 
-	public abstract ScaffoldBuilder add(String contigId, Range contigRange);
+	ScaffoldBuilder add(String contigId, Range contigRange);
 
 	/**
 	 * Shift all contigs in the scaffold so that the first
@@ -19,8 +19,8 @@ public interface ScaffoldBuilder extends Builder<DefaultScaffold> {
 	 * @param shiftContigs
 	 * @return this
 	 */
-	public abstract ScaffoldBuilder shiftContigs(boolean shiftContigs);
+	ScaffoldBuilder shiftContigs(boolean shiftContigs);
 
-	public abstract DefaultScaffold build();
+	DefaultScaffold build();
 
 }

@@ -109,7 +109,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
             outsideValidRange=false;
         }
         
-        
+        long allBasesLength = allBases.getLength();
         for(long i=0; i< region.getLength();i++){
             if(type != CasAlignmentRegionType.INSERT){
                 //add any extra gaps we added to the reference
@@ -129,7 +129,6 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
             }
             else{      
                 validBases.append(allBases.get((int)(currentOffset+i)));
-                
                 referenceOffset++;
             }
             

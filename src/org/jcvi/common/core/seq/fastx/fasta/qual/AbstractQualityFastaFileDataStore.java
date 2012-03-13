@@ -34,7 +34,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
  *
  *
  */
-public abstract class AbstractQualityFastaFileDataStore extends AbstractFastaFileDataStore<PhredQuality, QualitySequence,QualityFastaRecord> implements QualityFastaDataStore{
+public abstract class AbstractQualityFastaFileDataStore extends AbstractFastaFileDataStore<PhredQuality, QualitySequence,QualitySequenceFastaRecord> implements QualitySequenceFastaDataStore{
 
     private final QualityFastaRecordFactory fastaRecordFactory;
 

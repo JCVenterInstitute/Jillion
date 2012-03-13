@@ -45,7 +45,7 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecordUtil;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
@@ -78,7 +78,7 @@ public class SortedFasta2Fastq {
      * This is our end of file token which tell us we are
      * done parsing by the time we get to this object in our quality queue.
      */
-    private static final QualityFastaRecord QUALITY_END_OF_FILE = QualityFastaRecordUtil.buildFastaRecord("NULL", "", "");
+    private static final QualitySequenceFastaRecord QUALITY_END_OF_FILE = QualityFastaRecordUtil.buildFastaRecord("NULL", "", "");
     /**
      * This is our end of file token which tell us we are
      * done parsing by the time we get to this object in our seq queue.
@@ -115,14 +115,14 @@ public class SortedFasta2Fastq {
         
         
     }
-    private static class QualityBlockedFastaVisitor extends BlockedFastaVisitor<PhredQuality, QualitySequence, QualityFastaRecord>{
+    private static class QualityBlockedFastaVisitor extends BlockedFastaVisitor<PhredQuality, QualitySequence, QualitySequenceFastaRecord>{
 
         /**
          * @param file
          * @param queue
          */
         public QualityBlockedFastaVisitor(File file,
-                BlockingQueue<QualityFastaRecord> queue,FastXFilter filter) {
+                BlockingQueue<QualitySequenceFastaRecord> queue,FastXFilter filter) {
             super(file, queue,filter);
         }
 
@@ -283,7 +283,7 @@ public class SortedFasta2Fastq {
             }
             final FastQQualityCodec fastqQualityCodec = useSanger? FastQQualityCodec.SANGER: FastQQualityCodec.ILLUMINA;
         
-            final BlockingQueue<QualityFastaRecord> qualityQueue = new ArrayBlockingQueue<QualityFastaRecord>(bufferSize);
+            final BlockingQueue<QualitySequenceFastaRecord> qualityQueue = new ArrayBlockingQueue<QualitySequenceFastaRecord>(bufferSize);
             final BlockingQueue<NucleotideSequenceFastaRecord> sequenceQueue = new ArrayBlockingQueue<NucleotideSequenceFastaRecord>(bufferSize);
             
             final PrintWriter writer = new PrintWriter(commandLine.getOptionValue("o"));
@@ -297,7 +297,7 @@ public class SortedFasta2Fastq {
            qualVisitor.start();
            seqVisitor.start();
            while(!done){
-               QualityFastaRecord qualityFasta =qualityQueue.take();
+               QualitySequenceFastaRecord qualityFasta =qualityQueue.take();
                NucleotideSequenceFastaRecord seqFasta = sequenceQueue.take();
                if(qualityFasta == QUALITY_END_OF_FILE){
                    if(seqFasta == SEQ_END_OF_FILE){

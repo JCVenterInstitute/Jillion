@@ -48,11 +48,11 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide>{
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object o);
+    boolean equals(Object o);
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public int hashCode();
+    int hashCode();
 }

@@ -57,9 +57,11 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
  */
 public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
 
-    private final Map<Long, Map<Nucleotide, Integer>> consensusMap;
+    //private final Map<Long, Map<Nucleotide, Integer>> consensusMap;
     private final AceContigBuilder builder;
     private ConsensusCaller consensuCaller = MostFrequentBasecallConsensusCaller.INSTANCE;
+    
+    private VariantCounts variantCounts;
     /**
      * @param contigId
      * @param fullConsensus
@@ -67,7 +69,8 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     public UpdateConsensusAceContigBuilder(String contigId,
             NucleotideSequence fullConsensus) {
         builder = DefaultAceContig.createBuilder(contigId, fullConsensus);
-        consensusMap = new HashMap<Long,Map<Nucleotide,Integer>>((int)fullConsensus.getLength()+1, 1F);
+      //  consensusMap = new HashMap<Long,Map<Nucleotide,Integer>>((int)fullConsensus.getLength()+1, 1F);
+        variantCounts = new VariantCounts((int)fullConsensus.getLength());
         
     }
     public synchronized UpdateConsensusAceContigBuilder consensusCaller(ConsensusCaller consensusCaller){
@@ -78,26 +81,24 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     	return this;
     }
     public synchronized void updateConsensus() {
-    	if(consensusMap.isEmpty()){
+    	if(variantCounts==null){
     		return;
     	}
         NucleotideSequenceBuilder consensusBuilder = builder.getConsensusBuilder();
         for(int i=0; i<consensusBuilder.getLength(); i++ )   {
-            final Map<Nucleotide, Integer> histogramMap = consensusMap.get(Long.valueOf(i));
-            Slice<?> slice = createSliceFor(histogramMap);
-            
+            Slice<?> slice = variantCounts.createSliceFor(i);            
             consensusBuilder.replace(i,consensuCaller.callConsensus(slice).getConsensus());
         }
-        consensusMap.clear();
+        variantCounts=null;
     }
 
     @Override
     public synchronized UpdateConsensusAceContigBuilder addRead(AcePlacedRead acePlacedRead) {
-        addReadToConsensusMap(acePlacedRead);
+        variantCounts.add(acePlacedRead);
         builder.addRead(acePlacedRead);
         return this;
     }
-
+/*
     private synchronized void addReadToConsensusMap(PlacedRead casPlacedRead) {
         long startOffset = casPlacedRead.getStart();
         int i=0;
@@ -116,7 +117,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
             i++;
         }
     }
-    
+    */
     private Slice<?> createSliceFor(Map<Nucleotide, Integer> histogram){
     	CompactedSlice.Builder builder = new CompactedSlice.Builder();
     	PhredQuality qual = PhredQuality.valueOf(30);
@@ -235,5 +236,39 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
         return this;
     }
     
+    private static final class VariantCounts{
+    	private int[][] counts;
+    	Nucleotide[] values = Nucleotide.values();
+    	VariantCounts(int consensusLength){
+    		counts = new int[consensusLength][values.length];
+    	}
+    	
+    	public void add(PlacedRead casPlacedRead){
+    		int startOffset = (int)casPlacedRead.getStart();
+            int i=0;
+            for(Nucleotide base : casPlacedRead.getNucleotideSequence().asList()){
+                int index = startOffset+i;
+                counts[index][base.ordinal()]++;               
+                i++;
+            }
+    	}
+    	
+    	public Slice<?> createSliceFor(int offset){
+    		CompactedSlice.Builder builder = new CompactedSlice.Builder();
+        	PhredQuality qual = PhredQuality.valueOf(30);
+        	int[] histogram = counts[offset];
+        	int count=0;
+        	for(Nucleotide base : values){        		
+        		int numberOfBases = histogram[base.ordinal()];
+        		for(int i=0; i< numberOfBases;i++){
+        			String id = Integer.toString(count+i);
+        			builder.addSliceElement(id, base, qual, Direction.FORWARD);
+        		}
+        		count+=numberOfBases;
+        	}
+        	return builder.build();
+    	}
+    	
+    }
     
 }

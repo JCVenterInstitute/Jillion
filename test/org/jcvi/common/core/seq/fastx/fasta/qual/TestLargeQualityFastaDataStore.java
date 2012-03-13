@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaFileDataStore;
 public class TestLargeQualityFastaDataStore extends AbstractTestQualityFastaDataStore{
 
     @Override
-    protected  QualityFastaDataStore createDataStore(File file)
+    protected  QualitySequenceFastaDataStore createDataStore(File file)
             throws IOException {
         return new LargeQualityFastaFileDataStore(file);
     }

@@ -35,6 +35,6 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
  *
  *
  */
-interface QualityFastaRecordFactory extends FastaRecordFactory<PhredQuality, QualitySequence,QualityFastaRecord>{
+interface QualityFastaRecordFactory extends FastaRecordFactory<PhredQuality, QualitySequence,QualitySequenceFastaRecord>{
 
 }

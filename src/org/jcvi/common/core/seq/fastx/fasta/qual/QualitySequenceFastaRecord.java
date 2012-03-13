@@ -16,20 +16,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
+/*
+ * Created on Jan 26, 2009
+ *
+ * @author dkatzel
+ */
 package org.jcvi.common.core.seq.fastx.fasta.qual;
 
-import org.jcvi.common.core.seq.fastx.fasta.FastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 
-/**
- * {@code QualityFastaDataStore}is a FastaDataStore
- * for storing {@link PhredQuality}s.
- * @author dkatzel
- *
- *
- */
-public interface QualityFastaDataStore extends FastaDataStore<PhredQuality, QualitySequence, QualityFastaRecord>{
+public interface QualitySequenceFastaRecord extends FastaRecord<PhredQuality,QualitySequence> {
 
 }

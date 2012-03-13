@@ -1,0 +1,121 @@
+!format atac 1.0
+#
+# Legend:
+#
+# Field 0: the row class
+# Field 1: the match type u=ungapped, x=exact, ....
+# Field 2: the match instance index
+# Field 3: the parent index
+# Field 4: the FASTA sequence id in the first assembly
+# Field 5: the offset from the start of the sequence for the match
+# Field 6: the length of the match in the first assembly
+# Field 7: the orientation of the match sequence in the first assembly.
+# Field 8: the FASTA sequence id for the second assembly
+# Field 9: the offset from the start of the sequence for the match
+# Field 10: the length of the match in the second assembly
+# Field 11: the orientation of the match sequence in the second assembly.
+#
+/assemblyFile1=/usr/local/projects/BIOINFO/ASSEMBLY/jmiller/Bonobo/ATAC/meryl_tmp/human.fasta
+/assemblyFile2=/usr/local/projects/BIOINFO/ASSEMBLY/jmiller/Bonobo/ATAC/meryl_tmp/bonobo.fasta
+/assemblyId1=human
+/assemblyId2=bonobo
+/atacAlgorithmVersion=17
+/fillIntraRunGapsErate=0.30
+/fillIntraRunGapsMaxGap=100000
+/fillIntraRunGapsOn=1
+/globalMatchMinSize=20
+/globalPerfectRunMaxGapLen=100000
+/globalPerfectRunMinLen=100
+/heavyChainsOn=1
+/heavyMaxJump=100000
+/heavyMinFill=100
+/intraRunGapIsolatedMismatchLen=20
+/matchExtenderMaxMMBlock=5
+/matchExtenderMaxNbrPathMM=25
+/matchExtenderMaxNbrSep=100
+/matchExtenderMinBlockSep=5
+/matchExtenderMinEndRunLen=4
+/matchExtenderMinIdentity=0.7
+/matchExtenderOn=1
+/modificationDate=Tue Jul  6 15:24:34 2010
+/rawMatchAllowedSubstutionBlockSize=0
+/rawMatchMerMaxDegeneracy=9
+/rawMatchMerSize=18
+/rawMatchMinFillSize=18
+/uniqueFilterOn=1
+M u H14277377 r1 human:0 167707 1362 1 bonobo:57176 11813 1362 -1
+M u H14277385 r1 human:0 169069 533 1 bonobo:57176 11234 533 -1
+M u H14277383R r1 human:0 169629 821 1 bonobo:57176 10413 821 -1
+M u H14277350R r1 human:0 170460 232 1 bonobo:57176 10181 232 -1
+M u H14277351 r1 human:0 170692 1182 1 bonobo:57176 8998 1182 -1
+M u H14277364 r1 human:0 171875 509 1 bonobo:57176 8489 509 -1
+M u H14277412 r1 human:0 172384 33 1 bonobo:57176 8440 33 -1
+M u H14277415 r1 human:0 172417 254 1 bonobo:57176 8185 254 -1
+M u H14277406R r1 human:0 172676 605 1 bonobo:57176 7580 605 -1
+M u H14277419R r1 human:0 173282 268 1 bonobo:57176 7312 268 -1
+M u H14277397a3 r1 human:0 173550 6 1 bonobo:57176 7304 6 -1
+M u H14277397a2 r1 human:0 173556 2164 1 bonobo:57176 5138 2164 -1
+M u H14277301 r1 human:0 175722 376 1 bonobo:57176 4761 376 -1
+M u H14277314 r1 human:0 176102 879 1 bonobo:57176 3882 879 -1
+M u H14277279 r1 human:0 176981 1232 1 bonobo:57176 2649 1232 -1
+M u H14277342a3 r1 human:0 178213 13 1 bonobo:57176 2635 13 -1
+M u H14277342a2 r1 human:0 178228 16 1 bonobo:57176 2619 16 -1
+M u H14277342 r1 human:0 178248 151 1 bonobo:57176 2468 151 -1
+M u H14277339y2 r1 human:0 178408 1057 1 bonobo:57176 1411 1057 -1
+M u H14277322y1R r1 human:0 179466 257 1 bonobo:57176 1154 257 -1
+M u H14277334y3R r1 human:0 179724 622 1 bonobo:57176 532 622 -1
+M u H14277335y1 r1 human:0 180351 530 1 bonobo:57176 0 530 -1
+M u H12615348 r2 human:0 206713 69 1 bonobo:47625 27 69 1
+M u H12615349 r2 human:0 206782 24 1 bonobo:47625 97 24 1
+M u H12615349a3 r2 human:0 206806 16 1 bonobo:47625 122 16 1
+M u H12615349a4 r2 human:0 206822 12 1 bonobo:47625 139 12 1
+M u H12615349a5 r2 human:0 206834 6 1 bonobo:47625 152 6 1
+M u H12615349a6 r2 human:0 206840 7 1 bonobo:47625 159 7 1
+M u H12615349a7 r2 human:0 206847 4 1 bonobo:47625 167 4 1
+M u H12615349a8 r2 human:0 206851 12 1 bonobo:47625 172 12 1
+M u H12615349a9 r2 human:0 206863 3 1 bonobo:47625 185 3 1
+M u H12615349a10 r2 human:0 206866 5 1 bonobo:47625 189 5 1
+M u H12615349a11 r2 human:0 206872 16 1 bonobo:47625 194 16 1
+M u H12615350 r2 human:0 206905 1201 1 bonobo:47625 218 1201 1
+M u H12615363 r2 human:0 208108 220 1 bonobo:47625 1419 220 1
+M u H12615367 r2 human:0 208331 258 1 bonobo:47625 1639 258 1
+M u H12615371 r2 human:0 208589 553 1 bonobo:47625 1898 553 1
+M u H12615379 r2 human:0 209142 32 1 bonobo:47625 2472 32 1
+M u H12615380 r2 human:0 209174 83 1 bonobo:47625 2505 83 1
+M u H12615381 r2 human:0 209261 2837 1 bonobo:47625 2588 2837 1
+M u H12615403 r2 human:0 212098 79 1 bonobo:47625 5430 79 1
+M u H12615404 r2 human:0 212183 1549 1 bonobo:47625 5509 1549 1
+M u H12615419 r2 human:0 213735 29 1 bonobo:47625 7058 29 1
+M u H12615420 r2 human:0 213764 2608 1 bonobo:47625 7088 2608 1
+M u H12615420a3 r2 human:0 216372 20 1 bonobo:47625 9698 20 1
+M u H12615420a4 r2 human:0 216392 5 1 bonobo:47625 9720 5 1
+M u H12615453R r2 human:0 216397 139 1 bonobo:47625 9727 139 1
+M u H12615457 r2 human:0 216537 910 1 bonobo:47625 9866 910 1
+M u H12615464 r2 human:0 217447 868 1 bonobo:47625 10780 868 1
+M u H12615475 r2 human:0 218315 620 1 bonobo:47625 11649 620 1
+M u H12615482 r2 human:0 218936 49 1 bonobo:47625 12269 49 1
+M u H12615483 r2 human:0 218985 253 1 bonobo:47625 12324 253 1
+M u H12615487 r2 human:0 219278 390 1 bonobo:47625 12577 390 1
+M u H12615494R r2 human:0 219669 769 1 bonobo:47625 12967 769 1
+M u H12615494Ra3 r2 human:0 220438 8 1 bonobo:47625 13737 8 1
+M u H12615494Ra5 r2 human:0 220746 201 1 bonobo:47625 13745 201 1
+M u H12615529R r2 human:0 220997 1219 1 bonobo:47625 13946 1219 1
+M u H15365428 r3 human:0 234562 900 1 bonobo:64318 10476 900 -1
+M u H15365438 r3 human:0 235462 216 1 bonobo:64318 10256 216 -1
+M u H15365436 r3 human:0 235679 729 1 bonobo:64318 9527 729 -1
+M u H15365432 r3 human:0 236409 862 1 bonobo:64318 8665 862 -1
+M u H15365409 r3 human:0 237273 331 1 bonobo:64318 8334 331 -1
+M u H15365402 r3 human:0 237609 1102 1 bonobo:64318 7232 1102 -1
+M u H15365411 r3 human:0 238712 762 1 bonobo:64318 6470 762 -1
+M u H15365464 r3 human:0 239475 326 1 bonobo:64318 6144 326 -1
+M u H15365458 r3 human:0 239802 124 1 bonobo:64318 6020 124 -1
+M u H15365448R r3 human:0 239927 178 1 bonobo:64318 5842 178 -1
+M u H15365447 r3 human:0 240105 2002 1 bonobo:64318 3839 2002 -1
+M u H15365356 r3 human:0 242107 542 1 bonobo:64318 3296 542 -1
+M u H15365371 r3 human:0 242649 407 1 bonobo:64318 2887 407 -1
+M u H15365366R r3 human:0 243212 1873 1 bonobo:64318 1014 1873 -1
+M u H15365375 r3 human:0 245086 132 1 bonobo:64318 882 132 -1
+M u H15365376a3 r3 human:0 245218 26 1 bonobo:64318 855 26 -1
+M u H15365376 r3 human:0 245266 209 1 bonobo:64318 646 209 -1
+M u H15365388R r3 human:0 245613 199 1 bonobo:64318 447 199 -1
+M u H15365385R r3 human:0 245813 352 1 bonobo:64318 95 352 -1

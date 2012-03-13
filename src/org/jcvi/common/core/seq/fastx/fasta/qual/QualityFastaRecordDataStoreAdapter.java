@@ -29,17 +29,17 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 
-public final class QualityFastaRecordDataStoreAdapter extends FastaRecordDataStoreAdapter<PhredQuality,QualitySequence,QualityFastaRecord> implements QualityDataStore{
+public final class QualityFastaRecordDataStoreAdapter extends FastaRecordDataStoreAdapter<PhredQuality,QualitySequence,QualitySequenceFastaRecord> implements QualityDataStore{
     /**
      * Convert of {@code DataStore<F>} into a DataStore{@code DataStore<T>}
      * @param datastoreOfFastaRecords the DataStore of F to wrap.
      * @return a new {@code QualityDataStore} which wraps the given datastore. 
      */
-    public static  QualityDataStore adapt(DataStore<QualityFastaRecord> datastoreOfFastaRecords){
+    public static  QualityDataStore adapt(DataStore<QualitySequenceFastaRecord> datastoreOfFastaRecords){
         return new QualityFastaRecordDataStoreAdapter(datastoreOfFastaRecords);
     }
     private QualityFastaRecordDataStoreAdapter(
-            DataStore<QualityFastaRecord> datastoreOfFastaRecords) {
+            DataStore<QualitySequenceFastaRecord> datastoreOfFastaRecords) {
         super(datastoreOfFastaRecords);
     }
 

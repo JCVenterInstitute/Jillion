@@ -28,7 +28,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
  *
  *
  */
-public abstract class AbstractQualityFastaVisitor extends AbstractFastaRecordVisitor<PhredQuality,QualitySequence, QualityFastaRecord>{
+public abstract class AbstractQualityFastaVisitor extends AbstractFastaRecordVisitor<PhredQuality,QualitySequence, QualitySequenceFastaRecord>{
 
     public AbstractQualityFastaVisitor(){
         this(DefaultQualityFastaRecordFactory.getInstance());

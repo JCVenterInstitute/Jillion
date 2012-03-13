@@ -83,7 +83,7 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      * @return the full sequence as a long string.
      */
     @Override
-    public String toString();
+    String toString();
     /**
      * Two {@link ResidueSequence}s are equal
      * if they contain the same residues 
@@ -95,12 +95,12 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object o);
+    boolean equals(Object o);
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public int hashCode();
+    int hashCode();
 
 }

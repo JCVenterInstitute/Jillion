@@ -445,7 +445,7 @@ public interface AsmVisitor extends TextFileVisitor{
         VARIANTS
     }
     
-    public interface MatePairEvidence{
+    interface MatePairEvidence{
         String getRead1();
         String getRead2();
     }
@@ -689,7 +689,7 @@ public interface AsmVisitor extends TextFileVisitor{
             NucleotideSequence consensusSequence, QualitySequence consensusQualities,
             int numberOfReads, int numberOfUnitigs, int numberOfVariants);
     
-    public interface VariantRecord extends Comparable<VariantRecord>{
+    interface VariantRecord extends Comparable<VariantRecord>{
         /**
          * The internal read ids that contribute to this variant.
          * @return a list of IIDs 

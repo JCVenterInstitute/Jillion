@@ -34,7 +34,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideFastaDataStoreBuilderV
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -79,7 +79,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
 
     @Override
     public QualitySequence getQualities() {
-        QualityFastaDataStore datastore =null;
+        QualitySequenceFastaDataStore datastore =null;
         try{
         	datastore = DefaultQualityFastaFileDataStore.create(getInputStreamFor(TraceInfoField.QUAL_FILE));           
             return datastore.iterator().next().getSequence();
