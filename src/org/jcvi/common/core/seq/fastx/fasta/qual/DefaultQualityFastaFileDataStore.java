@@ -44,20 +44,20 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
  */
 public class DefaultQualityFastaFileDataStore {
     
-    public static QualityFastaDataStore create(File fastaFile) throws FileNotFoundException{
+    public static QualitySequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
     	return create(fastaFile,null);
     }
     
-    public static QualityFastaDataStore create(File fastaFile, FastXFilter filter) throws FileNotFoundException{
+    public static QualitySequenceFastaDataStore create(File fastaFile, FastXFilter filter) throws FileNotFoundException{
     	QualityFastaDataStoreBuilderVisitor builder = createBuilder(filter);
     	FastaParser.parseFasta(fastaFile, builder);
     	return builder.build();
     }
     
-    public static QualityFastaDataStore create(InputStream fastaStream) throws FileNotFoundException{
+    public static QualitySequenceFastaDataStore create(InputStream fastaStream) throws FileNotFoundException{
     	return create(fastaStream,null);
     }
-    public static QualityFastaDataStore create(InputStream fastaStream, FastXFilter filter) throws FileNotFoundException{
+    public static QualitySequenceFastaDataStore create(InputStream fastaStream, FastXFilter filter) throws FileNotFoundException{
     	QualityFastaDataStoreBuilderVisitor builder = createBuilder(filter);
     	FastaParser.parseFasta(fastaStream, builder);
     	return builder.build();
@@ -71,7 +71,7 @@ public class DefaultQualityFastaFileDataStore {
     
     
     private static class DefaultQualityFastaDataStoreBuilderVisitor 
-    				extends AbstractFastaFileDataStoreBuilderVisitor<PhredQuality, QualitySequence, QualityFastaRecord, QualityFastaDataStore>
+    				extends AbstractFastaFileDataStoreBuilderVisitor<PhredQuality, QualitySequence, QualitySequenceFastaRecord, QualitySequenceFastaDataStore>
     		implements QualityFastaDataStoreBuilderVisitor{
 		
 		public DefaultQualityFastaDataStoreBuilderVisitor(FastXFilter filter){
@@ -79,7 +79,7 @@ public class DefaultQualityFastaFileDataStore {
 		}
 
 		@Override
-		protected QualityFastaRecord createFastaRecord(String id,
+		protected QualitySequenceFastaRecord createFastaRecord(String id,
 				String comment, String entireBody) {
 			return DefaultQualityFastaRecordFactory.getInstance().createFastaRecord(id, comment,entireBody);
 		}

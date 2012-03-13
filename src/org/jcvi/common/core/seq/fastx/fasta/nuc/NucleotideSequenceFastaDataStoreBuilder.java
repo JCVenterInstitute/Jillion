@@ -16,5 +16,5 @@ public interface NucleotideSequenceFastaDataStoreBuilder extends FastaDataStoreB
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NucleotideSequenceFastaDataStoreBuilder addFastaRecord(NucleotideSequenceFastaRecord fastaRecord);
+	NucleotideSequenceFastaDataStoreBuilder addFastaRecord(NucleotideSequenceFastaRecord fastaRecord);
 }

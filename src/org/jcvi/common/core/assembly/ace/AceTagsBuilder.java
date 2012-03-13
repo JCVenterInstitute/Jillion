@@ -37,7 +37,7 @@ public interface AceTagsBuilder extends Builder<AceTags>{
      * @return this.
      * @throws NullPointerException if tag is null.
      */
-    public AceTagsBuilder addConsensusTag(ConsensusAceTag tag);
+    AceTagsBuilder addConsensusTag(ConsensusAceTag tag);
     /**
      * Add the all the given {@link ConsensusAceTag}s to this.
      * @param tags a collection of {@link ConsensusAceTag}s to add; 
@@ -46,14 +46,14 @@ public interface AceTagsBuilder extends Builder<AceTags>{
      * @return this.
      * @throws NullPointerException if tags is null or any element in the tags is null.
      */
-    public AceTagsBuilder addAllConsensusTags(Collection<? extends ConsensusAceTag> tags);
+    AceTagsBuilder addAllConsensusTags(Collection<? extends ConsensusAceTag> tags);
     /**
      * Add the given {@link WholeAssemblyAceTag} to this.
      * @param tag the {@link WholeAssemblyAceTag} to add; can not be null.
      * @return this.
      * @throws NullPointerException if tag is null.
      */
-    public AceTagsBuilder addWholeAssemblyTag(WholeAssemblyAceTag tag);
+    AceTagsBuilder addWholeAssemblyTag(WholeAssemblyAceTag tag);
     /**
      * Add the all the given {@link WholeAssemblyAceTag}s to this.
      * @param tags a collection of {@link WholeAssemblyAceTag}s to add; 
@@ -62,14 +62,14 @@ public interface AceTagsBuilder extends Builder<AceTags>{
      * @return this.
      * @throws NullPointerException if tags is null or any element in the tags is null.
      */
-    public AceTagsBuilder addAllWholeAssemblyTags(Collection<? extends WholeAssemblyAceTag> tags);
+    AceTagsBuilder addAllWholeAssemblyTags(Collection<? extends WholeAssemblyAceTag> tags);
     /**
      * Add the given {@link ReadAceTag} to this.
      * @param tag the {@link ReadAceTag} to add; can not be null.
      * @return this.
      * @throws NullPointerException if tag is null.
      */
-    public AceTagsBuilder addReadTag(ReadAceTag tag);
+    AceTagsBuilder addReadTag(ReadAceTag tag);
     /**
      * Add the all the given {@link ReadAceTag}s to this.
      * @param tags a collection of {@link ReadAceTag}s to add; 
@@ -78,5 +78,5 @@ public interface AceTagsBuilder extends Builder<AceTags>{
      * @return this.
      * @throws NullPointerException if tags is null or any element in the tags is null.
      */
-    public AceTagsBuilder addAllReadAceTags(Collection<? extends ReadAceTag> tags);
+    AceTagsBuilder addAllReadAceTags(Collection<? extends ReadAceTag> tags);
 }

@@ -7,7 +7,7 @@ import java.io.IOException;
 public class TestIndexedQualityFastaFileDataStore extends AbstractTestQualityFastaDataStore{
     
     @Override
-    protected QualityFastaDataStore createDataStore(File file) throws IOException{
+    protected QualitySequenceFastaDataStore createDataStore(File file) throws IOException{
         return IndexedQualityFastaFileDataStore.create(file);
     }
 

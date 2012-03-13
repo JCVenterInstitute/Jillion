@@ -50,7 +50,7 @@ public final class DefaultAceTagsFromAceFile {
      *
      *
      */
-    public static interface AceTagsFromFileBuilder extends AceFileVisitor, org.jcvi.common.core.util.Builder<AceTags>{
+    public interface AceTagsFromFileBuilder extends AceFileVisitor, org.jcvi.common.core.util.Builder<AceTags>{
         
     }
 

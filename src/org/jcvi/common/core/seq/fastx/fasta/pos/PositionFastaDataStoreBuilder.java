@@ -18,5 +18,5 @@ public interface PositionFastaDataStoreBuilder extends FastaDataStoreBuilder<Sho
 	 * {@inheritDoc}
 	 */
 	@Override
-	public PositionFastaDataStoreBuilder addFastaRecord(PositionFastaRecord<Sequence<ShortSymbol>> fastaRecord);
+	PositionFastaDataStoreBuilder addFastaRecord(PositionFastaRecord<Sequence<ShortSymbol>> fastaRecord);
 }

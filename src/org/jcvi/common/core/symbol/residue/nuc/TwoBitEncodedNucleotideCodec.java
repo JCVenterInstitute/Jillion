@@ -211,7 +211,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 			//need to read next offset (length)
             //to advance pointer in buffer even though we don't care
             //about value
-            offsetStrategy.getNext(buf);
+            int length=offsetStrategy.getNext(buf);
             if(isSentinelOffset(buf,offsetStrategy,index)){
             	return sententialBase;
             }

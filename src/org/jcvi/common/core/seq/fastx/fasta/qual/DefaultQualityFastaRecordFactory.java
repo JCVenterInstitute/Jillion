@@ -34,14 +34,14 @@ public final class DefaultQualityFastaRecordFactory implements QualityFastaRecor
         return INSTANCE;
     }
     @Override
-    public QualityFastaRecord createFastaRecord(
+    public QualitySequenceFastaRecord createFastaRecord(
             String id, String comments, String recordBody) {
         return QualityFastaRecordUtil.buildFastaRecord(id,comments, recordBody);
         
     }
 
     @Override
-    public QualityFastaRecord createFastaRecord(
+    public QualitySequenceFastaRecord createFastaRecord(
             String id, String recordBody) {
         return createFastaRecord(id, null,recordBody);
     }

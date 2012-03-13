@@ -261,7 +261,7 @@ public class Command
      * it with our own implementations.
      * @author dkatzel
      */
-    public static interface ProcessBuilderWrapper {
+    protected interface ProcessBuilderWrapper {
         ProcessBuilderWrapper command(List<String> command);
         ProcessBuilderWrapper directory(File workDir);
         Process start() throws IOException;

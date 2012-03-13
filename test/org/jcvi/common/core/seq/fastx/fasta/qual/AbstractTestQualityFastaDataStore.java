@@ -37,7 +37,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -185,19 +185,19 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void parseFile() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-        DataStore<QualityFastaRecord> sut = createDataStore(qualFile);
+        DataStore<QualitySequenceFastaRecord> sut = createDataStore(qualFile);
         assertEquals(321, sut.size());
         assertEquals(JGBAA02T21A12PB1A1F, sut.get("JGBAA02T21A12PB1A1F"));
         assertEquals(JGBAA07T21D08MP605F, sut.get("JGBAA07T21D08MP605F"));
         assertEquals(JGBAA01T21H05PB2A2341BRB, sut.get("JGBAA01T21H05PB2A2341BRB"));
     }
     
-    protected abstract QualityFastaDataStore createDataStore(File file) throws IOException;
+    protected abstract QualitySequenceFastaDataStore createDataStore(File file) throws IOException;
     
     @Test
     public void getIds() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-		QualityFastaDataStore sut = createDataStore(qualFile);
+		QualitySequenceFastaDataStore sut = createDataStore(qualFile);
     	Iterator<String> expectedIdsIter = createExpectedIdsFrom(qualFile);
     	Iterator<String> actual = sut.getIds();
     	assertTrue(expectedIdsIter.hasNext());
@@ -210,14 +210,14 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void iterator() throws IOException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-    	QualityFastaDataStore sut = createDataStore(qualFile);
-    	Iterator<QualityFastaRecord> iterator = sut.iterator();
+    	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
+    	Iterator<QualitySequenceFastaRecord> iterator = sut.iterator();
     	boolean hasJGBAA02T21A12PB1A1F = false;
     	boolean hasJGBAA07T21D08MP605F = false;
     	boolean hasJGBAA01T21H05PB2A2341BRB = false;
     	
     	while(iterator.hasNext()){
-    		QualityFastaRecord next = iterator.next();
+    		QualitySequenceFastaRecord next = iterator.next();
     		if(next.equals(JGBAA02T21A12PB1A1F)){
     			hasJGBAA02T21A12PB1A1F=true;
     		}else if(next.equals(JGBAA07T21D08MP605F)){
@@ -233,7 +233,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void close() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-    	QualityFastaDataStore sut = createDataStore(qualFile);
+    	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
     	sut.close();
     	assertTrue(sut.isClosed());
     	

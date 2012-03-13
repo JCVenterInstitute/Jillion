@@ -45,7 +45,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore implements QualityFastaDataStore{
+public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore implements QualitySequenceFastaDataStore{
    private final File fastaFile;
 
     private Integer size;
@@ -94,11 +94,11 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     }
 
     @Override
-    public synchronized QualityFastaRecord get(String id)
+    public synchronized QualitySequenceFastaRecord get(String id)
             throws DataStoreException {
-    	CloseableIterator<QualityFastaRecord> iter =iterator();
+    	CloseableIterator<QualitySequenceFastaRecord> iter =iterator();
     	while(iter.hasNext()){
-    		QualityFastaRecord fasta = iter.next();
+    		QualitySequenceFastaRecord fasta = iter.next();
     		if(fasta.getId().equals(id)){
     			IOUtil.closeAndIgnoreErrors(iter);
     			return fasta;
@@ -158,7 +158,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     }
 
     @Override
-    public synchronized CloseableIterator<QualityFastaRecord> iterator() {
+    public synchronized CloseableIterator<QualitySequenceFastaRecord> iterator() {
         checkNotYetClosed();
         LargeQualityFastaIterator iter = new LargeQualityFastaIterator(fastaFile);
             iter.start();

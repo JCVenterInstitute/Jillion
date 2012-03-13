@@ -9,24 +9,24 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
- * {@code DefaultQualityFastaDataStoreBuilder} is a {@link QualityFastaDataStoreBuilder}
- * that stores all {@link QualityFastaRecord} added to it via the {@link #addFastaRecord(QualityFastaRecord)}
+ * {@code DefaultQualityFastaDataStoreBuilder} is a {@link QualitySequenceFastaDataStoreBuilder}
+ * that stores all {@link QualitySequenceFastaRecord} added to it via the {@link #addFastaRecord(QualitySequenceFastaRecord)}
  * in  a Map.  All fastas are stored in memory so if too many records are added, this object could
  * take up considerable memory and could cause an {@link OutOfMemoryError}.
  * @author dkatzel
  *
  */
-public class DefaultQualityFastaDataStoreBuilder implements QualityFastaDataStoreBuilder{
+public class DefaultQualityFastaDataStoreBuilder implements QualitySequenceFastaDataStoreBuilder{
 
-	private final Map<String, QualityFastaRecord> map = new LinkedHashMap<String, QualityFastaRecord>();
+	private final Map<String, QualitySequenceFastaRecord> map = new LinkedHashMap<String, QualitySequenceFastaRecord>();
 	@Override
-	public QualityFastaDataStore build() {
+	public QualitySequenceFastaDataStore build() {
 		return new DefaultQualityFastaDataStoreImpl(map);
 	}
 
 	@Override
-	public QualityFastaDataStoreBuilder addFastaRecord(
-			QualityFastaRecord fastaRecord) {
+	public QualitySequenceFastaDataStoreBuilder addFastaRecord(
+			QualitySequenceFastaRecord fastaRecord) {
 		if(fastaRecord ==null){
 			throw new NullPointerException("fasta record can not be null");
 		}
@@ -34,10 +34,10 @@ public class DefaultQualityFastaDataStoreBuilder implements QualityFastaDataStor
 		return this;
 	}
 	
-	private static class DefaultQualityFastaDataStoreImpl implements QualityFastaDataStore{
-		private final DataStore<QualityFastaRecord> delegate;
-		public DefaultQualityFastaDataStoreImpl(Map<String, QualityFastaRecord> map){
-			delegate = new SimpleDataStore<QualityFastaRecord>(map);
+	private static class DefaultQualityFastaDataStoreImpl implements QualitySequenceFastaDataStore{
+		private final DataStore<QualitySequenceFastaRecord> delegate;
+		public DefaultQualityFastaDataStoreImpl(Map<String, QualitySequenceFastaRecord> map){
+			delegate = new SimpleDataStore<QualitySequenceFastaRecord>(map);
 		}
 		@Override
 		public CloseableIterator<String> getIds() throws DataStoreException {
@@ -45,7 +45,7 @@ public class DefaultQualityFastaDataStoreBuilder implements QualityFastaDataStor
 		}
 
 		@Override
-		public QualityFastaRecord get(String id) throws DataStoreException {
+		public QualitySequenceFastaRecord get(String id) throws DataStoreException {
 			return delegate.get(id);
 		}
 
@@ -71,7 +71,7 @@ public class DefaultQualityFastaDataStoreBuilder implements QualityFastaDataStor
 		}
 
 		@Override
-		public CloseableIterator<QualityFastaRecord> iterator() {
+		public CloseableIterator<QualitySequenceFastaRecord> iterator() {
 			return delegate.iterator();
 		}
 		

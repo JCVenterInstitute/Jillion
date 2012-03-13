@@ -31,7 +31,7 @@ import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStor
 public class TestDefaultQualityFastaDataStore extends AbstractTestQualityFastaDataStore{
     
     @Override
-    protected QualityFastaDataStore createDataStore(File file) throws IOException{
+    protected QualitySequenceFastaDataStore createDataStore(File file) throws IOException{
         return DefaultQualityFastaFileDataStore.create(file);
     }
 }

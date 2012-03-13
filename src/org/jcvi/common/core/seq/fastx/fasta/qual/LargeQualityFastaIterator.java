@@ -30,7 +30,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
  *
  *
  */
-public class LargeQualityFastaIterator extends AbstractLargeFastaRecordIterator<PhredQuality,QualitySequence, QualityFastaRecord>{
+public class LargeQualityFastaIterator extends AbstractLargeFastaRecordIterator<PhredQuality,QualitySequence, QualitySequenceFastaRecord>{
     public static LargeQualityFastaIterator createNewIteratorFor(File fastaFile){
         LargeQualityFastaIterator iter = new LargeQualityFastaIterator(fastaFile);
                iter.start();           
