@@ -26,7 +26,7 @@ package org.jcvi.common.core.symbol.residue.nuc;
 import java.util.List;
 /**
  * {@code ReferenceEncodedNucleotideSequence} encodes
- * a NucleotideSequence by refering to a reference sequence
+ * a NucleotideSequence by referring to a reference sequence
  * and only storing the differences (SNPs) between
  * this NucleotideSequence and its reference. Any {@link #get(int)}
  * that refers to a non-SNP
@@ -48,18 +48,4 @@ public interface ReferenceEncodedNucleotideSequence extends NucleotideSequence{
      * if there are no SNPs, but will never be null.
      */
     List<Integer> getSnpOffsets();
-    /**
-     * Get the number of bases of this sequence that align
-     * upstream of the reference start.
-     * @return the number of bases before the reference,
-     * will never be negative.
-     */
-    int getNumberOfBasesBeforeReference();
-    /**
-     * Get the number of bases of this sequence that align
-     * downstream of the reference start.
-     * @return the number of bases after the reference,
-     * will never be negative.
-     */
-    int getNumberOfBasesAfterReference();
 }
