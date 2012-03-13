@@ -50,6 +50,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 
 import org.jcvi.common.core.util.MultipleWrapper;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public class RemoveReferenceFromNewblerMappedAce {
     private static final String DEFAULT_ACE_OUTPUT = "dereferenced.ace";
@@ -89,8 +90,10 @@ public class RemoveReferenceFromNewblerMappedAce {
                     dataStoreBuilder,aceTagsBuilder));
             int numberOfReads =0;
             int numberOfContigs=0;
-            
-            for(AceContig contig : dataStoreBuilder.build()){
+            CloseableIterator<AceContig> iter = dataStoreBuilder.build().iterator();
+            try{
+            while(iter.hasNext()){
+            	AceContig contig = iter.next();
                 String contigId = contig.getId();
                 PhdDataStore phdDataStore = HiLowAceContigPhdDatastore.create(aceFile, contigId);
                 
@@ -100,6 +103,9 @@ public class RemoveReferenceFromNewblerMappedAce {
                     AceFileWriter.writeAceContig(actualContig, phdDataStore, tempOut);
                     
                 }
+            }
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(iter);
             }
             IOUtil.closeAndIgnoreErrors(tempOut);
             AceFileWriter.writeAceFileHeader(numberOfContigs, numberOfReads, aceOutStream);

@@ -38,6 +38,13 @@ import org.jcvi.common.core.io.IOUtil;
  * and will block that Thread until the next item to be iterated 
  * is required.  Elements to be iterated over are placed onto the blocking
  * iterator by {@link #blockingPut(Object)}.
+ * <strong>WARNING:</strong> Client code must be very careful
+ * to always make sure that this iterator is closed when finished.
+ * If the iterator does not reach the end or
+ * if the iterator is not explicitly closed via the {@link #close()}
+ * method, then the background thread will block forever. This is 
+ * especially true in situations when Exceptions are thrown by other objects.
+ * Please make sure CloseableIterators are closed in finally blocks.
  * <p/>
  * The background thread is not started until the {@link #start()}
  * method is called.  This allows for subclasses to set up

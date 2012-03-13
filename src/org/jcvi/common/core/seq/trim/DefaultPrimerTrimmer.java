@@ -30,10 +30,12 @@ import org.jcvi.common.core.align.pairwise.DefaultNucleotideScoringMatrix;
 import org.jcvi.common.core.align.pairwise.NucleotidePairwiseSequenceAlignment;
 import org.jcvi.common.core.align.pairwise.NucleotideSmithWatermanAligner;
 import org.jcvi.common.core.align.pairwise.ScoringMatrix;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * @author dkatzel
@@ -127,7 +129,10 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
     public Range trim(NucleotideSequence sequence,
             NucleotideDataStore primersToTrimAgainst) {
         List<Range> ranges = new ArrayList<Range>();
-        for(NucleotideSequence primer : primersToTrimAgainst){
+        CloseableIterator<NucleotideSequence> iter = primersToTrimAgainst.iterator();
+        try{
+        while(iter.hasNext()){
+        	NucleotideSequence primer = iter.next();
             if(primer.getLength()>=minLength){
             	NucleotidePairwiseSequenceAlignment forwardAlignment = NucleotideSmithWatermanAligner.align(primer, sequence, 
             					MATRIX, -2, -1);
@@ -149,6 +154,9 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
                     ranges.add(bestAlignment.getSubjectRange().asRange());
                 }
             }
+        }
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
         }
         List<Range> mergedRanges = Range.mergeRanges(ranges);
         Range sequenceRange = Range.buildRangeOfLength(0, sequence.getLength());

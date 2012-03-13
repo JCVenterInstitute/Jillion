@@ -16,15 +16,16 @@ import org.jcvi.common.core.align.pairwise.NucleotideScoringMatrix;
 import org.jcvi.common.core.align.pairwise.NucleotideSmithWatermanAligner;
 import org.jcvi.common.core.align.pairwise.PairwiseSequenceAlignment;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastQDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastQFileDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public class BarcodeDetector {
 
@@ -47,26 +48,35 @@ public class BarcodeDetector {
 		
 		
 		NucleotideSequenceFastaDataStore barcodes = DefaultNucleotideSequenceFastaFileDataStore.create(barcodeFasta);
-		FastQDataStore<FastQRecord> fastqDataStore = new LargeFastQFileDataStore(fastq, FastQQualityCodec.SANGER);
+		CloseableIterator<FastQRecord> fastqIterator = new LargeFastQFileDataStore(fastq, FastQQualityCodec.SANGER)
+														.iterator();
 		Set<String> unmatched = new HashSet<String>();
 		Map<String, Set<String>> mappedReads = new TreeMap<String, Set<String>>();
 		
 		Map<String, Set<String>> multiMatchReads = new TreeMap<String, Set<String>>();
 		int sequencesSeen =0;
-		for(FastQRecord fastqRecord : fastqDataStore){
+		try{
+		while(fastqIterator.hasNext()){
 			sequencesSeen++;
+			FastQRecord fastqRecord = fastqIterator.next();
 			List<String> matchedBarcodes = new ArrayList<String>();
 			List<PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>> validAlignments=new ArrayList<PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>>();
-			for(NucleotideSequenceFastaRecord barcode : barcodes){
-				NucleotideSequence barcodeSequence = barcode.getSequence();
-				PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> alignment =NucleotideSmithWatermanAligner.align(barcodeSequence, 
-															fastqRecord.getSequence(), matrix, -2, 0);
-				
-				if(alignment.getAlignmentLength() == barcodeSequence.getLength() 
-						&& alignment.getNumberOfMismatches() <=2 && alignment.getPercentIdentity() > .9F){
-					validAlignments.add(alignment);
-					matchedBarcodes.add(barcode.getId());
+			CloseableIterator<NucleotideSequenceFastaRecord> barcodeIterator = barcodes.iterator();
+			try{
+				while(barcodeIterator.hasNext()){
+					NucleotideSequenceFastaRecord barcode = barcodeIterator.next();
+					NucleotideSequence barcodeSequence = barcode.getSequence();
+					PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> alignment =NucleotideSmithWatermanAligner.align(barcodeSequence, 
+																fastqRecord.getSequence(), matrix, -2, 0);
+					
+					if(alignment.getAlignmentLength() == barcodeSequence.getLength() 
+							&& alignment.getNumberOfMismatches() <=2 && alignment.getPercentIdentity() > .9F){
+						validAlignments.add(alignment);
+						matchedBarcodes.add(barcode.getId());
+					}
 				}
+			}finally{
+				IOUtil.closeAndIgnoreErrors(barcodeIterator);
 			}
 			if(matchedBarcodes.isEmpty()){
 				unmatched.add(fastqRecord.getId());
@@ -88,6 +98,9 @@ public class BarcodeDetector {
 			}
 			
 			
+		}
+		}finally{
+			IOUtil.closeAndIgnoreErrors(fastqIterator);
 		}
 		
 		System.out.println("total number of sequences checked : "+ sequencesSeen);

@@ -34,7 +34,9 @@ import org.jcvi.common.core.assembly.clc.cas.UnTrimmedExtensionTrimMap;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.TemporaryDirectoryFileServer;
@@ -64,19 +66,24 @@ public class TestCas2Consed3 {
 	      File aceFile = tempDir.getFile("edit_dir/"+prefix+".ace.1");
 	      AceContigDataStore dataStore = DefaultAceFileDataStore.create(aceFile);
 	      assertEquals("# contigs", expectedDataStore.size(), dataStore.size());
-	      
-	      for(AceContig contig : dataStore){
-	    	  Contig<PlacedRead> expectedContig= getExpectedContig(contig.getId());
-	    	  assertEquals("consensus", expectedContig.getConsensus(),
-	    			  contig.getConsensus());
-	    	  assertEquals("# reads", expectedContig.getNumberOfReads(), contig.getNumberOfReads());
-	    	  for(AcePlacedRead actualRead : contig.getPlacedReads()){
-	    		  String readId =actualRead.getId();
-	    		  PlacedRead expectedRead = expectedContig.getPlacedReadById(readId);
-	    		  assertEquals("read basecalls", expectedRead.getNucleotideSequence().asList(), actualRead.getNucleotideSequence().asList());
-	    		  assertEquals("read offset", expectedRead.getStart(), actualRead.getStart());
-	    	  }
-	      }
+	        CloseableIterator<AceContig> iter = dataStore.iterator();
+	        try{
+		        while(iter.hasNext()){
+		        	AceContig contig = iter.next();
+		    	  Contig<PlacedRead> expectedContig= getExpectedContig(contig.getId());
+		    	  assertEquals("consensus", expectedContig.getConsensus(),
+		    			  contig.getConsensus());
+		    	  assertEquals("# reads", expectedContig.getNumberOfReads(), contig.getNumberOfReads());
+		    	  for(AcePlacedRead actualRead : contig.getPlacedReads()){
+		    		  String readId =actualRead.getId();
+		    		  PlacedRead expectedRead = expectedContig.getPlacedReadById(readId);
+		    		  assertEquals("read basecalls", expectedRead.getNucleotideSequence().asList(), actualRead.getNucleotideSequence().asList());
+		    		  assertEquals("read offset", expectedRead.getStart(), actualRead.getStart());
+		    	  }
+		      }
+	        }finally{
+	        	IOUtil.closeAndIgnoreErrors(iter);
+	        }
 	    }
 	    /**
 	     * cas2Consed now appends coordinates to the end of the contig

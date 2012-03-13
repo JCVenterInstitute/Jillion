@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.NullFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFileDataStore;
@@ -37,6 +38,7 @@ import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQFileDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastQFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.fasta.fastq.util.Fastq2Fasta;
 import org.junit.Test;
@@ -74,10 +76,16 @@ public class TestFastQ2Fasta {
     
         QualitySequenceFastaDataStore qualFastaDataStore = DefaultQualityFastaFileDataStore.create(new ByteArrayInputStream(qualOut.toByteArray()));
         NucleotideSequenceFastaDataStore seqFastaDataStore = seqFastaDataStoreVisitor.build();
-        for(FastQRecord fastQRecord : fastqDataStore){
-            String id = fastQRecord.getId();
-            assertEquals("qualities",fastQRecord.getQualities().asList(), qualFastaDataStore.get(id).getSequence().asList());
-            assertEquals("seq",fastQRecord.getNucleotides().asList(), seqFastaDataStore.get(id).getSequence().asList());
+        CloseableIterator<FastQRecord> iter = fastqDataStore.iterator();
+        try{
+	        while(iter.hasNext()){
+	        	FastQRecord fastQRecord = iter.next();
+	            String id = fastQRecord.getId();
+	            assertEquals("qualities",fastQRecord.getQualities().asList(), qualFastaDataStore.get(id).getSequence().asList());
+	            assertEquals("seq",fastQRecord.getNucleotides().asList(), seqFastaDataStore.get(id).getSequence().asList());
+	        }
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
         }
         return fastqDataStore.size();
     }

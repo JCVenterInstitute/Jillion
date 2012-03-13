@@ -60,12 +60,14 @@ import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecordDataStoreAdapter;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.glyph.qualClass.QualityClass;
 
 public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>{
@@ -253,38 +255,42 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
                 CachedDataStore.create(QualityDataStore.class, 
                         QualityFastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(qualFastaFile)),
                         100);
-         
-            for (Contig<PlacedRead> contig : contigDataStore) {
-
-                QualityClassContigTrimmer trimmer = new QualityClassContigTrimmer(
-                        fivePrimeMaxBasesToTrim, threePrimeMaxBasesToTrim, qualityClassesToTrim);
-
-                List<TrimmedPlacedRead<PlacedRead>> trims = trimmer
-                        .trim(contig,qualityFastaMap, new DefaultContigQualityClassComputer<PlacedRead>(
-                                GapQualityValueStrategies.LOWEST_FLANKING, highQualityThreshold));
-              
-                List<TrimmedPlacedRead<PlacedRead>> allChangedReads = new ArrayList<TrimmedPlacedRead<PlacedRead>>();
-                allChangedReads.addAll(trims);
-                for (TrimmedPlacedRead<PlacedRead> trim : allChangedReads) {
-                    // force it to be residue based
-                    Range newtrimmedRange = trim.getNewTrimRange();
-                    Range oldTrimmedRange = trim.getRead().getValidRange();
-                    String readId = trim.getRead().getId();
-                    long rightDelta = newtrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED) - oldTrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED);
-                    long displayRight;
-                    if (rightDelta == 0) {
-                        displayRight = trimMap.getReadTrimFor(readId)
-                                .getTrimRange(TrimType.CLB)
-                                .getEnd(CoordinateSystem.RESIDUE_BASED);
-                    } else {
-                        displayRight = newtrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED);
-                    }
-                    System.out.println(String.format("%s\t%d\t%d\t%d\t%d",
-                            readId, newtrimmedRange.getStart(CoordinateSystem.RESIDUE_BASED), displayRight,
-                            newtrimmedRange.getStart(CoordinateSystem.RESIDUE_BASED)
-                                    - oldTrimmedRange.getStart(CoordinateSystem.RESIDUE_BASED), rightDelta));
-                }
-                
+            CloseableIterator<Contig<PlacedRead>> iter = contigDataStore.iterator();
+            try{
+	            while(iter.hasNext()) {
+	            	Contig<PlacedRead> contig = iter.next();
+	                QualityClassContigTrimmer trimmer = new QualityClassContigTrimmer(
+	                        fivePrimeMaxBasesToTrim, threePrimeMaxBasesToTrim, qualityClassesToTrim);
+	
+	                List<TrimmedPlacedRead<PlacedRead>> trims = trimmer
+	                        .trim(contig,qualityFastaMap, new DefaultContigQualityClassComputer<PlacedRead>(
+	                                GapQualityValueStrategies.LOWEST_FLANKING, highQualityThreshold));
+	              
+	                List<TrimmedPlacedRead<PlacedRead>> allChangedReads = new ArrayList<TrimmedPlacedRead<PlacedRead>>();
+	                allChangedReads.addAll(trims);
+	                for (TrimmedPlacedRead<PlacedRead> trim : allChangedReads) {
+	                    // force it to be residue based
+	                    Range newtrimmedRange = trim.getNewTrimRange();
+	                    Range oldTrimmedRange = trim.getRead().getValidRange();
+	                    String readId = trim.getRead().getId();
+	                    long rightDelta = newtrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED) - oldTrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED);
+	                    long displayRight;
+	                    if (rightDelta == 0) {
+	                        displayRight = trimMap.getReadTrimFor(readId)
+	                                .getTrimRange(TrimType.CLB)
+	                                .getEnd(CoordinateSystem.RESIDUE_BASED);
+	                    } else {
+	                        displayRight = newtrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED);
+	                    }
+	                    System.out.println(String.format("%s\t%d\t%d\t%d\t%d",
+	                            readId, newtrimmedRange.getStart(CoordinateSystem.RESIDUE_BASED), displayRight,
+	                            newtrimmedRange.getStart(CoordinateSystem.RESIDUE_BASED)
+	                                    - oldTrimmedRange.getStart(CoordinateSystem.RESIDUE_BASED), rightDelta));
+	                }
+	                
+	            }
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(iter);
             }
             }catch(ParseException e){
                 HelpFormatter formatter = new HelpFormatter();

@@ -68,6 +68,7 @@ import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.MultipleWrapper;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * @author dkatzel
@@ -192,31 +193,35 @@ public class RecallAceConsensus {
                 }
             };
             AceFileVisitor aceVisitors = MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, headerVisitor,aceContigDataStoreBuilder);
-            System.out.println("begin parsing");
             AceFileParser.parseAceFile(inputAceFile, aceVisitors);
             AceContigDataStore aceContigDataStore = aceContigDataStoreBuilder.build();
-            System.out.println("begin for loop");
-            for(AceContig contig : aceContigDataStore){
-                System.out.println(contig.getId());
-                SliceMap sliceMap = CompactedSliceMap.create(contig, qualityDataStore, 
-                        GapQualityValueStrategies.LOWEST_FLANKING);
-                NucleotideSequence originalConsensus = contig.getConsensus();
-                NucleotideSequenceBuilder recalledConsensusBuilder = new NucleotideSequenceBuilder((int)originalConsensus.getLength());
-                for(int i=0; i<originalConsensus.getLength();i++){
-                    Slice slice =sliceMap.getSlice(i);
-                    ConsensusResult result =consensusCaller.callConsensus(slice);
-                  
-                    recalledConsensusBuilder.append(result.getConsensus());
-                }
-                final NucleotideSequence gappedRecalledConsensus = recalledConsensusBuilder.build();
-                if(fastaOut !=null){
-                    fastaOut.print(new DefaultNucleotideSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.asUngappedList()));
-                }
-                AceContigBuilder builder = DefaultAceContig.createBuilder(contig.getId(), gappedRecalledConsensus);
-                for(AcePlacedRead read : contig.getPlacedReads()){
-                    builder.addRead(read);
-                }
-                AceFileWriter.writeAceContig(builder.build(), masterPhdDataStore, out);
+            CloseableIterator<AceContig> iter = aceContigDataStore.iterator();
+            try{
+	            while(iter.hasNext()){
+	            	AceContig contig = iter.next();
+	                System.out.println(contig.getId());
+	                SliceMap sliceMap = CompactedSliceMap.create(contig, qualityDataStore, 
+	                        GapQualityValueStrategies.LOWEST_FLANKING);
+	                NucleotideSequence originalConsensus = contig.getConsensus();
+	                NucleotideSequenceBuilder recalledConsensusBuilder = new NucleotideSequenceBuilder((int)originalConsensus.getLength());
+	                for(int i=0; i<originalConsensus.getLength();i++){
+	                    Slice slice =sliceMap.getSlice(i);
+	                    ConsensusResult result =consensusCaller.callConsensus(slice);
+	                  
+	                    recalledConsensusBuilder.append(result.getConsensus());
+	                }
+	                final NucleotideSequence gappedRecalledConsensus = recalledConsensusBuilder.build();
+	                if(fastaOut !=null){
+	                    fastaOut.print(new DefaultNucleotideSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.asUngappedList()));
+	                }
+	                AceContigBuilder builder = DefaultAceContig.createBuilder(contig.getId(), gappedRecalledConsensus);
+	                for(AcePlacedRead read : contig.getPlacedReads()){
+	                    builder.addRead(read);
+	                }
+	                AceFileWriter.writeAceContig(builder.build(), masterPhdDataStore, out);
+	            }
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(iter);
             }
             IOUtil.closeAndIgnoreErrors(aceContigDataStore,fastaOut,masterPhdDataStore,out);
         } catch (ParseException e) {

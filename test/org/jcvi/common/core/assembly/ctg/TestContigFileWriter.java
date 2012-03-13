@@ -32,6 +32,7 @@ import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.ctg.CtgFileWriter;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -56,10 +57,15 @@ public class TestContigFileWriter {
     
     @Test
     public void write() throws IOException{
-        for(Contig<PlacedRead> contig : dataStore){
+    	CloseableIterator<Contig<PlacedRead>> iter = dataStore.iterator();
+    	try{
+        while(iter.hasNext()){
+        	Contig<PlacedRead> contig = iter.next();
             sut.write(contig);
         }
-     
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(iter);
+    	}
         InputStream inputStream=null;
         try{
 	        inputStream= RESOURCES.getFileAsStream(pathToFile);
