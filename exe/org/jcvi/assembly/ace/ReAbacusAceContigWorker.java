@@ -78,6 +78,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * @author dkatzel
@@ -456,56 +457,62 @@ public class ReAbacusAceContigWorker {
                         for(int i=0; i< sliceBuilders.length; i++){
                             sliceBuilders[i]= new CompactedSlice.Builder();
                         }
-                        for(NucleotideSequenceFastaRecord gappedFasta :gappedFastaDataStore){
-                            String id = gappedFasta.getId();
-                            NucleotideSequence gappedSequence = gappedFasta.getSequence();
-                            List<Nucleotide> bases = gappedSequence.asList();
-                            AcePlacedReadBuilder readBuilder =contigBuilder.getPlacedReadBuilder(id);
-                           
-                            Range sequenceRange = Range.parseRange(gappedFasta.getComment());
-                            
-                            Range newGappedRange = Range.buildRange(0,bases.size()-1);
-                            //will be 0 unless we are in the beginning of a read
-                            //which will change this number later
-                            int numberOfLeadingGaps=0;
-                            
-                            int i=bases.size()-1;
-                            Nucleotide currentBase = bases.get(i);
-                            int numberOfTrailingGaps = 0;
-                            while(i>=0 && currentBase.isGap()){
-                                numberOfTrailingGaps++;
-                                i--;
-                                currentBase = bases.get(i);
-                            }     
-                            NucleotideSequenceBuilder basesBuilder = readBuilder.getBasesBuilder();
-                            //remove bases to fix
-                            basesBuilder.delete(sequenceRange);
-                            
-                            long length =basesBuilder.getLength();
-                            Range fixedBasesRange = newGappedRange;
-                            if(length-1 <sequenceRange.getStart()){
-                                //we are fixing the end of the read
-                                //trim off trailing gaps
-                                fixedBasesRange = fixedBasesRange.shrink(0, numberOfTrailingGaps);
-                            }
-                            if(sequenceRange.getStart()==0){
-                                //we are fixing beginning of sequence
-                                //trim off leading gaps
-                                numberOfLeadingGaps = gappedSequence.getGappedOffsetFor(0);
-                                fixedBasesRange=fixedBasesRange.shrink(numberOfLeadingGaps, 0);
-                                //need to adjust the start coordinate since it could
-                                //have been originally placed incorrectly
-                                readBuilder.setStartOffset(gappedStart+numberOfLeadingGaps);
-                            }
-                            List<Nucleotide> rangeOfBasesThatContributeToConsensus = gappedSequence.asList(fixedBasesRange);
-                            basesBuilder.insert((int)sequenceRange.getStart(), rangeOfBasesThatContributeToConsensus);
-                        
-                             for(int index=0; index<rangeOfBasesThatContributeToConsensus.size() && index+numberOfLeadingGaps < sliceBuilders.length; index++){
-                                int sliceIndex = index+numberOfLeadingGaps;                               
-                                sliceBuilders[sliceIndex].addSliceElement(id, rangeOfBasesThatContributeToConsensus.get(index), 
-                                        PhredQuality.valueOf(15), readBuilder.getDirection());
-                            }
-                        }
+                        CloseableIterator<NucleotideSequenceFastaRecord> iter = gappedFastaDataStore.iterator();
+                        try{
+	                		while(iter.hasNext()){
+	                			NucleotideSequenceFastaRecord gappedFasta = iter.next();
+	                            String id = gappedFasta.getId();
+	                            NucleotideSequence gappedSequence = gappedFasta.getSequence();
+	                            List<Nucleotide> bases = gappedSequence.asList();
+	                            AcePlacedReadBuilder readBuilder =contigBuilder.getPlacedReadBuilder(id);
+	                           
+	                            Range sequenceRange = Range.parseRange(gappedFasta.getComment());
+	                            
+	                            Range newGappedRange = Range.buildRange(0,bases.size()-1);
+	                            //will be 0 unless we are in the beginning of a read
+	                            //which will change this number later
+	                            int numberOfLeadingGaps=0;
+	                            
+	                            int i=bases.size()-1;
+	                            Nucleotide currentBase = bases.get(i);
+	                            int numberOfTrailingGaps = 0;
+	                            while(i>=0 && currentBase.isGap()){
+	                                numberOfTrailingGaps++;
+	                                i--;
+	                                currentBase = bases.get(i);
+	                            }     
+	                            NucleotideSequenceBuilder basesBuilder = readBuilder.getBasesBuilder();
+	                            //remove bases to fix
+	                            basesBuilder.delete(sequenceRange);
+	                            
+	                            long length =basesBuilder.getLength();
+	                            Range fixedBasesRange = newGappedRange;
+	                            if(length-1 <sequenceRange.getStart()){
+	                                //we are fixing the end of the read
+	                                //trim off trailing gaps
+	                                fixedBasesRange = fixedBasesRange.shrink(0, numberOfTrailingGaps);
+	                            }
+	                            if(sequenceRange.getStart()==0){
+	                                //we are fixing beginning of sequence
+	                                //trim off leading gaps
+	                                numberOfLeadingGaps = gappedSequence.getGappedOffsetFor(0);
+	                                fixedBasesRange=fixedBasesRange.shrink(numberOfLeadingGaps, 0);
+	                                //need to adjust the start coordinate since it could
+	                                //have been originally placed incorrectly
+	                                readBuilder.setStartOffset(gappedStart+numberOfLeadingGaps);
+	                            }
+	                            List<Nucleotide> rangeOfBasesThatContributeToConsensus = gappedSequence.asList(fixedBasesRange);
+	                            basesBuilder.insert((int)sequenceRange.getStart(), rangeOfBasesThatContributeToConsensus);
+	                        
+	                             for(int index=0; index<rangeOfBasesThatContributeToConsensus.size() && index+numberOfLeadingGaps < sliceBuilders.length; index++){
+	                                int sliceIndex = index+numberOfLeadingGaps;                               
+	                                sliceBuilders[sliceIndex].addSliceElement(id, rangeOfBasesThatContributeToConsensus.get(index), 
+	                                        PhredQuality.valueOf(15), readBuilder.getDirection());
+	                            }
+	                        }
+	                    }finally{
+	                    	IOUtil.closeAndIgnoreErrors(iter);
+	                    }
                         
                         NucleotideSequenceBuilder consensusBuilder = new NucleotideSequenceBuilder();
                         ConsensusCaller consensusCaller = MostFrequentBasecallConsensusCaller.INSTANCE;

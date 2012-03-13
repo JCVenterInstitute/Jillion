@@ -32,6 +32,7 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.XMLUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 
 public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
@@ -77,7 +78,11 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
     @Override
     public void write(TraceArchiveInfo info) throws IOException {
         writeString(out, BEGIN_XML);
-        for(TraceArchiveRecord record : info){
+        CloseableIterator<TraceArchiveRecord> iter = info.iterator();
+        try{
+        	
+        while(iter.hasNext()){
+        	TraceArchiveRecord record = iter.next();
             writeString(out, String.format("%s\n",XMLUtil.beginTag("trace")));
             /*for(TraceInfoField field : FIELD_ORDER){
                 writeString(out,String.format("%s%s%s\n", 
@@ -92,7 +97,9 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
             writeExtendedData(record);
             writeString(out, String.format("%s\n",XMLUtil.endTag("trace")));
         }
-
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
+        }
         writeString(out, END_XML);
 
     }

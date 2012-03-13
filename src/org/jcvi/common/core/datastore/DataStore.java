@@ -26,7 +26,6 @@ package org.jcvi.common.core.datastore;
 import java.io.Closeable;
 import java.util.Iterator;
 
-import org.jcvi.common.core.util.iter.CloseableIterable;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * A {@code DataStore} is an interface for fetching objects by
@@ -36,7 +35,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public interface DataStore<T> extends Closeable,CloseableIterable<T>{
+public interface DataStore<T> extends Closeable{
     /**
      * Get all the ids contained in this DataStore.
      * @return an {@link Iterator} of the ids in this datastore.
@@ -73,5 +72,7 @@ public interface DataStore<T> extends Closeable,CloseableIterable<T>{
      * method?
      */
     boolean isClosed() throws DataStoreException;
+    
+    CloseableIterator<T> iterator();
     
 }

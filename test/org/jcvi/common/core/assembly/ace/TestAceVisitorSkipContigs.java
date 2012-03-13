@@ -32,6 +32,8 @@ import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -52,10 +54,15 @@ public class TestAceVisitorSkipContigs{
         assertEquals(7, datastore.size());
         DefaultContigFileDataStore contigDataStore = new DefaultContigFileDataStore(resources.getFile("files/fluSample.contig"));
         assertEquals(8,contigDataStore.size());
-        
-        for(AceContig aceContig : datastore){
-            Contig<PlacedRead> contig = contigDataStore.get(aceContig.getId());
-            AceContigTestUtil.assertContigsEqual(contig, aceContig);
+        CloseableIterator<AceContig> iter = datastore.iterator();
+        try{
+	    	 while(iter.hasNext()){
+	        	AceContig aceContig = iter.next();
+	            Contig<PlacedRead> contig = contigDataStore.get(aceContig.getId());
+	            AceContigTestUtil.assertContigsEqual(contig, aceContig);
+	    	 }
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
         }
         
     }
