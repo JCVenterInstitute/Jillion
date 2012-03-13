@@ -20,10 +20,6 @@
 package org.jcvi.common.core.assembly.clc.cas;
 
 import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
@@ -38,6 +34,7 @@ import org.jcvi.common.core.assembly.util.slice.CompactedSlice;
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -57,7 +54,6 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
  */
 public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
 
-    //private final Map<Long, Map<Nucleotide, Integer>> consensusMap;
     private final AceContigBuilder builder;
     private ConsensusCaller consensuCaller = MostFrequentBasecallConsensusCaller.INSTANCE;
     
@@ -69,7 +65,6 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     public UpdateConsensusAceContigBuilder(String contigId,
             NucleotideSequence fullConsensus) {
         builder = DefaultAceContig.createBuilder(contigId, fullConsensus);
-      //  consensusMap = new HashMap<Long,Map<Nucleotide,Integer>>((int)fullConsensus.getLength()+1, 1F);
         variantCounts = new VariantCounts((int)fullConsensus.getLength());
         
     }
@@ -98,44 +93,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
         builder.addRead(acePlacedRead);
         return this;
     }
-/*
-    private synchronized void addReadToConsensusMap(PlacedRead casPlacedRead) {
-        long startOffset = casPlacedRead.getStart();
-        int i=0;
-        for(Nucleotide base : casPlacedRead.getNucleotideSequence().asList()){
-            long index = startOffset+i;
-            if(!consensusMap.containsKey(index)){
-                consensusMap.put(index, new EnumMap<Nucleotide, Integer>(Nucleotide.class));
-            }
-           
-            Map<Nucleotide, Integer> histogram =consensusMap.get(index);
-            if(!histogram.containsKey(base)){
-                histogram.put(base, Integer.valueOf(1));
-            }else{
-                histogram.put(base,Integer.valueOf( histogram.get(base)+1));
-            }
-            i++;
-        }
-    }
-    */
-    private Slice<?> createSliceFor(Map<Nucleotide, Integer> histogram){
-    	CompactedSlice.Builder builder = new CompactedSlice.Builder();
-    	PhredQuality qual = PhredQuality.valueOf(30);
-    	if(histogram !=null){
-	    	int count=0;
-	    	for(Entry<Nucleotide, Integer> entry : histogram.entrySet()){
-	    		Nucleotide base = entry.getKey();
-	    		int max=entry.getValue();
-	    		for(int i=0; i<max; i++){
-		    		String id = Integer.toString(count);
-		    		builder.addSliceElement(id, base, qual , Direction.FORWARD);
-		    		count++;    
-	    		}
-	    	}
-    	}
-    	return builder.build();
-    }
-    
+
 
     /**
     * {@inheritDoc}
@@ -237,10 +195,13 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     }
     
     private static final class VariantCounts{
-    	private int[][] counts;
-    	Nucleotide[] values = Nucleotide.values();
+    	private Histogram[] histograms;
+    	
     	VariantCounts(int consensusLength){
-    		counts = new int[consensusLength][values.length];
+    		histograms = new Histogram[consensusLength];
+    		for(int i=0; i< consensusLength; i++){
+    			histograms[i] = new Histogram();
+    		}
     	}
     	
     	public void add(PlacedRead casPlacedRead){
@@ -248,18 +209,33 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
             int i=0;
             for(Nucleotide base : casPlacedRead.getNucleotideSequence().asList()){
                 int index = startOffset+i;
-                counts[index][base.ordinal()]++;               
+                histograms[index].add(base);          
                 i++;
             }
     	}
     	
     	public Slice<?> createSliceFor(int offset){
+    		return histograms[offset].createSlice();
+    	}
+    	
+    	
+    	
+    }
+    
+    private static final class Histogram{
+    	private static final Nucleotide[] values = Nucleotide.values();
+    	private short[] counts = new short[values.length];
+    	
+    	
+    	public void add(Nucleotide base){
+    		counts[base.ordinal()]++; 
+    	}
+    	public Slice<?> createSlice(){
     		CompactedSlice.Builder builder = new CompactedSlice.Builder();
         	PhredQuality qual = PhredQuality.valueOf(30);
-        	int[] histogram = counts[offset];
         	int count=0;
         	for(Nucleotide base : values){        		
-        		int numberOfBases = histogram[base.ordinal()];
+        		int numberOfBases = IOUtil.toUnsignedShort(counts[base.ordinal()]);
         		for(int i=0; i< numberOfBases;i++){
         			String id = Integer.toString(count+i);
         			builder.addSliceElement(id, base, qual, Direction.FORWARD);
@@ -268,7 +244,6 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
         	}
         	return builder.build();
     	}
-    	
     }
     
 }
