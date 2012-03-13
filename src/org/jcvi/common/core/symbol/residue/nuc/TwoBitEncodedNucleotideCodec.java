@@ -207,7 +207,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
         @Override
         public Nucleotide decode(byte[] encodedGlyphs, int index){
         	if(index <0){
-        		throw new IndexOutOfBoundsException(String.format("offset can not be negative ", index));
+        		throw new IndexOutOfBoundsException(String.format("offset %d can not be negative ", index));
         	}
         	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
             ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];

@@ -303,11 +303,64 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
 
     @Override
     public List<Integer> getGapOffsets() {
-      //first, get gaps from our aligned section of the reference
-        //we may have a snp in the gap location
-        //so we need to check for that
-       
-        List<Integer> refGapOffsets = reference.getGapOffsets();
+        List<Integer> referenceGapOffsets = shiftReferenceGaps();
+        if(encodedSnpsInfo !=null){
+	        return modifyForSnps(referenceGapOffsets);
+        }
+        return referenceGapOffsets;
+    }
+
+	private List<Integer> modifyForSnps(List<Integer> gaps) {
+		//now check our snps to see
+		//1. if we have snp where the ref has a gap
+		//2. if we have gap
+		ByteBuffer buf = ByteBuffer.wrap(encodedSnpsInfo);
+		int size = ValueSizeStrategy.values()[buf.get()].getNext(buf);
+		ValueSizeStrategy sizeStrategy = ValueSizeStrategy.values()[buf.get()];
+		List<Integer> snps = new ArrayList<Integer>(size);
+		for(int i=0; i<size; i++){
+		    Integer snpOffset = sizeStrategy.getNext(buf);
+		    //if we have a snp where 
+		    //the reference has a gap
+		    //remove it from our list of gaps
+		    if(gaps.contains(snpOffset)){
+		        gaps.remove(snpOffset);
+		    }
+		    snps.add(snpOffset);
+		}
+		if(buf.hasRemaining()){
+			int numBytesRemaining =buf.remaining();
+			
+			 byte[] snpSubArray = Arrays.copyOfRange(encodedSnpsInfo, encodedSnpsInfo.length- numBytesRemaining, encodedSnpsInfo.length);
+		     BitSet bits = IOUtil.toBitSet(snpSubArray);
+		     for(int i=0; i<size; i++){
+		    	 if(Nucleotide.Gap == getSnpValueFrom(bits, i)){
+		    		 gaps.add(snps.get(i));
+		    	 }
+		     }
+		    
+		}
+		//sort gaps so they are in order
+		//before this line, our gaps are in
+		//sorted ref gaps
+		//followed by sorted snps which happen to be gaps
+		Collections.sort(gaps);
+		return gaps;
+	}
+	//first, get gaps from our aligned section of the reference
+    //we may have a snp in the gap location
+    //so we need to check for that
+	/**
+	 * Most reference gaps should also
+	 * be present in our gapped sequence
+	 * so we need to get the reference gaps
+	 * that overlap with our sequence range
+	 * and shift them accordingly so read coordinate space.
+	 * (offset 0 is first base in our read)
+	 * @return
+	 */
+	private List<Integer> shiftReferenceGaps() {
+		List<Integer> refGapOffsets = reference.getGapOffsets();
         List<Integer> gaps = new ArrayList<Integer>(refGapOffsets.size());
         for(Integer refGap : refGapOffsets){
             int adjustedCoordinate = refGap.intValue() - startOffset;
@@ -315,44 +368,8 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
                 gaps.add(Integer.valueOf(adjustedCoordinate));
             }
         }
-        if(encodedSnpsInfo !=null){
-	        //now check our snps to see
-	        //1. if we have snp where the ref has a gap
-	        //2. if we have gap
-	        ByteBuffer buf = ByteBuffer.wrap(encodedSnpsInfo);
-	        int size = ValueSizeStrategy.values()[buf.get()].getNext(buf);
-	        ValueSizeStrategy sizeStrategy = ValueSizeStrategy.values()[buf.get()];
-	        List<Integer> snps = new ArrayList<Integer>(size);
-	        for(int i=0; i<size; i++){
-	            Integer snpOffset = sizeStrategy.getNext(buf);
-	            //if we have a snp where 
-	            //the reference has a gap
-	            //remove it from our list of gaps
-	            if(gaps.contains(snpOffset)){
-	                gaps.remove(snpOffset);
-	            }
-	            snps.add(snpOffset);
-	        }
-	        if(buf.hasRemaining()){
-	        	int numBytesRemaining =buf.remaining();
-	        	
-	        	 byte[] snpSubArray = Arrays.copyOfRange(encodedSnpsInfo, encodedSnpsInfo.length- numBytesRemaining, encodedSnpsInfo.length);
-	             BitSet bits = IOUtil.toBitSet(snpSubArray);
-	             for(int i=0; i<size; i++){
-	            	 if(Nucleotide.Gap == getSnpValueFrom(bits, i)){
-	            		 gaps.add(snps.get(i));
-	            	 }
-	             }
-	            
-	        }
-	        //sort gaps so they are in order
-	        //before this line, our gaps are in
-	        //sorted ref gaps
-	        //followed by sorted snps which happen to be gaps
-	        Collections.sort(gaps);
-        }
-        return gaps;
-    }
+		return gaps;
+	}
 
     @Override
     public int hashCode() {
