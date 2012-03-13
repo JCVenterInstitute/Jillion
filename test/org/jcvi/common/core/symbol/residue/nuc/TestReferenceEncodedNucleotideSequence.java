@@ -67,23 +67,17 @@ public class TestReferenceEncodedNucleotideSequence {
         String sequenceAsString = "CGTACGTACGT";
         assertDecodedCorrectly(offset, sequenceAsString);
     }
-    @Test
-    public void negativeStartOffset(){
+    @Test(expected = IllegalArgumentException.class)
+    public void negativeStartOffsetShouldThrowException(){
         int offset=-5;
         String sequenceAsString = "NYWHTACGT";
-        assertDecodedCorrectly(offset, sequenceAsString);
+        new DefaultReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset);
     }
-    @Test
-    public void sequenceGoesBeyondReference(){
+    @Test(expected = IllegalArgumentException.class)
+    public void sequenceGoesBeyondReferenceShouldThrowException(){
         int offset=referenceAsString.length()-4;
         String sequenceAsString = "ACGTNYWH";
-        assertDecodedCorrectly(offset, sequenceAsString);
-    }
-    @Test
-    public void sequenceHasNegativeOffsetAndGoesBeyondReference(){
-        int offset=-4;
-        String sequenceAsString = "VHDB"+referenceAsString+"NYWH";
-        assertDecodedCorrectly(offset, sequenceAsString);
+        new DefaultReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset);
     }
     @Test
     public void fullSequence(){

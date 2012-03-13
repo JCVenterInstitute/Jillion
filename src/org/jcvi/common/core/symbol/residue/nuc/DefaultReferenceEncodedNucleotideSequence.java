@@ -35,14 +35,10 @@ import java.util.TreeMap;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.ValueSizeStrategy;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.util.CommonUtil;
 
 final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferenceEncodedNucleotideSequence{
 
 	private static final int BITS_PER_SNP_VALUE=4;
-    private NucleotideSequence beforeValues=null;
-    private NucleotideSequence afterValues=null;
-    private int overhangOffset=0;
     private final int length;
     private final int startOffset;
     private final NucleotideSequence reference;
@@ -78,21 +74,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
      */
     private final byte[] encodedSnpsInfo;
     
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getNumberOfBasesBeforeReference() {
-        return beforeValues==null?0 : (int)beforeValues.getLength();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getNumberOfBasesAfterReference() {
-        return afterValues==null?0 : (int)afterValues.getLength();
-    }
+   
 
     @Override
     public List<Integer> getSnpOffsets() {
@@ -179,12 +161,12 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
 
 	private TreeMap<Integer, Nucleotide> populateFields(Sequence<Nucleotide> reference,
             String toBeEncoded, int startOffset, List<Integer> tempGapList) {
-        handleBeforeReference(toBeEncoded, startOffset);
+        handleBeforeReference(startOffset);
         handleAfterReference(reference, toBeEncoded, startOffset);
         TreeMap<Integer, Nucleotide> differentGlyphMap = new TreeMap<Integer, Nucleotide>();
         
-        int startReferenceEncodingOffset = computeStartReferenceEncodingOffset();
-        int endReferenceEncodingOffset = computeEndReferenceEncodingOffset(toBeEncoded);
+        int startReferenceEncodingOffset =0;
+        int endReferenceEncodingOffset = toBeEncoded.length();
         
         for(int i=startReferenceEncodingOffset; i<endReferenceEncodingOffset; i++){
             //get the corresponding index to this reference
@@ -203,30 +185,20 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
         return differentGlyphMap;
     }
 
-    private int computeStartReferenceEncodingOffset(){
-        return beforeValues==null?0: (int)beforeValues.getLength();
-    }
-
-    private int computeEndReferenceEncodingOffset(String toBeEncoded){
-        return afterValues==null?toBeEncoded.length(): overhangOffset;
-    }
     private void handleAfterReference(Sequence<Nucleotide> reference,
             String toBeEncoded, int startOffset) {
         int lastOffsetOfSequence = toBeEncoded.length()+startOffset;
         if(lastOffsetOfSequence > reference.getLength()){
             int overhang = (int)(toBeEncoded.length()+startOffset - reference.getLength());
-            overhangOffset = toBeEncoded.length()-overhang;
-            afterValues = new NucleotideSequenceBuilder(toBeEncoded.substring(overhangOffset))
-            					.build();
+            throw new IllegalArgumentException(String.format("sequences extends beyond reference by %d bases", overhang));
         }
     }
 
 
-    private void handleBeforeReference(String toBeEncoded, int startOffset) {
+    private void handleBeforeReference(int startOffset) {
         if(startOffset<0){
             //handle before values
-            beforeValues = new NucleotideSequenceBuilder(toBeEncoded.substring(0, Math.abs(startOffset)))
-            				.build();
+           throw new IllegalArgumentException("can not start before reference: "+ startOffset);
         }
     }
 
@@ -244,12 +216,10 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
     }
     @Override
     public Nucleotide get(int index) {
-        if(isBeforeReference(index)){
-            return beforeValues.get(index);
+        if(index <0 || index >= length){
+            throw new IndexOutOfBoundsException("invalid offset " +index);
         }
-        if(isAfterReference(index)){
-            return afterValues.get(index-overhangOffset);
-        }
+        
         
         if(encodedSnpsInfo !=null){
         	//there are snps so we need to check them first
@@ -279,16 +249,6 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
 		final int ordinal =new BigInteger(byteArray).intValue();
 		return Nucleotide.values()[ordinal];
 	}
-
-
-    private boolean isAfterReference(int index) {
-        return afterValues !=null && index >=overhangOffset;
-    }
-
-
-    private boolean isBeforeReference(int index) {
-        return beforeValues!=null && beforeValues.getLength()>index;
-    }
 
     @Override
     public boolean isGap(int index) {
@@ -380,7 +340,6 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
         result = prime * result + length;
         result = prime * result + startOffset;
         result = prime * result + Arrays.hashCode(encodedSnpsInfo);
-        result = prime * result + (beforeValues==null ? 0 : beforeValues.hashCode());
         return result;
     }
     @Override
@@ -406,12 +365,6 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
             return false;
         }
         if (!Arrays.equals(encodedSnpsInfo,other.encodedSnpsInfo)) {
-            return false;
-        }
-        if(!CommonUtil.similarTo(beforeValues, other.beforeValues)){
-            return false;
-        }
-        if(!CommonUtil.similarTo(afterValues, other.afterValues)){
             return false;
         }
         return true;
