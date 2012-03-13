@@ -110,6 +110,9 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         }
         
         long allBasesLength = allBases.getLength();
+        if(currentOffset + region.getLength() > allBasesLength){
+        	throw new IllegalStateException("alignment region extends beyond read");
+        }
         for(long i=0; i< region.getLength();i++){
             if(type != CasAlignmentRegionType.INSERT){
                 //add any extra gaps we added to the reference

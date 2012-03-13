@@ -160,4 +160,17 @@ public class TestACGTNNucleotideCodec {
         assertDecodeByIndexIsCorrect(longBases, actual);    
     }
     
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getBeyondLengthShouldThrowException(){
+    	 List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGT");
+         byte[] actual =sut.encode(nucleotides);
+         sut.decode(actual, 10);
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void negativeOffsetShouldThrowException(){
+    	 List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGT");
+         byte[] actual =sut.encode(nucleotides);
+         sut.decode(actual, -1);
+    }
+    
 }
