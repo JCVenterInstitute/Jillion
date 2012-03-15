@@ -106,7 +106,7 @@ public final class CloseableIteratorAdapter<T> implements CloseableIterator<T>{
     */
     @Override
     public void remove() {
-        iterator.remove();
+    	throw new UnsupportedOperationException();	
         
     }
     

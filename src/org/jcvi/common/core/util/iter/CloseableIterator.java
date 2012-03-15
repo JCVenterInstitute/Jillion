@@ -28,13 +28,22 @@ import java.util.NoSuchElementException;
  * {@code CloseableIterator} is an
  * {@link Iterator} that also
  * implements {@link Closeable}.
- * This can allow an iterator to be closed
- * and clean up any resources it is using
- * before the iterator reaches
- * the end of iterating over all the elements.
- * Calling {@link #close()} even when
- * {@link #hasNext()} returns {@code true}
- * should halt iterating.
+ * Client code must explicitly 
+ * close this iterator when done iterating
+ * (preferably in a try-finally block) so
+ * that any resources used by this iterator
+ * can be cleaned up.
+ * Closing a CloseableIterator before it has
+ * finished iterating over all the records
+ * will cause {@link #hasNext()}
+ * to return {@code false} and {@link #next()}
+ * to throw a {@link NoSuchElementException} as if this iterator
+ * has finished iterating.
+ * <p/>
+ * Not completely iterating over all the objects in this iterator
+ * <strong>and</strong> not calling {@link #close()} could in some implementations 
+ * cause memory leaks,
+ * deadlocks and/or permanently blocked threads.
  * @author dkatzel
  *
  *
@@ -52,13 +61,19 @@ public interface CloseableIterator<T> extends Closeable, Iterator<T>{
 	
 	/**
     * Close this iterator and clean up
-    * any open resources.  This will
+    * any open resources. This will
     * force this iterator's {@link #hasNext()}
     * to return {@code false}
     * and {@link #next()} to throw
     * a {@link NoSuchElementException}
     * as if there were no more elements
     * to iterate over.  
+    * <p/>
+    * If this method is not
+    * explicitly called and this iterator
+    * still has elements left to iterate over,
+    * then some implementations could cause memory leaks,
+    * deadlocks and/or permanently blocked threads. 
     */
     @Override
     void close() throws IOException;
@@ -69,4 +84,11 @@ public interface CloseableIterator<T> extends Closeable, Iterator<T>{
      */
     @Override
     T next();
+    /**
+     * Not supported; will always throw
+     * UnsupportedOperationException.
+     * @throws UnsupportedOperationException always.
+     */
+    @Override
+    void remove();
 }

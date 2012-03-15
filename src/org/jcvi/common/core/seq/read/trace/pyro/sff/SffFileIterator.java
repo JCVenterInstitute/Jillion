@@ -24,10 +24,10 @@ import java.io.IOException;
 
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIterable;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
- * {@code SffFileIterator} is a {@link CloseableIterable}
+ * {@code SffFileIterator} is a {@link CloseableIterator}
  * that can iterate over {@link SFFFlowgram}s contained
  * in a sff file.
  * @author dkatzel

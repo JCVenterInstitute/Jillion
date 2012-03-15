@@ -85,7 +85,7 @@ public class ChainedCloseableIterator<T> implements CloseableIterator<T>{
     */
     @Override
     public void remove() {
-        iterator.remove();
+        throw new UnsupportedOperationException();
         
     }
 

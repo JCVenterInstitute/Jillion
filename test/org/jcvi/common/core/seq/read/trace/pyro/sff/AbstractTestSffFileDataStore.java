@@ -96,6 +96,36 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
     }
     
     @Test
+    public void getIds() throws DataStoreException{
+        Iterator<String> iter = dataStore.getIds();
+        assertTrue(iter.hasNext());
+        boolean foundFF585OX02HCMO2 =false;
+        boolean foundFF585OX02HCD8G =false;
+        boolean foundFF585OX02FNE4N =false;
+        boolean foundFF585OX02GMGGN =false;
+        boolean foundFF585OX02FHO5X =false;
+        while(iter.hasNext()){
+        	String id =iter.next();
+            if(!foundFF585OX02HCMO2 && "FF585OX02HCMO2".equals(id)){
+                foundFF585OX02HCMO2=true;
+            }else if(!foundFF585OX02HCD8G && "FF585OX02HCD8G".equals(id)){
+                foundFF585OX02HCD8G=true;
+            }else if(!foundFF585OX02FNE4N && "FF585OX02FNE4N".equals(id)){
+                foundFF585OX02FNE4N=true;
+            }else if(!foundFF585OX02GMGGN && "FF585OX02GMGGN".equals(id)){
+                foundFF585OX02GMGGN=true;
+            }else if(!foundFF585OX02FHO5X ){
+                foundFF585OX02FHO5X = "FF585OX02FHO5X".equals(id);
+            }
+        }
+        assertTrue(foundFF585OX02HCMO2);
+        assertTrue(foundFF585OX02HCD8G);
+        assertTrue(foundFF585OX02FNE4N);
+        assertTrue(foundFF585OX02GMGGN);
+        assertTrue(foundFF585OX02FHO5X);
+    }
+    
+    @Test
     public void closeIteratorEarly() throws IOException{
         CloseableIterator<Flowgram> iter = dataStore.iterator();
         assertTrue(iter.hasNext());

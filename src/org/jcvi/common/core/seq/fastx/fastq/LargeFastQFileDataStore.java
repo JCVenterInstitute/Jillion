@@ -155,7 +155,7 @@ public final class LargeFastQFileDataStore implements FastQDataStore<FastQRecord
         */
         @Override
         public void remove() {
-            iter.remove();            
+        	throw new UnsupportedOperationException();	           
         }
         /**
         * {@inheritDoc}

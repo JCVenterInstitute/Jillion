@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
-public class DataStoreIterator<T> implements CloseableIterator<T>{
+public final class DataStoreIterator<T> implements CloseableIterator<T>{
     private final CloseableIterator<String> ids; 
     private final DataStore<T> dataStore;
     public DataStoreIterator(DataStore<T> dataStore){

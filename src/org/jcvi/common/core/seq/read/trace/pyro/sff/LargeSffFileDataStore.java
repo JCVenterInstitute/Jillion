@@ -28,9 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.CachedDataStore;
@@ -98,20 +96,8 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
     @Override
     public synchronized CloseableIterator<String> getIds() throws DataStoreException {
         super.getIds();
-        SffIdIterator iter = new SffIdIterator();
-        InputStream in = null;
-        try{
-            in =new FileInputStream(sffFile);
-            SffParser.parseSFF(in , iter);
-            return iter;
-        } catch (FileNotFoundException e) {
-            throw new DataStoreException("could not read sffFile ",e);
-        } catch (SFFDecoderException e) {
-            throw new DataStoreException("could not parse sffFile ",e);
-        }
-        finally{
-            IOUtil.closeAndIgnoreErrors(in);
-        }
+        return new SffIdIterator(SffFileIterator.createNewIteratorFor(sffFile));
+        
     }
 
     @Override
@@ -144,36 +130,22 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
         super.iterator();
       return SffFileIterator.createNewIteratorFor(sffFile);
     }
-
-    private static final class SffIdIterator implements SffFileVisitor, CloseableIterator<String>{
-        private List<String> ids = new ArrayList<String>();
-        private Iterator<String> iter=null;
-        @Override
-        public boolean visitCommonHeader(SFFCommonHeader commonHeader) {
-            return true;
+    /**
+     * {@code SffIdIterator} is a {@link CloseableIterator}
+     * that wraps the Iterator of Flowgrams and returns just
+     * the id of each record when {@link Iterator#next()}
+     * is called.
+     * @author dkatzel
+     *
+     */
+    private static final class SffIdIterator implements CloseableIterator<String>{
+        
+        private final CloseableIterator<Flowgram> iter;
+       
+        SffIdIterator(CloseableIterator<Flowgram> iter){
+        	this.iter= iter;
         }
-
-        @Override
-        public boolean visitReadData(SFFReadData readData) {
-            return true;
-        }
-
-        @Override
-        public boolean visitReadHeader(SFFReadHeader readHeader) {
-            ids.add(readHeader.getName());
-            return true;
-        }
-
-        @Override
-        public void visitEndOfFile() {
-            iter = ids.iterator();            
-        }
-
-        @Override
-        public void visitFile() {
-            
-        }
-
+        
         @Override
         public boolean hasNext() {
             return iter.hasNext();
@@ -181,7 +153,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
 
         @Override
         public String next() {
-            return iter.next();
+            return iter.next().getId();
         }
 
         @Override
@@ -194,7 +166,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
         */
         @Override
         public void close() throws IOException {
-            ids.clear();
+            iter.close();
             
         }
         
