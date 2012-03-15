@@ -121,7 +121,7 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
 
             @Override
             public void remove() {
-                iter.remove();
+                throw new UnsupportedOperationException();
                 
             }
 

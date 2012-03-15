@@ -192,16 +192,33 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 		throw new UnsupportedOperationException();		
 	}
 
-	 /**
-	    * {@inheritDoc}
-	    */
-	    @Override
-	    public final void close() throws IOException {
-	        isClosed=true;
-	        nextRecord=endOfFileToken;
-	        queue.clear();	        
-	    }
-	    /**
+	/**
+    * {@inheritDoc}
+    */
+    @Override
+    public final void close() throws IOException {
+        isClosed=true;
+        nextRecord=endOfFileToken;
+        queue.clear();	        
+    }
+	    
+	/**
+	 * Safety-net to close the iterator
+	 * in case it hasn't been closed already.
+	 * Client code should always explicitly
+	 * close a {@link CloseableIterator}
+	 * but this finalizer is used just in case.
+	 * This method can not be relied upon 
+	 * since an object is not guaranteed to 
+	 * get finalized by the garbage collector.
+	 */
+    @Override
+	protected void finalize() throws IOException {
+    	if(!isClosed){
+    		close();
+    	}
+	}
+		/**
 	    * {@inheritDoc}
 	    */
 	    @Override
