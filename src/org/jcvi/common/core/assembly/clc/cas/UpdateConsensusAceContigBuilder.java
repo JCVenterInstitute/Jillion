@@ -223,8 +223,8 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     }
     
     private static final class Histogram{
-    	private static final Nucleotide[] values = Nucleotide.values();
-    	private short[] counts = new short[values.length];
+    	private static final Nucleotide[] VALUES = Nucleotide.values();
+    	private short[] counts = new short[VALUES.length];
     	
     	
     	public void add(Nucleotide base){
@@ -234,7 +234,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     		CompactedSlice.Builder builder = new CompactedSlice.Builder();
         	PhredQuality qual = PhredQuality.valueOf(30);
         	int count=0;
-        	for(Nucleotide base : values){        		
+        	for(Nucleotide base : VALUES){        		
         		int numberOfBases = IOUtil.toUnsignedShort(counts[base.ordinal()]);
         		for(int i=0; i< numberOfBases;i++){
         			String id = Integer.toString(count+i);
