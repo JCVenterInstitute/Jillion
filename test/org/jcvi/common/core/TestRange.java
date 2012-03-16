@@ -27,6 +27,7 @@ package org.jcvi.common.core;
 
 import static org.junit.Assert.*;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -1400,5 +1401,22 @@ public class TestRange{
     @Test(expected = IllegalArgumentException.class)
     public void createRangeWithNegativeLengthShouldThrowException(){
     	Range.buildRangeOfLength(20, -40);
+    }
+    
+    @Test
+    public void longRange(){
+    	Range r = Range.buildRange(Long.MIN_VALUE, Integer.MIN_VALUE);
+    	assertEquals(Long.MIN_VALUE, r.getStart());
+    	assertEquals(Integer.MIN_VALUE, r.getEnd());
+    	assertEquals(
+    			BigInteger.valueOf(Integer.MIN_VALUE).subtract(BigInteger.valueOf(Long.MIN_VALUE)).longValue()+1L, 
+    			r.getLength());
+    }
+    @Test
+    public void intRange(){
+    	Range r = Range.buildRange(Integer.MIN_VALUE, 0);
+    	assertEquals(Integer.MIN_VALUE, r.getStart());
+    	assertEquals(0, r.getEnd());
+    	assertEquals(Math.abs((long)Integer.MIN_VALUE)+1L, r.getLength());
     }
 }
