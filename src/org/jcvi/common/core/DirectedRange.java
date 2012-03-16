@@ -26,6 +26,9 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 
 
 /**
+ * {@code DirectedRange} is a composite object that associates
+ * a {@link Range} with a {@link Direction}.
+ * 
  * @author dkatzel
  *
  *
@@ -35,16 +38,36 @@ public final class DirectedRange implements Placed<DirectedRange>{
         /**
          * Regular expression in the form (left) .. (right).
          */
-        private static Pattern DOT_PATTERN = Pattern.compile("(\\d+)\\s*\\.\\.\\s*(\\d+)");
+        private static Pattern DOT_PATTERN = Pattern.compile("(-?\\d+)\\s*\\.\\.\\s*(-?\\d+)");
         /**
          * Regular expression in the form (left) - (right).
          */
-        private static Pattern DASH_PATTERN = Pattern.compile("(\\d+)\\s*-\\s*(\\d+)");
-        private static Pattern COMMA_PATTERN = Pattern.compile("(\\d+)\\s*,\\s*(\\d+)");
+        private static Pattern DASH_PATTERN = Pattern.compile("(-?\\d+)\\s*-\\s*(-?\\d+)");
+        private static Pattern COMMA_PATTERN = Pattern.compile("(-?\\d+)\\s*,\\s*(-?\\d+)");
     
         private final Range range;
         private final Direction direction;
-        
+        /**
+         * Parse a range given as a string using the given {@link CoordinateSystem}
+         * and determine the direction by the orientation of the start and 
+         * end coordinates. 
+         * <p/>
+         * Current supported String formats are :
+         * <ul>
+         * <li>start - end</li>
+         * <li>end - start</li>
+         * <li>start , end</li>
+         * <li>end , start</li>
+         * <li>start .. end</li>
+         * <li>end .. start</li>
+         * </ul>
+         * @param rangeAsString the range; can not be null.
+         * @param coordinateSystem the coordinate system to use; can not be null.
+         * @return a new {@link DirectedRange}.
+         * @throws NullPointerException if either input is null.
+         * @throws IllegalArgumentException if given string does not conform
+         * to the allowed formats.
+         */
         public static DirectedRange parse(String rangeAsString, CoordinateSystem coordinateSystem){
             Matcher dotMatcher =DOT_PATTERN.matcher(rangeAsString);
             if(dotMatcher.find()){
@@ -60,10 +83,24 @@ public final class DirectedRange implements Placed<DirectedRange>{
             }
             throw new IllegalArgumentException("can not parse "+ rangeAsString +" into a Range");
         }
-        
+        /**
+         * Create a new DirectedRange object for the given range
+         * in the forward direction.
+         * @param range the range to use; can not be null.
+         * @return a new DirectedRange will never be null.
+         * @throw NullPointerException if range is null.
+         */
         public static DirectedRange create(Range range){
             return create(range,Direction.FORWARD);
         }
+        /**
+         * Create a new DirectedRange object for the given range
+         * in the given direction.
+         * @param range the range to use; can not be null.
+         * @param direction the direction to use; can not be null.
+         * @return a new DirectedRange will never be null.
+         * @throw NullPointerException if either range or direction is null.
+         */
         public static DirectedRange create(Range range, Direction direction){
             return new DirectedRange(range,direction);
         }
@@ -96,15 +133,9 @@ public final class DirectedRange implements Placed<DirectedRange>{
             return parse(firstCoord,secondCoord,CoordinateSystem.ZERO_BASED);
         }
         public static DirectedRange parse(String firstCoord, String secondCoord, CoordinateSystem coordinateSystem){
-            int first = Integer.parseInt(firstCoord);
-            int second = Integer.parseInt(secondCoord);
-            if(first<second){
-                Range range = Range.buildRange(coordinateSystem,first,second);
-                return new DirectedRange(range, Direction.FORWARD);
-            }
-            
-            Range range = Range.buildRange(coordinateSystem, second,first);
-            return new DirectedRange(range, Direction.REVERSE);
+            long first = Long.parseLong(firstCoord);
+            long second = Long.parseLong(secondCoord);
+            return convertIntoRange(coordinateSystem, first, second);
         }
         
         private DirectedRange(Range range, Direction direction) {
