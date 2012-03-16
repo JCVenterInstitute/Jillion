@@ -36,6 +36,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestDirection.class,
         TestRange.class,
+        TestDirectedRange.class,
         TestRangeArrivalComparator.class,
         TestRangeDepartureComparator.class,
         TestEmptyRange.class,

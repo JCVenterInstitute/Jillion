@@ -142,7 +142,13 @@ public enum Direction
     {
         return this.name().charAt(0);
     }
-
+    /**
+     * Get the opposite direction; for example,
+     * if this direction is forward, then this method will
+     * return reverse.  
+     * @return if this is forward, return reverse; else if this is reverse,
+     * return forward; otherwise return this.
+     */
     public Direction oppositeOrientation(){
         if(this == FORWARD ){
             return REVERSE;

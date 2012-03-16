@@ -46,17 +46,18 @@ import org.jcvi.common.core.util.Caches;
  * <p>
  * <code>Range</code>s have a start (or left) value and an end (or right)
  * value.  The start value will always be less than or equal to the end value.
+ * The minimum start value of a Range is {@link Long#MIN_VALUE}  and the max end
+ * value of a Range is {@link Long#MAX_VALUE}.  Any attempt to build Ranges beyond
+ * those values will throw Exceptions.
  * <p>
- * <code>Range</code>s in are always inclusive.  Thus, a <code>Range</code>
+ * The default coordinates are always inclusive.  Thus, a <code>Range</code>
  * of 20 to 30 has a size of 11, not 10, and a <code>Range</code> of 42 to 42
  * will have a size of 1 not 0.  This is done to conform with the overwhelming
  * majority use of inclusive ranges in Bioinformatics. The implications of this are particularly important when thinking about the
  * desire to represent no range at all.  A <code>Range</code> of 0 to 0 still
  * has a size of 1.  In order to represent a <code>Range</code> with size 0,
- * you need to explicitly use an empty range. The minimum start
- * value of a Range is {@link Long#MIN_VALUE}  and the max end
- * value of a Range is {@link Long#MAX_VALUE}.  Any attempt to build Ranges beyond
- * those values will throw Exceptions.
+ * you need to explicitly use an empty range via the factory methods:
+ * {@link #buildEmptyRange()} {@link #buildEmptyRange(long)} {@link #buildEmptyRange(CoordinateSystem, long)}. 
  * <p>
  * Ranges can also use a different {@link CoordinateSystem} which may not follow these
  * guidelines.  The other coordinate system start and end values can be queried
@@ -108,7 +109,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      */
     public enum Comparators implements Comparator<Range>{
         /**
-         * A <code>Arrival</code> compares a pair of {@link Range}s
+         * Compares a pair of {@link Range}s
          * and assigns the lower comparative value to the Range which begins earlier.
          * In the case of two ranges having identical start coordinates, the one
          * with the lower end coordinate (the shorter range) will be ranked lower.
@@ -145,7 +146,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
             }
         },
         /**
-         * A <code>RangeDepartureComparator</code> compares a pair of {@link Range}s
+         * Compares a pair of {@link Range}s
          * and assigns the lower comparative value to the Range which ends earlier.
          * In the case of two ranges having identical end coordinates, the one
          * with the start end coordinate (the longer range) will be ranked lower.
@@ -182,7 +183,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
             }
         },
         /**
-         * {@code LONGEST_TO_SHORTEST} compares Ranges by length
+         * Compares Ranges by length
          * and orders them longest to shortest.
          * @author dkatzel
          */
@@ -195,7 +196,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
             
         },
         /**
-         * {@code LONGEST_TO_SHORTEST} compares Ranges by length
+         * Compares Ranges by length
          * and orders them shortest to longest.
          * @author dkatzel
          */
@@ -219,7 +220,8 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * coordinate systems to fit their needs.  CoordinateSystem implementations
      * can be used to translate to and from the various bioinformatics coordinate
      * systems to simplify working with multiple coordinate systems at the same time.
-     * 
+     * @see Range#getStart(CoordinateSystem)
+     * @see Range#getEnd(CoordinateSystem)
      */
     public enum CoordinateSystem {
         /**
@@ -361,7 +363,6 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * Caches are SoftReferences mapped to their hashcodes
      */
     private static final Map<String, Range> CACHE;
-    private static final Comparator<Range> DEFAULT_COMPARATOR = Comparators.ARRIVAL;
     /**
      * Initialize cache with a soft reference cache that will grow as needed.
      */
@@ -1209,10 +1210,15 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
         rangeList.add(index, combinedRange);
         
     }
+    /**
+     * Compares two Ranges using the {@link Comparators#ARRIVAL}
+     * Comparator.
+     * This is the same as {@code Comparators.ARRIVAL.compare(this,that);
+     */
     @Override
     public int compareTo(Range that) 
     {
-        return Range.DEFAULT_COMPARATOR.compare(this, that);
+        return Comparators.ARRIVAL.compare(this, that);
     }
 
     @Override
