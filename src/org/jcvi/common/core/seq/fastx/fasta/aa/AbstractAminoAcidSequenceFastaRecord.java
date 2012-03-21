@@ -55,7 +55,7 @@ public abstract class AbstractAminoAcidSequenceFastaRecord extends AbstractFasta
 	
 	@Override
 	protected CharSequence getRecordBody() {
-        String result= this.decodeAminoAcids().toString().replaceAll("(.{60})", "$1"+FastaUtil.CR);
+        String result= this.decodeAminoAcids().toString().replaceAll("(.{60})", "$1"+FastaUtil.LINE_SEPARATOR);
         //some fasta parsers such as blast's formatdb
         //break if there is an extra blank line between records
         //this can happen if the sequence ends at the exact lenght of 1 line

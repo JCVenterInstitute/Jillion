@@ -94,7 +94,7 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
         return this.comments;
     }
   
-    public CharSequence toFormattedString()
+    public String toFormattedString()
     {
         final StringBuilder record = new StringBuilder();
         
@@ -103,7 +103,7 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
         .append(this.getRecordBody());
         appendCarriageReturnAndLineFeed(record);
         
-        return record;
+        return record.toString();
     }
     
     protected abstract CharSequence getRecordBody();
@@ -120,13 +120,8 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
     }
     
     protected StringBuilder appendCarriageReturnAndLineFeed(StringBuilder s){
-        return s.append(FastaUtil.CR);
+        return s.append(FastaUtil.LINE_SEPARATOR);
         
-    }
-    
-    @Override
-    public long getChecksum() {
-        return 0;
     }
     
     /**
@@ -138,7 +133,7 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
     @Override
     public String toString()
     {
-        return this.toFormattedString().toString();
+        return this.toFormattedString();
     }
     
     @Override
@@ -146,7 +141,6 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int)(this.getChecksum() ^ (this.getChecksum() >>> 32));
         result = prime * result + ((this.identifier == null) ? 0 : this.identifier.hashCode());
         return result;
     }
@@ -161,11 +155,8 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
             return false;
         }
         AbstractFastaRecord<?,?> other = (AbstractFastaRecord<?,?>)obj;
-        final long checksum = getChecksum();
-        final long checksum2 = other.getChecksum();
         return 
         //CommonUtil.similarTo(getRecordBody(), other.getRecordBody())
-        CommonUtil.similarTo(checksum, checksum2)
-        && CommonUtil.similarTo(getId(), other.getId());
+        CommonUtil.similarTo(getId(), other.getId());
     }   
 }

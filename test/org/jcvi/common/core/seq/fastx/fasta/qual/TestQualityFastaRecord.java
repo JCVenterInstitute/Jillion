@@ -48,9 +48,8 @@ public class TestQualityFastaRecord {
     public void constructor(){
         assertEquals(id, sut.getId());
         assertEquals(comment, sut.getComment());
-        assertEquals(0L, sut.getChecksum());
         final String expectedRecord = buildExpectedRecord();
-        assertEquals(expectedRecord, sut.toFormattedString().toString());
+        assertEquals(expectedRecord, sut.toFormattedString());
     }
     public String buildExpectedRecord(){
         StringBuilder builder= new StringBuilder();

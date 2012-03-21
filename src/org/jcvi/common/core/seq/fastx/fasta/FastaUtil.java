@@ -19,28 +19,28 @@
 
 package org.jcvi.common.core.seq.fastx.fasta;
 
-import java.util.zip.CRC32;
-import java.util.zip.Checksum;
-
 /**
+ * 
+ * {@code FastaUtil} is a utility class
+ * for common Fasta constants.
  * @author dkatzel
  *
  *
  */
-public class FastaUtil {
-
-    public static final String CR = "\n";
-
+public final class FastaUtil {
+	/**
+	 * The line String used to separate lines in 
+	 * a Fasta file.  This Separator is platform
+	 * independent.
+	 */
+    public static final String LINE_SEPARATOR = "\n";
+    /**
+     * The required prefix in a fasta header '{@value}'.
+     */
     public static final char HEADER_PREFIX = '>';
     
-    
-    public static long calculateCheckSum(CharSequence data)
-    {
-        final Checksum checksummer = new CRC32();
-        for (int i = 0; i < data.length(); i++)
-        {
-            checksummer.update(data.charAt(i));
-        }
-        return checksummer.getValue();
+    private FastaUtil(){
+    	
     }
+    
 }

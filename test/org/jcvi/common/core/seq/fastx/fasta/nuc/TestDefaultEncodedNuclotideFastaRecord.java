@@ -51,7 +51,6 @@ public class TestDefaultEncodedNuclotideFastaRecord {
         assertEquals(id, sut.getId());
         assertEquals(comment, sut.getComment());
         assertEquals(encodedGlyphs, sut.getSequence());
-        assertEquals(FastaUtil.calculateCheckSum(bases), sut.getChecksum());
         assertEquals(buildExpectedToString(comment), sut.toString());
     }
     @Test
@@ -61,7 +60,6 @@ public class TestDefaultEncodedNuclotideFastaRecord {
         assertEquals(id, fasta.getId());
         assertEquals(comment, fasta.getComment());
         assertEquals(encodedGlyphs, fasta.getSequence());
-        assertEquals(FastaUtil.calculateCheckSum(bases), fasta.getChecksum());
         assertEquals(buildExpectedToString(comment), fasta.toString());
     }
     @Test
@@ -71,7 +69,6 @@ public class TestDefaultEncodedNuclotideFastaRecord {
         assertEquals(id, fasta.getId());
         assertNull(fasta.getComment());
         assertEquals(encodedGlyphs, fasta.getSequence());
-        assertEquals(FastaUtil.calculateCheckSum(bases), fasta.getChecksum());
         assertEquals(buildExpectedToString(null), fasta.toString());
     }
     @Test
@@ -81,7 +78,6 @@ public class TestDefaultEncodedNuclotideFastaRecord {
         assertEquals(id, fasta.getId());
         assertNull(fasta.getComment());
         assertEquals(encodedGlyphs, fasta.getSequence());
-        assertEquals(FastaUtil.calculateCheckSum(bases), fasta.getChecksum());
         assertEquals(buildExpectedToString(null), fasta.toString());
     }
     @Test
@@ -134,14 +130,14 @@ public class TestDefaultEncodedNuclotideFastaRecord {
         if(comment !=null){
             builder.append(' ').append(comment);
         }
-        builder.append(FastaUtil.CR);
+        builder.append(FastaUtil.LINE_SEPARATOR);
         builder.append(formatBasecalls());
-        builder.append(FastaUtil.CR);
+        builder.append(FastaUtil.LINE_SEPARATOR);
         return builder.toString();
     }
 
     private String formatBasecalls() {
-        return bases.replaceAll("(.{60})", "$1"+FastaUtil.CR);
+        return bases.replaceAll("(.{60})", "$1"+FastaUtil.LINE_SEPARATOR);
     }
     
     @Test
