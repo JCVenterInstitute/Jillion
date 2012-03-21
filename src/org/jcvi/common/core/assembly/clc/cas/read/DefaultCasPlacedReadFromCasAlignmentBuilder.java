@@ -111,7 +111,9 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         
         long allBasesLength = allBases.getLength();
         if(currentOffset + region.getLength() > allBasesLength){
-        	throw new IllegalStateException("alignment region extends beyond read");
+        	throw new IllegalStateException(
+        			String.format("alignment region %s extends beyond read; (current offset = %d total read length = %d)", 
+        					region, currentOffset,allBasesLength));
         }
         for(long i=0; i< region.getLength();i++){
             if(type != CasAlignmentRegionType.INSERT){
