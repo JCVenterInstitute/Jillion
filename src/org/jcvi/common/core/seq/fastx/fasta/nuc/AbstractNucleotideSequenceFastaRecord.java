@@ -43,7 +43,6 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFastaRecord<Nucleotide,NucleotideSequence> implements NucleotideSequenceFastaRecord
 {
     private final NucleotideSequence sequence;
-    private final long checksum;
     
     /**
      * Creates a new <code>SequenceFastaRecord</code>.
@@ -52,7 +51,6 @@ public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFast
     {
         super(identifier, comments);
         String nonWhiteSpaceSequence = sequence.toString().replaceAll("\\s+", "");
-        this.checksum = FastaUtil.calculateCheckSum(nonWhiteSpaceSequence);
         this.sequence = encodeNucleotides(nonWhiteSpaceSequence);
         
     }
@@ -83,11 +81,6 @@ public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFast
     {
         this(Integer.toString(identifier), sequence);
     }
-    @Override
-    public long getChecksum()
-    {
-        return this.checksum;
-    }
 
     @Override
     public NucleotideSequence getSequence() 
@@ -99,10 +92,10 @@ public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFast
     
     protected CharSequence getRecordBody()
     {
-        String result= this.decodeNucleotides().toString().replaceAll("(.{60})", "$1"+FastaUtil.CR);
+        String result= this.decodeNucleotides().toString().replaceAll("(.{60})", "$1"+FastaUtil.LINE_SEPARATOR);
         //some fasta parsers such as blast's formatdb
         //break if there is an extra blank line between records
-        //this can happen if the sequence ends at the exact lenght of 1 line
+        //this can happen if the sequence ends at the exact length of 1 line
         //(60 characters)
         if(sequence.getLength() >0 && sequence.getLength()%60==0){
             return result.substring(0, result.length()-1);

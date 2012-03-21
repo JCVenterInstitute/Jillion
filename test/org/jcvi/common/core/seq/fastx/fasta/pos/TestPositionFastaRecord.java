@@ -90,9 +90,8 @@ public class TestPositionFastaRecord {
 
     private void assertConstructedFieldsCorrect(DefaultPositionFastaRecord<Sequence<ShortSymbol>> fasta) {
         assertEquals(id, fasta.getId());        
-        assertEquals(0L, fasta.getChecksum());
         final String expectedRecord = buildExpectedRecord(fasta);
-        assertEquals(expectedRecord, fasta.toFormattedString().toString());
+        assertEquals(expectedRecord, fasta.toFormattedString());
         assertEquals(encodedPositions, fasta.getSequence());
     }
     @Test

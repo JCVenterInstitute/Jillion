@@ -38,11 +38,20 @@ public interface FastaRecord<S extends Symbol,T extends Sequence<S>> extends Fas
 {
     
     /**
-     * Gets the entire formatted fasta record as a {@link CharSequence}.
+     * Gets the entire formatted fasta record as a {@link String}.
+     * The format slightly varies by implementation but in general
+     * will look like:
+     * <pre>
+     * >id optional-comment
+     * multi-line 
+     * sequence
+     * </pre>
+     * The last character in the string is a line separator
+     * character.
+     * @return this fasta record formatted in fasta format.
+     * 
      */
-    CharSequence toFormattedString();
-
-    long getChecksum();
+    String toFormattedString();
     /**
      * Delegates to {@link #toFormattedString()}.
      * @return a correctly formatted FASTA record
