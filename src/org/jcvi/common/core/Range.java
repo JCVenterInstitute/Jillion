@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,10 +48,12 @@ import org.jcvi.common.core.util.Caches;
  * <code>Range</code>s have a start (or left) value and an end (or right)
  * value.  The start value will always be less than or equal to the end value.
  * The minimum start value of a Range is {@link Long#MIN_VALUE}  and the max end
- * value of a Range is {@link Long#MAX_VALUE}.  Any attempt to build Ranges beyond
+ * value of a Range is {@link Long#MAX_VALUE}. Also due to limitations
+ * to Java primitives, Ranges can not have a length > {@link Long#MAX_VALUE}.
+ *  Any attempt to build Ranges beyond
  * those values will throw Exceptions.
  * <p>
- * The default coordinates are always inclusive.  Thus, a <code>Range</code>
+ * The Range coordinates are 0-based inclusive.  Thus, a <code>Range</code>
  * of 20 to 30 has a size of 11, not 10, and a <code>Range</code> of 42 to 42
  * will have a size of 1 not 0.  This is done to conform with the overwhelming
  * majority use of inclusive ranges in Bioinformatics. The implications of this are particularly important when thinking about the
@@ -59,30 +62,31 @@ import org.jcvi.common.core.util.Caches;
  * you need to explicitly use an empty range via the factory methods:
  * {@link #buildEmptyRange()} {@link #buildEmptyRange(long)} {@link #buildEmptyRange(CoordinateSystem, long)}. 
  * <p>
- * Ranges can also use a different {@link CoordinateSystem} which may not follow these
- * guidelines.  The other coordinate system start and end values can be queried
+ * Often, Bioinformatics formats use non-0-based coordinates. Other coordinate system start and end values can be queried
  * via the {@link #getStart(CoordinateSystem)} and {@link #getEnd(CoordinateSystem)} methods.  
- * A different coordinate {@link CoordinateSystem} can be also be specified at construction time
+ * A different {@link CoordinateSystem} can be also be specified at construction time
  * via the {@link Range#buildRange(CoordinateSystem, long, long)} method.  If this method is used,
- * the input values will automatically get converted for you.
+ * the input values will automatically get converted into 0-based coordinates.
  * <p/>
  * Ranges can be constructed using the various Range.buildRange(...) methods
  * which might return different Range implementations based on 
  * what the input values.  In addition, since Ranges are immutable,
  * it is not guaranteed that the Range object returned by the build methods
- * is a new object since Ranges are often cached.  Therefore;
+ * is a new object since Ranges are often cached (Flyweight pattern).  Therefore;
  * <strong> Range objects should not be used
  * for synchronization locks.</strong>  Range objects are cached and shared, synchronizing
  * on the same object as other, unrelated code can cause deadlock.
  * <pre> 
  * &#047;&#047;don't do this
- * private static Range range = Range.buildRange(1,10);
+ * private static Range range = Range.buildRange(0,9);
  * ...
  *   synchronized(range){ .. }
  * ...
  * </pre>
  * @author dkatzel
  * @author jsitz@jcvi.org
+ * 
+ * @see CoordinateSystem
  * 
  */
 public abstract class Range implements Placed<Range>,Iterable<Long>
@@ -113,8 +117,6 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
          * and assigns the lower comparative value to the Range which begins earlier.
          * In the case of two ranges having identical start coordinates, the one
          * with the lower end coordinate (the shorter range) will be ranked lower.
-         * Empty ranges are considered lower in comparative value than any non-empty
-         * Range.
          * 
          * @author jsitz@jcvi.org
          * @author dkatzel
@@ -149,9 +151,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
          * Compares a pair of {@link Range}s
          * and assigns the lower comparative value to the Range which ends earlier.
          * In the case of two ranges having identical end coordinates, the one
-         * with the start end coordinate (the longer range) will be ranked lower.
-         * Empty ranges are considered lower in comparative value than any non-empty
-         * Range.
+         * with the lower start coordinate (the longer range) will be ranked lower.
          * 
          * @author jsitz@jcvi.org
          * @author dkatzel
@@ -184,7 +184,8 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
         },
         /**
          * Compares Ranges by length
-         * and orders them longest to shortest.
+         * and orders them longest to shortest. Ranges
+         * of the same length are considered equal.
          * @author dkatzel
          */
         LONGEST_TO_SHORTEST{
@@ -198,6 +199,8 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
         /**
          * Compares Ranges by length
          * and orders them shortest to longest.
+         * Ranges
+         * of the same length are considered equal.
          * @author dkatzel
          */
         SHORTEST_TO_LONGEST{
@@ -299,7 +302,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
         }
 
         /**
-         * Fetches the shortened "tag" name for this <code>CoordinateSystem</code>.
+         * Get the shortened "tag" name for this <code>CoordinateSystem</code>.
          * to be used in the toString value.
          * @return A two-letter abbreviation for this <code>CoordinateSystem</code>.
          */
@@ -308,9 +311,11 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
             return abbreviatedName;
         }
         
-        /* (non-Javadoc)
-         * @see java.lang.Enum#toString()
+        /**
+         * 
+         * {@inheritDoc}
          */
+        @Override
         public String toString() 
         {
             return displayName;
@@ -319,28 +324,32 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
         /**
          * Get the start coordinate in this system from the 
          * equivalent zero-based start coordinate.
+         * @param zeroBasedStart start coordinate in 0-based
+         * coordinate system.
          */
-        private long getLocalStart(long start) {
-            return start + zeroBaseToCoordinateSystemStartAdjustmentValue;
+        private long getLocalStart(long zeroBasedStart) {
+            return zeroBasedStart + zeroBaseToCoordinateSystemStartAdjustmentValue;
         }
         /**
          * Get the end coordinate in this system from the 
          * equivalent zero-based end coordinate.
+         * @param zeroBasedEnd the end coordinate in 0-based
+         * coordiante system.
          */
-        private long getLocalEnd(long end) {
-            return end + zeroBaseToCoordinateSystemEndAdjustmentValue;
+        private long getLocalEnd(long zeroBasedEnd) {
+            return zeroBasedEnd + zeroBaseToCoordinateSystemEndAdjustmentValue;
         }
 
         /**
-         * Get zero base start and end locations
-        * from range coordinate system start location.
+         * Get 0-base start coordinate
+        * from this coordinate system start location.
          */
         private long getStart(long localStart) {
             return localStart + coordinateSystemToZeroBaseStartAdjustmentValue;
         }
         /**
-         * Get zero base end location
-        * from range coordinate system  end location.
+         * Get 0-base end location
+        * from this coordinate system  end location.
          */
         private long getEnd(long localEnd) {
             return localEnd + coordinateSystemToZeroBaseEndAdjustmentValue;
@@ -356,11 +365,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * Regular expression in the form (left) - (right).
      */
     private static Pattern DASH_PATTERN = Pattern.compile("(\\d+)\\s*-\\s*(\\d+)");
+    /**
+     * Regular expression in the form (left) , (right).
+     */
     private static Pattern COMMA_PATTERN = Pattern.compile("(\\d+)\\s*,\\s*(\\d+)");
     /**
-     * Cache of previously built ranges. Need to keep caches
-     * for each coordinate system since that isn't used in equals or hashcode computations.
-     * Caches are SoftReferences mapped to their hashcodes
+     * Cache of previously built ranges.  
+     * This cache uses  {@link SoftReference}s
+     * so memory can be reclaimed if needed.
      */
     private static final Map<String, Range> CACHE;
     /**
@@ -377,8 +389,10 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * a cached instance instead (flyweight pattern).
      * @param start start coordinate inclusive.
      * @param end end coordinate inclusive.
-     * @return a {@link Range}.
-     * @throws IllegalArgumentException if <code>end &lt; start -1</code>
+     * @return a {@link Range}; never null but might 
+     * not be a new instance.
+     * @throws IllegalArgumentException if {@code end < start -1} 
+     * or if the resulting range length > {@link Long#MAX_VALUE}.
      */
     public static Range buildRange(long start, long end){
         return buildRange(CoordinateSystem.ZERO_BASED,start,end);
@@ -388,7 +402,8 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * of length 1 with the given coordinate in 
      * the {@link CoordinateSystem#ZERO_BASED} coordinate system.
      * @param singleCoordinate only coordinate in this range.
-     * @return a {@link Range}.
+     * @return a {@link Range}; never null but might 
+     * not be a new instance.
      */
     public static Range buildRange(long singleCoordinate){
         return buildRange(CoordinateSystem.ZERO_BASED,singleCoordinate);
@@ -400,40 +415,44 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * the given coordinate system.
      * @param coordinateSystem the {@link CoordinateSystem} to use.
      * @param singleCoordinate only coordinate in this range.
-     * @return a {@link Range}.
+     * @return a {@link Range}; never null but might 
+     * not be a new instance.
      * @throws NullPointerException if the coordinateSystem is null.
      */
     public static Range buildRange(CoordinateSystem coordinateSystem, long singleCoordinate){
         return buildRangeOfLength(coordinateSystem,singleCoordinate,1);
     }
     /**
-     * Factory method to build a {@link Range} object.
-     * with the following local start and end
-     * coordinates in  
-     * the given coordinate system. If the end = begin -1, then
+     * Factory method to build a {@link Range} object
+     * with the given coordinates
+     * specified in the given coordinate system. If after converting 
+     * the coordinates into 0-based coordinate,
+     * {@code end = start -1}, then
      * the returned range is equivalent to an empty range
-     * with the begin coordinate.
+     * at the start coordinate.
      * @param coordinateSystem the {@link CoordinateSystem} to use.
-     * @param begin the start coordinate in the given coordinateSystem.
-     * @param end the end coordinate in the given coordinateSystem.
-     * @return a {@link Range}.
+     * @param localStart the start coordinate in the given coordinateSystem.
+     * @param localEnd the end coordinate in the given coordinateSystem.
+     * @return a {@link Range}; never null but might 
+     * not be a new instance.
      * @throws NullPointerException if the coordinateSystem is null.
-     * @throws IllegalArgumentException if end < begin -1.
+     * @throws IllegalArgumentException if end < begin -1
+     * or if the resulting range length > {@link Long#MAX_VALUE}.
      */
-    public static synchronized Range buildRange(CoordinateSystem coordinateSystem,long begin, long end){
+    public static synchronized Range buildRange(CoordinateSystem coordinateSystem,long localStart, long localEnd){
         if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot build null coordinate system range");
         }
 
-        long zeroBasedStart = coordinateSystem.getStart(begin);
-        long zeroBasedEnd = coordinateSystem.getEnd(end);
+        long zeroBasedStart = coordinateSystem.getStart(localStart);
+        long zeroBasedEnd = coordinateSystem.getEnd(localEnd);
         final Range range;
         if(zeroBasedEnd >= zeroBasedStart) {
             range= buildNewRange(zeroBasedStart,zeroBasedEnd);            
         } else if (zeroBasedEnd == zeroBasedStart-1) {
             range = buildNewEmptyRange(zeroBasedStart);
         } else {
-            throw new IllegalArgumentException("Range coordinates" + begin + "," + end
+            throw new IllegalArgumentException("Range coordinates" + localStart + "," + localEnd
                 + " are not valid " + coordinateSystem + " coordinates");
         }
         return getFromCache(range);
@@ -444,7 +463,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * that can take up the fewest number of bytes is chosen.
      * @param zeroBasedStart
      * @param zeroBasedEnd
-     * @return
+     * @return a new Range instance.
      */
     private static Range buildNewRange(long zeroBasedStart, long zeroBasedEnd){
     	
@@ -457,33 +476,57 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     	
     	return buildNewSignedRange(zeroBasedStart, zeroBasedEnd);
     }
+    /**
+     * Create a new Range instance that requires signed values
+     * (probably because the range has negative coordinates).
+     *  The implementation
+     * that can take up the fewest number of bytes is chosen.
+     * @param zeroBasedStart
+     * @param zeroBasedEnd
+     * @return a new Range instance.
+     */
 	private static Range buildNewSignedRange(long zeroBasedStart,
 			long zeroBasedEnd) {
-		
-		//need to use signed
-    	if(zeroBasedStart <= Byte.MAX_VALUE && zeroBasedStart >=Byte.MIN_VALUE
-    			&& zeroBasedEnd <= Byte.MAX_VALUE && zeroBasedEnd >=Byte.MIN_VALUE
-    			){
+
+    	if(canFitInSignedByte(zeroBasedStart, zeroBasedEnd)){
     		return new ByteRange((byte)zeroBasedStart, (byte)zeroBasedEnd);
-    	}else if(zeroBasedStart <= Short.MAX_VALUE && zeroBasedStart >=Short.MIN_VALUE
-    			&& zeroBasedEnd <= Short.MAX_VALUE && zeroBasedEnd >=Short.MIN_VALUE
-    			){
+    	}else if(canFitInSignedShort(zeroBasedStart,zeroBasedEnd)){
     		return new ShortRange((short)zeroBasedStart, (short)zeroBasedEnd);
-    	}else if(zeroBasedStart <= Integer.MAX_VALUE && zeroBasedStart >=Integer.MIN_VALUE
-    			&& zeroBasedEnd <= Integer.MAX_VALUE && zeroBasedEnd >=Integer.MIN_VALUE
-    			){
+    	}else if(canFitInSignedInt(zeroBasedStart,zeroBasedEnd)){
     		return new IntRange((int)zeroBasedStart, (int)zeroBasedEnd);
-    	}
-    	
+    	}    	
     	return new LongRange(zeroBasedStart, zeroBasedEnd);
 	}
+	
+	private static boolean canFitInSignedByte(long start, long end){
+		return start <= Byte.MAX_VALUE && start >=Byte.MIN_VALUE
+    			&& end <= Byte.MAX_VALUE && end >=Byte.MIN_VALUE;
+	}
+	private static boolean canFitInSignedShort(long start, long end){
+		return start <= Short.MAX_VALUE && start >=Short.MIN_VALUE
+    			&& end <= Short.MAX_VALUE && end >=Short.MIN_VALUE;
+	}
+	private static boolean canFitInSignedInt(long start, long end){
+		return start <= Integer.MAX_VALUE && start >=Integer.MIN_VALUE
+    			&& end <= Integer.MAX_VALUE && end >=Integer.MIN_VALUE;
+	}
+	/**
+	 * Create a new Range instance which can use unsigned
+	 * values to save memory.  The implementation
+     * that can take up the fewest number of bytes is chosen.
+	 * @param zeroBasedStart
+	 * @param zeroBasedEnd
+	 * @param length
+	 * @return
+	 */
 	private static Range buildNewUnsignedRange(long zeroBasedStart,
 			long zeroBasedEnd, long length) {
+		//JVM spec of computing size of objects
+		//in heap includes padding
+		//to keep objects a multiple of 8 bytes.
+		//This means that not all byte-short-int-long combinations
+		//actually affect the object size.
 		if(zeroBasedStart <= UNSIGNED_BYTE_MAX){
-			//don't need to have different implementation of
-			//byte length since java class spec will padd the header
-			//so a byte length or short length will end up the same number of bytes
-			//in memory.
 			if(length <= UNSIGNED_BYTE_MAX){
 				return new UnsignedByteStartByteLengthRange((short) zeroBasedStart, (short)length);
 			}
@@ -515,6 +558,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 			return new LongStartIntLengthRange(zeroBasedStart, length);
 		}
 		return new LongRange(zeroBasedStart, zeroBasedEnd);
+
 	}
 	private static Range buildNewEmptyRange(long zeroBasedStart) {
 		if(zeroBasedStart >=0){
@@ -2023,17 +2067,19 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      *
      */
     private static final class UnsignedShortStartIntLengthRange extends Range{
-        /**
-         * The start coordinate.
-         * This coordinate stored relative to the zero base coordinate system
-         */
-        private final short start;
+    
 
         /**
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
         private final  int length;
+        
+        /**
+         * The start coordinate.
+         * This coordinate stored relative to the zero base coordinate system
+         */
+        private final short start;
         
     	private UnsignedShortStartIntLengthRange(int start, long length){
     		 this.start = IOUtil.toSignedShort(start);

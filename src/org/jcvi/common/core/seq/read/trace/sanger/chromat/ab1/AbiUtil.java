@@ -21,7 +21,12 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1;
 import java.util.Arrays;
 
 import org.jcvi.common.core.io.IOUtil;
-
+/**
+ * Utility class for working
+ * with Abi chromatogram files.
+ * @author dkatzel
+ *
+ */
 public final class AbiUtil {
 
 	private AbiUtil(){}
