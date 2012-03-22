@@ -59,5 +59,11 @@ public interface FastaRecord<S extends Symbol,T extends Sequence<S>> extends Fas
      */
     @Override
     String toString();
-
+    /**
+     * Two FastaRecords are equal
+     * if they both have the same id
+     * and the same sequence.
+     */
+    @Override
+    public boolean equals(Object o);
 }

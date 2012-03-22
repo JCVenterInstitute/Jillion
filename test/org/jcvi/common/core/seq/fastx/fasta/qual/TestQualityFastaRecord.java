@@ -81,12 +81,6 @@ public class TestQualityFastaRecord {
         TestUtil.assertEqualAndHashcodeSame(sut, sut);
     }
     @Test
-    public void equalsSameId(){
-        DefaultQualityFastaRecord sameIdAndComment = new DefaultQualityFastaRecord(
-                id,comment,createMock(QualitySequence.class));
-        TestUtil.assertEqualAndHashcodeSame(sut, sameIdAndComment);
-    }
-    @Test
     public void notEqualsNull(){
         assertFalse(sut.equals(null));
     }
@@ -97,13 +91,21 @@ public class TestQualityFastaRecord {
     @Test
     public void equalsDifferentComment(){
         DefaultQualityFastaRecord differentComment = new DefaultQualityFastaRecord(
-                id,null,createMock(QualitySequence.class));
+                id,null,encodedBytes);
         TestUtil.assertEqualAndHashcodeSame(sut, differentComment);
     }
     @Test
     public void notEqualsDifferentId(){
         DefaultQualityFastaRecord differentId = new DefaultQualityFastaRecord(
-                "different"+id,comment,createMock(QualitySequence.class));
+                "different"+id,comment,encodedBytes);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentId);
     }
+    
+    @Test
+    public void notEqualsDifferentSequence(){
+        DefaultQualityFastaRecord differentId = new DefaultQualityFastaRecord(
+                "different"+id,comment,new EncodedQualitySequence(RUN_LENGTH_CODEC,PhredQuality.valueOf(new byte[]{1,2,3,4,5})));
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentId);
+    }
+    
 }

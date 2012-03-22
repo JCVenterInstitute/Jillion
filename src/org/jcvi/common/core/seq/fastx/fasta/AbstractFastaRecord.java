@@ -29,7 +29,7 @@ import org.jcvi.common.core.util.CommonUtil;
 /**
  * {@code AbstractFastaRecord} is an abstract
  * implementation of {@link FastaRecord}
- * to handle common functionaility like
+ * to handle common functionality like
  * getting comments, formating etc.
  * 
  * @author jsitz
@@ -141,11 +141,11 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.identifier == null) ? 0 : this.identifier.hashCode());
+        result = prime * result + this.identifier.hashCode();
         result = prime * result + this.getSequence().hashCode();
         return result;
     }
-
+    
     @Override
     public boolean equals(Object obj)
     {

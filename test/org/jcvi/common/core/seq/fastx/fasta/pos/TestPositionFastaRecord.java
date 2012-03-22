@@ -28,6 +28,7 @@ import static org.easymock.EasyMock.createMock;
 
 import java.util.List;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaRecord;
 import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
@@ -106,12 +107,7 @@ public class TestPositionFastaRecord {
     public void equalsSameRef(){
         TestUtil.assertEqualAndHashcodeSame(sut, sut);
     }
-    @Test
-    public void equalsSameId(){
-        DefaultPositionFastaRecord<Sequence<ShortSymbol>> sameIdAndComment = new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(
-                id,comment,createMock(Sequence.class));
-        TestUtil.assertEqualAndHashcodeSame(sut, sameIdAndComment);
-    }
+   
     @Test
     public void notEqualsNull(){
         assertFalse(sut.equals(null));
@@ -123,13 +119,21 @@ public class TestPositionFastaRecord {
     @Test
     public void equalsDifferentComment(){
         DefaultPositionFastaRecord<Sequence<ShortSymbol>> differentComment = new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(
-                id,null,createMock(Sequence.class));
+                id,null,encodedPositions);
         TestUtil.assertEqualAndHashcodeSame(sut, differentComment);
     }
     @Test
     public void notEqualsDifferentId(){
         DefaultPositionFastaRecord<Sequence<ShortSymbol>> differentId = new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(
-                "different"+id,comment,createMock(Sequence.class));
+                "different"+id,comment,encodedPositions);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentId);
+    }
+    
+    @Test
+    public void notEqualsDifferentSequence(){
+    	Sequence<ShortSymbol> differentSequence = new EncodedSequence<ShortSymbol>(CODEC,
+    			encodedPositions.asList(Range.buildRange(0,5)));
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(
+                id,comment,differentSequence));
     }
 }
