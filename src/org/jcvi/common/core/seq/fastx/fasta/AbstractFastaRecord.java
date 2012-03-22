@@ -142,6 +142,7 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.identifier == null) ? 0 : this.identifier.hashCode());
+        result = prime * result + this.getSequence().hashCode();
         return result;
     }
 
@@ -155,8 +156,8 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
             return false;
         }
         AbstractFastaRecord<?,?> other = (AbstractFastaRecord<?,?>)obj;
-        return 
-        //CommonUtil.similarTo(getRecordBody(), other.getRecordBody())
+		return 
+        CommonUtil.similarTo(getSequence(), other.getSequence()) &&
         CommonUtil.similarTo(getId(), other.getId());
     }   
 }
