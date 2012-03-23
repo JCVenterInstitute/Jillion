@@ -521,15 +521,13 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 	 */
 	private static Range buildNewUnsignedRange(long zeroBasedStart,
 			long zeroBasedEnd, long length) {
+		
 		//JVM spec of computing size of objects
 		//in heap includes padding
 		//to keep objects a multiple of 8 bytes.
 		//This means that not all byte-short-int-long combinations
 		//actually affect the object size.
-		if(zeroBasedStart <= UNSIGNED_BYTE_MAX){
-			if(length <= UNSIGNED_BYTE_MAX){
-				return new UnsignedByteStartByteLengthRange((short) zeroBasedStart, (short)length);
-			}
+		if(zeroBasedStart <= UNSIGNED_BYTE_MAX){			
 			if(length <= UNSIGNED_SHORT_MAX){
 				return new UnsignedByteStartShortLengthRange((short) zeroBasedStart, (int)length);
 			}
@@ -1717,93 +1715,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 		}
     }
     
-    /**
-     * Range implementation that stores the 
-     * start coordinates as an unsigned byte
-     * and the length as an unsigned short.
-     * This is commonly used for next-gen length
-     * valid ranges or next-gen reads placed in the beginning
-     * of contigs/scaffolds.
-     * @author dkatzel
-     *
-     */
-    private static final class UnsignedByteStartByteLengthRange extends Range{
-        /**
-         * The start coordinate.
-         * This coordinate stored relative to the zero base coordinate system
-         */
-        private final byte start;
-
-        /**
-         * The end coordinate.
-         * This coordinate stored relative to the zero base coordinate system
-         */
-        private final  byte length;
-        
-    	private UnsignedByteStartByteLengthRange(short start, short length){
-    		this.start = IOUtil.toSignedByte(start);
-	        this.length = IOUtil.toSignedByte(length);
-	       
-    	}
-    	
-    	/**
-         * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
-         * getStart(ZERO_BASED)}.
-         *
-         * @return The left-hand (starting) coordinate.
-         * 
-         */
-    	@Override
-        public long getStart() {
-            return IOUtil.toUnsignedByte(start);
-        }
-    	 /**
-         * Fetch the 0-based right (end) coordinate.
-         * This is the same as {@link #getEnd(CoordinateSystem)
-         * getEnd(ZERO_BASED)}.
-         *
-         * @return The right-hand (ending) coordinate.
-         */
-    	@Override
-        public long getLength() {
-            return IOUtil.toUnsignedByte(length);
-        }
-
-    	@Override
-    	public long getEnd(){
-    		return getStart() + getLength() -1;
-    	}
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + length;
-			result = prime * result + start;
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
-				return false;
-			}
-			UnsignedByteStartByteLengthRange other = (UnsignedByteStartByteLengthRange) obj;
-			if (length != other.length) {
-				return false;
-			}
-			if (start != other.start) {
-				return false;
-			}
-			return true;
-		}
-    }
+   
     
     /**
      * Range implementation that stores the 
