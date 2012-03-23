@@ -29,9 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.ValueSizeStrategy;
 import org.jcvi.common.core.symbol.Sequence;
@@ -207,13 +209,41 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
     }
 
     @Override
+	public Iterator<Nucleotide> iterator() {
+		return asList().iterator();
+	}
+
+	@Override
     public List<Nucleotide> asList() {
-        List<Nucleotide> result = new ArrayList<Nucleotide>(length);
-        for(int i=0; i< length; i++){
-            result.add(get(i));
+		//get the reference bases as an array
+		//we convert to an array since
+		//we need to replace with our SNPs
+		//and its simpler than
+		//list.remove(offset); list.add(offset, snp);
+		//with boundary checking
+		//or 
+		//list.add(offset, snp);
+		//list.remove(offset+1);
+		//without resizing list everytime.
+		Nucleotide[] array= reference.asList(Range.buildRangeOfLength(startOffset,length)).toArray(new Nucleotide[0]);
+		if(encodedSnpsInfo !=null){
+			//pull out all of our SNP data at the same
+			//time and 
+	        ByteBuffer buf = ByteBuffer.wrap(encodedSnpsInfo);
+	        
+	        ValueSizeStrategy numSnpsSizeStrategy = ValueSizeStrategy.values()[buf.get()];
+			int size = numSnpsSizeStrategy.getNext(buf);
+	        ValueSizeStrategy sizeStrategy = ValueSizeStrategy.values()[buf.get()];
+	        int from = numSnpsSizeStrategy.getNumberOfBytesPerValue()+2+size*sizeStrategy.getNumberOfBytesPerValue();
+	        byte[] snpSubArray = Arrays.copyOfRange(encodedSnpsInfo, from, encodedSnpsInfo.length);
+	        BitSet bits = IOUtil.toBitSet(snpSubArray);
+	        for(int i=0; i<size; i++){        	
+	            int index = sizeStrategy.getNext(buf);
+				array[index]=getSnpValueFrom(bits, i);	            
+	        }
         }
-        return result;
-    }
+		return Arrays.asList(array);
+	}
     @Override
     public Nucleotide get(int index) {
         if(index <0 || index >= length){

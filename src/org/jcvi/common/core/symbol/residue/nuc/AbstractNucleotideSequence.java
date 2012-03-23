@@ -30,13 +30,6 @@ import org.jcvi.common.core.symbol.residue.AbstractResidueSequence;
 public abstract class AbstractNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements NucleotideSequence{
 
     /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Iterator<Nucleotide> iterator() {
-        return new NucleotideSequenceIterator();
-    }
-    /**
      * Iterator that doesn't need to decode
      * the entire sequence to get the iterator.
      * @author dkatzel
