@@ -24,6 +24,7 @@
 package org.jcvi.common.core.symbol.residue.nuc;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -137,6 +138,10 @@ final class DefaultNucleotideSequence extends AbstractNucleotideSequence{
     public int getNumberOfGaps() {
         return encodedBasecalls.getNumberOfGaps();
     }
+	@Override
+	public Iterator<Nucleotide> iterator() {
+		return encodedBasecalls.iterator();
+	}
 
     
 }
