@@ -133,4 +133,11 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
               
           };
       }
+	@Override
+	protected void handleClose() throws IOException {
+		//no-op
+		
+	}
+      
+      
 }

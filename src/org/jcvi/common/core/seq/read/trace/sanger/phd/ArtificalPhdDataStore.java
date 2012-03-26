@@ -113,13 +113,13 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
         return seqDataStore.size();
     }
 
-    @Override
-    public synchronized void close() throws IOException {
-        super.close();
-        seqDataStore.close();
-        qualDataStore.close();
-        comments.clear();
-    }
+	@Override
+	protected void handleClose() throws IOException {
+		 seqDataStore.close();
+	        qualDataStore.close();
+	        comments.clear();
+		
+	}
 
     
 }

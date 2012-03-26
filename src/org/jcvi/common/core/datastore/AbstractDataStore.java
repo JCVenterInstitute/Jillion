@@ -30,18 +30,29 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 public abstract class  AbstractDataStore<T> implements DataStore<T>{
     private boolean isClosed;
     
-    private synchronized void throwExceptionIfClosed() {
+    protected final synchronized void throwExceptionIfClosed() {
         if(isClosed){
             throw new IllegalStateException("DataStore is closed");
         }
     }
-    
+    /**
+     * This method is called
+     * when a datastore is closed
+     * via the {@link #close()}.
+     * Implementations should
+     * use this method to handle
+     * any resource cleanup.
+     */
+    protected abstract void handleClose() throws IOException;
     @Override
-    public synchronized void close() throws IOException {
+    public final synchronized void close() throws IOException {
+    	if(!isClosed){
+    		handleClose();
+    	}
         isClosed = true;
     }
 
-    public synchronized boolean isClosed() {
+    public final synchronized boolean isClosed() {
         return isClosed;
     }
     

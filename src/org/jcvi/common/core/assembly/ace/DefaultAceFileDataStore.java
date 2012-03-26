@@ -31,7 +31,7 @@ import java.util.Map;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
@@ -159,7 +159,7 @@ public final class DefaultAceFileDataStore implements AceContigDataStore{
         private final DataStoreFilter filter;
         
         public DefaultAceFileDataStoreBuilder(){
-            this(EmptyDataStoreFilter.INSTANCE);
+            this(AcceptingDataStoreFilter.INSTANCE);
         }
         public DefaultAceFileDataStoreBuilder(DataStoreFilter filter) {
             if(filter==null){

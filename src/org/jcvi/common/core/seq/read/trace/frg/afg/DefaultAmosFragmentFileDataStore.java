@@ -21,6 +21,7 @@ package org.jcvi.common.core.seq.read.trace.frg.afg;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,5 +170,10 @@ public class DefaultAmosFragmentFileDataStore extends AbstractDataStore<AmosFrag
         // TODO Auto-generated method stub
         
     }
+	@Override
+	protected void handleClose() throws IOException {
+		map.clear();
+		
+	}
 
 }

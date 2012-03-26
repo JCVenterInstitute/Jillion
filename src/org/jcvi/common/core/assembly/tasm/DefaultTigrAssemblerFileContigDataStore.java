@@ -47,10 +47,10 @@ public class DefaultTigrAssemblerFileContigDataStore extends AbstractTigrAssembl
     }
    
     @Override
-    public synchronized void close() throws IOException {
-        super.close();
+	protected void handleClose() throws IOException {
         contigs.clear();
-    }
+		
+	}
     @Override
     public synchronized TigrAssemblerContig get(String id)
             throws DataStoreException {

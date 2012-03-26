@@ -41,11 +41,11 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     List<AceContig> actualContigs;
     DefaultContigFileDataStore expectedContigDataStore;
     ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestAceParserMatchesAce2Contig.class);
-    
+    private final String pathToAceFile;
     AbstractTestAceParserMatchesAce2Contig(String aceFile, String contigFile) throws IOException{
         this.expectedContigDataStore = new DefaultContigFileDataStore(
         		RESOURCES.getFileAsStream(contigFile));
-        
+        pathToAceFile = aceFile;
         this.actualContigs = getContigList(
         		RESOURCES.getFile(aceFile));       
     }
@@ -56,6 +56,9 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
         assertContigsParsedCorrectly(actualContigs);
     }
    
+    protected File getAceFile() throws IOException{
+    	return RESOURCES.getFile(pathToAceFile);
+    }
 
     private void assertContigsParsedCorrectly(List<AceContig> actual) throws DataStoreException {
         assertEquals(expectedContigDataStore.size(), actual.size());

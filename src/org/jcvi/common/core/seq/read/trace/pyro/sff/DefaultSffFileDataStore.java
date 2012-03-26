@@ -29,7 +29,7 @@ import java.util.Collections;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
-import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 
 public final class DefaultSffFileDataStore {
@@ -51,7 +51,7 @@ public final class DefaultSffFileDataStore {
 		return builder.build();
 	}
 	public static SffFileVisitorDataStoreBuilder createVisitorBuilder() {
-		return new DefaultSffFileVisitorDataStoreBuilder(EmptyDataStoreFilter.INSTANCE);
+		return new DefaultSffFileVisitorDataStoreBuilder(AcceptingDataStoreFilter.INSTANCE);
 	}
 	public static SffFileVisitorDataStoreBuilder createVisitorBuilder(String singleReadId) {
 		return new DefaultSffFileVisitorDataStoreBuilder(singleReadId);

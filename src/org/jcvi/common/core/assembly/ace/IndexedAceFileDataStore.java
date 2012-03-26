@@ -206,9 +206,6 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
             }
             
         }
-
-       
-        
     }
     /**
      * {@code IndexedAceFileDataStoreBuilder} is a {@link AceContigDataStoreBuilder}

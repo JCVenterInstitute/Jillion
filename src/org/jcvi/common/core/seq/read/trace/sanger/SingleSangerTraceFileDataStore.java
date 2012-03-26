@@ -81,15 +81,12 @@ public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrac
         super.size();
         return 1;
     }
+	@Override
+	protected void handleClose() throws IOException {
+		//no-op
+		
+	}
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public synchronized void close() throws IOException {
-        super.close();
-        
-    }
 
    
 }

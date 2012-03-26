@@ -160,6 +160,7 @@ public final class InMemoryZipDataStore extends AbstractDataStore<InputStream> i
         super.size();
         return contents.size();
     }
+    
     /**
      * 
      * {@inheritDoc}
@@ -169,11 +170,11 @@ public final class InMemoryZipDataStore extends AbstractDataStore<InputStream> i
      * (but does not delete the file).
      */
     @Override
-    public synchronized void close() throws IOException {
-        super.close();
-        contents.clear();
-    }
-    /**
+	protected void handleClose() throws IOException {
+    	 contents.clear();
+		
+	}
+	/**
      * Add the entry with the given entry name and its corresponding
      * data to this datastore.
      * @param entryName

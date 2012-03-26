@@ -126,6 +126,11 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
    
 
     @Override
+	protected void handleClose() throws IOException {
+		//no-op
+		
+	}
+	@Override
     public synchronized CloseableIterator<Flowgram> iterator() {
         super.iterator();
       return SffFileIterator.createNewIteratorFor(sffFile);

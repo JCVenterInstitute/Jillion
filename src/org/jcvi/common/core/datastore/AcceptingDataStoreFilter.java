@@ -20,13 +20,14 @@
 package org.jcvi.common.core.datastore;
 
 /**
- * {@code EmptyDataStoreFilter} is an implementation of
- * {@link DataStoreFilter} which 
+ * {@code AcceptingDataStoreFilter} is an implementation of
+ * {@link DataStoreFilter} which all ids are
+ * always accepted.
  * @author dkatzel
  *
  *
  */
-public enum EmptyDataStoreFilter implements DataStoreFilter{
+public enum AcceptingDataStoreFilter implements DataStoreFilter{
     /**
      * This static singleton is the instance of EmptyDataStoreFilter
      * that should be used.

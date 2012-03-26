@@ -65,5 +65,8 @@ public interface FastaRecord<S extends Symbol,T extends Sequence<S>> extends Fas
      * and the same sequence.
      */
     @Override
-    public boolean equals(Object o);
+    boolean equals(Object o);
+    
+    @Override
+    int hashCode();
 }

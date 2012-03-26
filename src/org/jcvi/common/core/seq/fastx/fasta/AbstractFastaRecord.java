@@ -157,7 +157,7 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
         }
         AbstractFastaRecord<?,?> other = (AbstractFastaRecord<?,?>)obj;
 		return 
-        CommonUtil.similarTo(getSequence(), other.getSequence()) &&
-        CommonUtil.similarTo(getId(), other.getId());
+        CommonUtil.similarTo(getSequence(), other.getSequence()) 
+        && CommonUtil.similarTo(getId(), other.getId());
     }   
 }

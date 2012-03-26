@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -65,7 +65,7 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
      * that will visit all phd records (no filter).
      */
     public AbstractPhdFileVisitor(){
-        this(EmptyDataStoreFilter.INSTANCE);
+        this(AcceptingDataStoreFilter.INSTANCE);
     }
     /**
      * Create a new AbstractPhdFileVisitor with the given filter.  Any

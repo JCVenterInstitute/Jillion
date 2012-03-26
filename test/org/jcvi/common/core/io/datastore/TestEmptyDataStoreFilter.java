@@ -20,7 +20,7 @@
 package org.jcvi.common.core.io.datastore;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  */
 public class TestEmptyDataStoreFilter {
-    DataStoreFilter sut = EmptyDataStoreFilter.INSTANCE;
+    DataStoreFilter sut = AcceptingDataStoreFilter.INSTANCE;
     @Test
     public void alwaysTrue(){
         assertTrue(sut.accept("something"));
