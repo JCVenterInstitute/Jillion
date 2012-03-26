@@ -56,12 +56,11 @@ public class SimpleDataStore<T> extends AbstractDataStore<T> {
         super.size();
         return map.size();
     }
-    @Override
-    public synchronized void close() throws IOException {
-       super.close();
-       map.clear();
-        
-    }
+	@Override
+	protected void handleClose() throws IOException {
+		 map.clear();
+		
+	}
 
     
     

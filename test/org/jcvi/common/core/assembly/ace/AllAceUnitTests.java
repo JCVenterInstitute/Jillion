@@ -46,6 +46,8 @@ import org.junit.runners.Suite.SuiteClasses;
        TestDefaultAceFileDataStore.class,
        TestIndexAceFileOffsets.class,
        TestIndexedAceFileDataStore.class,
+       TestLargeAceFileDataStore.class,
+       
        TestAceFileWriter.class,
        TestHiLowAceContigPhdDatastore.class,
        TestAceContigTrimmer.class,

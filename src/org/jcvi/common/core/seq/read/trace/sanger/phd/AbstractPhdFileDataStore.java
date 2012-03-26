@@ -31,7 +31,7 @@ import java.util.Properties;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -75,7 +75,7 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
 
 
     public AbstractPhdFileDataStore(){
-        this(EmptyDataStoreFilter.INSTANCE);
+        this(AcceptingDataStoreFilter.INSTANCE);
     }
     
     public AbstractPhdFileDataStore(DataStoreFilter filter){

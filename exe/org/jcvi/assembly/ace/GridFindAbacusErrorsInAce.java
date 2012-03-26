@@ -62,7 +62,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
-import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
@@ -271,7 +271,7 @@ public class GridFindAbacusErrorsInAce {
             idFile =new File(commandLine.getOptionValue("e"));
             filter = new DefaultExcludeDataStoreFilter(parseIdsFrom(idFile));
         }else{
-            filter = EmptyDataStoreFilter.INSTANCE;
+            filter = AcceptingDataStoreFilter.INSTANCE;
         }
         return filter;
     }

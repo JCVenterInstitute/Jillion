@@ -37,7 +37,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
-import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
 import org.jcvi.common.io.idReader.IdReaderException;
@@ -84,7 +84,7 @@ public class CommandLineUtils {
         }else if(commandLine.hasOption("e")){
             filter = new DefaultExcludeDataStoreFilter(parseIdsFrom(new File(commandLine.getOptionValue("e"))));
         }else{
-            filter = EmptyDataStoreFilter.INSTANCE;
+            filter = AcceptingDataStoreFilter.INSTANCE;
         }
         return filter;
     }

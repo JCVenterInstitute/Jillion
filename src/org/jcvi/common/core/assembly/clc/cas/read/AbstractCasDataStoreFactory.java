@@ -23,7 +23,7 @@ import java.io.File;
 
 import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.EmptyDataStoreFilter;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
 
@@ -50,7 +50,7 @@ public abstract class AbstractCasDataStoreFactory implements CasDataStoreFactory
      * @param workingDir
      */
     public AbstractCasDataStoreFactory(File workingDir, CasTrimMap trimMap) {
-        this(workingDir, trimMap, EmptyDataStoreFilter.INSTANCE);
+        this(workingDir, trimMap, AcceptingDataStoreFilter.INSTANCE);
     }
     
     public AbstractCasDataStoreFactory(File workingDir, CasTrimMap trimMap, DataStoreFilter filter) {
