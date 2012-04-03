@@ -151,16 +151,20 @@ public class MultiThreadedReAbacusAce {
             AceContigDataStore datastore = builder.build();
             CloseableIterator<String> ids = datastore.getIds();
             List<Future<Void>> futures = new ArrayList<Future<Void>>();
-            while(ids.hasNext()){
-                String contigId = ids.next();
-                File tempOutputFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);
-                if(abacusErrorMap.containsKey(contigId)){
-                    Callable<Void> callable = new SingleContigReAbacusWorker(inputAceFile, abacusErrorMap, contigId, tempOutputFile, numberOfFlankingBases,maxMuscleMem);
-                    futures.add(executor.submit(callable));
-                }else{
-                    Callable<Void> callable = new StreamContigWorker(inputAceFile, contigOffsets.getRangeFor(contigId), tempOutputFile);
-                    futures.add(executor.submit(callable));
-                }
+            try{
+	            while(ids.hasNext()){
+	                String contigId = ids.next();
+	                File tempOutputFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);
+	                if(abacusErrorMap.containsKey(contigId)){
+	                    Callable<Void> callable = new SingleContigReAbacusWorker(inputAceFile, abacusErrorMap, contigId, tempOutputFile, numberOfFlankingBases,maxMuscleMem);
+	                    futures.add(executor.submit(callable));
+	                }else{
+	                    Callable<Void> callable = new StreamContigWorker(inputAceFile, contigOffsets.getRangeFor(contigId), tempOutputFile);
+	                    futures.add(executor.submit(callable));
+	                }
+	            }
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(ids);
             }
             boolean success=true;
             for(Future<Void> future : futures){
@@ -173,6 +177,7 @@ public class MultiThreadedReAbacusAce {
                 }catch(Exception e){
                     success=false;
                     e.printStackTrace();
+                    executor.shutdownNow();
                 }
             }
             if(!success){

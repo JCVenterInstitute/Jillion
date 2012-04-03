@@ -17,38 +17,17 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Apr 20, 2009
+ * Created on Jul 6, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.fastx.fasta;
+package org.jcvi.common.core.seq.fastx.fasta.pos;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.ShortSymbol;
 
-public final class SequenceFastaRecordUtil {
-   
-    
-    private static final Pattern ID_LINE_PATTERN = Pattern.compile("^>(\\S+)(\\s+(.*))?");
-    
-    private SequenceFastaRecordUtil(){}
-    
-    public static String parseCommentFromIdLine(String line) {
-        final Matcher idMatcher = ID_LINE_PATTERN.matcher(line);
-        if (idMatcher.find()){
-        	String comment= idMatcher.group(3);
-            if(!comment.isEmpty()){
-            	return comment;
-            }
-        }
-        return null;
-    }
 
-    public static String parseIdentifierFromIdLine(String line) {
-        final Matcher idMatcher = ID_LINE_PATTERN.matcher(line);
-        if (idMatcher.find()){
-            return idMatcher.group(1);           
-        }
-        return null;
-    }
+public interface PositionSequenceFastaRecord<T extends Sequence<ShortSymbol>> extends FastaRecord<ShortSymbol,T> {
+
 }

@@ -565,12 +565,8 @@ public class ReAbacusAceContigWorker {
                 AceFileWriter.writeAceContig(contig,phdDataStore, aceOut);
                 aceOut.flush();
                 System.out.println("done writing contig "+ contig.getId());
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (DataStoreException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            } catch (Exception e) {
+                throw new RuntimeException("error writing out contig "+contig.getId(), e);
             }
             
         }
@@ -584,8 +580,7 @@ public class ReAbacusAceContigWorker {
             try {
                 aceOut.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            	throw new RuntimeException("error closing temp ace output", e);
             }
         }
         

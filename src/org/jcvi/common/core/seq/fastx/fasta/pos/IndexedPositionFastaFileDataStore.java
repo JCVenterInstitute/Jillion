@@ -46,7 +46,7 @@ public final class IndexedPositionFastaFileDataStore implements PositionFastaDat
 	 * instance that will build an {@link IndexedPositionFastaFileDataStore}
 	 * using the given fastaFile.  This implementation of {@link PositionFastaDataStoreBuilderVisitor}
 	 * can only be used to parse a single fasta file (the one given) and does not support
-	 * {@link PositionFastaDataStoreBuilderVisitor#addFastaRecord(PositionFastaRecord)}.
+	 * {@link PositionFastaDataStoreBuilderVisitor#addFastaRecord(PositionSequenceFastaRecord)}.
 	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaVisitor}
 	 * interface.
 	 * @param fastaFile the fasta to create an {@link IndexedPositionFastaFileDataStore}
@@ -72,7 +72,7 @@ public final class IndexedPositionFastaFileDataStore implements PositionFastaDat
 	}
 
 	@Override
-	public PositionFastaRecord<Sequence<ShortSymbol>> get(String id)
+	public PositionSequenceFastaRecord<Sequence<ShortSymbol>> get(String id)
 			throws DataStoreException {
 		if(!contains(id)){
 			return null;
@@ -111,17 +111,17 @@ public final class IndexedPositionFastaFileDataStore implements PositionFastaDat
 	}
 
 	@Override
-	public CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> iterator() {
+	public CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator() {
 		return LargePositionFastaRecordIterator.createNewIteratorFor(fastaFile);
 	}
 	
 	private static final class IndexedPositionFastaDataStoreBuilderVisitor 
-	extends AbstractIndexedFastaDataStoreBuilderVisitor<ShortSymbol, Sequence<ShortSymbol>, PositionFastaRecord<Sequence<ShortSymbol>>, PositionFastaDataStore>
+	extends AbstractIndexedFastaDataStoreBuilderVisitor<ShortSymbol, Sequence<ShortSymbol>, PositionSequenceFastaRecord<Sequence<ShortSymbol>>, PositionFastaDataStore>
 			implements	PositionFastaDataStoreBuilderVisitor{
 
 			@Override
 		public IndexedPositionFastaDataStoreBuilderVisitor addFastaRecord(
-				PositionFastaRecord<Sequence<ShortSymbol>> fastaRecord) {
+				PositionSequenceFastaRecord<Sequence<ShortSymbol>> fastaRecord) {
 				//don't know why complier is complaining about type
 				//just cast for now the method will throw an exception anyway...
 			return (IndexedPositionFastaDataStoreBuilderVisitor) super.addFastaRecord(fastaRecord);

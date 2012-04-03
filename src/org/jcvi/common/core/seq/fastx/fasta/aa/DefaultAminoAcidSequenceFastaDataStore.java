@@ -9,6 +9,7 @@ import java.util.Map;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
@@ -31,7 +32,7 @@ public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSe
 	
 	
 	
-	private static final class DefaultAminoAcidSequenceFastaDataStoreBuilder implements AminoAcidSequenceFastaDataStoreBuilderVisitor{
+	private static final class DefaultAminoAcidSequenceFastaDataStoreBuilder extends AbstractFastaVisitor implements AminoAcidSequenceFastaDataStoreBuilderVisitor{
 		private final Map<String, AminoAcidSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, AminoAcidSequenceFastaRecord>();
 		@Override
 		public FastaDataStoreBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord, AminoAcidSequenceFastaDataStore> addFastaRecord(
@@ -45,15 +46,6 @@ public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSe
 			return new DefaultAminoAcidSequenceFastaDataStore(new SimpleDataStore<AminoAcidSequenceFastaRecord>(fastaRecords));
 		}
 
-		@Override
-		public boolean visitDefline(String defline) {
-			return true;
-		}
-
-		@Override
-		public boolean visitBodyLine(String bodyLine) {
-			return true;
-		}
 
 		@Override
 		public boolean visitRecord(String id, String comment, String entireBody) {
@@ -61,23 +53,6 @@ public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSe
 			return true;
 		}
 
-		@Override
-		public void visitLine(String line) {
-			// no-op
-			
-		}
-
-		@Override
-		public void visitFile() {
-			// no-op
-			
-		}
-
-		@Override
-		public void visitEndOfFile() {
-			// no-op
-			
-		}
 		
 	}
 	private final DataStore<AminoAcidSequenceFastaRecord> delegate;

@@ -12,7 +12,7 @@ import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code DefaultPositionFastaDataStoreBuilder} is a {@link PositionFastaDataStoreBuilder}
- * that stores all {@link PositionFastaRecord} added to it via the {@link #addFastaRecord(PositionFastaRecord)}
+ * that stores all {@link PositionSequenceFastaRecord} added to it via the {@link #addFastaRecord(PositionSequenceFastaRecord)}
  * in  a Map.  All fastas are stored in memory so if too many records are added, this object could
  * take up considerable memory and could cause an {@link OutOfMemoryError}.
  * @author dkatzel
@@ -20,7 +20,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  */
 public final class DefaultPositionFastaDataStoreBuilder implements PositionFastaDataStoreBuilder{
 
-	private final Map<String, PositionFastaRecord<Sequence<ShortSymbol>>> map = new LinkedHashMap<String, PositionFastaRecord<Sequence<ShortSymbol>>>();
+	private final Map<String, PositionSequenceFastaRecord<Sequence<ShortSymbol>>> map = new LinkedHashMap<String, PositionSequenceFastaRecord<Sequence<ShortSymbol>>>();
 	@Override
 	public PositionFastaDataStore build() {
 		return new PositionFastaDataStoreImpl(map);
@@ -28,7 +28,7 @@ public final class DefaultPositionFastaDataStoreBuilder implements PositionFasta
 
 	@Override
 	public DefaultPositionFastaDataStoreBuilder addFastaRecord(
-			PositionFastaRecord<Sequence<ShortSymbol>> fastaRecord) {
+			PositionSequenceFastaRecord<Sequence<ShortSymbol>> fastaRecord) {
 		if(fastaRecord ==null){
 			throw new NullPointerException("fasta record can not be null");
 		}
@@ -37,9 +37,9 @@ public final class DefaultPositionFastaDataStoreBuilder implements PositionFasta
 	}
 	
 	private static final class PositionFastaDataStoreImpl implements PositionFastaDataStore{
-		private final DataStore<PositionFastaRecord<Sequence<ShortSymbol>>> delegate;
-		private PositionFastaDataStoreImpl(Map<String, PositionFastaRecord<Sequence<ShortSymbol>>> map){
-			delegate = new SimpleDataStore<PositionFastaRecord<Sequence<ShortSymbol>>>(map);
+		private final DataStore<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> delegate;
+		private PositionFastaDataStoreImpl(Map<String, PositionSequenceFastaRecord<Sequence<ShortSymbol>>> map){
+			delegate = new SimpleDataStore<PositionSequenceFastaRecord<Sequence<ShortSymbol>>>(map);
 		}
 		@Override
 		public CloseableIterator<String> getIds() throws DataStoreException {
@@ -47,7 +47,7 @@ public final class DefaultPositionFastaDataStoreBuilder implements PositionFasta
 		}
 
 		@Override
-		public PositionFastaRecord<Sequence<ShortSymbol>> get(String id)
+		public PositionSequenceFastaRecord<Sequence<ShortSymbol>> get(String id)
 				throws DataStoreException {
 			return delegate.get(id);
 		}
@@ -74,7 +74,7 @@ public final class DefaultPositionFastaDataStoreBuilder implements PositionFasta
 		}
 
 		@Override
-		public CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> iterator() {
+		public CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator() {
 			return delegate.iterator();
 		}
 		

@@ -35,8 +35,8 @@ import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
-import org.jcvi.common.core.seq.fastx.fasta.SequenceFastaRecordUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code LargeNucleotideSequenceFastaFileDataStore} is an implementation
@@ -84,9 +84,9 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
     
     
     @Override
-    public boolean visitRecord(String id, String comment, String entireBody) { 
-        return true;
-    }
+	public EndOfBodyReturnCode visitEndOfBody() {
+		return EndOfBodyReturnCode.KEEP_PARSING;
+	}
 
     @Override
     public boolean contains(String id) throws DataStoreException {
@@ -186,7 +186,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
             //to include our id as a prefix (for example a TIGR "B" read)
             while(!done){
                 if(line.startsWith(expectedHeader)){
-                    String currentId= SequenceFastaRecordUtil.parseIdentifierFromIdLine(line);
+                    String currentId= FastaUtil.parseIdentifierFromIdLine(line);
                     if(id.equals(currentId)){
                         done=true;
                         //done

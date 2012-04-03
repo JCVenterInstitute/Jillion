@@ -28,8 +28,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.pos.PositionFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.pos.PositionSequenceFastaRecord;
 import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.GlyphCodec;
@@ -43,7 +43,7 @@ public abstract class AbstractTestPositionsFastaDataStore {
     private static final String QUAL_FILE_PATH = "files/1119369023656.peak";
     private static final GlyphCodec<ShortSymbol> CODEC = DefaultShortGlyphCodec.getInstance();
     
-    PositionFastaRecord<Sequence<ShortSymbol>> expected = new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(
+    PositionSequenceFastaRecord<Sequence<ShortSymbol>> expected = new DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>>(
             "1119369023656", 
             new EncodedSequence<ShortSymbol>(CODEC,ShortGlyphFactory.getInstance().getGlyphsFor(
             new short[]{
@@ -119,12 +119,12 @@ public abstract class AbstractTestPositionsFastaDataStore {
     ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultPositionsFastaDataStore.class);
     @Test
     public void parseFile() throws Exception{
-        DataStore<PositionFastaRecord<Sequence<ShortSymbol>>> sut = 
+        DataStore<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> sut = 
         	createPositionFastaMap(
         			RESOURCES.getFile(QUAL_FILE_PATH));
        assertEquals(1, sut.size());
         assertEquals(expected, sut.get("1119369023656"));
     }
     
-    protected abstract DataStore<PositionFastaRecord<Sequence<ShortSymbol>>> createPositionFastaMap(File fastaFile) throws Exception;
+    protected abstract DataStore<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> createPositionFastaMap(File fastaFile) throws Exception;
 }

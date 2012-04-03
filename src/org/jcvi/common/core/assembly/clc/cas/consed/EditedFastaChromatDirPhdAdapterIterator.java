@@ -25,7 +25,7 @@ import java.util.Properties;
 
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.pos.LargePositionFastaRecordIterator;
-import org.jcvi.common.core.seq.fastx.fasta.pos.PositionFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.pos.PositionSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaIterator;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
@@ -47,7 +47,7 @@ import org.joda.time.DateTime;
 public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaConsedPhdAdaptedIterator{
 
     private final CloseableIterator<QualitySequenceFastaRecord> qualityIterator;
-    private final CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> positionIterator;
+    private final CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> positionIterator;
     
     private QualitySequenceFastaRecord currentQualityFasta;
     private SangerPeak currentPeaks;
@@ -71,7 +71,7 @@ public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaCons
      * @param fastaFile
      * @return
      */
-    private CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> createPositionIterator(
+    private CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> createPositionIterator(
             File fastaFile) {
         File posFile = getFileLike(fastaFile,"pos");
         if(!posFile.exists()){

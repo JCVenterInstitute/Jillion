@@ -42,24 +42,24 @@ final class DefaultPositionFastaRecordFactory implements PositionFastaRecordFact
         return INSTANCE;
     }
     @Override
-    public PositionFastaRecord<Sequence<ShortSymbol>> createFastaRecord(
+    public PositionSequenceFastaRecord<Sequence<ShortSymbol>> createFastaRecord(
             String id, String comments, String recordBody) {
         return buildFastaRecord(id, comments, recordBody);
         
     }
 
     @Override
-    public PositionFastaRecord<Sequence<ShortSymbol>> createFastaRecord(
+    public PositionSequenceFastaRecord<Sequence<ShortSymbol>> createFastaRecord(
             String id, String recordBody) {
         return createFastaRecord(id, null,recordBody);
     }
     
     private static final ShortGlyphFactory GLYPH_FACTORY  = ShortGlyphFactory.getInstance();
 
-    private static PositionFastaRecord<Sequence<ShortSymbol>> buildFastaRecord(
+    private static PositionSequenceFastaRecord<Sequence<ShortSymbol>> buildFastaRecord(
             String identifier, String comment, CharSequence sequence) {
         List<ShortSymbol> positions = parsePositions(sequence);
-        return new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(identifier, comment, 
+        return new DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>>(identifier, comment, 
                 new EncodedSequence<ShortSymbol>(DefaultShortGlyphCodec.getInstance(),positions));
     }
 

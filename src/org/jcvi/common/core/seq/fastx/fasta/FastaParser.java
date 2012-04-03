@@ -31,15 +31,26 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Semaphore;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor.DeflineReturnCode;
+import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor.EndOfBodyReturnCode;
 /**
  * {@code FastaParser} is a utility class
  * to parse Fasta formated files.
  * @author dkatzel
  */
 public final class FastaParser {
+	
+	private static final Pattern TRAILING_WHITE_SPACE_PATTERN = Pattern.compile("\\s+$");
+	
+	private static boolean endsWithWhiteSpace(String line){
+		Matcher m = TRAILING_WHITE_SPACE_PATTERN.matcher(line);
+		return m.find();
+	}
     /**
      * private constructor.
      */
@@ -116,12 +127,10 @@ public final class FastaParser {
     
     private static class ParserState implements Closeable{
         private boolean keepParsing;
-        private String currentId;
-        private String currentComment;
-        private StringBuilder currentBody;
         private final TextLineParser parser;
         private boolean done;
-        
+        private boolean skipCurrentRecord;
+        private boolean seenFirstDefline=true;
         ParserState(InputStream in) throws IOException{
             if(in ==null){
                 throw new NullPointerException("input stream can not be null");
@@ -134,7 +143,11 @@ public final class FastaParser {
             return done;
         }
         
-        public String getNextLine() throws IOException{
+        public boolean skipCurrentRecord() {
+			return skipCurrentRecord;
+		}
+
+		public String getNextLine() throws IOException{
             String nextLine= parser.nextLine();
             if(!parser.hasNextLine()){
                 done = true;
@@ -151,9 +164,11 @@ public final class FastaParser {
         }
         
         public void visitFinalRecord(FastaVisitor visitor){
-            if(keepParsing && currentBody!=null){
-                visitor.visitRecord(currentId, currentComment, currentBody.toString());
-                currentBody = null;
+            if(keepParsing && !skipCurrentRecord){
+            	EndOfBodyReturnCode ret =visitor.visitEndOfBody();
+            	if(ret ==null){
+            		throw new IllegalStateException("return from visitDefline can not be null");                	
+            	}
             }
         }
         
@@ -177,14 +192,31 @@ public final class FastaParser {
                 
                 visitor.visitLine(lineWithCR);
                 String lineWithoutCR = lineWithCR.substring(0, lineWithCR.length()-1);
-                if(parserState.currentBody!=null){                        
-                    parserState.keepParsing = visitor.visitRecord(parserState.currentId, parserState.currentComment, parserState.currentBody.toString());
-                    parserState.currentBody = null;
+                if(!parserState.seenFirstDefline && !parserState.skipCurrentRecord()){  
+                	EndOfBodyReturnCode ret =visitor.visitEndOfBody();
+                	if(ret ==null){
+                		throw new IllegalStateException("return from visitDefline can not be null");
+                	}
+                	if(ret == EndOfBodyReturnCode.KEEP_PARSING){
+                		parserState.keepParsing = true;
+                	}else{
+                		parserState.keepParsing = false;
+                	}
                 }                    
-                parserState.keepParsing = visitor.visitDefline(lineWithoutCR);
-                parserState.currentId = SequenceFastaRecordUtil.parseIdentifierFromIdLine(lineWithCR);
-                parserState.currentComment = SequenceFastaRecordUtil.parseCommentFromIdLine(lineWithCR);
-            
+                DeflineReturnCode visitDefline = visitor.visitDefline(lineWithoutCR);
+                if(visitDefline ==null){
+                	throw new IllegalStateException("return from visitDefline can not be null");
+                }
+                if(visitDefline == DeflineReturnCode.SKIP_CURRENT_RECORD){
+                	parserState.skipCurrentRecord=true;
+                	parserState.keepParsing=true;
+                }else if(visitDefline == DeflineReturnCode.STOP_PARSING){
+                	parserState.keepParsing=false;
+                }else{
+                	parserState.skipCurrentRecord=false;
+                	parserState.keepParsing=true;
+                }
+                parserState.seenFirstDefline = false;
                 return parserState;
             }
             
@@ -199,14 +231,16 @@ public final class FastaParser {
             ParserState sectionSpecificHandle(String lineWithCR, ParserState parserState,FastaVisitor visitor){
                 
                 visitor.visitLine(lineWithCR);
-                String lineWithoutCR = lineWithCR.substring(0, lineWithCR.length()-1);
-                
-                parserState.keepParsing = visitor.visitBodyLine(lineWithoutCR);
-                if(parserState.currentBody ==null){
-                    parserState.currentBody= new StringBuilder();
+                final String lineWithoutCR ;
+                if(endsWithWhiteSpace(lineWithCR)){
+                	lineWithoutCR = lineWithCR.trim();
+                }else{
+                	lineWithoutCR = lineWithCR;
                 }
-                parserState.currentBody.append(lineWithCR);
                 
+                if(!parserState.skipCurrentRecord()){
+                	visitor.visitBodyLine(lineWithoutCR);
+                }
                 return parserState;
             }
             

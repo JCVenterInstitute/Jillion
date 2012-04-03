@@ -26,7 +26,9 @@ package org.jcvi.common.core.seq.fastx.fasta;
 
 public abstract class AbstractFastaVisitor implements FastaVisitor{
 
-   
+   private String currentId;
+   private String currentComment;
+   private StringBuilder currentBody;
 
     @Override
     public void visitEndOfFile() {
@@ -39,17 +41,46 @@ public abstract class AbstractFastaVisitor implements FastaVisitor{
     }
 
     @Override
-    public boolean visitBodyLine(String bodyLine) {
-        return true;
+    public void visitBodyLine(String bodyLine) {
+    	if(bodyLine !=null){
+	    	currentBody.append(bodyLine)
+	    	.append(" "); //append white space so we separate numeric values
+    	}
     }
 
     @Override
-    public boolean visitDefline(String defline) {
-        return true;
+    public DeflineReturnCode visitDefline(String defline) {
+    	currentId = FastaUtil.parseIdentifierFromIdLine(defline);
+    	currentComment = FastaUtil.parseCommentFromIdLine(defline);
+    	currentBody = new StringBuilder();
+        return DeflineReturnCode.VISIT_CURRENT_RECORD;
     }
 
     @Override
     public void visitFile() {
         
     }
+
+	@Override
+	public EndOfBodyReturnCode visitEndOfBody() {
+		boolean keepParsing = visitRecord(currentId, currentComment, currentBody.toString().trim());
+		return keepParsing? FastaVisitor.EndOfBodyReturnCode.KEEP_PARSING : FastaVisitor.EndOfBodyReturnCode.STOP_PARSING;
+	}
+
+	 /**
+     * Visit the entire current fasta record which
+     * includes information parsed from the most recent 
+     * call to {@link #visitDefline(String)} and any
+     * {@link #visitBodyLine(String)}s.
+     * @param id the id of the fasta record.
+     * @param comment the comment if there is one (will be null
+     * if no comment exists.
+     * @param entireBody the entire body of the fasta record
+     * which might include new lines.
+     * @return {@code true} if the parser should keep parsing
+     * {@code false} if it should stop parsing.
+     */
+	protected abstract boolean visitRecord(String id, String comment, String entireBody);
+    
+    
 }

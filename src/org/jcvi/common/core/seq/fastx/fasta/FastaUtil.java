@@ -19,6 +19,9 @@
 
 package org.jcvi.common.core.seq.fastx.fasta;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * 
  * {@code FastaUtil} is a utility class
@@ -39,8 +42,35 @@ public final class FastaUtil {
      */
     public static final char HEADER_PREFIX = '>';
     
+    
+    private static final Pattern ID_LINE_PATTERN = Pattern.compile("^>(\\S+)(\\s+(.*))?");
+
     private FastaUtil(){
     	
+    }
+    
+
+    
+    public static String parseCommentFromIdLine(String line) {
+        final Matcher idMatcher = ID_LINE_PATTERN.matcher(line);
+        if (idMatcher.find()){
+        	String comment= idMatcher.group(3);
+        	if(comment ==null){
+        		return null;
+        	}
+            if(!comment.isEmpty()){
+            	return comment;
+            }
+        }
+        return null;
+    }
+
+    public static String parseIdentifierFromIdLine(String line) {
+        final Matcher idMatcher = ID_LINE_PATTERN.matcher(line);
+        if (idMatcher.find()){
+            return idMatcher.group(1);           
+        }
+        return null;
     }
     
 }
