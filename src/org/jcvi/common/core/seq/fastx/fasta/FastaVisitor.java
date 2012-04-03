@@ -32,33 +32,43 @@ import org.jcvi.common.core.io.TextFileVisitor;
  *
  */
 public interface FastaVisitor extends TextFileVisitor{
+	enum DeflineReturnCode{
+		SKIP_CURRENT_RECORD,
+		VISIT_CURRENT_RECORD,
+		STOP_PARSING
+	}
+	
+	enum EndOfBodyReturnCode{
+		KEEP_PARSING,
+		STOP_PARSING
+	}
     /**
      * Visit the definition line of the current fasta record.
      * @param defline a string containing all the text of
      * the def line including any comments and white space.
-     * @return {@code true} if the parser should keep parsing
-     * {@code false} if it should stop parsing.
+     * @return a non-null instance of {@link DeflineReturnCode}
+     * telling the parser how it should proceed. 
+     * Returning null will throw an {@link IllegalStateException}.
      */
-    boolean visitDefline(String defline);
+	DeflineReturnCode visitDefline(String defline);
     /**
      * Visit a line of the body of the fasta record.
-     * @param bodyLine
-     * @return {@code true} if the parser should keep parsing
-     * {@code false} if it should stop parsing.
+     * This line is only called if {@link #visitDefline(String)}
+     * returns {@link DeflineReturnCode#VISIT_CURRENT_RECORD}.
+     * @param bodyLine the current line as a String (including
+     * white space).  Will never be null and shouldn't
+     * be empty.
      */
-    boolean visitBodyLine(String bodyLine);
+    void visitBodyLine(String bodyLine);
     /**
-     * Visit the entire current fasta record which
-     * includes information parsed from the most recent 
-     * call to {@link #visitDefline(String)} and any
-     * {@link #visitBodyLine(String)}s.
-     * @param id the id of the fasta record.
-     * @param comment the comment if there is one (will be null
-     * if no comment exists.
-     * @param entireBody the entire body of the fasta record
-     * which might include new lines.
-     * @return {@code true} if the parser should keep parsing
-     * {@code false} if it should stop parsing.
+     * The current fasta record body has been completely
+     * visited.  This method is only called
+     * if {@link #visitDefline(String)}
+     * returns {@link DeflineReturnCode#VISIT_CURRENT_RECORD}.
+     * @return a non-null instance of {@link EndOfBodyReturnCode}
+     * which tells the parser how it should proceed.
+     * Returning null will throw an {@link IllegalStateException}.
      */
-    boolean visitRecord(String id, String comment, String entireBody);
+    EndOfBodyReturnCode visitEndOfBody();
+  
 }

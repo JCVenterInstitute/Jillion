@@ -76,9 +76,9 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     }
     
     @Override
-    public boolean visitRecord(String id, String comment, String entireBody) {
-        return true;
-    }
+	public EndOfBodyReturnCode visitEndOfBody() {
+		return EndOfBodyReturnCode.KEEP_PARSING;
+	}
 
     @Override
     public boolean contains(String id) throws DataStoreException {

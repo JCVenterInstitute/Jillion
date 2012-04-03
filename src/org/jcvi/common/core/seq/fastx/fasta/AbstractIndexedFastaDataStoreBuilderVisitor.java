@@ -24,7 +24,7 @@ import org.jcvi.common.core.util.IndexedFileRange;
  * @param <F> the {@link FastaRecord} type.
  * @param <D> the {@link DataStore} type to build.
  */
-public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>, D extends DataStore<F>> implements FastaFileDataStoreBuilderVisitor<S,T,F,D>{
+public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>, D extends DataStore<F>> extends AbstractFastaVisitor implements FastaFileDataStoreBuilderVisitor<S,T,F,D>{
 	private final IndexedFileRange index = new DefaultIndexedFileRange();
 	private long currentStartOffset=0;
 	private long currentOffset=0;
@@ -61,18 +61,6 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 	}
 
 	@Override
-	public synchronized boolean visitDefline(String defline) {
-		throwErrorIfDone();
-		return true;
-	}
-
-	@Override
-	public synchronized boolean visitBodyLine(String bodyLine) {
-		throwErrorIfDone();
-		return true;
-	}
-
-	@Override
 	public synchronized boolean visitRecord(String id, String comment, String entireBody) {
 		throwErrorIfDone();
 		lastId = id;
@@ -92,7 +80,7 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 	@Override
 	public synchronized void visitFile() {
 		throwErrorIfDone();
-		
+		super.visitFile();
 	}
 	private synchronized void throwErrorIfDone(){
 		if(doneReadingFile){

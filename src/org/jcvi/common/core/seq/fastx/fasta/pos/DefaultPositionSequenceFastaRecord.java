@@ -29,13 +29,13 @@ import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 
-public class DefaultPositionFastaRecord <T extends Sequence<ShortSymbol>> extends AbstractFastaRecord<ShortSymbol,T> implements PositionFastaRecord<T>{
+public class DefaultPositionSequenceFastaRecord <T extends Sequence<ShortSymbol>> extends AbstractFastaRecord<ShortSymbol,T> implements PositionSequenceFastaRecord<T>{
 
     private final T positions;
-    public DefaultPositionFastaRecord(String id, T positions){
+    public DefaultPositionSequenceFastaRecord(String id, T positions){
         this(id, null, positions);
     }
-    public DefaultPositionFastaRecord(String id, String comments, T positions){
+    public DefaultPositionSequenceFastaRecord(String id, String comments, T positions){
         super(id,comments);
         this.positions = positions;
         
@@ -67,7 +67,7 @@ public class DefaultPositionFastaRecord <T extends Sequence<ShortSymbol>> extend
     
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof DefaultPositionFastaRecord)){
+        if(!(obj instanceof DefaultPositionSequenceFastaRecord)){
             return false;
         }
         return super.equals(obj);

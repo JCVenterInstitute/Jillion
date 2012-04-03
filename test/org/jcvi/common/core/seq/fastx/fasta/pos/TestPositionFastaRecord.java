@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionSequenceFastaRecord;
 import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.GlyphCodec;
@@ -52,9 +52,9 @@ public class TestPositionFastaRecord {
         new EncodedSequence<ShortSymbol>(CODEC,
                 ShortGlyphFactory.getInstance().getGlyphsFor(positions));
     
-    DefaultPositionFastaRecord<Sequence<ShortSymbol>> sut = new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(id,comment, encodedPositions);
+    DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>> sut = new DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>>(id,comment, encodedPositions);
     
-    private String buildExpectedRecord(DefaultPositionFastaRecord<Sequence<ShortSymbol>> fasta){
+    private String buildExpectedRecord(DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>> fasta){
         StringBuilder builder= new StringBuilder();
         builder.append(">")
                     .append(fasta.getId());
@@ -89,7 +89,7 @@ public class TestPositionFastaRecord {
         assertConstructedFieldsCorrect(sut);
     }
 
-    private void assertConstructedFieldsCorrect(DefaultPositionFastaRecord<Sequence<ShortSymbol>> fasta) {
+    private void assertConstructedFieldsCorrect(DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>> fasta) {
         assertEquals(id, fasta.getId());        
         final String expectedRecord = buildExpectedRecord(fasta);
         assertEquals(expectedRecord, fasta.toFormattedString());
@@ -97,7 +97,7 @@ public class TestPositionFastaRecord {
     }
     @Test
     public void constructorWithoutComment(){
-        DefaultPositionFastaRecord<Sequence<ShortSymbol>> noComment = new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(id,encodedPositions);
+        DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>> noComment = new DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>>(id,encodedPositions);
         
         assertNull(noComment.getComment());
         assertConstructedFieldsCorrect(noComment);
@@ -118,13 +118,13 @@ public class TestPositionFastaRecord {
     }
     @Test
     public void equalsDifferentComment(){
-        DefaultPositionFastaRecord<Sequence<ShortSymbol>> differentComment = new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(
+        DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>> differentComment = new DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>>(
                 id,null,encodedPositions);
         TestUtil.assertEqualAndHashcodeSame(sut, differentComment);
     }
     @Test
     public void notEqualsDifferentId(){
-        DefaultPositionFastaRecord<Sequence<ShortSymbol>> differentId = new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(
+        DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>> differentId = new DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>>(
                 "different"+id,comment,encodedPositions);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentId);
     }
@@ -133,7 +133,7 @@ public class TestPositionFastaRecord {
     public void notEqualsDifferentSequence(){
     	Sequence<ShortSymbol> differentSequence = new EncodedSequence<ShortSymbol>(CODEC,
     			encodedPositions.asList(Range.buildRange(0,5)));
-        TestUtil.assertNotEqualAndHashcodeDifferent(sut, new DefaultPositionFastaRecord<Sequence<ShortSymbol>>(
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, new DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>>(
                 id,comment,differentSequence));
     }
 }

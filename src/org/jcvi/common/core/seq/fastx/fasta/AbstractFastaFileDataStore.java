@@ -72,13 +72,12 @@ public abstract class AbstractFastaFileDataStore<S extends Symbol, T extends Seq
     }
 
     @Override
-    public boolean visitBodyLine(String bodyLine) {
-        return true;
+    public void visitBodyLine(String bodyLine) {
     }
 
     @Override
-    public boolean visitDefline(String defline) {
-        return true;
+    public DeflineReturnCode visitDefline(String defline) {
+        return DeflineReturnCode.VISIT_CURRENT_RECORD;
     }
 
 }

@@ -70,16 +70,17 @@ public final class LargePositionFastaFileDataStore extends AbstractPositionFasta
 	    this.fastaFile = fastaFile;
 	}
 	
-	@Override
-	public boolean visitRecord(String id, String comment, String entireBody) {   
-	    return true;
-	}
+	
 	
 	@Override
+	public EndOfBodyReturnCode visitEndOfBody() {
+		return EndOfBodyReturnCode.KEEP_PARSING;
+	}
+	@Override
 	public boolean contains(String id) throws DataStoreException {
-		CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> iter =iterator();
+		CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iter =iterator();
 		while(iter.hasNext()){
-			PositionFastaRecord<Sequence<ShortSymbol>> fasta = iter.next();
+			PositionSequenceFastaRecord<Sequence<ShortSymbol>> fasta = iter.next();
 			if(fasta.getId().equals(id)){
 				IOUtil.closeAndIgnoreErrors(iter);
 				return true;
@@ -90,12 +91,12 @@ public final class LargePositionFastaFileDataStore extends AbstractPositionFasta
 	}
 	
 	@Override
-	public synchronized PositionFastaRecord<Sequence<ShortSymbol>> get(String id)
+	public synchronized PositionSequenceFastaRecord<Sequence<ShortSymbol>> get(String id)
 	        throws DataStoreException {
 		
-		CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> iter =iterator();
+		CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iter =iterator();
 		while(iter.hasNext()){
-			PositionFastaRecord<Sequence<ShortSymbol>> fasta = iter.next();
+			PositionSequenceFastaRecord<Sequence<ShortSymbol>> fasta = iter.next();
 			if(fasta.getId().equals(id)){
 				IOUtil.closeAndIgnoreErrors(iter);
 				return fasta;
@@ -130,7 +131,7 @@ public final class LargePositionFastaFileDataStore extends AbstractPositionFasta
 	
 	
 	@Override
-	public synchronized CloseableIterator<PositionFastaRecord<Sequence<ShortSymbol>>> iterator() {
+	public synchronized CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator() {
 	    checkNotYetClosed();
 	    LargePositionFastaRecordIterator iter= new LargePositionFastaRecordIterator(fastaFile);
 	        iter.start();

@@ -201,9 +201,6 @@ public final class CasUtil {
         if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
             regionsToConsider.remove(lastIndex);
         }
-        if("RUXIA11T26C03NSP5A0F".equals(readId)){
-        	System.out.println("here");
-        }
         try{
             builder.addAlignmentRegions(regionsToConsider,gappedReference);
         }catch(Throwable t){

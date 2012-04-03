@@ -27,6 +27,8 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor.DeflineReturnCode;
+import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor.EndOfBodyReturnCode;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,22 +65,22 @@ public class TestFastaParser {
         mockVisitor.visitFile();
         
         mockVisitor.visitLine(">IWKNA01T07A01PB2A1101R comment1\n");
-        expect(mockVisitor.visitDefline(">IWKNA01T07A01PB2A1101R comment1")).andReturn(true);
+        expect(mockVisitor.visitDefline(">IWKNA01T07A01PB2A1101R comment1")).andReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
         
-        expect(mockVisitor.visitBodyLine("CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("AACTGACGACCCACTTGTTCTTTTGAAAGTGAATCCACCAAAGCTGAAAGATGAGCTAAT")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("CCTTAAGCCCATTGCTGCCTTGCATATGTCCACAGCTTGTTCCTCAGTTGGATTTTGTCG")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("AAGAATGTCTACCATCCTTATTCCCCCAATCTGTGTGCTATGGCACATCTCCAATAAAGA")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("TGCTAGTGGGTCTGCTGATACCGTTGCTCTTCTTACTATGTTCCTGGCAGCAATAATCAA")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("GCTTTGGTCAACATCATCATTTCTCACCTCCCCTCCTGGAGTATACATTTGCTCCCAGCA")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("TGTTCCCTGGGTCAAATGCAGCACTTCAATATAGACACTGCTTGTTCCACCAGCCACTGG")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("GAGGAATCTCGTTTTGCGGACCAACTCTCTTTCTAGCATGTATGCAACCATTAAGGGGGC")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("AATTTTGCAGTCCTGGAGTTCTTCCTTCTTCTCTTTTGTTATCGTCAGCTGTGATTCCGA")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("TGTTAGTATTCTAGCTCCCACTTCATTTGGGAAAACAACTTCCATGATTACATCCTGCGC")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("CTCTTTGGCACTGAGGTCTGCGTGGCCAGGGTTTATGTCAACCCTCCGTCTTATTTTAAC")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("TTGATTTCTGAAGTGGACAGGGCCAAAGGTCCCGTGTTTCAATCTTTCGACTTTTTCAAA")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("ATAAGTTTTATATACCTTTGGGTAGTGAACTGTACTTGTTGTTGGTCCATTCCTATTCCA")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("CCATGTTACAGCTAGAGGTGATACCATTACTCGGTCTGAGCCGGCA")).andReturn(true);
+        mockVisitor.visitBodyLine("CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT");
+        mockVisitor.visitBodyLine("AACTGACGACCCACTTGTTCTTTTGAAAGTGAATCCACCAAAGCTGAAAGATGAGCTAAT");
+        mockVisitor.visitBodyLine("CCTTAAGCCCATTGCTGCCTTGCATATGTCCACAGCTTGTTCCTCAGTTGGATTTTGTCG");
+        mockVisitor.visitBodyLine("AAGAATGTCTACCATCCTTATTCCCCCAATCTGTGTGCTATGGCACATCTCCAATAAAGA");
+        mockVisitor.visitBodyLine("TGCTAGTGGGTCTGCTGATACCGTTGCTCTTCTTACTATGTTCCTGGCAGCAATAATCAA");
+        mockVisitor.visitBodyLine("GCTTTGGTCAACATCATCATTTCTCACCTCCCCTCCTGGAGTATACATTTGCTCCCAGCA");
+        mockVisitor.visitBodyLine("TGTTCCCTGGGTCAAATGCAGCACTTCAATATAGACACTGCTTGTTCCACCAGCCACTGG");
+        mockVisitor.visitBodyLine("GAGGAATCTCGTTTTGCGGACCAACTCTCTTTCTAGCATGTATGCAACCATTAAGGGGGC");
+        mockVisitor.visitBodyLine("AATTTTGCAGTCCTGGAGTTCTTCCTTCTTCTCTTTTGTTATCGTCAGCTGTGATTCCGA");
+        mockVisitor.visitBodyLine("TGTTAGTATTCTAGCTCCCACTTCATTTGGGAAAACAACTTCCATGATTACATCCTGCGC");
+        mockVisitor.visitBodyLine("CTCTTTGGCACTGAGGTCTGCGTGGCCAGGGTTTATGTCAACCCTCCGTCTTATTTTAAC");
+        mockVisitor.visitBodyLine("TTGATTTCTGAAGTGGACAGGGCCAAAGGTCCCGTGTTTCAATCTTTCGACTTTTTCAAA");
+        mockVisitor.visitBodyLine("ATAAGTTTTATATACCTTTGGGTAGTGAACTGTACTTGTTGTTGGTCCATTCCTATTCCA");
+        mockVisitor.visitBodyLine("CCATGTTACAGCTAGAGGTGATACCATTACTCGGTCTGAGCCGGCA");
         
         mockVisitor.visitLine("CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT\n");
         mockVisitor.visitLine("AACTGACGACCCACTTGTTCTTTTGAAAGTGAATCCACCAAAGCTGAAAGATGAGCTAAT\n");
@@ -95,6 +97,8 @@ public class TestFastaParser {
         mockVisitor.visitLine("ATAAGTTTTATATACCTTTGGGTAGTGAACTGTACTTGTTGTTGGTCCATTCCTATTCCA\n");
         mockVisitor.visitLine("CCATGTTACAGCTAGAGGTGATACCATTACTCGGTCTGAGCCGGCA\n");
 
+        expect(mockVisitor.visitEndOfBody()).andReturn(EndOfBodyReturnCode.KEEP_PARSING);
+        /*
         expect(mockVisitor.visitRecord("IWKNA01T07A01PB2A1101R", "comment1", 
         
                 "CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT\n" +
@@ -113,24 +117,25 @@ public class TestFastaParser {
                 "CCATGTTACAGCTAGAGGTGATACCATTACTCGGTCTGAGCCGGCA\n"
                 )
         ).andReturn(true);
-        expect( mockVisitor.visitDefline(">IWKNA01T07A01PB2A1F  another comment")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("ATAAAAGAACTAAGAGATCTAATGTCGCAGTCTCGCACCCGCGAGATACTAACCAAAACC")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("ACTGTGGACCACATGGCCATAATCAAAAAATACACATCAGGAAGACAAGAGAAGAACCCC")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("GCACTCAGGATGAAGTGGATGATGGCAATGAAATATCCAATTACAGCAGATAAAAGAATA")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("ATGGAAATGATTCCCGAAAGGAATGAACAAGGACAAACCCTCTGGAGTAAAACAAACGAT")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("GCCGGCTCAGACCGAGTAATGGTATCACCTCTAGCTGTAACATGGTGGAATAGGAATGGA")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("CCAACAACAAGTACAGTTCACTACCCAAAGGTATATAAAACTTATTTTGAAAAAGTCGAA")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("AGATTGAAACACGGGACCTTTGGCCCTGTCCACTTCAGAAATCAAGTTAAAATAAGACGG")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("AGGGTTGACATAAACCCTGGCCACGCAGACCTCAGTGCCAAAGAGGCGCAGGATGTAATC")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("ATGGAAGTTGTTTTCCCAAATGAAGTGGGAGCTAGAATACTAACATCGGAATCACAGCTG")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("ACGATAACAAAAGAGAAGAAGGAAGAACTCCAGGACTGCAAAATTGCCCCCTTAATGGTT")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("GCATACATGCTAGAAAGAGAGTTGGTCCGCAAAACGAGATTCCTCCCAGTGGCTGGTGGA")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("ACAAGCAGTGTCTATATTGAAGTGCTGCATTTGACCCAGGGAACATGCTGGGAGCAAATG")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("TATACTCCAGGAGGGGAGGTGAGAAATGATGATGTTGACCAAAGCTTGATTATTGCTGCC")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("AGGAACATAGTAAGAAGAGCAACGGTATCAGCAGACCCACTAGCATCTCTATTGGAGATG")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("TGCCATAGCACACAGATGGGGGAATAAGGATGGTAGACATTCTTCGACAAAATCCAACTG")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("AGGAACAAGCTGTGGACATATGCAAGGCAGCAATGGGCTTAAGGATTAGCTCATCTTTCA")).andReturn(true);
-        expect(mockVisitor.visitBodyLine("GCTTTGGTGGATTCACT")).andReturn(true);
+        */
+        expect( mockVisitor.visitDefline(">IWKNA01T07A01PB2A1F  another comment")).andReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        mockVisitor.visitBodyLine("ATAAAAGAACTAAGAGATCTAATGTCGCAGTCTCGCACCCGCGAGATACTAACCAAAACC");
+        mockVisitor.visitBodyLine("ACTGTGGACCACATGGCCATAATCAAAAAATACACATCAGGAAGACAAGAGAAGAACCCC");
+        mockVisitor.visitBodyLine("GCACTCAGGATGAAGTGGATGATGGCAATGAAATATCCAATTACAGCAGATAAAAGAATA");
+        mockVisitor.visitBodyLine("ATGGAAATGATTCCCGAAAGGAATGAACAAGGACAAACCCTCTGGAGTAAAACAAACGAT");
+        mockVisitor.visitBodyLine("GCCGGCTCAGACCGAGTAATGGTATCACCTCTAGCTGTAACATGGTGGAATAGGAATGGA");
+        mockVisitor.visitBodyLine("CCAACAACAAGTACAGTTCACTACCCAAAGGTATATAAAACTTATTTTGAAAAAGTCGAA");
+        mockVisitor.visitBodyLine("AGATTGAAACACGGGACCTTTGGCCCTGTCCACTTCAGAAATCAAGTTAAAATAAGACGG");
+        mockVisitor.visitBodyLine("AGGGTTGACATAAACCCTGGCCACGCAGACCTCAGTGCCAAAGAGGCGCAGGATGTAATC");
+        mockVisitor.visitBodyLine("ATGGAAGTTGTTTTCCCAAATGAAGTGGGAGCTAGAATACTAACATCGGAATCACAGCTG");
+        mockVisitor.visitBodyLine("ACGATAACAAAAGAGAAGAAGGAAGAACTCCAGGACTGCAAAATTGCCCCCTTAATGGTT");
+        mockVisitor.visitBodyLine("GCATACATGCTAGAAAGAGAGTTGGTCCGCAAAACGAGATTCCTCCCAGTGGCTGGTGGA");
+        mockVisitor.visitBodyLine("ACAAGCAGTGTCTATATTGAAGTGCTGCATTTGACCCAGGGAACATGCTGGGAGCAAATG");
+        mockVisitor.visitBodyLine("TATACTCCAGGAGGGGAGGTGAGAAATGATGATGTTGACCAAAGCTTGATTATTGCTGCC");
+        mockVisitor.visitBodyLine("AGGAACATAGTAAGAAGAGCAACGGTATCAGCAGACCCACTAGCATCTCTATTGGAGATG");
+        mockVisitor.visitBodyLine("TGCCATAGCACACAGATGGGGGAATAAGGATGGTAGACATTCTTCGACAAAATCCAACTG");
+        mockVisitor.visitBodyLine("AGGAACAAGCTGTGGACATATGCAAGGCAGCAATGGGCTTAAGGATTAGCTCATCTTTCA");
+        mockVisitor.visitBodyLine("GCTTTGGTGGATTCACT");
         
         mockVisitor.visitLine(">IWKNA01T07A01PB2A1F  another comment\n");
         mockVisitor.visitLine("ATAAAAGAACTAAGAGATCTAATGTCGCAGTCTCGCACCCGCGAGATACTAACCAAAACC\n");
@@ -151,6 +156,8 @@ public class TestFastaParser {
         mockVisitor.visitLine("AGGAACAAGCTGTGGACATATGCAAGGCAGCAATGGGCTTAAGGATTAGCTCATCTTTCA\n");
         mockVisitor.visitLine("GCTTTGGTGGATTCACT\n");
         
+        expect(mockVisitor.visitEndOfBody()).andReturn(EndOfBodyReturnCode.KEEP_PARSING);
+        /*
         expect(mockVisitor.visitRecord("IWKNA01T07A01PB2A1F", "another comment", 
                 
                 "ATAAAAGAACTAAGAGATCTAATGTCGCAGTCTCGCACCCGCGAGATACTAACCAAAACC\n" +
@@ -171,7 +178,7 @@ public class TestFastaParser {
                 "AGGAACAAGCTGTGGACATATGCAAGGCAGCAATGGGCTTAAGGATTAGCTCATCTTTCA\n" +
                 "GCTTTGGTGGATTCACT\n"
         )).andReturn(true);
-        
+        */
         mockVisitor.visitEndOfFile();
         
         replay(mockVisitor);

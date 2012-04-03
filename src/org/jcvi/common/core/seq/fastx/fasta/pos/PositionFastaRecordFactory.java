@@ -27,6 +27,6 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaRecordFactory;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 
-interface PositionFastaRecordFactory extends FastaRecordFactory<ShortSymbol,Sequence<ShortSymbol>,PositionFastaRecord<Sequence<ShortSymbol>>>{
+interface PositionFastaRecordFactory extends FastaRecordFactory<ShortSymbol,Sequence<ShortSymbol>,PositionSequenceFastaRecord<Sequence<ShortSymbol>>>{
 
 }

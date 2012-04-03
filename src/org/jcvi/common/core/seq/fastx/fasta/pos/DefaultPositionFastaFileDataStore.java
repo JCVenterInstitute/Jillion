@@ -65,11 +65,11 @@ public class DefaultPositionFastaFileDataStore{
 	}
 	
 	private static class PositionFastaDataStoreBuilderVisitorImpl extends 
-	AbstractFastaFileDataStoreBuilderVisitor<ShortSymbol, Sequence<ShortSymbol>, PositionFastaRecord<Sequence<ShortSymbol>>, PositionFastaDataStore> implements PositionFastaDataStoreBuilderVisitor{
+	AbstractFastaFileDataStoreBuilderVisitor<ShortSymbol, Sequence<ShortSymbol>, PositionSequenceFastaRecord<Sequence<ShortSymbol>>, PositionFastaDataStore> implements PositionFastaDataStoreBuilderVisitor{
 	
 		@Override
 		public PositionFastaDataStoreBuilderVisitorImpl addFastaRecord(
-				PositionFastaRecord<Sequence<ShortSymbol>> fastaRecord) {
+				PositionSequenceFastaRecord<Sequence<ShortSymbol>> fastaRecord) {
 			super.addFastaRecord(fastaRecord);
 			return this;
 		}
@@ -82,7 +82,7 @@ public class DefaultPositionFastaFileDataStore{
 		}
 	
 		@Override
-		protected PositionFastaRecord<Sequence<ShortSymbol>> createFastaRecord(String id,
+		protected PositionSequenceFastaRecord<Sequence<ShortSymbol>> createFastaRecord(String id,
 				String comment, String entireBody) {
 			return DefaultPositionFastaRecordFactory.getInstance().createFastaRecord(id, comment, entireBody);
 		}

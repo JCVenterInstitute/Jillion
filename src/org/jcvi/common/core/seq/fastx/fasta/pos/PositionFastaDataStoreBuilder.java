@@ -11,12 +11,12 @@ import org.jcvi.common.core.symbol.ShortSymbol;
  * @author dkatzel
  *
  */
-public interface PositionFastaDataStoreBuilder extends FastaDataStoreBuilder<ShortSymbol, Sequence<ShortSymbol>, PositionFastaRecord<Sequence<ShortSymbol>>, PositionFastaDataStore>{
+public interface PositionFastaDataStoreBuilder extends FastaDataStoreBuilder<ShortSymbol, Sequence<ShortSymbol>, PositionSequenceFastaRecord<Sequence<ShortSymbol>>, PositionFastaDataStore>{
 	/**
-	 * Adds the given {@link PositionFastaRecord} to this builder.
+	 * Adds the given {@link PositionSequenceFastaRecord} to this builder.
 	 * <p/>
 	 * {@inheritDoc}
 	 */
 	@Override
-	PositionFastaDataStoreBuilder addFastaRecord(PositionFastaRecord<Sequence<ShortSymbol>> fastaRecord);
+	PositionFastaDataStoreBuilder addFastaRecord(PositionSequenceFastaRecord<Sequence<ShortSymbol>> fastaRecord);
 }
