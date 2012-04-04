@@ -19,6 +19,7 @@
 
 package org.jcvi.common.core.seq.fastx.fastq;
 
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
@@ -45,31 +46,31 @@ public abstract class AbstractFilteredFastQFileVisitor extends AbstractFastQFile
     }
 
     @Override
-    public boolean visitBeginBlock(String id, String optionalComment) {
-        super.visitBeginBlock(id, optionalComment);
+    public FastXFileVisitor.DeflineReturnCode visitDefline(String id, String optionalComment) {
+        super.visitDefline(id, optionalComment);
         accept= filter.accept(id);
-        return accept;
+        return accept?FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD : FastXFileVisitor.DeflineReturnCode.SKIP_CURRENT_RECORD;
     }
     /**
      * Visit the following {@link FastQRecord} which has been
      * accepted by the filter.
      * @param fastQ the fastQRecord being visited.
      */
-    protected abstract boolean visitFastQRecord(FastQRecord fastQ);
+    protected abstract FastXFileVisitor.EndOfBodyReturnCode visitFastQRecord(FastQRecord fastQ);
     
     @Override
-    public boolean visitEndBlock() {
+    public FastXFileVisitor.EndOfBodyReturnCode visitEndOfBody() {
         if(accept){
-           super.visitEndBlock();
+           super.visitEndOfBody();
         }
-        return true;
+        return FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING;
     }
     
     /**
      * {@inheritDoc}
      */
      @Override
-     protected boolean visitFastQRecord(String id,
+     protected FastXFileVisitor.EndOfBodyReturnCode visitFastQRecord(String id,
              NucleotideSequence nucleotides,
              QualitySequence qualities, String optionalComment) {
          return visitFastQRecord(new DefaultFastQRecord(id, nucleotides, qualities,optionalComment));

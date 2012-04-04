@@ -26,6 +26,8 @@ import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
+
 /**
  * Casava 1.8 changes the fastq mated read names
  * to have the mate pairs have the same read name
@@ -42,9 +44,9 @@ public class TestCasava18 {
     @Test
     public void parseMateInfoCorrectly() throws FileNotFoundException, IOException{
         FastQFileVisitor visitor = createNiceMock(FastQFileVisitor.class);
-        expect(visitor.visitBeginBlock("EAS139:136:FC706VJ:2:5:1000:12850", "1:Y:18:ATCACG"))
-            .andReturn(true);
-        
+        expect(visitor.visitDefline("EAS139:136:FC706VJ:2:5:1000:12850", "1:Y:18:ATCACG"))
+            .andReturn(FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD);
+        expect(visitor.visitEndOfBody()).andReturn(FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING);
         replay(visitor);
         ResourceFileServer resources = new ResourceFileServer(TestCasava18.class);
         FastQFileParser.parse(resources.getFile("files/casava1.8.fastq"), visitor);

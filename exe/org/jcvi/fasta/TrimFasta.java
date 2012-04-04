@@ -37,7 +37,7 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
-import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.AbstractNucleotideFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
@@ -90,7 +90,7 @@ public class TrimFasta {
             final Map<String, Integer> rightTrimPoints = parseTrimPoints(rightTrimFile);
             
             final OutputStream out = new FileOutputStream(outputFile);
-            FastaVisitor visitor = new AbstractNucleotideFastaVisitor() {
+            FastaFileVisitor visitor = new AbstractNucleotideFastaVisitor() {
 
                 @Override
                 protected boolean visitFastaRecord(

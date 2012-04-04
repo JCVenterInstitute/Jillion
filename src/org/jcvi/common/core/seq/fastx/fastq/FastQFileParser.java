@@ -34,6 +34,8 @@ import java.util.regex.Matcher;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor.EndOfBodyReturnCode;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 /**
@@ -80,8 +82,11 @@ public class FastQFileParser {
 	            }
 	            String id = beginSeqMatcher.group(1);
 	            String optionalComment =beginSeqMatcher.group(3);
-	            visitCurrentBlock = visitor.visitBeginBlock(id, optionalComment);
-	            if(visitCurrentBlock){
+	            FastXFileVisitor.DeflineReturnCode deflineRet= visitor.visitDefline(id, optionalComment);
+	            if(deflineRet ==null){
+	            	throw new IllegalStateException("defline return value can not be null");
+	            }
+	            if(deflineRet==FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD){
 	                visitor.visitLine(basecalls);
 	                NucleotideSequence encodedNucleotides = new NucleotideSequenceBuilder(basecalls.substring(0, basecalls.length()-1)).build();
 	                visitor.visitNucleotides(encodedNucleotides);
@@ -98,7 +103,11 @@ public class FastQFileParser {
 	                visitor.visitLine(qualLine);
 	                visitor.visitLine(qualities);
 	            }
-	            keepParsing =visitor.visitEndBlock();
+	            EndOfBodyReturnCode endOfBodyRet = visitor.visitEndOfBody();
+	            if(endOfBodyRet ==null){
+	            	throw new IllegalStateException("end of body return value can not be null");
+	            }
+				keepParsing =endOfBodyRet==EndOfBodyReturnCode.KEEP_PARSING;
 	        }
         }catch(IOException e){
         	throw new IllegalStateException("error reading fastq file",e);

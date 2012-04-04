@@ -24,6 +24,7 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
 import org.jcvi.common.core.io.TextFileVisitor;
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
  * {@code FastQFileVisitor} is a {@link TextFileVisitor}
@@ -32,7 +33,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  *
  *
  */
-public interface FastQFileVisitor extends TextFileVisitor{
+public interface FastQFileVisitor extends FastXFileVisitor{
     /**
      * Begin a new FASTQ Record block for the given read.
      * @param id the read id
@@ -44,13 +45,13 @@ public interface FastQFileVisitor extends TextFileVisitor{
      * read data; {@code false} if this parser should skip this
      * read and continue on to the next read.
      */
-    boolean visitBeginBlock(String id, String optionalComment);
+    //boolean visitDefline(String id, String optionalComment);
     /**
      * The current FastQRecord Block is done visiting.
      * @return {@code true} if the fastq file should continue to be parsed;
      * {@code false} if the fastq parsing should stop.
      */
-    boolean visitEndBlock();
+   // boolean visitEndOfBody();
     
     void visitNucleotides(NucleotideSequence nucleotides);
     

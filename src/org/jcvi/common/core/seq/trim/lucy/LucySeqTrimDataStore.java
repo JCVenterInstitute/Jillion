@@ -33,7 +33,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
-import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
@@ -57,7 +57,7 @@ public class LucySeqTrimDataStore implements TrimDataStore {
         final Map<String, Range> map = new LinkedHashMap<String, Range>();
         //our fasta visitor implementation
         //to parse the trim points from the comments
-        FastaVisitor visitor = new AbstractFastaVisitor() {
+        FastaFileVisitor visitor = new AbstractFastaVisitor() {
             
             @Override
             public boolean visitRecord(String id, String comment, String entireBody) {

@@ -28,6 +28,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
@@ -98,9 +99,9 @@ public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends 
     
 
     @Override
-    public boolean visitBeginBlock(String id, String optionalComment) {
+    public FastXFileVisitor.DeflineReturnCode visitDefline(String id, String optionalComment) {
         checkNotYetInitialized();
-        return super.visitBeginBlock(id, optionalComment);
+        return super.visitDefline(id, optionalComment);
     }
     
     @Override

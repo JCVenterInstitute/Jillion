@@ -81,7 +81,7 @@ public class Fastq2Fasta extends AbstractFilteredFastQFileVisitor {
      * {@inheritDoc}
      */
      @Override
-     protected boolean visitFastQRecord(FastQRecord fastQ) {
+     protected EndOfBodyReturnCode visitFastQRecord(FastQRecord fastQ) {
          String id = fastQ.getId();
          if(qualOut!=null){
              try {
@@ -100,7 +100,7 @@ public class Fastq2Fasta extends AbstractFilteredFastQFileVisitor {
                  throw new RuntimeException("could not write to sequence data for "+ id, e);
              }
          }
-         return true;
+         return EndOfBodyReturnCode.KEEP_PARSING;
          
      }
     

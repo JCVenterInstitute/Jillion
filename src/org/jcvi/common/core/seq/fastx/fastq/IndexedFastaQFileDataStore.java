@@ -27,6 +27,7 @@ import java.io.InputStream;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
@@ -76,17 +77,17 @@ public class IndexedFastaQFileDataStore implements FastQDataStore<FastQRecord>, 
     public void visitEndOfFile() {
     }
     @Override
-    public boolean visitBeginBlock(String id, String optionalComment) {
+    public FastXFileVisitor.DeflineReturnCode visitDefline(String id, String optionalComment) {
         currentId = id;
-        return true;
+        return FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
     }
     @Override
-    public boolean visitEndBlock() {
+    public FastXFileVisitor.EndOfBodyReturnCode visitEndOfBody() {
         final Range range = Range.buildRangeOfLength(currentStartOffset, currentRecordLength);
         indexFileRange.put(currentId, range);
         currentStartOffset+=currentRecordLength;
         currentRecordLength=0;
-        return true;
+        return FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING;
     }
     @Override
     public void visitNucleotides(NucleotideSequence nucleotides) {

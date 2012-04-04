@@ -22,6 +22,7 @@ package org.jcvi.common.core.seq.fastx.fastq;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
@@ -57,17 +58,17 @@ public final class LargeFastQFileIterator extends AbstractBlockingCloseableItera
         	FastQFileVisitor visitor = new AbstractFastQFileVisitor(qualityCodec) {
 				
         		 @Override
-        	     protected boolean visitFastQRecord(String id,
+        	     protected FastXFileVisitor.EndOfBodyReturnCode visitFastQRecord(String id,
         	             NucleotideSequence nucleotides,
         	             QualitySequence qualities, String optionalComment) {
         	         FastQRecord record = new DefaultFastQRecord(id,nucleotides, qualities,optionalComment);
         	         blockingPut(record);
-        	         return !LargeFastQFileIterator.this.isClosed();
+        	         return LargeFastQFileIterator.this.isClosed() ? FastXFileVisitor.EndOfBodyReturnCode.STOP_PARSING : FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING;
         	     }
         		 @Override
-        		    public boolean visitBeginBlock(String id, String optionalComment) {
-        		        super.visitBeginBlock(id, optionalComment);
-        		        return true;
+        		    public FastXFileVisitor.DeflineReturnCode visitDefline(String id, String optionalComment) {
+        		        super.visitDefline(id, optionalComment);
+        		        return FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
         		    }
 			};
             FastQFileParser.parse(fastQFile, visitor);

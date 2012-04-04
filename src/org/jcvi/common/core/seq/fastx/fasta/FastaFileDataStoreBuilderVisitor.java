@@ -6,7 +6,7 @@ import org.jcvi.common.core.symbol.Symbol;
 /**
  * A {@code FastaFileDataStoreBuilderVisitor} is a 
  * {@link FastaDataStoreBuilder} that also implements
- * {@link FastaVisitor}.  This allows {@link FastaDataStore}s
+ * {@link FastaFileVisitor}.  This allows {@link FastaDataStore}s
  * to be built by either manually adding records via
  * {@link #addFastaRecord(FastaRecord)}
  * or by passing an instance of this class to {@link FastaParser}'s parse methods
@@ -19,7 +19,7 @@ import org.jcvi.common.core.symbol.Symbol;
  * @author dkatzel
  *
  */
-public interface FastaFileDataStoreBuilderVisitor <S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>, D extends DataStore<F>> extends FastaDataStoreBuilder<S,T,F,D>, FastaVisitor{
+public interface FastaFileDataStoreBuilderVisitor <S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>, D extends DataStore<F>> extends FastaDataStoreBuilder<S,T,F,D>, FastaFileVisitor{
 	/**
 	 * If this method is supported, add the given {@link FastaRecord}.  Not all
 	 * implementations support adding fastaRecords directly.  If this method

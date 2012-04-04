@@ -42,7 +42,7 @@ import org.jcvi.common.core.seq.fastx.NullFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
@@ -128,7 +128,7 @@ public class SortedFasta2Fastq {
 
         @Override
         public void run() {
-            FastaVisitor qualVisitor = new AbstractFastaVisitor() {
+            FastaFileVisitor qualVisitor = new AbstractFastaVisitor() {
                 
                 @Override
                 public boolean visitRecord(String id, String comment, String entireBody) {
@@ -176,7 +176,7 @@ public class SortedFasta2Fastq {
         }
         @Override
         public void run() {
-            FastaVisitor seqVisitor = new AbstractFastaVisitor() {
+            FastaFileVisitor seqVisitor = new AbstractFastaVisitor() {
                 @Override
                 public boolean visitRecord(String id, String comment, String entireBody) {
                     if(getFilter().accept(id)){
