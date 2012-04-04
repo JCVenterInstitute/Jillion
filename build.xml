@@ -189,6 +189,10 @@
 	
 	<target name="emma" description="turns on EMMA's on-the-fly instrumentation mode" >
 	    <property name="emma.enabled" value="true" />
+		<!-- delete old coverage files -->
+		<delete dir="coverage"></delete>
+		<delete file="coverage.ec"></delete>
+		<delete file="coverage.em"></delete>
 	  </target>
 	<target name="clean"
          description="Clean generated files">
