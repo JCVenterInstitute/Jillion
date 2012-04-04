@@ -19,6 +19,7 @@
 
 package org.jcvi.common.core.seq.fastx.fastq;
 
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
@@ -47,16 +48,15 @@ public abstract class AbstractFastQReadIdVisitor implements FastQFileVisitor{
     }
 
     @Override
-    public boolean visitBeginBlock(String id, String optionalComment) {
+    public FastXFileVisitor.DeflineReturnCode visitDefline(String id, String optionalComment) {
         visitRead(id, optionalComment);
-        return false;
+        return FastXFileVisitor.DeflineReturnCode.SKIP_CURRENT_RECORD;
     }
     protected abstract void visitRead(String id, String optionalComment);
 
     @Override
-    public boolean visitEndBlock() {
-        // keep reading
-        return true;
+    public FastXFileVisitor.EndOfBodyReturnCode visitEndOfBody() {
+        return FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING;
     }
 
     @Override

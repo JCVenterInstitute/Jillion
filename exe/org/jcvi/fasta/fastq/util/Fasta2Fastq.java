@@ -41,7 +41,7 @@ import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.NullFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
-import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQRecord;
@@ -132,7 +132,7 @@ public class Fasta2Fastq {
             File seqFile = new File(commandLine.getOptionValue("s"));
             final PrintWriter writer = new PrintWriter(commandLine.getOptionValue("o"));
             
-            FastaVisitor visitor = new AbstractFastaVisitor() {
+            FastaFileVisitor visitor = new AbstractFastaVisitor() {
                 
                 @Override
                 public boolean visitRecord(String id, String comment, String entireBody) {

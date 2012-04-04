@@ -35,8 +35,8 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
-import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor.DeflineReturnCode;
-import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor.EndOfBodyReturnCode;
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor.DeflineReturnCode;
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor.EndOfBodyReturnCode;
 /**
  * {@code FastaParser} is a utility class
  * to parse Fasta formated files.
@@ -65,7 +65,7 @@ public final class FastaParser {
      * exist.
      * @throws NullPointerException if fastaFile or visitor are null.
      */
-    public static void parseFasta(File fastaFile, FastaVisitor visitor) throws FileNotFoundException{
+    public static void parseFasta(File fastaFile, FastaFileVisitor visitor) throws FileNotFoundException{
         if(visitor ==null){
         	throw new NullPointerException("visitor can not be null");
         }
@@ -84,7 +84,7 @@ public final class FastaParser {
      * @param visitor the visitor to call the visit methods on.
      * @throws NullPointerException if inputstream or visitor are null.
      */    
-    public static void parseFasta(InputStream in, FastaVisitor visitor){
+    public static void parseFasta(InputStream in, FastaFileVisitor visitor){
     	
     	if(visitor ==null){
         	throw new NullPointerException("visitor can not be null");
@@ -145,7 +145,7 @@ public final class FastaParser {
             parser.close();            
         }
         
-        public void visitFinalRecord(FastaVisitor visitor){
+        public void visitFinalRecord(FastaFileVisitor visitor){
             if(keepParsing && !skipCurrentRecord && seenFirstDefline){
             	EndOfBodyReturnCode ret =visitor.visitEndOfBody();
             	if(ret ==null){
@@ -170,7 +170,7 @@ public final class FastaParser {
                 return line.startsWith(">");
             }
             @Override
-            ParserState sectionSpecificHandle(String lineWithCR, ParserState parserState,FastaVisitor visitor){
+            ParserState sectionSpecificHandle(String lineWithCR, ParserState parserState,FastaFileVisitor visitor){
                 
                 
                 String lineWithoutCR = lineWithCR.substring(0, lineWithCR.length()-1);
@@ -220,7 +220,7 @@ public final class FastaParser {
             }
             
             @Override
-            ParserState sectionSpecificHandle(String lineWithCR, ParserState parserState,FastaVisitor visitor){
+            ParserState sectionSpecificHandle(String lineWithCR, ParserState parserState,FastaFileVisitor visitor){
                 
                 visitor.visitLine(lineWithCR);
                 final String lineWithoutCR ;
@@ -238,7 +238,7 @@ public final class FastaParser {
             
         };
         
-        static ParserState handleNextSection(ParserState parserState,FastaVisitor visitor) throws IOException{
+        static ParserState handleNextSection(ParserState parserState,FastaFileVisitor visitor) throws IOException{
             String line =parserState.getNextLine();            
             for(SectionHandler handler : values()){
                 if(handler.canHandle(line)){
@@ -251,7 +251,7 @@ public final class FastaParser {
         }
         
         abstract boolean canHandle(String line);
-        abstract ParserState sectionSpecificHandle(String lineWithCR, ParserState parserState,FastaVisitor visitor);
+        abstract ParserState sectionSpecificHandle(String lineWithCR, ParserState parserState,FastaFileVisitor visitor);
         
         
     }

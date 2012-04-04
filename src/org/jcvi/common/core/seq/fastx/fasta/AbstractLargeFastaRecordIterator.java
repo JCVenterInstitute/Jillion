@@ -55,7 +55,7 @@ public class AbstractLargeFastaRecordIterator<S extends Symbol, T extends Sequen
     */
     @Override
     protected void backgroundThreadRunMethod() {
-        FastaVisitor visitor = new AbstractFastaRecordVisitor<S,T, F>(recordFactory) {
+        FastaFileVisitor visitor = new AbstractFastaRecordVisitor<S,T, F>(recordFactory) {
 
             @Override
             protected boolean visitFastaRecord(F fastaRecord) {

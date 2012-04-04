@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.seq.fastx.fastq;
 
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
@@ -61,10 +62,10 @@ public abstract class AbstractFastQFileVisitor implements FastQFileVisitor{
     }
     
     @Override
-    public boolean visitBeginBlock(String id, String optionalComment) {
+    public FastXFileVisitor.DeflineReturnCode visitDefline(String id, String optionalComment) {
         currentId = id;
         currentComment = optionalComment;
-        return true;
+        return FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
     }
     
     @Override
@@ -75,7 +76,7 @@ public abstract class AbstractFastQFileVisitor implements FastQFileVisitor{
     
     
     @Override
-    public boolean visitEndBlock() {
+    public FastXFileVisitor.EndOfBodyReturnCode visitEndOfBody() {
         return visitFastQRecord(currentId, nucleotides, qualities, currentComment);
         
         
@@ -86,10 +87,9 @@ public abstract class AbstractFastQFileVisitor implements FastQFileVisitor{
      * @param nucleotides
      * @param qualities
      * @param optionalComment
-     * @return {@code true} if the fastQ file should continue
-     * to be parsed; {@code false} if parsing should stop.
+     * @return FastXFileVisitor.EndOfBodyReturnCode
      */
-    protected abstract boolean visitFastQRecord(
+    protected abstract FastXFileVisitor.EndOfBodyReturnCode visitFastQRecord(
             String id, 
             NucleotideSequence nucleotides,
             QualitySequence qualities,

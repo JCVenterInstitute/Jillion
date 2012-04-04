@@ -36,7 +36,7 @@ import org.jcvi.common.core.symbol.Symbol;
  *
  *
  */
-public abstract class AbstractFastaFileDataStore<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>> implements FastaVisitor, DataStore<F>{
+public abstract class AbstractFastaFileDataStore<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>> implements FastaFileVisitor, DataStore<F>{
 
     private boolean closed =false;
     

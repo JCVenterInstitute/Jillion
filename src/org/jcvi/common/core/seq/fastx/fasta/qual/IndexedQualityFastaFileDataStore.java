@@ -10,7 +10,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.IndexedFileRange;
@@ -48,7 +48,7 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 	 * using the given fastaFile.  This implementation of {@link QualityFastaDataStoreBuilderVisitor}
 	 * can only be used to parse a single fasta file (the one given) and does not support
 	 * {@link QualityFastaDataStoreBuilderVisitor#addFastaRecord(QualitySequenceFastaRecord)}.
-	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaVisitor}
+	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaFileVisitor}
 	 * interface.
 	 * @param fastaFile the fasta to create an {@link IndexedQualityFastaFileDataStore}
 	 * for.

@@ -53,7 +53,7 @@ public final class LargeFastaIdIterator extends AbstractBlockingCloseableIterato
     */
     @Override
     protected void backgroundThreadRunMethod() {
-    	FastaVisitor visitor = new FastaVisitor() {
+    	FastaFileVisitor visitor = new FastaFileVisitor() {
     		@Override
 			public DeflineReturnCode visitDefline(String id, String comment) {
 				LargeFastaIdIterator.this.blockingPut(id);

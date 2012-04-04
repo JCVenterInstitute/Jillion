@@ -26,9 +26,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
-import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor.DeflineReturnCode;
-import org.jcvi.common.core.seq.fastx.fasta.FastaVisitor.EndOfBodyReturnCode;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor.DeflineReturnCode;
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor.EndOfBodyReturnCode;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,11 +43,11 @@ public class TestFastaParser {
 
     private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestFastaParser.class);
     
-    FastaVisitor mockVisitor;
+    FastaFileVisitor mockVisitor;
     
     @Before
     public void setup(){
-        mockVisitor = createMock(FastaVisitor.class);
+        mockVisitor = createMock(FastaFileVisitor.class);
     }
     
     @Test(expected = NullPointerException.class)
