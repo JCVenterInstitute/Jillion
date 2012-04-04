@@ -46,6 +46,7 @@ import org.jcvi.common.command.Command;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.ace.AbstractAceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
@@ -357,7 +358,7 @@ public class ReAbacusAceContigWorker {
                     rangesToMerge.add(gappedFlankingRange);
                 }
                 
-                List<Range> reversedSortedRanges = new ArrayList<Range>(Range.mergeRanges(rangesToMerge));
+                List<Range> reversedSortedRanges = new ArrayList<Range>(Ranges.merge(rangesToMerge));
                 Collections.reverse(reversedSortedRanges);
                
                 CoverageMap<CoverageRegion<AcePlacedReadBuilder>> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllPlacedReadBuilders());

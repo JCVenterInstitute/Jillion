@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
@@ -107,7 +108,7 @@ public class AbacusErrorFinder {
             }
         }
 
-        List<Range> candidateRanges = Range.mergeRanges(ungappedRanges);
+        List<Range> candidateRanges = Ranges.merge(ungappedRanges);
         return candidateRanges;
     }
     public <P extends PlacedRead, C extends Contig<P>> List<Range>  findAbacusErrors(C contig){
@@ -124,7 +125,7 @@ public class AbacusErrorFinder {
                 Range buildRange = Range.buildRange(gapOffset.intValue() + placedRead.getStart());
                 gaps.add(buildRange);
             }
-            List<Range> mergeRanges = Range.mergeRanges(gaps);
+            List<Range> mergeRanges = Ranges.merge(gaps);
             for(Range mergedRange: mergeRanges ){               
                 if(mergedRange.getLength() >=minAbacusLength){
                     gapRangesPerRead.add(mergedRange);
@@ -142,7 +143,7 @@ public class AbacusErrorFinder {
             }            
         }
         
-        List<Range> ungappedCandidateRanges = convertToUngappedRanges(Range.mergeRanges(abacusErrors,clusterDistance), contig.getConsensus());
+        List<Range> ungappedCandidateRanges = convertToUngappedRanges(Ranges.merge(abacusErrors,clusterDistance), contig.getConsensus());
         return ungappedCandidateRanges;
     }
     
