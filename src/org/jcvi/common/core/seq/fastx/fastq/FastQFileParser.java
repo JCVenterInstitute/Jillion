@@ -62,56 +62,69 @@ public class FastQFileParser {
 		try {
 			parser = new TextLineParser(new BufferedInputStream(in));
 		} catch (IOException e1) {
-			e1.printStackTrace();
-			throw new IllegalStateException("error reading file");
+			throw new IllegalStateException("error reading file",e1);
 			
 		}
-        visitor.visitFile();
-        boolean visitCurrentBlock;
+        parse(visitor, parser);
+    }
+	private static void parse(FastQFileVisitor visitor, TextLineParser parser) {
+		visitor.visitFile();
         boolean keepParsing=true;
         try{
 	        while(keepParsing && parser.hasNextLine()){
-	            String seqLine = parser.nextLine();
-	            String basecalls = parser.nextLine();
-	            String qualLine = parser.nextLine();
-	            String qualities = parser.nextLine();
-	            visitor.visitLine(seqLine);
-	            Matcher beginSeqMatcher =FastQUtil.SEQ_DEFLINE_PATTERN.matcher(seqLine);
-	            if(!beginSeqMatcher.find()){
-	                throw new IllegalStateException("invalid fastq file, could not parse seq id from "+ seqLine);
-	            }
-	            String id = beginSeqMatcher.group(1);
-	            String optionalComment =beginSeqMatcher.group(3);
-	            FastXFileVisitor.DeflineReturnCode deflineRet= visitor.visitDefline(id, optionalComment);
-	            if(deflineRet ==null){
-	            	throw new IllegalStateException("defline return value can not be null");
-	            }
-	            if(deflineRet==FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD){
-	                visitor.visitLine(basecalls);
-	                NucleotideSequence encodedNucleotides = new NucleotideSequenceBuilder(basecalls.substring(0, basecalls.length()-1)).build();
-	                visitor.visitNucleotides(encodedNucleotides);
-	                visitor.visitLine(qualLine);
-	                Matcher beginQualityMatcher =FastQUtil.QUAL_DEFLINE_PATTERN.matcher(qualLine);
-	                if(!beginQualityMatcher.find()){ 
-	                    throw new IllegalStateException("invalid fastq file, could not parse qual id from "+ qualLine);
-	                }
-	                visitor.visitLine(qualities);
-	                String encodedQualities = qualities.endsWith("\n")?qualities.substring(0, qualities.length()-1) : qualities;
-	                visitor.visitEncodedQualities(encodedQualities);
-	            }else{
-	                visitor.visitLine(basecalls);
-	                visitor.visitLine(qualLine);
-	                visitor.visitLine(qualities);
-	            }
-	            EndOfBodyReturnCode endOfBodyRet = visitor.visitEndOfBody();
-	            if(endOfBodyRet ==null){
-	            	throw new IllegalStateException("end of body return value can not be null");
-	            }
-				keepParsing =endOfBodyRet==EndOfBodyReturnCode.KEEP_PARSING;
+				keepParsing =parseSingleRecord(visitor, parser);
 	        }
         }catch(IOException e){
         	throw new IllegalStateException("error reading fastq file",e);
         }
         visitor.visitEndOfFile();
-    }
+	}
+	
+	private static boolean parseSingleRecord(FastQFileVisitor visitor, TextLineParser parser) throws IOException{
+		String seqLine = parser.nextLine();
+        String basecalls = parser.nextLine();
+        String qualLine = parser.nextLine();
+        String qualities = parser.nextLine();
+        visitor.visitLine(seqLine);
+        Matcher beginSeqMatcher =FastQUtil.SEQ_DEFLINE_PATTERN.matcher(seqLine);
+        if(!beginSeqMatcher.find()){
+            throw new IllegalStateException("invalid fastq file, could not parse seq id from "+ seqLine);
+        }
+        String id = beginSeqMatcher.group(1);
+        String optionalComment =beginSeqMatcher.group(3);
+        FastXFileVisitor.DeflineReturnCode deflineRet= visitor.visitDefline(id, optionalComment);
+        if(deflineRet ==null){
+        	throw new IllegalStateException("defline return value can not be null");
+        }
+        if(deflineRet==FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD){
+            handleVisitBody(visitor, basecalls, qualLine, qualities);
+        }else{
+            visitLines(visitor, basecalls, qualLine, qualities);
+        }
+        EndOfBodyReturnCode endOfBodyRet = visitor.visitEndOfBody();
+        if(endOfBodyRet ==null){
+        	throw new IllegalStateException("end of body return value can not be null");
+        }
+		return endOfBodyRet==EndOfBodyReturnCode.KEEP_PARSING;
+	}
+	private static void visitLines(FastQFileVisitor visitor, String basecalls,
+			String qualLine, String qualities) {
+		visitor.visitLine(basecalls);
+		visitor.visitLine(qualLine);
+		visitor.visitLine(qualities);
+	}
+	private static void handleVisitBody(FastQFileVisitor visitor,
+			String basecalls, String qualLine, String qualities) {
+		visitor.visitLine(basecalls);
+		NucleotideSequence encodedNucleotides = new NucleotideSequenceBuilder(basecalls.substring(0, basecalls.length()-1)).build();
+		visitor.visitNucleotides(encodedNucleotides);
+		visitor.visitLine(qualLine);
+		Matcher beginQualityMatcher =FastQUtil.QUAL_DEFLINE_PATTERN.matcher(qualLine);
+		if(!beginQualityMatcher.find()){ 
+		    throw new IllegalStateException("invalid fastq file, could not parse qual id from "+ qualLine);
+		}
+		visitor.visitLine(qualities);
+		String encodedQualities = qualities.endsWith("\n")?qualities.substring(0, qualities.length()-1) : qualities;
+		visitor.visitEncodedQualities(encodedQualities);
+	}
 }
