@@ -36,6 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
@@ -152,7 +153,7 @@ public class ConsedUtil {
             }
         }
         
-        List<Range> contigRanges =Range.mergeRanges(coveredRegions);
+        List<Range> contigRanges =Ranges.merge(coveredRegions);
         SortedMap<Range, AceContig> map = new TreeMap<Range, AceContig>();
         if(contigRanges.size()==1){
             //no 0x region        	
