@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.align.pairwise.DefaultNucleotideScoringMatrix;
 import org.jcvi.common.core.align.pairwise.NucleotidePairwiseSequenceAlignment;
 import org.jcvi.common.core.align.pairwise.NucleotideSmithWatermanAligner;
@@ -158,7 +159,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
         }finally{
         	IOUtil.closeAndIgnoreErrors(iter);
         }
-        List<Range> mergedRanges = Range.mergeRanges(ranges);
+        List<Range> mergedRanges = Ranges.merge(ranges);
         Range sequenceRange = Range.buildRangeOfLength(0, sequence.getLength());
 
         if(mergedRanges.size() ==1){

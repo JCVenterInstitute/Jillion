@@ -29,6 +29,7 @@ import java.util.TreeSet;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
+import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 
@@ -197,7 +198,7 @@ public final class LucyLikeQualityTrimmer {
                 candidateCleanRanges.add(windowRange);
             }
         }
-        return Range.mergeRanges(candidateCleanRanges);
+        return Ranges.merge(candidateCleanRanges);
     }
 
 

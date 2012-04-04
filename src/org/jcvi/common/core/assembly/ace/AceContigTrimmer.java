@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.util.trimmer.AbstractContigTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.ContigTrimmerResult;
@@ -110,7 +111,7 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
             currentRanges = new ArrayList<Range>();
         }
         currentRanges.add(sequenceRange); 
-        currentRanges = Range.mergeRanges(currentRanges);
+        currentRanges = Ranges.merge(currentRanges);
         
     }
 

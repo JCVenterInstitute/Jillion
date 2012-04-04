@@ -755,7 +755,7 @@ public class TestRange{
 
     @Test
     public void mergeEmpty(){
-        assertTrue(Range.mergeRanges(Collections.<Range>emptyList()).isEmpty());
+        assertTrue(Ranges.merge(Collections.<Range>emptyList()).isEmpty());
     }
     
     @Test
@@ -764,7 +764,7 @@ public class TestRange{
         final List<Range> oneRange = Arrays.asList(range);
         assertEquals(
                 oneRange,
-                Range.mergeRanges(oneRange));
+                Ranges.merge(oneRange));
     }
     
     @Test
@@ -773,7 +773,7 @@ public class TestRange{
         List<Range> nonOverlappingRanges = Arrays.asList(range,nonOverlappingRange);
         assertEquals(
                 nonOverlappingRanges,
-                Range.mergeRanges(nonOverlappingRanges));
+                Ranges.merge(nonOverlappingRanges));
         
     }
     
@@ -784,7 +784,7 @@ public class TestRange{
         List<Range> expectedRanges = Arrays.asList(Range.buildRange(range.getStart(), overlappingRange.getEnd()));
         assertEquals(
                 expectedRanges,
-                Range.mergeRanges(overlappingRanges));
+                Ranges.merge(overlappingRanges));
         
     }
     @Test
@@ -795,7 +795,7 @@ public class TestRange{
                 Range.buildRange(range.getStart(), adjacentRange.getEnd()));
         assertEquals(
                 expectedRanges,
-                Range.mergeRanges(rangesToMerge));
+                Ranges.merge(rangesToMerge));
         
     }
     @Test
@@ -806,7 +806,7 @@ public class TestRange{
         List<Range> expectedRanges = Arrays.asList(Range.buildRange(range.getStart(), overlappingRange_2.getEnd()));
         assertEquals(
                 expectedRanges,
-                Range.mergeRanges(overlappingRanges));
+                Ranges.merge(overlappingRanges));
         
     }
     @Test
@@ -817,7 +817,7 @@ public class TestRange{
         List<Range> expectedRanges = Arrays.asList(Range.buildRange(range.getStart(), overlappingRange_1.getEnd()));
         assertEquals(
                 expectedRanges,
-                Range.mergeRanges(overlappingRanges));
+                Ranges.merge(overlappingRanges));
         
     }
     @Test
@@ -828,7 +828,7 @@ public class TestRange{
         List<Range> expectedRanges = Arrays.asList(Range.buildRange(range.getStart(), overlappingRange.getEnd()),nonOverlappingRange);
         assertEquals(
                 expectedRanges,
-                Range.mergeRanges(overlappingRanges));
+                Ranges.merge(overlappingRanges));
         
     }
     @Test
@@ -837,7 +837,7 @@ public class TestRange{
         List<Range> expectedRanges = Arrays.asList(range);
         assertEquals(
                 expectedRanges,
-                Range.mergeRanges(consecutiveRanges));
+                Ranges.merge(consecutiveRanges));
     }
     private Range createRangeSeparatedFrom(Range range, int distance){
         return Range.buildRangeOfLength(range.getEnd()+ distance, range.size());
@@ -850,7 +850,7 @@ public class TestRange{
         List<Range> expectedRange = Arrays.asList(Range.buildRange(range.getStart(), clusterableRange.getEnd()));
         assertEquals(
                 expectedRange,
-                Range.mergeRanges(clusteredRanges,clusterDistance));
+                Ranges.merge(clusteredRanges,clusterDistance));
     }
     @Test
     public void mergeClusteredRangesAbutmentShouldStillMerge(){
@@ -860,7 +860,7 @@ public class TestRange{
         List<Range> expectedRange = Arrays.asList(Range.buildRange(range.getStart(), clusterableRange.getEnd()));
         assertEquals(
                 expectedRange,
-                Range.mergeRanges(clusteredRanges,clusterDistance));
+                Ranges.merge(clusteredRanges,clusterDistance));
     }
     @Test
     public void mergeClusteredRangesBeyondClusterShouldNotMerge(){
@@ -869,7 +869,7 @@ public class TestRange{
         List<Range> clusteredRanges = Arrays.asList(range, unclusterableRange);
         assertEquals(
                 clusteredRanges,
-                Range.mergeRanges(clusteredRanges,clusterDistance));
+                Ranges.merge(clusteredRanges,clusterDistance));
     }
     @Test
     public void mergeLeftClusteredRanges(){
@@ -879,7 +879,7 @@ public class TestRange{
         List<Range> expectedRange = Arrays.asList(Range.buildRange(clusterableRange.getStart(), range.getEnd()));
         assertEquals(
                 expectedRange,
-                Range.mergeRanges(clusteredRanges,clusterDistance));
+                Ranges.merge(clusteredRanges,clusterDistance));
     }
     @Test
     public void mergeThreeClusteredRanges(){
@@ -890,13 +890,13 @@ public class TestRange{
         List<Range> expectedRange = Arrays.asList(Range.buildRange(leftClusterableRange.getStart(), rightClusterableRange.getEnd()));
         assertEquals(
                 expectedRange,
-                Range.mergeRanges(clusteredRanges,clusterDistance));
+                Ranges.merge(clusteredRanges,clusterDistance));
     }
     
     @Test
     public void mergeWithNegativeClusterDistanceShouldThrowIllegalArgumentException(){
         try{
-            Range.mergeRanges(Arrays.asList(range), -1);
+            Ranges.merge(Arrays.asList(range), -1);
             fail("should catch illegal argumentException when cluster distance is -1");
         }
         catch(IllegalArgumentException e){
@@ -1008,21 +1008,21 @@ public class TestRange{
     @Test
     public void mergeIntoClustersEmptyListShouldReturnEmptyList(){
         assertTrue(
-                Range.mergeRangesIntoClusters(Collections.<Range>emptyList(), 100)
+                Ranges.mergeIntoClusters(Collections.<Range>emptyList(), 100)
                 .isEmpty());
     }
     
     @Test
     public void mergeIntoClustersOneRangeShouldReturnSameRange(){
         final List<Range> inputList = Arrays.asList(range);
-        assertEquals(inputList, Range.mergeRangesIntoClusters(inputList, 100));
+        assertEquals(inputList, Ranges.mergeIntoClusters(inputList, 100));
     }
     @Test
     public void mergeIntoClusters2RangesFartherAwayThanMaxClusterDistanceSame2Ranges(){
         int maxClusterDistance=100;
         Range farAwayRange = range.shiftRight(maxClusterDistance+1);
         final List<Range> inputList = Arrays.asList(range,farAwayRange);
-        assertEquals(inputList, Range.mergeRangesIntoClusters(inputList, maxClusterDistance));
+        assertEquals(inputList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
     }
     @Test
     public void mergeIntoClusters2OverLappingRanges(){
@@ -1030,7 +1030,7 @@ public class TestRange{
         Range overlappingRange = range.shiftRight(5);
         final List<Range> inputList = Arrays.asList(range,overlappingRange);
         final List<Range> expectedList = Arrays.asList(Range.buildRange(range.getStart(), overlappingRange.getEnd()));
-        assertEquals(expectedList, Range.mergeRangesIntoClusters(inputList, maxClusterDistance));
+        assertEquals(expectedList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
     }
     @Test
     public void mergeIntoClusters3OverLappingRanges(){
@@ -1039,7 +1039,7 @@ public class TestRange{
         Range overlappingRange2 = overlappingRange.shiftRight(10);
         final List<Range> inputList = Arrays.asList(range,overlappingRange,overlappingRange2);
         final List<Range> expectedList = Arrays.asList(Range.buildRange(range.getStart(), overlappingRange2.getEnd()));
-        assertEquals(expectedList, Range.mergeRangesIntoClusters(inputList, maxClusterDistance));
+        assertEquals(expectedList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
     }
     
     @Test
@@ -1054,7 +1054,7 @@ public class TestRange{
                 Range.buildRange(0,99),
                 Range.buildRange(100,110)
             );
-        assertEquals(expectedList, Range.mergeRangesIntoClusters(inputList, maxClusterDistance));
+        assertEquals(expectedList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
     }
     
     @Test
@@ -1069,7 +1069,7 @@ public class TestRange{
                 Range.buildRange(0,99),
                 Range.buildRange(100,120)
             );
-        assertEquals(expectedList, Range.mergeRangesIntoClusters(inputList, maxClusterDistance));
+        assertEquals(expectedList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
     }
    
     @Test

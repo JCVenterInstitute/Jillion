@@ -32,6 +32,7 @@ import java.util.TreeSet;
 
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.util.Builder;
 
 /**
@@ -114,7 +115,7 @@ public final class BlastHitMapper{
                 for(DirectedRange directedRange : directedRanges){
                     ranges.add(directedRange.getRange());
                 }
-                List<Range> mergedRanges = Range.mergeRanges(ranges);
+                List<Range> mergedRanges = Ranges.merge(ranges);
                 long covered=0;
                 for(Range range : mergedRanges){
                     covered+=range.getLength();
