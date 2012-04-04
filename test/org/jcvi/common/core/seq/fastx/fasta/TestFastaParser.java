@@ -58,16 +58,247 @@ public class TestFastaParser {
     public void nullInputStreamShouldThrowNPE(){
         FastaParser.parseFasta((InputStream)null, mockVisitor);
     }
+    @Test(expected = NullPointerException.class)
+    public void nullVisitorFileConstructorShouldThrowNPE() throws IOException{
+        FastaParser.parseFasta(getFastaFile() , null);
+    }
+    @Test(expected = NullPointerException.class)
+    public void nullVisitorStreamConstructorShouldThrowNPE() throws IOException{
+        FastaParser.parseFasta(new ByteArrayInputStream(new byte[0]) , null);
+    }
+    @Test
+    public void parseAllRecords() throws FileNotFoundException, IOException{
+        
+        mockVisitor.visitFile();        
+        visitLinesForFirstRecord();
+        visitLinesForSecondRecord();
+        
+        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        visitBodyOfFirstRecord();
+        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
+        
+
+        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        visitBodyOfSecondRecord();
+        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
+        
+        mockVisitor.visitEndOfFile();
+        
+        replay(mockVisitor);
+        parseFastaWithVisitor();
+        verify(mockVisitor);
+    }
+    /**
+     * Should be the same visits as if we
+     * parsed all records.
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    @Test
+    public void stopAfterLastRecord() throws FileNotFoundException, IOException{
+        
+        mockVisitor.visitFile();        
+        visitLinesForFirstRecord();
+        visitLinesForSecondRecord();
+        
+        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        visitBodyOfFirstRecord();
+        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
+        
+
+        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        visitBodyOfSecondRecord();
+        visitEndOfBodyAndReturn(EndOfBodyReturnCode.STOP_PARSING);
+        
+        mockVisitor.visitEndOfFile();
+        
+        replay(mockVisitor);
+        parseFastaWithVisitor();
+        verify(mockVisitor);
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void returnNullOnLastVisitEndOfBodyShouldThrowIllegalStateException() throws FileNotFoundException, IOException{
+        
+        mockVisitor.visitFile();        
+        visitLinesForFirstRecord();
+        visitLinesForSecondRecord();
+        
+        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        visitBodyOfFirstRecord();
+        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
+        
+
+        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        visitBodyOfSecondRecord();
+        visitEndOfBodyAndReturn(null);
+        
+        replay(mockVisitor);
+        parseFastaWithVisitor();
+    }
+    @Test
+    public void skipFirstRecord() throws FileNotFoundException, IOException{
+        
+        mockVisitor.visitFile();        
+        visitLinesForFirstRecord();
+        visitLinesForSecondRecord();
+        
+        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.SKIP_CURRENT_RECORD);
+        
+
+        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        visitBodyOfSecondRecord();
+        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
+        
+        mockVisitor.visitEndOfFile();
+        
+        replay(mockVisitor);
+        parseFastaWithVisitor();
+        verify(mockVisitor);
+    }
     
     @Test
-    public void parseFastaFile() throws FileNotFoundException, IOException{
+    public void skipLastRecord() throws FileNotFoundException, IOException{
         
-        mockVisitor.visitFile();
+        mockVisitor.visitFile();        
+        visitLinesForFirstRecord();
+        visitLinesForSecondRecord();
         
-        mockVisitor.visitLine(">IWKNA01T07A01PB2A1101R comment1\n");
-        expect(mockVisitor.visitDefline(">IWKNA01T07A01PB2A1101R comment1")).andReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        visitBodyOfFirstRecord();
+        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
         
-        mockVisitor.visitBodyLine("CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT");
+
+        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.SKIP_CURRENT_RECORD);
+        
+        mockVisitor.visitEndOfFile();
+        
+        replay(mockVisitor);
+        parseFastaWithVisitor();
+        verify(mockVisitor);
+    }
+    
+    @Test
+    public void skipAllRecords() throws FileNotFoundException, IOException{
+        
+        mockVisitor.visitFile();        
+        visitLinesForFirstRecord();
+        visitLinesForSecondRecord();
+        
+        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.SKIP_CURRENT_RECORD);
+        
+
+        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.SKIP_CURRENT_RECORD);
+        
+        mockVisitor.visitEndOfFile();
+        
+        replay(mockVisitor);
+        parseFastaWithVisitor();
+        verify(mockVisitor);
+    }
+    
+    @Test
+    public void stopAfterFirstDeflineRecords() throws FileNotFoundException, IOException{
+        
+        mockVisitor.visitFile();        
+        visitLineForFirstDefline();
+        
+        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.STOP_PARSING);
+        
+        mockVisitor.visitEndOfFile();
+        
+        replay(mockVisitor);
+        parseFastaWithVisitor();
+        verify(mockVisitor);
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void returnNullOnVisitDeflineShouldThrowIllegalStateException() throws FileNotFoundException, IOException{
+        
+        mockVisitor.visitFile();        
+        visitLineForFirstDefline();
+        
+        visitDeflineOfFirstRecordAndReturn(null);
+        
+        replay(mockVisitor);
+        parseFastaWithVisitor();
+    }
+    @Test
+    public void stopAfterFirstRecord() throws FileNotFoundException, IOException{
+        
+        mockVisitor.visitFile();        
+        visitLinesForFirstRecord();
+        
+        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        visitBodyOfFirstRecord();
+        visitEndOfBodyAndReturn(EndOfBodyReturnCode.STOP_PARSING);
+        
+        mockVisitor.visitEndOfFile();
+        
+        replay(mockVisitor);
+        parseFastaWithVisitor();
+        verify(mockVisitor);
+    }
+    
+    
+    
+    @Test(expected = IllegalStateException.class)
+    public void returningNullOnVisitEndOfBodyShouldThrowIllegalStateException() throws FileNotFoundException, IOException{
+        
+        mockVisitor.visitFile();        
+        visitLinesForFirstRecord();
+        
+        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        visitBodyOfFirstRecord();
+        visitEndOfBodyAndReturn(null);
+        
+      
+        
+        replay(mockVisitor);
+        parseFastaWithVisitor();
+    }
+    @Test
+    public void stopAfterSecondDefline() throws FileNotFoundException, IOException{
+        
+        mockVisitor.visitFile();        
+        visitLinesForFirstRecord();
+        
+        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
+        visitBodyOfFirstRecord();
+        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
+        
+        visitLineForSecondDefline();
+        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.STOP_PARSING);
+        
+        mockVisitor.visitEndOfFile();
+        
+        replay(mockVisitor);
+        parseFastaWithVisitor();
+        verify(mockVisitor);
+    }
+
+	private void parseFastaWithVisitor() throws FileNotFoundException,
+			IOException {
+		FastaParser.parseFasta(getFastaFile(), mockVisitor);
+	}
+
+	private File getFastaFile() throws IOException {
+		return RESOURCES.getFile("files/seqs.fasta");
+	}
+
+    
+    private void visitEndOfBodyAndReturn(EndOfBodyReturnCode ret){
+    	 expect(mockVisitor.visitEndOfBody()).andReturn(ret);         
+    }
+    
+    private void visitDeflineOfFirstRecordAndReturn(DeflineReturnCode ret){
+    	expect(mockVisitor.visitDefline(">IWKNA01T07A01PB2A1101R comment1")).andReturn(ret);
+    }
+    private void visitDeflineOfSecondRecordAndReturn(DeflineReturnCode ret){
+    	expect(mockVisitor.visitDefline(">IWKNA01T07A01PB2A1F  another comment")).andReturn(ret);
+    }
+	private void visitBodyOfFirstRecord() {
+		mockVisitor.visitBodyLine("CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT");
         mockVisitor.visitBodyLine("AACTGACGACCCACTTGTTCTTTTGAAAGTGAATCCACCAAAGCTGAAAGATGAGCTAAT");
         mockVisitor.visitBodyLine("CCTTAAGCCCATTGCTGCCTTGCATATGTCCACAGCTTGTTCCTCAGTTGGATTTTGTCG");
         mockVisitor.visitBodyLine("AAGAATGTCTACCATCCTTATTCCCCCAATCTGTGTGCTATGGCACATCTCCAATAAAGA");
@@ -81,45 +312,10 @@ public class TestFastaParser {
         mockVisitor.visitBodyLine("TTGATTTCTGAAGTGGACAGGGCCAAAGGTCCCGTGTTTCAATCTTTCGACTTTTTCAAA");
         mockVisitor.visitBodyLine("ATAAGTTTTATATACCTTTGGGTAGTGAACTGTACTTGTTGTTGGTCCATTCCTATTCCA");
         mockVisitor.visitBodyLine("CCATGTTACAGCTAGAGGTGATACCATTACTCGGTCTGAGCCGGCA");
-        
-        mockVisitor.visitLine("CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT\n");
-        mockVisitor.visitLine("AACTGACGACCCACTTGTTCTTTTGAAAGTGAATCCACCAAAGCTGAAAGATGAGCTAAT\n");
-        mockVisitor.visitLine("CCTTAAGCCCATTGCTGCCTTGCATATGTCCACAGCTTGTTCCTCAGTTGGATTTTGTCG\n");
-        mockVisitor.visitLine("AAGAATGTCTACCATCCTTATTCCCCCAATCTGTGTGCTATGGCACATCTCCAATAAAGA\n");
-        mockVisitor.visitLine("TGCTAGTGGGTCTGCTGATACCGTTGCTCTTCTTACTATGTTCCTGGCAGCAATAATCAA\n");
-        mockVisitor.visitLine("GCTTTGGTCAACATCATCATTTCTCACCTCCCCTCCTGGAGTATACATTTGCTCCCAGCA\n");
-        mockVisitor.visitLine("TGTTCCCTGGGTCAAATGCAGCACTTCAATATAGACACTGCTTGTTCCACCAGCCACTGG\n");
-        mockVisitor.visitLine("GAGGAATCTCGTTTTGCGGACCAACTCTCTTTCTAGCATGTATGCAACCATTAAGGGGGC\n");
-        mockVisitor.visitLine("AATTTTGCAGTCCTGGAGTTCTTCCTTCTTCTCTTTTGTTATCGTCAGCTGTGATTCCGA\n");
-        mockVisitor.visitLine("TGTTAGTATTCTAGCTCCCACTTCATTTGGGAAAACAACTTCCATGATTACATCCTGCGC\n");
-        mockVisitor.visitLine("CTCTTTGGCACTGAGGTCTGCGTGGCCAGGGTTTATGTCAACCCTCCGTCTTATTTTAAC\n");
-        mockVisitor.visitLine("TTGATTTCTGAAGTGGACAGGGCCAAAGGTCCCGTGTTTCAATCTTTCGACTTTTTCAAA\n");
-        mockVisitor.visitLine("ATAAGTTTTATATACCTTTGGGTAGTGAACTGTACTTGTTGTTGGTCCATTCCTATTCCA\n");
-        mockVisitor.visitLine("CCATGTTACAGCTAGAGGTGATACCATTACTCGGTCTGAGCCGGCA\n");
+	}
 
-        expect(mockVisitor.visitEndOfBody()).andReturn(EndOfBodyReturnCode.KEEP_PARSING);
-        /*
-        expect(mockVisitor.visitRecord("IWKNA01T07A01PB2A1101R", "comment1", 
-        
-                "CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT\n" +
-                "AACTGACGACCCACTTGTTCTTTTGAAAGTGAATCCACCAAAGCTGAAAGATGAGCTAAT\n" +
-                "CCTTAAGCCCATTGCTGCCTTGCATATGTCCACAGCTTGTTCCTCAGTTGGATTTTGTCG\n" +
-                "AAGAATGTCTACCATCCTTATTCCCCCAATCTGTGTGCTATGGCACATCTCCAATAAAGA\n" +
-                "TGCTAGTGGGTCTGCTGATACCGTTGCTCTTCTTACTATGTTCCTGGCAGCAATAATCAA\n" +
-                "GCTTTGGTCAACATCATCATTTCTCACCTCCCCTCCTGGAGTATACATTTGCTCCCAGCA\n" +
-                "TGTTCCCTGGGTCAAATGCAGCACTTCAATATAGACACTGCTTGTTCCACCAGCCACTGG\n" +
-                "GAGGAATCTCGTTTTGCGGACCAACTCTCTTTCTAGCATGTATGCAACCATTAAGGGGGC\n" +
-                "AATTTTGCAGTCCTGGAGTTCTTCCTTCTTCTCTTTTGTTATCGTCAGCTGTGATTCCGA\n" +
-                "TGTTAGTATTCTAGCTCCCACTTCATTTGGGAAAACAACTTCCATGATTACATCCTGCGC\n" +
-                "CTCTTTGGCACTGAGGTCTGCGTGGCCAGGGTTTATGTCAACCCTCCGTCTTATTTTAAC\n" +
-                "TTGATTTCTGAAGTGGACAGGGCCAAAGGTCCCGTGTTTCAATCTTTCGACTTTTTCAAA\n" +
-                "ATAAGTTTTATATACCTTTGGGTAGTGAACTGTACTTGTTGTTGGTCCATTCCTATTCCA\n" +
-                "CCATGTTACAGCTAGAGGTGATACCATTACTCGGTCTGAGCCGGCA\n"
-                )
-        ).andReturn(true);
-        */
-        expect( mockVisitor.visitDefline(">IWKNA01T07A01PB2A1F  another comment")).andReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
-        mockVisitor.visitBodyLine("ATAAAAGAACTAAGAGATCTAATGTCGCAGTCTCGCACCCGCGAGATACTAACCAAAACC");
+	private void visitBodyOfSecondRecord() {
+		mockVisitor.visitBodyLine("ATAAAAGAACTAAGAGATCTAATGTCGCAGTCTCGCACCCGCGAGATACTAACCAAAACC");
         mockVisitor.visitBodyLine("ACTGTGGACCACATGGCCATAATCAAAAAATACACATCAGGAAGACAAGAGAAGAACCCC");
         mockVisitor.visitBodyLine("GCACTCAGGATGAAGTGGATGATGGCAATGAAATATCCAATTACAGCAGATAAAAGAATA");
         mockVisitor.visitBodyLine("ATGGAAATGATTCCCGAAAGGAATGAACAAGGACAAACCCTCTGGAGTAAAACAAACGAT");
@@ -136,8 +332,10 @@ public class TestFastaParser {
         mockVisitor.visitBodyLine("TGCCATAGCACACAGATGGGGGAATAAGGATGGTAGACATTCTTCGACAAAATCCAACTG");
         mockVisitor.visitBodyLine("AGGAACAAGCTGTGGACATATGCAAGGCAGCAATGGGCTTAAGGATTAGCTCATCTTTCA");
         mockVisitor.visitBodyLine("GCTTTGGTGGATTCACT");
-        
-        mockVisitor.visitLine(">IWKNA01T07A01PB2A1F  another comment\n");
+	}
+
+	private void visitLinesForSecondRecord() {
+		visitLineForSecondDefline();
         mockVisitor.visitLine("ATAAAAGAACTAAGAGATCTAATGTCGCAGTCTCGCACCCGCGAGATACTAACCAAAACC\n");
         mockVisitor.visitLine("ACTGTGGACCACATGGCCATAATCAAAAAATACACATCAGGAAGACAAGAGAAGAACCCC\n");
         mockVisitor.visitLine("GCACTCAGGATGAAGTGGATGATGGCAATGAAATATCCAATTACAGCAGATAAAAGAATA\n");
@@ -155,36 +353,33 @@ public class TestFastaParser {
         mockVisitor.visitLine("TGCCATAGCACACAGATGGGGGAATAAGGATGGTAGACATTCTTCGACAAAATCCAACTG\n");
         mockVisitor.visitLine("AGGAACAAGCTGTGGACATATGCAAGGCAGCAATGGGCTTAAGGATTAGCTCATCTTTCA\n");
         mockVisitor.visitLine("GCTTTGGTGGATTCACT\n");
-        
-        expect(mockVisitor.visitEndOfBody()).andReturn(EndOfBodyReturnCode.KEEP_PARSING);
-        /*
-        expect(mockVisitor.visitRecord("IWKNA01T07A01PB2A1F", "another comment", 
-                
-                "ATAAAAGAACTAAGAGATCTAATGTCGCAGTCTCGCACCCGCGAGATACTAACCAAAACC\n" +
-                "ACTGTGGACCACATGGCCATAATCAAAAAATACACATCAGGAAGACAAGAGAAGAACCCC\n" +
-                "GCACTCAGGATGAAGTGGATGATGGCAATGAAATATCCAATTACAGCAGATAAAAGAATA\n" +
-                "ATGGAAATGATTCCCGAAAGGAATGAACAAGGACAAACCCTCTGGAGTAAAACAAACGAT\n" +
-                "GCCGGCTCAGACCGAGTAATGGTATCACCTCTAGCTGTAACATGGTGGAATAGGAATGGA\n" +
-                "CCAACAACAAGTACAGTTCACTACCCAAAGGTATATAAAACTTATTTTGAAAAAGTCGAA\n" +
-                "AGATTGAAACACGGGACCTTTGGCCCTGTCCACTTCAGAAATCAAGTTAAAATAAGACGG\n" +
-                "AGGGTTGACATAAACCCTGGCCACGCAGACCTCAGTGCCAAAGAGGCGCAGGATGTAATC\n" +
-                "ATGGAAGTTGTTTTCCCAAATGAAGTGGGAGCTAGAATACTAACATCGGAATCACAGCTG\n" +
-                "ACGATAACAAAAGAGAAGAAGGAAGAACTCCAGGACTGCAAAATTGCCCCCTTAATGGTT\n" +
-                "GCATACATGCTAGAAAGAGAGTTGGTCCGCAAAACGAGATTCCTCCCAGTGGCTGGTGGA\n" +
-                "ACAAGCAGTGTCTATATTGAAGTGCTGCATTTGACCCAGGGAACATGCTGGGAGCAAATG\n" +
-                "TATACTCCAGGAGGGGAGGTGAGAAATGATGATGTTGACCAAAGCTTGATTATTGCTGCC\n" +
-                "AGGAACATAGTAAGAAGAGCAACGGTATCAGCAGACCCACTAGCATCTCTATTGGAGATG\n" +
-                "TGCCATAGCACACAGATGGGGGAATAAGGATGGTAGACATTCTTCGACAAAATCCAACTG\n" +
-                "AGGAACAAGCTGTGGACATATGCAAGGCAGCAATGGGCTTAAGGATTAGCTCATCTTTCA\n" +
-                "GCTTTGGTGGATTCACT\n"
-        )).andReturn(true);
-        */
-        mockVisitor.visitEndOfFile();
-        
-        replay(mockVisitor);
-        FastaParser.parseFasta(RESOURCES.getFile("files/seqs.fasta"), mockVisitor);
-        verify(mockVisitor);
-    }
+	}
+
+	private void visitLineForSecondDefline() {
+		mockVisitor.visitLine(">IWKNA01T07A01PB2A1F  another comment\n");
+	}
+
+	private void visitLinesForFirstRecord() {
+		visitLineForFirstDefline();
+        mockVisitor.visitLine("CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT\n");
+        mockVisitor.visitLine("AACTGACGACCCACTTGTTCTTTTGAAAGTGAATCCACCAAAGCTGAAAGATGAGCTAAT\n");
+        mockVisitor.visitLine("CCTTAAGCCCATTGCTGCCTTGCATATGTCCACAGCTTGTTCCTCAGTTGGATTTTGTCG\n");
+        mockVisitor.visitLine("AAGAATGTCTACCATCCTTATTCCCCCAATCTGTGTGCTATGGCACATCTCCAATAAAGA\n");
+        mockVisitor.visitLine("TGCTAGTGGGTCTGCTGATACCGTTGCTCTTCTTACTATGTTCCTGGCAGCAATAATCAA\n");
+        mockVisitor.visitLine("GCTTTGGTCAACATCATCATTTCTCACCTCCCCTCCTGGAGTATACATTTGCTCCCAGCA\n");
+        mockVisitor.visitLine("TGTTCCCTGGGTCAAATGCAGCACTTCAATATAGACACTGCTTGTTCCACCAGCCACTGG\n");
+        mockVisitor.visitLine("GAGGAATCTCGTTTTGCGGACCAACTCTCTTTCTAGCATGTATGCAACCATTAAGGGGGC\n");
+        mockVisitor.visitLine("AATTTTGCAGTCCTGGAGTTCTTCCTTCTTCTCTTTTGTTATCGTCAGCTGTGATTCCGA\n");
+        mockVisitor.visitLine("TGTTAGTATTCTAGCTCCCACTTCATTTGGGAAAACAACTTCCATGATTACATCCTGCGC\n");
+        mockVisitor.visitLine("CTCTTTGGCACTGAGGTCTGCGTGGCCAGGGTTTATGTCAACCCTCCGTCTTATTTTAAC\n");
+        mockVisitor.visitLine("TTGATTTCTGAAGTGGACAGGGCCAAAGGTCCCGTGTTTCAATCTTTCGACTTTTTCAAA\n");
+        mockVisitor.visitLine("ATAAGTTTTATATACCTTTGGGTAGTGAACTGTACTTGTTGTTGGTCCATTCCTATTCCA\n");
+        mockVisitor.visitLine("CCATGTTACAGCTAGAGGTGATACCATTACTCGGTCTGAGCCGGCA\n");
+	}
+
+	private void visitLineForFirstDefline() {
+		mockVisitor.visitLine(">IWKNA01T07A01PB2A1101R comment1\n");
+	}
     
     @Test
     public void parseEmptyFile(){

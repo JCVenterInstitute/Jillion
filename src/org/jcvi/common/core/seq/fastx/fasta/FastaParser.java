@@ -30,7 +30,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.Semaphore;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,38 +65,17 @@ public final class FastaParser {
      * @throws NullPointerException if fastaFile or visitor are null.
      */
     public static void parseFasta(File fastaFile, FastaVisitor visitor) throws FileNotFoundException{
-        InputStream in = new FileInputStream(fastaFile);
+        if(visitor ==null){
+        	throw new NullPointerException("visitor can not be null");
+        }
+    	InputStream in = new FileInputStream(fastaFile);
         try{
             parseFasta(in,visitor);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
     }
-    /**
-     * Parse the given Fasta file and call the appropriate
-     * visitXXX methods on the given visitor.  This version
-     * will try to acquire this given semaphore
-     * before parsing each fasta record in the file
-     * (or block until a permit has been released).
-     * This is useful if parsing needs to be halted
-     * and restarted where the parser left off. 
-     * @param fastaFile the Fasta file to parse.
-     * @param visitor the visitor to call the visit methods on.
-     * @param semaphore the {@link Semaphore} which 
-     * this parser will try to acquire when parsing each fasta
-     * record.
-     * @throws FileNotFoundException if the given fasta file does not 
-     * exist.
-     * @throws NullPointerException if fastaFile or visitor are null.
-     */
-    public static void blockingParseFasta(File fastaFile, FastaVisitor visitor) throws FileNotFoundException{
-        InputStream in = new FileInputStream(fastaFile);
-        try{
-            parseFasta(in,visitor);
-        }finally{
-            IOUtil.closeAndIgnoreErrors(in);
-        }
-    }
+    
     /**
      * Parse the given InputStream of Fasta data and call the appropriate
      * visitXXX methods on the given visitor.
@@ -107,12 +85,14 @@ public final class FastaParser {
      */    
     public static void parseFasta(InputStream in, FastaVisitor visitor){
     	
-    	
+    	if(visitor ==null){
+        	throw new NullPointerException("visitor can not be null");
+        }
     	try {
     	    ParserState parserState = new ParserState(in);           
             visitor.visitFile();
             try{
-                while(!parserState.done()){
+                while(parserState.keepParsing()){
                    parserState = SectionHandler.handleNextSection(parserState, visitor);
                 }
                 parserState.visitFinalRecord(visitor);
@@ -126,11 +106,11 @@ public final class FastaParser {
     }
     
     private static class ParserState implements Closeable{
-        private boolean keepParsing;
+        private boolean keepParsing=true;
         private final TextLineParser parser;
         private boolean done;
         private boolean skipCurrentRecord;
-        private boolean seenFirstDefline=true;
+        private boolean seenFirstDefline=false;
         ParserState(InputStream in) throws IOException{
             if(in ==null){
                 throw new NullPointerException("input stream can not be null");
@@ -139,9 +119,10 @@ public final class FastaParser {
             done= !parser.hasNextLine();
         }
         
-        public boolean done(){
-            return done;
+        public boolean keepParsing(){
+        	return keepParsing && !done;
         }
+        
         
         public boolean skipCurrentRecord() {
 			return skipCurrentRecord;
@@ -164,7 +145,7 @@ public final class FastaParser {
         }
         
         public void visitFinalRecord(FastaVisitor visitor){
-            if(keepParsing && !skipCurrentRecord){
+            if(keepParsing && !skipCurrentRecord && seenFirstDefline){
             	EndOfBodyReturnCode ret =visitor.visitEndOfBody();
             	if(ret ==null){
             		throw new IllegalStateException("return from visitDefline can not be null");                	
@@ -190,9 +171,9 @@ public final class FastaParser {
             @Override
             ParserState sectionSpecificHandle(String lineWithCR, ParserState parserState,FastaVisitor visitor){
                 
-                visitor.visitLine(lineWithCR);
+                
                 String lineWithoutCR = lineWithCR.substring(0, lineWithCR.length()-1);
-                if(!parserState.seenFirstDefline && !parserState.skipCurrentRecord()){  
+                if(parserState.seenFirstDefline && !parserState.skipCurrentRecord()){  
                 	EndOfBodyReturnCode ret =visitor.visitEndOfBody();
                 	if(ret ==null){
                 		throw new IllegalStateException("return from visitDefline can not be null");
@@ -202,21 +183,24 @@ public final class FastaParser {
                 	}else{
                 		parserState.keepParsing = false;
                 	}
-                }                    
-                DeflineReturnCode visitDefline = visitor.visitDefline(lineWithoutCR);
-                if(visitDefline ==null){
-                	throw new IllegalStateException("return from visitDefline can not be null");
                 }
-                if(visitDefline == DeflineReturnCode.SKIP_CURRENT_RECORD){
-                	parserState.skipCurrentRecord=true;
-                	parserState.keepParsing=true;
-                }else if(visitDefline == DeflineReturnCode.STOP_PARSING){
-                	parserState.keepParsing=false;
-                }else{
-                	parserState.skipCurrentRecord=false;
-                	parserState.keepParsing=true;
+                if(parserState.keepParsing){
+	                visitor.visitLine(lineWithCR);
+	                DeflineReturnCode visitDefline = visitor.visitDefline(lineWithoutCR);
+	                if(visitDefline ==null){
+	                	throw new IllegalStateException("return from visitDefline can not be null");
+	                }
+	                if(visitDefline == DeflineReturnCode.SKIP_CURRENT_RECORD){
+	                	parserState.skipCurrentRecord=true;
+	                	parserState.keepParsing=true;
+	                }else if(visitDefline == DeflineReturnCode.STOP_PARSING){
+	                	parserState.keepParsing=false;
+	                }else{
+	                	parserState.skipCurrentRecord=false;
+	                	parserState.keepParsing=true;
+	                }
+	                parserState.seenFirstDefline = true;
                 }
-                parserState.seenFirstDefline = false;
                 return parserState;
             }
             
