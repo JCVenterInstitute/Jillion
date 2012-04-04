@@ -292,10 +292,10 @@ public class TestFastaParser {
     }
     
     private void visitDeflineOfFirstRecordAndReturn(DeflineReturnCode ret){
-    	expect(mockVisitor.visitDefline(">IWKNA01T07A01PB2A1101R comment1")).andReturn(ret);
+    	expect(mockVisitor.visitDefline("IWKNA01T07A01PB2A1101R", "comment1")).andReturn(ret);
     }
     private void visitDeflineOfSecondRecordAndReturn(DeflineReturnCode ret){
-    	expect(mockVisitor.visitDefline(">IWKNA01T07A01PB2A1F  another comment")).andReturn(ret);
+    	expect(mockVisitor.visitDefline("IWKNA01T07A01PB2A1F",  "another comment")).andReturn(ret);
     }
 	private void visitBodyOfFirstRecord() {
 		mockVisitor.visitBodyLine("CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT");

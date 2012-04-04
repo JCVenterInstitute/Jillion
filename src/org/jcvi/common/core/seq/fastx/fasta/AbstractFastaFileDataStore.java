@@ -76,7 +76,7 @@ public abstract class AbstractFastaFileDataStore<S extends Symbol, T extends Seq
     }
 
     @Override
-    public DeflineReturnCode visitDefline(String defline) {
+    public DeflineReturnCode visitDefline(String id, String comment) {
         return DeflineReturnCode.VISIT_CURRENT_RECORD;
     }
 

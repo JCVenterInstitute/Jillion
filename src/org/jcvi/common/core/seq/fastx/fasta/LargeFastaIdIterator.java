@@ -55,8 +55,7 @@ public final class LargeFastaIdIterator extends AbstractBlockingCloseableIterato
     protected void backgroundThreadRunMethod() {
     	FastaVisitor visitor = new FastaVisitor() {
     		@Override
-			public DeflineReturnCode visitDefline(String defline) {
-				String id =FastaUtil.parseIdentifierFromIdLine(defline);
+			public DeflineReturnCode visitDefline(String id, String comment) {
 				LargeFastaIdIterator.this.blockingPut(id);
 				return DeflineReturnCode.SKIP_CURRENT_RECORD;
 			}
