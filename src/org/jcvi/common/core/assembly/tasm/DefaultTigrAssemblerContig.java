@@ -56,7 +56,7 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
             Set<TigrAssemblerPlacedRead> placedReads, 
             EnumMap<TigrAssemblerContigAttribute, String> attributes) {
         super(id, consensus, placedReads);
-        this.attributes = Collections.unmodifiableMap(new EnumMap(attributes));
+        this.attributes = Collections.unmodifiableMap(new EnumMap<TigrAssemblerContigAttribute, String>(attributes));
     }
 
     @Override
