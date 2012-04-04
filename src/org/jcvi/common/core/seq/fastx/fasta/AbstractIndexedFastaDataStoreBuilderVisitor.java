@@ -64,7 +64,7 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 	public synchronized boolean visitRecord(String id, String comment, String entireBody) {
 		throwErrorIfDone();
 		lastId = id;
-		long endOfRecord = currentOffset - currentLineLength-1;
+		long endOfRecord = currentOffset -1;
 		index.put(id, Range.buildRange(currentStartOffset, endOfRecord));
 		currentStartOffset = endOfRecord+1;
 		return true;
