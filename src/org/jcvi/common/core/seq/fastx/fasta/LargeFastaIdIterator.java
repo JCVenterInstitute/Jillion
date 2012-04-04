@@ -53,13 +53,33 @@ public final class LargeFastaIdIterator extends AbstractBlockingCloseableIterato
     */
     @Override
     protected void backgroundThreadRunMethod() {
-        AbstractFastaVisitor visitor = new AbstractFastaVisitor() {
+    	FastaVisitor visitor = new FastaVisitor() {
+    		@Override
+			public DeflineReturnCode visitDefline(String defline) {
+				String id =FastaUtil.parseIdentifierFromIdLine(defline);
+				LargeFastaIdIterator.this.blockingPut(id);
+				return DeflineReturnCode.SKIP_CURRENT_RECORD;
+			}
+
+			@Override
+			public void visitLine(String line) {}
+
+			@Override
+			public void visitFile() {}
+
+			@Override
+			public void visitEndOfFile() {}
+
+			
+			@Override
+			public void visitBodyLine(String bodyLine) {}
+
+			@Override
+			public EndOfBodyReturnCode visitEndOfBody() {
+				return EndOfBodyReturnCode.KEEP_PARSING;
+			}
             
-            @Override
-            public boolean visitRecord(String id, String comment, String entireBody) {
-                LargeFastaIdIterator.this.blockingPut(id);
-                return LargeFastaIdIterator.this.isClosed();
-            }
+            
         };
         try {
             FastaParser.parseFasta(fastaFile, visitor);
