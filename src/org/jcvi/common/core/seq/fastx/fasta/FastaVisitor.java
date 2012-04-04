@@ -91,14 +91,16 @@ public interface FastaVisitor extends TextFileVisitor{
 	}
     /**
      * Visit the definition line of the current fasta record.
-     * @param defline a string containing all the text of
-     * the def line including any comments and white space.
+     * @param id the id of this record as a String
+     * @param optionalComment the comment for this record.  This comment
+     * may have white space.  If no comment exists, then this
+     * parameter will be null.
      * @return a non-null instance of {@link DeflineReturnCode}
      * telling the parser how it should proceed. 
      * Returning null will throw an {@link IllegalStateException}.
      * @see DeflineReturnCode
      */
-	DeflineReturnCode visitDefline(String defline);
+	DeflineReturnCode visitDefline(String id, String optionalComment);
     /**
      * Visit a line of the body of the fasta record.
      * This line is only called if {@link #visitDefline(String)}

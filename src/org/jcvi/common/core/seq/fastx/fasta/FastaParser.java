@@ -46,6 +46,7 @@ public final class FastaParser {
 	
 	private static final Pattern TRAILING_WHITE_SPACE_PATTERN = Pattern.compile("\\s+$");
 	
+    private static final Pattern DEFLINE_LINE_PATTERN = Pattern.compile("^>(\\S+)(\\s+(.*))?");
 	private static boolean endsWithWhiteSpace(String line){
 		Matcher m = TRAILING_WHITE_SPACE_PATTERN.matcher(line);
 		return m.find();
@@ -186,7 +187,14 @@ public final class FastaParser {
                 }
                 if(parserState.keepParsing){
 	                visitor.visitLine(lineWithCR);
-	                DeflineReturnCode visitDefline = visitor.visitDefline(lineWithoutCR);
+	                Matcher matcher = DEFLINE_LINE_PATTERN.matcher(lineWithoutCR);
+	                if(!matcher.find()){
+	                	throw new IllegalStateException(
+	                			String.format("could not parse defline '%s'", lineWithoutCR));
+	                }
+	                String id = matcher.group(1);
+	                String comment = matcher.group(3);
+	                DeflineReturnCode visitDefline = visitor.visitDefline(id,comment);
 	                if(visitDefline ==null){
 	                	throw new IllegalStateException("return from visitDefline can not be null");
 	                }

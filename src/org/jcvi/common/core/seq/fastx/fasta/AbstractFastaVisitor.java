@@ -49,9 +49,9 @@ public abstract class AbstractFastaVisitor implements FastaVisitor{
     }
 
     @Override
-    public DeflineReturnCode visitDefline(String defline) {
-    	currentId = FastaUtil.parseIdentifierFromIdLine(defline);
-    	currentComment = FastaUtil.parseCommentFromIdLine(defline);
+    public DeflineReturnCode visitDefline(String id, String comment) {
+    	currentId = id;
+    	currentComment = comment;
     	currentBody = new StringBuilder();
         return DeflineReturnCode.VISIT_CURRENT_RECORD;
     }
