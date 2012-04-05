@@ -32,37 +32,37 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
-public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQRecord>{
+public class DefaultFastqFileDataStore extends AbstractFastqFileDataStore{
 
-   private DefaultFastQDataStore<FastQRecord> dataStore;
-   private final DefaultFastQDataStore.Builder<FastQRecord> builder;
+   private DefaultFastqDataStore dataStore;
+   private final DefaultFastqDataStore.Builder builder;
     /**
      * @param qualityCodec
      */
-    public DefaultFastQFileDataStore(FastQQualityCodec qualityCodec, int numberOfRecords) {
+    public DefaultFastqFileDataStore(FastqQualityCodec qualityCodec, int numberOfRecords) {
         super(qualityCodec);
-        builder = new DefaultFastQDataStore.Builder<FastQRecord>(numberOfRecords);
+        builder = new DefaultFastqDataStore.Builder(numberOfRecords);
     }
-    public DefaultFastQFileDataStore(FastQQualityCodec qualityCodec) {
+    public DefaultFastqFileDataStore(FastqQualityCodec qualityCodec) {
         super(qualityCodec);        
-        builder = new DefaultFastQDataStore.Builder<FastQRecord>();
+        builder = new DefaultFastqDataStore.Builder();
     }
-    public DefaultFastQFileDataStore(File fastQFile,FastQQualityCodec qualityCodec) throws IOException {
+    public DefaultFastqFileDataStore(File fastQFile,FastqQualityCodec qualityCodec) throws IOException {
         super(qualityCodec);
-        builder = new DefaultFastQDataStore.Builder<FastQRecord>();
-        FastQFileParser.parse(fastQFile, this);
+        builder = new DefaultFastqDataStore.Builder();
+        FastqFileParser.parse(fastQFile, this);
     }
-    public DefaultFastQFileDataStore(File fastQFile,FastQQualityCodec qualityCodec, int numberOfRecords) throws IOException {
+    public DefaultFastqFileDataStore(File fastQFile,FastqQualityCodec qualityCodec, int numberOfRecords) throws IOException {
         super(qualityCodec);
-        builder = new DefaultFastQDataStore.Builder<FastQRecord>(numberOfRecords);
-        FastQFileParser.parse(fastQFile, this);
+        builder = new DefaultFastqDataStore.Builder(numberOfRecords);
+        FastqFileParser.parse(fastQFile, this);
     }
     @Override
     protected FastXFileVisitor.EndOfBodyReturnCode visitFastQRecord( String id, 
             NucleotideSequence nucleotides,
             QualitySequence qualities,
             String optionalComment) {
-        builder.put(new DefaultFastQRecord(id, nucleotides, qualities, optionalComment));
+        builder.put(new DefaultFastqRecord(id, nucleotides, qualities, optionalComment));
         return FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING;
     }
 
@@ -79,7 +79,7 @@ public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQR
     }
 
     @Override
-    public FastQRecord get(String id) throws DataStoreException {
+    public FastqRecord get(String id) throws DataStoreException {
         return dataStore.get(id);
     }
 
@@ -99,7 +99,7 @@ public class DefaultFastQFileDataStore extends AbstractFastQFileDataStore<FastQR
     }
 
     @Override
-    public CloseableIterator<FastQRecord> iterator() {
+    public CloseableIterator<FastqRecord> iterator() {
         return dataStore.iterator();
     }
 }

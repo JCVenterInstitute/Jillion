@@ -29,25 +29,25 @@ import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
- * {@code LargeFastQFileIterator} is an Iterator of FastQRecords meant for large
+ * {@code LargeFastQFileIterator} is an Iterator of {@link FastqRecord}s meant for large
  * fastq files (although small fastqs will work too).
  * @author dkatzel
  *
  *
  */
-public final class LargeFastQFileIterator extends AbstractBlockingCloseableIterator<FastQRecord> implements CloseableIterator<FastQRecord>{
+public final class LargeFastqFileIterator extends AbstractBlockingCloseableIterator<FastqRecord> implements CloseableIterator<FastqRecord>{
 
    
     private final File fastQFile;
-    private final FastQQualityCodec qualityCodec;
+    private final FastqQualityCodec qualityCodec;
     
-    public static LargeFastQFileIterator createNewIteratorFor(File fastQFile,FastQQualityCodec qualityCodec){
-    	LargeFastQFileIterator iter = new LargeFastQFileIterator(fastQFile, qualityCodec);
+    public static LargeFastqFileIterator createNewIteratorFor(File fastQFile,FastqQualityCodec qualityCodec){
+    	LargeFastqFileIterator iter = new LargeFastqFileIterator(fastQFile, qualityCodec);
     	iter.start();
     	
     	return iter;
     }
-    private LargeFastQFileIterator(File fastQFile,FastQQualityCodec qualityCodec){
+    private LargeFastqFileIterator(File fastQFile,FastqQualityCodec qualityCodec){
         this.fastQFile = fastQFile;
         this.qualityCodec = qualityCodec;
     }
@@ -55,15 +55,15 @@ public final class LargeFastQFileIterator extends AbstractBlockingCloseableItera
 	@Override
 	protected void backgroundThreadRunMethod() {
 		try {
-        	FastQFileVisitor visitor = new AbstractFastQFileVisitor(qualityCodec) {
+        	FastqFileVisitor visitor = new AbstractFastqFileVisitor(qualityCodec) {
 				
         		 @Override
         	     protected FastXFileVisitor.EndOfBodyReturnCode visitFastQRecord(String id,
         	             NucleotideSequence nucleotides,
         	             QualitySequence qualities, String optionalComment) {
-        	         FastQRecord record = new DefaultFastQRecord(id,nucleotides, qualities,optionalComment);
+        	         FastqRecord record = new DefaultFastqRecord(id,nucleotides, qualities,optionalComment);
         	         blockingPut(record);
-        	         return LargeFastQFileIterator.this.isClosed() ? FastXFileVisitor.EndOfBodyReturnCode.STOP_PARSING : FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING;
+        	         return LargeFastqFileIterator.this.isClosed() ? FastXFileVisitor.EndOfBodyReturnCode.STOP_PARSING : FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING;
         	     }
         		 @Override
         		    public FastXFileVisitor.DeflineReturnCode visitDefline(String id, String optionalComment) {
@@ -71,7 +71,7 @@ public final class LargeFastQFileIterator extends AbstractBlockingCloseableItera
         		        return FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
         		    }
 			};
-            FastQFileParser.parse(fastQFile, visitor);
+            FastqFileParser.parse(fastQFile, visitor);
        } catch (IOException e) {
             
             //should never happen

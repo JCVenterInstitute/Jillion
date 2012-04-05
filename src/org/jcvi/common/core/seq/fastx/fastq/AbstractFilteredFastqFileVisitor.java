@@ -25,22 +25,22 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 /**
- * {@code AbstractFilteredFastQFileVisitor} is an implementation
- * of {@link AbstractFastQFileVisitor} that also takes a {@link FastXFilter}
+ * {@code AbstractFilteredFastqFileVisitor} is an implementation
+ * of {@link AbstractFastqFileVisitor} that also takes a {@link FastXFilter}
  * to filter the records being visited.
  * 
  * @author dkatzel
  *
  *
  */
-public abstract class AbstractFilteredFastQFileVisitor extends AbstractFastQFileVisitor{
+public abstract class AbstractFilteredFastqFileVisitor extends AbstractFastqFileVisitor{
     private boolean accept;
     private final FastXFilter filter;
     
     /**
      * @param filter
      */
-    public AbstractFilteredFastQFileVisitor(FastXFilter filter,FastQQualityCodec qualityCodec) {
+    public AbstractFilteredFastqFileVisitor(FastXFilter filter,FastqQualityCodec qualityCodec) {
         super(qualityCodec);
         this.filter = filter;
     }
@@ -52,11 +52,11 @@ public abstract class AbstractFilteredFastQFileVisitor extends AbstractFastQFile
         return accept?FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD : FastXFileVisitor.DeflineReturnCode.SKIP_CURRENT_RECORD;
     }
     /**
-     * Visit the following {@link FastQRecord} which has been
+     * Visit the following {@link FastqRecord} which has been
      * accepted by the filter.
      * @param fastQ the fastQRecord being visited.
      */
-    protected abstract FastXFileVisitor.EndOfBodyReturnCode visitFastQRecord(FastQRecord fastQ);
+    protected abstract FastXFileVisitor.EndOfBodyReturnCode visitFastQRecord(FastqRecord fastQ);
     
     @Override
     public FastXFileVisitor.EndOfBodyReturnCode visitEndOfBody() {
@@ -73,7 +73,7 @@ public abstract class AbstractFilteredFastQFileVisitor extends AbstractFastQFile
      protected FastXFileVisitor.EndOfBodyReturnCode visitFastQRecord(String id,
              NucleotideSequence nucleotides,
              QualitySequence qualities, String optionalComment) {
-         return visitFastQRecord(new DefaultFastQRecord(id, nucleotides, qualities,optionalComment));
+         return visitFastQRecord(new DefaultFastqRecord(id, nucleotides, qualities,optionalComment));
      }
    
 }

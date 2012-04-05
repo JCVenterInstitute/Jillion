@@ -36,8 +36,8 @@ import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
-import org.jcvi.common.core.seq.fastx.fastq.AbstractFastQReadIdVisitor;
-import org.jcvi.common.core.seq.fastx.fastq.FastQFileParser;
+import org.jcvi.common.core.seq.fastx.fastq.AbstractFastqReadIdVisitor;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileParser;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
@@ -130,7 +130,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
             }
             else if(fileName.endsWith("fastq") || fileName.matches("\\S*\\.fastq\\S*")){
                 in = new FileInputStream(file);
-                FastQFileParser.parse(in, new FastQReadOrder(file));
+                FastqFileParser.parse(in, new FastqReadOrder(file));
             }
             else{
               //try as fasta...
@@ -281,9 +281,9 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         }
         
     }
-    private final class FastQReadOrder extends AbstractFastQReadIdVisitor{
+    private final class FastqReadOrder extends AbstractFastqReadIdVisitor{
         private final File file;
-        FastQReadOrder(File file){
+        FastqReadOrder(File file){
             this.file =file;
         }
         /**

@@ -25,15 +25,15 @@ package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.io.File;
 
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.LargeFastQFileDataStore;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 
 public class TestLargeFastQFileDataStore extends AbstractTestFastQFileDataStore{
 
     @Override
-    protected LargeFastQFileDataStore createFastQFileDataStore(File file,
-            FastQQualityCodec qualityCodec) {
-        return new LargeFastQFileDataStore(file, qualityCodec);
+    protected LargeFastqFileDataStore createFastQFileDataStore(File file,
+            FastqQualityCodec qualityCodec) {
+        return new LargeFastqFileDataStore(file, qualityCodec);
     }
 
 }

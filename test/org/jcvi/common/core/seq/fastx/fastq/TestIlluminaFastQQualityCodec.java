@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +50,7 @@ public class TestIlluminaFastQQualityCodec {
     
     private PhredQuality quality;
     private char encodedQuality;
-    private FastQQualityCodec sut = FastQQualityCodec.ILLUMINA;
+    private FastqQualityCodec sut = FastqQualityCodec.ILLUMINA;
     
     public TestIlluminaFastQQualityCodec(PhredQuality quality,char encodedQuality ){
         this.quality = quality;

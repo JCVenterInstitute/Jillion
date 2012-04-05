@@ -26,13 +26,13 @@ package org.jcvi.common.core.seq.fastx.fastq;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQFileDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqFileDataStore;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 
 public class TestDefaultFastQFileDataStore extends AbstractTestFastQFileDataStore{
     @Override
-    protected DefaultFastQFileDataStore createFastQFileDataStore(File file, FastQQualityCodec qualityCodec) throws IOException {
-        return new DefaultFastQFileDataStore(file,qualityCodec);
+    protected DefaultFastqFileDataStore createFastQFileDataStore(File file, FastqQualityCodec qualityCodec) throws IOException {
+        return new DefaultFastqFileDataStore(file,qualityCodec);
     }
     
 }

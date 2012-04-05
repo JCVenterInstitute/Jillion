@@ -28,16 +28,16 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 
-public abstract class AbstractFastQFileVisitor implements FastQFileVisitor{
+public abstract class AbstractFastqFileVisitor implements FastqFileVisitor{
     private String currentId, currentComment;
 
     private NucleotideSequence nucleotides;
     private QualitySequence qualities;
-    protected final FastQQualityCodec qualityCodec;
+    protected final FastqQualityCodec qualityCodec;
 
     
    
-    public AbstractFastQFileVisitor(FastQQualityCodec qualityCodec){
+    public AbstractFastqFileVisitor(FastqQualityCodec qualityCodec){
         this.qualityCodec = qualityCodec;
     }
     @Override
@@ -57,7 +57,7 @@ public abstract class AbstractFastQFileVisitor implements FastQFileVisitor{
     public void visitFile() {       
        
     }
-    protected FastQQualityCodec getQualityCodec() {
+    protected FastqQualityCodec getQualityCodec() {
         return qualityCodec;
     }
     
@@ -82,7 +82,7 @@ public abstract class AbstractFastQFileVisitor implements FastQFileVisitor{
         
     }
     /**
-     * Visit the current {@link FastQRecord}.
+     * Visit the current {@link FastqRecord}.
      * @param id
      * @param nucleotides
      * @param qualities

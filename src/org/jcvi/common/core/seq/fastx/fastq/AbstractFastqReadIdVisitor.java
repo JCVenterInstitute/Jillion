@@ -27,7 +27,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  *
  *
  */
-public abstract class AbstractFastQReadIdVisitor implements FastQFileVisitor{
+public abstract class AbstractFastqReadIdVisitor implements FastqFileVisitor{
 
     @Override
     public void visitLine(String line) {

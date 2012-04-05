@@ -80,9 +80,9 @@ public class RemoveRedundantMatePairs {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             
             int expectedSize = Integer.parseInt(commandLine.getOptionValue("s"));
-            FastQQualityCodec qualityCodec =commandLine.hasOption("sanger")?
-                                                FastQQualityCodec.SANGER:
-                                                FastQQualityCodec.ILLUMINA;
+            FastqQualityCodec qualityCodec =commandLine.hasOption("sanger")?
+                                                FastqQualityCodec.SANGER:
+                                                FastqQualityCodec.ILLUMINA;
             
             File mate1 = new File(commandLine.getOptionValue("mate1"));
             File mate2 = new File(commandLine.getOptionValue("mate2"));
@@ -90,8 +90,8 @@ public class RemoveRedundantMatePairs {
             int comparisonRangeLength = Integer.parseInt(commandLine.getOptionValue("n"));
             Range comparisonRange=Range.createOfLength(comparisonRangeLength);
             
-            LargeFastQFileIterator mate1Iterator = LargeFastQFileIterator.createNewIteratorFor(mate1, qualityCodec);
-            LargeFastQFileIterator mate2Iterator = LargeFastQFileIterator.createNewIteratorFor(mate2, qualityCodec);
+            LargeFastqFileIterator mate1Iterator = LargeFastqFileIterator.createNewIteratorFor(mate1, qualityCodec);
+            LargeFastqFileIterator mate2Iterator = LargeFastqFileIterator.createNewIteratorFor(mate2, qualityCodec);
             File outputDir = new File(commandLine.getOptionValue("o"));
             outputDir.mkdirs();
             String prefix = commandLine.getOptionValue("prefix");
@@ -104,15 +104,15 @@ public class RemoveRedundantMatePairs {
             long recordsSeen=0;
             Set<NucleotideSequence> nonRedundantSet = new HashSet<NucleotideSequence>(expectedSize+1,1F);
             while(mate1Iterator.hasNext()){
-                FastQRecord forward = mate1Iterator.next();
-                FastQRecord reverse = mate2Iterator.next();
+                FastqRecord forward = mate1Iterator.next();
+                FastqRecord reverse = mate2Iterator.next();
                 NucleotideSequenceBuilder builder =new NucleotideSequenceBuilder(comparisonRangeLength*2);
                 builder.append(forward.getSequence().asList(comparisonRange));
                 builder.append(reverse.getSequence().asList(comparisonRange));
                 NucleotideSequence seq =builder.build();
                 if(!nonRedundantSet.contains(seq)){
-                    out1.write(FastQUtil.encode(forward, qualityCodec).getBytes());
-                    out2.write(FastQUtil.encode(reverse, qualityCodec).getBytes());
+                    out1.write(FastqUtil.encode(forward, qualityCodec).getBytes());
+                    out2.write(FastqUtil.encode(reverse, qualityCodec).getBytes());
                     nonRedundantSet.add(seq);
                 }
                 recordsSeen++;

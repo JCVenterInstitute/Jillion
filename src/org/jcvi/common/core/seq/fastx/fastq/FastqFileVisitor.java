@@ -33,7 +33,7 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  *
  *
  */
-public interface FastQFileVisitor extends FastXFileVisitor{
+public interface FastqFileVisitor extends FastXFileVisitor{
     /**
      * Begin a new FASTQ Record block for the given read.
      * @param id the read id

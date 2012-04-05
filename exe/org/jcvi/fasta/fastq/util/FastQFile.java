@@ -41,7 +41,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.fastq.FastQUtil;
+import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.core.util.JoinedStringBuilder;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.FirstWordStringIdParser;
@@ -123,7 +123,7 @@ public class FastQFile {
             Scanner scanner = new Scanner(fastQFile);
             while(scanner.hasNext()){
                 String defLine= scanner.nextLine();
-                Matcher matcher = FastQUtil.SEQ_DEFLINE_PATTERN.matcher(defLine);
+                Matcher matcher = FastqUtil.SEQ_DEFLINE_PATTERN.matcher(defLine);
                 if(!matcher.find()){
                     throw new IllegalStateException("invalid fastq file, could not parse id from "+defLine);
                 }

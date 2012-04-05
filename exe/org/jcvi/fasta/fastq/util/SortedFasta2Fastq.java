@@ -47,10 +47,10 @@ import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRe
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecordUtil;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastQUtil;
+import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -281,7 +281,7 @@ public class SortedFasta2Fastq {
             }else{
                 bufferSize = DEFAULT_QUEUE_SIZE;
             }
-            final FastQQualityCodec fastqQualityCodec = useSanger? FastQQualityCodec.SANGER: FastQQualityCodec.ILLUMINA;
+            final FastqQualityCodec fastqQualityCodec = useSanger? FastqQualityCodec.SANGER: FastqQualityCodec.ILLUMINA;
         
             final BlockingQueue<QualitySequenceFastaRecord> qualityQueue = new ArrayBlockingQueue<QualitySequenceFastaRecord>(bufferSize);
             final BlockingQueue<NucleotideSequenceFastaRecord> sequenceQueue = new ArrayBlockingQueue<NucleotideSequenceFastaRecord>(bufferSize);
@@ -318,10 +318,10 @@ public class SortedFasta2Fastq {
                        
                    }
                  //here we have a valid seq and qual
-                   FastQRecord fastq = new DefaultFastQRecord(seqFasta.getId(), 
+                   FastqRecord fastq = new DefaultFastqRecord(seqFasta.getId(), 
                            seqFasta.getSequence(), qualityFasta.getSequence(),null);
 
-                   writer.print(FastQUtil.encode(fastq, fastqQualityCodec));
+                   writer.print(FastqUtil.encode(fastq, fastqQualityCodec));
                }
             }
             

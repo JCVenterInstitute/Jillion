@@ -39,14 +39,14 @@ import org.jcvi.common.core.seq.fastx.FastXFileVisitor.EndOfBodyReturnCode;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 /**
- * {@code FastQFileParser} parses FASTQ encoded files
+ * {@code FastqFileParser} parses FASTQ encoded files
  * regardless of how the qualities are encoded.
  * @author dkatzel
  *
  */
-public class FastQFileParser {
+public class FastqFileParser {
     
-    public static void parse(File fastQFile, FastQFileVisitor visitor ) throws FileNotFoundException{
+    public static void parse(File fastQFile, FastqFileVisitor visitor ) throws FileNotFoundException{
         InputStream in = new FileInputStream(fastQFile);
         try{
             parse(in,visitor);
@@ -54,7 +54,7 @@ public class FastQFileParser {
             IOUtil.closeAndIgnoreErrors(in);
         }
     }
-    public static void parse(InputStream in, FastQFileVisitor visitor ){
+    public static void parse(InputStream in, FastqFileVisitor visitor ){
     	if(in ==null){
     		throw new NullPointerException("input stream can not be null");
     	}
@@ -67,7 +67,7 @@ public class FastQFileParser {
 		}
         parse(visitor, parser);
     }
-	private static void parse(FastQFileVisitor visitor, TextLineParser parser) {
+	private static void parse(FastqFileVisitor visitor, TextLineParser parser) {
 		visitor.visitFile();
         boolean keepParsing=true;
         try{
@@ -80,13 +80,13 @@ public class FastQFileParser {
         visitor.visitEndOfFile();
 	}
 	
-	private static boolean parseSingleRecord(FastQFileVisitor visitor, TextLineParser parser) throws IOException{
+	private static boolean parseSingleRecord(FastqFileVisitor visitor, TextLineParser parser) throws IOException{
 		String seqLine = parser.nextLine();
         String basecalls = parser.nextLine();
         String qualLine = parser.nextLine();
         String qualities = parser.nextLine();
         visitor.visitLine(seqLine);
-        Matcher beginSeqMatcher =FastQUtil.SEQ_DEFLINE_PATTERN.matcher(seqLine);
+        Matcher beginSeqMatcher =FastqUtil.SEQ_DEFLINE_PATTERN.matcher(seqLine);
         if(!beginSeqMatcher.find()){
             throw new IllegalStateException("invalid fastq file, could not parse seq id from "+ seqLine);
         }
@@ -107,19 +107,19 @@ public class FastQFileParser {
         }
 		return endOfBodyRet==EndOfBodyReturnCode.KEEP_PARSING;
 	}
-	private static void visitLines(FastQFileVisitor visitor, String basecalls,
+	private static void visitLines(FastqFileVisitor visitor, String basecalls,
 			String qualLine, String qualities) {
 		visitor.visitLine(basecalls);
 		visitor.visitLine(qualLine);
 		visitor.visitLine(qualities);
 	}
-	private static void handleVisitBody(FastQFileVisitor visitor,
+	private static void handleVisitBody(FastqFileVisitor visitor,
 			String basecalls, String qualLine, String qualities) {
 		visitor.visitLine(basecalls);
 		NucleotideSequence encodedNucleotides = new NucleotideSequenceBuilder(basecalls.substring(0, basecalls.length()-1)).build();
 		visitor.visitNucleotides(encodedNucleotides);
 		visitor.visitLine(qualLine);
-		Matcher beginQualityMatcher =FastQUtil.QUAL_DEFLINE_PATTERN.matcher(qualLine);
+		Matcher beginQualityMatcher =FastqUtil.QUAL_DEFLINE_PATTERN.matcher(qualLine);
 		if(!beginQualityMatcher.find()){ 
 		    throw new IllegalStateException("invalid fastq file, could not parse qual id from "+ qualLine);
 		}

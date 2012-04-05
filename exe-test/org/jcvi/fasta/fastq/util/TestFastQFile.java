@@ -24,10 +24,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQFileDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.FastQDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
+import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqFileDataStore;
+import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.common.io.idReader.IdReaderException;
 import org.junit.Before;
@@ -66,11 +65,11 @@ public class TestFastQFile {
     @Test
     public void includeOnlyIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
         
-        FastQDataStore<FastQRecord> originalDataStore = new DefaultFastQFileDataStore(fastQFile, FastQQualityCodec.ILLUMINA);
+        FastqDataStore originalDataStore = new DefaultFastqFileDataStore(fastQFile, FastqQualityCodec.ILLUMINA);
         FastQFile.main(new String[]{"-i",ids.getAbsolutePath(),
                 "-o", outputFile.getAbsolutePath(),
                 fastQFile.getAbsolutePath()});
-        FastQDataStore<FastQRecord> filteredDataStore = new DefaultFastQFileDataStore(outputFile, FastQQualityCodec.ILLUMINA);
+        FastqDataStore filteredDataStore = new DefaultFastqFileDataStore(outputFile, FastqQualityCodec.ILLUMINA);
         assertEquals(1, filteredDataStore.size());
         assertFalse(filteredDataStore.contains(otherId));
         assertEquals(originalDataStore.get(id),filteredDataStore.get(id));
@@ -78,12 +77,12 @@ public class TestFastQFile {
     @Test
     public void excludeIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
         File fastQFile = RESOURCES.getFile("files/example.fastq");
-        FastQDataStore<FastQRecord> originalDataStore = new DefaultFastQFileDataStore(fastQFile, FastQQualityCodec.ILLUMINA);
+        FastqDataStore originalDataStore = new DefaultFastqFileDataStore(fastQFile, FastqQualityCodec.ILLUMINA);
         FastQFile.main(new String[]{"-e",ids.getAbsolutePath(),
                 "-o", outputFile.getAbsolutePath(),
                 fastQFile.getAbsolutePath()});
         
-        FastQDataStore<FastQRecord> filteredDataStore = new DefaultFastQFileDataStore(outputFile, FastQQualityCodec.ILLUMINA);
+        FastqDataStore filteredDataStore = new DefaultFastqFileDataStore(outputFile, FastqQualityCodec.ILLUMINA);
         assertEquals(1, filteredDataStore.size());
         assertFalse(filteredDataStore.contains(id));
         

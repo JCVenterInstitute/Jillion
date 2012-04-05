@@ -2,14 +2,14 @@ package org.jcvi.common.core.seq.fastx;
 
 import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fastx.fastq.FastQFileVisitor;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileVisitor;
 /**
  * {@code FastXVisitor} is an interface which contains
  * common visit methods for both fasta and fastq 
  * sub-interfaces.
  * @author dkatzel
  * @see FastaFileVisitor
- * @see FastQFileVisitor
+ * @see FastqFileVisitor
  *
  */
 public interface FastXFileVisitor extends TextFileVisitor{

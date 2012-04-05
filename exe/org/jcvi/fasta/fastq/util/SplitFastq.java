@@ -32,10 +32,10 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastQUtil;
-import org.jcvi.common.core.seq.fastx.fastq.LargeFastQFileIterator;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
+import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
@@ -82,23 +82,23 @@ public class SplitFastq {
         try {
             commandLine = CommandLineUtils.parseCommandLine(options, args);
             File fastqFile = new File(commandLine.getOptionValue("i"));
-            final FastQQualityCodec fastqQualityCodec;
+            final FastqQualityCodec fastqQualityCodec;
             if(commandLine.hasOption("sanger")){
-                fastqQualityCodec = FastQQualityCodec.SANGER;
+                fastqQualityCodec = FastqQualityCodec.SANGER;
             }else{
-                fastqQualityCodec = FastQQualityCodec.ILLUMINA;
+                fastqQualityCodec = FastqQualityCodec.ILLUMINA;
             }
             int n = Integer.parseInt(commandLine.getOptionValue("n"));
             ReadWriteDirectoryFileServer outputDir = DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
             List<PrintWriter> writers = createWriters(outputDir, fastqFile, n);
             
-            CloseableIterator<FastQRecord> iterator= LargeFastQFileIterator.createNewIteratorFor(fastqFile, fastqQualityCodec);
+            CloseableIterator<FastqRecord> iterator= LargeFastqFileIterator.createNewIteratorFor(fastqFile, fastqQualityCodec);
             int counter=0;
             try{
                 while(iterator.hasNext()){
                     int mod = counter %n;
-                    FastQRecord record = iterator.next();
-                    writers.get(mod).print(FastQUtil.encode(record, fastqQualityCodec)); 
+                    FastqRecord record = iterator.next();
+                    writers.get(mod).print(FastqUtil.encode(record, fastqQualityCodec)); 
                     counter++;
                 }
             }finally{

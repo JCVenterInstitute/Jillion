@@ -23,24 +23,58 @@
  */
 package org.jcvi.common.core.seq.fastx.fastq;
 
+import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
-public class FastQNucleotideDataStoreAdapter extends AbstractFastQDataStoreAdapter<NucleotideSequence> implements NucleotideDataStore{
-
+public abstract class AbstractFastqDataStoreAdapter<T> implements DataStore<T>{
+    private final DataStore<FastqRecord> dataStore;
+    
+    
     /**
      * @param dataStore
      */
-    public FastQNucleotideDataStoreAdapter(DataStore<FastQRecord> dataStore) {
-        super(dataStore);
+    public AbstractFastqDataStoreAdapter(DataStore<FastqRecord> dataStore) {
+        this.dataStore = dataStore;
     }
 
     @Override
-    public NucleotideSequence get(String id) throws DataStoreException {
-        return getDataStore().get(id).getNucleotides();
+    public boolean contains(String id) throws DataStoreException {
+        return dataStore.contains(id);
     }
-   
+
+    
+
+    public DataStore<FastqRecord> getDataStore() {
+        return dataStore;
+    }
+
+    @Override
+    public CloseableIterator<String> getIds() throws DataStoreException {
+        return dataStore.getIds();
+    }
+
+    @Override
+    public int size() throws DataStoreException {
+        return dataStore.size();
+    }
+
+    @Override
+    public void close() throws IOException {
+        dataStore.close();
+        
+    }
+
+    @Override
+    public boolean isClosed() throws DataStoreException {
+        return dataStore.isClosed();
+    }
+
+    @Override
+    public CloseableIterator<T> iterator() {
+        return new DataStoreIterator<T>(this);
+    }
 }

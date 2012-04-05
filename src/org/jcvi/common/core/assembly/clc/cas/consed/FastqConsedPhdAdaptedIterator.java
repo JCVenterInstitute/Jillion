@@ -25,7 +25,7 @@ import java.util.Properties;
 
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
-import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdUtil;
@@ -34,11 +34,11 @@ import org.joda.time.DateTime;
 
 public class FastqConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 
-	private final CloseableIterator<? extends FastQRecord> fastqIterator;
+	private final CloseableIterator<? extends FastqRecord> fastqIterator;
 	private final Properties requiredComments;
 	private final DateTime phdDate;
 	private final File fastqFile;
-	public FastqConsedPhdAdaptedIterator(CloseableIterator<? extends FastQRecord> fastqIterator,  File fastqFile,DateTime phdDate ){
+	public FastqConsedPhdAdaptedIterator(CloseableIterator<? extends FastqRecord> fastqIterator,  File fastqFile,DateTime phdDate ){
 		this.requiredComments = PhdUtil.createPhdTimeStampCommentFor(phdDate);
 		this.fastqIterator = fastqIterator;	
 		this.phdDate = phdDate;
@@ -51,7 +51,7 @@ public class FastqConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 
 	@Override
 	public PhdReadRecord next() {
-		FastQRecord nextFastq = fastqIterator.next();
+		FastqRecord nextFastq = fastqIterator.next();
 		String id = nextFastq.getId();
 		Phd phd = ArtificialPhd.createNewbler454Phd(
 				id, 

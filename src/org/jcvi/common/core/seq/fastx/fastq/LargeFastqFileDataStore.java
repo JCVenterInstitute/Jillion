@@ -31,18 +31,18 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
- * {@code LargeFastQFileDataStore} is a {@link FastQDataStore} implementation
+ * {@code LargeFastqFileDataStore} is a {@link FastqDataStore} implementation
  * to be used a very large FastQ Files.  No data contained in this
  * fastq file is stored in memory except it's size (which is lazy loaded).
  * This means that each get() or contain() requires re-parsing the fastq file
  * which can take some time.  It is recommended that instances of 
- * {@link LargeFastQFileDataStore} are wrapped by {@link CachedDataStore}
+ * {@link LargeFastqFileDataStore} are wrapped by {@link CachedDataStore}
  * @author dkatzel
  *
  *
  */
-public final class LargeFastQFileDataStore implements FastQDataStore<FastQRecord> {
-    private final FastQQualityCodec qualityCodec;
+public final class LargeFastqFileDataStore implements FastqDataStore {
+    private final FastqQualityCodec qualityCodec;
     private final File fastQFile;
     private Integer size=null;
     private volatile boolean closed;
@@ -50,7 +50,7 @@ public final class LargeFastQFileDataStore implements FastQDataStore<FastQRecord
     /**
      * @param qualityCodec
      */
-    public LargeFastQFileDataStore(File fastQFile, FastQQualityCodec qualityCodec) {
+    public LargeFastqFileDataStore(File fastQFile, FastqQualityCodec qualityCodec) {
         this.qualityCodec = qualityCodec;
         this.fastQFile = fastQFile;        
     }
@@ -71,9 +71,9 @@ public final class LargeFastQFileDataStore implements FastQDataStore<FastQRecord
     @Override
     public synchronized boolean contains(String id) throws DataStoreException {
         throwExceptionIfClosed();
-        CloseableIterator<FastQRecord> iter = iterator();
+        CloseableIterator<FastqRecord> iter = iterator();
         while(iter.hasNext()){
-            FastQRecord fastQ = iter.next();
+            FastqRecord fastQ = iter.next();
             if(fastQ.getId().equals(id)){
                 IOUtil.closeAndIgnoreErrors(iter);
                 return true;
@@ -87,13 +87,13 @@ public final class LargeFastQFileDataStore implements FastQDataStore<FastQRecord
         }
     }
     @Override
-    public synchronized FastQRecord get(String id) throws DataStoreException {
+    public synchronized FastqRecord get(String id) throws DataStoreException {
         if(closed){
             throw new DataStoreException("datastore is closed");
         }
-        CloseableIterator<FastQRecord> iter = iterator();
+        CloseableIterator<FastqRecord> iter = iterator();
         while(iter.hasNext()){
-            FastQRecord fastQ = iter.next();
+            FastqRecord fastQ = iter.next();
             if(fastQ.getId().equals(id)){
                 IOUtil.closeAndIgnoreErrors(iter);
                 return fastQ;
@@ -113,7 +113,7 @@ public final class LargeFastQFileDataStore implements FastQDataStore<FastQRecord
         throwExceptionIfClosed();
         if(size ==null){
             int count=0;
-            CloseableIterator<FastQRecord> iter = iterator();
+            CloseableIterator<FastqRecord> iter = iterator();
             while(iter.hasNext()){
                 count++;
                 iter.next();
@@ -124,15 +124,15 @@ public final class LargeFastQFileDataStore implements FastQDataStore<FastQRecord
     }
     
     @Override
-    public synchronized CloseableIterator<FastQRecord> iterator() {
+    public synchronized CloseableIterator<FastqRecord> iterator() {
         throwExceptionIfClosed();
-        return LargeFastQFileIterator.createNewIteratorFor(fastQFile,qualityCodec);
+        return LargeFastqFileIterator.createNewIteratorFor(fastQFile,qualityCodec);
   
     }
     
     
     private final class FastQIdIterator implements CloseableIterator<String>{
-        private final CloseableIterator<FastQRecord> iter;
+        private final CloseableIterator<FastqRecord> iter;
         private FastQIdIterator(){
                 iter = iterator();
         }

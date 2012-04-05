@@ -38,10 +38,10 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class IndexedFastaQFileDataStore implements FastQDataStore<FastQRecord>, FastQFileVisitor{
+public class IndexedFastaqFileDataStore implements FastqDataStore, FastqFileVisitor{
 
     private final IndexedFileRange indexFileRange;
-    private final FastQQualityCodec qualityCodec;
+    private final FastqQualityCodec qualityCodec;
     private final File file;
     private int currentStartOffset;
     private int currentRecordLength;
@@ -52,13 +52,13 @@ public class IndexedFastaQFileDataStore implements FastQDataStore<FastQRecord>, 
      * @param file
      * @throws FileNotFoundException 
      */
-    public IndexedFastaQFileDataStore(File file,FastQQualityCodec qualityCodec,IndexedFileRange indexFileRange) throws IOException {
+    public IndexedFastaqFileDataStore(File file,FastqQualityCodec qualityCodec,IndexedFileRange indexFileRange) throws IOException {
         this.file = file;
         this.qualityCodec = qualityCodec;
         this.indexFileRange = indexFileRange;
-        FastQFileParser.parse(file, this);
+        FastqFileParser.parse(file, this);
     }
-    public IndexedFastaQFileDataStore(File file,FastQQualityCodec qualityCodec) throws IOException {
+    public IndexedFastaqFileDataStore(File file,FastqQualityCodec qualityCodec) throws IOException {
        this(file, qualityCodec,new DefaultIndexedFileRange());
     }
     @Override
@@ -103,7 +103,7 @@ public class IndexedFastaQFileDataStore implements FastQDataStore<FastQRecord>, 
         return indexFileRange.getIds();
     }
     @Override
-    public FastQRecord get(String id) throws DataStoreException {
+    public FastqRecord get(String id) throws DataStoreException {
         if(!contains(id)){
             throw new DataStoreException(id +" does not exist in datastore");
         }
@@ -111,8 +111,8 @@ public class IndexedFastaQFileDataStore implements FastQDataStore<FastQRecord>, 
         InputStream in =null;
         try {
             in = IOUtil.createInputStreamFromFile(file,range);
-            DefaultFastQFileDataStore datastore = new DefaultFastQFileDataStore(qualityCodec);
-            FastQFileParser.parse(in, datastore);
+            DefaultFastqFileDataStore datastore = new DefaultFastqFileDataStore(qualityCodec);
+            FastqFileParser.parse(in, datastore);
             return datastore.get(id);
         } catch (IOException e) {
             throw new DataStoreException("error reading fastq file",e);
@@ -138,8 +138,8 @@ public class IndexedFastaQFileDataStore implements FastQDataStore<FastQRecord>, 
         
     }
     @Override
-    public CloseableIterator<FastQRecord> iterator() {
-        return LargeFastQFileIterator.createNewIteratorFor(file, qualityCodec);
+    public CloseableIterator<FastqRecord> iterator() {
+        return LargeFastqFileIterator.createNewIteratorFor(file, qualityCodec);
        
         
     }
