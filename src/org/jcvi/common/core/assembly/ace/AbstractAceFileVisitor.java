@@ -190,8 +190,8 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         //edited and that could have changed the coordinates.
         //Therefore intersect the qual and align coords
         //to find the region we are interested in
-        Range qualityRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
-        Range alignmentRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
+        Range qualityRange = Range.create(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
+        Range alignmentRange = Range.create(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
         Range gappedValidRange;
         try{
 	        gappedValidRange = qualityRange.intersection(alignmentRange);
@@ -231,7 +231,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         if(assembledFrom ==null){
             throw new IllegalStateException("unknown read no AF record for "+ currentReadId);
         }
-        currentOffset = computeReadOffset(assembledFrom, gappedValidRange.getStart(CoordinateSystem.RESIDUE_BASED));            
+        currentOffset = computeReadOffset(assembledFrom, gappedValidRange.getBegin(CoordinateSystem.RESIDUE_BASED));            
        
         currentFullLengthBases = currentBasecalls.toString();
         NucleotideSequence gappedFullLengthSequence = currentBasecalls.build();
@@ -250,9 +250,9 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         //but that won't affect real assembly data
         //it will only show up if both versions (before and after)
         //of the file were diff'ed.
-        int ungappedClearLeft = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getStart());
+        int ungappedClearLeft = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getBegin());
         int ungappedClearRight = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getEnd());
-        Range ungappedValidRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, ungappedClearLeft+1, ungappedClearRight+1 );
+        Range ungappedValidRange = Range.create(CoordinateSystem.RESIDUE_BASED, ungappedClearLeft+1, ungappedClearRight+1 );
         if(assembledFrom.getSequenceDirection() == Direction.REVERSE){
             ungappedValidRange = AssemblyUtil.reverseComplimentValidRange(ungappedValidRange, currentReadUngappedFullLength);            
         }

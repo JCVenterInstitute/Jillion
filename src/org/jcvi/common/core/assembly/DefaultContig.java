@@ -69,7 +69,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
         public Builder addRead(String id, int offset,String basecalls, Direction dir){
             int numberOfGaps = computeNumberOfGapsIn(basecalls);
             int ungappedLength = basecalls.length()-numberOfGaps;
-            return addRead(id, offset, Range.buildRangeOfLength(0,ungappedLength),basecalls, dir,ungappedLength);
+            return addRead(id, offset, Range.createOfLength(0,ungappedLength),basecalls, dir,ungappedLength);
         }
         /**
          * @param basecalls
@@ -112,7 +112,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
                     getConsensusBuilder().build(), 
                     read.getId(), 
                     read.getNucleotideSequence().toString(), 
-                    (int)read.getStart(), 
+                    (int)read.getBegin(), 
                     read.getDirection(), 
                     read.getValidRange(),
                     //TODO need to actually compute ungapped full length here

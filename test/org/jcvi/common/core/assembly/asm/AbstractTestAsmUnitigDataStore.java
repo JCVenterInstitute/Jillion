@@ -60,12 +60,12 @@ public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmData
 			private void verifyAForwardGappedRead(AsmUnitig unitig,
 					FragmentDataStore frg) throws DataStoreException {
 				AsmPlacedRead read =unitig.getPlacedReadById("1099820534711");
-				assertEquals(Range.buildRange(33,989), read.asRange());
+				assertEquals(Range.create(33,989), read.asRange());
 				assertEquals(Direction.FORWARD, read.getDirection());
 				assertEquals(Arrays.asList(82, 193 ,771 ),
 						read.getNucleotideSequence().getGapOffsets());
 				//clr 21,975
-				Range expectedValidRange = Range.buildRange(CoordinateSystem.SPACE_BASED,21,975);
+				Range expectedValidRange = Range.create(CoordinateSystem.SPACE_BASED,21,975);
 				assertEquals(expectedValidRange, read.getValidRange());
 				
 				Fragment actualFragment =frg.get("1099820534711");
@@ -83,13 +83,13 @@ public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmData
 
 			private void verifyAReverseGappedRead(AsmUnitig unitig, FragmentDataStore frg) throws DataStoreException {
 				AsmPlacedRead read =unitig.getPlacedReadById("1100010859106");
-				assertEquals(Range.buildRange(0,729), read.asRange());
+				assertEquals(Range.create(0,729), read.asRange());
 				assertEquals(Direction.REVERSE, read.getDirection());
 				
 				assertEquals(Arrays.asList(115,226),
 						read.getNucleotideSequence().getGapOffsets());
 				//clr:27,755
-				Range expectedValidRange = Range.buildRange(CoordinateSystem.SPACE_BASED,27,755);
+				Range expectedValidRange = Range.create(CoordinateSystem.SPACE_BASED,27,755);
 				assertEquals(expectedValidRange, read.getValidRange());
 				Fragment actualFragment =frg.get("1100010859106");
 				//manually build the reverse complimented gapped valid range and insert the gaps

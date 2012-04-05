@@ -154,13 +154,13 @@ public class AceFileUtil {
 
         
        return String.format("QA %d %d %d %d",
-                gappedValidRange.getStart(CoordinateSystem.RESIDUE_BASED), gappedValidRange.getEnd(CoordinateSystem.RESIDUE_BASED),
-                gappedValidRange.getStart(CoordinateSystem.RESIDUE_BASED), gappedValidRange.getEnd(CoordinateSystem.RESIDUE_BASED)
+                gappedValidRange.getBegin(CoordinateSystem.RESIDUE_BASED), gappedValidRange.getEnd(CoordinateSystem.RESIDUE_BASED),
+                gappedValidRange.getBegin(CoordinateSystem.RESIDUE_BASED), gappedValidRange.getEnd(CoordinateSystem.RESIDUE_BASED)
                 );
     }
     private static Range buildGappedValidRangeFor(Range ungappedValidRange, int numberOfGaps,Direction dir, long ungappedFullLength){
-       Range gappedValidRange=  Range.buildRange( 
-               ungappedValidRange.getStart(),
+       Range gappedValidRange=  Range.create( 
+               ungappedValidRange.getBegin(),
                ungappedValidRange.getEnd()+numberOfGaps);
         
         if(dir==Direction.REVERSE){

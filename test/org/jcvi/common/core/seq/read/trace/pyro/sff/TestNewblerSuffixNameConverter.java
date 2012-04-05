@@ -82,12 +82,12 @@ public class TestNewblerSuffixNameConverter {
     
     @Test
     public void getRangeShouldReturnZeroBased(){
-        Range expectedRange = Range.buildRange(0, 10);
+        Range expectedRange = Range.create(0, 10);
         assertEquals(expectedRange, NewblerSuffixNameConverter.getSuffixedRangeFrom(ORIGINAL_NAME+".1-11"));
     }
     @Test
     public void getReversedRangeShouldSwapLeftAndRight(){
-        Range expectedRange = Range.buildRange(23, 543);
+        Range expectedRange = Range.create(23, 543);
         assertEquals(expectedRange, NewblerSuffixNameConverter.getSuffixedRangeFrom(ORIGINAL_NAME+".544-24"));
     }
     

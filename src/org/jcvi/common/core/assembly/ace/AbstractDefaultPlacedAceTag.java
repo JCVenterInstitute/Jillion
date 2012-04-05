@@ -69,8 +69,8 @@ public abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag 
     }
 
     @Override
-    public long getStart() {
-        return location.getStart();
+    public long getBegin() {
+        return location.getBegin();
     }
 
     @Override
@@ -136,8 +136,8 @@ public abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag 
 
     @Override
     public int compareTo(PlacedAceTag o) {
-        Range range= Range.buildRange(getStart(), getEnd());
-        Range otherRange = Range.buildRange(o.getStart(), o.getEnd());
+        Range range= Range.create(getBegin(), getEnd());
+        Range otherRange = Range.create(o.getBegin(), o.getEnd());
         return range.compareTo(otherRange);
     }
     

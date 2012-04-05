@@ -38,7 +38,7 @@ public class QualityClassContigMapXMLWriter {
         out.write("<qualityclassmap>\n".getBytes());
         for(QualityClassRegion region : qualityClassRegions){
             final QualityClass qualityClass = region.getQualityClass();
-            out.write(String.format(QUALITY_CLASS_REGION_FORMAT, region.getStart(), region.getEnd(), 
+            out.write(String.format(QUALITY_CLASS_REGION_FORMAT, region.getBegin(), region.getEnd(), 
                     qualityClass.getValue()).getBytes());
         }
         out.write("</qualityclassmap>\n".getBytes());

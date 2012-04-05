@@ -247,8 +247,8 @@ public class FilterFastqDataFromCas {
         * {@inheritDoc}
         */
         @Override
-        public long getStart() {
-            return range.getStart();
+        public long getBegin() {
+            return range.getBegin();
         }
         /**
         * {@inheritDoc}

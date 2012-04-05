@@ -37,7 +37,7 @@ import org.junit.Test;
  */
 public class TestReadNavigationElement {
     String id= "contig id";
-    Range range = Range.buildRange(5,10);
+    Range range = Range.create(5,10);
     String comment = "this is a comment";
     ReadNavigationElement sut = new ReadNavigationElement(id, range,comment);
     

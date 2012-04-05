@@ -68,7 +68,7 @@ public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
                     //different than currentElement so 
                     //we don't have to check if we match currentelement
                     if( currentElement !=null){
-                        previouslyEnteredRange = Range.buildRange(start,end);
+                        previouslyEnteredRange = Range.create(start,end);
                         bestSegments.put(previouslyEnteredRange, new DefaultAceBestSegment(currentElement, previouslyEnteredRange));
                     }
                     currentElement = element.getId();
@@ -83,7 +83,7 @@ public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
                 //keep current element?
             }
         }
-        Range lastRange = Range.buildRange(start,end);
+        Range lastRange = Range.create(start,end);
         if(!lastRange.equals(previouslyEnteredRange)){       
             bestSegments.put(lastRange, new DefaultAceBestSegment(currentElement, lastRange));
         }
@@ -91,7 +91,7 @@ public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
     @Override
     public AceBestSegment getBestSegmentFor(long gappedConsensusOffset) {       
         return getBestSegmentsFor(
-                Range.buildRange(gappedConsensusOffset, gappedConsensusOffset))
+                Range.create(gappedConsensusOffset, gappedConsensusOffset))
                 .get(0);
     }
 

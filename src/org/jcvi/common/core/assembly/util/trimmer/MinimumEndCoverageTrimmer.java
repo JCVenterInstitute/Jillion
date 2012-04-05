@@ -55,8 +55,8 @@ public class MinimumEndCoverageTrimmer<P extends PlacedRead, C extends Contig<P>
         if(currentRangeOfBases.isEmpty()){
             return currentRangeOfBases;
         }
-        Range currentValidRangeOnReference =Range.buildRange(
-                placedRead.toReferenceOffset(currentRangeOfBases.getStart()),
+        Range currentValidRangeOnReference =Range.create(
+                placedRead.toReferenceOffset(currentRangeOfBases.getBegin()),
                 placedRead.toReferenceOffset(currentRangeOfBases.getEnd()));
         
         Range placedReadTrimRange =trimmedContigRange.intersection(currentValidRangeOnReference);
@@ -65,12 +65,12 @@ public class MinimumEndCoverageTrimmer<P extends PlacedRead, C extends Contig<P>
         if(placedReadTrimRange.isEmpty()){
             return placedReadTrimRange;
         }
-        int gappedLeftIndex = (int)placedRead.toGappedValidRangeOffset(placedReadTrimRange.getStart());
+        int gappedLeftIndex = (int)placedRead.toGappedValidRangeOffset(placedReadTrimRange.getBegin());
         int gappedRightIndex =(int)placedRead.toGappedValidRangeOffset(placedReadTrimRange.getEnd());
         int newLeftStart =AssemblyUtil.getRightFlankingNonGapIndex(placedRead.getNucleotideSequence(), gappedLeftIndex);
         int newRightStart =AssemblyUtil.getLeftFlankingNonGapIndex(placedRead.getNucleotideSequence(), gappedRightIndex);
         
-        return Range.buildRange(newLeftStart,newRightStart);
+        return Range.create(newLeftStart,newRightStart);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class MinimumEndCoverageTrimmer<P extends PlacedRead, C extends Contig<P>
         for(int i=0; i<regions.size(); i++){
             CoverageRegion<P> region = regions.get(i);
             if(meetsTrimmingRequirements(region)){
-                trimLeftIndex=region.getStart();
+                trimLeftIndex=region.getBegin();
                 break;
             }
         }
@@ -94,9 +94,9 @@ public class MinimumEndCoverageTrimmer<P extends PlacedRead, C extends Contig<P>
             }
         }
         if(trimRightIndex < trimLeftIndex -1){
-            trimmedContigRange = Range.buildEmptyRange();
+            trimmedContigRange = Range.createEmptyRange();
         }else{
-            trimmedContigRange = Range.buildRange(trimLeftIndex, trimRightIndex);
+            trimmedContigRange = Range.create(trimLeftIndex, trimRightIndex);
         }
     }
 

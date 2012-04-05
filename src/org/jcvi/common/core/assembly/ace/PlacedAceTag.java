@@ -41,7 +41,7 @@ public interface PlacedAceTag extends AceTag, Placed<PlacedAceTag> {
      * Gapped Start offset.
      */
     @Override
-    long getStart();
+    long getBegin();
     /**
      * Gapped End Offset.
      */

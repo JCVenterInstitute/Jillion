@@ -29,7 +29,7 @@ public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<
         if (range == null){
             return asList();
         }
-        List<AminoAcid> result = new ArrayList<AminoAcid>((int)range.size());
+        List<AminoAcid> result = new ArrayList<AminoAcid>((int)range.getLength());
         for (long index : range){
             result.add(get((int)index));
         }

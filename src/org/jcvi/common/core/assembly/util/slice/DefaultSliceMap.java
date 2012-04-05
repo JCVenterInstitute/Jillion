@@ -60,7 +60,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
         this.defaultQuality = defaultQuality;
         this.size = coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()+1;
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
-            for(long i=region.getStart(); i<=region.getEnd(); i++ ){
+            for(long i=region.getBegin(); i<=region.getEnd(); i++ ){
                 List<IdedSliceElement> sliceElements = createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy);
                 sliceMap.put(Long.valueOf(i),new DefaultSlice.Builder()
                                             .addAll(sliceElements)

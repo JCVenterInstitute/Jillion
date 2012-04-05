@@ -51,7 +51,7 @@ final class AssembledFrom implements Comparable<AssembledFrom>{
             validRange = readValidRange;
         }
         return new AssembledFrom(read.getId(), 
-                (int)(read.getStart()-validRange.getStart()+1),dir);
+                (int)(read.getBegin()-validRange.getBegin()+1),dir);
     }
     /**
      * @param id

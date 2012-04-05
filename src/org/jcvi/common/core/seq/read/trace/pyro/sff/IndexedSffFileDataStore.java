@@ -188,7 +188,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 		} catch (IOException e) {
 			throw new IllegalStateException("error computing number of bytes", e);
 		}
-		indexRanges.put(currentReadId, Range.buildRangeOfLength(currentOffset, encodedReadLength));
+		indexRanges.put(currentReadId, Range.createOfLength(currentOffset, encodedReadLength));
 		currentOffset+=encodedReadLength;
 		return true;
 	}

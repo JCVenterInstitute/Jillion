@@ -78,7 +78,7 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
             if(newTrimRange.isEmpty()){
                 continue;
             }
-            long newOffset = placedRead.toReferenceOffset((int)newTrimRange.getStart());
+            long newOffset = placedRead.toReferenceOffset((int)newTrimRange.getBegin());
             
             final NucleotideSequence originalGappedValidBases = placedRead.getNucleotideSequence();
             NucleotideSequence trimmedSequence = new NucleotideSequenceBuilder(originalGappedValidBases.asList(newTrimRange)).build();
@@ -87,15 +87,15 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
             
             final Range ungappedNewValidRange;
             if(placedRead.getDirection()==Direction.FORWARD){
-                int numberOfGapsTrimmedOff= originalGappedValidBases.getNumberOfGapsUntil((int)newTrimRange.getStart());
-                ungappedNewValidRange = Range.buildRangeOfLength(oldValidRange.getStart()+ newTrimRange.getStart()-numberOfGapsTrimmedOff, ungappedLength);
+                int numberOfGapsTrimmedOff= originalGappedValidBases.getNumberOfGapsUntil((int)newTrimRange.getBegin());
+                ungappedNewValidRange = Range.createOfLength(oldValidRange.getBegin()+ newTrimRange.getBegin()-numberOfGapsTrimmedOff, ungappedLength);
                 
             }else{
-                int numberOfGapsTrimmedOffLeft = originalGappedValidBases.getNumberOfGapsUntil((int)newTrimRange.getStart());
-                long numberOfBasesTrimmedOffLeft = newTrimRange.getStart()-numberOfGapsTrimmedOffLeft;
+                int numberOfGapsTrimmedOffLeft = originalGappedValidBases.getNumberOfGapsUntil((int)newTrimRange.getBegin());
+                long numberOfBasesTrimmedOffLeft = newTrimRange.getBegin()-numberOfGapsTrimmedOffLeft;
                 
                 long numberOfBasesTrimmedOffRight = originalGappedValidBases.getUngappedLength() -ungappedLength-numberOfBasesTrimmedOffLeft;
-                ungappedNewValidRange = Range.buildRange(oldValidRange.getStart()+numberOfBasesTrimmedOffRight, oldValidRange.getEnd()- numberOfBasesTrimmedOffLeft);    
+                ungappedNewValidRange = Range.create(oldValidRange.getBegin()+numberOfBasesTrimmedOffRight, oldValidRange.getEnd()- numberOfBasesTrimmedOffLeft);    
             }
             
             trimRead(placedRead, newOffset, trimmedSequence.toString(),ungappedNewValidRange);
@@ -163,7 +163,7 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
      * @return
      */
     private Range computeNewTrimRangeFor(P placedRead) {
-        Range currentValidRange = Range.buildRangeOfLength(0,placedRead.getLength());
+        Range currentValidRange = Range.createOfLength(0,placedRead.getLength());
         for(PlacedReadTrimmer<P,C> trimmer : trimmers){
             currentValidRange =trimmer.trimRead(placedRead, currentValidRange);
         }

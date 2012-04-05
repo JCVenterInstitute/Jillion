@@ -307,7 +307,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         if(!range.isEmpty()){
             Range bitRange = convertBaseRangeIntoBitRange(range);
             int numberOfDeletedBits = (int)bitRange.getLength()-1;
-			BitSet subBits = bits.get((int)bitRange.getStart(), (int)bitRange.getEnd()+1);
+			BitSet subBits = bits.get((int)bitRange.getBegin(), (int)bitRange.getEnd()+1);
 			NewValues newValues = new NewValues(subBits, numberOfDeletedBits);
             delete(bitRange, numberOfDeletedBits, newValues);
               
@@ -315,14 +315,14 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         return this;
     }
 	private Range convertBaseRangeIntoBitRange(Range range) {
-		int start = (int)range.getStart();
+		int start = (int)range.getBegin();
 		assertStartCoordinateIsValid(start);   
 		int bitOffsetOfStart = start*NUM_BITS_PER_VALUE;
 		int maxEnd = Math.min((tail-1)/NUM_BITS_PER_VALUE, (int)range.getEnd());
 		int deleteLength = (maxEnd-start+1)*NUM_BITS_PER_VALUE;
 		int bitOffsetOfEnd = bitOffsetOfStart+deleteLength;
 		
-		Range bitRange = Range.buildRange(bitOffsetOfStart,bitOffsetOfEnd);
+		Range bitRange = Range.create(bitOffsetOfStart,bitOffsetOfEnd);
 		return bitRange;
 	}
 	private void assertStartCoordinateIsValid(int start) {
@@ -337,7 +337,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 	private void delete(Range bitRange,
 			int numberOfDeletedBits, NewValues newValues) {
 		BitSet shrunkBits = new BitSet(tail-numberOfDeletedBits);
-		int bitOffsetOfStart = (int) bitRange.getStart();
+		int bitOffsetOfStart = (int) bitRange.getBegin();
 		for(int i=0; i<bitOffsetOfStart; i++){
 			if(bits.get(i)){
 				shrunkBits.set(i);
@@ -619,10 +619,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     public NucleotideSequence build(Range range) {
     	Range bitRange = convertBaseRangeIntoBitRange(range);
         int numberOfDeletedBits = (int)bitRange.getLength()-1;
-		BitSet subBits = bits.get((int)bitRange.getStart(), (int)bitRange.getEnd()+1);
+		BitSet subBits = bits.get((int)bitRange.getBegin(), (int)bitRange.getEnd()+1);
 		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(subBits,numberOfDeletedBits);
 		if(codecDecider.alignedReference !=null){
-			builder.setReferenceHint(codecDecider.alignedReference.reference, codecDecider.alignedReference.offset+ (int)range.getStart());
+			builder.setReferenceHint(codecDecider.alignedReference.reference, codecDecider.alignedReference.offset+ (int)range.getBegin());
 		}
 		return builder.build();
     }
@@ -655,13 +655,13 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		if(range==null){
             throw new NullPointerException("range can not be null");
         }
-    	Range currentRange = Range.buildRangeOfLength(getLength());
+    	Range currentRange = Range.createOfLength(getLength());
     	if(!range.isSubRangeOf(currentRange)){
     		throw new IllegalArgumentException(
     				"range is not a sub-range of the sequence: "+ range);
     	}
         List<Nucleotide> bases = new ArrayList<Nucleotide>((int)range.getLength());
-        int start = (int)range.getStart()*NUM_BITS_PER_VALUE;
+        int start = (int)range.getBegin()*NUM_BITS_PER_VALUE;
         int end = (int)range.getEnd()*NUM_BITS_PER_VALUE+NUM_BITS_PER_VALUE;
         
         
@@ -692,7 +692,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * {@inheritDoc}
      */
 	public NucleotideSequenceBuilder subSequence(Range range) {
-		int startOffsetBit = (int)range.getStart()*NUM_BITS_PER_VALUE;
+		int startOffsetBit = (int)range.getBegin()*NUM_BITS_PER_VALUE;
 		int endOffsetBit = (int)range.getEnd()*NUM_BITS_PER_VALUE+NUM_BITS_PER_VALUE;
 		BitSet subBits = bits.get(startOffsetBit, endOffsetBit);
 		return new NucleotideSequenceBuilder(subBits, endOffsetBit - startOffsetBit);
@@ -706,7 +706,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @return a new List of Nucleotides.
      */
     public List<Nucleotide> asList(){
-        return asList(Range.buildRangeOfLength(getLength()));
+        return asList(Range.createOfLength(getLength()));
     }
     /**
      * Get the entire current <strong>ungapped</strong> nucleotide sequence as a list
@@ -714,7 +714,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @return a new List of Nucleotides.
      */
     public List<Nucleotide> asUngappedList(){
-        return asUngappedList(Range.buildRangeOfLength(getLength()));
+        return asUngappedList(Range.createOfLength(getLength()));
     }
     /**
      * Get the current Nucleotides as a String

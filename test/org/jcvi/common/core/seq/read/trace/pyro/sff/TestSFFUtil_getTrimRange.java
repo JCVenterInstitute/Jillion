@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 public class TestSFFUtil_getTrimRange {
 
-    private static final Range NOT_SET = Range.buildRange(CoordinateSystem.RESIDUE_BASED,0,0);
+    private static final Range NOT_SET = Range.create(CoordinateSystem.RESIDUE_BASED,0,0);
 
     Flowgram flowgram;
     long numberOfBases = 100L;
@@ -54,13 +54,13 @@ public class TestSFFUtil_getTrimRange {
         expect(flowgram.getQualitiesClip()).andReturn(NOT_SET);
         expect(flowgram.getAdapterClip()).andReturn(NOT_SET);
         replay(flowgram);
-        Range expectedRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 1,numberOfBases);
+        Range expectedRange = Range.create(CoordinateSystem.RESIDUE_BASED, 1,numberOfBases);
         assertEquals(expectedRange, SFFUtil.getTrimRangeFor(flowgram));
         verify(flowgram);
     }
     @Test
     public void onlyQualityClipSetShouldReturnQualityClip(){
-        Range qualityClip = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 5,80);
+        Range qualityClip = Range.create(CoordinateSystem.RESIDUE_BASED, 5,80);
         expect(flowgram.getQualitiesClip()).andReturn(qualityClip);
         expect(flowgram.getAdapterClip()).andReturn(NOT_SET);
         replay(flowgram);
@@ -69,7 +69,7 @@ public class TestSFFUtil_getTrimRange {
     }
     @Test
     public void onlyAdapterClipSetShouldReturnAdapterClip(){
-        Range adapterClip = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 5,80);
+        Range adapterClip = Range.create(CoordinateSystem.RESIDUE_BASED, 5,80);
         expect(flowgram.getQualitiesClip()).andReturn(NOT_SET);
         expect(flowgram.getAdapterClip()).andReturn(adapterClip);
         replay(flowgram);
@@ -78,8 +78,8 @@ public class TestSFFUtil_getTrimRange {
     }
     @Test
     public void bothClipsSetShouldReturnIntersection(){
-        Range qualityClip = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 5,80);
-        Range adapterClip = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 30,75);
+        Range qualityClip = Range.create(CoordinateSystem.RESIDUE_BASED, 5,80);
+        Range adapterClip = Range.create(CoordinateSystem.RESIDUE_BASED, 30,75);
         expect(flowgram.getQualitiesClip()).andReturn(qualityClip);
         expect(flowgram.getAdapterClip()).andReturn(adapterClip);
         replay(flowgram);
@@ -89,8 +89,8 @@ public class TestSFFUtil_getTrimRange {
     }
     @Test
     public void adapterOutsideOfQualityClip(){
-        Range qualityClip = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 5,80);
-        Range adapterClip = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 3,85);
+        Range qualityClip = Range.create(CoordinateSystem.RESIDUE_BASED, 5,80);
+        Range adapterClip = Range.create(CoordinateSystem.RESIDUE_BASED, 3,85);
         expect(flowgram.getQualitiesClip()).andReturn(qualityClip);
         expect(flowgram.getAdapterClip()).andReturn(adapterClip);
         replay(flowgram);

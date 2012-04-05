@@ -108,7 +108,7 @@ public class ConsedNavigationParser {
                             default: throw new IllegalStateException("could not find region type");
                         }
                         positionMatcher.find();
-                        range = Range.buildRange(CoordinateSystem.RESIDUE_BASED,
+                        range = Range.create(CoordinateSystem.RESIDUE_BASED,
                                 Integer.parseInt(positionMatcher.group(1)),
                                 Integer.parseInt(positionMatcher.group(2)));
                         

@@ -76,7 +76,7 @@ new EncodedQualitySequence(
         "\\\\F@977").getBytes())
         ), 
 
-Range.buildRange(17,678), Range.buildRange(0,678), Range.buildRange(17,678));
+Range.create(17,678), Range.create(0,678), Range.create(17,678));
     @Before
     public void setup() throws IOException{
         sut = new DefaultAmosFragmentFileDataStore(RESOURCES.getFile("files/PB2.afg"));

@@ -36,7 +36,7 @@ public final class AgpWriter {
 		// chrY	1	3043	1	W	AADB02037551.1	1	3043	+
 		String line = String.format("%s\t%d\t%d\t%d\tW\t%s\t1\t%d\t+%n",
 				scaffoldId,
-				range.getStart(CoordinateSystem.RESIDUE_BASED),
+				range.getBegin(CoordinateSystem.RESIDUE_BASED),
 				range.getEnd(CoordinateSystem.RESIDUE_BASED),
 				partNumber,
 				contig.getContigId(),
@@ -50,7 +50,7 @@ public final class AgpWriter {
 		//chrY	3044	53043	2	N	50000	contig	no	
 		String line = String.format("%s\t%d\t%d\t%d\tN\t%d\tcontig\tno\tna%n",
 				scaffoldId,
-				range.getStart(CoordinateSystem.RESIDUE_BASED),
+				range.getBegin(CoordinateSystem.RESIDUE_BASED),
 				range.getEnd(CoordinateSystem.RESIDUE_BASED),
 				partNumber,
 				range.getLength()

@@ -365,7 +365,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
         @Override
         public synchronized void visitEndOfContig() {
             if(currentContigId !=null){
-               this.fileRange.put(currentContigId, Range.buildRange(startCurrentUnitigOffset, currentFileOffset));
+               this.fileRange.put(currentContigId, Range.create(startCurrentUnitigOffset, currentFileOffset));
                currentContigId=null;
             }
         }
@@ -374,7 +374,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
         @Override
         public synchronized UnitigDataStore build(){
             
-            return new IndexedAsmUnitigDataStore(asmFile, fileRange,Range.buildRange(startAFG, endAFG),frgDataStore);
+            return new IndexedAsmUnitigDataStore(asmFile, fileRange,Range.create(startAFG, endAFG),frgDataStore);
         }
 
     }
@@ -442,7 +442,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
                     String gappedValidBases = AsmUtil.computeGappedSequence(
                             validBases.asList(), gapOffsets);
                     currentBuilder.addRead(externalReadId, gappedValidBases,
-                            (int)readRange.getStart(),readRange.getDirection(),
+                            (int)readRange.getBegin(),readRange.getDirection(),
                             clearRange, 
                             (int)fullLengthSequence.getLength(),
                             false);

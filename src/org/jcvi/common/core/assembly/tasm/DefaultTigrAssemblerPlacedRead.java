@@ -155,8 +155,8 @@ public final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlaced
     * {@inheritDoc}
     */
     @Override
-    public long getStart() {
-        return delegate.getStart();
+    public long getBegin() {
+        return delegate.getBegin();
     }
     /**
     * {@inheritDoc}
@@ -263,8 +263,8 @@ public final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlaced
         * {@inheritDoc}
         */
         @Override
-        public long getStart() {
-            return delegate.getStart();
+        public long getBegin() {
+            return delegate.getBegin();
         }
 
         /**

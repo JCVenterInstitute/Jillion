@@ -38,7 +38,7 @@ public class TestDefaultCasPlacedRead extends EasyMockSupport{
 
     private Read read;
     private final long startOffset = 1234;
-    private final Range validRange = Range.buildRange(5,10); 
+    private final Range validRange = Range.create(5,10); 
     private final Direction dir = Direction.FORWARD;
     private final int ungappedFullLength = 10;
     
@@ -66,7 +66,7 @@ public class TestDefaultCasPlacedRead extends EasyMockSupport{
     
     @Test
     public void getStart(){
-        assertEquals(startOffset, sut.getStart());
+        assertEquals(startOffset, sut.getBegin());
     }
     
     @Test

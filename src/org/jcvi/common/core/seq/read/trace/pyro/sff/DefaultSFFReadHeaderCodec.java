@@ -51,8 +51,8 @@ public class DefaultSFFReadHeaderCodec implements SFFReadHeaderCodec {
             IOUtil.blockingSkip(in, padding);
             
             return new DefaultSFFReadHeader(numBases,
-                    Range.buildRange(CoordinateSystem.RESIDUE_BASED, qualLeft, qualRight),
-                    Range.buildRange(CoordinateSystem.RESIDUE_BASED, adapterLeft, adapterRight),
+                    Range.create(CoordinateSystem.RESIDUE_BASED, qualLeft, qualRight),
+                    Range.create(CoordinateSystem.RESIDUE_BASED, adapterLeft, adapterRight),
                      name);
         }
         catch(IOException e){

@@ -83,7 +83,7 @@ public class IndexedFastaQFileDataStore implements FastQDataStore<FastQRecord>, 
     }
     @Override
     public FastXFileVisitor.EndOfBodyReturnCode visitEndOfBody() {
-        final Range range = Range.buildRangeOfLength(currentStartOffset, currentRecordLength);
+        final Range range = Range.createOfLength(currentStartOffset, currentRecordLength);
         indexFileRange.put(currentId, range);
         currentStartOffset+=currentRecordLength;
         currentRecordLength=0;

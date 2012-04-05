@@ -275,7 +275,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
                 List<PhredQuality> qualities, List<ShortSymbol> positions,
                 Properties comments, List<PhdTag> tags) {
             long endOfOldRecord = currentOffset-currentLineLength-1;
-            recordLocations.put(id, Range.buildRange(currentStartOffset,endOfOldRecord));
+            recordLocations.put(id, Range.create(currentStartOffset,endOfOldRecord));
             currentStartOffset=endOfOldRecord;
             return true;
         }
@@ -313,7 +313,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
             
             fileInputStream = new FileInputStream(phdBall);
             MappedByteBuffer buf =fileInputStream.getChannel().map(
-                    FileChannel.MapMode.READ_ONLY, range.getStart(), range.size());
+                    FileChannel.MapMode.READ_ONLY, range.getBegin(), range.getLength());
             
             in =new ByteBufferInputStream(buf);
             PhdDataStoreBuilder builder =  DefaultPhdFileDataStore.createBuilder();            

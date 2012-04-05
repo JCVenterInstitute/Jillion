@@ -177,7 +177,7 @@ public final class ChromatogramXMLSerializer {
                          Range.class,
                          "buildRange",
                          new Object[]{
-                         clip == null? 0:clip.getStart(),
+                         clip == null? 0:clip.getBegin(),
                          clip == null? 0:clip.getEnd()
              }      );
          }

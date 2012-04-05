@@ -46,7 +46,7 @@ public class DefaultFragment implements Fragment{
         this(id, trace,validRange,validRange,library,null);
     }
     public DefaultFragment(String id, Trace trace,Library library){
-        this(id, trace,Range.buildRangeOfLength(0,trace.getBasecalls().getLength()),library);
+        this(id, trace,Range.createOfLength(0,trace.getBasecalls().getLength()),library);
     }
     public DefaultFragment(String id, NucleotideSequence bases,
             QualitySequence qualities,Range validRange,Range vectorClearRange, Library library,String comment){

@@ -92,9 +92,9 @@ public class TestSFFReadHeaderCodec_decode extends AbstractTestSFFReadHeaderCode
         putShort(mockInputStream,(short)(padds+unpaddedLength));
         putShort(mockInputStream,(short)nameLength);
         putInt(mockInputStream,readHeader.getNumberOfBases());
-        putShort(mockInputStream,(short)readHeader.getQualityClip().getStart(CoordinateSystem.RESIDUE_BASED));
+        putShort(mockInputStream,(short)readHeader.getQualityClip().getBegin(CoordinateSystem.RESIDUE_BASED));
         putShort(mockInputStream,(short)readHeader.getQualityClip().getEnd(CoordinateSystem.RESIDUE_BASED));
-        putShort(mockInputStream,(short)readHeader.getAdapterClip().getStart(CoordinateSystem.RESIDUE_BASED));
+        putShort(mockInputStream,(short)readHeader.getAdapterClip().getBegin(CoordinateSystem.RESIDUE_BASED));
         putShort(mockInputStream,(short)readHeader.getAdapterClip().getEnd(CoordinateSystem.RESIDUE_BASED));
         expect(mockInputStream.read(isA(byte[].class), eq(0),eq(nameLength)))
             .andAnswer(EasyMockUtil.writeArrayToInputStream(seqName.getBytes()));
@@ -109,9 +109,9 @@ public class TestSFFReadHeaderCodec_decode extends AbstractTestSFFReadHeaderCode
         putShort(mockInputStream,(short)(padds+unpaddedLength));
         putShort(mockInputStream,(short)(nameLength+1));
         putInt(mockInputStream,readHeader.getNumberOfBases());
-        putShort(mockInputStream,(short)readHeader.getQualityClip().getStart());
+        putShort(mockInputStream,(short)readHeader.getQualityClip().getBegin());
         putShort(mockInputStream,(short)readHeader.getQualityClip().getEnd());
-        putShort(mockInputStream,(short)readHeader.getAdapterClip().getStart());
+        putShort(mockInputStream,(short)readHeader.getAdapterClip().getBegin());
         putShort(mockInputStream,(short)readHeader.getAdapterClip().getEnd());
         expect(mockInputStream.read(isA(byte[].class), eq(0),eq(nameLength+1)))
             .andAnswer(EasyMockUtil.writeArrayToInputStream(seqName.getBytes()));

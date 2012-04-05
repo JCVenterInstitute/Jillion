@@ -197,7 +197,7 @@ public enum Chunk {
             }
             ByteBuffer buf = ByteBuffer.wrap(unEncodedData);
             buf.position(1); //skip padding
-            builder.clip(Range.buildRange(buf.getInt(), buf.getInt()));
+            builder.clip(Range.create(buf.getInt(), buf.getInt()));
         }
 
         @Override
@@ -208,7 +208,7 @@ public enum Chunk {
             }
             ByteBuffer buf = ByteBuffer.wrap(unEncodedData);
             buf.position(1); //skip padding
-            Range clipRange = Range.buildRange(buf.getInt(), buf.getInt());
+            Range clipRange = Range.create(buf.getInt(), buf.getInt());
             if(visitor instanceof ZTRChromatogramFileVisitor){
                 ((ZTRChromatogramFileVisitor)visitor).visitClipRange(clipRange);
             }
@@ -229,11 +229,11 @@ public enum Chunk {
 			
 			if(clip ==null){
 				//store as 0,0?
-				clip = Range.buildRange(0, 0);
+				clip = Range.create(0, 0);
 			}
 			ByteBuffer buffer= ByteBuffer.allocate(9);
 			buffer.put(PADDING_BYTE);
-			buffer.putInt((int)clip.getStart());
+			buffer.putInt((int)clip.getBegin());
 			buffer.putInt((int)clip.getEnd());
 			return buffer.array();
 		}

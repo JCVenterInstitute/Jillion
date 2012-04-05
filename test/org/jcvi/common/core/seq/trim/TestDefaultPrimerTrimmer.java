@@ -40,7 +40,7 @@ public class TestDefaultPrimerTrimmer {
         NucleotideSequence sequence = new NucleotideSequenceBuilder("AAACGACGTACGTACGT").build();
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(sequence);
         
-        Range expectedRange= Range.buildEmptyRange();
+        Range expectedRange= Range.createEmptyRange();
         Range actualRange= sut.trim(sequence, datastore);
         assertEquals(expectedRange, actualRange);
     }
@@ -49,7 +49,7 @@ public class TestDefaultPrimerTrimmer {
         NucleotideSequence sequence = new NucleotideSequenceBuilder("AAACGACGTACGTACGT").build();
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("AAACG").build());
         
-        Range expectedRange= Range.buildRange(5, sequence.getLength()-1);
+        Range expectedRange= Range.create(5, sequence.getLength()-1);
         Range actualRange= sut.trim(sequence, datastore);
         assertEquals(expectedRange, actualRange);
     }
@@ -58,7 +58,7 @@ public class TestDefaultPrimerTrimmer {
         NucleotideSequence sequence = new NucleotideSequenceBuilder("TTAAACGACGTACGTACGT").build();
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("AAACG").build());
         
-        Range expectedRange= Range.buildRange(7, sequence.getLength()-1);
+        Range expectedRange= Range.create(7, sequence.getLength()-1);
         Range actualRange= sut.trim(sequence, datastore);
         assertEquals(expectedRange, actualRange);
     }
@@ -67,7 +67,7 @@ public class TestDefaultPrimerTrimmer {
         NucleotideSequence sequence = new NucleotideSequenceBuilder("AAACGACGTACGTACGT").build();
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("CGTTT").build());
         
-        Range expectedRange= Range.buildRange(5, sequence.getLength()-1);
+        Range expectedRange= Range.create(5, sequence.getLength()-1);
         Range actualRange= sut.trim(sequence, datastore);
         assertEquals(expectedRange, actualRange);
     }
@@ -76,7 +76,7 @@ public class TestDefaultPrimerTrimmer {
         NucleotideSequence sequence = new NucleotideSequenceBuilder("TTAAACGACGTACGTACGT").build();
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("CGTTT").build());
         
-        Range expectedRange= Range.buildRange(7, sequence.getLength()-1);
+        Range expectedRange= Range.create(7, sequence.getLength()-1);
         Range actualRange= sut.trim(sequence, datastore);
         assertEquals(expectedRange, actualRange);
     }
@@ -85,7 +85,7 @@ public class TestDefaultPrimerTrimmer {
         NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACG").build();
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("AAACG").build());
         
-        Range expectedRange= Range.buildRange(0, sequence.getLength()-1-5);
+        Range expectedRange= Range.create(0, sequence.getLength()-1-5);
         Range actualRange= sut.trim(sequence, datastore);
         assertEquals(expectedRange, actualRange);
     }
@@ -94,7 +94,7 @@ public class TestDefaultPrimerTrimmer {
         NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACGTT").build();
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("AAACG").build());
         
-        Range expectedRange= Range.buildRange(0, sequence.getLength()-3-5);
+        Range expectedRange= Range.create(0, sequence.getLength()-3-5);
         Range actualRange= sut.trim(sequence, datastore);
         assertEquals(expectedRange, actualRange);
     }
@@ -103,7 +103,7 @@ public class TestDefaultPrimerTrimmer {
         NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACG").build();
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("CGTTT").build());
         
-        Range expectedRange= Range.buildRange(0, sequence.getLength()-1-5);
+        Range expectedRange= Range.create(0, sequence.getLength()-1-5);
         Range actualRange= sut.trim(sequence, datastore);
         assertEquals(expectedRange, actualRange);
     }
@@ -112,7 +112,7 @@ public class TestDefaultPrimerTrimmer {
         NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACGCC").build();
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("CGTTT").build());
         
-        Range expectedRange= Range.buildRange(0, sequence.getLength()-3-5);
+        Range expectedRange= Range.create(0, sequence.getLength()-3-5);
         Range actualRange= sut.trim(sequence, datastore);
         assertEquals(expectedRange, actualRange);
     }
@@ -121,7 +121,7 @@ public class TestDefaultPrimerTrimmer {
         NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACGCC").build();
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("A").build());
         
-        assertEquals(Range.buildRangeOfLength(sequence.getLength()), sut.trim(sequence, datastore));
+        assertEquals(Range.createOfLength(sequence.getLength()), sut.trim(sequence, datastore));
         
     }
     
@@ -131,7 +131,7 @@ public class TestDefaultPrimerTrimmer {
         NucleotideSequence sequence = new NucleotideSequenceBuilder("AAATTTACGTACGTGGGAAAAAATATA").build();
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(new NucleotideSequenceBuilder("ACGTACGTG").build());
         
-        Range expectedRange= Range.buildRange(15, sequence.getLength()-1);
+        Range expectedRange= Range.create(15, sequence.getLength()-1);
         Range actualRange= sut.trim(sequence, datastore);
         assertEquals(expectedRange, actualRange);
     }

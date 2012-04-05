@@ -72,22 +72,22 @@ public class SffReadInfo extends AbstractSffFileProcessor {
         final Range qualityClip = readHeader.getQualityClip();
         final Range adapterClip = readHeader.getAdapterClip();
         Range trimmedRange;
-        if(adapterClip.equals(Range.buildRange(CoordinateSystem.RESIDUE_BASED,0,0))){
+        if(adapterClip.equals(Range.create(CoordinateSystem.RESIDUE_BASED,0,0))){
             trimmedRange= qualityClip;
         }
         else{
             trimmedRange = qualityClip.intersection(adapterClip);
         }
-        final long basesTrimmed = readHeader.getNumberOfBases()-trimmedRange.size();
+        final long basesTrimmed = readHeader.getNumberOfBases()-trimmedRange.getLength();
         out.println(String.format(
                 "%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%.2f%%",
                 readHeader.getName(),
                 readHeader.getNumberOfBases(),
-                qualityClip.getStart(CoordinateSystem.RESIDUE_BASED),
+                qualityClip.getBegin(CoordinateSystem.RESIDUE_BASED),
                 qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED),
-                adapterClip.getStart(CoordinateSystem.RESIDUE_BASED),
+                adapterClip.getBegin(CoordinateSystem.RESIDUE_BASED),
                 adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED),
-                trimmedRange.size(),
+                trimmedRange.getLength(),
                 basesTrimmed,
                 basesTrimmed/(double)readHeader.getNumberOfBases()*100
                 ));

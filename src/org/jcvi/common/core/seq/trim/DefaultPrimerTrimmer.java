@@ -160,13 +160,13 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
         	IOUtil.closeAndIgnoreErrors(iter);
         }
         List<Range> mergedRanges = Ranges.merge(ranges);
-        Range sequenceRange = Range.buildRangeOfLength(0, sequence.getLength());
+        Range sequenceRange = Range.createOfLength(0, sequence.getLength());
 
         if(mergedRanges.size() ==1){
            Range primerRange = mergedRanges.get(0);
            if(primerRange.equals(sequenceRange)){
                //the entire primer range is the same as the original sequence
-               return Range.buildEmptyRange();
+               return Range.createEmptyRange();
            }
            List<Range> rangesFreeFromPrimer = sequenceRange.compliment(primerRange);
            Collections.sort(rangesFreeFromPrimer, Range.Comparators.LONGEST_TO_SHORTEST);

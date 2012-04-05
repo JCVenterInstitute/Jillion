@@ -85,7 +85,7 @@ public final class FragmentUtil {
     public static  Range parseRangeFrom(Matcher m){
         if(m.find()){
             Range celeraClearRange= Range.parseRange(m.group(1));
-            return Range.buildRange(celeraClearRange.getStart(), celeraClearRange.getEnd()-1);
+            return Range.create(celeraClearRange.getBegin(), celeraClearRange.getEnd()-1);
         }
         return null;
     }

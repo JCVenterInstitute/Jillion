@@ -64,7 +64,7 @@ public class DefaultQualityClassContigMap implements QualityClassMap{
                                                                 qualityDataStore, consensus, i);
             if(isDifferentQualityClass(qualityClass, currentQualityClass)){
                 if(qualityClass!=null){
-                    qualityClassRegions.add(new QualityClassRegion(qualityClass, Range.buildRange(qualityClassStart, i-1 )));
+                    qualityClassRegions.add(new QualityClassRegion(qualityClass, Range.create(qualityClassStart, i-1 )));
                 }
                 qualityClass = currentQualityClass;
                 qualityClassStart=i;
@@ -72,7 +72,7 @@ public class DefaultQualityClassContigMap implements QualityClassMap{
         }
         final long lastConsensusIndex = consensus.getLength()-1;
         if(qualityClassStart <=lastConsensusIndex){
-            qualityClassRegions.add(new QualityClassRegion(qualityClass, Range.buildRange(qualityClassStart, lastConsensusIndex)));
+            qualityClassRegions.add(new QualityClassRegion(qualityClass, Range.create(qualityClassStart, lastConsensusIndex)));
         }
     }
 

@@ -51,10 +51,10 @@ public class RunLengthEncoder {
     }
     public static <T> T decode(List<RunLength<T>> encoded, int decodedIndex){
         long previousIndex=-1;
-        final Range target = Range.buildRangeOfLength(decodedIndex, 1);
+        final Range target = Range.createOfLength(decodedIndex, 1);
         for(RunLength<T> runLength : encoded){
             long currentStartIndex = previousIndex+1;
-            Range range = Range.buildRangeOfLength(currentStartIndex, runLength.getLength());
+            Range range = Range.createOfLength(currentStartIndex, runLength.getLength());
             
             if(range.intersects(target)){
                 return runLength.getValue();

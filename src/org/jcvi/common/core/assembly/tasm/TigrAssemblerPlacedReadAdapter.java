@@ -59,20 +59,20 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 		
 		//TODO is asm_lend / asm_rend ungapped or gapped?
 		//try ungapped?
-		int asmLend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getStart());
+		int asmLend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getBegin());
 		int asmRend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getEnd());
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_LEFT, ""+asmLend);
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_RIGHT, ""+asmRend);
-		attributes.put(TigrAssemblerReadAttribute.CONTIG_START_OFFSET, ""+(this.getStart()));
+		attributes.put(TigrAssemblerReadAttribute.CONTIG_START_OFFSET, ""+(this.getBegin()));
 		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, Nucleotides.asString(this.getNucleotideSequence().asList()));
 		
 		Range validRange = this.getValidRange();
 		if(this.getDirection()== Direction.FORWARD){
-			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_LEFT, ""+(validRange.getStart()+1));
+			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_LEFT, ""+(validRange.getBegin()+1));
 			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_RIGHT, ""+(validRange.getEnd()+1));
 		}else{
 			//reverse gets left and right flipped
-			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_RIGHT, ""+(validRange.getStart()+1));
+			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_RIGHT, ""+(validRange.getBegin()+1));
 			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_LEFT, ""+(validRange.getEnd()+1));
 		}
 		return attributes;
@@ -145,8 +145,8 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	}
 
 	@Override
-	public long getStart() {
-		return delegatePlacedRead.getStart();
+	public long getBegin() {
+		return delegatePlacedRead.getBegin();
 	}
 
 	@Override

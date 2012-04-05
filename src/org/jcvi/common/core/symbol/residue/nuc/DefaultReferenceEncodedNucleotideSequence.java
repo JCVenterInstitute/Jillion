@@ -225,7 +225,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
 		//list.add(offset, snp);
 		//list.remove(offset+1);
 		//without resizing list everytime.
-		Nucleotide[] array= reference.asList(Range.buildRangeOfLength(startOffset,length)).toArray(new Nucleotide[0]);
+		Nucleotide[] array= reference.asList(Range.createOfLength(startOffset,length)).toArray(new Nucleotide[0]);
 		if(encodedSnpsInfo !=null){
 			//pull out all of our SNP data at the same
 			//time and 

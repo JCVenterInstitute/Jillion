@@ -419,7 +419,7 @@ public abstract class TestContigFileParser {
             "CAGCTATGTATAATGTTTATTGTCTTTGTAGACATGTTATGTATGGATGTAGTAAGCCTG" +
             "GTTGCTTGTTTTGTTATAAGAGAAACCGTAGTGTCCGTGTTAAGTGTAGCACCGTAGTTT" +
             "G" 
-            , 4870, Direction.REVERSE, Range.buildRange(10,788), 790)
+            , 4870, Direction.REVERSE, Range.create(10,788), 790)
             .build();
    
     
@@ -434,7 +434,7 @@ public abstract class TestContigFileParser {
                          "TTATTACTATGAGAGTGAGGCTAATTTCACACTACAAGGTTGTGATGAATTTATAGTACC" +
                          "GCTCTGCGTTTTTAATGGCCGTTCCAAGGGCAGCTC"
                          ,
-            20675, Direction.FORWARD,Range.buildRange(40,553),550)
+            20675, Direction.FORWARD,Range.create(40,553),550)
             .build();
     
     

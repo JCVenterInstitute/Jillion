@@ -252,7 +252,7 @@ public class Cas2Consed3 {
                  long ungappedLength = fullConsensus.getUngappedLength();
                  long firstReadStart= fullConsensus.getLength();
                  for(AcePlacedReadBuilder readBuilder : builder.getAllPlacedReadBuilders()){
-                     long start =readBuilder.getStart();
+                     long start =readBuilder.getBegin();
                      if(start < firstReadStart){
                          firstReadStart = start;
                      }
@@ -276,7 +276,7 @@ public class Cas2Consed3 {
                      //add split contig reads to total # reads
                      numberOfReads+= splitContig.getNumberOfReads();
                      
-                     int numberOfUpstreamNs = (int)(contigRange.getStart() - previousPseduoMoleculeOffset);
+                     int numberOfUpstreamNs = (int)(contigRange.getBegin() - previousPseduoMoleculeOffset);
                 	 appendNsIfNeeded(pseduoMoleculeBuilder, numberOfUpstreamNs);
                     
                      List<Nucleotide> ungappedConsensus = splitContig.getConsensus().asUngappedList();

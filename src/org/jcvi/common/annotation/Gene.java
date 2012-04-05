@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Ranges;
 
 public final class Gene {
 
@@ -29,7 +30,7 @@ public final class Gene {
 		this.exons = new ArrayList<Range>(exons);
 		Collections.sort(this.exons);
 		
-		List<Range> completeExonRange = Arrays.asList(Range.buildInclusiveRange(this.exons));
+		List<Range> completeExonRange = Arrays.asList(Ranges.createInclusiveRange(this.exons));
 		List<Range> introns = completeExonRange;
 		for(Range exon : this.exons){
 			 introns = exon.complimentFrom(introns);

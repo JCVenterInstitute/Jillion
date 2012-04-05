@@ -144,7 +144,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, C
         @Override
         protected void addContig(Contig contig) {
             int actualLengthOfContig = sizeOfCurrentContig-currentLineLength;
-            mappedRanges.put(contig.getId(), Range.buildRangeOfLength(currentStartOffset, actualLengthOfContig));
+            mappedRanges.put(contig.getId(), Range.createOfLength(currentStartOffset, actualLengthOfContig));
             currentStartOffset+=actualLengthOfContig;
             resetCurrentContigSize(currentLineLength);
         }

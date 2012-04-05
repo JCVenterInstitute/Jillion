@@ -42,8 +42,8 @@ import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 public class TestSFFFlowgram {
 
-    Range qualitiesClip = Range.buildRange(10,90);
-    Range adapterClip= Range.buildRange(5,95);
+    Range qualitiesClip = Range.create(10,90);
+    Range adapterClip= Range.create(5,95);
     QualitySequence confidence = createMock(QualitySequence.class);
     List<Short> values = convertIntoList(new short[]{202, 310,1,232,7});
     NucleotideSequence basecalls = createMock(NucleotideSequence.class);

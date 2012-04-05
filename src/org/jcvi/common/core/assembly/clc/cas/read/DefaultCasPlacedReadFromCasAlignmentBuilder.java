@@ -66,10 +66,10 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         NucleotideSequenceBuilder allBasesBuilder = new NucleotideSequenceBuilder(fullRangeSequence.asList(traceTrimRange));
         if(isReversed){
         	allBasesBuilder.reverseCompliment();
-            validRangeStart = traceTrimRange ==null?0:AssemblyUtil.reverseComplimentValidRange(traceTrimRange, fullUngappedLength).getStart();
+            validRangeStart = traceTrimRange ==null?0:AssemblyUtil.reverseComplimentValidRange(traceTrimRange, fullUngappedLength).getBegin();
         }
         else{
-            validRangeStart = traceTrimRange ==null?0:traceTrimRange.getStart();
+            validRangeStart = traceTrimRange ==null?0:traceTrimRange.getBegin();
         }
         allBases = allBasesBuilder.build();
         dir = isReversed? Direction.REVERSE: Direction.FORWARD;
@@ -148,7 +148,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     }
     @Override
     public DefaultCasPlacedRead build() {
-        Range validRange = Range.buildRangeOfLength(0, validBases.getLength()-numberOfGaps).shiftRight(validRangeStart);
+        Range validRange = Range.createOfLength(0, validBases.getLength()-numberOfGaps).shiftRight(validRangeStart);
         if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplimentValidRange(validRange, fullUngappedLength);
         }

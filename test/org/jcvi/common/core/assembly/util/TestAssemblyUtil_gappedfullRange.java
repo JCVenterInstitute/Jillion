@@ -50,7 +50,7 @@ public class TestAssemblyUtil_gappedfullRange {
     public void entireSequenceIsValid(){
         
         List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotides.ungap(gappedValidRange);
-        Range validRange = Range.buildRange(0, ungappedUnComplimentedFullRange.size()-1);
+        Range validRange = Range.create(0, ungappedUnComplimentedFullRange.size()-1);
         
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
         expect(mockPlacedRead.getDirection()).andStubReturn(Direction.FORWARD);
@@ -67,7 +67,7 @@ public class TestAssemblyUtil_gappedfullRange {
         
         List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotides.reverseCompliment(
                                             Nucleotides.ungap(gappedValidRange));
-        Range validRange = Range.buildRange(0, ungappedUnComplimentedFullRange.size()-1);
+        Range validRange = Range.create(0, ungappedUnComplimentedFullRange.size()-1);
         
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
         expect(mockPlacedRead.getDirection()).andStubReturn(Direction.REVERSE);
@@ -82,7 +82,7 @@ public class TestAssemblyUtil_gappedfullRange {
     @Test
     public void hasBeyondValidRange(){
         List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotides.parse("RRACGTACGTKKK");
-        Range validRange = Range.buildRange(2, 9);
+        Range validRange = Range.create(2, 9);
         
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
         expect(mockPlacedRead.getDirection()).andStubReturn(Direction.FORWARD);
@@ -97,7 +97,7 @@ public class TestAssemblyUtil_gappedfullRange {
     @Test
     public void hasBeyondValidRangeAndUngapped(){
         List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotides.parse("RRACGTACGTKKK");
-        Range validRange = Range.buildRange(3, 10);
+        Range validRange = Range.create(3, 10);
         
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
         expect(mockPlacedRead.getDirection()).andStubReturn(Direction.REVERSE);

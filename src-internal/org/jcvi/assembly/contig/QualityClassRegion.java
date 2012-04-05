@@ -53,8 +53,8 @@ public class QualityClassRegion implements Placed<QualityClassRegion>{
     }
 
     @Override
-    public long getStart() {
-        return placed.getStart();
+    public long getBegin() {
+        return placed.getBegin();
     }
     @Override
     public String toString() {
@@ -91,8 +91,8 @@ public class QualityClassRegion implements Placed<QualityClassRegion>{
     */
     @Override
     public int compareTo(QualityClassRegion o) {
-        Range range= Range.buildRange(getStart(), getEnd());
-        Range otherRange = Range.buildRange(o.getStart(), o.getEnd());
+        Range range= Range.create(getBegin(), getEnd());
+        Range otherRange = Range.create(o.getBegin(), o.getEnd());
         return range.compareTo(otherRange);
     }
     /**

@@ -57,7 +57,7 @@ public class EditedReferenceBuilder implements Builder<NucleotideSequence>{
         return this;
     }
     public EditedReferenceBuilder addPlacedRead(PlacedRead placedRead){
-        long startOffset = placedRead.getStart();
+        long startOffset = placedRead.getBegin();
         int i=0;
         for(Nucleotide base : placedRead.getNucleotideSequence().asList()){
             long index = startOffset+i;
@@ -90,7 +90,7 @@ public class EditedReferenceBuilder implements Builder<NucleotideSequence>{
                         sliceBuilder.add(base+"_"+j, base, PhredQuality.valueOf(30), Direction.FORWARD);
                     }
                 }
-                builder.delete(Range.buildRange(i))
+                builder.delete(Range.create(i))
                         .insert(i, consensusCaller.callConsensus(sliceBuilder.build()).getConsensus());
                                 
             }

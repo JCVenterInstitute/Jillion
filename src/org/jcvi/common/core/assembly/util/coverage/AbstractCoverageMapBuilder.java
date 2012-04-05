@@ -109,7 +109,7 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
         //iterate backwards to avoid concurrent modification errors
         for (int i = coverageRegionBuilders.size() - 1; i >= 0; i--) {
             CoverageRegionBuilder<P> builder = coverageRegionBuilders.get(i);
-            Range range = Range.buildRange(builder.start(), builder.end());
+            Range range = Range.create(builder.start(), builder.end());
             if (range.isEmpty()) {
                 coverageRegionBuilders.remove(i);
             }
@@ -178,7 +178,7 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
     }
 
     private void handleEnteringObject() {
-        long startCoord = enteringObject.getStart();
+        long startCoord = enteringObject.getBegin();
         createNewRegionWithEnteringAmplicon();
         enteringObject = getNextObject(enteringIterator);
         handleAmpliconsWithSameStartCoord(startCoord);
@@ -195,13 +195,13 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
     }
 
     private boolean isAbutment() {
-        return leavingObject.getEnd() == enteringObject.getStart() - 1;
+        return leavingObject.getEnd() == enteringObject.getBegin() - 1;
 
     }
 
     private void handleAmpliconsWithSameStartCoord(long regionStart) {
         while (stillHaveEnteringObjects()
-                && enteringObject.getStart() == regionStart) {
+                && enteringObject.getBegin() == regionStart) {
             // next amplicon also starts here, add this to current region
             addEnteringObjectToPreviousRegionBuilder();
             addAndAdvanceEnteringObject();
@@ -222,7 +222,7 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
     }
 
     private boolean isEntering() {
-        return enteringObject.getStart() <= leavingObject.getEnd() ;
+        return enteringObject.getBegin() <= leavingObject.getEnd() ;
     }
 
     private void createNewRegionWithoutCurrentLeavingObject() {
@@ -240,11 +240,11 @@ public abstract class AbstractCoverageMapBuilder<P extends Placed, R extends Cov
 
     private void createNewRegionWithEnteringAmplicon() {
         if (coverageRegionBuilders.size() > 0) {
-            final long endCoordinate = enteringObject.getStart() - 1;
+            final long endCoordinate = enteringObject.getBegin() - 1;
             setEndCoordinateOfPreviousRegion(endCoordinate);
         }
         coveringObjects.offer(enteringObject);
-        coverageRegionBuilders.add(createNewCoverageRegionBuilder(coveringObjects, enteringObject.getStart(), maxAllowedCoverage ));
+        coverageRegionBuilders.add(createNewCoverageRegionBuilder(coveringObjects, enteringObject.getBegin(), maxAllowedCoverage ));
 
     }
 

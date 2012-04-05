@@ -335,32 +335,32 @@ public enum HmmModels {
 
 	private int[] handleFinalExon(Sequence<Nucleotide> sequence, int[] labels, Range finalExon) {
 		int[] finalExonStates = visitFinalExon(sequence.asList(finalExon));
-		System.arraycopy(finalExonStates, 0, labels, (int)finalExon.getStart(), finalExonStates.length);
+		System.arraycopy(finalExonStates, 0, labels, (int)finalExon.getBegin(), finalExonStates.length);
 		return labels;
 	}
 
 	private int[] handleMiddleExon(Sequence<Nucleotide> sequence, int[] labels, Range middleExon) {
 		int[] middleExonStates = visitMiddleExon(sequence.asList(middleExon));
-		System.arraycopy(middleExonStates, 0, labels, (int)middleExon.getStart(), middleExonStates.length);
+		System.arraycopy(middleExonStates, 0, labels, (int)middleExon.getBegin(), middleExonStates.length);
 		return labels;
 	}
 
 	private int[] handleInitialExon(Sequence<Nucleotide> sequence, int[] labels, Range initialExon) {
 		int[] exonStates = visitInitialExon(sequence.asList(initialExon));
-		System.arraycopy(exonStates, 0, labels, (int)initialExon.getStart(), exonStates.length);
+		System.arraycopy(exonStates, 0, labels, (int)initialExon.getBegin(), exonStates.length);
 		return labels;
 	}
 
 	private int[] handleIntron(Sequence<Nucleotide> sequence, int[] labels,	Range intron) {
 		int[] intronStates = visitIntron(sequence.asList(intron));
-		System.arraycopy(intronStates, 0, labels, (int)intron.getStart(), intronStates.length);
+		System.arraycopy(intronStates, 0, labels, (int)intron.getBegin(), intronStates.length);
 		return labels;
 	}
 
 	private int[] handleSingleExon(Sequence<Nucleotide> sequence, int[] labels,
 			Range exon) {
 		int[] exonStates = visitOnlyExon(sequence.asList(exon));
-		System.arraycopy(exonStates, 0, labels, (int)exon.getStart(), exonStates.length);
+		System.arraycopy(exonStates, 0, labels, (int)exon.getBegin(), exonStates.length);
 		return labels;
 	}
 }

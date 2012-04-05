@@ -41,7 +41,7 @@ import org.junit.Test;
  */
 public class TestDefaultAcePlacedReadReAbacus {
     String readId = "readId";
-    Range validRange= Range.buildRange(15,25);
+    Range validRange= Range.create(15,25);
     int ungappedFullLength =30;
     Direction dir = Direction.FORWARD;
     PhdInfo phdInfo = createMock(PhdInfo.class);
@@ -64,7 +64,7 @@ public class TestDefaultAcePlacedReadReAbacus {
     @Test
     public void confirmInitialValues(){
         assertEquals(readId, sut.getId());
-        assertEquals(originalStartOffset, sut.getStart());
+        assertEquals(originalStartOffset, sut.getBegin());
         assertEquals(dir, sut.getDirection());
         assertEquals(phdInfo, sut.getPhdInfo());
         assertEquals(ungappedFullLength, sut.getUngappedFullLength());
@@ -75,7 +75,7 @@ public class TestDefaultAcePlacedReadReAbacus {
     @Test
     public void shiftBases(){
         sut.setStartOffset(originalStartOffset+5);
-        assertEquals(originalStartOffset+5, sut.getStart());
+        assertEquals(originalStartOffset+5, sut.getBegin());
         
         assertEquals(readId, sut.getId());
         assertEquals(dir, sut.getDirection());
@@ -87,7 +87,7 @@ public class TestDefaultAcePlacedReadReAbacus {
     
     @Test
     public void reAbacus(){
-        sut.reAbacus(Range.buildRange(3,9), Nucleotides.parse("TACGT"));
+        sut.reAbacus(Range.create(3,9), Nucleotides.parse("TACGT"));
         
         assertEquals(readId, sut.getId());       
         assertEquals(8, sut.getLength());
@@ -99,7 +99,7 @@ public class TestDefaultAcePlacedReadReAbacus {
     @Test
     public void reAbacusDifferentNonGapBasesShouldThrowException(){
         try{
-            sut.reAbacus(Range.buildRange(3,9), Nucleotides.parse("TRCGT"));
+            sut.reAbacus(Range.create(3,9), Nucleotides.parse("TRCGT"));
             fail("should throw Exception");
         }catch(IllegalArgumentException expected){
             assertEquals("reAbacusing must retain same ungapped basecalls! 'TACGT' vs 'TRCGT'",

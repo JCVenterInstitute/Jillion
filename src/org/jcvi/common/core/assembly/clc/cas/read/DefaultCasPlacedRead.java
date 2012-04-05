@@ -74,7 +74,7 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
         return read.getLength();
     }
     @Override
-    public long getStart() {
+    public long getBegin() {
         return startOffset;
     }
     @Override
@@ -94,14 +94,14 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
     @Override
     public long toGappedValidRangeOffset(long referenceIndex) {
         
-        long validRangeIndex= referenceIndex - getStart();
+        long validRangeIndex= referenceIndex - getBegin();
         checkValidRange(validRangeIndex);
         return validRangeIndex;
     }
     @Override
     public long toReferenceOffset(long validRangeIndex) {
         checkValidRange(validRangeIndex);
-        return getStart() +validRangeIndex;
+        return getBegin() +validRangeIndex;
     }
     private void checkValidRange(long validRangeIndex) {
         if(validRangeIndex <0){
@@ -172,7 +172,7 @@ public class DefaultCasPlacedRead implements CasPlacedRead{
     */
     @Override
     public Range asRange() {
-        return Range.buildRange(getStart(), getEnd());
+        return Range.create(getBegin(), getEnd());
     }
 
    

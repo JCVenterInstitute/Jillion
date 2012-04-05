@@ -60,15 +60,15 @@ import org.jcvi.common.core.util.Caches;
  * desire to represent no range at all.  A <code>Range</code> of 0 to 0 still
  * has a size of 1.  In order to represent a <code>Range</code> with size 0,
  * you need to explicitly use an empty range via the factory methods:
- * {@link #buildEmptyRange()} {@link #buildEmptyRange(long)} {@link #buildEmptyRange(CoordinateSystem, long)}. 
+ * {@link #createEmptyRange()} {@link #createEmptyRange(long)} {@link #createEmptyRange(CoordinateSystem, long)}. 
  * <p>
  * Often, Bioinformatics formats use non-0-based coordinates. Other coordinate system start and end values can be queried
- * via the {@link #getStart(CoordinateSystem)} and {@link #getEnd(CoordinateSystem)} methods.  
+ * via the {@link #getBegin(CoordinateSystem)} and {@link #getEnd(CoordinateSystem)} methods.  
  * A different {@link CoordinateSystem} can be also be specified at construction time
- * via the {@link Range#buildRange(CoordinateSystem, long, long)} method.  If this method is used,
+ * via the {@link Range#create(CoordinateSystem, long, long)} method.  If this method is used,
  * the input values will automatically get converted into 0-based coordinates.
  * <p/>
- * Ranges can be constructed using the various Range.buildRange(...) methods
+ * Ranges can be constructed using the various Range.create(...) methods
  * which might return different Range implementations based on 
  * what the input values.  In addition, since Ranges are immutable,
  * it is not guaranteed that the Range object returned by the build methods
@@ -78,7 +78,7 @@ import org.jcvi.common.core.util.Caches;
  * on the same object as other, unrelated code can cause deadlock.
  * <pre> 
  * &#047;&#047;don't do this
- * private static Range range = Range.buildRange(0,9);
+ * private static Range range = Range.create(0,9);
  * ...
  *   synchronized(range){ .. }
  * ...
@@ -139,7 +139,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
                  * Compare first by the start values, then by the end values, if the ranges start
                  * in the same place.
                  */
-                final int startComparison = Long.valueOf(first.getStart()).compareTo(Long.valueOf(second.getStart()));
+                final int startComparison = Long.valueOf(first.getBegin()).compareTo(Long.valueOf(second.getBegin()));
                 if (startComparison == 0)
                 {
                     return Long.valueOf(first.getEnd()).compareTo(Long.valueOf(second.getEnd()));
@@ -177,7 +177,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
                 final int endComparison = Long.valueOf(first.getEnd()).compareTo(Long.valueOf(second.getEnd()));
                 if (endComparison == 0)
                 {
-                    return Long.valueOf(first.getStart()).compareTo(Long.valueOf(second.getStart()));
+                    return Long.valueOf(first.getBegin()).compareTo(Long.valueOf(second.getBegin()));
                 }
                 return endComparison;
             }
@@ -223,7 +223,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * coordinate systems to fit their needs.  CoordinateSystem implementations
      * can be used to translate to and from the various bioinformatics coordinate
      * systems to simplify working with multiple coordinate systems at the same time.
-     * @see Range#getStart(CoordinateSystem)
+     * @see Range#getBegin(CoordinateSystem)
      * @see Range#getEnd(CoordinateSystem)
      */
     public enum CoordinateSystem {
@@ -394,8 +394,8 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * @throws IllegalArgumentException if {@code end < start -1} 
      * or if the resulting range length > {@link Long#MAX_VALUE}.
      */
-    public static Range buildRange(long start, long end){
-        return buildRange(CoordinateSystem.ZERO_BASED,start,end);
+    public static Range create(long start, long end){
+        return create(CoordinateSystem.ZERO_BASED,start,end);
     }
     /**
      * Factory method to build a {@link Range} object.
@@ -405,22 +405,31 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * @return a {@link Range}; never null but might 
      * not be a new instance.
      */
-    public static Range buildRange(long singleCoordinate){
-        return buildRange(CoordinateSystem.ZERO_BASED,singleCoordinate);
+    public static Range create(long singleCoordinate){
+        return create(CoordinateSystem.ZERO_BASED,singleCoordinate);
     }
     
     /**
-     * Factory method to build a {@link Range} object.
+     * Factory method to create a {@link Range} object.
      * of length 1 with the given coordinate in 
      * the given coordinate system.
      * @param coordinateSystem the {@link CoordinateSystem} to use.
      * @param singleCoordinate only coordinate in this range.
-     * @return a {@link Range}; never null but might 
-     * not be a new instance.
+     * @return a non-empty Range instance  whose {@link Range#getBegin()}
+     * method
+     * will return the passed in value 
+     * (after possibly converting it to zero based coordinate)
+     * and whose
+     * and {@link Range#getLength()} will return {@code 1}.  This is not guaranteed to be a 
+     * new instance since Ranges use the flyweight pattern
+     * to reuse the same objects.
+     * @throws IndexOutOfBoundsException if the combination 
+     * of start and length values would cause the Range to extend
+     * beyond {@link Long#MAX_VALUE}.
      * @throws NullPointerException if the coordinateSystem is null.
      */
-    public static Range buildRange(CoordinateSystem coordinateSystem, long singleCoordinate){
-        return buildRangeOfLength(coordinateSystem,singleCoordinate,1);
+    public static Range create(CoordinateSystem coordinateSystem, long singleCoordinate){
+        return createOfLength(coordinateSystem,singleCoordinate,1);
     }
     /**
      * Factory method to build a {@link Range} object
@@ -433,13 +442,16 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * @param coordinateSystem the {@link CoordinateSystem} to use.
      * @param localStart the start coordinate in the given coordinateSystem.
      * @param localEnd the end coordinate in the given coordinateSystem.
-     * @return a {@link Range}; never null but might 
-     * not be a new instance.
-     * @throws NullPointerException if the coordinateSystem is null.
-     * @throws IllegalArgumentException if end < begin -1
-     * or if the resulting range length > {@link Long#MAX_VALUE}.
+     * @return a non-empty Range instance.  This is not guaranteed to be a 
+     * new instance since Ranges use the flyweight pattern
+     * to reuse the same objects.
+     * @throws NullPointerException if coordinateSystem is null.
+     * @throws IllegalArgumentException if length is negative
+     *  @throws IndexOutOfBoundsException if the combination 
+     * of start and length values would cause the Range to extend
+     * beyond {@link Long#MAX_VALUE}.
      */
-    public static synchronized Range buildRange(CoordinateSystem coordinateSystem,long localStart, long localEnd){
+    public static synchronized Range create(CoordinateSystem coordinateSystem,long localStart, long localEnd){
         if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot build null coordinate system range");
         }
@@ -596,30 +608,44 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     }
    
     /**
-     * Build and empty range in the zero-based coordinate system
+     * Create an empty range in the zero-based coordinate system
      * at coordinate 0.
-     * @return a new Empty Range.
+     * @return a Range instance whose {@link Range#isEmpty()}
+     * method returns true and whose {@link Range#getBegin()}
+     * will return 0.  This is not guaranteed to be a 
+     * new instance since Ranges use the flyweight pattern
+     * to reuse the same objects.
      */
-    public static Range buildEmptyRange(){
-        return buildEmptyRange(0);
+    public static Range createEmptyRange(){
+        return createEmptyRange(0);
     }
     /**
-     * Build and empty range in the zero-based coordinate system
+     * Create an empty range in the zero-based coordinate system
      * at the given coordinate.
      * @param coordinate the coordinate to set this empty range to.
-     * @return a new Empty Range.
+     * @return a Range instance whose {@link Range#isEmpty()}
+     * method returns true and whose {@link Range#getBegin()}
+     * will return the coordinate passed in.  This is not guaranteed to be a 
+     * new instance since Ranges use the flyweight pattern
+     * to reuse the same objects.
      */
-    public static Range buildEmptyRange(long coordinate){
-        return buildEmptyRange(Range.CoordinateSystem.ZERO_BASED,coordinate);
+    public static Range createEmptyRange(long coordinate){
+        return createEmptyRange(Range.CoordinateSystem.ZERO_BASED,coordinate);
     }
     /**
-     * Build and empty range in the given coordinate system
+     * Create an empty range in the given coordinate system
      * at the given coordinate.
      * @param coordinate the coordinate to set this empty range to.
-     * @return a new Empty Range.
+     * @return a Range instance whose {@link Range#isEmpty()}
+     * method returns true and whose {@link Range#getBegin()}
+     * will return the coordinate passed in 
+     * (possibly first converted into zero-based coordinate system).  
+     * This is not guaranteed to be a 
+     * new instance since Ranges use the flyweight pattern
+     * to reuse the same objects.
      * @throws NullPointerException if the coordinateSystem is null.
      */
-    public static Range buildEmptyRange(CoordinateSystem coordinateSystem,long coordinate){
+    public static Range createEmptyRange(CoordinateSystem coordinateSystem,long coordinate){
         if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot build null coordinate system range");
         }
@@ -630,26 +656,35 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     }
 
     /**
-     * Build a new Range object of in the Zero based coordinate
+     * Create a non-empty Range object in the Zero based coordinate
      * system starting at 0 and with the given length.
      * @param length the length of this range.
-     * @return a new Range.
+     * @return a non-empty Range instance  whose {@link Range#getBegin()}
+     * will return {@code 0} and {@link Range#getLength()}
+     * will return the pass in value.  This is not guaranteed to be a 
+     * new instance since Ranges use the flyweight pattern
+     * to reuse the same objects.
+     * @throws IllegalArgumentException if length is negative
      */
-    public static Range buildRangeOfLength(long length){
-        return buildRangeOfLength(0,length);
+    public static Range createOfLength(long length){
+        return createOfLength(0,length);
     }
     /**
-     * Build a new Range object of in the Zero based coordinate
+     * Create a non-empty Range object in the Zero based coordinate
      * system at the given start offset with the given length.
      * @param start the start coordinate of this new range.
      * @param length the length of this range.
-     * @return a new Range.
+     * @return a non-empty Range instance  whose {@link Range#getBegin()}
+     * and {@link Range#getLength()} methods
+     * will return the passed in values.  This is not guaranteed to be a 
+     * new instance since Ranges use the flyweight pattern
+     * to reuse the same objects.
      * @throws IllegalArgumentException if length is negative
      * @throws IndexOutOfBoundsException if the combination 
      * of start and length values would cause the Range to extend
      * beyond {@link Long#MAX_VALUE}.
      */
-    public static Range buildRangeOfLength(long start, long length){
+    public static Range createOfLength(long start, long length){
     	if(length < 0){
     		throw new IllegalArgumentException("length can not be negative");
     	}
@@ -661,75 +696,33 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     							length, start));
     		}
     	}
-        return buildRangeOfLength(CoordinateSystem.ZERO_BASED, start, length);
+        return createOfLength(CoordinateSystem.ZERO_BASED, start, length);
     }
     /**
-     * Build a new Range object of in the given coordinate
+     * Create a non-empty Range object in the given coordinate
      * system at the given start offset with the given length.
      * @param coordinateSystem the coordinate system to use.
      * @param localStart the start coordinate of this new range.
      * @param length the length of this range.
-     * @return a new Range.
+     * @return a non-empty Range instance  whose {@link Range#getBegin()}
+     * and {@link Range#getLength()} methods
+     * will return the passed in values.  This is not guaranteed to be a 
+     * new instance since Ranges use the flyweight pattern
+     * to reuse the same objects.
      * @throws NullPointerException if coordinateSystem is null.
+     * @throws IllegalArgumentException if length is negative
+     *  @throws IndexOutOfBoundsException if the combination 
+     * of start and length values would cause the Range to extend
+     * beyond {@link Long#MAX_VALUE}.
      */
-    public static Range buildRangeOfLength(CoordinateSystem coordinateSystem,long localStart, long length){
+    public static Range createOfLength(CoordinateSystem coordinateSystem,long localStart, long length){
     	if ( coordinateSystem == null ) {
             throw new NullPointerException("Cannot build null coordinate system range");
         }
     	long zeroBasedStart = coordinateSystem.getStart(localStart);
-        return buildRange(CoordinateSystem.ZERO_BASED,zeroBasedStart,zeroBasedStart+length-1);
+        return create(CoordinateSystem.ZERO_BASED,zeroBasedStart,zeroBasedStart+length-1);
     }
-    public static Range buildRangeOfLengthFromEndCoordinate(long end, long rangeSize){
-        return buildRangeOfLengthFromEndCoordinate(CoordinateSystem.ZERO_BASED,end,rangeSize);
-    }
-    public static Range buildRangeOfLengthFromEndCoordinate(CoordinateSystem system,long end, long rangeSize){
-        long zeroBasedEnd = system.getEnd(end);
-        return buildRange(CoordinateSystem.ZERO_BASED,zeroBasedEnd-rangeSize+1,zeroBasedEnd);
-    }
-    /**
-     * Return a single
-     * Range that covers the entire span
-     * of the given Ranges.
-     * <p>
-     * For example: passing in 2 Ranges [0,10] and [20,30]
-     * will return [0,30]
-     * @param ranges varargs of Ranges
-     * @return a new Range that covers the entire span of
-     * input ranges.
-     */
-    public static Range buildInclusiveRange(Range... ranges){
-        return buildInclusiveRange(Arrays.asList(ranges));
-    }
-    /**
-     * Return a single
-     * Range that covers the entire span
-     * of the given Ranges.
-     * <p>
-     * For example: passing in 2 Ranges [0,10] and [20,30]
-     * will return [0,30]
-     * @param ranges a collection of ranges
-     * @return a new Range that covers the entire span of
-     * input ranges.
-     */
-    public static Range buildInclusiveRange(Collection<Range> ranges){
-        if(ranges.isEmpty()){
-            return buildEmptyRange();
-        }
-        Iterator<Range> iter =ranges.iterator();
-        Range firstRange =iter.next();
-        long currentLeft = firstRange.getStart();
-        long currentRight = firstRange.getEnd();
-        while(iter.hasNext()){
-            Range range = iter.next();
-            if(range.getStart() < currentLeft){
-                currentLeft = range.getStart();
-            }
-            if(range.getEnd() > currentRight){
-                currentRight = range.getEnd();
-            }
-        }
-        return buildRange(currentLeft, currentRight);
-    }
+    
     /**
      * Parses a string in the format &lt;left&gt;[.. | - ]&lt;right&gt;. 
      * Any whitespace between the left and right parameters is ignored.
@@ -782,7 +775,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     }
     
     private static Range convertIntoRange(Matcher dashMatcher, CoordinateSystem coordinateSystem) {
-        return Range.buildRange(coordinateSystem,Long.parseLong(dashMatcher.group(1)), 
+        return Range.create(coordinateSystem,Long.parseLong(dashMatcher.group(1)), 
                 Long.parseLong(dashMatcher.group(2))
                 );
     }
@@ -793,30 +786,30 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     }
 
     /**
-     * Fetch the left (start) coordinate This is the same as 
-     * {@link #getStart(CoordinateSystem)
-     * getStart(ZERO_BASED)}.
+     * Fetch the first coordinate in this Range. This is the same as 
+     * {@link #getBegin(CoordinateSystem)
+     * getBegin(ZERO_BASED)}.
      *
      * @return The left-hand (starting) coordinate.
      * 
      */
     @Override
-    public abstract long getStart();
+    public abstract long getBegin();
     /**
-     * Fetch the left (start) coordinate using the given 
+     * Fetch the first coordinate using the given 
      * {@link CoordinateSystem}.  
      *
-     * @return The left-hand (starting) coordinate.
+     * @return The first coordinate.
      * @throws NullPointerException if the given {@link CoordinateSystem} is null.
      */
-    public long getStart(CoordinateSystem coordinateSystem) {
+    public long getBegin(CoordinateSystem coordinateSystem) {
     	if(coordinateSystem==null){
     		throw new NullPointerException("CoordinateSystem can not be null");
     	}
-        return coordinateSystem.getLocalStart(getStart());
+        return coordinateSystem.getLocalStart(getBegin());
     }
     /**
-     * Fetch the 0-based right (end) coordinate.
+     * Fetch the 0-based last coordinate.
      * This is the same as {@link #getEnd(CoordinateSystem)
      * getEnd(ZERO_BASED)}.
      *
@@ -839,23 +832,13 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     }
 
     /**
-     * Calculate the size of the <code>Range</code>.  All <code>Range</code>s
-     * are inclusive.
-     *
-     * @return The inclusive count of values between the left and right
-     * coordinates.
-     */
-    public long size() {
-        return getEnd() - getStart() + 1;
-    }
-    /**
      * Create a new Range of the same size
      * but shifted to the left the specified number of units.
      * @param units number of units to shift
      * @return a new Range (not null)
      */
     public Range shiftLeft(long units){
-        return Range.buildRangeOfLength(this.getStart()-units, this.size());
+        return Range.createOfLength(this.getBegin()-units, this.getLength());
     }
     /**
      * Create a new Range of the same size
@@ -864,7 +847,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * @return a new Range (not null)
      */
     public Range shiftRight(long units){
-        return Range.buildRangeOfLength(this.getStart()+units, this.size());
+        return Range.createOfLength(this.getBegin()+units, this.getLength());
     }
     /**
      * Checks if this range is empty.
@@ -899,9 +882,9 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
        
     }
     private boolean isCompletelyInsideOf(Range range) {
-    	long start = getStart();
+    	long start = getBegin();
     	long end = getEnd();
-    	long otherStart = range.getStart();
+    	long otherStart = range.getBegin();
     	long otherEnd = range.getEnd();
     	
         return (start>otherStart && end<otherEnd) ||
@@ -935,10 +918,10 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
             return target.intersects(this);
         }
 
-        return !(this.getStart() > target.getEnd() || this.getEnd() < target.getStart());
+        return !(this.getBegin() > target.getEnd() || this.getEnd() < target.getBegin());
     }
     public boolean intersects(long coordinate){
-        return coordinate >= this.getStart() && coordinate <=this.getEnd();
+        return coordinate >= this.getBegin() && coordinate <=this.getEnd();
     }
     /**
      * Calculates the intersection of this {@link Range} and a second one.
@@ -965,16 +948,16 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
         }
 
         try{
-            long intersectionStart = Math.max(target.getStart(), this.getStart());
+            long intersectionStart = Math.max(target.getBegin(), this.getBegin());
 			long intersectionEnd = Math.min(target.getEnd(), this.getEnd());
-			return  Range.buildRange(intersectionStart,
+			return  Range.create(intersectionStart,
                             intersectionEnd);
         }
         catch(NullPointerException npe){
         	throw npe;
         }
         catch(IllegalArgumentException e){
-            return buildEmptyRange();
+            return createEmptyRange();
         }
 
     }
@@ -993,8 +976,8 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
             return Arrays.asList(this);
         }
         
-        Range beforeOther = Range.buildRange(getStart(), intersection.getStart()-1);
-        Range afterOther = Range.buildRange(intersection.getEnd()+1, getEnd());
+        Range beforeOther = Range.create(getBegin(), intersection.getBegin()-1);
+        Range afterOther = Range.create(intersection.getEnd()+1, getEnd());
         List<Range> complimentedRanges = new ArrayList<Range>();
         if(!beforeOther.isEmpty()){
             complimentedRanges.add(beforeOther);
@@ -1030,7 +1013,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
             throw new IllegalArgumentException("Null Range used in range comparison operation.");
         }
 
-        return this.getStart() < target.getStart();
+        return this.getBegin() < target.getBegin();
     }
 
     /**
@@ -1052,7 +1035,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
             return false;
         }
         
-        return this.getEnd() < target.getStart();
+        return this.getEnd() < target.getBegin();
     }
 
     
@@ -1063,16 +1046,16 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * <code>Range</code>, and as such, positive values will result in a <code>Range</code>
      * which is longer than the current <code>Range</code>.  Negative values may also be used,
      * with appropriately opposite results, and positive and negative deltas may be mixed to 
-     * produce a traslation/scaling effect.
+     * produce a translation/scaling effect.
      * 
-     * @param fromStart The number of positions to extend the start of the range.
+     * @param fromBegin The number of positions to extend the beginning of the range.
      * @param fromEnd The number of positions to extend the end of the range.
-     * @return A new <code>Range</code> in the same {@link RangeCoordinateSystem}, with modified
+     * @return A new <code>Range</code> with modified
      * coordinates.
      */
-    public Range grow(long fromStart, long fromEnd)
+    public Range grow(long fromBegin, long fromEnd)
     {
-        return Range.buildRange(this.getStart() - fromStart, this.getEnd() + fromEnd);
+        return Range.create(this.getBegin() - fromBegin, this.getEnd() + fromEnd);
     }
     
     /**
@@ -1119,7 +1102,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     		throw new NullPointerException("coordinateSystem can not be null");
     	}
         return String.format("[ %d - %d ]/%s", 
-        		coordinateSystem.getLocalStart(getStart()) ,
+        		coordinateSystem.getLocalStart(getBegin()) ,
         		coordinateSystem.getLocalEnd(getEnd()),
                 coordinateSystem.getAbbreviatedName());
     }
@@ -1140,14 +1123,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * specified.
      */
     public List<Range> split(long maxSplitLength){
-        if(size()<maxSplitLength){
+        if(getLength()<maxSplitLength){
             return Collections.singletonList(this);
         }
-        long currentStart=getStart();
+        long currentStart=getBegin();
         List<Range> list = new ArrayList<Range>();
         while(currentStart<=getEnd()){
             long endCoordinate = Math.min(getEnd(), currentStart+maxSplitLength-1);
-            list.add(Range.buildRange(currentStart, endCoordinate));
+            list.add(Range.create(currentStart, endCoordinate));
             currentStart = currentStart+maxSplitLength;
         }
         return list;
@@ -1166,7 +1149,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 
     @Override
     public long getLength() {
-        return size();
+    	 return getEnd() - getBegin() + 1;
     }
     /**
     * {@inheritDoc} 
@@ -1185,7 +1168,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
         private long index;
         
         public RangeIterator(Range range){
-            from = range.getStart();
+            from = range.getBegin();
             to = range.getEnd();
             index = from;
         }
@@ -1232,14 +1215,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     	
     	/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return start;
         }
     	 /**
@@ -1311,14 +1294,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     	
     	/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return start;
         }
     	 /**
@@ -1391,14 +1374,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     	
     	/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return start;
         }
     	 /**
@@ -1471,14 +1454,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     	
     	/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return start;
         }
     	 /**
@@ -1559,14 +1542,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     	
     	/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return IOUtil.toUnsignedByte(start);
         }
     	 /**
@@ -1583,7 +1566,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 
     	@Override
     	public long getEnd(){
-    		return getStart() + getLength() -1;
+    		return getBegin() + getLength() -1;
     	}
 		@Override
 		public int hashCode() {
@@ -1649,14 +1632,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     	
     	/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return IOUtil.toUnsignedByte(start);
         }
 
@@ -1667,7 +1650,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 
     	@Override
     	public long getEnd(){
-    		return getStart() + getLength() -1;
+    		return getBegin() + getLength() -1;
     	}
 		@Override
 		public int hashCode() {
@@ -1730,14 +1713,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     	
     	/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return IOUtil.toUnsignedByte(start);
         }
 
@@ -1748,7 +1731,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 
     	@Override
     	public long getEnd(){
-    		return getStart() + getLength() -1;
+    		return getBegin() + getLength() -1;
     	}
 
 		@Override
@@ -1817,14 +1800,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 
 		/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return IOUtil.toUnsignedShort(start);
         }
     	 /**
@@ -1836,7 +1819,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
          */
     	@Override
         public long getEnd() {
-            return getStart()+getLength()-1;
+            return getBegin()+getLength()-1;
         }
 
 		@Override
@@ -1906,14 +1889,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 
 		/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return IOUtil.toUnsignedShort(start);
         }
     	 /**
@@ -1925,7 +1908,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
          */
     	@Override
         public long getEnd() {
-            return getStart()+getLength()-1;
+            return getBegin()+getLength()-1;
         }
 
 		@Override
@@ -1993,14 +1976,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 
 		/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return IOUtil.toUnsignedShort(start);
         }
     	 /**
@@ -2012,7 +1995,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
          */
     	@Override
         public long getEnd() {
-            return getStart()+getLength()-1;
+            return getBegin()+getLength()-1;
         }
 
 		@Override
@@ -2080,14 +2063,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 
 		/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return IOUtil.toUnsignedInt(start);
         }
     	 /**
@@ -2099,7 +2082,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
          */
     	@Override
         public long getEnd() {
-            return getStart()+getLength()-1;
+            return getBegin()+getLength()-1;
         }
 
 		@Override
@@ -2167,14 +2150,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 
 		/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return IOUtil.toUnsignedInt(start);
         }
     	 /**
@@ -2186,7 +2169,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
          */
     	@Override
         public long getEnd() {
-            return getStart()+getLength()-1;
+            return getBegin()+getLength()-1;
         }
 
 		@Override
@@ -2253,14 +2236,14 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 
 		/**
          * Fetch the left (start) coordinate This is the same as 
-         * {@link #getStart(CoordinateSystem)
+         * {@link #getBegin(CoordinateSystem)
          * getStart(ZERO_BASED)}.
          *
          * @return The left-hand (starting) coordinate.
          * 
          */
     	@Override
-        public long getStart() {
+        public long getBegin() {
             return start;
         }
     	 /**
@@ -2272,7 +2255,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
          */
     	@Override
         public long getEnd() {
-            return getStart()+getLength()-1;
+            return getBegin()+getLength()-1;
         }
 
 		@Override
@@ -2318,7 +2301,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     	}
 
 		@Override
-		public long getStart() {
+		public long getBegin() {
 			return coordinate;
 		}
 
@@ -2368,7 +2351,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     	}
 
 		@Override
-		public long getStart() {
+		public long getBegin() {
 			return coordinate;
 		}
 
@@ -2417,7 +2400,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     	}
 
 		@Override
-		public long getStart() {
+		public long getBegin() {
 			return coordinate;
 		}
 
@@ -2466,7 +2449,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
     	}
 
 		@Override
-		public long getStart() {
+		public long getBegin() {
 			return coordinate;
 		}
 
@@ -2507,5 +2490,7 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
 		}
 		
     }
+    
+    
     
 }

@@ -41,8 +41,8 @@ public class TestBlastHit {
     private int length = 806;
     private int mismatches = 118;
     private int numGapOpenings = 2;
-    private DirectedRange queryRange = DirectedRange.create(Range.buildRange(CoordinateSystem.RESIDUE_BASED,1,806));
-    private DirectedRange subjectRange = DirectedRange.create(Range.buildRange(CoordinateSystem.RESIDUE_BASED,99,904));
+    private DirectedRange queryRange = DirectedRange.create(Range.create(CoordinateSystem.RESIDUE_BASED,1,806));
+    private DirectedRange subjectRange = DirectedRange.create(Range.create(CoordinateSystem.RESIDUE_BASED,99,904));
     
     private BigDecimal eValue = new BigDecimal("2e-172");
     private BigDecimal bitScore = new BigDecimal(636.8D);

@@ -1,7 +1,10 @@
 package org.jcvi.common.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 /**
  * {@code Ranges} is a helper class
@@ -80,8 +83,8 @@ public final class Ranges {
             for(int i=0; i<rangesToMerge.size()-1; i++){
                 Range range = rangesToMerge.get(i);
                 Range nextRange = rangesToMerge.get(i+1);
-                final Range combinedRange = Range.buildInclusiveRange(range,nextRange);
-                if(combinedRange.size()<= maxClusterDistance){
+                final Range combinedRange = createInclusiveRange(range,nextRange);
+                if(combinedRange.getLength()<= maxClusterDistance){
                     //can be combined
                     replaceWithCombined(rangesToMerge,range, nextRange);
                     merged= true;
@@ -97,7 +100,7 @@ public final class Ranges {
             merged = false;
             for(int i=0; i<rangesToMerge.size()-1; i++){
                 Range range = rangesToMerge.get(i);
-                Range clusteredRange = Range.buildRange(range.getStart()-clusterDistance, range.getEnd()+clusterDistance);
+                Range clusteredRange = Range.create(range.getBegin()-clusterDistance, range.getEnd()+clusterDistance);
                 Range nextRange = rangesToMerge.get(i+1);
                 if(clusteredRange.intersects(nextRange) || clusteredRange.shiftRight(1).intersects(nextRange)){
                     replaceWithCombined(rangesToMerge,range, nextRange);
@@ -108,11 +111,46 @@ public final class Ranges {
         }while(merged);
     }
     private static void replaceWithCombined(List<Range> rangeList, Range range, Range nextRange) {
-        final Range combinedRange = Range.buildInclusiveRange(range,nextRange);
+        final Range combinedRange = createInclusiveRange(range,nextRange);
         int index =rangeList.indexOf(range);
         rangeList.remove(range);
         rangeList.remove(nextRange);
         rangeList.add(index, combinedRange);
         
+    }
+    
+    /**
+     * Return a single
+     * Range that covers the entire span
+     * of the given Ranges.
+     * <p>
+     * For example: passing in 2 Ranges [0,10] and [20,30]
+     * will return [0,30]
+     * @param ranges a collection of ranges
+     * @return a new Range that covers the entire span of
+     * input ranges.
+     */
+    public static Range createInclusiveRange(Collection<Range> ranges){
+        if(ranges.isEmpty()){
+            return Range.createEmptyRange();
+        }
+        Iterator<Range> iter =ranges.iterator();
+        Range firstRange =iter.next();
+        long currentLeft = firstRange.getBegin();
+        long currentRight = firstRange.getEnd();
+        while(iter.hasNext()){
+            Range range = iter.next();
+            if(range.getBegin() < currentLeft){
+                currentLeft = range.getBegin();
+            }
+            if(range.getEnd() > currentRight){
+                currentRight = range.getEnd();
+            }
+        }
+        return Range.create(currentLeft, currentRight);
+    }
+    
+    private static Range createInclusiveRange(Range... ranges){
+    	return createInclusiveRange(Arrays.asList(ranges));
     }
 }

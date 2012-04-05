@@ -170,11 +170,11 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
         Range newValidRange = null;
         if (fullRangeIndex < maxNumberOf5PrimeBasesToTrim) {
             // 5 prime
-            newValidRange = Range.buildRange(fullRangeIndex, 
+            newValidRange = Range.create(fullRangeIndex, 
                     oldValidRange.getEnd());
         } else if (fullLength - fullRangeIndex < maxNumberOf3PrimeBasesToTrim) {
             // 3 prime
-            newValidRange = Range.buildRange(oldValidRange.getEnd(),
+            newValidRange = Range.create(oldValidRange.getEnd(),
                     fullRangeIndex);
         }
         return newValidRange;
@@ -283,9 +283,9 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
 	                        displayRight = newtrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED);
 	                    }
 	                    System.out.println(String.format("%s\t%d\t%d\t%d\t%d",
-	                            readId, newtrimmedRange.getStart(CoordinateSystem.RESIDUE_BASED), displayRight,
-	                            newtrimmedRange.getStart(CoordinateSystem.RESIDUE_BASED)
-	                                    - oldTrimmedRange.getStart(CoordinateSystem.RESIDUE_BASED), rightDelta));
+	                            readId, newtrimmedRange.getBegin(CoordinateSystem.RESIDUE_BASED), displayRight,
+	                            newtrimmedRange.getBegin(CoordinateSystem.RESIDUE_BASED)
+	                                    - oldTrimmedRange.getBegin(CoordinateSystem.RESIDUE_BASED), rightDelta));
 	                }
 	                
 	            }

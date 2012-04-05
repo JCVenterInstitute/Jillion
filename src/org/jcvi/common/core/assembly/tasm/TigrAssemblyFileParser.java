@@ -200,9 +200,9 @@ public class TigrAssemblyFileParser {
                                 Direction.FORWARD;
         final Range validRange;
         if(dir == Direction.REVERSE){
-            validRange= Range.buildRange(CoordinateSystem.RESIDUE_BASED, currentSequenceRightEnd, currentSequenceLeftEnd);
+            validRange= Range.create(CoordinateSystem.RESIDUE_BASED, currentSequenceRightEnd, currentSequenceLeftEnd);
         }else{
-            validRange= Range.buildRange(CoordinateSystem.RESIDUE_BASED, currentSequenceLeftEnd, currentSequenceRightEnd);
+            validRange= Range.create(CoordinateSystem.RESIDUE_BASED, currentSequenceLeftEnd, currentSequenceRightEnd);
         }
         
         visitor.visitNewRead(currentSequenceName, currentOffset, validRange, dir);

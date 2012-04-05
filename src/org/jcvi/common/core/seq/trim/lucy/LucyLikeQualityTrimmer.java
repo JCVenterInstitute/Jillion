@@ -101,10 +101,10 @@ public final class LucyLikeQualityTrimmer {
         List<Double> errorRates = convertToErrorRates(qualities);
         Range bracketedRegion = findBracketedRegion(errorRates);
         Range largestRange = findLargestCleanRangeFrom(bracketedRegion, errorRates);
-        if(largestRange.size() < minGoodLength){
-            return Range.buildEmptyRange(CoordinateSystem.RESIDUE_BASED,1);
+        if(largestRange.getLength() < minGoodLength){
+            return Range.createEmptyRange(CoordinateSystem.RESIDUE_BASED,1);
         }
-        return largestRange.shiftRight(bracketedRegion.getStart());
+        return largestRange.shiftRight(bracketedRegion.getBegin());
     }
 
 
@@ -124,7 +124,7 @@ public final class LucyLikeQualityTrimmer {
 
     private List<Double> getSubList(List<Double> errorRates,
             Range region) {
-        return errorRates.subList((int)region.getStart(), (int)region.getEnd()+1);
+        return errorRates.subList((int)region.getBegin(), (int)region.getEnd()+1);
     }
 
 
@@ -143,10 +143,10 @@ public final class LucyLikeQualityTrimmer {
         while(!done && currentWindowSize >=SIZE_OF_ENDS){
            
             for(int i=0; i<encodedCandidateErrorRates.size() - currentWindowSize && i<=currentWindowSize; i++){
-                Range currentWindowRange = Range.buildRange(i, currentWindowSize);
+                Range currentWindowRange = Range.create(i, currentWindowSize);
                 double avgErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, currentWindowRange);
-                double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.buildRangeOfLength(currentWindowRange.getStart(),SIZE_OF_ENDS));
-                double rightEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.buildRangeOfLength(currentWindowRange.getEnd()-SIZE_OF_ENDS,SIZE_OF_ENDS));
+                double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.createOfLength(currentWindowRange.getBegin(),SIZE_OF_ENDS));
+                double rightEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.createOfLength(currentWindowRange.getEnd()-SIZE_OF_ENDS,SIZE_OF_ENDS));
                 if(avgErrorRate <= this.maxTotalAvgError && 
                         leftEndErrorRate <= this.maxErrorAtEnds 
                         && rightEndErrorRate <= this.maxErrorAtEnds){
@@ -156,7 +156,7 @@ public final class LucyLikeQualityTrimmer {
             }
             currentWindowSize--;
         }
-        return Range.buildEmptyRange(candidateCleanRange.getStart());
+        return Range.createEmptyRange(candidateCleanRange.getBegin());
     }
 
 
@@ -174,7 +174,7 @@ public final class LucyLikeQualityTrimmer {
             List<Range> trimmedCandidateCleanRanges = new ArrayList<Range>();
             for(Range range : candidateCleanRanges){
                 for(Range newCandidateRange : trim(getSubList(bracketedErrorRates,range), subsequentTrimWindow)){
-                    trimmedCandidateCleanRanges.add(newCandidateRange.shiftRight(range.getStart()));
+                    trimmedCandidateCleanRanges.add(newCandidateRange.shiftRight(range.getBegin()));
                 }
             }
             candidateCleanRanges = trimmedCandidateCleanRanges;
@@ -191,7 +191,7 @@ public final class LucyLikeQualityTrimmer {
     private List<Range> trim(List<Double> errorRates, Window trimWindow) {
         List<Range> candidateCleanRanges = new ArrayList<Range>();
         for(long i=0; i<errorRates.size()-trimWindow.getSize(); i++){
-            Range windowRange = Range.buildRangeOfLength(i, trimWindow.getSize());
+            Range windowRange = Range.createOfLength(i, trimWindow.getSize());
             
             double avgErrorRate = computeAvgErrorRateOf(errorRates,windowRange);
             if(avgErrorRate <= trimWindow.getMaxErrorRate()){
@@ -216,9 +216,9 @@ public final class LucyLikeQualityTrimmer {
         //so we must check before we pass to build range
         //buildRange will throw an exception if left >= right-1
         if(leftCoordinate > rightCoordinate-2){
-            return Range.buildEmptyRange();
+            return Range.createEmptyRange();
         }
-        return Range.buildRange(leftCoordinate, rightCoordinate);
+        return Range.create(leftCoordinate, rightCoordinate);
     }
     /**
      * @param qualities
@@ -228,7 +228,7 @@ public final class LucyLikeQualityTrimmer {
         long coordinate=errorRates.size()-1;
         final int bracketSize = bracketWindow.getSize();
         while(coordinate >= bracketSize){
-            Range windowRange = Range.buildRangeOfLength(coordinate-bracketSize,bracketSize);
+            Range windowRange = Range.createOfLength(coordinate-bracketSize,bracketSize);
             double avgErrorRate = computeAvgErrorRateOf(errorRates,windowRange);
             if(avgErrorRate <= bracketWindow.getMaxErrorRate()){
                 return coordinate;
@@ -247,7 +247,7 @@ public final class LucyLikeQualityTrimmer {
         int coordinate=0;
         final int bracketSize = bracketWindow.getSize();
         while(coordinate < errorRates.size()- bracketSize){
-            Range windowRange = Range.buildRangeOfLength(coordinate, bracketSize);
+            Range windowRange = Range.createOfLength(coordinate, bracketSize);
             double avgErrorRate = computeAvgErrorRateOf(errorRates,windowRange);
             if(avgErrorRate <= bracketWindow.getMaxErrorRate()){
                 return coordinate;
@@ -265,12 +265,12 @@ public final class LucyLikeQualityTrimmer {
              totalErrorRate+= errorRate;
          }
          
-         return totalErrorRate/windowRange.size();
+         return totalErrorRate/windowRange.getLength();
      }
     
     private Range getLargestRangeFrom(List<Range> goodQualityRanges) {
         if(goodQualityRanges.isEmpty()){
-            return Range.buildEmptyRange();
+            return Range.createEmptyRange();
         }
         List<Range> sorted = new ArrayList<Range>(goodQualityRanges);
         Collections.sort(sorted, Range.Comparators.LONGEST_TO_SHORTEST);

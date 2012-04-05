@@ -79,7 +79,7 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
         Range contigRange = currentRanges.get(0);
         builder.setContigId(createNewContigId(builder.getContigId(),oldConsensus,contigRange));
         return ContigTrimmerResult.createTrimmedResult(builder.build(), 
-        		(int)contigRange.getStart(),
+        		(int)contigRange.getBegin(),
         		(int)(oldConsensus.getLength() - contigRange.getEnd()));
     }
 
@@ -87,7 +87,7 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
         if(oldConsensus.getLength() == newContigRange.getLength()){
             return oldContigId;
         }
-        final int start = AssemblyUtil.getRightFlankingNonGapIndex(oldConsensus, (int)newContigRange.getStart());
+        final int start = AssemblyUtil.getRightFlankingNonGapIndex(oldConsensus, (int)newContigRange.getBegin());
         
         int ungappedStart =start - oldConsensus.getNumberOfGapsUntil(start);
         final int end = AssemblyUtil.getRightFlankingNonGapIndex(oldConsensus, (int)newContigRange.getEnd());
@@ -105,7 +105,7 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
         builder.addRead(placedRead.getId(), new NucleotideSequenceBuilder(trimmedBasecalls).build(), (int)trimmedOffset, 
                 placedRead.getDirection(), newValidRange, placedRead.getPhdInfo(),
                 placedRead.getUngappedFullLength());
-        final Range sequenceRange = Range.buildRangeOfLength(trimmedOffset,trimmedBasecalls.length());
+        final Range sequenceRange = Range.createOfLength(trimmedOffset,trimmedBasecalls.length());
         
         if(currentRanges ==null){
             currentRanges = new ArrayList<Range>();

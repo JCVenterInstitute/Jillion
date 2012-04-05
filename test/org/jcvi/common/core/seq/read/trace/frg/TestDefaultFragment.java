@@ -44,8 +44,8 @@ public class TestDefaultFragment {
     QualitySequence qualities = createMock(QualitySequence.class);
     
     Library library = createMock(Library.class);
-    Range validRange = Range.buildRange(10, 20);
-    Range clearRange = Range.buildRange(12,20);
+    Range validRange = Range.create(10, 20);
+    Range clearRange = Range.create(12,20);
     long basesLength=21;
     DefaultFragment sut;
     

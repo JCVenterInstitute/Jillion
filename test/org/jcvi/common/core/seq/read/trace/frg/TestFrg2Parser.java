@@ -60,8 +60,8 @@ public class TestFrg2Parser {
         expectLastCall().anyTimes();
         mockVisitor.visitLibrary(FrgAction.ADD, ".", MateOrientation.INNIE, 
                 Distance.buildDistance(5821F, 1513F));
-        final Range clearRangeFor678 = Range.buildRange(0,835);
-        final Range clearRangeFor061 = Range.buildRange(0,650);
+        final Range clearRangeFor678 = Range.create(0,835);
+        final Range clearRangeFor061 = Range.create(0,650);
         mockVisitor.visitFragment(FrgAction.ADD, 
                 "334369678", ".", 
                 new NucleotideSequenceBuilder(

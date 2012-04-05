@@ -89,7 +89,7 @@ public final class BlastScaffoldBuilder implements BlastVisitor, Builder<Scaffol
         if(subjectId.equals(blastHit.getSubjectId())){
             DirectedRange directedRange = blastHit.getSubjectRange();
             String uniqueId = String.format("%s_%d_%d",blastHit.getQueryId(), 
-                    directedRange.getStart()+1,
+                    directedRange.getBegin()+1,
                     directedRange.getEnd()+1);
             scaffoldBuilder.add(uniqueId, directedRange.asRange(), directedRange.getDirection());
         }

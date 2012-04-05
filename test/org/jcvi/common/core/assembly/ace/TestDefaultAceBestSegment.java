@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 public class TestDefaultAceBestSegment {
 
     String name = "name";
-    Range range = Range.buildRange(1,10);
+    Range range = Range.create(1,10);
     DefaultAceBestSegment sut = new DefaultAceBestSegment(name, range);
     
     @Test(expected = NullPointerException.class)

@@ -4,14 +4,14 @@ import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDirectedRange {
-	Range range = Range.buildRange(0,9);
+	Range range = Range.create(0,9);
 	@Test
 	public void composite(){
 		
 		DirectedRange sut = DirectedRange.create(range, Direction.REVERSE);
 		assertEquals(range, sut.getRange());
 		assertEquals(Direction.REVERSE, sut.getDirection());
-		assertEquals(range.getStart(), sut.getStart());
+		assertEquals(range.getBegin(), sut.getBegin());
 		assertEquals(range.getEnd(), sut.getEnd());
 		assertEquals(range.getLength(), sut.getLength());
 		assertEquals(range, sut.asRange());
@@ -109,7 +109,7 @@ public class TestDirectedRange {
 	/////////////////////////////
 	@Test
 	public void parseStringBothNegativeValuesDash(){
-		Range range= Range.buildRange(-10,-1);
+		Range range= Range.create(-10,-1);
 		DirectedRange expected = DirectedRange.create(range,Direction.FORWARD);
 		assertEquals(expected, DirectedRange.parse("-10 - -1"));
 		assertEquals("no whitespace",expected, DirectedRange.parse("-10--1"));
@@ -117,7 +117,7 @@ public class TestDirectedRange {
 	}
 	@Test
 	public void parseStringBothNegativeValuesComma(){
-		Range range= Range.buildRange(-10,-1);
+		Range range= Range.create(-10,-1);
 		DirectedRange expected = DirectedRange.create(range,Direction.FORWARD);
 		assertEquals(expected, DirectedRange.parse("-10 , -1"));
 		assertEquals("no whitespace",expected, DirectedRange.parse("-10,-1"));
@@ -125,7 +125,7 @@ public class TestDirectedRange {
 	}
 	@Test
 	public void parseStringBothNegativeValuesDots(){
-		Range range= Range.buildRange(-10,-1);
+		Range range= Range.create(-10,-1);
 		DirectedRange expected = DirectedRange.create(range,Direction.FORWARD);
 		assertEquals(expected, DirectedRange.parse("-10 .. -1"));
 		assertEquals("no whitespace",expected, DirectedRange.parse("-10..-1"));
@@ -134,7 +134,7 @@ public class TestDirectedRange {
 	////////////////////////////
 	@Test
 	public void parseStringReverseBothNegativeValuesDash(){
-		Range range= Range.buildRange(-10,-1);
+		Range range= Range.create(-10,-1);
 		DirectedRange expected = DirectedRange.create(range,Direction.REVERSE);
 		assertEquals(expected, DirectedRange.parse("-1 - -10"));
 		assertEquals("no whitespace",expected, DirectedRange.parse("-1--10"));
@@ -142,7 +142,7 @@ public class TestDirectedRange {
 	}
 	@Test
 	public void parseStringReverseBothNegativeValuesComma(){
-		Range range= Range.buildRange(-10,-1);
+		Range range= Range.create(-10,-1);
 		DirectedRange expected = DirectedRange.create(range,Direction.REVERSE);
 		assertEquals(expected, DirectedRange.parse("-1 , -10"));
 		assertEquals("no whitespace",expected, DirectedRange.parse("-1,-10"));
@@ -150,7 +150,7 @@ public class TestDirectedRange {
 	}
 	@Test
 	public void parseStringReverseBothNegativeValuesDots(){
-		Range range= Range.buildRange(-10,-1);
+		Range range= Range.create(-10,-1);
 		DirectedRange expected = DirectedRange.create(range,Direction.REVERSE);
 		assertEquals(expected, DirectedRange.parse("-1 .. -10"));
 		assertEquals("no whitespace",expected, DirectedRange.parse("-1..-10"));
@@ -159,7 +159,7 @@ public class TestDirectedRange {
 	////////////////////////////
 	@Test
 	public void parseStringOneNegativeValuesDash(){
-		Range range= Range.buildRange(-10,5);
+		Range range= Range.create(-10,5);
 		DirectedRange expected = DirectedRange.create(range,Direction.FORWARD);
 		assertEquals(expected, DirectedRange.parse("-10 - 5"));
 		assertEquals("no whitespace",expected, DirectedRange.parse("-10-5"));
@@ -167,7 +167,7 @@ public class TestDirectedRange {
 	}
 	@Test
 	public void parseStringOneNegativeValuesComma(){
-		Range range= Range.buildRange(-10,5);
+		Range range= Range.create(-10,5);
 		DirectedRange expected = DirectedRange.create(range,Direction.FORWARD);
 		assertEquals(expected, DirectedRange.parse("-10 , 5"));
 		assertEquals("no whitespace",expected, DirectedRange.parse("-10,5"));
@@ -175,7 +175,7 @@ public class TestDirectedRange {
 	}
 	@Test
 	public void parseStringOneNegativeValuesDots(){
-		Range range= Range.buildRange(-10,5);
+		Range range= Range.create(-10,5);
 		DirectedRange expected = DirectedRange.create(range,Direction.FORWARD);
 		assertEquals(expected, DirectedRange.parse("-10 .. 5"));
 		assertEquals("no whitespace",expected, DirectedRange.parse("-10..5"));
@@ -184,7 +184,7 @@ public class TestDirectedRange {
 	/////////////////////////////
 	@Test
 	public void parseStringReverseOneNegativeValuesDash(){
-		Range range= Range.buildRange(-10,5);
+		Range range= Range.create(-10,5);
 		DirectedRange expected = DirectedRange.create(range,Direction.REVERSE);
 		assertEquals(expected, DirectedRange.parse("5 - -10"));
 		assertEquals("no whitespace",expected, DirectedRange.parse("5--10"));
@@ -192,7 +192,7 @@ public class TestDirectedRange {
 	}
 	@Test
 	public void parseStringReverseOneNegativeValuesComma(){
-		Range range= Range.buildRange(-10,5);
+		Range range= Range.create(-10,5);
 		DirectedRange expected = DirectedRange.create(range,Direction.REVERSE);
 		assertEquals(expected, DirectedRange.parse("5 , -10"));
 		assertEquals("no whitespace",expected, DirectedRange.parse("5,-10"));
@@ -200,7 +200,7 @@ public class TestDirectedRange {
 	}
 	@Test
 	public void parseStringReverseOneNegativeValuesDots(){
-		Range range= Range.buildRange(-10,5);
+		Range range= Range.create(-10,5);
 		DirectedRange expected = DirectedRange.create(range,Direction.REVERSE);
 		assertEquals(expected, DirectedRange.parse("5 .. -10"));
 		assertEquals("no whitespace",expected, DirectedRange.parse("5..-10"));
