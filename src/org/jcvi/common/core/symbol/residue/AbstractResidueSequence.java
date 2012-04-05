@@ -58,7 +58,7 @@ public abstract class AbstractResidueSequence<R extends Residue> implements Resi
             return asList();
         }
         List<R> result = new ArrayList<R>();
-        for(long i = range.getStart(); i<= range.getEnd(); i++){
+        for(long i = range.getBegin(); i<= range.getEnd(); i++){
         	result.add(get((int)i));
         }
         return result;

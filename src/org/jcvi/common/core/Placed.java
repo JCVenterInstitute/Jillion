@@ -38,7 +38,7 @@ public interface Placed<P extends Placed> extends Comparable<P>{
      * on the placed axis.
      * @return the start as a long.
      */
-    long getStart();
+    long getBegin();
     /**
      * Get the end coordinate of this placed object
      * on the placed axis.

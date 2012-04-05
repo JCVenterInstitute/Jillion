@@ -148,7 +148,7 @@ public class ConsedUtil {
         for(CoverageRegion<AcePlacedReadBuilder> region : coverageMap){
             if(region.getCoverage()>0){
                 
-                final Range contigRange = Range.buildRange(region.getStart(), region.getEnd());
+                final Range contigRange = Range.create(region.getBegin(), region.getEnd());
                 coveredRegions.add(contigRange);
             }
         }
@@ -192,7 +192,7 @@ public class ConsedUtil {
         String contigConsensus =Nucleotides.asString(consensus.asList(contigRange));
         //id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
         String contigId = String.format("%s_%d_%d",originalContigId, 
-                oldStart + consensus.getUngappedOffsetFor((int) contigRange.getStart()),
+                oldStart + consensus.getUngappedOffsetFor((int) contigRange.getBegin()),
                 oldStart + consensus.getUngappedOffsetFor((int) contigRange.getEnd()));
         AceContigBuilder builder = DefaultAceContig.createBuilder(contigId, contigConsensus);
         
@@ -203,7 +203,7 @@ public class ConsedUtil {
             }
             builder.addRead(readId, 
                     read.getBasesBuilder().build(), 
-                    (int)(read.getStart() - contigRange.getStart()), 
+                    (int)(read.getBegin() - contigRange.getBegin()), 
                     read.getDirection(), read.getClearRange(), read.getPhdInfo(),
                     read.getUngappedFullLength());
         }

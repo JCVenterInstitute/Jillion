@@ -58,7 +58,7 @@ public interface PlacedReadBuilder<R extends PlacedRead> extends Placed<PlacedRe
     * Get the gapped start offset of this read
      * against the new reference in reference coordinate space.
      */
-    long getStart();
+    long getBegin();
     /**
      * Get the read id.
      * @return this

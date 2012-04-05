@@ -244,7 +244,7 @@ public final class DefaultAsmContigDataStore implements AsmContigDataStore{
                     String gappedValidBases = AsmUtil.computeGappedSequence(
                             validBases.asList(), gapOffsets);
                     currentBuilder.addRead(externalReadId, gappedValidBases,
-                            (int)readRange.getStart(),readRange.getDirection(),
+                            (int)readRange.getBegin(),readRange.getDirection(),
                             clearRange, 
                             (int)fullLengthSequence.getLength(),
                             false);

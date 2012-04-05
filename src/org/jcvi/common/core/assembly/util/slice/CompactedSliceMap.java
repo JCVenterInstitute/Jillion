@@ -197,7 +197,7 @@ public final class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRe
                     qualities.put(id,qualityDataStore.get(id));
                 }
             }
-            for(int i=(int)region.getStart(); i<=region.getEnd(); i++ ){
+            for(int i=(int)region.getBegin(); i<=region.getEnd(); i++ ){
                 
                 this.slices[i] =createSlice(region, qualities,qualityValueStrategy,i);                
             }
@@ -215,7 +215,7 @@ public final class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRe
         CompactedSlice.Builder builder = new CompactedSlice.Builder();
         for (PlacedRead read : region) {
             String id=read.getId();
-            int indexIntoRead = (int) (i - read.getStart());
+            int indexIntoRead = (int) (i - read.getBegin());
           //  if()
             Sequence<PhredQuality> fullQualities = qualities.get(id);
             final PhredQuality quality;

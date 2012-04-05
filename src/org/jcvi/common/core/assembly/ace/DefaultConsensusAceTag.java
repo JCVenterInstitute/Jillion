@@ -80,7 +80,7 @@ public final class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag im
     public String toString() {
         return "DefaultConsensusAceTag [comments=" + comments + ", getEnd()="
                 + getEnd() + ", getId()=" + getId() + ", getStart()="
-                + getStart() + ", isTransient()=" + isTransient()
+                + getBegin() + ", isTransient()=" + isTransient()
                 + ", getCreationDate()=" + getCreationDate()
                 + ", getCreator()=" + getCreator() + ", getData()=" + getData()
                 + ", getType()=" + getType() + "]";

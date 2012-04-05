@@ -29,10 +29,10 @@ public final class AtacFileParser {
 				String instanceIndex = matchPattern.group(2);
 				long parentIndex = Long.parseLong(matchPattern.group(3));
 				String firstAssemblyId = matchPattern.group(4);
-				Range firstAssemblyRange = Range.buildRangeOfLength(
+				Range firstAssemblyRange = Range.createOfLength(
 						Long.parseLong(matchPattern.group(5)), Long.parseLong(matchPattern.group(6)));
 				String secondAssemblyId = matchPattern.group(7);
-				Range secondAssemblyRange = Range.buildRangeOfLength(
+				Range secondAssemblyRange = Range.createOfLength(
 						Long.parseLong(matchPattern.group(8)), Long.parseLong(matchPattern.group(9)));
 				Direction direction = Integer.parseInt(matchPattern.group(10)) ==1?
 						Direction.FORWARD : Direction.REVERSE;

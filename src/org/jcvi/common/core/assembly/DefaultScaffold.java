@@ -34,6 +34,7 @@ import java.util.TreeSet;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
@@ -59,9 +60,9 @@ public final class DefaultScaffold  implements Scaffold{
         }
         List<Range> ranges = new ArrayList<Range>(placedContigs.size());
         for(PlacedContig contig : placedContigs){
-            ranges.add(Range.buildRange(contig.getStart(), contig.getEnd()));
+            ranges.add(Range.create(contig.getBegin(), contig.getEnd()));
         }
-        length = Range.buildInclusiveRange(ranges).size();
+        length = Ranges.createInclusiveRange(ranges).getLength();
         DefaultCoverageMap.Builder<PlacedContig> builder =
             new DefaultCoverageMap.Builder<PlacedContig>(placedContigs);
         contigMap = builder.build();
@@ -121,7 +122,7 @@ public final class DefaultScaffold  implements Scaffold{
         }
 
         // make sure the specified range falls within the placed contig's range
-        Range normalizedPlacedContigRange = Range.buildRange(0,placedContig.getLength()-1);
+        Range normalizedPlacedContigRange = Range.create(0,placedContig.getLength()-1);
         if ( !placedContigRange.isSubRangeOf(normalizedPlacedContigRange) ) {
             throw new IllegalArgumentException("Specified contig range " + placedContigRange
                 + " is not a subrange of its parent placed contig " + placedContig
@@ -129,14 +130,14 @@ public final class DefaultScaffold  implements Scaffold{
         }
 
         if ( placedContig.getDirection() == Direction.FORWARD ) {
-            long rightShift = placedContig.getStart();
-            return Range.buildRange(
-                    rightShift+placedContigRange.getStart(),
+            long rightShift = placedContig.getBegin();
+            return Range.create(
+                    rightShift+placedContigRange.getBegin(),
                     rightShift+placedContigRange.getEnd());
         } else if ( placedContig.getDirection() == Direction.REVERSE ) {
-            long leftShift = placedContig.getEnd()-placedContigRange.getStart();
-            return Range.buildRange(
-                    leftShift-(placedContigRange.size()-1),
+            long leftShift = placedContig.getEnd()-placedContigRange.getBegin();
+            return Range.create(
+                    leftShift-(placedContigRange.getLength()-1),
                     leftShift);
         } else {
             throw new IllegalArgumentException("Do not know how to convert a(n) " +
@@ -250,7 +251,7 @@ public final class DefaultScaffold  implements Scaffold{
             if(shiftContigs && !contigs.isEmpty()){
                 Set<PlacedContig> shiftedContigs = new TreeSet<PlacedContig>();
                 PlacedContig firstContig = contigs.iterator().next();
-                long shiftOffset = firstContig.getStart();
+                long shiftOffset = firstContig.getBegin();
                 for(PlacedContig contig : contigs){
                     shiftedContigs.add(new DefaultPlacedContig(contig.getContigId(), contig.getValidRange().shiftLeft(shiftOffset)));
                 }

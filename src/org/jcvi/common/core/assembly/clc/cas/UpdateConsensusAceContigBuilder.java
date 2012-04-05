@@ -205,7 +205,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     	}
     	
     	public void add(PlacedRead casPlacedRead){
-    		int startOffset = (int)casPlacedRead.getStart();
+    		int startOffset = (int)casPlacedRead.getBegin();
             int i=0;
             for(Nucleotide base : casPlacedRead.getNucleotideSequence().asList()){
                 int index = startOffset+i;

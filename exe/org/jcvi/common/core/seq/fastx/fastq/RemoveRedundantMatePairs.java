@@ -88,7 +88,7 @@ public class RemoveRedundantMatePairs {
             File mate2 = new File(commandLine.getOptionValue("mate2"));
             
             int comparisonRangeLength = Integer.parseInt(commandLine.getOptionValue("n"));
-            Range comparisonRange=Range.buildRangeOfLength(comparisonRangeLength);
+            Range comparisonRange=Range.createOfLength(comparisonRangeLength);
             
             LargeFastQFileIterator mate1Iterator = LargeFastQFileIterator.createNewIteratorFor(mate1, qualityCodec);
             LargeFastQFileIterator mate2Iterator = LargeFastQFileIterator.createNewIteratorFor(mate2, qualityCodec);

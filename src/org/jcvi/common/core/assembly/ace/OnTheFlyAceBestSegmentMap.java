@@ -58,7 +58,7 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
     }
     @Override
     public AceBestSegment getBestSegmentFor(long gappedConsensusOffset) {
-        Range targetRange = Range.buildRange(gappedConsensusOffset,gappedConsensusOffset);
+        Range targetRange = Range.create(gappedConsensusOffset,gappedConsensusOffset);
         List<AceBestSegment> segments = getBestSegmentsFor(targetRange);
         if(segments.isEmpty()){
             return null;
@@ -167,7 +167,7 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
                             }
                                 //entering new best segment so we are done...
                                 
-                                previouslyEnteredRange = Range.buildRange(start,end);
+                                previouslyEnteredRange = Range.create(start,end);
                                 nextSegment =new DefaultAceBestSegment(currentElement, previouslyEnteredRange);
                                 currentStart=end+1;
                                 return;
@@ -180,7 +180,7 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
                 }
                 i++;
             }     
-                nextSegment =new DefaultAceBestSegment(currentElement, Range.buildRange(start,end));
+                nextSegment =new DefaultAceBestSegment(currentElement, Range.create(start,end));
                 currentStart=end+1;
            
         }

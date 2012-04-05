@@ -92,8 +92,8 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.getEnd();
     }
     @Override
-    public long getStart() {
-        return placedRead.getStart();
+    public long getBegin() {
+        return placedRead.getBegin();
     }
     @Override
     public String toString() {

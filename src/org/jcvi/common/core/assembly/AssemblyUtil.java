@@ -95,7 +95,7 @@ public final class AssemblyUtil {
         }
         NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(ungappedFullRangeComplimented.size());
 
-        for(int i=0; i< validRange.getStart(); i++ ){
+        for(int i=0; i< validRange.getBegin(); i++ ){
             builder.append(ungappedFullRangeComplimented.get(i));
         }
         builder.append(gappedValidRangeSequence);
@@ -118,13 +118,13 @@ public final class AssemblyUtil {
         if(validRange ==null){
             throw new NullPointerException("valid range can not be null");
         }
-        if(fullLength < validRange.size()){
+        if(fullLength < validRange.getLength()){
             throw new IllegalArgumentException(
                     String.format("valid range  %s is larger than fullLength %d", validRange, fullLength));
         }
         long newStart = fullLength - validRange.getEnd()-1;
-        long newEnd = fullLength - validRange.getStart()-1;
-        return Range.buildRange(newStart, newEnd);
+        long newEnd = fullLength - validRange.getBegin()-1;
+        return Range.create(newStart, newEnd);
     }
     /**
      * Convert the given gapped valid range offset of a given read into its
@@ -156,7 +156,7 @@ public final class AssemblyUtil {
             return numberOfLeadingBasesTrimmed + ungappedOffset;
         }        
         int ungappedValidRangeIndex =  nucleotideSequence.getUngappedOffsetFor(gappedOffset);
-        return ungappedValidRangeIndex + (int)validRange.getStart();
+        return ungappedValidRangeIndex + (int)validRange.getBegin();
     }
    
     /**
@@ -218,8 +218,8 @@ public final class AssemblyUtil {
         if(gappedRange ==null){
             throw new NullPointerException("gappedFeatureValidRange can not be null");
         }
-        return Range.buildRange(
-                gappedSequence.getUngappedOffsetFor((int)gappedRange.getStart()),
+        return Range.create(
+                gappedSequence.getUngappedOffsetFor((int)gappedRange.getBegin()),
                 gappedSequence.getUngappedOffsetFor((int)gappedRange.getEnd())
                 );
         
@@ -267,7 +267,7 @@ public final class AssemblyUtil {
             }
             
             ungappedCoverageRegions.add(
-                    new DefaultCoverageRegion.Builder<PR>(ungappedRange.getStart(),reads)
+                    new DefaultCoverageRegion.Builder<PR>(ungappedRange.getBegin(),reads)
                                 .end(ungappedRange.getEnd())
                                 .build());
         }

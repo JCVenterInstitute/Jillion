@@ -115,7 +115,7 @@ public class SffWriter {
          }
          else{
         
-            out.write(IOUtil.convertUnsignedShortToByteArray((int)clip.getStart(CoordinateSystem.RESIDUE_BASED)));
+            out.write(IOUtil.convertUnsignedShortToByteArray((int)clip.getBegin(CoordinateSystem.RESIDUE_BASED)));
             out.write(IOUtil.convertUnsignedShortToByteArray((int)clip.getEnd(CoordinateSystem.RESIDUE_BASED)));
         }
         

@@ -64,7 +64,7 @@ public class LucySeqTrimDataStore implements TrimDataStore {
                 //ex def line 
                 //>name CLZ CLZ CLR CLR
                 String[] trimpoints = comment.split("\\s+");
-                Range range = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
+                Range range = Range.create(CoordinateSystem.RESIDUE_BASED, 
                         Long.parseLong(trimpoints[3]),
                         Long.parseLong(trimpoints[4])
                         );

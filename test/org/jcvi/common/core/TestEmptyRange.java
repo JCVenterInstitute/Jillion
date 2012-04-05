@@ -30,13 +30,13 @@ import org.jcvi.common.core.Range;
 import org.junit.Test;
 public class TestEmptyRange{
 
-    private Range emptyRange = Range.buildEmptyRange();
-    private Range nonEmptyRange = Range.buildRange(5,5);
+    private Range emptyRange = Range.createEmptyRange();
+    private Range nonEmptyRange = Range.create(5,5);
 
 
     @Test
     public void testSize(){
-        assertEquals(0,emptyRange.size());
+        assertEquals(0,emptyRange.getLength());
     }
     @Test
     public void testIsEmpty(){

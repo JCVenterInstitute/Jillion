@@ -38,7 +38,7 @@ import static org.easymock.EasyMock.*;
 public class TestClipChunk {
 
    Chunk sut = Chunk.CLIP;
-   static final Range expectedClip = Range.buildRange(12345678, 987654321);
+   static final Range expectedClip = Range.create(12345678, 987654321);
 
     private static final byte[] encodedClip;
     static{    	
@@ -47,7 +47,7 @@ public class TestClipChunk {
 	private static byte[] encode(Range clip) {
 		ByteBuffer buf = ByteBuffer.allocate(9);
         buf.put((byte)0); // clip chunk
-        buf.putInt((int)clip.getStart());
+        buf.putInt((int)clip.getBegin());
         buf.putInt((int)clip.getEnd());
         byte[] temp = buf.array();
 		return temp;
@@ -76,7 +76,7 @@ public class TestClipChunk {
     	expect(mockChromatogram.getClip()).andReturn(null);
     	replay(mockChromatogram);
     	byte[] actual =sut.encodeChunk(mockChromatogram);
-    	assertArrayEquals(encode(Range.buildRange(0,0)), actual);
+    	assertArrayEquals(encode(Range.create(0,0)), actual);
     	verify(mockChromatogram);
     }
     @Test

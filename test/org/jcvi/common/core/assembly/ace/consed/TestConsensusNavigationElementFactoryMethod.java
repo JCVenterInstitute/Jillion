@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  */
 public class TestConsensusNavigationElementFactoryMethod {
-    Range gappedFeatureRange = Range.buildRange(5,10);
+    Range gappedFeatureRange = Range.create(5,10);
     NucleotideSequence consensus = new NucleotideSequenceBuilder("ACGT-ACGTACGTACGT-ACGT").build();
     Range ungappedFeatureRange= AssemblyUtil.toUngappedRange(consensus, gappedFeatureRange);
     

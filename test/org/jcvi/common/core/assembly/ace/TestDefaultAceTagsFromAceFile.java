@@ -51,13 +51,13 @@ public class TestDefaultAceTagsFromAceFile {
     ConsensusAceTag consensusTag0 = new DefaultConsensusAceTag.Builder(
                                             "Contig1", "repeat", "consed",
                                             new DateTime(1997, 12, 18, 18, 6, 23, 0).toDate(), 
-                                            Range.buildRange(976,986), 
+                                            Range.create(976,986), 
                                             false)
                                             .build();
     ConsensusAceTag consensusTag1 = new DefaultConsensusAceTag.Builder(
             "Contig1", "comment", "consed",
             new DateTime(1997, 12, 18, 18, 6, 23, 0).toDate(), 
-            Range.buildRange(996,1007), 
+            Range.create(996,1007), 
             false)
             .appendData("This is line 1 of a comment\nThere may be any number of lines\n")
             .build();
@@ -65,7 +65,7 @@ public class TestDefaultAceTagsFromAceFile {
     ConsensusAceTag consensusTag2 = new DefaultConsensusAceTag.Builder(
             "Contig1", "oligo", "consed",
             new DateTime(1997, 12, 18, 18, 6, 23, 0).toDate(), 
-            Range.buildRange(963,987), 
+            Range.create(963,987), 
             false)
             .appendData("standard.1 acataagacattctaaatttttact 50 U\nseq from clone\n")
             .build();
@@ -73,7 +73,7 @@ public class TestDefaultAceTagsFromAceFile {
     ConsensusAceTag consensusTag3 = new DefaultConsensusAceTag.Builder(
             "Contig853", "join", "consed",
             new DateTime(2009, 12, 28, 11, 38, 57, 0).toDate(), 
-            Range.buildRange(437,437), 
+            Range.create(437,437), 
             false)
             .addComment("old contigs:\nContig844 pinned pos: 511 length: 1324 reads: 1\nContig850 pinned pos: 23 length: 208,876 reads: 29,325\nace file: /local/closure10/HMP/HMP084/Newbler_091709_consed/hmp084/assembly/cons\ned/edit_dir/454Contigs.ace.176\nnew contig Contig853  length: 208,876 reads: 29,326\n")
             .build();
@@ -81,7 +81,7 @@ public class TestDefaultAceTagsFromAceFile {
     ConsensusAceTag consensusTag4 = new DefaultConsensusAceTag.Builder(
             "Contig853", "contigEndPair", "consed",
             new DateTime(2009, 12, 28, 12, 10, 44, 0).toDate(), 
-            Range.buildRange(10,10), 
+            Range.create(10,10), 
             false)
             .appendData("3\n<-gap\nggcctcgggg\n")
             .build();

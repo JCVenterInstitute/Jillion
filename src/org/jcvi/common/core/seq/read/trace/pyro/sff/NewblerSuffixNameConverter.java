@@ -51,7 +51,7 @@ public final class NewblerSuffixNameConverter {
                 first = temp;
             }
           //shift left to make 0-based
-            return Range.buildRange(first, second)
+            return Range.create(first, second)
                             .shiftLeft(1);  
         }
         return null;

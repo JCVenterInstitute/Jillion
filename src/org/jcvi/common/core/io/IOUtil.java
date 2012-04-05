@@ -556,8 +556,8 @@ public final class IOUtil {
         FileChannel fastaFileChannel=null;
        try{
             fastaFileChannel =fileInputStream.getChannel();
-            ByteBuffer buf= ByteBuffer.allocate((int)range.size());
-            fastaFileChannel.position((int)range.getStart());
+            ByteBuffer buf= ByteBuffer.allocate((int)range.getLength());
+            fastaFileChannel.position((int)range.getBegin());
             int bytesRead =fastaFileChannel.read(buf);
             if(bytesRead <0){
                 throw new IOException("could not read any bytes from file");

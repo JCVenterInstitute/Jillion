@@ -61,12 +61,12 @@ public class DefaultPlacedContig implements PlacedContig{
 
     @Override
     public long getLength() {
-        return range.size();
+        return range.getLength();
     }
 
     @Override
-    public long getStart() {
-        return range.getStart();
+    public long getBegin() {
+        return range.getBegin();
     }
     @Override
     public Range getValidRange() {

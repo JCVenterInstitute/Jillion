@@ -50,8 +50,8 @@ public abstract class  AbstractTestFragmentDataStore {
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
 
     Library library = new DefaultLibrary(".",Distance.buildDistance(5821F, 1513F), MateOrientation.INNIE);
-    final Range clearRangeFor678 = Range.buildRange(0,835);
-    final Range clearRangeFor061 = Range.buildRange(0,650);
+    final Range clearRangeFor678 = Range.create(0,835);
+    final Range clearRangeFor061 = Range.create(0,650);
     
     Fragment fragEndingIn78 = new DefaultFragment(
             "334369678",

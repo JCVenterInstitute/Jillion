@@ -39,20 +39,20 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultCoverageMap {
 
-    Placed seq_0_9 = Range.buildRange(0, 9);
-    Placed seq_0_12 =Range.buildRange(0, 12);
-    Placed seq_5_14 =Range.buildRange(5, 14);
-    Placed seq_5_5 = Range.buildEmptyRange(5);
-    Placed seq_8_12 =Range.buildRange(8, 12);
+    Placed seq_0_9 = Range.create(0, 9);
+    Placed seq_0_12 =Range.create(0, 12);
+    Placed seq_5_14 =Range.create(5, 14);
+    Placed seq_5_5 = Range.createEmptyRange(5);
+    Placed seq_8_12 =Range.create(8, 12);
     
-    Placed seq_10_12 =Range.buildRange(10, 12);
-    Placed seq_11_15 =Range.buildRange(11, 15);
-    Placed seq_11_20 =Range.buildRange(11, 20);
-    Placed seq_11_18 =Range.buildRange(11, 18);
+    Placed seq_10_12 =Range.create(10, 12);
+    Placed seq_11_15 =Range.create(11, 15);
+    Placed seq_11_20 =Range.create(11, 20);
+    Placed seq_11_18 =Range.create(11, 18);
     
-    Placed seq_12_18 =Range.buildRange(12, 18);
+    Placed seq_12_18 =Range.create(12, 18);
     
-    Placed seq_16_20 =Range.buildRange(16, 20);
+    Placed seq_16_20 =Range.create(16, 20);
     
     
     
@@ -72,7 +72,7 @@ public class TestDefaultCoverageMap {
     }
     @Test
     public void sizeOf1(){
-        Placed read = Range.buildRange(0, 0);
+        Placed read = Range.create(0, 0);
         final DefaultCoverageMap.Builder<Placed> builder = 
             new DefaultCoverageMap.Builder<Placed>(Arrays.asList(read));
         CoverageMap<CoverageRegion<Placed>> map =builder.build();
@@ -268,7 +268,7 @@ public class TestDefaultCoverageMap {
     
     @Test
     public void coverageRegionNotEqual(){
-        Placed differentSequence = Range.buildRange(seq_5_14.getStart(), seq_5_14.getEnd()+1);
+        Placed differentSequence = Range.create(seq_5_14.getBegin(), seq_5_14.getEnd()+1);
        
         CoverageMap<CoverageRegion<Placed>> map= new DefaultCoverageMap.Builder<Placed>(
                                             Arrays.asList(seq_0_9,seq_5_14)).build();
@@ -283,7 +283,7 @@ public class TestDefaultCoverageMap {
         CoverageMap<CoverageRegion<Placed>> map = new DefaultCoverageMap.Builder<Placed>(
                 Arrays.asList(seq_0_9,seq_5_14,seq_0_12)).build();
         
-        List<CoverageRegion<Placed>> regions = map.getRegionsWithin(Range.buildRange(5, 12));
+        List<CoverageRegion<Placed>> regions = map.getRegionsWithin(Range.create(5, 12));
         assertEquals(2, regions.size());
         assertEquals(createCoverageRegion(5,9,seq_0_9,seq_0_12,seq_5_14 ), regions.get(0));
         assertEquals(createCoverageRegion(10,12,seq_0_12,seq_5_14 ), regions.get(1));
@@ -294,7 +294,7 @@ public class TestDefaultCoverageMap {
         CoverageMap<CoverageRegion<Placed>> map = new DefaultCoverageMap.Builder<Placed>(
                 Arrays.asList(seq_0_9,seq_5_14,seq_0_12)).build();
         
-        List<CoverageRegion<Placed>> regions = map.getRegionsWhichIntersect(Range.buildRange(6, 11));
+        List<CoverageRegion<Placed>> regions = map.getRegionsWhichIntersect(Range.create(6, 11));
         assertEquals(2, regions.size());
         assertEquals(createCoverageRegion(5,9,seq_0_9,seq_0_12,seq_5_14 ), regions.get(0));
         assertEquals(createCoverageRegion(10,12,seq_0_12,seq_5_14 ), regions.get(1));

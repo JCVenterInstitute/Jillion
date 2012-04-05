@@ -93,8 +93,8 @@ public class CtgFileWriter implements Closeable{
     
     private void writePlacedReadHeader(PlacedRead placedRead,NucleotideSequence consensus) throws IOException {
         StringBuilder header = new StringBuilder();
-        header.append(String.format("#%s(%d) [", placedRead.getId(), placedRead.getStart()));
-        int validLeft = (int)placedRead.getValidRange().getStart();
+        header.append(String.format("#%s(%d) [", placedRead.getId(), placedRead.getBegin()));
+        int validLeft = (int)placedRead.getValidRange().getBegin();
         int validRight = (int)placedRead.getValidRange().getEnd();
         if(placedRead.getDirection() == Direction.REVERSE){
             header.append("RC");
@@ -105,7 +105,7 @@ public class CtgFileWriter implements Closeable{
 
         header.append(String.format("] %d bases, 00000000 checksum. {%d %d} <%d %d>\n",
                 placedRead.getNucleotideSequence().getLength(), validLeft+1, validRight+1, 
-                placedRead.getStart()+1-consensus.getNumberOfGapsUntil((int) placedRead.getStart()), 
+                placedRead.getBegin()+1-consensus.getNumberOfGapsUntil((int) placedRead.getBegin()), 
                 placedRead.getEnd()+1-consensus.getNumberOfGapsUntil((int)placedRead.getEnd())));
         writeToOutputStream(header.toString());
         
@@ -131,7 +131,7 @@ public class CtgFileWriter implements Closeable{
          */
         @Override
         public int compare(PlacedRead o1, PlacedRead o2) {
-            int startComparison = Long.valueOf(o1.getStart()).compareTo(Long.valueOf(o2.getStart()));
+            int startComparison = Long.valueOf(o1.getBegin()).compareTo(Long.valueOf(o2.getBegin()));
             if(startComparison !=0){
                 return startComparison;
             }

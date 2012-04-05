@@ -80,12 +80,12 @@ public class LucyDebugFileDataStore implements LucyDebugTrimRecordDataStore{
      */
     private Range buildTrimRangeFrom(String left, String right) {
         if(LUCY_INVALID_COORDINATE.equals(left) || LUCY_INVALID_COORDINATE.equals(right)){
-            return Range.buildEmptyRange(CoordinateSystem.RESIDUE_BASED, 1);
+            return Range.createEmptyRange(CoordinateSystem.RESIDUE_BASED, 1);
         }
         int start = getCoordinate(left);
         int stop = getCoordinate(right);
         
-        return Range.buildRange(CoordinateSystem.RESIDUE_BASED,
+        return Range.create(CoordinateSystem.RESIDUE_BASED,
                 start,
                 stop);
     }

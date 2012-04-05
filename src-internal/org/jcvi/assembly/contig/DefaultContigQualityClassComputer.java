@@ -83,7 +83,7 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
         for(P placedRead : region){
             final QualitySequence qualityRecord = qualityDataStore.get(placedRead.getId());
             if(qualityRecord !=null){
-                int gappedOffset = (int) (index - placedRead.getStart());
+                int gappedOffset = (int) (index - placedRead.getBegin());
                 NucleotideSequence gappedSequence = placedRead.getNucleotideSequence();
                 final Nucleotide calledBase = gappedSequence.get(gappedOffset);
                 PhredQuality qualityValue =qualityValueStrategy.getQualityFor(placedRead, qualityRecord, gappedOffset);

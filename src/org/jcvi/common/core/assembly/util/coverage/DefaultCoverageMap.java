@@ -66,7 +66,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
 
         @Override
         public int compare(T o1, T o2) {           
-            return Long.valueOf(o1.getStart()).compareTo(o2.getStart());
+            return Long.valueOf(o1.getBegin()).compareTo(o2.getBegin());
         }
 
     }
@@ -158,7 +158,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
     public List<T> getRegionsWithin(Range range) {
         List<T> selectedRegions = new ArrayList<T>();
         for(T region : regions){
-            Range regionRange = Range.buildRange(region.getStart(), region.getEnd());
+            Range regionRange = Range.create(region.getBegin(), region.getEnd());
             if(regionRange.isSubRangeOf(range)){
                 selectedRegions.add(region);
             }
@@ -170,7 +170,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
     public List<T> getRegionsWhichIntersect(Range range) {
         List<T> selectedRegions = new ArrayList<T>();
         for(T region : regions){
-            Range regionRange = Range.buildRange(region.getStart(), region.getEnd());
+            Range regionRange = Range.create(region.getBegin(), region.getEnd());
             if(range.endsBefore(regionRange)){
                 break;
             }
@@ -185,7 +185,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
 
     @Override
     public T getRegionWhichCovers(long consensusIndex) {
-        Range range = Range.buildRange(consensusIndex, consensusIndex);
+        Range range = Range.create(consensusIndex, consensusIndex);
         final List<T> intersectedRegion = getRegionsWhichIntersect(range);
         if(intersectedRegion.isEmpty()){
             return null;

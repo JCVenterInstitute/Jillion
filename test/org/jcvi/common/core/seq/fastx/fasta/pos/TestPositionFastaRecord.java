@@ -132,7 +132,7 @@ public class TestPositionFastaRecord {
     @Test
     public void notEqualsDifferentSequence(){
     	Sequence<ShortSymbol> differentSequence = new EncodedSequence<ShortSymbol>(CODEC,
-    			encodedPositions.asList(Range.buildRange(0,5)));
+    			encodedPositions.asList(Range.create(0,5)));
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, new DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>>(
                 id,comment,differentSequence));
     }

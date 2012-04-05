@@ -47,7 +47,7 @@ public class TestAcePlacedReadAdapter {
     AcePlacedReadAdapter sut;
     long referenceIndex = 1234;
     long validRangeIndex = 7;
-    Range validRange = Range.buildRange(1,10);
+    Range validRange = Range.create(1,10);
     
     @Before
     public void setup(){
@@ -96,7 +96,7 @@ public class TestAcePlacedReadAdapter {
     }
     @Test
     public void getValidRange() {
-        Range validRange = Range.buildRange(1,10);
+        Range validRange = Range.create(1,10);
         expect(mockPlacedRead.getValidRange()).andReturn(validRange);
         replay(mockPlacedRead);
         assertEquals(validRange, sut.getValidRange());
@@ -135,9 +135,9 @@ public class TestAcePlacedReadAdapter {
     }
     @Test
     public void getStart() {
-        expect(mockPlacedRead.getStart()).andReturn(validRange.getStart());
+        expect(mockPlacedRead.getBegin()).andReturn(validRange.getBegin());
         replay(mockPlacedRead);
-        assertEquals(validRange.getStart(), sut.getStart());
+        assertEquals(validRange.getBegin(), sut.getBegin());
         verify(mockPlacedRead);
     } 
     

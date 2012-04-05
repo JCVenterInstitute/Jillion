@@ -117,7 +117,7 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
             return asList();
         }
         List<T> result = new ArrayList<T>();
-        if(range.isSubRangeOf(Range.buildRangeOfLength(0, getLength()))){
+        if(range.isSubRangeOf(Range.createOfLength(0, getLength()))){
             for(long index : range){
                 result.add(get((int)index));
             }

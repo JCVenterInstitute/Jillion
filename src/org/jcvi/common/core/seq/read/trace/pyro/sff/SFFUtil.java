@@ -118,7 +118,7 @@ private SFFUtil(){}
     */
    static final byte[] EMPTY_CLIP_BYTES = new byte[]{0,0,0,0};
    
-   public static final Range EMPTY_CLIP = Range.buildRange(CoordinateSystem.RESIDUE_BASED, -1, -1);
+   public static final Range EMPTY_CLIP = Range.create(CoordinateSystem.RESIDUE_BASED, -1, -1);
    public static final Pattern SFFINFO_ENCODED_FLOWGRAM_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)");
     public static int caclulatePaddedBytes(int bytesReadInSection){
          final int remainder = bytesReadInSection % 8;
@@ -212,26 +212,26 @@ private SFFUtil(){}
         Range adapterClip = flowgram.getAdapterClip();
         long numberOfBases = flowgram.getBasecalls().getLength();
         long firstBaseOfInsert = Math.max(1,
-                        Math.max(qualityClip.getStart(CoordinateSystem.RESIDUE_BASED), 
-                                adapterClip.getStart(CoordinateSystem.RESIDUE_BASED)));
+                        Math.max(qualityClip.getBegin(CoordinateSystem.RESIDUE_BASED), 
+                                adapterClip.getBegin(CoordinateSystem.RESIDUE_BASED)));
         long lastBaseOfInsert = Math.min(
                 qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED), 
                         adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED));
         
-        return Range.buildRange(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
+        return Range.create(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
     }
     public static Range getTrimRangeFor(SFFReadHeader readHeader){
         Range qualityClip = readHeader.getQualityClip();
         Range adapterClip = readHeader.getAdapterClip();
         long numberOfBases = readHeader.getNumberOfBases();
         long firstBaseOfInsert = Math.max(1,
-                        Math.max(qualityClip.getStart(CoordinateSystem.RESIDUE_BASED), 
-                                adapterClip.getStart(CoordinateSystem.RESIDUE_BASED)));
+                        Math.max(qualityClip.getBegin(CoordinateSystem.RESIDUE_BASED), 
+                                adapterClip.getBegin(CoordinateSystem.RESIDUE_BASED)));
         long lastBaseOfInsert = Math.min(
                 qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED), 
                         adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED));
         
-        return Range.buildRange(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
+        return Range.create(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
     }
     
     public static SFFFlowgram buildSFFFlowgramFrom(SFFReadHeader readHeader,

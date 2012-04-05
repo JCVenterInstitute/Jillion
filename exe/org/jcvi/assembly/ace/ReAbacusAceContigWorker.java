@@ -351,10 +351,10 @@ public class ReAbacusAceContigWorker {
                 //convert to gapped
                 List<Range> rangesToMerge = new ArrayList<Range>();
                 for(Range ungappedRange : abacusProblemRanges.get(contigId)){
-                    int gappedStart=consensus.getGappedOffsetFor((int)ungappedRange.getStart()- numberOfFlankingBases)+1;
+                    int gappedStart=consensus.getGappedOffsetFor((int)ungappedRange.getBegin()- numberOfFlankingBases)+1;
                     int gappedEnd = consensus.getGappedOffsetFor((int)ungappedRange.getEnd()+1+numberOfFlankingBases)-1;
                    
-                    Range gappedFlankingRange = Range.buildRange(gappedStart, gappedEnd);
+                    Range gappedFlankingRange = Range.create(gappedStart, gappedEnd);
                     rangesToMerge.add(gappedFlankingRange);
                 }
                 
@@ -364,9 +364,9 @@ public class ReAbacusAceContigWorker {
                 CoverageMap<CoverageRegion<AcePlacedReadBuilder>> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllPlacedReadBuilders());
                 
                 for(Range gappedAbacusProblemRange : reversedSortedRanges){
-                    int gappedStart = (int)gappedAbacusProblemRange.getStart();
+                    int gappedStart = (int)gappedAbacusProblemRange.getBegin();
                     int gappedEnd = (int)gappedAbacusProblemRange.getEnd();
-                    Range ungappedProblemRange = Range.buildRange(
+                    Range ungappedProblemRange = Range.create(
                             consensus.getUngappedOffsetFor(gappedStart),
                             consensus.getUngappedOffsetFor(gappedEnd)
                             );
@@ -390,17 +390,17 @@ public class ReAbacusAceContigWorker {
                         
                         int flankedEnd = Math.min((int)consensus.getLength()-1,gappedEnd);
                         
-                        long start = Math.max(flankedStart,readBuilder.getStart())-readBuilder.getStart();                        
-                        long end  = Math.min(flankedEnd,readBuilder.getEnd())-readBuilder.getStart();
+                        long start = Math.max(flankedStart,readBuilder.getBegin())-readBuilder.getBegin();                        
+                        long end  = Math.min(flankedEnd,readBuilder.getEnd())-readBuilder.getBegin();
                         if(end < start){
                             //read doesn't reach abacus bug
                             //must end in flanking region
                             //so we don't care
                             continue;
                         }
-                        Range affectedSequenceRange = Range.buildRange(start, end); 
+                        Range affectedSequenceRange = Range.create(start, end); 
                         List<Nucleotide> ungappedProblemSequenceRange = readBuilder.getBasesBuilder().asUngappedList(affectedSequenceRange);
-                        String coment = String.format("%s - %s", affectedSequenceRange.getStart(), affectedSequenceRange.getEnd());
+                        String coment = String.format("%s - %s", affectedSequenceRange.getBegin(), affectedSequenceRange.getEnd());
                         if(ungappedProblemSequenceRange.size()>maxSeenLength){
                             maxSeenLength = ungappedProblemSequenceRange.size();
                         }
@@ -431,7 +431,7 @@ public class ReAbacusAceContigWorker {
                             //this read is too short add leading/trailing gaps to help muscle?
                             Range range =Range.parseRange(fasta.getComment());
                             NucleotideSequenceBuilder newSequenceBuilder = new NucleotideSequenceBuilder(fasta.getSequence());
-                            if(range.getStart()==0){
+                            if(range.getBegin()==0){
                                 //start of the read                                
                                 newSequenceBuilder.prepend(new String(gaps));
                             }else{
@@ -469,7 +469,7 @@ public class ReAbacusAceContigWorker {
 	                           
 	                            Range sequenceRange = Range.parseRange(gappedFasta.getComment());
 	                            
-	                            Range newGappedRange = Range.buildRange(0,bases.size()-1);
+	                            Range newGappedRange = Range.create(0,bases.size()-1);
 	                            //will be 0 unless we are in the beginning of a read
 	                            //which will change this number later
 	                            int numberOfLeadingGaps=0;
@@ -488,12 +488,12 @@ public class ReAbacusAceContigWorker {
 	                            
 	                            long length =basesBuilder.getLength();
 	                            Range fixedBasesRange = newGappedRange;
-	                            if(length-1 <sequenceRange.getStart()){
+	                            if(length-1 <sequenceRange.getBegin()){
 	                                //we are fixing the end of the read
 	                                //trim off trailing gaps
 	                                fixedBasesRange = fixedBasesRange.shrink(0, numberOfTrailingGaps);
 	                            }
-	                            if(sequenceRange.getStart()==0){
+	                            if(sequenceRange.getBegin()==0){
 	                                //we are fixing beginning of sequence
 	                                //trim off leading gaps
 	                                numberOfLeadingGaps = gappedSequence.getGappedOffsetFor(0);
@@ -503,7 +503,7 @@ public class ReAbacusAceContigWorker {
 	                                readBuilder.setStartOffset(gappedStart+numberOfLeadingGaps);
 	                            }
 	                            List<Nucleotide> rangeOfBasesThatContributeToConsensus = gappedSequence.asList(fixedBasesRange);
-	                            basesBuilder.insert((int)sequenceRange.getStart(), rangeOfBasesThatContributeToConsensus);
+	                            basesBuilder.insert((int)sequenceRange.getBegin(), rangeOfBasesThatContributeToConsensus);
 	                        
 	                             for(int index=0; index<rangeOfBasesThatContributeToConsensus.size() && index+numberOfLeadingGaps < sliceBuilders.length; index++){
 	                                int sliceIndex = index+numberOfLeadingGaps;                               
@@ -527,12 +527,12 @@ public class ReAbacusAceContigWorker {
                         long numberOfBasesToShift = gappedAbacusProblemRange.getLength() - updatedConsensus.getLength();
                         System.out.println(ungappedProblemRange + "(" + gappedAbacusProblemRange + ") fixed. downstream bases shifted "+ numberOfBasesToShift);
                        contigConsensusBuilder.delete(gappedAbacusProblemRange);
-                        contigConsensusBuilder.insert((int)gappedAbacusProblemRange.getStart(), updatedConsensus);
+                        contigConsensusBuilder.insert((int)gappedAbacusProblemRange.getBegin(), updatedConsensus);
                         //update downstream offsets
                         for(AcePlacedReadBuilder readBuilder : contigBuilder.getAllPlacedReadBuilders()){
                             
-                            long oldStart =readBuilder.getStart();
-                            if(oldStart>gappedAbacusProblemRange.getStart() && 
+                            long oldStart =readBuilder.getBegin();
+                            if(oldStart>gappedAbacusProblemRange.getBegin() && 
                                     !gappedFastaDataStore.contains(readBuilder.getId())){
                                 //we have a read that starts in or beyond our fix area
                                 //and is not one of the reads we reabacused

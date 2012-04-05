@@ -47,7 +47,7 @@ public class TestInternalPrimerHit {
     public void trim(){
         NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(forwardPrimer, reversePrimer);
     
-        Range expectedRange = Range.buildRange(0, 545);
+        Range expectedRange = Range.create(0, 545);
         Range actualRange = sut.trim(sequence, datastore);
         assertEquals(expectedRange, actualRange);
     }

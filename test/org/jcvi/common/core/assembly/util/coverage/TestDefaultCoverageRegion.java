@@ -49,7 +49,7 @@ public class TestDefaultCoverageRegion {
     public void builder(){
 
         
-        assertEquals(start, sut.getStart());
+        assertEquals(start, sut.getBegin());
         assertEquals(end, sut.getEnd());
         assertEquals(length, sut.getLength());
         assertEquals(Arrays.asList(seq1,seq2), getElements(sut));
@@ -63,7 +63,7 @@ public class TestDefaultCoverageRegion {
                                     .end(end)
                                         .build();
         
-        assertEquals(start, region.getStart());
+        assertEquals(start, region.getBegin());
         assertEquals(end, region.getEnd());
         assertEquals(length, region.getLength());
         assertEquals(Arrays.asList(seq1,seq2), getElements(region));
@@ -84,7 +84,7 @@ public class TestDefaultCoverageRegion {
                     .remove(seq2)
                     .build();
         
-        assertEquals(start, region.getStart());
+        assertEquals(start, region.getBegin());
         assertEquals(end, region.getEnd());
         assertEquals(length, region.getLength());
         assertEquals(Arrays.asList(seq1), getElements(region));

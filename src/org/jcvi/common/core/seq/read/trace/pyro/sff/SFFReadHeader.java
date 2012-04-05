@@ -43,7 +43,7 @@ public interface SFFReadHeader {
      * specify the subset of the basecalls
      * that are good quality.  If no
      * clip is set, then the Range should be
-     * equal to Range.buildRange(0,0);
+     * equal to Range.create(0,0);
      * @return a Range (never null).
      */
     Range getQualityClip();
@@ -52,7 +52,7 @@ public interface SFFReadHeader {
      * specify the subset of the basecalls
      * that are not adapter sequence.  If no
      * clip is set, then the Range should be
-     * equal to Range.buildRange(0,0);
+     * equal to Range.create(0,0);
      * @return a Range (never null).
      */
     Range getAdapterClip();

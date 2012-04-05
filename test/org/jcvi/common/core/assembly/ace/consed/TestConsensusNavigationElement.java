@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 public class TestConsensusNavigationElement {
 
     String id= "contig id";
-    Range range = Range.buildRange(5,10);
+    Range range = Range.create(5,10);
     String comment = "this is a comment";
     ConsensusNavigationElement sut = new ConsensusNavigationElement(id, range,comment);
     

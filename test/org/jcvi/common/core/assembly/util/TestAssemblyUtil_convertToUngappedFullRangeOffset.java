@@ -37,11 +37,11 @@ import static org.junit.Assert.*;
  */
 public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockSupport{
 
-    Range validRange = Range.buildRange(2,6);
+    Range validRange = Range.create(2,6);
     @Test
     public void forwardSequenceNoGapsValidLengthIsEntireSequenceShouldReturnSameOffset(){
         PlacedRead mockRead = new MockPlacedReadBuilder("ACGTACGT",8)
-                                .validRange(Range.buildRangeOfLength(8))
+                                .validRange(Range.createOfLength(8))
                                 .build();
         int offset = 4;
         replayAll();
@@ -51,7 +51,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
     @Test
     public void reverseSequenceNoGapsValidLengthIsEntireSequenceShouldReturnSameOffset(){
         PlacedRead mockRead = new MockPlacedReadBuilder("ACGTACGT",8)
-                                .validRange(Range.buildRangeOfLength(8))
+                                .validRange(Range.createOfLength(8))
                                 .direction(Direction.REVERSE)
                                 .build();
         int offset = 4;

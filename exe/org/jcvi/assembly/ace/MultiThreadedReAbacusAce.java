@@ -321,7 +321,7 @@ public class MultiThreadedReAbacusAce {
                 boolean isTransient) {
             super.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
             ReadAceTag tag =new DefaultReadAceTag(id, type, creator, creationDate, 
-                    Range.buildRange(gappedStart,gappedEnd), isTransient);
+                    Range.create(gappedStart,gappedEnd), isTransient);
             
             try {
                AceFileWriter.writeReadTag(tag, tagOutputStream);
@@ -349,7 +349,7 @@ public class MultiThreadedReAbacusAce {
                 boolean isTransient) {
             super.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
             consensusTagBuilder = new DefaultConsensusAceTag.Builder(id, 
-                    type, creator, creationDate, Range.buildRange(gappedStart, gappedEnd), isTransient);
+                    type, creator, creationDate, Range.create(gappedStart, gappedEnd), isTransient);
 
         }
         @Override

@@ -114,10 +114,10 @@ public final class DirectedRange implements Placed<DirectedRange>{
         private static DirectedRange convertIntoRange(
                 CoordinateSystem coordinateSystem, long first, long second) {
             if(first<second){
-                Range range =Range.buildRange(coordinateSystem,first,second);
+                Range range =Range.create(coordinateSystem,first,second);
                 return new DirectedRange(range, Direction.FORWARD);
             }
-            Range range =Range.buildRange(coordinateSystem,second,first);
+            Range range =Range.create(coordinateSystem,second,first);
             return new DirectedRange(range, Direction.REVERSE);
         }
         public static DirectedRange parse(String rangeAsString){
@@ -224,8 +224,8 @@ public final class DirectedRange implements Placed<DirectedRange>{
         * {@inheritDoc}
         */
         @Override
-        public long getStart() {
-            return getRange().getStart();
+        public long getBegin() {
+            return getRange().getBegin();
         }
 
         /**

@@ -40,7 +40,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 
 	 
 	
-	Range validRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED,5, 13);
+	Range validRange = Range.create(CoordinateSystem.RESIDUE_BASED,5, 13);
 	String id = "readId";
 	int offset = 5;
 	String readSequence = "ACGT-ACGT";
@@ -67,7 +67,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 		assertCommonGettersCorrect(sut);		
 		assertCommonAttributesCorrect(delegate, sut);
 		assertEquals(Direction.FORWARD, sut.getDirection());
-		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_LEFT),""+(delegate.getValidRange().getStart()+1));
+		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_LEFT),""+(delegate.getValidRange().getBegin()+1));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_RIGHT),""+(delegate.getValidRange().getEnd()+1));
 		
 	}
@@ -80,7 +80,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 		assertCommonGettersCorrect(sut);		
 		assertCommonAttributesCorrect(delegate, sut);
 		assertEquals(Direction.REVERSE, sut.getDirection());
-		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_RIGHT),""+(delegate.getValidRange().getStart()+1));
+		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_RIGHT),""+(delegate.getValidRange().getBegin()+1));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.SEQUENCE_LEFT),""+(delegate.getValidRange().getEnd()+1));
 		
 	}
@@ -89,7 +89,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 		assertEquals(id, sut.getId());
 		
 		assertEquals(gappedBasecalls, sut.getNucleotideSequence());
-		assertEquals(offset, sut.getStart());
+		assertEquals(offset, sut.getBegin());
 		assertEquals(offset+gappedBasecalls.getLength()-1, sut.getEnd());
 		assertEquals(gappedBasecalls.getLength(),sut.getLength());
 		assertTrue(sut.getSnps().isEmpty());
@@ -101,8 +101,8 @@ public class TestTigrAssemblerPlacedReadAdapter {
 		assertFalse(sut.hasAttribute(TigrAssemblerReadAttribute.DB));
 		
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.NAME),delegate.getId());
-		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_START_OFFSET),""+delegate.getStart());
-		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_LEFT),""+(delegate.getStart()));
+		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_START_OFFSET),""+delegate.getBegin());
+		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_LEFT),""+(delegate.getBegin()));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_RIGHT),""+(delegate.getEnd()));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.GAPPED_SEQUENCE),
 				Nucleotides.asString(gappedBasecalls.asList()));

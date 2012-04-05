@@ -43,8 +43,8 @@ import static org.junit.Assert.*;
  */
 public class TestSffWriter {
     int numberOfBases=123;
-    Range qualityClip = Range.buildRange(10, 20);
-    Range adapterClip = Range.buildRange(4, 122);
+    Range qualityClip = Range.create(10, 20);
+    Range adapterClip = Range.create(4, 122);
     String name = "readName";
     @Test
     public void writeCommonHeaderWithNoIndex() throws IOException{
@@ -97,7 +97,7 @@ public class TestSffWriter {
             buf.put(SFFUtil.EMPTY_CLIP_BYTES);
         }
         else{
-            buf.putShort((short)qClip.getStart(CoordinateSystem.RESIDUE_BASED));
+            buf.putShort((short)qClip.getBegin(CoordinateSystem.RESIDUE_BASED));
             buf.putShort((short)qClip.getEnd(CoordinateSystem.RESIDUE_BASED));
         }
         final Range aClip = readHeader.getAdapterClip();
@@ -105,7 +105,7 @@ public class TestSffWriter {
             buf.put(SFFUtil.EMPTY_CLIP_BYTES);
         }
         else{
-            buf.putShort((short)aClip.getStart(CoordinateSystem.RESIDUE_BASED));
+            buf.putShort((short)aClip.getBegin(CoordinateSystem.RESIDUE_BASED));
             buf.putShort((short)aClip.getEnd(CoordinateSystem.RESIDUE_BASED));
         }
         buf.put(readHeader.getName().getBytes());

@@ -78,7 +78,7 @@ public class TestCas2Consed3 {
 		    		  String readId =actualRead.getId();
 		    		  PlacedRead expectedRead = expectedContig.getPlacedReadById(readId);
 		    		  assertEquals("read basecalls", expectedRead.getNucleotideSequence().asList(), actualRead.getNucleotideSequence().asList());
-		    		  assertEquals("read offset", expectedRead.getStart(), actualRead.getStart());
+		    		  assertEquals("read offset", expectedRead.getBegin(), actualRead.getBegin());
 		    	  }
 		      }
 	        }finally{

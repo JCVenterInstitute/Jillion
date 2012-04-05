@@ -29,26 +29,26 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAssemblyUtil_reverseComplimentRange {
 
-    private final Range range = Range.buildRange(0, 9);
+    private final Range range = Range.create(0, 9);
     @Test
     public void reverseFullRange(){
-        assertEquals(range, AssemblyUtil.reverseComplimentValidRange(range, range.size()));
+        assertEquals(range, AssemblyUtil.reverseComplimentValidRange(range, range.getLength()));
     }
     
     @Test
     public void reverse(){
-        Range expectedRange = Range.buildRange(5,14);
+        Range expectedRange = Range.create(5,14);
         assertEquals(expectedRange, AssemblyUtil.reverseComplimentValidRange(range, 15));
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void fullLengthSmallerThanValidRangeShouldThrowIllegalArgumentException(){
-        AssemblyUtil.reverseComplimentValidRange(range, range.size()-1);
+        AssemblyUtil.reverseComplimentValidRange(range, range.getLength()-1);
     }
     
     @Test
     public void validRangeInMiddleOfFullRange(){
-        Range validRange = Range.buildRange(5,9);
-       assertEquals(Range.buildRange(10,14), AssemblyUtil.reverseComplimentValidRange(validRange, 20));
+        Range validRange = Range.create(5,9);
+       assertEquals(Range.create(10,14), AssemblyUtil.reverseComplimentValidRange(validRange, 20));
     }
 }

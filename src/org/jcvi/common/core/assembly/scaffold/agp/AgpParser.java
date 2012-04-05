@@ -71,7 +71,7 @@ public class AgpParser {
             Matcher matcher = CONTIG_PATTERN.matcher(line);
             if(matcher.find()){
                 String scaffoldId = matcher.group(1);
-                Range contigRange = Range.buildRange(agpFileCoordinateSystem,
+                Range contigRange = Range.create(agpFileCoordinateSystem,
                                                      Long.parseLong(matcher.group(2)),
                                                      Long.parseLong(matcher.group(3)));
                 String contigId = matcher.group(5);

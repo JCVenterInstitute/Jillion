@@ -32,9 +32,9 @@ import org.junit.Before;
  */
 public abstract class AbstractTestSizeRangeComparator {
 
-    Range small = Range.buildRangeOfLength(0, 10);
-    Range medium = Range.buildRangeOfLength(-10, 30);
-    Range large = Range.buildRangeOfLength(-50, 100);
+    Range small = Range.createOfLength(0, 10);
+    Range medium = Range.createOfLength(-10, 30);
+    Range large = Range.createOfLength(-50, 100);
     
     List<Range> ranges;
     @Before

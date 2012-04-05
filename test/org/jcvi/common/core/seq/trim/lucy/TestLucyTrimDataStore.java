@@ -44,15 +44,15 @@ public class TestLucyTrimDataStore {
         assertEquals(127, sut.size());
         
         assertEquals("first record",
-                Range.buildRange(0,139),
+                Range.create(0,139),
                 sut.get("CVJHE01T00MANA01F") );
-        assertEquals(Range.buildRange(313,688),
+        assertEquals(Range.create(313,688),
                 sut.get("CVJHE01T00MAND08F") );        
         assertEquals("middle record",
-                Range.buildRange(28,588),
+                Range.create(28,588),
                 sut.get("CVJHE01T00MANH08R") );
         assertEquals("last record",
-                Range.buildRange(51,868),
+                Range.create(51,868),
                 sut.get("CVJHF01T00MANH07R") );
     }
 }

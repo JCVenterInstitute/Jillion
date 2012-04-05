@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  *
  */
 public class TestAssemblyUtil_convertToUngappedRange {
-    private final Range range = Range.buildRange(3,5);
+    private final Range range = Range.create(3,5);
     @Test
     public void noGapsShouldReturnSameRange(){
         assertEquals(range, AssemblyUtil.toUngappedRange(
@@ -51,7 +51,7 @@ public class TestAssemblyUtil_convertToUngappedRange {
     
     @Test
     public void gapsInsideRangeShouldShiftEndCoordinate(){        
-        Range ungappedRagne = Range.buildRange(3,4);
+        Range ungappedRagne = Range.create(3,4);
         assertEquals(ungappedRagne, AssemblyUtil.toUngappedRange(
                 new NucleotideSequenceBuilder("ACGT-ACGT").build(), range));
     }

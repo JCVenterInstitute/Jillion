@@ -257,7 +257,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
 		}
 
         protected synchronized void visitContig() {
-            indexFileRange.put(currentContigId, Range.buildRange(currentStartOffset, 
+            indexFileRange.put(currentContigId, Range.create(currentStartOffset, 
                     currentFileOffset-currentLineLength-1));
         }
         /**
@@ -284,7 +284,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
                 Range range = indexFileRange.getRangeFor(currentContigId);
                 if(range ==null){
                     throw new IllegalStateException("in complete ace file.  Did not finish reading "+ currentContigId);
-                   // indexFileRange.put(currentContigId, Range.buildRange(currentStartOffset, 
+                   // indexFileRange.put(currentContigId, Range.create(currentStartOffset, 
                    //         currentFileOffset-currentLineLength-1));
                 }
                 indexFileRange.put(currentContigId, range.grow(0, currentLineLength));

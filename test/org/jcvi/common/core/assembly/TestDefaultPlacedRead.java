@@ -51,7 +51,7 @@ public class TestDefaultPlacedRead {
     Direction dir = Direction.FORWARD;
     long start = 100;
     long length = 200L;
-    Range validRange = Range.buildRange(start, length);
+    Range validRange = Range.create(start, length);
     DefaultPlacedRead sut ;
     @Before
     public void setup(){
@@ -79,7 +79,7 @@ public class TestDefaultPlacedRead {
         expect(glyphs.getSnpOffsets()).andReturn(snps);
         replay(read, glyphs);
         assertEquals(dir,sut.getDirection());
-        assertEquals(start, sut.getStart());
+        assertEquals(start, sut.getBegin());
         assertEquals(read, sut.getRead());
         assertEquals(id, sut.getId());
         assertEquals(glyphs, sut.getNucleotideSequence());

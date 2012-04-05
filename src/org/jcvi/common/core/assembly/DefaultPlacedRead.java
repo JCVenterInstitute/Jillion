@@ -81,7 +81,7 @@ public class DefaultPlacedRead implements PlacedRead {
     }
 
     @Override
-    public long getStart() {
+    public long getBegin() {
         return start;
     }
 
@@ -117,7 +117,7 @@ public class DefaultPlacedRead implements PlacedRead {
         }
         if (obj instanceof DefaultPlacedRead){           
             DefaultPlacedRead other = (DefaultPlacedRead) obj;
-            return read.equals(other.getRead()) && start== other.getStart() 
+            return read.equals(other.getRead()) && start== other.getBegin() 
             && getDirection() == other.getDirection();
         }
         else if (obj instanceof PlacedRead){           
@@ -138,7 +138,7 @@ public class DefaultPlacedRead implements PlacedRead {
         		return false;
         	}
         	
-            return start== other.getStart() 
+            return start== other.getBegin() 
             && getDirection() == other.getDirection();
         }
         return false;
@@ -151,11 +151,11 @@ public class DefaultPlacedRead implements PlacedRead {
     }
     @Override
     public String toString() {
-        return "offset = "+ getStart() + " complimented? "+ getDirection()+"  " + read.toString();
+        return "offset = "+ getBegin() + " complimented? "+ getDirection()+"  " + read.toString();
     }
     @Override
     public long getEnd() {
-        return getStart()+getLength()-1;
+        return getBegin()+getLength()-1;
     }
 
     public Map<Integer, Nucleotide> getSnps(){
@@ -182,14 +182,14 @@ public class DefaultPlacedRead implements PlacedRead {
     @Override
     public long toGappedValidRangeOffset(long referenceIndex) {
         
-        long validRangeIndex= referenceIndex - getStart();
+        long validRangeIndex= referenceIndex - getBegin();
         checkValidRange(validRangeIndex);
         return validRangeIndex;
     }
     @Override
     public long toReferenceOffset(long validRangeIndex) {
         checkValidRange(validRangeIndex);
-        return getStart() +validRangeIndex;
+        return getBegin() +validRangeIndex;
     }
     private void checkValidRange(long validRangeIndex) {
         if(validRangeIndex <0){
@@ -211,7 +211,7 @@ public class DefaultPlacedRead implements PlacedRead {
     */
     @Override
     public Range asRange() {
-        return Range.buildRange(getStart(), getEnd());
+        return Range.create(getBegin(), getEnd());
     }
     
     private static class Builder implements PlacedReadBuilder<PlacedRead>{
@@ -269,7 +269,7 @@ public class DefaultPlacedRead implements PlacedRead {
         * {@inheritDoc}
         */
         @Override
-        public long getStart(){
+        public long getBegin(){
             return offset;
         }
         /**
@@ -371,7 +371,7 @@ public class DefaultPlacedRead implements PlacedRead {
                 throw new IllegalReAbacus(oldUngappedBasecalls,newUngappedBasecalls);
             }
             basesBuilder.delete(gappedValidRangeToChange);
-            basesBuilder.insert((int)gappedValidRangeToChange.getStart(), newBasecalls);
+            basesBuilder.insert((int)gappedValidRangeToChange.getBegin(), newBasecalls);
             return this;
         }
         /**
@@ -396,7 +396,7 @@ public class DefaultPlacedRead implements PlacedRead {
         */
         @Override
         public Range asRange(){
-            return Range.buildRange(offset,getEnd());
+            return Range.create(offset,getEnd());
         }
         /**
         * {@inheritDoc}

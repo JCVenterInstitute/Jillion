@@ -96,8 +96,8 @@ public final class DefaultAcePlacedRead implements AcePlacedRead {
     * {@inheritDoc}
     */
     @Override
-    public long getStart() {
-        return placedRead.getStart();
+    public long getBegin() {
+        return placedRead.getBegin();
     }
 
     /**
@@ -237,8 +237,8 @@ public final class DefaultAcePlacedRead implements AcePlacedRead {
         * {@inheritDoc}
         */
         @Override
-        public long getStart(){
-            return delegateBuilder.getStart();
+        public long getBegin(){
+            return delegateBuilder.getBegin();
         }
         /**
         * {@inheritDoc}

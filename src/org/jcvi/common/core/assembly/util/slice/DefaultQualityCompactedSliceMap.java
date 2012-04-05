@@ -56,7 +56,7 @@ public class DefaultQualityCompactedSliceMap extends AbstractCompactedSliceMap{
             CoverageRegion<? extends PlacedRead> region, int i) {
         CompactedSlice.Builder builder= new CompactedSlice.Builder();
         for(PlacedRead read : region){
-            int indexIntoRead = (int) (i - read.getStart());
+            int indexIntoRead = (int) (i - read.getBegin());
             builder.addSliceElement(read.getId(),
                     read.getNucleotideSequence().get(indexIntoRead),
                     defaultPhredQuality,

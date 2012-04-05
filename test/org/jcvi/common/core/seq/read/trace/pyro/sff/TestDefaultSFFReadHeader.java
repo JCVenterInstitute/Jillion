@@ -31,8 +31,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultSFFReadHeader {
     int numberOfBases=100;
-    Range qualityClip = Range.buildRange(10,90);
-    Range adapterClip= Range.buildRange(5,95);
+    Range qualityClip = Range.create(10,90);
+    Range adapterClip= Range.create(5,95);
     String name = "sequence name";
 
     DefaultSFFReadHeader sut = new DefaultSFFReadHeader( numberOfBases,

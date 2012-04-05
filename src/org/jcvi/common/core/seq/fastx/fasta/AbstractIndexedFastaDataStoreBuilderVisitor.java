@@ -65,7 +65,7 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 		throwErrorIfDone();
 		lastId = id;
 		long endOfRecord = currentOffset -1;
-		index.put(id, Range.buildRange(currentStartOffset, endOfRecord));
+		index.put(id, Range.create(currentStartOffset, endOfRecord));
 		currentStartOffset = endOfRecord+1;
 		return true;
 	}

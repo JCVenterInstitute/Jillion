@@ -55,12 +55,12 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
 
     @Override
     public long getLength() {
-        return range.size();
+        return range.getLength();
     }
 
     @Override
-    public long getStart() {
-        return range.getStart();
+    public long getBegin() {
+        return range.getBegin();
     }
     @Override
     public long getEnd() {
@@ -75,7 +75,7 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("coverage region : ");
-        builder.append(Range.buildRange(getStart(), getEnd()));
+        builder.append(Range.create(getBegin(), getEnd()));
         builder.append(" coverage = ");
         builder.append(getCoverage());
         return builder.toString();
@@ -100,8 +100,8 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
         DefaultCoverageRegion other = (DefaultCoverageRegion) obj;
         return CommonUtil.similarTo(new ArrayList<T>(elements),
                 new ArrayList<T>(other.elements)) &&
-                CommonUtil.similarTo(range.size(), other.getLength()) 
-                && CommonUtil.similarTo(range.getStart(), other.getStart());
+                CommonUtil.similarTo(range.getLength(), other.getLength()) 
+                && CommonUtil.similarTo(range.getBegin(), other.getBegin());
     }
     @Override
     public CoverageRegion<T> shiftLeft(int units) {
@@ -158,7 +158,7 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
         public Builder end(long end){
             if(!canSetEndTo(end)){
                 for(Placed element : elements){
-                    System.out.println(element.getStart() +" , "+ element.getEnd());
+                    System.out.println(element.getBegin() +" , "+ element.getEnd());
                 }
                 throw new IllegalArgumentException("end must be >= than "+ (start + 1) + " but was "+ end);
             }
@@ -185,7 +185,7 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
             if(!endIsSet){
                 throw new IllegalStateException("end must be set");
             }
-            return new DefaultCoverageRegion(Range.buildRange(start, end), elements);
+            return new DefaultCoverageRegion(Range.create(start, end), elements);
         }
         /**
          * 

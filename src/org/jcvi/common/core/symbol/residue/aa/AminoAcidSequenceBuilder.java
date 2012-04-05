@@ -95,7 +95,7 @@ public class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAci
 				numberOfGaps --;
 			}
 		}
-		builder.delete((int)range.getStart(), (int)range.getEnd()+1);
+		builder.delete((int)range.getBegin(), (int)range.getEnd()+1);
 		return this;
 	}
 
@@ -163,7 +163,7 @@ public class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAci
 
 	@Override
 	public AminoAcidSequence build(Range range) {
-		return build(builder.substring((int)range.getStart(), (int)range.getEnd()+1));
+		return build(builder.substring((int)range.getBegin(), (int)range.getEnd()+1));
 	}
 
 	private AminoAcidSequence build(String seqToBuild){
@@ -175,13 +175,13 @@ public class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAci
 	}
 	@Override
 	public List<AminoAcid> asList(Range range) {
-		return AminoAcids.parse(builder.substring((int)range.getStart(), (int)range.getEnd()+1));
+		return AminoAcids.parse(builder.substring((int)range.getBegin(), (int)range.getEnd()+1));
 	}
 
 	@Override
 	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> subSequence(
 			Range range) {
-		return new AminoAcidSequenceBuilder(builder.subSequence((int)range.getStart(), (int)range.getEnd()+1));
+		return new AminoAcidSequenceBuilder(builder.subSequence((int)range.getBegin(), (int)range.getEnd()+1));
 	}
 
 	@Override

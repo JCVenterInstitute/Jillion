@@ -32,7 +32,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRangeIterator {
 
-    Range range = Range.buildRange(1, 10);
+    Range range = Range.create(1, 10);
     Iterator<Long> sut;
     @Before
     public void setup(){
@@ -40,7 +40,7 @@ public class TestRangeIterator {
     }
     @Test
     public void iterate(){
-        for(long i= range.getStart(); i<=range.getEnd(); i++){
+        for(long i= range.getBegin(); i<=range.getEnd(); i++){
             assertTrue(sut.hasNext());
             assertEquals(Long.valueOf(i), sut.next());
         }

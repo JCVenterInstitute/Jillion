@@ -115,7 +115,7 @@ public final class DefaultAceTagsFromAceFile {
             boolean isTransient) {
         super.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
         consensusTagBuilder = new DefaultConsensusAceTag.Builder(id, 
-                type, creator, creationDate, Range.buildRange(gappedStart, gappedEnd), isTransient);
+                type, creator, creationDate, Range.create(gappedStart, gappedEnd), isTransient);
 
     }
 
@@ -158,7 +158,7 @@ public final class DefaultAceTagsFromAceFile {
             boolean isTransient) {
         super.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
         aceTagsBuilder.addReadTag(new DefaultReadAceTag(id, type, creator, creationDate, 
-                Range.buildRange(gappedStart,gappedEnd), isTransient));
+                Range.create(gappedStart,gappedEnd), isTransient));
 
     }
 

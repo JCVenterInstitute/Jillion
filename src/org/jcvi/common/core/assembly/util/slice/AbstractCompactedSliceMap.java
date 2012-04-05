@@ -36,7 +36,7 @@ public abstract class AbstractCompactedSliceMap implements SliceMap{
         int size = (int)coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()+1;
         CompactedSlice[] slices = new CompactedSlice[size];
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
-            for(int i=(int)region.getStart(); i<=region.getEnd(); i++ ){
+            for(int i=(int)region.getBegin(); i<=region.getEnd(); i++ ){
                 slices[i] =createSlice(region, i);                
             }
         }

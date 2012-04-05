@@ -88,7 +88,7 @@ public final class TrimFileUtil {
                     Matcher matcher = TRIM_PATTERN.matcher(line);
                     if(matcher.matches()){
                         String id = matcher.group(1);
-                        Range validRange = Range.buildRange(CoordinateSystem.RESIDUE_BASED, 
+                        Range validRange = Range.create(CoordinateSystem.RESIDUE_BASED, 
                                     Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)));
                         keepParsing =visitor.visitTrim(id, validRange);
                     }
@@ -161,7 +161,7 @@ public final class TrimFileUtil {
             //force residue based
             Range trimRange = datastore.get(id);
             out.write(String.format("%s\t%d\t%d%n",id,
-            		trimRange.getStart(CoordinateSystem.RESIDUE_BASED), 
+            		trimRange.getBegin(CoordinateSystem.RESIDUE_BASED), 
             		trimRange.getEnd(CoordinateSystem.RESIDUE_BASED)).getBytes(IOUtil.UTF_8));
         }
     }

@@ -82,7 +82,7 @@ public class AceFileWriter {
                 consensusTag.getId(),
                 consensusTag.getType(),
                 consensusTag.getCreator(),
-                consensusTag.getStart(),
+                consensusTag.getBegin(),
                 consensusTag.getEnd(),
                 AceFileUtil.TAG_DATE_TIME_FORMATTER.print(consensusTag.getCreationDate().getTime()),
                 consensusTag.isTransient()?" NoTrans":"",
@@ -94,7 +94,7 @@ public class AceFileWriter {
                         readTag.getId(),
                         readTag.getType(),
                         readTag.getCreator(),
-                        readTag.getStart(),
+                        readTag.getBegin(),
                         readTag.getEnd(),
                         AceFileUtil.TAG_DATE_TIME_FORMATTER.print(readTag.getCreationDate().getTime())), out);
         

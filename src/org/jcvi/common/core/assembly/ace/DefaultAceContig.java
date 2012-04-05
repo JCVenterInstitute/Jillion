@@ -179,7 +179,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         public Builder addRead(AcePlacedRead acePlacedRead) {
          return addRead(acePlacedRead.getId(),
         		 acePlacedRead.getNucleotideSequence(),
-        		 (int)acePlacedRead.getStart(),
+        		 (int)acePlacedRead.getBegin(),
         		 acePlacedRead.getDirection(),
         		 acePlacedRead.getValidRange(),
         		 acePlacedRead.getPhdInfo(),
@@ -299,9 +299,9 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
             contigRight = Math.min(contigRight,(int)mutableConsensus.getLength()-1);
             //here only include the gapped valid range consensus bases
             //throw away the rest            
-            NucleotideSequence validConsensus = mutableConsensus.build(Range.buildRange(contigLeft, contigRight));
+            NucleotideSequence validConsensus = mutableConsensus.build(Range.create(contigLeft, contigRight));
             for(AcePlacedReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
-                int newOffset = (int)aceReadBuilder.getStart() - contigLeft;
+                int newOffset = (int)aceReadBuilder.getBegin() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);
                 placedReads.add(aceReadBuilder.build());                
             } 

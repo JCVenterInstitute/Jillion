@@ -71,16 +71,16 @@ public class TestAceContigTrimmer {
     @Test
     public void trim1xFromEnds() throws TrimmerException{
        AceContig originalContig = new TestAceBuilder("id","ACGTACGTACGT")
-                                   .addRead("read1", "ACGTACGT", 0, Direction.FORWARD, Range.buildRangeOfLength(20,8))
-                                   .addRead("read2",     "ACGTACGT", 4, Direction.FORWARD, Range.buildRangeOfLength(20,8))
-                                   .addRead("read3",   "GTACGTAC", 2, Direction.FORWARD, Range.buildRangeOfLength(20,8))
+                                   .addRead("read1", "ACGTACGT", 0, Direction.FORWARD, Range.createOfLength(20,8))
+                                   .addRead("read2",     "ACGTACGT", 4, Direction.FORWARD, Range.createOfLength(20,8))
+                                   .addRead("read3",   "GTACGTAC", 2, Direction.FORWARD, Range.createOfLength(20,8))
                                    
                                    .build();
        
        AceContig expectedContig = new TestAceBuilder("id_3_10","GTACGTAC")
-                                   .addRead("read1", "GTACGT", 0, Direction.FORWARD, Range.buildRangeOfLength(22,6))
-                                   .addRead("read2",   "ACGTAC", 2, Direction.FORWARD, Range.buildRangeOfLength(20,6))
-                                   .addRead("read3", "GTACGTAC", 0, Direction.FORWARD, Range.buildRangeOfLength(20,8))
+                                   .addRead("read1", "GTACGT", 0, Direction.FORWARD, Range.createOfLength(22,6))
+                                   .addRead("read2",   "ACGTAC", 2, Direction.FORWARD, Range.createOfLength(20,6))
+                                   .addRead("read3", "GTACGTAC", 0, Direction.FORWARD, Range.createOfLength(20,8))
                                    
                                    .build();
        ContigTrimmerResult<AcePlacedRead, AceContig> trimContigResults = sut.trimContig(originalContig);
@@ -97,16 +97,16 @@ public class TestAceContigTrimmer {
     @Test
     public void trim1xFromEndsWithReverseReads() throws TrimmerException{
        AceContig originalContig = new TestAceBuilder("id","ACGTACGTACGT")
-                                   .addRead("read1", "ACGTACGT", 0, Direction.REVERSE, Range.buildRangeOfLength(20,8))
-                                   .addRead("read2", "ACGTACGT", 4, Direction.REVERSE, Range.buildRangeOfLength(20,8))
-                                   .addRead("read3", "GTACGTAC", 2, Direction.REVERSE, Range.buildRangeOfLength(20,8))
+                                   .addRead("read1", "ACGTACGT", 0, Direction.REVERSE, Range.createOfLength(20,8))
+                                   .addRead("read2", "ACGTACGT", 4, Direction.REVERSE, Range.createOfLength(20,8))
+                                   .addRead("read3", "GTACGTAC", 2, Direction.REVERSE, Range.createOfLength(20,8))
                                    
                                    .build();
        
        AceContig expectedContig = new TestAceBuilder("id_3_10","GTACGTAC")
-                                   .addRead("read1", "GTACGT", 0, Direction.REVERSE, Range.buildRangeOfLength(20,6))
-                                   .addRead("read2", "ACGTAC", 2, Direction.REVERSE, Range.buildRangeOfLength(22,6))
-                                   .addRead("read3", "GTACGTAC", 0, Direction.REVERSE, Range.buildRangeOfLength(20,8))
+                                   .addRead("read1", "GTACGT", 0, Direction.REVERSE, Range.createOfLength(20,6))
+                                   .addRead("read2", "ACGTAC", 2, Direction.REVERSE, Range.createOfLength(22,6))
+                                   .addRead("read3", "GTACGTAC", 0, Direction.REVERSE, Range.createOfLength(20,8))
                                    
                                    .build();
        ContigTrimmerResult<AcePlacedRead, AceContig> trimContigResults = sut.trimContig(originalContig);
@@ -124,16 +124,16 @@ public class TestAceContigTrimmer {
     @Test
     public void trim1xFromEndsWithGaps() throws TrimmerException{
        AceContig originalContig = new TestAceBuilder("id","A-CGT-ACGTACG-T")
-                                   .addRead("read1", "A-CGT-ACGT", 0, Direction.FORWARD, Range.buildRangeOfLength(20,8))
-                                   .addRead("read2", "ACGTACG-T", 6, Direction.FORWARD, Range.buildRangeOfLength(20,8))
-                                   .addRead("read3", "GT-ACGTAC", 3, Direction.FORWARD, Range.buildRangeOfLength(20,8))
+                                   .addRead("read1", "A-CGT-ACGT", 0, Direction.FORWARD, Range.createOfLength(20,8))
+                                   .addRead("read2", "ACGTACG-T", 6, Direction.FORWARD, Range.createOfLength(20,8))
+                                   .addRead("read3", "GT-ACGTAC", 3, Direction.FORWARD, Range.createOfLength(20,8))
                                    
                                    .build();
        
        AceContig expectedContig = new TestAceBuilder("id_3_10","GT-ACGTAC")
-                                   .addRead("read1", "GT-ACGT", 0, Direction.FORWARD, Range.buildRangeOfLength(22,6))
-                                   .addRead("read2", "ACGTAC", 3, Direction.FORWARD, Range.buildRangeOfLength(20,6))
-                                   .addRead("read3", "GT-ACGTAC", 0, Direction.FORWARD, Range.buildRangeOfLength(20,8))
+                                   .addRead("read1", "GT-ACGT", 0, Direction.FORWARD, Range.createOfLength(22,6))
+                                   .addRead("read2", "ACGTAC", 3, Direction.FORWARD, Range.createOfLength(20,6))
+                                   .addRead("read3", "GT-ACGTAC", 0, Direction.FORWARD, Range.createOfLength(20,8))
                                    
                                    .build();
        ContigTrimmerResult<AcePlacedRead, AceContig> trimContigResults = sut.trimContig(originalContig);
@@ -150,16 +150,16 @@ public class TestAceContigTrimmer {
     @Test
     public void trim1xFromEndsWithGapsReverse() throws TrimmerException{
        AceContig originalContig = new TestAceBuilder("id","A-CGT-ACGTACG-T")
-                                   .addRead("read1", "A-CGT-ACGT", 0, Direction.REVERSE, Range.buildRangeOfLength(20,8))
-                                   .addRead("read2", "ACGTACG-T", 6, Direction.REVERSE, Range.buildRangeOfLength(20,8))
-                                   .addRead("read3", "GT-ACGTAC", 3, Direction.REVERSE, Range.buildRangeOfLength(20,8))
+                                   .addRead("read1", "A-CGT-ACGT", 0, Direction.REVERSE, Range.createOfLength(20,8))
+                                   .addRead("read2", "ACGTACG-T", 6, Direction.REVERSE, Range.createOfLength(20,8))
+                                   .addRead("read3", "GT-ACGTAC", 3, Direction.REVERSE, Range.createOfLength(20,8))
                                    
                                    .build();
        
        AceContig expectedContig = new TestAceBuilder("id_3_10","GT-ACGTAC")
-                                   .addRead("read1", "GT-ACGT", 0, Direction.REVERSE, Range.buildRangeOfLength(20,6))
-                                   .addRead("read2", "ACGTAC", 3, Direction.REVERSE, Range.buildRangeOfLength(22,6))
-                                   .addRead("read3", "GT-ACGTAC", 0, Direction.REVERSE, Range.buildRangeOfLength(20,8))
+                                   .addRead("read1", "GT-ACGT", 0, Direction.REVERSE, Range.createOfLength(20,6))
+                                   .addRead("read2", "ACGTAC", 3, Direction.REVERSE, Range.createOfLength(22,6))
+                                   .addRead("read3", "GT-ACGTAC", 0, Direction.REVERSE, Range.createOfLength(20,8))
                                    
                                    .build();
        ContigTrimmerResult<AcePlacedRead, AceContig> trimContigResults = sut.trimContig(originalContig);

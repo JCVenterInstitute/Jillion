@@ -340,7 +340,7 @@ public final class Codon
         return getCodonByOffset(triplet,0);
     }
     public static Codon getCodonFor(NucleotideSequence triplet){
-        return getCodonByOffset(triplet.asList(Range.buildRangeOfLength(0, 3)), 0);
+        return getCodonByOffset(triplet.asList(Range.createOfLength(0, 3)), 0);
     }
     
     public static Codon getCodonByOffset(String basecalls, int offset){
@@ -356,7 +356,7 @@ public final class Codon
         if(basecalls.getLength()<offset+3){
             throw new IllegalArgumentException("must have at least 3 nucleotides after given offset "+ (basecalls.getLength()-(offset+3)));
         }
-        return CODON_MAP.get(basecalls.asList(Range.buildRangeOfLength(offset, 3)));
+        return CODON_MAP.get(basecalls.asList(Range.createOfLength(offset, 3)));
     }
     public static Codon getCodonByOffset(List<Nucleotide> bases, int offset){
         if(offset<0){
