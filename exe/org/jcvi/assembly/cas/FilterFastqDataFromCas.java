@@ -49,7 +49,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 
 /**
@@ -176,9 +176,9 @@ public class FilterFastqDataFromCas {
         try {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             File casFile = new File(commandLine.getOptionValue("cas"));
-            FastQQualityCodec fastqQualityCodec=  commandLine.hasOption("useIllumina")?  
-                    FastQQualityCodec.ILLUMINA
-                 : FastQQualityCodec.SANGER;
+            FastqQualityCodec fastqQualityCodec=  commandLine.hasOption("useIllumina")?  
+                    FastqQualityCodec.ILLUMINA
+                 : FastqQualityCodec.SANGER;
             int maxSolexaCoverageDepth = Integer.parseInt(commandLine.getOptionValue("d"));
             File outputFile = new File(commandLine.getOptionValue("o"));
             //create dirs if needed

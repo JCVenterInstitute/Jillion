@@ -26,14 +26,14 @@ package org.jcvi.common.core.seq.fastx.fastq;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
-public class DefaultFastQRecord implements FastQRecord {
+public class DefaultFastqRecord implements FastqRecord {
 
     private final String id;
     private final String comments;
     private final NucleotideSequence nucleotides;
     private final QualitySequence qualities;
     
-    public DefaultFastQRecord(String id, NucleotideSequence nucleotides,
+    public DefaultFastqRecord(String id, NucleotideSequence nucleotides,
             QualitySequence qualities){
         this(id, nucleotides, qualities,null);
     }
@@ -43,7 +43,7 @@ public class DefaultFastQRecord implements FastQRecord {
      * @param qualities
      * @param comments
      */
-    public DefaultFastQRecord(String id, NucleotideSequence nucleotides,
+    public DefaultFastqRecord(String id, NucleotideSequence nucleotides,
             QualitySequence qualities, String comments) {
         this.id = id;
         this.nucleotides = nucleotides;
@@ -100,10 +100,10 @@ public class DefaultFastQRecord implements FastQRecord {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof FastQRecord)) {
+        if (!(obj instanceof FastqRecord)) {
             return false;
         }
-        FastQRecord other = (FastQRecord) obj;
+        FastqRecord other = (FastqRecord) obj;
         if (comments == null) {
             if (other.getComment() != null) {
                 return false;

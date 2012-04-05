@@ -32,14 +32,14 @@ import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
-public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends AbstractFastQFileVisitor implements FastQDataStore<T>{
+public abstract class AbstractFastqFileDataStore extends AbstractFastqFileVisitor implements FastqDataStore{
 
     
     
     private boolean isClosed =false;
     private boolean initialized=false;
 
-    public AbstractFastQFileDataStore(FastQQualityCodec qualityCodec){
+    public AbstractFastqFileDataStore(FastqQualityCodec qualityCodec){
         super(qualityCodec);
     }
     protected void checkNotYetInitialized(){
@@ -82,13 +82,13 @@ public abstract class AbstractFastQFileDataStore<T extends FastQRecord> extends 
         super.visitFile();
     }
     @Override
-    public CloseableIterator<T> iterator() {
+    public CloseableIterator<FastqRecord> iterator() {
         try {
             throwExceptionIfClosed();
         } catch (DataStoreException e) {
             throw new IllegalStateException("could not create iterator", e);
         }
-        return new DataStoreIterator<T>(this);
+        return new DataStoreIterator<FastqRecord>(this);
     }
 
     @Override

@@ -47,7 +47,7 @@ import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.IOUtil.Endian;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
@@ -240,7 +240,7 @@ public final class CasUtil {
     
     public static final class CasInfoBuilder implements Builder<CasInfo>{
         private final File casFile;
-        private FastQQualityCodec fastqQualityCodec = FastQQualityCodec.SANGER;
+        private FastqQualityCodec fastqQualityCodec = FastqQualityCodec.SANGER;
         private ExternalTrimInfo externalTrimInfo = ExternalTrimInfo.createEmptyInfo();
         private boolean hasEdits=false;
         private File chromatDir = null;
@@ -253,7 +253,7 @@ public final class CasUtil {
             this.casFile = casFile;
         }
         
-        public CasInfoBuilder fastQQualityCodec(FastQQualityCodec fastqQualityCodec){
+        public CasInfoBuilder fastQQualityCodec(FastqQualityCodec fastqQualityCodec){
             if(fastqQualityCodec ==null){
                 throw new NullPointerException("fastq quality codec can not be null");
             }
@@ -298,7 +298,7 @@ public final class CasUtil {
         private final CasTrimMap casTrimMap;
         private final CasIdLookup referenceIdLookup;
         
-        private CasInfoImpl(File casFile, FastQQualityCodec fastqQualityCodec, ExternalTrimInfo externalTrimInfo,
+        private CasInfoImpl(File casFile, FastqQualityCodec fastqQualityCodec, ExternalTrimInfo externalTrimInfo,
                 File chromatDir, boolean hasEdits) throws IOException{
             final File casWorkingDirectory = casFile.getParentFile();
             final AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup(casWorkingDirectory);

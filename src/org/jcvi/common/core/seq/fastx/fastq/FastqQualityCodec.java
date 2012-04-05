@@ -32,16 +32,16 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 /**
- * {@code FastQQualityCodec} is a can encode and decode
+ * {@code FastqQualityCodec} is a can encode and decode
  * The different ways a FASTQ file can be encode
  * quality data.
  * @author dkatzel
  *
  */
-public enum FastQQualityCodec {
+public enum FastqQualityCodec {
 	/**
 	 * {@code ILLUMINA} supports Illumina 1.3+
-	 * FastQ encoded qualities.
+	 * Fastq encoded qualities.
 	 */
 	ILLUMINA{
 		 @Override
@@ -69,9 +69,9 @@ public enum FastQQualityCodec {
 		    }
 	},
 	/**
-	 * {@code SOLEXA} is a FastQQualityCodec
+	 * {@code SOLEXA} is a {@link FastqQualityCodec}
 	 * that supports qualities not only encoded in
-	 * FASTQ solexa/Illumina format,
+	 * FASTq solexa/Illumina format,
 	 * but <strong>also</strong> the quality scores are
 	 * in Solexa scale and not the Phred scale.
 	 */

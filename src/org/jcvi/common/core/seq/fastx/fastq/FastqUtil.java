@@ -24,15 +24,15 @@ import java.util.regex.Pattern;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
 
 /**
- * {@code FastQUtil} is a utility class for working with 
+ * {@code FastqUtil} is a utility class for working with 
  * FASTQ data.
  * @author dkatzel
  *
  *
  */
-public final class FastQUtil {
+public final class FastqUtil {
 
-    private FastQUtil(){}
+    private FastqUtil(){}
     /**
      * This is the {@link Pattern} to parse
      * the sequence record defline of a FASTQ record.
@@ -51,20 +51,20 @@ public final class FastQUtil {
     public static final Pattern QUAL_DEFLINE_PATTERN = Pattern.compile("^\\+(.+$)?");
    
     /**
-     * Encode the given {@link FastQRecord} into FastQ format using the given
-     * {@link FastQQualityCodec}.  This is the same as 
-     * {@link #encode(FastQRecord, FastQQualityCodec, boolean) encode(fastQRecord,qualityCodec,false)}
+     * Encode the given {@link FastqRecord} into FastQ format using the given
+     * {@link FastqQualityCodec}.  This is the same as 
+     * {@link #encode(FastqRecord, FastqQualityCodec, boolean) encode(fastQRecord,qualityCodec,false)}
      * @return a multiline string which is the fastq encoded version of the
      * given FastQRecord.
      */
-    public static String encode(FastQRecord fastQRecord, FastQQualityCodec qualityCodec){
+    public static String encode(FastqRecord fastQRecord, FastqQualityCodec qualityCodec){
        return encode(fastQRecord,qualityCodec,false);
     }
     /**
-     * Encode the given {@link FastQRecord} into FastQ format using the given
-     * {@link FastQQualityCodec}.
+     * Encode the given {@link FastqRecord} into FastQ format using the given
+     * {@link FastqQualityCodec}.
      * @param fastQRecord the record to encode.
-     * @param qualityCodec the {@link FastQQualityCodec} to use to encode
+     * @param qualityCodec the {@link FastqQualityCodec} to use to encode
      * the qualities.
      * @param should the read id be written (again) on the qualities line,
      * many fastq formats no longer duplicate the id on the quality line to
@@ -72,7 +72,7 @@ public final class FastQUtil {
      * @return a multiline string which is the fastq encoded version of the
      * given FastQRecord.
      */
-    public static String encode(FastQRecord fastQRecord, FastQQualityCodec qualityCodec, boolean writeIdOnQualityLine){
+    public static String encode(FastqRecord fastQRecord, FastqQualityCodec qualityCodec, boolean writeIdOnQualityLine){
         String id = fastQRecord.getId();
         boolean hasComment = fastQRecord.getComment() !=null;
         

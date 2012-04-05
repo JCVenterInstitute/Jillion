@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.clc.cas;
 
 import java.io.File;
 
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 
@@ -34,14 +34,14 @@ public final class TraceDetails {
     private final boolean hasFastaEdits;
     private final File chromatDir;
     private final DateTime phdDate;
-    private final FastQQualityCodec fastqQualityCodec;
+    private final FastqQualityCodec fastqQualityCodec;
     
     public static class Builder implements org.jcvi.common.core.util.Builder<TraceDetails>{
         private boolean hasFastaEdits=false;
         private File chromatDir;
         private DateTime phdDate =null;
-        private final FastQQualityCodec fastqQualityCodec;
-        public Builder(FastQQualityCodec fastqQualityCodec){
+        private final FastqQualityCodec fastqQualityCodec;
+        public Builder(FastqQualityCodec fastqQualityCodec){
             if(fastqQualityCodec==null){
                 throw new NullPointerException("can not be null");
             }
@@ -71,7 +71,7 @@ public final class TraceDetails {
         }
     }
     private TraceDetails(File chromatDir, DateTime phdDate,
-            FastQQualityCodec fastqQualityCodec, boolean hasFastaEdits) {
+            FastqQualityCodec fastqQualityCodec, boolean hasFastaEdits) {
         this.chromatDir = chromatDir;
         this.phdDate = phdDate;
         this.fastqQualityCodec = fastqQualityCodec;
@@ -98,7 +98,7 @@ public final class TraceDetails {
     /**
      * @return the fastqQualityCodec
      */
-    public FastQQualityCodec getFastqQualityCodec() {
+    public FastqQualityCodec getFastqQualityCodec() {
         return fastqQualityCodec;
     }
     

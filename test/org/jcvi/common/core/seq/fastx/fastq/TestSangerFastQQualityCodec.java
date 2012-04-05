@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,7 +51,7 @@ public class TestSangerFastQQualityCodec {
     
     private PhredQuality quality;
     private char encodedQuality;
-    private FastQQualityCodec sut = FastQQualityCodec.SANGER;
+    private FastqQualityCodec sut = FastqQualityCodec.SANGER;
     
     public TestSangerFastQQualityCodec(PhredQuality quality,char encodedQuality ){
         this.quality = quality;

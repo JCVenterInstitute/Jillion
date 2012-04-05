@@ -23,58 +23,22 @@
  */
 package org.jcvi.common.core.seq.fastx.fastq;
 
-import java.io.IOException;
-
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 
-public abstract class AbstractFastQDataStoreAdapter<T> implements DataStore<T>{
-    private final DataStore<FastQRecord> dataStore;
-    
-    
+public class FastqQualitiesDataStoreAdapter extends AbstractFastqDataStoreAdapter<QualitySequence> implements QualityDataStore{
     /**
      * @param dataStore
      */
-    public AbstractFastQDataStoreAdapter(DataStore<FastQRecord> dataStore) {
-        this.dataStore = dataStore;
+    public FastqQualitiesDataStoreAdapter(DataStore<FastqRecord> dataStore) {
+        super(dataStore);
     }
 
     @Override
-    public boolean contains(String id) throws DataStoreException {
-        return dataStore.contains(id);
+    public QualitySequence get(String id) throws DataStoreException {
+        return getDataStore().get(id).getQualities();
     }
-
-    
-
-    public DataStore<FastQRecord> getDataStore() {
-        return dataStore;
-    }
-
-    @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return dataStore.getIds();
-    }
-
-    @Override
-    public int size() throws DataStoreException {
-        return dataStore.size();
-    }
-
-    @Override
-    public void close() throws IOException {
-        dataStore.close();
-        
-    }
-
-    @Override
-    public boolean isClosed() throws DataStoreException {
-        return dataStore.isClosed();
-    }
-
-    @Override
-    public CloseableIterator<T> iterator() {
-        return new DataStoreIterator<T>(this);
-    }
+   
 }

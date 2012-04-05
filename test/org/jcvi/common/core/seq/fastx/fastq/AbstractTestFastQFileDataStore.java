@@ -34,9 +34,9 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
+import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.CommonUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
@@ -45,25 +45,25 @@ import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractTestFastQFileDataStore {
-    static final FastQQualityCodec QUALITY_CODEC = FastQQualityCodec.ILLUMINA;
-    DataStore<FastQRecord> sut;
+    static final FastqQualityCodec QUALITY_CODEC = FastqQualityCodec.ILLUMINA;
+    DataStore<FastqRecord> sut;
     String file = "files/example.fastq";
     ResourceFileServer resources = new ResourceFileServer(
             TestDefaultFastQFileDataStore.class);
-    DefaultFastQRecord solexa_1489 = new DefaultFastQRecord(
+    DefaultFastqRecord solexa_1489 = new DefaultFastqRecord(
             "SOLEXA1:4:1:12:1489#0/1",
             new NucleotideSequenceBuilder("TATTTAAAATCTAATANGTCTTGATTTGAAATTGAAAGAGCAAAAATCTGATTGATTTTATTGAAGAATAATTTGATTTAATATATTCTTAAGTCTGTTT").build(),
             QUALITY_CODEC
                     .decode("abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S"));
 
-    DefaultFastQRecord solexa_1692 = new DefaultFastQRecord(
+    DefaultFastqRecord solexa_1692 = new DefaultFastqRecord(
             "SOLEXA1:4:1:12:1692#0/1",
             new NucleotideSequenceBuilder("ACGCCTGCGTTATGGTNTAACAGGCATTCCGCCCCAGACAAACTCCCCCCCTAACCATGTCTTTCGCAAAAATCAGTCAATAAATGACCTTAACTTTAGA").build(),
             QUALITY_CODEC
                     .decode("`a\\a`^\\a^ZZa[]^WB_aaaa^^a`]^a`^`aaa`]``aXaaS^a^YaZaTW]a_aPY\\_UVY[P_ZHQY_NLZUR[^UZ\\TZWT_[_VWMWaRFW]BB"),
             "example comment");
 
-    protected abstract DataStore<FastQRecord> createFastQFileDataStore(File file,FastQQualityCodec qualityCodec) throws IOException;
+    protected abstract DataStore<FastqRecord> createFastQFileDataStore(File file,FastqQualityCodec qualityCodec) throws IOException;
     @Before
     public void setup() throws IOException{
         sut = createFastQFileDataStore(resources.getFile(file), QUALITY_CODEC);
@@ -127,7 +127,7 @@ public abstract class AbstractTestFastQFileDataStore {
     }
     @Test
     public void iterator(){
-        Iterator<FastQRecord> iter = sut.iterator();
+        Iterator<FastqRecord> iter = sut.iterator();
         assertTrue(iter.hasNext());
         assertFastQRecordsEqual(solexa_1489, iter.next());
         assertTrue(iter.hasNext());
@@ -142,7 +142,7 @@ public abstract class AbstractTestFastQFileDataStore {
     
     @Test
     public void closingIteratorEarlyShouldStopIterating() throws IOException{
-        CloseableIterator<FastQRecord> iter = sut.iterator();
+        CloseableIterator<FastqRecord> iter = sut.iterator();
         assertTrue(iter.hasNext());
         assertFastQRecordsEqual(solexa_1489, iter.next());
         assertTrue(iter.hasNext());
@@ -155,8 +155,8 @@ public abstract class AbstractTestFastQFileDataStore {
         }
     }
 
-    private void assertFastQRecordsEqual(FastQRecord expected,
-            FastQRecord actual) {
+    private void assertFastQRecordsEqual(FastqRecord expected,
+            FastqRecord actual) {
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getNucleotides().asList(), actual
                 .getNucleotides().asList());

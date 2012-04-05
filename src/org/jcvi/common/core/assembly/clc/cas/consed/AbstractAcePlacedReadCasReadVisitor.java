@@ -29,7 +29,7 @@ import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 import org.jcvi.common.core.assembly.clc.cas.TraceDetails;
 import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideSequenceFastaIterator;
-import org.jcvi.common.core.seq.fastx.fastq.LargeFastQFileIterator;
+import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileIterator;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileIterator;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -54,7 +54,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     public CloseableIterator<PhdReadRecord> createIlluminaIterator(
             File illuminaFile, TraceDetails traceDetails) {
         return new FastqConsedPhdAdaptedIterator(                     
-                LargeFastQFileIterator.createNewIteratorFor(illuminaFile, traceDetails.getFastqQualityCodec()),
+                LargeFastqFileIterator.createNewIteratorFor(illuminaFile, traceDetails.getFastqQualityCodec()),
                 illuminaFile, 
                 traceDetails.getPhdDate());
     }

@@ -22,8 +22,8 @@ package org.jcvi.common.core.seq.fastx.fastq;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.IndexedFastaQFileDataStore;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.IndexedFastaqFileDataStore;
 
 /**
  * @author dkatzel
@@ -33,9 +33,9 @@ import org.jcvi.common.core.seq.fastx.fastq.IndexedFastaQFileDataStore;
 public class TestIndexedFastQFileDataStore extends AbstractTestFastQFileDataStore{
 
     @Override
-    protected IndexedFastaQFileDataStore createFastQFileDataStore(File file,
-            FastQQualityCodec qualityCodec) throws IOException {
-        return new IndexedFastaQFileDataStore(file, qualityCodec);
+    protected IndexedFastaqFileDataStore createFastQFileDataStore(File file,
+            FastqQualityCodec qualityCodec) throws IOException {
+        return new IndexedFastaqFileDataStore(file, qualityCodec);
     }
 
 }

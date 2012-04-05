@@ -43,10 +43,10 @@ import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.NullFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
-import org.jcvi.common.core.seq.fastx.fastq.AbstractFilteredFastQFileVisitor;
-import org.jcvi.common.core.seq.fastx.fastq.FastQFileParser;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
+import org.jcvi.common.core.seq.fastx.fastq.AbstractFilteredFastqFileVisitor;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileParser;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
 import org.jcvi.common.io.idReader.IdReaderException;
@@ -59,7 +59,7 @@ import org.jcvi.common.io.idReader.StringIdParser;
  *
  *
  */
-public class Fastq2Fasta extends AbstractFilteredFastQFileVisitor {
+public class Fastq2Fasta extends AbstractFilteredFastqFileVisitor {
     private final OutputStream seqOut;
     private final OutputStream qualOut;
     
@@ -67,7 +67,7 @@ public class Fastq2Fasta extends AbstractFilteredFastQFileVisitor {
      * @param filter
      * @param out
      */
-    public Fastq2Fasta(FastXFilter filter, FastQQualityCodec qualityCodec,OutputStream seqOut,OutputStream qualOut) {
+    public Fastq2Fasta(FastXFilter filter, FastqQualityCodec qualityCodec,OutputStream seqOut,OutputStream qualOut) {
        super(filter, qualityCodec);
        
         this.seqOut = seqOut;
@@ -81,7 +81,7 @@ public class Fastq2Fasta extends AbstractFilteredFastQFileVisitor {
      * {@inheritDoc}
      */
      @Override
-     protected EndOfBodyReturnCode visitFastQRecord(FastQRecord fastQ) {
+     protected EndOfBodyReturnCode visitFastQRecord(FastqRecord fastQ) {
          String id = fastQ.getId();
          if(qualOut!=null){
              try {
@@ -179,15 +179,15 @@ public class Fastq2Fasta extends AbstractFilteredFastQFileVisitor {
             }else{
                 filter = NullFastXFilter.INSTANCE;
             }
-            final FastQQualityCodec fastqQualityCodec;
+            final FastqQualityCodec fastqQualityCodec;
             if(commandLine.hasOption("sanger")){
-                fastqQualityCodec = FastQQualityCodec.SANGER;
+                fastqQualityCodec = FastqQualityCodec.SANGER;
             }else{
-                fastqQualityCodec = FastQQualityCodec.ILLUMINA;
+                fastqQualityCodec = FastqQualityCodec.ILLUMINA;
             }
             Fastq2Fasta fastq2Fasta = new Fastq2Fasta(filter, fastqQualityCodec, seqOut, qualOut);
             
-            FastQFileParser.parse(fastQFile, fastq2Fasta);
+            FastqFileParser.parse(fastQFile, fastq2Fasta);
             
             
         } catch (ParseException e) {

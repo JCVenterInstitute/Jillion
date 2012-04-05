@@ -35,7 +35,7 @@ import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -61,7 +61,7 @@ public class TestCas2Consed3 {
 	    public void parseCas() throws IOException, DataStoreException{
 	        File casFile = RESOURCES.getFile("files/flu.cas");
 	      Cas2Consed3 cas2consed3 = new Cas2Consed3(casFile, tempDir,prefix,true,false);
-	      cas2consed3.convert(TrimDataStoreUtil.EMPTY_DATASTORE,new UnTrimmedExtensionTrimMap(),FastQQualityCodec.ILLUMINA, false,false,false);
+	      cas2consed3.convert(TrimDataStoreUtil.EMPTY_DATASTORE,new UnTrimmedExtensionTrimMap(),FastqQualityCodec.ILLUMINA, false,false,false);
 	      
 	      File aceFile = tempDir.getFile("edit_dir/"+prefix+".ace.1");
 	      AceContigDataStore dataStore = DefaultAceFileDataStore.create(aceFile);

@@ -17,28 +17,26 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Dec 15, 2009
+ * Created on Oct 9, 2009
  *
  * @author dkatzel
  */
 package org.jcvi.common.core.seq.fastx.fastq;
 
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.seq.fastx.FastXRecord;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
-public class FastQQualitiesDataStoreAdapter extends AbstractFastQDataStoreAdapter<QualitySequence> implements QualityDataStore{
+public interface FastqRecord extends FastXRecord<Nucleotide,NucleotideSequence>{
+    
+    NucleotideSequence getNucleotides();
+    
+    QualitySequence getQualities();
     /**
-     * @param dataStore
+     * 
+    * Delegates to {@link #getNucleotides()}.
      */
-    public FastQQualitiesDataStoreAdapter(DataStore<FastQRecord> dataStore) {
-        super(dataStore);
-    }
-
     @Override
-    public QualitySequence get(String id) throws DataStoreException {
-        return getDataStore().get(id).getQualities();
-    }
-   
+    NucleotideSequence getSequence();
 }

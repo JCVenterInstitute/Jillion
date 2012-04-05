@@ -20,9 +20,9 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
-import org.jcvi.common.core.seq.fastx.fastq.LargeFastQFileDataStore;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
@@ -48,7 +48,7 @@ public class BarcodeDetector {
 		
 		
 		NucleotideSequenceFastaDataStore barcodes = DefaultNucleotideSequenceFastaFileDataStore.create(barcodeFasta);
-		CloseableIterator<FastQRecord> fastqIterator = new LargeFastQFileDataStore(fastq, FastQQualityCodec.SANGER)
+		CloseableIterator<FastqRecord> fastqIterator = new LargeFastqFileDataStore(fastq, FastqQualityCodec.SANGER)
 														.iterator();
 		Set<String> unmatched = new HashSet<String>();
 		Map<String, Set<String>> mappedReads = new TreeMap<String, Set<String>>();
@@ -58,7 +58,7 @@ public class BarcodeDetector {
 		try{
 		while(fastqIterator.hasNext()){
 			sequencesSeen++;
-			FastQRecord fastqRecord = fastqIterator.next();
+			FastqRecord fastqRecord = fastqIterator.next();
 			List<String> matchedBarcodes = new ArrayList<String>();
 			List<PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>> validAlignments=new ArrayList<PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>>();
 			CloseableIterator<NucleotideSequenceFastaRecord> barcodeIterator = barcodes.iterator();

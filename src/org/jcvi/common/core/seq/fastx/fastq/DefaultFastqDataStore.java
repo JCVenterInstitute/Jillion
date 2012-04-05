@@ -32,9 +32,9 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
-public final class DefaultFastQDataStore<T extends FastQRecord> implements FastQDataStore<T> {
+public final class DefaultFastqDataStore implements FastqDataStore {
 
-    private final Map<String, T> map;
+    private final Map<String, FastqRecord> map;
     private boolean closed = false;
     
     private void checkNotClosed() throws DataStoreException{
@@ -45,7 +45,7 @@ public final class DefaultFastQDataStore<T extends FastQRecord> implements FastQ
     /**
      * @param map
      */
-    private DefaultFastQDataStore(Map<String, T> map) {
+    private DefaultFastqDataStore(Map<String, FastqRecord> map) {
         this.map = map;
     }
 
@@ -56,7 +56,7 @@ public final class DefaultFastQDataStore<T extends FastQRecord> implements FastQ
     }
 
     @Override
-    public T get(String id) throws DataStoreException{
+    public FastqRecord get(String id) throws DataStoreException{
         checkNotClosed();
         return map.get(id);
     }
@@ -81,7 +81,7 @@ public final class DefaultFastQDataStore<T extends FastQRecord> implements FastQ
     }
 
     @Override
-    public CloseableIterator<T> iterator() {
+    public CloseableIterator<FastqRecord> iterator() {
         try {
             checkNotClosed();
         } catch (DataStoreException e) {
@@ -90,39 +90,39 @@ public final class DefaultFastQDataStore<T extends FastQRecord> implements FastQ
         return CloseableIteratorAdapter.adapt(map.values().iterator());
     }
     
-    public static class Builder<T extends FastQRecord> implements org.jcvi.common.core.util.Builder<DefaultFastQDataStore<T>>{
-        private final Map<String, T> map;
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultFastqDataStore>{
+        private final Map<String, FastqRecord> map;
         
         public Builder(){
-            map = new LinkedHashMap<String, T>();
+            map = new LinkedHashMap<String, FastqRecord>();
         }
         public Builder(int numberOfRecords){
-            map = new LinkedHashMap<String, T>(numberOfRecords);
+            map = new LinkedHashMap<String, FastqRecord>(numberOfRecords);
         }
-        public Builder<T> put(T fastQRecord){
+        public Builder put(FastqRecord fastQRecord){
             map.put(fastQRecord.getId(), fastQRecord);
             return this;
         }
-        public Builder<T> remove(T fastQRecord){
+        public Builder remove(FastqRecord fastQRecord){
             map.remove(fastQRecord.getId());
             return this;
         }
-        public Builder<T> putAll(Collection<T> fastQRecords){
-            for(T fastQRecord : fastQRecords){
+        public Builder putAll(Collection<FastqRecord> fastQRecords){
+            for(FastqRecord fastQRecord : fastQRecords){
                 put(fastQRecord);
             }           
             return this;
         }
         
-        public Builder<T> removeAll(Collection<T> fastQRecords){
-            for(T fastQRecord : fastQRecords){
+        public Builder removeAll(Collection<FastqRecord> fastQRecords){
+            for(FastqRecord fastQRecord : fastQRecords){
                 remove(fastQRecord);
             }           
             return this;
         }
         @Override
-        public DefaultFastQDataStore<T> build() {
-            return new DefaultFastQDataStore<T>(map);
+        public DefaultFastqDataStore build() {
+            return new DefaultFastqDataStore(map);
         }
         
     }

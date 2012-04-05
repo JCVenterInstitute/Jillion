@@ -73,7 +73,7 @@ import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
@@ -146,7 +146,7 @@ public class Cas2Consed3 {
         return chromatDir;
     }
 	public void convert(TrimDataStore trimDatastore,CasTrimMap trimToUntrimmedMap ,
-			FastQQualityCodec fastqQualityCodec, 
+			FastqQualityCodec fastqQualityCodec, 
 			final boolean useConic,
 			final boolean createPseduoMoleculeFasta,
 			final boolean createAgp) throws IOException{
@@ -478,9 +478,9 @@ public class Cas2Consed3 {
 	                trimToUntrimmedMap = EmptyCasTrimMap.getInstance();
 	            }
 	            
-	            FastQQualityCodec qualityCodec=  commandLine.hasOption("useIllumina")?  
-	                       FastQQualityCodec.ILLUMINA
-	                    : FastQQualityCodec.SANGER;
+	            FastqQualityCodec qualityCodec=  commandLine.hasOption("useIllumina")?  
+	                       FastqQualityCodec.ILLUMINA
+	                    : FastqQualityCodec.SANGER;
 	            
 	            if(!outputDir.contains("chromat_dir")){
 	                   outputDir.createNewDir("chromat_dir");

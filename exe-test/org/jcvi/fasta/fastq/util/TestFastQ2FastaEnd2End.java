@@ -31,10 +31,9 @@ import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFi
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQFileDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.FastQDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
+import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqFileDataStore;
+import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.common.io.idReader.IdReaderException;
 import org.junit.Before;
@@ -73,7 +72,7 @@ public class TestFastQ2FastaEnd2End {
      @Test
      public void ifNoFiltersThenIncludeAllIds() throws IOException, IdReaderException, DataStoreException{
          
-         FastQDataStore<FastQRecord> originalDataStore = new DefaultFastQFileDataStore(fastQFile, FastQQualityCodec.ILLUMINA);
+         FastqDataStore originalDataStore = new DefaultFastqFileDataStore(fastQFile, FastqQualityCodec.ILLUMINA);
          Fastq2Fasta.main(new String[]{
                  "-s", seqOutputFile.getAbsolutePath(),
                  "-q", qualOutputFile.getAbsolutePath(),
@@ -93,7 +92,7 @@ public class TestFastQ2FastaEnd2End {
      @Test
      public void supportSangerEncodedFastQWithDashSangerOption() throws IOException, IdReaderException, DataStoreException{
         File sangerFastQFile = RESOURCES.getFile("files/sanger.fastq");
-        FastQDataStore<FastQRecord> originalDataStore = new DefaultFastQFileDataStore(sangerFastQFile, FastQQualityCodec.SANGER);
+        FastqDataStore originalDataStore = new DefaultFastqFileDataStore(sangerFastQFile, FastqQualityCodec.SANGER);
         Fastq2Fasta.main(new String[]{
                 "-s", seqOutputFile.getAbsolutePath(),
                 "-q", qualOutputFile.getAbsolutePath(),
@@ -115,7 +114,7 @@ public class TestFastQ2FastaEnd2End {
      @Test
      public void includeOnlyIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
          
-         FastQDataStore<FastQRecord> originalDataStore = new DefaultFastQFileDataStore(fastQFile, FastQQualityCodec.ILLUMINA);
+         FastqDataStore originalDataStore = new DefaultFastqFileDataStore(fastQFile, FastqQualityCodec.ILLUMINA);
          Fastq2Fasta.main(new String[]{"-i",ids.getAbsolutePath(),
                  "-s", seqOutputFile.getAbsolutePath(),
                  "-q", qualOutputFile.getAbsolutePath(),
@@ -134,7 +133,7 @@ public class TestFastQ2FastaEnd2End {
      @Test
      public void excludeIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
          File fastQFile = RESOURCES.getFile("files/example.fastq");
-         FastQDataStore<FastQRecord> originalDataStore = new DefaultFastQFileDataStore(fastQFile, FastQQualityCodec.ILLUMINA);
+         FastqDataStore originalDataStore = new DefaultFastqFileDataStore(fastQFile, FastqQualityCodec.ILLUMINA);
          Fastq2Fasta.main(new String[]{"-e",ids.getAbsolutePath(),
                  "-s", seqOutputFile.getAbsolutePath(),
                  "-q", qualOutputFile.getAbsolutePath(),

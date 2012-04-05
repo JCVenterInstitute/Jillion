@@ -44,10 +44,10 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastQRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastQQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.FastQRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastQUtil;
+import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
@@ -123,7 +123,7 @@ public class Fasta2Fastq {
             }else{
                 filter = NullFastXFilter.INSTANCE;
             }
-            final FastQQualityCodec fastqQualityCodec = useSanger? FastQQualityCodec.SANGER: FastQQualityCodec.ILLUMINA;
+            final FastqQualityCodec fastqQualityCodec = useSanger? FastqQualityCodec.SANGER: FastqQualityCodec.ILLUMINA;
           
             File qualFile = new File(commandLine.getOptionValue("q"));
             
@@ -142,10 +142,10 @@ public class Fasta2Fastq {
                             if(qualities ==null){
                                 throw new IllegalStateException("no quality values for "+ id);
                             }
-                            FastQRecord fastq = new DefaultFastQRecord(id, 
+                            FastqRecord fastq = new DefaultFastqRecord(id, 
                                    new NucleotideSequenceBuilder(entireBody.replaceAll("\\s+", "")).build(), qualities,comment);
     
-                            writer.print(FastQUtil.encode(fastq, fastqQualityCodec));
+                            writer.print(FastqUtil.encode(fastq, fastqQualityCodec));
                         }
                     } catch (DataStoreException e) {
                         throw new IllegalStateException("error getting quality data for "+ id);
