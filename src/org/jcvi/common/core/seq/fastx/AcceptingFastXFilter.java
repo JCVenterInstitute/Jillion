@@ -21,21 +21,18 @@ package org.jcvi.common.core.seq.fastx;
 
 
 /**
- * {@code NullFastXFilter} is a Null Object implementation
+ * {@code AcceptingFastXFilter} is a Null Object implementation
  * of {@link FastXFilter} that accepts all ids.
  * @author dkatzel
  *
  *
  */
-public final class NullFastXFilter implements FastXFilter{
-    /**
+public enum AcceptingFastXFilter implements FastXFilter{
+	/**
      * Singleton instance of NullFastQFilter.
      */
-    public static final NullFastXFilter INSTANCE = new NullFastXFilter();
-    
-    private NullFastXFilter(){
-        
-    }
+	INSTANCE;
+
     /**
     * Accepts all ids.
     */

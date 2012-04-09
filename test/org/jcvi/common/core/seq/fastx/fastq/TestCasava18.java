@@ -44,7 +44,7 @@ public class TestCasava18 {
     @Test
     public void parseMateInfoCorrectly() throws FileNotFoundException, IOException{
         FastqFileVisitor visitor = createNiceMock(FastqFileVisitor.class);
-        expect(visitor.visitDefline("EAS139:136:FC706VJ:2:5:1000:12850", "1:Y:18:ATCACG"))
+        expect(visitor.visitDefline("EAS139:136:FC706VJ:2:5:1000:12850 1:Y:18:ATCACG",null))
             .andReturn(FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD);
         expect(visitor.visitEndOfBody()).andReturn(FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING);
         replay(visitor);

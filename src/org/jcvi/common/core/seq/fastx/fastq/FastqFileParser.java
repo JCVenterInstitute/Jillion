@@ -26,10 +26,10 @@ package org.jcvi.common.core.seq.fastx.fastq;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 import org.jcvi.common.core.io.IOUtil;
@@ -46,7 +46,8 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
  */
 public class FastqFileParser {
     
-    public static void parse(File fastQFile, FastqFileVisitor visitor ) throws FileNotFoundException{
+	private static final Pattern CASAVA_1_8_DEFLINE_PATTERN = Pattern.compile("^@(\\S+\\s+\\d:[N|Y]:\\d+:\\S+)\\s*$");
+    public static void parse(File fastQFile, FastqFileVisitor visitor ) throws IOException{
         InputStream in = new FileInputStream(fastQFile);
         try{
             parse(in,visitor);
@@ -54,17 +55,12 @@ public class FastqFileParser {
             IOUtil.closeAndIgnoreErrors(in);
         }
     }
-    public static void parse(InputStream in, FastqFileVisitor visitor ){
+    public static void parse(InputStream in, FastqFileVisitor visitor ) throws IOException{
     	if(in ==null){
     		throw new NullPointerException("input stream can not be null");
     	}
-    	TextLineParser parser;
-		try {
-			parser = new TextLineParser(new BufferedInputStream(in));
-		} catch (IOException e1) {
-			throw new IllegalStateException("error reading file",e1);
-			
-		}
+    	TextLineParser parser = new TextLineParser(new BufferedInputStream(in));
+		
         parse(visitor, parser);
     }
 	private static void parse(FastqFileVisitor visitor, TextLineParser parser) {
@@ -86,13 +82,8 @@ public class FastqFileParser {
         String qualLine = parser.nextLine();
         String qualities = parser.nextLine();
         visitor.visitLine(seqLine);
-        Matcher beginSeqMatcher =FastqUtil.SEQ_DEFLINE_PATTERN.matcher(seqLine);
-        if(!beginSeqMatcher.find()){
-            throw new IllegalStateException("invalid fastq file, could not parse seq id from "+ seqLine);
-        }
-        String id = beginSeqMatcher.group(1);
-        String optionalComment =beginSeqMatcher.group(3);
-        FastXFileVisitor.DeflineReturnCode deflineRet= visitor.visitDefline(id, optionalComment);
+        Defline defline = Defline.parse(seqLine);
+        FastXFileVisitor.DeflineReturnCode deflineRet= visitor.visitDefline(defline.getId(), defline.getComment());
         if(deflineRet ==null){
         	throw new IllegalStateException("defline return value can not be null");
         }
@@ -126,5 +117,35 @@ public class FastqFileParser {
 		visitor.visitLine(qualities);
 		String encodedQualities = qualities.endsWith("\n")?qualities.substring(0, qualities.length()-1) : qualities;
 		visitor.visitEncodedQualities(encodedQualities);
+	}
+	
+	private static class Defline{
+		private final String id,comment;
+
+		private Defline(String id, String comment) {
+			this.id = id;
+			this.comment = comment;
+		}
+		
+		public static Defline parse(String fastqDefline){
+			Matcher casava18Matcher = CASAVA_1_8_DEFLINE_PATTERN.matcher(fastqDefline);
+			if(casava18Matcher.matches()){
+				return new Defline(casava18Matcher.group(1),null);
+			}
+			Matcher beginSeqMatcher =FastqUtil.SEQ_DEFLINE_PATTERN.matcher(fastqDefline);
+	        if(!beginSeqMatcher.find()){
+	            throw new IllegalStateException("invalid fastq file, could not parse seq id from "+ fastqDefline);
+	        }
+	        return new Defline(beginSeqMatcher.group(1), beginSeqMatcher.group(3));
+		}
+		public String getId() {
+			return id;
+		}
+
+		public String getComment() {
+			return comment;
+		}
+
+		
 	}
 }

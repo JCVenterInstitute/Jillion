@@ -24,7 +24,13 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
 import org.jcvi.common.core.datastore.DataStore;
-
+/**
+ * {@code FastqDataStore} is a
+ * marker-interface for a {@link DataStore}
+ * of {@link FastqRecord}s.
+ * @author dkatzel
+ *
+ */
 public interface FastqDataStore extends DataStore<FastqRecord>{
 
 }

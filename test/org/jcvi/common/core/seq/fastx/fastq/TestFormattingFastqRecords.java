@@ -24,11 +24,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqFileDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.After;
 import org.junit.Before;
@@ -39,16 +38,15 @@ import static org.junit.Assert.*;
  *
  *
  */
-public class TestFastQUtil {
+public class TestFormattingFastqRecords {
     private static final String file = "files/example.fastq";
-    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestFastQUtil.class);
+    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestFormattingFastqRecords.class);
    
     FastqQualityCodec qualityCodec = FastqQualityCodec.ILLUMINA;
-    DefaultFastqFileDataStore expectedDataStore;
+    FastqDataStore expectedDataStore;
     @Before
     public void setup() throws FileNotFoundException, IOException{
-        expectedDataStore = new DefaultFastqFileDataStore(qualityCodec);
-        FastqFileParser.parse(RESOURCES.getFile(file), expectedDataStore);
+        expectedDataStore = DefaultFastqFileDataStore.create(RESOURCES.getFile(file),qualityCodec);
     }
     @After
     public void tearDown() throws IOException{
@@ -57,12 +55,14 @@ public class TestFastQUtil {
     @Test
     public void encodedDataCanBeReParsed() throws DataStoreException, IOException{
         FastqRecord fastq = expectedDataStore.get("SOLEXA1:4:1:12:1489#0/1");
-        String encodedFastQ = FastqUtil.encode(fastq, qualityCodec);
+        String encodedFastQ = fastq.toFormattedString(qualityCodec);
         ByteArrayInputStream in = new ByteArrayInputStream(encodedFastQ.getBytes());
-        
-        DefaultFastqFileDataStore actualDataStore = new DefaultFastqFileDataStore(qualityCodec);
-        FastqFileParser.parse(in, actualDataStore);
-        assertEquals(fastq, actualDataStore.get("SOLEXA1:4:1:12:1489#0/1"));
+        try{
+        	FastqDataStore actualDataStore = DefaultFastqFileDataStore.create(in, qualityCodec);        
+        	assertEquals(fastq, actualDataStore.get("SOLEXA1:4:1:12:1489#0/1"));
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(in);
+        }
     }
     @Test
     public void withQualityLineDuplicated() throws DataStoreException{
@@ -71,7 +71,7 @@ public class TestFastQUtil {
                 "+SOLEXA1:4:1:12:1489#0/1\n"+
                 "abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S\n";
         FastqRecord fastq = expectedDataStore.get("SOLEXA1:4:1:12:1489#0/1");
-        String actual = FastqUtil.encode(fastq, qualityCodec,true);
+        String actual = fastq.toFormattedString(qualityCodec,true);
         assertEquals(expected, actual);
     }
     @Test
@@ -81,7 +81,16 @@ public class TestFastQUtil {
                 "+\n"+
                 "abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S\n";
         FastqRecord fastq = expectedDataStore.get("SOLEXA1:4:1:12:1489#0/1");
-        String actual = FastqUtil.encode(fastq, qualityCodec);
+        String actual = fastq.toFormattedString(qualityCodec);
         assertEquals(expected, actual);
+    }
+    @Test
+    public void defaultCodecIsSanger() throws DataStoreException{
+    	FastqRecord fastq = expectedDataStore.get("SOLEXA1:4:1:12:1489#0/1");
+    	String sanger = fastq.toFormattedString(FastqQualityCodec.SANGER);
+    	String defaultEncoding = fastq.toFormattedString();
+    	
+    	assertEquals(defaultEncoding, sanger);
+    	
     }
 }

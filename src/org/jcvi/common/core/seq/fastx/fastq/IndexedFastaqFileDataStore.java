@@ -111,8 +111,7 @@ public class IndexedFastaqFileDataStore implements FastqDataStore, FastqFileVisi
         InputStream in =null;
         try {
             in = IOUtil.createInputStreamFromFile(file,range);
-            DefaultFastqFileDataStore datastore = new DefaultFastqFileDataStore(qualityCodec);
-            FastqFileParser.parse(in, datastore);
+            FastqDataStore datastore = DefaultFastqFileDataStore.create(in, qualityCodec);
             return datastore.get(id);
         } catch (IOException e) {
             throw new DataStoreException("error reading fastq file",e);

@@ -21,8 +21,6 @@ package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
-
 /**
  * {@code FastqUtil} is a utility class for working with 
  * FASTQ data.
@@ -49,44 +47,4 @@ public final class FastqUtil {
      * then it should match the id of the seq defline.
      */
     public static final Pattern QUAL_DEFLINE_PATTERN = Pattern.compile("^\\+(.+$)?");
-   
-    /**
-     * Encode the given {@link FastqRecord} into FastQ format using the given
-     * {@link FastqQualityCodec}.  This is the same as 
-     * {@link #encode(FastqRecord, FastqQualityCodec, boolean) encode(fastQRecord,qualityCodec,false)}
-     * @return a multiline string which is the fastq encoded version of the
-     * given FastQRecord.
-     */
-    public static String encode(FastqRecord fastQRecord, FastqQualityCodec qualityCodec){
-       return encode(fastQRecord,qualityCodec,false);
-    }
-    /**
-     * Encode the given {@link FastqRecord} into FastQ format using the given
-     * {@link FastqQualityCodec}.
-     * @param fastQRecord the record to encode.
-     * @param qualityCodec the {@link FastqQualityCodec} to use to encode
-     * the qualities.
-     * @param should the read id be written (again) on the qualities line,
-     * many fastq formats no longer duplicate the id on the quality line to
-     * save space.
-     * @return a multiline string which is the fastq encoded version of the
-     * given FastQRecord.
-     */
-    public static String encode(FastqRecord fastQRecord, FastqQualityCodec qualityCodec, boolean writeIdOnQualityLine){
-        String id = fastQRecord.getId();
-        boolean hasComment = fastQRecord.getComment() !=null;
-        
-        StringBuilder builder = new StringBuilder("@").append(id);
-        if(hasComment){
-            builder.append(" ").append(fastQRecord.getComment());
-        }
-        builder.append("\n")
-        .append(Nucleotides.asString(fastQRecord.getNucleotides().asList())).append("\n")
-        .append("+");
-        if(writeIdOnQualityLine){
-            builder.append(id);
-        }
-        builder.append("\n").append(qualityCodec.encode(fastQRecord.getQualities())).append("\n");
-        return builder.toString();
-    }
 }
