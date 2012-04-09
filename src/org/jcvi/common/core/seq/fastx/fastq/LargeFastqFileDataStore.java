@@ -24,11 +24,16 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code LargeFastqFileDataStore} is a {@link FastqDataStore} implementation
@@ -46,11 +51,30 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     private final File fastQFile;
     private Integer size=null;
     private volatile boolean closed;
-    
+    /**
+     * Create a new {@link FastqDataStore}
+     * @param fastqFile
+     * @param qualityCodec
+     * @return
+     * @throws FileNotFoundException 
+     */
+    public static FastqDataStore create(File fastqFile, FastqQualityCodec qualityCodec) throws FileNotFoundException{
+    	return new LargeFastqFileDataStore(fastqFile, qualityCodec);
+    }
     /**
      * @param qualityCodec
+     * @throws FileNotFoundException 
      */
-    public LargeFastqFileDataStore(File fastQFile, FastqQualityCodec qualityCodec) {
+    private LargeFastqFileDataStore(File fastQFile, FastqQualityCodec qualityCodec) throws FileNotFoundException {
+    	if(fastQFile==null){
+    		throw new NullPointerException("fastq file can not be null");
+    	}
+    	if(qualityCodec==null){
+    		throw new NullPointerException("qualityCodec can not be null");
+    	}
+    	if(!fastQFile.exists()){
+    		throw new FileNotFoundException("could not find " + fastQFile.getAbsolutePath());
+    	}
         this.qualityCodec = qualityCodec;
         this.fastQFile = fastQFile;        
     }
@@ -126,7 +150,10 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     @Override
     public synchronized CloseableIterator<FastqRecord> iterator() {
         throwExceptionIfClosed();
-        return LargeFastqFileIterator.createNewIteratorFor(fastQFile,qualityCodec);
+        LargeFastqFileIterator iter = new LargeFastqFileIterator();
+    	iter.start();
+    	
+    	return iter;
   
     }
     
@@ -167,6 +194,46 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
         
     }
     
+    /**
+     * {@code LargeFastQFileIterator} is an Iterator of {@link FastqRecord}s meant for large
+     * fastq files (although small fastqs will work too).
+     * @author dkatzel
+     *
+     *
+     */
+    private final class LargeFastqFileIterator extends AbstractBlockingCloseableIterator<FastqRecord> implements CloseableIterator<FastqRecord>{
 
+
+    	@Override
+    	protected void backgroundThreadRunMethod() {
+    		try {
+            	FastqFileVisitor visitor = new AbstractFastqFileVisitor(qualityCodec) {
+    				
+            		 @Override
+            	     protected FastXFileVisitor.EndOfBodyReturnCode visitFastQRecord(String id,
+            	             NucleotideSequence nucleotides,
+            	             QualitySequence qualities, String optionalComment) {
+            	         FastqRecord record = new DefaultFastqRecord(id,nucleotides, qualities,optionalComment);
+            	         blockingPut(record);
+            	         return LargeFastqFileIterator.this.isClosed() ? FastXFileVisitor.EndOfBodyReturnCode.STOP_PARSING : FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING;
+            	     }
+            		 @Override
+            		    public FastXFileVisitor.DeflineReturnCode visitDefline(String id, String optionalComment) {
+            		        super.visitDefline(id, optionalComment);
+            		        return FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
+            		    }
+    			};
+                FastqFileParser.parse(fastQFile, visitor);
+           } catch (IOException e) {
+                
+                //should never happen
+                throw new RuntimeException(e);
+            }
+    		
+    	}
+        
+        
+        
+    }
    
 }
