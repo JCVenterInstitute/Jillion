@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.NullFastXFilter;
+import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaDataStore;
@@ -58,7 +58,7 @@ public class TestFastQ2Fasta {
         ByteArrayOutputStream seqOut = new ByteArrayOutputStream();
         ByteArrayOutputStream qualOut = new ByteArrayOutputStream();
         
-        Fastq2Fasta sut = new Fastq2Fasta(NullFastXFilter.INSTANCE,codec , seqOut, qualOut);
+        Fastq2Fasta sut = new Fastq2Fasta(AcceptingFastXFilter.INSTANCE,codec , seqOut, qualOut);
         int numberOfRecords =parseAndAssertFastQFile(seqOut, qualOut, sut);
         assertEquals(2, numberOfRecords);
     }
@@ -68,8 +68,7 @@ public class TestFastQ2Fasta {
             FileNotFoundException, DataStoreException {
         final File fastqFile = RESOURCES.getFile("files/example.fastq");
         FastqFileParser.parse(fastqFile, sut);
-        DefaultFastqFileDataStore fastqDataStore = new DefaultFastqFileDataStore(codec);
-        FastqFileParser.parse(fastqFile, fastqDataStore);
+        FastqDataStore fastqDataStore = DefaultFastqFileDataStore.create(fastqFile,codec);
         
         NucleotideFastaDataStoreBuilderVisitor seqFastaDataStoreVisitor = DefaultNucleotideSequenceFastaFileDataStore.createBuilder();
         FastaParser.parseFasta(new ByteArrayInputStream(seqOut.toByteArray()), seqFastaDataStoreVisitor);

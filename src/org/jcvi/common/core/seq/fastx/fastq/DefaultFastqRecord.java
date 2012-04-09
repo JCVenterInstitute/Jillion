@@ -32,19 +32,47 @@ public class DefaultFastqRecord implements FastqRecord {
     private final String comments;
     private final NucleotideSequence nucleotides;
     private final QualitySequence qualities;
-    
+    /**
+     * Create a new uncommented {@link DefaultFastqRecord} with the given
+     * values ({@link #getComment()} will return {@code null}.
+     * @param id the id of this fastq record.  This
+     * id may contain whitespace.
+     * @param nucleotides the {@link NucleotideSequence}
+     * associated with this record.
+     * @param qualities the {@link QualitySequence}
+     * associated with this record, can not be null.
+     * @throw NullPointerException if either id, nucleotides or qualities
+     * is set to null.
+     */
     public DefaultFastqRecord(String id, NucleotideSequence nucleotides,
             QualitySequence qualities){
         this(id, nucleotides, qualities,null);
     }
     /**
-     * @param id
-     * @param nucleotides
-     * @param qualities
-     * @param comments
+     * Create a new {@link DefaultFastqRecord} with the given
+     * values.
+     * @param id the id of this fastq record.  This
+     * id may contain whitespace.
+     * @param nucleotides the {@link NucleotideSequence}
+     * associated with this record.
+     * @param qualities the {@link QualitySequence}
+     * associated with this record, can not be null.
+     * @param comments the comments for this record, may
+     * be set to null to indicate that there are no comments.
+     * @throw NullPointerException if either id, nucleotides or qualities
+     * is set to null.
      */
     public DefaultFastqRecord(String id, NucleotideSequence nucleotides,
             QualitySequence qualities, String comments) {
+    	if(id ==null){
+    		throw new NullPointerException("id can not be null");
+    	}
+    	if(nucleotides ==null){
+    		throw new NullPointerException("nucleotides can not be null");
+    	}
+    	if(qualities ==null){
+    		throw new NullPointerException("qualities can not be null");
+    	}
         this.id = id;
         this.nucleotides = nucleotides;
         this.qualities = qualities;
@@ -85,11 +113,11 @@ public class DefaultFastqRecord implements FastqRecord {
         int result = 1;
         result = prime * result
                 + ((comments == null) ? 0 : comments.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + id.hashCode();
         result = prime * result
-                + ((nucleotides == null) ? 0 : nucleotides.asList().hashCode());
+                + nucleotides.asList().hashCode();
         result = prime * result
-                + ((qualities == null) ? 0 : qualities.asList().hashCode());
+                + qualities.asList().hashCode();
         return result;
     }
     @Override
@@ -111,29 +139,46 @@ public class DefaultFastqRecord implements FastqRecord {
         } else if (!comments.equals(other.getComment())) {
             return false;
         }
-        if (id == null) {
-            if (other.getId()!= null) {
-                return false;
-            }
-        } else if (!id.equals(other.getId())) {
+        if (!id.equals(other.getId())) {
             return false;
         }
-        if (nucleotides == null) {
-            if (other.getNucleotides() != null) {
-                return false;
-            }
-        } else if (!nucleotides.asList().equals(other.getNucleotides().asList())) {
+        if (!nucleotides.asList().equals(other.getNucleotides().asList())) {
             return false;
         }
-        if (qualities == null) {
-            if (other.getQualities() != null) {
-                return false;
-            }
-        } else if (!qualities.asList().equals(other.getQualities().asList())) {
+        if (!qualities.asList().equals(other.getQualities().asList())) {
             return false;
         }
         return true;
     }
+	@Override
+	public String toFormattedString() {
+		return toFormattedString(FastqQualityCodec.SANGER);
+	}
+	@Override
+	public String toFormattedString(FastqQualityCodec qualityCodec) {
+		return toFormattedString(qualityCodec, false);
+	}
+	@Override
+	public String toFormattedString(FastqQualityCodec qualityCodec,
+			boolean writeIdOnQualityLine) {
+		if(qualityCodec ==null){
+			throw new NullPointerException("qualityCodec can not be null");
+		}
+        boolean hasComment = getComment() !=null;
+        
+        StringBuilder builder = new StringBuilder("@").append(id);
+        if(hasComment){
+            builder.append(" ").append(getComment());
+        }
+        builder.append("\n")
+        .append(getNucleotides()).append("\n")
+        .append("+");
+        if(writeIdOnQualityLine){
+            builder.append(id);
+        }
+        builder.append("\n").append(qualityCodec.encode(getQualities())).append("\n");
+        return builder.toString();
+	}
    
 
 }

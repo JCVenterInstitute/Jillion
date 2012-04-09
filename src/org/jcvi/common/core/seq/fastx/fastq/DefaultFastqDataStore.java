@@ -36,7 +36,7 @@ public final class DefaultFastqDataStore implements FastqDataStore {
 
     private final Map<String, FastqRecord> map;
     private boolean closed = false;
-    
+
     private void checkNotClosed() throws DataStoreException{
         if(closed){
             throw new DataStoreException("can not access closed dataStore");

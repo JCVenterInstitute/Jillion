@@ -35,23 +35,20 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
  */
 public interface FastqFileVisitor extends FastXFileVisitor{
     /**
-     * Begin a new FASTQ Record block for the given read.
-     * @param id the read id
-     * @param optionalComment any optional comments about the read
-     * given on the defline. Note: if the Fastq records were created using 
-     * Casava 1.8, then the comment will contain the mate information.
-     * If there is no comment, then this parameter is {@code null).
-     * @return a {@code true} if this parser should parse the 
-     * read data; {@code false} if this parser should skip this
-     * read and continue on to the next read.
+     * Visit the defline of a given fastq record.
+     * <strong>Note: </strong>if the Fastq records were created using 
+     * Casava 1.8+, then the id will contain a whitespace
+     * followed by the mate information and no comment.
+     * This is different than most other fastq parsers which separate
+     * on whitespace and therefore will create duplicate ids for each
+     * mate in the template (but with different values for the "comments").
+     * Duplicate ids will break any applications that combine all the reads
+     * from multiple fastq files so it was decided that {@link FastqRecord} id
+     * contain both the template and mate information to guarantee uniqueness.
+     * <p/>
+     * {@inheritDoc}
      */
-    //boolean visitDefline(String id, String optionalComment);
-    /**
-     * The current FastQRecord Block is done visiting.
-     * @return {@code true} if the fastq file should continue to be parsed;
-     * {@code false} if the fastq parsing should stop.
-     */
-   // boolean visitEndOfBody();
+	DeflineReturnCode visitDefline(String id, String optionalComment);
     
     void visitNucleotides(NucleotideSequence nucleotides);
     

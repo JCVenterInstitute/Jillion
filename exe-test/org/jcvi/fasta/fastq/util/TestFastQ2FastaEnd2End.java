@@ -72,7 +72,7 @@ public class TestFastQ2FastaEnd2End {
      @Test
      public void ifNoFiltersThenIncludeAllIds() throws IOException, IdReaderException, DataStoreException{
          
-         FastqDataStore originalDataStore = new DefaultFastqFileDataStore(fastQFile, FastqQualityCodec.ILLUMINA);
+         FastqDataStore originalDataStore = DefaultFastqFileDataStore.create(fastQFile, FastqQualityCodec.ILLUMINA);
          Fastq2Fasta.main(new String[]{
                  "-s", seqOutputFile.getAbsolutePath(),
                  "-q", qualOutputFile.getAbsolutePath(),
@@ -92,7 +92,7 @@ public class TestFastQ2FastaEnd2End {
      @Test
      public void supportSangerEncodedFastQWithDashSangerOption() throws IOException, IdReaderException, DataStoreException{
         File sangerFastQFile = RESOURCES.getFile("files/sanger.fastq");
-        FastqDataStore originalDataStore = new DefaultFastqFileDataStore(sangerFastQFile, FastqQualityCodec.SANGER);
+        FastqDataStore originalDataStore = DefaultFastqFileDataStore.create(sangerFastQFile, FastqQualityCodec.SANGER);
         Fastq2Fasta.main(new String[]{
                 "-s", seqOutputFile.getAbsolutePath(),
                 "-q", qualOutputFile.getAbsolutePath(),
@@ -114,7 +114,7 @@ public class TestFastQ2FastaEnd2End {
      @Test
      public void includeOnlyIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
          
-         FastqDataStore originalDataStore = new DefaultFastqFileDataStore(fastQFile, FastqQualityCodec.ILLUMINA);
+         FastqDataStore originalDataStore = DefaultFastqFileDataStore.create(fastQFile, FastqQualityCodec.ILLUMINA);
          Fastq2Fasta.main(new String[]{"-i",ids.getAbsolutePath(),
                  "-s", seqOutputFile.getAbsolutePath(),
                  "-q", qualOutputFile.getAbsolutePath(),
@@ -133,7 +133,7 @@ public class TestFastQ2FastaEnd2End {
      @Test
      public void excludeIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
          File fastQFile = RESOURCES.getFile("files/example.fastq");
-         FastqDataStore originalDataStore = new DefaultFastqFileDataStore(fastQFile, FastqQualityCodec.ILLUMINA);
+         FastqDataStore originalDataStore = DefaultFastqFileDataStore.create(fastQFile, FastqQualityCodec.ILLUMINA);
          Fastq2Fasta.main(new String[]{"-e",ids.getAbsolutePath(),
                  "-s", seqOutputFile.getAbsolutePath(),
                  "-q", qualOutputFile.getAbsolutePath(),

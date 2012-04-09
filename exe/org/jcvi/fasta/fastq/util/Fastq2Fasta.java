@@ -40,7 +40,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.NullFastXFilter;
+import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.common.core.seq.fastx.fastq.AbstractFilteredFastqFileVisitor;
@@ -177,7 +177,7 @@ public class Fastq2Fasta extends AbstractFilteredFastqFileVisitor {
                 idFile =new File(commandLine.getOptionValue("e"));
                 filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile));
             }else{
-                filter = NullFastXFilter.INSTANCE;
+                filter = AcceptingFastXFilter.INSTANCE;
             }
             final FastqQualityCodec fastqQualityCodec;
             if(commandLine.hasOption("sanger")){

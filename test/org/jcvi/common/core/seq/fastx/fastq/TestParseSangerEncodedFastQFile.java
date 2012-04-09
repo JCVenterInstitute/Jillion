@@ -23,7 +23,6 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqFileDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
@@ -42,11 +41,10 @@ public class TestParseSangerEncodedFastQFile {
     String file = "files/sanger.fastq";
     ResourceFileServer resources = new ResourceFileServer(
             TestDefaultFastQFileDataStore.class);
-    DefaultFastqFileDataStore sut;
+    FastqDataStore sut;
     @Before
     public void setup() throws IOException{
-        sut = new DefaultFastqFileDataStore(QUALITY_CODEC);
-        FastqFileParser.parse(resources.getFile(file), sut);
+        sut = DefaultFastqFileDataStore.create(resources.getFile(file),QUALITY_CODEC);
     }
     
     @Test

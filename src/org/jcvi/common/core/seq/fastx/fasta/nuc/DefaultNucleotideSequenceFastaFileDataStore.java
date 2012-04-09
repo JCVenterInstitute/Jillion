@@ -35,7 +35,7 @@ import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 /**
  * {@code DefaultNucleotideFastaFileDataStore} is the default implementation
- * of {@link AbstractNucleotideFastaFileDataStore} which stores
+ * of {@link NucleotideSequenceFastaDataStore} which stores
  * all fasta records in memory.  This is only recommended for small fasta
  * files that won't take up too much memory.
  * @author dkatzel

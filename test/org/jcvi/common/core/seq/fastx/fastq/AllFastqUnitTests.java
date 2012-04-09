@@ -39,7 +39,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestParseSangerEncodedFastQFile.class,
         AllIlluminaUnitTests.class,
         AllSolexaUnitTests.class,
-        TestFastQUtil.class,
+        TestFormattingFastqRecords.class,
         AllFastQUtilUnitTests.class        
     }
     )

@@ -31,8 +31,8 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 
 public class TestDefaultFastQFileDataStore extends AbstractTestFastQFileDataStore{
     @Override
-    protected DefaultFastqFileDataStore createFastQFileDataStore(File file, FastqQualityCodec qualityCodec) throws IOException {
-        return new DefaultFastqFileDataStore(file,qualityCodec);
+    protected FastqDataStore createFastQFileDataStore(File file, FastqQualityCodec qualityCodec) throws IOException {
+        return DefaultFastqFileDataStore.create(file,qualityCodec);
     }
     
 }

@@ -38,7 +38,7 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.NullFastXFilter;
+import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
@@ -50,7 +50,6 @@ import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecordUtil;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -273,7 +272,7 @@ public class SortedFasta2Fastq {
                 idFile =new File(commandLine.getOptionValue("e"));
                 filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile));
             }else{
-                filter = NullFastXFilter.INSTANCE;
+                filter = AcceptingFastXFilter.INSTANCE;
             }
             final int bufferSize;
             if(commandLine.hasOption("b")){
@@ -321,7 +320,7 @@ public class SortedFasta2Fastq {
                    FastqRecord fastq = new DefaultFastqRecord(seqFasta.getId(), 
                            seqFasta.getSequence(), qualityFasta.getSequence(),null);
 
-                   writer.print(FastqUtil.encode(fastq, fastqQualityCodec));
+                   writer.print(fastq.toFormattedString(fastqQualityCodec));
                }
             }
             

@@ -1,7 +1,7 @@
 package org.jcvi.common.core.seq.fastx.fasta;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
-import org.jcvi.common.core.seq.fastx.NullFastXFilter;
+import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
 
@@ -16,7 +16,7 @@ public abstract class AbstractFastaFileDataStoreBuilderVisitor<S extends Symbol,
 			throw new NullPointerException("builder can not be null");
 		}
 		if(filter ==null){
-			this.filter = NullFastXFilter.INSTANCE;
+			this.filter = AcceptingFastXFilter.INSTANCE;
 		}else{
 			this.filter = filter;
 		}

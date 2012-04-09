@@ -34,7 +34,6 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
@@ -98,7 +97,7 @@ public class SplitFastq {
                 while(iterator.hasNext()){
                     int mod = counter %n;
                     FastqRecord record = iterator.next();
-                    writers.get(mod).print(FastqUtil.encode(record, fastqQualityCodec)); 
+                    writers.get(mod).print(record.toFormattedString(fastqQualityCodec)); 
                     counter++;
                 }
             }finally{

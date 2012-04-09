@@ -36,12 +36,13 @@ import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
-import org.jcvi.common.core.seq.fastx.fastq.AbstractFastqReadIdVisitor;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileParser;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
+import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasFileVisitor{
 
@@ -281,18 +282,41 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         }
         
     }
-    private final class FastqReadOrder extends AbstractFastqReadIdVisitor{
+    private final class FastqReadOrder implements FastqFileVisitor{
         private final File file;
         FastqReadOrder(File file){
             this.file =file;
         }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        protected void visitRead(String id, String optionalComment) {
-            addRead(id,file);
-        }
+		@Override
+		public DeflineReturnCode visitDefline(String id, String optionalComment) {
+			addRead(id,file);
+			return DeflineReturnCode.SKIP_CURRENT_RECORD;
+		}
+		@Override
+		public EndOfBodyReturnCode visitEndOfBody() {
+			return EndOfBodyReturnCode.KEEP_PARSING;
+		}
+		@Override
+		public void visitLine(String line) {
+			
+		}
+		@Override
+		public void visitFile() {
+			
+		}
+		@Override
+		public void visitEndOfFile() {
+			
+		}
+		@Override
+		public void visitNucleotides(NucleotideSequence nucleotides) {
+			
+		}
+		@Override
+		public void visitEncodedQualities(String encodedQualities) {
+			
+		}
+       
     }
 
    

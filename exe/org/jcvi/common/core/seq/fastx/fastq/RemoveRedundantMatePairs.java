@@ -32,6 +32,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
 
@@ -111,8 +112,8 @@ public class RemoveRedundantMatePairs {
                 builder.append(reverse.getSequence().asList(comparisonRange));
                 NucleotideSequence seq =builder.build();
                 if(!nonRedundantSet.contains(seq)){
-                    out1.write(FastqUtil.encode(forward, qualityCodec).getBytes());
-                    out2.write(FastqUtil.encode(reverse, qualityCodec).getBytes());
+                    out1.write(forward.toFormattedString(qualityCodec).getBytes(IOUtil.UTF_8));
+                    out2.write(reverse.toFormattedString(qualityCodec).getBytes(IOUtil.UTF_8));
                     nonRedundantSet.add(seq);
                 }
                 recordsSeen++;
