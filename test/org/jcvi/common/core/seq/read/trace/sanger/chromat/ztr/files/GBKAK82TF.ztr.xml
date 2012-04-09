@@ -156,7 +156,7 @@
     </void> 
    </object> 
   </object> 
-  <object class="org.jcvi.common.core.Range" method="buildRange"> 
+  <object class="org.jcvi.common.core.Range" method="create"> 
    <long>0</long> 
    <long>0</long> 
   </object> 
