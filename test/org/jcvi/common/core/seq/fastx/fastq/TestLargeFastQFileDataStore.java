@@ -24,6 +24,7 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
@@ -31,9 +32,9 @@ import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 public class TestLargeFastQFileDataStore extends AbstractTestFastQFileDataStore{
 
     @Override
-    protected LargeFastqFileDataStore createFastQFileDataStore(File file,
-            FastqQualityCodec qualityCodec) {
-        return new LargeFastqFileDataStore(file, qualityCodec);
+    protected FastqDataStore createFastQFileDataStore(File file,
+            FastqQualityCodec qualityCodec) throws FileNotFoundException {
+        return LargeFastqFileDataStore.create(file, qualityCodec);
     }
 
 }

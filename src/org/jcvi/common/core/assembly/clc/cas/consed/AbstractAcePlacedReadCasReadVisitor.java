@@ -20,6 +20,7 @@
 package org.jcvi.common.core.assembly.clc.cas.consed;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadAdapter;
@@ -29,7 +30,8 @@ import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 import org.jcvi.common.core.assembly.clc.cas.TraceDetails;
 import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.common.core.seq.fastx.fasta.nuc.LargeNucleotideSequenceFastaIterator;
-import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileIterator;
+import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
+import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileIterator;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -53,8 +55,14 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     @Override
     public CloseableIterator<PhdReadRecord> createIlluminaIterator(
             File illuminaFile, TraceDetails traceDetails) {
-        return new FastqConsedPhdAdaptedIterator(                     
-                LargeFastqFileIterator.createNewIteratorFor(illuminaFile, traceDetails.getFastqQualityCodec()),
+        FastqDataStore datastore;
+		try {
+			datastore = LargeFastqFileDataStore.create(illuminaFile, traceDetails.getFastqQualityCodec());
+		} catch (FileNotFoundException e) {
+			throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath());
+		}
+		return new FastqConsedPhdAdaptedIterator( 
+        		datastore.iterator(),
                 illuminaFile, 
                 traceDetails.getPhdDate());
     }

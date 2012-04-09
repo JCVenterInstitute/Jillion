@@ -48,57 +48,59 @@ public class BarcodeDetector {
 		
 		
 		NucleotideSequenceFastaDataStore barcodes = DefaultNucleotideSequenceFastaFileDataStore.create(barcodeFasta);
-		CloseableIterator<FastqRecord> fastqIterator = new LargeFastqFileDataStore(fastq, FastqQualityCodec.SANGER)
-														.iterator();
 		Set<String> unmatched = new HashSet<String>();
 		Map<String, Set<String>> mappedReads = new TreeMap<String, Set<String>>();
 		
 		Map<String, Set<String>> multiMatchReads = new TreeMap<String, Set<String>>();
 		int sequencesSeen =0;
+		CloseableIterator<FastqRecord> fastqIterator= null;
 		try{
-		while(fastqIterator.hasNext()){
-			sequencesSeen++;
-			FastqRecord fastqRecord = fastqIterator.next();
-			List<String> matchedBarcodes = new ArrayList<String>();
-			List<PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>> validAlignments=new ArrayList<PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>>();
-			CloseableIterator<NucleotideSequenceFastaRecord> barcodeIterator = barcodes.iterator();
-			try{
-				while(barcodeIterator.hasNext()){
-					NucleotideSequenceFastaRecord barcode = barcodeIterator.next();
-					NucleotideSequence barcodeSequence = barcode.getSequence();
-					PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> alignment =NucleotideSmithWatermanAligner.align(barcodeSequence, 
-																fastqRecord.getSequence(), matrix, -2, 0);
-					
-					if(alignment.getAlignmentLength() == barcodeSequence.getLength() 
-							&& alignment.getNumberOfMismatches() <=2 && alignment.getPercentIdentity() > .9F){
-						validAlignments.add(alignment);
-						matchedBarcodes.add(barcode.getId());
+			fastqIterator = LargeFastqFileDataStore.create(fastq, FastqQualityCodec.SANGER)
+											.iterator();
+			
+			while(fastqIterator.hasNext()){
+				sequencesSeen++;
+				FastqRecord fastqRecord = fastqIterator.next();
+				List<String> matchedBarcodes = new ArrayList<String>();
+				List<PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>> validAlignments=new ArrayList<PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>>();
+				CloseableIterator<NucleotideSequenceFastaRecord> barcodeIterator = barcodes.iterator();
+				try{
+					while(barcodeIterator.hasNext()){
+						NucleotideSequenceFastaRecord barcode = barcodeIterator.next();
+						NucleotideSequence barcodeSequence = barcode.getSequence();
+						PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> alignment =NucleotideSmithWatermanAligner.align(barcodeSequence, 
+																	fastqRecord.getSequence(), matrix, -2, 0);
+						
+						if(alignment.getAlignmentLength() == barcodeSequence.getLength() 
+								&& alignment.getNumberOfMismatches() <=2 && alignment.getPercentIdentity() > .9F){
+							validAlignments.add(alignment);
+							matchedBarcodes.add(barcode.getId());
+						}
+					}
+				}finally{
+					IOUtil.closeAndIgnoreErrors(barcodeIterator);
+				}
+				if(matchedBarcodes.isEmpty()){
+					unmatched.add(fastqRecord.getId());
+				}else if(matchedBarcodes.size()==1){
+					String barcodeName = matchedBarcodes.get(0);
+					if(!mappedReads.containsKey(barcodeName)){
+						mappedReads.put(barcodeName, new TreeSet<String>());
+					}
+					mappedReads.get(barcodeName).add(fastqRecord.getId());
+				}else{
+					multiMatchReads.put(fastqRecord.getId(), new TreeSet<String>(matchedBarcodes));
+					System.out.println("multi match for " + fastqRecord.getId());
+					for(int i=0; i<matchedBarcodes.size(); i++){
+						String barcodeName = matchedBarcodes.get(i);
+						PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> alignment = validAlignments.get(i);
+						System.out.printf("barcode : %s : %s%n", barcodeName, alignment);
+						
 					}
 				}
-			}finally{
-				IOUtil.closeAndIgnoreErrors(barcodeIterator);
+				
+				
 			}
-			if(matchedBarcodes.isEmpty()){
-				unmatched.add(fastqRecord.getId());
-			}else if(matchedBarcodes.size()==1){
-				String barcodeName = matchedBarcodes.get(0);
-				if(!mappedReads.containsKey(barcodeName)){
-					mappedReads.put(barcodeName, new TreeSet<String>());
-				}
-				mappedReads.get(barcodeName).add(fastqRecord.getId());
-			}else{
-				multiMatchReads.put(fastqRecord.getId(), new TreeSet<String>(matchedBarcodes));
-				System.out.println("multi match for " + fastqRecord.getId());
-				for(int i=0; i<matchedBarcodes.size(); i++){
-					String barcodeName = matchedBarcodes.get(i);
-					PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> alignment = validAlignments.get(i);
-					System.out.printf("barcode : %s : %s%n", barcodeName, alignment);
-					
-				}
-			}
-			
-			
-		}
 		}finally{
 			IOUtil.closeAndIgnoreErrors(fastqIterator);
 		}

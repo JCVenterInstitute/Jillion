@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.IndexedFastaqFileDataStore;
+import org.jcvi.common.core.seq.fastx.fastq.IndexedFastqFileDataStore;
 
 /**
  * @author dkatzel
@@ -33,9 +33,9 @@ import org.jcvi.common.core.seq.fastx.fastq.IndexedFastaqFileDataStore;
 public class TestIndexedFastQFileDataStore extends AbstractTestFastQFileDataStore{
 
     @Override
-    protected IndexedFastaqFileDataStore createFastQFileDataStore(File file,
+    protected FastqDataStore createFastQFileDataStore(File file,
             FastqQualityCodec qualityCodec) throws IOException {
-        return new IndexedFastaqFileDataStore(file, qualityCodec);
+        return IndexedFastqFileDataStore.create(file, qualityCodec);
     }
 
 }

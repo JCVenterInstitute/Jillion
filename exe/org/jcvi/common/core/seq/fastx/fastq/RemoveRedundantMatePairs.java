@@ -35,6 +35,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * @author dkatzel
@@ -90,9 +91,8 @@ public class RemoveRedundantMatePairs {
             
             int comparisonRangeLength = Integer.parseInt(commandLine.getOptionValue("n"));
             Range comparisonRange=Range.createOfLength(comparisonRangeLength);
-            
-            LargeFastqFileIterator mate1Iterator = LargeFastqFileIterator.createNewIteratorFor(mate1, qualityCodec);
-            LargeFastqFileIterator mate2Iterator = LargeFastqFileIterator.createNewIteratorFor(mate2, qualityCodec);
+            CloseableIterator<FastqRecord> mate1Iterator=null;
+            CloseableIterator<FastqRecord> mate2Iterator  =null;
             File outputDir = new File(commandLine.getOptionValue("o"));
             outputDir.mkdirs();
             String prefix = commandLine.getOptionValue("prefix");
@@ -102,8 +102,13 @@ public class RemoveRedundantMatePairs {
             
             FileOutputStream out1 = new FileOutputStream(nonRedundantMate1);
             FileOutputStream out2 = new FileOutputStream(nonRedundantMate2);
-            long recordsSeen=0;
             Set<NucleotideSequence> nonRedundantSet = new HashSet<NucleotideSequence>(expectedSize+1,1F);
+            
+            try{
+            	mate1Iterator = LargeFastqFileDataStore.create(mate1, qualityCodec).iterator();
+            	mate2Iterator = LargeFastqFileDataStore.create(mate2, qualityCodec).iterator();
+            
+            long recordsSeen=0;
             while(mate1Iterator.hasNext()){
                 FastqRecord forward = mate1Iterator.next();
                 FastqRecord reverse = mate2Iterator.next();
@@ -127,9 +132,13 @@ public class RemoveRedundantMatePairs {
             }
             System.out.println("final number of mates seen ="+ recordsSeen);
             System.out.println("num mates written ="+ nonRedundantSet.size());
-            out1.close();
-            out2.close();
-            nonRedundantSet.clear();
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(mate1Iterator, mate2Iterator);
+            	out1.close();
+                out2.close();
+               
+            }
+            
         } catch (ParseException e) {
             printHelp(options);
             System.exit(1);
