@@ -175,7 +175,7 @@ public final class ChromatogramXMLSerializer {
              Range clip = (Range)oldInstance;
                  return new Expression(clip,
                          Range.class,
-                         "buildRange",
+                         "create",
                          new Object[]{
                          clip == null? 0:clip.getBegin(),
                          clip == null? 0:clip.getEnd()
