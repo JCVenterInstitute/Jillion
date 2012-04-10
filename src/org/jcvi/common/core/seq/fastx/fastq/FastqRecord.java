@@ -30,6 +30,17 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
 
 public interface FastqRecord extends FastXRecord<Nucleotide,NucleotideSequence>{
     
+	/**
+     * 
+     * {@inheritDoc}
+     * </p>
+     * <strong>Note: </strong> It is possible that this
+     * id has multiple "words" with whitespace in between
+     * if this record was from a CASAVA 1.8 run.
+     * This can cause problems with downstream software
+     * if whitespace in ids is not allowed.
+     */
+    String getId();
     NucleotideSequence getNucleotides();
     
     QualitySequence getQualities();
