@@ -51,7 +51,7 @@ public final class FastaUtil {
     
 
     
-    public static String parseCommentFromIdLine(String line) {
+    public static String parseCommentFromDefLine(String line) {
         final Matcher idMatcher = ID_LINE_PATTERN.matcher(line);
         if (idMatcher.find()){
         	String comment= idMatcher.group(3);
@@ -65,7 +65,7 @@ public final class FastaUtil {
         return null;
     }
 
-    public static String parseIdentifierFromIdLine(String line) {
+    public static String parseIdFromDefLine(String line) {
         final Matcher idMatcher = ID_LINE_PATTERN.matcher(line);
         if (idMatcher.find()){
             return idMatcher.group(1);           

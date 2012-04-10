@@ -26,8 +26,16 @@ package org.jcvi.common.core.seq.fastx.fasta;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
-
-public interface FastaDataStore<G extends Symbol, T extends Sequence<G>,F extends FastaRecord<G,T>> extends DataStore<F>{
+/**
+ * {@code FastaDataStore} is a marker interface
+ * for a {@link DataStore} for {@link FastaRecord}s.
+ * @author dkatzel
+ *
+ * @param <S> the type of {@link Symbol} in the fasta encoding.
+ * @param <T> the type of {@link Sequence} of {@link Symbol}s in the fasta.
+ * @param <F> the type of {@link FastaRecord} in the datastore.
+ */
+public interface FastaDataStore<S extends Symbol, T extends Sequence<S>,F extends FastaRecord<S,T>> extends DataStore<F>{
 
     
 

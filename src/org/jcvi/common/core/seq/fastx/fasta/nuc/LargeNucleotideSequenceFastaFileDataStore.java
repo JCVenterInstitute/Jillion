@@ -186,7 +186,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
             //to include our id as a prefix (for example a TIGR "B" read)
             while(!done){
                 if(line.startsWith(expectedHeader)){
-                    String currentId= FastaUtil.parseIdentifierFromIdLine(line);
+                    String currentId= FastaUtil.parseIdFromDefLine(line);
                     if(id.equals(currentId)){
                         done=true;
                         //done
