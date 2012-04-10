@@ -129,8 +129,13 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
     public boolean isClosed() throws DataStoreException {
         return indexFileRange.isClosed();
     }
-    
-    private static class IndexedFastqFileDataStoreBuilderVisitor implements FastqFileDataStoreBuilderVisitor{
+    /**
+     * Implementation of {@link FastqFileDataStoreBuilderVisitor}
+     * that only stores the file offsets for each record.
+     * @author dkatzel
+     *
+     */
+    private static final class IndexedFastqFileDataStoreBuilderVisitor implements FastqFileDataStoreBuilderVisitor{
     	private final IndexedFileRange indexFileRange;
         private final FastqQualityCodec qualityCodec;
         private final File file;
