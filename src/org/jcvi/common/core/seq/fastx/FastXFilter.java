@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.jcvi.common.core.seq.fastx;
 
-import org.jcvi.common.core.datastore.DataStoreFilter;
 
 /**
  * {@code FastXFilter} filters a FastX (Fasta or Fastq) file.
@@ -26,7 +25,7 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
  *
  *
  */
-public interface FastXFilter extends DataStoreFilter{
+public interface FastXFilter {
     /**
      * Filters the fastX record with the given read id and optional comment.
      * @param id the id of the read to possibly filter.
@@ -35,5 +34,12 @@ public interface FastXFilter extends DataStoreFilter{
      * @return {@code true} if the read meets the filter criteria {@code false} otherwise.
      */
     boolean accept(String id, String optionalComment);
+    
+    /**
+     * Filters the fastX record with the given read id.
+     * @param id the id of the read to possibly filter.
+     * @return {@code true} if the read meets the filter criteria {@code false} otherwise.
+     */
+    boolean accept(String id);
     
 }
