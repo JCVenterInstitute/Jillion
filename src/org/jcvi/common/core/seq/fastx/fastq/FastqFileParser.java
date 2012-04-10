@@ -44,25 +44,48 @@ import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
  * @author dkatzel
  *
  */
-public class FastqFileParser {
+public final class FastqFileParser {
     
 	private static final Pattern CASAVA_1_8_DEFLINE_PATTERN = Pattern.compile("^@(\\S+\\s+\\d:[N|Y]:\\d+:\\S+)\\s*$");
-    public static void parse(File fastQFile, FastqFileVisitor visitor ) throws IOException{
-        InputStream in = new FileInputStream(fastQFile);
+    
+	/**
+	 * Parse the given fastq encoded file and call the appropriate
+	 * visit callbacks from the given visitor.
+	 * @param fastqFile the fastq encoded file to parse; can not be null.
+	 * @param visitor the {@link FastqFileVisitor} to call
+	 * the visit methods on; can not be null.
+	 * @throws IOException if there is a problem parsing the file.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+	public static void parse(File fastqFile, FastqFileVisitor visitor ) throws IOException{
+        InputStream in = new FileInputStream(fastqFile);
         try{
             parse(in,visitor);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
     }
-    public static void parse(InputStream in, FastqFileVisitor visitor ) throws IOException{
-    	if(in ==null){
+	/**
+	 * Parse the given fastq encoded {@link InputStream} and call the appropriate
+	 * visit callbacks from the given visitor.
+	 * @param fastqStream the fastq encoded {@link InputStream} to parse; can not be null.
+	 * @param visitor the {@link FastqFileVisitor} to call
+	 * the visit methods on; can not be null.
+	 * @throws IOException if there is a problem parsing the stream.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+    public static void parse(InputStream fastqStream, FastqFileVisitor visitor ) throws IOException{
+    	if(fastqStream ==null){
     		throw new NullPointerException("input stream can not be null");
     	}
-    	TextLineParser parser = new TextLineParser(new BufferedInputStream(in));
+    	if(visitor==null){
+    		throw new NullPointerException("visitor can not be null");
+    	}
+    	TextLineParser parser = new TextLineParser(new BufferedInputStream(fastqStream));
 		
         parse(visitor, parser);
     }
+    
 	private static void parse(FastqFileVisitor visitor, TextLineParser parser) {
 		visitor.visitFile();
         boolean keepParsing=true;
