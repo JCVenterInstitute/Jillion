@@ -348,7 +348,7 @@
 		        <fileset dir="${bin}"/>
 		    	<zipfileset src="${lib}/log4j-1.2.15.jar"/>
 		    	<zipfileset src="${lib}/joda-time-2.0.jar"/>
-		    	<zipfileset src="${lib}/finj-1.1.5.jar"/>	
+		    	
 		    	
 		    	
 		    	<zipfileset src="${command-lib}/commons-cli-1.2.jar"/>

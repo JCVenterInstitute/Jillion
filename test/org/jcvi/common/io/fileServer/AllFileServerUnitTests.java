@@ -32,8 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestReadOnlyDirectoryFileServer.class,
         TestReadWriteDirectoryFileServer.class,
-        TestResourceFileServer.class,
-        TestFTPFileServer.class
+        TestResourceFileServer.class
     }
     )
 public class AllFileServerUnitTests {
