@@ -22,7 +22,7 @@ package org.jcvi.common.core.assembly.clc.cas.var;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
 /**
  * {@code Variation} represents a single row in 

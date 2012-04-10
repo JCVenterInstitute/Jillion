@@ -23,8 +23,8 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.DefaultNucleotideCodec;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.DefaultNucleotideCodec;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
 /**
  * {@code CompactedSliceElementCodec} is a codec that 

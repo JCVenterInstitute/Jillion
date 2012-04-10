@@ -2,8 +2,8 @@ package org.jcvi.common.core.align.pairwise;
 
 import java.util.Arrays;
 
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 
 public final class DefaultNucleotideScoringMatrix implements NucleotideScoringMatrix{
 

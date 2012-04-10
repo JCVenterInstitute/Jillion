@@ -30,7 +30,7 @@ import java.io.InputStream;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
  * {@code DefaultFastqFileDataStore} is the default implementation
  * of {@link FastqDataStore} which stores

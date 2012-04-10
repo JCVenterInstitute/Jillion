@@ -29,7 +29,7 @@ import java.util.Set;
 
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
 import static org.jcvi.common.core.assembly.util.slice.consensus.ConsensusUtil.*;
 /**

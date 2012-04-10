@@ -1,7 +1,7 @@
 package org.jcvi.common.core.seq.fastx.fasta.pos;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 

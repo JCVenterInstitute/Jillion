@@ -20,7 +20,7 @@
 package org.jcvi.common.core.symbol.residue;
 
 import org.jcvi.common.core.symbol.residue.aa.AllAminoAcidUnitTests;
-import org.jcvi.common.core.symbol.residue.nuc.AllNucleotideUnitTests;
+import org.jcvi.common.core.symbol.residue.nt.AllNucleotideUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

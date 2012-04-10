@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.util.slice;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 /**
  * {@code SliceElement} is 
  * @author dkatzel

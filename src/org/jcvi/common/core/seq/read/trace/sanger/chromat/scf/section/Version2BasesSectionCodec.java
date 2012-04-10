@@ -37,8 +37,8 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFil
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
 

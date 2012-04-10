@@ -25,9 +25,9 @@ package org.jcvi.common.core.assembly.util.slice.consensus;
 
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
-import static org.jcvi.common.core.symbol.residue.nuc.Nucleotide.*;
+import static org.jcvi.common.core.symbol.residue.nt.Nucleotide.*;
 /**
  * <code>NoAmbiguityConsensusCaller</code>
  * will always return the non-ambiguous base

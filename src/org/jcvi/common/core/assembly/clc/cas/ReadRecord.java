@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.clc.cas;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
  * {@code ReadRecord} is a marker interface

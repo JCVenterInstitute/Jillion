@@ -2,7 +2,8 @@ package org.jcvi.common.core.assembly.asm;
 
 import java.util.Arrays;
 import java.util.Collections;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
+
+import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

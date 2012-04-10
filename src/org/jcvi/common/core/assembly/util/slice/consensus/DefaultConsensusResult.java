@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.util.slice.consensus;
 
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
 public class DefaultConsensusResult implements ConsensusResult {
 

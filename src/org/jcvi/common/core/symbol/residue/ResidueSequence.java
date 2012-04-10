@@ -3,8 +3,8 @@ package org.jcvi.common.core.symbol.residue;
 import java.util.List;
 
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
  * {@code ResidueSequence} is a {@link Sequence}
  * of {@link Residue} that may contain gaps.  There are extra

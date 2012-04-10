@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly;
 
 import java.util.Collection;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 
 /**

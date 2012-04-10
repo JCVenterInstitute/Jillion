@@ -29,7 +29,7 @@ import java.util.Date;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
  * {@code DefaultAceTagsFromAceFile} is a class
  * that can create {@link AceTags} instances

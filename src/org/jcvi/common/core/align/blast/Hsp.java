@@ -22,8 +22,8 @@ package org.jcvi.common.core.align.blast;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import org.jcvi.common.core.align.SequenceAlignment;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
  * @author dkatzel

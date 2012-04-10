@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.EncodedSection;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.Section;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.junit.Before;
 import org.junit.Test;
 
