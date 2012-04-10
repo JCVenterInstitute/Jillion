@@ -25,7 +25,7 @@ import java.util.Set;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.PlacedRead;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
  * @author dkatzel

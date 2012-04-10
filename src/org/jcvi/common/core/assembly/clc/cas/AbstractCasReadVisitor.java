@@ -28,7 +28,7 @@ import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.ChainedCloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 

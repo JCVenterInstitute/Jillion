@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.List;
 
 import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
  * @author dkatzel

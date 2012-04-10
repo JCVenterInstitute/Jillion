@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta;
 
-import org.jcvi.common.core.seq.fastx.fasta.nuc.AllFastaSequenceTests;
+import org.jcvi.common.core.seq.fastx.fasta.nt.AllNucleotideSequenceFastaTests;
 import org.jcvi.common.core.seq.fastx.fasta.pos.AllFastaPositionTests;
 import org.jcvi.common.core.seq.fastx.fasta.qual.AllFastaQualityTests;
 
@@ -39,7 +39,7 @@ import org.junit.runners.Suite.SuiteClasses;
         
         AllFastaPositionTests.class,
         AllFastaQualityTests.class,
-        AllFastaSequenceTests.class
+        AllNucleotideSequenceFastaTests.class
         
    
     }

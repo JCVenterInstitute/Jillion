@@ -27,7 +27,7 @@ import java.util.Set;
 
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 public class BasicChurchillWatermanConsensusCaller extends AbstractChurchillWatermanConsensusCaller{
 
     private static final int MAX_NUMBER_OF_BASES_TOWARDS_AMBIGUITY = 5;

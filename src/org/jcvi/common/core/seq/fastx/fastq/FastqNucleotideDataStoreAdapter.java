@@ -26,8 +26,8 @@ package org.jcvi.common.core.seq.fastx.fastq;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public class FastqNucleotideDataStoreAdapter extends AbstractFastqDataStoreAdapter<NucleotideSequence> implements NucleotideDataStore{
 

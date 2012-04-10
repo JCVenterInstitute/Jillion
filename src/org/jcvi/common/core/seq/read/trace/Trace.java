@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.read.trace;
 
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
  * A {@code Trace} is genomic data that has
  * both a {@link NucleotideSequence}

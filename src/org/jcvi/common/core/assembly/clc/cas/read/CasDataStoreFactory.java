@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.clc.cas.read;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 /**
  * {@code CasDataStoreFactory} is a way to get {@link NucleotideDataStore}s
  * and {@link QualityDataStore}s from the file paths

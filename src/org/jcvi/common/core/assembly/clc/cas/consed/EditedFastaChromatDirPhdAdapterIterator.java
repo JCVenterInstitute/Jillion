@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jcvi.common.core.seq.fastx.fasta.nuc.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.pos.LargePositionFastaRecordIterator;
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaIterator;

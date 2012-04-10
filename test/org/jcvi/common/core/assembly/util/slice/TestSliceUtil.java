@@ -31,8 +31,8 @@ import java.util.List;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.util.slice.DefaultSlice;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 
 public final class TestSliceUtil {
     private TestSliceUtil(){}

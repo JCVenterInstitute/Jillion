@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 /**
  * {@code SCFChromatogramFile} is a {@link SCFChromatogramFileVisitor} implementation

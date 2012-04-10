@@ -22,7 +22,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1;
 import java.util.List;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
 /**
  * @author dkatzel

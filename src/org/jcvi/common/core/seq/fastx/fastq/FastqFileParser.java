@@ -36,8 +36,8 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.seq.fastx.FastXFileVisitor.EndOfBodyReturnCode;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 /**
  * {@code FastqFileParser} parses FASTQ encoded files
  * regardless of how the qualities are encoded.

@@ -22,7 +22,7 @@ package org.jcvi.common.core.seq.read.trace.sanger;
 import java.util.Map;
 
 import org.jcvi.common.core.io.FileVisitor;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
  * @author dkatzel

@@ -11,7 +11,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
 public class LargeNoQualitySliceMap extends LargeSliceMap{
     public static final PhredQuality DEFAULT_PHRED_QUALITY = PhredQuality.valueOf(0);

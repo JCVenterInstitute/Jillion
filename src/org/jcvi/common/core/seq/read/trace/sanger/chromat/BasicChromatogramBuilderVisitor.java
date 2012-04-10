@@ -21,7 +21,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 
 /**

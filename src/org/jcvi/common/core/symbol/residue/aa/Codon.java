@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 
 /**
  * A <code>Codon</code> represents a triplet of {@link Nucleotide}s which specify an 

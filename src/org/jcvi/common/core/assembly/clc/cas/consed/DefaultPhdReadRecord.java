@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.clc.cas.consed;
 
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public class DefaultPhdReadRecord implements PhdReadRecord {
 

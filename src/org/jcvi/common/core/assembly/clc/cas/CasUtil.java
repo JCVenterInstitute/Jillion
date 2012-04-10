@@ -49,7 +49,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.IOUtil.Endian;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.MultipleWrapper;
 /**

@@ -30,8 +30,8 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AbstractContig;
 import org.jcvi.common.core.assembly.ContigBuilder;
 import org.jcvi.common.core.assembly.PlacedReadBuilder;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 /**
  * @author dkatzel

@@ -24,8 +24,8 @@
 package org.jcvi.common.core.seq.read.trace;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
  * {@code TraceNucleotideDataStoreAdapter} adapts a {@link TraceDataStore} into
  * a {@link NucleotideDataStore} by delegating all the get() calls

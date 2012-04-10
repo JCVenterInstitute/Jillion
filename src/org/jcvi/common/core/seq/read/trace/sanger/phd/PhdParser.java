@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 /**
  * {@code PhdParser} parses .phd files (or phd.ball files).
  * @author dkatzel

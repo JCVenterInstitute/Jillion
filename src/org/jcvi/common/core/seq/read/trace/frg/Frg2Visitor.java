@@ -28,7 +28,7 @@ import java.util.List;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public interface Frg2Visitor extends TextFileVisitor{
     

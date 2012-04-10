@@ -34,7 +34,7 @@ import org.jcvi.common.core.assembly.AbstractContigBuilder;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.PlacedReadBuilder;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
  * {@code DefaultTigrAssemblerContig} is a {@link Contig}

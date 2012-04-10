@@ -30,10 +30,10 @@ import org.jcvi.common.core.assembly.tasm.TigrAssemblerPlacedReadAdapter;
 import org.jcvi.common.core.assembly.tasm.TigrAssemblerReadAttribute;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nuc.Nucleotides;
-import org.jcvi.common.core.symbol.residue.nuc.ReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestTigrAssemblerPlacedReadAdapter {

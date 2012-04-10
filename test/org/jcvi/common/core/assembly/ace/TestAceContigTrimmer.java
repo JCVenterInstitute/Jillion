@@ -34,7 +34,7 @@ import org.jcvi.common.core.assembly.util.trimmer.ContigTrimmerResult;
 import org.jcvi.common.core.assembly.util.trimmer.MinimumEndCoverageTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.PlacedReadTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.TrimmerException;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -25,7 +25,7 @@ import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.symbol.residue.nuc.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 
 /**
  * {@code AbstractCasDataStoreFactory} is an abstract
