@@ -26,10 +26,10 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreAdatper;
 import org.jcvi.common.core.datastore.SimpleDataStore;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFCommonHeader;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadData;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadData;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
 import org.jcvi.common.core.util.Builder;
 
@@ -64,7 +64,7 @@ public class SffTrimDataStoreBuilder implements SffFileVisitor, Builder<TrimData
     * {@inheritDoc}
     */
     @Override
-    public boolean visitCommonHeader(SFFCommonHeader commonHeader) {
+    public boolean visitCommonHeader(SffCommonHeader commonHeader) {
         return true;
     }
 
@@ -72,7 +72,7 @@ public class SffTrimDataStoreBuilder implements SffFileVisitor, Builder<TrimData
     * {@inheritDoc}
     */
     @Override
-    public boolean visitReadData(SFFReadData readData) {
+    public boolean visitReadData(SffReadData readData) {
         return true;
     }
 
@@ -80,8 +80,8 @@ public class SffTrimDataStoreBuilder implements SffFileVisitor, Builder<TrimData
     * {@inheritDoc}
     */
     @Override
-    public boolean visitReadHeader(SFFReadHeader readHeader) {
-        trimRanges.put(readHeader.getName(), SFFUtil.getTrimRangeFor(readHeader));
+    public boolean visitReadHeader(SffReadHeader readHeader) {
+        trimRanges.put(readHeader.getId(), SffUtil.getTrimRangeFor(readHeader));
         return false;
     }
 

@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffNameUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.Sff454NameUtil;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -32,52 +32,52 @@ public class TestSffNameUtil {
 
     @Test
     public void isSffRead(){
-        assertTrue(SffNameUtil.is454Read( "C3U5GWL01CBXT2"));
-        assertFalse(SffNameUtil.is454Read("IVAAA01T48C03PB1234F"));
-        assertFalse(SffNameUtil.is454Read("IVAAA01T48HA2F"));
+        assertTrue(Sff454NameUtil.is454Read( "C3U5GWL01CBXT2"));
+        assertFalse(Sff454NameUtil.is454Read("IVAAA01T48C03PB1234F"));
+        assertFalse(Sff454NameUtil.is454Read("IVAAA01T48HA2F"));
         //now check mated reads
-        assertTrue("clc split mate",SffNameUtil.is454Read("F3P0QKL01AMPVE_1-93"));
-        assertTrue("newbler split mate",SffNameUtil.is454Read("ERESL0I01CLM9Q_left"));
-        assertTrue("sffToCA split mate",SffNameUtil.is454Read("ERESL0I01EGOIMb"));
+        assertTrue("clc split mate",Sff454NameUtil.is454Read("F3P0QKL01AMPVE_1-93"));
+        assertTrue("newbler split mate",Sff454NameUtil.is454Read("ERESL0I01CLM9Q_left"));
+        assertTrue("sffToCA split mate",Sff454NameUtil.is454Read("ERESL0I01EGOIMb"));
     }
     
     @Test
     public void getUniveralAccessionNumberFrom(){
-        assertEquals("C3U5GWL01CBXT2", SffNameUtil.parseUniversalAccessionNumberFrom("C3U5GWL01CBXT2"));
+        assertEquals("C3U5GWL01CBXT2", Sff454NameUtil.parseUniversalAccessionNumberFrom("C3U5GWL01CBXT2"));
         assertEquals("clc split mate",
-                "F3P0QKL01AMPVE", SffNameUtil.parseUniversalAccessionNumberFrom("F3P0QKL01AMPVE_1-93"));
+                "F3P0QKL01AMPVE", Sff454NameUtil.parseUniversalAccessionNumberFrom("F3P0QKL01AMPVE_1-93"));
         
         assertEquals("newbler split mate",
-                "ERESL0I01CLM9Q", SffNameUtil.parseUniversalAccessionNumberFrom("ERESL0I01CLM9Q_left"));
+                "ERESL0I01CLM9Q", Sff454NameUtil.parseUniversalAccessionNumberFrom("ERESL0I01CLM9Q_left"));
         assertEquals("sffToCA split mate",
-                "ERESL0I01EGOIM", SffNameUtil.parseUniversalAccessionNumberFrom("ERESL0I01EGOIMb"));
+                "ERESL0I01EGOIM", Sff454NameUtil.parseUniversalAccessionNumberFrom("ERESL0I01EGOIMb"));
     }
     @Test
     public void getRegionNumber(){
-        assertEquals(1, SffNameUtil.getRegionNumber("C3U5GWL01CBXT2"));
-        assertEquals(2, SffNameUtil.getRegionNumber("F3P0QKL02AMPVE_1-93"));
+        assertEquals(1, Sff454NameUtil.getRegionNumber("C3U5GWL01CBXT2"));
+        assertEquals(2, Sff454NameUtil.getRegionNumber("F3P0QKL02AMPVE_1-93"));
         
-        assertEquals(12, SffNameUtil.getRegionNumber("ERESL0I12CLM9Q_left"));
+        assertEquals(12, Sff454NameUtil.getRegionNumber("ERESL0I12CLM9Q_left"));
  
     }
     @Test
     public void parseDateFromName(){
         DateTime expectedDate = new DateTime(2004, 9, 22, 16, 59, 10, 0);
-        assertEquals(expectedDate.toDate(), SffNameUtil.getDateOfRun("C3U5GWL01CBXT2"));
+        assertEquals(expectedDate.toDate(), Sff454NameUtil.getDateOfRun("C3U5GWL01CBXT2"));
     }
     
    
     
     @Test
     public void parseLocation(){
-        assertEquals(new SffNameUtil.Location(838,3960), SffNameUtil.parseLocationOf("C3U5GWL01CBXT2"));
+        assertEquals(new Sff454NameUtil.Location(838,3960), Sff454NameUtil.parseLocationOf("C3U5GWL01CBXT2"));
     }
     
     @Test
     public void generateAccessionName(){
         //example from 454 Data Analysis Software Manual page 533
         String rigRunName = "R_2006_10_10_20_18_48_build04_adminrig_100x7075SEQ082806BHTF960397NewBeadDep2Region4EXP106";
-        assertEquals("EBO6PME01EE3WX", SffNameUtil.generateAccessionNumberFor(rigRunName, 1, new SffNameUtil.Location(1695,767)));
+        assertEquals("EBO6PME01EE3WX", Sff454NameUtil.generateAccessionNumberFor(rigRunName, 1, new Sff454NameUtil.Location(1695,767)));
     }
     
     

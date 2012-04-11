@@ -39,8 +39,8 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileProcessor;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDecoderException;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 
@@ -68,7 +68,7 @@ public class SffReadInfo extends AbstractSffFileProcessor {
     }
 
     @Override
-    public boolean visitReadHeader(SFFReadHeader readHeader) {
+    public boolean visitReadHeader(SffReadHeader readHeader) {
         final Range qualityClip = readHeader.getQualityClip();
         final Range adapterClip = readHeader.getAdapterClip();
         Range trimmedRange;
@@ -81,7 +81,7 @@ public class SffReadInfo extends AbstractSffFileProcessor {
         final long basesTrimmed = readHeader.getNumberOfBases()-trimmedRange.getLength();
         out.println(String.format(
                 "%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%.2f%%",
-                readHeader.getName(),
+                readHeader.getId(),
                 readHeader.getNumberOfBases(),
                 qualityClip.getBegin(CoordinateSystem.RESIDUE_BASED),
                 qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED),
@@ -94,7 +94,7 @@ public class SffReadInfo extends AbstractSffFileProcessor {
         return super.visitReadHeader(readHeader);
     }
     
-    public static void main(String args[]) throws FileNotFoundException, SFFDecoderException{
+    public static void main(String args[]) throws FileNotFoundException, SffDecoderException{
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder("sff", "sff file")
                         .isRequired(true)

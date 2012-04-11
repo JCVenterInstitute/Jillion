@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.util.Arrays;
 
-import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadData;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffReadData;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.common.core.util.MathUtil;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class TestDefaultReadData {
     short[] flowgramValues = new short[]{100,97,110,80,120,101,100,93};
     byte[] indexes = new byte[]{1,1,1,1,1,1,1,1};
 
-    DefaultSFFReadData sut = new DefaultSFFReadData(basecalls,indexes, flowgramValues, qualities);
+    DefaultSffReadData sut = new DefaultSffReadData(basecalls,indexes, flowgramValues, qualities);
 
     @Test
     public void constructor(){
@@ -62,7 +62,7 @@ public class TestDefaultReadData {
     }
     @Test
     public void equalsSameValues(){
-        DefaultSFFReadData sameValues = new DefaultSFFReadData(basecalls,
+        DefaultSffReadData sameValues = new DefaultSffReadData(basecalls,
                                         indexes,
                                         flowgramValues,
                                         qualities);
@@ -72,7 +72,7 @@ public class TestDefaultReadData {
     @Test
     public void constructorFailsNullBasesShouldThrowNullPointerException(){
         try{
-            new DefaultSFFReadData(null,
+            new DefaultSffReadData(null,
                     indexes,
                     flowgramValues,
                     qualities);
@@ -84,7 +84,7 @@ public class TestDefaultReadData {
     @Test
     public void constructorFailsDifferentBasesShouldThrowIllegalArgumentException(){
         try{
-            new DefaultSFFReadData("different"+basecalls,
+            new DefaultSffReadData("different"+basecalls,
                                         indexes,
                                         flowgramValues,
                                         qualities);
@@ -97,7 +97,7 @@ public class TestDefaultReadData {
     public void constructorFailsNullIndexesShouldThrowNullPointerException(){
 
         try{
-            new DefaultSFFReadData(basecalls,
+            new DefaultSffReadData(basecalls,
                                         null,
                                         flowgramValues,
                                         qualities);
@@ -109,7 +109,7 @@ public class TestDefaultReadData {
     @Test
     public void constructorFailsDifferentIndexesShouldThrowIllegalArgumentException(){
         try{
-            new DefaultSFFReadData(basecalls,
+            new DefaultSffReadData(basecalls,
                                         new byte[]{0,0,0,0,0,0},
                                         flowgramValues,
                                         qualities);
@@ -121,7 +121,7 @@ public class TestDefaultReadData {
     @Test
     public void constructorFailsNullFlowgramValuesShouldNullPointerException(){
         try{
-            new DefaultSFFReadData(basecalls,
+            new DefaultSffReadData(basecalls,
                                        indexes,
                                         null,
                                         qualities);
@@ -136,7 +136,7 @@ public class TestDefaultReadData {
         final short[] differentValues = new short[]{1,2,3,4,500,1200};
         try{
 
-            new DefaultSFFReadData(basecalls,
+            new DefaultSffReadData(basecalls,
                                        indexes,
                                         differentValues,
                                         qualities);
@@ -150,7 +150,7 @@ public class TestDefaultReadData {
     @Test
     public void constructorFailsNullQualitiesShouldThrowNullPointerException(){
         try{
-            new DefaultSFFReadData(basecalls,
+            new DefaultSffReadData(basecalls,
                                        indexes,
                                         flowgramValues,
                                         null);
@@ -162,7 +162,7 @@ public class TestDefaultReadData {
     @Test
     public void constructorFailsDifferentQualitiesShouldThrowIllegalArgumentException(){
         try{
-            new DefaultSFFReadData(basecalls,
+            new DefaultSffReadData(basecalls,
                                        indexes,
                                         flowgramValues,
                                         new byte[]{0,0,0,0,0,0});

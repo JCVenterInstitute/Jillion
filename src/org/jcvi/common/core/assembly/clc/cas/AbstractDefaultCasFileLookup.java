@@ -39,8 +39,8 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileVisitor;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDecoderException;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
@@ -119,7 +119,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
             }
         }
     }
-    private void parse(File file) throws SFFDecoderException, IOException {
+    private void parse(File file) throws SffDecoderException, IOException {
         String fileName = file.getName();
         FileInputStream in=null;
         try{
@@ -263,8 +263,8 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
             this.file =file;
         }
         @Override
-        public boolean visitReadHeader(SFFReadHeader readHeader) {
-            final String name = readHeader.getName();
+        public boolean visitReadHeader(SffReadHeader readHeader) {
+            final String name = readHeader.getId();
             addRead(name,file);
             return false;
         }

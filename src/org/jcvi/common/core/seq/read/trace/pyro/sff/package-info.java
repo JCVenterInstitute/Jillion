@@ -18,6 +18,6 @@
  ******************************************************************************/
 /**
  * This package contains classes for working with 
- * 454 sff files.
+ * 454 or Ion Torrent sff encoded files.
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;

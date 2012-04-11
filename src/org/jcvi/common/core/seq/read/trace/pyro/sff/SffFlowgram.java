@@ -23,18 +23,24 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.CommonUtil;
 
-public class SFFFlowgram implements Flowgram {
+public final class SffFlowgram implements Flowgram {
     private final String id;
     private final NucleotideSequence basecalls;
     private final QualitySequence qualities;
@@ -42,6 +48,47 @@ public class SFFFlowgram implements Flowgram {
     private final Range adapterClip;
     private final short[] values;
 
+    public static Flowgram create(SffReadHeader readHeader, SffReadData readData) {
+        return new SffFlowgram(
+                readHeader.getId(),
+                new NucleotideSequenceBuilder(readData.getBasecalls()).build(),
+                        new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
+                                PhredQuality.valueOf(readData.getQualities())),
+                computeValues(readData),
+                readHeader.getQualityClip(),
+                readHeader.getAdapterClip());
+    }
+    
+    protected static List<Short> computeValues(SffReadData readData) {
+        final byte[] indexes = readData.getFlowIndexPerBase();
+        final short[] encodedValues =readData.getFlowgramValues();
+        verifyNotEmpty(encodedValues);
+        return computeValues(indexes, encodedValues);
+    }
+
+    private static List<Short> computeValues(final byte[] indexes,
+            final short[] encodedValues) {
+        List<Short> values = new ArrayList<Short>();
+        // positions are 1-based so start with -1 to compensate.
+        int position=-1;
+        int i=0;
+
+        while( i < indexes.length){
+            if(indexes[i] != 0){
+                position+=IOUtil.toUnsignedByte(indexes[i]);
+                values.add(encodedValues[position]);
+            }
+            i++;
+        }
+
+        return Collections.unmodifiableList(values);
+    }
+
+    private static void verifyNotEmpty(final short[] encodedValues) {
+        if(encodedValues.length==0){
+            throw new IllegalArgumentException("read data must contain Flowgram values");
+        }
+    }
     /**
      * @param basecalls
      * @param qualities
@@ -49,7 +96,7 @@ public class SFFFlowgram implements Flowgram {
      * @param qualitiesClip
      * @param adapterClip
      */
-    public SFFFlowgram(String id,NucleotideSequence basecalls, QualitySequence qualities,
+    protected SffFlowgram(String id,NucleotideSequence basecalls, QualitySequence qualities,
             List<Short> values, Range qualitiesClip, Range adapterClip) {
         canNotBeNull(id,basecalls, qualities, values, qualitiesClip, adapterClip);
         this.id = id;
@@ -96,7 +143,7 @@ public class SFFFlowgram implements Flowgram {
      * @return the qualityClip
      */
     @Override
-    public Range getQualitiesClip() {
+    public Range getQualityClip() {
         return qualitiesClip;
     }
     /**
@@ -107,15 +154,15 @@ public class SFFFlowgram implements Flowgram {
         return adapterClip;
     }
     @Override
-    public int getSize() {
+    public int getNumberOfFlows() {
         return values.length;
     }
     @Override
-    public float getValueAt(int index) {
-        return SFFUtil.convertFlowgramValue(values[index]);
+    public float getFlowValue(int index) {
+        return SffUtil.convertFlowgramValue(values[index]);
     }
     /**
-     * Returns the hash code for this {@link SFFFlowgram}.
+     * Returns the hash code for this {@link SffFlowgram}.
      * Hash code based on hashcodes for values, qualities, and clip points.
      */
     @Override
@@ -132,8 +179,8 @@ public class SFFFlowgram implements Flowgram {
         return result;
     }
     /**
-     * Compares this {@link SFFFlowgram} with the specified Object for equality.
-     * This method considers two {@link SFFFlowgram} objects equal 
+     * Compares this {@link SffFlowgram} with the specified Object for equality.
+     * This method considers two {@link SffFlowgram} objects equal 
      * only if they are have equal values, qualities and clip points. 
      * (basecalls can be derived from the values so basecalls 
      * are not taken into account).
@@ -152,14 +199,14 @@ public class SFFFlowgram implements Flowgram {
         CommonUtil.similarTo(id, other.getId()) &&
         CommonUtil.similarTo(basecalls.asList(), other.getBasecalls().asList()) &&
         CommonUtil.similarTo(qualities.asList(), other.getQualities().asList()) &&
-        CommonUtil.similarTo(qualitiesClip, other.getQualitiesClip()) &&
+        CommonUtil.similarTo(qualitiesClip, other.getQualityClip()) &&
         CommonUtil.similarTo(adapterClip, other.getAdapterClip()) &&
-        CommonUtil.similarTo(getSize(), other.getSize());
+        CommonUtil.similarTo(getNumberOfFlows(), other.getNumberOfFlows());
         if(!nonValuesEqual){
         	return false;
         }
         for(int i=0; i<values.length; i++){
-        	if(getValueAt(i) != other.getValueAt(i)){
+        	if(getFlowValue(i) != other.getFlowValue(i)){
         		return false;
         	}
         }

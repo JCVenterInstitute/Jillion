@@ -24,21 +24,29 @@
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.math.BigInteger;
+
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
  * {@code SFFCommonHeader}
- * is the common header in an sff file
- * that contains header information
- * used by all reads in the sff file.
+ * is the header in an sff file
+ * that contains information
+ * used by all of the flowgrams in the sff file.
  * @author dkatzel
  *
  *
  */
-public interface SFFCommonHeader {
+public interface SffCommonHeader {
     /**
      * The Index offset is the offset of
-     * the optional index of reads in the sff file,
-     * if the index is not included, then the offset
-     * should be set to 0.
+     * the optional index of reads at the 
+     * end of the sff file.
+     * If the sff file does not have
+     * an index, then the offset
+     * should be set to 0.  The sff file
+     * specification does not specify 
+     * how the index is to be implemented
+     * so sff creators can design their own
+     * systems.
      * @return the offset of the optional index block
      * as an unsigned long (BigInteger)
      */
@@ -52,8 +60,8 @@ public interface SFFCommonHeader {
      */
     long getIndexLength();
     /**
-     * The number of reads in this Sff file.
-     * @return
+     * The number of reads in this sff file.
+     * @return the total number of reads in this file.
      */
     long getNumberOfReads();
     /**
@@ -62,17 +70,17 @@ public interface SFFCommonHeader {
      */
     int getNumberOfFlowsPerRead();
     /**
-     * The nucleotides used for each flow of each read.
-     * the lenght of this String should be equal 
+     * The {@link NucleotideSequence} used for each flow of each read.
+     * the length of this sequence should be equal 
      * to {@link #getNumberOfFlowsPerRead()}.
      * @return a non-null String.
      */
-    String getFlow();
+    NucleotideSequence getFlowSequence();
     /**
      * The nucleotide bases of the key seuqence used for these
      * reads.
      * @return a non-null String, usually 4 bases long.
      */
-    String getKeySequence();
+    NucleotideSequence getKeySequence();
 
 }

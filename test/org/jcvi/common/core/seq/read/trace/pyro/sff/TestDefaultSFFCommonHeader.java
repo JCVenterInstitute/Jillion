@@ -25,7 +25,9 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.math.BigInteger;
 
-import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffCommonHeader;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -34,10 +36,10 @@ public class TestDefaultSFFCommonHeader {
     private int indexLength = 2000;
     private int numberOfReads = 2000000;
     private short numberOfFlowsPerRead = 400;
-    private String flow = "TCAGTCAGTCAG";
-    private String keySequence = "TCAG";
+    private NucleotideSequence flow = new NucleotideSequenceBuilder("TCAGTCAGTCAG").build();
+    private NucleotideSequence keySequence = new NucleotideSequenceBuilder("TCAG").build();
 
-    DefaultSFFCommonHeader sut = new DefaultSFFCommonHeader(indexOffset,  indexLength,
+    DefaultSffCommonHeader sut = new DefaultSffCommonHeader(indexOffset,  indexLength,
              numberOfReads,  numberOfFlowsPerRead,  flow,
              keySequence);
 
@@ -47,7 +49,7 @@ public class TestDefaultSFFCommonHeader {
         assertEquals(indexLength, sut.getIndexLength() );
         assertEquals(numberOfReads, sut.getNumberOfReads());
         assertEquals(numberOfFlowsPerRead, sut.getNumberOfFlowsPerRead());
-        assertEquals(flow , sut.getFlow());
+        assertEquals(flow , sut.getFlowSequence());
         assertEquals(keySequence , sut.getKeySequence());
     }
 
@@ -66,7 +68,7 @@ public class TestDefaultSFFCommonHeader {
 
     @Test
     public void equalsSameValues(){
-        DefaultSFFCommonHeader sameValues = new DefaultSFFCommonHeader(
+        DefaultSffCommonHeader sameValues = new DefaultSffCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads,  numberOfFlowsPerRead,  flow,
                                     keySequence);
@@ -75,7 +77,7 @@ public class TestDefaultSFFCommonHeader {
 
     @Test
     public void notEqualsDifferentIndexOffset(){
-        DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
+        DefaultSffCommonHeader differentValues = new DefaultSffCommonHeader(
                                     indexOffset.add(BigInteger.valueOf(1)),  indexLength,
                                     numberOfReads,  numberOfFlowsPerRead,  flow,
                                     keySequence);
@@ -84,7 +86,7 @@ public class TestDefaultSFFCommonHeader {
 
     @Test
     public void notEqualsDifferentIndexLength(){
-        DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
+        DefaultSffCommonHeader differentValues = new DefaultSffCommonHeader(
                                     indexOffset,  indexLength+1,
                                     numberOfReads,  numberOfFlowsPerRead,  flow,
                                     keySequence);
@@ -92,7 +94,7 @@ public class TestDefaultSFFCommonHeader {
     }
     @Test
     public void notEqualsDifferentNumberOfReads(){
-        DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
+        DefaultSffCommonHeader differentValues = new DefaultSffCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads+1,  numberOfFlowsPerRead,  flow,
                                     keySequence);
@@ -101,7 +103,7 @@ public class TestDefaultSFFCommonHeader {
 
     @Test
     public void notEqualsDifferentNumberOfFlowsPerReads(){
-        DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
+        DefaultSffCommonHeader differentValues = new DefaultSffCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads,  (short)(numberOfFlowsPerRead+1),  flow,
                                     keySequence);
@@ -110,16 +112,16 @@ public class TestDefaultSFFCommonHeader {
 
     @Test
     public void notEqualsDifferentFlow(){
-        DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
+        DefaultSffCommonHeader differentValues = new DefaultSffCommonHeader(
                                     indexOffset,  indexLength,
-                                    numberOfReads,  numberOfFlowsPerRead,  "not"+flow,
+                                    numberOfReads,  numberOfFlowsPerRead,  new NucleotideSequenceBuilder(flow).append("A").build(),
                                     keySequence);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
 
     @Test
     public void notEqualsNullFlow(){
-        DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
+        DefaultSffCommonHeader differentValues = new DefaultSffCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads,  numberOfFlowsPerRead,  null,
                                     keySequence);
@@ -128,7 +130,7 @@ public class TestDefaultSFFCommonHeader {
 
     @Test
     public void notEqualsNullKeySequence(){
-        DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
+        DefaultSffCommonHeader differentValues = new DefaultSffCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads,  numberOfFlowsPerRead,  flow,
                                     null);
@@ -137,10 +139,10 @@ public class TestDefaultSFFCommonHeader {
 
     @Test
     public void notEqualsDifferentKeySequence(){
-        DefaultSFFCommonHeader differentValues = new DefaultSFFCommonHeader(
+        DefaultSffCommonHeader differentValues = new DefaultSffCommonHeader(
                                     indexOffset,  indexLength,
                                     numberOfReads,  numberOfFlowsPerRead,  flow,
-                                    "not"+keySequence);
+                                    new NucleotideSequenceBuilder(keySequence).append("A").build());
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
 }

@@ -68,7 +68,7 @@ public final class DefaultSffFileDataStore {
 
     	private boolean initialized=false;
     	private final DefaultSffDataStoreBuilder builder = new DefaultSffDataStoreBuilder();
-    	private SFFReadHeader currentReadHeader;
+    	private SffReadHeader currentReadHeader;
     	private final DataStoreFilter filter;
     	private boolean keepParsingFile=true;
     	private final boolean onlyOneReadToParse;
@@ -100,16 +100,16 @@ public final class DefaultSffFileDataStore {
 		}
 
 		@Override
-		public synchronized boolean visitCommonHeader(SFFCommonHeader commonHeader) {
+		public synchronized boolean visitCommonHeader(SffCommonHeader commonHeader) {
 			checkNotYetInitialized();
 			return true;
 		}
 
 		@Override
-		public synchronized boolean visitReadHeader(SFFReadHeader readHeader) {
+		public synchronized boolean visitReadHeader(SffReadHeader readHeader) {
 			checkNotYetInitialized();
 			this.currentReadHeader = readHeader;
-	        boolean accept= filter.accept(readHeader.getName());
+	        boolean accept= filter.accept(readHeader.getId());
 	        if(onlyOneReadToParse && accept){
 	        	keepParsingFile=false;
 	        }
@@ -117,9 +117,9 @@ public final class DefaultSffFileDataStore {
 		}
 
 		@Override
-		public boolean visitReadData(SFFReadData readData) {
+		public boolean visitReadData(SffReadData readData) {
 			checkNotYetInitialized();
-			 builder.addFlowgram(SFFUtil.buildSFFFlowgramFrom(currentReadHeader, readData));
+			 builder.addFlowgram(SffFlowgram.create(currentReadHeader, readData));
 		     currentReadHeader=null;
 			return keepParsingFile;
 		}

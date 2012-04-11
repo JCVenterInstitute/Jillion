@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -37,24 +37,24 @@ public class TestSFFUtil_numberOfIntensities {
     @Test
     public void noHomoPolymerRunsshouldReturnNumberOfBases(){
         final List<Nucleotide> oneOfEachBasecall = Arrays.asList(Nucleotide.values());
-        assertEquals(oneOfEachBasecall.size(),SFFUtil.numberOfIntensities(oneOfEachBasecall));
+        assertEquals(oneOfEachBasecall.size(),SffUtil.numberOfIntensities(oneOfEachBasecall));
     }
     
     @Test
     public void emptyListShouldReturnZero(){
-        assertEquals(0, SFFUtil.numberOfIntensities(Collections.<Nucleotide>emptyList()));
+        assertEquals(0, SffUtil.numberOfIntensities(Collections.<Nucleotide>emptyList()));
     }
     
     @Test
     public void onlyOneHomopolymerRunShouldReturn1(){
         List<Nucleotide> oneHomopolymer = Arrays.asList(Nucleotide.Adenine,Nucleotide.Adenine,Nucleotide.Adenine);
-        assertEquals(1,SFFUtil.numberOfIntensities(oneHomopolymer));
+        assertEquals(1,SffUtil.numberOfIntensities(oneHomopolymer));
     }
     @Test
     public void twoHomopolymerRunsShouldReturn2(){
         List<Nucleotide> twoDifferentBases = Arrays.asList(Nucleotide.Adenine,Nucleotide.Adenine,
                 Nucleotide.Cytosine);
-        assertEquals(2,SFFUtil.numberOfIntensities(twoDifferentBases));
+        assertEquals(2,SffUtil.numberOfIntensities(twoDifferentBases));
     }
     
     @Test
@@ -62,6 +62,6 @@ public class TestSFFUtil_numberOfIntensities {
         List<Nucleotide> threeRuns = Arrays.asList(Nucleotide.Adenine,Nucleotide.Adenine,
                 Nucleotide.Cytosine,
                 Nucleotide.Adenine,Nucleotide.Adenine);
-        assertEquals(3,SFFUtil.numberOfIntensities(threeRuns));
+        assertEquals(3,SffUtil.numberOfIntensities(threeRuns));
     }
 }

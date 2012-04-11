@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.DataInputStream;
 
-public interface SFFCommonHeaderCodec {
+public interface SffCommonHeaderDecoder {
 
-    SFFCommonHeader decodeHeader(DataInputStream in) throws SFFDecoderException;
+    SffCommonHeader decodeHeader(DataInputStream in) throws SffDecoderException;
 }

@@ -29,7 +29,7 @@ import java.util.Arrays;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFFlowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFlowgram;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -48,7 +48,7 @@ public abstract class AbstractTestExampleSffFile{
            throw new IllegalStateException("could not read sff file");
         }
     }
-    final SFFFlowgram FF585OX02HCMO2 = new SFFFlowgram("FF585OX02HCMO2",
+    final SffFlowgram FF585OX02HCMO2 = new SffFlowgram("FF585OX02HCMO2",
     		new NucleotideSequenceBuilder(
                   "TCAGCTGGGCTCAAGTGATCTGCCCACCTCAGCTTCCCAAAGTGTTGGGATTACAGGCACGAACCACTGTGCTCGGTCAGCTCTTTTTTTGTTTTTTGGTTTTTTTCCAGGATCCAGTCAAAGTTTGGTTGGAACCGTCCGGGTTTTTAAAAACCCGGAATTCAAACCCTTTCGGTTCCAACACTCAGACCTCACCCTGAGCGGGCTGGCAAGGC").build(),
                   new EncodedQualitySequence(runLengthQualityCodec,
@@ -58,7 +58,7 @@ public abstract class AbstractTestExampleSffFile{
             Range.create(CoordinateSystem.RESIDUE_BASED, 0,0)
     );
     
-    final SFFFlowgram FF585OX02HCD8G = new SFFFlowgram("FF585OX02HCD8G",
+    final SffFlowgram FF585OX02HCD8G = new SffFlowgram("FF585OX02HCD8G",
     		new NucleotideSequenceBuilder(
                       "TCAGGGGGGGTCTTCTCCTGTGTGGAGAAATGGTGGCAGAAGCCTGGGGCCAGGCAGAGGAGAGGGAAAAGGTCAAAATTAACTTCTCTCCCCAGTCCCAAACCAACGTTGGAACCGAAAGGGTTTGAATTCAAACCCTTTCGGTTCCAACATGGTGAGACTCTGGGCCACAGGCCGGTTAGCAGTCTGAGCGGGCTGGCAAGGC").build(),
                       new EncodedQualitySequence(runLengthQualityCodec,
@@ -69,7 +69,7 @@ public abstract class AbstractTestExampleSffFile{
                 Range.create(CoordinateSystem.RESIDUE_BASED, 0,0)
         );
     
-    final SFFFlowgram FF585OX02FNE4N = new SFFFlowgram("FF585OX02FNE4N",
+    final SffFlowgram FF585OX02FNE4N = new SffFlowgram("FF585OX02FNE4N",
     		new NucleotideSequenceBuilder(
                       "TCAGGGGGGCACCATTTACAAGGATGATGCCTCCTAAATGTGGTGCAGCATGGTGGCCCCAGGTGTTTACTTCTATACTAAGGCCACACAGATGAATGGTCAAAAATTTGGTGACAGAAATCAATGTTAGATTCTTTAGCTTCTGTTTCCTTCCTCCTTTATTGCCACTGCCTCCAAGTTGGAACCGAAGGGTTTGAATTCAAACCCCTGAGCGGGCTGGCAAGGC").build(),
                       new EncodedQualitySequence(runLengthQualityCodec,
@@ -80,7 +80,7 @@ public abstract class AbstractTestExampleSffFile{
                 Range.create(CoordinateSystem.RESIDUE_BASED, 0,0)
         );
     
-    final SFFFlowgram FF585OX02GMGGN = new SFFFlowgram("FF585OX02GMGGN",
+    final SffFlowgram FF585OX02GMGGN = new SffFlowgram("FF585OX02GMGGN",
     		new NucleotideSequenceBuilder(
                       "TCAGAATTCAAACCCTTTCGGTTCCAACTTTAAAATTAATAATTATTTTTCCCATGTTGTCTAAACAGCTTTAAATATATTTTAATGGGATGTCTCAAAGCTTAGATAAGAATGCTCAGCAAACATATCCAATTTTTAAAATGATATTCATTTATTTTGTATGATTATTGCAACATCACCTCTTCTGTATTATGTGGCCATGTGGAAGAGAATGAGAATGTCACATTCACTTACCTTTGAATAGCAGGCTACTTTGGTATGCATTTTTA").build(),
                       new EncodedQualitySequence(runLengthQualityCodec,
@@ -90,7 +90,7 @@ public abstract class AbstractTestExampleSffFile{
                 Range.create(CoordinateSystem.RESIDUE_BASED, 0,0)
         );
     
-    final SFFFlowgram FF585OX02FHO5X = new SFFFlowgram("FF585OX02FHO5X",
+    final SffFlowgram FF585OX02FHO5X = new SffFlowgram("FF585OX02FHO5X",
     		new NucleotideSequenceBuilder(
                       "TCAGGGGGGCTTTGGATGTTGGAACCGAAAGGGTTTGAATTCAAACCCTTTCGGTTCCAACGATTTAAACCTACATCCATTTAACTCCAAATCCTGAACGGTTTCCAATAAACAACTTTACATTTGTGTAGCAAATTCCAGGCTATGTAAGAAAGGAGGACTCCACGGTGCACTGAGCGGGCTGGCAAGGC").build(),
                       new EncodedQualitySequence(runLengthQualityCodec,

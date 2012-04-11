@@ -30,22 +30,22 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadHeader;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDecoderException;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 import org.jcvi.common.core.testUtil.EasyMockUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.jcvi.common.core.testUtil.EasyMockUtil.*;
 import static org.easymock.EasyMock.*;
-public class TestSFFReadHeaderCodec_decode extends AbstractTestSFFReadHeaderCodec{
+public class TestSffeadHeaderDecoder extends AbstractTestSFFReadHeaderCodec{
 
     @Test
-    public void valid() throws SFFDecoderException, IOException{
+    public void valid() throws SffDecoderException, IOException{
         InputStream mockInputStream = createMock(InputStream.class);
         encodeHeader(mockInputStream, expectedReadHeader);
         replay(mockInputStream);
-        SFFReadHeader actualReadHeader =sut.decodeReadHeader(new DataInputStream(mockInputStream));
+        SffReadHeader actualReadHeader =sut.decodeReadHeader(new DataInputStream(mockInputStream));
         assertEquals(actualReadHeader, expectedReadHeader);
         verify(mockInputStream);
     }
@@ -75,7 +75,7 @@ public class TestSFFReadHeaderCodec_decode extends AbstractTestSFFReadHeaderCode
         try {
             sut.decodeReadHeader(new DataInputStream(mockInputStream));
             fail("should wrap IOException in SFFDecoderException");
-        } catch (SFFDecoderException e) {
+        } catch (SffDecoderException e) {
             assertEquals("error trying to decode read header", e.getMessage());
             assertEquals(expectedIOException, e.getCause());
         }
@@ -84,11 +84,11 @@ public class TestSFFReadHeaderCodec_decode extends AbstractTestSFFReadHeaderCode
     }
 
 
-    void encodeHeader(InputStream mockInputStream, SFFReadHeader readHeader) throws IOException{
-        final String seqName = readHeader.getName();
+    void encodeHeader(InputStream mockInputStream, SffReadHeader readHeader) throws IOException{
+        final String seqName = readHeader.getId();
         final int nameLength = seqName.length();
         int unpaddedLength = 16+nameLength;
-        final long padds = SFFUtil.caclulatePaddedBytes(unpaddedLength);
+        final long padds = SffUtil.caclulatePaddedBytes(unpaddedLength);
         putShort(mockInputStream,(short)(padds+unpaddedLength));
         putShort(mockInputStream,(short)nameLength);
         putInt(mockInputStream,readHeader.getNumberOfBases());
@@ -101,11 +101,11 @@ public class TestSFFReadHeaderCodec_decode extends AbstractTestSFFReadHeaderCode
         
         expect(mockInputStream.skip(padds)).andReturn(padds);
     }
-    void encodeHeaderWithWrongSequenceLength(InputStream mockInputStream, SFFReadHeader readHeader) throws IOException{
-        final String seqName = readHeader.getName();
+    void encodeHeaderWithWrongSequenceLength(InputStream mockInputStream, SffReadHeader readHeader) throws IOException{
+        final String seqName = readHeader.getId();
         final int nameLength = seqName.length();
         int unpaddedLength = 16+nameLength;
-        final long padds = SFFUtil.caclulatePaddedBytes(unpaddedLength);
+        final long padds = SffUtil.caclulatePaddedBytes(unpaddedLength);
         putShort(mockInputStream,(short)(padds+unpaddedLength));
         putShort(mockInputStream,(short)(nameLength+1));
         putInt(mockInputStream,readHeader.getNumberOfBases());
@@ -115,6 +115,8 @@ public class TestSFFReadHeaderCodec_decode extends AbstractTestSFFReadHeaderCode
         putShort(mockInputStream,(short)readHeader.getAdapterClip().getEnd());
         expect(mockInputStream.read(isA(byte[].class), eq(0),eq(nameLength+1)))
             .andAnswer(EasyMockUtil.writeArrayToInputStream(seqName.getBytes()));
+        
+        expect(mockInputStream.read(isA(byte[].class), eq(13), eq(1))).andReturn(-1); //EOF
     }
 
 

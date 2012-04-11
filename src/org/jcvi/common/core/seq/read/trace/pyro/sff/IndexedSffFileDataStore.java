@@ -101,18 +101,18 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 		public void visitEndOfFile() {}
 
 		@Override
-		public boolean visitCommonHeader(SFFCommonHeader commonHeader) {
+		public boolean visitCommonHeader(SffCommonHeader commonHeader) {
 			numberOfReads= commonHeader.getNumberOfReads();
 			return false;
 		}
 
 		@Override
-		public boolean visitReadHeader(SFFReadHeader readHeader) {
+		public boolean visitReadHeader(SffReadHeader readHeader) {
 			return false;
 		}
 
 		@Override
-		public boolean visitReadData(SFFReadData readData) {
+		public boolean visitReadData(SffReadData readData) {
 			return false;
 		}
 		
@@ -156,7 +156,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 		
 	}
 	@Override
-	public boolean visitCommonHeader(SFFCommonHeader commonHeader) {
+	public boolean visitCommonHeader(SffCommonHeader commonHeader) {
 		this.numberOfFlowsPerRead = commonHeader.getNumberOfFlowsPerRead();
 		if(commonHeader.getNumberOfReads() > Integer.MAX_VALUE){
 			throw new IllegalArgumentException("too many reads in sff file to index > Integer.MAX_VALUE");
@@ -171,10 +171,10 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 		return true;
 	}
 	@Override
-	public boolean visitReadHeader(SFFReadHeader readHeader) {
+	public boolean visitReadHeader(SffReadHeader readHeader) {
 		try {
 			encodedReadLength=SffWriter.writeReadHeader(readHeader, new ByteArrayOutputStream());
-			currentReadId=readHeader.getName();
+			currentReadId=readHeader.getId();
 			return true;
 		} catch (IOException e) {
 			throw new IllegalStateException("error computing number of bytes", e);
@@ -182,7 +182,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 		
 	}
 	@Override
-	public boolean visitReadData(SFFReadData readData) {
+	public boolean visitReadData(SffReadData readData) {
 		try {
 			encodedReadLength += SffWriter.writeReadData(readData, new ByteArrayOutputStream());
 		} catch (IOException e) {
@@ -202,8 +202,8 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 	}
 	    
 	}
-	private static final SFFReadHeaderCodec READ_HEADER_CODEC =new DefaultSFFReadHeaderCodec();
-	private static final SFFReadDataCodec READ_DATA_CODEC =new DefaultSFFReadDataCodec();
+	private static final SffReadHeaderDecoder READ_HEADER_CODEC =DefaultSffReadHeaderDecoder.INSTANCE;
+	private static final SffReadDataDecoder READ_DATA_CODEC =DefaultSffReadDataDecoder.INSTANCE;
 	    
 	private final IndexedFileRange fileRanges;
 	private final int numberOfFlowsPerRead;
@@ -233,9 +233,9 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 		try {
 			InputStream in = IOUtil.createInputStreamFromFile(sffFile, fileRanges.getRangeFor(id));
 			 DataInputStream dataIn = new DataInputStream(in);
-			 SFFReadHeader readHeader = READ_HEADER_CODEC.decodeReadHeader(dataIn);
+			 SffReadHeader readHeader = READ_HEADER_CODEC.decodeReadHeader(dataIn);
 			 final int numberOfBases = readHeader.getNumberOfBases();
-             SFFReadData readData = READ_DATA_CODEC.decode(dataIn,
+             SffReadData readData = READ_DATA_CODEC.decode(dataIn,
                              numberOfFlowsPerRead,
                              numberOfBases);
              builder.visitReadHeader(readHeader);

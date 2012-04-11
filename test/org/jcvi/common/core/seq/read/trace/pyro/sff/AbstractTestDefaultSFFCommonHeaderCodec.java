@@ -25,9 +25,11 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.math.BigInteger;
 
-import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFCommonHeader;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFCommonHeaderCodec;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFCommonHeaderDecoder;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public class AbstractTestDefaultSFFCommonHeaderCodec {
 
@@ -35,13 +37,13 @@ public class AbstractTestDefaultSFFCommonHeaderCodec {
     protected int indexLength = 2000;
     protected int numberOfReads = 5;
     protected short numberOfFlowsPerRead = 12;
-    protected String flow = "TCAGTCAGTCAG";
-    protected String keySequence = "TCAG";
-    protected short headerLength = (short)(31+numberOfFlowsPerRead+SFFUtil.caclulatePaddedBytes(31+numberOfFlowsPerRead));
+    protected NucleotideSequence flow = new NucleotideSequenceBuilder("TCAGTCAGTCAG").build();
+    protected NucleotideSequence keySequence = new NucleotideSequenceBuilder("TCAG").build();
+    protected short headerLength = (short)(31+numberOfFlowsPerRead+SffUtil.caclulatePaddedBytes(31+numberOfFlowsPerRead));
 
-    protected DefaultSFFCommonHeader expectedHeader = new DefaultSFFCommonHeader(indexOffset,  indexLength,
+    protected DefaultSffCommonHeader expectedHeader = new DefaultSffCommonHeader(indexOffset,  indexLength,
              numberOfReads,  numberOfFlowsPerRead,  flow,
              keySequence);
 
-    protected DefaultSFFCommonHeaderCodec sut = new DefaultSFFCommonHeaderCodec();
+    protected DefaultSFFCommonHeaderDecoder sut = DefaultSFFCommonHeaderDecoder.INSTANCE;
 }

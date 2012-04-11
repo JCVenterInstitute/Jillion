@@ -23,30 +23,30 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
-
-public final class SFFUtil {
+/**
+ * Utility class for working with sff
+ * encoded data.
+ * @author dkatzel
+ *
+ */
+public final class SffUtil {
    /**
-     * 
+     * {@value}
      */
     private static final float ONE_HUNDRED = 100F;
-private SFFUtil(){}
+    
+    private SffUtil(){}
    /**
     * Mated Sff reads contain both mate data in the same
     * read with a "linker" sequence in between. 
@@ -138,59 +138,15 @@ private SFFUtil(){}
         }
         throw new IllegalArgumentException("could not parse sffinfo encoded flowgram value "+ sffinfoEncodedFlowgram);
     }
-    public static List<Integer> computeCalledFlowIndexes(SFFReadData readData){
-        final byte[] indexes = readData.getFlowIndexPerBase();
-        List<Integer> calledIndexes = new ArrayList<Integer>();
-        
-        int position=-1;
-        int i=0;
-
-        while( i < indexes.length){
-            if(indexes[i] != 0){
-                position+=IOUtil.toUnsignedByte(indexes[i]);
-                calledIndexes.add(Integer.valueOf(position));
-            }
-            i++;
-        }
-        return calledIndexes;
-    }
-    public static List<Short> computeValues(SFFReadData readData) {
-        final byte[] indexes = readData.getFlowIndexPerBase();
-        final short[] encodedValues =readData.getFlowgramValues();
-        verifyHashEncodedValues(encodedValues);
-        return computeValues(indexes, encodedValues);
-    }
-
-    private static List<Short> computeValues(final byte[] indexes,
-            final short[] encodedValues) {
-        List<Short> values = new ArrayList<Short>();
-        // positions are 1-based so start with -1 to compensate.
-        int position=-1;
-        int i=0;
-
-        while( i < indexes.length){
-            if(indexes[i] != 0){
-                position+=IOUtil.toUnsignedByte(indexes[i]);
-                values.add(encodedValues[position]);
-            }
-            i++;
-        }
-
-        return Collections.unmodifiableList(values);
-    }
-
-    private static void verifyHashEncodedValues(final short[] encodedValues) {
-        if(encodedValues ==null || encodedValues.length==0){
-            throw new IllegalArgumentException("read data must contain Flowgram values");
-        }
-    }
+    
+   
     public static int getReadDataLength(int numberOfFlows, int numberOfBases) {
         return numberOfFlows * 2 + 3*numberOfBases;
         
     }
     public static int getReadDataLengthIncludingPadding(int numberOfFlows, int numberOfBases) {
         int lengthWithoutPadding = getReadDataLength(numberOfFlows, numberOfBases);
-        int padding= SFFUtil.caclulatePaddedBytes(lengthWithoutPadding);
+        int padding= SffUtil.caclulatePaddedBytes(lengthWithoutPadding);
         return lengthWithoutPadding+padding;
     }
     
@@ -208,7 +164,7 @@ private SFFUtil(){}
     }
     
     public static Range getTrimRangeFor(Flowgram flowgram){
-        Range qualityClip = flowgram.getQualitiesClip();
+        Range qualityClip = flowgram.getQualityClip();
         Range adapterClip = flowgram.getAdapterClip();
         long numberOfBases = flowgram.getBasecalls().getLength();
         long firstBaseOfInsert = Math.max(1,
@@ -220,7 +176,7 @@ private SFFUtil(){}
         
         return Range.create(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
     }
-    public static Range getTrimRangeFor(SFFReadHeader readHeader){
+    public static Range getTrimRangeFor(SffReadHeader readHeader){
         Range qualityClip = readHeader.getQualityClip();
         Range adapterClip = readHeader.getAdapterClip();
         long numberOfBases = readHeader.getNumberOfBases();
@@ -234,17 +190,7 @@ private SFFUtil(){}
         return Range.create(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
     }
     
-    public static SFFFlowgram buildSFFFlowgramFrom(SFFReadHeader readHeader,
-            SFFReadData readData) {
-        return new SFFFlowgram(
-                readHeader.getName(),
-                new NucleotideSequenceBuilder(readData.getBasecalls()).build(),
-                        new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                                PhredQuality.valueOf(readData.getQualities())),
-                SFFUtil.computeValues(readData),
-                readHeader.getQualityClip(),
-                readHeader.getAdapterClip());
-    }
+    
     
   
     

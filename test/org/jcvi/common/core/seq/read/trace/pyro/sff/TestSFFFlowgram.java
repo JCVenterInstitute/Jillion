@@ -28,8 +28,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFFlowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFlowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -48,14 +48,14 @@ public class TestSFFFlowgram {
     List<Short> values = convertIntoList(new short[]{202, 310,1,232,7});
     NucleotideSequence basecalls = createMock(NucleotideSequence.class);
     String id = "readId";
-    SFFFlowgram sut;
+    SffFlowgram sut;
     @Before
     public void setup(){
         expect(basecalls.asList()).andStubReturn(Nucleotides.parse("ACGT"));
         expect(confidence.asList()).andStubReturn(PhredQuality.valueOf(new byte[]{20,15,30,15}));
         
         replay(basecalls,confidence);
-        sut = new SFFFlowgram(id,basecalls,confidence,values,qualitiesClip, adapterClip);
+        sut = new SffFlowgram(id,basecalls,confidence,values,qualitiesClip, adapterClip);
         
     }
 
@@ -72,18 +72,18 @@ public class TestSFFFlowgram {
         assertEquals(id, sut.getId());
         assertEquals(basecalls, sut.getBasecalls());
         assertEquals(confidence, sut.getQualities());
-        assertEquals(qualitiesClip, sut.getQualitiesClip());
+        assertEquals(qualitiesClip, sut.getQualityClip());
         assertEquals(adapterClip, sut.getAdapterClip());
-        assertEquals(values.size(), sut.getSize());
+        assertEquals(values.size(), sut.getNumberOfFlows());
         for(int i=0; i< values.size(); i++){
-            assertEquals(SFFUtil.convertFlowgramValue(values.get(i)), 
-                            sut.getValueAt(i),0);
+            assertEquals(SffUtil.convertFlowgramValue(values.get(i)), 
+                            sut.getFlowValue(i),0);
         }
     }
     @Test
     public void nullIdShouldthrowNullPointerException(){
         try{
-            new SFFFlowgram(null,basecalls,confidence,values,qualitiesClip, adapterClip);
+            new SffFlowgram(null,basecalls,confidence,values,qualitiesClip, adapterClip);
             fail("should throw nullPointerException when id is null");
         }
         catch(NullPointerException expected){
@@ -93,7 +93,7 @@ public class TestSFFFlowgram {
     @Test
     public void nullBasecallsShouldthrowNullPointerException(){
         try{
-            new SFFFlowgram(id,null,confidence,values,qualitiesClip, adapterClip);
+            new SffFlowgram(id,null,confidence,values,qualitiesClip, adapterClip);
             fail("should throw nullPointerException when basecalls is null");
         }
         catch(NullPointerException expected){
@@ -103,7 +103,7 @@ public class TestSFFFlowgram {
     @Test
     public void nullQualitiesShouldthrowNullPointerException(){
         try{
-            new SFFFlowgram(id,basecalls,null,values,qualitiesClip, adapterClip);
+            new SffFlowgram(id,basecalls,null,values,qualitiesClip, adapterClip);
             fail("should throw nullPointerException when qualities is null");
         }
         catch(NullPointerException expected){
@@ -113,7 +113,7 @@ public class TestSFFFlowgram {
     @Test
     public void nullValuesShouldthrowNullPointerException(){
         try{
-            new SFFFlowgram(id,basecalls,confidence,null,qualitiesClip, adapterClip);
+            new SffFlowgram(id,basecalls,confidence,null,qualitiesClip, adapterClip);
             fail("should throw nullPointerException when values is null");
         }
         catch(NullPointerException expected){
@@ -123,7 +123,7 @@ public class TestSFFFlowgram {
     @Test
     public void emptyValuesShouldthrowIllegalArgumentException(){
         try{
-            new SFFFlowgram(id,basecalls,confidence,Collections.<Short>emptyList(),qualitiesClip, adapterClip);
+            new SffFlowgram(id,basecalls,confidence,Collections.<Short>emptyList(),qualitiesClip, adapterClip);
             fail("should throw IllegalArgumentException when values is empty");
         }
         catch(IllegalArgumentException expected){
@@ -133,7 +133,7 @@ public class TestSFFFlowgram {
     @Test
     public void nullQualitiesClipShouldthrowNullPointerException(){
         try{
-            new SFFFlowgram(id,basecalls,confidence,values,null, adapterClip);
+            new SffFlowgram(id,basecalls,confidence,values,null, adapterClip);
             fail("should throw nullPointerException when qualitiesClip is null");
         }
         catch(NullPointerException expected){
@@ -143,7 +143,7 @@ public class TestSFFFlowgram {
     @Test
     public void nullAdapterClipShouldthrowNullPointerException(){
         try{
-            new SFFFlowgram(id,basecalls,confidence,values,qualitiesClip, null);
+            new SffFlowgram(id,basecalls,confidence,values,qualitiesClip, null);
             fail("should throw nullPointerException when adapterClip is null");
         }
         catch(NullPointerException expected){
@@ -165,19 +165,19 @@ public class TestSFFFlowgram {
     }
     @Test
     public void equalsSameData(){
-        SFFFlowgram sameData = new SFFFlowgram(id,basecalls,confidence,values,qualitiesClip, adapterClip);
+        SffFlowgram sameData = new SffFlowgram(id,basecalls,confidence,values,qualitiesClip, adapterClip);
         TestUtil.assertEqualAndHashcodeSame(sut, sameData);
     }
     @Test
     public void notEqualsDifferentValues(){
-        SFFFlowgram differentValues = new SFFFlowgram(id,basecalls,confidence,
+        SffFlowgram differentValues = new SffFlowgram(id,basecalls,confidence,
                 convertIntoList(new short[]{1,2,3,4,5,6,7}),
                     qualitiesClip, adapterClip);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
     @Test
     public void notEqualsValues(){
-        SFFFlowgram differentValues = new SFFFlowgram(id,basecalls,confidence,
+        SffFlowgram differentValues = new SffFlowgram(id,basecalls,confidence,
                 convertIntoList(new short[]{1,2,3,4,5,6,7}),
                     qualitiesClip, adapterClip);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);

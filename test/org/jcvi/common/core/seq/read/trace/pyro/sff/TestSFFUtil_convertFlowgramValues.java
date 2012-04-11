@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -60,7 +60,7 @@ public class TestSFFUtil_convertFlowgramValues {
 
     @Test
     public void convert(){
-        assertEquals(expectedFloat, SFFUtil.convertFlowgramValue(encodedValue),0);
+        assertEquals(expectedFloat, SffUtil.convertFlowgramValue(encodedValue),0);
     }
 
 }

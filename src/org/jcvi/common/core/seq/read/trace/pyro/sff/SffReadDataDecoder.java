@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Oct 6, 2008
+ * Created on Oct 7, 2008
  *
  * @author dkatzel
  */
@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.DataInputStream;
 
-public interface SFFReadHeaderCodec {
+public interface SffReadDataDecoder {
 
-    SFFReadHeader decodeReadHeader(DataInputStream in) throws SFFDecoderException;
+    SffReadData decode(DataInputStream in, int numberOfFlows, int numberOfBases ) throws SffDecoderException;
 }

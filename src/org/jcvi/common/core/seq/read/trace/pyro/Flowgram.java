@@ -26,11 +26,55 @@ package org.jcvi.common.core.seq.read.trace.pyro;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.Trace;
-
+/**
+ * A {@code Flowgram} is a next-generation trace
+ * created using pyrosequencing.
+ * @author dkatzel
+ * @see <a href="http://en.wikipedia.org/wiki/Pyrosequencing">Pyrosequencing Wikipedia Article</a>
+ *
+ */
 public interface Flowgram extends Trace {
+	/**
+	 * The name of this flowgram.
+	 * @return the id as a String; will never be null.
+	 */
     String getId();
+    
+    /**
+     * The quality clip points that
+     * specify the subset of the basecalls
+     * that are good quality.  If no
+     * clip is set, then the Range should be
+     * equal to Range.create(0,0);
+     * @return a Range (never null).
+     */
+    Range getQualityClip();
+    /**
+     * The adapter clip points that
+     * specify the subset of the basecalls
+     * that are not adapter sequence.  If no
+     * clip is set, then the Range should be
+     * equal to Range.create(0,0);
+     * @return a Range (never null).
+     */
     Range getAdapterClip();
-    Range getQualitiesClip();
-    int getSize();
-    float getValueAt(int index);
+    /**
+     * Get the number of flows that this
+     * flowgram has.
+     * @return an int >=0.
+     */
+    int getNumberOfFlows();
+    /**
+     * Get the flow value for the given flow index.  
+     * The flow value is a float which is the estimated
+     * size of a homopolymer run for the given flow index.
+     * 
+     * @param index the index into the flowgram
+     * values to get.  Must be >=0 and < the number of flows.
+     * @return the flow value as a float.
+     * @throws ArrayIndexOutOfBoundsException if 
+     * the index is outside the number of flows
+     * specified by {@link #getNumberOfFlows()}.
+     */
+    float getFlowValue(int index);
 }

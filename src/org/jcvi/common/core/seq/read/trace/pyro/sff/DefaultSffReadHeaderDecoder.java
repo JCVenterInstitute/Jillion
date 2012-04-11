@@ -30,10 +30,15 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
 
-public class DefaultSFFReadHeaderCodec implements SFFReadHeaderCodec {
+enum DefaultSffReadHeaderDecoder implements SffReadHeaderDecoder {
+	/**
+	 * Singleton instance.
+	 */
+	INSTANCE;
+	
     @Override
-    public SFFReadHeader decodeReadHeader(DataInputStream in)
-            throws SFFDecoderException {
+    public SffReadHeader decodeReadHeader(DataInputStream in)
+            throws SffDecoderException {
         try{
             short headerLength =in.readShort();
             short nameLegnth = in.readShort();
@@ -44,29 +49,31 @@ public class DefaultSFFReadHeaderCodec implements SFFReadHeaderCodec {
             short adapterRight = in.readShort();
             String name = readSequenceName(in,nameLegnth);
             int bytesReadSoFar = 16+nameLegnth;
-            int padding =SFFUtil.caclulatePaddedBytes(bytesReadSoFar);
+            int padding =SffUtil.caclulatePaddedBytes(bytesReadSoFar);
             if(headerLength != bytesReadSoFar+padding){
-                throw new SFFDecoderException("invalid header length");
+                throw new SffDecoderException("invalid header length");
             }
             IOUtil.blockingSkip(in, padding);
             
-            return new DefaultSFFReadHeader(numBases,
+            return new DefaultSffReadHeader(numBases,
                     Range.create(CoordinateSystem.RESIDUE_BASED, qualLeft, qualRight),
                     Range.create(CoordinateSystem.RESIDUE_BASED, adapterLeft, adapterRight),
                      name);
         }
         catch(IOException e){
-            throw new SFFDecoderException("error trying to decode read header",e);
+            throw new SffDecoderException("error trying to decode read header",e);
         }
     }
 
 
-    private String readSequenceName(DataInputStream in, short length) throws IOException, SFFDecoderException {
+    private String readSequenceName(DataInputStream in, short length) throws IOException {
         byte[] name = new byte[length];
-        int bytesRead = in.read(name);
-        if(bytesRead != length){
-            throw new SFFDecoderException("error decoding seq name");
+        try{
+        	IOUtil.blockingRead(in, name);
+        }catch(IOException e){
+        	throw new SffDecoderException("error decoding seq name",e);
         }
+       
         return new String(name,IOUtil.UTF_8);
     }
 

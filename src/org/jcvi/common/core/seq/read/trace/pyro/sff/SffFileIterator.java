@@ -28,7 +28,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * {@code SffFileIterator} is a {@link CloseableIterator}
- * that can iterate over {@link SFFFlowgram}s contained
+ * that can iterate over {@link Flowgram}s contained
  * in a sff file.
  * @author dkatzel
  *
@@ -54,10 +54,10 @@ public final class SffFileIterator extends AbstractBlockingCloseableIterator<Flo
 	@Override
 	protected void backgroundThreadRunMethod() {
 		 try {
-         	SffFileVisitor visitor = new AbstractSFFFlowgramVisitor() {
+         	SffFileVisitor visitor = new AbstractSffFlowgramVisitor() {
 					
          		@Override
-         		protected boolean visitSFFFlowgram(SFFFlowgram flowgram) {
+         		protected boolean visitFlowgram(Flowgram flowgram) {
          			SffFileIterator.this.blockingPut(flowgram);
          			return !SffFileIterator.this.isClosed();
          		}

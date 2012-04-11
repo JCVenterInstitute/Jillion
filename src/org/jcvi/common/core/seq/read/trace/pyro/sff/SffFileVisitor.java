@@ -38,13 +38,13 @@ public interface SffFileVisitor extends FileVisitor {
      * return value allows visitors to tell the parser
      * to continue parsing the sff data or to halt parsing
      * entirely.
-     * @param commonHeader the {@link SFFCommonHeader} of this sff
+     * @param commonHeader the {@link SffCommonHeader} of this sff
      * file being parsed.
      * @return {@code true} to continue parsing the
      * SFF file and move on to the reads;
      * {@code false} to stop parsing the file.
      */
-    boolean visitCommonHeader(SFFCommonHeader commonHeader);
+    boolean visitCommonHeader(SffCommonHeader commonHeader);
     /**
      * Visit the header for the current read.  The Boolean
      * return value allows visitors to tell the parser
@@ -56,7 +56,7 @@ public interface SffFileVisitor extends FileVisitor {
      * read; {@code false} to skip this read and move on to
      * the next.
      */
-    boolean visitReadHeader(SFFReadHeader readHeader);
+    boolean visitReadHeader(SffReadHeader readHeader);
     /**
      * Visit the read data for the current read.  The Boolean
      * return value allows visitors to tell the parser
@@ -70,5 +70,5 @@ public interface SffFileVisitor extends FileVisitor {
      * SFF file and move on to the next read header;
      * {@code false} to stop parsing the file.
      */
-    boolean visitReadData(SFFReadData readData);
+    boolean visitReadData(SffReadData readData);
 }

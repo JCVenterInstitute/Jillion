@@ -28,6 +28,10 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqFileDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
+import org.jcvi.common.core.symbol.qual.DefaultEncodedPhredGlyphCodec;
+import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.After;
 import org.junit.Before;
@@ -92,5 +96,27 @@ public class TestFormattingFastqRecords {
     	
     	assertEquals(defaultEncoding, sanger);
     	
+    }
+    
+    @Test
+    public void test(){
+    	QualitySequence qualities = new EncodedQualitySequence(new DefaultEncodedPhredGlyphCodec(), 
+    			new byte[]{20,13,14,15,16,20,20});
+    	FastqRecord fastqRecord = new DefaultFastqRecord("id", 
+    			new NucleotideSequenceBuilder("ACGTACGT")
+    					.build(), 
+    					qualities);
+    	
+    	System.out.println("as sanger");
+    	System.out.print(fastqRecord.toFormattedString(FastqQualityCodec.SANGER));
+    	
+    	System.out.println("as illumina");
+    	System.out.print(fastqRecord.toFormattedString(FastqQualityCodec.ILLUMINA));
+    	
+    	System.out.println("as solexa");
+    	System.out.print(fastqRecord.toFormattedString(FastqQualityCodec.SOLEXA));
+    	
+    	System.out.println("as solexa with duplicated id on qual line");
+    	System.out.print(fastqRecord.toFormattedString(FastqQualityCodec.SOLEXA, true));
     }
 }
