@@ -57,9 +57,9 @@ public final class SffFileIterator extends AbstractBlockingCloseableIterator<Flo
          	SffFileVisitor visitor = new AbstractSffFlowgramVisitor() {
 					
          		@Override
-         		protected boolean visitFlowgram(Flowgram flowgram) {
+         		protected ReadDataReturnCode visitFlowgram(Flowgram flowgram) {
          			SffFileIterator.this.blockingPut(flowgram);
-         			return !SffFileIterator.this.isClosed();
+         			return SffFileIterator.this.isClosed()? ReadDataReturnCode.STOP : ReadDataReturnCode.PARSE_NEXT_READ;
          		}
 
 				};

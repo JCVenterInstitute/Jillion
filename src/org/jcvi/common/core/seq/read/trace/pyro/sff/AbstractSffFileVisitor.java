@@ -26,18 +26,18 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 public abstract class AbstractSffFileVisitor implements SffFileVisitor {
 
     @Override
-    public boolean visitCommonHeader(SffCommonHeader commonHeader) {
-        return true;
+    public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
+        return CommonHeaderReturnCode.PARSE_READS;
     }
 
     @Override
-    public boolean visitReadData(SffReadData readData) {
-        return true;
+    public ReadDataReturnCode visitReadData(SffReadData readData) {
+        return ReadDataReturnCode.PARSE_NEXT_READ;
     }
 
     @Override
-    public boolean visitReadHeader(SffReadHeader readHeader) {
-        return true;
+    public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
+        return ReadHeaderReturnCode.PARSE_READ_DATA;
     }
 
     @Override

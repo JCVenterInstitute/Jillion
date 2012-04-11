@@ -68,7 +68,7 @@ public class SffReadInfo extends AbstractSffFileProcessor {
     }
 
     @Override
-    public boolean visitReadHeader(SffReadHeader readHeader) {
+    public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
         final Range qualityClip = readHeader.getQualityClip();
         final Range adapterClip = readHeader.getAdapterClip();
         Range trimmedRange;

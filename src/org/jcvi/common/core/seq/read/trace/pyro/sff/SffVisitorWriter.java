@@ -40,35 +40,35 @@ public class SffVisitorWriter implements SffFileVisitor{
     }
 
     @Override
-    public boolean visitCommonHeader(SffCommonHeader header) {
+    public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader header) {
         try {         
             SffWriter.writeCommonHeader(header, out);
         } catch (IOException e) {
             throw new IllegalStateException("error writing Sff Common Header ",e);
         }
-        return true;
+        return CommonHeaderReturnCode.PARSE_READS;
         
     }
 
     @Override
-    public boolean visitReadData(SffReadData readData) {
+    public ReadDataReturnCode visitReadData(SffReadData readData) {
        
         try {
           SffWriter.writeReadData(readData, out);
         } catch (IOException e) {
             throw new IllegalStateException("error writing Sff read Data ",e);
         }
-        return true;
+        return ReadDataReturnCode.PARSE_NEXT_READ;
     }
 
     @Override
-    public boolean visitReadHeader(SffReadHeader readHeader) {
+    public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
        try {
        SffWriter.writeReadHeader(readHeader, out);
     } catch (IOException e) {
         throw new IllegalStateException("error writing Sff read header ",e);
     }
-    return true;
+    return ReadHeaderReturnCode.PARSE_READ_DATA;
         
     }
 

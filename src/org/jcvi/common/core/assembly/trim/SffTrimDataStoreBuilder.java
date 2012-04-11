@@ -64,25 +64,25 @@ public class SffTrimDataStoreBuilder implements SffFileVisitor, Builder<TrimData
     * {@inheritDoc}
     */
     @Override
-    public boolean visitCommonHeader(SffCommonHeader commonHeader) {
-        return true;
+    public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
+        return CommonHeaderReturnCode.PARSE_READS;
     }
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public boolean visitReadData(SffReadData readData) {
-        return true;
+    public ReadDataReturnCode visitReadData(SffReadData readData) {
+        return ReadDataReturnCode.PARSE_NEXT_READ;
     }
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public boolean visitReadHeader(SffReadHeader readHeader) {
+    public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
         trimRanges.put(readHeader.getId(), SffUtil.getTrimRangeFor(readHeader));
-        return false;
+        return ReadHeaderReturnCode.SKIP_CURRENT_READ;
     }
 
     /**

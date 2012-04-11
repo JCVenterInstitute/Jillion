@@ -101,19 +101,19 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 		public void visitEndOfFile() {}
 
 		@Override
-		public boolean visitCommonHeader(SffCommonHeader commonHeader) {
+		public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
 			numberOfReads= commonHeader.getNumberOfReads();
-			return false;
+			return CommonHeaderReturnCode.STOP;
 		}
 
 		@Override
-		public boolean visitReadHeader(SffReadHeader readHeader) {
-			return false;
+		public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
+			return ReadHeaderReturnCode.STOP;
 		}
 
 		@Override
-		public boolean visitReadData(SffReadData readData) {
-			return false;
+		public ReadDataReturnCode visitReadData(SffReadData readData) {
+			return ReadDataReturnCode.STOP;
 		}
 		
 	}
@@ -156,7 +156,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 		
 	}
 	@Override
-	public boolean visitCommonHeader(SffCommonHeader commonHeader) {
+	public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
 		this.numberOfFlowsPerRead = commonHeader.getNumberOfFlowsPerRead();
 		if(commonHeader.getNumberOfReads() > Integer.MAX_VALUE){
 			throw new IllegalArgumentException("too many reads in sff file to index > Integer.MAX_VALUE");
@@ -168,21 +168,21 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 			throw new IllegalStateException("error computing number of bytes", e);
 		}
 		
-		return true;
+		return CommonHeaderReturnCode.PARSE_READS;
 	}
 	@Override
-	public boolean visitReadHeader(SffReadHeader readHeader) {
+	public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
 		try {
 			encodedReadLength=SffWriter.writeReadHeader(readHeader, new ByteArrayOutputStream());
 			currentReadId=readHeader.getId();
-			return true;
+			return ReadHeaderReturnCode.PARSE_READ_DATA;
 		} catch (IOException e) {
 			throw new IllegalStateException("error computing number of bytes", e);
 		}
 		
 	}
 	@Override
-	public boolean visitReadData(SffReadData readData) {
+	public ReadDataReturnCode visitReadData(SffReadData readData) {
 		try {
 			encodedReadLength += SffWriter.writeReadData(readData, new ByteArrayOutputStream());
 		} catch (IOException e) {
@@ -190,7 +190,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 		}
 		indexRanges.put(currentReadId, Range.createOfLength(currentOffset, encodedReadLength));
 		currentOffset+=encodedReadLength;
-		return true;
+		return ReadDataReturnCode.PARSE_NEXT_READ;
 	}
 	@Override
 	public SffDataStore build() {
