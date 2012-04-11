@@ -36,7 +36,7 @@ import org.joda.time.DateTime;
  *
  *
  */
-public final class SffNameUtil {
+public final class Sff454NameUtil {
     /**
      * All 454 Universal Accession numbers follow the same 14 character format.  Some tools may add
      * suffixes to the accession number to include mate pair information.
@@ -44,7 +44,7 @@ public final class SffNameUtil {
     private static final Pattern UNIVERSAL_ACCCESSION_NUM_PATTERN = Pattern.compile("^([A-Z0-9]{7}\\d\\d[A-Z0-9]{5})\\S*$");
     
     
-    private SffNameUtil(){
+    private Sff454NameUtil(){
         //can not instantiate
     }
     /**

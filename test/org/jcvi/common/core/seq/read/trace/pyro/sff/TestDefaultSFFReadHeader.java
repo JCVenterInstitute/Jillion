@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffReadHeader;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 
@@ -35,7 +35,7 @@ public class TestDefaultSFFReadHeader {
     Range adapterClip= Range.create(5,95);
     String name = "sequence name";
 
-    DefaultSFFReadHeader sut = new DefaultSFFReadHeader( numberOfBases,
+    DefaultSffReadHeader sut = new DefaultSffReadHeader( numberOfBases,
             qualityClip, adapterClip, name);
 
     @Test
@@ -43,7 +43,7 @@ public class TestDefaultSFFReadHeader {
         assertEquals(numberOfBases, sut.getNumberOfBases());
         assertEquals(qualityClip, sut.getQualityClip());
         assertEquals(adapterClip, sut.getAdapterClip());
-        assertEquals(name, sut.getName());
+        assertEquals(name, sut.getId());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class TestDefaultSFFReadHeader {
 
     @Test
     public void equalsSameValues(){
-        DefaultSFFReadHeader sameValues = new DefaultSFFReadHeader(
+        DefaultSffReadHeader sameValues = new DefaultSffReadHeader(
                 numberOfBases,
                 qualityClip,
                 adapterClip,
@@ -71,7 +71,7 @@ public class TestDefaultSFFReadHeader {
    
     @Test
     public void notEqualsDifferentNumberOfBases(){
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
+        DefaultSffReadHeader differentValues = new DefaultSffReadHeader(
                 numberOfBases+1,
                 qualityClip,
                 adapterClip,
@@ -80,7 +80,7 @@ public class TestDefaultSFFReadHeader {
     }
     @Test
     public void notEqualsNullQualityClip(){
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
+        DefaultSffReadHeader differentValues = new DefaultSffReadHeader(
                 numberOfBases,
                 null,
                 adapterClip,
@@ -90,7 +90,7 @@ public class TestDefaultSFFReadHeader {
     @Test
     public void notEqualsDifferentQualityClip(){
         Range differentQualityClip = qualityClip.shiftRight(2);
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
+        DefaultSffReadHeader differentValues = new DefaultSffReadHeader(
                 numberOfBases,
                 differentQualityClip,
                 adapterClip,
@@ -100,7 +100,7 @@ public class TestDefaultSFFReadHeader {
 
     @Test
     public void notEqualsNullAdapterClip(){
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
+        DefaultSffReadHeader differentValues = new DefaultSffReadHeader(
                 numberOfBases,
                 qualityClip,
                 null,
@@ -110,7 +110,7 @@ public class TestDefaultSFFReadHeader {
     @Test
     public void notEqualsDifferentAdapterClip(){
         Range differentAdapterClip = adapterClip.shiftRight(2);
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
+        DefaultSffReadHeader differentValues = new DefaultSffReadHeader(
                 numberOfBases,
                 qualityClip,
                 differentAdapterClip,
@@ -120,7 +120,7 @@ public class TestDefaultSFFReadHeader {
 
     @Test
     public void notEqualsDifferentName(){
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
+        DefaultSffReadHeader differentValues = new DefaultSffReadHeader(
                 numberOfBases,
                 qualityClip,
                 adapterClip,
@@ -130,7 +130,7 @@ public class TestDefaultSFFReadHeader {
 
     @Test
     public void notEqualsNullName(){
-        DefaultSFFReadHeader differentValues = new DefaultSFFReadHeader(
+        DefaultSffReadHeader differentValues = new DefaultSffReadHeader(
                 numberOfBases,
                 qualityClip,
                 adapterClip,

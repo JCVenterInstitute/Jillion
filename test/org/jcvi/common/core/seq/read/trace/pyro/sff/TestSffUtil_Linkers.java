@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.junit.Test;
@@ -34,13 +34,13 @@ public class TestSffUtil_Linkers {
     @Test
     public void flx(){
         String seq = "GTTGGAACCGAAAGGGTTTGAATTCAAACCCTTTCGGTTCCAAC";
-        assertMatches(seq, SFFUtil.Linkers.FLX.getForwardSequence());
-        assertMatches(seq, SFFUtil.Linkers.FLX.getReverseSequence());
+        assertMatches(seq, SffUtil.Linkers.FLX.getForwardSequence());
+        assertMatches(seq, SffUtil.Linkers.FLX.getReverseSequence());
     }
     @Test
     public void titanium(){
-        assertMatches("TCGTATAACTTCGTATAATGTATGCTATACGAAGTTATTACG", SFFUtil.Linkers.TITANIUM.getForwardSequence());
-        assertMatches("CGTAATAACTTCGTATAGCATACATTATACGAAGTTATACGA", SFFUtil.Linkers.TITANIUM.getReverseSequence());
+        assertMatches("TCGTATAACTTCGTATAATGTATGCTATACGAAGTTATTACG", SffUtil.Linkers.TITANIUM.getForwardSequence());
+        assertMatches("CGTAATAACTTCGTATAGCATACATTATACGAAGTTATACGA", SffUtil.Linkers.TITANIUM.getReverseSequence());
         
     }
     

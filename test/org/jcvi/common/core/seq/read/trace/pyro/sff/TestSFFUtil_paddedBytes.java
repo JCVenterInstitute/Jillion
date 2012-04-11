@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -60,7 +60,7 @@ public class TestSFFUtil_paddedBytes {
 
     @Test
     public void paddedBytes(){
-        assertEquals(expectedPadding, SFFUtil.caclulatePaddedBytes(readIn));
+        assertEquals(expectedPadding, SffUtil.caclulatePaddedBytes(readIn));
     }
 
 }

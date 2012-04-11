@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.util.CommonUtil;
 
-public class DefaultSFFReadHeader implements SFFReadHeader {
+final class DefaultSffReadHeader implements SffReadHeader {
     private final int numberOfBases;
     private final Range qualityClip;
     private final Range adapterClip;
@@ -40,7 +40,7 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
      * @param adapterClip
      * @param name
      */
-    public DefaultSFFReadHeader(int numberOfBases,
+    public DefaultSffReadHeader(int numberOfBases,
             Range qualityClip, Range adapterClip, String name) {
         this.numberOfBases = numberOfBases;
         this.qualityClip = qualityClip;
@@ -55,7 +55,7 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return name;
     }
 
@@ -93,11 +93,11 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof DefaultSFFReadHeader)){
+        if (!(obj instanceof DefaultSffReadHeader)){
             return false;
         }
-        final DefaultSFFReadHeader other = (DefaultSFFReadHeader) obj;
-        return CommonUtil.similarTo(getName(), other.getName())
+        final DefaultSffReadHeader other = (DefaultSffReadHeader) obj;
+        return CommonUtil.similarTo(getId(), other.getId())
         && CommonUtil.similarTo(getNumberOfBases(), other.getNumberOfBases())
         && CommonUtil.similarTo(getAdapterClip(), other.getAdapterClip())
         && CommonUtil.similarTo(getQualityClip(), other.getQualityClip());
@@ -105,17 +105,17 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
     }
 
 
-    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultSFFReadHeader>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultSffReadHeader>{
         private  int numberOfBases;
         private  Range qualityClip;
         private  Range adapterClip;
         private  String name;
         
-        public Builder(SFFReadHeader header){
+        public Builder(SffReadHeader header){
             this.numberOfBases = header.getNumberOfBases();
             this.qualityClip = header.getQualityClip();
             this.adapterClip = header.getAdapterClip();
-            this.name = header.getName();
+            this.name = header.getId();
         }
         
         public Builder qualityClip(Range clip){
@@ -123,8 +123,8 @@ public class DefaultSFFReadHeader implements SFFReadHeader {
             return this;
         }
         @Override
-        public DefaultSFFReadHeader build() {
-            return new DefaultSFFReadHeader(
+        public DefaultSffReadHeader build() {
+            return new DefaultSffReadHeader(
                     numberOfBases, 
                     qualityClip, adapterClip, name);
         }

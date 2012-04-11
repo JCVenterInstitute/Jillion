@@ -113,7 +113,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
                this.size = sffSize.getSize();
             } catch (FileNotFoundException e) {
                 throw new DataStoreException("could not read sffFile ",e);
-            } catch (SFFDecoderException e) {
+            } catch (SffDecoderException e) {
                 throw new DataStoreException("could not parse sffFile ",e);
             }
             finally{
@@ -180,7 +180,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
         private int size=0;
 
         @Override
-        public boolean visitReadData(SFFReadData readData) {
+        public boolean visitReadData(SffReadData readData) {
             size++;
             return true;
         }

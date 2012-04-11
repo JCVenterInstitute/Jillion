@@ -17,36 +17,34 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Oct 7, 2008
+ * Created on Oct 6, 2008
  *
  * @author dkatzel
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import java.io.DataInputStream;
-import java.io.IOException;
+import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 
-import org.jcvi.common.core.io.IOUtil;
+public class SffDecoderException extends TraceDecoderException {
 
-public class DefaultSFFReadDataCodec implements SFFReadDataCodec {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5849079908602188978L;
 
-    @Override
-    public SFFReadData decode(DataInputStream in, int numberOfFlows, int numberOfBases) throws SFFDecoderException {
-        try{
-            short[] values = IOUtil.readShortArray(in, numberOfFlows);
-            byte[] indexes = IOUtil.toByteArray(in, numberOfBases);
-            String bases = new String(IOUtil.toByteArray(in, numberOfBases),IOUtil.UTF_8);
-            byte[] qualities = IOUtil.toByteArray(in, numberOfBases);
+    /**
+     * @param message
+     * @param cause
+     */
+    public SffDecoderException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-            int readDataLength = SFFUtil.getReadDataLength(numberOfFlows, numberOfBases);
-            int padding =SFFUtil.caclulatePaddedBytes(readDataLength);
-            IOUtil.blockingSkip(in, padding);
-            return new DefaultSFFReadData(bases, indexes, values,qualities);
-        }
-        catch(IOException e){
-            throw new SFFDecoderException("error decoding read data", e);
-        }
-
+    /**
+     * @param message
+     */
+    public SffDecoderException(String message) {
+        super(message);
     }
 
 }

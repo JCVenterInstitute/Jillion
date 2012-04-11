@@ -25,23 +25,19 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.math.BigInteger;
 
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.CommonUtil;
 
-public class DefaultSFFCommonHeader implements SFFCommonHeader {
+final class DefaultSffCommonHeader implements SffCommonHeader {
 
     private final BigInteger indexOffset;
     private final long indexLength;
     private final long numberOfReads;
     private final int numberOfFlowsPerRead;
-    private final String flow;
-    private final String keySequence;
-
-
-
-   
-
-
-
+    private final NucleotideSequence flow;
+    private final NucleotideSequence keySequence;
+    
     /**
      * @param indexOffset
      * @param indexLength
@@ -51,9 +47,9 @@ public class DefaultSFFCommonHeader implements SFFCommonHeader {
      * @param keySequence
      * @param headerLength
      */
-    public DefaultSFFCommonHeader(BigInteger indexOffset, long indexLength,
-            long numberOfReads, int numberOfFlowsPerRead, String flow,
-            String keySequence) {
+    DefaultSffCommonHeader(BigInteger indexOffset, long indexLength,
+            long numberOfReads, int numberOfFlowsPerRead, NucleotideSequence flow,
+            NucleotideSequence keySequence) {
         this.indexOffset = indexOffset;
         this.indexLength = indexLength;
         this.numberOfReads = numberOfReads;
@@ -65,7 +61,7 @@ public class DefaultSFFCommonHeader implements SFFCommonHeader {
 
 
     @Override
-    public String getFlow() {
+    public NucleotideSequence getFlowSequence() {
         return flow;
     }
 
@@ -83,7 +79,7 @@ public class DefaultSFFCommonHeader implements SFFCommonHeader {
 
 
     @Override
-    public String getKeySequence() {
+    public NucleotideSequence getKeySequence() {
         return keySequence;
     }
 
@@ -129,8 +125,8 @@ public class DefaultSFFCommonHeader implements SFFCommonHeader {
         if (getClass() != obj.getClass()){
             return false;
         }
-        final DefaultSFFCommonHeader other = (DefaultSFFCommonHeader) obj;
-        return CommonUtil.similarTo(getFlow(), other.getFlow())
+        final DefaultSffCommonHeader other = (DefaultSffCommonHeader) obj;
+        return CommonUtil.similarTo(getFlowSequence(), other.getFlowSequence())
        && CommonUtil.similarTo(getIndexLength(), other.getIndexLength())
         && CommonUtil.similarTo(getIndexOffset(), other.getIndexOffset())
         && CommonUtil.similarTo(getKeySequence(), other.getKeySequence())
@@ -149,23 +145,23 @@ public class DefaultSFFCommonHeader implements SFFCommonHeader {
                 + "]";
     }
     
-    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultSFFCommonHeader>{
+    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultSffCommonHeader>{
 
         private BigInteger indexOffset;
         private long indexLength;
         private long numberOfReads;
         private int numberOfFlowsPerRead;
-        private String flow;
-        private String keySequence;
+        private NucleotideSequence flow;
+        private NucleotideSequence keySequence;
         
         public Builder(){}
         
-        public Builder(SFFCommonHeader copy){
+        public Builder(SffCommonHeader copy){
             indexOffset = copy.getIndexOffset();
             indexLength = copy.getIndexLength();
             numberOfReads = copy.getNumberOfReads();
             numberOfFlowsPerRead = copy.getNumberOfFlowsPerRead();
-            flow = copy.getFlow();
+            flow = copy.getFlowSequence();
             keySequence = copy.getKeySequence();
         }
         public Builder withNoIndex(){
@@ -191,7 +187,7 @@ public class DefaultSFFCommonHeader implements SFFCommonHeader {
             return this;
         }
         
-        public Builder keySequence(String keySequence){
+        public Builder keySequence(NucleotideSequence keySequence){
             this.keySequence = keySequence;
             return this;
         }
@@ -207,7 +203,7 @@ public class DefaultSFFCommonHeader implements SFFCommonHeader {
          * to use default.
          * @return this
          */
-        public Builder flow(String flow){
+        public Builder flow(NucleotideSequence flow){
             this.flow = flow;
             return this;
         }
@@ -215,15 +211,16 @@ public class DefaultSFFCommonHeader implements SFFCommonHeader {
         * {@inheritDoc}
         */
         @Override
-        public DefaultSFFCommonHeader build() {
+        public DefaultSffCommonHeader build() {
             if(flow==null){
-                StringBuilder flowBuilder = new StringBuilder();
-                for(int i=0; i< numberOfFlowsPerRead; i+=keySequence.length()){
+            	NucleotideSequenceBuilder flowBuilder = new NucleotideSequenceBuilder(numberOfFlowsPerRead);
+            	int keyLength = (int)keySequence.getLength();
+                for(int i=0; i< numberOfFlowsPerRead; i+=keyLength){
                     flowBuilder.append(keySequence);
                 }
-                flow=flowBuilder.toString();
+                flow=flowBuilder.build();
             }
-            return new DefaultSFFCommonHeader(indexOffset, indexLength,
+            return new DefaultSffCommonHeader(indexOffset, indexLength,
                     numberOfReads, numberOfFlowsPerRead, flow,
                     keySequence);
         }

@@ -24,8 +24,32 @@
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.DataInputStream;
+import java.io.IOException;
 
-public interface SFFReadDataCodec {
+import org.jcvi.common.core.io.IOUtil;
 
-    SFFReadData decode(DataInputStream in, int numberOfFlows, int numberOfBases ) throws SFFDecoderException;
+enum DefaultSffReadDataDecoder implements SffReadDataDecoder {
+	/**
+	 * Singleton instance.
+	 */
+	INSTANCE;
+    @Override
+    public SffReadData decode(DataInputStream in, int numberOfFlows, int numberOfBases) throws SffDecoderException {
+        try{
+            short[] values = IOUtil.readShortArray(in, numberOfFlows);
+            byte[] indexes = IOUtil.toByteArray(in, numberOfBases);
+            String bases = new String(IOUtil.toByteArray(in, numberOfBases),IOUtil.UTF_8);
+            byte[] qualities = IOUtil.toByteArray(in, numberOfBases);
+
+            int readDataLength = SffUtil.getReadDataLength(numberOfFlows, numberOfBases);
+            int padding =SffUtil.caclulatePaddedBytes(readDataLength);
+            IOUtil.blockingSkip(in, padding);
+            return new DefaultSffReadData(bases, indexes, values,qualities);
+        }
+        catch(IOException e){
+            throw new SffDecoderException("error decoding read data", e);
+        }
+
+    }
+
 }

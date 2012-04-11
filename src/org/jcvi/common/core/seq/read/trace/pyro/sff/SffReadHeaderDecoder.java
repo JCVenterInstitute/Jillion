@@ -23,28 +23,9 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
+import java.io.DataInputStream;
 
-public class SFFDecoderException extends TraceDecoderException {
+public interface SffReadHeaderDecoder {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 5849079908602188978L;
-
-    /**
-     * @param message
-     * @param cause
-     */
-    public SFFDecoderException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
-     * @param message
-     */
-    public SFFDecoderException(String message) {
-        super(message);
-    }
-
+    SffReadHeader decodeReadHeader(DataInputStream in) throws SffDecoderException;
 }

@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,51 +51,51 @@ public class TestSFFUtil_getTrimRange {
     
     @Test
     public void noClipsSetShouldReturn1_NumBases(){
-        expect(flowgram.getQualitiesClip()).andReturn(NOT_SET);
+        expect(flowgram.getQualityClip()).andReturn(NOT_SET);
         expect(flowgram.getAdapterClip()).andReturn(NOT_SET);
         replay(flowgram);
         Range expectedRange = Range.create(CoordinateSystem.RESIDUE_BASED, 1,numberOfBases);
-        assertEquals(expectedRange, SFFUtil.getTrimRangeFor(flowgram));
+        assertEquals(expectedRange, SffUtil.getTrimRangeFor(flowgram));
         verify(flowgram);
     }
     @Test
     public void onlyQualityClipSetShouldReturnQualityClip(){
         Range qualityClip = Range.create(CoordinateSystem.RESIDUE_BASED, 5,80);
-        expect(flowgram.getQualitiesClip()).andReturn(qualityClip);
+        expect(flowgram.getQualityClip()).andReturn(qualityClip);
         expect(flowgram.getAdapterClip()).andReturn(NOT_SET);
         replay(flowgram);
-       assertEquals(qualityClip, SFFUtil.getTrimRangeFor(flowgram));
+       assertEquals(qualityClip, SffUtil.getTrimRangeFor(flowgram));
         verify(flowgram);
     }
     @Test
     public void onlyAdapterClipSetShouldReturnAdapterClip(){
         Range adapterClip = Range.create(CoordinateSystem.RESIDUE_BASED, 5,80);
-        expect(flowgram.getQualitiesClip()).andReturn(NOT_SET);
+        expect(flowgram.getQualityClip()).andReturn(NOT_SET);
         expect(flowgram.getAdapterClip()).andReturn(adapterClip);
         replay(flowgram);
-       assertEquals(adapterClip, SFFUtil.getTrimRangeFor(flowgram));
+       assertEquals(adapterClip, SffUtil.getTrimRangeFor(flowgram));
         verify(flowgram);
     }
     @Test
     public void bothClipsSetShouldReturnIntersection(){
         Range qualityClip = Range.create(CoordinateSystem.RESIDUE_BASED, 5,80);
         Range adapterClip = Range.create(CoordinateSystem.RESIDUE_BASED, 30,75);
-        expect(flowgram.getQualitiesClip()).andReturn(qualityClip);
+        expect(flowgram.getQualityClip()).andReturn(qualityClip);
         expect(flowgram.getAdapterClip()).andReturn(adapterClip);
         replay(flowgram);
         Range expectedRange = qualityClip.intersection(adapterClip);
-       assertEquals(expectedRange, SFFUtil.getTrimRangeFor(flowgram));
+       assertEquals(expectedRange, SffUtil.getTrimRangeFor(flowgram));
         verify(flowgram);
     }
     @Test
     public void adapterOutsideOfQualityClip(){
         Range qualityClip = Range.create(CoordinateSystem.RESIDUE_BASED, 5,80);
         Range adapterClip = Range.create(CoordinateSystem.RESIDUE_BASED, 3,85);
-        expect(flowgram.getQualitiesClip()).andReturn(qualityClip);
+        expect(flowgram.getQualityClip()).andReturn(qualityClip);
         expect(flowgram.getAdapterClip()).andReturn(adapterClip);
         replay(flowgram);
         Range expectedRange = qualityClip.intersection(adapterClip);
-       assertEquals(expectedRange, SFFUtil.getTrimRangeFor(flowgram));
+       assertEquals(expectedRange, SffUtil.getTrimRangeFor(flowgram));
         verify(flowgram);
     }
 }

@@ -30,9 +30,15 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
-public class DefaultSFFCommonHeaderCodec implements SFFCommonHeaderCodec {
-
+enum DefaultSFFCommonHeaderDecoder implements SffCommonHeaderDecoder {
+	/**
+	 * Singleton instance.
+	 */
+	INSTANCE
+	;
     private static final byte[] MAGIC_NUMBER = ".sff".getBytes(IOUtil.UTF_8);
     private static final byte[] ACCEPTED_VERSION = new byte[]{0,0,0,1};
     /**
@@ -40,7 +46,7 @@ public class DefaultSFFCommonHeaderCodec implements SFFCommonHeaderCodec {
      */
     private static final byte FORMAT_CODE = 1;
     @Override
-    public SFFCommonHeader decodeHeader(DataInputStream in) throws SFFDecoderException{
+    public SffCommonHeader decodeHeader(DataInputStream in) throws SffDecoderException{
 
         try{
             verifyMagicNumber(in);
@@ -53,67 +59,71 @@ public class DefaultSFFCommonHeaderCodec implements SFFCommonHeaderCodec {
             int keyLength = IOUtil.readUnsignedShort(in);
             int flowsPerRead = IOUtil.readUnsignedShort(in);
             verifyFlowgramFormatCode(in);
-            String flow = readFlow(in,flowsPerRead);
-            String keySequence = readKeySequence(in, keyLength);
+            NucleotideSequence flow = readFlow(in,flowsPerRead);
+            NucleotideSequence keySequence = readKeySequence(in, keyLength);
             int bytesReadSoFar = 31+flowsPerRead+keyLength;
-            int padding =SFFUtil.caclulatePaddedBytes(bytesReadSoFar);
+            int padding =SffUtil.caclulatePaddedBytes(bytesReadSoFar);
             IOUtil.blockingSkip(in, padding);
 
-            return new DefaultSFFCommonHeader(indexOffset, indexLength,
+            return new DefaultSffCommonHeader(indexOffset, indexLength,
             numReads, flowsPerRead, flow,
             keySequence);
 
         }
         catch(IOException e){
-            throw new SFFDecoderException("error decoding sff file",e);
+            throw new SffDecoderException("error decoding sff file",e);
         }
 
     }
-    private String readFlow(DataInputStream in, int flowsPerRead) throws IOException, SFFDecoderException {
+    private NucleotideSequence readFlow(DataInputStream in, int flowsPerRead) throws IOException, SffDecoderException {
         byte[] flow = new byte[flowsPerRead];
-        int bytesRead = in.read(flow);
-        if(bytesRead != flowsPerRead){
-            throw new SFFDecoderException("error decoding flow");
+        try{
+        	IOUtil.blockingRead(in, flow);
+        }catch(IOException e){
+        	throw new SffDecoderException("error decoding flow",e);
         }
-        return new String(flow,IOUtil.UTF_8);
+        return new NucleotideSequenceBuilder(new String(flow,IOUtil.UTF_8))
+        		.build();
     }
-    private String readKeySequence(DataInputStream in, int keyLength) throws IOException, SFFDecoderException {
+    private NucleotideSequence readKeySequence(DataInputStream in, int keyLength) throws IOException, SffDecoderException {
         byte[] keySequence = new byte[keyLength];
-        int bytesRead = in.read(keySequence);
-        if(bytesRead != keyLength){
-            throw new SFFDecoderException("error decoding keySequence");
-        }
-        return new String(keySequence,IOUtil.UTF_8);
+        try{
+        	IOUtil.blockingRead(in, keySequence);
+        }catch(IOException e){
+        	throw new SffDecoderException("error decoding keySequence",e);
+        }       
+        return new NucleotideSequenceBuilder(new String(keySequence,IOUtil.UTF_8))
+        			.build();
     }
-    private void verifyFlowgramFormatCode(DataInputStream in) throws IOException, SFFDecoderException {
+    private void verifyFlowgramFormatCode(DataInputStream in) throws IOException, SffDecoderException {
         //currently only 1 format code
         if(in.readByte() != FORMAT_CODE){
-            throw new SFFDecoderException("unknown flowgram format code");
+            throw new SffDecoderException("unknown flowgram format code");
         }
 
     }
-    private void verifyVersion1(DataInputStream in) throws IOException, SFFDecoderException {
+    private void verifyVersion1(DataInputStream in) throws IOException, SffDecoderException {
         byte[] versionArray = new byte[4];
-        int bytesRead =in.read(versionArray);
-        if(bytesRead != 4 || !Arrays.equals(versionArray, ACCEPTED_VERSION)){
-            throw new SFFDecoderException("version not compatible with decoder");
+        IOUtil.blockingRead(in, versionArray);
+        if(!Arrays.equals(versionArray, ACCEPTED_VERSION)){
+            throw new SffDecoderException("version not compatible with decoder");
         }
 
     }
     private void verifyMagicNumber(DataInputStream in) throws IOException,
-            SFFDecoderException {
+            SffDecoderException {
         byte[] actualMagicNumber = new byte[4];
-        int bytesRead =in.read(actualMagicNumber);
-        if(bytesRead != 4 || !Arrays.equals(actualMagicNumber, MAGIC_NUMBER)){
-            throw new SFFDecoderException("magic number does not match expected");
+        IOUtil.blockingRead(in, actualMagicNumber);
+        if(!Arrays.equals(actualMagicNumber, MAGIC_NUMBER)){
+            throw new SffDecoderException("magic number does not match expected");
         }
     }
 
 
-    public byte[] encodeHeader(SFFCommonHeader header){
-        final short keyLength =(short) (header.getKeySequence().length());
+    public byte[] encodeHeader(SffCommonHeader header){
+        final short keyLength =(short) (header.getKeySequence().getLength());
         int size = 31+header.getNumberOfFlowsPerRead()+ keyLength;
-        int padding =SFFUtil.caclulatePaddedBytes(size);
+        int padding =SffUtil.caclulatePaddedBytes(size);
         ByteBuffer buf = ByteBuffer.wrap(new byte[size+padding]);
         buf.put(MAGIC_NUMBER);
         buf.put(ACCEPTED_VERSION);
@@ -124,8 +134,8 @@ public class DefaultSFFCommonHeaderCodec implements SFFCommonHeaderCodec {
         buf.putShort(keyLength);
         buf.put(IOUtil.convertUnsignedShortToByteArray(header.getNumberOfFlowsPerRead()));
         buf.put(FORMAT_CODE);
-        buf.put(header.getFlow().getBytes(IOUtil.UTF_8));
-        buf.put(header.getKeySequence().getBytes(IOUtil.UTF_8));
+        buf.put(header.getFlowSequence().toString().getBytes(IOUtil.UTF_8));
+        buf.put(header.getKeySequence().toString().getBytes(IOUtil.UTF_8));
         return buf.array();
     }
 

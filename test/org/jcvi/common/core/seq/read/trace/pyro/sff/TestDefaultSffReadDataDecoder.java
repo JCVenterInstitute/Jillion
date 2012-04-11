@@ -27,16 +27,16 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadData;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadDataCodec;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFReadData;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffReadData;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffReadDataDecoder;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDecoderException;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadData;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 import org.jcvi.common.core.testUtil.EasyMockUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
-public class TestDefaultSFFReadDataCodec_decode {
+public class TestDefaultSffReadDataDecoder {
 
     protected int numberOfFlows = 5;
     protected int numberOfBases=4;
@@ -47,20 +47,20 @@ public class TestDefaultSFFReadDataCodec_decode {
     protected String bases = "TATT";
 
 
-    protected DefaultSFFReadDataCodec sut = new DefaultSFFReadDataCodec();
+    protected DefaultSffReadDataDecoder sut = DefaultSffReadDataDecoder.INSTANCE;
 
-    protected DefaultSFFReadData expectedReadData = new DefaultSFFReadData(bases, indexes,  values,
+    protected DefaultSffReadData expectedReadData = new DefaultSffReadData(bases, indexes,  values,
                                             qualities);
 
 
     @Test
-    public void valid() throws SFFDecoderException, IOException{
+    public void valid() throws SffDecoderException, IOException{
         InputStream mockInputStream = createMock(InputStream.class);
         encode(mockInputStream,expectedReadData);
 
 
         replay(mockInputStream);
-       SFFReadData actualReadData= sut.decode(new DataInputStream(mockInputStream),
+       SffReadData actualReadData= sut.decode(new DataInputStream(mockInputStream),
                 numberOfFlows, numberOfBases);
        assertEquals(expectedReadData, actualReadData);
        verify(mockInputStream);
@@ -76,7 +76,7 @@ public class TestDefaultSFFReadDataCodec_decode {
         try{
             sut.decode(new DataInputStream(mockInputStream),numberOfFlows, numberOfBases);
             fail("IOException should be wrapped in SFFDecoderException");
-        }catch(SFFDecoderException e){
+        }catch(SffDecoderException e){
             assertEquals("error decoding read data",e.getMessage());
             assertEquals(ioException, e.getCause());
         }
@@ -84,11 +84,11 @@ public class TestDefaultSFFReadDataCodec_decode {
     }
 
 
-    void encode(InputStream mockInputStream, SFFReadData readData) throws IOException{
+    void encode(InputStream mockInputStream, SffReadData readData) throws IOException{
         int basesLength =readData.getBasecalls().length();
         int numberOfFlows = readData.getFlowgramValues().length;
         int readDataLength = numberOfFlows * 2 + 3*numberOfBases;
-        long padding =SFFUtil.caclulatePaddedBytes(readDataLength);
+        long padding =SffUtil.caclulatePaddedBytes(readDataLength);
         for(int i=0; i<numberOfFlows; i++){
             EasyMockUtil.putShort(mockInputStream, readData.getFlowgramValues()[i]);
         }

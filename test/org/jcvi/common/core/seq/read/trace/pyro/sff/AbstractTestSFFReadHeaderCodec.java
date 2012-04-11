@@ -25,9 +25,9 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadHeader;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSFFReadHeaderCodec;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffReadHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffReadHeaderDecoder;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 
 public class AbstractTestSFFReadHeaderCodec {
     protected int numberOfBases=100;
@@ -38,9 +38,9 @@ public class AbstractTestSFFReadHeaderCodec {
     protected  Range qualityClip = Range.create(CoordinateSystem.RESIDUE_BASED, qual_left, qual_right);
     protected Range adapterClip= Range.create(CoordinateSystem.RESIDUE_BASED, adapter_left, adapter_right);
     protected String name = "sequence name";
-    protected short headerLength= (short)(16+name.length()+SFFUtil.caclulatePaddedBytes(16+name.length()));
+    protected short headerLength= (short)(16+name.length()+SffUtil.caclulatePaddedBytes(16+name.length()));
 
-    protected DefaultSFFReadHeader expectedReadHeader = new DefaultSFFReadHeader(numberOfBases,
+    protected DefaultSffReadHeader expectedReadHeader = new DefaultSffReadHeader(numberOfBases,
             qualityClip, adapterClip, name);
-    protected DefaultSFFReadHeaderCodec sut = new DefaultSFFReadHeaderCodec();
+    protected DefaultSffReadHeaderDecoder sut = DefaultSffReadHeaderDecoder.INSTANCE;
 }

@@ -33,9 +33,9 @@ import java.io.InputStream;
 import org.jcvi.common.core.io.IOUtil;
 
 public final class SffParser {
-    private static final SFFCommonHeaderCodec COMMON_HEADER_CODEC = new DefaultSFFCommonHeaderCodec();
-    private static final SFFReadHeaderCodec READ_HEADER_CODEC =new DefaultSFFReadHeaderCodec();
-    private static final SFFReadDataCodec READ_DATA_CODEC =new DefaultSFFReadDataCodec();
+    private static final SffCommonHeaderDecoder COMMON_HEADER_CODEC = DefaultSFFCommonHeaderDecoder.INSTANCE;
+    private static final SffReadHeaderDecoder READ_HEADER_CODEC =DefaultSffReadHeaderDecoder.INSTANCE;
+    private static final SffReadDataDecoder READ_DATA_CODEC =DefaultSffReadDataDecoder.INSTANCE;
     
     private SffParser(){}
     /**
@@ -43,10 +43,10 @@ public final class SffParser {
      * on the given visitor.
      * @param sffFile the sff file to visit.
      * @param visitor the visitor to visit.
-     * @throws SFFDecoderException if there is a problem parsing the sff data.
+     * @throws SffDecoderException if there is a problem parsing the sff data.
      * @throws NullPointerException if the sffFile or visitor are null.
      */
-    public static void parseSFF(File sffFile, SffFileVisitor visitor) throws SFFDecoderException, FileNotFoundException{
+    public static void parseSFF(File sffFile, SffFileVisitor visitor) throws SffDecoderException, FileNotFoundException{
         InputStream in = new FileInputStream(sffFile);
         try{
             parseSFF(in,visitor);
@@ -60,22 +60,22 @@ public final class SffParser {
      * @param in {@link InputStream} containing sff encoded
      * data
      * @param visitor the visitor to visit.
-     * @throws SFFDecoderException if there is a problem parsing the sff data.
+     * @throws SffDecoderException if there is a problem parsing the sff data.
      * @throws NullPointerException if the inputstream or visitor are null.
      */
-    public static void parseSFF(InputStream in, SffFileVisitor visitor) throws SFFDecoderException{
+    public static void parseSFF(InputStream in, SffFileVisitor visitor) throws SffDecoderException{
         DataInputStream dataIn = new DataInputStream(in);
         visitor.visitFile();
-        SFFCommonHeader commonHeader =COMMON_HEADER_CODEC.decodeHeader(dataIn);
+        SffCommonHeader commonHeader =COMMON_HEADER_CODEC.decodeHeader(dataIn);
         if(visitor.visitCommonHeader(commonHeader)){
         
             final long numberOfReads = commonHeader.getNumberOfReads();
             final int numberOfFlowsPerRead = commonHeader.getNumberOfFlowsPerRead();
             for(long i=0; i<numberOfReads; i++){
-                SFFReadHeader readHeader = READ_HEADER_CODEC.decodeReadHeader(dataIn);
+                SffReadHeader readHeader = READ_HEADER_CODEC.decodeReadHeader(dataIn);
                 if(visitor.visitReadHeader(readHeader)){            
                     final int numberOfBases = readHeader.getNumberOfBases();
-                    SFFReadData readData = READ_DATA_CODEC.decode(dataIn,
+                    SffReadData readData = READ_DATA_CODEC.decode(dataIn,
                                     numberOfFlowsPerRead,
                                     numberOfBases);
                     if(!visitor.visitReadData(readData)){
@@ -83,12 +83,12 @@ public final class SffParser {
                     }
                 }else{
                     //skip length of readData
-                    int readDataLength = SFFUtil.getReadDataLength(numberOfFlowsPerRead, readHeader.getNumberOfBases());
-                    int padding =SFFUtil.caclulatePaddedBytes(readDataLength);
+                    int readDataLength = SffUtil.getReadDataLength(numberOfFlowsPerRead, readHeader.getNumberOfBases());
+                    int padding =SffUtil.caclulatePaddedBytes(readDataLength);
                     try {
                         IOUtil.blockingSkip(dataIn, readDataLength+padding);
                     } catch (IOException e) {
-                        throw new SFFDecoderException("could not skip read data block");
+                        throw new SffDecoderException("could not skip read data block");
                     }
                 }
                 

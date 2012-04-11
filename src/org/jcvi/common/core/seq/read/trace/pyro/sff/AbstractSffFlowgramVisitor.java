@@ -18,27 +18,30 @@
  ******************************************************************************/
 
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
+
+import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+
 /**
- * {@code AbstractSFFFlowgramVisitor} is an {@link SffFileVisitor}
- * implementation that builds {@link SFFFlowgram} instances
+ * {@code AbstractSffFlowgramVisitor} is an {@link SffFileVisitor}
+ * implementation that builds {@link SffFlowgram} instances
  * as the various SFF data blocks are being parsed.  This
- * simplifies visiting SFFFlowgrams if all the client
- * cares about are the final constructed SFFFlowgrams.
+ * simplifies visiting {@link SffFlowgram}s if all the client
+ * cares about are the final constructed {@link Flowgram}s.
  * @author dkatzel
  *
  */
-public abstract class AbstractSFFFlowgramVisitor implements SffFileVisitor{
+public abstract class AbstractSffFlowgramVisitor implements SffFileVisitor{
 
-	private SFFReadHeader currentReadHeader;
+	private SffReadHeader currentReadHeader;
 	
 	/**
-	 * Visit the current {@link SFFFlowgram} in the file
+	 * Visit the current {@link Flowgram} in the file
 	 * being parsed.
 	 * @param flowgram
 	 * @return {@code true} to keep parsing the sff file;
 	 * {@code false} to halt parsing entirely.
 	 */
-	protected abstract boolean visitSFFFlowgram(SFFFlowgram flowgram);
+	protected abstract boolean visitFlowgram(Flowgram flowgram);
 	@Override
 	public void visitFile() {}
 
@@ -47,21 +50,21 @@ public abstract class AbstractSFFFlowgramVisitor implements SffFileVisitor{
 	public void visitEndOfFile() {}
 
 	@Override
-	public boolean visitCommonHeader(SFFCommonHeader commonHeader) {
+	public boolean visitCommonHeader(SffCommonHeader commonHeader) {
 		return true;
 	}
 
 	@Override
-	public boolean visitReadHeader(SFFReadHeader readHeader) {
+	public boolean visitReadHeader(SffReadHeader readHeader) {
 		this.currentReadHeader = readHeader;
 		return true;
 	}
 
 	@Override
-	public boolean visitReadData(SFFReadData readData) {
+	public boolean visitReadData(SffReadData readData) {
 		
-		return visitSFFFlowgram(
-				SFFUtil.buildSFFFlowgramFrom(currentReadHeader, readData));
+		return visitFlowgram(
+				SffFlowgram.create(currentReadHeader, readData));
 	}
 	
 	

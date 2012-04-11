@@ -40,7 +40,7 @@ public class SffVisitorWriter implements SffFileVisitor{
     }
 
     @Override
-    public boolean visitCommonHeader(SFFCommonHeader header) {
+    public boolean visitCommonHeader(SffCommonHeader header) {
         try {         
             SffWriter.writeCommonHeader(header, out);
         } catch (IOException e) {
@@ -51,7 +51,7 @@ public class SffVisitorWriter implements SffFileVisitor{
     }
 
     @Override
-    public boolean visitReadData(SFFReadData readData) {
+    public boolean visitReadData(SffReadData readData) {
        
         try {
           SffWriter.writeReadData(readData, out);
@@ -62,7 +62,7 @@ public class SffVisitorWriter implements SffFileVisitor{
     }
 
     @Override
-    public boolean visitReadHeader(SFFReadHeader readHeader) {
+    public boolean visitReadHeader(SffReadHeader readHeader) {
        try {
        SffWriter.writeReadHeader(readHeader, out);
     } catch (IOException e) {

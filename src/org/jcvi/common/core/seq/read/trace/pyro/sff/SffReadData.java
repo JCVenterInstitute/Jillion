@@ -22,44 +22,38 @@
  * @author dkatzel
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
-
-import org.jcvi.common.core.Range;
 /**
- * {@code SFFReadHeader} contains
- * the information about the a specific
- * SFF Read.
+ * {@code SFFReadData} contains the raw
+ * sequencing data from a given SFF read.
  * @author dkatzel
  *
  *
  */
-public interface SFFReadHeader {
+public interface SffReadData {
     /**
-     * The number of bases called for this read.
-     * @return a positive number.
+     * The flowgram values contains the homopolymer
+     * stretch estimates for each flow of the read.
+     * @return an array containing homopolymer
+     * estimates for each flow; never null.
      */
-    int getNumberOfBases();
+    short[] getFlowgramValues();
     /**
-     * The quality clip points that
-     * specify the subset of the basecalls
-     * that are good quality.  If no
-     * clip is set, then the Range should be
-     * equal to Range.create(0,0);
-     * @return a Range (never null).
+     * the flow index in the array
+     * returned by {@link #getFlowgramValues()} for each base
+     * in the called sequence.
+     * @return
      */
-    Range getQualityClip();
+    byte[] getFlowIndexPerBase();
     /**
-     * The adapter clip points that
-     * specify the subset of the basecalls
-     * that are not adapter sequence.  If no
-     * clip is set, then the Range should be
-     * equal to Range.create(0,0);
-     * @return a Range (never null).
+     * The called basecalls.
+     * @return
      */
-    Range getAdapterClip();
+    String getBasecalls();
     /**
-     * The name of this read.
-     * @return a non-null String.
+     * The quality scores for each bases in the sequence
+     * stored as Phred values.
+     * @return
      */
-    String getName();
+    byte[] getQualities();
 
 }

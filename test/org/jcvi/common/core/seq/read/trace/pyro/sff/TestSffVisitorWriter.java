@@ -30,7 +30,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SFFDecoderException;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffVisitorWriter;
@@ -43,7 +43,7 @@ public class TestSffVisitorWriter {
     
     
     @Test
-    public void write() throws IOException, SFFDecoderException{
+    public void write() throws IOException, SffDecoderException{
         InputStream in = resources.getFileAsStream("files/5readExample.sff");
         byte[] expectedBytes =IOUtil.toByteArray(in);
         ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -36,7 +36,7 @@ public abstract class AbstractSffFileProcessor implements SffFileVisitor{
     }
 
     @Override
-    public boolean visitCommonHeader(SFFCommonHeader commonHeader) {
+    public boolean visitCommonHeader(SffCommonHeader commonHeader) {
         if(parent !=null){
             return parent.visitCommonHeader(commonHeader);
         }
@@ -65,7 +65,7 @@ public abstract class AbstractSffFileProcessor implements SffFileVisitor{
     }
 
     @Override
-    public boolean visitReadData(SFFReadData readData) {
+    public boolean visitReadData(SffReadData readData) {
         if(parent !=null){
             return parent.visitReadData(readData);
         }
@@ -73,7 +73,7 @@ public abstract class AbstractSffFileProcessor implements SffFileVisitor{
     }
 
     @Override
-    public boolean visitReadHeader(SFFReadHeader readHeader) {
+    public boolean visitReadHeader(SffReadHeader readHeader) {
         if(parent !=null){
             parent.visitReadHeader(readHeader);
         }

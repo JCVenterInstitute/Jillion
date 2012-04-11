@@ -31,7 +31,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestSFFUtil_convertFlowgramValues.class,
         TestSFFUtil_paddedBytes.class,
-        TestSFFUtil_computeValues.class,
+        TestSFFFlowgram_computeValues.class,
         TestSFFUtil_numberOfIntensities.class,
         TestSffUtil_Linkers.class,
         TestSffNameUtil.class

@@ -29,7 +29,7 @@ import java.util.Arrays;
 import org.jcvi.common.core.util.CommonUtil;
 import org.jcvi.common.core.util.MathUtil;
 
-public class DefaultSFFReadData implements SFFReadData {
+public class DefaultSffReadData implements SffReadData {
 
     private String basecalls;
     private byte[] indexes;
@@ -43,7 +43,7 @@ public class DefaultSFFReadData implements SFFReadData {
      * @param values
      * @param qualities
      */
-    public DefaultSFFReadData(String basecalls, byte[] indexes, short[] values,
+    public DefaultSffReadData(String basecalls, byte[] indexes, short[] values,
             byte[] qualities) {
         validateArguments(basecalls, indexes, values, qualities);
         this.basecalls = basecalls;
@@ -128,10 +128,10 @@ public class DefaultSFFReadData implements SFFReadData {
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof DefaultSFFReadData)){
+        if (!(obj instanceof DefaultSffReadData)){
             return false;
         }
-        final DefaultSFFReadData other = (DefaultSFFReadData) obj;
+        final DefaultSffReadData other = (DefaultSffReadData) obj;
         return CommonUtil.similarTo(getBasecalls(), other.getBasecalls())
                 && Arrays.equals(indexes, other.indexes)
                 && Arrays.equals(qualities, other.qualities)
