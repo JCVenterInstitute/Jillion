@@ -109,7 +109,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
             InputStream in = null;
             try{
                 in =new FileInputStream(sffFile);
-                SffParser.parseSFF(in , sffSize);
+                SffFileParser.parseSFF(in , sffSize);
                this.size = sffSize.getSize();
             } catch (FileNotFoundException e) {
                 throw new DataStoreException("could not read sffFile ",e);

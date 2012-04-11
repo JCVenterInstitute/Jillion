@@ -48,7 +48,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 	 */
 	public static boolean canCreateIndexedDataStore(File sffFile) throws IOException{
 		NumberOfReadChecker numReadChecker = new NumberOfReadChecker();
-		SffParser.parseSFF(sffFile, numReadChecker);
+		SffFileParser.parseSFF(sffFile, numReadChecker);
 		return numReadChecker.numberOfReads <=Integer.MAX_VALUE;
 	}
 	/**
@@ -89,7 +89,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 	 */
 	public static SffDataStore create(File sffFile) throws IOException{
 		IndexedSffVisitorBuilder builder= new IndexedSffVisitorBuilder(sffFile);
-		SffParser.parseSFF(sffFile, builder);
+		SffFileParser.parseSFF(sffFile, builder);
 		return builder.build();
 	}
 	private static final class NumberOfReadChecker implements SffFileVisitor{
