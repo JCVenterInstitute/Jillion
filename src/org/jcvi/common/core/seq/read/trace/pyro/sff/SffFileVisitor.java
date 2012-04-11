@@ -28,7 +28,7 @@ import org.jcvi.common.core.io.FileVisitor;
  * {@code SffFileVisitor} is a {@link FileVisitor}
  * implementation for 454 .sff binary encoded files.
  * @author dkatzel
- * @see SffParser
+ * @see SffFileParser
  *
  */
 public interface SffFileVisitor extends FileVisitor {

@@ -41,7 +41,7 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadHeader;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileParser;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasFileVisitor{
@@ -126,7 +126,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
             if(fileName.endsWith("sff")){
                 
                     in = new FileInputStream(file);
-                    SffParser.parseSFF(in, new SffReadOrder(file));
+                    SffFileParser.parseSFF(in, new SffReadOrder(file));
                 
             }
             else if(fileName.endsWith("fastq") || fileName.matches("\\S*\\.fastq\\S*")){

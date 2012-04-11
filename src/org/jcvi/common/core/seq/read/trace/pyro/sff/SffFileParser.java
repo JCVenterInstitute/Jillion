@@ -32,12 +32,12 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
 
-public final class SffParser {
+public final class SffFileParser {
     private static final SffCommonHeaderDecoder COMMON_HEADER_CODEC = DefaultSFFCommonHeaderDecoder.INSTANCE;
     private static final SffReadHeaderDecoder READ_HEADER_CODEC =DefaultSffReadHeaderDecoder.INSTANCE;
     private static final SffReadDataDecoder READ_DATA_CODEC =DefaultSffReadDataDecoder.INSTANCE;
     
-    private SffParser(){}
+    private SffFileParser(){}
     /**
      * Parse the given sffFile and call the appropriate visitXXX methods
      * on the given visitor.

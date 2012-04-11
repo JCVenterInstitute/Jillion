@@ -37,17 +37,17 @@ public final class DefaultSffFileDataStore {
 	
 	public static SffDataStore create(File sffFile) throws IOException{
 		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder();
-		SffParser.parseSFF(sffFile, builder);
+		SffFileParser.parseSFF(sffFile, builder);
 		return builder.build();
 	}
 	public static SffDataStore createDataStoreOfSingleRead(File sffFile, String readId) throws IOException{
 		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder(readId);
-		SffParser.parseSFF(sffFile, builder);
+		SffFileParser.parseSFF(sffFile, builder);
 		return builder.build();
 	}
 	public static SffDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder(filter);
-		SffParser.parseSFF(sffFile, builder);
+		SffFileParser.parseSFF(sffFile, builder);
 		return builder.build();
 	}
 	public static SffFileVisitorDataStoreBuilder createVisitorBuilder() {

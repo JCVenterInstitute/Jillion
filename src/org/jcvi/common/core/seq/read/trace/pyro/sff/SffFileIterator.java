@@ -63,7 +63,7 @@ public final class SffFileIterator extends AbstractBlockingCloseableIterator<Flo
          		}
 
 				};
-             SffParser.parseSFF(sffFile, visitor);
+             SffFileParser.parseSFF(sffFile, visitor);
          } catch (IOException e) {
              //should never happen
              throw new RuntimeException(e);

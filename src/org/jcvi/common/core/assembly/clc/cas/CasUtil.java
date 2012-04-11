@@ -48,7 +48,7 @@ import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.IOUtil.Endian;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileParser;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.MultipleWrapper;
@@ -326,7 +326,7 @@ public final class CasUtil {
                            String extension =FileUtil.getExtension(readFilename);
                            if("sff".equals(extension)){
                                try {
-                                   SffParser.parseSFF(new File(casWorkingDirectory,readFilename), sffTrimDatastoreBuilder);
+                                   SffFileParser.parseSFF(new File(casWorkingDirectory,readFilename), sffTrimDatastoreBuilder);
                                } catch (Exception e) {
                                    throw new IllegalStateException("error trying to read sff file " + readFilename,e);
                                } 

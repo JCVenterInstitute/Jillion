@@ -32,7 +32,7 @@ import java.util.Arrays;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileParser;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffVisitorWriter;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public class TestSffVisitorWriter {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         
         SffFileVisitor sut = new SffVisitorWriter(out);
-        SffParser.parseSFF(new ByteArrayInputStream(expectedBytes), sut);
+        SffFileParser.parseSFF(new ByteArrayInputStream(expectedBytes), sut);
 
         final byte[] actualBytes = out.toByteArray();
         //must do a sub array because real sff has extra metadata at the end

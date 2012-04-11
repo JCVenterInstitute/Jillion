@@ -42,7 +42,7 @@ import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileProcessor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffParser;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileParser;
 
 public class SffReadInfo extends AbstractSffFileProcessor {
 
@@ -114,7 +114,7 @@ public class SffReadInfo extends AbstractSffFileProcessor {
                 info = new SffReadInfo();
             }
             in = new FileInputStream(commandLine.getOptionValue("sff"));
-            SffParser.parseSFF(in, info);
+            SffFileParser.parseSFF(in, info);
             
             
         } catch (ParseException e) {
