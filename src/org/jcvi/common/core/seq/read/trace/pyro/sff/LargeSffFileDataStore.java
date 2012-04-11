@@ -180,9 +180,9 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
         private int size=0;
 
         @Override
-        public boolean visitReadData(SffReadData readData) {
+        public ReadDataReturnCode visitReadData(SffReadData readData) {
             size++;
-            return true;
+            return ReadDataReturnCode.PARSE_NEXT_READ;
         }
 
         public int getSize() {

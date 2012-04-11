@@ -32,6 +32,75 @@ import org.jcvi.common.core.io.FileVisitor;
  *
  */
 public interface SffFileVisitor extends FileVisitor {
+	/**
+	 * Tells this parser how to proceed
+	 * parsing the sff file after
+	 * the common header has been visited.
+	 * @author dkatzel
+	 *
+	 */
+	enum CommonHeaderReturnCode{
+		/**
+		 * Continue to parse the 
+		 * sff encoded file in order
+		 * to parse the read data.
+		 */
+		PARSE_READS,
+		/**
+		 * Stop parsing the file.
+		 */
+		STOP;
+	}
+	/**
+	 * Tells this parser how to proceed
+	 * parsing the sff file after
+	 * the header for the current read
+	 * has been visited.
+	 * @author dkatzel
+	 *
+	 */
+	enum ReadHeaderReturnCode{
+		/**
+		 * Skip this read but continue parsing
+		 * the file and read the next read.
+		 * The next callback for the visitor
+		 * will be {@link SffFileVisitor#visitReadData(SffReadData)}
+		 * for the next read.
+		 */
+		SKIP_CURRENT_READ,
+		/**
+		 * Parse the read data.
+		 * this will cause the {@link SffFileVisitor#visitReadData(SffReadData)}
+		 * to get called.
+		 */
+		PARSE_READ_DATA,
+		/**
+		 * Stop parsing the file.
+		 */
+		STOP;
+	}
+	/**
+	 * Tells this parser how to proceed
+	 * parsing the sff file after
+	 * the current read data
+	 * has been visited.
+	 * @author dkatzel
+	 *
+	 */
+	enum ReadDataReturnCode{
+		/**
+		 * Continue parsing
+		 * the file and read the next read.
+		 * The next callback for the visitor
+		 * will be {@link SffFileVisitor#visitReadData(SffReadData)}
+		 * for the next read.
+		 */
+		PARSE_NEXT_READ,
+		/**
+		 * Stop parsing the file.
+		 */
+		STOP;
+	}
     /**
      * Visit the header information that is common to 
      * all reads in this sff file.  The Boolean
@@ -40,11 +109,10 @@ public interface SffFileVisitor extends FileVisitor {
      * entirely.
      * @param commonHeader the {@link SffCommonHeader} of this sff
      * file being parsed.
-     * @return {@code true} to continue parsing the
-     * SFF file and move on to the reads;
-     * {@code false} to stop parsing the file.
+     * @return an instance of {@link CommonHeaderReturnCode};
+     * can not be null.
      */
-    boolean visitCommonHeader(SffCommonHeader commonHeader);
+	CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader);
     /**
      * Visit the header for the current read.  The Boolean
      * return value allows visitors to tell the parser
@@ -52,11 +120,10 @@ public interface SffFileVisitor extends FileVisitor {
      * onto the next read.
      * @param readHeader the parsed header for the current read
      * being parsed.
-     * @return {@code true} to parse the read data for this 
-     * read; {@code false} to skip this read and move on to
-     * the next.
+     * @return an instance of {@link visitReadHeaderReturnCode};
+     * can not be null.
      */
-    boolean visitReadHeader(SffReadHeader readHeader);
+	ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader);
     /**
      * Visit the read data for the current read.  The Boolean
      * return value allows visitors to tell the parser
@@ -66,9 +133,8 @@ public interface SffFileVisitor extends FileVisitor {
      * resources.
      * @param readData the data for the current read
      * being parsed.
-     * @return {@code true} to continue parsing the
-     * SFF file and move on to the next read header;
-     * {@code false} to stop parsing the file.
+     * @return an instance of {@link visitReadDataReturnCode};
+     * can not be null.
      */
-    boolean visitReadData(SffReadData readData);
+	ReadDataReturnCode visitReadData(SffReadData readData);
 }

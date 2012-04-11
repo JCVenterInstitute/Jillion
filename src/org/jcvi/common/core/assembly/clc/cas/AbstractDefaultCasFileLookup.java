@@ -263,10 +263,10 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
             this.file =file;
         }
         @Override
-        public boolean visitReadHeader(SffReadHeader readHeader) {
+        public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
             final String name = readHeader.getId();
             addRead(name,file);
-            return false;
+            return ReadHeaderReturnCode.SKIP_CURRENT_READ;
         }
         
     }

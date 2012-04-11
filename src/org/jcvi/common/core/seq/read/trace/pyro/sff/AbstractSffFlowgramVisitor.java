@@ -38,10 +38,10 @@ public abstract class AbstractSffFlowgramVisitor implements SffFileVisitor{
 	 * Visit the current {@link Flowgram} in the file
 	 * being parsed.
 	 * @param flowgram
-	 * @return {@code true} to keep parsing the sff file;
-	 * {@code false} to halt parsing entirely.
+	 * @return an instance of {@link ReadDataReturnCode};
+	 * can not be null.
 	 */
-	protected abstract boolean visitFlowgram(Flowgram flowgram);
+	protected abstract ReadDataReturnCode visitFlowgram(Flowgram flowgram);
 	@Override
 	public void visitFile() {}
 
@@ -50,18 +50,18 @@ public abstract class AbstractSffFlowgramVisitor implements SffFileVisitor{
 	public void visitEndOfFile() {}
 
 	@Override
-	public boolean visitCommonHeader(SffCommonHeader commonHeader) {
-		return true;
+	public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
+		return CommonHeaderReturnCode.PARSE_READS;
 	}
 
 	@Override
-	public boolean visitReadHeader(SffReadHeader readHeader) {
+	public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
 		this.currentReadHeader = readHeader;
-		return true;
+		return ReadHeaderReturnCode.PARSE_READ_DATA;
 	}
 
 	@Override
-	public boolean visitReadData(SffReadData readData) {
+	public ReadDataReturnCode visitReadData(SffReadData readData) {
 		
 		return visitFlowgram(
 				SffFlowgram.create(currentReadHeader, readData));

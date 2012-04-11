@@ -100,28 +100,28 @@ public final class DefaultSffFileDataStore {
 		}
 
 		@Override
-		public synchronized boolean visitCommonHeader(SffCommonHeader commonHeader) {
+		public synchronized CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
 			checkNotYetInitialized();
-			return true;
+			return CommonHeaderReturnCode.PARSE_READS;
 		}
 
 		@Override
-		public synchronized boolean visitReadHeader(SffReadHeader readHeader) {
+		public synchronized ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
 			checkNotYetInitialized();
 			this.currentReadHeader = readHeader;
 	        boolean accept= filter.accept(readHeader.getId());
 	        if(onlyOneReadToParse && accept){
 	        	keepParsingFile=false;
 	        }
-	        return accept;
+	        return accept?ReadHeaderReturnCode.PARSE_READ_DATA:ReadHeaderReturnCode.SKIP_CURRENT_READ;
 		}
 
 		@Override
-		public boolean visitReadData(SffReadData readData) {
+		public ReadDataReturnCode visitReadData(SffReadData readData) {
 			checkNotYetInitialized();
 			 builder.addFlowgram(SffFlowgram.create(currentReadHeader, readData));
 		     currentReadHeader=null;
-			return keepParsingFile;
+			return keepParsingFile?ReadDataReturnCode.PARSE_NEXT_READ:ReadDataReturnCode.STOP;
 		}
 
 		@Override

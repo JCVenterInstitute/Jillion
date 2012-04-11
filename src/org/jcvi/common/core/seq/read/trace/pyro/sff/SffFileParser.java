@@ -31,6 +31,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.CommonHeaderReturnCode;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.ReadDataReturnCode;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.ReadHeaderReturnCode;
 
 public final class SffFileParser {
     private static final SffCommonHeaderDecoder COMMON_HEADER_CODEC = DefaultSFFCommonHeaderDecoder.INSTANCE;
@@ -67,21 +70,33 @@ public final class SffFileParser {
         DataInputStream dataIn = new DataInputStream(in);
         visitor.visitFile();
         SffCommonHeader commonHeader =COMMON_HEADER_CODEC.decodeHeader(dataIn);
-        if(visitor.visitCommonHeader(commonHeader)){
+        CommonHeaderReturnCode commonHeaderRet = visitor.visitCommonHeader(commonHeader);
+        if(commonHeaderRet==null){
+        	throw new NullPointerException("can not return null for visitCommonHeader() callback");
+        }
+		if(commonHeaderRet==CommonHeaderReturnCode.PARSE_READS){
         
             final long numberOfReads = commonHeader.getNumberOfReads();
             final int numberOfFlowsPerRead = commonHeader.getNumberOfFlowsPerRead();
             for(long i=0; i<numberOfReads; i++){
                 SffReadHeader readHeader = READ_HEADER_CODEC.decodeReadHeader(dataIn);
-                if(visitor.visitReadHeader(readHeader)){            
+                ReadHeaderReturnCode readHeaderRet = visitor.visitReadHeader(readHeader);
+                if(readHeaderRet==null){
+                	throw new NullPointerException("can not return null for visitReadHeader() callback");
+                }
+				if(readHeaderRet==ReadHeaderReturnCode.PARSE_READ_DATA){            
                     final int numberOfBases = readHeader.getNumberOfBases();
                     SffReadData readData = READ_DATA_CODEC.decode(dataIn,
                                     numberOfFlowsPerRead,
                                     numberOfBases);
-                    if(!visitor.visitReadData(readData)){
+                    ReadDataReturnCode readDataRet = visitor.visitReadData(readData);
+                    if(readDataRet==null){
+                    	throw new NullPointerException("can not return null for visitReadData() callback");
+                    }
+					if(readDataRet==ReadDataReturnCode.STOP){
                         break;
                     }
-                }else{
+                }else if(readHeaderRet==ReadHeaderReturnCode.SKIP_CURRENT_READ){
                     //skip length of readData
                     int readDataLength = SffUtil.getReadDataLength(numberOfFlowsPerRead, readHeader.getNumberOfBases());
                     int padding =SffUtil.caclulatePaddedBytes(readDataLength);
@@ -90,6 +105,9 @@ public final class SffFileParser {
                     } catch (IOException e) {
                         throw new SffDecoderException("could not skip read data block");
                     }
+                }else{
+                	//stop
+                	break;
                 }
                 
             }
