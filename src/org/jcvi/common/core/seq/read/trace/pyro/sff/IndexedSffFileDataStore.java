@@ -240,8 +240,16 @@ public final class IndexedSffFileDataStore{
 	}
 	    
 	}
-	
-	static class FullPassIndexedSffFileDataStore implements SffDataStore{
+	/**
+	 * {@link SffDataStore} instance that needs to parse the 
+	 * entire sff file and note the offsets of each read.
+	 * This can be very slow so it should only
+	 * be used if no sff index is present in the file
+	 * or that index is in an unknown format.
+	 * @author dkatzel
+	 *
+	 */
+	static final class FullPassIndexedSffFileDataStore implements SffDataStore{
 		private static final SffReadHeaderDecoder READ_HEADER_CODEC =DefaultSffReadHeaderDecoder.INSTANCE;
 		private static final SffReadDataDecoder READ_DATA_CODEC =DefaultSffReadDataDecoder.INSTANCE;
 		    

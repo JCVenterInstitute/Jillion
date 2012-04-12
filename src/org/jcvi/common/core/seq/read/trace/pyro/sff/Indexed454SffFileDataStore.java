@@ -62,6 +62,12 @@ final class Indexed454SffFileDataStore implements SffDataStore{
 	}
 	private final File sffFile;
 	private SffCommonHeader commonHeader;
+	/**
+	 * It appears that 454 will
+	 * only make an index if the file size <4GB
+	 * so we can use unsigned ints to save memory
+	 * in the index.
+	 */
 	private Map<String, Integer> map;
 	private boolean isClosed=false;
 	
@@ -190,13 +196,11 @@ final class Indexed454SffFileDataStore implements SffDataStore{
 		}
 		@Override
 		public void visitFile() {
-			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void visitEndOfFile() {
-			// TODO Auto-generated method stub
 			
 		}
 
