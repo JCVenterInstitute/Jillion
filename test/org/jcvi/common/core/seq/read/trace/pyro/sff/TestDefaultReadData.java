@@ -26,6 +26,8 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.util.Arrays;
 
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffReadData;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.common.core.util.MathUtil;
 import org.junit.Test;
@@ -33,7 +35,7 @@ import static org.junit.Assert.*;
 
 public class TestDefaultReadData {
 
-    String basecalls = "ACGTACGT";
+	NucleotideSequence basecalls = new NucleotideSequenceBuilder("ACGTACGT").build();
     byte[] qualities = new byte[]{20,30,40,20,30,40,50,20};
     short[] flowgramValues = new short[]{100,97,110,80,120,101,100,93};
     byte[] indexes = new byte[]{1,1,1,1,1,1,1,1};
@@ -84,7 +86,7 @@ public class TestDefaultReadData {
     @Test
     public void constructorFailsDifferentBasesShouldThrowIllegalArgumentException(){
         try{
-            new DefaultSffReadData("different"+basecalls,
+            new DefaultSffReadData(new NucleotideSequenceBuilder(basecalls).append("A").build(),
                                         indexes,
                                         flowgramValues,
                                         qualities);

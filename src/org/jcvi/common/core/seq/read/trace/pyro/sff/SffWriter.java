@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
  * {@code SffWriter} writes Sff formated data to an OutputStream.
@@ -64,6 +65,21 @@ public class SffWriter {
         return headerLength;
     }
     /**
+     * Get the number of bytes (plus padding) that a {@link SffCommonHeader}
+     * will take up in an sff encoded file.
+     * @param header the {@link SffCommonHeader} to inspect;
+     * can not be null.
+     * @return a positive int.
+     * @throws NullPointerException if header is null or
+     * {@link SffCommonHeader#getKeySequence()} returns null.
+     */
+    public static int getNumberOfBytesFor(SffCommonHeader header){
+    	int keyLength = (int)header.getKeySequence().getLength();
+        int size = 31+header.getNumberOfFlowsPerRead()+ keyLength;
+        int padding =SffUtil.caclulatePaddedBytes(size);
+        return size+padding;
+    }
+    /**
      * Writes the given {@link SffReadHeader} to the given {@link OutputStream}.
      * @param readHeader the readHeader to write.
      * @param out the {@link OutputStream} to write to.
@@ -90,7 +106,22 @@ public class SffWriter {
         out.flush();
         return paddedHeaderLength;
     }
-    
+    /**
+     * Get the number of bytes (plus padding) that a {@link SffReadHeader}
+     * will take up in an sff encoded file.
+     * @param readHeader the {@link SffReadHeader} to inspect;
+     * can not be null.
+     * @return a positive int.
+     * @throws NullPointerException if readHeader is null or
+     * {@link SffReadHeader#getId()} returns null.
+     */
+    public static int getNumberOfBytesFor(SffReadHeader readHeader){
+    	String id =readHeader.getId();        
+        int unpaddedHeaderLength = 16+id.length();
+        int padding = SffUtil.caclulatePaddedBytes(unpaddedHeaderLength);
+        return  unpaddedHeaderLength+padding;
+    }
+    		
     public static int writeReadData(SffReadData readData, OutputStream out) throws IOException{
         final short[] flowgramValues = readData.getFlowgramValues();
         ByteBuffer flowValues= ByteBuffer.allocate(flowgramValues.length*2);
@@ -99,14 +130,20 @@ public class SffWriter {
         }
         out.write(flowValues.array());
         out.write(readData.getFlowIndexPerBase());
-        final String basecalls = readData.getBasecalls();
-        out.write(basecalls.getBytes(IOUtil.UTF_8));
+        final NucleotideSequence basecalls = readData.getBasecalls();
+        out.write(basecalls.toString().getBytes(IOUtil.UTF_8));
         out.write(readData.getQualities());
-        int readDataLength = SffUtil.getReadDataLength(flowgramValues.length, basecalls.length());
+        int readDataLength = SffUtil.getReadDataLength(flowgramValues.length, (int)basecalls.getLength());
         int padding =SffUtil.caclulatePaddedBytes(readDataLength);
         out.write(new byte[padding]);
         out.flush();
         return readDataLength+padding;
+    }
+    
+    public static int getNumberOfBytesFor(SffReadData readData){
+    	 int readDataLength = SffUtil.getReadDataLength(readData.getFlowgramValues().length, (int)readData.getBasecalls().getLength());
+         int padding =SffUtil.caclulatePaddedBytes(readDataLength);
+         return readDataLength+padding;
     }
     
     private static void writeClip(Range clip, OutputStream out) throws IOException{

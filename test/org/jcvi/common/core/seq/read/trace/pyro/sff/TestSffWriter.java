@@ -150,7 +150,7 @@ public class TestSffWriter {
         byte[] qualities = new byte[]{20,30,40,35};
         short[] values = new short[]{100,8,97,4,200};
         byte[] indexes = new byte[]{1,2,2,0};
-        String bases = "TATT";
+        NucleotideSequence bases = new NucleotideSequenceBuilder("TATT").build();
 
         DefaultSffReadData readData = new DefaultSffReadData(bases, indexes,  values,
                                                 qualities);
@@ -161,14 +161,14 @@ public class TestSffWriter {
         
     }
     private byte[] encodeExpectedReadData(SffReadData readData){
-        int basesLength =readData.getBasecalls().length();
+        int basesLength =(int)readData.getBasecalls().getLength();
         int numberOfFlows = readData.getFlowgramValues().length;
         int readDataLength = numberOfFlows * 2 + 3*basesLength;
         int padding =SffUtil.caclulatePaddedBytes(readDataLength);
         ByteBuffer buf = ByteBuffer.wrap(new byte[readDataLength+padding]);
         IOUtil.putShortArray(buf, readData.getFlowgramValues());
         buf.put(readData.getFlowIndexPerBase());
-        buf.put(readData.getBasecalls().getBytes());
+        buf.put(readData.getBasecalls().toString().getBytes(IOUtil.UTF_8));
         buf.put(readData.getQualities());
         return buf.array();
     }

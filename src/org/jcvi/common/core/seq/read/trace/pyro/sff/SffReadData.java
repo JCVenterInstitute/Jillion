@@ -22,6 +22,9 @@
  * @author dkatzel
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
+
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+
 /**
  * {@code SFFReadData} contains the raw
  * sequencing data from a given SFF read.
@@ -45,10 +48,10 @@ public interface SffReadData {
      */
     byte[] getFlowIndexPerBase();
     /**
-     * The called basecalls.
-     * @return
+     * The called basecalls as a {@link NucleotideSequence}.
+     * @return a {@link NucleotideSequence}; never null.
      */
-    String getBasecalls();
+    NucleotideSequence getBasecalls();
     /**
      * The quality scores for each bases in the sequence
      * stored as Phred values.

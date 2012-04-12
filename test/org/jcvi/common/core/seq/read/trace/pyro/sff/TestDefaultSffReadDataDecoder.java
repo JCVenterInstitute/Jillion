@@ -27,11 +27,14 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffReadData;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffReadDataDecoder;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadData;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.testUtil.EasyMockUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -44,7 +47,7 @@ public class TestDefaultSffReadDataDecoder {
     protected byte[] qualities = new byte[]{20,30,40,35};
     protected short[] values = new short[]{100,8,97,4,200};
     protected byte[] indexes = new byte[]{1,2,2,0};
-    protected String bases = "TATT";
+    protected NucleotideSequence bases = new NucleotideSequenceBuilder("TATT").build();
 
 
     protected DefaultSffReadDataDecoder sut = DefaultSffReadDataDecoder.INSTANCE;
@@ -85,7 +88,7 @@ public class TestDefaultSffReadDataDecoder {
 
 
     void encode(InputStream mockInputStream, SffReadData readData) throws IOException{
-        int basesLength =readData.getBasecalls().length();
+        int basesLength =(int)readData.getBasecalls().getLength();
         int numberOfFlows = readData.getFlowgramValues().length;
         int readDataLength = numberOfFlows * 2 + 3*numberOfBases;
         long padding =SffUtil.caclulatePaddedBytes(readDataLength);
@@ -96,7 +99,7 @@ public class TestDefaultSffReadDataDecoder {
         .andAnswer(EasyMockUtil.writeArrayToInputStream(readData.getFlowIndexPerBase()));
 
         expect(mockInputStream.read(isA(byte[].class), eq(0),eq(basesLength)))
-        .andAnswer(EasyMockUtil.writeArrayToInputStream(readData.getBasecalls().getBytes()));
+        .andAnswer(EasyMockUtil.writeArrayToInputStream(readData.getBasecalls().toString().getBytes(IOUtil.UTF_8)));
         expect(mockInputStream.read(isA(byte[].class), eq(0),eq(basesLength)))
         .andAnswer(EasyMockUtil.writeArrayToInputStream(readData.getQualities()));
         expect(mockInputStream.skip(padding)).andReturn(padding);
