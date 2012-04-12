@@ -9,6 +9,7 @@ import java.io.InputStream;
 
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
@@ -23,6 +24,19 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * random access without taking up much memory. The down side is each flowgram
  * must be re-parsed each time and the sff file must exist and not
  * get altered during the entire lifetime of this object.
+ * <p/>
+ * While this class will work on any valid sff file, certain
+ * kinds of sff files can create an {@link IndexedSffFileDataStore}
+ * faster if they already contain an index.  454 sff files contain
+ * a index at the end of the file that contains the offsets for each record.
+ * While this index format has not been formally specified, it has been 
+ * reverse engineered.  If the given sff file has such an index, then
+ * this class will quickly decode that index and not have to parse
+ * any read data until {@link SffDataStore#get(String)} is called.
+ * If the sff file does not have such an index already (ex: any Ion Torrent or
+ *  a 454 sff >4GB) then the entire file must be parsed to create the index
+ *  in memory.  This will mean that some sff files can have their {@link SffDataStore}
+ *  objects created much faster than others even if the file sizes are vastly different.
  * <p/>
  * {@link IndexedSffFileDataStore} is limited to only {@link Integer#MAX_VALUE}
  * of reads.  Attempting to create an instance of
@@ -58,7 +72,7 @@ public final class IndexedSffFileDataStore{
      * given sff file should be used with to populate/index
      * the returned builder.  Please make sure that the given
      * sffFile can be used to create an indexedSffFileDataStore.
-     * A valid datastore can not be created if there are 
+     * A valid {@link DataStore} can not be created if there are 
      * more than {@link Integer#MAX_VALUE} reads.  If such
      * a file is given to the builder when the file is visited
      * downstream, it will throw an {@link IllegalArgumentException}.
@@ -88,13 +102,33 @@ public final class IndexedSffFileDataStore{
 	 * @see #canCreateIndexedDataStore(File)
 	 */
 	public static SffDataStore create(File sffFile) throws IOException{
-		//TODO put manifest datastore here
-		
+		SffDataStore manifestDataStore = Indexed454SffFileDataStore.create(sffFile);
+		if(manifestDataStore!=null){
+			return manifestDataStore;
+		}
 		//do full pass if can't use manifest
+		return createByFullyParsing(sffFile);
+	}
+	
+	/**
+	 * Create a new {@link SffDataStore} instance by parsing
+	 * the entire sff file and noting the file offsets
+	 * for each record.
+	 * @param sffFile the sff file to create a datastore for.
+	 * @return a new {@link SffDataStore} instance; never null.
+	 * @throws IOException if there is a problem reading the file.
+	 * @throws IllegalArgumentException if the given sffFile
+	 * has more than {@link Integer#MAX_VALUE} reads.
+	 * @throws NullPointerException if sffFile is null.
+	 * @throws IllegalArgumentException if sffFile does not exist.
+	 * @see #canCreateIndexedDataStore(File)
+	 */
+	static SffDataStore createByFullyParsing(File sffFile) throws IOException{
 		FullPassIndexedSffVisitorBuilder builder= new FullPassIndexedSffVisitorBuilder(sffFile);
 		SffFileParser.parseSFF(sffFile, builder);
 		return builder.build();
 	}
+	
 	private static final class NumberOfReadChecker implements SffFileVisitor{
 		private long numberOfReads=Long.MAX_VALUE;
 		@Override
@@ -207,7 +241,7 @@ public final class IndexedSffFileDataStore{
 	    
 	}
 	
-	private static class FullPassIndexedSffFileDataStore implements SffDataStore{
+	static class FullPassIndexedSffFileDataStore implements SffDataStore{
 		private static final SffReadHeaderDecoder READ_HEADER_CODEC =DefaultSffReadHeaderDecoder.INSTANCE;
 		private static final SffReadDataDecoder READ_DATA_CODEC =DefaultSffReadDataDecoder.INSTANCE;
 		    

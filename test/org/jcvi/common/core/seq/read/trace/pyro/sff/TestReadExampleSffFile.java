@@ -33,9 +33,12 @@ import static org.junit.Assert.*;
 
 public abstract class  TestReadExampleSffFile extends AbstractTestExampleSffFile{
     
+	protected File sffFileToUse(){
+		return SFF_FILE;
+	}
     @Before
     public void populate() throws Exception{
-        parseSff(SFF_FILE);
+        parseSff(sffFileToUse());
         
     }
     @Test
