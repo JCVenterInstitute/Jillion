@@ -196,12 +196,12 @@ public final class SffFlowgram implements Flowgram {
         Flowgram other = (Flowgram) obj;
         
         boolean nonValuesEqual=
-        CommonUtil.similarTo(id, other.getId()) &&
-        CommonUtil.similarTo(basecalls.asList(), other.getBasecalls().asList()) &&
-        CommonUtil.similarTo(qualities.asList(), other.getQualities().asList()) &&
-        CommonUtil.similarTo(qualitiesClip, other.getQualityClip()) &&
-        CommonUtil.similarTo(adapterClip, other.getAdapterClip()) &&
-        CommonUtil.similarTo(getNumberOfFlows(), other.getNumberOfFlows());
+        CommonUtil.similarTo(id, other.getId())
+        && CommonUtil.similarTo(basecalls.asList(), other.getBasecalls().asList())
+        && CommonUtil.similarTo(qualities.asList(), other.getQualities().asList())
+        && CommonUtil.similarTo(qualitiesClip, other.getQualityClip())
+        && CommonUtil.similarTo(adapterClip, other.getAdapterClip())
+        && CommonUtil.similarTo(getNumberOfFlows(), other.getNumberOfFlows());
         if(!nonValuesEqual){
         	return false;
         }
