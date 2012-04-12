@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.DataInputStream;
 
-public interface SffReadDataDecoder {
+interface SffReadDataDecoder {
 
     SffReadData decode(DataInputStream in, int numberOfFlows, int numberOfBases ) throws SffDecoderException;
 }

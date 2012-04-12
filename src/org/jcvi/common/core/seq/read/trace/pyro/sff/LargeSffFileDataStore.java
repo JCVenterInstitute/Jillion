@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -57,18 +58,36 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
      * @param sffFile the sff file to parse.
      * @return a new SffDataStore; never null.
      * @throws NullPointerException if sffFile is null.
-     * @throws FileNotFoundException if sffFile does not exist.
+     * @throws IOException if sffFile does not exist or is not a valid sff file.
      */
-    public static SffDataStore create(File sffFile) throws FileNotFoundException{
-    	if(sffFile ==null){
+    public static SffDataStore create(File sffFile) throws IOException{
+    	verifyFileExists(sffFile);
+    	verifyIsValidSff(sffFile);
+    	
+    	return new LargeSffFileDataStore(sffFile);
+    }
+	private static void verifyFileExists(File sffFile)
+			throws FileNotFoundException {
+		if(sffFile ==null){
     		throw new NullPointerException("file can not be null");
     	}
     	if(!sffFile.exists()){
     		throw new FileNotFoundException("sff file does not exist");
     	}
-    	return new LargeSffFileDataStore(sffFile);
-    }
-    /**
+	}
+    private static void verifyIsValidSff(File f) throws IOException {
+    	DataInputStream in=null;
+    	try{
+    		in = new DataInputStream(new FileInputStream(f));
+    		//don't care about return value
+    		//this will throw IOException if the file isn't valid
+    		DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(in);
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(in);
+    	}
+		
+	}
+	/**
      * @param sffFile
      */
     private LargeSffFileDataStore(File sffFile) {

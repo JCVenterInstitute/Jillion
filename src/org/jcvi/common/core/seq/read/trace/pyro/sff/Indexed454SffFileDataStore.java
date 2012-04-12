@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -84,8 +83,8 @@ final class Indexed454SffFileDataStore implements SffDataStore{
 			//use large sffFileDataStore 
 			//to parse ids in order in file
 			return LargeSffFileDataStore.create(sffFile).getIds();
-		} catch (FileNotFoundException e) {
-			throw new IllegalStateException("sff file has been deleted");
+		} catch (IOException e) {
+			throw new IllegalStateException("sff file has been deleted",e);
 		}
 	}
 
@@ -154,8 +153,8 @@ final class Indexed454SffFileDataStore implements SffDataStore{
 		throwErrorIfClosed();
 		try {
 			return LargeSffFileDataStore.create(sffFile).iterator();
-		} catch (FileNotFoundException e) {
-			throw new IllegalStateException("sff file has been deleted");
+		} catch (IOException e) {
+			throw new IllegalStateException("sff file has been deleted",e);
 		}
 	}
 

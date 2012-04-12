@@ -26,7 +26,6 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import org.jcvi.common.core.io.IOUtil;
@@ -118,26 +117,4 @@ enum DefaultSFFCommonHeaderDecoder implements SffCommonHeaderDecoder {
             throw new SffDecoderException("magic number does not match expected");
         }
     }
-
-
-    public byte[] encodeHeader(SffCommonHeader header){
-        final short keyLength =(short) (header.getKeySequence().getLength());
-        int size = 31+header.getNumberOfFlowsPerRead()+ keyLength;
-        int padding =SffUtil.caclulatePaddedBytes(size);
-        ByteBuffer buf = ByteBuffer.wrap(new byte[size+padding]);
-        buf.put(MAGIC_NUMBER);
-        buf.put(ACCEPTED_VERSION);
-        buf.put(IOUtil.convertUnsignedLongToByteArray(header.getIndexOffset()));
-        buf.put(IOUtil.convertUnsignedIntToByteArray(header.getIndexLength()));
-        buf.put(IOUtil.convertUnsignedIntToByteArray(header.getNumberOfReads()));
-        buf.putShort((short)(size+padding));
-        buf.putShort(keyLength);
-        buf.put(IOUtil.convertUnsignedShortToByteArray(header.getNumberOfFlowsPerRead()));
-        buf.put(FORMAT_CODE);
-        buf.put(header.getFlowSequence().toString().getBytes(IOUtil.UTF_8));
-        buf.put(header.getKeySequence().toString().getBytes(IOUtil.UTF_8));
-        return buf.array();
-    }
-
-
 }
