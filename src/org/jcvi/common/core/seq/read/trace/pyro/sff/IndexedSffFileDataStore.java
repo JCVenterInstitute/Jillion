@@ -34,7 +34,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * @author dkatzel
  *
  */
-public final class IndexedSffFileDataStore implements SffDataStore{
+public final class IndexedSffFileDataStore{
 	/**
 	 * Partially parses the given sff file to get the number of 
 	 * reads in the header and checks to make sure the total number
@@ -55,7 +55,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
      * Create a new empty {@link SffFileVisitorDataStoreBuilder}
      * that will create an {@link IndexedSffFileDataStore} 
      * once the builder has been built.  Only the 
-     * given given sff file should be used with to populate/index
+     * given sff file should be used with to populate/index
      * the returned builder.  Please make sure that the given
      * sffFile can be used to create an indexedSffFileDataStore.
      * A valid datastore can not be created if there are 
@@ -73,7 +73,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
      * @see #canCreateIndexedDataStore(File)
      */
 	public static SffFileVisitorDataStoreBuilder createVisitorBuilder(File sffFile) throws FileNotFoundException{
-		return new IndexedSffVisitorBuilder(sffFile);
+		return new FullPassIndexedSffVisitorBuilder(sffFile);
 	}
 	/**
 	 * Create a new {@link SffDataStore} instance which only indexes
@@ -88,7 +88,10 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 	 * @see #canCreateIndexedDataStore(File)
 	 */
 	public static SffDataStore create(File sffFile) throws IOException{
-		IndexedSffVisitorBuilder builder= new IndexedSffVisitorBuilder(sffFile);
+		//TODO put manifest datastore here
+		
+		//do full pass if can't use manifest
+		FullPassIndexedSffVisitorBuilder builder= new FullPassIndexedSffVisitorBuilder(sffFile);
 		SffFileParser.parseSFF(sffFile, builder);
 		return builder.build();
 	}
@@ -118,16 +121,17 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 		
 	}
 	/**
-	 * {@code IndexedSffVisitorBuilder} computes
-	 * byte offsets of each record in the sff file
+	 * {@code FullPassIndexedSffVisitorBuilder} parses
+	 * all the read data in the file and computes
+	 * byte offsets of each record
 	 * by re-encoding each header and read data  to temp arrays
 	 * and accumulating resulting byte lengths.  We need to do this
-	 * because binary visitors such as {@link SffFileVisitor}
-	 * don't report how many bytes were read for each visit method.
+	 * if there isn't a manifest in the sff file or
+	 * we don't know how to parse the manifest.
 	 * @author dkatzel
 	 *
 	 */
-	private static final class IndexedSffVisitorBuilder implements SffFileVisitorDataStoreBuilder{
+	private static final class FullPassIndexedSffVisitorBuilder implements SffFileVisitorDataStoreBuilder{
 	 private int numberOfFlowsPerRead=0;
 	  private long currentOffset;
 	  
@@ -136,7 +140,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 	  private String currentReadId;
 	  private final File sffFile;
 	  
-	  private IndexedSffVisitorBuilder(File sffFile) throws FileNotFoundException{
+	  private FullPassIndexedSffVisitorBuilder(File sffFile) throws FileNotFoundException{
 		  if(sffFile==null){
 			  throw new NullPointerException("sff file can not be null");
 		  }
@@ -194,7 +198,7 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 	}
 	@Override
 	public SffDataStore build() {
-		return new IndexedSffFileDataStore(sffFile, numberOfFlowsPerRead, indexRanges);
+		return new FullPassIndexedSffFileDataStore(sffFile, numberOfFlowsPerRead, indexRanges);
 	}
 	@Override
 	public SffFileVisitorDataStoreBuilder addFlowgram(Flowgram flowgram) {
@@ -202,79 +206,81 @@ public final class IndexedSffFileDataStore implements SffDataStore{
 	}
 	    
 	}
-	private static final SffReadHeaderDecoder READ_HEADER_CODEC =DefaultSffReadHeaderDecoder.INSTANCE;
-	private static final SffReadDataDecoder READ_DATA_CODEC =DefaultSffReadDataDecoder.INSTANCE;
-	    
-	private final IndexedFileRange fileRanges;
-	private final int numberOfFlowsPerRead;
-	private final File sffFile;
 	
-	private IndexedSffFileDataStore(File sffFile,  int numberOfFlowsPerRead,
-			IndexedFileRange fileRanges) {
-		this.sffFile = sffFile;
-		this.numberOfFlowsPerRead = numberOfFlowsPerRead;
-		this.fileRanges = fileRanges;
-	}
-
-	@Override
-	public CloseableIterator<String> getIds() throws DataStoreException {
-		try {
-			return LargeSffFileDataStore.create(sffFile).getIds();
-		} catch (FileNotFoundException e) {
-			throw new DataStoreException("error creating id iterator",e);
-		}
-	}
-
-	@Override
-	public Flowgram get(String id) throws DataStoreException {
+	private static class FullPassIndexedSffFileDataStore implements SffDataStore{
+		private static final SffReadHeaderDecoder READ_HEADER_CODEC =DefaultSffReadHeaderDecoder.INSTANCE;
+		private static final SffReadDataDecoder READ_DATA_CODEC =DefaultSffReadDataDecoder.INSTANCE;
+		    
+		private final IndexedFileRange fileRanges;
+		private final int numberOfFlowsPerRead;
+		private final File sffFile;
 		
-		SffFileVisitorDataStoreBuilder builder = DefaultSffFileDataStore.createVisitorBuilder();
-		builder.visitFile();
-		try {
-			InputStream in = IOUtil.createInputStreamFromFile(sffFile, fileRanges.getRangeFor(id));
-			 DataInputStream dataIn = new DataInputStream(in);
-			 SffReadHeader readHeader = READ_HEADER_CODEC.decodeReadHeader(dataIn);
-			 final int numberOfBases = readHeader.getNumberOfBases();
-             SffReadData readData = READ_DATA_CODEC.decode(dataIn,
-                             numberOfFlowsPerRead,
-                             numberOfBases);
-             builder.visitReadHeader(readHeader);
-             builder.visitReadData(readData);
-             return builder.build().get(id);
-		} catch (IOException e) {
-			throw new DataStoreException("error trying to get flowgram "+ id);
+		private FullPassIndexedSffFileDataStore(File sffFile,  int numberOfFlowsPerRead,
+				IndexedFileRange fileRanges) {
+			this.sffFile = sffFile;
+			this.numberOfFlowsPerRead = numberOfFlowsPerRead;
+			this.fileRanges = fileRanges;
 		}
-	}
-
-	@Override
-	public boolean contains(String id) throws DataStoreException {
-		return fileRanges.contains(id);
-	}
-
-	@Override
-	public int size() throws DataStoreException {
-		return fileRanges.size();
-	}
-
-	@Override
-	public boolean isClosed() throws DataStoreException {
-		return fileRanges.isClosed();
-	}
-
-	@Override
-	public void close() throws IOException {
-		fileRanges.close();
-		
-	}
-
-	@Override
-	public CloseableIterator<Flowgram> iterator() {
-		try {
-			return LargeSffFileDataStore.create(sffFile).iterator();
-		} catch (FileNotFoundException e) {
-			throw new IllegalStateException("error creating iterator",e);
-		}
-	}
 	
+		@Override
+		public CloseableIterator<String> getIds() throws DataStoreException {
+			try {
+				return LargeSffFileDataStore.create(sffFile).getIds();
+			} catch (FileNotFoundException e) {
+				throw new DataStoreException("error creating id iterator",e);
+			}
+		}
+	
+		@Override
+		public Flowgram get(String id) throws DataStoreException {
+			
+			SffFileVisitorDataStoreBuilder builder = DefaultSffFileDataStore.createVisitorBuilder();
+			builder.visitFile();
+			try {
+				InputStream in = IOUtil.createInputStreamFromFile(sffFile, fileRanges.getRangeFor(id));
+				 DataInputStream dataIn = new DataInputStream(in);
+				 SffReadHeader readHeader = READ_HEADER_CODEC.decodeReadHeader(dataIn);
+				 final int numberOfBases = readHeader.getNumberOfBases();
+	             SffReadData readData = READ_DATA_CODEC.decode(dataIn,
+	                             numberOfFlowsPerRead,
+	                             numberOfBases);
+	             builder.visitReadHeader(readHeader);
+	             builder.visitReadData(readData);
+	             return builder.build().get(id);
+			} catch (IOException e) {
+				throw new DataStoreException("error trying to get flowgram "+ id);
+			}
+		}
+	
+		@Override
+		public boolean contains(String id) throws DataStoreException {
+			return fileRanges.contains(id);
+		}
+	
+		@Override
+		public int size() throws DataStoreException {
+			return fileRanges.size();
+		}
+	
+		@Override
+		public boolean isClosed() throws DataStoreException {
+			return fileRanges.isClosed();
+		}
+	
+		@Override
+		public void close() throws IOException {
+			fileRanges.close();
+			
+		}
+	
+		@Override
+		public CloseableIterator<Flowgram> iterator() {
+			try {
+				return LargeSffFileDataStore.create(sffFile).iterator();
+			} catch (FileNotFoundException e) {
+				throw new IllegalStateException("error creating iterator",e);
+			}
+		}
+	}
 	
 }
