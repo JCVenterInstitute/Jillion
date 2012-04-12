@@ -15,6 +15,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * 454 includes an optional index at the 
@@ -36,21 +37,21 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * @author dkatzel
  *
  */
-final class Indexed454SffFileDataStore implements SffDataStore{
+final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	
 	/**
-	 * Try to create a {@link SffDataStore} by only parsing
+	 * Try to create a {@link FlowgramDataStore} by only parsing
 	 * the 454 index at the end of the sff file.
 	 * If there is no index or it is encoded
 	 * in an unknown format, then this method will
 	 * return null.
 	 * @param sffFile
-	 * @return an {@link SffDataStore} if successfully
+	 * @return an {@link FlowgramDataStore} if successfully
 	 * parsed; or {@code null} if the index can't
 	 * be parsed.
 	 * @throws IOException if there is a problem reading the file.
 	 */
-	public static SffDataStore create(File sffFile) throws IOException{
+	public static FlowgramDataStore create(File sffFile) throws IOException{
 		ManifestCreatorVisitor visitor = new ManifestCreatorVisitor(sffFile);
 		SffFileParser.parseSFF(sffFile, visitor);
 		if(!visitor.isUseableManifest()){

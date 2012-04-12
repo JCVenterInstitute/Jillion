@@ -30,7 +30,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.CommonUtil;
 import org.jcvi.common.core.util.MathUtil;
 
-public class DefaultSffReadData implements SffReadData {
+final class DefaultSffReadData implements SffReadData {
 
     private NucleotideSequence basecalls;
     private byte[] indexes;
@@ -65,8 +65,8 @@ public class DefaultSffReadData implements SffReadData {
     private void indexesWithinBounds(byte[] indexes, short[] values) {
         final BigInteger sum = MathUtil.sumOf(indexes);
         if(sum.compareTo(BigInteger.valueOf(values.length)) >0){
-            throw new ArrayIndexOutOfBoundsException("indexed flowgram value refers to "+ sum +
-                    "flowgram value length is" + values.length);
+            throw new ArrayIndexOutOfBoundsException("indexed flowgram value refers to "+ sum
+                    + "flowgram value length is" + values.length);
         }
     }
 

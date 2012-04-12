@@ -31,21 +31,22 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 
 public final class DefaultSffFileDataStore {
 
 	
-	public static SffDataStore create(File sffFile) throws IOException{
+	public static FlowgramDataStore create(File sffFile) throws IOException{
 		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder();
 		SffFileParser.parseSFF(sffFile, builder);
 		return builder.build();
 	}
-	public static SffDataStore createDataStoreOfSingleRead(File sffFile, String readId) throws IOException{
+	public static FlowgramDataStore createDataStoreOfSingleRead(File sffFile, String readId) throws IOException{
 		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder(readId);
 		SffFileParser.parseSFF(sffFile, builder);
 		return builder.build();
 	}
-	public static SffDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
+	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder(filter);
 		SffFileParser.parseSFF(sffFile, builder);
 		return builder.build();
@@ -93,7 +94,7 @@ public final class DefaultSffFileDataStore {
 		}
 
 		@Override
-		public synchronized SffDataStore build() {
+		public synchronized FlowgramDataStore build() {
 			checkNotYetInitialized();
 			initialized=true;
 			return builder.build();

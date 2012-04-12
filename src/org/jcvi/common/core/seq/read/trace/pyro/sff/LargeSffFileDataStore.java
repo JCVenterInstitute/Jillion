@@ -36,9 +36,10 @@ import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
- * {@code LargeSffFileDataStore} is a {@link SffDataStore}
+ * {@code LargeSffFileDataStore} is a {@link FlowgramDataStore}
  * implementation that doesn't store any read information in memory.
  *  No data contained in this
  * sff file is stored in memory except it's size (which is lazy loaded).
@@ -48,7 +49,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * @author dkatzel
  *
  */
-public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements SffDataStore{
+public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements FlowgramDataStore{
 
     private final File sffFile;
     private Integer size=null;
@@ -60,7 +61,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
      * @throws NullPointerException if sffFile is null.
      * @throws IOException if sffFile does not exist or is not a valid sff file.
      */
-    public static SffDataStore create(File sffFile) throws IOException{
+    public static FlowgramDataStore create(File sffFile) throws IOException{
     	verifyFileExists(sffFile);
     	verifyIsValidSff(sffFile);
     	
@@ -104,7 +105,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
     public synchronized Flowgram get(String id) throws DataStoreException {
         super.get(id);        
         try{
-        	SffDataStore datastore= DefaultSffFileDataStore.createDataStoreOfSingleRead(sffFile,id);
+        	FlowgramDataStore datastore= DefaultSffFileDataStore.createDataStoreOfSingleRead(sffFile,id);
             return datastore.get(id);
         } catch (IOException e) {
             throw new DataStoreException("could not read sffFile ",e);
@@ -195,7 +196,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
         }
         
     }
-    private static final class SffSize extends AbstractSffFileVisitor{
+    private static final class SffSize implements SffFileVisitor{
         private int size=0;
 
         @Override
@@ -208,7 +209,25 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
             return size;
         }
         
-        
+        @Override
+        public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
+            return CommonHeaderReturnCode.PARSE_READS;
+        }
+
+        @Override
+        public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
+            return ReadHeaderReturnCode.PARSE_READ_DATA;
+        }
+
+        @Override
+        public void visitEndOfFile() {
+
+        }
+
+        @Override
+        public void visitFile() {
+
+        }
     }
     
 }

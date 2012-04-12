@@ -34,11 +34,14 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.CommonHeaderReturnCode;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.ReadDataReturnCode;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.ReadHeaderReturnCode;
-
+/**
+ * {@code SffFileParser} contains
+ * methods for parsing sff encoded
+ * files.
+ * @author dkatzel
+ * @see <a href ="http://www.ncbi.nlm.nih.gov/Traces/trace.cgi?cmd=show&f=formats&m=doc&s=format#sff">SFF file format spec from NCBI</a>
+ */
 public final class SffFileParser {
-    private static final SffCommonHeaderDecoder COMMON_HEADER_CODEC = DefaultSFFCommonHeaderDecoder.INSTANCE;
-    private static final SffReadHeaderDecoder READ_HEADER_CODEC =DefaultSffReadHeaderDecoder.INSTANCE;
-    private static final SffReadDataDecoder READ_DATA_CODEC =DefaultSffReadDataDecoder.INSTANCE;
     
     private SffFileParser(){}
     /**
@@ -69,50 +72,54 @@ public final class SffFileParser {
     public static void parseSFF(InputStream in, SffFileVisitor visitor) throws SffDecoderException{
         DataInputStream dataIn = new DataInputStream(in);
         visitor.visitFile();
-        SffCommonHeader commonHeader =COMMON_HEADER_CODEC.decodeHeader(dataIn);
+        SffCommonHeader commonHeader =DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(dataIn);
         CommonHeaderReturnCode commonHeaderRet = visitor.visitCommonHeader(commonHeader);
         if(commonHeaderRet==null){
         	throw new NullPointerException("can not return null for visitCommonHeader() callback");
         }
-		if(commonHeaderRet==CommonHeaderReturnCode.PARSE_READS){
-        
-            final long numberOfReads = commonHeader.getNumberOfReads();
-            final int numberOfFlowsPerRead = commonHeader.getNumberOfFlowsPerRead();
-            for(long i=0; i<numberOfReads; i++){
-                SffReadHeader readHeader = READ_HEADER_CODEC.decodeReadHeader(dataIn);
-                ReadHeaderReturnCode readHeaderRet = visitor.visitReadHeader(readHeader);
-                if(readHeaderRet==null){
-                	throw new NullPointerException("can not return null for visitReadHeader() callback");
-                }
-				if(readHeaderRet==ReadHeaderReturnCode.PARSE_READ_DATA){            
-                    final int numberOfBases = readHeader.getNumberOfBases();
-                    SffReadData readData = READ_DATA_CODEC.decode(dataIn,
-                                    numberOfFlowsPerRead,
-                                    numberOfBases);
-                    ReadDataReturnCode readDataRet = visitor.visitReadData(readData);
-                    if(readDataRet==null){
-                    	throw new NullPointerException("can not return null for visitReadData() callback");
-                    }
-					if(readDataRet==ReadDataReturnCode.STOP){
-                        break;
-                    }
-                }else if(readHeaderRet==ReadHeaderReturnCode.SKIP_CURRENT_READ){
-                    //skip length of readData
-                    int readDataLength = SffUtil.getReadDataLength(numberOfFlowsPerRead, readHeader.getNumberOfBases());
-                    int padding =SffUtil.caclulatePaddedBytes(readDataLength);
-                    try {
-                        IOUtil.blockingSkip(dataIn, readDataLength+padding);
-                    } catch (IOException e) {
-                        throw new SffDecoderException("could not skip read data block");
-                    }
-                }else{
-                	//stop
-                	break;
-                }
-                
-            }
+		if(commonHeaderRet==CommonHeaderReturnCode.PARSE_READS){        
+            parseReads(visitor, dataIn, commonHeader);
         }
         visitor.visitEndOfFile();
         
     }
+	private static void parseReads(SffFileVisitor visitor,
+			DataInputStream dataIn, SffCommonHeader commonHeader)
+			throws SffDecoderException {
+		final long numberOfReads = commonHeader.getNumberOfReads();
+		final int numberOfFlowsPerRead = commonHeader.getNumberOfFlowsPerRead();
+		for(long i=0; i<numberOfReads; i++){
+		    SffReadHeader readHeader = DefaultSffReadHeaderDecoder.INSTANCE.decodeReadHeader(dataIn);
+		    ReadHeaderReturnCode readHeaderRet = visitor.visitReadHeader(readHeader);
+		    if(readHeaderRet==null){
+		    	throw new NullPointerException("can not return null for visitReadHeader() callback");
+		    }
+			if(readHeaderRet==ReadHeaderReturnCode.PARSE_READ_DATA){            
+		        final int numberOfBases = readHeader.getNumberOfBases();
+		        SffReadData readData = DefaultSffReadDataDecoder.INSTANCE.decode(dataIn,
+		                        numberOfFlowsPerRead,
+		                        numberOfBases);
+		        ReadDataReturnCode readDataRet = visitor.visitReadData(readData);
+		        if(readDataRet==null){
+		        	throw new NullPointerException("can not return null for visitReadData() callback");
+		        }
+				if(readDataRet==ReadDataReturnCode.STOP){
+		            break;
+		        }
+		    }else if(readHeaderRet==ReadHeaderReturnCode.SKIP_CURRENT_READ){
+		        //skip length of readData
+		        int readDataLength = SffUtil.getReadDataLength(numberOfFlowsPerRead, readHeader.getNumberOfBases());
+		        int padding =SffUtil.caclulatePaddedBytes(readDataLength);
+		        try {
+		            IOUtil.blockingSkip(dataIn, readDataLength+padding);
+		        } catch (IOException e) {
+		            throw new SffDecoderException("could not skip read data block");
+		        }
+		    }else{
+		    	//stop
+		    	break;
+		    }
+		    
+		}
+	}
 }
