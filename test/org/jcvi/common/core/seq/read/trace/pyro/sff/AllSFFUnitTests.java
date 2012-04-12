@@ -37,7 +37,6 @@ import org.junit.runners.Suite.SuiteClasses;
         TestSffeadHeaderDecoder.class,
         TestDefaultSffReadDataDecoder.class,
         TestDefaultSffCommonHeaderDecoder.class,
-        TestSffUtil_encodeCommonHeaderCodec.class,
         TestSFFFlowgram.class,
         TestSFFCodecParseActualSFFFile.class,
         TestLargeSffFileDataStore.class,

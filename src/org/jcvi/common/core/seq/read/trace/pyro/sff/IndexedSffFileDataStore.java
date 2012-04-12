@@ -268,7 +268,7 @@ public final class IndexedSffFileDataStore{
 		public CloseableIterator<String> getIds() throws DataStoreException {
 			try {
 				return LargeSffFileDataStore.create(sffFile).getIds();
-			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
 				throw new DataStoreException("error creating id iterator",e);
 			}
 		}
@@ -319,7 +319,7 @@ public final class IndexedSffFileDataStore{
 		public CloseableIterator<Flowgram> iterator() {
 			try {
 				return LargeSffFileDataStore.create(sffFile).iterator();
-			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
 				throw new IllegalStateException("error creating iterator",e);
 			}
 		}
