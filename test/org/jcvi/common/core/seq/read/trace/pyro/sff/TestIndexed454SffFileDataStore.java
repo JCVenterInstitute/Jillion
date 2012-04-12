@@ -1,10 +1,12 @@
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-
-public class TestIndexedSffFlowgramDataStore extends TestReadExampleSffFile{
+import org.junit.Test;
+import static org.junit.Assert.*;
+public class TestIndexed454SffFileDataStore extends TestReadExampleSffFile{
 
     private SffDataStore dataStore;
     @Override
@@ -19,6 +21,12 @@ public class TestIndexedSffFlowgramDataStore extends TestReadExampleSffFile{
 
     @Override
     protected void parseSff(File f) throws Exception {
-    	dataStore = IndexedSffFileDataStore.create(f);
+    	dataStore = Indexed454SffFileDataStore.create(f);
     }
+    
+    @Test
+    public void noIndexInSffShouldMakeCreateReturnNull() throws IOException{
+    	assertNull(Indexed454SffFileDataStore.create(SFF_FILE_NO_INDEX));
+    }
+
 }

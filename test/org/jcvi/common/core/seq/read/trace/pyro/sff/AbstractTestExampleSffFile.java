@@ -41,11 +41,15 @@ public abstract class AbstractTestExampleSffFile{
     protected static final RunLengthEncodedGlyphCodec runLengthQualityCodec = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);short[] encodedValues = new short[]{213,0,2, 97, 120};
     protected static final FileServer RESOURCES = new ResourceFileServer(AbstractTestExampleSffFile.class);
     protected static File SFF_FILE ; 
+    protected static File SFF_FILE_NO_XML ; 
+    protected static File SFF_FILE_NO_INDEX ; 
         static{
         try {
             SFF_FILE =RESOURCES.getFile("files/5readExample.sff");
+            SFF_FILE_NO_XML =RESOURCES.getFile("files/5readExample_noXML.sff");
+            SFF_FILE_NO_INDEX =RESOURCES.getFile("files/5readExample_noIndex.sff");
         } catch (IOException e) {
-           throw new IllegalStateException("could not read sff file");
+           throw new IllegalStateException("could not read sff files",e);
         }
     }
     final SffFlowgram FF585OX02HCMO2 = new SffFlowgram("FF585OX02HCMO2",

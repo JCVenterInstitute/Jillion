@@ -46,7 +46,10 @@ import org.junit.runners.Suite.SuiteClasses;
         TestSFFUtil_getTrimRange.class,
         TestSffVisitorWriter.class,
         TestSffWriter.class,
-        TestIndexedSffFlowgramDataStore.class
+        TestFullyParsedIndexedSffFileDataStore.class,
+        TestIndexed454SffFileDataStore.class,
+        TestNoXMLManifestIndexedSffFileDataStore.class,
+        TestIndexedSffFileDataStore.class
     }
     )
 public class AllSFFUnitTests {
