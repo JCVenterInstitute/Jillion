@@ -200,32 +200,20 @@ public final class IndexedSffFileDataStore{
 			throw new IllegalArgumentException("too many reads in sff file to index > Integer.MAX_VALUE");
 		}
 		indexRanges = new DefaultIndexedFileRange((int)commonHeader.getNumberOfReads());
-		try {
-			currentOffset +=SffWriter.writeCommonHeader(commonHeader, new ByteArrayOutputStream());
-		} catch (IOException e) {
-			throw new IllegalStateException("error computing number of bytes", e);
-		}
+		currentOffset +=SffWriter.getNumberOfBytesFor(commonHeader);
 		
 		return CommonHeaderReturnCode.PARSE_READS;
 	}
 	@Override
 	public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
-		try {
-			encodedReadLength=SffWriter.writeReadHeader(readHeader, new ByteArrayOutputStream());
-			currentReadId=readHeader.getId();
-			return ReadHeaderReturnCode.PARSE_READ_DATA;
-		} catch (IOException e) {
-			throw new IllegalStateException("error computing number of bytes", e);
-		}
+		encodedReadLength=SffWriter.getNumberOfBytesFor(readHeader);
+		currentReadId=readHeader.getId();
+		return ReadHeaderReturnCode.PARSE_READ_DATA;
 		
 	}
 	@Override
 	public ReadDataReturnCode visitReadData(SffReadData readData) {
-		try {
-			encodedReadLength += SffWriter.writeReadData(readData, new ByteArrayOutputStream());
-		} catch (IOException e) {
-			throw new IllegalStateException("error computing number of bytes", e);
-		}
+		encodedReadLength += SffWriter.getNumberOfBytesFor(readData);
 		indexRanges.put(currentReadId, Range.createOfLength(currentOffset, encodedReadLength));
 		currentOffset+=encodedReadLength;
 		return ReadDataReturnCode.PARSE_NEXT_READ;

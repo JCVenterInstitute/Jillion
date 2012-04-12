@@ -26,12 +26,13 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.CommonUtil;
 import org.jcvi.common.core.util.MathUtil;
 
 public class DefaultSffReadData implements SffReadData {
 
-    private String basecalls;
+    private NucleotideSequence basecalls;
     private byte[] indexes;
     private short[] values;
     private byte[] qualities;
@@ -43,7 +44,7 @@ public class DefaultSffReadData implements SffReadData {
      * @param values
      * @param qualities
      */
-    public DefaultSffReadData(String basecalls, byte[] indexes, short[] values,
+    public DefaultSffReadData(NucleotideSequence basecalls, byte[] indexes, short[] values,
             byte[] qualities) {
         validateArguments(basecalls, indexes, values, qualities);
         this.basecalls = basecalls;
@@ -54,7 +55,7 @@ public class DefaultSffReadData implements SffReadData {
         this.qualities = Arrays.copyOf(qualities, qualities.length);
     }
 
-    private void validateArguments(String basecalls, byte[] indexes,
+    private void validateArguments(NucleotideSequence basecalls, byte[] indexes,
             short[] values, byte[] qualities) {
         canNotBeNull(basecalls, indexes, values, qualities);
         lengthsMatch(basecalls, indexes, qualities);
@@ -69,13 +70,13 @@ public class DefaultSffReadData implements SffReadData {
         }
     }
 
-    private void lengthsMatch(String basecalls, byte[] indexes, byte[] qualities) {
-        if(basecalls.length() !=indexes.length || indexes.length !=qualities.length){
+    private void lengthsMatch(NucleotideSequence basecalls, byte[] indexes, byte[] qualities) {
+        if(basecalls.getLength() !=indexes.length || indexes.length !=qualities.length){
             throw new IllegalArgumentException("basecalls, indexes and qualities must be the same length");
         }
     }
 
-    private void canNotBeNull(String basecalls, byte[] indexes, short[] values,
+    private void canNotBeNull(NucleotideSequence basecalls, byte[] indexes, short[] values,
             byte[] qualities) {
         CommonUtil.cannotBeNull(basecalls, "basecalls can not be null");
         CommonUtil.cannotBeNull(indexes, "indexes can not be null");
@@ -84,7 +85,7 @@ public class DefaultSffReadData implements SffReadData {
     }
 
     @Override
-    public String getBasecalls() {
+    public NucleotideSequence getBasecalls() {
         return basecalls;
     }
 

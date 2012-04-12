@@ -144,11 +144,6 @@ public final class SffUtil {
         return numberOfFlows * 2 + 3*numberOfBases;
         
     }
-    public static int getReadDataLengthIncludingPadding(int numberOfFlows, int numberOfBases) {
-        int lengthWithoutPadding = getReadDataLength(numberOfFlows, numberOfBases);
-        int padding= SffUtil.caclulatePaddedBytes(lengthWithoutPadding);
-        return lengthWithoutPadding+padding;
-    }
     
     public static int numberOfIntensities(List<Nucleotide> glyphs){
         int count=0;

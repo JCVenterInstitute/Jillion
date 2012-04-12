@@ -27,6 +27,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 enum DefaultSffReadDataDecoder implements SffReadDataDecoder {
 	/**
@@ -38,7 +40,9 @@ enum DefaultSffReadDataDecoder implements SffReadDataDecoder {
         try{
             short[] values = IOUtil.readShortArray(in, numberOfFlows);
             byte[] indexes = IOUtil.toByteArray(in, numberOfBases);
-            String bases = new String(IOUtil.toByteArray(in, numberOfBases),IOUtil.UTF_8);
+            NucleotideSequence bases = new NucleotideSequenceBuilder()
+            					.append(new String(IOUtil.toByteArray(in, numberOfBases),IOUtil.UTF_8))
+            					.build();
             byte[] qualities = IOUtil.toByteArray(in, numberOfBases);
 
             int readDataLength = SffUtil.getReadDataLength(numberOfFlows, numberOfBases);
