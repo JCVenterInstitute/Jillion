@@ -134,16 +134,17 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
 
     @Override
     protected final synchronized void visitMatch(CasMatch match, long readCounter) {
-    	R readRecord=null;
-    	try{
-    		readRecord =readIterator.next();
-    	}catch(Exception e){
+    	if(!readIterator.hasNext()){
+    		//we probably don't need to close
+    		//but just to be sure we don't get thread deadlock
     		 IOUtil.closeAndIgnoreErrors(readIterator);
     		 //this will happen if we run out of reads unexpectedly
     		 //wrap with more helpful error message
-             throw new IllegalStateException("no more reads in input file(s) even though .cas file thinks there are",e);
+             throw new IllegalStateException("no more reads in input file(s) even though .cas file thinks there are");
     	}
+    	R readRecord =readIterator.next();
         try {
+        	
             if(match.matchReported()){
                 String recordId = readRecord.getId();
                 int casReferenceId = (int)match.getChosenAlignment().contigSequenceId();
