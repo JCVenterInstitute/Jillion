@@ -17,37 +17,20 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Nov 4, 2009
+ * Created on Dec 16, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read.trace.pyro.sff;
+package org.jcvi.common.core.seq.read.trace.pyro;
 
-public abstract class AbstractSffFileVisitor implements SffFileVisitor {
-
-    @Override
-    public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
-        return CommonHeaderReturnCode.PARSE_READS;
-    }
-
-    @Override
-    public ReadDataReturnCode visitReadData(SffReadData readData) {
-        return ReadDataReturnCode.PARSE_NEXT_READ;
-    }
-
-    @Override
-    public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
-        return ReadHeaderReturnCode.PARSE_READ_DATA;
-    }
-
-    @Override
-    public void visitEndOfFile() {
-
-    }
-
-    @Override
-    public void visitFile() {
-
-    }
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.seq.read.trace.TraceDataStore;
+/**
+ * Marker interface for a {@link DataStore} of 
+ * {@link Flowgram}s.
+ * @author dkatzel
+ *
+ */
+public interface FlowgramDataStore extends TraceDataStore<Flowgram>{
 
 }

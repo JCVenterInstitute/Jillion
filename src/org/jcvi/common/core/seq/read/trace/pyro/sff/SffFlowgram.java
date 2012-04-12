@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.CommonUtil;
 
-public final class SffFlowgram implements Flowgram {
+final class SffFlowgram implements Flowgram {
     private final String id;
     private final NucleotideSequence basecalls;
     private final QualitySequence qualities;

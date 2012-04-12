@@ -4,11 +4,12 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestIndexed454SffFileDataStore extends TestReadExampleSffFile{
 
-    private SffDataStore dataStore;
+    private FlowgramDataStore dataStore;
     @Override
     protected Flowgram getFlowgram(String id) throws Exception {
         return dataStore.get(id);

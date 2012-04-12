@@ -31,20 +31,20 @@ import java.util.NoSuchElementException;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDataStore;
+import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFile{  
 
-    private SffDataStore dataStore;
+    private FlowgramDataStore dataStore;
     @Override
     protected void parseSff(File file) throws Exception{
         dataStore = parseDataStore(file);
     }
     
-    protected abstract SffDataStore parseDataStore(File f) throws Exception;
+    protected abstract FlowgramDataStore parseDataStore(File f) throws Exception;
     
     @Override
     protected Flowgram getFlowgram(String id) throws TraceDecoderException, DataStoreException {

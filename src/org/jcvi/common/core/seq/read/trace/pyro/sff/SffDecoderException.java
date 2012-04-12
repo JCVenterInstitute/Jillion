@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 
-public class SffDecoderException extends TraceDecoderException {
+class SffDecoderException extends TraceDecoderException {
 
     /**
      * 

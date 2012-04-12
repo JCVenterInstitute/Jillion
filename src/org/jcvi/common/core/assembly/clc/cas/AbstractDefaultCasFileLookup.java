@@ -38,8 +38,9 @@ import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileVisitor;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileVisitor;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDecoderException;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadData;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileParser;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -119,7 +120,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
             }
         }
     }
-    private void parse(File file) throws SffDecoderException, IOException {
+    private void parse(File file) throws IOException {
         String fileName = file.getName();
         FileInputStream in=null;
         try{
@@ -257,10 +258,29 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         readCounter++;
     }
     
-    private final class SffReadOrder extends AbstractSffFileVisitor{
+    private final class SffReadOrder implements SffFileVisitor{
         private final File file;
         SffReadOrder(File file){
             this.file =file;
+        }
+        @Override
+        public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
+            return CommonHeaderReturnCode.PARSE_READS;
+        }
+
+        @Override
+        public ReadDataReturnCode visitReadData(SffReadData readData) {
+            return ReadDataReturnCode.PARSE_NEXT_READ;
+        }
+
+        @Override
+        public void visitEndOfFile() {
+
+        }
+
+        @Override
+        public void visitFile() {
+
         }
         @Override
         public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {

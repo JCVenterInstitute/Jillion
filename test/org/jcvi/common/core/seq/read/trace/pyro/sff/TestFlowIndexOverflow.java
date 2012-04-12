@@ -32,6 +32,7 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFlowgram;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
@@ -71,7 +72,7 @@ public class TestFlowIndexOverflow{
     
     @Test
     public void validDecode() throws TraceDecoderException, DataStoreException, IOException{
-        SffDataStore dataStore = DefaultSffFileDataStore.create(RESOURCES.getFile(FILE));
+        FlowgramDataStore dataStore = DefaultSffFileDataStore.create(RESOURCES.getFile(FILE));
         assertEquals(1, dataStore.size());
         
         Flowgram actual =dataStore.get("FCPRO0N01A48YO");

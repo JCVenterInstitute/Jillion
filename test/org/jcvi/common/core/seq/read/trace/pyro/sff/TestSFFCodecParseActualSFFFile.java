@@ -28,14 +28,14 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDecoderException;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDataStore;
 
 public class TestSFFCodecParseActualSFFFile extends AbstractTestSffFileDataStore{
 
     @Override
-    protected SffDataStore parseDataStore(File file) throws SffDecoderException{
+    protected FlowgramDataStore parseDataStore(File file) throws SffDecoderException{
         
         InputStream in=null;
         try {

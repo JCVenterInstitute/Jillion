@@ -24,8 +24,8 @@
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
@@ -38,33 +38,28 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.AbstractSffFileProcessor;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffDecoderException;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadData;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileParser;
 
-public class SffReadInfo extends AbstractSffFileProcessor {
+public class SffReadInfo implements SffFileVisitor {
 
     private final PrintStream out;
 
     /**
      * @param out
      */
-    public SffReadInfo(PrintStream out, SffFileVisitor parent) {
-        super(parent);
+    public SffReadInfo(PrintStream out) {
         this.out = out;
     }
-    public SffReadInfo(SffFileVisitor parent) {
-        this(System.out,parent);
-    }
     public SffReadInfo(){
-        this(System.out,null);
+        this(System.out);
     }
     @Override
     public void visitFile() {        
         out.println("name\t#bases\tclip_qual_left\tclip_qual_right\tclip_adapter_left\tclip_adapter_right\tUseable_length\t#bases_trimmed\t%_trimmed");
-        super.visitFile();
     }
 
     @Override
@@ -91,10 +86,23 @@ public class SffReadInfo extends AbstractSffFileProcessor {
                 basesTrimmed,
                 basesTrimmed/(double)readHeader.getNumberOfBases()*100
                 ));
-        return super.visitReadHeader(readHeader);
+        return ReadHeaderReturnCode.SKIP_CURRENT_READ;
     }
     
-    public static void main(String args[]) throws FileNotFoundException, SffDecoderException{
+    @Override
+	public void visitEndOfFile() {
+		//no-op
+		
+	}
+	@Override
+	public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
+		return CommonHeaderReturnCode.PARSE_READS;
+	}
+	@Override
+	public ReadDataReturnCode visitReadData(SffReadData readData) {
+		return ReadDataReturnCode.PARSE_NEXT_READ;
+	}
+	public static void main(String args[]) throws IOException{
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder("sff", "sff file")
                         .isRequired(true)
@@ -109,7 +117,7 @@ public class SffReadInfo extends AbstractSffFileProcessor {
             final SffReadInfo info;
             if(commandLine.hasOption("output")){
                 fileOut = new FileOutputStream(commandLine.getOptionValue("output"));
-                info = new SffReadInfo(new PrintStream(fileOut,true),null);
+                info = new SffReadInfo(new PrintStream(fileOut,true));
             }else{
                 info = new SffReadInfo();
             }

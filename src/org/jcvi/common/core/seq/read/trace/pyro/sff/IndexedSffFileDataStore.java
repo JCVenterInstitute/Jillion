@@ -13,12 +13,13 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code IndexedSffFileDataStore} is an implementation 
- * of {@link SffDataStore} that only stores an index containing
+ * of {@link FlowgramDataStore} that only stores an index containing
  * byte offsets to the various {@link Flowgram}s contained
  * in a single sff file.  This allows for large files to provide
  * random access without taking up much memory. The down side is each flowgram
@@ -32,10 +33,10 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * While this index format has not been formally specified, it has been 
  * reverse engineered.  If the given sff file has such an index, then
  * this class will quickly decode that index and not have to parse
- * any read data until {@link SffDataStore#get(String)} is called.
+ * any read data until {@link FlowgramDataStore#get(String)} is called.
  * If the sff file does not have such an index already (ex: any Ion Torrent or
  *  a 454 sff >4GB) then the entire file must be parsed to create the index
- *  in memory.  This will mean that some sff files can have their {@link SffDataStore}
+ *  in memory.  This will mean that some sff files can have their {@link FlowgramDataStore}
  *  objects created much faster than others even if the file sizes are vastly different.
  * <p/>
  * {@link IndexedSffFileDataStore} is limited to only {@link Integer#MAX_VALUE}
@@ -90,10 +91,10 @@ public final class IndexedSffFileDataStore{
 		return new FullPassIndexedSffVisitorBuilder(sffFile);
 	}
 	/**
-	 * Create a new {@link SffDataStore} instance which only indexes
+	 * Create a new {@link FlowgramDataStore} instance which only indexes
 	 * byte offsets for each read.
 	 * @param sffFile the sff file to create a datastore for.
-	 * @return a new {@link SffDataStore} instance; never null.
+	 * @return a new {@link FlowgramDataStore} instance; never null.
 	 * @throws IOException if there is a problem reading the file.
 	 * @throws IllegalArgumentException if the given sffFile
 	 * has more than {@link Integer#MAX_VALUE} reads.
@@ -101,8 +102,8 @@ public final class IndexedSffFileDataStore{
 	 * @throws IllegalArgumentException if sffFile does not exist.
 	 * @see #canCreateIndexedDataStore(File)
 	 */
-	public static SffDataStore create(File sffFile) throws IOException{
-		SffDataStore manifestDataStore = Indexed454SffFileDataStore.create(sffFile);
+	public static FlowgramDataStore create(File sffFile) throws IOException{
+		FlowgramDataStore manifestDataStore = Indexed454SffFileDataStore.create(sffFile);
 		if(manifestDataStore!=null){
 			return manifestDataStore;
 		}
@@ -111,11 +112,11 @@ public final class IndexedSffFileDataStore{
 	}
 	
 	/**
-	 * Create a new {@link SffDataStore} instance by parsing
+	 * Create a new {@link FlowgramDataStore} instance by parsing
 	 * the entire sff file and noting the file offsets
 	 * for each record.
 	 * @param sffFile the sff file to create a datastore for.
-	 * @return a new {@link SffDataStore} instance; never null.
+	 * @return a new {@link FlowgramDataStore} instance; never null.
 	 * @throws IOException if there is a problem reading the file.
 	 * @throws IllegalArgumentException if the given sffFile
 	 * has more than {@link Integer#MAX_VALUE} reads.
@@ -123,7 +124,7 @@ public final class IndexedSffFileDataStore{
 	 * @throws IllegalArgumentException if sffFile does not exist.
 	 * @see #canCreateIndexedDataStore(File)
 	 */
-	static SffDataStore createByFullyParsing(File sffFile) throws IOException{
+	static FlowgramDataStore createByFullyParsing(File sffFile) throws IOException{
 		FullPassIndexedSffVisitorBuilder builder= new FullPassIndexedSffVisitorBuilder(sffFile);
 		SffFileParser.parseSFF(sffFile, builder);
 		return builder.build();
@@ -219,7 +220,7 @@ public final class IndexedSffFileDataStore{
 		return ReadDataReturnCode.PARSE_NEXT_READ;
 	}
 	@Override
-	public SffDataStore build() {
+	public FlowgramDataStore build() {
 		return new FullPassIndexedSffFileDataStore(sffFile, numberOfFlowsPerRead, indexRanges);
 	}
 	@Override
@@ -229,7 +230,7 @@ public final class IndexedSffFileDataStore{
 	    
 	}
 	/**
-	 * {@link SffDataStore} instance that needs to parse the 
+	 * {@link FlowgramDataStore} instance that needs to parse the 
 	 * entire sff file and note the offsets of each read.
 	 * This can be very slow so it should only
 	 * be used if no sff index is present in the file
@@ -237,7 +238,7 @@ public final class IndexedSffFileDataStore{
 	 * @author dkatzel
 	 *
 	 */
-	static final class FullPassIndexedSffFileDataStore implements SffDataStore{
+	static final class FullPassIndexedSffFileDataStore implements FlowgramDataStore{
 		private static final SffReadHeaderDecoder READ_HEADER_CODEC =DefaultSffReadHeaderDecoder.INSTANCE;
 		private static final SffReadDataDecoder READ_DATA_CODEC =DefaultSffReadDataDecoder.INSTANCE;
 		    

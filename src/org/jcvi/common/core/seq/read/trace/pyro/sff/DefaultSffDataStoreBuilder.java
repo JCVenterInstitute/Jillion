@@ -8,9 +8,11 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
+import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStoreBuilder;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
-public final class DefaultSffDataStoreBuilder implements SffDataStoreBuilder{
+public final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilder{
 
 	
 	private final Map<String, Flowgram> map;
@@ -20,17 +22,17 @@ public final class DefaultSffDataStoreBuilder implements SffDataStoreBuilder{
 	}
 	
 	@Override
-	public SffDataStore build() {
+	public FlowgramDataStore build() {
 		return new DefaultSffDataStoreImpl(new SimpleDataStore<Flowgram>(map));
 	}
 
 	@Override
-	public SffDataStoreBuilder addFlowgram(Flowgram flowgram) {
+	public FlowgramDataStoreBuilder addFlowgram(Flowgram flowgram) {
 		map.put(flowgram.getId(), flowgram);
 		return this;
 	}
 	
-	private static final class DefaultSffDataStoreImpl implements SffDataStore{
+	private static final class DefaultSffDataStoreImpl implements FlowgramDataStore{
 
 		private final DataStore<Flowgram> delegate;
 		
