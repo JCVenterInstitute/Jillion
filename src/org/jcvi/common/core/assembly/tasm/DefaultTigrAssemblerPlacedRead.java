@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  *
  *
  */
-public final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
+final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
     private final Map<TigrAssemblerReadAttribute,String> attributes;
     private final PlacedRead delegate;

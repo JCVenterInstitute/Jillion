@@ -36,7 +36,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 
-public final class DefaultAcePlacedRead implements AcePlacedRead {
+final class DefaultAcePlacedRead implements AcePlacedRead {
     private final PhdInfo phdInfo;
     private final PlacedRead placedRead;
     

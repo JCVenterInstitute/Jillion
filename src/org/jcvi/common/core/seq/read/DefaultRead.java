@@ -26,16 +26,16 @@ package org.jcvi.common.core.seq.read;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.CommonUtil;
 
-public class DefaultRead<T extends NucleotideSequence> implements Read<T>{
+public final class DefaultRead<T extends NucleotideSequence> implements Read<T>{
     private final String id;
-    private final T glyphs;
+    private final T sequence;
     public DefaultRead(String id, T sequence){
         this.id= id;
-        this.glyphs = sequence;
+        this.sequence = sequence;
     }
     @Override
     public T getNucleotideSequence() {
-        return glyphs;
+        return sequence;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class DefaultRead<T extends NucleotideSequence> implements Read<T>{
     }
     @Override
     public long getLength() {
-        return glyphs.getLength();
+        return sequence.getLength();
     }
     @Override
     public int hashCode() {
@@ -67,7 +67,7 @@ public class DefaultRead<T extends NucleotideSequence> implements Read<T>{
         if (!(obj instanceof Read)){
             return false;
         }
-        Read other = (Read) obj;
+        Read<?> other = (Read<?>) obj;
         return CommonUtil.similarTo(id, other.getId());
         
     }

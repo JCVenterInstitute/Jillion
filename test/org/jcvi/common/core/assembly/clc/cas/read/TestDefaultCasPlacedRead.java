@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly.cas.read;
+package org.jcvi.common.core.assembly.clc.cas.read;
 
 import org.easymock.EasyMockSupport;
 import org.jcvi.common.core.Direction;

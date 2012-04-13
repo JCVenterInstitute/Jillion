@@ -24,8 +24,8 @@
 package org.jcvi.common.core.assembly.cas;
 
 import org.jcvi.common.core.assembly.cas.align.AllCasAlignmentUnitTests;
-import org.jcvi.common.core.assembly.cas.read.AllCasReadUnitTests;
 import org.jcvi.common.core.assembly.cas.var.AllVarUnitTests;
+import org.jcvi.common.core.assembly.clc.cas.read.AllCasReadUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
