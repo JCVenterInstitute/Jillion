@@ -47,7 +47,7 @@ public final class LargePositionFastaFileDataStore extends AbstractPositionFasta
 
 	private final File fastaFile;
 	
-	private Integer size;
+	private Long size;
 	/**
 	 * Create a new instance of a {@link LargePositionFastaFileDataStore}.
 	 * @param fastaFile the fastaFile to create a datastore of.
@@ -118,7 +118,7 @@ public final class LargePositionFastaFileDataStore extends AbstractPositionFasta
 	    checkNotYetClosed();
 	    if(size ==null){
 	    	CloseableIterator<String> ids = getIds();
-	    	int count=0;
+	    	long count=0;
 	    	while(ids.hasNext()){
 	    		ids.next();
 	    		count++;

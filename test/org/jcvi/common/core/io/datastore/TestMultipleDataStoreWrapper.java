@@ -62,11 +62,11 @@ public class TestMultipleDataStoreWrapper {
         verify(datastore1, datastore2);
     }
     @Test
-    public void intMethodShouldSumTotal() throws DataStoreException{
+    public void longMethodShouldSumTotal() throws DataStoreException{
         expect(datastore1.getNumberOfRecords()).andReturn(100L);
         expect(datastore2.getNumberOfRecords()).andReturn(50L);
         replay(datastore1, datastore2);
-        assertEquals(150, sut.getNumberOfRecords());
+        assertEquals(150L, sut.getNumberOfRecords());
         verify(datastore1, datastore2);
     }
     @Test

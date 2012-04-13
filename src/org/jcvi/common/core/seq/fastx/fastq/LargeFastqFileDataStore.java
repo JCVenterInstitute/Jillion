@@ -49,7 +49,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 public final class LargeFastqFileDataStore implements FastqDataStore {
     private final FastqQualityCodec qualityCodec;
     private final File fastQFile;
-    private Integer size=null;
+    private Long size=null;
     private volatile boolean closed;
     /**
      * Create a new {@link FastqDataStore}
@@ -136,13 +136,13 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     public synchronized long getNumberOfRecords() throws DataStoreException {
         throwExceptionIfClosed();
         if(size ==null){
-            int count=0;
+            long count=0;
             CloseableIterator<FastqRecord> iter = iterator();
             while(iter.hasNext()){
                 count++;
                 iter.next();
             }
-            size = Integer.valueOf(count);
+            size = Long.valueOf(count);
         }
         return size;
     }

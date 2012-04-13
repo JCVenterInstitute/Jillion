@@ -34,7 +34,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code LargePhdDataStore} is a {@link PhdDataStore} implementation
  * to be used a very large phd files or phdballs.  No data contained in this
- * phd file is stored in memory except it's size (which is lazy loaded).
+ * phd file is stored in memory except the number of phd records (which is lazy loaded).
  * This means that each get() or contain() requires re-parsing the phd file
  * which can take some time.  It is recommended that instances of 
  * {@link LargePhdDataStore} are wrapped by {@link CachedDataStore}
@@ -46,7 +46,7 @@ public final class LargePhdDataStore implements PhdDataStore{
 
     static final Pattern BEGIN_SEQUENCE_PATTERN = Pattern.compile("BEGIN_SEQUENCE\\s+(\\S+)");
     private final File phdFile;
-    private Integer size=null;
+    private Long size=null;
     boolean closed = false;
     
     /**
@@ -104,13 +104,13 @@ public final class LargePhdDataStore implements PhdDataStore{
     public synchronized long getNumberOfRecords() throws DataStoreException {
         checkIfClosed();
         if(size ==null){
-            int count=0;
+            long count=0;
             CloseableIterator<Phd> iter = iterator();
             while(iter.hasNext()){
                 count++;
                 iter.next();
             }
-            size = Integer.valueOf(count);
+            size = Long.valueOf(count);
         }
         return size;
     }

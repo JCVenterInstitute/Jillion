@@ -48,7 +48,7 @@ public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implement
     /**
      * These are the parameters in the {@link DataStore#get(String)} method signature.
      */
-    private static final Class[] GET_PARAMETERS = new Class[]{String.class};
+    private static final Class<?>[] GET_PARAMETERS = new Class[]{String.class};
     
     /**
      * Create a dynamic proxy to wrap the given delegate {@link DataStore} instances.
@@ -113,7 +113,10 @@ public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implement
             return handleBooleanMethod(method, args);
         }
         if(int.class.equals(returnType)){
-            return handleSumMethod(method, args);
+            return handleIntSumMethod(method, args);
+        }
+        if(long.class.equals(returnType)){
+            return handleLongSumMethod(method, args);
         }
         if(Iterator.class.isAssignableFrom(returnType)){
             return handleIterator(method, args);
@@ -176,10 +179,17 @@ public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implement
         }
         return new ChainedCloseableIterator<T>(iterators);
     }
-    private Object handleSumMethod(Method method, Object[] args) throws Throwable {
+    private Object handleIntSumMethod(Method method, Object[] args) throws Throwable {
         int sum=0;
         for(D delegate : delegates){
             sum+= (Integer)(method.invoke(delegate, args));
+        }
+        return sum;
+    }
+    private Object handleLongSumMethod(Method method, Object[] args) throws Throwable {
+        long sum=0;
+        for(D delegate : delegates){
+            sum+= ((Long)(method.invoke(delegate, args))).longValue();
         }
         return sum;
     }

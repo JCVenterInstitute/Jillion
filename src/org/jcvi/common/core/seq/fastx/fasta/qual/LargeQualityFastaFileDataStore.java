@@ -45,10 +45,10 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore implements QualitySequenceFastaDataStore{
+public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore implements QualitySequenceFastaDataStore{
    private final File fastaFile;
 
-    private Integer size;
+    private Long size;
     /**
      * Construct a {@link LargeQualityFastaFileDataStore}
      * for the given Fasta file and the given {@link QualityFastaRecordFactory}.
@@ -140,8 +140,8 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
      *
      *
      */
-    private static class RecordCounter extends AbstractFastaVisitor{
-        int count=0;
+    private static final class RecordCounter extends AbstractFastaVisitor{
+        long count=0;
         @Override
         public synchronized boolean visitRecord(String id, String comment, String entireBody) {
             count++;
@@ -150,7 +150,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
         /**
          * @return the count
          */
-        public synchronized int getCount() {
+        public synchronized long getCount() {
             return count;
         }
         

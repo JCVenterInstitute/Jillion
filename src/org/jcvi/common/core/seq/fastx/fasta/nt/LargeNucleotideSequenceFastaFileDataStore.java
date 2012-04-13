@@ -63,7 +63,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
 	private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
     private final File fastaFile;
 
-    private Integer size;
+    private Long size;
     
    
     /**
@@ -141,7 +141,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
         if(size ==null){
             try {
                 Scanner scanner = new Scanner(fastaFile, IOUtil.UTF_8_NAME);
-                int counter =0;
+                long counter =0;
                 while(scanner.hasNextLine()){
                     String line = scanner.nextLine();
                     Matcher matcher = NEXT_ID_PATTERN.matcher(line);
