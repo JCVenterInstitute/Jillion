@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.assembly.cas.align;
+package org.jcvi.common.core.assembly.clc.cas.align;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -30,9 +30,12 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestCasAlignmentType.class
+        TestDefaultCasAlignmentRegion.class,
+        TestPhaseChangeCasAlignmentRegion.class,
+        TestDefaultCasAlignment.class,
+       AllCasScoreUnitTests.class 
     }
     )
-public class AllCasScoreUnitTests {
+public class AllCasAlignmentUnitTests {
 
 }

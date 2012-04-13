@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.assembly.cas.align;
+package org.jcvi.common.core.assembly.clc.cas.align;
 
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentType;
 import org.junit.Test;

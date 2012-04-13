@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly.cas.var;
+package org.jcvi.common.core.assembly.clc.cas.var;
 
 import org.jcvi.common.core.assembly.clc.cas.var.Variation;
 import org.jcvi.common.core.assembly.clc.cas.var.Variation.Type;

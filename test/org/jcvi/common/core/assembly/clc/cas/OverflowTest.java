@@ -1,4 +1,4 @@
-package org.jcvi.common.core.assembly.cas;
+package org.jcvi.common.core.assembly.clc.cas;
 
 import org.jcvi.common.core.io.IOUtil;
 

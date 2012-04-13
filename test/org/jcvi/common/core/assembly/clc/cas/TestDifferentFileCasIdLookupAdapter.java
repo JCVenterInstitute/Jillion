@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly.cas;
+package org.jcvi.common.core.assembly.clc.cas;
 import static org.easymock.EasyMock.*;
 
 import java.io.File;
