@@ -104,8 +104,8 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return delegate.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return delegate.idIterator();
     }
 
     /**
@@ -150,9 +150,10 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
 
     /**
     * {@inheritDoc}
+     * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<Phd> iterator() {
+    public CloseableIterator<Phd> iterator() throws DataStoreException {
         return delegate.iterator();
     }
     

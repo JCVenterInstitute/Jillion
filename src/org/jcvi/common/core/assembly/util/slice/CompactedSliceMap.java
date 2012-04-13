@@ -105,7 +105,7 @@ public final class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRe
         * {@inheritDoc}
         */
         @Override
-        public CloseableIterator<String> getIds() throws DataStoreException {
+        public CloseableIterator<String> idIterator() throws DataStoreException {
             // TODO Auto-generated method stub
             return null;
         }

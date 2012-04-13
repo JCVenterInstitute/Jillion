@@ -136,7 +136,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
     }
 
     @Override
-    public CloseableIterator<String> getIds() {
+    public CloseableIterator<String> idIterator() {
         return indexFileRange.getIds();
     }
 

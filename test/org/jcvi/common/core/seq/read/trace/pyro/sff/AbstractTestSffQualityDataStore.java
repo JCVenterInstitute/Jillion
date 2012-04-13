@@ -52,7 +52,7 @@ public abstract class AbstractTestSffQualityDataStore extends AbstractTestExampl
     public void datastoresMatch() throws Exception{
         QualityDataStore sut = createSut(SFF_FILE);
         assertEquals(sut.getNumberOfRecords(), dataStore.getNumberOfRecords());
-        Iterator<String> ids = sut.getIds();
+        Iterator<String> ids = sut.idIterator();
         while(ids.hasNext()){
             String id = ids.next();
             assertEquals(

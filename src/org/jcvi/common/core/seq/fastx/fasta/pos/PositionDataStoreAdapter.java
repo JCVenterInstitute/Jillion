@@ -46,8 +46,8 @@ public final class PositionDataStoreAdapter implements PositionDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return datastore.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return datastore.idIterator();
     }
 
     /**
@@ -93,9 +93,10 @@ public final class PositionDataStoreAdapter implements PositionDataStore{
 
     /**
     * {@inheritDoc}
+     * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<Sequence<ShortSymbol>> iterator() {
+    public CloseableIterator<Sequence<ShortSymbol>> iterator() throws DataStoreException {
         return datastore.iterator();
     }
 

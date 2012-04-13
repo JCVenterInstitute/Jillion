@@ -29,6 +29,7 @@ import org.jcvi.common.core.assembly.clc.cas.CasInfo;
 import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 import org.jcvi.common.core.assembly.clc.cas.TraceDetails;
 import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaIterator;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
@@ -51,10 +52,11 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
 
     /**
     * {@inheritDoc}
+     * @throws DataStoreException 
     */
     @Override
     public CloseableIterator<PhdReadRecord> createIlluminaIterator(
-            File illuminaFile, TraceDetails traceDetails) {
+            File illuminaFile, TraceDetails traceDetails) throws DataStoreException {
         FastqDataStore datastore;
 		try {
 			datastore = LargeFastqFileDataStore.create(illuminaFile, traceDetails.getFastqQualityCodec());
@@ -72,7 +74,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     */
     @Override
     public CloseableIterator<PhdReadRecord> createSffIterator(File sffFile,
-            TraceDetails traceDetails) {
+            TraceDetails traceDetails) throws DataStoreException{
         return new FlowgramConsedPhdAdaptedIterator(
                 SffFileIterator.createNewIteratorFor(sffFile),
                 sffFile,
@@ -84,7 +86,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     */
     @Override
     public CloseableIterator<PhdReadRecord> createFastaIterator(File fastaFile,
-            TraceDetails traceDetails) {
+            TraceDetails traceDetails) throws DataStoreException{
         return new FastaConsedPhdAdaptedIterator(
                 LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile),
                 fastaFile,
@@ -96,7 +98,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     */
     @Override
     public CloseableIterator<PhdReadRecord> createChromatogramIterator(
-            File chromatogramFile, TraceDetails traceDetails) {
+            File chromatogramFile, TraceDetails traceDetails) throws DataStoreException{
         if(traceDetails.hasFastaEdits()){
             return new EditedFastaChromatDirPhdAdapterIterator(
                     LargeNucleotideSequenceFastaIterator.createNewIteratorFor(chromatogramFile),

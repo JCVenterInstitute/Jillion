@@ -52,7 +52,7 @@ public class DefaultTraceArchiveInfo<T extends TraceArchiveRecord> implements Tr
     }
 
     @Override
-    public CloseableIterator<String> getIds() {
+    public CloseableIterator<String> idIterator() {
         return CloseableIteratorAdapter.adapt(map.keySet().iterator());
     }
 

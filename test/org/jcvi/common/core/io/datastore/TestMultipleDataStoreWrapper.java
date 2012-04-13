@@ -94,7 +94,7 @@ public class TestMultipleDataStoreWrapper {
     }
     
     @Test
-    public void iteratorShouldIterateOverAll(){
+    public void iteratorShouldIterateOverAll() throws DataStoreException{
         CloseableIterator<String> iter1 = CloseableIteratorAdapter.adapt(Arrays.asList("one","two").iterator());
         CloseableIterator<String> iter2 = CloseableIteratorAdapter.adapt(Arrays.asList("three","four").iterator());
         
@@ -111,7 +111,7 @@ public class TestMultipleDataStoreWrapper {
     }
     
     @Test
-    public void closingIteratorShouldCloseAllIterators() throws IOException{
+    public void closingIteratorShouldCloseAllIterators() throws IOException, DataStoreException{
         CloseableIterator<String> iter1 = createMock(CloseableIterator.class);
         CloseableIterator<String> iter2 = createMock(CloseableIterator.class);
         iter1.close();

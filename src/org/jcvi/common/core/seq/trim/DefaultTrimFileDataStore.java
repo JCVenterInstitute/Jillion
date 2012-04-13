@@ -111,8 +111,8 @@ public class DefaultTrimFileDataStore implements TrimDataStore, TrimFileVisitor{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return delegate.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return delegate.idIterator();
     }
 
     /**
@@ -134,9 +134,10 @@ public class DefaultTrimFileDataStore implements TrimDataStore, TrimFileVisitor{
 
     /**
     * {@inheritDoc}
+     * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<Range> iterator() {
+    public CloseableIterator<Range> iterator() throws DataStoreException {
         return delegate.iterator();
     }
     /**

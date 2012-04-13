@@ -74,7 +74,7 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
     }
 
     @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
         throwExceptionIfClosed();
         return null;
     }

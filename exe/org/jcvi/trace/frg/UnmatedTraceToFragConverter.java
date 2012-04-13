@@ -87,7 +87,7 @@ public class UnmatedTraceToFragConverter {
             							MateOrientation.UNORIENTED);
     
             Set<Fragment> unmatedFrags = new HashSet<Fragment>();
-            Iterator<String> iter =traceDataStore.getIds();
+            Iterator<String> iter =traceDataStore.idIterator();
             try{
             	while(iter.hasNext()){
             		String id =iter.next();                    

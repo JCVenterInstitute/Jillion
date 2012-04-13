@@ -97,8 +97,8 @@ public class LucyDebugFileDataStore implements LucyDebugTrimRecordDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return datastore.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return datastore.idIterator();
     }
     /**
     * {@inheritDoc}
@@ -138,9 +138,10 @@ public class LucyDebugFileDataStore implements LucyDebugTrimRecordDataStore{
     }
     /**
     * {@inheritDoc}
+     * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<LucyDebugTrimRecord> iterator() {
+    public CloseableIterator<LucyDebugTrimRecord> iterator() throws DataStoreException {
         return datastore.iterator();
     }
 }

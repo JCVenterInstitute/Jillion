@@ -42,8 +42,8 @@ public class PhdDataStoreAdapter implements PhdDataStore{
 
 
 	@Override
-	public CloseableIterator<String> getIds() throws DataStoreException {
-		return delegate.getIds();
+	public CloseableIterator<String> idIterator() throws DataStoreException {
+		return delegate.idIterator();
 	}
 
 
@@ -70,7 +70,7 @@ public class PhdDataStoreAdapter implements PhdDataStore{
 	}
 
 	@Override
-	public CloseableIterator<Phd> iterator() {
+	public CloseableIterator<Phd> iterator() throws DataStoreException {
 		return delegate.iterator();
 	}
 

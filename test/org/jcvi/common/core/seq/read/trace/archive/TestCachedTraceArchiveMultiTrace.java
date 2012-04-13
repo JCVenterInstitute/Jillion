@@ -91,7 +91,7 @@ public class TestCachedTraceArchiveMultiTrace {
     }
     
     @Test
-    public void iterator(){
+    public void iterator() throws DataStoreException{
         CloseableIterator<String> expectedIterator = CloseableIteratorAdapter.adapt(
                         Arrays.asList("one","two","three").iterator());
         expect(mockTraceArchive.iterator()).andReturn(expectedIterator);

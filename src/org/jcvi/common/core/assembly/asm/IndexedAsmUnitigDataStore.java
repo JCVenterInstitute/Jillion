@@ -146,7 +146,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> idIterator() throws DataStoreException {
         return fileRange.getIds();
     }
 
@@ -225,7 +225,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
     public CloseableIterator<AsmUnitig> iterator() {
 
         try {
-            return new AsmUnitigIterator(getIds());
+            return new AsmUnitigIterator(idIterator());
         } catch (DataStoreException e) {
             throw new IllegalStateException("could not create iterator",e);
         }

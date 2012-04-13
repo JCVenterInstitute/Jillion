@@ -103,7 +103,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder
 
 
     @Override
-    public CloseableIterator<String> getIds() {
+    public CloseableIterator<String> idIterator() {
         return CloseableIteratorAdapter.adapt(contigs.keySet().iterator());
     }
 

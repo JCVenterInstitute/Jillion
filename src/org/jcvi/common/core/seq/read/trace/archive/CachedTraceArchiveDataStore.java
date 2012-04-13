@@ -82,13 +82,13 @@ public class CachedTraceArchiveDataStore implements TraceArchiveDataStore<TraceA
     }
 
     @Override
-    public CloseableIterator<TraceArchiveTrace> iterator() {
+    public CloseableIterator<TraceArchiveTrace> iterator() throws DataStoreException {
         return traceArchiveDataStore.iterator();
     }
 
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return traceArchiveDataStore.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return traceArchiveDataStore.idIterator();
     }
 
     /**

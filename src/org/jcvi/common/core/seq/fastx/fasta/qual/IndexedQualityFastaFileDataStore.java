@@ -68,7 +68,7 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 		this.fastaFile = fastaFile;
 	}
 	@Override
-	public CloseableIterator<String> getIds() throws DataStoreException {
+	public CloseableIterator<String> idIterator() throws DataStoreException {
 		return index.getIds();
 	}
 

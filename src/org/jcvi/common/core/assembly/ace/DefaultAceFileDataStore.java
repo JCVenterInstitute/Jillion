@@ -107,8 +107,8 @@ public final class DefaultAceFileDataStore implements AceContigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return delegate.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return delegate.idIterator();
     }
     /**
     * {@inheritDoc}
@@ -148,9 +148,10 @@ public final class DefaultAceFileDataStore implements AceContigDataStore{
     }
     /**
     * {@inheritDoc}
+     * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<AceContig> iterator() {
+    public CloseableIterator<AceContig> iterator() throws DataStoreException {
         return delegate.iterator();
     }
 

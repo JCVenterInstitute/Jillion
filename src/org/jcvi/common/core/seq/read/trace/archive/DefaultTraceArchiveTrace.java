@@ -23,7 +23,6 @@
  */
 package org.jcvi.common.core.seq.read.trace.archive;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
@@ -31,13 +30,19 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.pos.PositionSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     
@@ -47,14 +52,16 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     @Override
     public SangerPeak getPeaks() {      
     	PositionFastaDataStore datastore = null;
+    	CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator =null;
         try{
             datastore =DefaultPositionFastaFileDataStore.create(getInputStreamFor(TraceInfoField.PEAK_FILE));
-            return new SangerPeak(datastore.iterator().next().getSequence().asList());
-        } catch (IOException e) {
+            iterator = datastore.iterator();
+			return new SangerPeak(iterator.next().getSequence().asList());
+        } catch (Exception e) {
             throw new IllegalArgumentException("peak file not valid",e);
         }
         finally{
-            IOUtil.closeAndIgnoreErrors(datastore);
+            IOUtil.closeAndIgnoreErrors(iterator,datastore);
         }
     }
 
@@ -63,31 +70,34 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         InputStream in=null;
         NucleotideSequenceFastaDataStore datastore=null;
         NucleotideFastaDataStoreBuilderVisitor visitor= DefaultNucleotideSequenceFastaFileDataStore.createBuilder();
+        CloseableIterator<NucleotideSequenceFastaRecord> iterator=null;
         try{
             in = getInputStreamFor(TraceInfoField.BASE_FILE);
             FastaParser.parseFasta(in, visitor);
             datastore = visitor.build();
-            return datastore.iterator().next().getSequence();
-        } catch (IOException e) {
+            iterator = datastore.iterator();
+			return iterator.next().getSequence();
+        } catch (Exception e) {
             throw new IllegalArgumentException("basecall file not valid",e);
         }
         finally{
-            IOUtil.closeAndIgnoreErrors(in);
-            IOUtil.closeAndIgnoreErrors(datastore);
+            IOUtil.closeAndIgnoreErrors(in, iterator,datastore);
         }
     }
 
     @Override
     public QualitySequence getQualities() {
         QualitySequenceFastaDataStore datastore =null;
+        CloseableIterator<QualitySequenceFastaRecord> iterator =null;
         try{
         	datastore = DefaultQualityFastaFileDataStore.create(getInputStreamFor(TraceInfoField.QUAL_FILE));           
-            return datastore.iterator().next().getSequence();
-        } catch (IOException e) {
+            iterator = datastore.iterator();
+			return iterator.next().getSequence();
+        } catch (Exception e) {
             throw new IllegalArgumentException("quality file not valid",e);
         }
         finally{
-            IOUtil.closeAndIgnoreErrors(datastore);
+            IOUtil.closeAndIgnoreErrors(iterator, datastore);
         }
     }
 }

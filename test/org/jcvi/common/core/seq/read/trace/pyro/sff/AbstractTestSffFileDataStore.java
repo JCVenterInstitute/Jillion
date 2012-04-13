@@ -66,7 +66,7 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
     }
     
     @Test
-    public void iterator(){
+    public void iterator() throws DataStoreException{
         Iterator<Flowgram> iter = dataStore.iterator();
         assertTrue(iter.hasNext());
         boolean foundFF585OX02HCMO2 =false;
@@ -97,7 +97,7 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
     
     @Test
     public void getIds() throws DataStoreException{
-        Iterator<String> iter = dataStore.getIds();
+        Iterator<String> iter = dataStore.idIterator();
         assertTrue(iter.hasNext());
         boolean foundFF585OX02HCMO2 =false;
         boolean foundFF585OX02HCD8G =false;
@@ -126,7 +126,7 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
     }
     
     @Test
-    public void closeIteratorEarly() throws IOException{
+    public void closeIteratorEarly() throws IOException, DataStoreException{
         CloseableIterator<Flowgram> iter = dataStore.iterator();
         assertTrue(iter.hasNext());
         iter.next();

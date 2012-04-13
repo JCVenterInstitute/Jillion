@@ -79,8 +79,8 @@ public class LucySeqTrimDataStore implements TrimDataStore {
      * {@inheritDoc}
      */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return datastore.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return datastore.idIterator();
     }
 
     /**
@@ -126,9 +126,10 @@ public class LucySeqTrimDataStore implements TrimDataStore {
 
     /**
      * {@inheritDoc}
+     * @throws DataStoreException 
      */
     @Override
-    public CloseableIterator<Range> iterator() {
+    public CloseableIterator<Range> iterator() throws DataStoreException {
         return datastore.iterator();
     }
 

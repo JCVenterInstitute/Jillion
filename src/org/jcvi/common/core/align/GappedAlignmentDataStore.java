@@ -57,8 +57,8 @@ public final class GappedAlignmentDataStore implements NucleotideDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return delegate.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return delegate.idIterator();
     }
 
     /**
@@ -104,9 +104,10 @@ public final class GappedAlignmentDataStore implements NucleotideDataStore{
 
     /**
     * {@inheritDoc}
+     * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<NucleotideSequence> iterator() {
+    public CloseableIterator<NucleotideSequence> iterator() throws DataStoreException {
         return delegate.iterator();
     }
     

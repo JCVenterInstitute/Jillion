@@ -33,7 +33,7 @@ public final class DataStoreIterator<T> implements CloseableIterator<T>{
     public DataStoreIterator(DataStore<T> dataStore){
         this.dataStore =  dataStore;
         try {
-            ids = dataStore.getIds();
+            ids = dataStore.idIterator();
         } catch (DataStoreException e) {
             throw new IllegalStateException("could not iterate over ids", e);
         }

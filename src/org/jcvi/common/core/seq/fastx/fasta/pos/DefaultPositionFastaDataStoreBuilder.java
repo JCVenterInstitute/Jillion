@@ -42,8 +42,8 @@ public final class DefaultPositionFastaDataStoreBuilder implements PositionFasta
 			delegate = new SimpleDataStore<PositionSequenceFastaRecord<Sequence<ShortSymbol>>>(map);
 		}
 		@Override
-		public CloseableIterator<String> getIds() throws DataStoreException {
-			return delegate.getIds();
+		public CloseableIterator<String> idIterator() throws DataStoreException {
+			return delegate.idIterator();
 		}
 
 		@Override
@@ -74,7 +74,7 @@ public final class DefaultPositionFastaDataStoreBuilder implements PositionFasta
 		}
 
 		@Override
-		public CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator() {
+		public CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator() throws DataStoreException {
 			return delegate.iterator();
 		}
 		

@@ -77,9 +77,9 @@ public class QualityDataStoreAdapter implements QualityDataStore
      * @see org.jcvi.datastore.DataStore#getIds()
      */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException
+    public CloseableIterator<String> idIterator() throws DataStoreException
     {
-        return datastore.getIds();
+        return datastore.idIterator();
     }
 
     /* (non-Javadoc)
@@ -104,7 +104,7 @@ public class QualityDataStoreAdapter implements QualityDataStore
      * @see java.lang.Iterable#iterator()
      */
     @Override
-    public CloseableIterator<QualitySequence> iterator()
+    public CloseableIterator<QualitySequence> iterator() throws DataStoreException
     {
         return this.datastore.iterator();
     }

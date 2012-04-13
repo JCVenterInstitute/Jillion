@@ -100,7 +100,7 @@ public abstract class AbstractTestFastQFileDataStore {
     @Test
     public void idIterator() throws DataStoreException{
         List<String> expectedIds = Arrays.asList(solexa_1489.getId(),solexa_1692.getId());
-        Iterator<String> iterator = sut.getIds();
+        Iterator<String> iterator = sut.idIterator();
         assertTrue(iterator.hasNext());
         for(String expectedId : expectedIds){
             assertTrue(iterator.hasNext());
@@ -115,7 +115,7 @@ public abstract class AbstractTestFastQFileDataStore {
     }
     @Test
     public void closingIdIteratorEarlyShouldHaltIterating() throws DataStoreException, IOException{
-        CloseableIterator<String> iter = sut.getIds();
+        CloseableIterator<String> iter = sut.idIterator();
         iter.next();
         iter.close();
         assertFalse(iter.hasNext());
@@ -126,7 +126,7 @@ public abstract class AbstractTestFastQFileDataStore {
         }
     }
     @Test
-    public void iterator(){
+    public void iterator() throws DataStoreException{
         Iterator<FastqRecord> iter = sut.iterator();
         assertTrue(iter.hasNext());
         assertFastQRecordsEqual(solexa_1489, iter.next());
@@ -141,7 +141,7 @@ public abstract class AbstractTestFastQFileDataStore {
     }
     
     @Test
-    public void closingIteratorEarlyShouldStopIterating() throws IOException{
+    public void closingIteratorEarlyShouldStopIterating() throws IOException, DataStoreException{
         CloseableIterator<FastqRecord> iter = sut.iterator();
         assertTrue(iter.hasNext());
         assertFastQRecordsEqual(solexa_1489, iter.next());

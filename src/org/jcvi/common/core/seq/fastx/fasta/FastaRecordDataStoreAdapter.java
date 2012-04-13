@@ -66,8 +66,8 @@ public class FastaRecordDataStoreAdapter<S extends Symbol,T extends Sequence<S>,
     }
 
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return delegate.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return delegate.idIterator();
     }
 
     @Override

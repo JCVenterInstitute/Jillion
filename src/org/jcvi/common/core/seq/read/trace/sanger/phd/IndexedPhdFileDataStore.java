@@ -333,7 +333,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
     }
 
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> idIterator() throws DataStoreException {
         return recordLocations.getIds();
     }
 

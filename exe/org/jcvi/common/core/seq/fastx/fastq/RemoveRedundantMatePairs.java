@@ -32,6 +32,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -47,8 +48,9 @@ public class RemoveRedundantMatePairs {
     /**
      * @param args
      * @throws IOException 
+     * @throws DataStoreException 
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, DataStoreException {
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder("mate1", "path to mate 1 file")
                             .isRequired(true)
@@ -108,30 +110,30 @@ public class RemoveRedundantMatePairs {
             	mate1Iterator = LargeFastqFileDataStore.create(mate1, qualityCodec).iterator();
             	mate2Iterator = LargeFastqFileDataStore.create(mate2, qualityCodec).iterator();
             
-            long recordsSeen=0;
-            while(mate1Iterator.hasNext()){
-                FastqRecord forward = mate1Iterator.next();
-                FastqRecord reverse = mate2Iterator.next();
-                NucleotideSequenceBuilder builder =new NucleotideSequenceBuilder(comparisonRangeLength*2);
-                builder.append(forward.getSequence().asList(comparisonRange));
-                builder.append(reverse.getSequence().asList(comparisonRange));
-                NucleotideSequence seq =builder.build();
-                if(!nonRedundantSet.contains(seq)){
-                    out1.write(forward.toFormattedString(qualityCodec).getBytes(IOUtil.UTF_8));
-                    out2.write(reverse.toFormattedString(qualityCodec).getBytes(IOUtil.UTF_8));
-                    nonRedundantSet.add(seq);
-                }
-                recordsSeen++;
-                if(recordsSeen%100000==0){
-                    System.out.println("mates seen = "+recordsSeen);
-                }
-            }
-            if(mate2Iterator.hasNext()){
-                //different number of reads in mate files
-                throw new MismatchedMateFiles(recordsSeen);
-            }
-            System.out.println("final number of mates seen ="+ recordsSeen);
-            System.out.println("num mates written ="+ nonRedundantSet.size());
+	            long recordsSeen=0;
+	            while(mate1Iterator.hasNext()){
+	                FastqRecord forward = mate1Iterator.next();
+	                FastqRecord reverse = mate2Iterator.next();
+	                NucleotideSequenceBuilder builder =new NucleotideSequenceBuilder(comparisonRangeLength*2);
+	                builder.append(forward.getSequence().asList(comparisonRange));
+	                builder.append(reverse.getSequence().asList(comparisonRange));
+	                NucleotideSequence seq =builder.build();
+	                if(!nonRedundantSet.contains(seq)){
+	                    out1.write(forward.toFormattedString(qualityCodec).getBytes(IOUtil.UTF_8));
+	                    out2.write(reverse.toFormattedString(qualityCodec).getBytes(IOUtil.UTF_8));
+	                    nonRedundantSet.add(seq);
+	                }
+	                recordsSeen++;
+	                if(recordsSeen%100000==0){
+	                    System.out.println("mates seen = "+recordsSeen);
+	                }
+	            }
+	            if(mate2Iterator.hasNext()){
+	                //different number of reads in mate files
+	                throw new MismatchedMateFiles(recordsSeen);
+	            }
+	            System.out.println("final number of mates seen ="+ recordsSeen);
+	            System.out.println("num mates written ="+ nonRedundantSet.size());
             }finally{
             	IOUtil.closeAndIgnoreErrors(mate1Iterator, mate2Iterator);
             	out1.close();

@@ -149,7 +149,7 @@ public class MultiThreadedReAbacusAce {
                     MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, builder,tagWriter));
             
             AceContigDataStore datastore = builder.build();
-            CloseableIterator<String> ids = datastore.getIds();
+            CloseableIterator<String> ids = datastore.idIterator();
             List<Future<Void>> futures = new ArrayList<Future<Void>>();
             try{
 	            while(ids.hasNext()){
@@ -183,7 +183,7 @@ public class MultiThreadedReAbacusAce {
             if(!success){
                 System.err.println("failed to complete reabacus process check error logs for details");                
             }else{
-                CloseableIterator<String> contigIdIter = datastore.getIds();
+                CloseableIterator<String> contigIdIter = datastore.idIterator();
                 while(contigIdIter.hasNext()){
                     String contigId = contigIdIter.next();
                     File tempFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);

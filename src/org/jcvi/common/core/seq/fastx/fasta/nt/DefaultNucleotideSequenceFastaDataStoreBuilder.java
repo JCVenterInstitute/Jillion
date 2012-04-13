@@ -40,8 +40,8 @@ public final class DefaultNucleotideSequenceFastaDataStoreBuilder implements Nuc
 			delegate = new SimpleDataStore<NucleotideSequenceFastaRecord>(map);
 		}
 		@Override
-		public CloseableIterator<String> getIds() throws DataStoreException {
-			return delegate.getIds();
+		public CloseableIterator<String> idIterator() throws DataStoreException {
+			return delegate.idIterator();
 		}
 
 		@Override
@@ -72,7 +72,7 @@ public final class DefaultNucleotideSequenceFastaDataStoreBuilder implements Nuc
 		}
 
 		@Override
-		public CloseableIterator<NucleotideSequenceFastaRecord> iterator() {
+		public CloseableIterator<NucleotideSequenceFastaRecord> iterator() throws DataStoreException {
 			return delegate.iterator();
 		}
 		

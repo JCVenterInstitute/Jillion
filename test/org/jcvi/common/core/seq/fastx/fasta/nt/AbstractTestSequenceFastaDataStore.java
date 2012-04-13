@@ -161,7 +161,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     public void parseIdIterator() throws IOException, DataStoreException{
         
         DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
-        Iterator<String> iter = sut.getIds();
+        Iterator<String> iter = sut.idIterator();
         assertTrue(iter.hasNext());
         for(int i=1; i<=9; i++){
             assertEquals(""+i, iter.next());
@@ -172,7 +172,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     public void closingIdIteratorShouldStopIteration() throws IOException, DataStoreException{
         
         DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
-        CloseableIterator<String> iter = sut.getIds();
+        CloseableIterator<String> iter = sut.idIterator();
         assertTrue(iter.hasNext());
         iter.next();
         iter.next();
@@ -181,7 +181,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     }
     
     @Test
-    public void parseFileRecordIterator() throws IOException{
+    public void parseFileRecordIterator() throws IOException, DataStoreException{
         
         DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
         Iterator<NucleotideSequenceFastaRecord> iter = sut.iterator();
@@ -193,7 +193,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
         assertFalse(iter.hasNext());
     }
     @Test
-    public void closingFileRecordIteratorShouldStopIteration() throws IOException{
+    public void closingFileRecordIteratorShouldStopIteration() throws IOException, DataStoreException{
         
         DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
         CloseableIterator<NucleotideSequenceFastaRecord> iter = sut.iterator();

@@ -73,14 +73,14 @@ public class TestSimpleDataStore {
     @Test
     public void getIds() throws DataStoreException{
         Iterator<String> expectedIter = MAP.keySet().iterator();
-        Iterator<String> actualIter = sut.getIds();
+        Iterator<String> actualIter = sut.idIterator();
         while(actualIter.hasNext()){
             assertEquals(expectedIter.next(), actualIter.next());
         }
         assertFalse(expectedIter.hasNext());
     }
     @Test
-    public void iterator(){
+    public void iterator() throws DataStoreException{
         Iterator<String> idIter = MAP.keySet().iterator();
         Iterator<Integer> actualIter = sut.iterator();
         while(actualIter.hasNext()){

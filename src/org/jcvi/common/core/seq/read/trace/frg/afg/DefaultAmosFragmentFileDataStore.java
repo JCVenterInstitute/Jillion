@@ -68,8 +68,8 @@ public class DefaultAmosFragmentFileDataStore extends AbstractDataStore<AmosFrag
     }
 
     @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
-        super.getIds();
+    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+        super.idIterator();
         return CloseableIteratorAdapter.adapt(map.keySet().iterator());
     }
 

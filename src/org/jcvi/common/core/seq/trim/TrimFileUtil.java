@@ -155,7 +155,7 @@ public final class TrimFileUtil {
      * @throws NullPointerException if datastore or out are null.
      */
     public static void writeTrimFile(TrimDataStore datastore, OutputStream out) throws DataStoreException, IOException{
-        Iterator<String> iter = datastore.getIds();
+        Iterator<String> iter = datastore.idIterator();
         while(iter.hasNext()){
             final String id = iter.next();
             //force residue based

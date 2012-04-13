@@ -102,7 +102,7 @@ public final class ZipFileDataStore implements ZipDataStore{
     }
 
     @Override
-    public CloseableIterator<String> getIds() {
+    public CloseableIterator<String> idIterator() {
         return new EntryNameIterator(zipfile.entries());
     }
 

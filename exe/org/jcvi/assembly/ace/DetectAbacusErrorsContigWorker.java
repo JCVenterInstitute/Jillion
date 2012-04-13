@@ -104,7 +104,7 @@ public class DetectAbacusErrorsContigWorker {
             final AbacusErrorFinder abacusErrorFinder = new AbacusErrorFinder(5,3,percentGap);
             try{
                 AceContigDataStore datastore = IndexedAceFileDataStore.create(aceFile);
-                Iterator<String> contigIds = datastore.getIds();
+                Iterator<String> contigIds = datastore.idIterator();
                 while(contigIds.hasNext()){
                     String id = contigIds.next();
                     if(contigId.equals(id)){

@@ -95,7 +95,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, C
     }
     
     @Override
-    public CloseableIterator<String> getIds() {
+    public CloseableIterator<String> idIterator() {
         return mappedRanges.getIds();
     }
     @Override

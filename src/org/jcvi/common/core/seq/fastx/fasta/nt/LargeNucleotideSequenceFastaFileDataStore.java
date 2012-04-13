@@ -129,7 +129,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
     }
 
     @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
         checkNotYetClosed();
         return LargeFastaIdIterator.createNewIteratorFor(fastaFile);
         

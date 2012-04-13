@@ -58,8 +58,8 @@ public class DefaultTigrAssemblerFileContigDataStore extends AbstractTigrAssembl
         return contigs.get(id);
     }
     @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
-        super.getIds();
+    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+        super.idIterator();
         return CloseableIteratorAdapter.adapt(contigs.keySet().iterator());
     }
     @Override

@@ -31,6 +31,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
@@ -50,8 +51,9 @@ public class SplitFastq {
      * @param args
      * @throws ParseException 
      * @throws IOException 
+     * @throws DataStoreException 
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, DataStoreException {
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder("i", 
                                     "input fastq file")

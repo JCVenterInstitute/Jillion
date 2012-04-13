@@ -42,14 +42,14 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     DefaultContigFileDataStore expectedContigDataStore;
     ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestAceParserMatchesAce2Contig.class);
     private final String pathToAceFile;
-    AbstractTestAceParserMatchesAce2Contig(String aceFile, String contigFile) throws IOException{
+    AbstractTestAceParserMatchesAce2Contig(String aceFile, String contigFile) throws IOException, DataStoreException{
         this.expectedContigDataStore = new DefaultContigFileDataStore(
         		RESOURCES.getFileAsStream(contigFile));
         pathToAceFile = aceFile;
         this.actualContigs = getContigList(
         		RESOURCES.getFile(aceFile));       
     }
-    protected abstract List<AceContig> getContigList(File aceFile) throws IOException;
+    protected abstract List<AceContig> getContigList(File aceFile) throws IOException, DataStoreException;
     
     @Test
     public void assertParsedAceFileMatchedParsedContigFile() throws DataStoreException{

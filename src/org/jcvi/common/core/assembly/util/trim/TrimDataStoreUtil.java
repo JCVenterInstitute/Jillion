@@ -56,7 +56,7 @@ public final class TrimDataStoreUtil {
         }
         
         @Override
-        public CloseableIterator<String> getIds() throws DataStoreException {
+        public CloseableIterator<String> idIterator() throws DataStoreException {
             return CloseableIteratorAdapter.adapt(EmptyIterator.<String>createEmptyIterator());
             
         }

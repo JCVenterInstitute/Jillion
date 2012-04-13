@@ -60,8 +60,8 @@ public abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implemen
     }
 
     @Override
-    public final CloseableIterator<String> getIds() throws DataStoreException {
-        return delegate.getIds();
+    public final CloseableIterator<String> idIterator() throws DataStoreException {
+        return delegate.idIterator();
     }
 
     @Override

@@ -106,8 +106,8 @@ public final class DefaultAsmContigDataStore implements AsmContigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return delegate.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return delegate.idIterator();
     }
 
     /**
@@ -153,9 +153,10 @@ public final class DefaultAsmContigDataStore implements AsmContigDataStore{
 
     /**
     * {@inheritDoc}
+     * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<AsmContig> iterator() {
+    public CloseableIterator<AsmContig> iterator() throws DataStoreException {
         return delegate.iterator();
     }
     

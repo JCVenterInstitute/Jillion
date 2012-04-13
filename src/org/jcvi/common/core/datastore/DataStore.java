@@ -24,11 +24,10 @@
 package org.jcvi.common.core.datastore;
 
 import java.io.Closeable;
-import java.util.Iterator;
 
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
- * A {@code DataStore} is an interface for fetching objects by
+ * A {@code DataStore} is an interface for fetching records by
  * an id.  How the data in the datastore is stored is implementation
  * dependent so clients don't have to know how that data is stored.
  * @author dkatzel
@@ -36,15 +35,19 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  */
 public interface DataStore<T> extends Closeable{
-    /**
-     * Get all the ids contained in this DataStore.
-     * @return an {@link Iterator} of the ids in this datastore.
-     * @throws DataStoreException if there is a problem fetching
-     * data from this DataStore.
+	 /**
+     * Create a new {@link CloseableIterator}
+     * which will iterate over the ids 
+     * of all the records
+     * in this datastore.
+     * @return a new {@link CloseableIterator}
+     * instance; never null.
+     * @throws DataStoreException if there is a 
+     * problem creating this iterator.
      */
-    CloseableIterator<String> getIds() throws DataStoreException;
+    CloseableIterator<String> idIterator() throws DataStoreException;
     /**
-     * Get the Object in this datastore with the given id.
+     * Get the record in this {@link DataStore} with the given id.
      * @param id the id of the object to fetch.
      * @return the object being fetched, may be null.
      * @throws DataStoreException if there is a problem fetching the
@@ -70,9 +73,19 @@ public interface DataStore<T> extends Closeable{
     /**
      * Has this datastore been closed by the {@link #close()}
      * method?
+     * @return {@code true} if this {@link DataStore} is
+     * closed; {@code false} otherwise.
      */
     boolean isClosed() throws DataStoreException;
-    
-    CloseableIterator<T> iterator();
+    /**
+     * Create a new {@link CloseableIterator}
+     * which will iterate over all the records
+     * in this {@link DataStore}.
+     * @return a new {@link CloseableIterator}
+     * instance; never null.
+     * @throws DataStoreException if there is a 
+     * problem creating this iterator.
+     */
+    CloseableIterator<T> iterator() throws DataStoreException;
     
 }

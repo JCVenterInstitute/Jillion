@@ -68,7 +68,7 @@ public final class DefaultFastqDataStore implements FastqDataStore {
     }
 
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> idIterator() throws DataStoreException {
         checkNotClosed();
         return CloseableIteratorAdapter.adapt(map.keySet().iterator());
     }

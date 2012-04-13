@@ -53,8 +53,8 @@ public abstract class AbstractFastqDataStoreAdapter<T> implements DataStore<T>{
     }
 
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return dataStore.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return dataStore.idIterator();
     }
 
     @Override

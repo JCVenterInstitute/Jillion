@@ -114,8 +114,8 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
     }
 
     @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
-        super.getIds();
+    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+        super.idIterator();
         return new SffIdIterator(SffFileIterator.createNewIteratorFor(sffFile));
         
     }

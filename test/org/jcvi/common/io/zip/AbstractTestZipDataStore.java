@@ -55,7 +55,7 @@ public abstract class AbstractTestZipDataStore {
 		expectedIds.add("file1.txt");
 		expectedIds.add("file2.txt");
 		
-		Iterator<String> idIter = sut.getIds();
+		Iterator<String> idIter = sut.idIterator();
 		assertTrue(idIter.hasNext());
 		while(idIter.hasNext()){
 			assertTrue(expectedIds.contains(idIter.next()));
@@ -114,7 +114,7 @@ public abstract class AbstractTestZipDataStore {
 	}
 	
 	@Test
-	public void iterator() throws IOException{
+	public void iterator() throws IOException, DataStoreException{
 		Iterator<InputStream> iter = sut.iterator();
 		assertTrue(iter.hasNext());
 		boolean hasFile1=false;

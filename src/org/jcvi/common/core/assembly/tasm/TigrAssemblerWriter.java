@@ -48,7 +48,7 @@ public final class TigrAssemblerWriter {
 		}
 		Iterator<String> contigIds;
 		try {
-			contigIds = datastore.getIds();
+			contigIds = datastore.idIterator();
 			
 			while(contigIds.hasNext()){
 				TigrAssemblerContig contig =datastore.get(contigIds.next());

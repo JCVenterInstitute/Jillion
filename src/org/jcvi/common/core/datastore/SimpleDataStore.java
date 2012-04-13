@@ -47,8 +47,8 @@ public class SimpleDataStore<T> extends AbstractDataStore<T> {
         return map.get(id);
     }
     @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
-        super.getIds();
+    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+        super.idIterator();
         return CloseableIteratorAdapter.adapt(map.keySet().iterator());
     }
     @Override

@@ -27,6 +27,7 @@ import java.util.List;
 import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.ChainedCloseableIterator;
@@ -74,13 +75,13 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
     public TrimDataStore getValidRangeDataStore() {
         return validRangeDataStore;
     }
-    public abstract CloseableIterator<R>  createIlluminaIterator(File illuminaFile, TraceDetails traceDetails);
+    public abstract CloseableIterator<R>  createIlluminaIterator(File illuminaFile, TraceDetails traceDetails) throws DataStoreException;
     
-    public abstract CloseableIterator<R>  createSffIterator(File sffFile, TraceDetails traceDetails);
+    public abstract CloseableIterator<R>  createSffIterator(File sffFile, TraceDetails traceDetails) throws DataStoreException;
     
-    public abstract CloseableIterator<R>  createFastaIterator(File fastaFile, TraceDetails traceDetails);
+    public abstract CloseableIterator<R>  createFastaIterator(File fastaFile, TraceDetails traceDetails) throws DataStoreException;
     
-    public abstract CloseableIterator<R>  createChromatogramIterator(File chromatogramFile, TraceDetails traceDetails);
+    public abstract CloseableIterator<R>  createChromatogramIterator(File chromatogramFile, TraceDetails traceDetails) throws DataStoreException;
     
     @Override
     public final synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
@@ -94,26 +95,34 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
                 throw new IllegalStateException(e);
             }
             ReadFileType readType = ReadFileType.getTypeFromFile(filename);
-            switch(readType){
-                case ILLUMINA:
-                        iterators.add(createIlluminaIterator(file, traceDetails));
-                        break;
-                case SFF:
-                    iterators.add(createSffIterator(file, traceDetails));
-                    break;
-                case FASTA:
-                    final CloseableIterator<R> iter;
-                    if(!traceDetails.hasChromatDir()){
-                        iter= createFastaIterator(file, traceDetails);
-                    }else{
-                        iter = createChromatogramIterator(file, traceDetails);
-                    }
-                            
-                    iterators.add(iter);
-                    break;
-                default: throw new IllegalArgumentException("unsupported type "+ file.getName());
-                    
-            }           
+            try{
+	            switch(readType){
+	                case ILLUMINA:
+	                        iterators.add(createIlluminaIterator(file, traceDetails));
+	                        break;
+	                case SFF:
+	                    iterators.add(createSffIterator(file, traceDetails));
+	                    break;
+	                case FASTA:
+	                    final CloseableIterator<R> iter;
+	                    if(!traceDetails.hasChromatDir()){
+	                        iter= createFastaIterator(file, traceDetails);
+	                    }else{
+	                        iter = createChromatogramIterator(file, traceDetails);
+	                    }
+	                            
+	                    iterators.add(iter);
+	                    break;
+	                default: throw new IllegalArgumentException("unsupported type "+ file.getName());
+	                    
+	            }     
+            }catch(Exception e){
+            	//close any blocking iterators
+            	for(CloseableIterator<R> iter : iterators){
+            		IOUtil.closeAndIgnoreErrors(iter);
+            	}
+            	throw new RuntimeException(e);
+            }
         }
         
     }
