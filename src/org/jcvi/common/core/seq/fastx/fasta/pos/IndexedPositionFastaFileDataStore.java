@@ -95,7 +95,7 @@ public final class IndexedPositionFastaFileDataStore implements PositionFastaDat
 	}
 
 	@Override
-	public int size() throws DataStoreException {
+	public long getNumberOfRecords() throws DataStoreException {
 		return index.size();
 	}
 
@@ -120,8 +120,8 @@ public final class IndexedPositionFastaFileDataStore implements PositionFastaDat
 			implements	PositionFastaDataStoreBuilderVisitor{
 
 			@Override
-		public IndexedPositionFastaDataStoreBuilderVisitor addFastaRecord(
-				PositionSequenceFastaRecord<Sequence<ShortSymbol>> fastaRecord) {
+		public <F extends PositionSequenceFastaRecord<Sequence<ShortSymbol>>> IndexedPositionFastaDataStoreBuilderVisitor addFastaRecord(
+				F fastaRecord) {
 				//don't know why complier is complaining about type
 				//just cast for now the method will throw an exception anyway...
 			return (IndexedPositionFastaDataStoreBuilderVisitor) super.addFastaRecord(fastaRecord);

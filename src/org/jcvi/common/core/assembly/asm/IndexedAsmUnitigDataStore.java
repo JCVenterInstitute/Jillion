@@ -197,7 +197,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public int size() throws DataStoreException {
+    public long getNumberOfRecords() throws DataStoreException {
         return fileRange.size();
     }
 

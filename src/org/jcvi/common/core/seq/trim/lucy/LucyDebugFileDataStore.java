@@ -118,8 +118,8 @@ public class LucyDebugFileDataStore implements LucyDebugTrimRecordDataStore{
     * {@inheritDoc}
     */
     @Override
-    public int size() throws DataStoreException {
-        return datastore.size();
+    public long getNumberOfRecords() throws DataStoreException {
+        return datastore.getNumberOfRecords();
     }
     /**
     * {@inheritDoc}

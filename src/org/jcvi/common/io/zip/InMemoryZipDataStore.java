@@ -156,8 +156,8 @@ public final class InMemoryZipDataStore extends AbstractDataStore<InputStream> i
      * Get the number of zip entries in the zip file.
      */
     @Override
-    public synchronized int size() throws DataStoreException {
-        super.size();
+    public synchronized long getNumberOfRecords() throws DataStoreException {
+        super.getNumberOfRecords();
         return contents.size();
     }
     

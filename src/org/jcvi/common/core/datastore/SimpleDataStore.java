@@ -52,8 +52,8 @@ public class SimpleDataStore<T> extends AbstractDataStore<T> {
         return CloseableIteratorAdapter.adapt(map.keySet().iterator());
     }
     @Override
-    public synchronized int size() throws DataStoreException {
-        super.size();
+    public synchronized long getNumberOfRecords() throws DataStoreException {
+        super.getNumberOfRecords();
         return map.size();
     }
 	@Override

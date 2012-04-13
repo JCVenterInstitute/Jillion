@@ -75,7 +75,7 @@ public class TestAceFileWriter {
         
         
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int numberOfContigs = aceDataStore.size();
+        int numberOfContigs = (int)aceDataStore.getNumberOfRecords();
         int numberOfReads = countNumberOfTotalReads(aceDataStore);
         AceFileWriter.writeAceFileHeader(numberOfContigs, numberOfReads, out);
         writeAceContigs(phdDataStore, aceDataStore, out);
@@ -84,7 +84,7 @@ public class TestAceFileWriter {
         AceFileParser.parseAceFile(new ByteArrayInputStream(out.toByteArray()), builder);
         
         AceContigDataStore reparsedAceDataStore = builder.build();
-        assertEquals("# contigs", aceDataStore.size(), reparsedAceDataStore.size());
+        assertEquals("# contigs", aceDataStore.getNumberOfRecords(), reparsedAceDataStore.getNumberOfRecords());
         CloseableIterator<AceContig> iter = aceDataStore.iterator();
         try{
 	        while(iter.hasNext()){

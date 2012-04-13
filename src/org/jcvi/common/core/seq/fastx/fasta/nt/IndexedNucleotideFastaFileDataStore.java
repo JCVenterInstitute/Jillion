@@ -118,7 +118,7 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 	}
 
 	@Override
-	public int size() throws DataStoreException {
+	public long getNumberOfRecords() throws DataStoreException {
 		return index.size();
 	}
 

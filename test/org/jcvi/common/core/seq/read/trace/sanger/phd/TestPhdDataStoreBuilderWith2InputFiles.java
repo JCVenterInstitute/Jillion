@@ -43,7 +43,7 @@ public class TestPhdDataStoreBuilderWith2InputFiles extends AbstractTestPhd{
         PhdParser.parsePhd(RESOURCE.getFile("files/fake.phd"), sut);
         
         PhdDataStore datastore = sut.build();
-        assertEquals(4, datastore.size());
+        assertEquals(4, datastore.getNumberOfRecords());
 
         phdRecordMatchesExpected(datastore.get("1095595674585"));
         

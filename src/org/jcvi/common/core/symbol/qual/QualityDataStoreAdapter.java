@@ -86,9 +86,9 @@ public class QualityDataStoreAdapter implements QualityDataStore
      * @see org.jcvi.datastore.DataStore#size()
      */
     @Override
-    public int size() throws DataStoreException
+    public long getNumberOfRecords() throws DataStoreException
     {
-        return this.datastore.size();
+        return this.datastore.getNumberOfRecords();
     }
 
     /* (non-Javadoc)

@@ -57,7 +57,7 @@ public class DefaultTraceArchiveInfo<T extends TraceArchiveRecord> implements Tr
     }
 
     @Override
-    public int size() throws DataStoreException {
+    public long getNumberOfRecords() throws DataStoreException {
         return map.size();
     }
 

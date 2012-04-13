@@ -103,8 +103,8 @@ public class LucySeqTrimDataStore implements TrimDataStore {
      * {@inheritDoc}
      */
     @Override
-    public int size() throws DataStoreException {
-        return datastore.size();
+    public long getNumberOfRecords() throws DataStoreException {
+        return datastore.getNumberOfRecords();
     }
 
     /**

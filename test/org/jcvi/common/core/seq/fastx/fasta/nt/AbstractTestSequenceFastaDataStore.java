@@ -151,7 +151,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     public void parseFileGet() throws IOException, DataStoreException{
         
         DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
-        assertEquals(9, sut.size());
+        assertEquals(9, sut.getNumberOfRecords());
         assertEquals(contig_1, sut.get("1"));
         assertEquals(contig_5, sut.get("5"));
         assertEquals(contig_9, sut.get("9"));

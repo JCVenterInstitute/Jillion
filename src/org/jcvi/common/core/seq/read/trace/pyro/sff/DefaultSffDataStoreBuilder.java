@@ -56,8 +56,8 @@ public final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilde
 		}
 
 		@Override
-		public int size() throws DataStoreException {
-			return delegate.size();
+		public long getNumberOfRecords() throws DataStoreException {
+			return delegate.getNumberOfRecords();
 		}
 
 		@Override

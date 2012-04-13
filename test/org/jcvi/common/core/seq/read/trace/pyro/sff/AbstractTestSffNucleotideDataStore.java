@@ -49,7 +49,7 @@ public abstract class AbstractTestSffNucleotideDataStore extends AbstractTestExa
     @Test
     public void datastoresMatch() throws Exception{
         NucleotideDataStore sut = createSut(SFF_FILE);
-        assertEquals(sut.size(), dataStore.size());
+        assertEquals(sut.getNumberOfRecords(), dataStore.getNumberOfRecords());
         Iterator<String> ids = sut.getIds();
         while(ids.hasNext()){
             String id = ids.next();

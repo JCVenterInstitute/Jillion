@@ -73,8 +73,8 @@ public abstract class AbstractFolderTraceArchiveDataStore implements TraceArchiv
     
 
     @Override
-    public int size() throws DataStoreException{
-        return traceArchiveInfo.size();
+    public long getNumberOfRecords() throws DataStoreException{
+        return traceArchiveInfo.getNumberOfRecords();
        
     }
 

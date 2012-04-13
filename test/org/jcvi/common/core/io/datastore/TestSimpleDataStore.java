@@ -58,7 +58,7 @@ public class TestSimpleDataStore {
     }
     @Test
     public void size() throws DataStoreException{
-        assertEquals(2, sut.size());
+        assertEquals(2, sut.getNumberOfRecords());
     }
     @Test
     public void gettingAfterCloseShouldThrowIllegalStateException() throws IOException, DataStoreException{

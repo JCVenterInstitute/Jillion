@@ -80,7 +80,7 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
     }
 
     @Override
-    public synchronized int size() throws DataStoreException {
+    public synchronized long getNumberOfRecords() throws DataStoreException {
         throwExceptionIfClosed();
         return 0;
     }

@@ -32,7 +32,7 @@ public interface FastaFileDataStoreBuilderVisitor <S extends Symbol, T extends S
 	 * 
 	 */
 	@Override
-	FastaDataStoreBuilder<S, T, F, D> addFastaRecord(F fastaRecord);
+	<E extends F> FastaDataStoreBuilder<S, T, F, D> addFastaRecord(E fastaRecord);
 	/**
 	 * Does this implementation allow {@link #addFastaRecord(FastaRecord)}
 	 * to be called without throwing a {@link UnsupportedOperationException}.

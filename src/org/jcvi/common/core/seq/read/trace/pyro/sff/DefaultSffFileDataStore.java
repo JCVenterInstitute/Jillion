@@ -25,38 +25,78 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
-
+/**
+ {@code DefaultSffFileDataStore} creates {@link FlowgramDataStore}
+ * instances that store all the {@link Flowgram}s
+ * in a Map.  This implementation is not very 
+ * memory efficient and therefore should not be used
+ * for large sff files.
+ * @author dkatzel
+ */
 public final class DefaultSffFileDataStore {
 
-	
+	/**
+	 * Create a new {@link FlowgramDataStore} by parsing
+	 * the entire given sff file and include all
+	 * the reads in the DataStore.
+	 * @param sffFile the sff encoded file to parse.
+	 * @return a new {@link FlowgramDataStore} containing
+	 * all the reads in the sff file; never null.
+	 * @throws IOException if there is a problem
+	 * parsing the file.
+	 * @throws NullPointerException if either the sffFile is null.
+	 */
 	public static FlowgramDataStore create(File sffFile) throws IOException{
 		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder();
 		SffFileParser.parseSFF(sffFile, builder);
 		return builder.build();
 	}
-	public static FlowgramDataStore createDataStoreOfSingleRead(File sffFile, String readId) throws IOException{
-		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder(readId);
-		SffFileParser.parseSFF(sffFile, builder);
-		return builder.build();
-	}
+	/**
+	 * Create a new {@link FlowgramDataStore} by parsing
+	 * the entire given sff file but include only
+	 * the reads that are accepted by the given {@link DataStoreFilter}.
+	 * @param sffFile the sff encoded file to parse.
+	 * @param filter the {@link DataStoreFilter} to use
+	 * to filter out any reads in the sff file; can not be null.
+	 * @return a new {@link FlowgramDataStore} containing
+	 * only the reads accepted by the given filter; never null.
+	 * @throws IOException if there is a problem
+	 * parsing the file.
+	 * @throws NullPointerException if either the sffFile or filter are null.
+	 */
 	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder(filter);
 		SffFileParser.parseSFF(sffFile, builder);
 		return builder.build();
 	}
+	/**
+	 * Create a new {@link SffFileVisitorDataStoreBuilder}
+	 * that needs to be populated and built.
+	 * @return a new instance of {@link SffFileVisitorDataStoreBuilder};
+	 * never null.
+	 */
 	public static SffFileVisitorDataStoreBuilder createVisitorBuilder() {
 		return new DefaultSffFileVisitorDataStoreBuilder(AcceptingDataStoreFilter.INSTANCE);
 	}
-	public static SffFileVisitorDataStoreBuilder createVisitorBuilder(String singleReadId) {
-		return new DefaultSffFileVisitorDataStoreBuilder(singleReadId);
-	}
+	/**
+	 * Create a new {@link SffFileVisitorDataStoreBuilder}
+	 * with the given {@link DataStoreFilter}
+	 * that needs to be populated and built.
+	 * Any {@link Flowgram}s added to this builder that are 
+	 * not accepted by the filter will be ignored
+	 * and not included in the {@link FlowgramDataStore}
+	 * when it is built via {@link SffFileVisitorDataStoreBuilder#build()}.
+	 * @param filter the {@link DataStoreFilter} to use
+	 * to filter out any reads in the sff file; can not be null.
+	 * @return a new instance of {@link SffFileVisitorDataStoreBuilder};
+	 * never null.
+	 * @throws NullPointerException if filter is null.
+	 */
 	public static SffFileVisitorDataStoreBuilder createVisitorBuilder(DataStoreFilter filter) {
 		if(filter==null){
 			throw new NullPointerException("filter can not be null");
@@ -71,15 +111,9 @@ public final class DefaultSffFileDataStore {
     	private final DefaultSffDataStoreBuilder builder = new DefaultSffDataStoreBuilder();
     	private SffReadHeader currentReadHeader;
     	private final DataStoreFilter filter;
-    	private boolean keepParsingFile=true;
-    	private final boolean onlyOneReadToParse;
-    	private DefaultSffFileVisitorDataStoreBuilder(String singleReadId){
-    		this.filter=new DefaultIncludeDataStoreFilter(Collections.singleton(singleReadId));
-    		onlyOneReadToParse=true;
-    	}
+    	
     	private DefaultSffFileVisitorDataStoreBuilder(DataStoreFilter filter){
     		this.filter=filter;
-    		onlyOneReadToParse=false;
     	}
     	private synchronized void checkNotYetInitialized(){
     		if(initialized){
@@ -111,9 +145,6 @@ public final class DefaultSffFileDataStore {
 			checkNotYetInitialized();
 			this.currentReadHeader = readHeader;
 	        boolean accept= filter.accept(readHeader.getId());
-	        if(onlyOneReadToParse && accept){
-	        	keepParsingFile=false;
-	        }
 	        return accept?ReadHeaderReturnCode.PARSE_READ_DATA:ReadHeaderReturnCode.SKIP_CURRENT_READ;
 		}
 
@@ -122,7 +153,7 @@ public final class DefaultSffFileDataStore {
 			checkNotYetInitialized();
 			 builder.addFlowgram(SffFlowgram.create(currentReadHeader, readData));
 		     currentReadHeader=null;
-			return keepParsingFile?ReadDataReturnCode.PARSE_NEXT_READ:ReadDataReturnCode.STOP;
+			return ReadDataReturnCode.PARSE_NEXT_READ;
 		}
 
 		@Override

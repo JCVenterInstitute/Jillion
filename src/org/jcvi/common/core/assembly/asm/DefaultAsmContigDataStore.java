@@ -130,8 +130,8 @@ public final class DefaultAsmContigDataStore implements AsmContigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public int size() throws DataStoreException {
-        return delegate.size();
+    public long getNumberOfRecords() throws DataStoreException {
+        return delegate.getNumberOfRecords();
     }
 
     /**

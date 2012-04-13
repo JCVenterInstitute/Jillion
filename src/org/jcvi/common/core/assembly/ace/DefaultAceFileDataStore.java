@@ -38,7 +38,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * {@code DefaultAceFileDataStore} is a AceContigDataStore
  * implementation that stores all the {@link AceContig}s
  * in a Map.  This implementation is not very 
- * memory effiecient and therefore should not be used
+ * memory efficient and therefore should not be used
  * for large ace files.
  * @author dkatzel
  *
@@ -128,8 +128,8 @@ public final class DefaultAceFileDataStore implements AceContigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public int size() throws DataStoreException {
-        return delegate.size();
+    public long getNumberOfRecords() throws DataStoreException {
+        return delegate.getNumberOfRecords();
     }
     /**
     * {@inheritDoc}

@@ -59,11 +59,11 @@ public class TestFastQ2Fasta {
         ByteArrayOutputStream qualOut = new ByteArrayOutputStream();
         
         Fastq2Fasta sut = new Fastq2Fasta(AcceptingFastXFilter.INSTANCE,codec , seqOut, qualOut);
-        int numberOfRecords =parseAndAssertFastQFile(seqOut, qualOut, sut);
-        assertEquals(2, numberOfRecords);
+        long numberOfRecords =parseAndAssertFastQFile(seqOut, qualOut, sut);
+        assertEquals(2L, numberOfRecords);
     }
 
-    private int parseAndAssertFastQFile(ByteArrayOutputStream seqOut,
+    private long parseAndAssertFastQFile(ByteArrayOutputStream seqOut,
             ByteArrayOutputStream qualOut, Fastq2Fasta sut) throws IOException,
             FileNotFoundException, DataStoreException {
         final File fastqFile = RESOURCES.getFile("files/example.fastq");
@@ -86,6 +86,6 @@ public class TestFastQ2Fasta {
         }finally{
         	IOUtil.closeAndIgnoreErrors(iter);
         }
-        return fastqDataStore.size();
+        return fastqDataStore.getNumberOfRecords();
     }
 }

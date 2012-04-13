@@ -78,8 +78,8 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     }
 
     @Override
-    public int size() throws DataStoreException {
-        return dataStore.size();
+    public long getNumberOfRecords() throws DataStoreException {
+        return dataStore.getNumberOfRecords();
     }
 
     @Override

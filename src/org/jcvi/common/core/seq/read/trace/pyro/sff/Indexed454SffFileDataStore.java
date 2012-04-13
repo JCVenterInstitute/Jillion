@@ -139,7 +139,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	}
 
 	@Override
-	public int size() throws DataStoreException {
+	public long getNumberOfRecords() throws DataStoreException {
 		throwErrorIfClosed();
 		return map.size();
 	}

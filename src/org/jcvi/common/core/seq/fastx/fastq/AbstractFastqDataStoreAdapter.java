@@ -58,8 +58,8 @@ public abstract class AbstractFastqDataStoreAdapter<T> implements DataStore<T>{
     }
 
     @Override
-    public int size() throws DataStoreException {
-        return dataStore.size();
+    public long getNumberOfRecords() throws DataStoreException {
+        return dataStore.getNumberOfRecords();
     }
 
     @Override

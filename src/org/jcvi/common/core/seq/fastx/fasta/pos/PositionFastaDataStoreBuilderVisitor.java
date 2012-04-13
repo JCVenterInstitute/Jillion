@@ -7,6 +7,6 @@ import org.jcvi.common.core.symbol.ShortSymbol;
 public interface PositionFastaDataStoreBuilderVisitor extends FastaFileDataStoreBuilderVisitor<ShortSymbol, Sequence<ShortSymbol>, PositionSequenceFastaRecord<Sequence<ShortSymbol>>, PositionFastaDataStore>{
 
 	@Override
-	PositionFastaDataStoreBuilderVisitor addFastaRecord(
-			PositionSequenceFastaRecord<Sequence<ShortSymbol>> fastaRecord);
+	<F extends PositionSequenceFastaRecord<Sequence<ShortSymbol>>> PositionFastaDataStoreBuilderVisitor addFastaRecord(
+			F fastaRecord);
 }

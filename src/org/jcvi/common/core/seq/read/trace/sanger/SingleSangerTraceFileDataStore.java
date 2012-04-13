@@ -77,8 +77,8 @@ public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrac
     * {@inheritDoc}
     */
     @Override
-    public synchronized  int size() throws DataStoreException {
-        super.size();
+    public synchronized  long getNumberOfRecords() throws DataStoreException {
+        super.getNumberOfRecords();
         return 1;
     }
 	@Override

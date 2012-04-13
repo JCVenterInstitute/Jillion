@@ -96,7 +96,7 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 	}
 
 	@Override
-	public int size() throws DataStoreException {
+	public long getNumberOfRecords() throws DataStoreException {
 		return index.size();
 	}
 

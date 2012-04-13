@@ -101,7 +101,7 @@ public final class LargePhdDataStore implements PhdDataStore{
     }
 
     @Override
-    public synchronized int size() throws DataStoreException {
+    public synchronized long getNumberOfRecords() throws DataStoreException {
         checkIfClosed();
         if(size ==null){
             int count=0;

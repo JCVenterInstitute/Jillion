@@ -21,7 +21,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * read information in memory.
  * This means that each {@link #get(String)} or {@link #contains(String)}
  * requires re-parsing the ace file which can take some time.
- * Other methods such as {@link #size()} are lazy-loaded
+ * Other methods such as {@link #getNumberOfRecords()} are lazy-loaded
  * and are only parsed the first time they are asked for.
  * <p/>
  * Since each method call involves re-parsing the ace file,
@@ -54,7 +54,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 	 * Create a new instance of {@link LargeAceFileDataStore}
 	 * with only some of the contigs from the given ace file.
 	 * Any contigs excluded by the given {@link DataStoreFilter}
-	 * will be completely ignored during calls to {@link #size()}
+	 * will be completely ignored during calls to {@link #getNumberOfRecords()}
 	 * {@link #iterator()} and {@link #getIds()}, return
 	 * {@code false} for {@link #contains(String)}
 	 * and return null for {@link #get(String)}
@@ -134,7 +134,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 		return found;
 	}
 	@Override
-	public synchronized int size() throws DataStoreException {
+	public synchronized long getNumberOfRecords() throws DataStoreException {
 		throwExceptionIfClosed();
 		if(numberOfContigs ==null){
 			//haven't parsed num contigs yet 

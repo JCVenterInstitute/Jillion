@@ -71,8 +71,8 @@ public class FastaRecordDataStoreAdapter<S extends Symbol,T extends Sequence<S>,
     }
 
     @Override
-    public int size() throws DataStoreException {
-        return delegate.size();
+    public long getNumberOfRecords() throws DataStoreException {
+        return delegate.getNumberOfRecords();
     }
 
     @Override

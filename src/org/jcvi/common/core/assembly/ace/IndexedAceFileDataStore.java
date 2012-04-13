@@ -141,7 +141,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
     }
 
     @Override
-    public int size() {
+    public long getNumberOfRecords() {
         return indexFileRange.size();
     }
 

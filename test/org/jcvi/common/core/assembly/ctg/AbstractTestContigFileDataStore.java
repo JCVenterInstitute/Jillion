@@ -38,7 +38,7 @@ public abstract class AbstractTestContigFileDataStore extends TestContigFilePars
     @Test
     public void thereAre4Contigs() throws DataStoreException, IOException{
         ContigDataStore<PlacedRead, Contig<PlacedRead>> dataStore = buildContigFileDataStore(getFile());
-        assertEquals(4, dataStore.size());
+        assertEquals(4, dataStore.getNumberOfRecords());
     }
     @Override
     protected Contig getContig925From(File file) throws FileNotFoundException {

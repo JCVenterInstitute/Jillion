@@ -65,8 +65,8 @@ public abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implemen
     }
 
     @Override
-    public final int size() throws DataStoreException {
-        return delegate.size();
+    public final long getNumberOfRecords() throws DataStoreException {
+        return delegate.getNumberOfRecords();
     }
 
     @Override

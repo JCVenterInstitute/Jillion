@@ -45,7 +45,7 @@ public class TestIndexedAceFileDataStore extends TestAbstractAceParserMatchesAce
             throws IOException {
         AceContigDataStore dataStore= IndexedAceFileDataStore.create(aceFile);
         try{
-            List<AceContig> contigs = new ArrayList<AceContig>(dataStore.size());
+            List<AceContig> contigs = new ArrayList<AceContig>((int)dataStore.getNumberOfRecords());
             for(Iterator<String> iter = dataStore.getIds(); iter.hasNext();){
                 String id = iter.next();
                     contigs.add(dataStore.get(id));

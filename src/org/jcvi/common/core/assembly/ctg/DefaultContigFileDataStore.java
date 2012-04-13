@@ -109,7 +109,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder
 
 
     @Override
-    public int size() {
+    public long getNumberOfRecords() {
         return contigs.size();
     }
 

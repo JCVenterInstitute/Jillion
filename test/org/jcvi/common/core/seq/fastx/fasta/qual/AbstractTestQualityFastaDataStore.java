@@ -186,7 +186,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     public void parseFile() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
         DataStore<QualitySequenceFastaRecord> sut = createDataStore(qualFile);
-        assertEquals(321, sut.size());
+        assertEquals(321, sut.getNumberOfRecords());
         assertEquals(JGBAA02T21A12PB1A1F, sut.get("JGBAA02T21A12PB1A1F"));
         assertEquals(JGBAA07T21D08MP605F, sut.get("JGBAA07T21D08MP605F"));
         assertEquals(JGBAA01T21H05PB2A2341BRB, sut.get("JGBAA01T21H05PB2A2341BRB"));

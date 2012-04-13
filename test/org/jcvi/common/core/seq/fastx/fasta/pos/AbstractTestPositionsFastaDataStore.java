@@ -122,7 +122,7 @@ public abstract class AbstractTestPositionsFastaDataStore {
         DataStore<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> sut = 
         	createPositionFastaMap(
         			RESOURCES.getFile(QUAL_FILE_PATH));
-       assertEquals(1, sut.size());
+       assertEquals(1, sut.getNumberOfRecords());
         assertEquals(expected, sut.get("1119369023656"));
     }
     

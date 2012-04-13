@@ -16,8 +16,8 @@ public class TestIndexed454SffFileDataStore extends TestReadExampleSffFile{
     }
 
     @Override
-    protected int getNumberOfFlowgrams() throws Exception {
-        return dataStore.size();
+    protected long getNumberOfFlowgrams() throws Exception {
+        return dataStore.getNumberOfRecords();
     }
 
     @Override

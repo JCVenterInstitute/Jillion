@@ -39,7 +39,7 @@ public class TestTraceNucleotideDataStoreAdapter extends EasyMockSupport{
 	
 	@Test
 	public void size() throws DataStoreException{
-		assertEquals(1, sut.size());
+		assertEquals(1, sut.getNumberOfRecords());
 	}
 	
 	@Test

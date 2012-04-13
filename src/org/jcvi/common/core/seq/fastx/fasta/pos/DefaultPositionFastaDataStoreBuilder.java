@@ -27,8 +27,8 @@ public final class DefaultPositionFastaDataStoreBuilder implements PositionFasta
 	}
 
 	@Override
-	public DefaultPositionFastaDataStoreBuilder addFastaRecord(
-			PositionSequenceFastaRecord<Sequence<ShortSymbol>> fastaRecord) {
+	public <F extends PositionSequenceFastaRecord<Sequence<ShortSymbol>>> DefaultPositionFastaDataStoreBuilder addFastaRecord(
+			F fastaRecord) {
 		if(fastaRecord ==null){
 			throw new NullPointerException("fasta record can not be null");
 		}
@@ -58,8 +58,8 @@ public final class DefaultPositionFastaDataStoreBuilder implements PositionFasta
 		}
 
 		@Override
-		public int size() throws DataStoreException {
-			return delegate.size();
+		public long getNumberOfRecords() throws DataStoreException {
+			return delegate.getNumberOfRecords();
 		}
 
 		@Override

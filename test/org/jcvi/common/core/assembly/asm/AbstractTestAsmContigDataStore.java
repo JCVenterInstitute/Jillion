@@ -27,7 +27,7 @@ public abstract class AbstractTestAsmContigDataStore extends AbstractTestAsmData
 		FragmentDataStore frgDataStore = IndexedFragmentDataStore.create(frgFile);
 		AsmContigDataStore datastore = createDataStore(asmFile, frgDataStore);
 	
-		assertEquals(1, datastore.size());
+		assertEquals(1, datastore.getNumberOfRecords());
 		AsmContig contig = datastore.get("7180000000001");
 		NucleotideSequence consensus = contig.getConsensus();
 		assertEquals(1017, consensus.getLength());

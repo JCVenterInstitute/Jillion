@@ -92,8 +92,8 @@ public final class TrimDataStoreAdatper implements TrimDataStore{
     * {@inheritDoc}
     */
     @Override
-    public int size() throws DataStoreException {
-        return delegate.size();
+    public long getNumberOfRecords() throws DataStoreException {
+        return delegate.getNumberOfRecords();
     }
 
     /**

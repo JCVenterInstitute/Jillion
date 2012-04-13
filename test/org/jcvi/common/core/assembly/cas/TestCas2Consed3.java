@@ -65,7 +65,7 @@ public class TestCas2Consed3 {
 	      
 	      File aceFile = tempDir.getFile("edit_dir/"+prefix+".ace.1");
 	      AceContigDataStore dataStore = DefaultAceFileDataStore.create(aceFile);
-	      assertEquals("# contigs", expectedDataStore.size(), dataStore.size());
+	      assertEquals("# contigs", expectedDataStore.getNumberOfRecords(), dataStore.getNumberOfRecords());
 	        CloseableIterator<AceContig> iter = dataStore.iterator();
 	        try{
 		        while(iter.hasNext()){
