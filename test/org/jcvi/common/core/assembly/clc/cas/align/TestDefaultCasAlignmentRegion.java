@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly.cas.align;
+package org.jcvi.common.core.assembly.clc.cas.align;
 
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegionType;
 import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasAlignmentRegion;

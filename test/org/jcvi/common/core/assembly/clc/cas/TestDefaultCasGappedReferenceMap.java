@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.assembly.cas;
+package org.jcvi.common.core.assembly.clc.cas;
 
 import java.util.ArrayList;
 import java.util.List;
