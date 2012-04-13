@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 
 
-public class DefaultPlacedRead implements PlacedRead {
+public final class DefaultPlacedRead implements PlacedRead {
 
     private final Read<ReferenceEncodedNucleotideSequence> read;
     private final long start;

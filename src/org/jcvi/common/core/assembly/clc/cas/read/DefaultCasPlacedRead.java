@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
-public class DefaultCasPlacedRead implements CasPlacedRead{
+final class DefaultCasPlacedRead implements CasPlacedRead{
 
     private final Read read;
     private final Range validRange;
