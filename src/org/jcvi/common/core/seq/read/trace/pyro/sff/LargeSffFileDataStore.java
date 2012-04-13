@@ -51,7 +51,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements FlowgramDataStore{
 
     private final File sffFile;
-    private Integer size=null;
+    private Long size=null;
     
     /**
      * Create a new instance of {@link LargeSffFileDataStore}.
@@ -127,7 +127,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
         	DataInputStream in = null;
         	try{
         		in = new DataInputStream(new FileInputStream(sffFile));
-        		size =(int)DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(in).getNumberOfReads();
+        		size =DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(in).getNumberOfReads();
         	}catch(Exception e){
         		 throw new DataStoreException("could not parse sffFile ",e);
         	}finally{

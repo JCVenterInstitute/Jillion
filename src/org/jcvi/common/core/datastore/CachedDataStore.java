@@ -39,11 +39,11 @@ import org.jcvi.common.core.util.Caches;
  *
  *
  */
-public final class CachedDataStore <D extends DataStore> implements InvocationHandler{
+public final class CachedDataStore <D extends DataStore<?>> implements InvocationHandler{
 
     private final D delegate;
     private final Map<String, Object> cache;
-    private static final Class[] GET_PARAMETERS = new Class[]{String.class};
+    private static final Class<?>[] GET_PARAMETERS = new Class<?>[]{String.class};
     
     /**
      * Clears the cache from a DataStore created by this utilty
@@ -77,7 +77,7 @@ public final class CachedDataStore <D extends DataStore> implements InvocationHa
      * implements Cacheable.
      */
     @SuppressWarnings("unchecked")
-    public static <D extends DataStore> D create(Class<? super D> c,D delegate, int cacheSize){
+    public static <D extends DataStore<?>> D create(Class<? super D> c,D delegate, int cacheSize){
         try {
             c.getMethod("get", GET_PARAMETERS).getReturnType();
         } catch (Exception e) {

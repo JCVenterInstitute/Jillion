@@ -35,7 +35,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> implements AceContigDataStore{
 
 	private final File aceFile;
-	private Integer numberOfContigs = null;
+	private Long numberOfContigs = null;
 	private final DataStoreFilter contigIdFilter;
 	
 	/**
@@ -165,10 +165,10 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 
 	private class SizeVisitor implements AceFileVisitor{
 
-		private int size=0;
+		private long size=0;
 		
 		
-		public int getSize() {
+		public long getSize() {
 			return size;
 		}
 
