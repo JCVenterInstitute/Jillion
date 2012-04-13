@@ -71,18 +71,18 @@ public class TestCachedTraceArchiveMultiTrace {
     
     @Test
     public void numberOfTraces() throws DataStoreException{
-        int numTraces =100;
-        expect(mockTraceArchive.size()).andReturn(numTraces);
+        long numTraces =100;
+        expect(mockTraceArchive.getNumberOfRecords()).andReturn(numTraces);
         replay(mockTraceArchive);
-        assertEquals(numTraces, sut.size());
+        assertEquals(numTraces, sut.getNumberOfRecords());
         verify(mockTraceArchive);
     }
     @Test
     public void numberOfTracesThrowsTraceDecoderException() throws DataStoreException{
-        expect(mockTraceArchive.size()).andThrow(expectedDataStoreException);
+        expect(mockTraceArchive.getNumberOfRecords()).andThrow(expectedDataStoreException);
         replay(mockTraceArchive);
         try{
-            sut.size();
+            sut.getNumberOfRecords();
             fail("should throw expectedTraceDecoderException");
         }catch( DataStoreException e){
             assertEquals(expectedDataStoreException, e);

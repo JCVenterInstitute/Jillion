@@ -1,6 +1,5 @@
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,7 +8,6 @@ import java.io.InputStream;
 
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
@@ -29,9 +27,8 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * While this class will work on any valid sff file, certain
  * kinds of sff files can create an {@link IndexedSffFileDataStore}
  * faster if they already contain an index.  454 sff files contain
- * a index at the end of the file that contains the offsets for each record.
- * While this index format has not been formally specified, it has been 
- * reverse engineered.  If the given sff file has such an index, then
+ * an index at the end of the file that contains the offsets for each record.
+ * If the given sff file has such an index, then
  * this class will quickly decode that index and not have to parse
  * any read data until {@link FlowgramDataStore#get(String)} is called.
  * If the sff file does not have such an index already (ex: any Ion Torrent or
@@ -42,7 +39,8 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * {@link IndexedSffFileDataStore} is limited to only {@link Integer#MAX_VALUE}
  * of reads.  Attempting to create an instance of
  * {@link IndexedSffFileDataStore} using an sff file with more than that many reads will
- * cause an {@link IllegalArgumentException} to be thrown {@link #create(File)}
+ * cause an {@link IllegalArgumentException} to be thrown. See {@link #canCreateIndexedDataStore(File)} 
+ * {@link #create(File)}
  * and {@link #createVisitorBuilder(File)} for more information about when
  * the exception will be thrown.
  * @see #canCreateIndexedDataStore(File)
@@ -66,28 +64,37 @@ public final class IndexedSffFileDataStore{
 		SffFileParser.parseSFF(sffFile, numReadChecker);
 		return numReadChecker.numberOfReads <=Integer.MAX_VALUE;
 	}
+	
+	private static void verifyCanCreateIndex(File sffFile) throws IOException{
+		if(!canCreateIndexedDataStore(sffFile)){
+			throw new IllegalArgumentException("too many reads in sff file, can not create index");
+		}
+	}
 	/**
      * Create a new empty {@link SffFileVisitorDataStoreBuilder}
      * that will create an {@link IndexedSffFileDataStore} 
      * once the builder has been built.  Only the 
-     * given sff file should be used with to populate/index
-     * the returned builder.  Please make sure that the given
-     * sffFile can be used to create an indexedSffFileDataStore.
-     * A valid {@link DataStore} can not be created if there are 
-     * more than {@link Integer#MAX_VALUE} reads.  If such
-     * a file is given to the builder when the file is visited
-     * downstream, it will throw an {@link IllegalArgumentException}.
+     * given sff file should be used to populate/index
+     * the returned builder.  This method will
+     * quickly parse the sff file header
+     * to ensure that there are less than {@link Integer#MAX_VALUE} reads
+     * and will throw an {@link IllegalArgumentException}
+     * if there are too many.
      * 
      * @param sffFile the sffFile to parse.  NOTE: 
      * the file isn't actually parsed in this method.  The builder
      * will only store a reference to this file for future
      * use when it needs to re-parse after indexing has occurred.
      * @return a new SffFileVisitorDataStoreBuilder, never null.
-	 * @throws FileNotFoundException if sffFile does not exist.
-     * @throws NullPointerException if sffFile is null.
+	 * @throws IOException if there is a problem reading the sff header 
+	 * to get the number of reads in the file.
+	 * @throws NullPointerException if sffFile is null.
+	 * @throws IllegalArgumentException if the given sffFile
+	 * has more than {@link Integer#MAX_VALUE} reads.
      * @see #canCreateIndexedDataStore(File)
      */
-	public static SffFileVisitorDataStoreBuilder createVisitorBuilder(File sffFile) throws FileNotFoundException{
+	public static SffFileVisitorDataStoreBuilder createVisitorBuilder(File sffFile) throws IOException{
+		verifyCanCreateIndex(sffFile);
 		return new FullPassIndexedSffVisitorBuilder(sffFile);
 	}
 	/**
@@ -289,7 +296,7 @@ public final class IndexedSffFileDataStore{
 		}
 	
 		@Override
-		public int size() throws DataStoreException {
+		public long getNumberOfRecords() throws DataStoreException {
 			return fileRanges.size();
 		}
 	

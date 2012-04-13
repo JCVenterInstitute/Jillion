@@ -115,9 +115,9 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
     }
 
     @Override
-    public synchronized int size() throws DataStoreException {
+    public synchronized long getNumberOfRecords() throws DataStoreException {
         checkIsInitialized();
-        return delegate.size();
+        return delegate.getNumberOfRecords();
     }
 
     @Override

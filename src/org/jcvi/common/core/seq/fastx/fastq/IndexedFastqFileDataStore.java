@@ -103,7 +103,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
         }
     }
     @Override
-    public int size() throws DataStoreException {
+    public long getNumberOfRecords() throws DataStoreException {
         return indexFileRange.size();
     }
     @Override

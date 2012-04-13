@@ -77,8 +77,8 @@ public class CachedTraceArchiveDataStore implements TraceArchiveDataStore<TraceA
     }
 
     @Override
-    public int size() throws DataStoreException {
-        return traceArchiveDataStore.size();
+    public long getNumberOfRecords() throws DataStoreException {
+        return traceArchiveDataStore.getNumberOfRecords();
     }
 
     @Override

@@ -80,8 +80,8 @@ public class TestFastQ2FastaEnd2End {
          NucleotideSequenceFastaDataStore filteredSeqDataStore = DefaultNucleotideSequenceFastaFileDataStore.create(seqOutputFile);
          QualitySequenceFastaDataStore filteredQualityDataStore = DefaultQualityFastaFileDataStore.create(qualOutputFile);
          
-         assertEquals(2, filteredSeqDataStore.size());
-         assertEquals(2, filteredQualityDataStore.size());
+         assertEquals(2, filteredSeqDataStore.getNumberOfRecords());
+         assertEquals(2, filteredQualityDataStore.getNumberOfRecords());
          assertEquals(originalDataStore.get(id).getNucleotides().asList(),filteredSeqDataStore.get(id).getSequence().asList());
          assertEquals(originalDataStore.get(id).getQualities().asList(),filteredQualityDataStore.get(id).getSequence().asList());
          
@@ -101,8 +101,8 @@ public class TestFastQ2FastaEnd2End {
         NucleotideSequenceFastaDataStore filteredSeqDataStore = DefaultNucleotideSequenceFastaFileDataStore.create(seqOutputFile);
         QualitySequenceFastaDataStore filteredQualityDataStore = DefaultQualityFastaFileDataStore.create(qualOutputFile);
         
-        assertEquals(2, filteredSeqDataStore.size());
-        assertEquals(2, filteredQualityDataStore.size());
+        assertEquals(2, filteredSeqDataStore.getNumberOfRecords());
+        assertEquals(2, filteredQualityDataStore.getNumberOfRecords());
         assertEquals(originalDataStore.get(id).getNucleotides().asList(),filteredSeqDataStore.get(id).getSequence().asList());
         assertEquals(originalDataStore.get(id).getQualities().asList(),filteredQualityDataStore.get(id).getSequence().asList());
         
@@ -122,8 +122,8 @@ public class TestFastQ2FastaEnd2End {
          NucleotideSequenceFastaDataStore filteredSeqDataStore = DefaultNucleotideSequenceFastaFileDataStore.create(seqOutputFile);
          QualitySequenceFastaDataStore filteredQualityDataStore = DefaultQualityFastaFileDataStore.create(qualOutputFile);
          
-         assertEquals(1, filteredSeqDataStore.size());
-         assertEquals(1, filteredQualityDataStore.size());
+         assertEquals(1, filteredSeqDataStore.getNumberOfRecords());
+         assertEquals(1, filteredQualityDataStore.getNumberOfRecords());
          assertFalse(filteredSeqDataStore.contains(otherId));
          assertFalse(filteredQualityDataStore.contains(otherId));
          assertEquals(originalDataStore.get(id).getNucleotides().asList(),filteredSeqDataStore.get(id).getSequence().asList());
@@ -142,8 +142,8 @@ public class TestFastQ2FastaEnd2End {
          NucleotideSequenceFastaDataStore filteredSeqDataStore = DefaultNucleotideSequenceFastaFileDataStore.create(seqOutputFile);
          QualitySequenceFastaDataStore filteredQualityDataStore = DefaultQualityFastaFileDataStore.create(qualOutputFile);
         
-         assertEquals(1, filteredSeqDataStore.size());
-         assertEquals(1, filteredQualityDataStore.size());
+         assertEquals(1, filteredSeqDataStore.getNumberOfRecords());
+         assertEquals(1, filteredQualityDataStore.getNumberOfRecords());
          assertFalse(filteredSeqDataStore.contains(id));
          assertFalse(filteredQualityDataStore.contains(id));
          

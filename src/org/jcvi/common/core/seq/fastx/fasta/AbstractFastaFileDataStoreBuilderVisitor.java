@@ -46,7 +46,7 @@ public abstract class AbstractFastaFileDataStoreBuilderVisitor<S extends Symbol,
 	protected abstract F createFastaRecord(String id, String comment, String entireBody);
 
 	@Override
-	public FastaDataStoreBuilder<S, T, F, D> addFastaRecord(F fastaRecord) {
+	public <E extends F> FastaDataStoreBuilder<S, T, F, D>  addFastaRecord(E fastaRecord) {
 		if(filter.accept(fastaRecord.getId())){
 			builder.addFastaRecord(fastaRecord);
 		}

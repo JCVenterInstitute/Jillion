@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
 
 import org.jcvi.common.core.datastore.AbstractDataStore;
@@ -105,8 +104,9 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
     public synchronized Flowgram get(String id) throws DataStoreException {
         super.get(id);        
         try{
-        	FlowgramDataStore datastore= DefaultSffFileDataStore.createDataStoreOfSingleRead(sffFile,id);
-            return datastore.get(id);
+        	SingleFlowgramVisitor singleVisitor = new SingleFlowgramVisitor(id);
+        	SffFileParser.parseSFF(sffFile, singleVisitor);
+        	return singleVisitor.getFlowgram();
         } catch (IOException e) {
             throw new DataStoreException("could not read sffFile ",e);
         }
@@ -121,24 +121,18 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
     }
 
     @Override
-    public synchronized int size() throws DataStoreException {
-        super.size();
+    public synchronized long getNumberOfRecords() throws DataStoreException {
+        super.getNumberOfRecords();
         if(this.size ==null){
-            this.size = 0;
-            SffSize sffSize = new SffSize();
-            InputStream in = null;
-            try{
-                in =new FileInputStream(sffFile);
-                SffFileParser.parseSFF(in , sffSize);
-               this.size = sffSize.getSize();
-            } catch (FileNotFoundException e) {
-                throw new DataStoreException("could not read sffFile ",e);
-            } catch (SffDecoderException e) {
-                throw new DataStoreException("could not parse sffFile ",e);
-            }
-            finally{
-                IOUtil.closeAndIgnoreErrors(in);
-            }
+        	DataInputStream in = null;
+        	try{
+        		in = new DataInputStream(new FileInputStream(sffFile));
+        		size =(int)DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(in).getNumberOfReads();
+        	}catch(Exception e){
+        		 throw new DataStoreException("could not parse sffFile ",e);
+        	}finally{
+        		IOUtil.closeAndIgnoreErrors(in);
+        	}
         }
         return size;
     }
@@ -196,17 +190,24 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
         }
         
     }
-    private static final class SffSize implements SffFileVisitor{
-        private int size=0;
+    
+    
+    private static final class SingleFlowgramVisitor implements SffFileVisitor{
+        private final String idToFind;
+        private SffReadHeader readHeader=null;
+        private Flowgram flowgram=null;
+        private SingleFlowgramVisitor(String idToFind) {
+			this.idToFind = idToFind;
+		}
 
-        @Override
+		public Flowgram getFlowgram() {
+			return flowgram;
+		}
+
+		@Override
         public ReadDataReturnCode visitReadData(SffReadData readData) {
-            size++;
-            return ReadDataReturnCode.PARSE_NEXT_READ;
-        }
-
-        public int getSize() {
-            return size;
+            flowgram = SffFlowgram.create(readHeader, readData);
+            return ReadDataReturnCode.STOP;
         }
         
         @Override
@@ -216,7 +217,11 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
 
         @Override
         public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
-            return ReadHeaderReturnCode.PARSE_READ_DATA;
+        	if(readHeader.getId().equals(idToFind)){
+        		this.readHeader = readHeader;
+        		return ReadHeaderReturnCode.PARSE_READ_DATA;
+        	}
+        	return ReadHeaderReturnCode.SKIP_CURRENT_READ;
         }
 
         @Override

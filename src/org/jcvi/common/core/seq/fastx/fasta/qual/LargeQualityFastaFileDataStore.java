@@ -116,7 +116,7 @@ public class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileData
     }
 
     @Override
-    public synchronized int size() throws DataStoreException {
+    public synchronized long getNumberOfRecords() throws DataStoreException {
         checkNotYetClosed();
             if(size ==null){
             	

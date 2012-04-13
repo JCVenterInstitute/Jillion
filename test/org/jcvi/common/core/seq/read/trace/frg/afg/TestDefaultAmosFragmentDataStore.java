@@ -84,7 +84,7 @@ Range.create(17,678), Range.create(0,678), Range.create(17,678));
     
     @Test
     public void size() throws DataStoreException{
-        assertEquals(48, sut.size());
+        assertEquals(48, sut.getNumberOfRecords());
     }
     @Test
     public void lastRecord() throws DataStoreException{

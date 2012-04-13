@@ -24,6 +24,6 @@ public interface FastaDataStoreBuilder<S extends Symbol, T extends Sequence<S>, 
 	 * @return this.
 	 * @throws NullPointerException if fastaRecord is null.
 	 */
-	FastaDataStoreBuilder<S,T,F,D> addFastaRecord(F fastaRecord);
+	<E extends F> FastaDataStoreBuilder<S,T,F,D> addFastaRecord(E fastaRecord);
 	
 }

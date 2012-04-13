@@ -99,7 +99,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, C
         return mappedRanges.getIds();
     }
     @Override
-    public int size() {
+    public long getNumberOfRecords() {
         return mappedRanges.size();
     }
     

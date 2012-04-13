@@ -108,9 +108,9 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
     }
 
     @Override
-    public synchronized int size() throws DataStoreException {
-        super.size();
-        return seqDataStore.size();
+    public synchronized long getNumberOfRecords() throws DataStoreException {
+        super.getNumberOfRecords();
+        return seqDataStore.getNumberOfRecords();
     }
 
 	@Override

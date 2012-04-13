@@ -128,8 +128,8 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
     * {@inheritDoc}
     */
     @Override
-    public int size() throws DataStoreException {
-        return delegate.size();
+    public long getNumberOfRecords() throws DataStoreException {
+        return delegate.getNumberOfRecords();
     }
 
     /**

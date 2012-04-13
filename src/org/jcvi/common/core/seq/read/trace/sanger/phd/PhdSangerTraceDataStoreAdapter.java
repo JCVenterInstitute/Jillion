@@ -68,8 +68,8 @@ public class PhdSangerTraceDataStoreAdapter<S extends SangerTrace> implements Ph
         return delegate.getIds();
     }
     @Override
-    public int size() throws DataStoreException {
-        return delegate.size();
+    public long getNumberOfRecords() throws DataStoreException {
+        return delegate.getNumberOfRecords();
     }
     @Override
     public void close() throws IOException {

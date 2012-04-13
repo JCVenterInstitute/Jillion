@@ -132,7 +132,7 @@ public final class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRe
         * {@inheritDoc}
         */
         @Override
-        public int size() throws DataStoreException {
+        public long getNumberOfRecords() throws DataStoreException {
             // TODO Auto-generated method stub
             return 0;
         }

@@ -120,7 +120,7 @@ public class DefaultFragmentDataStore extends AbstractFragmentDataStore{
     }
 
     @Override
-    public int size() throws DataStoreException {
+    public long getNumberOfRecords() throws DataStoreException {
         throwErrorIfClosed();
         return fragments.size();
     }

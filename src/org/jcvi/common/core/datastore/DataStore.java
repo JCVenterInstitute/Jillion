@@ -66,7 +66,7 @@ public interface DataStore<T> extends Closeable{
      * @throws DataStoreException if there is a problem fetching the
      * data from this Datastore.
      */
-    int size() throws DataStoreException;
+    long getNumberOfRecords() throws DataStoreException;
     /**
      * Has this datastore been closed by the {@link #close()}
      * method?

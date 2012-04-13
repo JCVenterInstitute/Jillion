@@ -70,7 +70,7 @@ public class TestFastQFile {
                 "-o", outputFile.getAbsolutePath(),
                 fastQFile.getAbsolutePath()});
         FastqDataStore filteredDataStore = DefaultFastqFileDataStore.create(outputFile, FastqQualityCodec.ILLUMINA);
-        assertEquals(1, filteredDataStore.size());
+        assertEquals(1, filteredDataStore.getNumberOfRecords());
         assertFalse(filteredDataStore.contains(otherId));
         assertEquals(originalDataStore.get(id),filteredDataStore.get(id));
     }
@@ -83,7 +83,7 @@ public class TestFastQFile {
                 fastQFile.getAbsolutePath()});
         
         FastqDataStore filteredDataStore = DefaultFastqFileDataStore.create(outputFile, FastqQualityCodec.ILLUMINA);
-        assertEquals(1, filteredDataStore.size());
+        assertEquals(1, filteredDataStore.getNumberOfRecords());
         assertFalse(filteredDataStore.contains(id));
         
         assertEquals(originalDataStore.get(otherId),filteredDataStore.get(otherId));

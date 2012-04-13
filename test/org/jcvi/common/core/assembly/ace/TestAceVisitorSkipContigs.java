@@ -51,9 +51,9 @@ public class TestAceVisitorSkipContigs{
         File aceFile = resources.getFile("files/fluSample.ace");
         DataStoreFilter filter = new DefaultExcludeDataStoreFilter(Collections.singleton(contigIdToSkip));
         AceContigDataStore datastore = DefaultAceFileDataStore.create(aceFile, filter);
-        assertEquals(7, datastore.size());
+        assertEquals(7, datastore.getNumberOfRecords());
         DefaultContigFileDataStore contigDataStore = new DefaultContigFileDataStore(resources.getFile("files/fluSample.contig"));
-        assertEquals(8,contigDataStore.size());
+        assertEquals(8,contigDataStore.getNumberOfRecords());
         CloseableIterator<AceContig> iter = datastore.iterator();
         try{
 	    	 while(iter.hasNext()){

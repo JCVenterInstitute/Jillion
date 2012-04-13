@@ -145,7 +145,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     }
 
     @Override
-    public int size() throws DataStoreException {
+    public long getNumberOfRecords() throws DataStoreException {
         throwErrorIfClosed();
         return fragmentInfoIndexFileRange.size();
     }

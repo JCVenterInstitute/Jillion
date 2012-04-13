@@ -107,7 +107,7 @@ public final class ZipFileDataStore implements ZipDataStore{
     }
 
     @Override
-    public int size() throws DataStoreException {
+    public long getNumberOfRecords() throws DataStoreException {
         return zipfile.size();
     }
 

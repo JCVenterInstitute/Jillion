@@ -51,8 +51,8 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
         return dataStore.get(id);
     }
     @Override
-    protected int getNumberOfFlowgrams() throws TraceDecoderException, DataStoreException {
-        return dataStore.size();
+    protected long getNumberOfFlowgrams() throws TraceDecoderException, DataStoreException {
+        return dataStore.getNumberOfRecords();
     }
     
     @Test

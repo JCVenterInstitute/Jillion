@@ -23,6 +23,9 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.CommonHeaderReturnCode;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.ReadDataReturnCode;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.ReadHeaderReturnCode;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
@@ -54,15 +57,32 @@ public final class SffFileIterator extends AbstractBlockingCloseableIterator<Flo
 	@Override
 	protected void backgroundThreadRunMethod() {
 		 try {
-         	SffFileVisitor visitor = new AbstractSffFlowgramVisitor() {
-					
+         	SffFileVisitor visitor = new SffFileVisitor() {
+         		private SffReadHeader currentReadHeader;
          		@Override
-         		protected ReadDataReturnCode visitFlowgram(Flowgram flowgram) {
-         			SffFileIterator.this.blockingPut(flowgram);
-         			return SffFileIterator.this.isClosed()? ReadDataReturnCode.STOP : ReadDataReturnCode.PARSE_NEXT_READ;
+         		public void visitFile() {}
+
+         		
+         		@Override
+         		public void visitEndOfFile() {}
+
+         		@Override
+         		public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
+         			return CommonHeaderReturnCode.PARSE_READS;
          		}
 
-				};
+         		@Override
+         		public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
+         			this.currentReadHeader = readHeader;
+         			return ReadHeaderReturnCode.PARSE_READ_DATA;
+         		}
+
+         		@Override
+         		public ReadDataReturnCode visitReadData(SffReadData readData) {
+         			SffFileIterator.this.blockingPut(SffFlowgram.create(currentReadHeader, readData));
+         			return ReadDataReturnCode.PARSE_NEXT_READ;
+         		}
+         	};
              SffFileParser.parseSFF(sffFile, visitor);
          } catch (IOException e) {
              //should never happen

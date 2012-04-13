@@ -53,7 +53,7 @@ public abstract class  TestReadExampleSffFile extends AbstractTestExampleSffFile
         assertEquals(FF585OX02GMGGN, getFlowgram("FF585OX02GMGGN"));
         assertEquals(FF585OX02FHO5X,getFlowgram("FF585OX02FHO5X"));
     }
-    protected abstract int getNumberOfFlowgrams() throws Exception;
+    protected abstract long getNumberOfFlowgrams() throws Exception;
    protected abstract Flowgram getFlowgram(String id) throws Exception;
    protected abstract void parseSff(File f) throws Exception;
 }

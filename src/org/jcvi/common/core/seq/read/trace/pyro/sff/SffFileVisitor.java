@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import org.jcvi.common.core.io.FileVisitor;
 /**
  * {@code SffFileVisitor} is a {@link FileVisitor}
- * implementation for 454 .sff binary encoded files.
+ * implementation for {@literal .sff} binary encoded files.
  * @author dkatzel
  * @see SffFileParser
  *
@@ -103,9 +103,9 @@ public interface SffFileVisitor extends FileVisitor {
 	}
     /**
      * Visit the header information that is common to 
-     * all reads in this sff file.  The Boolean
+     * all reads in this sff file.  The
      * return value allows visitors to tell the parser
-     * to continue parsing the sff data or to halt parsing
+     * to continue parsing the sff data or to stop parsing
      * entirely.
      * @param commonHeader the {@link SffCommonHeader} of this sff
      * file being parsed.
@@ -114,10 +114,11 @@ public interface SffFileVisitor extends FileVisitor {
      */
 	CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader);
     /**
-     * Visit the header for the current read.  The Boolean
+     * Visit the header for the current read.  The 
      * return value allows visitors to tell the parser
      * to visit this read's data or to skip it and move
-     * onto the next read.
+     * onto the next read to stop parsing
+     * entirely.
      * @param readHeader the parsed header for the current read
      * being parsed.
      * @return an instance of {@link visitReadHeaderReturnCode};
@@ -125,7 +126,7 @@ public interface SffFileVisitor extends FileVisitor {
      */
 	ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader);
     /**
-     * Visit the read data for the current read.  The Boolean
+     * Visit the read data for the current read.  The
      * return value allows visitors to tell the parser
      * to continue parsing the sff data or to halt parsing
      * entirely.  (this is useful if a visitor has visited all the 

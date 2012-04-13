@@ -62,7 +62,7 @@ public final class DefaultFastqDataStore implements FastqDataStore {
     }
 
     @Override
-    public int size() throws DataStoreException{
+    public long getNumberOfRecords() throws DataStoreException{
         checkNotClosed();
         return map.size();
     }

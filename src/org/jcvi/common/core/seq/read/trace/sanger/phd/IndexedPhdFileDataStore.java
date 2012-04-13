@@ -338,7 +338,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
     }
 
     @Override
-    public int size() throws DataStoreException {
+    public long getNumberOfRecords() throws DataStoreException {
         return recordLocations.size();
     }
 

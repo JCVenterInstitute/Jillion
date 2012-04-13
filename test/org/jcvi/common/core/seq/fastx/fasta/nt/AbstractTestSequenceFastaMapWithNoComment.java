@@ -37,7 +37,7 @@ public abstract class AbstractTestSequenceFastaMapWithNoComment extends Abstract
     public void parseStream() throws IOException, DataStoreException{
         DataStore<NucleotideSequenceFastaRecord> sut = buildMap(
         		RESOURCES.getFile(FASTA_FILE_PATH));
-        assertEquals(1, sut.size());
+        assertEquals(1, sut.getNumberOfRecords());
         assertEquals(hrv_61, sut.get("hrv-61"));
     }
 

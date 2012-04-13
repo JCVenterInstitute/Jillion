@@ -196,7 +196,7 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public int size() throws DataStoreException {
+    public long getNumberOfRecords() throws DataStoreException {
         return fileRange.size();
     }
 

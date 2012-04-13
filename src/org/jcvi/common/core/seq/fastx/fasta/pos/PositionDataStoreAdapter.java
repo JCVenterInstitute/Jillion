@@ -70,8 +70,8 @@ public final class PositionDataStoreAdapter implements PositionDataStore{
     * {@inheritDoc}
     */
     @Override
-    public int size() throws DataStoreException {
-        return datastore.size();
+    public long getNumberOfRecords() throws DataStoreException {
+        return datastore.getNumberOfRecords();
     }
 
     /**

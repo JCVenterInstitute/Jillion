@@ -37,8 +37,8 @@ public class TestLargeAceFileDataStore extends TestAbstractAceParserMatchesAce2C
 	public void size() throws IOException, DataStoreException{
 		AceContigDataStore dataStore= LargeAceFileDataStore.create(getAceFile());
 		
-		int size = dataStore.size();
-		int expected = 0;
+		long size = dataStore.getNumberOfRecords();
+		long expected = 0;
 		CloseableIterator<AceContig> iter = dataStore.iterator();
 		try{
 			while(iter.hasNext()){

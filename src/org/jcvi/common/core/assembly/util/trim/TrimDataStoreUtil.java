@@ -51,7 +51,7 @@ public final class TrimDataStoreUtil {
         }
         
         @Override
-        public int size() throws DataStoreException {
+        public long getNumberOfRecords() throws DataStoreException {
             return 0;
         }
         

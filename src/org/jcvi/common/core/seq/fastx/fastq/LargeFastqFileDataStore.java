@@ -133,7 +133,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     }
 
     @Override
-    public synchronized int size() throws DataStoreException {
+    public synchronized long getNumberOfRecords() throws DataStoreException {
         throwExceptionIfClosed();
         if(size ==null){
             int count=0;

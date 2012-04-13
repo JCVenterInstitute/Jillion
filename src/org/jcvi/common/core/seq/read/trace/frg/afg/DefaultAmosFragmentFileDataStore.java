@@ -76,8 +76,8 @@ public class DefaultAmosFragmentFileDataStore extends AbstractDataStore<AmosFrag
   
 
     @Override
-    public synchronized int size() throws DataStoreException {
-        super.size();
+    public synchronized long getNumberOfRecords() throws DataStoreException {
+        super.getNumberOfRecords();
         return map.size();
     }
 

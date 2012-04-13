@@ -38,8 +38,8 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 		this.fastaFile = fastaFile;
 	}
 	@Override
-	public FastaFileDataStoreBuilderVisitor<S,T,F,D> addFastaRecord(
-			F fastaRecord) {
+	public <E extends F> FastaFileDataStoreBuilderVisitor<S,T,F,D> addFastaRecord(
+			E fastaRecord) {
 		throw new UnsupportedOperationException("can not add fastas manually to visitor; only through visit methods");
 	}
 	/**

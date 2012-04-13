@@ -23,9 +23,9 @@ import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 
 /**
  * {@code AbstractSffFlowgramVisitor} is an {@link SffFileVisitor}
- * implementation that builds {@link SffFlowgram} instances
+ * implementation that builds {@link Flowgram} instances
  * as the various SFF data blocks are being parsed.  This
- * simplifies visiting {@link SffFlowgram}s if all the client
+ * simplifies visiting sff encoded files if all the client
  * cares about are the final constructed {@link Flowgram}s.
  * @author dkatzel
  *

@@ -119,18 +119,18 @@ public class TestAbstractFolderTraceArchiveMultiTrace {
     
     @Test
     public void getNumberOfTraces() throws DataStoreException{
-        int size = 1234;
-        expect(mockTraceArchiveInfo.size()).andReturn(size);
+        long size = 1234;
+        expect(mockTraceArchiveInfo.getNumberOfRecords()).andReturn(size);
         replay(mockTraceArchiveInfo);
-        assertEquals(size, sut.size());
+        assertEquals(size, sut.getNumberOfRecords());
         verify(mockTraceArchiveInfo);
     }
     @Test
     public void exceptionThrownOnGetNumberOfTraces() throws DataStoreException{
-        expect(mockTraceArchiveInfo.size()).andThrow(expectedDataStoreException);
+        expect(mockTraceArchiveInfo.getNumberOfRecords()).andThrow(expectedDataStoreException);
         replay(mockTraceArchiveInfo);
         try {
-            sut.size();
+            sut.getNumberOfRecords();
             fail("should throw TraceDecoderException on error");
         } catch (DataStoreException e) {
             assertEquals(expectedDataStoreException.getMessage(), e.getMessage());

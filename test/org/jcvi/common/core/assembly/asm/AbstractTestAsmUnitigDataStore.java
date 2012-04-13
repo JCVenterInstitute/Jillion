@@ -27,7 +27,7 @@ public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmData
 		FragmentDataStore frgDataStore = IndexedFragmentDataStore.create(frgFile);
 		UnitigDataStore datastore = createDataStore(asmFile, frgDataStore);
 	
-		assertEquals(1, datastore.size());
+		assertEquals(1, datastore.getNumberOfRecords());
 		AsmUnitig unitig = datastore.get("7180000000000");
 		NucleotideSequence consensus = unitig.getConsensus();
 		assertEquals(1016, consensus.getLength());

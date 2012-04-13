@@ -68,8 +68,8 @@ public class DefaultTigrAssemblerFileContigDataStore extends AbstractTigrAssembl
         return CloseableIteratorAdapter.adapt(contigs.values().iterator());
     }
     @Override
-    public synchronized int size() throws DataStoreException {
-        super.size();
+    public synchronized long getNumberOfRecords() throws DataStoreException {
+        super.getNumberOfRecords();
         return contigs.size();
     }
 

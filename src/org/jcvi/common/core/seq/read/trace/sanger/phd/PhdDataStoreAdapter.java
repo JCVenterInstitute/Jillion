@@ -59,8 +59,8 @@ public class PhdDataStoreAdapter implements PhdDataStore{
 
 
 	@Override
-	public int size() throws DataStoreException {
-		return delegate.size();
+	public long getNumberOfRecords() throws DataStoreException {
+		return delegate.getNumberOfRecords();
 	}
 
 

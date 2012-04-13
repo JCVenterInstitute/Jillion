@@ -68,8 +68,8 @@ public class DefaultPositionFastaFileDataStore{
 	AbstractFastaFileDataStoreBuilderVisitor<ShortSymbol, Sequence<ShortSymbol>, PositionSequenceFastaRecord<Sequence<ShortSymbol>>, PositionFastaDataStore> implements PositionFastaDataStoreBuilderVisitor{
 	
 		@Override
-		public PositionFastaDataStoreBuilderVisitorImpl addFastaRecord(
-				PositionSequenceFastaRecord<Sequence<ShortSymbol>> fastaRecord) {
+		public <F extends PositionSequenceFastaRecord<Sequence<ShortSymbol>>> PositionFastaDataStoreBuilderVisitorImpl addFastaRecord(
+				F fastaRecord) {
 			super.addFastaRecord(fastaRecord);
 			return this;
 		}
