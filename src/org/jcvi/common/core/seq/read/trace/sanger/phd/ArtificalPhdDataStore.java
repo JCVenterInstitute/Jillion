@@ -102,9 +102,9 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
     }
 
     @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
-        super.getIds();
-        return seqDataStore.getIds();
+    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+        super.idIterator();
+        return seqDataStore.idIterator();
     }
 
     @Override

@@ -67,7 +67,7 @@ public final class IndexedPositionFastaFileDataStore implements PositionFastaDat
 		this.fastaFile = fastaFile;
 	}
 	@Override
-	public CloseableIterator<String> getIds() throws DataStoreException {
+	public CloseableIterator<String> idIterator() throws DataStoreException {
 		return index.getIds();
 	}
 

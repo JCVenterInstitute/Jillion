@@ -130,7 +130,7 @@ public class Ace2Fasta {
             //for those the contigs, any contig without those comments
             //will not exist in the map
             final Map<String, String> contigIdMap = getContigIdMap(aceAssembly.getAceTags());
-            Iterator<String> ids = contigDataStore.getIds();
+            Iterator<String> ids = contigDataStore.idIterator();
             while(ids.hasNext()){
             	String contigId = ids.next();
             	if(!filter.accept(contigId)){

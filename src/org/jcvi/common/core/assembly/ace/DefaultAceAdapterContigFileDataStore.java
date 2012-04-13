@@ -73,8 +73,8 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     }
 
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return dataStore.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return dataStore.idIterator();
     }
 
     @Override
@@ -89,7 +89,7 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     }
 
     @Override
-    public CloseableIterator<AceContig> iterator() {
+    public CloseableIterator<AceContig> iterator() throws DataStoreException {
         return dataStore.iterator();
     }
     /**

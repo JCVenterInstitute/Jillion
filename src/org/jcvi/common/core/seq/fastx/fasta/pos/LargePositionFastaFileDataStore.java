@@ -108,7 +108,7 @@ public final class LargePositionFastaFileDataStore extends AbstractPositionFasta
 	}
 	
 	@Override
-	public synchronized CloseableIterator<String> getIds() throws DataStoreException {
+	public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
 	    checkNotYetClosed();
 	    return  LargeFastaIdIterator.createNewIteratorFor(fastaFile);
 	}
@@ -117,7 +117,7 @@ public final class LargePositionFastaFileDataStore extends AbstractPositionFasta
 	public synchronized long getNumberOfRecords() throws DataStoreException {
 	    checkNotYetClosed();
 	    if(size ==null){
-	    	CloseableIterator<String> ids = getIds();
+	    	CloseableIterator<String> ids = idIterator();
 	    	long count=0;
 	    	while(ids.hasNext()){
 	    		ids.next();

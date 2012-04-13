@@ -89,7 +89,7 @@ public class PhdDirQualityDataStore implements PhdDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> idIterator() throws DataStoreException {
         // TODO Auto-generated method stub
         return null;
     }

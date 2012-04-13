@@ -165,7 +165,7 @@ public class GridFindAbacusErrorsInAce {
             File aceFile = new File(commandLine.getOptionValue("a"));
             final DataStoreFilter filter = getDataStoreFilter(commandLine);
             AceContigDataStore datastore = IndexedAceFileDataStore.create(aceFile);
-            Iterator<String> contigIds = datastore.getIds();
+            Iterator<String> contigIds = datastore.idIterator();
             Set<File> files = new HashSet<File>();
             
             while(contigIds.hasNext()){

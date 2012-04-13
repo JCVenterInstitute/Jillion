@@ -119,7 +119,7 @@ public class TestAceFileWriter {
 		}
 	}
 
-	private int countNumberOfTotalReads(AceContigDataStore aceDataStore) {
+	private int countNumberOfTotalReads(AceContigDataStore aceDataStore) throws DataStoreException {
 		int numberOfReads =0;
 		CloseableIterator<AceContig> iter = aceDataStore.iterator();
 		try{

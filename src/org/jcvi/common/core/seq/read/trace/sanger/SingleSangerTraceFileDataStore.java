@@ -68,8 +68,8 @@ public class SingleSangerTraceFileDataStore extends AbstractDataStore<SangerTrac
     * {@inheritDoc}
     */
     @Override
-    public synchronized  CloseableIterator<String> getIds() throws DataStoreException {
-        super.getIds();
+    public synchronized  CloseableIterator<String> idIterator() throws DataStoreException {
+        super.idIterator();
         return CloseableIteratorAdapter.adapt(Collections.singleton(id).iterator());
     }
 

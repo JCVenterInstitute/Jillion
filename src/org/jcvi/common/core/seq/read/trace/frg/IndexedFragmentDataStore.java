@@ -139,7 +139,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     
 
     @Override
-    public CloseableIterator<String> getIds() {
+    public CloseableIterator<String> idIterator() {
         throwErrorIfClosed();
         return fragmentInfoIndexFileRange.getIds();
     }

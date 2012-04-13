@@ -145,8 +145,8 @@ public final class InMemoryZipDataStore extends AbstractDataStore<InputStream> i
      * {@inheritDoc}
      */
     @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
-        super.getIds();
+    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+        super.idIterator();
         return CloseableIteratorAdapter.adapt(contents.keySet().iterator());
     }
     /**

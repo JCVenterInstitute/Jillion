@@ -136,7 +136,7 @@ public abstract class AbstractTestActualJcviTraceFileServer {
     private void compareJars(File expectedJar, InputStream inputStreamOfActualJar) throws ZipException, IOException, DataStoreException{
         ZipDataStore expectedDataStore = ZipFileDataStore.create(expectedJar);
         ZipDataStore actualDataStore = InMemoryZipDataStore.createInMemoryZipDataStoreFrom(inputStreamOfActualJar);
-        Iterator<String> expectedIds =expectedDataStore.getIds();
+        Iterator<String> expectedIds =expectedDataStore.idIterator();
         while(expectedIds.hasNext()){
             String id= expectedIds.next();
             //ignore manifests because the files in the manifest may 

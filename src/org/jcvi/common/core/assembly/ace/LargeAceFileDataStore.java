@@ -55,7 +55,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 	 * with only some of the contigs from the given ace file.
 	 * Any contigs excluded by the given {@link DataStoreFilter}
 	 * will be completely ignored during calls to {@link #getNumberOfRecords()}
-	 * {@link #iterator()} and {@link #getIds()}, return
+	 * {@link #iterator()} and {@link #idIterator()}, return
 	 * {@code false} for {@link #contains(String)}
 	 * and return null for {@link #get(String)}
 	 * @param aceFile the ace file to create an {@link AceContigDataStore}
@@ -89,7 +89,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 		this.contigIdFilter = contigIdFilter;
 	}
 	@Override
-	public synchronized CloseableIterator<String> getIds() throws DataStoreException {
+	public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
 		throwExceptionIfClosed();
 		IdVisitor ids = new IdVisitor();
 		ids.start();
@@ -119,7 +119,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 			throw new DataStoreException(String.format("contig id %s not allowed by filter", id));
 		}
 		boolean found = false;
-		CloseableIterator<String> ids = getIds();
+		CloseableIterator<String> ids = idIterator();
 		try{
 			while(ids.hasNext()){
 				String nextId = ids.next();

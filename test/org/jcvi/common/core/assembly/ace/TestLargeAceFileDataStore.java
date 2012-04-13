@@ -13,12 +13,12 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestLargeAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
 
-	public TestLargeAceFileDataStore() throws IOException {
+	public TestLargeAceFileDataStore() throws IOException, DataStoreException {
 		super();
 	}
 
 	@Override
-	protected List<AceContig> getContigList(File aceFile) throws IOException {
+	protected List<AceContig> getContigList(File aceFile) throws IOException, DataStoreException {
 		AceContigDataStore dataStore= LargeAceFileDataStore.create(aceFile);
 		CloseableIterator<AceContig> iter = dataStore.iterator();
 		List<AceContig> contigs = new ArrayList<AceContig>();

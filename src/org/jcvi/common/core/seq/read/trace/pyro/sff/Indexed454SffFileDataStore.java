@@ -78,12 +78,12 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 		this.commonHeader = visitor.commonHeader;
 	}
 	@Override
-	public CloseableIterator<String> getIds() throws DataStoreException {
+	public CloseableIterator<String> idIterator() throws DataStoreException {
 		throwErrorIfClosed();
 		try {
 			//use large sffFileDataStore 
 			//to parse ids in order in file
-			return LargeSffFileDataStore.create(sffFile).getIds();
+			return LargeSffFileDataStore.create(sffFile).idIterator();
 		} catch (IOException e) {
 			throw new IllegalStateException("sff file has been deleted",e);
 		}
@@ -150,12 +150,12 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	}
 
 	@Override
-	public CloseableIterator<Flowgram> iterator() {
+	public CloseableIterator<Flowgram> iterator() throws DataStoreException {
 		throwErrorIfClosed();
 		try {
 			return LargeSffFileDataStore.create(sffFile).iterator();
 		} catch (IOException e) {
-			throw new IllegalStateException("sff file has been deleted",e);
+			throw new DataStoreException("sff file has been deleted",e);
 		}
 	}
 

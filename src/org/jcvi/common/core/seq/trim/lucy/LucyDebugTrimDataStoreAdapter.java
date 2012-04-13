@@ -49,8 +49,8 @@ public final class LucyDebugTrimDataStoreAdapter implements TrimDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return delegate.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return delegate.idIterator();
     }
 
     /**
@@ -96,11 +96,12 @@ public final class LucyDebugTrimDataStoreAdapter implements TrimDataStore{
 
     /**
     * {@inheritDoc}
+     * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<Range> iterator() {
+    public CloseableIterator<Range> iterator() throws DataStoreException {
         return new CloseableIterator<Range>() {
-            CloseableIterator<LucyDebugTrimRecord> iter = delegate.iterator();
+            CloseableIterator<LucyDebugTrimRecord> iter= delegate.iterator();
 
             @Override
             public void remove() {

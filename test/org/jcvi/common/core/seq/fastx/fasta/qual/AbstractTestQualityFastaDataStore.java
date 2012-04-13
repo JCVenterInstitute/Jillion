@@ -199,7 +199,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
 		QualitySequenceFastaDataStore sut = createDataStore(qualFile);
     	Iterator<String> expectedIdsIter = createExpectedIdsFrom(qualFile);
-    	Iterator<String> actual = sut.getIds();
+    	Iterator<String> actual = sut.idIterator();
     	assertTrue(expectedIdsIter.hasNext());
     	while(expectedIdsIter.hasNext()){
     		assertTrue(actual.hasNext());
@@ -208,7 +208,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     	assertFalse(actual.hasNext());
     }
     @Test
-    public void iterator() throws IOException{
+    public void iterator() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
     	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
     	Iterator<QualitySequenceFastaRecord> iterator = sut.iterator();

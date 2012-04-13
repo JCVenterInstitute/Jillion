@@ -127,7 +127,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     }
 
     @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
         throwExceptionIfClosed();
         return new FastQIdIterator();        
     }

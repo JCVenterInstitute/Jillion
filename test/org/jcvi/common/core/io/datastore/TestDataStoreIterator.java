@@ -43,7 +43,7 @@ public class TestDataStoreIterator {
     public void setup() throws DataStoreException{
         mockDataStore = createMock(DataStore.class);
         mockIterator = createMock(CloseableIterator.class);
-        expect(mockDataStore.getIds()).andReturn(mockIterator);
+        expect(mockDataStore.idIterator()).andReturn(mockIterator);
         replay(mockDataStore);
         sut = new DataStoreIterator<Object>(mockDataStore);
         reset(mockDataStore);
@@ -51,7 +51,7 @@ public class TestDataStoreIterator {
     @Test
     public void constructorFails() throws DataStoreException{
         DataStoreException expectedException = new DataStoreException("expected");
-        expect(mockDataStore.getIds()).andThrow(expectedException);
+        expect(mockDataStore.idIterator()).andThrow(expectedException);
         replay(mockDataStore);
         try{
             new DataStoreIterator<Object>(mockDataStore);

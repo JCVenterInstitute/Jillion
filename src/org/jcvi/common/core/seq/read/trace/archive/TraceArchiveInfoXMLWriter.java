@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.XMLUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
@@ -78,9 +79,9 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
     @Override
     public void write(TraceArchiveInfo info) throws IOException {
         writeString(out, BEGIN_XML);
-        CloseableIterator<TraceArchiveRecord> iter = info.iterator();
+        CloseableIterator<TraceArchiveRecord> iter =null;
         try{
-        	
+        	iter= info.iterator();
         while(iter.hasNext()){
         	TraceArchiveRecord record = iter.next();
             writeString(out, String.format("%s\n",XMLUtil.beginTag("trace")));
@@ -97,7 +98,9 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
             writeExtendedData(record);
             writeString(out, String.format("%s\n",XMLUtil.endTag("trace")));
         }
-        }finally{
+        } catch (DataStoreException e) {
+			throw new IOException("error getting iterator from trace archive datastore",e);
+		}finally{
         	IOUtil.closeAndIgnoreErrors(iter);
         }
         writeString(out, END_XML);

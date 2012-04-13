@@ -40,8 +40,8 @@ public class DefaultQualityFastaDataStoreBuilder implements QualitySequenceFasta
 			delegate = new SimpleDataStore<QualitySequenceFastaRecord>(map);
 		}
 		@Override
-		public CloseableIterator<String> getIds() throws DataStoreException {
-			return delegate.getIds();
+		public CloseableIterator<String> idIterator() throws DataStoreException {
+			return delegate.idIterator();
 		}
 
 		@Override
@@ -71,7 +71,7 @@ public class DefaultQualityFastaDataStoreBuilder implements QualitySequenceFasta
 		}
 
 		@Override
-		public CloseableIterator<QualitySequenceFastaRecord> iterator() {
+		public CloseableIterator<QualitySequenceFastaRecord> iterator() throws DataStoreException {
 			return delegate.iterator();
 		}
 		

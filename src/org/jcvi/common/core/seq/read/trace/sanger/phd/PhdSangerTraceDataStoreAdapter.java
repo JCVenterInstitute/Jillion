@@ -64,8 +64,8 @@ public class PhdSangerTraceDataStoreAdapter<S extends SangerTrace> implements Ph
         }
     }
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return delegate.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return delegate.idIterator();
     }
     @Override
     public long getNumberOfRecords() throws DataStoreException {

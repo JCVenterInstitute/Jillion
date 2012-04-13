@@ -69,13 +69,13 @@ public abstract class AbstractTestPhdDataStore extends AbstractTestPhd{
 
     @Test
     public void idIterator() throws DataStoreException{
-        Iterator<String> iter = sut.getIds();
+        Iterator<String> iter = sut.idIterator();
         assertTrue(iter.hasNext());
         assertEquals("1095595674585", iter.next());
         assertFalse(iter.hasNext());
     }
     @Test
-    public void iterator(){
+    public void iterator() throws DataStoreException{
         Iterator<Phd> iter = sut.iterator();
         assertTrue(iter.hasNext());
         Phd actual = iter.next();

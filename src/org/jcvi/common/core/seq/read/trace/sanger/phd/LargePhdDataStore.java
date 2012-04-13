@@ -94,7 +94,7 @@ public final class LargePhdDataStore implements PhdDataStore{
     }
 
     @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
         checkIfClosed();
         return new PhdIdIterator();
        

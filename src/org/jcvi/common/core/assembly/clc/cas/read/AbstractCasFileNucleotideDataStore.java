@@ -109,9 +109,9 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
     }
 
     @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
         checkIsInitialized();
-        return delegate.getIds();
+        return delegate.idIterator();
     }
 
     @Override
@@ -121,7 +121,7 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
     }
 
     @Override
-    public synchronized CloseableIterator<NucleotideSequence> iterator() {
+    public synchronized CloseableIterator<NucleotideSequence> iterator() throws DataStoreException {
         checkIsInitialized();
         return delegate.iterator();
     }

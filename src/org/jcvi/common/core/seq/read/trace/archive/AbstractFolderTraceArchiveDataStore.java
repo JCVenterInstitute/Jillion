@@ -80,8 +80,8 @@ public abstract class AbstractFolderTraceArchiveDataStore implements TraceArchiv
 
 
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
-        return traceArchiveInfo.getIds();
+    public CloseableIterator<String> idIterator() throws DataStoreException {
+        return traceArchiveInfo.idIterator();
     }
     
     

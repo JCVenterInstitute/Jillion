@@ -170,7 +170,7 @@ public abstract class  AbstractTestFragmentDataStore {
                 "334370061"
         ).iterator();
         
-        Iterator<String> actualIterator = sut.getIds();
+        Iterator<String> actualIterator = sut.idIterator();
         while(expectedIterator.hasNext()){
             assertTrue(actualIterator.hasNext());
             assertEquals(expectedIterator.next(), actualIterator.next());

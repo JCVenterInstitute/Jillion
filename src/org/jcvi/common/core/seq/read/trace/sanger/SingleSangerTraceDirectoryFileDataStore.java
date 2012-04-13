@@ -98,8 +98,8 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
       * {@inheritDoc}
       */
       @Override
-      public synchronized CloseableIterator<String> getIds() throws DataStoreException {
-          super.getIds();
+      public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+          super.idIterator();
           return new CloseableIterator<String>(){
               Iterator<File> iter = FileIterator.createNonRecursiveFileIteratorBuilder(
                       fileServer.getRootDir())

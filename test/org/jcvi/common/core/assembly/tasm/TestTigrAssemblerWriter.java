@@ -57,7 +57,7 @@ public class TestTigrAssemblerWriter {
     public void whenDataStoreThrowsExceptionShouldWrapInIOException() throws DataStoreException{
     	TigrAssemblerContigDataStore mockDataStore = createMock(TigrAssemblerContigDataStore.class);
     	DataStoreException expectedException = new DataStoreException("expected");
-    	expect(mockDataStore.getIds()).andThrow(expectedException);
+    	expect(mockDataStore.idIterator()).andThrow(expectedException);
     	replay(mockDataStore);
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
     	try {

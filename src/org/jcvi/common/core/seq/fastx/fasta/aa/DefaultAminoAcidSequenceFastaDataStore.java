@@ -62,8 +62,8 @@ public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSe
 	}
 
 	@Override
-	public CloseableIterator<String> getIds() throws DataStoreException {
-		return delegate.getIds();
+	public CloseableIterator<String> idIterator() throws DataStoreException {
+		return delegate.idIterator();
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSe
 	}
 
 	@Override
-	public CloseableIterator<AminoAcidSequenceFastaRecord> iterator() {
+	public CloseableIterator<AminoAcidSequenceFastaRecord> iterator() throws DataStoreException {
 		return delegate.iterator();
 	}
 	

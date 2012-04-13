@@ -43,7 +43,7 @@ public class TestTraceQualityDataStoreAdapter extends EasyMockSupport{
 	
 	@Test
 	public void getIds() throws DataStoreException{
-		Iterator<String> ids = sut.getIds();
+		Iterator<String> ids = sut.idIterator();
 		
 		assertTrue(ids.hasNext());
 		assertEquals(id, ids.next());

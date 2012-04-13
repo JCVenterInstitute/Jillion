@@ -41,8 +41,8 @@ public final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilde
 		}
 
 		@Override
-		public CloseableIterator<String> getIds() throws DataStoreException {
-			return delegate.getIds();
+		public CloseableIterator<String> idIterator() throws DataStoreException {
+			return delegate.idIterator();
 		}
 
 		@Override
@@ -72,7 +72,7 @@ public final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilde
 		}
 
 		@Override
-		public CloseableIterator<Flowgram> iterator() {
+		public CloseableIterator<Flowgram> iterator() throws DataStoreException {
 			return delegate.iterator();
 		}
 		

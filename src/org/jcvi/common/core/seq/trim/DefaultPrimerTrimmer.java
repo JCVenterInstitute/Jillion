@@ -31,6 +31,7 @@ import org.jcvi.common.core.align.pairwise.DefaultNucleotideScoringMatrix;
 import org.jcvi.common.core.align.pairwise.NucleotidePairwiseSequenceAlignment;
 import org.jcvi.common.core.align.pairwise.NucleotideSmithWatermanAligner;
 import org.jcvi.common.core.align.pairwise.ScoringMatrix;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
@@ -130,8 +131,9 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
     public Range trim(NucleotideSequence sequence,
             NucleotideDataStore primersToTrimAgainst) {
         List<Range> ranges = new ArrayList<Range>();
-        CloseableIterator<NucleotideSequence> iter = primersToTrimAgainst.iterator();
+        CloseableIterator<NucleotideSequence> iter =null; 
         try{
+        	iter =primersToTrimAgainst.iterator();
         while(iter.hasNext()){
         	NucleotideSequence primer = iter.next();
             if(primer.getLength()>=minLength){
@@ -156,7 +158,9 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
                 }
             }
         }
-        }finally{
+        } catch (DataStoreException e) {
+			throw new IllegalStateException("error iterating over nucleotide sequences",e);
+		}finally{
         	IOUtil.closeAndIgnoreErrors(iter);
         }
         List<Range> mergedRanges = Ranges.merge(ranges);

@@ -74,7 +74,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
    
    
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> idIterator() throws DataStoreException {
         return indexFileRange.getIds();
     }
     @Override
@@ -112,7 +112,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
         
     }
     @Override
-    public CloseableIterator<FastqRecord> iterator() {
+    public CloseableIterator<FastqRecord> iterator() throws DataStoreException {
     	try {
 			return LargeFastqFileDataStore.create(file, qualityCodec)
 					.iterator();

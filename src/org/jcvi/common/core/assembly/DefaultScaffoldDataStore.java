@@ -61,8 +61,8 @@ public final class DefaultScaffoldDataStore {
 		}
 
 		@Override
-		public CloseableIterator<String> getIds() throws DataStoreException {
-			return delegate.getIds();
+		public CloseableIterator<String> idIterator() throws DataStoreException {
+			return delegate.idIterator();
 		}
 
 		@Override
@@ -92,7 +92,7 @@ public final class DefaultScaffoldDataStore {
 		}
 
 		@Override
-		public CloseableIterator<Scaffold> iterator() {
+		public CloseableIterator<Scaffold> iterator() throws DataStoreException {
 			return delegate.iterator();
 		}
 		

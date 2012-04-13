@@ -145,7 +145,7 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> getIds() throws DataStoreException {
+    public CloseableIterator<String> idIterator() throws DataStoreException {
         return fileRange.getIds();
     }
 
@@ -224,7 +224,7 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
     public CloseableIterator<AsmContig> iterator() {
 
         try {
-            return new AsmContigIterator(getIds());
+            return new AsmContigIterator(idIterator());
         } catch (DataStoreException e) {
             throw new IllegalStateException("could not create iterator",e);
         }

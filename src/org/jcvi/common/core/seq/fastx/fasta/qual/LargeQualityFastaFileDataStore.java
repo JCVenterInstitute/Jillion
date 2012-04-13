@@ -82,7 +82,7 @@ public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFi
 
     @Override
     public boolean contains(String id) throws DataStoreException {
-    	CloseableIterator<String> iter =getIds();
+    	CloseableIterator<String> iter =idIterator();
     	while(iter.hasNext()){
     		String nextId = iter.next();
     		if(nextId.equals(id)){
@@ -109,7 +109,7 @@ public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFi
     }
 
     @Override
-    public synchronized CloseableIterator<String> getIds() throws DataStoreException {
+    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
         checkNotYetClosed();
         return LargeFastaIdIterator.createNewIteratorFor(fastaFile);
 

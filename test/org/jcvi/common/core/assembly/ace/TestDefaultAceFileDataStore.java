@@ -36,7 +36,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 
 public class TestDefaultAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
 
-    public TestDefaultAceFileDataStore() throws IOException {
+    public TestDefaultAceFileDataStore() throws IOException, DataStoreException {
         super();        
     }
 
@@ -47,7 +47,7 @@ public class TestDefaultAceFileDataStore extends TestAbstractAceParserMatchesAce
         try{
             List<AceContig> contigs = new ArrayList<AceContig>((int)dataStore.getNumberOfRecords());
         
-            for(Iterator<String> iter = dataStore.getIds(); iter.hasNext();){
+            for(Iterator<String> iter = dataStore.idIterator(); iter.hasNext();){
                 String id = iter.next();
                contigs.add(dataStore.get(id));
             }
