@@ -17,33 +17,23 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.io.datastore;
+package org.jcvi.common.core.datastore;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-
-import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.junit.Test;
-
+import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
  *
  */
-public class TestDefaultExcludeDataStoreFilter {
-    DefaultExcludeDataStoreFilter sut = new DefaultExcludeDataStoreFilter(Arrays.asList("include_1", "include_2"));
-    
+public class TestEmptyDataStoreFilter {
+    DataStoreFilter sut = AcceptingDataStoreFilter.INSTANCE;
     @Test
-    public void idIsInIncludeListShouldNotAccept(){
-        assertFalse(sut.accept("include_1"));
-        assertFalse(sut.accept("include_2"));
-    }
-    
-    @Test
-    public void idIsNotInIncludeListShouldAccept(){
-        assertTrue(sut.accept("include_3"));
-        assertTrue(sut.accept("something completely different"));
+    public void alwaysTrue(){
+        assertTrue(sut.accept("something"));
+        assertTrue(sut.accept("12345"));
+        assertTrue(sut.accept("blah blah"));
     }
 }

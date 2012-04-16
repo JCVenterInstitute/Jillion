@@ -17,31 +17,33 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.io.datastore;
+package org.jcvi.common.core.datastore;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
+import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 /**
  * @author dkatzel
  *
  *
  */
-public class TestDefaultIncludeDataStoreFilter {
-
-    DefaultIncludeDataStoreFilter sut = new DefaultIncludeDataStoreFilter(Arrays.asList("include_1", "include_2"));
+public class TestDefaultExcludeDataStoreFilter {
+    DefaultExcludeDataStoreFilter sut = new DefaultExcludeDataStoreFilter(Arrays.asList("include_1", "include_2"));
     
     @Test
-    public void idIsInIncludeListShouldAccept(){
-        assertTrue(sut.accept("include_1"));
-        assertTrue(sut.accept("include_2"));
+    public void idIsInIncludeListShouldNotAccept(){
+        assertFalse(sut.accept("include_1"));
+        assertFalse(sut.accept("include_2"));
     }
     
     @Test
-    public void idIsNotInIncludeListShouldNotAccept(){
-        assertFalse(sut.accept("include_3"));
-        assertFalse(sut.accept("something completely different"));
+    public void idIsNotInIncludeListShouldAccept(){
+        assertTrue(sut.accept("include_3"));
+        assertTrue(sut.accept("something completely different"));
     }
 }

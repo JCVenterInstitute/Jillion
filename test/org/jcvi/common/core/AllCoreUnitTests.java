@@ -21,8 +21,8 @@ package org.jcvi.common.core;
 
 import org.jcvi.common.core.align.AllAlignUnitTests;
 import org.jcvi.common.core.assembly.AllAssemblyUnitTests;
+import org.jcvi.common.core.datastore.AllDataStoreUnitTests;
 import org.jcvi.common.core.io.AllCoreIOUnitTests;
-import org.jcvi.common.core.io.datastore.AllDataStoreUnitTests;
 import org.jcvi.common.core.seq.AllSeqUnitTests;
 import org.jcvi.common.core.symbol.AllGlyphUnitTests;
 import org.jcvi.common.core.testUtil.TestTestUtilSuite;

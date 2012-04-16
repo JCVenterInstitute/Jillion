@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.io.datastore;
+package org.jcvi.common.core.datastore;
 
 import java.io.IOException;
 import java.util.HashMap;

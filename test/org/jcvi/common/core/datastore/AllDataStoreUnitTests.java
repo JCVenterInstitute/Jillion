@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.io.datastore;
+package org.jcvi.common.core.datastore;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
