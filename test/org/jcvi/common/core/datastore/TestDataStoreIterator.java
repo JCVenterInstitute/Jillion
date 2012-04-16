@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.io.datastore;
+package org.jcvi.common.core.datastore;
 
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
