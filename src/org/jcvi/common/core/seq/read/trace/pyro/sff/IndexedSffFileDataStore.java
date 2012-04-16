@@ -148,17 +148,17 @@ public final class IndexedSffFileDataStore{
 		@Override
 		public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
 			numberOfReads= commonHeader.getNumberOfReads();
-			return CommonHeaderReturnCode.STOP;
+			return CommonHeaderReturnCode.STOP_PARSING;
 		}
 
 		@Override
 		public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
-			return ReadHeaderReturnCode.STOP;
+			return ReadHeaderReturnCode.STOP_PARSING;
 		}
 
 		@Override
 		public ReadDataReturnCode visitReadData(SffReadData readData) {
-			return ReadDataReturnCode.STOP;
+			return ReadDataReturnCode.STOP_PARSING;
 		}
 		
 	}

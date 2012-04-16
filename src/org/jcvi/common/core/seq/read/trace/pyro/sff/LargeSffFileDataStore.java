@@ -207,7 +207,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
 		@Override
         public ReadDataReturnCode visitReadData(SffReadData readData) {
             flowgram = SffFlowgram.create(readHeader, readData);
-            return ReadDataReturnCode.STOP;
+            return ReadDataReturnCode.STOP_PARSING;
         }
         
         @Override

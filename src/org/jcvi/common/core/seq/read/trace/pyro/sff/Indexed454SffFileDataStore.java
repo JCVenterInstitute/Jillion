@@ -217,7 +217,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 				tryToParseManifest(commonHeader, offsetToIndex);
 			}
 			//stop parsing file
-			return CommonHeaderReturnCode.STOP;
+			return CommonHeaderReturnCode.STOP_PARSING;
 		}
 
 		private void tryToParseManifest(SffCommonHeader commonHeader,
@@ -314,12 +314,12 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 		@Override
 		public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
 	
-			return ReadHeaderReturnCode.STOP;
+			return ReadHeaderReturnCode.STOP_PARSING;
 		}
 
 		@Override
 		public ReadDataReturnCode visitReadData(SffReadData readData) {
-			return ReadDataReturnCode.STOP;
+			return ReadDataReturnCode.STOP_PARSING;
 		}
 		
 	}

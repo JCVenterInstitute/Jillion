@@ -49,7 +49,7 @@ public interface SffFileVisitor extends FileVisitor {
 		/**
 		 * Stop parsing the file.
 		 */
-		STOP;
+		STOP_PARSING;
 	}
 	/**
 	 * Tells this parser how to proceed
@@ -77,7 +77,7 @@ public interface SffFileVisitor extends FileVisitor {
 		/**
 		 * Stop parsing the file.
 		 */
-		STOP;
+		STOP_PARSING;
 	}
 	/**
 	 * Tells this parser how to proceed
@@ -99,7 +99,7 @@ public interface SffFileVisitor extends FileVisitor {
 		/**
 		 * Stop parsing the file.
 		 */
-		STOP;
+		STOP_PARSING;
 	}
     /**
      * Visit the header information that is common to 
