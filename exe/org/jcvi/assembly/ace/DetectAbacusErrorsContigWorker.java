@@ -37,6 +37,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigDataStore;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
+import org.jcvi.common.core.assembly.ace.LargeAceFileDataStore;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationWriter;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -103,18 +104,16 @@ public class DetectAbacusErrorsContigWorker {
                     : DEFAULT_GAP_PERCENTAGE;
             final AbacusErrorFinder abacusErrorFinder = new AbacusErrorFinder(5,3,percentGap);
             try{
-                AceContigDataStore datastore = IndexedAceFileDataStore.create(aceFile);
-                Iterator<String> contigIds = datastore.idIterator();
-                while(contigIds.hasNext()){
-                    String id = contigIds.next();
-                    if(contigId.equals(id)){
-                        try {
-                            findErrorsIn(abacusErrorFinder, datastore.get(contigId), out,consedNavWriter);
-                        } catch (IOException e) {
-                            throw new IllegalStateException(e);
-                        } 
-                    }                                
+                AceContigDataStore datastore = LargeAceFileDataStore.create(aceFile);
+                try {
+                    findErrorsIn(abacusErrorFinder, datastore.get(contigId), out,consedNavWriter);
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
                 }
+                finally{
+                	IOUtil.closeAndIgnoreErrors(datastore);
+                }
+                
             }finally{
                 IOUtil.closeAndIgnoreErrors(out,consedNavWriter);
             }

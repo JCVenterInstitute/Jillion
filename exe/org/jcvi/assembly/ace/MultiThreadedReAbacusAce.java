@@ -149,11 +149,11 @@ public class MultiThreadedReAbacusAce {
                     MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, builder,tagWriter));
             
             AceContigDataStore datastore = builder.build();
-            CloseableIterator<String> ids = datastore.idIterator();
+            CloseableIterator<String> idIter = datastore.idIterator();
             List<Future<Void>> futures = new ArrayList<Future<Void>>();
             try{
-	            while(ids.hasNext()){
-	                String contigId = ids.next();
+	            while(idIter.hasNext()){
+	                String contigId = idIter.next();
 	                File tempOutputFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);
 	                if(abacusErrorMap.containsKey(contigId)){
 	                    Callable<Void> callable = new SingleContigReAbacusWorker(inputAceFile, abacusErrorMap, contigId, tempOutputFile, numberOfFlankingBases,maxMuscleMem);
@@ -164,7 +164,7 @@ public class MultiThreadedReAbacusAce {
 	                }
 	            }
             }finally{
-            	IOUtil.closeAndIgnoreErrors(ids);
+            	IOUtil.closeAndIgnoreErrors(idIter);
             }
             boolean success=true;
             for(Future<Void> future : futures){

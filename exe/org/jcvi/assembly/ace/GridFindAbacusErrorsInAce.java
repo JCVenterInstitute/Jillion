@@ -64,6 +64,7 @@ import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
 import org.jcvi.common.io.idReader.IdReaderException;
@@ -165,11 +166,11 @@ public class GridFindAbacusErrorsInAce {
             File aceFile = new File(commandLine.getOptionValue("a"));
             final DataStoreFilter filter = getDataStoreFilter(commandLine);
             AceContigDataStore datastore = IndexedAceFileDataStore.create(aceFile);
-            Iterator<String> contigIds = datastore.idIterator();
+            CloseableIterator<String> idIter = datastore.idIterator();
             Set<File> files = new HashSet<File>();
-            
-            while(contigIds.hasNext()){
-                final String contigId = contigIds.next();
+            try{
+            while(idIter.hasNext()){
+                final String contigId = idIter.next();
                 if(filter.accept(contigId)){
                     Command findAbacusErrorWorker = new Command(ABACUS_WORKER_EXE);
                     findAbacusErrorWorker.setOption("-ace", aceFile.getAbsolutePath());
@@ -218,7 +219,9 @@ public class GridFindAbacusErrorsInAce {
                     jobs.add(job.build());
                 }             
             }
-           
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(idIter);
+            }
            for(Future<?> future : executor.invokeAll(jobs)){
                try {
                 future.get();
