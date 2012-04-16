@@ -103,7 +103,7 @@ public final class SffFileParser {
 		        if(readDataRet==null){
 		        	throw new NullPointerException("can not return null for visitReadData() callback");
 		        }
-				if(readDataRet==ReadDataReturnCode.STOP){
+				if(readDataRet==ReadDataReturnCode.STOP_PARSING){
 		            break;
 		        }
 		    }else if(readHeaderRet==ReadHeaderReturnCode.SKIP_CURRENT_READ){
