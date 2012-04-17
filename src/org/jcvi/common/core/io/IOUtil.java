@@ -197,7 +197,7 @@ public final class IOUtil {
             if(closeable !=null){
                 closeable.close();
             }
-        } catch (IOException ignore) {
+        } catch (Exception ignore) {
                 //ignored on purpose
         }
     }

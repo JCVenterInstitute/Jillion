@@ -22,16 +22,17 @@ package org.jcvi.common.core.assembly.tasm;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -56,8 +57,15 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	 */
 	private TigrAssemblerContigAdapter(Contig<? extends PlacedRead> delegate, Map<TigrAssemblerContigAttribute, String> optionalAttributes) {
 		this.delegate = delegate;
-		for(PlacedRead read : delegate.getPlacedReads()){
-			adaptedReads.put(read.getId(), new TigrAssemblerPlacedReadAdapter(read));
+		CloseableIterator<? extends PlacedRead> iter = null;
+		try{
+			iter = delegate.getReadIterator();
+			while(iter.hasNext()){
+				PlacedRead read = iter.next();
+				adaptedReads.put(read.getId(), new TigrAssemblerPlacedReadAdapter(read));
+			}
+		}finally{
+			IOUtil.closeAndIgnoreErrors(iter);
 		}
 		attributes = createNonConsensusAttributes(delegate,optionalAttributes);
 	}
@@ -150,8 +158,8 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	}
 
 	@Override
-	public boolean containsPlacedRead(String placedReadId) {
-		return delegate.containsPlacedRead(placedReadId);
+	public boolean containsRead(String placedReadId) {
+		return delegate.containsRead(placedReadId);
 	}
 
 	@Override
@@ -170,18 +178,15 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	}
 
 	@Override
-	public TigrAssemblerPlacedRead getPlacedReadById(
+	public TigrAssemblerPlacedRead getRead(
 			String id) {
 		return adaptedReads.get(id);
 	}
 
 	@Override
-	public Set<TigrAssemblerPlacedRead> getPlacedReads() {
-		Set<TigrAssemblerPlacedRead> set= new LinkedHashSet<TigrAssemblerPlacedRead>();
-		for(TigrAssemblerPlacedRead read: adaptedReads.values()){
-			set.add(read);
-		}
-		return Collections.unmodifiableSet(set);
+	public CloseableIterator<TigrAssemblerPlacedRead> getReadIterator() {
+
+		return CloseableIteratorAdapter.adapt(adaptedReads.values().iterator());
 	}
 
 	

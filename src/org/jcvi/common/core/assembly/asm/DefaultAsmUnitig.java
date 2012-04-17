@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * @author dkatzel
@@ -57,8 +58,8 @@ public class DefaultAsmUnitig implements AsmUnitig{
     * {@inheritDoc}
     */
     @Override
-    public Set<AsmPlacedRead> getPlacedReads() {
-        return delegate.getPlacedReads();
+    public CloseableIterator<AsmPlacedRead> getReadIterator() {
+        return delegate.getReadIterator();
     }
 
     /**
@@ -73,16 +74,16 @@ public class DefaultAsmUnitig implements AsmUnitig{
     * {@inheritDoc}
     */
     @Override
-    public AsmPlacedRead getPlacedReadById(String id) {
-        return delegate.getPlacedReadById(id);
+    public AsmPlacedRead getRead(String id) {
+        return delegate.getRead(id);
     }
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public boolean containsPlacedRead(String placedReadId) {
-        return delegate.containsPlacedRead(placedReadId);
+    public boolean containsRead(String placedReadId) {
+        return delegate.containsRead(placedReadId);
     }
     
     

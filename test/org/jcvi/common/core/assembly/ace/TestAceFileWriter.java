@@ -85,23 +85,31 @@ public class TestAceFileWriter {
         
         AceContigDataStore reparsedAceDataStore = builder.build();
         assertEquals("# contigs", aceDataStore.getNumberOfRecords(), reparsedAceDataStore.getNumberOfRecords());
-        CloseableIterator<AceContig> iter = aceDataStore.iterator();
+        CloseableIterator<AceContig> contigIter = aceDataStore.iterator();
         try{
-	        while(iter.hasNext()){
-	        	AceContig expectedContig = iter.next();
+	        while(contigIter.hasNext()){
+	        	AceContig expectedContig = contigIter.next();
 	            AceContig actualContig = reparsedAceDataStore.get(expectedContig.getId());            
 	            assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
 	            assertEquals("# reads", expectedContig.getNumberOfReads(), actualContig.getNumberOfReads());
-	            for(AcePlacedRead expectedRead : expectedContig.getPlacedReads()){
-	                AcePlacedRead actualRead = actualContig.getPlacedReadById(expectedRead.getId());
-	                assertEquals("basecalls", expectedRead.getNucleotideSequence(), actualRead.getNucleotideSequence());
-	                assertEquals("offset", expectedRead.getBegin(), actualRead.getBegin());
-	                assertEquals("validRange", expectedRead.getValidRange(), actualRead.getValidRange());
-	                assertEquals("dir", expectedRead.getDirection(), actualRead.getDirection());
+	            CloseableIterator<AcePlacedRead> readIter =null;
+	            try{
+	            	readIter = expectedContig.getReadIterator();
+	            	while(readIter.hasNext()){
+	            		AcePlacedRead expectedRead = readIter.next();
+	            		AcePlacedRead actualRead = actualContig.getRead(expectedRead.getId());
+	  	                assertEquals("basecalls", expectedRead.getNucleotideSequence(), actualRead.getNucleotideSequence());
+	  	                assertEquals("offset", expectedRead.getBegin(), actualRead.getBegin());
+	  	                assertEquals("validRange", expectedRead.getValidRange(), actualRead.getValidRange());
+	  	                assertEquals("dir", expectedRead.getDirection(), actualRead.getDirection());
+	  	            
+	            	}
+	            }finally{
+	            	IOUtil.closeAndIgnoreErrors(readIter);
 	            }
 	        }
         }finally{
-        	IOUtil.closeAndIgnoreErrors(iter);
+        	IOUtil.closeAndIgnoreErrors(contigIter);
         }
     }
 

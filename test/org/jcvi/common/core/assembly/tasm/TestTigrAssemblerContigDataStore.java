@@ -94,9 +94,7 @@ public class TestTigrAssemblerContigDataStore {
         assertEquals("consensus",contig.getConsensus(), tasm.getConsensus());
         assertEquals("#reads",contig.getNumberOfReads(), tasm.getNumberOfReads());
         
-        
-        for(PlacedRead read : contig.getPlacedReads()){
-            assertEquals(read, tasm.getPlacedReadById(read.getId()));
-        }
+        TigrAssemblerTestUtil.assertAllReadsCorrectlyPlaced(contig, tasm);
+
     }
 }

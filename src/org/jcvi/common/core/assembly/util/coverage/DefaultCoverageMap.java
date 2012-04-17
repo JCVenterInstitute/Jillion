@@ -35,6 +35,9 @@ import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
 
 public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> implements CoverageMap<T> {
@@ -47,16 +50,21 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
     }
     @SuppressWarnings("unchecked")
     public static <V extends Placed,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
+            buildCoverageMap(CloseableIterator<V> elements){
+        return (DefaultCoverageMap<V,T>)new Builder(elements).build();
+    }
+    @SuppressWarnings("unchecked")
+    public static <V extends Placed,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
             buildCoverageMap(Collection<V> elements, int maxAllowedCoverage){
         return (DefaultCoverageMap<V,T>)new Builder(elements,maxAllowedCoverage).build();
     }
     public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
         buildCoverageMap(C contig){
-            return (DefaultCoverageMap<PR,T>)new Builder(contig.getPlacedReads()).build();
+            return (DefaultCoverageMap<PR,T>)new Builder(contig.getReadIterator()).build();
     }
     public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T>    
         buildCoverageMap(C contig, int maxAllowedCoverage){
-            return (DefaultCoverageMap<PR,T>)new Builder(contig.getPlacedReads(),maxAllowedCoverage).build();
+            return (DefaultCoverageMap<PR,T>)new Builder(contig.getReadIterator(),maxAllowedCoverage).build();
     }
     private static class PlacedStartComparator <T extends Placed> implements Comparator<T>,Serializable {       
         /**
@@ -267,9 +275,27 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
             
         }
         
-        private final void initialize(Collection<P> elements){
-            startCoordinateSortedList.addAll(elements);
-            endCoordinateSortedList.addAll(elements);
+        public Builder(CloseableIterator<P> elements, int maxAllowedCoverage){
+            super(maxAllowedCoverage);
+            initialize(elements);
+        }
+        public Builder(CloseableIterator<P> elements) {
+            initialize(elements);
+            
+        }
+        private final void initialize(Collection<P> collection){
+        	initialize(CloseableIteratorAdapter.adapt(collection.iterator()));
+        }
+        private final void initialize(CloseableIterator<P> elements){
+        	try{
+        		while(elements.hasNext()){
+        			P element = elements.next();
+        			startCoordinateSortedList.add(element);
+        			endCoordinateSortedList.add(element);
+        		}
+        	}finally{
+        		IOUtil.closeAndIgnoreErrors(elements);
+        	}
             filterAmpliconsWithoutCoordinates(startCoordinateSortedList);
             filterAmpliconsWithoutCoordinates(endCoordinateSortedList);
             Collections.sort(startCoordinateSortedList,

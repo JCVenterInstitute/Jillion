@@ -20,6 +20,7 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
@@ -105,37 +106,28 @@ public class RemoveRedundantMatePairs {
             FileOutputStream out1 = new FileOutputStream(nonRedundantMate1);
             FileOutputStream out2 = new FileOutputStream(nonRedundantMate2);
             Set<NucleotideSequence> nonRedundantSet = new HashSet<NucleotideSequence>(expectedSize+1,1F);
-            
+            MatePairIterator iter =null;
+          
             try{
-            	mate1Iterator = LargeFastqFileDataStore.create(mate1, qualityCodec).iterator();
-            	mate2Iterator = LargeFastqFileDataStore.create(mate2, qualityCodec).iterator();
-            
-	            long recordsSeen=0;
-	            while(mate1Iterator.hasNext()){
-	                FastqRecord forward = mate1Iterator.next();
-	                FastqRecord reverse = mate2Iterator.next();
-	                NucleotideSequenceBuilder builder =new NucleotideSequenceBuilder(comparisonRangeLength*2);
-	                builder.append(forward.getSequence().asList(comparisonRange));
-	                builder.append(reverse.getSequence().asList(comparisonRange));
-	                NucleotideSequence seq =builder.build();
+            	  iter= new MatePairIterator(mate1, mate2, qualityCodec);
+	            while(iter.hasNext()){
+	            	MatePair matePair =iter.next();
+	               
+	                NucleotideSequence seq = matePair.getConcatenatedSequence(comparisonRange);
+
 	                if(!nonRedundantSet.contains(seq)){
+	                	 FastqRecord forward = matePair.getForward();
+	 	                FastqRecord reverse = matePair.getReverse();
 	                    out1.write(forward.toFormattedString(qualityCodec).getBytes(IOUtil.UTF_8));
 	                    out2.write(reverse.toFormattedString(qualityCodec).getBytes(IOUtil.UTF_8));
 	                    nonRedundantSet.add(seq);
 	                }
-	                recordsSeen++;
-	                if(recordsSeen%100000==0){
-	                    System.out.println("mates seen = "+recordsSeen);
-	                }
 	            }
-	            if(mate2Iterator.hasNext()){
-	                //different number of reads in mate files
-	                throw new MismatchedMateFiles(recordsSeen);
-	            }
-	            System.out.println("final number of mates seen ="+ recordsSeen);
+	           
+	            System.out.println("final number of mates seen ="+ iter.getRecordCounter());
 	            System.out.println("num mates written ="+ nonRedundantSet.size());
             }finally{
-            	IOUtil.closeAndIgnoreErrors(mate1Iterator, mate2Iterator);
+            	IOUtil.closeAndIgnoreErrors(iter);
             	out1.close();
                 out2.close();
                
@@ -165,5 +157,79 @@ public class RemoveRedundantMatePairs {
         public MismatchedMateFiles(long recordsSeen){
             super(String.format("input mate files have different number of records, both should have %d", recordsSeen));
         }
+    }
+    private static final class MatePair{
+    	FastqRecord forward,reverse;
+
+		private MatePair(FastqRecord forward, FastqRecord reverse) {
+			this.forward = forward;
+			this.reverse = reverse;
+		}
+
+		public FastqRecord getForward() {
+			return forward;
+		}
+
+		public FastqRecord getReverse() {
+			return reverse;
+		}
+    	
+		public NucleotideSequence getConcatenatedSequence(Range subRangePerMate){
+			NucleotideSequenceBuilder builder =new NucleotideSequenceBuilder((int)subRangePerMate.getLength()*2);
+            builder.append(forward.getSequence().asList(subRangePerMate));
+            builder.append(reverse.getSequence().asList(subRangePerMate));
+            return builder.build();
+		}
+    	
+    }
+    private static final class MatePairIterator implements CloseableIterator<MatePair>{
+    	private final CloseableIterator<FastqRecord> mate1Iterator;
+    	private final CloseableIterator<FastqRecord> mate2Iterator;
+    	private long recordCounter=0L;
+    	public MatePairIterator(File fastq1, File fastq2, FastqQualityCodec qualityCodec) throws FileNotFoundException, DataStoreException{
+    		mate1Iterator = LargeFastqFileDataStore.create(fastq1, qualityCodec).iterator();
+        	mate2Iterator = LargeFastqFileDataStore.create(fastq2, qualityCodec).iterator();
+        
+    	}
+    	
+    	
+		public long getRecordCounter() {
+			return recordCounter;
+		}
+
+
+		@Override
+		public synchronized boolean hasNext() {
+			if(mate1Iterator.hasNext() && mate2Iterator.hasNext()){
+				return true;
+			}
+			if((mate1Iterator.hasNext() && !mate2Iterator.hasNext()) || 
+					(!mate1Iterator.hasNext() && mate2Iterator.hasNext())){
+				throw new MismatchedMateFiles(recordCounter);
+			}
+			return false;
+		}
+
+		@Override
+		public void close() throws IOException {
+			IOUtil.closeAndIgnoreErrors(mate1Iterator, mate2Iterator);
+		}
+
+		@Override
+		public synchronized MatePair next() {
+			MatePair pair= new MatePair(mate1Iterator.next(), mate2Iterator.next());
+			recordCounter++;
+			if(recordCounter%100000==0){
+                System.out.println("mates seen = "+recordCounter);
+            }
+			return pair;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("remove() not allowed on closeable iterator");
+			
+		}
+    	
     }
 }

@@ -25,6 +25,8 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code TigrAssemblerWriter} writes out TIGR Assembler
  * formated files (.tasm).  This assembly format 
@@ -81,28 +83,33 @@ public final class TigrAssemblerWriter {
 		if(contig.getNumberOfReads()>0){
     		out.write(BLANK_LINE);
     		
-    		Iterator<TigrAssemblerPlacedRead> placedReadIterator = contig.getPlacedReads().iterator();
-    		while(placedReadIterator.hasNext()){
-    			TigrAssemblerPlacedRead read = placedReadIterator.next();
-    			for(TigrAssemblerReadAttribute readAttribute : TigrAssemblerReadAttribute.values()){
-    				String assemblyTableColumn = readAttribute.getAssemblyTableColumn();
-    				int padding = 4-assemblyTableColumn.length()%4;
-    				StringBuilder row = new StringBuilder(assemblyTableColumn);
-    				if(padding>0){
-    					row.append("\t");
-    				}
-    				if(read.hasAttribute(readAttribute)){
-    					row.append(String.format("%s\n", 
-    							read.getAttributeValue(readAttribute)));
-    				}else{
-    					row.append("\n");
-    				}
-    				
-    				out.write(row.toString().getBytes(UTF_8));				
-    			}
-    			if(placedReadIterator.hasNext()){
-    				out.write(BLANK_LINE);
-    			}
+    		CloseableIterator<TigrAssemblerPlacedRead> placedReadIterator=null;
+    		try{
+	    		placedReadIterator= contig.getReadIterator();
+	    		while(placedReadIterator.hasNext()){
+	    			TigrAssemblerPlacedRead read = placedReadIterator.next();
+	    			for(TigrAssemblerReadAttribute readAttribute : TigrAssemblerReadAttribute.values()){
+	    				String assemblyTableColumn = readAttribute.getAssemblyTableColumn();
+	    				int padding = 4-assemblyTableColumn.length()%4;
+	    				StringBuilder row = new StringBuilder(assemblyTableColumn);
+	    				if(padding>0){
+	    					row.append("\t");
+	    				}
+	    				if(read.hasAttribute(readAttribute)){
+	    					row.append(String.format("%s\n", 
+	    							read.getAttributeValue(readAttribute)));
+	    				}else{
+	    					row.append("\n");
+	    				}
+	    				
+	    				out.write(row.toString().getBytes(UTF_8));				
+	    			}
+	    			if(placedReadIterator.hasNext()){
+	    				out.write(BLANK_LINE);
+	    			}
+	    		}
+    		}finally{
+    			IOUtil.closeAndIgnoreErrors(placedReadIterator);
     		}
 		}
 		

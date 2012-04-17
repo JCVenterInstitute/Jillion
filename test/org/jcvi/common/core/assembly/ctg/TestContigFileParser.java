@@ -481,8 +481,8 @@ public abstract class TestContigFileParser {
         assertEquals(contig_id, Integer.parseInt(contig925.getId()));
         assertEquals(contig_length, contig925.getConsensus().getLength());
         assertEquals(numberOfReads, contig925.getNumberOfReads());
-        AssemblyTestUtil.assertPlacedReadCorrect(CVGWB15T06B037761RM, contig925.getPlacedReadById("CVGWB15T06B037761RM"));
-        AssemblyTestUtil.assertPlacedReadCorrect(CVGWB47T06D1122735FMB, contig925.getPlacedReadById("CVGWB47T06D1122735FMB"));
+        AssemblyTestUtil.assertPlacedReadCorrect(CVGWB15T06B037761RM, contig925.getRead("CVGWB15T06B037761RM"));
+        AssemblyTestUtil.assertPlacedReadCorrect(CVGWB47T06D1122735FMB, contig925.getRead("CVGWB47T06D1122735FMB"));
     
         
     }

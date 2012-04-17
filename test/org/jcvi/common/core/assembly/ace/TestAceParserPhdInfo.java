@@ -35,6 +35,8 @@ import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -93,8 +95,15 @@ public class TestAceParserPhdInfo {
     
     @Test
     public void assertPhdInfosCorrect(){
-        for(AcePlacedRead read : actualContig.getPlacedReads()){
-            assertEquals(phdInfoMap.get(read.getId()), read.getPhdInfo());
-        }
+    	CloseableIterator<AcePlacedRead> iter=null;
+    	try{
+    		iter = actualContig.getReadIterator();
+    		while(iter.hasNext()){
+    			AcePlacedRead read = iter.next();
+    			 assertEquals(phdInfoMap.get(read.getId()), read.getPhdInfo());
+    		}
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(iter);
+    	}
     }
 }

@@ -74,17 +74,34 @@ public class TestCas2Consed3 {
 		    	  assertEquals("consensus", expectedContig.getConsensus(),
 		    			  contig.getConsensus());
 		    	  assertEquals("# reads", expectedContig.getNumberOfReads(), contig.getNumberOfReads());
-		    	  for(AcePlacedRead actualRead : contig.getPlacedReads()){
-		    		  String readId =actualRead.getId();
-		    		  PlacedRead expectedRead = expectedContig.getPlacedReadById(readId);
-		    		  assertEquals("read basecalls", expectedRead.getNucleotideSequence().asList(), actualRead.getNucleotideSequence().asList());
-		    		  assertEquals("read offset", expectedRead.getBegin(), actualRead.getBegin());
-		    	  }
+		    	  
+		    	  assertReadsCorrectlyPlaced(contig, expectedContig);
 		      }
 	        }finally{
 	        	IOUtil.closeAndIgnoreErrors(iter);
 	        }
 	    }
+
+		private void assertReadsCorrectlyPlaced(AceContig contig,
+				Contig<PlacedRead> expectedContig) {
+			CloseableIterator<AcePlacedRead> iter = null;
+			try{
+				iter = contig.getReadIterator();
+				while(iter.hasNext()){
+					AcePlacedRead actualRead = iter.next();
+				String readId = actualRead.getId();
+				PlacedRead expectedRead = expectedContig.getRead(readId);
+				assertEquals("read basecalls", expectedRead
+						.getNucleotideSequence().asList(), actualRead
+						.getNucleotideSequence().asList());
+				assertEquals("read offset", expectedRead.getBegin(),
+						actualRead.getBegin());
+
+				}
+			}finally{
+				IOUtil.closeAndIgnoreErrors(iter);
+			}
+		}
 	    /**
 	     * cas2Consed now appends coordinates to the end of the contig
 	     * if they don't get full reference length, stip that out 

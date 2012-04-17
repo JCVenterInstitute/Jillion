@@ -59,15 +59,15 @@ public class TestDefaultAceContigBuilderReAbacus {
            
         AceContig contig =sut.build();
         assertEquals("ACGTTACGT", contig.getConsensus().toString());
-        AcePlacedRead read1 = contig.getPlacedReadById("read1");
+        AcePlacedRead read1 = contig.getRead("read1");
         assertEquals("GTTACG", read1.getNucleotideSequence().toString());
         assertEquals(7, read1.getEnd());
         
-        AcePlacedRead read2 = contig.getPlacedReadById("read2");
+        AcePlacedRead read2 = contig.getRead("read2");
         assertEquals("ACGTTAC", read2.getNucleotideSequence().toString());
         assertEquals(6, read2.getEnd());
         
-        AcePlacedRead read3 = contig.getPlacedReadById("read3");
+        AcePlacedRead read3 = contig.getRead("read3");
         assertEquals("TTACGT", read3.getNucleotideSequence().toString());
         assertEquals(8, read3.getEnd());
     }
@@ -90,19 +90,19 @@ public class TestDefaultAceContigBuilderReAbacus {
            
         AceContig contig =sut.build();
         assertEquals("ACGTTACGT", contig.getConsensus().toString());
-        AcePlacedRead read1 = contig.getPlacedReadById("read1");
+        AcePlacedRead read1 = contig.getRead("read1");
         assertEquals("GTTACG", read1.getNucleotideSequence().toString());
         assertEquals(7, read1.getEnd());
         
-        AcePlacedRead read2 = contig.getPlacedReadById("read2");
+        AcePlacedRead read2 = contig.getRead("read2");
         assertEquals("ACGTTAC", read2.getNucleotideSequence().toString());
         assertEquals(6, read2.getEnd());
         
-        AcePlacedRead read3 = contig.getPlacedReadById("read3");
+        AcePlacedRead read3 = contig.getRead("read3");
         assertEquals("TTACGT", read3.getNucleotideSequence().toString());
         assertEquals(8, read3.getEnd());
         
-        AcePlacedRead read4 = contig.getPlacedReadById("read4");
+        AcePlacedRead read4 = contig.getRead("read4");
         assertEquals("ACGT", read4.getNucleotideSequence().toString());
         assertEquals(5, read4.getBegin());
         assertEquals(8, read4.getEnd());

@@ -35,9 +35,11 @@ import java.util.TreeSet;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code CtgFileWriter} will write out {@link Contig}
  * objects in ctg format.
@@ -56,8 +58,17 @@ public class CtgFileWriter implements Closeable{
             UnsupportedEncodingException {
         writeContigHeader(contig);
         writeBases(contig.getConsensus());
-        Set<PlacedRead> readsInContig = new TreeSet<PlacedRead>(READ_SORTER);
-        readsInContig.addAll(contig.getPlacedReads());
+        Set<PR> readsInContig = new TreeSet<PR>(READ_SORTER);
+        CloseableIterator<PR> iter = null;
+        try{
+        	iter = contig.getReadIterator();
+        	while(iter.hasNext()){
+        		PR placedRead = iter.next();
+        		readsInContig.add(placedRead);
+        	}
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
+        }
         for(PlacedRead placedRead : readsInContig){
             writePlacedReadHeader(placedRead, contig.getConsensus());
             writeBases(placedRead.getNucleotideSequence());

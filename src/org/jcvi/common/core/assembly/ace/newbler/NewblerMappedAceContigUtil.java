@@ -38,9 +38,11 @@ import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public class NewblerMappedAceContigUtil {
 
@@ -67,16 +69,23 @@ public class NewblerMappedAceContigUtil {
             TraceDataStore<Phd> phdDataStore) throws DataStoreException{
         Map<String,Range> ranges = new HashMap<String, Range>();
         String idPrefix=null;
-        for(AcePlacedRead read : newblerMappedContig.getPlacedReads()){
-            String id = read.getId();
-            Matcher matcher = ACTUAL_CONSENSUS_ID_PATTERN.matcher(id);
-            if(matcher.matches()){
-                ranges.put(id,Range.create(read.getBegin(),read.getEnd()));
-                
-            }
-            else if(!phdDataStore.contains(id)){
-                idPrefix = id;
-            }
+        CloseableIterator<AcePlacedRead> iter = null;
+        try{
+        	iter = newblerMappedContig.getReadIterator();
+        	while(iter.hasNext()){
+        		AcePlacedRead read = iter.next();
+        		String id = read.getId();
+                Matcher matcher = ACTUAL_CONSENSUS_ID_PATTERN.matcher(id);
+                if(matcher.matches()){
+                    ranges.put(id,Range.create(read.getBegin(),read.getEnd()));
+                    
+                }
+                else if(!phdDataStore.contains(id)){
+                    idPrefix = id;
+                }
+        	}
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
         }
         List<AceContig> result = new ArrayList<AceContig>(ranges.size());
         boolean in1Contig = ranges.size()==1;
@@ -90,24 +99,31 @@ public class NewblerMappedAceContigUtil {
 
     private static AceContig buildAceContigFor(AceContig originalAceContig, TraceDataStore<Phd> phdDataStore,String id,String consensusId,Range contigRange) throws DataStoreException{
         
-        final AcePlacedRead consensusRead = originalAceContig.getPlacedReadById(consensusId);
+        final AcePlacedRead consensusRead = originalAceContig.getRead(consensusId);
         final String consensus = Nucleotides.asString(consensusRead.getNucleotideSequence().asList());
         AceContigBuilder builder = DefaultAceContig.createBuilder(id,consensus);
-        for(AcePlacedRead read : originalAceContig.getPlacedReads()){
-            
-            Matcher matcher = ACTUAL_CONSENSUS_ID_PATTERN.matcher(id);
-            Range readRange = Range.create(read.getBegin(), read.getEnd());
-            if(!matcher.matches() && phdDataStore.contains(read.getId()) && readRange.isSubRangeOf(contigRange) ){
-                final int newOffset = (int)(read.getBegin() -consensusRead.getBegin());
-                builder.addRead(read.getId(), 
-                        read.getNucleotideSequence(),
-                        newOffset,
-                        read.getDirection(),
-                        read.getValidRange(), read.getPhdInfo(),
-                        read.getUngappedFullLength());
-            }
+        CloseableIterator<AcePlacedRead> iter = null;
+        try{
+        	iter = originalAceContig.getReadIterator();
+        	while(iter.hasNext()){
+        		AcePlacedRead read = iter.next();
+        		 Matcher matcher = ACTUAL_CONSENSUS_ID_PATTERN.matcher(id);
+                 Range readRange = Range.create(read.getBegin(), read.getEnd());
+                 if(!matcher.matches() && phdDataStore.contains(read.getId()) && readRange.isSubRangeOf(contigRange) ){
+                     final int newOffset = (int)(read.getBegin() -consensusRead.getBegin());
+                     builder.addRead(read.getId(), 
+                             read.getNucleotideSequence(),
+                             newOffset,
+                             read.getDirection(),
+                             read.getValidRange(), read.getPhdInfo(),
+                             read.getUngappedFullLength());
+                 }
+        	}
+        	return builder.build();
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
         }
-        return builder.build();
+       
         
     }
 

@@ -37,6 +37,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code AssemblyUtil} is a utility class for working
  * with {@link PlacedRead}s and gapped {@link NucleotideSequence}.
@@ -235,7 +236,7 @@ public final class AssemblyUtil {
      */
     public static <PR extends PlacedRead,C extends Contig<PR>> CoverageMap<CoverageRegion<PR>> 
     buildUngappedCoverageMap(C contig){
-        return buildUngappedCoverageMap(contig.getConsensus(), contig.getPlacedReads());
+        return buildUngappedCoverageMap(contig.getConsensus(), contig.getReadIterator());
     }
     /**
      * Create a coverage map in <strong>ungapped consensus coordinate space</strong>
@@ -248,7 +249,7 @@ public final class AssemblyUtil {
      * 
      */
     public static <PR extends PlacedRead> CoverageMap<CoverageRegion<PR>> 
-    buildUngappedCoverageMap(NucleotideSequence consensus, Collection<PR> reads){
+    buildUngappedCoverageMap(NucleotideSequence consensus, CloseableIterator<PR> reads){
         
         CoverageMap<CoverageRegion<PR>> gappedCoverageMap =DefaultCoverageMap.buildCoverageMap(reads);
         return createUngappedCoverageMap(consensus, gappedCoverageMap);

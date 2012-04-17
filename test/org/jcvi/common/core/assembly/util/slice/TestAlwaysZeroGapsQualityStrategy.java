@@ -53,7 +53,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
         .addRead("readId", 0, "ACGT-")
         .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14}));
         
@@ -65,7 +65,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
         .addRead("readId", 0, "-ACGT")
         .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14}));
         
@@ -77,7 +77,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
                                     .addRead("readId", 0, "ACGT-CGT")
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14,15,16,17}));
         
@@ -88,7 +88,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
                                     .addRead("readId", 0, "ACGT-CGT", Direction.REVERSE)
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14,15,16,17}));
         
@@ -100,7 +100,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
                                     .addRead("readId", 0, "ACGT--CGT")
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14,15,16}));
         assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
@@ -111,7 +111,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
                                     .addRead("readId", 0, "ACGT--CGT", Direction.REVERSE)
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14,15,16,17,18}));
         

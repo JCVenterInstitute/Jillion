@@ -29,6 +29,8 @@ import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.assembly.util.trimmer.MinimumBidirectionalEndCoverageTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.PlacedReadTrimmer;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,7 +57,7 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
                         .addRead("read1", 0, Range.create(0, 7), "ACGTACGT", Direction.FORWARD, 10)
                         .build();
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
-        PlacedRead read = _1xContig.getPlacedReadById("read1");
+        PlacedRead read = _1xContig.getRead("read1");
         Range actualValidRange =sut.trimRead(read, read.getValidRange());
         assertEquals(Range.createEmptyRange(), actualValidRange);
     }
@@ -68,8 +70,8 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
                         .addRead("read3", 2, Range.create(0, 5), "GTACGT", Direction.REVERSE, 10)
                         .build();
         sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
-        PlacedRead readToTrim = _1xContig.getPlacedReadById("read1");
-        PlacedRead readThatDoesntGetTrimmed = _1xContig.getPlacedReadById("read2");
+        PlacedRead readToTrim = _1xContig.getRead("read1");
+        PlacedRead readThatDoesntGetTrimmed = _1xContig.getRead("read2");
         Range expectedTrimRange = Range.create(2, 7);
         Range actualValidRange =sut.trimRead(readToTrim, readToTrim.getValidRange());
         assertEquals("new trimmed range",expectedTrimRange, actualValidRange);
@@ -85,10 +87,18 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
                         .addRead("read3", 0,  Range.create(0, 7), "ACGTACGT", Direction.REVERSE, 10)
                         .build();
         sut.initializeContig(_3xBiDirectionalContig, DefaultCoverageMap.buildCoverageMap(_3xBiDirectionalContig));
-        for(PlacedRead readThatDoesntGetTrimmed : _3xBiDirectionalContig.getPlacedReads()){
-            final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
-            assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
-       
+        
+        CloseableIterator<PlacedRead> iter = null;
+        try{
+        	iter = _3xBiDirectionalContig.getReadIterator();
+        	while(iter.hasNext()){
+        		PlacedRead readThatDoesntGetTrimmed = iter.next();
+        		final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
+                assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
+           
+        	}
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
         }
     }
     @Test
@@ -100,18 +110,18 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
                         .build();
         sut.initializeContig(_3xBiDirectionalContig, DefaultCoverageMap.buildCoverageMap(_3xBiDirectionalContig));
         
-        PlacedRead readToTrim = _3xBiDirectionalContig.getPlacedReadById("read1");
+        PlacedRead readToTrim = _3xBiDirectionalContig.getRead("read1");
         Range expectedTrimRange = Range.create(2, 7);
         Range actualValidRange =sut.trimRead(readToTrim, readToTrim.getValidRange());
         assertEquals("new trimmed range",expectedTrimRange, actualValidRange);
         
-        PlacedRead read2ToTrim = _3xBiDirectionalContig.getPlacedReadById("read2");
+        PlacedRead read2ToTrim = _3xBiDirectionalContig.getRead("read2");
         Range expectedTrimRange2 = Range.create(2, 7);
         Range actualValidRange2 =sut.trimRead(read2ToTrim, read2ToTrim.getValidRange());
         assertEquals("new trimmed range",expectedTrimRange2, actualValidRange2);
         
         
-        PlacedRead readThatDoesntGetTrimmed = _3xBiDirectionalContig.getPlacedReadById("read3");
+        PlacedRead readThatDoesntGetTrimmed = _3xBiDirectionalContig.getRead("read3");
         final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
         assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
     }
@@ -125,18 +135,18 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
                         .build();
         sut.initializeContig(_3xBiDirectionalContig, DefaultCoverageMap.buildCoverageMap(_3xBiDirectionalContig));
         
-        PlacedRead readToTrim = _3xBiDirectionalContig.getPlacedReadById("read1");
+        PlacedRead readToTrim = _3xBiDirectionalContig.getRead("read1");
         Range expectedTrimRange = Range.create(0, 5);
         Range actualValidRange =sut.trimRead(readToTrim, readToTrim.getValidRange());
         assertEquals("new trimmed range",expectedTrimRange, actualValidRange);
         
-        PlacedRead read2ToTrim = _3xBiDirectionalContig.getPlacedReadById("read2");
+        PlacedRead read2ToTrim = _3xBiDirectionalContig.getRead("read2");
         Range expectedTrimRange2 = Range.create(0, 5);
         Range actualValidRange2 =sut.trimRead(read2ToTrim, read2ToTrim.getValidRange());
         assertEquals("new trimmed range",expectedTrimRange2, actualValidRange2);
         
         
-        PlacedRead readThatDoesntGetTrimmed = _3xBiDirectionalContig.getPlacedReadById("read3");
+        PlacedRead readThatDoesntGetTrimmed = _3xBiDirectionalContig.getRead("read3");
         final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
         assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
     }
@@ -151,10 +161,17 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
                         .addRead("read5", 0,  Range.create(0, 7), "ACGTACGT", Direction.FORWARD, 10)
                         .build();
         sut.initializeContig(_2xBiDirectionalContig, DefaultCoverageMap.buildCoverageMap(_2xBiDirectionalContig));
-        for(PlacedRead readThatDoesntGetTrimmed : _2xBiDirectionalContig.getPlacedReads()){
-            final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
-            assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
-       
+        CloseableIterator<PlacedRead> iter =null;
+        try{
+        	iter = _2xBiDirectionalContig.getReadIterator();
+        	while(iter.hasNext()){
+        		PlacedRead readThatDoesntGetTrimmed = iter.next();
+        		  final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
+                  assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
+             
+        	}
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
         }
        
     }
