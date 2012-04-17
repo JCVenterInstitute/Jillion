@@ -194,7 +194,7 @@ public class AceFileWriter {
     	IdAlignedReadInfo assembledFrom = IdAlignedReadInfo.createFrom(read, fullLength);
         return String.format("AF %s %s %d%n",
                 assembledFrom.getId(),
-                assembledFrom.getSequenceDirection()==Direction.FORWARD? "U":"C",
+                assembledFrom.getDirection()==Direction.FORWARD? "U":"C",
                         assembledFrom.getStartOffset());
     }
     
@@ -215,9 +215,9 @@ public class AceFileWriter {
     
     private static final class IdAlignedReadInfo implements Comparable<IdAlignedReadInfo>{
     	private final String id;
-	    private final Direction dir;
+	    private final byte dir;
 	    private final int startOffset;
-	    
+	    private static final Direction[] DIRECTION_VALUES = Direction.values();
 	    public static IdAlignedReadInfo createFrom(PlacedRead read, long ungappedFullLength){
 	        final Range validRange;
 	        Direction dir = read.getDirection();
@@ -235,7 +235,7 @@ public class AceFileWriter {
 	    
 		private IdAlignedReadInfo(String id, int startOffset, Direction dir) {
 			this.id = id;
-			this.dir = dir;
+			this.dir = (byte)dir.ordinal();
 			this.startOffset = startOffset;
 		}
 
@@ -269,13 +269,13 @@ public class AceFileWriter {
 	        return startOffset;
 	    }
 	    
-	    public Direction getSequenceDirection(){
-	        return dir;
+	    public Direction getDirection(){
+	        return DIRECTION_VALUES[dir];
 	    }
 	    @Override
 	    public String toString() {
 	        StringBuilder builder = new StringBuilder();
-	        builder.append(id).append(" ").append(startOffset).append("is complimented? ").append(dir ==Direction.REVERSE);
+	        builder.append(id).append(" ").append(startOffset).append("is complimented? ").append(getDirection() ==Direction.REVERSE);
 	        return builder.toString();
 	    }
 	    /**
