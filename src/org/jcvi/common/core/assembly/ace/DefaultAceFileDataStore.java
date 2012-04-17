@@ -191,7 +191,9 @@ public final class DefaultAceFileDataStore implements AceContigDataStore{
         */
         @Override
         public AceContigDataStore build() {
-            return new DefaultAceFileDataStore(new SimpleDataStore<AceContig>(contigMap));
+        	AceContigDataStore datastore= new DefaultAceFileDataStore(new SimpleDataStore<AceContig>(contigMap));
+        	contigMap=null;
+        	return datastore;
         }
         
         /**
