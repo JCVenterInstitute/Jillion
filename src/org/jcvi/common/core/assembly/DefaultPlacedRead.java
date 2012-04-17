@@ -49,7 +49,7 @@ public final class DefaultPlacedRead implements PlacedRead {
     private final int ungappedFullLength;
     
     
-    public static final PlacedReadBuilder<PlacedRead> createBuilder(NucleotideSequence reference, 
+    public static PlacedReadBuilder<PlacedRead> createBuilder(NucleotideSequence reference, 
             String readId,NucleotideSequence validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength){
@@ -57,7 +57,7 @@ public final class DefaultPlacedRead implements PlacedRead {
                 clearRange, ungappedFullLength);
     }
     
-    public static final PlacedReadBuilder<PlacedRead> createBuilder(NucleotideSequence reference, 
+    public static PlacedReadBuilder<PlacedRead> createBuilder(NucleotideSequence reference, 
             String readId,String validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength){
