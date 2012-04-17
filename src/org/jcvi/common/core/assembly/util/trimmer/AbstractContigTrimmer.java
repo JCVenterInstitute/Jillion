@@ -29,8 +29,10 @@ import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * {@code AbstractContigTrimmer} is an abstract implementation
@@ -70,35 +72,42 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
         
         initializeTrimmers(contig,coverageMap);
         beginTrimmingContig(contig);
-        for(P placedRead : contig.getPlacedReads()){
-            Range oldValidRange = placedRead.getValidRange();
-            
-            Range newTrimRange = computeNewTrimRangeFor(placedRead);
-            //skip reads that are completely trimmed
-            if(newTrimRange.isEmpty()){
-                continue;
-            }
-            long newOffset = placedRead.toReferenceOffset((int)newTrimRange.getBegin());
-            
-            final NucleotideSequence originalGappedValidBases = placedRead.getNucleotideSequence();
-            NucleotideSequence trimmedSequence = new NucleotideSequenceBuilder(originalGappedValidBases.asList(newTrimRange)).build();
-			long ungappedLength = trimmedSequence.getUngappedLength();
-            
-            
-            final Range ungappedNewValidRange;
-            if(placedRead.getDirection()==Direction.FORWARD){
-                int numberOfGapsTrimmedOff= originalGappedValidBases.getNumberOfGapsUntil((int)newTrimRange.getBegin());
-                ungappedNewValidRange = Range.createOfLength(oldValidRange.getBegin()+ newTrimRange.getBegin()-numberOfGapsTrimmedOff, ungappedLength);
-                
-            }else{
-                int numberOfGapsTrimmedOffLeft = originalGappedValidBases.getNumberOfGapsUntil((int)newTrimRange.getBegin());
-                long numberOfBasesTrimmedOffLeft = newTrimRange.getBegin()-numberOfGapsTrimmedOffLeft;
-                
-                long numberOfBasesTrimmedOffRight = originalGappedValidBases.getUngappedLength() -ungappedLength-numberOfBasesTrimmedOffLeft;
-                ungappedNewValidRange = Range.create(oldValidRange.getBegin()+numberOfBasesTrimmedOffRight, oldValidRange.getEnd()- numberOfBasesTrimmedOffLeft);    
-            }
-            
-            trimRead(placedRead, newOffset, trimmedSequence.toString(),ungappedNewValidRange);
+        CloseableIterator<P> readIter = null;
+        try{
+        	readIter = contig.getReadIterator();
+        	while(readIter.hasNext()){
+        		P placedRead = readIter.next();
+	            Range oldValidRange = placedRead.getValidRange();
+	            
+	            Range newTrimRange = computeNewTrimRangeFor(placedRead);
+	            //skip reads that are completely trimmed
+	            if(newTrimRange.isEmpty()){
+	                continue;
+	            }
+	            long newOffset = placedRead.toReferenceOffset((int)newTrimRange.getBegin());
+	            
+	            final NucleotideSequence originalGappedValidBases = placedRead.getNucleotideSequence();
+	            NucleotideSequence trimmedSequence = new NucleotideSequenceBuilder(originalGappedValidBases.asList(newTrimRange)).build();
+				long ungappedLength = trimmedSequence.getUngappedLength();
+	            
+	            
+	            final Range ungappedNewValidRange;
+	            if(placedRead.getDirection()==Direction.FORWARD){
+	                int numberOfGapsTrimmedOff= originalGappedValidBases.getNumberOfGapsUntil((int)newTrimRange.getBegin());
+	                ungappedNewValidRange = Range.createOfLength(oldValidRange.getBegin()+ newTrimRange.getBegin()-numberOfGapsTrimmedOff, ungappedLength);
+	                
+	            }else{
+	                int numberOfGapsTrimmedOffLeft = originalGappedValidBases.getNumberOfGapsUntil((int)newTrimRange.getBegin());
+	                long numberOfBasesTrimmedOffLeft = newTrimRange.getBegin()-numberOfGapsTrimmedOffLeft;
+	                
+	                long numberOfBasesTrimmedOffRight = originalGappedValidBases.getUngappedLength() -ungappedLength-numberOfBasesTrimmedOffLeft;
+	                ungappedNewValidRange = Range.create(oldValidRange.getBegin()+numberOfBasesTrimmedOffRight, oldValidRange.getEnd()- numberOfBasesTrimmedOffLeft);    
+	            }
+	            
+	            trimRead(placedRead, newOffset, trimmedSequence.toString(),ungappedNewValidRange);
+	        }
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(readIter);
         }
         clearTrimmers();
         return buildNewContig();

@@ -44,7 +44,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
         .addRead("readId", 0, "ACGT-")
         .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14}));
         
@@ -56,7 +56,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
         .addRead("readId", 0, "-ACGT")
         .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14}));
         
@@ -76,7 +76,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
                                     .addRead("readId", 0, "ACGT-CGT")
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{0,0,0,16,16,0,0,0}));
         
@@ -88,7 +88,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
                                     .addRead("readId", 0, "ACGT-CGT")
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{0,0,0,14,16,0,0,0}));
         
@@ -99,7 +99,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
                                     .addRead("readId", 0, "ACGT-CGT",Direction.REVERSE)
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{0,0,0,0,14,16,0,0}));
         
@@ -110,7 +110,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
                                     .addRead("readId", 0, "ACGT-CGT")
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{0,0,0,14,11,0,0,0}));
         
@@ -121,7 +121,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
                                     .addRead("readId", 0, "ACGT-CGT",Direction.REVERSE)
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{0,0,14,11,0,0,0}));
         
@@ -132,7 +132,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
                                     .addRead("readId", 0, "ACGT--CGT")
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{0,0,0,14,11,0,0,0}));
         
@@ -144,7 +144,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
                                     .addRead("readId", 0, "ACGT--CGT")
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{0,0,0,14,16,0,0,0}));
         
@@ -158,7 +158,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
                                     .addRead("readId", 0, "ACGT--CGT", Direction.REVERSE)
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{0,0,14,11,0,0,0}));
         
@@ -170,7 +170,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
                                     .addRead("readId", 0, "ACGT--CGT",Direction.REVERSE)
                                     .build();
-        PlacedRead read = contig.getPlacedReadById("readId");
+        PlacedRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{0,0,14,16,0,0,0}));
         

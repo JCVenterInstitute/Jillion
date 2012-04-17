@@ -215,8 +215,15 @@ public class RecallAceConsensus {
 	                    fastaOut.print(new DefaultNucleotideSequenceFastaRecord(contig.getId(), gappedRecalledConsensus.asUngappedList()));
 	                }
 	                AceContigBuilder builder = DefaultAceContig.createBuilder(contig.getId(), gappedRecalledConsensus);
-	                for(AcePlacedRead read : contig.getPlacedReads()){
-	                    builder.addRead(read);
+	                CloseableIterator<AcePlacedRead> readIter = null;
+	                try{
+	                	readIter = contig.getReadIterator();
+	                	while(readIter.hasNext()){
+	                		AcePlacedRead read = readIter.next();
+	                		builder.addRead(read);
+	                	}
+	                }finally{
+	                	IOUtil.closeAndIgnoreErrors(readIter);
 	                }
 	                AceFileWriter.writeAceContig(builder.build(), masterPhdDataStore, out);
 	            }

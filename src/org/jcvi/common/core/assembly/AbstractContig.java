@@ -29,23 +29,23 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
 public abstract class AbstractContig<T extends PlacedRead> implements Contig<T>{
     private NucleotideSequence consensus;
     private String id;
     private Map<String, T> mapById;
     private final int numberOfReads;
-    private final Set<T> placedReads;
     protected AbstractContig(String id, NucleotideSequence consensus, Set<T> placedReads){
         this.id = id;
         this.consensus = consensus;
-        mapById = new LinkedHashMap<String, T>();
-        this.placedReads = new LinkedHashSet<T>();
+        this.numberOfReads = placedReads.size();
+        mapById = new LinkedHashMap<String, T>(numberOfReads+1, 1F);
         for(T r : placedReads){
             mapById.put(r.getId(), r);
-            this.placedReads.add(r);
         }
-        this.numberOfReads = this.placedReads.size();
+       
     }
 
     @Override
@@ -63,19 +63,19 @@ public abstract class AbstractContig<T extends PlacedRead> implements Contig<T>{
         return numberOfReads;
     }
     @Override
-    public T getPlacedReadById(String id) {
+    public T getRead(String id) {
         return mapById.get(id);
     }
     @Override
-    public Set<T> getPlacedReads() {       
-        return placedReads;
+    public CloseableIterator<T> getReadIterator() {       
+        return CloseableIteratorAdapter.adapt(mapById.values().iterator());
     }
 
     
 
 
     @Override
-    public boolean containsPlacedRead(String placedReadId) {
+    public boolean containsRead(String placedReadId) {
         return mapById.containsKey(placedReadId);
     }
 
@@ -90,8 +90,6 @@ public abstract class AbstractContig<T extends PlacedRead> implements Contig<T>{
 				+ ((consensus == null) ? 0 : consensus.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + numberOfReads;
-		result = prime * result
-				+ ((placedReads == null) ? 0 : placedReads.hashCode());
 		return result;
 	}
 
@@ -126,13 +124,6 @@ public abstract class AbstractContig<T extends PlacedRead> implements Contig<T>{
 			return false;
 		}
 		if (numberOfReads != other.getNumberOfReads()) {
-			return false;
-		}
-		if (placedReads == null) {
-			if (other.getPlacedReads() != null) {
-				return false;
-			}
-		} else if (!placedReads.equals(other.getPlacedReads())) {
 			return false;
 		}
 		return true;

@@ -59,7 +59,7 @@ public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmData
 
 			private void verifyAForwardGappedRead(AsmUnitig unitig,
 					FragmentDataStore frg) throws DataStoreException {
-				AsmPlacedRead read =unitig.getPlacedReadById("1099820534711");
+				AsmPlacedRead read =unitig.getRead("1099820534711");
 				assertEquals(Range.create(33,989), read.asRange());
 				assertEquals(Direction.FORWARD, read.getDirection());
 				assertEquals(Arrays.asList(82, 193 ,771 ),
@@ -82,7 +82,7 @@ public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmData
 			}
 
 			private void verifyAReverseGappedRead(AsmUnitig unitig, FragmentDataStore frg) throws DataStoreException {
-				AsmPlacedRead read =unitig.getPlacedReadById("1100010859106");
+				AsmPlacedRead read =unitig.getRead("1100010859106");
 				assertEquals(Range.create(0,729), read.asRange());
 				assertEquals(Direction.REVERSE, read.getDirection());
 				

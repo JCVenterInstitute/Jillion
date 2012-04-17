@@ -33,10 +33,12 @@ import java.util.List;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 public class AceFileWriter {
 
     private static final String CONTIG_HEADER = "CO %s %d %d %d %s%n";
@@ -136,7 +138,7 @@ public class AceFileWriter {
         for(AssembledFrom assembledFrom : assembledFroms){
             String id = assembledFrom.getId();
             final Phd phd = phdDataStore.get(id);
-            final AcePlacedRead realPlacedRead = contig.getPlacedReadById(id);
+            final AcePlacedRead realPlacedRead = contig.getRead(id);
              long fullLength = realPlacedRead.getUngappedFullLength();
             assembledFromBuilder.append(createAssembledFromRecord(realPlacedRead,fullLength));
             placedReadBuilder.append(createPlacedReadRecord(realPlacedRead, phd));
@@ -151,9 +153,16 @@ public class AceFileWriter {
     private static List<AssembledFrom> getSortedAssembledFromsFor(
             Contig<AcePlacedRead> contig){
         List<AssembledFrom> assembledFroms = new ArrayList<AssembledFrom>(contig.getNumberOfReads());
-        for(AcePlacedRead read : contig.getPlacedReads()){
-            long fullLength =read.getUngappedFullLength();
-            assembledFroms.add(AssembledFrom.createFrom(read, fullLength));
+        CloseableIterator<AcePlacedRead> iter = null;
+        try{
+        	iter = contig.getReadIterator();
+        	while(iter.hasNext()){
+        		AcePlacedRead read = iter.next();
+        		long fullLength =read.getUngappedFullLength();
+	            assembledFroms.add(AssembledFrom.createFrom(read, fullLength));
+        	}
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
         }
         Collections.sort(assembledFroms);
         return assembledFroms;

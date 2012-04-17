@@ -31,8 +31,10 @@ import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * @author dkatzel
@@ -66,7 +68,7 @@ public class AbacusErrorFinder {
             }
             boolean isAbacusError=true;
             for(String readId : readIds){
-                P read =contig.getPlacedReadById(readId);              
+                P read =contig.getRead(readId);              
                 long adjustedStart = Math.max(gappedCandidateRange.getBegin(), read.getBegin());
                 long adjustedEnd = Math.min(gappedCandidateRange.getEnd(), read.getEnd());
                 boolean spansEntireRegion = (adjustedStart == gappedCandidateRange.getBegin()) && (adjustedEnd == gappedCandidateRange.getEnd());
@@ -119,20 +121,26 @@ public class AbacusErrorFinder {
     private <P extends PlacedRead, C extends Contig<P>> List<Range> getUngappedCandidateRanges(C contig) {
         
         List<Range> gapRangesPerRead = new ArrayList<Range>(contig.getNumberOfReads());
-        for(P placedRead : contig.getPlacedReads()){           
-            List<Range> gaps = new ArrayList<Range>(placedRead.getNucleotideSequence().getNumberOfGaps());
-            for(Integer gapOffset : placedRead.getNucleotideSequence().getGapOffsets()){
-                Range buildRange = Range.create(gapOffset.intValue() + placedRead.getBegin());
-                gaps.add(buildRange);
-            }
-            List<Range> mergeRanges = Ranges.merge(gaps);
-            for(Range mergedRange: mergeRanges ){               
-                if(mergedRange.getLength() >=minAbacusLength){
-                    gapRangesPerRead.add(mergedRange);
-                }
-            }
+        CloseableIterator<P> readIterator = null;
+        try{
+        	readIterator = contig.getReadIterator();
+        	while(readIterator.hasNext()){         
+	            P placedRead = readIterator.next();
+        		List<Range> gaps = new ArrayList<Range>(placedRead.getNucleotideSequence().getNumberOfGaps());
+	            for(Integer gapOffset : placedRead.getNucleotideSequence().getGapOffsets()){
+	                Range buildRange = Range.create(gapOffset.intValue() + placedRead.getBegin());
+	                gaps.add(buildRange);
+	            }
+	            List<Range> mergeRanges = Ranges.merge(gaps);
+	            for(Range mergedRange: mergeRanges ){               
+	                if(mergedRange.getLength() >=minAbacusLength){
+	                    gapRangesPerRead.add(mergedRange);
+	                }
+	            }
+	        }
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(readIterator);
         }
-        
         CoverageMap<CoverageRegion<Range>> clusteredGapCoverage = DefaultCoverageMap.buildCoverageMap(gapRangesPerRead);
     
         List<Range> abacusErrors = new ArrayList<Range>();

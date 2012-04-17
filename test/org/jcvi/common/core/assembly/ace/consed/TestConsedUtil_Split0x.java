@@ -36,8 +36,10 @@ import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.junit.Test;
 /**
  * @author dkatzel
@@ -270,10 +272,17 @@ public class TestConsedUtil_Split0x {
         assertEquals("id",expected.getId(),actual.getId());
         assertEquals("consensus", expected.getConsensus().asList(), actual.getConsensus().asList());
         assertEquals("numberOfReads", expected.getNumberOfReads(), actual.getNumberOfReads());
-        for(AcePlacedRead expectedRead: expected.getPlacedReads()){
-            final String id = expectedRead.getId();
-            assertTrue("missing read " +id,actual.containsPlacedRead(id));
-            assertAcePlacedReadsEqual(expectedRead, actual.getPlacedReadById(id));
+        CloseableIterator<AcePlacedRead> iter = null;
+        try{
+        	iter = expected.getReadIterator();
+        	while(iter.hasNext()){
+        		AcePlacedRead expectedRead = iter.next();
+				final String id = expectedRead.getId();
+				assertTrue("missing read " + id, actual.containsRead(id));
+				assertAcePlacedReadsEqual(expectedRead, actual.getRead(id));
+        	}
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
         }
     }
 

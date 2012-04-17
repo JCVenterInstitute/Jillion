@@ -24,6 +24,8 @@ import static org.junit.Assert.*;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * @author dkatzel
@@ -39,8 +41,15 @@ public final class AceContigTestUtil {
         assertEquals(expected.getId(), actual.getId()); 
         assertEquals(expected.getConsensus().asList(), actual.getConsensus().asList());
         assertEquals(expected.getId(),expected.getNumberOfReads(), actual.getNumberOfReads());
-        for(PlacedRead expectedRead : expected.getPlacedReads()){
-            assertPlacedReadParsedCorrectly(expectedRead, actual.getPlacedReadById(expectedRead.getId()));
+        CloseableIterator<? extends PlacedRead> iter = null;
+        try{
+        	iter = expected.getReadIterator();
+        	while(iter.hasNext()){
+        		PlacedRead expectedRead = iter.next();
+        		assertPlacedReadParsedCorrectly(expectedRead, actual.getRead(expectedRead.getId()));
+        	}
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
         }
         
     }

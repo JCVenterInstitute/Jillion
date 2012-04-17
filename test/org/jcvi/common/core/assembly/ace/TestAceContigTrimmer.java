@@ -34,7 +34,9 @@ import org.jcvi.common.core.assembly.util.trimmer.ContigTrimmerResult;
 import org.jcvi.common.core.assembly.util.trimmer.MinimumEndCoverageTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.PlacedReadTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.TrimmerException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -88,12 +90,23 @@ public class TestAceContigTrimmer {
         
        assertEquals("trimmed id", expectedContig.getId(), actualContig.getId());
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
-       for(AcePlacedRead expectedRead : expectedContig.getPlacedReads()){
-           final String id = expectedRead.getId();
-           AcePlacedRead actualRead = actualContig.getPlacedReadById(id);
-           AssemblyTestUtil.assertPlacedReadCorrect(expectedRead, actualRead);
-       }
+       assertReadsCorrectlyPlaced(expectedContig, actualContig);
     }
+	private void assertReadsCorrectlyPlaced(AceContig expectedContig,
+			AceContig actualContig) {
+		CloseableIterator<AcePlacedRead> iter = null;
+		try{
+			iter = expectedContig.getReadIterator();
+			while(iter.hasNext()){
+				AcePlacedRead expectedRead = iter.next();
+				   final String id = expectedRead.getId();
+			       AcePlacedRead actualRead = actualContig.getRead(id);
+			       AssemblyTestUtil.assertPlacedReadCorrect(expectedRead, actualRead);
+			}
+		}finally{
+			IOUtil.closeAndIgnoreErrors(iter);
+		}
+	}
     @Test
     public void trim1xFromEndsWithReverseReads() throws TrimmerException{
        AceContig originalContig = new TestAceBuilder("id","ACGTACGTACGT")
@@ -114,11 +127,7 @@ public class TestAceContigTrimmer {
         
        assertEquals("trimmed id", expectedContig.getId(), actualContig.getId());
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
-       for(AcePlacedRead expectedRead : expectedContig.getPlacedReads()){
-           final String id = expectedRead.getId();
-           AcePlacedRead actualRead = actualContig.getPlacedReadById(id);
-           AssemblyTestUtil.assertPlacedReadCorrect(expectedRead, actualRead);
-       }
+       assertReadsCorrectlyPlaced(expectedContig, actualContig);
     }
     
     @Test
@@ -141,11 +150,7 @@ public class TestAceContigTrimmer {
         
        assertEquals("trimmed id", expectedContig.getId(), actualContig.getId());
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
-       for(AcePlacedRead expectedRead : expectedContig.getPlacedReads()){
-           final String id = expectedRead.getId();
-           AcePlacedRead actualRead = actualContig.getPlacedReadById(id);
-           AssemblyTestUtil.assertPlacedReadCorrect(expectedRead, actualRead);
-       }
+       assertReadsCorrectlyPlaced(expectedContig, actualContig);
     }
     @Test
     public void trim1xFromEndsWithGapsReverse() throws TrimmerException{
@@ -167,11 +172,7 @@ public class TestAceContigTrimmer {
         
        assertEquals("trimmed id", expectedContig.getId(), actualContig.getId());
        assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
-       for(AcePlacedRead expectedRead : expectedContig.getPlacedReads()){
-           final String id = expectedRead.getId();
-           AcePlacedRead actualRead = actualContig.getPlacedReadById(id);
-           AssemblyTestUtil.assertPlacedReadCorrect(expectedRead, actualRead);
-       }
+       assertReadsCorrectlyPlaced(expectedContig, actualContig);
     }
     //TODO make test to trim when consensus to start/end is a gap (test new flanking code)
 }

@@ -35,6 +35,7 @@ import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Rule;
@@ -79,10 +80,17 @@ public class TestAce2Contig {
       AceContigDataStore aceContigDataStore = DefaultAceFileDataStore.create(aceFile);
       AceContig aceContig = aceContigDataStore.get("Contig1");
       assertEquals(aceContig.getConsensus().asList(), contig.getConsensus().asList());
-      for(AcePlacedRead expectedRead : aceContig.getPlacedReads()){
-          PlacedRead actualRead = contig.getPlacedReadById(expectedRead.getId());
-          assertEquals(expectedRead.getNucleotideSequence().asList(),actualRead.getNucleotideSequence().asList());
-          assertEquals(expectedRead.asRange(), actualRead.asRange());
+      CloseableIterator<AcePlacedRead> iter = null;
+      try{
+    	  iter = aceContig.getReadIterator();
+    	  while(iter.hasNext()){
+    		  AcePlacedRead expectedRead = iter.next();
+    		  PlacedRead actualRead = contig.getRead(expectedRead.getId());
+              assertEquals(expectedRead.getNucleotideSequence().asList(),actualRead.getNucleotideSequence().asList());
+              assertEquals(expectedRead.asRange(), actualRead.asRange());
+    	  }
+      }finally{
+    	  IOUtil.closeAndIgnoreErrors(iter);
       }
       assertContentEquals(expectedContigFile, actualContigFile);
     }

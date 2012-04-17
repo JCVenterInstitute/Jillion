@@ -30,6 +30,8 @@ import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -113,8 +115,15 @@ public class TestFilterFastqDataFromCas {
     
     private CoverageMap<CoverageRegion<ReadRange>> convertToReadRangeCoverageMap(Contig<? extends PlacedRead> contig){
         List<ReadRange> readRanges = new ArrayList<ReadRange>();
-        for(PlacedRead read : contig.getPlacedReads()){
-            readRanges.add(new ReadRange(read.getId(), read.asRange()));
+        CloseableIterator<? extends PlacedRead> iter = null;
+        try{
+        	iter = contig.getReadIterator();
+        	while(iter.hasNext()){
+        		PlacedRead read = iter.next();
+        		readRanges.add(new ReadRange(read.getId(), read.asRange()));
+        	}
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
         }
         return DefaultCoverageMap.buildCoverageMap(readRanges);
     }

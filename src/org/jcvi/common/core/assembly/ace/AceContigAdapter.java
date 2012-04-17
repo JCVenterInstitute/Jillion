@@ -19,13 +19,13 @@
 
 package org.jcvi.common.core.assembly.ace;
 
+import java.io.IOException;
 import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * @author dkatzel
@@ -65,12 +65,9 @@ public class AceContigAdapter implements AceContig{
     * {@inheritDoc}
     */
     @Override
-    public Set<AcePlacedRead> getPlacedReads() {
-        Set<AcePlacedRead> set = new LinkedHashSet<AcePlacedRead>();
-        for(PlacedRead r : delegate.getPlacedReads()){
-            set.add(adaptPlacedRead(r.getId(), r));
-        }
-        return set;
+    public CloseableIterator<AcePlacedRead> getReadIterator() {
+       
+        return new PlacedReadIteratorAdapter(delegate.getReadIterator());
     }
 
     /**
@@ -85,8 +82,8 @@ public class AceContigAdapter implements AceContig{
     * {@inheritDoc}
     */
     @Override
-    public AcePlacedRead getPlacedReadById(String id) {
-        PlacedRead placedRead = delegate.getPlacedReadById(id);
+    public AcePlacedRead getRead(String id) {
+        PlacedRead placedRead = delegate.getRead(id);
         return adaptPlacedRead(id, placedRead);
     }
 
@@ -99,8 +96,8 @@ public class AceContigAdapter implements AceContig{
     * {@inheritDoc}
     */
     @Override
-    public boolean containsPlacedRead(String placedReadId) {
-        return delegate.containsPlacedRead(placedReadId);
+    public boolean containsRead(String placedReadId) {
+        return delegate.containsRead(placedReadId);
     }
 
     /**
@@ -111,4 +108,35 @@ public class AceContigAdapter implements AceContig{
         return isComplimented;
     }
 
+    private class PlacedReadIteratorAdapter implements CloseableIterator<AcePlacedRead>{
+    	private final CloseableIterator<? extends PlacedRead> delegateIter;
+    	
+		private PlacedReadIteratorAdapter(
+				CloseableIterator<? extends PlacedRead> delegateIter) {
+			this.delegateIter = delegateIter;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return delegateIter.hasNext();
+		}
+
+		@Override
+		public void close() throws IOException {
+			delegateIter.close();
+			
+		}
+
+		@Override
+		public AcePlacedRead next() {
+			PlacedRead r = delegateIter.next();
+			return adaptPlacedRead(r.getId(), r);
+		}
+
+		@Override
+		public void remove() {
+			delegateIter.remove();
+			
+		}
+    }
 }
