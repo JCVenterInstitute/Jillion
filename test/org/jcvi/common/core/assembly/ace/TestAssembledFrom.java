@@ -24,32 +24,25 @@
 package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.assembly.ace.AssembledFrom;
+import org.jcvi.common.core.assembly.ace.AlignedReadInfo;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAssembledFrom {
 
     Direction dir = Direction.FORWARD;
-    String id = "assembled from id";
     int offset = 12345;
     
-    AssembledFrom sut = new AssembledFrom(id, offset, dir);
+    AlignedReadInfo sut = new AlignedReadInfo(offset, dir);
     
     @Test
     public void constructor(){
-        assertEquals(id, sut.getId());
         assertEquals(offset, sut.getStartOffset());
-        assertEquals(dir, sut.getSequenceDirection());
+        assertEquals(dir, sut.getDirection());
     }
-    @Test
-    public void nullIdShouldThrowIllegalArgumentException(){
-        try{
-            new AssembledFrom(null, offset, dir);
-            fail("should throw IllegalArgumentException when id is null");
-        }catch(IllegalArgumentException e){
-            assertEquals("id can not be null", e.getMessage());
-        }
+    @Test(expected = NullPointerException.class)
+    public void nullDirectionShouldThrowNPE(){
+    	new AlignedReadInfo(offset,null);
     }
     @Test
     public void equalsSameRef(){
@@ -66,35 +59,27 @@ public class TestAssembledFrom {
     
     @Test
     public void equalsSameValues(){
-        AssembledFrom sameValues = new AssembledFrom(id, offset, dir);
+        AlignedReadInfo sameValues = new AlignedReadInfo(offset, dir);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
-    
+  
+
     @Test
-    public void differentIdShouldNotBeEqual(){
-        AssembledFrom differentId = new AssembledFrom("different"+id, offset, dir);
-        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentId);
+    public void differentOffsetShouldNotBeEqual(){
+        AlignedReadInfo differentOffset = new AlignedReadInfo(offset+1, dir);
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentOffset);
     }
-    /**
-     * Only id is used to calculate equality.
-     */
+
     @Test
-    public void differentOffsetShouldStillBeEqual(){
-        AssembledFrom differentOffset = new AssembledFrom(id, offset+1, dir);
-        TestUtil.assertEqualAndHashcodeSame(sut, differentOffset);
-    }
-    /**
-     * Only id is used to calculate equality.
-     */
-    @Test
-    public void differentComlimentShouldStillBeEqual(){
-        AssembledFrom differentCompliment = new AssembledFrom(id, offset, Direction.REVERSE);
-        TestUtil.assertEqualAndHashcodeSame(sut, differentCompliment);
+    public void differentComlimentShouldNotBeEqual(){
+        AlignedReadInfo differentCompliment = new AlignedReadInfo(offset, Direction.REVERSE);
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentCompliment);
     }
     
     @Test
     public void testToString(){
-        String expected = id + " " + offset + "is complimented? "+(dir ==Direction.REVERSE);
+        String expected = "AlignedReadInfo [dir=" + dir + ", startOffset=" + offset
+				+ "]";
         assertEquals(expected, sut.toString());
     }
 }
