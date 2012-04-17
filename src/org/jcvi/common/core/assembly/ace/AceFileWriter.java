@@ -31,7 +31,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.common.core.Direction;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -131,11 +134,11 @@ public class AceFileWriter {
         writeFakeUngappedConsensusQualities(consensus, out);
         writeString(String.format("%n"), out);
         out.flush();
-        List<AssembledFrom> assembledFroms = getSortedAssembledFromsFor(contig);
+        List<IdAlignedReadInfo> assembledFroms = getSortedAssembledFromsFor(contig);
         StringBuilder assembledFromBuilder = new StringBuilder();
         StringBuilder placedReadBuilder = new StringBuilder();
         
-        for(AssembledFrom assembledFrom : assembledFroms){
+        for(IdAlignedReadInfo assembledFrom : assembledFroms){
             String id = assembledFrom.getId();
             final Phd phd = phdDataStore.get(id);
             final AcePlacedRead realPlacedRead = contig.getRead(id);
@@ -150,16 +153,16 @@ public class AceFileWriter {
         writeString(placedReadBuilder.toString(),out);
         out.flush();
     }
-    private static List<AssembledFrom> getSortedAssembledFromsFor(
+    private static List<IdAlignedReadInfo> getSortedAssembledFromsFor(
             Contig<AcePlacedRead> contig){
-        List<AssembledFrom> assembledFroms = new ArrayList<AssembledFrom>(contig.getNumberOfReads());
+        List<IdAlignedReadInfo> assembledFroms = new ArrayList<IdAlignedReadInfo>(contig.getNumberOfReads());
         CloseableIterator<AcePlacedRead> iter = null;
         try{
         	iter = contig.getReadIterator();
         	while(iter.hasNext()){
         		AcePlacedRead read = iter.next();
         		long fullLength =read.getUngappedFullLength();
-	            assembledFroms.add(AssembledFrom.createFrom(read, fullLength));
+	            assembledFroms.add(IdAlignedReadInfo.createFrom(read, fullLength));
         	}
         }finally{
         	IOUtil.closeAndIgnoreErrors(iter);
@@ -188,7 +191,7 @@ public class AceFileWriter {
    
 
     private static String createAssembledFromRecord(AcePlacedRead read, long fullLength){
-        AssembledFrom assembledFrom = AssembledFrom.createFrom(read, fullLength);
+    	IdAlignedReadInfo assembledFrom = IdAlignedReadInfo.createFrom(read, fullLength);
         return String.format("AF %s %s %d%n",
                 assembledFrom.getId(),
                 assembledFrom.getSequenceDirection()==Direction.FORWARD? "U":"C",
@@ -208,5 +211,86 @@ public class AceFileWriter {
     private static void writeString(String s, OutputStream out) throws IOException{
         out.write(s.getBytes(UTF_8));
         
+    }
+    
+    private static final class IdAlignedReadInfo implements Comparable<IdAlignedReadInfo>{
+    	private final String id;
+	    private final Direction dir;
+	    private final int startOffset;
+	    
+	    public static IdAlignedReadInfo createFrom(PlacedRead read, long ungappedFullLength){
+	        final Range validRange;
+	        Direction dir = read.getDirection();
+	        Range readValidRange = read.getValidRange();
+	        if(dir==Direction.REVERSE){
+	            validRange = AssemblyUtil.reverseComplimentValidRange(readValidRange, ungappedFullLength);
+	        }
+	        else{
+	            validRange = readValidRange;
+	        }
+	        return new IdAlignedReadInfo(read.getId(), 
+	                (int)(read.getBegin()-validRange.getBegin()+1),dir);
+	    }
+	    
+	    
+		private IdAlignedReadInfo(String id, int startOffset, Direction dir) {
+			this.id = id;
+			this.dir = dir;
+			this.startOffset = startOffset;
+		}
+
+
+		@Override
+	    public int hashCode() {
+	        final int prime = 31;
+	        int result = 1;
+	        result = prime * result + id.hashCode();
+	        return result;
+	    }
+	    @Override
+	    public boolean equals(Object obj) {
+	        if (this == obj){
+	            return true;
+	        }
+	        if (obj == null){
+	            return false;
+	        }
+	        if (!(obj instanceof AlignedReadInfo)){
+	            return false;
+	        }
+	        IdAlignedReadInfo other = (IdAlignedReadInfo) obj;
+	        return id.equals(other.getId());
+	    }
+	    public String getId() {
+	        return id;
+	    }
+
+	    public int getStartOffset() {
+	        return startOffset;
+	    }
+	    
+	    public Direction getSequenceDirection(){
+	        return dir;
+	    }
+	    @Override
+	    public String toString() {
+	        StringBuilder builder = new StringBuilder();
+	        builder.append(id).append(" ").append(startOffset).append("is complimented? ").append(dir ==Direction.REVERSE);
+	        return builder.toString();
+	    }
+	    /**
+	    * Compares two AssembledFrom instances and compares them based on start offset
+	    * then by Id.  This should match the order of AssembledFrom records 
+	    * (and reads) in an .ace file.
+	    */
+	    @Override
+	    public int compareTo(IdAlignedReadInfo o) {
+	        int cmp= Integer.valueOf(getStartOffset()).compareTo(o.getStartOffset());
+	        if(cmp !=0){
+	            return cmp;
+	        }
+	        return getId().compareTo(o.getId());
+	    }
+    	
     }
 }

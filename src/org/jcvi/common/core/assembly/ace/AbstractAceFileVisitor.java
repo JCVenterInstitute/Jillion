@@ -46,7 +46,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private String currentReadId;
     private int currentReadGappedFullLength;
     private int currentReadUngappedFullLength;
-    private Map<String, AssembledFrom> currentAssembledFromMap;
+    private Map<String, AlignedReadInfo> currentAssembledFromMap;
     private boolean readingConsensus=true;
     private NucleotideSequenceBuilder currentBasecalls = new NucleotideSequenceBuilder();
     private PhdInfo currentPhdInfo;
@@ -86,7 +86,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
             Direction dir, int gappedStartOffset) {
         throwExceptionIfInitialized();
         fireVisitNewContigIfWeHaventAlready();
-        final AssembledFrom assembledFromObj = new AssembledFrom(readId, gappedStartOffset, dir);
+        final AlignedReadInfo assembledFromObj = new AlignedReadInfo(gappedStartOffset, dir);
         currentAssembledFromMap.put(readId, assembledFromObj);
     }
 	private synchronized void fireVisitNewContigIfWeHaventAlready() {
@@ -144,7 +144,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
             boolean reverseComplimented) {
         throwExceptionIfInitialized();
         currentContigId = contigId;
-        currentAssembledFromMap = new HashMap<String, AssembledFrom>();
+        currentAssembledFromMap = new HashMap<String, AlignedReadInfo>();
         readingConsensus = true;
         currentBasecalls = new NucleotideSequenceBuilder();
         currentContigIsComplimented = reverseComplimented;
@@ -227,7 +227,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
        }catch(Exception e){
     	   throw new RuntimeException("error while generating quality data for "+currentReadId,e);
        }
-        AssembledFrom assembledFrom =currentAssembledFromMap.get(currentReadId);
+        AlignedReadInfo assembledFrom =currentAssembledFromMap.get(currentReadId);
         if(assembledFrom ==null){
             throw new IllegalStateException("unknown read no AF record for "+ currentReadId);
         }
@@ -253,7 +253,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         int ungappedClearLeft = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getBegin());
         int ungappedClearRight = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getEnd());
         Range ungappedValidRange = Range.create(CoordinateSystem.RESIDUE_BASED, ungappedClearLeft+1, ungappedClearRight+1 );
-        if(assembledFrom.getSequenceDirection() == Direction.REVERSE){
+        if(assembledFrom.getDirection() == Direction.REVERSE){
             ungappedValidRange = AssemblyUtil.reverseComplimentValidRange(ungappedValidRange, currentReadUngappedFullLength);            
         }
         currentClearRange = ungappedValidRange;
@@ -276,7 +276,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     	System.err.printf("ignoring read %s because %s%n", readId,reason);
     }
     
-    private int computeReadOffset(AssembledFrom assembledFrom, long startPosition) {
+    private int computeReadOffset(AlignedReadInfo assembledFrom, long startPosition) {
         return assembledFrom.getStartOffset() + (int)startPosition -2;
     }
 
@@ -299,8 +299,8 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         throwExceptionIfInitialized();
         if(!skipCurrentRead){
             currentPhdInfo =new DefaultPhdInfo(traceName, phdName, date);
-            AssembledFrom assembledFrom = currentAssembledFromMap.get(currentReadId);
-            visitAceRead(currentReadId, currentValidBases ,currentOffset, assembledFrom.getSequenceDirection(), 
+            AlignedReadInfo assembledFrom = currentAssembledFromMap.get(currentReadId);
+            visitAceRead(currentReadId, currentValidBases ,currentOffset, assembledFrom.getDirection(), 
                     currentClearRange ,currentPhdInfo,currentReadUngappedFullLength);
         }
         skipCurrentRead=false;
