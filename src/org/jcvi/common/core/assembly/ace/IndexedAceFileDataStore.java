@@ -24,14 +24,21 @@
 package org.jcvi.common.core.assembly.ace;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
@@ -40,7 +47,13 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * {@code IndexedAceFileDataStore} is an implementation of 
  * {@link AceContigDataStore} that only stores an index containing
  * byte offsets to the various contigs contained
- * inside the ace file.  This allows large files to provide random 
+ * inside the ace file. Furthermore, each {@link AceContig}
+ * in this datastore will not store all the underlying read
+ * data in memory either.  Calls to {@link AceContig#getRead(String)} may
+ * cause part of the ace file to be re-parsed in order to retreive
+ * any missing information.  
+ * <p/>
+ * This allows large files to provide random 
  * access without taking up much memory.  The down side is each contig
  * must be re-parsed each time and the ace file must exist and not
  * get altered during the entire lifetime of this object.
@@ -122,12 +135,10 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         Range range = indexFileRange.getRangeFor(contigId);
         InputStream inputStream=null;
         try {
-            AceContigDataStoreBuilder builder = DefaultAceFileDataStore.createBuilder();
+        	IndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder = new IndexedAceFileContig.IndexedContigVisitorBuilder(range.getBegin(), file);
             inputStream = IOUtil.createInputStreamFromFile(file,range);
-            //need to explicitly say we have 1 contig for maps to get populated correctly
-            builder.visitHeader(1, 0);
-            AceFileParser.parseAceFile(inputStream,builder);
-            return builder.build().get(contigId);
+            AceFileParser.parseAceFile(inputStream, visitorBuilder);
+            return visitorBuilder.build();
         } catch (Exception e) {
             throw new DataStoreException("error trying to get contig "+ contigId,e);
         }finally{
@@ -154,9 +165,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
 
     @Override
     public CloseableIterator<AceContig> iterator() {
-        AceFileDataStoreIterator iter= new AceFileDataStoreIterator();
-        iter.start();
-        return iter;
+        return new IndexedContigIterator(idIterator());
     }
     /**
     * {@inheritDoc}
@@ -166,47 +175,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         return indexFileRange.isClosed();
     }
     
-    /**
-     * Special implementation of a {@link CloseableIterator}
-     * that directly parses the ace file.  This allows us
-     * to iterate over the entire file in 1 pass.
-     * @author dkatzel
-     */
-    private class AceFileDataStoreIterator extends AbstractBlockingCloseableIterator<AceContig>{
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        protected void backgroundThreadRunMethod() {
-            AbstractAceContigBuilder builder = new AbstractAceContigBuilder() {
-
-                @Override
-				public synchronized boolean shouldVisitContig(String contigId,
-						int numberOfBases, int numberOfReads,
-						int numberOfBaseSegments, boolean reverseComplimented) {
-					return indexFileRange.contains(contigId);
-				}
-
-			
-
-                @Override
-                protected void visitContig(AceContig contig) {
-                    AceFileDataStoreIterator.this.blockingPut(contig);
-                    
-                }
-                
-                
-            };
-            try {
-                AceFileParser.parseAceFile(file, builder);
-            } catch (Exception e) {
-                //some kind of exception occured while we were parsing the ace file
-                throw new RuntimeException("error while iterating over ace file",e);
-            }
-            
-        }
-    }
+   
     /**
      * {@code IndexedAceFileDataStoreBuilder} is a {@link AceContigDataStoreBuilder}
      * that will keep track of offsets into the ace file
@@ -427,4 +396,389 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
             hasTags=true;
         }
     }
+    
+    private static final class IndexedAceFileContig implements AceContig{
+
+    	private final String contigId;
+    	private Map<String, AlignedReadInfo> readInfoMap;
+    	private IndexedFileRange readOffsetRanges;
+    	private boolean isComplimented;
+    	private final NucleotideSequence consensus;
+    	private final File aceFile;
+    	private final long contigStartFileOffset;
+    	
+    	
+		public IndexedAceFileContig(String contigId,
+				Map<String, AlignedReadInfo> readInfoMap,
+				IndexedFileRange readOffsetRanges, boolean isComplimented,
+				NucleotideSequence consensus, File aceFile,
+				long contigStartFileOffset) {
+			this.contigId = contigId;
+			this.readInfoMap = readInfoMap;
+			this.readOffsetRanges = readOffsetRanges;
+			this.isComplimented = isComplimented;
+			this.consensus = consensus;
+			this.aceFile = aceFile;
+			this.contigStartFileOffset = contigStartFileOffset;
+		}
+
+		@Override
+		public String getId() {
+			return contigId;
+		}
+
+		@Override
+		public int getNumberOfReads() {
+			return readInfoMap.size();
+		}
+
+		@Override
+		public CloseableIterator<AcePlacedRead> getReadIterator() {
+			InputStream in = null;
+			try{
+				in = new FileInputStream(aceFile);
+				//seek to start of contig
+				IOUtil.blockingSkip(in, contigStartFileOffset);
+				//start parsing
+				IndexedReadIterator iter = new IndexedReadIterator(in, consensus, readInfoMap);
+				iter.start();
+				return iter;
+			} catch (IOException e) {
+				throw new IllegalStateException("error iterating over reads",e);
+			}
+		}
+
+		@Override
+		public NucleotideSequence getConsensus() {
+			return consensus;
+		}
+
+		@Override
+		public AcePlacedRead getRead(String id) {
+			if(!containsRead(id)){
+				return null;
+			}
+			InputStream in = null;
+			try{
+				Range offsetRange = readOffsetRanges.getRangeFor(id);
+				in = IOUtil.createInputStreamFromFile(aceFile, offsetRange);
+				ReadVisitorBuilder builder = new ReadVisitorBuilder(consensus);
+				builder.visitBeginContig(contigId, 0, 0, 0, isComplimented);
+				AlignedReadInfo alignmentInfo = readInfoMap.get(id);
+				builder.visitAssembledFromLine(id, alignmentInfo.getDirection(), alignmentInfo.getStartOffset());
+				
+				AceFileParser.parseAceFile(in, builder);
+				return builder.build();
+				
+			} catch (FileNotFoundException e) {
+				throw new IllegalStateException("ace file no longer exists", e);
+			} catch (IOException e) {
+				
+				throw new IllegalStateException("error parsing ace file", e);
+			}finally{
+				IOUtil.closeAndIgnoreErrors(in);
+			}
+		}
+
+		@Override
+		public boolean containsRead(String readId) {
+			return readInfoMap.containsKey(readId);
+		}
+
+		@Override
+		public boolean isComplemented() {
+			return isComplimented;
+		}
+    	
+		private static final class IndexedContigVisitorBuilder implements AceFileVisitor, Builder<AceContig>{
+			
+			private long startOffset=0;
+			private IndexedFileRange readRanges;
+			private final File aceFile;
+			private String currentLine;
+			private String contigId;
+			private boolean isComplimented;
+			private Map<String, AlignedReadInfo> readInfoMap;
+			private NucleotideSequenceBuilder consensusBuilder;
+			private boolean readingConsensus=true;
+			private int currentReadLength=0;
+			private String currentReadId;
+			private long contigStartOffset=0;
+			
+			public IndexedContigVisitorBuilder(long startOffset, File aceFile) {
+				this.startOffset = startOffset;
+				this.aceFile = aceFile;
+				this.contigStartOffset = startOffset;
+			}
+
+			@Override
+			public void visitLine(String line) {
+				currentLine = line;
+				if(readingConsensus){
+					startOffset+=currentLine.length();
+				}else{
+					currentReadLength+=currentLine.length();
+				}
+			}
+
+			@Override
+			public void visitFile() {
+				
+			}
+
+			@Override
+			public void visitEndOfFile() {
+				
+			}
+
+			@Override
+			public AceContig build() {
+				return new IndexedAceFileContig(contigId, readInfoMap, readRanges, isComplimented, 
+						consensusBuilder.build(), aceFile, 
+						contigStartOffset);
+			}
+
+			@Override
+			public void visitHeader(int numberOfContigs, int totalNumberOfReads) {
+				
+			}
+
+			@Override
+			public boolean shouldVisitContig(String contigId,
+					int numberOfBases, int numberOfReads,
+					int numberOfBaseSegments, boolean reverseComplimented) {
+				this.contigId =contigId;
+				readRanges = new DefaultIndexedFileRange(numberOfReads);
+				isComplimented = reverseComplimented;
+				readInfoMap = new LinkedHashMap<String, AlignedReadInfo>(numberOfReads+1, 1F);
+				consensusBuilder = new NucleotideSequenceBuilder();
+				return true;
+			}
+
+			@Override
+			public void visitBeginContig(String contigId, int numberOfBases,
+					int numberOfReads, int numberOfBaseSegments,
+					boolean reverseComplimented) {
+				
+			}
+
+			@Override
+			public void visitConsensusQualities() {
+				
+			}
+
+			@Override
+			public void visitAssembledFromLine(String readId, Direction dir,
+					int gappedStartOffset) {
+				readInfoMap.put(readId, new AlignedReadInfo(gappedStartOffset, dir));
+				
+			}
+
+			@Override
+			public void visitBaseSegment(Range gappedConsensusRange,
+					String readId) {
+				
+			}
+
+			@Override
+			public void visitReadHeader(String readId, int gappedLength) {
+				if(readingConsensus){
+					readingConsensus=false;
+					startOffset -=currentLine.length();
+				}
+				currentReadLength = currentLine.length();
+				currentReadId= readId;
+			}
+
+			@Override
+			public void visitQualityLine(int qualLeft, int qualRight,
+					int alignLeft, int alignRight) {
+				
+			}
+
+			@Override
+			public void visitTraceDescriptionLine(String traceName,
+					String phdName, Date date) {
+				//end of current read
+				readRanges.put(currentReadId, Range.createOfLength(startOffset, currentReadLength));
+				startOffset += currentReadLength+1;
+			}
+
+			@Override
+			public void visitBasesLine(String mixedCaseBasecalls) {
+				if(readingConsensus){
+					consensusBuilder.append(mixedCaseBasecalls.trim());
+				}
+				
+			}
+
+			@Override
+			public void visitReadTag(String id, String type, String creator,
+					long gappedStart, long gappedEnd, Date creationDate,
+					boolean isTransient) {
+				
+			}
+
+			@Override
+			public boolean visitEndOfContig() {
+				return false;
+			}
+
+			@Override
+			public void visitBeginConsensusTag(String id, String type,
+					String creator, long gappedStart, long gappedEnd,
+					Date creationDate, boolean isTransient) {
+				
+			}
+
+			@Override
+			public void visitConsensusTagComment(String comment) {
+				
+			}
+
+			@Override
+			public void visitConsensusTagData(String data) {
+				
+			}
+
+			@Override
+			public void visitEndConsensusTag() {
+				
+			}
+
+			@Override
+			public void visitWholeAssemblyTag(String type, String creator,
+					Date creationDate, String data) {
+				
+			}
+			
+		}
+    }
+    
+    public static final class ReadVisitorBuilder extends AbstractAceFileVisitor implements Builder<AcePlacedRead>{
+
+    	private final NucleotideSequence consensus;
+    	private AcePlacedRead builtRead;
+		public ReadVisitorBuilder(NucleotideSequence consensus) {
+			this.consensus = consensus;
+		}
+
+		@Override
+		public AcePlacedRead build() {
+			return builtRead;
+		}
+
+		@Override
+		protected void visitNewContig(String contigId,
+				NucleotideSequence consensus, int numberOfBases,
+				int numberOfReads, boolean isComplimented) {
+			//no-op
+			
+		}
+
+		@Override
+		protected void visitAceRead(String readId,
+				NucleotideSequence validBasecalls, int offset, Direction dir,
+				Range validRange, PhdInfo phdInfo, int ungappedFullLength) {
+			builtRead= DefaultAcePlacedRead.createBuilder(consensus, readId, validBasecalls, offset, dir, validRange, phdInfo, ungappedFullLength)
+					.build();
+			
+		}
+		
+		
+	}
+
+    
+    private final class IndexedContigIterator implements CloseableIterator<AceContig>{
+
+    	private final CloseableIterator<String> idIterator;
+    	
+		public IndexedContigIterator(CloseableIterator<String> idIterator) {
+			this.idIterator = idIterator;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return idIterator.hasNext();
+		}
+
+		@Override
+		public void close() throws IOException {
+			idIterator.close();
+			
+		}
+
+		@Override
+		public AceContig next() {
+			String id = idIterator.next();
+			try {
+				return get(id);
+			} catch (DataStoreException e) {
+				throw new IllegalStateException("error getting contig "+ id,e);
+			}finally{
+				IOUtil.closeAndIgnoreErrors(idIterator);
+			}
+		}
+
+		@Override
+		public void remove() {
+			idIterator.remove();
+			
+		}
+
+    }
+    private static final class IndexedReadIterator extends AbstractBlockingCloseableIterator<AcePlacedRead>{
+
+    	private final NucleotideSequence consensus;
+    	private final Map<String, AlignedReadInfo> readInfoMap;
+    	private final InputStream in;
+    	
+		public IndexedReadIterator(InputStream in, NucleotideSequence consensus, final Map<String, AlignedReadInfo> readInfoMap) {
+			this.consensus = consensus;
+			this.readInfoMap = readInfoMap;
+			this.in = in;
+		}
+
+		@Override
+		protected void backgroundThreadRunMethod()
+				throws RuntimeException {
+			AbstractAceFileVisitor visitor = new AbstractAceFileVisitor() {
+				{
+					this.setAlignedInfoMap(readInfoMap);
+				}
+				@Override
+				protected void visitNewContig(String contigId,
+						NucleotideSequence consensus, int numberOfBases, int numberOfReads,
+						boolean isComplimented) {
+					//no-op
+					
+				}
+				
+				@Override
+				public boolean visitEndOfContig() {
+					return false;
+				}
+
+				@Override
+				protected void visitAceRead(String readId,
+						NucleotideSequence validBasecalls, int offset, Direction dir,
+						Range validRange, PhdInfo phdInfo, int ungappedFullLength) {
+					AcePlacedRead read =DefaultAcePlacedRead.createBuilder(IndexedReadIterator.this.consensus, readId, validBasecalls, offset, dir, validRange, phdInfo, ungappedFullLength)
+							.build();
+					
+					blockingPut(read);
+				}
+			};
+			try{
+				AceFileParser.parseAceFile(in, visitor);
+			} catch (IOException e) {
+				throw new IllegalStateException("error parsing reads from contig in ace file",e);
+			}finally{
+				IOUtil.closeAndIgnoreErrors(in);
+			}
+			
+		}
+		
+	}
+  
 }
