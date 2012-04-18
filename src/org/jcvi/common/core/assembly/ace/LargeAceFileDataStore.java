@@ -13,6 +13,7 @@ import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
@@ -101,13 +102,14 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 		if(!contigIdFilter.accept(id)){
 			throw new DataStoreException(String.format("contig id %s not allowed by filter", id));
 		}
-		SingleContigVisitor visitor = new SingleContigVisitor(id);
+		IndexedSingleContigVisitor visitor = new IndexedSingleContigVisitor(aceFile, id);
+
 		try {
 			AceFileParser.parseAceFile(aceFile, visitor);
 		} catch (IOException e) {
 			throw new DataStoreException("error parsing ace file",e);
 		}
-		return visitor.getContig();
+		return visitor.build();
 	}
 	@Override
 	public synchronized boolean contains(String id) throws DataStoreException {
@@ -349,35 +351,171 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
             
         }
     }
-    
-    private final class SingleContigVisitor extends  AbstractAceContigBuilder{
+    private final class IndexedSingleContigVisitor implements AceFileVisitor, Builder<AceContig>{
 
-    	private final String contigIdtoFind;
-    	private AceContig contig;
-    	
-		public SingleContigVisitor(String contigIdtoFind) {
-			if(contigIdtoFind ==null){
-				throw new NullPointerException("contig id to find can not be null");
+    	IndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder;
+    	private final String contigIdToGet;
+    	private final File aceFile;
+    	private long startOffset=0L;
+    	private String currentLine;
+		public IndexedSingleContigVisitor(File aceFile, String contigIdToGet) {
+			this.contigIdToGet = contigIdToGet;
+			this.aceFile = aceFile;
+		}
+
+		@Override
+		public void visitLine(String line) {
+			if(visitorBuilder!=null){
+				visitorBuilder.visitLine(line);
+			}else{
+				startOffset+=line.length();
+				currentLine = line;
 			}
-			this.contigIdtoFind = contigIdtoFind;
+			
+		}
+
+		@Override
+		public void visitFile() {
+			
+		}
+
+		@Override
+		public void visitEndOfFile() {
+			
+		}
+
+		@Override
+		public void visitHeader(int numberOfContigs, int totalNumberOfReads) {
+			
 		}
 
 		@Override
 		public boolean shouldVisitContig(String contigId, int numberOfBases,
 				int numberOfReads, int numberOfBaseSegments,
 				boolean reverseComplimented) {
-			return contigIdtoFind.equals(contigId);
+			if(contigIdToGet.equals(contigId)){
+				visitorBuilder = new IndexedAceFileContig.IndexedContigVisitorBuilder(startOffset-currentLine.length(), aceFile);
+				return visitorBuilder.shouldVisitContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
+			}
+			return false;
 		}
 
 		@Override
-		protected void visitContig(AceContig contig) {
-			this.contig = contig;
+		public void visitBeginContig(String contigId, int numberOfBases,
+				int numberOfReads, int numberOfBaseSegments,
+				boolean reverseComplimented) {
+			if(visitorBuilder!=null){
+				visitorBuilder.visitBeginContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
+			}
+			
 		}
 
-		public AceContig getContig() {
-			return contig;
+		@Override
+		public void visitConsensusQualities() {
+			
 		}
+
+		@Override
+		public void visitAssembledFromLine(String readId, Direction dir,
+				int gappedStartOffset) {
+			if(visitorBuilder!=null){
+				visitorBuilder.visitAssembledFromLine(readId, dir, gappedStartOffset);
+			}
+			
+		}
+
+		@Override
+		public void visitBaseSegment(Range gappedConsensusRange, String readId) {
+			
+		}
+
+		@Override
+		public void visitReadHeader(String readId, int gappedLength) {
+			if(visitorBuilder!=null){
+				visitorBuilder.visitReadHeader(readId, gappedLength);
+			}
+			
+		}
+
+		@Override
+		public void visitQualityLine(int qualLeft, int qualRight,
+				int alignLeft, int alignRight) {
+			if(visitorBuilder!=null){
+				visitorBuilder.visitQualityLine(qualLeft, qualRight, alignLeft, alignRight);
+			}
+			
+		}
+
+		@Override
+		public void visitTraceDescriptionLine(String traceName, String phdName,
+				Date date) {
+			if(visitorBuilder!=null){
+				visitorBuilder.visitTraceDescriptionLine(traceName, phdName, date);
+			}
+			
+		}
+
+		@Override
+		public void visitBasesLine(String mixedCaseBasecalls) {
+			if(visitorBuilder!=null){
+				visitorBuilder.visitBasesLine(mixedCaseBasecalls);
+			}
+			
+		}
+
+		@Override
+		public void visitReadTag(String id, String type, String creator,
+				long gappedStart, long gappedEnd, Date creationDate,
+				boolean isTransient) {
+			
+		}
+
+		@Override
+		public boolean visitEndOfContig() {
+			if(visitorBuilder !=null){
+				return visitorBuilder.visitEndOfContig();
+			}
+			//haven't found our contig yet
+			return true;
+		}
+
+		@Override
+		public void visitBeginConsensusTag(String id, String type,
+				String creator, long gappedStart, long gappedEnd,
+				Date creationDate, boolean isTransient) {
+			
+		}
+
+		@Override
+		public void visitConsensusTagComment(String comment) {
+			
+		}
+
+		@Override
+		public void visitConsensusTagData(String data) {
+			
+		}
+
+		@Override
+		public void visitEndConsensusTag() {
+			
+		}
+
+		@Override
+		public void visitWholeAssemblyTag(String type, String creator,
+				Date creationDate, String data) {
+			
+		}
+
+		@Override
+		public AceContig build() {
+			return visitorBuilder.build();
+		}
+    	
     }
+    
+    
+    	
     
     private class IdVisitor extends AbstractBlockingCloseableIterator<String>{
 
@@ -524,11 +662,6 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 					//no-op
 					
 				}
-
-               
-			
-
-                
                 
             };
             try {
