@@ -45,7 +45,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     private long currentOffset=0;
     private boolean outsideValidRange=true;
     private final NucleotideSequence allBases;
-    private NucleotideSequenceBuilder validBases = new NucleotideSequenceBuilder();
+    private NucleotideSequenceBuilder gappedSequenceBuilder = new NucleotideSequenceBuilder();
     private final Direction dir;
     private int numberOfGaps=0;
     private long referenceOffset;
@@ -87,15 +87,14 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     public long startOffset(){
         return startOffset;
     }
-    public DefaultCasPlacedReadFromCasAlignmentBuilder addAlignmentRegions(List<CasAlignmentRegion> regions,Sequence<Nucleotide> referenceBases){
+    public DefaultCasPlacedReadFromCasAlignmentBuilder addAlignmentRegions(List<CasAlignmentRegion> regions, NucleotideSequence referenceBases){
         
         for(CasAlignmentRegion region : regions){
             addAlignmentRegion(region,referenceBases);
         }
-        //validBases = NucleotideGlyph.convertToUngapped(validBases);
         return this;
     }
-    private void addAlignmentRegion(CasAlignmentRegion region,Sequence<Nucleotide> referenceBases){
+    private void addAlignmentRegion(CasAlignmentRegion region,NucleotideSequence gappedReference){
         CasAlignmentRegionType type =region.getType();
         
         if(outsideValidRange){
@@ -121,39 +120,39 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
             	//reference should not have any initial
             	//gaps so any gaps we see we put there during
             	//the 1st pass to build a gapped alignment.
-                while(referenceOffset < referenceBases.getLength() && referenceBases.get((int)(referenceOffset)).isGap()){
-                    validBases.append(Nucleotide.Gap);
+                while(referenceOffset < gappedReference.getLength() && gappedReference.get((int)(referenceOffset)).isGap()){
+                    gappedSequenceBuilder.append(Nucleotide.Gap);
                     referenceOffset++;
                     numberOfGaps++;
                 }
             }
             if(type == CasAlignmentRegionType.DELETION){
-                validBases.append(Nucleotide.Gap);
+                gappedSequenceBuilder.append(Nucleotide.Gap);
                 numberOfGaps++;
                 referenceOffset++;
             }
             else{      
-                validBases.append(allBases.get((int)(currentOffset+i)));
+                gappedSequenceBuilder.append(allBases.get((int)(currentOffset+i)));
                 referenceOffset++;
             }
             
-        }
+        }//end for
         if(type != CasAlignmentRegionType.DELETION){
             currentOffset+=region.getLength();
         }
     }
   
     public String validBases(){
-        return validBases.toString();
+        return gappedSequenceBuilder.toString();
     }
     @Override
     public DefaultCasPlacedRead build() {
-        Range validRange = Range.createOfLength(0, validBases.getLength()-numberOfGaps).shiftRight(validRangeStart);
+        Range validRange = Range.createOfLength(0, gappedSequenceBuilder.getLength()-numberOfGaps).shiftRight(validRangeStart);
         if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplimentValidRange(validRange, fullUngappedLength);
         }
         Read<NucleotideSequence> read = new DefaultRead<NucleotideSequence>(readId,
-        		validBases.build());
+        		gappedSequenceBuilder.build());
         return new DefaultCasPlacedRead(read, startOffset, validRange, dir,(int)fullUngappedLength);
     }
 

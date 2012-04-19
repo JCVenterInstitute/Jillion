@@ -255,7 +255,7 @@ public class AceFileWriter {
 	        if (obj == null){
 	            return false;
 	        }
-	        if (!(obj instanceof AlignedReadInfo)){
+	        if (!(obj instanceof IdAlignedReadInfo)){
 	            return false;
 	        }
 	        IdAlignedReadInfo other = (IdAlignedReadInfo) obj;

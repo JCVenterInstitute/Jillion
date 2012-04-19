@@ -36,6 +36,7 @@ import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegion;
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegionType;
 import org.jcvi.common.core.assembly.clc.cas.read.CasNucleotideDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.MathUtil;
@@ -81,21 +82,19 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
     @Override
     public synchronized void visitMatch(CasMatch match, long readCounter) {
         if(match.matchReported()){
-            boolean outsideValidRange=true;
+            
             
             CasAlignment alignment =match.getChosenAlignment();
             Long referenceId = alignment.contigSequenceId();
             if(!gapsByReferenceId.containsKey(referenceId)){
                 gapsByReferenceId.put(referenceId, new TreeMap<Long,Insertion>());
             }
-            long currentOffset = alignment.getStartOfMatch();
             
-            List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
-            int lastIndex = regionsToConsider.size()-1;
-            if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
-                regionsToConsider.remove(lastIndex);
-            }
+            List<CasAlignmentRegion> regionsToConsider = getAlignmentRegionsToConsider(alignment);
+            boolean outsideValidRange=true;
+            long currentOffset = alignment.getStartOfMatch();
             for(CasAlignmentRegion region: regionsToConsider){
+            	//1st non insertion type is beginning of where we map
                 if(outsideValidRange && region.getType() != CasAlignmentRegionType.INSERT){
                     outsideValidRange=false;
                 }
@@ -117,6 +116,18 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
         }
     }
 
+
+	private List<CasAlignmentRegion> getAlignmentRegionsToConsider(
+			CasAlignment alignment) {
+		List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
+		int lastIndex = regionsToConsider.size()-1;
+		//CLC puts 3' unmapped portion of read as an insertion
+		if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
+		    regionsToConsider.remove(lastIndex);
+		}
+		return regionsToConsider;
+	}
+
     @Override
     public synchronized void visitEndOfFile() {   
         super.visitEndOfFile();
@@ -131,8 +142,8 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
                 }
                 try {
     
-                    String gappedBasecalls = buildGappedReferenceAsString(contigName, gapsByReferenceId.get(i));
-                    gappedReferences.put(i, new NucleotideSequenceBuilder(gappedBasecalls).build());
+                    NucleotideSequence gappedBasecalls = buildGappedReferenceSequence(contigName, gapsByReferenceId.get(i));
+                    gappedReferences.put(i, gappedBasecalls);
                     
                 } catch (DataStoreException e) {
                     throw new IllegalStateException("could not generate gapped reference for reference " + i,e);
@@ -142,43 +153,42 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
         gapsByReferenceId.clear();
     }
     
-    private String buildGappedReferenceAsString(String contigName, TreeMap<Long, Insertion> insertions) throws DataStoreException{
-       if(insertions ==null){
-           return "";
-       }
-        NucleotideSequence contigBasecalls = referenceNucleotideDataStore.get(contigName);
-        if(contigBasecalls==null){
-            //invalid contig name?
-            throw new IllegalStateException("could not find reference for "+ contigName);
+    private NucleotideSequence buildGappedReferenceSequence(String contigName, TreeMap<Long, Insertion> insertions) throws DataStoreException{
+        if(insertions ==null){
+            return new NucleotideSequenceBuilder().build();
         }
-        Iterator<Entry<Long, Insertion>> gapIterator = insertions.entrySet().iterator();
-        Entry<Long, Insertion> nextGap;
-        if(gapIterator.hasNext()){
-            nextGap = gapIterator.next();
-        }
-        else{
-            nextGap =null;
-        }
-        StringBuilder builder = new StringBuilder();
-        for(long currentOffset=0; currentOffset<contigBasecalls.getLength(); currentOffset++){
-            if(nextGap !=null && nextGap.getKey() ==currentOffset){
-                Insertion insertion = nextGap.getValue();
-                for(int i=0; i< insertion.getSize(); i++){
-                    builder.append("-");
-                }
-                
-                if(gapIterator.hasNext()){
-                    nextGap = gapIterator.next();
-                }
-                else{
-                    nextGap =null;
-                }
-            }
-            builder.append(contigBasecalls.get((int)currentOffset));
-        }
-        return builder.toString();
-    }
-    
+         NucleotideSequence ungappedSequence = referenceNucleotideDataStore.get(contigName);
+         if(ungappedSequence==null){
+             //invalid contig name?
+             throw new IllegalStateException("could not find reference for "+ contigName);
+         }
+         Iterator<Entry<Long, Insertion>> entryIterator = insertions.entrySet().iterator();
+         Entry<Long, Insertion> entry;
+         if(entryIterator.hasNext()){
+             entry = entryIterator.next();
+         }
+         else{
+             entry =null;
+         }
+         NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder();
+         for(long currentOffset=0; currentOffset<ungappedSequence.getLength(); currentOffset++){
+             if(entry !=null && entry.getKey() ==currentOffset){
+                 Insertion insertion = entry.getValue();
+                 for(int i=0; i< insertion.getSize(); i++){
+                     builder.append(Nucleotide.Gap);
+                 }
+                 
+                 if(entryIterator.hasNext()){
+                     entry = entryIterator.next();
+                 }
+                 else{
+                     entry =null;
+                 }
+             }
+             builder.append(ungappedSequence.get((int)currentOffset));
+         }
+         return builder.build();
+     }
     
     @Override
     public NucleotideSequence getGappedReferenceFor(long referenceId){

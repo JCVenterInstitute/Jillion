@@ -27,8 +27,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -51,6 +53,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     private final File fastQFile;
     private Long size=null;
     private volatile boolean closed;
+    private final DataStoreFilter filter;
     /**
      * Create a new {@link FastqDataStore}
      * @param fastqFile
@@ -59,13 +62,23 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
      * @throws FileNotFoundException 
      */
     public static FastqDataStore create(File fastqFile, FastqQualityCodec qualityCodec) throws FileNotFoundException{
-    	return new LargeFastqFileDataStore(fastqFile, qualityCodec);
+    	return new LargeFastqFileDataStore(fastqFile, qualityCodec,null);
+    }
+    /**
+     * Create a new {@link FastqDataStore}
+     * @param fastqFile
+     * @param qualityCodec
+     * @return
+     * @throws FileNotFoundException 
+     */
+    public static FastqDataStore create(File fastqFile, FastqQualityCodec qualityCodec, DataStoreFilter filter) throws FileNotFoundException{
+    	return new LargeFastqFileDataStore(fastqFile, qualityCodec,filter);
     }
     /**
      * @param qualityCodec
      * @throws FileNotFoundException 
      */
-    private LargeFastqFileDataStore(File fastQFile, FastqQualityCodec qualityCodec) throws FileNotFoundException {
+    private LargeFastqFileDataStore(File fastQFile, FastqQualityCodec qualityCodec,DataStoreFilter filter) throws FileNotFoundException {
     	if(fastQFile==null){
     		throw new NullPointerException("fastq file can not be null");
     	}
@@ -74,6 +87,11 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     	}
     	if(!fastQFile.exists()){
     		throw new FileNotFoundException("could not find " + fastQFile.getAbsolutePath());
+    	}
+    	if(filter==null){
+    		this.filter = AcceptingDataStoreFilter.INSTANCE;
+    	}else{
+    		this.filter = filter;
     	}
         this.qualityCodec = qualityCodec;
         this.fastQFile = fastQFile;        
@@ -95,6 +113,9 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     @Override
     public synchronized boolean contains(String id) throws DataStoreException {
         throwExceptionIfClosed();
+        if(!filter.accept(id)){
+        	return false;
+        }
         CloseableIterator<FastqRecord> iter = iterator();
         while(iter.hasNext()){
             FastqRecord fastQ = iter.next();
@@ -114,6 +135,9 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     public synchronized FastqRecord get(String id) throws DataStoreException {
         if(closed){
             throw new DataStoreException("datastore is closed");
+        }
+        if(!filter.accept(id)){
+        	return null;
         }
         CloseableIterator<FastqRecord> iter = iterator();
         while(iter.hasNext()){
@@ -150,7 +174,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     @Override
     public synchronized CloseableIterator<FastqRecord> iterator() {
         throwExceptionIfClosed();
-        LargeFastqFileIterator iter = new LargeFastqFileIterator();
+        LargeFastqFileIterator iter = new LargeFastqFileIterator(filter);
     	iter.start();
     	
     	return iter;
@@ -203,8 +227,15 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
      */
     private final class LargeFastqFileIterator extends AbstractBlockingCloseableIterator<FastqRecord> implements CloseableIterator<FastqRecord>{
 
+    	private final DataStoreFilter filter;
+    	
 
-    	@Override
+    	public LargeFastqFileIterator(DataStoreFilter filter) {
+			this.filter = filter;
+		}
+
+
+		@Override
     	protected void backgroundThreadRunMethod() {
     		try {
             	FastqFileVisitor visitor = new AbstractFastqFileVisitor(qualityCodec) {
@@ -220,7 +251,10 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
             		 @Override
             		    public FastXFileVisitor.DeflineReturnCode visitDefline(String id, String optionalComment) {
             		        super.visitDefline(id, optionalComment);
-            		        return FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
+            		        if(filter.accept(id)){
+            		        	return FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
+            		        }
+            		        return FastXFileVisitor.DeflineReturnCode.SKIP_CURRENT_RECORD;
             		    }
     			};
                 FastqFileParser.parse(fastQFile, visitor);

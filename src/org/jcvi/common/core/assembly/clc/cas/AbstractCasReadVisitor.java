@@ -75,7 +75,7 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
     public TrimDataStore getValidRangeDataStore() {
         return validRangeDataStore;
     }
-    public abstract CloseableIterator<R>  createIlluminaIterator(File illuminaFile, TraceDetails traceDetails) throws DataStoreException;
+    public abstract CloseableIterator<R>  createFastqIterator(File illuminaFile, TraceDetails traceDetails) throws DataStoreException;
     
     public abstract CloseableIterator<R>  createSffIterator(File sffFile, TraceDetails traceDetails) throws DataStoreException;
     
@@ -87,46 +87,42 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
     public final synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
         super.visitReadFileInfo(readFileInfo);
         for(String filename :readFileInfo.getFileNames()){
-            
-            File file;
-            try {
-                file = getTrimmedFileFor(filename);
-            } catch (FileNotFoundException e) {
-                throw new IllegalStateException(e);
-            }
-            ReadFileType readType = ReadFileType.getTypeFromFile(filename);
-            try{
-	            switch(readType){
-	                case ILLUMINA:
-	                        iterators.add(createIlluminaIterator(file, traceDetails));
-	                        break;
-	                case SFF:
-	                    iterators.add(createSffIterator(file, traceDetails));
-	                    break;
-	                case FASTA:
-	                    final CloseableIterator<R> iter;
-	                    if(!traceDetails.hasChromatDir()){
-	                        iter= createFastaIterator(file, traceDetails);
-	                    }else{
-	                        iter = createChromatogramIterator(file, traceDetails);
-	                    }
-	                            
-	                    iterators.add(iter);
-	                    break;
-	                default: throw new IllegalArgumentException("unsupported type "+ file.getName());
-	                    
-	            }     
-            }catch(Exception e){
-            	//close any blocking iterators
-            	for(CloseableIterator<R> iter : iterators){
-            		IOUtil.closeAndIgnoreErrors(iter);
-            	}
-            	throw new RuntimeException(e);
-            }
+            iterators.add(createIteratorFor(filename));           
         }
         
     }
     
+    private CloseableIterator<R> createIteratorFor(String filename){
+    	 File file;
+         try {
+             file = getTrimmedFileFor(filename);
+         } catch (FileNotFoundException e) {
+             throw new IllegalStateException(e);
+         }
+         ReadFileType readType = ReadFileType.getTypeFromFile(filename);
+         
+         try{
+            switch(readType){
+	            case FASTQ: 
+	            	return createFastqIterator(file, traceDetails);
+	            case SFF:
+	            	return createSffIterator(file, traceDetails);
+	            case FASTA:
+	            	if(!traceDetails.hasChromatDir()){
+                        return createFastaIterator(file, traceDetails);
+                    }
+	            	return createChromatogramIterator(file, traceDetails);
+	            default: 
+	            	throw new IllegalArgumentException("unsupported type "+ file.getName());
+	            }
+         }catch(Exception e){
+         	//close any blocking iterators
+         	for(CloseableIterator<R> iter : iterators){
+         		IOUtil.closeAndIgnoreErrors(iter);
+         	}
+         	throw new RuntimeException(e);
+         }
+    }
       @Override
     public final synchronized void visitScoringScheme(CasScoringScheme scheme) {
         super.visitScoringScheme(scheme);

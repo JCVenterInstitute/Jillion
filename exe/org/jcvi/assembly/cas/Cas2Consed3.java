@@ -376,7 +376,7 @@ public class Cas2Consed3 {
                 ReadFileType readType = ReadFileType.getTypeFromFile(filename);
                 try{
                     switch(readType){
-                        case  ILLUMINA: createSymlinkFor("solexa_dir",file);
+                        case  FASTQ: createSymlinkFor("solexa_dir",file);
                                         break;
                         case  SFF: createSymlinkFor("sff_dir",file);
                                         break;

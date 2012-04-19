@@ -31,7 +31,7 @@ import org.jcvi.common.core.io.FileUtil;
 public enum ReadFileType {
 
     SFF,
-    ILLUMINA,
+    FASTQ,
     FASTA,
     SANGER;
     
@@ -41,7 +41,7 @@ public enum ReadFileType {
     public static ReadFileType getTypeFromFile(String readFileName){
         String extension =FileUtil.getExtension(readFileName);
         if("fastq".equals(extension) || readFileName.matches("\\S*/?s_+\\d+_sequence\\.txt")){
-           return ILLUMINA;
+           return FASTQ;
         }if("sff".equals(extension)){
             return SFF;
         }

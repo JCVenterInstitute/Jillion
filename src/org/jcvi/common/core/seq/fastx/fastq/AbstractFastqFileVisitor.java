@@ -82,7 +82,7 @@ public abstract class AbstractFastqFileVisitor implements FastqFileVisitor{
         
     }
     /**
-     * Visit the current {@link FastqRecord}.
+     * Visit the current {@link FastqRecord}; called from {@link #visitEndOfBody()}.
      * @param id
      * @param nucleotides
      * @param qualities
