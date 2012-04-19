@@ -30,7 +30,7 @@ import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
@@ -123,7 +123,7 @@ public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFi
                 RecordCounter recordCounter = new RecordCounter();
 				
 				try {
-					FastaParser.parseFasta(fastaFile, recordCounter);
+					FastaFileParser.parse(fastaFile, recordCounter);
 					LargeQualityFastaFileDataStore.this.size=recordCounter.getCount();
 				} catch (FileNotFoundException e) {
 					throw new DataStoreException("error parsing fasta file",e);

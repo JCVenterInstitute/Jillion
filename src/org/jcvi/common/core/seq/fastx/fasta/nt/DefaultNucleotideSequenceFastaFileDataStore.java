@@ -30,7 +30,7 @@ import java.io.InputStream;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStoreBuilderVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
@@ -56,7 +56,7 @@ public class DefaultNucleotideSequenceFastaFileDataStore{
 	}
 	public static NucleotideSequenceFastaDataStore create(File fastaFile, FastXFilter filter) throws FileNotFoundException{
 		NucleotideFastaDataStoreBuilderVisitor builder = createBuilder(filter);
-		FastaParser.parseFasta(fastaFile, builder);
+		FastaFileParser.parse(fastaFile, builder);
 		return builder.build();
 	}
 	
@@ -66,7 +66,7 @@ public class DefaultNucleotideSequenceFastaFileDataStore{
 	public static NucleotideSequenceFastaDataStore create(InputStream in, FastXFilter filter) throws FileNotFoundException{
 		try{
 			NucleotideFastaDataStoreBuilderVisitor builder = createBuilder(filter);
-			FastaParser.parseFasta(in, builder);
+			FastaFileParser.parse(in, builder);
 			return builder.build();
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);

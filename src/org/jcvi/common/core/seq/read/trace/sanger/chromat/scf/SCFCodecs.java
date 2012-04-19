@@ -86,8 +86,8 @@ public enum SCFCodecs implements SCFCodec{
      * 
      */
     SCFCodecs(){
-    	  this.headerCodec = new DefaultSCFHeaderCodec();
-          this.sectionCodecFactory = new DefaultSectionCodecFactory();
+    	  this.headerCodec = DefaultSCFHeaderCodec.INSTANCE;
+          this.sectionCodecFactory = DefaultSectionCodecFactory.INSTANCE;
     }
     
 

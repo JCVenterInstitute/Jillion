@@ -46,7 +46,7 @@ public final class SCFChromatogramFileParser {
      * 
      */
     private static final float THREE = 3F;
-    private static final SCFHeaderCodec HEADER_CODEC =new DefaultSCFHeaderCodec();
+    private static final SCFHeaderCodec HEADER_CODEC =DefaultSCFHeaderCodec.INSTANCE;
     
     private SCFChromatogramFileParser(){}
     /**
@@ -63,26 +63,26 @@ public final class SCFChromatogramFileParser {
      * @throws IOException if there is a problem reading the file.
      * @throws NullPointerException if visitor is null.
      */
-    public static void parseSCFFile(File scfFile, ChromatogramFileVisitor visitor) throws TraceDecoderException, IOException{
+    public static void parse(File scfFile, ChromatogramFileVisitor visitor) throws TraceDecoderException, IOException{
         if(visitor ==null){
             throw new NullPointerException("visitor can not be null");
         }
         InputStream fileInputStream =null;
         try{
             fileInputStream = new FileInputStream(scfFile);
-            parseSCFFile(fileInputStream, visitor);
+            parse(fileInputStream, visitor);
         }finally{
             IOUtil.closeAndIgnoreErrors(fileInputStream);
         }
         
     }
     /**
-     * Parse the given SCF encoded chromatogram InputStream
+     * Parse the given SCF encoded chromatogram {@link InputStream}
      * and call the appropriate visitXXX methods of the given
      * visitor while parsing.  This method can handle SCF version
      * 2 AND version 3 formats.
      * @param in the SCF version 2 or version 3 chromatogram file
-     * Inputstream to parse.
+     * {@link InputStream} to parse.
      * @param visitor the visitor instance to call visitXXX methods on
      * (can not be null).
      * @throws TraceDecoderException if there is  a problem
@@ -90,7 +90,7 @@ public final class SCFChromatogramFileParser {
      * @throws IOException if there is a problem reading the file.
      * @throws NullPointerException if visitor is null.
      */
-    public static void parseSCFFile(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
+    public static void parse(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
         DataInputStream dIn = new DataInputStream(in);
         SCFHeader header =HEADER_CODEC.decode(dIn);
         if(header.getVersion()>=THREE){

@@ -217,7 +217,7 @@ public final class ZTRChromatogramFile{
      */
     public static ZTRChromatogram create(File ztrFile) throws FileNotFoundException, TraceDecoderException{
         ZTRChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
-        ZTRChromatogramFileParser.parseZTRFile(ztrFile, visitor);
+        ZTRChromatogramFileParser.parse(ztrFile, visitor);
         return visitor.build();
     }
     
@@ -234,7 +234,7 @@ public final class ZTRChromatogramFile{
     public static ZTRChromatogram create(InputStream ztrInputStream) throws FileNotFoundException, TraceDecoderException{
         try{
             ZTRChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
-            ZTRChromatogramFileParser.parseZTRFile(ztrInputStream, visitor);
+            ZTRChromatogramFileParser.parse(ztrInputStream, visitor);
             return visitor.build();
         }finally{
             IOUtil.closeAndIgnoreErrors(ztrInputStream);

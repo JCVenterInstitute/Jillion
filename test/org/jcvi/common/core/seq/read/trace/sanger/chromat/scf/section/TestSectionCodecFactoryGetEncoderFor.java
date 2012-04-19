@@ -39,7 +39,7 @@ import org.junit.Test;
 
 public class TestSectionCodecFactoryGetEncoderFor {
 
-    DefaultSectionCodecFactory sut = new DefaultSectionCodecFactory();
+    SectionCodecFactory sut = DefaultSectionCodecFactory.INSTANCE;
     @Test
     public void nullSectionShouldThrowIllegalArgumentException(){
         try{

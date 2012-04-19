@@ -100,12 +100,12 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
      */
     public static AceContigDataStore create(File aceFile) throws IOException{
         AceContigDataStoreBuilder builder = createBuilder(aceFile);
-        AceFileParser.parseAceFile(aceFile, builder);
+        AceFileParser.parse(aceFile, builder);
         return builder.build();
     }
     public static AceContigDataStore create(File aceFile, IndexedFileRange indexFileRange) throws IOException{
         AceContigDataStoreBuilder builder = createBuilder(aceFile,indexFileRange);
-        AceFileParser.parseAceFile(aceFile, builder);
+        AceFileParser.parse(aceFile, builder);
         return builder.build();
     }
     
@@ -131,7 +131,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         try {
         	IndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder = new IndexedAceFileContig.IndexedContigVisitorBuilder(range.getBegin(), file);
             inputStream = IOUtil.createInputStreamFromFile(file,range);
-            AceFileParser.parseAceFile(inputStream, visitorBuilder);
+            AceFileParser.parse(inputStream, visitorBuilder);
             return visitorBuilder.build();
         } catch (Exception e) {
             throw new DataStoreException("error trying to get contig "+ contigId,e);

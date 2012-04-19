@@ -33,7 +33,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.AbstractNucleotideFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
@@ -92,7 +92,7 @@ public class ReverseComplimentFasta {
                     return true;
                 }
             };
-            FastaParser.parseFasta(fastaFile, visitor);
+            FastaFileParser.parse(fastaFile, visitor);
             IOUtil.closeAndIgnoreErrors(out);
             
         } catch (ParseException e) {

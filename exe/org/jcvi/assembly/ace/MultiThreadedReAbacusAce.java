@@ -145,7 +145,7 @@ public class MultiThreadedReAbacusAce {
             //populate offsets
             AceContigDataStoreBuilder builder =IndexedAceFileDataStore.createBuilder(inputAceFile, contigOffsets);
             
-            AceFileParser.parseAceFile(inputAceFile, 
+            AceFileParser.parse(inputAceFile, 
                     MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, builder,tagWriter));
             
             AceContigDataStore datastore = builder.build();
@@ -276,7 +276,7 @@ public class MultiThreadedReAbacusAce {
             OutputStream out = new FileOutputStream(outFile);
             AbacusFixerBuilder contigFixer = new AbacusFixerBuilder(abacusErrorMap,contigId, numberOfFlankingBases, out, hilowPhdDataStore,maxMuscleMem);
             
-            AceFileParser.parseAceFile(inputAceFile, contigFixer);
+            AceFileParser.parse(inputAceFile, contigFixer);
             return null;
         }
         

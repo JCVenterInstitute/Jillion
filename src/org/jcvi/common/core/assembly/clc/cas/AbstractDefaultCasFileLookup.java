@@ -35,7 +35,7 @@ import java.util.Map;
 import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffCommonHeader;
@@ -127,7 +127,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
             if(fileName.endsWith("sff")){
                 
                     in = new FileInputStream(file);
-                    SffFileParser.parseSFF(in, new SffReadOrder(file));
+                    SffFileParser.parse(in, new SffReadOrder(file));
                 
             }
             else if(fileName.endsWith("fastq") || fileName.matches("\\S*\\.fastq\\S*")){
@@ -137,7 +137,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
             else{
               //try as fasta...
                 in = new FileInputStream(file);
-                FastaParser.parseFasta(in, new FastaReadOrder(file));
+                FastaFileParser.parse(in, new FastaReadOrder(file));
                
             }
         }finally{

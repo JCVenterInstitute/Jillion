@@ -69,7 +69,7 @@ public class TestChromatogramFileParser {
     public void parseAB1() throws TraceDecoderException, IOException{    	
         File ab1File = RESOURCES.getFile(AB1_FILE);
         BasicChromatogramFile expected = new BasicChromatogramFile();
-        Ab1FileParser.parseAb1File(ab1File, expected);
+        Ab1FileParser.parse(ab1File, expected);
         BasicChromatogramFile actual = new BasicChromatogramFile();
         
 		ChromatogramParser.parse(ab1File,actual);
@@ -99,7 +99,7 @@ public class TestChromatogramFileParser {
     public void parseAB1Stream() throws TraceDecoderException, IOException{    	
     	InputStream ab1File = RESOURCES.getFileAsStream(AB1_FILE);
         BasicChromatogramFile expected = new BasicChromatogramFile();
-        Ab1FileParser.parseAb1File(ab1File, expected);
+        Ab1FileParser.parse(ab1File, expected);
         BasicChromatogramFile actual = new BasicChromatogramFile();
         
 		ChromatogramParser.parse(RESOURCES.getFileAsStream(AB1_FILE),actual);

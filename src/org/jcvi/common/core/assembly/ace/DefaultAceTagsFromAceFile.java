@@ -83,7 +83,7 @@ public final class DefaultAceTagsFromAceFile {
      */
     public static AceTags create(File aceFile) throws IOException{
         AceTagsFromFileBuilder builder = createBuilder();
-        AceFileParser.parseAceFile(aceFile, builder);
+        AceFileParser.parse(aceFile, builder);
         return builder.build();
     }
     private DefaultAceTagsFromAceFile(){

@@ -156,7 +156,7 @@ public class GridReAbacusAce {
             
             MasterAceVisitor visitor = new MasterAceVisitor(out, inputAceFile,navigationFile, session, projectCode,workDir,executor, numberOfFlankingBases,outputAceFile, useHiMem);
       
-            AceFileParser.parseAceFile(inputAceFile, visitor);
+            AceFileParser.parse(inputAceFile, visitor);
             //when we get here we are done all jobs
             executor.shutdown();
             for(String contigId : visitor.getContigIds()){

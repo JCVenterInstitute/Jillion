@@ -38,8 +38,11 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFUtils;
  *
  *
  */
-public class DefaultSCFHeaderCodec implements SCFHeaderCodec {
-    
+public enum DefaultSCFHeaderCodec implements SCFHeaderCodec {
+    /**
+     * Singleton instance.
+     */
+	INSTANCE;
     /**
      * There is extra unused space at the end of the header; this is the length
      * of that unused space.

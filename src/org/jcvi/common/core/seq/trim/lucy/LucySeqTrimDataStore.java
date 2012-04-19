@@ -32,7 +32,7 @@ import org.jcvi.common.core.assembly.util.trim.TrimDataStoreAdatper;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
@@ -72,7 +72,7 @@ public class LucySeqTrimDataStore implements TrimDataStore {
                 return true;
             }
         };
-        FastaParser.parseFasta(lucySeqFile, visitor);
+        FastaFileParser.parse(lucySeqFile, visitor);
         datastore = TrimDataStoreAdatper.adapt(new SimpleDataStore<Range>(map));
     }
     /**

@@ -34,7 +34,7 @@ import org.jcvi.common.core.util.FIFOQueue;
  *
  *
  */
-public class TextLineParser implements Closeable{
+public final class TextLineParser implements Closeable{
 
 	private int endOfLine;
 	private InputStream in;

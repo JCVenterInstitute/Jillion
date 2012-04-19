@@ -86,7 +86,7 @@ public class RemoveReferenceFromNewblerMappedAce {
             
             AceContigDataStoreBuilder dataStoreBuilder = IndexedAceFileDataStore.createBuilder(aceFile);
             DefaultAceTagsFromAceFile.AceTagsFromFileBuilder aceTagsBuilder = DefaultAceTagsFromAceFile.createBuilder();
-            AceFileParser.parseAceFile(aceFile, MultipleWrapper.createMultipleWrapper(AceFileVisitor.class,
+            AceFileParser.parse(aceFile, MultipleWrapper.createMultipleWrapper(AceFileVisitor.class,
                     dataStoreBuilder,aceTagsBuilder));
             int numberOfReads =0;
             int numberOfContigs=0;

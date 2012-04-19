@@ -42,7 +42,7 @@ import org.jcvi.common.core.seq.fastx.FastXFileVisitor.EndOfBodyReturnCode;
  * to parse Fasta formated files.
  * @author dkatzel
  */
-public final class FastaParser {
+public final class FastaFileParser {
 	
 	private static final Pattern TRAILING_WHITE_SPACE_PATTERN = Pattern.compile("\\s+$");
 	
@@ -54,7 +54,7 @@ public final class FastaParser {
     /**
      * private constructor.
      */
-    private FastaParser(){}
+    private FastaFileParser(){}
     
     /**
      * Parse the given Fasta file and call the appropriate
@@ -65,13 +65,13 @@ public final class FastaParser {
      * exist.
      * @throws NullPointerException if fastaFile or visitor are null.
      */
-    public static void parseFasta(File fastaFile, FastaFileVisitor visitor) throws FileNotFoundException{
+    public static void parse(File fastaFile, FastaFileVisitor visitor) throws FileNotFoundException{
         if(visitor ==null){
         	throw new NullPointerException("visitor can not be null");
         }
     	InputStream in = new FileInputStream(fastaFile);
         try{
-            parseFasta(in,visitor);
+            parse(in,visitor);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
@@ -84,7 +84,7 @@ public final class FastaParser {
      * @param visitor the visitor to call the visit methods on.
      * @throws NullPointerException if inputstream or visitor are null.
      */    
-    public static void parseFasta(InputStream in, FastaFileVisitor visitor){
+    public static void parse(InputStream in, FastaFileVisitor visitor){
     	
     	if(visitor ==null){
         	throw new NullPointerException("visitor can not be null");

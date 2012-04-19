@@ -8,7 +8,7 @@ import java.io.InputStream;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -39,7 +39,7 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 	 */
 	public static QualitySequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
 		QualityFastaDataStoreBuilderVisitor builder = createBuilder(fastaFile);
-		FastaParser.parseFasta(fastaFile, builder);
+		FastaFileParser.parse(fastaFile, builder);
 		return builder.build();
 	}
 	/**

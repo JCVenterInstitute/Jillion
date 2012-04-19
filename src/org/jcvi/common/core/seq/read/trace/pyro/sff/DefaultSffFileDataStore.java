@@ -53,7 +53,7 @@ public final class DefaultSffFileDataStore {
 	 */
 	public static FlowgramDataStore create(File sffFile) throws IOException{
 		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder();
-		SffFileParser.parseSFF(sffFile, builder);
+		SffFileParser.parse(sffFile, builder);
 		return builder.build();
 	}
 	/**
@@ -71,7 +71,7 @@ public final class DefaultSffFileDataStore {
 	 */
 	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		SffFileVisitorDataStoreBuilder builder = createVisitorBuilder(filter);
-		SffFileParser.parseSFF(sffFile, builder);
+		SffFileParser.parse(sffFile, builder);
 		return builder.build();
 	}
 	/**

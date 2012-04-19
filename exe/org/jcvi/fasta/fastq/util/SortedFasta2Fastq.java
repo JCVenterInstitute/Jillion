@@ -40,7 +40,7 @@ import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
@@ -155,7 +155,7 @@ public class SortedFasta2Fastq {
                 
             };
             try {
-                FastaParser.parseFasta(file, qualVisitor);
+                FastaFileParser.parse(file, qualVisitor);
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -199,7 +199,7 @@ public class SortedFasta2Fastq {
                 }
             };
             try {
-                FastaParser.parseFasta(file, seqVisitor);
+                FastaFileParser.parse(file, seqVisitor);
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

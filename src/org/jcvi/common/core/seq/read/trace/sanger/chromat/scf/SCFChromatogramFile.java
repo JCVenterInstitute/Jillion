@@ -49,7 +49,7 @@ public final class SCFChromatogramFile {
      */
     public static SCFChromatogram create(File scfFile) throws TraceDecoderException, IOException{
         SCFChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
-        SCFChromatogramFileParser.parseSCFFile(scfFile, visitor);
+        SCFChromatogramFileParser.parse(scfFile, visitor);
         return visitor.build();
     }
     /**
@@ -65,7 +65,7 @@ public final class SCFChromatogramFile {
     public static SCFChromatogram create(InputStream scfInputStream) throws TraceDecoderException, IOException{
         try{
             SCFChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
-            SCFChromatogramFileParser.parseSCFFile(scfInputStream, visitor);
+            SCFChromatogramFileParser.parse(scfInputStream, visitor);
             return visitor.build();
         }finally{
             IOUtil.closeAndIgnoreErrors(scfInputStream);

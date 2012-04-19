@@ -64,7 +64,7 @@ public class AbstractLargeFastaRecordIterator<S extends Symbol, T extends Sequen
             }
         };
         try {
-            FastaParser.parseFasta(fastaFile, visitor);
+            FastaFileParser.parse(fastaFile, visitor);
         } catch (FileNotFoundException e) {
             throw new RuntimeException("fasta file does not exist",e);
         }

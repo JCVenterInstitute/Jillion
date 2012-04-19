@@ -251,7 +251,7 @@ public class ReAbacusAceContigWorker {
             OutputStream out, int numberOfFlankingBases, PhdDataStore phdDataStore,
             int maxMuscleMem) throws IOException {
         AbacusFixerBuilder contigFixer = new AbacusFixerBuilder(abacusErrorMap,contigId, numberOfFlankingBases, out, phdDataStore,maxMuscleMem);
-        AceFileParser.parseAceFile(inputAceFile, contigFixer);
+        AceFileParser.parse(inputAceFile, contigFixer);
     }
     /**
      * @param navigationFile

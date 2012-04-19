@@ -193,7 +193,7 @@ public class RecallAceConsensus {
                 }
             };
             AceFileVisitor aceVisitors = MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, headerVisitor,aceContigDataStoreBuilder);
-            AceFileParser.parseAceFile(inputAceFile, aceVisitors);
+            AceFileParser.parse(inputAceFile, aceVisitors);
             AceContigDataStore aceContigDataStore = aceContigDataStoreBuilder.build();
             CloseableIterator<AceContig> iter = aceContigDataStore.iterator();
             try{

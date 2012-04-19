@@ -76,7 +76,7 @@ public final class DefaultAceFileDataStore implements AceContigDataStore{
      */
     public static AceContigDataStore create(File aceFile) throws IOException{
         AceContigDataStoreBuilder builder = createBuilder();
-        AceFileParser.parseAceFile(aceFile, builder);
+        AceFileParser.parse(aceFile, builder);
         return builder.build();
     }
     /**
@@ -94,7 +94,7 @@ public final class DefaultAceFileDataStore implements AceContigDataStore{
      */
     public static AceContigDataStore create(File aceFile,DataStoreFilter filter) throws IOException{
         AceContigDataStoreBuilder builder = createBuilder(filter);
-        AceFileParser.parseAceFile(aceFile, builder);
+        AceFileParser.parse(aceFile, builder);
         return builder.build();
     }
     private final DataStore<AceContig> delegate;

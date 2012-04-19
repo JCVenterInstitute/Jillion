@@ -95,7 +95,7 @@ public class AceReadPositionPrinter {
                 File aceFile = new File(commandLine.getOptionValue("a"));
                 System.out.println("contigID\treadID\tstart\tend\tgapped start\tgapped end\tdir");
                 AceFileVisitor visitor = new Printer();
-                AceFileParser.parseAceFile(aceFile, visitor);
+                AceFileParser.parse(aceFile, visitor);
             } catch (ParseException e) {
                 HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp( "aceReadPositionPrinter -ace <ace file>", 

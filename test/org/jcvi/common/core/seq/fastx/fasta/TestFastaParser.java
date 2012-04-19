@@ -25,7 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.FastXFileVisitor.DeflineReturnCode;
 import org.jcvi.common.core.seq.fastx.FastXFileVisitor.EndOfBodyReturnCode;
@@ -52,19 +52,19 @@ public class TestFastaParser {
     
     @Test(expected = NullPointerException.class)
     public void nullFileShouldThrowNPE() throws FileNotFoundException{
-        FastaParser.parseFasta((File)null, mockVisitor);
+        FastaFileParser.parse((File)null, mockVisitor);
     }
     @Test(expected = NullPointerException.class)
     public void nullInputStreamShouldThrowNPE(){
-        FastaParser.parseFasta((InputStream)null, mockVisitor);
+        FastaFileParser.parse((InputStream)null, mockVisitor);
     }
     @Test(expected = NullPointerException.class)
     public void nullVisitorFileConstructorShouldThrowNPE() throws IOException{
-        FastaParser.parseFasta(getFastaFile() , null);
+        FastaFileParser.parse(getFastaFile() , null);
     }
     @Test(expected = NullPointerException.class)
     public void nullVisitorStreamConstructorShouldThrowNPE() throws IOException{
-        FastaParser.parseFasta(new ByteArrayInputStream(new byte[0]) , null);
+        FastaFileParser.parse(new ByteArrayInputStream(new byte[0]) , null);
     }
     @Test
     public void parseAllRecords() throws FileNotFoundException, IOException{
@@ -279,7 +279,7 @@ public class TestFastaParser {
 
 	private void parseFastaWithVisitor() throws FileNotFoundException,
 			IOException {
-		FastaParser.parseFasta(getFastaFile(), mockVisitor);
+		FastaFileParser.parse(getFastaFile(), mockVisitor);
 	}
 
 	private File getFastaFile() throws IOException {
@@ -387,7 +387,7 @@ public class TestFastaParser {
         mockVisitor.visitEndOfFile();
         
         replay(mockVisitor);
-        FastaParser.parseFasta(new ByteArrayInputStream(new byte[]{}), mockVisitor);
+        FastaFileParser.parse(new ByteArrayInputStream(new byte[]{}), mockVisitor);
         verify(mockVisitor);
     }
 }

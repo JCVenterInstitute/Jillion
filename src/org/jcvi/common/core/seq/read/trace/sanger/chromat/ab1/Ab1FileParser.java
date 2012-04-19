@@ -104,11 +104,11 @@ public final class Ab1FileParser {
 	 * @throws TraceDecoderException if there are problems 
 	 * parsing the chromatogram.
 	 */
-	public static void parseAb1File(File ab1File, ChromatogramFileVisitor visitor) throws FileNotFoundException, TraceDecoderException{
+	public static void parse(File ab1File, ChromatogramFileVisitor visitor) throws FileNotFoundException, TraceDecoderException{
 		InputStream in = null;
 		try{
 			in = new FileInputStream(ab1File);
-			parseAb1File(in, visitor);
+			parse(in, visitor);
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);
 		}
@@ -124,7 +124,7 @@ public final class Ab1FileParser {
 	 * @throws TraceDecoderException if there are problems 
 	 * parsing the chromatogram.
 	 */
-	public static void parseAb1File(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
+	public static void parse(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
 	        visitor.visitFile();
 			verifyMagicNumber(in);
 			visitor.visitNewTrace();

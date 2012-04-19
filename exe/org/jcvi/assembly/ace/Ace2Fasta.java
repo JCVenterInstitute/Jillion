@@ -186,7 +186,7 @@ public class Ace2Fasta {
     		AceFileVisitor visitor = MultipleWrapper.createMultipleWrapper(
     				AceFileVisitor.class, dataStoreBuilder, tagBuilder);
     		
-    		AceFileParser.parseAceFile(aceFile, visitor);
+    		AceFileParser.parse(aceFile, visitor);
     		datastore = dataStoreBuilder.build();
     		aceTags = tagBuilder.build();
     		

@@ -122,7 +122,7 @@ public class SffReadInfo implements SffFileVisitor {
                 info = new SffReadInfo();
             }
             in = new FileInputStream(commandLine.getOptionValue("sff"));
-            SffFileParser.parseSFF(in, info);
+            SffFileParser.parse(in, info);
             
             
         } catch (ParseException e) {

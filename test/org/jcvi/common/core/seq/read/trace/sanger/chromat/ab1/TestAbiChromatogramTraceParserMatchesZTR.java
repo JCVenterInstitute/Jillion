@@ -42,13 +42,13 @@ public class TestAbiChromatogramTraceParserMatchesZTR {
     @Before
     public void setup() throws FileNotFoundException, TraceDecoderException, IOException{
         expectedZTR = new BasicChromatogramFile();
-        ZTRChromatogramFileParser.parseZTRFile(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ztr"), expectedZTR);
+        ZTRChromatogramFileParser.parse(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ztr"), expectedZTR);
     }
     
     @Test
     public void abiVisitorMatchesZTR() throws FileNotFoundException, TraceDecoderException, IOException{
         BasicChromatogramFile actualAbi = new BasicChromatogramFile();
-        Ab1FileParser.parseAb1File(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ab1"), actualAbi);
+        Ab1FileParser.parse(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ab1"), actualAbi);
 
         assertEquals(expectedZTR.getBasecalls(), actualAbi.getBasecalls());
         assertEquals(expectedZTR.getPeaks(), actualAbi.getPeaks());

@@ -48,7 +48,7 @@ public class TestMixAndMatchChromatogramParsers {
         File ztrFile = RESOURCES.getFile("ztr/files/GBKAK82TF.ztr");
         ZTRChromatogram ztr = ZTRChromatogramFile.create(ztrFile);
         SCFChromatogramFileBuilderVisitor visitor = SCFChromatogramFile.createNewBuilderVisitor();
-        ZTRChromatogramFileParser.parseZTRFile(ztrFile, visitor);
+        ZTRChromatogramFileParser.parse(ztrFile, visitor);
         
         assertValuesMatch(visitor.build(), ztr);
     }
@@ -58,7 +58,7 @@ public class TestMixAndMatchChromatogramParsers {
         File scfFile = RESOURCES.getFile("scf/files/GBKAK82TF.scf");
         SCFChromatogram scf = SCFChromatogramFile.create(scfFile);
         ZTRChromatogramFileBuilderVisitor visitor = ZTRChromatogramFile.createNewBuilderVisitor();
-        SCFChromatogramFileParser.parseSCFFile(scfFile, visitor);
+        SCFChromatogramFileParser.parse(scfFile, visitor);
         
         assertValuesMatch(scf, visitor.build());
     }
