@@ -128,40 +128,40 @@ public class TestReadFileType {
     
     @Test
     public void fastqShouldBeIlluminaFile(){
-        assertEquals(ReadFileType.ILLUMINA, 
+        assertEquals(ReadFileType.FASTQ, 
                 ReadFileType.getTypeFromFile(new File("my.fastq")));
     }
     @Test
     public void fastqShouldBeIllumina(){
-        assertEquals(ReadFileType.ILLUMINA, 
+        assertEquals(ReadFileType.FASTQ, 
                 ReadFileType.getTypeFromFile("my.fastq"));
     }
     
     @Test
     public void s_1_sequenceDotTxtShouldBeIlluminaFile(){
-        assertEquals(ReadFileType.ILLUMINA, 
+        assertEquals(ReadFileType.FASTQ, 
                 ReadFileType.getTypeFromFile(new File("s_1_sequence.txt")));
     }
     @Test
     public void s_1_sequenceDotTxtShouldBeIllumina(){
-        assertEquals(ReadFileType.ILLUMINA, 
+        assertEquals(ReadFileType.FASTQ, 
                 ReadFileType.getTypeFromFile("s_1_sequence.txt"));
     }
     
     @Test
     public void s_2_sequenceDotTxtShouldBeIlluminaFile(){
-        assertEquals(ReadFileType.ILLUMINA, 
+        assertEquals(ReadFileType.FASTQ, 
                 ReadFileType.getTypeFromFile(new File("s_2_sequence.txt")));
         //s_2_sequence.txt
     }
     @Test
     public void s_2_sequenceDotTxtShouldBeIllumina(){
-        assertEquals(ReadFileType.ILLUMINA, 
+        assertEquals(ReadFileType.FASTQ, 
                 ReadFileType.getTypeFromFile("s_2_sequence.txt"));
     }
     @Test
     public void fullPaths_2_sequenceDotTxtShouldBeIllumina(){
-        assertEquals(ReadFileType.ILLUMINA, 
+        assertEquals(ReadFileType.FASTQ, 
                 ReadFileType.getTypeFromFile("/path/to/file/s_2_sequence.txt"));
     }
 }

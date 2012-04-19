@@ -89,7 +89,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         final AlignedReadInfo assembledFromObj = new AlignedReadInfo(gappedStartOffset, dir);
         currentAssembledFromMap.put(readId, assembledFromObj);
     }
-    protected void setAlignedInfoMap(Map<String, AlignedReadInfo> currentAlignedInfoMap){
+    protected synchronized void setAlignedInfoMap(Map<String, AlignedReadInfo> currentAlignedInfoMap){
     	this.currentAssembledFromMap = currentAlignedInfoMap;
     }
 	private synchronized void fireVisitNewContigIfWeHaventAlready() {

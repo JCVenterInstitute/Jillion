@@ -351,7 +351,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
             
         }
     }
-    private final class IndexedSingleContigVisitor implements AceFileVisitor, Builder<AceContig>{
+    private static final class IndexedSingleContigVisitor implements AceFileVisitor, Builder<AceContig>{
 
     	IndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder;
     	private final String contigIdToGet;

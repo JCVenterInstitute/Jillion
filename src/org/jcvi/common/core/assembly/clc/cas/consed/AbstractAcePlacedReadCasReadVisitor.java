@@ -55,7 +55,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
      * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<PhdReadRecord> createIlluminaIterator(
+    public CloseableIterator<PhdReadRecord> createFastqIterator(
             File illuminaFile, TraceDetails traceDetails) throws DataStoreException {
         FastqDataStore datastore;
 		try {
