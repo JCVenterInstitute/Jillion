@@ -35,7 +35,7 @@ public final class AbiChromatogramFile {
 
     public static AbiChromatogram create(File abiFile) throws FileNotFoundException, TraceDecoderException{
         AbiChromatogramBuilder builder = new AbiChromatogramBuilder();
-        Ab1FileParser.parseAb1File(abiFile, builder);        
+        Ab1FileParser.parse(abiFile, builder);        
         return builder.build();
     }
     
@@ -45,7 +45,7 @@ public final class AbiChromatogramFile {
     public static AbiChromatogram create(InputStream abiStream, boolean autoClose) throws TraceDecoderException{
         try{
             AbiChromatogramBuilder builder = new AbiChromatogramBuilder();
-            Ab1FileParser.parseAb1File(abiStream, builder);            
+            Ab1FileParser.parse(abiStream, builder);            
             return builder.build();
         }finally{
             if(autoClose){

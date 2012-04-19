@@ -50,11 +50,11 @@ public final class ChromatogramParser {
 			IOException {
 		byte[] magicNumber = mIn.peekMagicNumber();
 		if(AbiUtil.isABIMagicNumber(magicNumber)){
-			Ab1FileParser.parseAb1File(mIn, visitor);
+			Ab1FileParser.parse(mIn, visitor);
 		}else if(ZTRUtil.isMagicNumber(magicNumber)){
-			ZTRChromatogramFileParser.parseZTRFile(mIn, visitor);
+			ZTRChromatogramFileParser.parse(mIn, visitor);
 		}else if(SCFUtils.isMagicNumber(magicNumber)){
-			SCFChromatogramFileParser.parseSCFFile(mIn, visitor);
+			SCFChromatogramFileParser.parse(mIn, visitor);
 		}else{
 			throw new IOException("unknown chromatogram format (not ab1, scf or ztr)");
 		}

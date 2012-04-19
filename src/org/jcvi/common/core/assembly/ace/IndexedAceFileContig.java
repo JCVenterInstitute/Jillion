@@ -91,7 +91,7 @@ final class IndexedAceFileContig implements AceContig{
 			AlignedReadInfo alignmentInfo = readInfoMap.get(id);
 			builder.visitAssembledFromLine(id, alignmentInfo.getDirection(), alignmentInfo.getStartOffset());
 			
-			AceFileParser.parseAceFile(in, builder);
+			AceFileParser.parse(in, builder);
 			return builder.build();
 			
 		} catch (FileNotFoundException e) {
@@ -321,7 +321,7 @@ final class IndexedAceFileContig implements AceContig{
 					}
 				};
 				try{
-					AceFileParser.parseAceFile(in, visitor);
+					AceFileParser.parse(in, visitor);
 				} catch (IOException e) {
 					throw new IllegalStateException("error parsing reads from contig in ace file",e);
 				}finally{

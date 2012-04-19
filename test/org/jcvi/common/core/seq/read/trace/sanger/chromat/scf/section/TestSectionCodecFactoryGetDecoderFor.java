@@ -43,7 +43,7 @@ public class TestSectionCodecFactoryGetDecoderFor {
     SCFHeader version3Header;
     SCFHeader version2Header;
 
-    private SectionCodecFactory sut = new DefaultSectionCodecFactory();
+    private SectionCodecFactory sut = DefaultSectionCodecFactory.INSTANCE;
     @Before
     public void setupMockHeader(){
         mockSCFHeader = createMock(SCFHeader.class);

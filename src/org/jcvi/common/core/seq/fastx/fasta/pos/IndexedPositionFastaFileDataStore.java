@@ -8,7 +8,7 @@ import java.io.InputStream;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.symbol.Sequence;
@@ -38,7 +38,7 @@ public final class IndexedPositionFastaFileDataStore implements PositionFastaDat
 	 */
 	public static PositionFastaDataStore create(File fastaFile) throws FileNotFoundException{
 		PositionFastaDataStoreBuilderVisitor builder = createBuilder(fastaFile);
-		FastaParser.parseFasta(fastaFile, builder);
+		FastaFileParser.parse(fastaFile, builder);
 		return builder.build();
 	}
 	/**

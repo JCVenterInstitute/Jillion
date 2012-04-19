@@ -203,11 +203,11 @@ public  final class ChromatogramUtil {
 	        
 	        byte[] magicNumber = mIn.peekMagicNumber();
 	        if(AbiUtil.isABIMagicNumber(magicNumber)){
-	            Ab1FileParser.parseAb1File(mIn, visitor);
+	            Ab1FileParser.parse(mIn, visitor);
 	        }else if(ZTRUtil.isMagicNumber(magicNumber)){
-	            ZTRChromatogramFileParser.parseZTRFile(mIn, visitor);
+	            ZTRChromatogramFileParser.parse(mIn, visitor);
 	        }else{
-	            SCFChromatogramFileParser.parseSCFFile(mIn, visitor);
+	            SCFChromatogramFileParser.parse(mIn, visitor);
 	        }
         }finally{
         	IOUtil.closeAndIgnoreErrors(mIn);

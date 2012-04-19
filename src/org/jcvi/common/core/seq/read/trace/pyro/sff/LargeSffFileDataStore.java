@@ -105,7 +105,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
         super.get(id);        
         try{
         	SingleFlowgramVisitor singleVisitor = new SingleFlowgramVisitor(id);
-        	SffFileParser.parseSFF(sffFile, singleVisitor);
+        	SffFileParser.parse(sffFile, singleVisitor);
         	return singleVisitor.getFlowgram();
         } catch (IOException e) {
             throw new DataStoreException("could not read sffFile ",e);

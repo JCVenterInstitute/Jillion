@@ -61,7 +61,7 @@ public final class IndexedSffFileDataStore{
 	 */
 	public static boolean canCreateIndexedDataStore(File sffFile) throws IOException{
 		NumberOfReadChecker numReadChecker = new NumberOfReadChecker();
-		SffFileParser.parseSFF(sffFile, numReadChecker);
+		SffFileParser.parse(sffFile, numReadChecker);
 		return numReadChecker.numberOfReads <=Integer.MAX_VALUE;
 	}
 	
@@ -133,7 +133,7 @@ public final class IndexedSffFileDataStore{
 	 */
 	static FlowgramDataStore createByFullyParsing(File sffFile) throws IOException{
 		FullPassIndexedSffVisitorBuilder builder= new FullPassIndexedSffVisitorBuilder(sffFile);
-		SffFileParser.parseSFF(sffFile, builder);
+		SffFileParser.parse(sffFile, builder);
 		return builder.build();
 	}
 	

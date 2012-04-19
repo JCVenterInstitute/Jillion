@@ -52,10 +52,10 @@ public final class SffFileParser {
      * @throws SffDecoderException if there is a problem parsing the sff data.
      * @throws NullPointerException if the sffFile or visitor are null.
      */
-    public static void parseSFF(File sffFile, SffFileVisitor visitor) throws SffDecoderException, FileNotFoundException{
+    public static void parse(File sffFile, SffFileVisitor visitor) throws SffDecoderException, FileNotFoundException{
         InputStream in = new FileInputStream(sffFile);
         try{
-            parseSFF(in,visitor);
+            parse(in,visitor);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
@@ -69,7 +69,7 @@ public final class SffFileParser {
      * @throws SffDecoderException if there is a problem parsing the sff data.
      * @throws NullPointerException if the inputstream or visitor are null.
      */
-    public static void parseSFF(InputStream in, SffFileVisitor visitor) throws SffDecoderException{
+    public static void parse(InputStream in, SffFileVisitor visitor) throws SffDecoderException{
         DataInputStream dataIn = new DataInputStream(in);
         visitor.visitFile();
         SffCommonHeader commonHeader =DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(dataIn);

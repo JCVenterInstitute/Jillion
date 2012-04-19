@@ -50,7 +50,7 @@ public class TestDefaultSCFHeaderCodec {
 
     private DefaultSCFHeader header;
 
-    private DefaultSCFHeaderCodec sut = new DefaultSCFHeaderCodec();
+    private SCFHeaderCodec sut = DefaultSCFHeaderCodec.INSTANCE;
     @Before
     public void createHeader(){
         header = new DefaultSCFHeader();

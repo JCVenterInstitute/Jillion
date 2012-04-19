@@ -9,7 +9,7 @@ import org.jcvi.common.core.symbol.Symbol;
  * {@link FastaFileVisitor}.  This allows {@link FastaDataStore}s
  * to be built by either manually adding records via
  * {@link #addFastaRecord(FastaRecord)}
- * or by passing an instance of this class to {@link FastaParser}'s parse methods
+ * or by passing an instance of this class to {@link FastaFileParser}'s parse methods
  * to add all the fasta records from  a fasta file.  Some implementations
  * may be able to add fasta records from multiple fasta files.
  * @param <S> the type of {@link Symbol} in the sequence of the fasta.

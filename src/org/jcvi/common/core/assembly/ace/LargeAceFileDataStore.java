@@ -105,7 +105,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 		IndexedSingleContigVisitor visitor = new IndexedSingleContigVisitor(aceFile, id);
 
 		try {
-			AceFileParser.parseAceFile(aceFile, visitor);
+			AceFileParser.parse(aceFile, visitor);
 		} catch (IOException e) {
 			throw new DataStoreException("error parsing ace file",e);
 		}
@@ -142,7 +142,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 			//haven't parsed num contigs yet 
 			SizeVisitor visitor = new SizeVisitor();
 			try {
-				AceFileParser.parseAceFile(aceFile, visitor);
+				AceFileParser.parse(aceFile, visitor);
 			} catch (IOException e) {
 				throw new DataStoreException("error parsing number of contigs",e);
 			}
@@ -343,7 +343,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
                 
             };
             try {
-                AceFileParser.parseAceFile(aceFile, builder);
+                AceFileParser.parse(aceFile, builder);
             } catch (Exception e) {
                 //some kind of exception occured while we were parsing the ace file
                 throw new RuntimeException("error while iterating over ace file",e);
@@ -665,7 +665,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
                 
             };
             try {
-                AceFileParser.parseAceFile(aceFile, builder);
+                AceFileParser.parse(aceFile, builder);
             } catch (Exception e) {
                 //some kind of exception occured while we were parsing the ace file
                 throw new RuntimeException("error while iterating over ace file",e);

@@ -52,26 +52,26 @@ public final class AceFileParser {
      * if there is a problem reading the ace file .
      * @throws NullPointerException if either the aceFile or the visitor are {@code null}.
      */
-    public static void parseAceFile(File aceFile, AceFileVisitor visitor) throws IOException{
+    public static void parse(File aceFile, AceFileVisitor visitor) throws IOException{
         InputStream in = new FileInputStream(aceFile);
         try{
-            parseAceFile(in, visitor);
+            parse(in, visitor);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
     }
     /**
-     * Parse the given inputStream containing ace encoded data
+     * Parse the given {@link InputStream} containing ace encoded data
      * and call the appropriate methods on the given AceFileVisitor.
      * If the entire inputStream is parsed, then it will automatically
-     * be closed, however if there is an error while reading the inputstream,
-     * then the inputstream will be left open.
+     * be closed, however if there is an error while reading the {@link InputStream},
+     * then the {@link InputStream} will be left open.
      * @param inputStream the inputStream to parse, can not be null.
      * @param visitor the visitor to be visited, can not be null.
      * @throws IOException if there is a problem reading the ace file.
      * @throws NullPointerException if either the aceFile or the visitor are {@code null}.
      */
-    public static void parseAceFile(InputStream inputStream, AceFileVisitor visitor) throws IOException{
+    public static void parse(InputStream inputStream, AceFileVisitor visitor) throws IOException{
         if(inputStream ==null){
             throw new NullPointerException("input stream can not be null");
         }
@@ -213,8 +213,8 @@ public final class AceFileParser {
         }
     }
     /**
-     * Each Section of an ACE file needs handled 
-     * differently.  This might require firing vistor methods
+     * Each Section of an ACE file needs to be handled 
+     * differently.  This might require firing visitor methods
      * or reading additional lines of text from the ace file.
      * @author dkatzel
      */

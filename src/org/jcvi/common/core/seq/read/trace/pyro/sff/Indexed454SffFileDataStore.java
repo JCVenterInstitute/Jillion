@@ -53,7 +53,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	 */
 	public static FlowgramDataStore create(File sffFile) throws IOException{
 		ManifestCreatorVisitor visitor = new ManifestCreatorVisitor(sffFile);
-		SffFileParser.parseSFF(sffFile, visitor);
+		SffFileParser.parse(sffFile, visitor);
 		if(!visitor.isUseableManifest()){
 			//no manifest delegate to iterating thru
 			return null;

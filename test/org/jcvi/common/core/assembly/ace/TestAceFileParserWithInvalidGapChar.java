@@ -41,7 +41,7 @@ public class TestAceFileParserWithInvalidGapChar {
         AceFileVisitor mockVisitor = createNiceMock(AceFileVisitor.class);
         replay(mockVisitor);
         try{
-            AceFileParser.parseAceFile(resources.getFile("files/invalidAceFileWithDash.ace"), mockVisitor);
+            AceFileParser.parse(resources.getFile("files/invalidAceFileWithDash.ace"), mockVisitor);
             fail("should error out");
         }catch(IllegalStateException e){
             assertEquals(

@@ -101,7 +101,7 @@ public class Ace2Contig {
                 }
             };
             try{
-                AceFileParser.parseAceFile(aceFile, aceVisitor);
+                AceFileParser.parse(aceFile, aceVisitor);
             }finally{
                 IOUtil.closeAndIgnoreErrors(writer);
             }

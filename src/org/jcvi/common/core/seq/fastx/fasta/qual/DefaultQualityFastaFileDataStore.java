@@ -30,7 +30,7 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStoreBuilderVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 /**
@@ -50,7 +50,7 @@ public class DefaultQualityFastaFileDataStore {
     
     public static QualitySequenceFastaDataStore create(File fastaFile, FastXFilter filter) throws FileNotFoundException{
     	QualityFastaDataStoreBuilderVisitor builder = createBuilder(filter);
-    	FastaParser.parseFasta(fastaFile, builder);
+    	FastaFileParser.parse(fastaFile, builder);
     	return builder.build();
     }
     
@@ -59,7 +59,7 @@ public class DefaultQualityFastaFileDataStore {
     }
     public static QualitySequenceFastaDataStore create(InputStream fastaStream, FastXFilter filter) throws FileNotFoundException{
     	QualityFastaDataStoreBuilderVisitor builder = createBuilder(filter);
-    	FastaParser.parseFasta(fastaStream, builder);
+    	FastaFileParser.parse(fastaStream, builder);
     	return builder.build();
     }
     public static QualityFastaDataStoreBuilderVisitor createBuilder(){

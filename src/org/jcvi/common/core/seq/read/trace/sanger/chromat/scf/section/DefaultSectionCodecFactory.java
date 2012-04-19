@@ -28,9 +28,12 @@ import java.util.Map;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 
-public class DefaultSectionCodecFactory implements SectionCodecFactory{
-
-
+public enum DefaultSectionCodecFactory implements SectionCodecFactory{
+	/**
+	 * Singleton instance.
+	 */
+	INSTANCE;
+	
     private static final SectionCodec NULL_CODEC = new NullSectionCodec();
     private static final SectionCodec COMMENT_CODEC = new CommentSectionCodec();
     private static final SectionCodec PRIVATE_DATA_CODEC = new PrivateDataCodec();

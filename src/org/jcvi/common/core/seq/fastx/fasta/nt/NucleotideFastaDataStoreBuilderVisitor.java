@@ -1,7 +1,7 @@
 package org.jcvi.common.core.seq.fastx.fasta.nt;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreBuilderVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -12,7 +12,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  * {@link FastaFileVisitor}.  This allows {@link NucleotideSequenceFastaDataStore}s
  * to be built by either manually adding records via
  * {@link #addFastaRecord(NucleotideSequenceFastaRecord)}
- * or by passing an instance of this class to {@link FastaParser}'s parse methods
+ * or by passing an instance of this class to {@link FastaFileParser}'s parse methods
  * to add all the fasta records from  a fasta file.  Some implementations
  * may be able to add fasta records from multiple fasta files.
  * @author dkatzel

@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
@@ -116,7 +116,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
             }
       
             NucleotideFastaDataStoreBuilderVisitor builder= DefaultNucleotideSequenceFastaFileDataStore.createBuilder();
-            FastaParser.parseFasta(in, builder);
+            FastaFileParser.parse(in, builder);
             datastore = builder.build();
             return datastore.get(id);
            

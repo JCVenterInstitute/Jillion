@@ -81,7 +81,7 @@ public final class LargeFastaIdIterator extends AbstractBlockingCloseableIterato
             
         };
         try {
-            FastaParser.parseFasta(fastaFile, visitor);
+            FastaFileParser.parse(fastaFile, visitor);
         } catch (FileNotFoundException e) {
             throw new RuntimeException("fasta file does not exist",e);
         }

@@ -54,7 +54,7 @@ public class OnlyPrintForwardReadsOfASpecificContig {
 			}
 		};
 		
-		AceFileParser.parseAceFile(aceFile, visitor);
+		AceFileParser.parse(aceFile, visitor);
 	}
 
 }

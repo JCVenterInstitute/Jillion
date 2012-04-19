@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.archive;
 import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
@@ -73,7 +73,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         CloseableIterator<NucleotideSequenceFastaRecord> iterator=null;
         try{
             in = getInputStreamFor(TraceInfoField.BASE_FILE);
-            FastaParser.parseFasta(in, visitor);
+            FastaFileParser.parse(in, visitor);
             datastore = visitor.build();
             iterator = datastore.iterator();
 			return iterator.next().getSequence();

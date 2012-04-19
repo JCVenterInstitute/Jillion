@@ -11,7 +11,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fasta.FastaParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
@@ -21,7 +21,7 @@ public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSe
 	
 	public static AminoAcidSequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
 		AminoAcidSequenceFastaDataStoreBuilderVisitor builder = createBuilder();
-		FastaParser.parseFasta(fastaFile, builder);
+		FastaFileParser.parse(fastaFile, builder);
 		return builder.build();
 	}
 	

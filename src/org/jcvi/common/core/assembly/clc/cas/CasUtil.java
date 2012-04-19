@@ -326,7 +326,7 @@ public final class CasUtil {
                            String extension =FileUtil.getExtension(readFilename);
                            if("sff".equals(extension)){
                                try {
-                                   SffFileParser.parseSFF(new File(casWorkingDirectory,readFilename), sffTrimDatastoreBuilder);
+                                   SffFileParser.parse(new File(casWorkingDirectory,readFilename), sffTrimDatastoreBuilder);
                                } catch (Exception e) {
                                    throw new IllegalStateException("error trying to read sff file " + readFilename,e);
                                } 

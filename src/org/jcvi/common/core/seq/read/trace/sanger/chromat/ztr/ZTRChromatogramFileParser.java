@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  *
  *
  */
-public class ZTRChromatogramFileParser {
+public final class ZTRChromatogramFileParser {
    
     /**
      * Parse the given ZTR encoded chromatogram file
@@ -55,13 +55,13 @@ public class ZTRChromatogramFileParser {
      * @throws IOException if there is a problem reading the file.
      * @throws NullPointerException if visitor is null.
      */
-    public static void parseZTRFile(File ztrFile, ChromatogramFileVisitor visitor) throws FileNotFoundException, TraceDecoderException{
+    public static void parse(File ztrFile, ChromatogramFileVisitor visitor) throws FileNotFoundException, TraceDecoderException{
         if(visitor ==null){
             throw new NullPointerException("visitor can not be null");
         }
         InputStream in = new FileInputStream(ztrFile);
         try{
-            parseZTRFile(in, visitor);
+            parse(in, visitor);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
@@ -80,7 +80,7 @@ public class ZTRChromatogramFileParser {
      * @throws IOException if there is a problem reading the file.
      * @throws NullPointerException if visitor is null.
      */
-    public static void parseZTRFile(InputStream ztrStream, ChromatogramFileVisitor visitor) throws TraceDecoderException{
+    public static void parse(InputStream ztrStream, ChromatogramFileVisitor visitor) throws TraceDecoderException{
         visitor.visitFile();
         parseHeader(ztrStream);
         visitor.visitNewTrace();
