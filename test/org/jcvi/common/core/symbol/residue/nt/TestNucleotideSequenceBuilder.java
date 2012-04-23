@@ -288,21 +288,21 @@ public class TestNucleotideSequenceBuilder {
             .delete(Range.create(2,8)) //TCA-ACGTTCGA
             .append("GGGGG") //TCA-ACGTTCGAGGGGG
             .ungap() //TCAACGTTCGAGGGGG
-            .reverseCompliment(); //CCCCCTCGAACGTTGA
+            .reverseComplement(); //CCCCCTCGAACGTTGA
         assertBuiltSequenceEquals("CCCCCTCGAACGTTGA",sut);
     }
     
     @Test
     public void reverseComplimentOddNumberOfBases(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-");
-        sut.reverseCompliment();
+        sut.reverseComplement();
         assertBuiltSequenceEquals("-ACGT",sut);
     }
     
     @Test
     public void reverseComplimentEvenNumberOfBases(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("TGGA");
-        sut.reverseCompliment();
+        sut.reverseComplement();
         assertBuiltSequenceEquals("TCCA",sut);
     }
     

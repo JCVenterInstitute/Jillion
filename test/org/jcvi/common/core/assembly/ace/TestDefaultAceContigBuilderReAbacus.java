@@ -184,8 +184,8 @@ public class TestDefaultAceContigBuilderReAbacus {
 	}
 
 	@Override
-	public AceContigBuilder setComplimented(boolean complimented) {
-		delegate.setComplimented(complimented);
+	public AceContigBuilder setComplemented(boolean complemented) {
+		delegate.setComplemented(complemented);
 		return this;
 	}
     	

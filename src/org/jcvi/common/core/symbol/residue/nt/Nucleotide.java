@@ -61,28 +61,28 @@ public enum Nucleotide implements Residue {
     
     ;
     
-    private static final Map<Nucleotide,Nucleotide> COMPLIMENT_MAP;
+    private static final Map<Nucleotide,Nucleotide> COMPLEMENT_MAP;
     private static final Map<Nucleotide,Set<Nucleotide>> AMBIGUITY_TO_CONSTIUENT;
     private static final Map<Nucleotide,Set<Nucleotide>> CONSTIUENT_TO_AMBIGUITY;
     private static final Map<Character,Nucleotide> CHARACTER_MAP;
     static{
-        COMPLIMENT_MAP = new EnumMap<Nucleotide, Nucleotide>(Nucleotide.class);
-        COMPLIMENT_MAP.put(Adenine, Thymine);
-        COMPLIMENT_MAP.put(Thymine, Adenine);
-        COMPLIMENT_MAP.put(Guanine, Cytosine);
-        COMPLIMENT_MAP.put(Cytosine, Guanine);
-        COMPLIMENT_MAP.put(Pyrimidine, Purine);
-        COMPLIMENT_MAP.put(Purine, Pyrimidine);        
-        COMPLIMENT_MAP.put(Keto, Amino);
-        COMPLIMENT_MAP.put(Amino, Keto);
-        COMPLIMENT_MAP.put(NotCytosine, NotGuanine);
-        COMPLIMENT_MAP.put(NotGuanine, NotCytosine);
-        COMPLIMENT_MAP.put(NotThymine, NotAdenine);
-        COMPLIMENT_MAP.put(NotAdenine, NotThymine);
-        COMPLIMENT_MAP.put(Weak, Weak);
-        COMPLIMENT_MAP.put(Strong, Strong);
-        COMPLIMENT_MAP.put(Gap, Gap);
-        COMPLIMENT_MAP.put(Unknown, Unknown);  
+        COMPLEMENT_MAP = new EnumMap<Nucleotide, Nucleotide>(Nucleotide.class);
+        COMPLEMENT_MAP.put(Adenine, Thymine);
+        COMPLEMENT_MAP.put(Thymine, Adenine);
+        COMPLEMENT_MAP.put(Guanine, Cytosine);
+        COMPLEMENT_MAP.put(Cytosine, Guanine);
+        COMPLEMENT_MAP.put(Pyrimidine, Purine);
+        COMPLEMENT_MAP.put(Purine, Pyrimidine);        
+        COMPLEMENT_MAP.put(Keto, Amino);
+        COMPLEMENT_MAP.put(Amino, Keto);
+        COMPLEMENT_MAP.put(NotCytosine, NotGuanine);
+        COMPLEMENT_MAP.put(NotGuanine, NotCytosine);
+        COMPLEMENT_MAP.put(NotThymine, NotAdenine);
+        COMPLEMENT_MAP.put(NotAdenine, NotThymine);
+        COMPLEMENT_MAP.put(Weak, Weak);
+        COMPLEMENT_MAP.put(Strong, Strong);
+        COMPLEMENT_MAP.put(Gap, Gap);
+        COMPLEMENT_MAP.put(Unknown, Unknown);  
         
         CHARACTER_MAP = new TreeMap<Character, Nucleotide>();
         for(Nucleotide n: Nucleotide.values()){
@@ -150,11 +150,11 @@ public enum Nucleotide implements Residue {
         return toString();
     }
     /**
-     * Get the compliment this {@link Nucleotide}.
-     * @return the compliment of this.
+     * Get the complement this {@link Nucleotide}.
+     * @return the complement of this.
      */
-    public Nucleotide compliment() {
-       return COMPLIMENT_MAP.get(this);
+    public Nucleotide complement() {
+       return COMPLEMENT_MAP.get(this);
     }
     
     /**

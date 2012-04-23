@@ -42,7 +42,7 @@ public final class Ranges {
             throw new IllegalArgumentException("cluster distance can not be negative");
         }
         List<Range> sortedCopy = new ArrayList<Range>(rangesToMerge);
-        Collections.sort(sortedCopy);
+        Collections.sort(sortedCopy, Range.Comparators.ARRIVAL);
 
         mergeAnyRangesThatCanBeCombined(sortedCopy, maxDistanceBetweenAdjacentRanges);
         return sortedCopy;

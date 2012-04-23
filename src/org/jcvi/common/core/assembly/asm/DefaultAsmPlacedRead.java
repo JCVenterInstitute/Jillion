@@ -57,8 +57,8 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
     * {@inheritDoc}
     */
     @Override
-    public Map<Integer, Nucleotide> getSnps() {
-        return placedRead.getSnps();
+    public Map<Integer, Nucleotide> getDifferenceMap() {
+        return placedRead.getDifferenceMap();
     }
 
     /**
@@ -147,14 +147,6 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
     @Override
     public Range asRange() {
         return placedRead.asRange();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int compareTo(PlacedRead o) {
-        return placedRead.compareTo(o);
     }
 
     /**
@@ -356,21 +348,6 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
         @Override
         public synchronized NucleotideSequence getCurrentNucleotideSequence(){
             return delegateBuilder.getCurrentNucleotideSequence();
-        }
-        
-
-
-        /**
-        * {@inheritDoc}
-        */        
-        @Override
-        public int compareTo(PlacedReadBuilder<AsmPlacedRead> o) {
-            
-            int rangeCompare = asRange().compareTo(o.asRange());
-            if(rangeCompare !=0){
-                return rangeCompare;
-            }
-            return getId().compareTo(o.getId());
         }
 
 

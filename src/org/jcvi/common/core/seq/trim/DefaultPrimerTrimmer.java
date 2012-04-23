@@ -143,7 +143,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
                 final NucleotidePairwiseSequenceAlignment reverseAlignment;
                 if(alsoCheckReverseCompliment){
                 	NucleotideSequence reversePrimer = new NucleotideSequenceBuilder(primer)
-												.reverseCompliment()
+												.reverseComplement()
 												.build();
 					reverseAlignment = NucleotideSmithWatermanAligner.align(
 							reversePrimer,sequence,
@@ -172,7 +172,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
                //the entire primer range is the same as the original sequence
                return Range.createEmptyRange();
            }
-           List<Range> rangesFreeFromPrimer = sequenceRange.compliment(primerRange);
+           List<Range> rangesFreeFromPrimer = sequenceRange.complement(primerRange);
            Collections.sort(rangesFreeFromPrimer, Range.Comparators.LONGEST_TO_SHORTEST);
            //return the largest range
            return rangesFreeFromPrimer.get(0);     

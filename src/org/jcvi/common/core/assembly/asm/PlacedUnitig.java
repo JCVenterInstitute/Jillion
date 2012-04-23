@@ -26,6 +26,6 @@ import org.jcvi.common.core.Placed;
  *
  *
  */
-public interface PlacedUnitig<U extends AsmUnitig> extends Placed<PlacedUnitig<U>> {
+public interface PlacedUnitig<U extends AsmUnitig> extends Placed {
 
 }

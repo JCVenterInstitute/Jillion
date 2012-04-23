@@ -94,10 +94,10 @@ public abstract class AbstractTestAsmContigDataStore extends AbstractTestAsmData
 		Range expectedValidRange = Range.create(CoordinateSystem.SPACE_BASED,27,755);
 		assertEquals(expectedValidRange, read.getValidRange());
 		Fragment actualFragment =frg.get("1100010859106");
-		//manually build the reverse complimented gapped valid range and insert the gaps
+		//manually build the reverse complemented gapped valid range and insert the gaps
 		NucleotideSequence expectedGappedSequence =new NucleotideSequenceBuilder(
 									actualFragment.getBasecalls())
-									.reverseCompliment()
+									.reverseComplement()
 									.subSequence(AssemblyUtil.reverseComplimentValidRange(expectedValidRange, actualFragment.getLength()))
 									.insert(80, Nucleotide.Gap)
 									.insert(115, Nucleotide.Gap)

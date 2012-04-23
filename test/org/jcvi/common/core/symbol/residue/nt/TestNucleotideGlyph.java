@@ -66,8 +66,8 @@ public class TestNucleotideGlyph {
 
     @Test
     public void reverseCompliment(){
-        assertEquals(reverseGlyph, glyph.compliment());
-        assertEquals(glyph, reverseGlyph.compliment());
+        assertEquals(reverseGlyph, glyph.complement());
+        assertEquals(glyph, reverseGlyph.complement());
         assertEquals(glyph.isAmbiguity(), reverseGlyph.isAmbiguity());
     }
     @Test
@@ -93,7 +93,7 @@ public class TestNucleotideGlyph {
         List<Nucleotide> forward = Arrays.asList(Adenine,Cytosine,Guanine, Thymine, Gap,Cytosine);
         List<Nucleotide> expectedReversed = Arrays.asList(Guanine, Gap, Adenine,Cytosine,Guanine, Thymine);
         
-        assertEquals(expectedReversed, Nucleotides.reverseCompliment(forward));
+        assertEquals(expectedReversed, Nucleotides.reverseComplement(forward));
     }
 
 

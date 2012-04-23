@@ -175,7 +175,7 @@ public final class DefaultAceTagsFromAceFile {
      * {@inheritDoc}
      */
      @Override
-     protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complimented) {
+     protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complemented) {
          
      }
        

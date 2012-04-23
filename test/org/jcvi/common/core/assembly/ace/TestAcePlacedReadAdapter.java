@@ -89,9 +89,9 @@ public class TestAcePlacedReadAdapter {
     @Test
     public void getSnps() {
         Map<Integer,Nucleotide> snpMap = createMock(Map.class);
-        expect(mockPlacedRead.getSnps()).andReturn(snpMap);
+        expect(mockPlacedRead.getDifferenceMap()).andReturn(snpMap);
         replay(mockPlacedRead);
-        assertEquals(snpMap, sut.getSnps());
+        assertEquals(snpMap, sut.getDifferenceMap());
         verify(mockPlacedRead);
     }
     @Test

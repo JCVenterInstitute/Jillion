@@ -30,7 +30,7 @@ import org.jcvi.common.core.Placed;
  * on a genomic element in the assembly.
  * @author dkatzel
  */
-public interface PlacedAceTag extends AceTag, Placed<PlacedAceTag> {
+public interface PlacedAceTag extends AceTag, Placed {
     /**
      * Get the Id of this tag which can refer to the read or contig
      * this tag references.

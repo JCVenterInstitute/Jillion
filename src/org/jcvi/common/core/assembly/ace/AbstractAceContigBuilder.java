@@ -69,9 +69,9 @@ public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
     
     
     @Override
-    protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complimented) {
+    protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complemented) {
         contigBuilder= DefaultAceContig.createBuilder(contigId, consensus);
-        contigBuilder.setComplimented(complimented);
+        contigBuilder.setComplemented(complemented);
         
     }
     @Override

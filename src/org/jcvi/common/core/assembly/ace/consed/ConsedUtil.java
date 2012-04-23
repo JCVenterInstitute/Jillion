@@ -154,7 +154,7 @@ public class ConsedUtil {
         }
         
         List<Range> contigRanges =Ranges.merge(coveredRegions);
-        SortedMap<Range, AceContig> map = new TreeMap<Range, AceContig>();
+        SortedMap<Range, AceContig> map = new TreeMap<Range, AceContig>(Range.Comparators.ARRIVAL);
         if(contigRanges.size()==1){
             //no 0x region        	
         	map.put(AssemblyUtil.toUngappedRange(consensus, contigRanges.get(0)), contigBuilder.build());

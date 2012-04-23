@@ -125,7 +125,7 @@ public class TestHiLowAceContigPhdDatastore {
             "acg";
         
         NucleotideSequence reverseComplimented = new NucleotideSequenceBuilder(basecalls)
-        											.reverseCompliment()
+        											.reverseComplement()
         											.build();
     
         List<PhredQuality> expectedQualities = new ArrayList<PhredQuality>();

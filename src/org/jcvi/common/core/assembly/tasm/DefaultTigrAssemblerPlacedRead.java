@@ -91,8 +91,8 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
     * {@inheritDoc}
     */
     @Override
-    public Map<Integer, Nucleotide> getSnps() {
-        return delegate.getSnps();
+    public Map<Integer, Nucleotide> getDifferenceMap() {
+        return delegate.getDifferenceMap();
     }
     /**
     * {@inheritDoc}
@@ -171,13 +171,6 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
     @Override
     public Range asRange() {
         return delegate.asRange();
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int compareTo(PlacedRead o) {
-        return delegate.compareTo(o);
     }
     /**
     * {@inheritDoc}
@@ -395,18 +388,6 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         @Override
         public NucleotideSequence getCurrentNucleotideSequence() {
             return delegate.getCurrentNucleotideSequence();
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public int compareTo(PlacedReadBuilder<TigrAssemblerPlacedRead> o) {
-            int rangeCompare = asRange().compareTo(o.asRange());
-            if(rangeCompare !=0){
-                return rangeCompare;
-            }
-            return getId().compareTo(o.getId());
         }
 
         /**

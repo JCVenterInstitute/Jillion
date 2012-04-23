@@ -39,7 +39,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  * this read was placed in.
  * @author dkatzel
  */
-public interface PlacedRead extends Read, Placed<PlacedRead>{
+public interface PlacedRead extends Read, Placed{
 
     /**
      * Get a Mapping of all the Single Nucleotide Positions (SNP)
@@ -50,7 +50,7 @@ public interface PlacedRead extends Read, Placed<PlacedRead>{
      * @return a Map of all the SNP locations; will never be null
      * but may be empty if there are no SNPs for this read.
      */
-    Map<Integer, Nucleotide> getSnps();
+    Map<Integer, Nucleotide> getDifferenceMap();
     /**
      * Get the valid {@link Range} which is ungapped "good" part of the basecalls.  Depending
      * on what this {@link NucleotideSequence} represents can change the 
@@ -67,7 +67,7 @@ public interface PlacedRead extends Read, Placed<PlacedRead>{
      * Get the {@link Direction} that this read is relative to the contig
      * this read was placed in. If the read is {@link Direction#REVERSE}
      * then the {@link NucleotideSequence} of this read has already been
-     * reverse complimented so that it matches the consensus.
+     * reverse complemented so that it matches the consensus.
      * @return either {@link Direction#FORWARD} or {@link Direction#REVERSE}.
      */
     Direction getDirection();

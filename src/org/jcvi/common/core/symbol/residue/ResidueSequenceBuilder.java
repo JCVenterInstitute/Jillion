@@ -253,7 +253,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
     
     
     /**
-     * Reverse <strong>but not compliment</strong> all the residues currently in this builder.
+     * Reverse <strong>but not complement</strong> all the residues currently in this builder.
      * Calling this method will only reverse residues that 
      * already exist in this builder; any additional operations
      * to insert residues will not be affected.

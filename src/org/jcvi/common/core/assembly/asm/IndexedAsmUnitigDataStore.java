@@ -437,7 +437,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
                    
                     NucleotideSequenceBuilder validBases = new NucleotideSequenceBuilder(fullLengthSequence.asList(clearRange));
                     if(readRange.getDirection() == Direction.REVERSE){
-                        validBases.reverseCompliment();
+                        validBases.reverseComplement();
                     }
                     String gappedValidBases = AsmUtil.computeGappedSequence(
                             validBases.asList(), gapOffsets);

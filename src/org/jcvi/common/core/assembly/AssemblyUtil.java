@@ -48,51 +48,51 @@ public final class AssemblyUtil {
     private AssemblyUtil(){}
     /**
      * Create a List of {@link Nucleotide}s that corresponds to the gapped full range
-     * (untrimmed, uncomplimented, gapped) version of the given PlacedRead.
+     * (untrimmed, uncomplemented, gapped) version of the given PlacedRead.
      * This method is equivalent to 
      * {@link #buildGappedComplimentedFullRangeBases(NucleotideSequence, Direction, Range, List)
-     * buildGappedComplimentedFullRangeBases(placedRead.getEncodedGlyphs(), placedRead.getSequenceDirection(), placedRead.getValidRange(), ungappedUncomplimentedFullRangeBases)}
+     * buildGappedComplimentedFullRangeBases(placedRead.getEncodedGlyphs(), placedRead.getSequenceDirection(), placedRead.getValidRange(), ungappedUncomplementedFullRangeBases)}
      * @param placedRead the read to work on.
-     * @param ungappedUncomplimentedFullRangeBases the ungapped uncomplimented
+     * @param ungappedUncomplementedFullRangeBases the ungapped uncomplemented
      * full (raw) version of the basecalls as originally called from the sequencer.
-     * @return a new List of {@link Nucleotide}s of the gapped, untrimmed uncomplimented
+     * @return a new List of {@link Nucleotide}s of the gapped, untrimmed uncomplemented
      * basecalls of the given read.
      * @see #buildGappedComplimentedFullRangeBases(NucleotideSequence, Direction, Range, List)
      */
-    public static List<Nucleotide> buildGappedComplimentedFullRangeBases(PlacedRead placedRead, List<Nucleotide> ungappedUncomplimentedFullRangeBases){
+    public static List<Nucleotide> buildGappedComplimentedFullRangeBases(PlacedRead placedRead, List<Nucleotide> ungappedUncomplementedFullRangeBases){
         Direction dir =placedRead.getDirection();
         Range validRange = placedRead.getValidRange();
         if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplimentValidRange(
                     validRange,
-                    ungappedUncomplimentedFullRangeBases.size());
+                    ungappedUncomplementedFullRangeBases.size());
         }
         return buildGappedComplimentedFullRangeBases(placedRead.getNucleotideSequence(),
                placedRead.getDirection(), validRange,
-               ungappedUncomplimentedFullRangeBases);
+               ungappedUncomplementedFullRangeBases);
     }
     /**
      * Create a List of {@link Nucleotide}s that corresponds to the gapped full range
-     * (untrimmed, uncomplimented, gapped) version of the given sequence.
+     * (untrimmed, uncomplemented, gapped) version of the given sequence.
      * @param gappedValidRangeSequence the {@link NucleotideSequence} that gapped
      * sequence that only contains the trimmed portion of the read that is used
      * in the contig in the assembly.
      * @param dir the direction of the read in the Assembly.
      * @param validRange the ungapped version of the valid range.
-     * @param ungappedUncomplimentedFullRangeBases the ungapped uncomplimented
+     * @param ungappedUncomplementedFullRangeBases the ungapped uncomplemented
      * full (raw) version of the basecalls as originally called from the sequencer.
-     * @return a new List of {@link Nucleotide}s of the gapped, untrimmed uncomplimented
+     * @return a new List of {@link Nucleotide}s of the gapped, untrimmed uncomplemented
      * basecalls of the given read.
      */
     public static List<Nucleotide> buildGappedComplimentedFullRangeBases(
             NucleotideSequence gappedValidRangeSequence, Direction dir, Range validRange,
-            List<Nucleotide> ungappedUncomplimentedFullRangeBases){
+            List<Nucleotide> ungappedUncomplementedFullRangeBases){
         List<Nucleotide> ungappedFullRangeComplimented;
         if(dir == Direction.REVERSE){
-            ungappedFullRangeComplimented = Nucleotides.reverseCompliment(ungappedUncomplimentedFullRangeBases);
+            ungappedFullRangeComplimented = Nucleotides.reverseComplement(ungappedUncomplementedFullRangeBases);
         }
         else{
-            ungappedFullRangeComplimented = ungappedUncomplimentedFullRangeBases;
+            ungappedFullRangeComplimented = ungappedUncomplementedFullRangeBases;
         }
         NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(ungappedFullRangeComplimented.size());
 
@@ -111,7 +111,7 @@ public final class AssemblyUtil {
      * Reverse Compliment the given validRange with regards to its fullLength.
      * @param validRange the valid Range to reverseCompliment.
      * @param fullLength the full length of the untrimmed basecalls.
-     * @return a new Range that corresponds to the reverse complimented valid range.
+     * @return a new Range that corresponds to the reverse complemented valid range.
      * @throws IllegalArgumentException if valid range is larger than fullLength
      * @throws NullPointerException if validRange is null.
      */

@@ -33,7 +33,7 @@ import org.jcvi.common.core.Range.CoordinateSystem;
  *
  *
  */
-public final class DirectedRange implements Placed<DirectedRange>{
+public final class DirectedRange implements Placed{
     
         /**
          * Regular expression in the form (left) .. (right).
@@ -206,18 +206,6 @@ public final class DirectedRange implements Placed<DirectedRange>{
         public String toString() {
             return "DirectedRange [range=" + range + ", direction=" + direction
                     + "]";
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public int compareTo(DirectedRange o) {
-            int rangeCmp= getRange().compareTo(o.getRange());
-            if(rangeCmp!=0){
-                return rangeCmp;
-            }
-            return getDirection().compareTo(o.getDirection());
         }
 
         /**

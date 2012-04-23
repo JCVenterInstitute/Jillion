@@ -53,13 +53,13 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
     /**
      * Maintains the mapping of each glyph singleton with
      * its assigned glyphcode value.  The glyphcodes have been specially
-     * set to simplify reverse complimenting.
+     * set to simplify reverse complementing.
      */
     private static final Map<Byte, Nucleotide> BYTE_TO_GLYPH_MAP = new HashMap<Byte, Nucleotide>();
     /**
      * Maintains the mapping of each glyph singleton with
      * its assigned glyphcode value.  The glyphcodes have been specially
-     * set to simplify reverse complimenting.
+     * set to simplify reverse complementing.
      */
     private static final Map<Nucleotide, Byte> GLYPH_TO_BYTE_MAP = new EnumMap<Nucleotide, Byte>(Nucleotide.class);
     /**
@@ -77,15 +77,15 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
      * populate the maps.
      * Each byte key has been specially assigned so
      * that flipping the bits (then bit masking)
-     * returns the byte value for the key of the reverse compliment
+     * returns the byte value for the key of the reverse complement
      * glyph where applicable.
      */
     static{
         //special case for
-        //Gap and Unknown since they compliment to themselves
+        //Gap and Unknown since they complement to themselves
         BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x00), Nucleotide.Gap);
         BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0F), Nucleotide.Unknown);
-        //everything else has a compliment
+        //everything else has a complement
         BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x01), Nucleotide.Adenine);
         BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x0E), Nucleotide.Thymine);
         BYTE_TO_GLYPH_MAP.put(Byte.valueOf((byte)0x02), Nucleotide.Guanine);

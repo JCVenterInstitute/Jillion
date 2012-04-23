@@ -36,12 +36,12 @@ public class TestRangeCompliment {
     Range range = Range.create(0,10);
     
     @Test
-    public void complimentEmptyShouldReturnEmpty(){
-        assertTrue(range.complimentFrom(Collections.<Range>emptyList()).isEmpty());
+    public void complementEmptyShouldReturnEmpty(){
+        assertTrue(range.complementFrom(Collections.<Range>emptyList()).isEmpty());
     }
     @Test
-    public void complimentWithItselfShouldReturnEmpty(){
-        assertTrue(range.complimentFrom(Collections.singleton(range)).isEmpty());
+    public void complementWithItselfShouldReturnEmpty(){
+        assertTrue(range.complementFrom(Collections.singleton(range)).isEmpty());
     }
     
     @Test
@@ -50,7 +50,7 @@ public class TestRangeCompliment {
                 Range.create(-10, -1),
                 Range.create(11, 20)
                 );
-        assertEquals(expected, range.complimentFrom(Collections.singleton(
+        assertEquals(expected, range.complementFrom(Collections.singleton(
                 Range.create(-10,20))));
     }
     
@@ -58,7 +58,7 @@ public class TestRangeCompliment {
     public void oneSideOverhangsShouldReturnThatSide(){
         Range largeRange = Range.create(0,20);
         List<Range> expected = Arrays.asList(Range.create(11,20));
-        assertEquals(expected, range.complimentFrom(Collections.singleton(largeRange)));
+        assertEquals(expected, range.complementFrom(Collections.singleton(largeRange)));
     }
     
     @Test
@@ -71,7 +71,7 @@ public class TestRangeCompliment {
                 Range.create(-5,-1),
                 Range.create(11,20)
                 );
-        assertEquals(expected, range.complimentFrom(ranges));
+        assertEquals(expected, range.complementFrom(ranges));
   
     }
 }

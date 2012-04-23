@@ -158,8 +158,8 @@ public class TestConsedUtil_Split0x {
         * {@inheritDoc}
         */
         @Override
-        public AceContigBuilder setComplimented(boolean complimented) {
-            builder.setComplimented(complimented);
+        public AceContigBuilder setComplemented(boolean complemented) {
+            builder.setComplemented(complemented);
             return this;
         }
     	

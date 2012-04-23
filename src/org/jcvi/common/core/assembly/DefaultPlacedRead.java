@@ -151,14 +151,14 @@ public final class DefaultPlacedRead implements PlacedRead {
     }
     @Override
     public String toString() {
-        return "offset = "+ getBegin() + " complimented? "+ getDirection()+"  " + read.toString();
+        return "offset = "+ getBegin() + " complemented? "+ getDirection()+"  " + read.toString();
     }
     @Override
     public long getEnd() {
         return getBegin()+getLength()-1;
     }
 
-    public Map<Integer, Nucleotide> getSnps(){
+    public Map<Integer, Nucleotide> getDifferenceMap(){
         Map<Integer, Nucleotide> map = new TreeMap<Integer, Nucleotide>();
         final ReferenceEncodedNucleotideSequence encodedGlyphs = read.getNucleotideSequence();
         for(Integer offset : encodedGlyphs.getSnpOffsets()){
@@ -199,13 +199,7 @@ public final class DefaultPlacedRead implements PlacedRead {
             throw new IllegalArgumentException("reference index refers to index after valid range");
         }
     }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int compareTo(PlacedRead o) {
-        return asRange().compareTo(o.asRange());   
-    }
+
     /**
     * {@inheritDoc}
     */
@@ -428,18 +422,6 @@ public final class DefaultPlacedRead implements PlacedRead {
         }
 
 
-        /**
-        * {@inheritDoc}
-        */        
-        @Override
-        public int compareTo(PlacedReadBuilder<PlacedRead> o) {
-            
-            int rangeCompare = asRange().compareTo(o.asRange());
-            if(rangeCompare !=0){
-                return rangeCompare;
-            }
-            return getId().compareTo(o.getId());
-        }
 
 
         

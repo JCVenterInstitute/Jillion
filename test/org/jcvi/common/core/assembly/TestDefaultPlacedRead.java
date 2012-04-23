@@ -86,7 +86,7 @@ public class TestDefaultPlacedRead {
         assertEquals(length, sut.getLength());
         assertEquals(start+ length-1 , sut.getEnd());
         assertEquals(validRange, sut.getValidRange());
-        assertEquals(snpMap, sut.getSnps());
+        assertEquals(snpMap, sut.getDifferenceMap());
         verify(read, glyphs);        
     }
     
@@ -131,7 +131,7 @@ public class TestDefaultPlacedRead {
     
     @Test
     public void testToString(){
-        String expected = "offset = "+ start + " complimented? "+ dir+"  " + read;
+        String expected = "offset = "+ start + " complemented? "+ dir+"  " + read;
         assertEquals(expected, sut.toString());
     }
 }

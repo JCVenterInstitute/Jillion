@@ -64,7 +64,7 @@ public class ReadNavigationElement extends AbstractNavigationElement{
      * Build a new {@link ReadNavigationElement} for the given
      * PlacedRead, that will navigate to the given GAPPED range.  This
      * is a convenience method that handles converting the gapped
-     * range into an ungapped range and reverse complimenting required by the consed.
+     * range into an ungapped range and reverse complementing required by the consed.
      * This is the same as {@link #buildReadNavigationElement(PlacedRead, Range, int,String)
      * buildReadNavigationElementFrom(read, gappedFeatureValidRange, fullLength,null)}
      * @param read the read to make a {@link ReadNavigationElement}
@@ -82,7 +82,7 @@ public class ReadNavigationElement extends AbstractNavigationElement{
      * Build a new {@link ReadNavigationElement} for the given
      * PlacedRead, that will navigate to the given GAPPED range.  This
      * is a convenience method that handles converting the gapped
-     * range into an ungapped range and reverse complimenting required by the consed.
+     * range into an ungapped range and reverse complementing required by the consed.
      * @param read the read to make a {@link ReadNavigationElement}
      * for; cannot be null.
      * @param gappedFeatureRange the gapped feature range coordinates; cannot be null.

@@ -27,7 +27,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
 
-public interface PlacedContig extends Placed<PlacedContig> {
+public interface PlacedContig extends Placed {
 
     String getContigId();
     Direction getDirection();

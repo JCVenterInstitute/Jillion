@@ -38,12 +38,7 @@ final class AlignedReadInfo{
 	private final byte dirOrdinal;
     private final int startOffset;
     
-    
-    /**
-     * @param id
-     * @param startOffset
-     * @param complimented
-     */
+
     public AlignedReadInfo(int startOffset, Direction dir) {
         if(dir ==null){
             throw new NullPointerException("direction can not be null");

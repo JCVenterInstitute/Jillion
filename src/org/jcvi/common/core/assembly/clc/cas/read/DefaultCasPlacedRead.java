@@ -117,7 +117,7 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     }
     //TODO fix me we can compute snps by the alignment regions
     @Override
-    public Map<Integer, Nucleotide> getSnps() {
+    public Map<Integer, Nucleotide> getDifferenceMap() {
         return Collections.emptyMap();
     }
     @Override
@@ -157,13 +157,6 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
             return false;
         }
         return true;
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int compareTo(PlacedRead o) {
-        return asRange().compareTo(o.asRange());       
     }
 
 

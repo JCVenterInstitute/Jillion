@@ -65,7 +65,7 @@ public class TestAssemblyUtil_gappedfullRange {
     @Test
     public void entireSequenceIsValidButComplimented(){
         
-        List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotides.reverseCompliment(
+        List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotides.reverseComplement(
                                             Nucleotides.ungap(gappedValidRange));
         Range validRange = Range.create(0, ungappedUnComplimentedFullRange.size()-1);
         

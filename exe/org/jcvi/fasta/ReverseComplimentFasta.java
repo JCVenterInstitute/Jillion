@@ -57,7 +57,7 @@ public class ReverseComplimentFasta {
         options.addOption(new CommandLineOptionBuilder("fasta", "path to fasta file")
                     .isRequired(true)
                     .build());
-        options.addOption(new CommandLineOptionBuilder("o", "path to output reverse complimented file")
+        options.addOption(new CommandLineOptionBuilder("o", "path to output reverse complemented file")
         .longName("out")
         .isRequired(true)
         .build());
@@ -78,14 +78,14 @@ public class ReverseComplimentFasta {
                 @Override
                 protected boolean visitFastaRecord(
                         NucleotideSequenceFastaRecord fastaRecord) {
-                    List<Nucleotide> revcompliment = new NucleotideSequenceBuilder(fastaRecord.getSequence())
-                    									.reverseCompliment()
+                    List<Nucleotide> revcomplement = new NucleotideSequenceBuilder(fastaRecord.getSequence())
+                    									.reverseComplement()
                     									.asList();
                     try {
                         out.write(new DefaultNucleotideSequenceFastaRecord(
                                 fastaRecord.getId(),
                                 fastaRecord.getComment(),
-                                revcompliment).toString().getBytes());
+                                revcomplement).toString().getBytes());
                     } catch (IOException e) {
                        throw new IllegalStateException("error writing to output fasta",e);
                     }
@@ -108,10 +108,10 @@ public class ReverseComplimentFasta {
     
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "reverseCompliment -fasta <input fasta> -o <output fasta>", 
+        formatter.printHelp( "reverseComplement -fasta <input fasta> -o <output fasta>", 
                 
                 "read in a fasta file and output a new fasta file which contains " +
-                "all the same records, except they are reverse complimented",
+                "all the same records, except they are reverse complemented",
                 options,
                 "Created by Danny Katzel");
         

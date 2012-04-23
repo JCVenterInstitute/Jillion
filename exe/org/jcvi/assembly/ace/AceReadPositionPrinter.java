@@ -49,7 +49,7 @@ public class AceReadPositionPrinter {
         private String currentContigId=null;
         private NucleotideSequence consensus;
         @Override
-        protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complimented) {
+        protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complemented) {
             currentContigId = contigId;
             this.consensus = consensus;
         }
