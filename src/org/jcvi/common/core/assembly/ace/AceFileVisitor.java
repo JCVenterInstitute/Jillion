@@ -57,13 +57,13 @@ public interface AceFileVisitor extends TextFileVisitor{
      * @param numberOfBaseSegments number of base segment lines
      * which indicate reads phrap has chosen to be the consensus
      * at a particular position.
-     * @param reverseComplimented is this contig reverse complimented
+     * @param isComplemented is this contig reverse complemented
      * @return {@code true} if this contig should be parsed; {@code false}
      * if this contig should be skipped.  If this contig is to be skipped,
      * then only {@link #visitLine(String)} and {@link #visitEndOfContig()} methods will get called
      * for this contig.
      */
-    boolean shouldVisitContig(String contigId, int numberOfBases, int numberOfReads, int numberOfBaseSegments, boolean reverseComplimented);
+    boolean shouldVisitContig(String contigId, int numberOfBases, int numberOfReads, int numberOfBaseSegments, boolean isComplemented);
    
     /**
      * Begin Visiting the current contig.  This method will
@@ -76,9 +76,9 @@ public interface AceFileVisitor extends TextFileVisitor{
      * @param numberOfBaseSegments number of base segment lines
      * which indicate reads phrap has chosen to be the consensus
      * at a particular position.
-     * @param reverseComplimented is this contig reverse complimented
+     * @param reverseComplemented is this contig reverse complemented
      */
-    void visitBeginContig(String contigId, int numberOfBases, int numberOfReads, int numberOfBaseSegments, boolean reverseComplimented);
+    void visitBeginContig(String contigId, int numberOfBases, int numberOfReads, int numberOfBaseSegments, boolean reverseComplemented);
     /**
      * begin visiting consensus qualities.  This method will only
      * get called if the current contig is being parsed which is determined

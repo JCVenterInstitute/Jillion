@@ -136,11 +136,11 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
     }
     
 
-    protected PhredQuality getQualityForNonGapBase(PlacedRead placedRead, List<PhredQuality> uncomplimentedQualities,
+    protected PhredQuality getQualityForNonGapBase(PlacedRead placedRead, List<PhredQuality> uncomplementedQualities,
             int gappedReadIndexForNonGapBase) {
         try{
-            int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(placedRead, uncomplimentedQualities.size(),gappedReadIndexForNonGapBase);            
-            return uncomplimentedQualities.get(ungappedFullRangeIndex);
+            int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(placedRead, uncomplementedQualities.size(),gappedReadIndexForNonGapBase);            
+            return uncomplementedQualities.get(ungappedFullRangeIndex);
         }
         catch(Exception e){
             throw new IllegalArgumentException("could not get quality for read " + placedRead +" at gapped index " +gappedReadIndexForNonGapBase,e);

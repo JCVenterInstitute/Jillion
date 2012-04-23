@@ -24,6 +24,7 @@
 package org.jcvi.common.core.assembly;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -211,7 +212,20 @@ public final class DefaultScaffold  implements Scaffold{
         private boolean shiftContigs=false;
         private Builder(String id){
             this.id =id;
-            contigs = new TreeSet<PlacedContig>();
+            contigs = new TreeSet<PlacedContig>( new Comparator<PlacedContig>() {
+
+				@Override
+				public int compare(PlacedContig o1, PlacedContig o2) {
+					int rangeCmp = Range.Comparators.ARRIVAL.compare(o1.asRange(), o2.asRange());
+					if(rangeCmp !=0){
+						return rangeCmp;
+					}
+					return o1.getContigId().compareTo(o2.getContigId());
+				}
+
+				
+			
+            });
         }
         /**
 		 * {@inheritDoc}

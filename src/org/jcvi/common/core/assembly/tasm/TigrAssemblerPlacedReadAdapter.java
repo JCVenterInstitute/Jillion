@@ -115,8 +115,8 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	}
 
 	@Override
-	public Map<Integer, Nucleotide> getSnps() {
-		return delegatePlacedRead.getSnps();
+	public Map<Integer, Nucleotide> getDifferenceMap() {
+		return delegatePlacedRead.getDifferenceMap();
 	}
 
 	@Override
@@ -147,11 +147,6 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	@Override
 	public long getBegin() {
 		return delegatePlacedRead.getBegin();
-	}
-
-	@Override
-	public int compareTo(PlacedRead o) {
-		return delegatePlacedRead.compareTo(o);
 	}
 
 	/* (non-Javadoc)

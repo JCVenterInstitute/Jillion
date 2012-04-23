@@ -141,14 +141,14 @@ public final class Nucleotides {
     
     /**
      * Given the input List of {@link Nucleotide}s
-     * return the reverse compliment as a new List.
-     * @param nucleotides the {@link Nucleotide}s to reverse compliment.
-     * @return the reverse compliment of the given List as a new List.
+     * return the reverse complement as a new List.
+     * @param nucleotides the {@link Nucleotide}s to reverse complement.
+     * @return the reverse complement of the given List as a new List.
      */
-    public static List<Nucleotide> reverseCompliment(List<Nucleotide> nucleotides) {
+    public static List<Nucleotide> reverseComplement(List<Nucleotide> nucleotides) {
         List<Nucleotide> reversed = new ArrayList<Nucleotide>(nucleotides.size());
         for(int i=nucleotides.size()-1; i>=0; i--){
-            reversed.add(nucleotides.get(i).compliment());
+            reversed.add(nucleotides.get(i).complement());
         }
         return reversed;
      }

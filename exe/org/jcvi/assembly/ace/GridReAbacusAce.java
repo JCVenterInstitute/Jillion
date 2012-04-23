@@ -330,7 +330,7 @@ public class GridReAbacusAce {
         }
 
         @Override
-         protected void visitNewContig(final String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complimented) {
+         protected void visitNewContig(final String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complemented) {
              Command findAbacusErrorWorker = new Command(ABACUS_WORKER_EXE);
              contigIds.add(contigId);
              File tempOutputFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);

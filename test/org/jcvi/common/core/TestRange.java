@@ -900,35 +900,35 @@ public class TestRange{
     }
     
     @Test
-    public void complimentNoIntersectionShouldReturnOriginalRange(){
+    public void complementNoIntersectionShouldReturnOriginalRange(){
         Range noOverlapRange = range.shiftRight(1000);
-        assertEquals(Arrays.asList(range),range.compliment(noOverlapRange));
+        assertEquals(Arrays.asList(range),range.complement(noOverlapRange));
     }
     
     @Test
-    public void complimentOfSubRangeShouldReturn2DisjointRanges(){
+    public void complementOfSubRangeShouldReturn2DisjointRanges(){
         Range subrange = range.shrink(2, 2);
         assertEquals(Arrays.asList(Range.create(range.getBegin(),2), Range.create(range.getEnd()-1, range.getEnd())),
-                range.compliment(subrange));
+                range.complement(subrange));
     }
     
     @Test
-    public void complimentOfSuperRangeShouldReturnEmptyList(){
+    public void complementOfSuperRangeShouldReturnEmptyList(){
         Range superRange = range.grow(2, 2);
-        assertEquals(Collections.emptyList(), range.compliment(superRange));
+        assertEquals(Collections.emptyList(), range.complement(superRange));
     }
     @Test
-    public void complimentOfLeftSideShouldReturnArrayOfOneElementContainingRightSide(){
+    public void complementOfLeftSideShouldReturnArrayOfOneElementContainingRightSide(){
         Range left = range.shrink(0, 2);
         assertEquals(Arrays.asList(Range.create(range.getEnd()-1, range.getEnd())),
-                range.compliment(left));
+                range.complement(left));
     }
     
     @Test
-    public void complimentOfRightSideShouldReturnArrayOfOneElementContainingLeftSide(){
+    public void complementOfRightSideShouldReturnArrayOfOneElementContainingLeftSide(){
         Range right = range.shrink(2, 0);
         assertEquals(Arrays.asList(Range.create(range.getBegin(),2)),
-                range.compliment(right));
+                range.complement(right));
     }
     
     @Test

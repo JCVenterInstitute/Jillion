@@ -92,7 +92,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 		assertEquals(offset, sut.getBegin());
 		assertEquals(offset+gappedBasecalls.getLength()-1, sut.getEnd());
 		assertEquals(gappedBasecalls.getLength(),sut.getLength());
-		assertTrue(sut.getSnps().isEmpty());
+		assertTrue(sut.getDifferenceMap().isEmpty());
 	}
 	private void assertCommonAttributesCorrect(PlacedRead delegate,
 			TigrAssemblerPlacedReadAdapter sut) {

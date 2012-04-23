@@ -32,9 +32,9 @@ import org.jcvi.common.core.assembly.Contig;
  */
 public interface AceContig extends Contig<AcePlacedRead>{
     /**
-     * Is this contig complimented?
+     * Is this contig complemented?
      * @return {@code true} if this contig
-     * is complimented; {@code false} otherwise.
+     * is complemented; {@code false} otherwise.
      */
     boolean isComplemented();
 }

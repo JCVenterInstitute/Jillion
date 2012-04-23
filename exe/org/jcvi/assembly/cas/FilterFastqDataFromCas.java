@@ -201,7 +201,7 @@ public class FilterFastqDataFromCas {
         }
     }
 
-    static class ReadRange implements Placed<ReadRange>{
+    static class ReadRange implements Placed{
         private final Range range;
         private final String readId;
         
@@ -236,13 +236,6 @@ public class FilterFastqDataFromCas {
         }
 
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public int compareTo(ReadRange o) {
-            return range.compareTo(o.getRange());
-        }
         /**
         * {@inheritDoc}
         */

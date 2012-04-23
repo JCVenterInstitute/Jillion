@@ -76,7 +76,7 @@ public final class SffUtil {
     private Linkers(String sequence) {
     	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(sequence);
         this.forwardSequence = builder.build();
-        this.reverseSequence = builder.reverseCompliment().build();
+        this.reverseSequence = builder.reverseComplement().build();
     }
 
     public NucleotideSequence getForwardSequence() {

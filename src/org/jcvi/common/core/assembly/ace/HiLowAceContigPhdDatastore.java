@@ -199,7 +199,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         }
 
         @Override
-        protected void visitNewContig(String aceContigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complimented) {
+        protected void visitNewContig(String aceContigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complemented) {
             //no-op
         }
         
@@ -287,7 +287,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
                
                 if(dir==Direction.REVERSE){
                     Collections.reverse(currentHiLowQualities);
-                    builder.reverseCompliment();
+                    builder.reverseComplement();
                 }
                 QualitySequence qualities = new EncodedQualitySequence(
                                             RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,

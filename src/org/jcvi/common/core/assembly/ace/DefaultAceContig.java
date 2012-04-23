@@ -47,12 +47,12 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
  */
 public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
 
-    private final boolean complimented;
+    private final boolean complemented;
 
     private DefaultAceContig(String id, NucleotideSequence consensus,
-            Set<AcePlacedRead> reads,boolean complimented) {
+            Set<AcePlacedRead> reads,boolean complemented) {
         super(id, consensus, reads);
-        this.complimented = complimented;
+        this.complemented = complemented;
     }
     /**
      * Create a new {@link AceContigBuilder} for a contig with the given
@@ -101,7 +101,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
     */
     @Override
     public boolean isComplemented() {
-        return complimented;
+        return complemented;
     }
 
 
@@ -114,7 +114,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         private int contigLeft= -1;
         private int contigRight = -1;
         private boolean built=false;
-        private boolean complimented=false;
+        private boolean complemented=false;
         public Builder(String contigId, String fullConsensus){
            this(contigId,                   
                     Nucleotides.parse(ConsedUtil.convertAceGapsToContigGaps(fullConsensus))
@@ -137,13 +137,13 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         	 this.mutableConsensus = new NucleotideSequenceBuilder(fullConsensus);
         }
         /**
-         * Set this contig as being complimented.
-         * @param complimented
+         * Set this contig as being complemented.
+         * @param complemented
          * @return this
          */
         @Override
-        public synchronized Builder setComplimented(boolean complimented){
-            this.complimented = complimented;
+        public synchronized Builder setComplemented(boolean complemented){
+            this.complemented = complemented;
             return this;
         }
         /**
@@ -288,7 +288,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
              built=true;
             if(numberOfReads()==0){
                 //force empty contig if no reads...
-                return new DefaultAceContig(contigId, new NucleotideSequenceBuilder().build(),Collections.<AcePlacedRead>emptySet(),complimented);
+                return new DefaultAceContig(contigId, new NucleotideSequenceBuilder().build(),Collections.<AcePlacedRead>emptySet(),complemented);
             }
             Set<AcePlacedRead> placedReads = new HashSet<AcePlacedRead>(aceReadBuilderMap.size()+1,1F);
             //contig left (and right) might be beyond consensus depending on how
@@ -307,7 +307,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
             } 
             aceReadBuilderMap.clear();
             fullConsensus = null;
-            return new DefaultAceContig(contigId, validConsensus,placedReads,complimented);
+            return new DefaultAceContig(contigId, validConsensus,placedReads,complemented);
         }
     }
     

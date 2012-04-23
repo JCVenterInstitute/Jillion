@@ -134,7 +134,7 @@ public abstract class AbstractSequenceAlignmentBuilder
 			subjectRange = Range.create(subjectStart-subjectSequenceBuilder.getUngappedLength()+1, subjectStart);
 			//we built these sequence backwards
 			//since they were built from a traceback
-			//so reverse (but not compliment) the sequences
+			//so reverse (but not complement) the sequences
 			//to make them in the correct order.
 			querySequenceBuilder.reverse();
 			subjectSequenceBuilder.reverse();

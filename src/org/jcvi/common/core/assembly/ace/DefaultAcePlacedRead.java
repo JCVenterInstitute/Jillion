@@ -120,16 +120,8 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
     * {@inheritDoc}
     */
     @Override
-    public int compareTo(PlacedRead o) {
-        return placedRead.compareTo(o);
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Map<Integer, Nucleotide> getSnps() {
-        return placedRead.getSnps();
+    public Map<Integer, Nucleotide> getDifferenceMap() {
+        return placedRead.getDifferenceMap();
     }
 
     /**
@@ -367,21 +359,6 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
         @Override
         public synchronized NucleotideSequence getCurrentNucleotideSequence(){
             return delegateBuilder.getCurrentNucleotideSequence();
-        }
-        
-
-
-        /**
-        * {@inheritDoc}
-        */        
-        @Override
-        public int compareTo(PlacedReadBuilder<AcePlacedRead> o) {
-            
-            int rangeCompare = asRange().compareTo(o.asRange());
-            if(rangeCompare !=0){
-                return rangeCompare;
-            }
-            return getId().compareTo(o.getId());
         }
 
 

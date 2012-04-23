@@ -38,7 +38,7 @@ public final  class AsmUtil {
 	 * ASM del encoding).
 	 * @param ungappedSequence a List of {@link Nucleotide}s of the ungapped
 	 * valid range sequence to be gapped; this sequence should already
-	 * be complimented into the correct orientation.
+	 * be complemented into the correct orientation.
 	 * @param asmEncodedGaps the List of Integers of the ASM del encoded
 	 * gaps.
 	 * @return a new String representing the gapped sequence.

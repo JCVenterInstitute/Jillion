@@ -89,7 +89,7 @@ import org.jcvi.common.core.util.Caches;
  * @see CoordinateSystem
  * 
  */
-public abstract class Range implements Placed<Range>,Iterable<Long>
+public abstract class Range implements Placed,Iterable<Long>
 {
 	/**
 	 * 2^8 -1.
@@ -965,10 +965,10 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
      * Get the List of Ranges that represents the 
      * {@code this - other}.  This is similar to the 
      * Set of all coordinates that don't intersect.
-     * @param other the range to compliment with.
+     * @param other the range to complement with.
      * @return
      */
-    public List<Range> compliment(Range other){
+    public List<Range> complement(Range other){
         //this - other
         //anything in this that doesn't intersect with other
         Range intersection = intersection(other);
@@ -978,23 +978,23 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
         
         Range beforeOther = Range.create(getBegin(), intersection.getBegin()-1);
         Range afterOther = Range.create(intersection.getEnd()+1, getEnd());
-        List<Range> complimentedRanges = new ArrayList<Range>();
+        List<Range> complementedRanges = new ArrayList<Range>();
         if(!beforeOther.isEmpty()){
-            complimentedRanges.add(beforeOther);
+            complementedRanges.add(beforeOther);
         }
         if(!afterOther.isEmpty()){
-            complimentedRanges.add(afterOther);
+            complementedRanges.add(afterOther);
         }
-        return Ranges.merge(complimentedRanges);
+        return Ranges.merge(complementedRanges);
     }
     
-    public List<Range> complimentFrom(Collection<Range> ranges){
+    public List<Range> complementFrom(Collection<Range> ranges){
         List<Range> universe = Ranges.merge(new ArrayList<Range>(ranges));
-        List<Range> compliments = new ArrayList<Range>(universe.size());
+        List<Range> complements = new ArrayList<Range>(universe.size());
         for(Range range : universe){
-            compliments.addAll(range.compliment(this));
+            complements.addAll(range.complement(this));
         }
-        return Ranges.merge(compliments);
+        return Ranges.merge(complements);
     }
 
     /**
@@ -1136,16 +1136,6 @@ public abstract class Range implements Placed<Range>,Iterable<Long>
         return list;
     }
    
-    /**
-     * Compares two Ranges using the {@link Comparators#ARRIVAL}
-     * Comparator.
-     * This is the same as {@code Comparators.ARRIVAL.compare(this,that);
-     */
-    @Override
-    public int compareTo(Range that) 
-    {
-        return Comparators.ARRIVAL.compare(this, that);
-    }
 
     @Override
     public long getLength() {

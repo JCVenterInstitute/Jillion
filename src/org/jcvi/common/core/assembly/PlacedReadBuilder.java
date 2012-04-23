@@ -39,7 +39,7 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public interface PlacedReadBuilder<R extends PlacedRead> extends Placed<PlacedReadBuilder<R>>, Builder<R>{
+public interface PlacedReadBuilder<R extends PlacedRead> extends Placed, Builder<R>{
     /**
      * Change the reference that this read aligns to and its new
      * gapped starting offset on this new reference.
@@ -194,10 +194,5 @@ public interface PlacedReadBuilder<R extends PlacedRead> extends Placed<PlacedRe
      * basecalls of this read; never null.
      */
     NucleotideSequence getCurrentNucleotideSequence();
-
-    /**
-     * {@inheritDoc}
-     */
-    int compareTo(PlacedReadBuilder<R> o);
 
 }

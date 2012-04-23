@@ -189,8 +189,8 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     * {@inheritDoc}
     */
     @Override
-    public UpdateConsensusAceContigBuilder setComplimented(boolean complimented) {
-        builder.setComplimented(complimented);
+    public UpdateConsensusAceContigBuilder setComplemented(boolean complemented) {
+        builder.setComplemented(complemented);
         return this;
     }
     

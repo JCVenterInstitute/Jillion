@@ -28,12 +28,12 @@ public final class Gene {
 	    }
 		this.name = name;
 		this.exons = new ArrayList<Range>(exons);
-		Collections.sort(this.exons);
+		Collections.sort(this.exons, Range.Comparators.ARRIVAL);
 		
 		List<Range> completeExonRange = Arrays.asList(Ranges.createInclusiveRange(this.exons));
 		List<Range> introns = completeExonRange;
 		for(Range exon : this.exons){
-			 introns = exon.complimentFrom(introns);
+			 introns = exon.complementFrom(introns);
 		}
 		this.introns = introns.equals(completeExonRange)? 
 				Collections.<Range>emptyList() 

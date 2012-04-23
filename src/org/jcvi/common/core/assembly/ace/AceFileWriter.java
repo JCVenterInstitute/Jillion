@@ -275,7 +275,7 @@ public class AceFileWriter {
 	    @Override
 	    public String toString() {
 	        StringBuilder builder = new StringBuilder();
-	        builder.append(id).append(" ").append(startOffset).append("is complimented? ").append(getDirection() ==Direction.REVERSE);
+	        builder.append(id).append(" ").append(startOffset).append("is complemented? ").append(getDirection() ==Direction.REVERSE);
 	        return builder.toString();
 	    }
 	    /**

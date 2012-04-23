@@ -68,8 +68,8 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.getDirection();
     }
     @Override
-    public Map<Integer, Nucleotide> getSnps() {
-        return placedRead.getSnps();
+    public Map<Integer, Nucleotide> getDifferenceMap() {
+        return placedRead.getDifferenceMap();
     }
     @Override
     public Range getValidRange() {
@@ -99,14 +99,6 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
     public String toString() {
         return "AcePlacedReadAdapter [placedRead="
                 + placedRead + ", phdInfo=" + phdInfo +  "]";
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int compareTo(PlacedRead o) {
-        return placedRead.compareTo(o);
     }
 
     /**

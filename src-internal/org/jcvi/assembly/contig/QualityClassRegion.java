@@ -27,7 +27,7 @@ import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
 import org.jcvi.glyph.qualClass.QualityClass;
 
-public class QualityClassRegion implements Placed<QualityClassRegion>{
+public class QualityClassRegion implements Placed{
 
     private QualityClass qualityClass;
     private Placed placed;
@@ -85,15 +85,6 @@ public class QualityClassRegion implements Placed<QualityClassRegion>{
             return false;
         QualityClassRegion other = (QualityClassRegion) obj;
         return placed.equals(other.placed) && qualityClass.equals(other.qualityClass);
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int compareTo(QualityClassRegion o) {
-        Range range= Range.create(getBegin(), getEnd());
-        Range otherRange = Range.create(o.getBegin(), o.getEnd());
-        return range.compareTo(otherRange);
     }
     /**
     * {@inheritDoc}

@@ -32,7 +32,7 @@ package org.jcvi.common.core;
  *
  *
  */
-public interface Placed<P extends Placed> extends Comparable<P>{
+public interface Placed{
     /**
      * Get the start coordinate of this placed object
      * on the placed axis.

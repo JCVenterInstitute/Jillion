@@ -108,10 +108,10 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * @param numberOfBases the total number of bases expected in this contig if you 
      * add the bases from all the reads up.
      * @param numberOfReads the total number of expected reads in this contig.
-     * @param isComplimented is this contig complimented
+     * @param isComplemented is this contig complemented
      * @see #visitEndOfContig()
      */
-    protected abstract void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean isComplimented);
+    protected abstract void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean isComplemented);
 
     @Override
     public synchronized void visitConsensusQualities() {

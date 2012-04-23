@@ -726,8 +726,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         return Nucleotides.asString(asList());
     }
     /**
-     * Reverse compliment all the nucleotides currently in this builder.
-     * Calling this method will only reverse compliment bases that 
+     * Reverse complement all the nucleotides currently in this builder.
+     * Calling this method will only reverse complement bases that 
      * already exist in this builder; any additional operations
      * to insert bases will not be affected.
      * <p/>
@@ -740,22 +740,22 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * will generate a Sequence "GCCGN".
      * @return this.
      */
-    public NucleotideSequenceBuilder reverseCompliment(){
+    public NucleotideSequenceBuilder reverseComplement(){
         int currentLength = codecDecider.getCurrentLength();
         int pivotOffset = currentLength/2;
         for(int i=0; i<pivotOffset; i++){
             int compOffset = currentLength-1-i;
             int startBitOfI = i*NUM_BITS_PER_VALUE;
-            Nucleotide tmp = getNucleotideFor(startBitOfI).compliment();
-            int startBitOfComplimentOffset = compOffset*NUM_BITS_PER_VALUE;
-            byte complimentOrdinal = (byte) getNucleotideFor(startBitOfComplimentOffset).compliment().ordinal();
-            setBitsFor(startBitOfI, complimentOrdinal);
-            setBitsFor(startBitOfComplimentOffset, (byte) tmp.ordinal());
+            Nucleotide tmp = getNucleotideFor(startBitOfI).complement();
+            int startBitOfComplementOffset = compOffset*NUM_BITS_PER_VALUE;
+            byte complementOrdinal = (byte) getNucleotideFor(startBitOfComplementOffset).complement().ordinal();
+            setBitsFor(startBitOfI, complementOrdinal);
+            setBitsFor(startBitOfComplementOffset, (byte) tmp.ordinal());
         }
         if(currentLength%2!=0){
         	int bitOffset = pivotOffset*NUM_BITS_PER_VALUE;
-        	byte complimentOrdinal = (byte) getNucleotideFor(bitOffset).compliment().ordinal();
-        	setBitsFor(bitOffset, complimentOrdinal);
+        	byte complementOrdinal = (byte) getNucleotideFor(bitOffset).complement().ordinal();
+        	setBitsFor(bitOffset, complementOrdinal);
         }
         return this;
     }
@@ -782,7 +782,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     /**
      * {@inheritDoc}
      * 
-     * @see #reverseCompliment()
+     * @see #reverseComplement()
      */
     @Override
 	public NucleotideSequenceBuilder reverse() {
