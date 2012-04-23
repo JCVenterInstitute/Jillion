@@ -147,7 +147,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
     }
 
     private boolean isASnp(R read, int gappedValidRangeIndex) {
-        return read.getSnps().containsKey(
+        return read.getDifferenceMap().containsKey(
                 Integer.valueOf(gappedValidRangeIndex));
     }
 
