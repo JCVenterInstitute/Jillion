@@ -31,8 +31,6 @@ import java.util.Map.Entry;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 public class PhdWriter {
     private static final String BEGIN_SEQUENCE = "BEGIN_SEQUENCE";
@@ -42,8 +40,6 @@ public class PhdWriter {
     
     private static final String BEGIN_DNA = "BEGIN_DNA";
     private static final String END_DNA = "END_DNA";
-    static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern(
-    "EEE MMM dd kk:mm:ss yyyy");
     
     public static void writePhd(Phd phd, OutputStream out) throws IOException{
         try{
