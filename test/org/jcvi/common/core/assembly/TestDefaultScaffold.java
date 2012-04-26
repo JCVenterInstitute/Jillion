@@ -31,6 +31,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultPlacedContig;
 import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.PlacedContig;
+import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 
 import static org.junit.Assert.assertEquals;
 
@@ -64,6 +65,35 @@ public class TestDefaultScaffold {
     }
 
     @Test
+    public void shiftingContigsShouldAdjustCoordinatesToStartAtZero(){
+    	 ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
+    	 builder.shiftContigs(true);
+    	 for ( PlacedContig contig : placedContigs ) {
+    		 builder.add(contig);    
+    	 }
+    	 Scaffold shiftedScaffold = builder.build();
+    	 long shiftOffset = getFirstCoveredRange(scaffold).getBegin();
+    	 for(PlacedContig shiftedContig : shiftedScaffold.getPlacedContigs()){
+    		 assertShiftedCoorrectly(scaffold.getPlacedContig(shiftedContig.getContigId()), shiftedContig,shiftOffset);
+    	 }
+    }
+    private Range getFirstCoveredRange(DefaultScaffold scaffold) {
+		for(CoverageRegion<?> region :scaffold.getContigCoverageMap()){
+			if(region.getCoverage()>0){
+				return region.asRange();
+			}
+		}
+		throw new IllegalStateException("scaffold is empty");
+	}
+
+	private void assertShiftedCoorrectly(PlacedContig unshifted,
+			PlacedContig shifted, long shiftOffset) {
+		assertEquals(unshifted.getContigId(), shifted.getContigId());
+		assertEquals(unshifted.getDirection(), shifted.getDirection());
+		assertEquals(unshifted.asRange().shiftLeft(shiftOffset), shifted.asRange());
+	}
+
+	@Test
     public void testGetPlacedContig() {
         PlacedContig contig = placedContigs.iterator().next();
         assertEquals(scaffold.getPlacedContig(contig.getContigId()),contig);

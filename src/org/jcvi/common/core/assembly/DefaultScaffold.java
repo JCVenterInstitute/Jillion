@@ -204,28 +204,26 @@ public final class DefaultScaffold  implements Scaffold{
         }
         return true;
     }
-
+    private static final class PlacedContigComparator implements
+		Comparator<PlacedContig> {
+	@Override
+	public int compare(PlacedContig o1, PlacedContig o2) {
+		int rangeCmp = Range.Comparators.ARRIVAL.compare(o1.asRange(), o2.asRange());
+		if(rangeCmp !=0){
+			return rangeCmp;
+		}
+		return o1.getContigId().compareTo(o2.getContigId());
+	}
+}
 
     private static final class Builder implements ScaffoldBuilder{
-        private final String id;
+      
+		private final String id;
         private Set<PlacedContig> contigs;
         private boolean shiftContigs=false;
         private Builder(String id){
             this.id =id;
-            contigs = new TreeSet<PlacedContig>( new Comparator<PlacedContig>() {
-
-				@Override
-				public int compare(PlacedContig o1, PlacedContig o2) {
-					int rangeCmp = Range.Comparators.ARRIVAL.compare(o1.asRange(), o2.asRange());
-					if(rangeCmp !=0){
-						return rangeCmp;
-					}
-					return o1.getContigId().compareTo(o2.getContigId());
-				}
-
-				
-			
-            });
+            contigs = new TreeSet<PlacedContig>( new PlacedContigComparator());
         }
         /**
 		 * {@inheritDoc}
@@ -263,11 +261,14 @@ public final class DefaultScaffold  implements Scaffold{
         @Override
 		public DefaultScaffold build(){
             if(shiftContigs && !contigs.isEmpty()){
-                Set<PlacedContig> shiftedContigs = new TreeSet<PlacedContig>();
+                Set<PlacedContig> shiftedContigs = new TreeSet<PlacedContig>(new PlacedContigComparator());
                 PlacedContig firstContig = contigs.iterator().next();
                 long shiftOffset = firstContig.getBegin();
                 for(PlacedContig contig : contigs){
-                    shiftedContigs.add(new DefaultPlacedContig(contig.getContigId(), contig.getValidRange().shiftLeft(shiftOffset)));
+                    shiftedContigs.add(
+                    		new DefaultPlacedContig(contig.getContigId(),
+                    				contig.getValidRange().shiftLeft(shiftOffset),
+                    				contig.getDirection()));
                 }
                 contigs = shiftedContigs;
             }
