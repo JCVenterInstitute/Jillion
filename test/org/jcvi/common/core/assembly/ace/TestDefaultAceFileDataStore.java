@@ -56,6 +56,11 @@ public class TestDefaultAceFileDataStore extends TestAbstractAceParserMatchesAce
             throw new RuntimeException("error getting contigs",e);
         }
         }
+
+	@Override
+	protected AceContigDataStore createDataStoreFor(File aceFile) throws IOException {
+		return DefaultAceFileDataStore.create(aceFile);
+	}
     
 
 }

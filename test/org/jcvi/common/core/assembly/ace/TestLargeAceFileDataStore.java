@@ -87,4 +87,10 @@ public class TestLargeAceFileDataStore extends TestAbstractAceParserMatchesAce2C
 		}
 		dataStore.close();
 	}
+
+	@Override
+	protected AceContigDataStore createDataStoreFor(File aceFile)
+			throws IOException {
+		return LargeAceFileDataStore.create(getAceFile());
+	}
 }

@@ -57,4 +57,10 @@ public class TestIndexedAceFileDataStore extends TestAbstractAceParserMatchesAce
         }
     }
 
+	@Override
+	protected AceContigDataStore createDataStoreFor(File aceFile)
+			throws IOException {
+		return IndexedAceFileDataStore.create(aceFile);
+	}
+
 }
