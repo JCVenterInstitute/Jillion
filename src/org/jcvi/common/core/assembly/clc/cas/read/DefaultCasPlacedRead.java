@@ -32,15 +32,16 @@ import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 
 final class DefaultCasPlacedRead implements CasPlacedRead{
 
-    private final Read read;
+    private final Read<ReferenceEncodedNucleotideSequence> read;
     private final Range validRange;
     private final long startOffset;
     private final Direction dir;
     private final int ungappedFullLength;
-    public DefaultCasPlacedRead(Read read, long startOffset,Range validRange, 
+    public DefaultCasPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long startOffset,Range validRange, 
             Direction dir, int ungappedFullLength){
         if(read==null){
             throw new NullPointerException("read can not be null");
@@ -78,7 +79,7 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
         return startOffset;
     }
     @Override
-    public NucleotideSequence getNucleotideSequence() {
+    public ReferenceEncodedNucleotideSequence getNucleotideSequence() {
         return read.getNucleotideSequence();
     }
     @Override

@@ -37,6 +37,7 @@ import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.util.iter.EmptyIterator;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.junit.Before;
@@ -208,7 +209,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     private List<Object> createAgreeingRead(String id, Direction dir,
             List<PlacedRead> reads, final PhredQuality returnedQuality) throws DataStoreException {
         PlacedRead realRead = createMock(PlacedRead.class);
-        NucleotideSequence encodedBases = createMock(NucleotideSequence.class);
+        ReferenceEncodedNucleotideSequence encodedBases = createMock(ReferenceEncodedNucleotideSequence.class);
         QualitySequence encodedQualities = createMock(QualitySequence.class);
         expect(realRead.getId()).andReturn(id);
         expect(qualityFastaMap.get(id)).andReturn(encodedQualities);
@@ -230,7 +231,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     private List<Object> createConflictingRead(String id, Direction dir,
             List<PlacedRead> reads, final PhredQuality returnedQuality) throws DataStoreException {
         PlacedRead realRead = createMock(PlacedRead.class);
-        NucleotideSequence encodedBases = createMock(NucleotideSequence.class);
+        ReferenceEncodedNucleotideSequence encodedBases = createMock(ReferenceEncodedNucleotideSequence.class);
         QualitySequence encodedQualities = createMock(QualitySequence.class);
         expect(realRead.getId()).andReturn(id);
         expect(qualityFastaMap.get(id)).andReturn(encodedQualities);

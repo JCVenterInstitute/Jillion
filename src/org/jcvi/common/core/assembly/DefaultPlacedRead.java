@@ -168,7 +168,7 @@ public final class DefaultPlacedRead implements PlacedRead {
         
     }
     @Override
-    public NucleotideSequence getNucleotideSequence() {
+    public ReferenceEncodedNucleotideSequence getNucleotideSequence() {
         return read.getNucleotideSequence();
     }
     @Override

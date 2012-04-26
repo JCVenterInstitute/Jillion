@@ -191,6 +191,7 @@ public final class CasUtil {
         long ungappedStartOffset = alignment.getStartOfMatch();
         long gappedStartOffset = gappedReference.getGappedOffsetFor((int)ungappedStartOffset);
         builder = new DefaultCasPlacedReadFromCasAlignmentBuilder(readId,
+        		gappedReference,
         		fullLengthReadBasecalls,
                 alignment.readIsReversed(),
                 gappedStartOffset,

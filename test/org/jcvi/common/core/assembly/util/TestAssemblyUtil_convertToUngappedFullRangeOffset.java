@@ -19,13 +19,18 @@
 
 package org.jcvi.common.core.assembly.util;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.easymock.EasyMockSupport;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
@@ -114,15 +119,98 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
         replayAll();
         assertEquals(3, AssemblyUtil.convertToUngappedFullRangeOffset(mockRead,2));
     }
+    
+    private static class NucleotideSequenceReferenceEncodedAdapter implements ReferenceEncodedNucleotideSequence{
+    	private final NucleotideSequence delegate;
+    	
+		public NucleotideSequenceReferenceEncodedAdapter(NucleotideSequence delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public List<Integer> getGapOffsets() {
+			return delegate.getGapOffsets();
+		}
+
+		@Override
+		public int getNumberOfGaps() {
+			return delegate.getNumberOfGaps();
+		}
+
+		@Override
+		public boolean isGap(int gappedOffset) {
+			return delegate.isGap(gappedOffset);
+		}
+
+		@Override
+		public long getUngappedLength() {
+			return delegate.getUngappedLength();
+		}
+
+		@Override
+		public List<Nucleotide> asUngappedList() {
+			return delegate.asUngappedList();
+		}
+
+		@Override
+		public int getNumberOfGapsUntil(int gappedOffset) {
+			return delegate.getNumberOfGapsUntil(gappedOffset);
+		}
+
+		@Override
+		public int getUngappedOffsetFor(int gappedOffset) {
+			return delegate.getUngappedOffsetFor(gappedOffset);
+		}
+
+		@Override
+		public int getGappedOffsetFor(int ungappedOffset) {
+			return delegate.getGappedOffsetFor(ungappedOffset);
+		}
+
+		@Override
+		public List<Nucleotide> asList() {
+			return delegate.asList();
+		}
+
+		@Override
+		public Nucleotide get(int index) {
+			return delegate.get(index);
+		}
+
+		@Override
+		public long getLength() {
+			return delegate.getLength();
+		}
+
+		@Override
+		public List<Nucleotide> asList(Range range) {
+			return delegate.asList(range);
+		}
+
+		@Override
+		public Iterator<Nucleotide> iterator() {
+			return delegate.iterator();
+		}
+
+		@Override
+		public List<Integer> getSnpOffsets() {
+			throw new UnsupportedOperationException("invalid for adapted sequence");
+		}
+    	
+    }
     private class MockPlacedReadBuilder implements Builder<PlacedRead>{
         private final PlacedRead mock = createMock(PlacedRead.class);
         private Direction dir = Direction.FORWARD;
-        private final NucleotideSequence seq;
+        private final ReferenceEncodedNucleotideSequence seq;
         private Range validRange;
+        private final int ungappedLength;
         public MockPlacedReadBuilder(String validRangeSeq, int fullLength){
-            
-            seq = new NucleotideSequenceBuilder(validRangeSeq).build();
-            assertTrue(fullLength >= seq.getUngappedLength());
+        	this.ungappedLength = validRangeSeq.replaceAll("-", "").length();
+           
+            seq = new NucleotideSequenceReferenceEncodedAdapter(
+            		new NucleotideSequenceBuilder(validRangeSeq).build());
+            		
+            assertTrue(fullLength >= ungappedLength);
             expect(mock.getUngappedFullLength()).andStubReturn(fullLength);
             expect(mock.getNucleotideSequence()).andStubReturn(seq);
         }
@@ -142,8 +230,8 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
         */
         @Override
         public PlacedRead build() {
-            assertEquals("ungapped valid sequence is wrong length",validRange.getLength(),seq.getUngappedLength());
-           
+            assertEquals("ungapped valid sequence is wrong length",validRange.getLength(),
+            		seq.getUngappedLength());
             expect(mock.getDirection()).andStubReturn(dir);
             return mock;
         }

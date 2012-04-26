@@ -34,6 +34,7 @@ import org.jcvi.common.core.assembly.PlacedReadBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 
 /**
  * @author dkatzel
@@ -141,7 +142,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
     * {@inheritDoc}
     */
     @Override
-    public NucleotideSequence getNucleotideSequence() {
+    public ReferenceEncodedNucleotideSequence getNucleotideSequence() {
         return delegate.getNucleotideSequence();
     }
     /**

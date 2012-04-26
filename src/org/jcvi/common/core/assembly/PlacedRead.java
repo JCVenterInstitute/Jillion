@@ -31,6 +31,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 /**
  * A {@code PlacedRead} is a {@link Read}
  * that has been {@link Placed}
@@ -39,7 +40,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  * this read was placed in.
  * @author dkatzel
  */
-public interface PlacedRead extends Read, Placed{
+public interface PlacedRead extends Read<ReferenceEncodedNucleotideSequence>, Placed{
 
     /**
      * Get a Mapping of all the Single Nucleotide Positions (SNP)
