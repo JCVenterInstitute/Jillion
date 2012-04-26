@@ -18,6 +18,10 @@
  ******************************************************************************/
 
 package org.jcvi.common.internal.command.grid;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The JCVI Grid has several different "queues" which allow
  * jobs to run for limited periods of time.  Queues for faster
@@ -54,6 +58,13 @@ public enum JcviQueue {
      */
     HI_MEM("himem");
 
+    private static final Map<String, JcviQueue> MAP;
+    static{
+    	MAP = new HashMap<String, JcviQueue>();
+    	for(JcviQueue q : values()){
+    		MAP.put(q.getQueueName(),q);
+    	}
+    }
     private final String queueName;
 
     /**
@@ -65,5 +76,12 @@ public enum JcviQueue {
 
     public String getQueueName() {
         return queueName;
+    }
+    
+    public static JcviQueue getQueueFor(String queueName){
+    	if(MAP.containsKey(queueName)){
+    		return MAP.get(queueName);
+    	}
+    	throw new IllegalArgumentException("unknown queue name : "+ queueName);
     }
 }
