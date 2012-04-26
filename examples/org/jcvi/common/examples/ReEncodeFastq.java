@@ -10,6 +10,8 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.FastXFilter;
+import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
@@ -28,7 +30,7 @@ public class ReEncodeFastq {
 		File fastqFile = new File("path/to/fastq");
 		List<String> idsToInclude = new ArrayList<String>();//put names here
 		
-		DataStoreFilter filter = new DefaultIncludeDataStoreFilter(idsToInclude);
+		FastXFilter filter = new IncludeFastXIdFilter(idsToInclude);
 		
 		FastqDataStore datastore = LargeFastqFileDataStore.create(fastqFile, 
 												FastqQualityCodec.SANGER, filter);

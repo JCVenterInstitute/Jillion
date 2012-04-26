@@ -26,8 +26,8 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 /**
  * {@code TigrAssemblerPlacedReadAdapter} is a Adapter which allows
  * a PlacedRead to conform to the TigrAssemblerPlacedRead interface.
@@ -125,7 +125,7 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	}
 
 	@Override
-	public NucleotideSequence getNucleotideSequence() {
+	public ReferenceEncodedNucleotideSequence getNucleotideSequence() {
 		return delegatePlacedRead.getNucleotideSequence();
 	}
 

@@ -32,10 +32,10 @@ import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegion;
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegionType;
 import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 
 public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<DefaultCasPlacedRead>{
@@ -50,14 +50,19 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     private int numberOfGaps=0;
     private long referenceOffset;
     private final long fullUngappedLength;
-    
+    private final  NucleotideSequence gappedReference;
     public DefaultCasPlacedReadFromCasAlignmentBuilder(String readId,
+    		 NucleotideSequence gappedReference,
             NucleotideSequence fullRangeSequence, 
             boolean isReversed, long startOffset,
             Range traceTrimRange){
         if(fullRangeSequence ==null){
             throw new NullPointerException("null fullRangeSequence for id "+ readId);
         }
+        if(gappedReference ==null){
+            throw new NullPointerException("null gappedReference for id "+ readId);
+        }
+        this.gappedReference = gappedReference;
         try{
         this.readId = readId;
         this.startOffset = startOffset;
@@ -151,8 +156,11 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplimentValidRange(validRange, fullUngappedLength);
         }
-        Read<NucleotideSequence> read = new DefaultRead<NucleotideSequence>(readId,
-        		gappedSequenceBuilder.build());
+        
+        Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead<ReferenceEncodedNucleotideSequence>(readId,
+        		gappedSequenceBuilder
+        		.setReferenceHint(gappedReference, (int)startOffset)
+        		.buildReferenceEncodedNucleotideSequence());
         return new DefaultCasPlacedRead(read, startOffset, validRange, dir,(int)fullUngappedLength);
     }
 

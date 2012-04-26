@@ -34,7 +34,7 @@ import org.jcvi.common.core.assembly.ace.AcePlacedReadAdapter;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -103,11 +103,11 @@ public class TestAcePlacedReadAdapter {
         verify(mockPlacedRead);
     }
     @Test
-    public void getEncodedGlyphs() {
-        NucleotideSequence encodedGlyphs = createMock(NucleotideSequence.class);
-        expect(mockPlacedRead.getNucleotideSequence()).andReturn(encodedGlyphs);
+    public void getSequence() {
+    	ReferenceEncodedNucleotideSequence sequence = createMock(ReferenceEncodedNucleotideSequence.class);
+        expect(mockPlacedRead.getNucleotideSequence()).andReturn(sequence);
         replay(mockPlacedRead);
-        assertEquals(encodedGlyphs, sut.getNucleotideSequence());
+        assertEquals(sequence, sut.getNucleotideSequence());
         verify(mockPlacedRead);
         
     }
