@@ -113,7 +113,7 @@ public enum Nucleotide implements Residue {
         AMBIGUITY_TO_CONSTIUENT.put(Cytosine, EnumSet.of(Cytosine));
         AMBIGUITY_TO_CONSTIUENT.put(Guanine, EnumSet.of(Guanine));
         AMBIGUITY_TO_CONSTIUENT.put(Thymine, EnumSet.of(Thymine));
-        AMBIGUITY_TO_CONSTIUENT.put(Gap, EnumSet.of(Gap));
+
         
         CONSTIUENT_TO_AMBIGUITY = new EnumMap<Nucleotide, Set<Nucleotide>>(Nucleotide.class);
         for(Nucleotide n : EnumSet.of(Adenine,Cytosine,Guanine,Thymine)){
@@ -291,6 +291,9 @@ public enum Nucleotide implements Residue {
      * will never be null or empty.
      */
     public Set<Nucleotide> getBasesFor(){
+    	if(this== Gap){
+    		return EnumSet.of(Gap);
+    	}
     	return AMBIGUITY_TO_CONSTIUENT.get(this);
     }
     
