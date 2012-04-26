@@ -40,7 +40,11 @@ import org.junit.runners.Suite.SuiteClasses;
         AllIlluminaUnitTests.class,
         AllSolexaUnitTests.class,
         TestFormattingFastqRecords.class,
-        AllFastQUtilUnitTests.class        
+        AllFastQUtilUnitTests.class ,
+        
+        TestDefaultMultiLineFastqRecordsInDataStore.class,
+        TestIndexedMultilineFastqDataStore.class,
+        TestLargeMultilineFastqDataStore.class
     }
     )
 public class AllFastqUnitTests {
