@@ -44,7 +44,7 @@ public final class DefaultPlacedRead implements PlacedRead {
 
     private final Read<ReferenceEncodedNucleotideSequence> read;
     private final long start;
-    private final Direction sequenceDirection;
+    private final byte directionOrdinal;
     private final Range validRange;
     private final int ungappedFullLength;
     
@@ -71,7 +71,7 @@ public final class DefaultPlacedRead implements PlacedRead {
         }
         this.read = read;
         this.start= start;
-        this.sequenceDirection = sequenceDirection;
+        this.directionOrdinal = (byte)sequenceDirection.ordinal();
         this.validRange = validRange;
         this.ungappedFullLength = ungappedFullLength;
     }
@@ -102,7 +102,7 @@ public final class DefaultPlacedRead implements PlacedRead {
         final int prime = 31;
         int result = 1;
         result = prime * result + read.hashCode();
-        result = prime * result + sequenceDirection.hashCode();
+        result = prime * result + directionOrdinal;
         result = prime * result + (int) (start ^ (start >>> 32));
         return result;
     }
@@ -147,7 +147,7 @@ public final class DefaultPlacedRead implements PlacedRead {
     
     @Override
     public Direction getDirection() {
-        return sequenceDirection;
+        return Direction.values()[directionOrdinal];
     }
     @Override
     public String toString() {

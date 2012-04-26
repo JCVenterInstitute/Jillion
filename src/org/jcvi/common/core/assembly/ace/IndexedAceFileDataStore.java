@@ -451,10 +451,9 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
 			String id = idIterator.next();
 			try {
 				return get(id);
-			} catch (DataStoreException e) {
-				throw new IllegalStateException("error getting contig"+ id,e);
-			}finally{
+			} catch (Throwable t) {
 				IOUtil.closeAndIgnoreErrors(idIterator);
+				throw new IllegalStateException("error getting contig"+ id,t);
 			}
 		}
 

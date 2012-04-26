@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.assembly;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -205,7 +206,10 @@ public final class DefaultScaffold  implements Scaffold{
         return true;
     }
     private static final class PlacedContigComparator implements
-		Comparator<PlacedContig> {
+		Comparator<PlacedContig> , Serializable{
+
+		private static final long serialVersionUID = 101208868003843457L;
+
 	@Override
 	public int compare(PlacedContig o1, PlacedContig o2) {
 		int rangeCmp = Range.Comparators.ARRIVAL.compare(o1.asRange(), o2.asRange());
