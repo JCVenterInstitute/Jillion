@@ -346,7 +346,6 @@
 		
 		    <jarjar jarfile="${project-name}-${version}-r${revision}.jar">
 		        <fileset dir="${bin}"/>
-		    	<zipfileset src="${lib}/log4j-1.2.15.jar"/>
 		    	<zipfileset src="${lib}/joda-time-2.0.jar"/>
 		    	
 		    	
