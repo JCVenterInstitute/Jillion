@@ -113,6 +113,7 @@ public enum Nucleotide implements Residue {
         AMBIGUITY_TO_CONSTIUENT.put(Cytosine, EnumSet.of(Cytosine));
         AMBIGUITY_TO_CONSTIUENT.put(Guanine, EnumSet.of(Guanine));
         AMBIGUITY_TO_CONSTIUENT.put(Thymine, EnumSet.of(Thymine));
+        AMBIGUITY_TO_CONSTIUENT.put(Gap, EnumSet.of(Gap));
         
         CONSTIUENT_TO_AMBIGUITY = new EnumMap<Nucleotide, Set<Nucleotide>>(Nucleotide.class);
         for(Nucleotide n : EnumSet.of(Adenine,Cytosine,Guanine,Thymine)){
@@ -248,6 +249,7 @@ public enum Nucleotide implements Residue {
      * @return the ambiguity {@link Nucleotide} or {@link #Gap}
      * if no ambiguity exists for all the given unambiguous bases.
      * @throws NullPointerException if unambiguiousBases is null.
+     * @see #getBasesFor()
      */
     public static Nucleotide getAmbiguityFor(Collection<Nucleotide> unambiguiousBases){
         if(unambiguiousBases ==null){
@@ -260,6 +262,36 @@ public enum Nucleotide implements Residue {
         }
         return Gap;        
     }
-    
+    /**
+     * Get the non-ambiguous bases that make up this
+     * {@link Nucleotide}.
+     * If this Nucleotide is ambiguous, then
+     * the returned {@link Set} will contain
+     * all the {@link Nucleotide}s
+     * that make up this ambiguity.
+     * Calling this method on a non-ambiguous
+     * {@link Nucleotide} will return
+     * a Set containing a single element, this.
+     * For example calling this method
+     * on
+     * {@link Nucleotide#Purine}
+     * will return a set containing
+     * the two {@link Nucleotide}s
+     * {@link Nucleotide#Adenine} and
+     * {@link Nucleotide#Guanine}.
+     * <p/>
+     * This method mirrors {@link #getAmbiguityFor(Collection)}
+     * such that the input of one of these methods should
+     * be the return value of the other.
+     * <pre> 
+     * Nucleotide n = ...;
+     * n == Nucleotide.getAmbiguityFor(n.getBasesFor());
+     * </pre> 
+     * @return a {@link Set} of Nucleotides
+     * will never be null or empty.
+     */
+    public Set<Nucleotide> getBasesFor(){
+    	return AMBIGUITY_TO_CONSTIUENT.get(this);
+    }
     
 }
