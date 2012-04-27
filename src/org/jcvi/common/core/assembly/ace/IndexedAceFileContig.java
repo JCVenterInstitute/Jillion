@@ -130,7 +130,7 @@ final class IndexedAceFileContig implements AceContig{
 	
 	static final class IndexedContigVisitorBuilder implements AceFileVisitor, Builder<AceContig>{
 		
-		private long startOffset=0;
+		private long currentOffset=0;
 		private IndexedFileRange readRanges;
 		private final File aceFile;
 		private String currentLine;
@@ -139,13 +139,12 @@ final class IndexedAceFileContig implements AceContig{
 		private Map<String, AlignedReadInfo> readInfoMap;
 		private NucleotideSequenceBuilder consensusBuilder;
 		private boolean readingConsensus=true;
-		private int currentReadLength=0;
 		private String currentReadId;
 		private long contigStartOffset=0;
 		private List<Range> coverageRanges = new ArrayList<Range>();
-		
+		private long currentReadStart;
 		public IndexedContigVisitorBuilder(long startOffset, File aceFile) {
-			this.startOffset = startOffset;
+			this.currentOffset = startOffset;
 			this.aceFile = aceFile;
 			this.contigStartOffset = startOffset;
 		}
@@ -153,11 +152,7 @@ final class IndexedAceFileContig implements AceContig{
 		@Override
 		public void visitLine(String line) {
 			currentLine = line;
-			if(readingConsensus){
-				startOffset+=currentLine.length();
-			}else{
-				currentReadLength+=currentLine.length();
-			}
+			currentOffset+=currentLine.length();
 		}
 
 		@Override
@@ -227,9 +222,9 @@ final class IndexedAceFileContig implements AceContig{
 		public void visitReadHeader(String readId, int gappedLength) {
 			if(readingConsensus){
 				readingConsensus=false;
-				startOffset -=currentLine.length();
+				
 			}
-			currentReadLength = currentLine.length();
+			currentReadStart =currentOffset - currentLine.length();
 			currentReadId= readId;
 			coverageRanges.add(Range.createOfLength(readInfoMap.get(readId).getStartOffset(), gappedLength));
 		}
@@ -244,8 +239,7 @@ final class IndexedAceFileContig implements AceContig{
 		public void visitTraceDescriptionLine(String traceName,
 				String phdName, Date date) {
 			//end of current read
-			readRanges.put(currentReadId, Range.createOfLength(startOffset, currentReadLength));
-			startOffset += currentReadLength;
+			readRanges.put(currentReadId, Range.create(currentReadStart, currentOffset-1));
 		}
 
 		@Override
