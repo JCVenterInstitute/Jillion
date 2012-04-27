@@ -5,17 +5,23 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore.ReadVisitorBuilder;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
+import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
+import org.jcvi.common.core.util.Caches;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
@@ -30,13 +36,14 @@ final class IndexedAceFileContig implements AceContig{
 	private final NucleotideSequence consensus;
 	private final File aceFile;
 	private final long contigStartFileOffset;
-	
+	private final Map<String, AcePlacedRead> cachedReads;
 	
 	private IndexedAceFileContig(String contigId,
 			Map<String, AlignedReadInfo> readInfoMap,
 			IndexedFileRange readOffsetRanges, boolean isComplimented,
 			NucleotideSequence consensus, File aceFile,
-			long contigStartFileOffset) {
+			long contigStartFileOffset,
+			int maxCoverage) {
 		this.contigId = contigId;
 		this.readInfoMap = readInfoMap;
 		this.readOffsetRanges = readOffsetRanges;
@@ -44,6 +51,7 @@ final class IndexedAceFileContig implements AceContig{
 		this.consensus = consensus;
 		this.aceFile = aceFile;
 		this.contigStartFileOffset = contigStartFileOffset;
+		this.cachedReads = Caches.createSoftReferencedValueLRUCache(maxCoverage*2);
 	}
 
 	@Override
@@ -78,9 +86,13 @@ final class IndexedAceFileContig implements AceContig{
 	}
 
 	@Override
-	public AcePlacedRead getRead(String id) {
+	public synchronized AcePlacedRead getRead(String id) {
 		if(!containsRead(id)){
 			return null;
+		}
+		AcePlacedRead cachedRead =cachedReads.get(id);
+		if(cachedRead !=null){
+			return cachedRead;
 		}
 		InputStream in = null;
 		try{
@@ -92,7 +104,9 @@ final class IndexedAceFileContig implements AceContig{
 			builder.visitAssembledFromLine(id, alignmentInfo.getDirection(), alignmentInfo.getStartOffset());
 			
 			AceFileParser.parse(in, builder);
-			return builder.build();
+			AcePlacedRead read= builder.build();
+			cachedReads.put(id, read);
+			return read;
 			
 		} catch (FileNotFoundException e) {
 			throw new IllegalStateException("ace file no longer exists", e);
@@ -128,6 +142,7 @@ final class IndexedAceFileContig implements AceContig{
 		private int currentReadLength=0;
 		private String currentReadId;
 		private long contigStartOffset=0;
+		private List<Range> coverageRanges = new ArrayList<Range>();
 		
 		public IndexedContigVisitorBuilder(long startOffset, File aceFile) {
 			this.startOffset = startOffset;
@@ -157,9 +172,13 @@ final class IndexedAceFileContig implements AceContig{
 
 		@Override
 		public AceContig build() {
+			
+			CoverageMap<CoverageRegion<Range>> coverageMap = DefaultCoverageMap.buildCoverageMap(coverageRanges);
+			int maxCoverage = coverageMap.getMaxCoverage();
+			coverageRanges.clear();
 			return new IndexedAceFileContig(contigId, readInfoMap, readRanges, isComplimented, 
 					consensusBuilder.build(), aceFile, 
-					contigStartOffset);
+					contigStartOffset, maxCoverage);
 		}
 
 		@Override
@@ -212,6 +231,7 @@ final class IndexedAceFileContig implements AceContig{
 			}
 			currentReadLength = currentLine.length();
 			currentReadId= readId;
+			coverageRanges.add(Range.createOfLength(readInfoMap.get(readId).getStartOffset(), gappedLength));
 		}
 
 		@Override
@@ -225,7 +245,7 @@ final class IndexedAceFileContig implements AceContig{
 				String phdName, Date date) {
 			//end of current read
 			readRanges.put(currentReadId, Range.createOfLength(startOffset, currentReadLength));
-			startOffset += currentReadLength+1;
+			startOffset += currentReadLength;
 		}
 
 		@Override

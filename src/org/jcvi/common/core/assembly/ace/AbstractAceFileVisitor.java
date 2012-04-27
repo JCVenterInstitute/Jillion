@@ -171,6 +171,9 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     public synchronized void visitQualityLine(int qualLeft,
             int qualRight, int alignLeft, int alignRight) {
         throwExceptionIfInitialized();  
+        if(currentReadId ==null){
+        	throw new IllegalStateException("current read id is null");
+        }
         if(qualLeft == -1 && qualRight ==-1){
             skipCurrentRead = true;
             visitIgnoredRead(currentReadId, "entire read is low quality");
