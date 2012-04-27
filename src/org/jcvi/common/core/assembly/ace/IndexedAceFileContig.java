@@ -26,7 +26,24 @@ import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
-
+/**
+ * {@code IndexedAceFileContig} is an {@link AceContig}
+ * that doesn't store all the data of this contig
+ * in memory at any one time.  Instead of storing
+ * {@link AcePlacedRead}s, only a map of offset ranges
+ * into the ace file are stored.  Whenever a read
+ * is requested, the file is re-opened, and 
+ * <strong>just the lines for that one read</strong>
+ * are re-parsed.  To improve performance,
+ * an LRU cache is used to store the most recent fetched
+ * reads.  This helps performance if the same reads
+ * are requested over and over again in close proximity
+ * (like  iterating through regions in a coverage map).
+ * Currently the cache size is 
+ * {@code max depth of coverage * 2}.
+ * @author dkatzel
+ *
+ */
 final class IndexedAceFileContig implements AceContig{
 
 	private final String contigId;
